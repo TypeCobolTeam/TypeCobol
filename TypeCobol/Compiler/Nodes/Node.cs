@@ -211,7 +211,9 @@ namespace TypeCobol.Compiler.Nodes {
             /// Indicate the node who is inserted by the codegen to indicate the COPY node.
             /// </summary>
             IsTypedefCopyNode = 0x01 << 28,
-
+            /// Mark a program that should generate its procedure as nested pgm.
+            /// </summary>
+            GenerateAsNested = 0x01 << 29,
         };
         /// <summary>
         /// A 32 bits value for flags associated to this Node

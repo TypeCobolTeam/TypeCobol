@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Codegen.Skeletons;
@@ -341,6 +342,26 @@ namespace TypeCobol.Codegen.Generators
                         }
                         previousBuffer = curSourceText;
                     }
+                    else if (mapper.Nodes[node_index].node.CodeElement is Compiler.CodeElements.ProgramEnd)
+                    {
+                        //for each typecobol nested procedure declaration in procedure division
+                        foreach (var functionDeclaration in mapper.Nodes[node_index].node.Parent.Children.OfType<FunctionDeclarationCG>().Where(c => c.GenerateAsNested))
+                        {
+                            //for each procedure generated in pgm
+                            foreach (var functionIndex in mapper.FunctionDeclarationNodeIndices)
+                            {
+                                LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[functionIndex] as LinearNodeSourceCodeMapper.NodeFunctionData;
+                                FunctionDeclarationCG function = funData.node as FunctionDeclarationCG;
+                                if (funData.node.QualifiedName.Matches(functionDeclaration.QualifiedName) && 
+                                    function?.OriginalHash != null && function.OriginalHash == functionDeclaration.OriginalHash)
+                                {
+                                    AppendBufferContent(targetSourceText, funData.FunctionDeclBuffer);
+                                }
+                            }
+                        }
+
+                        previousBuffer = curSourceText;
+                    }
                     else
                     {
                         previousBuffer = curSourceText;
@@ -356,11 +377,16 @@ namespace TypeCobol.Codegen.Generators
                 previousBuffer = null;
             }
             //--------------------------------------------------------------------------------------------------------------
-            //4)//Flush of Function declation body
+            //4)//Flush of Function declation body that shouldn't be generated as nested
             foreach (int fun_index in mapper.FunctionDeclarationNodeIndices)
             {
-                LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[fun_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
-                AppendBufferContent(targetSourceText, funData.FunctionDeclBuffer);
+                FunctionDeclarationCG functionDeclaration = mapper.Nodes[fun_index].node as FunctionDeclarationCG;
+                if (functionDeclaration != null && !functionDeclaration.GenerateAsNested)
+                {
+                    LinearNodeSourceCodeMapper.NodeFunctionData funData =
+                        mapper.Nodes[fun_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
+                    AppendBufferContent(targetSourceText, funData.FunctionDeclBuffer);
+                }
             }
             //5)//Generate Line Exceed Diagnostics
             GenerateExceedLineDiagnostics();
