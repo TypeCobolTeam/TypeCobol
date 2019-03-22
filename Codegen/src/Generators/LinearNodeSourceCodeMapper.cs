@@ -756,6 +756,15 @@ namespace TypeCobol.Codegen.Generators
                 }
                 return true;
             }
+            //Special case Typedef
+            if (node is TypeDefinition)
+            {   //Mark all of being inside a Typedef so that we can handle DataDefitioon
+                //Inside a Typedef which comes from COPY.
+                if (node.IsInsideCopy())
+                {
+                    node.SetFlag(Node.Flag.InsideTypedefFromCopy, true, true);
+                }
+            }
             if (positions.Item4.Count == 0)
             {   //This must be a Node in an imported COPY it has no lines associated to it
                 //So We must First try to create a COPY Node so that we can capture the COPY Line.
@@ -813,8 +822,7 @@ namespace TypeCobol.Codegen.Generators
                                 {//This a commented COPYs
                                     if (node.Parent != null)
                                     {//Inform the parent that it has a COPY node here
-                                        this.Generator.ErasedNodes.Add(copyNode);
-                                        node.Parent.SetFlag(Node.Flag.InsideTypedefFromCopy, true, true);
+                                        this.Generator.ErasedNodes.Add(copyNode);                                        
                                         copyNode.SetFlag(Node.Flag.IsTypedefCopyNode, true);
                                     }
                                 }

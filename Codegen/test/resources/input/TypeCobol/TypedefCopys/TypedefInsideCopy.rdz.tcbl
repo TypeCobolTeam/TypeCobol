@@ -1,0 +1,16 @@
+﻿       identification division.
+       program-id. MyPGM.
+       environment division.
+       configuration section.
+       source-computer. ibm-370
+      *                 with debugging mode
+                        .
+       special-names. decimal-point is comma.
+       data division.
+       working-storage section.
+     
+
+       COPY MyCopyC. 
+       01 var11 type Type11.
+      
+       end program MyPGM.

@@ -164,24 +164,9 @@ namespace TypeCobol.Codegen {
 			var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol","skeletons")+".xml") : null;
 
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "FunDeclare") + ".rdz.cbl", skeletons);
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "FunDeclareWithExec") + ".rdz.cbl", skeletons);
         }
 
-
-        [TestMethod]
-        [TestCategory("Codegen")]
-        [TestProperty("Time", "fast")]
-        public void ParseProcedureWithExec()
-        {
-            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
-
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenerateAsNested", "FunDeclareWithExec-PrivateOnly") + ".rdz.cbl", skeletons);
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenerateAsNested", "FunDeclareWithExec-PublicOnly") + ".rdz.cbl", skeletons);
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenerateAsNested", "FunDeclareWithExec-PublicPrivate") + ".rdz.cbl", skeletons);
-        }
-
-
-        [TestMethod]
+		[TestMethod]
 		[TestCategory("Codegen")]
 		[TestProperty("Time","fast")]
 		public void ParseLibrary() {
@@ -830,6 +815,18 @@ namespace TypeCobol.Codegen {
 	        string copies = Path.Combine(dir, "resources", "input", "TypeCobol", "TypedefCopys");
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefCopys", "TypedefBodyInsideCopy") + ".rdz.tcbl", skeletons, false,
 	            null, new List<string>() {copies});
+	    }
+
+	    [TestMethod]
+	    [TestCategory("Codegen")]
+	    [TestProperty("Time", "fast")]
+	    public void TypedefInsideCopy()
+	    {
+	        var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
+	        string dir = System.IO.Directory.GetCurrentDirectory();
+	        string copies = Path.Combine(dir, "resources", "input", "TypeCobol", "TypedefCopys");
+	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefCopys", "TypedefInsideCopy") + ".rdz.tcbl", skeletons, false,
+	            null, new List<string>() { copies });
 	    }
 
 #if EUROINFO_RULES

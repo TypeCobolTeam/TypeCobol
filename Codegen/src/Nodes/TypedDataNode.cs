@@ -792,18 +792,14 @@ namespace TypeCobol.Codegen.Nodes
         {
             var lines = new List<ITextLine>();
             foreach (var child in type.Children)
-            {
-                bool bCanGenerate = !child.IsInsideCopy();
+            {                
                 //Handle Typedef whose body is inside a COPY
-                if (child.IsFlagSet(Flag.InsideTypedefFromCopy))
+                if (child.IsFlagSet(Flag.IsTypedefCopyNode))
                 {
-                    if (child.IsFlagSet(Flag.IsTypedefCopyNode))
-                    {
-                        lines.AddRange(child.Lines);
-                        continue;
-                    }
+                    lines.AddRange(child.Lines);
+                    continue;
                 }
-
+                bool bCanGenerate = !child.IsInsideCopy() || child.IsFlagSet(Flag.InsideTypedefFromCopy);
                 if (child is TypedDataNode) continue;
                 //Special cases BOOL / POINTER
                 if (child is TypeCobol.Compiler.Nodes.DataDescription)
