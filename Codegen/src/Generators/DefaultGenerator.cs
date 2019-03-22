@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -56,6 +57,7 @@ namespace TypeCobol.Codegen.Generators
             : base(document, destination, skeletons, null)
         {
             TypeCobolVersion = typeCobolVersion;
+            int count = CompilationResults.TokensLines.Count;            
         }
 
         /// <summary>
@@ -96,6 +98,9 @@ namespace TypeCobol.Codegen.Generators
         /// </summary>
         private SourceText LinearGeneration<A>(LinearNodeSourceCodeMapper mapper, IReadOnlyList<A> Input) where A : ITextLine
         {
+            /// Marker of all line that have beeen already generated has commented.
+            BitArray CommentedLinesDone = new BitArray(CompilationResults.TokensLines.Count);
+            //Final Generated source code
             SourceText targetSourceText = new GapSourceText();
             //Stack Used to save current generation buffer when switching in a function declaration generation.
             //Beacuse a function declartion has its own buffer.
@@ -175,25 +180,39 @@ namespace TypeCobol.Codegen.Generators
                     previousBuffer = null;
                 }
                 for (int j = i; mapper.CommentedLines[j]; j++)
-                {
+                {                    
                     List<int> current_nodes = mapper.LineData[j].LineNodes;
-                    if (!LinearNodeSourceCodeMapper.HasIntersection(line_nodes, current_nodes))
-                        break;//This commented line has no nodes which intersect with the previous line.
-                    IEnumerable<ITextLine> lines = Indent(Input[j], true);
-                    foreach (var line in lines)
-                    {
-                        string text = line.Text.TrimEnd();
-                        targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
-                        targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
-                        CheckFunctionDeclCommentedheader(mapper, current_nodes, text);
+                    if (!CommentedLinesDone[j])
+                    {//Don't comment twice same lines
+                        if (!LinearNodeSourceCodeMapper.HasIntersection(line_nodes, current_nodes))
+                            break; //This commented line has no nodes which intersect with the previous line.
+                        IEnumerable<ITextLine> lines = Indent(Input[j], true);
+                        foreach (var line in lines)
+                        {
+                            string text = line.Text.TrimEnd();
+                            targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
+                            targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
+                            CheckFunctionDeclCommentedheader(mapper, current_nodes, text);
+                        }
+
+                        if (current_nodes != null)
+                        {
+                            //Inform only if the node has other nodes
+                            mapper.CommentedLines[j] = false; //This commented line has been generated now
+                        }
+                        CommentedLinesDone[j] = true;
                     }
-                    mapper.CommentedLines[j] = false;//This commented line has been generated now
+                    
                     line_nodes = current_nodes;
                 }
                 //--------------------------------------------------------------------------------------------------------------
                 //3)For each node related to this line, and not already generated.
                 line_nodes = mapper.LineData[i].LineNodes;
-                foreach (int node_index in line_nodes)
+                if (line_nodes == null)
+                {//No Node to generate
+                    continue;
+                }
+                foreach(int node_index in line_nodes)
                 {
                     if (node_index == -1 || mapper.Nodes[node_index].node.IsFlagSet(Node.Flag.GeneratorCanIgnoreIt))
                     {//bad Node
