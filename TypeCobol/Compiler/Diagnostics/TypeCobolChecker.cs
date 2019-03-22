@@ -726,17 +726,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
-            if (parameter.Picture != null)
-            {
-                CrossCompleteChecker.CheckPicture(node, parameter);
-            }
-
-            DataDefinitionChecker.OnNode(node, parameter);
-
-            var type = parameter.DataType;
-            TypeDefinition foundedType;
-            TypeDefinitionHelper.Check(node, type, out foundedType); //Check if the type exists and is not ambiguous
-
         }
 
         /// <summary>TCRFUN_DECLARATION_NO_DUPLICATE_NAME</summary>

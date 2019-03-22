@@ -42,7 +42,7 @@ Line 243[12,40] <27, Error, Syntax> - Syntax error : No suitable function signat
 Line 243[12,40] <27, Error, Syntax> - Syntax error : Function 'StrangelyReturnsItsInput' is missing parameter 'x' of type Numeric and length 4
 Line 252[12,20] <27, Error, Syntax> - Syntax error : Warning: Risk of confusion in call of 'varC'
 Line 256[12,39] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'varD' input(DATE)
-Line 265[8,42] <30, Error, Semantics> - Semantic error: TYPE 'Date2' is not referenced
+Line 266[18,41] <30, Error, Semantics> - Semantic error: TYPE 'Date2' is not referenced
 
 --- Program ---
 PROGRAM: ProcedureCall common:False initial:False recursive:False
