@@ -30,36 +30,21 @@ namespace TypeCobol.Compiler.CodeModel
         public IEnumerable<DataDefinition> GetAllEnclosingTypeReferences(TypeDefinition currentTypeDef)
         {
             var result = new List<DataDefinition>();
+            
+
             SymbolTable symbolTable = this;//By default set this symboltable as the starting point
 
-            while (symbolTable.CurrentScope >= Scope.Namespace) //Loop on enclosing scope until null scope. 
+            while (symbolTable.CurrentScope > Scope.Namespace) //Loop on enclosing scope until we reach NameSpace 
             {
-                symbolTable.TypesReferences.TryGetValue(currentTypeDef, out var typeReferences);
-                if (typeReferences != null)
+                if (symbolTable.TypesReferences.TryGetValue(currentTypeDef, out var typeReferences))
                 {
                     result.AddRange(typeReferences);
-                }
 
-                if (symbolTable.CurrentScope == Scope.Namespace && symbolTable.Programs.Count > 0)
-                    //Some TypeReferences are stored only in program's symbolTable, need to seek into them. 
-                {
-                    foreach (var program in symbolTable.Programs.SelectMany(t => t.Value))
-                    {
-                        if (!program.SymbolTable.TypesReferences.IsNullOrEmpty())
-                        {
-
-                            program.SymbolTable.TypesReferences.TryGetValue(currentTypeDef, out var typeReferences2);
-                            if (typeReferences2 != null)
-                            {
-                                result.AddRange(typeReferences2);
-                            }
-                        }
-                    }
                 }
 
                 symbolTable = symbolTable.EnclosingScope; //Go to the next enclosing scope. 
             }
-            return result.Distinct();
+            return result.Distinct();//Distinct we are using path from 2 multiple SymbolTable and can have duplicate
         }
 
 
@@ -554,19 +539,16 @@ namespace TypeCobol.Compiler.CodeModel
                 //If typeDefContext is set : Ignore references of this typedefContext to avoid loop seeking
                 //                           Only takes variable references that are declared inside the typeDefContext
                 if (typeDefContext != null)
-                    references = references.Where(r => r.DataType != typeDefContext.DataType && r.ParentTypeDefinition == typeDefContext);
+                    references = references.Where(r => r.TypeDefinition != typeDefContext && r.ParentTypeDefinition == typeDefContext);
 
 
                 foreach (var reference in references)
                 {
                     //references property of a TypeDefinition can lead to variable in totally others scopes, like in another program
                     //So we need to check if we can access this variable
-                    if (reference.IsPartOfATypeDef || GetVariables(reference.Name).Contains(reference))
-                    {
-                        var newDataDefinitionPath = new DataDefinitionPath(dataDefinitionPath, reference);//Add the reference found to the dataDefinitionPath
+                    var newDataDefinitionPath = new DataDefinitionPath(dataDefinitionPath, reference);//Add the reference found to the dataDefinitionPath
 
-                        MatchVariable(foundedVariables, headDataDefinition, name, nameIndex, reference, newDataDefinitionPath, typeDefContext);
-                    }
+                    MatchVariable(foundedVariables, headDataDefinition, name, nameIndex, reference, newDataDefinitionPath, typeDefContext);
                 }
             }
 
@@ -591,25 +573,21 @@ namespace TypeCobol.Compiler.CodeModel
             //If typedefcontext is setted : Ignore references of this typedefContext to avoid loop seeking
             //                              + Only takes variable references that are declared inside the typeDefContext
             if (typeDefContext != null)
-                references = references.Where(r => r.DataType != typeDefContext.DataType && r.ParentTypeDefinition == typeDefContext);
+                references = references.Where(r => r.TypeDefinition != typeDefContext.TypeDefinition && r.ParentTypeDefinition == typeDefContext);
 
             foreach (var reference in references)
             {
                 var parentTypeDef = reference.ParentTypeDefinition;
-                if (parentTypeDef != null && parentTypeDef != typeDefContext)
+                if (parentTypeDef == null || parentTypeDef == typeDefContext)
+                {
+                    var newDataDefinitionPath = new DataDefinitionPath(dataDefinitionPath, reference);//Add the reference found to the dataDefinitionPath
+                    foundedVariables.Add(new KeyValuePair<DataDefinitionPath, DataDefinition>(newDataDefinitionPath, headDataDefinition));
+                    
+                }
+                else
                 {
                     var newDataDefinitionPath = new DataDefinitionPath(dataDefinitionPath, reference);//Add the reference found to the dataDefinitionPath
                     AddAllReference(foundedVariables, headDataDefinition, parentTypeDef, newDataDefinitionPath, typeDefContext);
-                }
-                else
-                { 
-                    //we are on a variable but ... references property of a TypeDefinition can lead to variable in totally others scopes, like in another program
-                    //So we need to check if we can access this variable OR check if the variable is declared inside the typeDefContext
-                    if (GetVariables(reference.Name).Contains(reference) || (typeDefContext != null && typeDefContext.Equals(parentTypeDef)))
-                    {
-                        var newDataDefinitionPath = new DataDefinitionPath(dataDefinitionPath, reference);//Add the reference found to the dataDefinitionPath
-                        foundedVariables.Add(new KeyValuePair<DataDefinitionPath, DataDefinition>(newDataDefinitionPath, headDataDefinition));
-                    }
                 }
             }
         }
