@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using Analytics;
 using TypeCobol.Compiler;
@@ -390,15 +391,48 @@ namespace TypeCobol.LanguageServer
             if (matchingNode == null)
                 return null;
 
-            //OnHover for data declared with a type
-            var dataDefinition = matchingNode as DataDefinition;
-            if (dataDefinition?.TypeDefinition != null)
+            string message = string.Empty;
+
+            //Switch between all nodes that can return information
+            switch (matchingNode)
+            {
+                case DataDefinition data:
+                    message = data.TypeDefinition.ToString();
+                    break;
+                case ProcedureStyleCall call:
+                    //don't show hover on params
+                    if (lastSignificantToken.TokenType != TokenType.INPUT && lastSignificantToken.TokenType != TokenType.IN_OUT && lastSignificantToken.TokenType != TokenType.OUTPUT)
+                    {
+                        message = call.ToString();
+                    }
+                    break;
+                case FunctionDeclaration fun:
+                    //only for params of a function declaration
+                    if (userFilterToken != null && (lastSignificantToken.TokenType == TokenType.QualifiedNameSeparator || lastSignificantToken.TokenType == TokenType.TYPE))
+                    {
+                        foreach (var param in fun.Profile.Parameters)
+                        {
+                            //if the hovered position is inside this parameter
+                            //line + 1 : because start index is 0
+                            if (param.CodeElement.Line == parameters.position.line + 1 && 
+                                param.CodeElement.StartIndex < parameters.position.character && 
+                                param.CodeElement.StopIndex > parameters.position.character)
+                            {
+                                if (param.TypeDefinition != null)
+                                    message = param.TypeDefinition.ToString();
+                            }
+                        }
+                    }
+                    break;
+            }
+
+            if (message != string.Empty)
             {
                 resultHover.range = new Range(matchingCodeElement.Line, matchingCodeElement.StartIndex,
                     matchingCodeElement.Line,
                     matchingCodeElement.StopIndex + 1);
                 resultHover.contents =
-                    new MarkedString[] { new MarkedString() { language = "Cobol", value = string.Join("", dataDefinition.TypeDefinition.SelfAndChildrenLines.Select(e => e.Text + "\r\n")) } };
+                    new MarkedString[] { new MarkedString() { language = "Cobol", value = message } };
                 return resultHover;
             }
 
