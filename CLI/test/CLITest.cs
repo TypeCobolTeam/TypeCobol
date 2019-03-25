@@ -47,6 +47,15 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// Perform a generation with procedure generated as nested programs
+        /// </summary>
+        [TestMethod]
+        public void TestGenerate_NestedProcedure()
+        {
+            CLITestHelper.Test("generate_nestedProc", ReturnCode.Success);
+        }
+
+        /// <summary>
         /// Test various case of usage of dependencies such as good usage, bad file, bad path.
         /// </summary>
         [TestMethod]
@@ -57,11 +66,22 @@ namespace CLI.Test
             CLITestHelper.ReadConsole("dependencies_4", ReturnCode.DependenciesError);            //No dependencies found
             CLITestHelper.Test("dependencies_5", ReturnCode.Success);
             CLITestHelper.Test("dependencies_6", ReturnCode.Success);
-            CLITestHelper.Test("dependency_with_copy_loading", ReturnCode.Success); 
+            CLITestHelper.Test("dependency_with_copy_loading", ReturnCode.Success);
 #if EUROINFO_RULES
             CLITestHelper.Test("ei_dependencies_1", ReturnCode.ParsingDiagnostics);
 #endif
         }
+
+        [TestMethod]
+        public void TestEmptyDependency()
+        {
+            var testFolderName = "empty_dependency_folder";
+            Directory.CreateDirectory("ressources" + Path.DirectorySeparatorChar + testFolderName + Path.DirectorySeparatorChar +  "emptyFolder");
+
+            CLITestHelper.ReadConsoleWarnings(testFolderName, ReturnCode.Success);
+        }
+
+
 
         /// <summary>
         /// Test that even with a execToStep>Preprocessor, then the parsing will halt on preprocessor phase because copy are missing
@@ -216,6 +236,29 @@ namespace CLI.Test
                                                   "Expected: {5}{0}{2}{0}" +
                                                   "{3}",
                     Environment.NewLine, standardOutput, expectedoutput, Environment.NewLine, standardOutput.Length, expectedoutput.Length));
+        }
+
+        internal static void ReadConsoleWarnings(string testFolderName, ReturnCode expectedReturnCode)
+        {
+            var workingDirectory = "ressources" + Path.DirectorySeparatorChar + testFolderName;
+            string arguments = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "CLIArguments.txt");
+            string standardOutput = Test(workingDirectory, arguments, expectedReturnCode).Trim();
+            string warnings = string.Empty;
+
+            foreach (string line in standardOutput.Split(new string[] { "\r\n" }, StringSplitOptions.None))
+            {
+                if (line.StartsWith("Line"))
+                    warnings += line + "\r\n";
+            }
+
+            warnings = warnings.Trim();
+            string expectedoutput = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "ExpectedConsole.txt").Trim();
+            if (!string.Equals(warnings, expectedoutput, StringComparison.CurrentCultureIgnoreCase))
+                throw new Exception(string.Format("console outputs not equals.{0}" +
+                                                  "Console: {4}{0}{1}{0}" +
+                                                  "Expected: {5}{0}{2}{0}" +
+                                                  "{3}",
+                    Environment.NewLine, warnings, expectedoutput, Environment.NewLine, warnings.Length, expectedoutput.Length));
         }
 
         /// <summary>

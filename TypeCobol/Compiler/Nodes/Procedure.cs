@@ -116,6 +116,9 @@ namespace TypeCobol.Compiler.Nodes {
 	    public string Copy { get { return Library+"cpy"; } }
 	    //public ParametersProfile Profile { get { return this.CodeElement().Profile; } }
         public ParametersProfileNode Profile{ get; set; }
+        //For specific FunctionDeclaration generation as nested, check flag on FunctionDeclaration node
+        //Don't forget to set the flag on the right node in ProgramClassBuilder
+        public bool GenerateAsNested => this.Root.MainProgram.IsFlagSet(Flag.GenerateAsNested);
 
 
         private string _hash;
@@ -150,7 +153,11 @@ namespace TypeCobol.Compiler.Nodes {
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            return astVisitor.Visit(this);
+            return astVisitor.Visit(this) && this.ContinueVisitToChildren(astVisitor, Profile.InputParameters)
+                                          && this.ContinueVisitToChildren(astVisitor, Profile.InoutParameters)
+                                          && this.ContinueVisitToChildren(astVisitor, Profile.OutputParameters)
+                                          && this.ContinueVisitToChildren(astVisitor, Profile.ReturningParameter );
+
         }
 
         public Dictionary<string, Tuple<IList<SymbolReference>, ProcedureStyleCall>> ProcStyleCalls { get; set; }

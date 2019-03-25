@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Codegen.Skeletons;
@@ -55,6 +57,7 @@ namespace TypeCobol.Codegen.Generators
             : base(document, destination, skeletons, null)
         {
             TypeCobolVersion = typeCobolVersion;
+            int count = CompilationResults.TokensLines.Count;            
         }
 
         /// <summary>
@@ -95,6 +98,9 @@ namespace TypeCobol.Codegen.Generators
         /// </summary>
         private SourceText LinearGeneration<A>(LinearNodeSourceCodeMapper mapper, IReadOnlyList<A> Input) where A : ITextLine
         {
+            /// Marker of all line that have beeen already generated has commented.
+            BitArray CommentedLinesDone = new BitArray(CompilationResults.TokensLines.Count);
+            //Final Generated source code
             SourceText targetSourceText = new GapSourceText();
             //Stack Used to save current generation buffer when switching in a function declaration generation.
             //Beacuse a function declartion has its own buffer.
@@ -174,25 +180,39 @@ namespace TypeCobol.Codegen.Generators
                     previousBuffer = null;
                 }
                 for (int j = i; mapper.CommentedLines[j]; j++)
-                {
+                {                    
                     List<int> current_nodes = mapper.LineData[j].LineNodes;
-                    if (!LinearNodeSourceCodeMapper.HasIntersection(line_nodes, current_nodes))
-                        break;//This commented line has no nodes which intersect with the previous line.
-                    IEnumerable<ITextLine> lines = Indent(Input[j], true);
-                    foreach (var line in lines)
-                    {
-                        string text = line.Text.TrimEnd();
-                        targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
-                        targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
-                        CheckFunctionDeclCommentedheader(mapper, current_nodes, text);
+                    if (!CommentedLinesDone[j])
+                    {//Don't comment twice same lines
+                        if (!LinearNodeSourceCodeMapper.HasIntersection(line_nodes, current_nodes))
+                            break; //This commented line has no nodes which intersect with the previous line.
+                        IEnumerable<ITextLine> lines = Indent(Input[j], true);
+                        foreach (var line in lines)
+                        {
+                            string text = line.Text.TrimEnd();
+                            targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
+                            targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
+                            CheckFunctionDeclCommentedheader(mapper, current_nodes, text);
+                        }
+
+                        if (current_nodes != null)
+                        {
+                            //Inform only if the node has other nodes
+                            mapper.CommentedLines[j] = false; //This commented line has been generated now
+                        }
+                        CommentedLinesDone[j] = true;
                     }
-                    mapper.CommentedLines[j] = false;//This commented line has been generated now
+                    
                     line_nodes = current_nodes;
                 }
                 //--------------------------------------------------------------------------------------------------------------
                 //3)For each node related to this line, and not already generated.
                 line_nodes = mapper.LineData[i].LineNodes;
-                foreach (int node_index in line_nodes)
+                if (line_nodes == null)
+                {//No Node to generate
+                    continue;
+                }
+                foreach(int node_index in line_nodes)
                 {
                     if (node_index == -1 || mapper.Nodes[node_index].node.IsFlagSet(Node.Flag.GeneratorCanIgnoreIt))
                     {//bad Node
@@ -322,6 +342,26 @@ namespace TypeCobol.Codegen.Generators
                         }
                         previousBuffer = curSourceText;
                     }
+                    else if (mapper.Nodes[node_index].node.CodeElement is Compiler.CodeElements.ProgramEnd)
+                    {
+                        //for each typecobol nested procedure declaration in procedure division
+                        foreach (var functionDeclaration in mapper.Nodes[node_index].node.Parent.Children.OfType<FunctionDeclarationCG>().Where(c => c.GenerateAsNested))
+                        {
+                            //for each procedure generated in pgm
+                            foreach (var functionIndex in mapper.FunctionDeclarationNodeIndices)
+                            {
+                                LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[functionIndex] as LinearNodeSourceCodeMapper.NodeFunctionData;
+                                FunctionDeclarationCG function = funData.node as FunctionDeclarationCG;
+                                if (funData.node.QualifiedName.Matches(functionDeclaration.QualifiedName) && 
+                                    function?.OriginalHash != null && function.OriginalHash == functionDeclaration.OriginalHash)
+                                {
+                                    AppendBufferContent(targetSourceText, funData.FunctionDeclBuffer);
+                                }
+                            }
+                        }
+
+                        previousBuffer = curSourceText;
+                    }
                     else
                     {
                         previousBuffer = curSourceText;
@@ -337,11 +377,16 @@ namespace TypeCobol.Codegen.Generators
                 previousBuffer = null;
             }
             //--------------------------------------------------------------------------------------------------------------
-            //4)//Flush of Function declation body
+            //4)//Flush of Function declation body that shouldn't be generated as nested
             foreach (int fun_index in mapper.FunctionDeclarationNodeIndices)
             {
-                LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[fun_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
-                AppendBufferContent(targetSourceText, funData.FunctionDeclBuffer);
+                FunctionDeclarationCG functionDeclaration = mapper.Nodes[fun_index].node as FunctionDeclarationCG;
+                if (functionDeclaration != null && !functionDeclaration.GenerateAsNested)
+                {
+                    LinearNodeSourceCodeMapper.NodeFunctionData funData =
+                        mapper.Nodes[fun_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
+                    AppendBufferContent(targetSourceText, funData.FunctionDeclBuffer);
+                }
             }
             //5)//Generate Line Exceed Diagnostics
             GenerateExceedLineDiagnostics();
