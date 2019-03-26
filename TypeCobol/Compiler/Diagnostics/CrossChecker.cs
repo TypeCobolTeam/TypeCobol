@@ -446,7 +446,14 @@ namespace TypeCobol.Compiler.Diagnostics
             if (!topPrg.HasFlag((Symbol.Flags)expandedFlag))
             {
                 SymbolExpander se = new SymbolExpander(topPrg);
-                topPrg.Accept(se, topPrg);
+                try
+                {
+                    topPrg.Accept(se, topPrg);
+                }
+                catch (Types.Type.CyclicTypeException cte)
+                {//Capture a Cyclic Type exception
+                    throw cte;
+                }                
                 //Marqué ce programme come ayant été expandé
                 topPrg.SetFlag((Symbol.Flags)expandedFlag, true);
             }
@@ -606,7 +613,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 var dataDefinitionFound = found.First();
                 string completeQualifiedName = foundQualified.First().Key;
 #if DOMAIN_CHECKER
-                if (result != null)
+                if (result != null && result.Symbol != null)
                 {
                     if (result.Symbol.TargetNode == null)
                     {
@@ -622,13 +629,16 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                     else
                         System.Diagnostics.Debug.Assert(dataDefinitionFound == result.Symbol.TargetNode);
-                }
 
-                //Check that the qualified name of the variable found is the same.
-                //I cannot do that because: Actually TypeCobol Path variable includes TYPEDEF.NAMES,
-                //New Domain doesn't include TYPEDEF.NAMES in paths. ==> cannot compare qualified path names.
-                string qname = foundSymbolTypedPaths != null ? NormalizePathNames(foundSymbolTypedPaths[0]) : result.Symbol.FullTypedDotName;
-                System.Diagnostics.Debug.Assert(NormalizePathNames(completeQualifiedName).ToLower().Equals(qname.ToLower()));
+                    //Check that the qualified name of the variable found is the same.
+                    //I cannot do that because: Actually TypeCobol Path variable includes TYPEDEF.NAMES,
+                    //New Domain doesn't include TYPEDEF.NAMES in paths. ==> cannot compare qualified path names.
+                    string qname = foundSymbolTypedPaths != null
+                        ? NormalizePathNames(foundSymbolTypedPaths[0])
+                        : result.Symbol.FullTypedDotName;
+                    System.Diagnostics.Debug.Assert(NormalizePathNames(completeQualifiedName).ToLower()
+                        .Equals(qname.ToLower()));
+                }
 #endif
 
                 if (foundQualified.Count == 1)

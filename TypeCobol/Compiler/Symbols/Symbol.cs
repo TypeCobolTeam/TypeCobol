@@ -67,6 +67,11 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
+        /// The Visibility mask that a symbol can take.
+        /// </summary>
+        public const Flags SymbolVisibilityMask = Flags.Public | Flags.Private | Flags.External | Flags.Global;
+
+        /// <summary>
         /// Empty constructor
         /// </summary>
         protected Symbol()

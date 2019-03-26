@@ -11,6 +11,12 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Test.Utils;
 using System.Text;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Domain;
+using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Parser;
+// DocumentFormat
+// CodeElementDiagnostics
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Test {
 
@@ -50,7 +56,53 @@ namespace TypeCobol.Test {
 	            
 	    }
 
-	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex, string[] include, string[] exclude, string[] copiesFolder, string skelPath, int stopAfterAsManyErrors, bool autoRemarks, string expectedResultFile, bool ignoreWarningDiag) { 
+#if DOMAIN_CHECKER
+	    public static TypeCobolConfiguration DefaultConfig = null;
+	    public static ProgramSymbolTableBuilder Builder = null;
+	    public static NodeListenerFactory BuilderNodeListenerFactory = null;
+	    public static string DefaultIntrinsicPath = null;//@"C:\TypeCobol\Sources\##Latest_Release##\Intrinsic\Intrinsic.txt";
+
+	    public static void TestInitialize()
+	    {
+	        SymbolTableBuilder.Root = null;
+	        //Create a default configurations for options
+	        DefaultConfig = new TypeCobolConfiguration();
+	        if (File.Exists(DefaultIntrinsicPath))
+	        {
+	            DefaultConfig.Copies.Add(DefaultIntrinsicPath);
+	        }
+	        DefaultConfig.Dependencies.Add(Path.Combine(Directory.GetCurrentDirectory(), "resources", "dependencies"));
+	        SymbolTableBuilder.Config = DefaultConfig;
+
+	        //Force the creation of the Global Symbol Table
+	        var global = SymbolTableBuilder.Root;
+
+	        //Allocate a static Program Symbol Table Builder
+	        BuilderNodeListenerFactory = () =>
+	        {
+	            Builder = new ProgramSymbolTableBuilder();
+	            ProgramSymbolTableBuilder.LastBuilder = Builder;
+	            return Builder;
+	        };
+	        TypeCobol.Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(BuilderNodeListenerFactory);
+	    }
+	    public static void TestCleanup()
+	    {
+	        if (BuilderNodeListenerFactory != null)
+	        {
+	            TypeCobol.Compiler.Parser.NodeDispatcher.RemoveStaticNodeListenerFactory(BuilderNodeListenerFactory);
+	            if (Builder.Programs.Count != 0)
+	            {
+	                foreach (var prog in Builder.Programs)
+	                    SymbolTableBuilder.Root.RemoveProgram(prog);
+	            }
+	            ProgramSymbolTableBuilder.LastBuilder = null;
+	        }
+	    }
+
+#endif
+
+        public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex, string[] include, string[] exclude, string[] copiesFolder, string skelPath, int stopAfterAsManyErrors, bool autoRemarks, string expectedResultFile, bool ignoreWarningDiag) { 
 			string[] files = Directory.GetFiles(rootFolder, regex, SearchOption.AllDirectories);
 			bool codegen = true;
 			var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
@@ -91,15 +143,28 @@ namespace TypeCobol.Test {
 #endif
                 };
 
-                document.Init(path, options, format, copiesFolder);
-                document.Parse(path);
-                
+#if DOMAIN_CHECKER
+                try
+                {
+			        TestInitialize();
+                    document.Init(path, options, format, copiesFolder);
+                    document.Parse(path);
+                }
+                finally
+                {
+                    TestCleanup();
+
+                }
+#else
+			    document.Init(path, options, format, copiesFolder);
+			    document.Parse(path);
+#endif
 
                 watch.Stop();
 				//TestJSONSerializer.DumpAsJSON(unit.CodeElementsDocumentSnapshot.CodeElements, filename);
 				TimeSpan elapsed = watch.Elapsed;
 				parsingSumDuration += elapsed;
-				string formatted = String.Format("{0:00}m{1:00}s{2:000}ms", elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
+				string formatted = string.Format("{0:00}m{1:00}s{2:000}ms", elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
 			    AppendTextToFiles(" parsed in " + formatted + "\n", timedResultFile);
                 AppendTextToFiles("- " + document.Results.PerfStatsForText.FirstCompilationTime + " ms : text update\n", timedResultFile);
                 AppendTextToFiles("- " + document.Results.PerfStatsForScanner.FirstCompilationTime + " ms : scanner\n", timedResultFile);
@@ -151,7 +216,7 @@ namespace TypeCobol.Test {
                     watch.Stop();
                     elapsed = watch.Elapsed;
                     codeGenSumDuration += elapsed;
-                    formatted = String.Format("{0:00}m{1:00}s{2:000}ms", elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
+                    formatted = string.Format("{0:00}m{1:00}s{2:000}ms", elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
                     AppendTextToFiles(" generated in " + formatted + "\n", timedResultFile);
 
                     var parsingDiags = generator.Diagnostics;
@@ -214,9 +279,9 @@ namespace TypeCobol.Test {
                             }
                         }
                         for (int i = actual.Count; i < expected.Count; i++)
-                            errors.AppendLine(String.Format("-{0:" + fmt + "} {1}", i, expected[i]));
+                            errors.AppendLine(string.Format("-{0:" + fmt + "} {1}", i, expected[i]));
                         for (int i = expected.Count; i < actual.Count; i++)
-                            errors.AppendLine(String.Format("+{0:" + fmt + "} {1}", i, actual[i]));
+                            errors.AppendLine(string.Format("+{0:" + fmt + "} {1}", i, actual[i]));
                         if (errors.Length > 0)
                         {
                             codegenDiff += linesKO.Count + Math.Abs(actual.Count - expected.Count);
@@ -231,7 +296,7 @@ namespace TypeCobol.Test {
                 }
 			}
             TimeSpan totalTestDuration = parsingSumDuration + codeGenSumDuration;
-            string parsingTotalDurationFormatted = String.Format("{0:00}m{1:00}s{2:000}ms", parsingSumDuration.Minutes, parsingSumDuration.Seconds, parsingSumDuration.Milliseconds);
+            string parsingTotalDurationFormatted = string.Format("{0:00}m{1:00}s{2:000}ms", parsingSumDuration.Minutes, parsingSumDuration.Seconds, parsingSumDuration.Milliseconds);
             
 			string message = "Files tested=" + tested + "/" + files.Length + ", files in error=" + nbFilesInError + ", ignored=" + ignores + "\n";
             AppendTextToFiles(message, resultFile);
@@ -241,7 +306,7 @@ namespace TypeCobol.Test {
             message += "Parsing time: " + parsingTotalDurationFormatted;
             if (codegen) {
                 string codeGenTotalDurationFormatted = string.Format("{0:00}m{1:00}s{2:000}ms", codeGenSumDuration.Minutes, codeGenSumDuration.Seconds, codeGenSumDuration.Milliseconds);
-                string totalDurationFormatted = String.Format("{0:00}m{1:00}s{2:000}ms", totalTestDuration.Minutes, totalTestDuration.Seconds, totalTestDuration.Milliseconds);
+                string totalDurationFormatted = string.Format("{0:00}m{1:00}s{2:000}ms", totalTestDuration.Minutes, totalTestDuration.Seconds, totalTestDuration.Milliseconds);
                 message += " + Codegen time: " + codeGenTotalDurationFormatted + "  => Total time: " + totalDurationFormatted;
             }
             AppendTextToFiles(message, timedResultFile);
@@ -279,13 +344,13 @@ namespace TypeCobol.Test {
 		/// <param name="fmt"></param>
 		private static void before(System.Text.StringBuilder output, List<string> input, int index, int before, string fmt="0") {
 			for(int line=index-before; line<index; line++)
-				if (line > 0) output.AppendLine(String.Format(" {0:"+fmt+"} {1}", line+1, input[line]));
+				if (line > 0) output.AppendLine(string.Format(" {0:"+fmt+"} {1}", line+1, input[line]));
 		}
 		private static void diff(System.Text.StringBuilder output, List<string> expected, List<string> actual, int start, int end, string fmt="0") {
 			for (int i=start; i<=end; i++)
-				output.AppendLine(String.Format("-{0:"+fmt+"} {1}", i+1, expected[i]));
+				output.AppendLine(string.Format("-{0:"+fmt+"} {1}", i+1, expected[i]));
 			for (int i=start; i<=end; i++)
-				output.AppendLine(String.Format("+{0:"+fmt+"} {1}", i+1, actual[i]));
+				output.AppendLine(string.Format("+{0:"+fmt+"} {1}", i+1, actual[i]));
 		}
 		/// <param name="output"></param>
 		/// <param name="input">Input text</param>
@@ -294,7 +359,7 @@ namespace TypeCobol.Test {
 		/// <param name="fmt"></param>
 		private static void after(System.Text.StringBuilder output, List<string> input, int index, int after, string fmt="0") {
 			for(int line=index+1; line<=index+after; line++)
-				if (line < input.Count) output.AppendLine(String.Format(" {0:"+fmt+"} {1}", line+1, input[line]));
+				if (line < input.Count) output.AppendLine(string.Format(" {0:"+fmt+"} {1}", line+1, input[line]));
 		}
 	}
 }
