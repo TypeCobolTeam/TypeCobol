@@ -7,6 +7,7 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Symbols;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Tools;
 
@@ -67,6 +68,12 @@ namespace TypeCobol.Compiler.Nodes {
                         _mySemanticData = new System.WeakReference(value);
                     else
                         _mySemanticData.Target = value;
+#if DOMAIN_CHECKER
+                    if (value != null && value.SemanticKind == SemanticKinds.Symbol)
+                    {
+                        ((Symbol) value).TargetNode = this;
+                    }
+#endif
                 }
             }
         }

@@ -1470,7 +1470,7 @@ namespace TypeCobol.Compiler.Domain
                         indexSym.SetFlag(Symbol.Flags.Global, true);
                     }
 
-                    dataDef.SemanticData = indexSym;
+                    child.SemanticData = indexSym;
                 }
             }
         }

@@ -593,6 +593,17 @@ namespace TypeCobol.Compiler.Diagnostics
                 var dataDefinitionFound = found.First();
                 string completeQualifiedName = foundQualified.First().Key;
 #if DOMAIN_CHECKER
+                if (result.Symbol.TargetNode == null)
+                {
+                    //Special CASE DATE we don't capture the Target Node wich is created dynamically by TypeCobol.
+                    System.Diagnostics.Debug.Assert((dataDefinitionFound.Name == "YYYY" || dataDefinitionFound.Name == "DD" || dataDefinitionFound.Name == "MM") &&
+                                                    result.Symbol.Owner != null && result.Symbol.Owner.HasFlag(Symbol.Flags.HasATypedefType)
+                                                    && result.Symbol.Owner is VariableTypeSymbol && ((VariableTypeSymbol)result.Symbol.Owner).Typedef == BuiltinSymbols.Date);
+                    //But ensure that the parent Node is the same
+                    //System.Diagnostics.Debug.Assert(dataDefinitionFound.Parent == result.Symbol.Owner.TargetNode);
+                }
+                else
+                    System.Diagnostics.Debug.Assert(dataDefinitionFound.Equals(result.Symbol.TargetNode));
                 //Check that the qualified name of the variable found is the same.
                 //I cannot do that because: Actually TypeCobol Path variable includes TYPEDEF.NAMES,
                 //New Domain doesn't include TYPEDEF.NAMES in paths. ==> cannot compare qualified path names.
