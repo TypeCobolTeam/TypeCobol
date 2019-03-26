@@ -66,6 +66,11 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
+        /// The Visibility mask that a symbol can take.
+        /// </summary>
+        public const Flags SymbolVisibilityMask = Flags.Public | Flags.Private | Flags.External | Flags.Global;
+
+        /// <summary>
         /// Empty constructor
         /// </summary>
         protected Symbol()
@@ -96,7 +101,7 @@ namespace TypeCobol.Compiler.Symbols
         public Flags Flag
         {
             get;
-            set;
+            internal set;
         }
 
         /// <summary>
@@ -222,7 +227,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="flag"></param>
         /// <param name="value"></param>
         /// <param name="propagate">true the flags must be propagated, false otherwise</param>
-        public virtual void SetFlag(Flags flag, bool value, bool propagate = false)
+        internal virtual void SetFlag(Flags flag, bool value, bool propagate = false)
         {
             this.Flag = value ? (Flags)((ulong)this.Flag | (ulong)flag)
                               : (Flags)((ulong)this.Flag & ~(ulong)flag);

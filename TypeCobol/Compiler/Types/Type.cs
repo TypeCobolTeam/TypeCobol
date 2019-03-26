@@ -100,7 +100,7 @@ namespace TypeCobol.Compiler.Types
         public Symbol.Flags Flag
         {
             get;
-            set;
+            internal set;
         }
 
         public virtual UsageFormat Usage

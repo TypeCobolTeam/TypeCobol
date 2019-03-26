@@ -1558,7 +1558,7 @@ namespace TypeCobol.Compiler.Domain
                         sym.Level = 88;
                         if (parentScope.Owner != null)
                         {
-                            sym.SetFlag(Symbol.Flags.Global, parentScope.Owner.HasFlag(Symbol.Flags.Global));
+                            sym.SetFlag(parentScope.Owner.Flag & Symbol.SymbolVisibilityMask , parentScope.Owner.HasFlag(Symbol.SymbolVisibilityMask));                                
                         }
                     }
                         break;
@@ -1567,7 +1567,7 @@ namespace TypeCobol.Compiler.Domain
                         sym.Level = 66;
                         if (parentScope.Owner != null)
                         {
-                            sym.SetFlag(Symbol.Flags.Global, parentScope.Owner.HasFlag(Symbol.Flags.Global));
+                            sym.SetFlag(parentScope.Owner.Flag & Symbol.SymbolVisibilityMask, parentScope.Owner.HasFlag(Symbol.SymbolVisibilityMask));
                         }
                      }
                         break;
@@ -1577,15 +1577,17 @@ namespace TypeCobol.Compiler.Domain
                         CommonDataDescriptionAndDataRedefines dataDescEntry =
                             (CommonDataDescriptionAndDataRedefines)dataDef.CodeElement;
                         sym.Level = (int)dataDescEntry.LevelNumber.Value;
-                        if (dataDescEntry.IsGlobal)
-                        {
+                        if (dataDescEntry.IsGlobal || parentScope.Owner.HasFlag(Symbol.Flags.Global))
+                        {//No Global inside GLOBAL-STORAGE.
                             if (fSection.HasValue && fSection != Symbol.Flags.GLOBAL_STORAGE)
                             {
                                 //This a global symbol
                                 sym.SetFlag(Symbol.Flags.Global, true);
                             }
                         }
-                     }
+                        //Propagate other visibility than global
+                        sym.SetFlag(parentScope.Owner.Flag & Symbol.SymbolVisibilityMask & ~Symbol.Flags.Global, parentScope.Owner.HasFlag(Symbol.SymbolVisibilityMask & ~Symbol.Flags.Global));
+                    }
                         break;
                     default:
                         System.Diagnostics.Debug.Assert(dataDef.CodeElement.Type == CodeElementType.DataDescriptionEntry ||
