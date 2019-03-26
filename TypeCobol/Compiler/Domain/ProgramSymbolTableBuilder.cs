@@ -360,6 +360,9 @@ namespace TypeCobol.Compiler.Domain
             var pvar = this.CurrentProgram.LinkageStorageData.Lookup(pname);
             if (pvar != null)
             {
+                if (p.SharingMode == null)
+                    pvar.Symbol.SetFlag(Symbol.Flags.ByReference, true);
+                else
                 switch (p.SharingMode.Value)
                 {
                     case ParameterSharingMode.ByContent:
@@ -373,6 +376,7 @@ namespace TypeCobol.Compiler.Domain
                         break;
                 }
 
+                if (p.PassingDirection != null)
                 switch (p.PassingDirection.Value)
                 {
                     case ParameterPassingDirection.Input:
