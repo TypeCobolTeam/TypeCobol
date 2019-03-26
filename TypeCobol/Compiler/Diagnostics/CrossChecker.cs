@@ -435,6 +435,12 @@ namespace TypeCobol.Compiler.Diagnostics
         /// <returns></returns>
         static ProgramSymbol ExpandTopProgram(ProgramSymbol curPrg)
         {
+            //if (ProgramSymbolTableBuilder.LastBuilder != null &&
+            //    ProgramSymbolTableBuilder.LastBuilder.Diagnostics.Count > 0)
+            //{//There was errord dont expand the program.
+            //    return curPrg;
+            //}
+
             const ulong expandedFlag = 0x1 << 62;//I use this flag to mark an expanded program.
             ProgramSymbol topPrg = GetTopProgram(curPrg);
             if (!topPrg.HasFlag((Symbol.Flags)expandedFlag))
@@ -475,6 +481,13 @@ namespace TypeCobol.Compiler.Diagnostics
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             foreach (var s in symbolPaths)
             {
+                if (s == symbolPaths[symbolPaths.Length- 1])
+                {
+                    if (s.Kind == Symbol.Kinds.Typedef)
+                    {//If the last symbol is a Typedef don't put it in the path.
+                        continue;
+                    }
+                }
                     sb.Append(sep);
                     sb.Append(s.Name);
                     sep = ".";
@@ -593,17 +606,24 @@ namespace TypeCobol.Compiler.Diagnostics
                 var dataDefinitionFound = found.First();
                 string completeQualifiedName = foundQualified.First().Key;
 #if DOMAIN_CHECKER
-                if (result.Symbol.TargetNode == null)
+                if (result != null)
                 {
-                    //Special CASE DATE we don't capture the Target Node wich is created dynamically by TypeCobol.
-                    System.Diagnostics.Debug.Assert((dataDefinitionFound.Name == "YYYY" || dataDefinitionFound.Name == "DD" || dataDefinitionFound.Name == "MM") &&
-                                                    result.Symbol.Owner != null && result.Symbol.Owner.HasFlag(Symbol.Flags.HasATypedefType)
-                                                    && result.Symbol.Owner is VariableTypeSymbol && ((VariableTypeSymbol)result.Symbol.Owner).Typedef == BuiltinSymbols.Date);
-                    //But ensure that the parent Node is the same
-                    //System.Diagnostics.Debug.Assert(dataDefinitionFound.Parent == result.Symbol.Owner.TargetNode);
+                    if (result.Symbol.TargetNode == null)
+                    {
+                        //Special CASE DATE we don't capture the Target Node wich is created dynamically by TypeCobol.
+                        System.Diagnostics.Debug.Assert(
+                            (dataDefinitionFound.Name == "YYYY" || dataDefinitionFound.Name == "DD" ||
+                             dataDefinitionFound.Name == "MM") &&
+                            result.Symbol.Owner != null && result.Symbol.Owner.HasFlag(Symbol.Flags.HasATypedefType)
+                            && result.Symbol.Owner is VariableTypeSymbol &&
+                            ((VariableTypeSymbol) result.Symbol.Owner).Typedef == BuiltinSymbols.Date);
+                        //But ensure that the parent Node is the same
+                        //System.Diagnostics.Debug.Assert(dataDefinitionFound.Parent == result.Symbol.Owner.TargetNode);
+                    }
+                    else
+                        System.Diagnostics.Debug.Assert(dataDefinitionFound == result.Symbol.TargetNode);
                 }
-                else
-                    System.Diagnostics.Debug.Assert(dataDefinitionFound.Equals(result.Symbol.TargetNode));
+
                 //Check that the qualified name of the variable found is the same.
                 //I cannot do that because: Actually TypeCobol Path variable includes TYPEDEF.NAMES,
                 //New Domain doesn't include TYPEDEF.NAMES in paths. ==> cannot compare qualified path names.

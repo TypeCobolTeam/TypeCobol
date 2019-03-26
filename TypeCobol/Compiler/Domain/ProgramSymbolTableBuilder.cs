@@ -53,6 +53,16 @@ namespace TypeCobol.Compiler.Domain
         /// </summary>
         public IList<Diagnostic> Diagnostics { get; private set; }
 
+#if DOMAIN_CHECKER
+        /// <summary>
+        /// The Last Builder created if any.
+        /// </summary>
+        public static ProgramSymbolTableBuilder LastBuilder
+        {
+            get;
+            set;
+        }
+#endif
         /// <summary>
         /// The List of Stacked Program symbol built as a Scope
         /// </summary>
