@@ -72,6 +72,17 @@ namespace CLI.Test
 #endif
         }
 
+
+
+        
+
+            [TestMethod]
+        public void TestCircularTypedef_1()
+        {
+            CLITestHelper.Test("CircularTypedef_1", ReturnCode.ParsingDiagnostics);
+        }
+
+
         [TestMethod]
         public void TestEmptyDependency()
         {

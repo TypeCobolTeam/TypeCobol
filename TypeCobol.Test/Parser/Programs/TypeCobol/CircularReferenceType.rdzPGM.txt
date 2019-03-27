@@ -2,6 +2,13 @@
 Line 8[13,35] <30, Error, Semantics> - Semantic error: Type circular reference detected : ThirdType -> myType
 Line 17[15,20] <30, Error, Semantics> - Semantic error: Variable 'MyVar1' has to be limited to level 47 because of 'myType' maximum estimated children level OffendingSymbol=[15,20:MyVar1]<UserDefinedWord>
 Line 24[13,38] <30, Error, Semantics> - Semantic error: Type circular reference detected : MySendType -> myType
+Line 33[13,28] <30, Error, Semantics> - Semantic error: Type circular reference detected : C1 -> B1 -> A1
+Line 41[13,28] <30, Error, Semantics> - Semantic error: Type circular reference detected : B2 -> A2 -> C2
+Line 54[13,28] <30, Error, Semantics> - Semantic error: Type circular reference detected : A3 -> C3 -> B3
+Line 71[13,28] <30, Error, Semantics> - Semantic error: Type circular reference detected : C4 -> B4 -> A4
+Line 87[13,29] <30, Error, Semantics> - Semantic error: Type circular reference detected : C5 -> B5 -> A5
+Line 94[44,48] <27, Error, Syntax> - Syntax error : Symbol MyVar.A5var.B5Var.C5Var.A5Var is not referenced OffendingSymbol=[44,48:A5Var]<UserDefinedWord>
+Line 95[44,48] <27, Error, Syntax> - Syntax error : Symbol MyVar.A5var.B5Var.C5Var.A5Var is not referenced OffendingSymbol=[44,48:A5Var]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: CircularRefCheck common:False initial:False recursive:False
@@ -16,6 +23,24 @@ PROGRAM: CircularRefCheck common:False initial:False recursive:False
   ThirdType:ThirdType
   myType:myType
   MySendType:MySendType
+  A1:A1
+  B1:B1
+  C1:C1
+  C2:C2
+  B2:B2
+  A2:A2
+  B3:B3
+  C3:C3
+  A3:A3
+  A4:A4
+  B4:B4
+  C4:C4
+  A5:A5
+  B5:B5
+  C5:C5
+-- FUNCTIONS ---
+  CheckCircular
+  CheckCircular2
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL
