@@ -229,6 +229,16 @@ namespace TypeCobol.Compiler.Diagnostics
             for (int c = 0; c < parameters.Count; c++)
             {
                 var expected = parameters[c];
+
+                //Hack until we get a real concept of project to build all of the dependencies
+                if (expected.CodeElement.UserDefinedDataType != null && expected.TypeDefinition == null)
+                {
+                    TypeCobolLinker.ResolveType(expected);
+                    if (expected.TypeDefinition != null)
+                    {
+                        TypeCobolLinker.CheckCircularReferences(expected.TypeDefinition);
+                    }
+                }
                 if (c < callArgsCount)
                 {
                     //Omitted

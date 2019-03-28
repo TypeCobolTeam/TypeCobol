@@ -261,6 +261,7 @@ namespace TypeCobol.Compiler.Nodes {
             get { return _typeDefinition; }
             set
             {
+                //Implementation note : Only TypeCobolLinker should set this value
                 if (_typeDefinition == null)
                     _typeDefinition = value;
             }
@@ -815,7 +816,10 @@ namespace TypeCobol.Compiler.Nodes {
     // [COBOL 2002]
     public class TypeDefinition: DataDefinition, Parent<DataDescription>, IDocumentable
     {
-        public TypeDefinition([NotNull] DataTypeDescriptionEntry entry) : base(entry) { }
+        public TypeDefinition([NotNull] DataTypeDescriptionEntry entry) : base(entry)
+        {
+            TypedChildren = new List<DataDefinition>();
+        }
 
         [NotNull]
         public new DataTypeDescriptionEntry CodeElement => (DataTypeDescriptionEntry) base.CodeElement;
@@ -826,6 +830,17 @@ namespace TypeCobol.Compiler.Nodes {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
         }
 
+        /// <summary>
+        /// List of all children that reference a type.
+        /// Element of this list can be null if :
+        ///  - the child reference an unknown type, it'll be set to null in this list.
+        ///  - We detect a circular reference between type. To avoid infinite loop one link of the circular reference will be set to null.
+        ///
+        /// ProgramClassBuilder to initialize this list.
+        /// Only TypeCobolLinker can check the link and set items to null.
+        /// </summary>
+        [NotNull][ItemCanBeNull]
+        public List<DataDefinition>  TypedChildren { get;  }
 
         public override bool IsPartOfATypeDef => true;
 

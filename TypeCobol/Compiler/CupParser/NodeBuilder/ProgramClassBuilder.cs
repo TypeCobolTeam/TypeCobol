@@ -24,13 +24,28 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         private Program Program { get; set; }
         public SyntaxTree SyntaxTree { get; set; }
 
-        private TypeDefinition _CurrentTypeDefinition;
+        private TypeDefinition _CurrentTypeDefinition
+        {
+            get => _currentTypeDefinition;
+            set
+            {
+                _currentTypeDefinition = value;
+                //Reset that this type was already added to the list TypeThatNeedTypeLinking
+                typeAlreadyAddedToTypeToLink = false;
+            }
+        }
+
+        private bool typeAlreadyAddedToTypeToLink = false;
+
         private bool _IsInsideWorkingStorageContext;
         private bool _IsInsideLinkageSectionContext;
         private bool _IsInsideLocalStorageSectionContext;
         private bool _IsInsideFileSectionContext;
         private bool _IsInsideGlobalStorageSection;
         private FunctionDeclaration _ProcedureDeclaration;
+
+        public List<DataDefinition> TypedVariablesOutsideTypedef { get; } = new List<DataDefinition>();
+        public List<TypeDefinition> TypeThatNeedTypeLinking { get; } = new List<TypeDefinition>();
 
         // Programs can be nested => track current programs being analyzed
         private Stack<Program> programsStack = null;
@@ -179,25 +194,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             _CurrentTypeDefinition = null;
             while (CurrentNode.CodeElement != null && CurrentNode.CodeElement is DataDefinitionEntry) Exit();
-        }
-
-        private void AddToSymbolTable(DataDescription node)
-        {
-            var table = node.SymbolTable;
-            if (node.CodeElement.IsGlobal && table.CurrentScope != SymbolTable.Scope.GlobalStorage)
-                table = table.GetTableFromScope(SymbolTable.Scope.Global);
-            else
-            {
-                var parent = node.Parent as DataDescription;
-                while (parent != null)
-                {
-                    if (parent.CodeElement.IsGlobal && table.CurrentScope != SymbolTable.Scope.GlobalStorage)
-                        table = table.GetTableFromScope(SymbolTable.Scope.Global);
-                    parent = parent.Parent as DataDescription;
-                }
-            }
-
-            table.AddVariable(node);
         }
 
         public virtual void StartCobolCompilationUnit()
@@ -415,36 +411,31 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             {
                 SetCurrentNodeToTopLevelItem(entry.LevelNumber);
 
+                var symbolTable = SyntaxTree.CurrentNode.SymbolTable;
+                if (entry.IsGlobal)
+                    symbolTable = symbolTable.GetTableFromScope(SymbolTable.Scope.Global);
+
                 //Update DataType of CodeElement by searching info on the declared Type into SymbolTable.
                 //Note that the AST is not complete here, but you can only refer to a Type that has previously been defined.
                 var node = new DataDescription(entry);
                 if (_CurrentTypeDefinition != null)
                     node.ParentTypeDefinition = _CurrentTypeDefinition;
-                Enter(node);
+                Enter(node, null, symbolTable);
 
                 if (entry.Indexes != null && entry.Indexes.Any())
                 {
-                    var table = node.SymbolTable;
+                    
                     foreach (var index in entry.Indexes)
                     {
-                        if (node.CodeElement.IsGlobal)
-                            table = table.GetTableFromScope(SymbolTable.Scope.Global);
-
                         var indexNode = new IndexDefinition(index);
-                        Enter(indexNode, null, table);
+                        Enter(indexNode, null, symbolTable);
                         if (_CurrentTypeDefinition != null)
                             indexNode.ParentTypeDefinition = _CurrentTypeDefinition;
-                        table.AddVariable(indexNode);
+                        symbolTable.AddVariable(indexNode);
                         Exit();
                     }
                 }
 
-                var types = node.SymbolTable.GetType(node);
-                if (types.Count == 1)
-                {
-                    entry.DataType.RestrictionLevel = types[0].DataType.RestrictionLevel;
-                }
-                //else do nothing, it's an error that will be handled by Cobol2002Checker
 
                 if(_IsInsideWorkingStorageContext)
                     node.SetFlag(Node.Flag.WorkingSectionNode, true);      //Set flag to know that this node belongs to Working Storage Section
@@ -457,18 +448,55 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 if (_IsInsideGlobalStorageSection)
                     node.SetFlag(Node.Flag.GlobalStorageSection, true);         //Set flag to know that this node belongs to Global Storage Section
 
-                AddToSymbolTable(node);
+                node.SymbolTable.AddVariable(node);
+                CheckIfItsTyped(node, node.CodeElement);
             }
         }
+
+        private void CheckIfItsTyped(DataDefinition dataDefinition, CommonDataDescriptionAndDataRedefines commonDataDescriptionAndDataRedefines)
+        {
+            //Is a type referenced
+            if (commonDataDescriptionAndDataRedefines.UserDefinedDataType != null)
+            {
+                if (_CurrentTypeDefinition != null)
+                {
+                    _CurrentTypeDefinition.TypedChildren.Add(dataDefinition);
+                }
+                else
+                {
+                    TypedVariablesOutsideTypedef.Add(dataDefinition);
+                }
+            }
+
+            //Special case for Depending On.
+            //Depending on inside typedef can reference other variable declared in type referenced in this typedef
+            //To resolve variable after "depending on" we first have to resolve all types used in this typedef.
+            //This resolution must be recursive until all sub types have been resolved.
+            if (commonDataDescriptionAndDataRedefines.OccursDependingOn != null)
+            {
+                if (_CurrentTypeDefinition != null && !typeAlreadyAddedToTypeToLink)
+                {
+                    TypeThatNeedTypeLinking.Add(_CurrentTypeDefinition);
+                    typeAlreadyAddedToTypeToLink = true;
+                }
+            }
+        }
+
 
         public virtual void StartDataRedefinesEntry(DataRedefinesEntry entry)
         {
             SetCurrentNodeToTopLevelItem(entry.LevelNumber);
+            var symbolTable = SyntaxTree.CurrentNode.SymbolTable;
+            if (entry.IsGlobal)
+                symbolTable = symbolTable.GetTableFromScope(SymbolTable.Scope.Global);
+
             var node = new DataRedefines(entry);
             if (_CurrentTypeDefinition != null)
                 node.ParentTypeDefinition = _CurrentTypeDefinition;
-            Enter(node);
+            Enter(node, null, symbolTable);
             node.SymbolTable.AddVariable(node);
+
+            CheckIfItsTyped(node, node.CodeElement);
         }
 
         public virtual void StartDataRenamesEntry(DataRenamesEntry entry)
@@ -494,13 +522,17 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         public virtual void StartTypeDefinitionEntry(DataTypeDescriptionEntry typedef)
         {
             SetCurrentNodeToTopLevelItem(typedef.LevelNumber);
-            var node = new TypeDefinition(typedef);
-            Enter(node);
+
             // TCTYPE_GLOBAL_TYPEDEF
-            var table = node.SymbolTable.GetTableFromScope(node.CodeElement.IsGlobal ? SymbolTable.Scope.Global : SymbolTable.Scope.Declarations);
-            table.AddType(node);
+            var symbolTable = SyntaxTree.CurrentNode.SymbolTable.GetTableFromScope(typedef.IsGlobal ? SymbolTable.Scope.Global : SymbolTable.Scope.Declarations);
+
+            var node = new TypeDefinition(typedef);
+            Enter(node, null, symbolTable);
+
+            symbolTable.AddType(node);
 
             _CurrentTypeDefinition = node;
+            CheckIfItsTyped(node, node.CodeElement);
         }
 
         public virtual void StartWorkingStorageSection(WorkingStorageSectionHeader header)
@@ -586,6 +618,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         }
 
         private Tools.UIDStore uidfactory = new Tools.UIDStore();
+        private TypeDefinition _currentTypeDefinition;
+
         public virtual void StartFunctionDeclaration(FunctionDeclarationHeader header)
         {
             header.SetLibrary(CurrentProgram.Identification.ProgramName.Name);
@@ -617,6 +651,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
                 paramNode.SetParent(CurrentNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
+                CheckIfItsTyped(paramNode, paramNode.CodeElement);
             }
             foreach (var parameter in declaration.Profile.OutputParameters) //Set Output Parameters
             {
@@ -628,6 +663,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
                 paramNode.SetParent(CurrentNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
+                CheckIfItsTyped(paramNode, paramNode.CodeElement);
             }
             foreach (var parameter in declaration.Profile.InoutParameters) //Set Inout Parameters
             {
@@ -639,6 +675,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
                 paramNode.SetParent(CurrentNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
+                CheckIfItsTyped(paramNode, paramNode.CodeElement);
             }
 
             if (declaration.Profile.ReturningParameter != null) //Set Returning Parameters
@@ -650,6 +687,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
                 paramNode.SetParent(CurrentNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
+                CheckIfItsTyped(paramNode, paramNode.CodeElement);
             }
         }
 
