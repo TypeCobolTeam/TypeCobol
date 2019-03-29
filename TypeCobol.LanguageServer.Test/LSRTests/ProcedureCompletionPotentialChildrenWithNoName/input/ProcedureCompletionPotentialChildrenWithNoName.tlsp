@@ -115,7 +115,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"TestVar3 (BOOL) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"TestVar3 (Level88) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}"
     },
     {
       "category": 0,

@@ -147,6 +147,8 @@ namespace TypeCobol.Compiler.CodeElements
 		public static readonly DataType DBCS               = new DataType("DBCS");
 		public static readonly DataType FloatingPoint      = new DataType("FloatingPoint");
 		public static readonly DataType Occurs             = new DataType("Array");
+        public static readonly DataType Level88            = new DataType("Level88");
+
         // [TYPECOBOL]
         //Boolean is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior (with move and set) 
         public static readonly DataType Boolean            = new DataType("BOOL", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);

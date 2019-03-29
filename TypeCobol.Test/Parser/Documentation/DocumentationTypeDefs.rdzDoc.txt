@@ -235,7 +235,7 @@ TypeDefChild :
             Usage : 
             MaxOccurence : 1
             DefaultValue : 
-            TypeName : BOOL
+            TypeName : 
             Picture : 
 
 ---------------------
@@ -386,7 +386,7 @@ TypeDefChild :
             Usage : 
             MaxOccurence : 1
             DefaultValue : 
-            TypeName : BOOL
+            TypeName : 
             Picture : 
 
 ---------------------
@@ -538,7 +538,7 @@ TypeDefChild :
             Usage : 
             MaxOccurence : 1
             DefaultValue : 
-            TypeName : BOOL
+            TypeName : 
             Picture : 
 
 ---------------------

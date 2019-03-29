@@ -1093,7 +1093,8 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// </summary>
 		public ValuesRange[] ConditionValuesRanges { get; set; }
 
-		public override DataType DataType { get { return DataType.Boolean; } }
+		public override DataType DataType { get { return DataType.Level88; } }
+
 	    public override bool VisitCodeElement(IASTVisitor astVisitor) {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor, ConditionName, DataType)
