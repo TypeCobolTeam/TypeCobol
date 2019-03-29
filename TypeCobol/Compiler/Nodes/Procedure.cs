@@ -109,8 +109,8 @@ namespace TypeCobol.Compiler.Nodes {
 	    public override string ID { get { return Name; } }
 	    public string Label { get; internal set; }
 
-	    public override string Name { get { return QualifiedName.Head; } }
-	    public override CodeElements.Expressions.QualifiedName QualifiedName { get { return new CodeElements.Expressions.URI(this.CodeElement.Name); } }
+	    public override string Name => this.CodeElement.FunctionName.Name;
+        public override CodeElements.Expressions.QualifiedName QualifiedName { get { return new CodeElements.Expressions.URI(this.CodeElement.Name); } }
 
 	    public string Library { get; internal set; }
 	    public string Copy { get { return Library+"cpy"; } }

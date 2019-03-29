@@ -318,6 +318,45 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
+
+        private List<string> _fixedVisualQualifiedName;
+
+        /// <summary>
+        /// List of all named Node that leads to this one.
+        /// Except there is no program or function/procedure prefix.
+        /// </summary>
+        public virtual List<string> VisualQualifiedNameWithoutProgram
+        {
+            get
+            {
+                if (_fixedVisualQualifiedName == null)
+                {
+                    _fixedVisualQualifiedName = new List<string>();
+                    var currentNode = this;
+                    while (currentNode != null)
+                    {
+                        if (!string.IsNullOrEmpty(currentNode.Name))
+                        {
+                            _fixedVisualQualifiedName.Add(currentNode.Name);
+                        }
+
+                        currentNode = currentNode.Parent;
+
+                        //If it's a procedure, we can exit we don't need the program name
+                        if (currentNode is FunctionDeclaration) 
+                            break;
+                        //If we reach a data section (working-storage section, ...) stop here
+                        if (currentNode is DataSection)
+                            break;
+                    }
+
+                    _fixedVisualQualifiedName.Reverse();
+                }
+
+                return _fixedVisualQualifiedName;
+            }
+        }
+
         /// <summary>Non-unique identifier of this node. Depends on CodeElement type and name (if applicable).</summary>
         public virtual string ID {
             get { return null; }
@@ -420,7 +459,27 @@ namespace TypeCobol.Compiler.Nodes {
         /// <summary>
         /// Allows to store the used storage areas and their fully qualified Name. 
         /// </summary>
-        public Dictionary<StorageArea, string> QualifiedStorageAreas { get; set; }
+        public Dictionary<StorageArea, DataDefinitionPath> QualifiedStorageAreas { get; set; }
+
+        /// <summary>
+        /// Get the fully qualified name used to reference the DataDefinition referenced by this StorageArea
+        ///
+        /// For a DataDefinition outside a typedef, this its qualified name
+        /// For a DataDefinition in a typedef, this is its qualified name inside the typedef and the qualified name of the DataDefinition that use this type
+        /// </summary>
+        /// <param name="storageArea"></param>
+        /// <returns></returns>
+        public string GetQualifiedName(StorageArea storageArea)
+        {
+            if (this.QualifiedStorageAreas[storageArea] == null)
+            {
+                return GetDataDefinitionFromStorageAreaDictionary(storageArea).QualifiedName.ToString();
+            }
+            else
+            {
+                return this.QualifiedStorageAreas[storageArea].ToString(".");
+            }
+        }
 
         private List<Diagnostic> _Diagnostics;
 
@@ -469,21 +528,6 @@ namespace TypeCobol.Compiler.Nodes {
 
             return _programNode;
         }
-        
-        /// <summary>Search for all children of a specific Name</summary>
-        /// <param name="name">Name we search for</param>
-        /// <param name="deep">true for deep search, false for shallow search</param>
-        /// <returns>List of all children with the proper name ; empty list if there is none</returns>
-        public IList<T> GetChildren<T>(string name, bool deep) where T : Node {
-            var results = new List<T>();
-            foreach (var child in children) {
-                var typedChild = child as T;
-                if (typedChild != null && name.Equals(child.Name, StringComparison.OrdinalIgnoreCase)) results.Add(typedChild);
-                if (deep) results.AddRange(child.GetChildren<T>(name, true));
-            }
-            return results;
-        }
-
 
         /// <summary>Adds a node as a children of this one.</summary>
         /// <param name="child">Child to-be.</param>
@@ -725,13 +769,15 @@ namespace TypeCobol.Compiler.Nodes {
         /// The tuple stores the complete qualified name of the corresponding node (as string) and the DataDefintion.
         /// Node properties are context dependent and the tuple ensures the retrieved DataDefintion is consistent with the context
         /// </summary>
-        public IDictionary<StorageArea, Tuple<string,DataDefinition>> StorageAreaReadsDataDefinition { get; internal set; }
+        public IDictionary<StorageArea, DataDefinition> StorageAreaReadsDataDefinition { get; internal set; }
         /// <summary>
         /// Dictionary that contains pairs of StorageArea and Tuple "string,DataDefintion" for the Write Area
         /// The tuple stores the complete qualified name of the corresponding node (as string) and the DataDefintion.
         /// Node properties are context dependent and the tuple ensures the retrieved DataDefintion is consistent with the context
         /// </summary>
-        public IDictionary<StorageArea, Tuple<string,DataDefinition>> StorageAreaWritesDataDefinition { get; internal set; }
+        public IDictionary<StorageArea, DataDefinition> StorageAreaWritesDataDefinition { get; internal set; }
+
+
 
         /// <summary>
         /// Search both dictionaries for a given StorageArea
@@ -743,7 +789,7 @@ namespace TypeCobol.Compiler.Nodes {
         /// <returns>Correpsonding DataDefinition</returns>
         public DataDefinition GetDataDefinitionFromStorageAreaDictionary(StorageArea searchedStorageArea, bool? isReadDataDefiniton=null)
         {
-            Tuple<string, DataDefinition> searchedElem = null;
+            DataDefinition searchedElem = null;
             if (isReadDataDefiniton == null)
             {
                 StorageAreaReadsDataDefinition?.TryGetValue(
@@ -765,12 +811,12 @@ namespace TypeCobol.Compiler.Nodes {
                 StorageAreaWritesDataDefinition?.TryGetValue(
                     searchedStorageArea, out searchedElem);
             }
-            return searchedElem?.Item2;
+            return searchedElem;
         }
         
         public DataDefinition GetDataDefinitionForQualifiedName(QualifiedName qualifiedName, bool? isReadDictionary=null)
         {
-            Tuple<string, DataDefinition> searchedElem = null;
+            DataDefinition searchedElem = null;
             if (isReadDictionary.HasValue)
             {
                 searchedElem = isReadDictionary.Value
@@ -786,7 +832,7 @@ namespace TypeCobol.Compiler.Nodes {
 
             }
 
-            return searchedElem?.Item2;
+            return searchedElem;
         }
     }
 

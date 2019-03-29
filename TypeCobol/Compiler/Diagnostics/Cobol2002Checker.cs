@@ -97,7 +97,7 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 foreach (var sub in typeDefinition.Children)
                 {
-                    CheckForValueClause(sub, typeDefinition.QualifiedName);
+                    CheckForValueClause(sub, typeDefinition.Name);
                 }
             }
             // Add a warning if a parameters field is set inside the formalized comment
@@ -115,16 +115,16 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-        private static void CheckForValueClause(Node node, QualifiedName typedef)
+        private static void CheckForValueClause(Node node, string typedefName)
         {
             var codeElement = node.CodeElement as DataDescriptionEntry;
             if (codeElement != null && codeElement.InitialValue != null)
             {
                 string message = "Illegal VALUE clause for subordinate \'" + node.Name + "\' of STRONG TYPEDEF \'" +
-                                 typedef.Head + "\'";
+                                 typedefName + "\'";
                 DiagnosticUtils.AddError(node, message, codeElement, code:MessageCode.SemanticTCErrorInParser);
             }
-            foreach (var sub in node.Children) CheckForValueClause(sub, typedef);
+            foreach (var sub in node.Children) CheckForValueClause(sub, typedefName);
         }
     }
 
