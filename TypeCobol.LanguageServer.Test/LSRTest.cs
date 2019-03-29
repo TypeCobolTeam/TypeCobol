@@ -319,6 +319,12 @@ namespace TypeCobol.LanguageServer.Test
         }
 
         [TestMethod]
+        public void OnHover()
+        {
+            LSRTestHelper.Test("OnHover", LsrTestingOptions.NoLsrTesting, true, true);
+        }
+
+        [TestMethod]
         public void LSRAutoReplaceSecurityTest()
         {
             if (CLI.Test.UnitTestHelper.CompareDirectory(null, null, "TypeCobol.LanguageServer.Test\\LSRTests"))

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Antlr4.Runtime;
 using System.Collections.Generic;
 using JetBrains.Annotations;
@@ -276,8 +276,7 @@ namespace TypeCobol.Compiler.Diagnostics
                             }
 
                                // accepted format is "PIC [S]9(5..9) comp-5"
-                            if (expected.PrimitiveDataType.Name != "Numeric" || expected.Length < 5 ||
-                                expected.Length > 9 || expected.Usage != DataUsage.NativeBinary)
+                            if (expected.PrimitiveDataType.Name != "Numeric" || expected.PhysicalLength != 4 || expected.Usage != DataUsage.NativeBinary)
                             {
                                 DiagnosticUtils.AddError(node, "LENGTH can only be used as PIC S9(5..9) comp-5",
                                     actualSpecialRegister.SpecialRegisterName);
@@ -347,7 +346,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     
 
                     //Cobol 85 Type will be checked with their picture
-                        if (actualDataDefinition.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85 ||
+                    if (actualDataDefinition.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85 ||
                         expected.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85) 
                     {
                         if (actualDataDefinition.DataType.CobolLanguageLevel == CobolLanguageLevel.Cobol85 ||
@@ -365,17 +364,25 @@ namespace TypeCobol.Compiler.Diagnostics
                         {
                             TypeDefinition callerType = actualDataDefinition.TypeDefinition;
                             TypeDefinition calleeType = expected.TypeDefinition;
-                            if (callerType == null || calleeType == null)
+                            if (callerType != null && calleeType != null)
                             {
-                                //Ignore, it's an unknown DataType. It's already checked
-                            }
-                            else if (!Equals(callerType.QualifiedName, calleeType.QualifiedName))
-                            {
-                                var m = string.Format(
+                                //Compare reference of TypeDefinition
+                                if (callerType != calleeType)
+                                {
+                                    var m = string.Format(
                                         "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
                                         call.FunctionName, calleeType.Name, calleeType.DataType,
                                         callArgName ?? string.Format("position {0}", c + 1), callerType.DataType);
-                                DiagnosticUtils.AddError(node, m);
+                                    DiagnosticUtils.AddError(node, m);
+                                }
+                                //else
+                                //DataType were not written exactly the same in the source code
+                                //eg. we can have a type qualified with its program and the same type without the qualification, then DataType are not the same but TypeDefinition are
+                                //So no error here, it's ok
+                            }
+                            else
+                            {
+                                //Ignore, it's an unknown DataType. It's already checked by TypeCobolLinker
                             }
                         }
                     }
@@ -555,7 +562,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 else
                 {
                     var m = string.Format("Function '{0}' is missing parameter '{1}' of type {2} and length {3}",
-                        call.FunctionName, expected.Name, expected.DataType, expected.Length);
+                        call.FunctionName, expected.Name, expected.DataType, expected.PhysicalLength);
                     DiagnosticUtils.AddError(node, m);
                 }
             }
@@ -727,17 +734,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
-            if (parameter.Picture != null)
-            {
-                CrossCompleteChecker.CheckPicture(node, parameter);
-            }
-
-            DataDefinitionChecker.OnNode(node, parameter);
-
-            var type = parameter.DataType;
-            TypeDefinition foundedType;
-            TypeDefinitionHelper.Check(node, type, out foundedType); //Check if the type exists and is not ambiguous
-
         }
 
         /// <summary>TCRFUN_DECLARATION_NO_DUPLICATE_NAME</summary>
@@ -753,28 +749,28 @@ namespace TypeCobol.Compiler.Diagnostics
                 var used = Validate(profile.ReturningParameter, description.Name);
                 if (used != null)
                 {
-                    AddErrorAlreadyParameter(description, description.QualifiedName);
+                    AddErrorAlreadyParameter(description, description.Name);
                     continue;
                 }
 
                 used = GetParameter(profile.InputParameters, description.Name);
                 if (used != null)
                 {
-                    AddErrorAlreadyParameter(description, description.QualifiedName);
+                    AddErrorAlreadyParameter(description, description.Name);
                     continue;
                 }
 
                 used = GetParameter(profile.OutputParameters, description.Name);
                 if (used != null)
                 {
-                    AddErrorAlreadyParameter(description, description.QualifiedName);
+                    AddErrorAlreadyParameter(description, description.Name);
                     continue;
                 }
 
                 used = GetParameter(profile.InoutParameters, description.Name);
                 if (used != null)
                 {
-                    AddErrorAlreadyParameter(description, description.QualifiedName);
+                    AddErrorAlreadyParameter(description, description.Name);
                     continue;
                 }
             }
@@ -808,9 +804,9 @@ namespace TypeCobol.Compiler.Diagnostics
             return null;
         }
 
-        private static void AddErrorAlreadyParameter([NotNull] Node node, [NotNull] QualifiedName name)
+        private static void AddErrorAlreadyParameter([NotNull] Node node, [NotNull] string parameterName)
         {
-            DiagnosticUtils.AddError(node, name.Head + " is already a parameter.");
+            DiagnosticUtils.AddError(node, parameterName + " is already a parameter.");
         }
 
         private static void CheckNoPerform(SymbolTable table, [NotNull] Node node)
@@ -911,7 +907,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (statement != null)
             {
                 // Check receivers (incremented) 
-                var receivers = node?.StorageAreaWritesDataDefinition?.Values.Select(tuple => tuple.Item2);
+                var receivers = node?.StorageAreaWritesDataDefinition?.Values;
                 if (receivers == null)
                     return;
                 bool containsPointers = false;

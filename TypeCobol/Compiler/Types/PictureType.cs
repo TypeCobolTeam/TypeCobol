@@ -118,6 +118,7 @@ namespace TypeCobol.Compiler.Types
                 this.IsExternalFloat = validator.ValidationContext.IsExternalFloatSequence();
                 this.Sequence = validator.ValidationContext.Sequence.ToArray();
                 this.Size = validator.ValidationContext.Size;
+                this.IsSeparateSign = validator.ValidationContext.IsSeparateSign;
                 if (validator.ValidationContext.IsDbcsSequence())
                     Category = PictureCategory.Dbcs;
                 if (this.IsExternalFloat)
@@ -329,6 +330,31 @@ namespace TypeCobol.Compiler.Types
                                         break;
                                     default:
                                         len += c.count;//double the size
+                                        break;
+                                }
+                            }
+                            return len;
+                        }
+                    case UsageFormat.National:
+                        {
+                            int len = Size;
+                            foreach (PictureValidator.Character c in Sequence)
+                            {
+                                switch (c.ch)
+                                {
+                                    case PictureValidator.SC.S:
+                                        if (IsSeparateSign)
+                                        {
+                                            len += c.count;//double the size of S.
+                                        }
+                                        break;
+                                    case PictureValidator.SC.A:
+                                    case PictureValidator.SC.B:
+                                    case PictureValidator.SC.Z:
+                                    case PictureValidator.SC.NINE:
+                                    case PictureValidator.SC.DOT:
+                                    case PictureValidator.SC.COMMA:
+                                        len += c.count;//double the size.
                                         break;
                                 }
                             }

@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
+using Antlr4.Runtime.Misc;
 using TypeCobol.Codegen.Actions;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Source;
@@ -679,6 +682,59 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
+        /// Capture for a Token within a copy, its Line and if it is a '.' token
+        /// </summary>
+        /// <param name="lastLine">ref variable to store the last line</param>
+        /// <param name="periodSeparatorSeen">ref variable to store if the PeriodSeparator token has been seen.</param>
+        /// <param name="t">The current token</param>
+        /// <returns>The current token</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static Token CaptureEndCopyLine(ref int lastLine, ref bool periodSeparatorSeen, Token t)
+        {
+            lastLine = t.Line - 1;
+            periodSeparatorSeen = periodSeparatorSeen || t.TokenType == TokenType.PeriodSeparator;
+            return t;
+        }
+
+        /// <summary>
+        /// Yield all token from a CopyDirective
+        /// </summary>
+        /// <param name="copyDirective">The CopyDirective instance to yield all tokens.</param>
+        /// <returns>The Token Enumerable instance</returns>
+        private IEnumerable<Token> CopyTokensYielder(TypeCobol.Compiler.Directives.CopyDirective copyDirective)
+        {
+            int lastLine = -1;
+            bool periodSeparatorSeen = false;
+            //Starting from the COPY Line and the COPY Token capture all to token till to encounter a PeriodSeparator.
+            var tl = Generator.CompilationResults.TokensLines[copyDirective.COPYToken.Line - 1];
+            bool copyTokenSeen = false;
+            foreach (var t in tl.SourceTokens)
+            {
+                if (t == copyDirective.COPYToken)
+                    copyTokenSeen = true;
+                if (copyTokenSeen)
+                    yield return CaptureEndCopyLine(ref lastLine, ref periodSeparatorSeen, t);
+            }
+
+            if (lastLine >= 0 && !periodSeparatorSeen)
+            {
+                lastLine++;
+                int count = Generator.CompilationResults.TokensLines.Count;
+                for (int l = lastLine ; l < count && !periodSeparatorSeen; l++)
+                {
+                    var tl2 = Generator.CompilationResults.TokensLines[l];
+                    foreach (var t in tl2.SourceTokens)
+                    {
+                        if (periodSeparatorSeen)
+                            yield break;
+                        else
+                            yield return CaptureEndCopyLine(ref lastLine, ref periodSeparatorSeen, t);
+                    }
+                }                
+            }
+        }
+
+        /// <summary>
         /// The Linearization Phase.
         /// <param name="node">The node to linearize</param>
         /// <param name="functionBody">true if the node belongs to a function body, false otherwise</param>
@@ -711,7 +767,7 @@ namespace TypeCobol.Codegen.Generators
                         int copyLine = node.CodeElement.FirstCopyDirective.COPYToken.Line;
                         if (copyLine > 0 && copyLine <= this.Generator.CompilationResults.CobolTextLines.Count)
                         {
-                            var copyTextLine = this.Generator.CompilationResults.CobolTextLines[copyLine - 1];
+                            ICobolTextLine copyTextLine = this.Generator.CompilationResults.CobolTextLines[copyLine - 1];
                             var copyToken = ((Compiler.Parser.CodeElementsLine)copyTextLine).SourceTokens.FirstOrDefault(
                                 t => t == node.CodeElement.FirstCopyDirective.COPYToken);
                             if (copyToken != null && !MappedCopyTokens.ContainsKey((copyToken)))
@@ -719,7 +775,10 @@ namespace TypeCobol.Codegen.Generators
                                 //Collect all COPY Tokens
                                 bool bEnd = false;
                                 bool bCopySeen = false;
-                                var copyTokens = ((Compiler.Parser.CodeElementsLine)copyTextLine).SourceTokens.Where(t =>
+                                //A Copy of a Commented node must have is lines commented also.
+                                bool bCopyCommented = node.Comment.HasValue && node.Comment.Value;
+                                int lastLine = -1;
+                                var copyTokens = CopyTokensYielder(node.CodeElement.FirstCopyDirective).Where(t =>
                                 {
                                     if (t == copyToken)
                                     {
@@ -730,12 +789,35 @@ namespace TypeCobol.Codegen.Generators
                                     {
                                         bEnd = true;
                                     }
+
+                                    if (bCopyCommented)
+                                    {
+                                        int nextLine = t.Line - 1;
+                                        if (lastLine >= 0)
+                                        {//We must take in account gap between lines because for instance a BY token in a
+                                            //REPLACE is not captured.
+                                            for (int i = lastLine + 1; i < nextLine; i++)
+                                                CommentedLines[i] = true;
+                                        }                                        
+                                        CommentedLines[nextLine] = true;
+                                        lastLine = nextLine;
+                                    }
+
                                     return bResult;
                                 });
                                 //Create node with the COPY Tokens
                                 LinearCopyNode copyNode = new LinearCopyNode(new Qualifier.TokenCodeElement(copyTokens.ToList()));
                                 //Just add it has children to the current node.
-                                node.Add(copyNode);
+                                node.Add(copyNode);                                    
+                                if (bCopyCommented)
+                                {//This a commented COPYs
+                                    if (node.Parent != null)
+                                    {//Inform the parent that it has a COPY node here
+                                        this.Generator.ErasedNodes.Add(copyNode);
+                                        node.Parent.SetFlag(Node.Flag.InsideTypedefFromCopy, true, true);
+                                        copyNode.SetFlag(Node.Flag.IsTypedefCopyNode, true);
+                                    }
+                                }
                                 MappedCopyTokens[copyToken] = copyNode;
                             }
                         }

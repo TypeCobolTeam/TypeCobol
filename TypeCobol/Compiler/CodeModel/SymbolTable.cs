@@ -14,7 +14,7 @@ using TypeCobol.Compiler.Concurrency;
 
 namespace TypeCobol.Compiler.CodeModel
 {
-
+    
     public class SymbolTable
     {
         public Scope CurrentScope { get; internal set; }
@@ -413,41 +413,19 @@ namespace TypeCobol.Compiler.CodeModel
 
         //After that, the algorithm will rapidly return to the first foreach done on candidates inside GetVariablesExplicitWithQualifiedName
         //And launch the same mechanic, but this time with no success, because we are going to immediately find a terminal variable. 
-        public List<KeyValuePair<string, DataDefinition>> GetVariablesExplicitWithQualifiedName(QualifiedName name,
+        public List<KeyValuePair<DataDefinitionPath, DataDefinition>> GetVariablesExplicitWithQualifiedName(QualifiedName name,
             TypeDefinition typeDefContext = null)
         {
-            List<KeyValuePair<string, DataDefinition>> foundedVariables = new List<KeyValuePair<string, DataDefinition>>();
+            var foundedVariables = new List<KeyValuePair<DataDefinitionPath, DataDefinition>>();
 
 
             #region Get variables declared under Type
-            var found = new List<DataDefinition>();
-            var completeQualifiedNames = new List<List<string>>();
-            int foundCount = 0;
+
             //Get all variables that corresponds to the given head of QualifiedName    
             foreach (var candidate in GetCustomTypesSubordinatesNamed(name.Head))
             {
-                completeQualifiedNames.Add(new List<string>());
-                MatchVariable(found, candidate, name, name.Count - 1, candidate, completeQualifiedNames,
-                    typeDefContext);
-
-                if (foundCount == found.Count && completeQualifiedNames.Count > 0)
-                    //No changes detected so delete the last completeQualifiedName tested.
-                    completeQualifiedNames.Remove(completeQualifiedNames.Last());
-
-                foundCount = found.Count;
-            }
-                
-            int i = 0;
-            foreach (var foundedVar in found)
-            {
-                completeQualifiedNames[i].Reverse();
-                foundedVariables.Add(
-                    new KeyValuePair<string, DataDefinition>(string.Join(".", completeQualifiedNames[i]),
-                        foundedVar));
-                i++;
-
-                if (completeQualifiedNames.Count == i)
-                    break;
+                DataDefinitionPath dataDefinitionPath = new DataDefinitionPath(candidate);
+                MatchVariable(foundedVariables, candidate, name, name.Count - 1, candidate, dataDefinitionPath, typeDefContext);
             }
             #endregion
 
@@ -480,7 +458,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="name">QualifiedName of the symbol looked for</param>
         /// <param name="nameIndex">Total count of the parts of the qualifiedName 'name' </param>
         /// <param name="currentDataDefinition">Currently checked DataDefinition</param>
-        public void MatchVariableOutsideType(List<KeyValuePair<string, DataDefinition>> found, in DataDefinition headDataDefinition, in QualifiedName name,
+        public void MatchVariableOutsideType(List<KeyValuePair<DataDefinitionPath, DataDefinition>> found, in DataDefinition headDataDefinition, in QualifiedName name,
             int nameIndex, in DataDefinition currentDataDefinition)
         {
 
@@ -492,7 +470,7 @@ namespace TypeCobol.Compiler.CodeModel
                 { //We reached the end of the name : it's a complete match
                     
                     //we are on a variable
-                    found.Add(new KeyValuePair<string, DataDefinition>(headDataDefinition.QualifiedName.ToString(), headDataDefinition));
+                    found.Add(new KeyValuePair<DataDefinitionPath, DataDefinition>(null, headDataDefinition));
 
                     //End here
                     return;
@@ -518,16 +496,15 @@ namespace TypeCobol.Compiler.CodeModel
         /// The algorithm will search as deep as possible in every direction until the path comes to an end. 
         /// </summary>
         /// <param name="found">List of compatible variable found regarding to the given name</param>
-        /// <param name="headDataDefinition">Given potential variable candidate</param>
+        /// <param name="headDataDefinition">The result to add to found is the full path is matched</param>
         /// <param name="name">QualifiedName of the symbol looked for</param>
         /// <param name="nameIndex">Total count of the parts of the qualifiedName 'name' </param>
         /// <param name="currentDataDefinition">Currently checked DataDefinition</param>
-        /// <param name="completeQualifiedNames">List of list of string that allows to store all the different path for the founded possibilities</param>
+        /// <param name="dataDefinitionPath"></param>
         /// <param name="typeDefContext">TypeDefinition context to force the algorithm to only work inside the typedef scope</param>
-        public void MatchVariable(IList<DataDefinition> found, in DataDefinition headDataDefinition, in QualifiedName name,
-            int nameIndex, in DataDefinition currentDataDefinition, List<List<string>> completeQualifiedNames, TypeDefinition typeDefContext) {
+        public void MatchVariable(List<KeyValuePair<DataDefinitionPath, DataDefinition>> foundedVariables, in DataDefinition headDataDefinition, in QualifiedName name,
+            int nameIndex, in DataDefinition currentDataDefinition, DataDefinitionPath dataDefinitionPath, TypeDefinition typeDefContext) {
 
-            completeQualifiedNames.Last().Add(currentDataDefinition.Name);
             var currentTypeDef = currentDataDefinition as TypeDefinition;
 
             //Name match ?
@@ -537,17 +514,13 @@ namespace TypeCobol.Compiler.CodeModel
                 nameIndex--;
                 if (nameIndex < 0) { //We reached the end of the name : it's a complete match
 
-                    var qualifiedPath = new List<string>();
-                    var parentTypeDef = currentDataDefinition.GetParentTypeDefinitionWithPath(qualifiedPath);
+                    var parentTypeDef = currentDataDefinition.ParentTypeDefinition;
                     
                     if ((parentTypeDef != null && parentTypeDef != typeDefContext))
                     //Ok we found out that we are in a typedef. BUT if TypeDefContext is set and different that the context, we can check deeper inside parentTypeDef. 
                     {
-                        //We are under a TypeDefinition
-                        completeQualifiedNames.Last().Remove(currentDataDefinition.Name);
-                        completeQualifiedNames.Last().AddRange(qualifiedPath);
                         //For each variable declared with this type (or a type that use this type), we need to add the headDataDefinition
-                        AddAllReference(found, headDataDefinition, parentTypeDef, completeQualifiedNames, typeDefContext);
+                        AddAllReference(foundedVariables, headDataDefinition, parentTypeDef, dataDefinitionPath, typeDefContext);
                     }
                     else if (parentTypeDef == null && typeDefContext != null)
                     {
@@ -557,14 +530,12 @@ namespace TypeCobol.Compiler.CodeModel
                     //If nameIndex < 0 AND there is no more parentTypeDef OR we are inside the defined TypeDefContext we have reach our destination, the variable is found. 
                     {
                         //we are on a variable
-                        found.Add(headDataDefinition);
-                        completeQualifiedNames.Last().Remove(currentDataDefinition.Name);//Without this it will duplicate the name currentDataDefinitionName
-                        completeQualifiedNames.Last().AddRange(currentDataDefinition.QualifiedName.Reverse());//Add the complete qualifiedName of this founded variable 
+                        foundedVariables.Add(new KeyValuePair<DataDefinitionPath, DataDefinition>(dataDefinitionPath, headDataDefinition));
                     }
 
                     //End here
                     return;
-                } 
+                }
 
                 //else it's not the end of name, let's continue with next part of QualifiedName
             }
@@ -574,7 +545,7 @@ namespace TypeCobol.Compiler.CodeModel
             if (currentDataDefinition.Parent is DataDefinition parent)
             {
                 //Go deeper to check the rest of the QualifiedName 'name'
-                MatchVariable(found, headDataDefinition, name, nameIndex, parent, completeQualifiedNames, typeDefContext); 
+                MatchVariable(foundedVariables, headDataDefinition, name, nameIndex, parent, dataDefinitionPath, typeDefContext); 
                 return;
             }
 
@@ -588,20 +559,17 @@ namespace TypeCobol.Compiler.CodeModel
                 if (typeDefContext != null)
                     references = references.Where(r => r.DataType != typeDefContext.DataType && r.ParentTypeDefinition == typeDefContext);
 
-                var primaryPath = completeQualifiedNames.Last().ToArray(); //PrimaryPath that will be added in front of every reference's path found
+
                 foreach (var reference in references)
                 {
                     //references property of a TypeDefinition can lead to variable in totally others scopes, like in another program
                     //So we need to check if we can access this variable
                     if (reference.IsPartOfATypeDef || GetVariables(reference.Name).Contains(reference))
                     {
-                        if (found.Count == 0)
-                            completeQualifiedNames.Remove(completeQualifiedNames.Last());//InCase nothing was found after first reference checked, we need to reset completeQualifiedName to it's primary value.
-                        completeQualifiedNames.Add(new List<string>(primaryPath));
+                        var newDataDefinitionPath = new DataDefinitionPath(dataDefinitionPath, reference);//Add the reference found to the dataDefinitionPath
 
-                        MatchVariable(found, headDataDefinition, name, nameIndex, reference, completeQualifiedNames, typeDefContext);
+                        MatchVariable(foundedVariables, headDataDefinition, name, nameIndex, reference, newDataDefinitionPath, typeDefContext);
                     }
-                       
                 }
             }
 
@@ -617,42 +585,33 @@ namespace TypeCobol.Compiler.CodeModel
         /// Technical note: this method should be declared under MatchVariable because there is no use for it outside.
         /// </summary>
         /// <param name="found"></param>
-        /// <param name="heaDataDefinition"></param>
+        /// <param name="headDataDefinition"></param>
         /// <param name="currentDataDefinition"></param>
-        private void AddAllReference(IList<DataDefinition> found, DataDefinition heaDataDefinition, [NotNull] TypeDefinition currentDataDefinition, List<List<string>> completeQualifiedNames, TypeDefinition typeDefContext)
+        private void AddAllReference(List<KeyValuePair<DataDefinitionPath, DataDefinition>> foundedVariables, DataDefinition headDataDefinition, [NotNull] TypeDefinition currentDataDefinition, DataDefinitionPath dataDefinitionPath, TypeDefinition typeDefContext)
         {
-            completeQualifiedNames.Last().Add(currentDataDefinition.Name);
             IEnumerable<DataDefinition> references = GetAllEnclosingTypeReferences(currentDataDefinition);
 
             //If typedefcontext is setted : Ignore references of this typedefContext to avoid loop seeking
             //                              + Only takes variable references that are declared inside the typeDefContext
             if (typeDefContext != null)
                 references = references.Where(r => r.DataType != typeDefContext.DataType && r.ParentTypeDefinition == typeDefContext);
-            var typePath = completeQualifiedNames.Last().ToArray();
-            var referenceCounter = 0;
+
             foreach (var reference in references)
             {
-                var primaryPath = new List<string>();
-                var parentTypeDef = reference.GetParentTypeDefinitionWithPath(primaryPath);
-                if (parentTypeDef != null && parentTypeDef != typeDefContext) {
-                    completeQualifiedNames.Last().AddRange(primaryPath);
-                    AddAllReference(found, heaDataDefinition, parentTypeDef, completeQualifiedNames, typeDefContext);
-                    referenceCounter++;
-                } else { 
+                var parentTypeDef = reference.ParentTypeDefinition;
+                if (parentTypeDef != null && parentTypeDef != typeDefContext)
+                {
+                    var newDataDefinitionPath = new DataDefinitionPath(dataDefinitionPath, reference);//Add the reference found to the dataDefinitionPath
+                    AddAllReference(foundedVariables, headDataDefinition, parentTypeDef, newDataDefinitionPath, typeDefContext);
+                }
+                else
+                { 
                     //we are on a variable but ... references property of a TypeDefinition can lead to variable in totally others scopes, like in another program
                     //So we need to check if we can access this variable OR check if the variable is declared inside the typeDefContext
-                    if (GetVariables(reference.Name).Contains(reference) || (typeDefContext != null && typeDefContext.GetChildren<DataDefinition>(reference.Name, true).Contains(reference)))
+                    if (GetVariables(reference.Name).Contains(reference) || (typeDefContext != null && typeDefContext.Equals(parentTypeDef)))
                     {
-                        found.Add(heaDataDefinition);
-                        referenceCounter++;
-                        if (referenceCounter == 1) //If first reference found, add it to the top item of list
-                            completeQualifiedNames.Last().AddRange(reference.QualifiedName.Reverse());
-                        else
-                        {
-                            var newPath = new List<string>(typePath);
-                            newPath.AddRange(reference.QualifiedName.Reverse());
-                            completeQualifiedNames.Add(newPath);
-                        }
+                        var newDataDefinitionPath = new DataDefinitionPath(dataDefinitionPath, reference);//Add the reference found to the dataDefinitionPath
+                        foundedVariables.Add(new KeyValuePair<DataDefinitionPath, DataDefinition>(newDataDefinitionPath, headDataDefinition));
                     }
                 }
             }
@@ -674,7 +633,7 @@ namespace TypeCobol.Compiler.CodeModel
                 //Get Custom Types from program 
                 foreach (var pgm in programs.Value) { //we shouldn't have more than one program with the same name
                     //but just in case it changes 
-                    foundDataDef.AddRange(GetVariablesUnderTypeDefFromTableAndEnclosing(pgm.SymbolTable, name));
+                    GetVariablesUnderTypeDefForPublicType(pgm.SymbolTable, name, foundDataDef);
                 }
             }
 
@@ -696,9 +655,8 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="table">SymbolTable that can have the searched DataDefinition</param>
         /// <returns>List of found DataDefinitions that correspond to the passed name</returns>
         [CanBeNull]
-        private static IEnumerable<DataDefinition> GetVariablesUnderTypeDefinition(string name, SymbolTable table) {
-            List<DataDefinition> dataDef;
-            table.DataTypeEntries.TryGetValue(name, out dataDef);
+        private static List<DataDefinition> GetVariablesUnderTypeDefinition(string name, SymbolTable table) {
+            table.DataTypeEntries.TryGetValue(name, out var dataDef);
             return dataDef;
         }
 
@@ -710,21 +668,27 @@ namespace TypeCobol.Compiler.CodeModel
         /// </summary>
         /// <param name="symbolTable">Current SymbolTable</param>
         /// <param name="name">name of the variable to search for</param>
+        /// <param name="resultDataDefinitions">Data definitions found with the specified name and under a type</param>
         /// <returns>List of found DataDefinition</returns>
-        private static IEnumerable<DataDefinition> GetVariablesUnderTypeDefFromTableAndEnclosing(SymbolTable symbolTable, string name)
+        private static void GetVariablesUnderTypeDefForPublicType(SymbolTable symbolTable, string name, List<DataDefinition> resultDataDefinitions)
         {
             var currSymbolTable = symbolTable;
-            var dataDefinitions = new List<DataDefinition>();
-            //Don't search into Intrinsic table because it's shared between all programs
-            while (currSymbolTable != null && currSymbolTable.CurrentScope != Scope.Intrinsic) {
-                var result = GetVariablesUnderTypeDefinition(name, currSymbolTable);
-                if (result != null) {
-                    dataDefinitions.AddRange(result);
+            //Start at scope Declarations because scope below cannot contains public type
+            while (currSymbolTable.CurrentScope != Scope.Declarations)
+            {
+                currSymbolTable = currSymbolTable.EnclosingScope;
+            }
+
+            //Stop at namespace because Namespace don't contains any type and Intrinsic is shared between all programs
+            //and will be searched separately
+            while (currSymbolTable != null && currSymbolTable.CurrentScope != Scope.Namespace) {
+                var temp = GetVariablesUnderTypeDefinition(name, currSymbolTable);
+                if (temp != null) {
+                    resultDataDefinitions.AddRange(temp);
                 }
                 currSymbolTable = currSymbolTable.EnclosingScope;
             }
 
-            return dataDefinitions;
         }
 
         
@@ -1502,5 +1466,102 @@ namespace TypeCobol.Compiler.CodeModel
 
 
         #endregion
+    }
+
+
+    /// <summary>
+    /// This class serves to follow the path of SymbolReference from a variable under a typedef till a variable outside a typedef.
+    ///
+    /// Group1                  TypeA               TypeB                 TypeC
+    ///   var1                    A11 type typeB       B1                    C1
+    ///    var11 type typeA                             B2                    C2
+    ///                                                  B3 type typeC         C3
+    /// 
+    ///  Group2                  TypeO
+    ///    var22                    Z11 type typeB
+    ///     var222 type typeZ                      
+    ///
+    ///
+    ///
+    /// with an incomplete SymbolReference:
+    /// var11::A11::B2::B3::C3
+    /// we want to retrieve the full path:
+    /// Group1::var1::var11::A11::B1::B2::B3::C1::C2::C3
+    ///
+    /// This full path is currently use for:
+    /// - Codegen : Index under type used with qualification need to prefixed with a hash
+    /// - When a SymbolReference is ambiguous we want to display all path that match the SymbolReference
+    ///
+    /// DataDefinitionPath optimize the data and the calculation necessary to get the full path.
+    /// DataDefinitionPath only need to store the DataDefinition Node that reference a Type.
+    /// In the previous example:
+    /// var11 -> A11 -> B3 -> C3
+    /// Then DataDefinitionPath will use the FixedVisualQualifiedName on each one of these DataDefinition Node to get the full path.
+    ///
+    /// Note:
+    /// This is the job of the caller of DataDefinitionPath to store only Node that reference a Type.
+    /// DataDefinitionPath will check that only in debug mode for performance reason.
+    ///
+    /// 
+    /// When there are multiple path this class share DataDefinitionPath instance across path.
+    /// Eg: For incomplete SymbolReference B1::C3
+    /// We can have:
+    /// Group1::var1::var11::A11::B1::B2::B3::C1::C2::C3
+    /// Group2::var22::var222::O11::B1::B2::B3::C1::C2::C3
+    ///
+    /// We'll then have the same root for both DataDefinitionPath tree:
+    /// var11  -> A11  \
+    ///                 -> B3 -> C3   
+    /// var222 -> Z11  /
+    /// </summary>
+    public class DataDefinitionPath
+    {
+
+        public DataDefinitionPath(DataDefinition currentDataDefinition) : this(null/*this is the head*/, currentDataDefinition)
+        {
+        }
+
+        public DataDefinitionPath([CanBeNull] DataDefinitionPath parent, [NotNull] DataDefinition currentDataDefinition)
+        {
+            this.Parent = parent;
+            this.CurrentDataDefinition = currentDataDefinition;
+
+            //Check that our Typed CurrentDataDefinition is linked to a parent with the same type
+            System.Diagnostics.Debug.Assert(this.Parent == null 
+                                            || this.Parent.CurrentDataDefinition.ParentTypeDefinition == this.CurrentDataDefinition.TypeDefinition);
+        }
+
+        /// <summary>
+        /// Parent which is the head or toward the head of this data definition path.
+        /// 
+        /// </summary>
+        /// <returns>Null if this the head</returns>
+        [CanBeNull] 
+        public DataDefinitionPath Parent { get; }
+
+        [NotNull]
+        public DataDefinition CurrentDataDefinition { get; }
+
+
+        public string ToString(string separator)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            //Start the tail with the qualifiedName (including the pgm name)
+            sb.Append(this.CurrentDataDefinition.QualifiedName);
+            var currentDataDefinitionPath = this.Parent;
+            while (currentDataDefinitionPath != null)
+            {
+                //We don't want the pgm name here
+                sb.Append(separator).Append(string.Join(separator, currentDataDefinitionPath.CurrentDataDefinition.VisualQualifiedNameWithoutProgram));
+                currentDataDefinitionPath = currentDataDefinitionPath.Parent;
+            }
+
+            return sb.ToString();
+        }
+        public override string ToString()
+        {
+            return ToString("::");
+        }
     }
 }

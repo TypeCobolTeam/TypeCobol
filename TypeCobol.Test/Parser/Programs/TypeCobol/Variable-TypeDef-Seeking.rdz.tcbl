@@ -59,8 +59,18 @@
        01 MyVar2 Type MySimpleType.
        01 MySuperVar1 Type MySuperType.
        01 MySuperVar2 Type MySuperType.
+
+       01 Group1.
+           10 itemBuffer pic X(40).
+           10 redefines itemBuffer.
+              15 toto   type MyTypeUnderRedefines.
+       01 MyTypeUnderRedefines typedef strict private.
+                15 idt           pic 99.
+
        PROCEDURE DIVISION.
 
-       MOVE "15" TO bla.
+          MOVE "15" TO bla
+
+           move idt to idt.
 
        END PROGRAM VariableSeeking.

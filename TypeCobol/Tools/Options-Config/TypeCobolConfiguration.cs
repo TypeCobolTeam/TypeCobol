@@ -78,7 +78,7 @@ namespace TypeCobol.Tools.Options_Config
             { ReturnCode.EncodingError,          "Unexpected parameter given for encoding option. Accepted parameters are \"rdz\"(default), \"zos\", \"utf8\"." },
             { ReturnCode.IntrinsicError,         "Intrinsic files given are unreachable." },
             { ReturnCode.CopiesError,            "Copies files given are unreachable." },
-            { ReturnCode.DependenciesError,      "Dependencies files given are unreachable." },
+            { ReturnCode.DependenciesError,      "Dependencies files given are unreachable: " },
             { ReturnCode.MaxDiagnosticsError,    "Maximum diagnostics have to be an integer." },
             { ReturnCode.OutputFormatError,      "Unexpected parameter given for Output format option. Accepted parameters are Cobol85/0(default), PublicSignature/1." },
             { ReturnCode.ExpandingCopyError,     "Expanding copy path given is unreachable." },
@@ -144,6 +144,7 @@ namespace TypeCobol.Tools.Options_Config
         PublicSignatures,
         ExpandingCopy,
         Cobol85Mixed,
+        Cobol85Nested,
         Documentation
     }
     public static class TypeCobolOptionSet
@@ -165,7 +166,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "dp|dependencies=", "Path to folder containing programs to load and to use for parsing a generating the input program.", v => typeCobolConfig.Dependencies.Add(v) },
                 { "t|telemetry", "If set to true telemetry will send automatic email in case of bug and it will provide to TypeCobol Team data on your usage.", v => typeCobolConfig.Telemetry = true },
                 { "md|maximumdiagnostics=", "Wait for an int value that will represent the maximum number of diagnostics that TypeCobol have to return.", v =>  typeCobolConfig.RawMaximumDiagnostics = v},
-                { "f|outputFormat=", "Output format (default is Cobol 85). (Cobol85/0, PublicSignature/1, Cobol85Mixed/3, Documentation/4)", v =>typeCobolConfig.RawOutputFormat = v},
+                { "f|outputFormat=", "Output format (default is Cobol 85). (Cobol85/0, PublicSignature/1, Cobol85Mixed/3, Cobol85Nested/4, Documentation/5).", v =>typeCobolConfig.RawOutputFormat = v},
                 { "ec|expandingcopy=", "Generate a file with all COPY directives expanded in the source code. This option will be executed if the Preprocessor step is enabled.", v => typeCobolConfig.ExpandingCopyFilePath = v },
                 { "exc|extractusedcopy=", "Generate a file with all COPIES detected by the parser.", v => typeCobolConfig.ExtractedCopiesFilePath = v },
                 { "alr|antlrprogparse", "Use ANTLR to parse a program.", v => typeCobolConfig.UseAntlrProgramParsing = true},
@@ -256,8 +257,22 @@ namespace TypeCobol.Tools.Options_Config
             //CopiesError
             VerifFiles(config.CopyFolders, ReturnCode.CopiesError, ref errorStack, true);
 
-            //DependenciesError
-            VerifFiles(config.Dependencies, ReturnCode.DependenciesError, ref errorStack);
+            ////DependencyFolderMissing
+            if (config.ExecToStep == ExecutionStep.Generate && !errorStack.ContainsKey(ReturnCode.ExecToStepError))
+            {
+                foreach (string dependency in config.Dependencies)
+                {
+                    string directory = Path.GetDirectoryName(dependency);
+                    string file = Path.GetFileName(dependency);
+
+                    if (file?.Contains("*") == true)
+                        file = string.Empty;
+
+                    if ((!Directory.Exists(directory) || !file.IsNullOrEmpty() && !File.Exists(dependency)) && !errorStack.ContainsKey(ReturnCode.DependenciesError))
+                        errorStack.Add(ReturnCode.DependenciesError, TypeCobolConfiguration.ErrorMessages[ReturnCode.DependenciesError] + directory + Path.DirectorySeparatorChar + file);
+
+                }
+            }
 
             // MaxDiagnosticsError
             if (!config.RawMaximumDiagnostics.IsNullOrEmpty())
