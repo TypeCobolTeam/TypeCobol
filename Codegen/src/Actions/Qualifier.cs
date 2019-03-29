@@ -700,7 +700,7 @@ namespace TypeCobol.Codegen.Actions
                 base.ConsumedTokens = new List<TypeCobol.Compiler.Scanner.Token>();
                 base.ConsumedTokens.Add(token);
             }
-            public TokenCodeElement(List<TypeCobol.Compiler.Scanner.Token> consumedTokens)
+            public TokenCodeElement(IList<TypeCobol.Compiler.Scanner.Token> consumedTokens)
                 : base((CodeElementType)0)
             {
                 base.ConsumedTokens = consumedTokens;

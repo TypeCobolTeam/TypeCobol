@@ -138,7 +138,7 @@ namespace TypeCobol.Codegen.Generators
 
                         // Comment the multilines comments
 
-                        if (text.Trim().StartsWith("*<<"))
+                        if ((Input[i] as Compiler.Scanner.TokensLine)?.SourceTokens.Any(st => st.TokenType == Compiler.Scanner.TokenType.MULTILINES_COMMENTS_START) == true)
                         {
                             insideMultilineComments = true;
                         }
@@ -161,7 +161,7 @@ namespace TypeCobol.Codegen.Generators
                             targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
                         }
 
-                        if (text.Trim().EndsWith("*>>"))
+                        if ((Input[i] as Compiler.Scanner.TokensLine)?.SourceTokens.Any(st => st.TokenType == Compiler.Scanner.TokenType.MULTILINES_COMMENTS_STOP) == true)
                         {
                             insideMultilineComments = false;
                         }

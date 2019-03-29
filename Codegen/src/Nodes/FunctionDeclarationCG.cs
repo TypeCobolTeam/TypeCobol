@@ -69,8 +69,9 @@ namespace TypeCobol.Codegen.Nodes {
                         GenerateCodeToCallPublicProc(originalNode, pdiv,  workingStorageSection, linkageSection);
                     }
                 } else {
-                    if (child.CodeElement is FunctionDeclarationEnd) {
-                        children.Add(new ProgramEnd(new URI(OriginalHash), OriginalProcName));
+                    if (child.CodeElement is FunctionDeclarationEnd)
+                    {
+                        children.Add(new ProgramEnd(new URI(OriginalHash), OriginalProcName, child.CodeElement.Line));
                     } else {
                         // TCRFUN_CODEGEN_NO_ADDITIONAL_DATA_SECTION
                         // TCRFUN_CODEGEN_DATA_SECTION_AS_IS
