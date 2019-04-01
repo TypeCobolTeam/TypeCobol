@@ -81,6 +81,16 @@ namespace CLI.Test
             CLITestHelper.Test("dependencies_7_bad_call_proc", ReturnCode.ParsingDiagnostics);
         }
 
+        /// <summary>
+        /// Tests with a dependency that depends on a dependency which is loaded after itself.
+        /// </summary>
+        [TestMethod]
+        public void TestDpendenciesNotLoadedInCorrectOrder() {
+            CLITestHelper.Test("dependenciesNotLoadedInCorrectOrder", ReturnCode.ParsingDiagnostics);
+        }
+
+
+
 
         
 
