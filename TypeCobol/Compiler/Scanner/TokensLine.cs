@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -163,6 +163,13 @@ namespace TypeCobol.Compiler.Scanner
                     _ScannerDiagnostics.Remove(diag);
                 }
             }
+        }
+
+        internal void RemoveDiagnostics()
+        {
+            System.Diagnostics.Debug.Assert(SourceTokens.Count == 0, "The diagnostics are on the tokens");
+
+            _ScannerDiagnostics.Clear();
         }
 
         // --- State for context-sensitive tokens ---
