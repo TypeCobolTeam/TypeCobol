@@ -150,6 +150,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(redefinesNode, message, redefinesSymbolReference, code: MessageCode.SemanticTCErrorInParser);
                 return;
             }
+            redefinedVariable.AddDataRedefinition(redefinesNode);
+
 
             if (redefinedVariable.IsStronglyTyped || redefinedVariable.IsStrictlyTyped)
             {
