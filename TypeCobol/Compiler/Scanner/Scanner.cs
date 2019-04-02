@@ -112,27 +112,19 @@ namespace TypeCobol.Compiler.Scanner
                         tokensLine.Indicator.StartIndex, tokensLine.Indicator.EndIndex, "Line exceed 80 chars");
                 }
 
-                //string lineText = textLine.Text.Trim();
-                //if (!lineText.StartsWith("%<<") && !lineText.StartsWith("%>>"))
-                //{
-                    Token commentToken = new Token(TokenType.CommentLine, startIndex, lastIndex, tokensLine);
-                    tokensLine.AddToken(commentToken);
-                    return;
-                //}
+                Token commentToken = new Token(TokenType.CommentLine, startIndex, lastIndex, tokensLine);
+                tokensLine.AddToken(commentToken);
+                return;
             }
             else if (textLine.Type == CobolTextLineType.MultiFormalizedComment)
             {
-                // Invalid indicator => register an error
+                //If a '%' is spotted that isn't a multiline/formalized comment token or if a stop token is spotted without an associated start
                 if (!line.Trim().StartsWith("%<<") && !line.Trim().StartsWith("%>>") || !tokensLine.ScanState.InsideMultilineComments && !tokensLine.ScanState.InsideFormalizedComment && line.Trim().StartsWith("%>>"))
                 {
-                    if (textLine.IndicatorChar == '%')
-                    {
-                        tokensLine.AddDiagnostic(MessageCode.MultiFormalizedCommentIndicatorMisused, textLine.Indicator.StartIndex, textLine.Indicator.EndIndex, textLine.Indicator);
-                        Token invalidToken = new Token(TokenType.InvalidToken, startIndex, lastIndex, tokensLine);
-                        tokensLine.AddToken(invalidToken);
-                        return;
-                    }
-                    
+                    tokensLine.AddDiagnostic(MessageCode.MultiFormalizedCommentIndicatorMisused, textLine.Indicator.StartIndex, textLine.Indicator.EndIndex, textLine.Indicator);
+                    Token invalidToken = new Token(TokenType.InvalidToken, startIndex, lastIndex, tokensLine);
+                    tokensLine.AddToken(invalidToken);
+                    return;
                 }
                 else
                 {
@@ -881,6 +873,8 @@ namespace TypeCobol.Compiler.Scanner
                             return new Token(TokenType.MULTILINES_COMMENTS_START, startIndex, startIndex + 2, tokensLine);
                         }
                     }
+
+                    currentIndex += 1;
                     return new Token(TokenType.InvalidToken, startIndex, startIndex, tokensLine);
                 case '.':
                     //PeriodSeparator=7,
