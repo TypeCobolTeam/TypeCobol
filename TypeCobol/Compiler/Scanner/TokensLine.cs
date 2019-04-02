@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -113,7 +113,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         internal void AddDiagnostic(MessageCode messageCode, int columnStart, int columnEnd, params object[] messageArgs)
         {
-            Diagnostic diag = new Diagnostic(messageCode, columnStart, columnEnd, this.LineIndex, messageArgs);
+            Diagnostic diag = new Diagnostic(messageCode, columnStart, columnEnd, this.LineIndex + 1, messageArgs);
             _ScannerDiagnostics.Add(diag);
         }
 
