@@ -58,7 +58,6 @@ The best way to test this project is to download and install both tools (for fre
 
 The solution contains these projects :
 - **TypeCobol** is the main project, it implements a complete Cobol compiler front-end
-- **TypeCobol.Grammar** uses Antlr4 to generate C# parsers for Cobol compiler directives and Cobol statements
 - **TypeCobol.Test** provides unit tests which can be launched from the *Test Explorer* in Visual Studio
 - **Codegen** provides the mechanism to transform TypeCobol code to Cobol 85
 - **TypeCobol.LanguageServer** implements the LanguageServer protocol
