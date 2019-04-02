@@ -1,0 +1,43 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM1.
+
+       DATA DIVISION.
+       Working-STORAGE SECTION.
+
+       01  somedate     TYPE Date.
+       01  someformat   PIC X(08).
+       01  flag         TYPE Bool.
+       01  realformat   PIC X(08).
+       01  W-TechCtx    TYPE CALLEE::TechnicalContext.
+
+       PROCEDURE DIVISION.
+
+
+           MOVE W-TechCtx::Site::SiteName TO someformat
+           .
+       P1.
+      *    OK  call check of PGM1
+           call Callee::check input somedate
+           .
+       P2.
+      *    KO, first argument missing
+           call Callee::check input 
+           .
+       P3.
+      *    KO, 2nd argument missing
+           call Callee::check2 input somedate W-TechCtx
+           .
+       P4.
+      *    KO, 2nd argument missing
+           call Callee::check2 input somedate
+           .
+       P5.
+      * OK : proper parameter list (TCRFUN_CALL_PUBLIC_ANY_PGM)
+           CALL Callee::MyPublicProcedure
+                    INPUT      somedate someformat
+                    OUTPUT     flag     realformat 
+
+
+           .
+       END PROGRAM PGM1.
+

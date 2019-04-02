@@ -72,6 +72,14 @@ namespace CLI.Test
 #endif
         }
 
+        /// <summary>
+        /// Test various case of usage of dependencies that all ends with errors.
+        /// The purpose is also to not have a too big TestDependencies method/
+        /// </summary>
+        [TestMethod]
+        public void TestDependenciesWithErrors() {
+            CLITestHelper.Test("dependencies_7_bad_call_proc", ReturnCode.ParsingDiagnostics);
+        }
 
 
         

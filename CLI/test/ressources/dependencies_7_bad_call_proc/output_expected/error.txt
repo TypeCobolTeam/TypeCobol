@@ -1,0 +1,7 @@
+ReturnCode=ParsingDiagnostics_
+5 errors in "input\ProcedureCall-Public.rdz.tcbl":
+Line 25[12,12] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}
+Line 24[12,35] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'Callee.check' 
+Line 24[12,35] <27, Error, Syntax> - Syntax error : Function 'Callee.check' is missing parameter 'mydate' of type DATE and length 8
+Line 32[12,45] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'Callee.check2' input(DATE)
+Line 32[12,45] <27, Error, Syntax> - Syntax error : Function 'Callee.check2' is missing parameter 'ctx' of type TechnicalContext and length 16
