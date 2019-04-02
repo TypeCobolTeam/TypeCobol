@@ -12,10 +12,12 @@ internal class ProgramEnd: Compiler.Nodes.End, Generated {
 	private QualifiedName ProgramHashName;
     private string OriginalProcName; //Limited to 22 chars
 
-    public ProgramEnd(QualifiedName programHashName, string originalProcName) : base(new Compiler.CodeElements.ProgramEnd()) {
+    public int OriginalLine { get; }
+
+    public ProgramEnd(QualifiedName programHashName, string originalProcName, int originalLine) : base(new Compiler.CodeElements.ProgramEnd()) {
 		this.ProgramHashName = programHashName;
         this.OriginalProcName = originalProcName;
-
+        this.OriginalLine = originalLine;
 
     }
 
