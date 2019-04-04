@@ -425,7 +425,7 @@ namespace TypeCobol.Codegen.Generators
             //Create a New Data
             NodeData data = null;
             bool bHasCodeElement = node is ParameterEntry ? false : 
-                (node.CodeElement == null || node.CodeElement.ConsumedTokens == null) ? false : node.CodeElement.ConsumedTokens.Count > 0;
+                (node.CodeElement == null || node.CodeElement.ConsumedTokens == null) ? false : (node.CodeElement.ConsumedTokens.Count > 0 || node is Generated == false);
             if (!bHasCodeElement)
             {
                 //No Code Element ==> certainly a Generated node                
@@ -964,7 +964,7 @@ namespace TypeCobol.Codegen.Generators
                             curEnd = ((NodeFunctionData)Nodes[CurrentFunctionDeclNode.NodeIndex]).BodyLastLineIndex;
                             Visit(tokensNode);
                             //Don't add nodes that have a NodeIndex at 0 (e.G. node that contain only a SpaceSeparator token)
-                            if (tokensNode.NodeIndex > 0) 
+                            if (tokensNode.NodeIndex > 0 && tokensNode.CodeElement.ConsumedTokens.Count > 0) 
                                 node.Add(tokensNode, node.ChildrenCount - 1);
                             else
                             {
