@@ -387,9 +387,9 @@ namespace TypeCobol.LanguageServer
                 return resultHover;
             }
 
-            var matchingNode = docContext.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers[((CodeElementWrapper)matchingCodeElement).CodeElement];
+            docContext.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers.TryGetValue(((CodeElementWrapper)matchingCodeElement).CodeElement, out var matchingNode);
             if (matchingNode == null)
-                return null;
+                return resultHover;
 
             string message = string.Empty;
 
