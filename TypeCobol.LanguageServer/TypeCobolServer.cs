@@ -397,11 +397,12 @@ namespace TypeCobol.LanguageServer
             switch (matchingNode)
             {
                 case DataDefinition data:
-                    message = data.TypeDefinition.ToString();
+                    if (data.TypeDefinition != null)
+                        message = data.TypeDefinition.ToString();
                     break;
                 case ProcedureStyleCall call:
                     //don't show hover on params
-                    if (lastSignificantToken.TokenType != TokenType.INPUT && lastSignificantToken.TokenType != TokenType.IN_OUT && lastSignificantToken.TokenType != TokenType.OUTPUT)
+                    if (call.FunctionDeclaration != null && lastSignificantToken.TokenType != TokenType.INPUT && lastSignificantToken.TokenType != TokenType.IN_OUT && lastSignificantToken.TokenType != TokenType.OUTPUT)
                     {
                         message = call.ToString();
                     }
