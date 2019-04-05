@@ -387,9 +387,9 @@ namespace TypeCobol.LanguageServer
                 return resultHover;
             }
 
-            var matchingNode = docContext.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers[((CodeElementWrapper)matchingCodeElement).CodeElement];
+            docContext.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers.TryGetValue(((CodeElementWrapper)matchingCodeElement).CodeElement, out var matchingNode);
             if (matchingNode == null)
-                return null;
+                return resultHover;
 
             string message = string.Empty;
 
@@ -397,11 +397,12 @@ namespace TypeCobol.LanguageServer
             switch (matchingNode)
             {
                 case DataDefinition data:
-                    message = data.TypeDefinition.ToString();
+                    if (data.TypeDefinition != null)
+                        message = data.TypeDefinition.ToString();
                     break;
                 case ProcedureStyleCall call:
                     //don't show hover on params
-                    if (lastSignificantToken.TokenType != TokenType.INPUT && lastSignificantToken.TokenType != TokenType.IN_OUT && lastSignificantToken.TokenType != TokenType.OUTPUT)
+                    if (call.FunctionDeclaration != null && lastSignificantToken.TokenType != TokenType.INPUT && lastSignificantToken.TokenType != TokenType.IN_OUT && lastSignificantToken.TokenType != TokenType.OUTPUT)
                     {
                         message = call.ToString();
                     }
