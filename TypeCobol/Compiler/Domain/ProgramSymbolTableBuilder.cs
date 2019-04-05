@@ -145,23 +145,6 @@ namespace TypeCobol.Compiler.Domain
 
         public override void OnNode(Node node, Program program)
         {
-            if (node.CodeElement == null)
-                return;
-            switch (node.CodeElement.Type)
-            {
-                case CodeElements.CodeElementType.DataDescriptionEntry:
-                    if (node.CodeElement is DataTypeDescriptionEntry)
-                    {//This is a TypeDef
-
-                    }
-                    break;
-                case CodeElements.CodeElementType.DataRedefinesEntry:
-                    break;
-                case CodeElements.CodeElementType.DataRenamesEntry:
-                    break;
-                case CodeElements.CodeElementType.DataConditionEntry:
-                    break;
-            }
         }
 
         /// <summary>
