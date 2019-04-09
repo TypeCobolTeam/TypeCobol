@@ -448,6 +448,13 @@ namespace TypeCobol.Compiler.Parser
                 int nextLineIndex = lineIndex;
                 IEnumerator<CodeElementsLine> enumerator = documentLines.GetEnumerator(nextLineIndex + 1, -1, false);
                 bool nextLineHasCodeElements = false;
+                //----------------------------------------------------------------------------
+                // Because we use multi line comments once we have figure out
+                // the last line for stopping reparsing, we must consider the next for that,
+                // So that if figured out line is candidate for formalized comments, it will
+                // be entirely reparsed along with its formalized comment.
+                //----------------------------------------------------------------------------
+                bool oneMoreLine = false;
                 while (enumerator.MoveNext())
                 {
                     // Get the next line until non continuation line is encountered
@@ -485,10 +492,17 @@ namespace TypeCobol.Compiler.Parser
                         // Stop iterating forwards as soon as the start of an old CodeElement is found                   
                         if (nextLineHasCodeElements)
                         {
-                            currentParseSection.StopLineIndex = nextLineIndex;
-                            currentParseSection.StopToken = nextLine.CodeElements.First().ConsumedTokens.FirstOrDefault();
-                            currentParseSection.StopTokenIsFirstTokenOfTheLine = nextCodeElementStartsAtTheBeginningOfTheLine;
-                            break;
+                            if (oneMoreLine || !(nextLine.CodeElements.Any(ce => ce is IFormalizedCommentable)))
+                            {
+                                currentParseSection.StopLineIndex = nextLineIndex;
+                                currentParseSection.StopToken = nextLine.CodeElements.First().ConsumedTokens.FirstOrDefault();
+                                currentParseSection.StopTokenIsFirstTokenOfTheLine = nextCodeElementStartsAtTheBeginningOfTheLine;
+                                break;
+                            }
+                            else
+                            {   //Ok next line will be the last one.
+                                oneMoreLine = true;
+                            }
                         }
                     }
                 }

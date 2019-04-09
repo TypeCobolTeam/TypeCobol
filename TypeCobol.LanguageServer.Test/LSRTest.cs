@@ -132,6 +132,14 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("MultiLineCommentIncScan", LsrTestingOptions.NoLsrTesting, false);
         }
+
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void FormalizedCommentIncScan()
+        {
+            LSRTestHelper.Test("FormalizedCommentIncScan", LsrTestingOptions.NoLsrTesting, false, true);
+        }
+
         #endregion
 
         #region SyntaxColoring
