@@ -1,4 +1,4 @@
-﻿Line 9[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
+Line 9[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
 Line 49[12,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
 Line 54[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
 Line 56[21,23] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli
@@ -8,7 +8,7 @@ Line 67[21,24] <37, Warning, General> - Warning: Parameter does not have any des
 {
   "__type": "DocumentationForProgram:#TypeCobol.Compiler.Nodes",
   "Deprecated": "",
-  "Description": "My program description ",
+  "Description": "My program \u000d\u000adescription ",
   "Name": "DocCombined",
   "Namespace": "DocCombined",
   "Needs": [
@@ -79,7 +79,7 @@ Line 67[21,24] <37, Warning, General> - Warning: Parameter does not have any des
 {
   "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
   "Deprecated": "It is deprecated ",
-  "Description": "MyProc info ",
+  "Description": "MyProc info \u000d\u000a",
   "Name": "MyProc",
   "Namespace": "DocCombined",
   "Needs": [
