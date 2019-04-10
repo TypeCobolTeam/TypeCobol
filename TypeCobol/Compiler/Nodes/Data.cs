@@ -870,7 +870,7 @@ namespace TypeCobol.Compiler.Nodes {
                     }
                     else if (line.IndicatorChar != '*')
                     {
-                        sb.AppendLine(line.Text);
+                        sb.AppendLine(line.Text.Remove(0, 7));
                     }
                 }
                 i++;
