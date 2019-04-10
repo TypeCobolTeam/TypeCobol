@@ -174,18 +174,28 @@ namespace TypeCobol.Compiler.CodeElements
                         ToDo.Add(value);
                     break;
                 case Fields.Description:
+                    if (!Description.IsNullOrEmpty())
+                        Description += Environment.NewLine;
                     Description += value + " ";
                     break;
                 case Fields.Deprecated:
+                    if (!Deprecated.IsNullOrEmpty())
+                        Description += Environment.NewLine;
                     Deprecated += value + " ";
                     break;
                 case Fields.ReplacedBy:
+                    if (!ReplacedBy.IsNullOrEmpty())
+                        ReplacedBy += Environment.NewLine;
                     ReplacedBy += value + " ";
                     break;
                 case Fields.Restriction:
+                    if (!Restriction.IsNullOrEmpty())
+                        Restriction += Environment.NewLine;
                     Restriction += value + " ";
                     break;
                 case Fields.See:
+                    if (!See.IsNullOrEmpty())
+                        See += Environment.NewLine;
                     See += value + " ";
                     break;
                 case Fields.Parameters:
