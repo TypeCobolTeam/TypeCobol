@@ -91,6 +91,19 @@ namespace TypeCobol.LanguageServer
             get { return typeCobolWorkspace; }
         }
 
+        /// <summary>
+        //Put all experimental properties as an array of Tuple<string name, object value>.
+        //The JSON serialization of a tuple is of the form: {"Item1" : name, "Item2" : value}
+        /// </summary>
+        public virtual Tuple<string, object>[] ExperimentalProperties
+        {
+            get
+            {
+                //TypeCobol version
+                return new Tuple<string, object>[] { new Tuple<string, object>("version", AnalyticsWrapper.Telemetry.TypeCobolVersion) };
+            }
+        }
+
         #region Override LSP Methods
 
         public override InitializeResult OnInitialize(InitializeParams parameters)
@@ -125,6 +138,8 @@ namespace TypeCobol.LanguageServer
             initializeResult.capabilities.completionProvider = completionOptions;
             SignatureHelpOptions sigHelpOptions = new SignatureHelpOptions {triggerCharacters = new string[0]};
             initializeResult.capabilities.signatureHelpProvider = sigHelpOptions;
+
+            initializeResult.capabilities.experimental = ExperimentalProperties;
 
             return initializeResult;
         }
