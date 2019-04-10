@@ -1,0 +1,4 @@
+﻿ReturnCode=ParsingDiagnostics_
+2 errors in "input\MainPgm.rdz.tcbl":
+Line 15[12,20] <27, Error, Syntax> - Syntax error : Function 'DVZTEST1.GetTecMsg' expected parameter 'Span' of type Span and received 't1' of type type1 
+Line 18[12,20] <27, Error, Syntax> - Syntax error : Function 'GetTecMsg' expected parameter 'Span' of type Span and received 't1' of type type1 

@@ -1,0 +1,213 @@
+      *TypeCobol_Version:0.1(alpha)
+       identification division.
+       program-id. TCOSMPL2.
+       data division.
+       working-storage section.
+       01 TC-DVZTEST1 pic X(08) value 'DVZTEST1'.
+       01 TC-Call          PIC X VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'
+                            X'00' thru 'S'
+                            'U' thru X'FF'.
+
+                               
+      *01 type1 typedef strict private.
+      *05 blabla pic X.
+      *01 NSpan     TYPE DVZTEST1::NamedSpanArray.
+       01 NSpan.
+           02 namedSpan.
+             03 name pic X(10).
+             03 group1.
+               04 span.
+                05  ptr Pointer.
+                05  redefines ptr.
+                    06  ptrdbef1f3d pic S9(05) comp-5.
+                 05 len pic S9(5) comp-5.
+                    88 isEmpty value 0.
+                    88 isEndPack value -1 -2.
+                    88 isOverflow value -2.
+                                                  
+      
+      *01 s1 type DVZTEST2::Span.
+       01 s1.
+          02  ptr Pointer.
+          02  redefines ptr.
+              03  ptrdbef1f3d pic S9(05) comp-5.
+           02 len pic S9(5) comp-5.
+              88 isEmpty value 0.
+              88 isEndPack value -1 -2.
+              88 isOverflow value -2.
+                                 
+      *01 dat type date.
+       01 dat.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+                        
+      *01 t1 type DVZTEST2::Span.
+       01 t1.
+          02  ptr Pointer.
+          02  redefines ptr.
+              03  ptrdbef1f3d pic S9(05) comp-5.
+           02 len pic S9(5) comp-5.
+              88 isEmpty value 0.
+              88 isEndPack value -1 -2.
+              88 isOverflow value -2.
+                                 
+       01  TC-TCOSMPL2-FctList-Loaded PIC X(02).
+           88 TC-TCOSMPL2-FctList-IsLoaded      VALUE 'OK'.
+       01 TC-TCOSMPL2-PntTab.
+           05 TC-TCOSMPL2-PntNbr         PIC S9(04) COMP VALUE 1.
+      *To call program ea2e07d4GetTecMsg
+      *Which is generated code for TCOSMPL2.GetTecMsg
+      *Declared in source file MainPgm.rdz.tcbl
+           05 TC-TCOSMPL2-ea2e07d4-Idt   PIC X(08) VALUE 'ea2e07d4'.
+           05 TC-TCOSMPL2-ea2e07d4 PROCEDURE-POINTER.
+
+       LINKAGE SECTION.
+      *Common to all librairies used by the program.
+       01 TC-Library-PntTab.
+          05 TC-Library-PntNbr          PIC S9(04) COMP.
+          05 TC-Library-Item OCCURS 1000
+                               DEPENDING ON TC-Library-PntNbr
+                               INDEXED   BY TC-Library-Idx.
+              10 TC-Library-Item-Idt      PIC X(08).
+              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
+
+      *To call program a93b0351GetTecMsg in module DVZTEST1
+      *Which is generated code for DVZTEST1.GetTecMsg
+      *Declared in source file DVZTEST1.rdz.tcbl
+       01 TC-DVZTEST1-a93b0351-Item.
+          05 TC-DVZTEST1-a93b0351-Idt PIC X(08).
+          05 TC-DVZTEST1-a93b0351 PROCEDURE-POINTER.
+
+       01 PntTab-Pnt POINTER.
+
+      
+       procedure division USING PntTab-Pnt.
+                          
+      *
+      *    IF CallIsCopy
+      *      PERFORM Copy-Process-Mode
+      *    ELSE
+           PERFORM FctList-Process-Mode
+           perform INIT-LIBRARY
+      *    END-IF
+
+           GOBACK.
+
+        FctList-Process-Mode.
+            IF NOT TC-TCOSMPL2-FctList-IsLoaded
+              SET TC-TCOSMPL2-ea2e07d4   TO ENTRY 'ea2e07d4'
+
+              SET TC-TCOSMPL2-FctList-IsLoaded TO TRUE
+            END-IF
+               .
+
+            set PntTab-Pnt TO ADDRESS OF TC-TCOSMPL2-PntTab
+
+           .
+                          
+       INIT-LIBRARY.
+      *
+           PERFORM TC-INITIALIZATIONS
+
+                    
+      
+      *    call DVZTEST1::GetTecMsg INPUT t1
+      *    in-out s1
+           
+           IF ADDRESS OF TC-DVZTEST1-a93b0351-Item = NULL
+             OR TC-DVZTEST1-a93b0351-Idt not = 'a93b0351'
+               PERFORM TC-LOAD-POINTERS-DVZTEST1
+           END-IF
+      *    Equivalent to call a93b0351GetTecMsg in module DVZTEST1
+           CALL TC-DVZTEST1-a93b0351 USING
+                                 t1
+                    by reference s1
+           end-call
+                    
+      
+      *    call GetTecMsg input t1
+      *    in-out s1
+           CALL 'ea2e07d4GetTecMsg' USING
+                                 t1
+                    by reference s1
+           end-call
+                    
+      
+      
+           goback.
+      *=================================================================
+       TC-INITIALIZATIONS.
+      *=================================================================
+            IF TC-FirstCall
+                 SET TC-NthCall TO TRUE
+                 SET ADDRESS OF TC-DVZTEST1-a93b0351-Item  TO NULL
+            END-IF
+            .
+      *=================================================================
+        TC-LOAD-POINTERS-DVZTEST1.
+      *=================================================================
+            CALL 'ZCALLPGM' USING TC-DVZTEST1
+            ADDRESS OF TC-Library-PntTab
+            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
+            UNTIL TC-Library-Idx > TC-Library-PntNbr
+                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
+                WHEN 'a93b0351'
+                     SET ADDRESS OF
+                     TC-DVZTEST1-a93b0351-Item
+                     TO ADDRESS OF
+                     TC-Library-Item(TC-Library-Idx)
+                WHEN OTHER
+                     CONTINUE
+                END-EVALUATE
+            END-PERFORM
+            .
+
+      *----------------------------------------------------------------
+      *declare procedure GetTecMsg public
+      *    input capt     type DVZTEST2::Span
+      *    in-out msg     type DVZTEST2::Span
+      *    .
+      
+       end program TCOSMPL2.
+      *
+      *declare procedure GetTecMsg public
+      *    input capt     type DVZTEST2::Span
+      *    in-out msg     type DVZTEST2::Span
+      *    .
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ea2e07d4GetTecMsg.
+       DATA DIVISION.
+       LINKAGE SECTION.
+      *TCOSMPL2.GetTecMsg - Params :
+      *		input(capt: DVZTEST2.Span)
+      *		in-out(msg: DVZTEST2.Span)
+       01 capt.
+          02  ptr Pointer.
+          02  redefines ptr.
+              03  ptrdbef1f3d pic S9(05) comp-5.
+           02 len pic S9(5) comp-5.
+              88 isEmpty value 0.
+              88 isEndPack value -1 -2.
+              88 isOverflow value -2.
+       01 msg.
+          02  ptr Pointer.
+          02  redefines ptr.
+              03  ptrdbef1f3d pic S9(05) comp-5.
+           02 len pic S9(5) comp-5.
+              88 isEmpty value 0.
+              88 isEndPack value -1 -2.
+              88 isOverflow value -2.
+       PROCEDURE DIVISION
+             USING BY REFERENCE capt
+                   BY REFERENCE msg
+           .
+      *TCOSMPL2.GetTecMsg - Params :
+      *		input(capt: DVZTEST2.Span)
+      *		in-out(msg: DVZTEST2.Span)
+           continue
+           .
+       END PROGRAM ea2e07d4GetTecMsg.

@@ -1,0 +1,1 @@
+﻿-1 -i input\MainPgm.tcbl -o output\MainPgm.rdz.cbl -d output\error.txt --dependencies input\DepA.tcbl --dependencies input\DepB.tcbl -e rdz

@@ -49,7 +49,7 @@ internal class ParameterEntry: GenericNode<ParameterDescriptionEntry>, Generated
                     //Type exists from Cobol 2002
 				    string typedef = null;
 					if (this.CodeElement.DataType.CobolLanguageLevel >= TypeCobol.Compiler.CobolLanguageLevel.Cobol2002) {
-					    var type = this.Description?.TypeDefinition ?? this.SymbolTable.GetType(this.CodeElement.DataType).FirstOrDefault();
+					    var type = this.Description?.TypeDefinition;
 					    if (type != null)
 					    {
 							customtype = type;
@@ -84,7 +84,9 @@ internal class ParameterEntry: GenericNode<ParameterDescriptionEntry>, Generated
 
 				    if (picture == null && this.CodeElement.Usage == null && this.CodeElement.DataType.CobolLanguageLevel == Compiler.CobolLanguageLevel.Cobol85)
                     {//JCM humm... Type without picture lookup enclosing scope.
-                        var type = this.Description?.TypeDefinition ?? this.SymbolTable.GetType(this.CodeElement.DataType).FirstOrDefault();
+                       
+                        //TODO seems to be an impossible situation as we check if we are on Compiler.CobolLanguageLevel.Cobol85
+                        var type = this.Description?.TypeDefinition;
                         if (type != null)
                         {
                             customtype = type;

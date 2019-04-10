@@ -1,0 +1,13 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZTEST2.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.                                               
+       01 Span typedef strict public.
+           05 ptr    pointer.
+           05 len       pic S9(5) comp-5.
+                88 isEmpty   value 0.
+                88 isEndPack value -1 -2.
+                88 isOverflow value -2.
+       PROCEDURE DIVISION.
+            GOBACK.
+       end program DVZTEST2.
