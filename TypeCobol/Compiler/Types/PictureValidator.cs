@@ -1154,7 +1154,7 @@ namespace TypeCobol.Compiler.Types
                     return false;
                 if (this.Sequence.Count == 0)
                     return false;
-                return this.Sequence.TrueForAll(c => c.ch == SC.G || c.ch == SC.N || c.ch == SC.B);
+                return this.Sequence.TrueForAll(c => c.ch == SC.G || c.ch == SC.B);
             }
 
             /// <summary>

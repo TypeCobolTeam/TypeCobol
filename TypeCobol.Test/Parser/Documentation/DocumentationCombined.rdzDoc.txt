@@ -6,7 +6,8 @@ Line 66[21,26] <37, Warning, General> - Warning: Parameter does not have any des
 Line 67[21,24] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: toto
 ======================== Nodes properties ========================
 Name : DocCombined
-Description : My program description 
+Description : My program 
+description 
 Visibility : 
 Namespace : DocCombined
 NodeType : Program
@@ -117,6 +118,7 @@ TypeDefChild :
 
 Name : MyProc
 Description : MyProc info 
+
 Visibility : Public
 Namespace : DocCombined
 NodeType : Function
@@ -221,7 +223,8 @@ Parameters :
 
 ======================== Code Element properties ========================
 == DocCombined ==
-Description : My program description 
+Description : My program 
+description 
 Deprecated : *is present*
 ReplacedBy : MyFonction2 
 Restriction : Do not Use BOOL var 
@@ -263,6 +266,7 @@ Parameters :
 
 == MyProc ==
 Description : MyProc info 
+
 Deprecated : It is deprecated 
 ReplacedBy : 
 Restriction : 

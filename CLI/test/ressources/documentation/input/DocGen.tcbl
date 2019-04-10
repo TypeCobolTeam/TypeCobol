@@ -4,7 +4,7 @@
        DATA DIVISION.
        LOCAL-STORAGE SECTION.
        
-      *<<< 
+      %<<< 
           @ description : inline typedef
           @ params:
             - none: Type doesn't have any params
@@ -12,23 +12,23 @@
           @Restriction : Do not Use BOOL var 
           @Params:
             - Typedefs: should not have any params
-      *>>>
+      %>>>
        01 myType TYPEDEF STRICT PUBLIC pic X(01).
 
-      *<<< Vect2D
-      *>>>
+      %<<< Vect2D
+      %>>>
        01 Vect2D TYPEDEF STRICT PUBLIC.
          02 Coord2d.
            03 X PIC 9(4).
            03 Y PIC 9(4).
 
 
-      *<<< This type is private
-      *>>>
+      %<<< This type is private
+      %>>>
        01 PrivateType TYPEDEF STRICT pic XXX.
 
 
-      *<<< My program 
+      %<<< My program 
           @ Description  description
           @deprecated
           @    replacedBy  MyFonction2
@@ -39,10 +39,10 @@
           @ todo 
               - Add BOOL support 
               - implement a call counter
-      *>>>
+      %>>>
        PROCEDURE DIVISION.
 
-      *<<< MyProc info
+      %<<< MyProc info
           @ deprec : It is
        deprecated
                @           need : long need
@@ -54,7 +54,7 @@
           - bla: bla < 2
           - toto: toto 
           -blu: will be ignored
-      *>>>
+      %>>>
        DECLARE PROCEDURE MyProc PUBLIC
            INPUT    myDate      TYPE Date
                     bla         Pic S9(1)V9(12)

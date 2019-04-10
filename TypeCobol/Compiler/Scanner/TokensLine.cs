@@ -113,7 +113,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         internal void AddDiagnostic(MessageCode messageCode, int columnStart, int columnEnd, params object[] messageArgs)
         {
-            Diagnostic diag = new Diagnostic(messageCode, columnStart, columnEnd, this.LineIndex, messageArgs);
+            Diagnostic diag = new Diagnostic(messageCode, columnStart, columnEnd, this.LineIndex + 1, messageArgs);
             _ScannerDiagnostics.Add(diag);
         }
 
@@ -163,6 +163,13 @@ namespace TypeCobol.Compiler.Scanner
                     _ScannerDiagnostics.Remove(diag);
                 }
             }
+        }
+
+        internal void RemoveDiagnostics()
+        {
+            System.Diagnostics.Debug.Assert(SourceTokens.Count == 0, "The diagnostics are on the tokens");
+
+            _ScannerDiagnostics.Clear();
         }
 
         // --- State for context-sensitive tokens ---

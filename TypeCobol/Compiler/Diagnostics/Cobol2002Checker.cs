@@ -87,7 +87,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(typeDefinition, message, MessageCode.SemanticTCErrorInParser);
             }
 
-            if (typeDefinition.CodeElement().Picture == null && typeDefinition.Children.Count < 1 &&
+            if (typeDefinition.CodeElement.Picture == null && typeDefinition.Children.Count < 1 &&
                 !typeDefinition.Usage.HasValue)
             {
                 string message = "TYPEDEF \'" + typeDefinition.Name + "\' has no description.";
@@ -97,14 +97,14 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 foreach (var sub in typeDefinition.Children)
                 {
-                    CheckForValueClause(sub, typeDefinition.QualifiedName);
+                    CheckForValueClause(sub, typeDefinition.Name);
                 }
             }
             // Add a warning if a parameters field is set inside the formalized comment
-            if (typeDefinition.CodeElement().FormalizedCommentDocumentation != null &&
-                !typeDefinition.CodeElement().FormalizedCommentDocumentation.Parameters.IsNullOrEmpty())
+            if (typeDefinition.CodeElement.FormalizedCommentDocumentation != null &&
+                !typeDefinition.CodeElement.FormalizedCommentDocumentation.Parameters.IsNullOrEmpty())
             {
-                var token = typeDefinition.CodeElement().ConsumedTokens
+                var token = typeDefinition.CodeElement.ConsumedTokens
                     .FirstOrDefault(t => t.TokenType == TokenType.FORMALIZED_COMMENTS_PARAMETERS);
                 if (token != null)
                 {
@@ -113,18 +113,21 @@ namespace TypeCobol.Compiler.Diagnostics
                         token, code: MessageCode.Warning);
                 }
             }
+
+            //Check circular reference if not already done by TypeCobolLinker
+            TypeCobolLinker.CheckCircularReferences(typeDefinition);
         }
 
-        private static void CheckForValueClause(Node node, QualifiedName typedef)
+        private static void CheckForValueClause(Node node, string typedefName)
         {
             var codeElement = node.CodeElement as DataDescriptionEntry;
             if (codeElement != null && codeElement.InitialValue != null)
             {
                 string message = "Illegal VALUE clause for subordinate \'" + node.Name + "\' of STRONG TYPEDEF \'" +
-                                 typedef.Head + "\'";
+                                 typedefName + "\'";
                 DiagnosticUtils.AddError(node, message, codeElement, code:MessageCode.SemanticTCErrorInParser);
             }
-            foreach (var sub in node.Children) CheckForValueClause(sub, typedef);
+            foreach (var sub in node.Children) CheckForValueClause(sub, typedefName);
         }
     }
 
@@ -141,7 +144,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     MessageCode.SemanticTCErrorInParser);
             }
 
-            var redefinesSymbolReference = redefinesNode.CodeElement().RedefinesDataName;
+            var redefinesSymbolReference = redefinesNode.CodeElement.RedefinesDataName;
             var redefinedVariable = redefinesNode.SymbolTable.GetRedefinedVariable(redefinesNode, redefinesSymbolReference);
 
             if (redefinedVariable == null)
@@ -150,6 +153,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(redefinesNode, message, redefinesSymbolReference, code: MessageCode.SemanticTCErrorInParser);
                 return;
             }
+            redefinedVariable.AddDataRedefinition(redefinesNode);
+
 
             if (redefinedVariable.IsStronglyTyped || redefinedVariable.IsStrictlyTyped)
             {
@@ -169,10 +174,10 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 return; //not my job
             }
-            if (renames?.CodeElement()?.RenamesFromDataName != null)
-                Check(renames.CodeElement().RenamesFromDataName, renames);
-            if(renames?.CodeElement()?.RenamesToDataName != null)
-                Check(renames.CodeElement().RenamesToDataName, renames);
+            if (renames.CodeElement?.RenamesFromDataName != null)
+                Check(renames.CodeElement.RenamesFromDataName, renames);
+            if(renames.CodeElement?.RenamesToDataName != null)
+                Check(renames.CodeElement.RenamesToDataName, renames);
         }
 
         private static void Check(SymbolReference renames, Node node)
@@ -192,7 +197,7 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             var found = founds.First();
-            var foundCodeElement = found.CodeElement as DataDefinitionEntry;
+            var foundCodeElement = found.CodeElement;
            
             if (found.IsStronglyTyped || found.IsStrictlyTyped)
             {
@@ -212,10 +217,6 @@ namespace TypeCobol.Compiler.Diagnostics
 
     class TypedDeclarationChecker
     {
-        public IList<Type> GetNodes()
-        {
-            return new List<Type>() {typeof(ITypedNode),};
-        }
 
         private static List<Node> browsedTypes = new List<Node>();
 
@@ -235,8 +236,7 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             var type = dataDefinition.DataType;
-            TypeDefinition foundedType = null;
-            TypeDefinitionHelper.Check(node, type, out foundedType); //Check if the type exists and is not ambiguous
+            TypeDefinition foundedType = dataDefinition.TypeDefinition;
 
             if (foundedType == null || data == null || data.LevelNumber == null)
                 return;
@@ -279,7 +279,13 @@ namespace TypeCobol.Compiler.Diagnostics
 
         private static long SimulatedTypeDefLevel(long startingLevel, DataDefinition node)
         {
+            if (node == null)//case where the type of variable is not found
+            {
+                return startingLevel;
+            }
+
             var maximalLevelReached = startingLevel;
+            
 
             if (node is TypeDefinition)
             {
@@ -293,22 +299,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 var calculatedLevel = startingLevel;
                 if (child.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85) //If variable is typed
                 {
-                    /*----- This section should be removed when issue #1009 is fixed ----- */
-                    /*----- We'll only need child.TypeDefinition --------------------------*/
-                    TypeDefinition foundType;
-                    if (child.TypeDefinition == null)
-                    {
-                        var foundedTypes = node.SymbolTable.GetType(child.DataType);
-                        if (foundedTypes.Count != 1)
-                            continue; //If none or multiple corresponding type, it's useless to check
-
-                        foundType = foundedTypes.First();
-                    }
-                    else
-                        foundType = child.TypeDefinition;
-                    /* -----------------------------------------------------------------  */
-
-                    calculatedLevel = SimulatedTypeDefLevel(++calculatedLevel, foundType);
+                    calculatedLevel = SimulatedTypeDefLevel(++calculatedLevel, child.TypeDefinition);
                 }
                 else if (child.Children.Count > 0) //If variable is not typed, check if there is children
                 {
@@ -325,47 +316,5 @@ namespace TypeCobol.Compiler.Diagnostics
             return maximalLevelReached;
         }
     }
-
-    public static class TypeDefinitionHelper
-    {
-        /// <summary>
-        /// Generic method to check if a type is referenced or not or if it is ambiguous.
-        /// </summary>
-        /// <param name="node"></param>
-        /// <param name="type"></param>
-        /// <param name="foundedType"></param>
-        public static void Check(Node node, DataType type, out TypeDefinition foundedType)
-        {
-            foundedType = null;
-            if (type.CobolLanguageLevel == CobolLanguageLevel.Cobol85)
-                return; //nothing to do, Type exists from Cobol 2002
-            var dataDefinition = node as DataDefinition;
-            if (dataDefinition?.TypeDefinition != null)
-            {
-                foundedType = dataDefinition.TypeDefinition;
-                return;
-            }
-
-            var found = node.SymbolTable.GetType(type);
-            if (found.Count < 1)
-            {
-                string message = "TYPE \'" + type.Name + "\' is not referenced";
-                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
-            }
-            else if (found.Count > 1)
-            {
-                string message = "Ambiguous reference to TYPE \'" + type.Name + "\'";
-                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
-            }
-            else
-            {
-                //In case TypeDefinition is not already set, or it's not a DataDefinition Node
-                foundedType = found[0];
-                if (dataDefinition != null)
-                    dataDefinition.TypeDefinition = foundedType;
-            }
-
-        }
-
-    }
+    
 }

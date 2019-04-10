@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,12 +23,26 @@ namespace TypeCobol.Compiler.Nodes {
         /// <summary>TODO: Codegen should do its stuff without polluting this class.</summary>
         public bool? Comment = null;
 
-        protected Node(CodeElement CodeElement) {
-            this.CodeElement = CodeElement;
+        protected Node() {
         }
 
-        /// <summary>CodeElement data (weakly-typed)</summary>
-        public virtual CodeElement CodeElement { get; private set; }
+
+
+        /// <summary>
+        /// Return the CodeElement associated with this Node.
+        /// 
+        /// Subclass of Node can re-declare this method with "new" to return the correct class of CodeElement.
+        /// public SubClassOfCodeElement CodeElement => ...
+        /// 
+        /// Note : you cannot override and change the return type.
+        /// For implementation details see InternalCodeElement property and GenericNode
+        /// </summary>
+        /// <see cref="InternalCodeElement"/>
+        [CanBeNull]
+        public CodeElement CodeElement => InternalCodeElement;
+
+        [CanBeNull]
+        protected abstract CodeElement InternalCodeElement {  get;}
 
         /// <summary>Parent node (weakly-typed)</summary>
         public Node Parent { get; private set; }
@@ -73,7 +88,7 @@ namespace TypeCobol.Compiler.Nodes {
         /// Some interresting flags. Note each flag must be a power of 2
         /// for instance: 0x1 << 0; 0x01 << 1; 0x01 << 2 ... 0x01 << 32
         /// </summary>
-        public enum Flag : int
+        public enum Flag : uint
         {
             /// <summary>
             /// Flag that indicates that the node has been visited for Type Cobol Qualification style detection.
@@ -188,9 +203,17 @@ namespace TypeCobol.Compiler.Nodes {
             /// Mark a program that contains procedure declaration.
             /// </summary>
             ContainsProcedure = 0x01 << 26,
-
-
-
+            /// <summary>
+            /// Mark a node whose come from a Typedef Declared By a Copy.
+            /// </summary>
+            InsideTypedefFromCopy = 0x01 << 27,
+            /// <summary>
+            /// Indicate the node who is inserted by the codegen to indicate the COPY node.
+            /// </summary>
+            IsTypedefCopyNode = 0x01 << 28,
+            /// Mark a program that should generate its procedure as nested pgm.
+            /// </summary>
+            GenerateAsNested = 0x01 << 29,
         };
         /// <summary>
         /// A 32 bits value for flags associated to this Node
@@ -292,6 +315,45 @@ namespace TypeCobol.Compiler.Nodes {
                 qn.Reverse();
                 _visualQualifiedName = new URI(qn);
                 return _visualQualifiedName;
+            }
+        }
+
+
+        private List<string> _fixedVisualQualifiedName;
+
+        /// <summary>
+        /// List of all named Node that leads to this one.
+        /// Except there is no program or function/procedure prefix.
+        /// </summary>
+        public virtual List<string> VisualQualifiedNameWithoutProgram
+        {
+            get
+            {
+                if (_fixedVisualQualifiedName == null)
+                {
+                    _fixedVisualQualifiedName = new List<string>();
+                    var currentNode = this;
+                    while (currentNode != null)
+                    {
+                        if (!string.IsNullOrEmpty(currentNode.Name))
+                        {
+                            _fixedVisualQualifiedName.Add(currentNode.Name);
+                        }
+
+                        currentNode = currentNode.Parent;
+
+                        //If it's a procedure, we can exit we don't need the program name
+                        if (currentNode is FunctionDeclaration) 
+                            break;
+                        //If we reach a data section (working-storage section, ...) stop here
+                        if (currentNode is DataSection)
+                            break;
+                    }
+
+                    _fixedVisualQualifiedName.Reverse();
+                }
+
+                return _fixedVisualQualifiedName;
             }
         }
 
@@ -397,7 +459,27 @@ namespace TypeCobol.Compiler.Nodes {
         /// <summary>
         /// Allows to store the used storage areas and their fully qualified Name. 
         /// </summary>
-        public Dictionary<StorageArea, string> QualifiedStorageAreas { get; set; }
+        public Dictionary<StorageArea, DataDefinitionPath> QualifiedStorageAreas { get; set; }
+
+        /// <summary>
+        /// Get the fully qualified name used to reference the DataDefinition referenced by this StorageArea
+        ///
+        /// For a DataDefinition outside a typedef, this its qualified name
+        /// For a DataDefinition in a typedef, this is its qualified name inside the typedef and the qualified name of the DataDefinition that use this type
+        /// </summary>
+        /// <param name="storageArea"></param>
+        /// <returns></returns>
+        public string GetQualifiedName(StorageArea storageArea)
+        {
+            if (this.QualifiedStorageAreas[storageArea] == null)
+            {
+                return GetDataDefinitionFromStorageAreaDictionary(storageArea).QualifiedName.ToString();
+            }
+            else
+            {
+                return this.QualifiedStorageAreas[storageArea].ToString(".");
+            }
+        }
 
         private List<Diagnostic> _Diagnostics;
 
@@ -429,16 +511,6 @@ namespace TypeCobol.Compiler.Nodes {
             return children.OfType<N>().ToList();
         }
 
-        public IList<CodeElementHolder<T>> GetCodeElementHolderChildren<T>() where T : CodeElement {
-            var results = new List<CodeElementHolder<T>>();
-            foreach (var child in children) {
-                if (child.CodeElement == null) continue;
-                if (Reflection.IsTypeOf(child.CodeElement.GetType(), typeof(T)))
-                    results.Add((CodeElementHolder<T>) child);
-            }
-            return results;
-        }
-
 
         private Program _programNode;
         /// <summary>
@@ -456,21 +528,6 @@ namespace TypeCobol.Compiler.Nodes {
 
             return _programNode;
         }
-        
-        /// <summary>Search for all children of a specific Name</summary>
-        /// <param name="name">Name we search for</param>
-        /// <param name="deep">true for deep search, false for shallow search</param>
-        /// <returns>List of all children with the proper name ; empty list if there is none</returns>
-        public IList<T> GetChildren<T>(string name, bool deep) where T : Node {
-            var results = new List<T>();
-            foreach (var child in children) {
-                var typedChild = child as T;
-                if (typedChild != null && name.Equals(child.Name, StringComparison.OrdinalIgnoreCase)) results.Add(typedChild);
-                if (deep) results.AddRange(child.GetChildren<T>(name, true));
-            }
-            return results;
-        }
-
 
         /// <summary>Adds a node as a children of this one.</summary>
         /// <param name="child">Child to-be.</param>
@@ -712,13 +769,15 @@ namespace TypeCobol.Compiler.Nodes {
         /// The tuple stores the complete qualified name of the corresponding node (as string) and the DataDefintion.
         /// Node properties are context dependent and the tuple ensures the retrieved DataDefintion is consistent with the context
         /// </summary>
-        public IDictionary<StorageArea, Tuple<string,DataDefinition>> StorageAreaReadsDataDefinition { get; internal set; }
+        public IDictionary<StorageArea, DataDefinition> StorageAreaReadsDataDefinition { get; internal set; }
         /// <summary>
         /// Dictionary that contains pairs of StorageArea and Tuple "string,DataDefintion" for the Write Area
         /// The tuple stores the complete qualified name of the corresponding node (as string) and the DataDefintion.
         /// Node properties are context dependent and the tuple ensures the retrieved DataDefintion is consistent with the context
         /// </summary>
-        public IDictionary<StorageArea, Tuple<string,DataDefinition>> StorageAreaWritesDataDefinition { get; internal set; }
+        public IDictionary<StorageArea, DataDefinition> StorageAreaWritesDataDefinition { get; internal set; }
+
+
 
         /// <summary>
         /// Search both dictionaries for a given StorageArea
@@ -730,7 +789,7 @@ namespace TypeCobol.Compiler.Nodes {
         /// <returns>Correpsonding DataDefinition</returns>
         public DataDefinition GetDataDefinitionFromStorageAreaDictionary(StorageArea searchedStorageArea, bool? isReadDataDefiniton=null)
         {
-            Tuple<string, DataDefinition> searchedElem = null;
+            DataDefinition searchedElem = null;
             if (isReadDataDefiniton == null)
             {
                 StorageAreaReadsDataDefinition?.TryGetValue(
@@ -752,12 +811,12 @@ namespace TypeCobol.Compiler.Nodes {
                 StorageAreaWritesDataDefinition?.TryGetValue(
                     searchedStorageArea, out searchedElem);
             }
-            return searchedElem?.Item2;
+            return searchedElem;
         }
         
         public DataDefinition GetDataDefinitionForQualifiedName(QualifiedName qualifiedName, bool? isReadDictionary=null)
         {
-            Tuple<string, DataDefinition> searchedElem = null;
+            DataDefinition searchedElem = null;
             if (isReadDictionary.HasValue)
             {
                 searchedElem = isReadDictionary.Value
@@ -773,15 +832,38 @@ namespace TypeCobol.Compiler.Nodes {
 
             }
 
-            return searchedElem?.Item2;
+            return searchedElem;
         }
     }
 
-// --- Temporary base classes for data definition noes ---
+    /// <summary>
+    /// <![CDATA[
+    /// This class provide generics support for CodeElement property.
+    /// 
+    /// 
+    /// Note: Generics cannot be used directly on Node class for CodeElement property.
+    /// If you try to use generics with Node<CE> where CE : CodeElement.
+    /// then the property Children have to use generic Node as well.
+    /// Children<Node<CE>> is wrong because not all children use the same class for the CodeElement.
+    /// ]]>
+    /// </summary>
+    /// <typeparam name="CE">The type of CodeElement associated with this Node</typeparam>
+    public abstract class GenericNode<CE> : Node where CE : CodeElement {
 
-    public interface ITypedNode {
-        DataType DataType { get; }
-        int Length { get; }
+
+        protected GenericNode([NotNull] CE codeElement)
+        {
+            this.CodeElement = codeElement;
+        }
+
+        [NotNull]
+        protected override CodeElement InternalCodeElement => CodeElement;
+
+        /// <summary>
+        /// Use "new" keyword so we can change the return type.
+        /// </summary>
+        [NotNull]
+        public new CE CodeElement {get; }
     }
 
     /// <summary>Implementation of the GoF Visitor pattern.</summary>
@@ -789,20 +871,6 @@ namespace TypeCobol.Compiler.Nodes {
         void Visit(Node node);
     }
 
-
-    public interface CodeElementHolder<T> where T : CodeElement {}
-
-    public static class CodeElementHolderExtension {
-        /// <summary>CodeElement data (strongly-typed)</summary>
-        /// <typeparam name="T">Class (derived from <see cref="CodeElement" />) of the data.</typeparam>
-        /// <param name="holder">We want this <see cref="Node" />'s data.</param>
-        /// <returns>This <see cref="Node" />'s CodeElement data, but strongly-typed.</returns>
-        public static T CodeElement<T>(this CodeElementHolder<T> holder) where T : CodeElement {
-            var node = holder as Node;
-            if (node == null) throw new ArgumentException("CodeElementHolder must be a Node.");
-            return (T) node.CodeElement;
-        }
-    }
 
     /// <summary>A <see cref="Node" /> who can type its parent more strongly should inherit from this.</summary>
     /// <typeparam name="C">Class (derived from <see cref="Node{T}" />) of the parent node.</typeparam>
@@ -856,7 +924,7 @@ namespace TypeCobol.Compiler.Nodes {
 
 
     /// <summary>SourceFile of any Node tree, with null CodeElement.</summary>
-    public class SourceFile : Node, CodeElementHolder<CodeElement> {
+    public class SourceFile : GenericNode<CodeElement> {
         public SourceFile() : base(null)
         {
             GeneratedCobolHashes = new Dictionary<string, string>();
@@ -901,7 +969,7 @@ namespace TypeCobol.Compiler.Nodes {
 
     }
 
-    public class LibraryCopy : Node, CodeElementHolder<LibraryCopyCodeElement>, Child<Program> {
+    public class LibraryCopy : GenericNode<LibraryCopyCodeElement>, Child<Program> {
         public LibraryCopy(LibraryCopyCodeElement ce) : base(ce) {}
 
         public override string ID {
@@ -914,20 +982,20 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    public class Class : Node, CodeElementHolder<ClassIdentification> {
+    public class Class : GenericNode<ClassIdentification> {
         public Class(ClassIdentification identification) : base(identification) {}
 
         public override string ID {
             get { return "class";  }
         }
-        public override string Name { get { return this.CodeElement().ClassName.Name; } }
+        public override string Name { get { return this.CodeElement.ClassName.Name; } }
 
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
         }
     }
 
-    public class Factory : Node, CodeElementHolder<FactoryIdentification> {
+    public class Factory : GenericNode<FactoryIdentification> {
         public Factory(FactoryIdentification identification) : base(identification) {}
 
         public override string ID {
@@ -940,14 +1008,14 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    public class Method : Node, CodeElementHolder<MethodIdentification> {
+    public class Method : GenericNode<MethodIdentification> {
         public Method(MethodIdentification identification) : base(identification) {}
 
         public override string ID {
             get { return "Method"; }
         }
 
-        public override string Name { get { return this.CodeElement().MethodName.Name; } }
+        public override string Name { get { return this.CodeElement.MethodName.Name; } }
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -955,7 +1023,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    public class Object : Node, CodeElementHolder<ObjectIdentification> {
+    public class Object : GenericNode<ObjectIdentification> {
         public Object(ObjectIdentification identification) : base(identification) {}
 
         public override string ID {
@@ -968,7 +1036,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    public class End : Node, CodeElementHolder<CodeElementEnd> {
+    public class End : GenericNode<CodeElementEnd> {
         public End(CodeElementEnd end) : base(end) {}
 
         public override string ID {

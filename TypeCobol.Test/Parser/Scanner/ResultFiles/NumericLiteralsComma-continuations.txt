@@ -1,4 +1,4 @@
-﻿-- Line 1 --
+-- Line 1 --
 [1,13:DECIMAL-POINT]<DECIMAL_POINT>
 [14,14: ]<SpaceSeparator>
 [15,16:IS]<IS>
@@ -30,7 +30,7 @@
 
 -- Line 9 --
 =>continuation:[2,4:+123]<IntegerLiteral>{123}
-Line -1[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
+Line 0[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
 
 -- Line 10 --
 [1,1: ]<SpaceSeparator>

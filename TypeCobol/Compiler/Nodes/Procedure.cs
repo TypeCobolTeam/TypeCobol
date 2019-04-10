@@ -11,7 +11,7 @@ namespace TypeCobol.Compiler.Nodes {
     using TypeCobol.Compiler.CodeElements;
     using CodeElements.Expressions;
 
-    public class ProcedureDivision: Node, CodeElementHolder<ProcedureDivisionHeader> {
+    public class ProcedureDivision: GenericNode<ProcedureDivisionHeader> {
 	    public ProcedureDivision(ProcedureDivisionHeader header): base(header) { }
 	    public override string ID { get { return "procedure-division"; } }
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -87,7 +87,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    public class Declaratives : Node, CodeElementHolder<DeclarativesHeader>
+    public class Declaratives : GenericNode<DeclarativesHeader>
     {
         public Declaratives(DeclarativesHeader header) : base(header) { }
 
@@ -100,7 +100,7 @@ namespace TypeCobol.Compiler.Nodes {
 
     // [TYPECOBOL]
 
-    public class FunctionDeclaration: Node, CodeElementHolder<FunctionDeclarationHeader>, Tools.Hashable, IProcCaller, IDocumentable
+    public class FunctionDeclaration: GenericNode<FunctionDeclarationHeader>, Tools.Hashable, IProcCaller, IDocumentable
     {
         public FunctionDeclaration(FunctionDeclarationHeader header) : base(header)
         {
@@ -109,13 +109,16 @@ namespace TypeCobol.Compiler.Nodes {
 	    public override string ID { get { return Name; } }
 	    public string Label { get; internal set; }
 
-	    public override string Name { get { return QualifiedName.Head; } }
-	    public override CodeElements.Expressions.QualifiedName QualifiedName { get { return new CodeElements.Expressions.URI(this.CodeElement().Name); } }
+	    public override string Name => this.CodeElement.FunctionName.Name;
+        public override CodeElements.Expressions.QualifiedName QualifiedName { get { return new CodeElements.Expressions.URI(this.CodeElement.Name); } }
 
 	    public string Library { get; internal set; }
 	    public string Copy { get { return Library+"cpy"; } }
 	    //public ParametersProfile Profile { get { return this.CodeElement().Profile; } }
         public ParametersProfileNode Profile{ get; set; }
+        //For specific FunctionDeclaration generation as nested, check flag on FunctionDeclaration node
+        //Don't forget to set the flag on the right node in ProgramClassBuilder
+        public bool GenerateAsNested => this.Root.MainProgram.IsFlagSet(Flag.GenerateAsNested);
 
 
         private string _hash;
@@ -150,13 +153,17 @@ namespace TypeCobol.Compiler.Nodes {
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            return astVisitor.Visit(this);
+            return astVisitor.Visit(this) && this.ContinueVisitToChildren(astVisitor, Profile.InputParameters)
+                                          && this.ContinueVisitToChildren(astVisitor, Profile.InoutParameters)
+                                          && this.ContinueVisitToChildren(astVisitor, Profile.OutputParameters)
+                                          && this.ContinueVisitToChildren(astVisitor, Profile.ReturningParameter );
+
         }
 
         public Dictionary<string, Tuple<IList<SymbolReference>, ProcedureStyleCall>> ProcStyleCalls { get; set; }
     }
 
-    public class FunctionEnd: Node, CodeElementHolder<FunctionDeclarationEnd> {
+    public class FunctionEnd: GenericNode<FunctionDeclarationEnd> {
 	    public FunctionEnd(FunctionDeclarationEnd end): base(end) { }
 	    public override string ID { get { return "function-end"; } }
 
@@ -168,23 +175,23 @@ namespace TypeCobol.Compiler.Nodes {
 
 // [/TYPECOBOL]
 
-    public class Section: Node, CodeElementHolder<SectionHeader> {
+    public class Section: GenericNode<SectionHeader> {
 	    public Section(SectionHeader header): base(header) { }
 	    public override string ID { get { return "section"; } }
-        public override string Name { get { return this.CodeElement().SectionName.Name; } }
+        public override string Name { get { return this.CodeElement.SectionName.Name; } }
 
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
         }
     }
 
-    public class Paragraph: Node, CodeElementHolder<ParagraphHeader> {
+    public class Paragraph: GenericNode<ParagraphHeader> {
 	    public Paragraph(ParagraphHeader header): base(header) { }
 	    public override string ID { get { return "paragraph"; } }
         private string _Name;
         public override string Name { get {
             if (_Name == null)
-                _Name = this.CodeElement().ParagraphName.Name;
+                _Name = this.CodeElement.ParagraphName.Name;
             return _Name;
         } }
 
@@ -193,8 +200,8 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    public class Sentence: Node, CodeElementHolder<CodeElement> {
-	    public Sentence(): base(null) { }
+    public class Sentence: Node {
+	    public Sentence() { }
 	    public override string ID {
 		    get {
 			    string id = "sentence-";
@@ -203,6 +210,9 @@ namespace TypeCobol.Compiler.Nodes {
 			    return id;
 		    }
 	    }
+
+        protected override CodeElement InternalCodeElement => null;
+
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);

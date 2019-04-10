@@ -272,14 +272,14 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(DataDefinition dataDefinition)
         {
-            CommonDataDescriptionAndDataRedefines commonDataDataDefinitionCodeElement =
-                dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines;
+            var commonDataDataDefinitionCodeElement = dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines;
             if (commonDataDataDefinitionCodeElement!=null)
             {
                 CheckPicture(dataDefinition);
             }
 
-            DataDefinitionEntry dataDefinitionEntry = dataDefinition.CodeElement as DataDefinitionEntry;
+
+            DataDefinitionEntry dataDefinitionEntry = dataDefinition.CodeElement;
             
             if (dataDefinitionEntry == null) return true;
 
@@ -448,7 +448,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     // Multiline Version
                     //errorMessage += Environment.NewLine + "\t" + symbol.Key.Replace(".", "::");
                     // Inline version
-                    errorMessage += (isFirst ? "" : " | ") + symbol.Key.Replace(".", "::");
+                    //                                        if qualified name list is not null, create a string          otherwise is the qualified name of the DataDefinition
+                    errorMessage += (isFirst ? "" : " | ") + (symbol.Key != null ? symbol.Key.ToString().Replace(".", "::") : symbol.Value.QualifiedName.ToString().Replace(".", "::"));
                     isFirst = false;
                 }
                 DiagnosticUtils.AddError(node, errorMessage, area.SymbolReference);
@@ -456,11 +457,11 @@ namespace TypeCobol.Compiler.Diagnostics
             else if (foundCount == 1)
             {
                 var dataDefinitionFound = found.First();
-                string completeQualifiedName = foundQualified.First().Key;
+                var dataDefinitionPath = foundQualified.First().Key;
 
                 if (foundQualified.Count == 1)
                 {
-                    IndexAndFlagDataDefiniton(completeQualifiedName, dataDefinitionFound, node, area, storageArea);
+                    IndexAndFlagDataDefiniton(dataDefinitionPath, dataDefinitionFound, node, area, storageArea);
                 }
                 //add the found DataDefinition to a dictionary depending on the storage area type
                 if (isReadStorageArea)
@@ -468,18 +469,18 @@ namespace TypeCobol.Compiler.Diagnostics
                     //need to initialize the dictionaries
                     if (node.StorageAreaReadsDataDefinition == null)
                     {
-                        node.StorageAreaReadsDataDefinition = new Dictionary<StorageArea, Tuple<string, DataDefinition>>();
+                        node.StorageAreaReadsDataDefinition = new Dictionary<StorageArea, DataDefinition>();
                     }
-                    node.StorageAreaReadsDataDefinition.Add(storageArea,new Tuple<string, DataDefinition>(completeQualifiedName,dataDefinitionFound));
+                    node.StorageAreaReadsDataDefinition.Add(storageArea,dataDefinitionFound);
                 }
                 else
                 {
                     //need to initialize the dictionaries
                     if (node.StorageAreaWritesDataDefinition == null)
                     {
-                        node.StorageAreaWritesDataDefinition = new Dictionary<StorageArea, Tuple<string, DataDefinition>>();
+                        node.StorageAreaWritesDataDefinition = new Dictionary<StorageArea, DataDefinition>();
                     }
-                    node.StorageAreaWritesDataDefinition.Add(storageArea,new Tuple<string, DataDefinition>(completeQualifiedName,dataDefinitionFound));
+                    node.StorageAreaWritesDataDefinition.Add(storageArea,dataDefinitionFound);
                 }
 
                 return dataDefinitionFound;
@@ -488,7 +489,7 @@ namespace TypeCobol.Compiler.Diagnostics
             return null;
         }
 
-        private static void IndexAndFlagDataDefiniton(string completeQualifiedName, DataDefinition dataDefinition,
+        private static void IndexAndFlagDataDefiniton(DataDefinitionPath dataDefinitionPath, DataDefinition dataDefinition,
             Node node, StorageArea area, StorageArea storageArea)
         {
             if (dataDefinition.IsIndex)
@@ -513,13 +514,12 @@ namespace TypeCobol.Compiler.Diagnostics
                 //Index name is qualified or belongs to a typedef
                 {
                     //Mark this node for generator
-                    FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, node, storageArea,
-                        completeQualifiedName);
+                    FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, node, storageArea, dataDefinitionPath);
 
                     foreach (var reference in index.GetReferences())
                     {
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, reference.Value,
-                            reference.Key, completeQualifiedName);
+                            reference.Key, dataDefinitionPath);
                     }
                 }
                 else if (!area.SymbolReference.IsQualifiedReference)
@@ -529,7 +529,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if(index.IsFlagSet(Node.Flag.IndexUsedWithQualifiedName))
                     {
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, node, storageArea,
-                            completeQualifiedName);
+                            dataDefinitionPath);
                     }
                 }
 
@@ -545,14 +545,13 @@ namespace TypeCobol.Compiler.Diagnostics
                         DiagnosticUtils.AddError(node,
                             "Index can not be use with OF or IN qualifiers " + area, area.SymbolReference);
                 }
-                else if (dataDefinition.DataType == DataType.Boolean && dataDefinition.CodeElement is DataDefinitionEntry &&
-                         ((DataDefinitionEntry) dataDefinition?.CodeElement)?.LevelNumber?.Value != 88)
+                else if (dataDefinition.DataType == DataType.Boolean)
                 {
                     if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.PerformProcedure || node is Nodes.WhenSearch || node is Nodes.When ) || storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)//Ignore If/Set/Perform/WhenSearch Statement
                     {
                         //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea,
-                            completeQualifiedName);
+                            dataDefinitionPath);
                     }
                 }
 
@@ -611,14 +610,14 @@ namespace TypeCobol.Compiler.Diagnostics
         }
 
         private static void FlagNodeAndCreateQualifiedStorageAreas(Node.Flag flag, Node node, StorageArea storageArea,
-            string completeQualifiedName)
+            DataDefinitionPath dataDefinitionPath)
         {
             node.SetFlag(flag, true);
             if (node.QualifiedStorageAreas == null)
-                node.QualifiedStorageAreas = new Dictionary<StorageArea, string>();
+                node.QualifiedStorageAreas = new Dictionary<StorageArea, DataDefinitionPath>();
 
             if (!node.QualifiedStorageAreas.ContainsKey(storageArea))
-                node.QualifiedStorageAreas.Add(storageArea, completeQualifiedName);
+                node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
         }
     }
     
@@ -626,7 +625,7 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         public static void CheckReferenceToParagraphOrSection(PerformProcedure perform)
         {
-            var performCE = (PerformProcedureStatement)perform.CodeElement;
+            var performCE = perform.CodeElement;
             SymbolReference symbol;
             symbol = ResolveProcedureName(perform.SymbolTable, performCE.Procedure as AmbiguousSymbolReference, perform);
             if (symbol != null) performCE.Procedure = symbol;
@@ -715,13 +714,13 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (sent == null || wname == null) return; //Both items needed
             //var wsymbol = CrossCompleteChecker.CheckVariable(node, wname,false);
-            Tuple<string, DataDefinition> searchExistingDataDefinition;
+            DataDefinition searchExistingDataDefinition;
             DataDefinition wsymbol = null;
             //check if dico not null
             if (node.StorageAreaWritesDataDefinition != null)
             {
                 node.StorageAreaWritesDataDefinition.TryGetValue(wname, out searchExistingDataDefinition);
-                wsymbol = searchExistingDataDefinition?.Item2;
+                wsymbol = searchExistingDataDefinition;
             }
 
 
@@ -742,7 +741,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (node.StorageAreaReadsDataDefinition != null)
                 {
                     node.StorageAreaReadsDataDefinition.TryGetValue((StorageArea)sent, out searchExistingDataDefinition);
-                    rsymbol = searchExistingDataDefinition?.Item2;
+                    rsymbol = searchExistingDataDefinition;
                 }
 
                 if (rsymbol != null)
@@ -811,8 +810,8 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 var dataCondition = data as DataCondition;
                 if (dataCondition != null)
-                    return new GeneratedDefinition(dataCondition.CodeElement().DataType.Name,
-                        dataCondition.CodeElement().DataType);
+                    return new GeneratedDefinition(dataCondition.CodeElement.DataType.Name,
+                        dataCondition.CodeElement.DataType);
 
                 DataDescriptionEntry entry;
                 var descriptionEntry = data.CodeElement as DataDescriptionEntry;
@@ -845,14 +844,15 @@ namespace TypeCobol.Compiler.Diagnostics
 
                 if (entry.UserDefinedDataType == null)
                     return new GeneratedDefinition(entry.DataType.Name, entry.DataType);
+            } else
+            {
+                return null;
             }
-            ITypedNode typed = symbol as ITypedNode;
-            if (typed == null) return null; // symbol untyped
 
             if (data?.TypeDefinition != null)
                 return data.TypeDefinition;
 
-            var types = node.SymbolTable.GetType(typed);
+            var types = node.SymbolTable.GetType(data);
             // return null if symbol type not found or ambiguous
             return types.Count != 1 ? null : types[0];
         }

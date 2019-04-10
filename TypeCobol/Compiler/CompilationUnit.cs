@@ -173,7 +173,7 @@ namespace TypeCobol.Compiler
                     SourceFile root = temporarySnapshot.Root;
                     List<Diagnostic> diagnostics = new List<Diagnostic>();
                     Dictionary<CodeElement, Node> nodeCodeElementLinkers = temporarySnapshot.NodeCodeElementLinkers ?? new Dictionary<CodeElement, Node>();
-                    ProgramClassParserStep.CrossCheckPrograms(root);
+                    ProgramClassParserStep.CrossCheckPrograms(root, temporarySnapshot);
               
                     // Capture the result of the parse in a new snapshot
                     ProgramClassDocumentSnapshot = new ProgramClassDocument(
@@ -221,11 +221,17 @@ namespace TypeCobol.Compiler
                     List<Diagnostic> newDiagnostics;
                     Dictionary<CodeElement, Node> nodeCodeElementLinkers = new Dictionary<CodeElement, Node>();
 
+                    List<DataDefinition> typedVariablesOutsideTypedef = new List<DataDefinition>();
+                    List<TypeDefinition> typeThatNeedTypeLinking = new List<TypeDefinition>();
+
                     //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
-                    ProgramClassParserStep.CupParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, perfStatsForParserInvocation, out root, out newDiagnostics, out nodeCodeElementLinkers);
+                    ProgramClassParserStep.CupParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, perfStatsForParserInvocation, out root, out newDiagnostics, out nodeCodeElementLinkers,
+                        out typedVariablesOutsideTypedef,
+                        out typeThatNeedTypeLinking);
 
                     // Capture the produced results
-                    TemporaryProgramClassDocumentSnapshot = new TemporarySemanticDocument(codeElementsDocument, new DocumentVersion<ICodeElementsLine>(this), codeElementsDocument.Lines,  root, newDiagnostics, nodeCodeElementLinkers);
+                    TemporaryProgramClassDocumentSnapshot = new TemporarySemanticDocument(codeElementsDocument, new DocumentVersion<ICodeElementsLine>(this), codeElementsDocument.Lines,  root, newDiagnostics, nodeCodeElementLinkers,
+                        typedVariablesOutsideTypedef, typeThatNeedTypeLinking);
 
                     // Stop perf measurement
                     PerfStatsForTemporarySemantic.OnStopRefreshParsingStep();

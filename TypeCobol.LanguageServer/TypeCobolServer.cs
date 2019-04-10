@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using Analytics;
 using TypeCobol.Compiler;
@@ -397,19 +398,53 @@ namespace TypeCobol.LanguageServer
                 return resultHover;
             }
 
-            var matchingNode = docContext.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers[((CodeElementWrapper)matchingCodeElement).CodeElement];
+            docContext.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers.TryGetValue(((CodeElementWrapper)matchingCodeElement).CodeElement, out var matchingNode);
             if (matchingNode == null)
-                return null;
+                return resultHover;
 
-            //OnHover for data declared with a type
-            var dataDefinition = matchingNode as DataDefinition;
-            if (dataDefinition?.TypeDefinition != null)
+            string message = string.Empty;
+
+            //Switch between all nodes that can return information
+            switch (matchingNode)
+            {
+                case DataDefinition data:
+                    if (data.TypeDefinition != null)
+                        message = data.TypeDefinition.ToString();
+                    break;
+                case ProcedureStyleCall call:
+                    //don't show hover on params
+                    if (call.FunctionDeclaration != null && lastSignificantToken.TokenType != TokenType.INPUT && lastSignificantToken.TokenType != TokenType.IN_OUT && lastSignificantToken.TokenType != TokenType.OUTPUT)
+                    {
+                        message = call.ToString();
+                    }
+                    break;
+                case FunctionDeclaration fun:
+                    //only for params of a function declaration
+                    if (userFilterToken != null && (lastSignificantToken.TokenType == TokenType.QualifiedNameSeparator || lastSignificantToken.TokenType == TokenType.TYPE))
+                    {
+                        foreach (var param in fun.Profile.Parameters)
+                        {
+                            //if the hovered position is inside this parameter
+                            //line + 1 : because start index is 0
+                            if (param.CodeElement.Line == parameters.position.line + 1 && 
+                                param.CodeElement.StartIndex < parameters.position.character && 
+                                param.CodeElement.StopIndex > parameters.position.character)
+                            {
+                                if (param.TypeDefinition != null)
+                                    message = param.TypeDefinition.ToString();
+                            }
+                        }
+                    }
+                    break;
+            }
+
+            if (message != string.Empty)
             {
                 resultHover.range = new Range(matchingCodeElement.Line, matchingCodeElement.StartIndex,
                     matchingCodeElement.Line,
                     matchingCodeElement.StopIndex + 1);
                 resultHover.contents =
-                    new MarkedString[] { new MarkedString() { language = "Cobol", value = string.Join("", dataDefinition.TypeDefinition.SelfAndChildrenLines.Select(e => e.Text + "\r\n")) } };
+                    new MarkedString[] { new MarkedString() { language = "Cobol", value = message } };
                 return resultHover;
             }
 
@@ -495,7 +530,7 @@ namespace TypeCobol.LanguageServer
                                 da =>
                                     da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase) &&
                                     ((da.CodeElement != null &&
-                                      (da.CodeElement as DataDefinitionEntry).LevelNumber.Value < 88)
+                                      da.CodeElement.LevelNumber.Value < 88)
                                      || (da.CodeElement == null && da is IndexDefinition))));
                             //Ignore 88 level variable
                             break;
@@ -510,7 +545,7 @@ namespace TypeCobol.LanguageServer
                         {
                             items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
                                 v => v.Name.StartsWith(userFilterText, StringComparison.CurrentCultureIgnoreCase)
-                                     && ((v.CodeElement as DataDefinitionEntry) != null &&
+                                     && (v.CodeElement != null &&
                                          v.DataType == DataType.Alphabetic
                                          || v.DataType == DataType.Alphanumeric
                                          || v.DataType == DataType.AlphanumericEdited)
@@ -522,8 +557,8 @@ namespace TypeCobol.LanguageServer
                             items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
                                 v => v.Name.StartsWith(userFilterText, StringComparison.CurrentCultureIgnoreCase)
                                      &&
-                                     (((v.CodeElement as DataDefinitionEntry) != null &&
-                                       (v.CodeElement as DataDefinitionEntry).LevelNumber.Value == 88)
+                                     ((v.CodeElement != null &&
+                                       v.CodeElement.LevelNumber.Value == 88)
                                       //Level 88 Variable
                                       || v.DataType == DataType.Numeric //Numeric Integer Variable
                                       || v.Usage == DataUsage.Pointer) //Or usage is pointer 

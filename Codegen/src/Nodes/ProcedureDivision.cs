@@ -97,7 +97,7 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
         var found = table.GetVariables(symbolReference);
 		if (found.Count() < 1) return "?NOT_FOUND?";
 		if (found.Count() > 1) return name;
-		var pentry = (DataDescriptionEntry)found.First().CodeElement;
+		var pentry = found.First().CodeElement;
 		if (pentry.DataType == DataType.Boolean) return name+"-value";
 		return name;
 	}

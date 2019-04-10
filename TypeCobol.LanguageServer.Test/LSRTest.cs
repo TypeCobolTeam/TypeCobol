@@ -132,6 +132,14 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("MultiLineCommentIncScan", LsrTestingOptions.NoLsrTesting, false);
         }
+
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void FormalizedCommentIncScan()
+        {
+            LSRTestHelper.Test("FormalizedCommentIncScan", LsrTestingOptions.NoLsrTesting, false, true);
+        }
+
         #endregion
 
         #region SyntaxColoring
@@ -322,6 +330,12 @@ namespace TypeCobol.LanguageServer.Test
         public void OnOutlineRefresh()
         {
             LSRTestHelper.Test("OutlineRefresh", LsrTestingOptions.NoLsrTesting, true, useOutline: true);
+        }
+
+        [TestMethod]
+        public void OnHover()
+        {
+            LSRTestHelper.Test("OnHover", LsrTestingOptions.NoLsrTesting, true, true);
         }
 
         [TestMethod]

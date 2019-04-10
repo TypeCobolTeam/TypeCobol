@@ -37,16 +37,17 @@
             05 DuplicatedCounter pic 999 comp-5.
 
        01 DependType TYPEDEF STRICT.
+            05 var1 TYPE MyType.
             05 VarCounter TYPE CounterType.
             05 ambigousCounter TYPE DuplicatedCounterType.
             05 ambigousCounter2 TYPE DuplicatedCounterType.
-            05 TypeCounter pic 999 comp-5.
+            05 TypeCounter2 pic 999 comp-5.
             05 MyGroup.
                 10 GroupCounter pic 999 comp-5.
 
       *OK, typecounter is declared locally
             05 secondTable pic x(1) occurs 5
-            depending on TypeCounter.
+            depending on TypeCounter2.
 
       *OK, VarCounter is declared in this context
             05 typedTable PIC X(1) occurs 5 
@@ -56,29 +57,37 @@
             05 secondTypedTable PIC X(1) occurs 5 
             depending on Counter.
 
+      *OK, TypeCounter is a variable under var1
+            05 tableVar PIC X(1) occurs 5 
+            depending on TypeCounter.
+
+      *OK, TypeCounter is a variable under var1
+            05 tableVar PIC X(1) occurs 5 
+            depending on var1::TypeCounter.
+
       *KO, trying to use a variable declared outside typedef
             05 tableVar PIC X(1) occurs 5 
-Line 61[39,49] <27, Error, Syntax> - Syntax error : Symbol MyTypedVar2.TypeCounter is not referenced
+Line 70[39,49] <27, Error, Syntax> - Syntax error : Symbol MyTypedVar2.TypeCounter is not referenced
             depending on MyTypedVar2::TypeCounter.
 
       *KO, trying to use a variable declared outside typedef
             05 tableVar PIC X(1) occurs 5 
-Line 65[43,49] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.Counter is not referenced
+Line 74[43,49] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.Counter is not referenced
             depending on DenpendingGroup::Counter.
 
       *KO, trying to use a variable declared outside typedef
             05 tableVar PIC X(1) occurs 5 
-Line 69[55,61] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.VarCounter.Counter is not referenced
+Line 78[55,61] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.VarCounter.Counter is not referenced
             depending on DenpendingGroup::VarCounter::Counter.
 
       *KO, trying to use a variable declared outside typedef
             05 tableVar PIC X(1) occurs 5 
-Line 73[43,53] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.TypeCounter is not referenced
+Line 82[43,53] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.TypeCounter is not referenced
             depending on DenpendingGroup::TypeCounter.
 
       *KO, trying to use an ambigous local var
             05 tableVar PIC X(1) occurs 5 
-Line 77[26,42] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DuplicatedCounter 
+Line 86[26,42] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DuplicatedCounter 
 Symbols found: DependOnPgm::DependType::ambigousCounter::DuplicatedCounterType::DuplicatedCounter | DependOnPgm::DependType::ambigousCounter2::DuplicatedCounterType::DuplicatedCounter
             depending on DuplicatedCounter.
 
