@@ -190,12 +190,13 @@ namespace TypeCobol.LanguageServer
                 }
 
                 // Document cleared
-                if (contentChange.range == null || contentChange.rangeLength == -1)
+                if (contentChange.range == null)
                 {
                     //JCM: I have noticed that if the entire text has changed, is better to reload the entire file
                     //To avoid crashes.
                     try
                     {
+                        docContext.LanguageServerConnection(false);
                         typeCobolWorkspace.OpenTextDocument(docContext, contentChange.text, this.Workspace.LsrTestOptions);
                         return;
                     }
@@ -211,7 +212,8 @@ namespace TypeCobol.LanguageServer
                 else if (docContext.FileCompiler.CompilationResultsForProgram.CobolTextLines.Count != 0)
                 {
                     // Get original lines text before change
-                    string originalFirstLineText =
+                    int lineCount = docContext.FileCompiler.CompilationResultsForProgram.CobolTextLines.Count;
+                    string originalFirstLineText = lineCount <= contentChange.range.start.line ? "" :
                         docContext.FileCompiler.CompilationResultsForProgram.CobolTextLines[contentChange.range.start.line]
                             .Text;
                     string originalLastLineText = originalFirstLineText;
@@ -319,7 +321,6 @@ namespace TypeCobol.LanguageServer
             {
                 RemoteConsole.Log(" - " + textChange.ToString());
             }
-
         }
 
         public override void OnDidCloseTextDocument(DidCloseTextDocumentParams parameters)

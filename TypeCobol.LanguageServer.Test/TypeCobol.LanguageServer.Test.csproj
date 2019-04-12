@@ -69,6 +69,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="LSRTests\BeginTopLineEnterEnter\input\BeginTopLineEnterEnter.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\BeginTopLineEnterEnter\output_expected\BeginTopLineEnterEnter.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\FormalizedCommentIncScan\input\FormalizedCommentIncScan.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -302,6 +308,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\ReplacingSyntaxOff\output_expected\replacingSyntaxOff.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\SelectEndSuppressSaveUndo\input\SelectEndSuppressSaveUndo.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\SelectEndSuppressSaveUndo\output_expected\SelectEndSuppressSaveUndo.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\SetToAddressOfCompletion\input\SetToAddressOfCompletion.tlsp">
