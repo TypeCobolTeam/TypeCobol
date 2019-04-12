@@ -75,6 +75,12 @@
     <None Include="LSRTests\BeginTopLineEnterEnter\output_expected\BeginTopLineEnterEnter.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\FirstLineEditCommentBeforeIdentDiv\input\FirstLineEditCommentBeforeIdentDiv.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\FirstLineEditCommentBeforeIdentDiv\output_expected\FirstLineEditCommentBeforeIdentDiv.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\FormalizedCommentIncScan\input\FormalizedCommentIncScan.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
