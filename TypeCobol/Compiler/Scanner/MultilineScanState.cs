@@ -55,11 +55,6 @@ namespace TypeCobol.Compiler.Scanner
         public bool InsideParamsField { get; private set; }
 
         /// <summary>
-        /// True if we have reached the end of a Foramlized Comment
-        /// </summary>
-        public bool FormalizedCommentLineEnd { get; private set; }
-
-        /// <summary>
         /// True if we are between two MultilineComments markups
         /// </summary>
         public bool InsideMultilineComments { get; private set; }
@@ -116,7 +111,7 @@ namespace TypeCobol.Compiler.Scanner
         /// Initialize scanner state for the first line
         /// </summary>
         public MultilineScanState(bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals) :
-            this(insideDataDivision, false, false, false, false, false, false, false, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals)
+            this(insideDataDivision, false, false, false, false, false, false, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals)
         { }
 
         /// <summary>
@@ -124,7 +119,6 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions, 
                 bool insideFormalizedComment, bool insideMultilineComments, bool insideParamsField,
-                bool formalizedCommentLineEnd, 
                 bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals)
         {
             InsideDataDivision = insideDataDivision;
@@ -133,7 +127,6 @@ namespace TypeCobol.Compiler.Scanner
             InsideFormalizedComment = insideFormalizedComment;
             InsideMultilineComments = insideMultilineComments;
             InsideParamsField = insideParamsField;
-            FormalizedCommentLineEnd = formalizedCommentLineEnd;
             InsideSymbolicCharacterDefinitions = insideSymbolicCharacterDefinitions;
             DecimalPointIsComma = decimalPointIsComma;
             WithDebuggingMode = withDebuggingMode;
@@ -147,9 +140,7 @@ namespace TypeCobol.Compiler.Scanner
         {
             MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, InsideSymbolicCharacterDefinitions,
                 InsideFormalizedComment, InsideMultilineComments, InsideParamsField, 
-                FormalizedCommentLineEnd,
                 DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
-            clone.FormalizedCommentLineEnd = FormalizedCommentLineEnd;
             if (LastSignificantToken != null) clone.LastSignificantToken = LastSignificantToken;
             if (BeforeLastSignificantToken != null) clone.BeforeLastSignificantToken = BeforeLastSignificantToken;
             if (SymbolicCharacters != null)
@@ -245,7 +236,6 @@ namespace TypeCobol.Compiler.Scanner
                     break;
                 case TokenType.FORMALIZED_COMMENTS_STOP:
                     // Register the end of the formalized Comments
-                    FormalizedCommentLineEnd = true;
                     InsideFormalizedComment = false;
                     InsideParamsField = false;
                     break;
@@ -506,7 +496,6 @@ namespace TypeCobol.Compiler.Scanner
                        InsideFormalizedComment == otherScanState.InsideFormalizedComment &&
                        InsideParamsField == otherScanState.InsideParamsField &&
                        InsideMultilineComments == otherScanState.InsideMultilineComments &&
-                       FormalizedCommentLineEnd == otherScanState.FormalizedCommentLineEnd &&
 
 #if EUROINFO_RULES
                 InsideRemarksDirective == otherScanState.InsideRemarksDirective &&
@@ -537,7 +526,6 @@ namespace TypeCobol.Compiler.Scanner
                 hash = hash * 23 + InsideFormalizedComment.GetHashCode();
                 hash = hash * 23 + InsideParamsField.GetHashCode();
                 hash = hash * 23 + InsideMultilineComments.GetHashCode();
-                hash = hash * 23 + FormalizedCommentLineEnd.GetHashCode();
 
 #if EUROINFO_RULES
                 hash = hash * 23 + InsideRemarksDirective.GetHashCode();
