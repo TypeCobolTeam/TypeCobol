@@ -88,6 +88,9 @@ namespace TypeCobol.Test.Domain
         [TestMethod]
         [TestCategory("SemanticDomain")]
         [TestProperty("Object", "TypeExpander")]
+#if DOMAIN_CHECKER
+        [Ignore]//Ignore because CrossCheck performs a program expansion
+#endif
         public void DateTypeExpanderCheck()
         {
             string path = Path.Combine(Directory.GetCurrentDirectory(), "Parser", "Programs", "TypeCobol", "Type-Date.tcbl");
@@ -156,6 +159,9 @@ namespace TypeCobol.Test.Domain
         [TestMethod]
         [TestCategory("SemanticDomain")]
         [TestProperty("Object", "TypeExpander")]
+#if DOMAIN_CHECKER
+        [Ignore]//Ignore because CrossCheck performs a program expansion
+#endif
         public void AllDateTypeExpanderCheck()
         {
             string path = Path.Combine(Directory.GetCurrentDirectory(), "Parser", "Programs", "TypeCobol", "Type-Date.tcbl");
@@ -1062,6 +1068,9 @@ namespace TypeCobol.Test.Domain
         [TestMethod]
         [TestCategory("SemanticDomain")]
         [TestProperty("Object", "Visibility")]
+#if DOMAIN_CHECKER
+        [Ignore]//Because visibility are not the same using CrossChecker
+#endif
         public void VisibilityProgramProcedureVariable0()
         {
             string path = Path.Combine(Directory.GetCurrentDirectory(), "SemanticDomain", "VisPrgProcVar0.tcbl");
@@ -1476,6 +1485,9 @@ namespace TypeCobol.Test.Domain
         [TestMethod]
         [TestCategory("SemanticDomain")]
         [TestProperty("Object", "Visibility")]
+#if DOMAIN_CHECKER
+        [Ignore]//Because visibility are not the same using CrossChecker
+#endif
         public void VisibilityProgramNestedProcedureVariable0()
         {
             string path = Path.Combine(Directory.GetCurrentDirectory(), "SemanticDomain", "VisPrgNestedProcVar0.tcbl");

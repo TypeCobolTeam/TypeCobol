@@ -736,7 +736,8 @@ namespace TypeCobol.Compiler.Domain
             Type.UsageFormat usage = dataDef.Usage.HasValue ? DataUsage2UsageFormat(dataDef.Usage.Value) : Type.UsageFormat.None;
             PictureValidator pictureValidator = new PictureValidator(dataDef.Picture.Value, dataDef.SignIsSeparate);
             PictureType type = new PictureType(pictureValidator);
-            type.Usage = usage;
+            //Use permissive Usage setter which allows COMP1 and COMP2
+            type.UsageEx = usage;
             return type;
         }
 

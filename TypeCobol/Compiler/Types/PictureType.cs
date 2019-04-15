@@ -258,6 +258,31 @@ namespace TypeCobol.Compiler.Types
             }
         }
 
+        //Set Extended usage that allows COMP1 and COMP2 as a possible Usage for a Picture.
+        public UsageFormat UsageEx
+        {
+            get
+            {
+                return base.Usage;
+            }
+            set
+            {
+                bool bNotValid = (
+                        value == UsageFormat.ObjectReference ||
+                        value == UsageFormat.Pointer ||
+                        value == UsageFormat.FunctionPointer ||
+                        value == UsageFormat.ProcedurePointer
+                    );
+                System.Diagnostics.Contracts.Contract.Requires(!bNotValid);
+                System.Diagnostics.Debug.Assert(!bNotValid);
+                if (bNotValid)
+                {
+                    throw new ArgumentException("Invalid PICTURE Usage : " + value.ToString());
+                }
+                base.Usage = value;
+            }
+        }
+
         /// <summary>
         /// Get this picture Type Length;
         /// </summary>

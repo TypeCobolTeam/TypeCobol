@@ -112,6 +112,7 @@ namespace TypeCobol.Server
         {
             SymbolTable baseTable = null;
 
+#if DOMAIN_CHECKER
             //----------------------------------------------------------------------
             //Register a static SymbolTableBuilder for a Program as a Node Listener.
             //----------------------------------------------------------------------
@@ -120,13 +121,14 @@ namespace TypeCobol.Server
                     var builder = new ProgramSymbolTableBuilder();
                     return builder;
                 });
+#endif
 
-            #region Dependencies parsing
+#region Dependencies parsing
             var depParser = new Parser();
             bool diagDetected = false;
             if (config.ExecToStep > ExecutionStep.Preprocessor)
             {
-                #region Event Diags Handler
+#region Event Diags Handler
                 EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DiagnosticsErrorEvent = delegate (object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
                 {
                     //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
@@ -141,9 +143,12 @@ namespace TypeCobol.Server
                     //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
                     Server.AddError(errorWriter, diagEvent.Path, diagEvent.Diagnostic);
                 };
-                #endregion
+#endregion
 
                 depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load intrinsic
+#if DOMAIN_CHECKER
+                SymbolTableBuilder.TransfertAllProgramsToIntrinsics();
+#endif
                 depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, depParser.CustomSymbols, config.InputFiles, config.CopyFolders, DependencyErrorEvent); //Load dependencies
 
                 if (diagDetected)
@@ -151,7 +156,7 @@ namespace TypeCobol.Server
             }
 
             baseTable = depParser.CustomSymbols;
-            #endregion
+#endregion
 
             var typeCobolOptions = new TypeCobolOptions(config);
 
@@ -183,7 +188,7 @@ namespace TypeCobol.Server
                     throw new ParsingException(MessageCode.ParserInit, ex.Message, inputFilePath, ex); //Make ParsingException trace back to RunOnce()
                 }
 
-                #region Copy Report Init
+#region Copy Report Init
 
                 if (config.ExecToStep >= ExecutionStep.CrossCheck)
                 {
@@ -206,7 +211,7 @@ namespace TypeCobol.Server
                         
                     }
                 }
-                #endregion
+#endregion
 
                 //Parse input file
                 parser.Parse(inputFilePath);

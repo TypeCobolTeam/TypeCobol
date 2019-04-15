@@ -11,6 +11,7 @@ namespace TypeCobol.Codegen {
 
 	[TestClass]
 	public class TestTypeCobolCodegen {
+#if !DOMAIN_CHECKER //These are TypeCobol Tests they don't use Semantic Domain
         public static bool UseSkeleton = false;
 
 		[TestMethod]
@@ -818,5 +819,6 @@ namespace TypeCobol.Codegen {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Remarks", "NestedProgram") + ".rdz.cbl", skeletons, true);
         }
 #endif
+#endif //#if !DOMAIN_CHECKER
     }
 }
