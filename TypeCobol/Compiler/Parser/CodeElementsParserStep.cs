@@ -150,8 +150,16 @@ namespace TypeCobol.Compiler.Parser
 
             // --- INCREMENTAL PARSING ---
 
+            //-------------------------------------------------------------------------------------
             // In case of incremental parsing, parse only the code sections we need to refresh
-
+            //-------------------------------------------------------------------------------------
+            // By https://github.com/TypeCobolTeam/TypeCobol/issues/1351 it can happend that the
+            // The scanning can go beyond the section to be reparsed by one line, this can happend
+            // If the previous line was only made of whitespaces or comments.
+            // So we maintains a set of CodeElementsLine to be reseted.
+            //-------------------------------------------------------------------------------------
+            HashSet<CodeElementsLine> ResetedCodeElementsLines = null;//Set of new incremental lines to reseted
+            int IncrementalLineLimit = -1;//Original limit of the incremental section
             if (largestRefreshParseSection != null)
             {
                 // Seek just before the next code element starting token
@@ -159,21 +167,16 @@ namespace TypeCobol.Compiler.Parser
                 tokenStream.StartLookingForStopToken(largestRefreshParseSection.StopToken);
 
                 //Remove all the code elements for the future line to parse.
-
-                for (int i = largestRefreshParseSection.StartLineIndex;
-                    i < (largestRefreshParseSection.StopLineIndex == documentLines.Count - 1 && largestRefreshParseSection.StopToken == null //If the last index is equals to number of line in document, make sure to also reset the last line, otherwise, reset lines normally. 
+                IncrementalLineLimit = (largestRefreshParseSection.StopLineIndex == documentLines.Count - 1 && largestRefreshParseSection.StopToken == null //If the last index is equals to number of line in document, make sure to also reset the last line, otherwise, reset lines normally. 
                         ? largestRefreshParseSection.StopLineIndex + 1
                         : largestRefreshParseSection.StopLineIndex);
-                    i++)
+                for (int i = largestRefreshParseSection.StartLineIndex; i < IncrementalLineLimit; i++)
                 {
                     if (documentLines[i].CodeElements != null)
                         documentLines[i].ResetCodeElements();
                 }
             }
-
-           
-
-
+          
             // Reset parsing error diagnostics
             cobolErrorStrategy.Reset(cobolParser);
 
@@ -221,6 +224,18 @@ namespace TypeCobol.Compiler.Parser
                         if (codeElementsLine == null)
                         {
                             continue;
+                        }
+                        if (IncrementalLineLimit >= 0 && tokenStart.Line >= IncrementalLineLimit)
+                        {
+                            if (ResetedCodeElementsLines == null)
+                            {
+                                ResetedCodeElementsLines = new HashSet<CodeElementsLine>();                                
+                            }                            
+                            if (ResetedCodeElementsLines.Count == 0 || !ResetedCodeElementsLines.Contains(codeElementsLine))
+                            {
+                                ResetedCodeElementsLines.Add(codeElementsLine);
+                                codeElementsLine.ResetCodeElements();
+                            }                            
                         }
 
                         // Register that this line was updated
