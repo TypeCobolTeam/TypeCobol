@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Schema;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Types;
 using Type = TypeCobol.Compiler.Types.Type;
 
@@ -80,7 +81,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Named constructor
         /// </summary>
-        protected Symbol(String name, Kinds kind)
+        protected Symbol(string name, Kinds kind)
         {
             this.Name = name??"";//It happends that a symbol can have no name
             Kind = kind;
@@ -107,12 +108,22 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Symbol's name
         /// </summary>
-        public String Name
+        public string Name
         {
             get;
             internal set;
         }
 
+#if DOMAIN_CHECKER
+        /// <summary>
+        /// The target semantic node if nay
+        /// </summary>
+        public Node TargetNode
+        {
+            get;
+            internal set;
+        }
+#endif
 
         /// <summary>
         /// A Typed name is the name followed by a type, by default is the name..
@@ -129,7 +140,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Full qualified name of this Symbol à la TypeCobol using "::"
         /// </summary>
-        public virtual String FullName
+        public virtual string FullName
         {
             get
             {
@@ -142,7 +153,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Full qualified name of this Symbol à la COBOL85 using OF
         /// </summary>
-        public virtual String FullOfName
+        public virtual string FullOfName
         {
             get
             {
@@ -155,7 +166,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Full dotted qualified name
         /// </summary>
-        public virtual String FullDotName
+        public virtual string FullDotName
         {
             get
             {
@@ -168,7 +179,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Full typed dotted qualified name
         /// </summary>
-        public virtual String FullTypedDotName
+        public virtual string FullTypedDotName
         {
             get
             {

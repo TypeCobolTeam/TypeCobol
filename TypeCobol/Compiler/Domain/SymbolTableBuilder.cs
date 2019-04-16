@@ -102,10 +102,7 @@ namespace TypeCobol.Compiler.Domain
             //Put all Types from programs into the Global Namespace.
             foreach (var pgm in Root.Programs)
             {
-                foreach (var type in pgm.Types)
-                {
-                    Root.Types.Enter(type);
-                }
+                TransfertIntrinsics(pgm);
             }
 
             try
@@ -117,6 +114,31 @@ namespace TypeCobol.Compiler.Domain
             finally
             {
                 Compiler.Parser.NodeDispatcher.RemoveStaticNodeListenerFactory(BuilderNodeListenerFactory);
+            }
+        }
+
+        /// <summary>
+        /// Transfert the given program as an Intrinsics program.
+        /// </summary>
+        /// <param name="prg">The program to transfert as an intrinsics.</param>
+        public static void TransfertIntrinsics(ProgramSymbol prg)
+        {
+            //We only transfert Types.
+            foreach (var type in prg.Types)
+            {
+                Root.Types.Enter(type);
+            }
+        }
+
+
+        /// <summary>
+        /// Transfert all current programs has Intrinsics
+        /// </summary>
+        public static void TransfertAllProgramsToIntrinsics()
+        {
+            foreach (var pgm in Root.Programs)
+            {
+                TransfertIntrinsics(pgm);
             }
         }
 
@@ -157,13 +179,7 @@ namespace TypeCobol.Compiler.Domain
                     Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format,
                         DiagnosticsErrorEvent); //Load intrinsic
                 //Put all Intrinsic Types from programs into the Global Namespace.
-                foreach (var pgm in Root.Programs)
-                {
-                    foreach (var type in pgm.Types)
-                    {
-                        Root.Types.Enter(type);
-                    }
-                }
+                TransfertAllProgramsToIntrinsics();
 
                 baseSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, baseSymbols,
                     config.InputFiles, config.CopyFolders, DependencyErrorEvent); //Load dependencies

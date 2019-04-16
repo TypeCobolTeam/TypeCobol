@@ -97,8 +97,10 @@ namespace TypeCobol.Compiler.Types
                 }
 
                 newField.Accept(SymExpander, owner);
-                
+
+#if !DOMAIN_CHECKER
                 System.Diagnostics.Debug.Assert(newField.Type != null);
+#endif
                 //Normalize the new field
                 newField.NormalizeExpandedSymbol(newType.Scope);
                 newType.Scope.Enter(newField);

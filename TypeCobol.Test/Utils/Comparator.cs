@@ -8,8 +8,12 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Domain;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
+// DocumentFormat
+// CodeElementDiagnostics
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Test.Utils
 {
@@ -165,7 +169,53 @@ namespace TypeCobol.Test.Utils
             return _nbOfTests;
         }
 
-		public void Test(bool debug = false, bool json = false, bool autoRemarks = false) {
+#if DOMAIN_CHECKER
+        public static TypeCobolConfiguration DefaultConfig = null;
+        public static ProgramSymbolTableBuilder Builder = null;
+        public static NodeListenerFactory BuilderNodeListenerFactory = null;
+        public static string DefaultIntrinsicPath = null;//@"C:\TypeCobol\Sources\##Latest_Release##\Intrinsic\Intrinsic.txt";
+
+        public void TestInitialize()
+        {
+            SymbolTableBuilder.Root = null;
+            //Create a default configurations for options
+            DefaultConfig = new TypeCobolConfiguration();
+            if (File.Exists(DefaultIntrinsicPath))
+            {
+                DefaultConfig.Copies.Add(DefaultIntrinsicPath);
+            }
+            DefaultConfig.Dependencies.Add(Path.Combine(Directory.GetCurrentDirectory(), "resources", "dependencies"));
+            SymbolTableBuilder.Config = DefaultConfig;
+
+            //Force the creation of the Global Symbol Table
+            var global = SymbolTableBuilder.Root;
+
+            //Allocate a static Program Symbol Table Builder
+            BuilderNodeListenerFactory = () =>
+            {
+                Builder = new ProgramSymbolTableBuilder();
+                ProgramSymbolTableBuilder.LastBuilder = Builder;
+                return Builder;
+            };
+            TypeCobol.Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(BuilderNodeListenerFactory);
+        }
+        public void TestCleanup()
+        {
+            if (BuilderNodeListenerFactory != null)
+            {
+                TypeCobol.Compiler.Parser.NodeDispatcher.RemoveStaticNodeListenerFactory(BuilderNodeListenerFactory);
+                if (Builder.Programs.Count != 0)
+                {
+                    foreach (var prog in Builder.Programs)
+                        SymbolTableBuilder.Root.RemoveProgram(prog);
+                }
+                ProgramSymbolTableBuilder.LastBuilder = null;
+            }
+        }
+
+#endif
+
+        public void Test(bool debug = false, bool json = false, bool autoRemarks = false) {
 			var errors = new StringBuilder();
 			foreach (var samplePath in samples) {
 				IList<FilesComparator> comparators = GetComparators(_sampleRoot, _resultsRoot, samplePath, debug);
@@ -178,8 +228,20 @@ namespace TypeCobol.Test.Utils
                     Console.WriteLine(comparator.paths.Result + " checked with " + comparator.GetType().Name);
 					var unit = new TestUnit(comparator, debug);
 					unit.Init(compilerExtensions, autoRemarks);
-					unit.Parse();
-				    if (unit.Observer.HasErrors)
+#if DOMAIN_CHECKER
+				    try
+				    {
+				        TestInitialize();
+                        unit.Parse();
+                    }
+				    finally
+				    {
+				        TestCleanup();
+				    }
+#else
+    unit.Parse();
+#endif
+                    if (unit.Observer.HasErrors)
 				    {
 				        Console.WriteLine(" /!\\ EXCEPTION\n" + unit.Observer.DumpErrors());
 				        errors.AppendLine(unit.Observer.DumpErrors());
@@ -238,7 +300,7 @@ namespace TypeCobol.Test.Utils
         }
     }
 
-    #region Comparators
+#region Comparators
     
     internal interface Comparator
     {
@@ -807,7 +869,7 @@ namespace TypeCobol.Test.Utils
         }
     }
 
-    #endregion
+#endregion
 
 
     internal interface Names
@@ -834,7 +896,7 @@ namespace TypeCobol.Test.Utils
         }
     }
 
-    #region DefaultNames
+#region DefaultNames
     internal class EmptyName : AbstractNames
     {
         private Names _namesImplementation;
@@ -907,9 +969,9 @@ namespace TypeCobol.Test.Utils
         public override string CreateName(string name) { return name + "Doc" + Rextension; }
         public override Type GetComparatorType() { return typeof(DocumentationPropertiesComparator); }
     }
-    #endregion
+#endregion
 
-    #region EINames
+#region EINames
 #if EUROINFO_RULES
     internal class EIEmptyName : AbstractEINames
     {
@@ -963,7 +1025,7 @@ namespace TypeCobol.Test.Utils
         public override Type GetComparatorType() { return typeof(MemoryComparator); }
     }
 #endif
-    #endregion
+#endregion
 
     internal class Paths
     {
