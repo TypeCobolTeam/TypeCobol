@@ -1,3 +1,2 @@
 ﻿Code: 1021 TypeCobol.CLI.exe: Output paths given are unreachable.
-Code: 1023 TypeCobol.CLI.exe: Skeleton file given is unreachable.
 Try TypeCobol.CLI.exe --help for usage information.

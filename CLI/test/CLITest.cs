@@ -232,7 +232,7 @@ namespace CLI.Test
         {
             CLITestHelper.ReadConsole("arguments_errors_1", ReturnCode.MultipleErrors);
             CLITestHelper.ReadConsole("arguments_errors_2", ReturnCode.MultipleErrors);
-            CLITestHelper.ReadConsole("arguments_errors_3", ReturnCode.MultipleErrors);
+            CLITestHelper.ReadConsole("arguments_errors_3", ReturnCode.OutputPathError);
         }
 
         /// <summary>
