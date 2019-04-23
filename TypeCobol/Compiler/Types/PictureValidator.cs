@@ -93,66 +93,106 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// Special RegEx characters
+        /// Check the count in a picture string part ([0-9]+)
         /// </summary>
-        private static readonly string SpecialReChars = "$^()[]{}|.,:;+*#<>\\";
-
-        /// <summary>
-        /// Normalize a String for a regular expression
-        /// </summary>
-        /// <param name="s">The string to normalize</param>
-        /// <returns></returns>
-        private static string NormalizeStringForRegEx(string s)
+        /// <param name="pic">The picture string</param>
+        /// <param name="startOffset">start offset inside the picture string where should beging the count</param>
+        /// <param name="count">[out] the count calculated if no error, -1 otherwise.</param>
+        /// <returns>The new starting offset after the count part.</returns>
+        private static int CheckItemCount(string pic, int startOffset, out int count)
         {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < s.Length; i += 2)
+            count = -1;
+            if (startOffset >= pic.Length)
             {
-                int index = SpecialReChars.IndexOf(s[i]);
-                if (index >= 0)
+                count = 1;
+            }
+            else if (pic[startOffset] == '(')
+            {
+                bool bGood = false;
+                startOffset++;
+                while (startOffset < pic.Length)
                 {
-                    sb.Append('\\');
+                    if (pic[startOffset] == ')')
+                    {
+                        bGood = true;
+                        startOffset++;
+                        break;
+                    }
+                    if (pic[startOffset] < '0' || pic[startOffset] > '9')
+                    {//Error
+                        count = -1;
+                        break;
+                    }
+                    int n = pic[startOffset] - '0';
+                    count = count == -1 ? n : count * 10 + n;
+                    startOffset++;
                 }
-                sb.Append(s[i]);
+                if (!bGood)
+                {
+                    count = -1;
+                }
             }
-            return sb.ToString();
-        }
-
-        /// <summary>
-        /// Get the Picture regular expression
-        /// </summary>
-        /// <returns>A couple of regular expression the first item is for validation and the second for getting all matches collection.</returns>
-        private Tuple<string, string> GetPictureRegEx()
-        {
-            string cs = NormalizeStringForRegEx(CurrencySymbol);
-            String[] alphabet = { "A", "B", "E", "G", "N", "P", "S", "V", "X", "Z", "9", "0", "/", "\\,", "\\.", "\\+", "\\-", "CR", "DB", "\\*", cs };
-            StringBuilder sb_valid = new StringBuilder();
-            StringBuilder sb_matches = new StringBuilder();
-            string alt = "";
-            sb_valid.Append("(");
-            foreach (string a in alphabet)
+            else
             {
-                sb_matches.Append(alt);
-                sb_matches.Append("(?<ch>").Append(a).Append(')').Append("(\\((?<count>[0-9]+)\\))?");
-                alt = "|";
+                count = 1;
             }
-            sb_valid.Append(sb_matches.ToString());
-            sb_valid.Append(")+");
-            return new Tuple<string, string>(sb_valid.ToString(), sb_matches.ToString());
+            return startOffset;
         }
 
         /// <summary>
-        /// Get all matches of the picture string against the picture regular expression.
+        /// Split the Picture String into its parts. A List of tuple(Symbol, count)
+        /// Example: 9(2)X(4)9
+        /// {("9",2),("X",4),("9",1)}
         /// </summary>
-        /// <returns>The matches collection</returns>
-        private System.Text.RegularExpressions.MatchCollection GetPictureRegExMatches()
+        /// <returns>The list of parts if this is a well formed picture string, null otherwise.</returns>
+        public static List<Tuple<string, int>> PictureStringSplitter(String picture, string currencySymbol)
         {
-            Tuple<string, string> pic_res = GetPictureRegEx();
-            string pic_valid_re = pic_res.Item1;
-            string pic_matches_re = pic_res.Item2;
-            if (!System.Text.RegularExpressions.Regex.IsMatch(Picture, pic_valid_re))
-                return null;
-            System.Text.RegularExpressions.MatchCollection collection = System.Text.RegularExpressions.Regex.Matches(Picture, pic_matches_re);
-            return collection;
+            List<Tuple<string, int>> items = new List<Tuple<string, int>>();
+            String[] alphabet = { "A", "B", "E", "G", "N", "P", "S", "V", "X", "Z", "9", "0", "/", ",", ".", "+", "-", "CR", "DB", "*", currencySymbol };
+            for (int l = 0; l < picture.Length;)
+            {
+                bool match = false;
+                for (int i = 0; i < alphabet.Length && !match; i++)
+                {
+                    switch (alphabet[i].Length)
+                    {
+                        case 1:
+                            match = picture[l] == alphabet[i][0];
+                            break;
+                        case 2:
+                            if ((l + 1) < picture.Length)
+                            {
+                                match = picture[l] == alphabet[i][0] && picture[l + 1] == alphabet[i][1];
+                            }
+                            break;
+                        default:
+                            if ((l + alphabet[i].Length - 1) < picture.Length)
+                            {
+                                match = true;
+                                for (int j = 0, n = l; j < alphabet[i].Length && n < picture.Length; j++, n++)
+                                {
+                                    if (picture[n] != alphabet[i][j])
+                                    {
+                                        match = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                    }
+                    if (match)
+                    {
+                        int count = -1;
+                        l = CheckItemCount(picture, l + alphabet[i].Length, out count);
+                        if (count == -1)
+                            return null;
+                        items.Add(new Tuple<string, int>(alphabet[i], count));
+                    }
+                }
+                if (!match)
+                    return null;
+            }
+            return items;
         }
 
         /// <summary>
@@ -305,12 +345,12 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// Collect the Picture sequence of characters from the RegEx matching. And perform some prevalidation
+        /// Collect the Picture sequence of characters from the list of parts. And perform some prevalidation
         /// checks.
         /// </summary>
         /// <param name="matches">All Picture items matched</param>
         /// <returns>The list of picture item sequence</returns>
-        private List<Character> CollectPictureSequence(System.Text.RegularExpressions.MatchCollection matches)
+        private List<Character> CollectPictureSequence(List<Tuple<string, int>> matches)
         {
             List<Character> sequence = new List<Character>();
             Character prevChar = null;//Previous char so that we can accumulate consecutive same characters.
@@ -328,10 +368,8 @@ namespace TypeCobol.Compiler.Types
 
             foreach (var m in matches)
             {
-                System.Text.RegularExpressions.Match match = (System.Text.RegularExpressions.Match)m;
-                string ch = match.Groups["ch"].Value;
-                string scount = match.Groups["count"].Value;
-                int count = scount.Length == 0 ? 1 : System.Int32.Parse(scount);
+                string ch = m.Item1;
+                int count = m.Item2;
                 if (count == 0)
                 {//Count cannot be 0.
                     ValidationMesssage.Add(Context.SymbolCountCannotBeZeroMsg);
@@ -435,7 +473,6 @@ namespace TypeCobol.Compiler.Types
                 ValidationMesssage.Add(Context.MultuallyExclusiveSymbolMsg);
             }
             return sequence;
-
         }
 
         /// <summary>
@@ -455,7 +492,7 @@ namespace TypeCobol.Compiler.Types
         {
             //0. Picure String must contains at least
             //1. First Validate against the PICTURE string regular expression.
-            System.Text.RegularExpressions.MatchCollection matches = GetPictureRegExMatches();
+            List<Tuple<string, int>> matches = PictureStringSplitter(Picture, CurrencySymbol);
             if (matches == null)
                 return false;
             if (matches.Count <= 0)
@@ -643,7 +680,7 @@ namespace TypeCobol.Compiler.Types
                     default:
                         throw new ArgumentException();
                 }
-                return count > 0 ? (s +'(' + count +')') : s;
+                return count > 0 ? (s + '(' + count + ')') : s;
             }
         }
 
