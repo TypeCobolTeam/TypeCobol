@@ -60,6 +60,26 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
+        /// The Node of the procedure for which this control Flow Graph has been created.
+        /// </summary>
+        public N ProcedureNode
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// Intialize the construction of the Control Flow Graph.
+        /// </summary>
+        internal virtual void Initialize()
+        {
+            BlockFor = new Dictionary<N, BasicBlock<N, D>>();
+            AllBlocks = new List<BasicBlock<N, D>>();
+            RootBlocks = new List<BasicBlock<N, D>>();
+            SuccessorEdges = new List<BasicBlock<N, D>>();
+        }
+
+        /// <summary>
         /// All basic blocks that can be reached via control flow out of the given basic block.
         /// </summary>
         /// <param name="basicBlock">The basic block to get the successors</param>

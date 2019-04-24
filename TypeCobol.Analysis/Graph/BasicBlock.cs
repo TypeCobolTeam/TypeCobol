@@ -50,6 +50,45 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
+        /// Flag on a basic block.
+        /// </summary>
+        [Flags]
+        public enum Flags : uint
+        {
+            Resolved = 0x01 << 0 //Flag if this basic block is totally resolved.
+        }
+
+        /// <summary>
+        /// Symbol Flags.
+        /// </summary>
+        public Flags Flag
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// Set a set of flags to true or false.
+        /// </summary>
+        /// <param name="flag"></param>
+        /// <param name="value"></param>
+        internal virtual void SetFlag(Flags flag, bool value)
+        {
+            this.Flag = value ? (Flags)(this.Flag | flag)
+                              : (Flags)(this.Flag & ~flag);
+        }
+
+        /// <summary>
+        /// Determines if the given flag is set.
+        /// </summary>
+        /// <param name="flag">The flag to be tested</param>
+        /// <returns>true if yes, false otherwise.</returns>
+        public bool HasFlag(Flags flag)
+        {
+            return (this.Flag & flag) != 0;
+        }
+
+        /// <summary>
         /// Empty constructor.
         /// </summary>
         public BasicBlock()
