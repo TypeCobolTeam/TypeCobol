@@ -15,6 +15,14 @@ namespace TypeCobol.Analysis.Graph
     public class ControlFlowGraph<N, D>
     {
         /// <summary>
+        /// BasicBlock calllback type.
+        /// </summary>
+        /// <param name="block">The BasicBlock</param>
+        /// <param name="cfg">The Control Flow Graph in with the basic Block belongs.</param>
+        /// <returns>true if ok, false otherwise</returns>
+        public delegate bool BasicBlockCallback(BasicBlock<N, D> block, ControlFlowGraph<N, D> cfg);
+
+        /// <summary>
         /// Root blocks. Usually it is a singleton it is the first block in the program, but alos on Exception handlers.
         /// </summary>
         public List<BasicBlock<N, D>> RootBlocks
@@ -60,6 +68,26 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
+        /// The Node of the procedure for which this control Flow Graph has been created.
+        /// </summary>
+        public N ProcedureNode
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// Intialize the construction of the Control Flow Graph.
+        /// </summary>
+        internal virtual void Initialize()
+        {
+            BlockFor = new Dictionary<N, BasicBlock<N, D>>();
+            AllBlocks = new List<BasicBlock<N, D>>();
+            RootBlocks = new List<BasicBlock<N, D>>();
+            SuccessorEdges = new List<BasicBlock<N, D>>();
+        }
+
+        /// <summary>
         /// All basic blocks that can be reached via control flow out of the given basic block.
         /// </summary>
         /// <param name="basicBlock">The basic block to get the successors</param>
@@ -67,11 +95,85 @@ namespace TypeCobol.Analysis.Graph
         public List<BasicBlock<N,D>> SuccessorsFor(BasicBlock<N, D> basicBlock)
         {
             System.Diagnostics.Contracts.Contract.Requires(basicBlock != null);
-            if (basicBlock.FirstSuccessorEdge + basicBlock.SuccessorCount > this.SuccessorEdges.Count)
-                throw new InvalidOperationException();//Can happen if the basic bloc does not belong to this graph
-            System.Diagnostics.Contracts.Contract.Assume(basicBlock.FirstSuccessorEdge >= 0);
-            System.Diagnostics.Contracts.Contract.Assume(basicBlock.SuccessorCount >= 0);
-            return this.SuccessorEdges.GetRange(basicBlock.FirstSuccessorEdge, basicBlock.SuccessorCount);
+            System.Diagnostics.Contracts.Contract.Assume(basicBlock.SuccessorEdges != null);
+            List<BasicBlock<N, D>> result = new List<BasicBlock<N, D>>();
+            foreach(var n in basicBlock.SuccessorEdges)
+            {
+                result.Add(SuccessorEdges[n]);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// DFS Depth First Search implementation
+        /// </summary>
+        /// <param name="block">The current block</param>
+        /// <param name="discovered">Array of already discovered nodes</param>
+        /// <param name="callback">CallBack function</param>
+        internal void DFS(BasicBlock<N, D> block, System.Collections.BitArray discovered, BasicBlockCallback callback)
+        {
+            discovered[block.Index] = true;
+            if (!callback(block, this))
+                return;//Means stop
+            foreach (var edge in block.SuccessorEdges)
+            {
+                if (!discovered[SuccessorEdges[edge].Index])
+                {
+                    DFS(SuccessorEdges[edge], discovered, callback);
+                }
+            }
+        }
+
+        /// <summary>
+        /// DFS Depth First Search implementation
+        /// </summary>
+        /// <param name="rootBlock">The root block.</param>
+        /// <param name="callback">CallBack function</param>
+        public void DFS(BasicBlock<N, D> rootBlock, BasicBlockCallback callback)
+        {
+            System.Collections.BitArray discovered = new System.Collections.BitArray(AllBlocks.Count);
+            DFS(rootBlock, discovered, callback);
+        }
+
+        /// <summary>
+        /// DFS Depth First Search implementation.
+        /// </summary>
+        /// <param name="callback">CallBack function</param>
+        public void DFS(BasicBlockCallback callback)
+        {
+            foreach(var root in RootBlocks)
+            { 
+                DFS(root, callback);
+            }
+        }
+
+        /// <summary>
+        /// Iterative version of DFS Depth First Search implementation
+        /// </summary>
+        /// <param name="callback">CallBack function</param>
+        public void DFSIterative(BasicBlockCallback callback)
+        {
+            System.Collections.BitArray discovered = new System.Collections.BitArray(AllBlocks.Count);
+            foreach (var root in RootBlocks)
+            {
+                Stack<BasicBlock<N, D>> stack = new Stack<BasicBlock<N, D>>();
+                stack.Push(root);
+                while (stack.Count > 0)
+                {
+                    BasicBlock<N, D> block = stack.Pop();
+                    if (!discovered[block.Index])
+                    {
+                        if (!callback(block, this))
+                        {   //Don't traverse edges
+                            continue;
+                        }
+                        foreach (var edge in block.SuccessorEdges)
+                        {
+                            stack.Push(SuccessorEdges[edge]);
+                        }
+                    }
+                }
+            }
         }
     }
 }

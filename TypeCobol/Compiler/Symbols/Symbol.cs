@@ -30,7 +30,8 @@ namespace TypeCobol.Compiler.Symbols
             Variable,
             Index,
             Section,
-            Paragraph
+            Paragraph,
+            Sentence,
         }
 
         [Flags]
@@ -62,6 +63,7 @@ namespace TypeCobol.Compiler.Symbols
             Return = 0x01 << 23,//A Return variable.
             BuiltinType = 0x01 << 24,//This is a Builtin Type.
             InsideTypdef = 0x01 << 25,//Flag of any symbol inside a Typedef definition
+            Declaratives = 0x01 << 26,//Flag to indicate a symbol inside Declaractives context
 
             //Etc...
         }
@@ -106,12 +108,21 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
+        /// A integer number which can be associated to this Symbol.
+        /// </summary>
+        public int Number
+        {
+            set;
+            get;
+        }
+
+        /// <summary>
         /// Symbol's name
         /// </summary>
         public string Name
         {
             get;
-            internal set;
+            protected set;
         }
 
 #if DOMAIN_CHECKER
@@ -238,7 +249,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="flag"></param>
         /// <param name="value"></param>
         /// <param name="propagate">true the flags must be propagated, false otherwise</param>
-        internal virtual void SetFlag(Flags flag, bool value, bool propagate = false)
+        protected internal virtual void SetFlag(Flags flag, bool value, bool propagate = false)
         {
             this.Flag = value ? (Flags)((ulong)this.Flag | (ulong)flag)
                               : (Flags)((ulong)this.Flag & ~(ulong)flag);
@@ -267,7 +278,7 @@ namespace TypeCobol.Compiler.Symbols
         public Symbol Owner
         {
             get;
-            internal set;
+            protected internal set;
         }
 
         public SemanticKinds SemanticKind => SemanticKinds.Symbol;
