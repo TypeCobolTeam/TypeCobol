@@ -47,12 +47,15 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// </summary>
         public List<OutlineNode> childNodes;
 
+        private int childIndex;
+
         public OutlineNode(Node node, OutlineNode parent = null)
         {
             this.name = node.Name;
             this.type = node.GetType().Name;
             this.parentName = node.Parent?.Name;
-            this.childNodes = new List<OutlineNode>();
+            this.childIndex = 0;
+
             if (node is FunctionDeclaration fun)
             {
                 StringBuilder args = new StringBuilder();
@@ -83,7 +86,21 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         {
             int i = 0;
             //Gets the nodes that we will evaluate and transform into OutlineNodes
-            var interestingNodes = node.Children.Where(c => c is Sentence == false && c is FunctionEnd == false && c is End == false);
+            var interestingNodes = node.Children.Where(c => c is Sentence == false && c is FunctionEnd == false && c is End == false && c is DataDescription == false && c is DataRedefines == false);
+
+            if (interestingNodes.Any())
+            {
+                if (childNodes == null)
+                {
+                    this.childNodes = new List<OutlineNode>();
+                }
+            }
+            else
+            {
+                this.childNodes = null;
+                return false;
+            }
+
             int childrenCount = Math.Max(this.childNodes.Count, interestingNodes.Count());
 
             //Reset the updated status
@@ -104,6 +121,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                 // Create and insert the OutlineNode if there is less OutlineNode than Nodes
                 if (i >= this.childNodes.Count)
                 {
+                    this.childIndex = i;
                     this.childNodes.Insert(i, new OutlineNode(interestingNodes.ElementAt(i), this));
                     this.childNodes[i].isUpdated = true;
                     continue;
@@ -116,8 +134,14 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                 {
                     this.childNodes[i].isUpdated = this.childNodes[i].Update(derivationNode);
 
+                    if (this.childIndex != i)
+                    {
+                        this.childNodes[i].childIndex = i;
+                        this.childNodes[i].isUpdated = true;
+                    }
+
                     //Get first line of the Node that is not a commented line
-                    var tokensLine = derivationNode.Lines.OfType<TokensLine>().FirstOrDefault(l => l.ScanState.InsideFormalizedComment == false && l.ScanState.InsideMultilineComments == false && l.IndicatorChar != '*');
+                    var tokensLine = derivationNode.Lines.OfType<TokensLine>().FirstOrDefault(l => l.ScanState.InsideFormalizedComment == false && l.ScanState.InsideMultilineComments == false && l.IndicatorChar != '%');
                     if (tokensLine != null) 
                     {
                         //Compare lines index, if different, replace
@@ -142,6 +166,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                     //Create and insert new OutlineNodes with no Node equivalent
                     this.childNodes.Insert(i, new OutlineNode(interestingNodes.ElementAt(i), this));
                     this.childNodes[i].isUpdated = true;
+                    this.childNodes[i].childIndex = i;
                     childrenCount++;
 
                     if (interestingNodes.ElementAt(i).ChildrenCount > 0)
