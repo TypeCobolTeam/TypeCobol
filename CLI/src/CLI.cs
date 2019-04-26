@@ -369,7 +369,7 @@ namespace TypeCobol.Server
                             }
 
                             var sb = new StringBuilder();
-                            bool bNeedLineMap = config.OutputFiles.Count > fileIndex;
+                            bool bNeedLineMap = config.LineMapFiles.Count > fileIndex;
                             //Get Generator from specified config.OutputFormat
                             var generator = GeneratorFactoryManager.Instance.Create(config.OutputFormat.ToString(),
                                 parser.Results,
