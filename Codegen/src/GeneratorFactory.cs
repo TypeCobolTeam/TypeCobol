@@ -12,6 +12,7 @@ namespace TypeCobol.Codegen
     /// <param name="Document"> The compilation document </param>
     /// <param name="destination">The Output stream for the generated code</param>
     /// <param name="skeletons">All skeletons pattern for code generation </param>
+    /// <param name="bWithLineMap">True if Line Map can be generated</param>
     /// <returns>An instance of the IGenerator interface if one is created, null otherwise</returns>
-    public delegate IGenerator GeneratorFactory (String ID, TypeCobol.Compiler.CompilationDocument document, StringBuilder destination, List<Skeleton> skeletons, string typeCobolVersion);
+    public delegate IGenerator GeneratorFactory (String ID, TypeCobol.Compiler.CompilationDocument document, StringBuilder destination, List<Skeleton> skeletons, string typeCobolVersion, bool bWithLineMap);
 }

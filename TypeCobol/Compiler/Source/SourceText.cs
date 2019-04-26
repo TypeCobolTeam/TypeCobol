@@ -463,6 +463,25 @@ namespace TypeCobol.Compiler.Source
         }
 
         /// <summary>
+        /// Compute the count of lines from the start position to an end position
+        /// </summary>
+        /// <param name="start">The start position</param>
+        /// <param name="end">The end position</param>
+        /// <returns>The count of lines.</returns>
+        public int LineCount(int start, int end)
+        {
+            int count = 0;
+            do
+            {
+                int bstart, bend;
+                GetLineBoundaries(start, out bstart, out bend);
+                start = bend;
+                count++;                
+            } while (start < end);
+            return count;
+        }
+
+        /// <summary>
         /// Get the line infiormation of a length that contains a given position, the length does not take in account any \r or \n  characters.
         /// </summary>
         /// <param name="at">The Position to get the line of the length which conatins it.</param>
