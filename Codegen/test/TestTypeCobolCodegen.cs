@@ -207,8 +207,8 @@ namespace TypeCobol.Codegen {
 		public void CallPublicProcFromPublicProc() {
 			var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol","skeletons")+".xml") : null;
 			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CallPublicProcFromPublicProc") +".rdz.tcbl", skeletons);
-			//CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CallPublicProcFromPublicProc-DeclarativesNoDebug") +".rdz.tcbl", skeletons);
-			//CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CallPublicProcFromPublicProc-DeclarativesWithDebug") +".rdz.tcbl", skeletons);
+			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CallPublicProcFromPublicProc-DeclarativesNoDebug") +".rdz.tcbl", skeletons);
+			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CallPublicProcFromPublicProc-DeclarativesWithDebug") +".rdz.tcbl", skeletons);
 		}
 	    
 		[TestMethod]

@@ -99,21 +99,47 @@ namespace TypeCobol.Codegen.Generators
         /// </summary>
         public class LineMappingCtx
         {
-            public int startLineMapCounter = 1;//Stating the line mapping
+            /// <summary>
+            /// Starting the line mapping at ine 1
+            /// </summary>
+            public int startLineMapCounter;
+            /// <summary>
+            /// Current base offset in the source code advance.
+            /// </summary>
             public int currentGenLineOffset = 0;
+            /// <summary>
+            /// The current function declaration data if any
+            /// </summary>
             public NodeFunctionData funData;
+            /// <summary>
+            /// The line mapping data
+            /// </summary>
             public Tuple<int, int>[] LineMapping;
+            /// <summary>
+            /// Set of relocated lines from a function declaration.
+            /// </summary>
             public HashSet<int> RelocatedLines;
 
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="lineMap"></param>
             public LineMappingCtx(Tuple<int,int>[] lineMap)
             {
                 this.LineMapping = lineMap;
+                this.startLineMapCounter = 1;
             }
 
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="lineMap"></param>
+            /// <param name="funData"></param>
             public LineMappingCtx(Tuple<int, int>[] lineMap, NodeFunctionData funData)
             {
                 this.LineMapping = lineMap;
                 this.funData = funData;
+                this.startLineMapCounter = 0;
             }
 
             /// <summary>
@@ -143,8 +169,10 @@ namespace TypeCobol.Codegen.Generators
             public void UpdateLineMap(int i, SourceText targetSourceText, LineStringSourceText flushingBuffer)
             {
                 if (flushingBuffer == null)
-                {
+                {//No buffer ==> This is a line that must be generated as it is in the original source code.
                     System.Diagnostics.Debug.Assert(LineMapping[i] == null || IsRelocatedLine(i));
+                    if (!(LineMapping[i] == null || IsRelocatedLine(i)))
+                        return;//Don't take risk if assertion failure.
                     if (!IsRelocatedLine(i))
                     {
                         //We are inside a function declaration.
@@ -170,6 +198,8 @@ namespace TypeCobol.Codegen.Generators
                         foreach (var l in flushingBuffer.Lines)
                         {
                             System.Diagnostics.Debug.Assert(LineMapping[l] == null || flushingBuffer.Reallocated);
+                            if (!(LineMapping[l] == null || flushingBuffer.Reallocated))
+                                return;//Don't take risk if assertion failure.
                             if (funData != null && funData.LineMapFirstIndex == 0)
                             {
                                 funData.LineMapFirstIndex = l;
@@ -194,24 +224,42 @@ namespace TypeCobol.Codegen.Generators
             /// Relocate the Range mapping of a function declaration
             /// </summary>
             /// <param name="funData">Function declaration data</param>
-            /// <param name="targetSourceText">The current source for relocation</param>
-            public void RelocateFunctionRanges(NodeFunctionData funData)
+            /// <param name="funSourceText">The current function source code for relocation</param>
+            /// <param name="mainSourceText">The main source code buffer into which the relocation is performed </param>
+            /// <param name="bNested">true if we are relocating a function declaration generated as a nested program, false otherwise</param>
+            public void RelocateFunctionRanges(NodeFunctionData funData, StringSourceText funSourceText, SourceText mainSourceText, bool bNested)
             {
-                int Low = Int32.MaxValue;
-                int High = Int32.MinValue;
+                Tuple<int, int> interval = interval = GenLineMapping(0, 0, funSourceText);
+                if (funData.LineMapFirstIndex == 0 && funData.LineMapLastIndex == 0)
+                {//Special case the body of the function is empty. ==> So take the range of lines in its buffer
+                    foreach (var l in funData.Buffer.Lines)
+                    {
+                        if (funData.LineMapFirstIndex == 0)
+                        {
+                            funData.LineMapFirstIndex = l;
+                        }
+                        else
+                        {
+                            funData.LineMapFirstIndex = Math.Min(funData.LineMapFirstIndex, l);
+                        }
+                    }
+                    funData.LineMapLastIndex = funData.LineMapFirstIndex;                   
+                    LineMapping[funData.LineMapFirstIndex] = interval;
+                }
+
                 for (int i = funData.LineMapFirstIndex; i <= funData.LineMapLastIndex; i++)
                 {
                     if (LineMapping[i] != null)
                     {
                         LineMapping[i] = new Tuple<int, int>(LineMapping[i].Item1 + startLineMapCounter, LineMapping[i].Item2 + startLineMapCounter);
-                        Low = Math.Min(Low, LineMapping[i].Item1);
-                        High = Math.Max(Low, LineMapping[i].Item2);
                     }
                 }
                 //We update the new position.
-                System.Diagnostics.Debug.Assert(Low != Int32.MaxValue);
-                System.Diagnostics.Debug.Assert(High != Int32.MinValue);
-                startLineMapCounter += High - Low;
+                startLineMapCounter += interval.Item2 - interval.Item1 + 1;
+                if (bNested)
+                {
+                    currentGenLineOffset = mainSourceText.Size;
+                }
             }
 
             /// <summary>
@@ -228,6 +276,16 @@ namespace TypeCobol.Codegen.Generators
                 return new Tuple<int, int>(startLine, startLine + count - 1);
             }
 
+            /// <summary>
+            /// Update all delta based on the content of the urrent buffer.
+            /// </summary>
+            /// <param name="targetSourceText">The current buffer</param>
+            internal void UpdateDeltas(SourceText targetSourceText)
+            {
+                var interval = GenLineMapping(startLineMapCounter, currentGenLineOffset, targetSourceText);
+                currentGenLineOffset = targetSourceText.Size;
+                startLineMapCounter += interval.Item2 - interval.Item1 + 1;
+            }
         }
 
         /// <summary>
@@ -543,7 +601,7 @@ namespace TypeCobol.Codegen.Generators
                                     function?.OriginalHash != null && function.OriginalHash == functionDeclaration.OriginalHash)
                                 {
                                     AppendBufferContent(targetSourceText, funData.FunctionDeclBuffer);
-                                    lmCtx?.RelocateFunctionRanges(funData);
+                                    lmCtx?.RelocateFunctionRanges(funData, funData.FunctionDeclBuffer, targetSourceText, true);
                                 }
                             }
                         }
@@ -577,7 +635,7 @@ namespace TypeCobol.Codegen.Generators
                     LinearNodeSourceCodeMapper.NodeFunctionData funData =
                         mapper.Nodes[fun_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
                     AppendBufferContent(targetSourceText, funData.FunctionDeclBuffer);
-                    lmCtx?.RelocateFunctionRanges(funData);
+                    lmCtx?.RelocateFunctionRanges(funData, funData.FunctionDeclBuffer, targetSourceText, false);
                 }
             }
             //5)//Generate Line Exceed Diagnostics
