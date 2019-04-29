@@ -229,7 +229,7 @@ namespace TypeCobol.Codegen.Generators
             /// <param name="bNested">true if we are relocating a function declaration generated as a nested program, false otherwise</param>
             public void RelocateFunctionRanges(NodeFunctionData funData, StringSourceText funSourceText, SourceText mainSourceText, bool bNested)
             {
-                Tuple<int, int> interval = interval = GenLineMapping(0, 0, funSourceText);
+                Tuple<int, int> interval = GenLineMapping(0, 0, funSourceText);
                 if (funData.LineMapFirstIndex == 0 && funData.LineMapLastIndex == 0)
                 {//Special case the body of the function is empty. ==> So take the range of lines in its buffer
                     foreach (var l in funData.Buffer.Lines)
