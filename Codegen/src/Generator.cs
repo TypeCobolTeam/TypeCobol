@@ -323,7 +323,9 @@ namespace TypeCobol.Codegen
         /// <param name="node">The node to process</param>
         /// <returns>true if child nodes must visited for acceptation, false otherwise.</returns>
         protected abstract bool Process(Node node);
+        public abstract void GenerateLineMapFile(Stream stream);
 
         public string TypeCobolVersion { get; set; }
+        public abstract bool HasLineMapData { get; }
     }
 }
