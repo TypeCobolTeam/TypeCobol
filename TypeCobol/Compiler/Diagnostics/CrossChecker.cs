@@ -291,7 +291,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (dataDefinitionParent != null)
                 {
                     //Check if DataDefinition is level 88 and declared under a Type BOOL variable
-                    if (dataDefinitionParent.DataType == DataType.Boolean && levelNumberValue == 88)
+                    //Perf note: first compare levelNumberValue because it's faster than DataType
+                    if (levelNumberValue == 88 && dataDefinitionParent.DataType == DataType.Boolean)
                     {
                         DiagnosticUtils.AddError(dataDefinition,
                             "The Level 88 symbol '" + dataDefinition.Name + "' cannot be declared under a BOOL typed symbol");
