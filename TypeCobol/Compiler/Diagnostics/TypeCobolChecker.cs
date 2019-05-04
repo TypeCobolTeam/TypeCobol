@@ -47,10 +47,10 @@ namespace TypeCobol.Compiler.Diagnostics
         private static void checkReadOnly(Node node, [NotNull] Node receiving)
         {
             var rtype = receiving.Parent as DataDefinition;
-            if (rtype == null) return;
+            if (rtype == null || rtype.DataType.CobolLanguageLevel == CobolLanguageLevel.Cobol85) return;
             foreach (var type in READONLY_DATATYPES)
             {
-                if (type.Equals(rtype.DataType.Name.ToUpper()))
+                if (type.Equals(rtype.DataType.Name, StringComparison.OrdinalIgnoreCase))
                     DiagnosticUtils.AddError(node, type + " properties are read-only");
             }
         }
