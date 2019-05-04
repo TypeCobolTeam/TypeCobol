@@ -21,14 +21,8 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         private static string[] READONLY_DATATYPES = {"DATE",};
 
-        public static void OnNode([NotNull] Node node)
+        public static void OnNode([NotNull] VariableWriter variableWriter, Node node)
         {
-            VariableWriter variableWriter = node as VariableWriter;
-            if (variableWriter == null)
-            {
-                return; //not our job
-            }
-
             var element = node.CodeElement as VariableWriter;
             if (element?.VariablesWritten != null)
                 foreach (var pair in element.VariablesWritten)
@@ -999,14 +993,11 @@ namespace TypeCobol.Compiler.Diagnostics
 
     public class GlobalStorageSectionChecker
     {
-        public static void OnNode([NotNull] Node node)
+        public static void OnNode([NotNull] GlobalStorageSection globalStorageSection)
         {
-            var globalStorageSection = node as GlobalStorageSection;
-            if (globalStorageSection == null) return;
-
             //Check if GlobalStorageSection is declared in main program Rule - GLOBALSS_ONLY_IN_MAIN 
             if (!globalStorageSection.GetProgramNode().IsMainProgram)
-                DiagnosticUtils.AddError(node,
+                DiagnosticUtils.AddError(globalStorageSection,
                     "GLOBAL-STORAGE SECTION is only authorized in the main program of this source file.");
 
             //Check every GlobalStorageSection DataDefinition (children)

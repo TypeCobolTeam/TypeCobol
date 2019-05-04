@@ -45,12 +45,13 @@ namespace TypeCobol.Compiler.Diagnostics
                 CheckVariable(node, codeElement.StorageAreaGroupsCorrespondingImpact.ReceivingGroupItem, false);
             }
 
-            FunctionCallChecker.OnNode(node);
-            TypedDeclarationChecker.OnNode(node);
-            RenamesChecker.OnNode(node);
-            ReadOnlyPropertiesChecker.OnNode(node);
-            GlobalStorageSectionChecker.OnNode(node);
+            return true;
+        }
 
+
+        public override bool Visit(GlobalStorageSection globalStorageSection)
+        {
+            GlobalStorageSectionChecker.OnNode(globalStorageSection);
             return true;
         }
 
@@ -72,6 +73,19 @@ namespace TypeCobol.Compiler.Diagnostics
             RedefinesChecker.OnNode(dataRedefines);
             return true;
         }
+        public override bool Visit(DataRenames dataRenames)
+        {
+            RenamesChecker.OnNode(dataRenames);
+            return true;
+        }
+
+        public override bool Visit(ProcedureStyleCall call)
+        {
+            FunctionCallChecker.OnNode(call);
+            return true;
+        }
+
+        
 
         public override bool Visit(PerformProcedure performProcedureNode)
         {
@@ -267,11 +281,14 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool VisitVariableWriter(VariableWriter variableWriter)
         {
             WriteTypeConsistencyChecker.OnNode(variableWriter, CurrentNode);
+            ReadOnlyPropertiesChecker.OnNode(variableWriter, CurrentNode);
             return true;
         }
 
         public override bool Visit(DataDefinition dataDefinition)
         {
+            TypedDeclarationChecker.OnNode(dataDefinition);
+
             var commonDataDataDefinitionCodeElement = dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines;
             if (commonDataDataDefinitionCodeElement!=null)
             {
