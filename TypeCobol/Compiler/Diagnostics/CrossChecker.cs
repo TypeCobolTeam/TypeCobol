@@ -376,12 +376,24 @@ namespace TypeCobol.Compiler.Diagnostics
         /// Test if the received DataDefinition has other children than DataConditionEntry or DataRenamesEntry
         /// </summary>
         /// <param name="dataDefinition">Item to check</param>
-        /// <returns>True if there are only DataConditionEntry or DataRenamesEntry childrens</returns>
-        private static bool HasChildrenThatDeclareData(DataDefinition dataDefinition)
+        /// <returns>True if there are only DataConditionEntry or DataRenamesEntry children</returns>
+        private static bool HasChildrenThatDeclareData([NotNull] DataDefinition dataDefinition)
         {
-            return dataDefinition.Children.Any(elem=>elem.CodeElement != null && 
-                                                     elem.CodeElement.Type != CodeElementType.DataConditionEntry && 
-                                                     elem.CodeElement.Type != CodeElementType.DataRenamesEntry);
+            //We only need to check the last children:
+            //DataConditionEntry is a level 88, DataRenamesEntry is level 66 and they cannot have children
+            //DataDescription and DataRedefines are level between 1 and 49 inclusive.
+            //As the level number drive the positioning of Node inside the Children property DataConditionEntry and DataRenamesEntry will always be
+            //positioned before dataDescription.
+            if (dataDefinition.ChildrenCount > 0)
+            {
+                var lastChild = ((DataDefinition) dataDefinition.Children[dataDefinition.ChildrenCount - 1]);
+
+                return lastChild.CodeElement != null 
+                       && lastChild.CodeElement.Type != CodeElementType.DataConditionEntry 
+                       && lastChild.CodeElement.Type != CodeElementType.DataRenamesEntry;
+            }
+
+            return false;
         }
 
         public override bool Visit(IndexDefinition indexDefinition)
