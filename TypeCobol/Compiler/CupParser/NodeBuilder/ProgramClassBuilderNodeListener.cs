@@ -20,7 +20,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
         }
 
-        public virtual void OnLevel1Definition(Node level1Node)
+        public virtual void OnLevel1Definition(DataDefinition level1Node)
         {
 
         }

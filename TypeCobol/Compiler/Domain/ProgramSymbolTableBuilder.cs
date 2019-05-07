@@ -21,12 +21,13 @@ namespace TypeCobol.Compiler.Domain
     /// 
     /// THIS ARE COBOL Rules
     /// ---------------------
-    /// -"External" variables are the equivalent of a Fortran or assembler common section, they are truly global.
+    /// -"External" variables are the equivalent of a Fortran or assembler common section, 
+    ///     see: https://www.ibm.com/support/knowledgecenter/SS6SG3_5.1.1/com.ibm.cobol511.ent.doc/PGandLR/ref/rlfdeext.html.
     /// -"Global Program Scope" variables declared in working storage as global are visible to the entire program 
     ///     in which they are declared AND in all nested subprograms contained in that program.
     /// -"Program Scope" variables declared in working storage are visible to the entire program in which they are declared.
     /// -"Program Scope" variables declared in local storage are visible to the entire program in which they are declared,
-    ///     but are deleted and reinitialized on every invocation. Think thread scoped, sorta.
+    ///     but are deleted and reinitialized on every invocation.
     /// -"Nested Program Scope" Cobol does not distinguish between programs and functions/procedures, 
     /// its equivalent of a procedure or function is called a program.An infinite number of programs can be contained within a program, 
     /// and the variables of each are visible only within the scope of that individual program.
@@ -1657,13 +1658,12 @@ namespace TypeCobol.Compiler.Domain
         /// Level1 Definition Tracker, This tracker is used to create all DataDefinition symbols.
         /// </summary>
         /// <param name="level1Node">The level 1 definition node</param>
-        public override void OnLevel1Definition(Node level1Node)
+        public override void OnLevel1Definition(DataDefinition level1Node)
         {
-            System.Diagnostics.Debug.Assert(level1Node is DataDefinition);
             //Clear any pending RENAMES to validate.
             _renamesToValidate.Clear();
             var scope = GetCurrentDataDivisionSectionScope();
-            VariableSymbol dataDefSym = DataDefinition2Symbol((DataDefinition)level1Node, scope, null);
+            VariableSymbol dataDefSym = DataDefinition2Symbol(level1Node, scope, null);
             this.LastDataDefinitionSymbol = dataDefSym;
             if (dataDefSym != null)
             {

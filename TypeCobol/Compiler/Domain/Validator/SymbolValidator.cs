@@ -14,7 +14,7 @@ namespace TypeCobol.Compiler.Domain.Validator
     public class SymbolValidator : Symbol.AbstractSymbolVisitor<bool, Object>
     {
         /// <summary>
-        /// List of validated symbol
+        /// List of unvalidated symbol
         /// </summary>
         public List<Symbol> Unvalidated { get; set; }
 
@@ -32,8 +32,9 @@ namespace TypeCobol.Compiler.Domain.Validator
         }
 
         /// <summary>
-        /// TypeValidator Constructor
+        /// Constructor with a TypeValidator as argument.
         /// </summary>
+        /// <param name="typeValidator">The TypeValidator instance to be used when validating types</param>
         public SymbolValidator(TypeValidator typeValidator)
         {
             Unvalidated = new List<Symbol>();

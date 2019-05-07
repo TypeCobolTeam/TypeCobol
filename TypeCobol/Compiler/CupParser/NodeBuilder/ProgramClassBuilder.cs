@@ -186,7 +186,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 Exit();
             }
             if (LastLevel1Def != null)
-                Dispatcher.OnLevel1Definition(LastLevel1Def);
+                Dispatcher.OnLevel1Definition((DataDefinition)LastLevel1Def);
         }
 
         private void AddToSymbolTable(DataDescription node)
