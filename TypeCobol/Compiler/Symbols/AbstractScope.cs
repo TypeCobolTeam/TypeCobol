@@ -245,7 +245,7 @@ namespace TypeCobol.Compiler.Symbols
             paths = new string[refs.Count];
             for (int i = 0; i < refs.Count; i++)
             {
-                paths[i] = refs[i].Name.ToLower();
+                paths[i] = refs[i].Name;
             }
 
             return paths;

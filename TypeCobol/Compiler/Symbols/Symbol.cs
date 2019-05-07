@@ -295,23 +295,20 @@ namespace TypeCobol.Compiler.Symbols
         /// Lookup the Parent of this symbol of the given name.
         /// </summary>
         /// <param name="name">Parent name looked for</param>
-        /// <param name="nameLowered">true if the given name is already lowered, false otherwise.</param>
         /// <returns>The Parent if any, null otherwise</returns>
-        public virtual Symbol LookupParentOfName(string name, bool nameLowered = false)
+        public virtual Symbol LookupParentOfName(string name)
         {
-            name = nameLowered ? name : name.ToLower();
-            if (Owner != null && Owner.Name.ToLower().Equals(name))
+            if (Owner != null && Owner.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                 return Owner;
-            return Owner?.LookupParentOfName(name, true);
+            return Owner?.LookupParentOfName(name);
         }
 
         /// <summary>
         /// Determine if this symbol is matching the given path (à la COBOL qualification)
         /// </summary>
         /// <param name="path">The path to match</param>
-        /// <param name="pathLowered">true if the path names are already lowered, false otherwise</param>
         /// <returns>true if yes, false otherwise</returns>
-        public bool IsMatchingPath(string[] path, bool pathLowered = false)
+        public bool IsMatchingPath(string[] path)
         {
             Symbol currentSymbol = this;
             for (int i = 0; i < path.Length; i++)
@@ -319,13 +316,13 @@ namespace TypeCobol.Compiler.Symbols
                 switch (i)
                 {
                     case 0:
-                        string name = currentSymbol.Name.ToLower();
-                        if (!path[i].Equals(name))
+                        string name = currentSymbol.Name;
+                        if (!path[i].Equals(name, StringComparison.OrdinalIgnoreCase))
                             return false;
                         break;
                     default:
                     {
-                        Symbol parent = currentSymbol.LookupParentOfName(path[i], true);
+                        Symbol parent = currentSymbol.LookupParentOfName(path[i]);
                         if (parent == null)
                             return false;
                         currentSymbol = parent;

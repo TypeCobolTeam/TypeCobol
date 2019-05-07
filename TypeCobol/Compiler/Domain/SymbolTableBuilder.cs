@@ -77,7 +77,7 @@ namespace TypeCobol.Compiler.Domain
                 }
                 return _rootSymbolTable;
             }
-            set { _rootSymbolTable = null; }
+            set { _rootSymbolTable = value; }
         }
 
         /// <summary>

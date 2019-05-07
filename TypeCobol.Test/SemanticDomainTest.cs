@@ -34,6 +34,7 @@ namespace TypeCobol.Test.Domain
         [TestInitialize]
         public void TestInitialize()
         {
+            SymbolTableBuilder.Root = null;
             //Create a default configurations for options
             DefaultConfig = new TypeCobolConfiguration();
             if (File.Exists(DefaultIntrinsicPath))
@@ -63,7 +64,7 @@ namespace TypeCobol.Test.Domain
                 SymbolTableBuilder.Root.RemoveProgram(prog);
                 RemovePrograms(nestPrg);
             }
-            SymbolTableBuilder.Root.RemoveProgram(prog);
+            SymbolTableBuilder.Root.RemoveProgram(prog);            
         }
 
         [TestCleanup]
@@ -80,6 +81,7 @@ namespace TypeCobol.Test.Domain
                     }
                 }
             }
+            SymbolTableBuilder.Root = null;
         }
 
         /// <summary>
@@ -390,12 +392,20 @@ namespace TypeCobol.Test.Domain
             //Before expanding there were no X1, Y1, X2, Y2 variables in the program.
             var x1 = currentProgram.ResolveReference(new string[] { "x1" }, false);
             Assert.IsTrue(x1.Count == 0);
+            var X1 = currentProgram.ResolveReference(new string[] { "X1" }, false);
+            Assert.IsTrue(X1.Count == 0);
             var y1 = currentProgram.ResolveReference(new string[] { "y1" }, false);
             Assert.IsTrue(y1.Count == 0);
+            var Y1 = currentProgram.ResolveReference(new string[] { "Y1" }, false);
+            Assert.IsTrue(Y1.Count == 0);
             var x2 = currentProgram.ResolveReference(new string[] { "x2" }, false);
             Assert.IsTrue(x2.Count == 0);
+            var X2 = currentProgram.ResolveReference(new string[] { "X2" }, false);
+            Assert.IsTrue(X2.Count == 0);
             var y2 = currentProgram.ResolveReference(new string[] { "y2" }, false);
             Assert.IsTrue(y2.Count == 0);
+            var Y2 = currentProgram.ResolveReference(new string[] { "Y2" }, false);
+            Assert.IsTrue(Y2.Count == 0);
 
             SymbolExpander symExpander = new SymbolExpander(currentProgram);
 
@@ -409,15 +419,31 @@ namespace TypeCobol.Test.Domain
             x1 = currentProgram.ResolveReference(new string[] { "x1" }, false);
             Assert.IsTrue(x1.Count == 1);
             Assert.IsNotNull(x1.Symbol.Type);
+            X1 = currentProgram.ResolveReference(new string[] { "X1" }, false);
+            Assert.IsTrue(X1.Count == 1);
+            Assert.IsNotNull(X1.Symbol.Type);
+            Assert.IsNotNull(x1.Symbol == X1.Symbol);
             y1 = currentProgram.ResolveReference(new string[] { "y1" }, false);
             Assert.IsTrue(y1.Count == 1);
             Assert.IsNotNull(y1.Symbol.Type);
+            Y1 = currentProgram.ResolveReference(new string[] { "Y1" }, false);
+            Assert.IsTrue(Y1.Count == 1);
+            Assert.IsNotNull(Y1.Symbol.Type);
+            Assert.IsNotNull(y1.Symbol == Y1.Symbol);
             x2 = currentProgram.ResolveReference(new string[] { "x2" }, false);            
             Assert.IsTrue(x2.Count == 1);
             Assert.IsNotNull(x2.Symbol.Type);
+            X2 = currentProgram.ResolveReference(new string[] { "X2" }, false);
+            Assert.IsTrue(X2.Count == 1);
+            Assert.IsNotNull(X2.Symbol.Type);
+            Assert.IsNotNull(x2.Symbol == X2.Symbol);
             y2 = currentProgram.ResolveReference(new string[] { "y2" }, false);            
             Assert.IsTrue(y2.Count == 1);
             Assert.IsNotNull(y2.Symbol.Type);
+            Y2 = currentProgram.ResolveReference(new string[] { "Y2" }, false);
+            Assert.IsTrue(Y2.Count == 1);
+            Assert.IsNotNull(Y2.Symbol.Type);
+            Assert.IsNotNull(y2.Symbol == Y2.Symbol);
 
             var rcarray_x1 = currentProgram.ResolveReference(new string[] { "x1", "rcarray" }, false);
             Assert.IsTrue(rcarray_x1.Count == 1);
@@ -431,6 +457,20 @@ namespace TypeCobol.Test.Domain
             var rcarray_y2 = currentProgram.ResolveReference(new string[] { "y2", "rcarray" }, false);
             Assert.IsTrue(rcarray_y2.Count == 1);
             Assert.IsTrue(rcarray_y2.Symbol == y2.Symbol);
+
+            //Case Sensitive Tests
+            var rcArraY_x1 = currentProgram.ResolveReference(new string[] { "X1", "rcArRaY" }, false);
+            Assert.IsTrue(rcArraY_x1.Count == 1);
+            Assert.IsTrue(rcArraY_x1.Symbol == x1.Symbol);
+            var rcArraY_y1 = currentProgram.ResolveReference(new string[] { "Y1", "rcArRaY" }, false);
+            Assert.IsTrue(rcArraY_y1.Count == 1);
+            Assert.IsTrue(rcArraY_y1.Symbol == y1.Symbol);
+            var rcArraY_x2 = currentProgram.ResolveReference(new string[] { "X2", "rcArRaY" }, false);
+            Assert.IsTrue(rcArraY_x2.Count == 1);
+            Assert.IsTrue(rcArraY_x2.Symbol == x2.Symbol);
+            var rcArraY_y2 = currentProgram.ResolveReference(new string[] { "Y2", "rcArRaY" }, false);
+            Assert.IsTrue(rcArraY_y2.Count == 1);
+            Assert.IsTrue(rcArraY_y2.Symbol == y2.Symbol);
 
             //-------------------------
             //Expand rcpt variable.

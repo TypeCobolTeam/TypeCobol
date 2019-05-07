@@ -98,7 +98,8 @@ namespace TypeCobol.Test {
 	            }
 	            ProgramSymbolTableBuilder.LastBuilder = null;
 	        }
-	    }
+            SymbolTableBuilder.Root = null;
+        }
 
 #endif
 

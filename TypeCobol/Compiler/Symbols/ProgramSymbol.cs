@@ -34,7 +34,7 @@ namespace TypeCobol.Compiler.Symbols
             Functions = new Scope<FunctionSymbol>(this);
             Programs = new Scope<ProgramSymbol>(this);
             VariableTypeSymbols = new LinkedList<VariableSymbol>();
-            Domain = new Dictionary<string, Scope<VariableSymbol>.MultiSymbols>();
+            Domain = new Dictionary<string, Scope<VariableSymbol>.MultiSymbols>(StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace TypeCobol.Compiler.Symbols
             {
                 //First add it in the Global Domain.
                 SymbolTableBuilder.Root.AddToUniverse(varSym);
-                string name = varSym.Name.ToLower();
+                string name = varSym.Name;
                 Domain.TryGetValue(name, out var value);
                 if (value == null)
                 {

@@ -34,14 +34,13 @@ namespace TypeCobol.Compiler.Symbols
         public override string IndexedOFName => Indexed != null && Indexed.Name.Length != 0 ? Name +  " OF " + Indexed.Name  : Name;
         public override string IndexedDotName => Indexed != null && Indexed.Name.Length != 0 ? Indexed.Name + '.' + Name : Name;
 
-        public override Symbol LookupParentOfName(string name, bool nameLowered = false)
+        public override Symbol LookupParentOfName(string name)
         {
             if (Indexed == null)
-                return base.LookupParentOfName(name, nameLowered);
-            name = nameLowered ? name : name.ToLower();
-            if (Indexed.Name.ToLower().Equals(name))
+                return base.LookupParentOfName(name);
+            if (Indexed.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                 return Indexed;
-            return Indexed.LookupParentOfName(name, true);
+            return Indexed.LookupParentOfName(name);
         }
 
         public override bool HasParent(Symbol parent)

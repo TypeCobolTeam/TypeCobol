@@ -191,12 +191,11 @@ namespace TypeCobol.Compiler.Scopes
             System.Diagnostics.Debug.Assert(sym.Name != null);
             if (_symbols == null)
             {
-                _symbols = new Dictionary<String, Entry >();
+                _symbols = new Dictionary<String, Entry >(StringComparer.OrdinalIgnoreCase);
                 _orderedSymbols = new List<T>();
             }
             Entry entry = null;
-            //String name = String.Intern(sym.Name.ToLower());
-            String name = sym.Name.ToLower();
+            String name = sym.Name;
             if (!_symbols.ContainsKey(name))
             {
                 _symbols[name] = entry = new Entry(sym);
@@ -245,11 +244,11 @@ namespace TypeCobol.Compiler.Scopes
             System.Diagnostics.Contracts.Contract.Requires(sym != null);
             if (sym == null)
                 return;
-            String name = sym.Name.ToLower();
+            String name = sym.Name;
             Entry entry = null;
             if (_symbols != null)
             {
-                _symbols.TryGetValue(name.ToLower(), out entry);
+                _symbols.TryGetValue(name, out entry);
                 if (entry != null)
                 {
                     if (entry.Count == 1)
@@ -286,7 +285,7 @@ namespace TypeCobol.Compiler.Scopes
             Entry entry = null;
             if (_symbols != null)
             {
-                _symbols.TryGetValue(name.ToLower(), out entry);
+                _symbols.TryGetValue(name, out entry);
             }
             return entry;
         }

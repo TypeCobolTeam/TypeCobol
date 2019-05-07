@@ -211,6 +211,7 @@ namespace TypeCobol.Test.Utils
                 }
                 ProgramSymbolTableBuilder.LastBuilder = null;
             }
+            SymbolTableBuilder.Root = null;
         }
 
 #endif

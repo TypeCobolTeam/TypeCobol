@@ -57,7 +57,8 @@ namespace TypeCobol.Codegen.Domain
                     foreach (var prog in Builder.Programs)
                         SymbolTableBuilder.Root.RemoveProgram(prog);
                 }
-            }            
+            }
+            SymbolTableBuilder.Root = null;
         }
 
 

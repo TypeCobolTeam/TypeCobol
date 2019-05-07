@@ -73,7 +73,7 @@ namespace TypeCobol.Compiler.Symbols
 
             DomainLookup lookup = new DomainLookup();
             //Add our parent and ourself to the path variable.
-            LookupContext ctx = new LookupContext(path[0].ToLower());
+            LookupContext ctx = new LookupContext(path[0]);
             ctx.Path.AddLast(Owner);
             ctx.Path.AddLast(this);
             ctx.TypedPath.AddLast(Owner);
@@ -106,8 +106,8 @@ namespace TypeCobol.Compiler.Symbols
                 switch (i)
                 {
                     case 0:
-                        string name = symbolPath[currentSymbolIndex].Name.ToLower();
-                        if (!path[i].Equals(name))
+                        string name = symbolPath[currentSymbolIndex].Name;
+                        if (!path[i].Equals(name, StringComparison.OrdinalIgnoreCase))
                             return false;
                         break;
                     default:
@@ -131,10 +131,9 @@ namespace TypeCobol.Compiler.Symbols
         /// <returns></returns>
         private static int LookupParentIndexOfName(int currentSymbolIndex, Symbol[] symbolPath, string name)
         {
-            name = name.ToLower();
             while (currentSymbolIndex > 0)
             {
-                if (symbolPath[currentSymbolIndex - 1].Name.ToLower().Equals(name))
+                if (symbolPath[currentSymbolIndex - 1].Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                     return currentSymbolIndex - 1;
                 currentSymbolIndex--;
             }
@@ -194,7 +193,7 @@ namespace TypeCobol.Compiler.Symbols
             {
                 ctx.Path.AddLast(s);
                 ctx.TypedPath.AddLast(s);
-                if (s.Name.ToLower().Equals(ctx.Name))
+                if (s.Name.Equals(ctx.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     ctx.Candidates.AddLast(new Tuple<VariableSymbol, Symbol[], Symbol[]>(s, ctx.Path.ToArray(), ctx.TypedPath.ToArray()));
                 }
@@ -212,7 +211,7 @@ namespace TypeCobol.Compiler.Symbols
                 {
                     ctx.TypedPath.AddLast(s.Typedef);
                 }
-                if (s.Name.ToLower().Equals(ctx.Name))
+                if (s.Name.Equals(ctx.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     ctx.Candidates.AddLast(new Tuple<VariableSymbol, Symbol[], Symbol[]>(s, ctx.Path.ToArray(), ctx.TypedPath.ToArray()));
                 }
