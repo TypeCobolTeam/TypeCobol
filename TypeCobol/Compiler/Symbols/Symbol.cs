@@ -106,6 +106,15 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
+        /// A integer number which can be associated to this Symbol.
+        /// </summary>
+        public int Number
+        {
+            set;
+            get;
+        }
+
+        /// <summary>
         /// Symbol's name
         /// </summary>
         public string Name

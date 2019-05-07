@@ -87,11 +87,13 @@ namespace TypeCobol.Analysis.Graph
         public List<BasicBlock<N,D>> SuccessorsFor(BasicBlock<N, D> basicBlock)
         {
             System.Diagnostics.Contracts.Contract.Requires(basicBlock != null);
-            if (basicBlock.FirstSuccessorEdge + basicBlock.SuccessorCount > this.SuccessorEdges.Count)
-                throw new InvalidOperationException();//Can happen if the basic bloc does not belong to this graph
-            System.Diagnostics.Contracts.Contract.Assume(basicBlock.FirstSuccessorEdge >= 0);
-            System.Diagnostics.Contracts.Contract.Assume(basicBlock.SuccessorCount >= 0);
-            return this.SuccessorEdges.GetRange(basicBlock.FirstSuccessorEdge, basicBlock.SuccessorCount);
+            System.Diagnostics.Contracts.Contract.Assume(basicBlock.SuccessorEdges != null);
+            List<BasicBlock<N, D>> result = new List<BasicBlock<N, D>>();
+            foreach(var n in basicBlock.SuccessorEdges)
+            {
+                result.Add(SuccessorEdges[n]);
+            }
+            return result;
         }
     }
 }

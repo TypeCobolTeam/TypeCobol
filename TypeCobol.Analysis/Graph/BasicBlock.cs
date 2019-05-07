@@ -32,18 +32,9 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
-        /// The first edge that leaves this block. The edges are a contiguous sublist of the SuccessorEdges list of the ControlFlowGraph that contains this block.
+        /// The list of edge that leaves this block. The edges entries in the SuccessorEdges list of the ControlFlowGraph that contains this block.
         /// </summary>
-        public int FirstSuccessorEdge
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// The number of edges that leave this block. The edges are a contiguous sublist of the the SuccessorEdges list of the ControlFlowGraph that contains this block.
-        /// </summary>
-        public int SuccessorCount
+        public List<int> SuccessorEdges
         {
             get;
             set;
@@ -55,7 +46,10 @@ namespace TypeCobol.Analysis.Graph
         [Flags]
         public enum Flags : uint
         {
-            Resolved = 0x01 << 0 //Flag if this basic block is totally resolved.
+
+            Resolved = 0x01 << 0, //Flag if this basic block is totally resolved.
+            Ending = 0x01 << 1, //Flag if this basic block is an ending block.
+            Default = 0x01 << 2, //Flag if this basic block is  default block for instance a WhenOther block.
         }
 
         /// <summary>
@@ -93,6 +87,8 @@ namespace TypeCobol.Analysis.Graph
         /// </summary>
         public BasicBlock()
         {
+            Instructions = new LinkedList<N>();
+            SuccessorEdges = new List<int>(2);
         }
     }
 }
