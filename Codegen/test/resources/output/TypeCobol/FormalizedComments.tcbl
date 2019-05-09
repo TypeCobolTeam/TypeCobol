@@ -1,8 +1,8 @@
 ﻿      * 4 errors
       * Line 9[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
-      * Line 48[12,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
-      * Line 53[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
-      * Line 55[21,23] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli
+      * Line 52[12,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
+      * Line 57[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
+      * Line 59[21,23] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli
       *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DocCodeGen.
@@ -30,6 +30,10 @@
       *   @Restriction : Do not Use BOOL var
       *>>>
       *01 myType TYPEDEF STRICT PUBLIC pic X(01).
+
+000111*<<
+      *    a multiline comment
+000112*>>
 
       *<<< Vect2D
       *>>>
