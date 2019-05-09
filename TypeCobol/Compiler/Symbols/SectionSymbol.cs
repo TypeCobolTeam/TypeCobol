@@ -31,7 +31,7 @@ namespace TypeCobol.Compiler.Symbols
         /// Enters a paragraph symbol in this Sections
         /// </summary>
         /// <param name="p">The paragraph to enter</param>
-        public void AddParagraph(ParagraphSymbol p)
+        public virtual void AddParagraph(ParagraphSymbol p)
         {
             p.Owner = this;
             Paragraphs.Enter(p);

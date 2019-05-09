@@ -30,7 +30,8 @@ namespace TypeCobol.Compiler.Symbols
             Variable,
             Index,
             Section,
-            Paragraph
+            Paragraph,
+            Sentence,
         }
 
         [Flags]
@@ -120,7 +121,7 @@ namespace TypeCobol.Compiler.Symbols
         public string Name
         {
             get;
-            internal set;
+            protected set;
         }
 
 #if DOMAIN_CHECKER
@@ -276,7 +277,7 @@ namespace TypeCobol.Compiler.Symbols
         public Symbol Owner
         {
             get;
-            internal set;
+            protected internal set;
         }
 
         public SemanticKinds SemanticKind => SemanticKinds.Symbol;

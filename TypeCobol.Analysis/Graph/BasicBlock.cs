@@ -11,7 +11,7 @@ namespace TypeCobol.Analysis.Graph
     /// </summary>
     /// <typeparam name="N">The Type Variable of an instruction</typeparam>
     /// <typeparam name="D">The Type Variable for any extra Data information</typeparam>
-    public class BasicBlock<N, D>
+    public class BasicBlock<N, D> : ICloneable
     {
         /// <summary>
         /// Instructions making up this block.
@@ -80,6 +80,11 @@ namespace TypeCobol.Analysis.Graph
         public bool HasFlag(Flags flag)
         {
             return (this.Flag & flag) != 0;
+        }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
         }
 
         /// <summary>

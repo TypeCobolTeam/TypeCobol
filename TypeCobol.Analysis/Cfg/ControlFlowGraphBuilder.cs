@@ -145,7 +145,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// The current section symbol.
         /// </summary>
-        internal SectionSymbol CurrentSection
+        internal CfgSectionSymbol CurrentSection
         {
             get;
             set;
@@ -154,7 +154,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// The current paragraph symbol.
         /// </summary>
-        internal ParagraphSymbol CurrentParagraph
+        internal CfgParagraphSymbol CurrentParagraph
         {
             get;
             set;
@@ -182,16 +182,6 @@ namespace TypeCobol.Analysis.Cfg
         /// Ordered list of all Sections an Paragraphs encountered in order.
         /// </summary>
         internal List<Symbol> AllSectionsParagraphs
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Dictionary of Basic Blocks associated to Sections or Paragraphs.
-        /// Each block is a sentence.
-        /// </summary>
-        internal Dictionary<Symbol, LinkedList<BuilderSentence> > SectionParagraphBlocks
         {
             get;
             set;
@@ -235,7 +225,6 @@ namespace TypeCobol.Analysis.Cfg
         public ControlFlowGraphBuilder(ControlFlowGraphBuilder<D> parentCfgBuilder = null)
         {
             this.ParentProgramCfgBuilder = parentCfgBuilder;
-            this.SectionParagraphBlocks = new Dictionary<Symbol, LinkedList<BuilderSentence>>();
             this.Diagnostics = new List<Diagnostic>();
         }
 
@@ -636,36 +625,34 @@ namespace TypeCobol.Analysis.Cfg
         /// Link this sentence to the current section or paragraph if any.
         /// </summary>
         /// <param name="block">The block to link</param>
-        private void LinkBlockToCurrentSectionParagraph(BuilderSentence block)
+        private void LinkBlockSentenceToCurrentSectionParagraph(BuilderSentence block)
         {
             Symbol curSecorPara = ((Symbol)this.CurrentProgramCfgBuilder.CurrentParagraph) ?? this.CurrentProgramCfgBuilder.CurrentSection;
             if (curSecorPara != null)
             {
-                LinkedList<BuilderSentence> blocks;
-                this.CurrentProgramCfgBuilder.SectionParagraphBlocks.TryGetValue(curSecorPara, out blocks);
-                if (blocks == null)
+                if (curSecorPara.Kind == Symbol.Kinds.Section)
                 {
-                    blocks = new LinkedList<BuilderSentence>();
-                    this.CurrentProgramCfgBuilder.SectionParagraphBlocks[curSecorPara] = blocks;
+                    this.CurrentProgramCfgBuilder.CurrentSection.AddSentence(block);
                 }
-                blocks.AddLast(block);
+                else
+                {
+                    this.CurrentProgramCfgBuilder.CurrentParagraph.AddSentence(block);
+                }
             }
         }
 
         /// <summary>
-        /// A Sentence used for aour builder
+        /// A Sentence used for our builder. A Senetence is a special symbol.
         /// </summary>
-        internal class BuilderSentence : Sentence
+        internal class BuilderSentence : Symbol
         {
             /// <summary>
-            /// Any index associated to the Sentence
+            /// Private symbol owner.
             /// </summary>
-            internal int Index
+            internal void SetOwner(Symbol owner)
             {
-                get;
-                set;
+                Owner = owner;
             }
-
             /// <summary>
             /// First Block asociated to this sentence.
             /// </summary>
@@ -685,11 +672,38 @@ namespace TypeCobol.Analysis.Cfg
             }
 
             /// <summary>
+            /// All blocks in this Sentence.
+            /// </summary>
+            internal LinkedList<BasicBlockForNode> AllBlocks
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
+            /// Add a block in this sequence.
+            /// </summary>
+            /// <param name="block">The block to be added</param>
+            internal void AddBlock(BasicBlockForNode block)
+            {
+                if (AllBlocks == null)
+                {
+                    AllBlocks = new LinkedList<BasicBlockForNode>();
+                }
+                AllBlocks.AddLast(block);
+            }
+
+            /// <summary>
+            /// Sentence counter
+            /// </summary>
+            private static int SentenceCounter = 0;
+            /// <summary>
             /// ctor
             /// </summary>
             public BuilderSentence()
             {
-
+                Kind = Kinds.Sentence;
+                Name = "<<Sentence>>(" + (SentenceCounter++) + ")";
             }
         }
 
@@ -699,15 +713,15 @@ namespace TypeCobol.Analysis.Cfg
         private void StartBlockSentence()
         {
             this.CurrentProgramCfgBuilder.CurrentSentence = new BuilderSentence();
-            if (AllSentences == null)
+            if (this.CurrentProgramCfgBuilder.AllSentences == null)
             {
-                AllSentences = new List<BuilderSentence>();
+                this.CurrentProgramCfgBuilder.AllSentences = new List<BuilderSentence>();
             }
-            CurrentSentence.Index = AllSentences.Count;
-            AllSentences.Add(CurrentSentence);
+            this.CurrentProgramCfgBuilder.CurrentSentence.Number = this.CurrentProgramCfgBuilder.AllSentences.Count;
+            this.CurrentProgramCfgBuilder.AllSentences.Add(this.CurrentProgramCfgBuilder.CurrentSentence);
 
-            var block = this.CurrentProgramCfgBuilder.CreateBlock(this.CurrentProgramCfgBuilder.CurrentSentence);
-            CurrentSentence.Block = block;
+            var block = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
+            this.CurrentProgramCfgBuilder.CurrentSentence.Block = block;
 
             if (this.CurrentProgramCfgBuilder.CurrentBasicBlock != null)
             {
@@ -716,8 +730,8 @@ namespace TypeCobol.Analysis.Cfg
                 this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(block);
             }
             this.CurrentProgramCfgBuilder.CurrentBasicBlock = block;
-            //Link this Block to its paragraph if any.
-            this.CurrentProgramCfgBuilder.LinkBlockToCurrentSectionParagraph(CurrentSentence);
+            //Link this Sentence to its section or paragraph if any.
+            this.CurrentProgramCfgBuilder.LinkBlockSentenceToCurrentSectionParagraph(this.CurrentProgramCfgBuilder.CurrentSentence);
         }
 
         /// <summary>
@@ -888,16 +902,62 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
+        /// A Section symbol used by Cfg : it contains Sentences and Paragraphs in order of appearance.
+        /// </summary>
+        internal class CfgSectionSymbol : SectionSymbol
+        {
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="name">Section's name</param>
+            public CfgSectionSymbol(string name) : base(name)
+            {
+                SentencesParagraphs = new Scope<Symbol>(this);
+            }
+
+            /// <summary>
+            /// All sentences and paragraph in this section in the order of appearance.
+            /// </summary>
+            public Scope<Symbol> SentencesParagraphs
+            {
+                get;
+                protected set;
+            }
+
+            /// <summary>
+            /// Enters a sentence symbol in this Paragraph.
+            /// </summary>
+            /// <param name="p">The paragraph to enter</param>
+            public void AddSentence(BuilderSentence s)
+            {
+                s.SetOwner(this);
+                SentencesParagraphs.Enter(s);
+            }
+
+            /// <summary>
+            /// Enters a paragraph symbol in this Sections
+            /// </summary>
+            /// <param name="p">The paragraph to enter</param>
+            public override void AddParagraph(ParagraphSymbol p)
+            {
+                base.AddParagraph(p);
+                SentencesParagraphs.Enter(p);
+            }
+        }
+
+        /// <summary>
         /// Enter a section declaration
         /// </summary>
         /// <param name="section"></param>
         protected virtual void EnterSection(Section section)
         {
             string name = section.Name;
-            SectionSymbol sym = new SectionSymbol(name);
+            CfgSectionSymbol sym = new CfgSectionSymbol(name);
             this.CurrentProgramCfgBuilder.EnterSectionOrParagraphSymbol(sym);
             //The new current section.
             this.CurrentProgramCfgBuilder.CurrentSection = sym;
+            //No more Paragraph
+            this.CurrentProgramCfgBuilder.CurrentParagraph = null;
         }
 
         /// <summary>
@@ -912,13 +972,47 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
+        /// A Paragraph symbol used by a CFG, it contains Sentence symbols.
+        /// </summary>
+        internal class CfgParagraphSymbol : ParagraphSymbol
+        {
+            /// <summary>
+            /// All sentences in this paragraph in the order of appearance
+            /// </summary>
+            public Scope<BuilderSentence> Sentences
+            {
+                get;
+                protected set;
+            }
+
+            /// <summary>
+            /// Enters a sentence symbol in this Paragraph.
+            /// </summary>
+            /// <param name="p">The paragraph to enter</param>
+            public void AddSentence(BuilderSentence s)
+            {
+                s.SetOwner(this);
+                Sentences.Enter(s);
+            }
+
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="name">Pargarph's name</param>
+            public CfgParagraphSymbol(string name) : base(name)
+            {
+                Sentences = new Scope<BuilderSentence>(this);
+            }
+        }
+
+        /// <summary>
         /// Enter a paragraph
         /// </summary>
         /// <param name="p">The paragraph to be entered</param>
         protected virtual void EnterParagraph(Paragraph p)
         {
             string name = p.Name;
-            ParagraphSymbol sym = new ParagraphSymbol(name);
+            CfgParagraphSymbol sym = new CfgParagraphSymbol(name);
             this.CurrentProgramCfgBuilder.EnterSectionOrParagraphSymbol(sym);
             if (CurrentSection != null)
             {//Add the paragraph to the current section if any.
@@ -961,9 +1055,9 @@ namespace TypeCobol.Analysis.Cfg
                 {
                     BasicBlockForNode block = next.Item2;
                     BuilderSentence sentence = next.Item3;
-                    if (sentence.Index < this.CurrentProgramCfgBuilder.AllSentences.Count - 1)
+                    if (sentence.Number < this.CurrentProgramCfgBuilder.AllSentences.Count - 1)
                     {
-                        BuilderSentence nextSentence = AllSentences[sentence.Index + 1];
+                        BuilderSentence nextSentence = AllSentences[sentence.Number + 1];
                         System.Diagnostics.Debug.Assert(!block.SuccessorEdges.Contains(nextSentence.BlockIndex));
                         block.SuccessorEdges.Add(nextSentence.BlockIndex);
                     }
@@ -1008,31 +1102,38 @@ namespace TypeCobol.Analysis.Cfg
             }
         }
 
-        private Symbol CheckSectionOrParagraph(SymbolReference symRef)
+        /// <summary>
+        /// Check that a Section or a Paragraph is resolvable
+        /// </summary>
+        /// <param name="node">A reference node for the check, used as position.</param>
+        /// <param name="symRef">The Symbol Reference to the Section os Paragraph</param>
+        /// <returns>The Symbol of the section or Paragraph if resolved, null otherwise.</returns>
+        private Symbol CheckSectionOrParagraph(Node node, SymbolReference symRef)
         {
             //Resolve the target Section or Paragraph.
-            //Scope<Symbol>.MultiSymbols start = ResolveSectionOrParagraphSymbol(symRef);
+            Scope<Symbol>.MultiSymbols symbols = ResolveSectionOrParagraphSymbol(symRef);
 
-            //{
-            //    Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-            //        p.CodeElement.Column,
-            //        p.CodeElement.Column,
-            //        p.CodeElement.Line,
-            //        string.Format(Resource.UnknownSectionOrParagraph, symRef.ToString()));
-            //    Diagnostics.Add(d);
-            //    return null;
-            //}
-            //if (start.Count > 1)
-            //{
-            //    Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-            //        p.CodeElement.Column,
-            //        p.CodeElement.Column,
-            //        p.CodeElement.Line,
-            //        string.Format(Resource.AmbiguousSectionOrParagraph, symRef.ToString()));
-            //    Diagnostics.Add(d);
-            //    return null;
-            //}
-            return null;
+            if (symbols.Count == 0)
+            {
+                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                    node.CodeElement.Column,
+                    node.CodeElement.Column,
+                    node.CodeElement.Line,
+                    string.Format(Resource.UnknownSectionOrParagraph, symRef.ToString()));
+                Diagnostics.Add(d);
+                return null;
+            }
+            if (symbols.Count > 1)
+            {
+                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                    node.CodeElement.Column,
+                    node.CodeElement.Column,
+                    node.CodeElement.Line,
+                    string.Format(Resource.AmbiguousSectionOrParagraph, symRef.ToString()));
+                Diagnostics.Add(d);
+                return null;
+            }
+            return symbols.Symbol;
         }
 
         /// <summary>
@@ -1045,6 +1146,35 @@ namespace TypeCobol.Analysis.Cfg
         {
             SymbolReference procedure = p.CodeElement.Procedure;
             SymbolReference throughProcedure = p.CodeElement.ThroughProcedure;
+
+            Symbol procedureSymbol = CheckSectionOrParagraph(p, procedure);
+            if (procedureSymbol == null)
+                return false;
+            switch(procedureSymbol.Kind)
+            {
+                case Symbol.Kinds.Paragraph:
+                    {//We must clone each block of the sequence and add them to the group.
+                        CfgParagraphSymbol cfgParaSymbol = (CfgParagraphSymbol)procedureSymbol;
+                        Scope<BuilderSentence> sentences = cfgParaSymbol.Sentences;
+                        foreach(var sentence in sentences)
+                        {
+                            //A Sentence has at least one block
+                            System.Diagnostics.Debug.Assert(sentence.AllBlocks != null);                            
+                            System.Diagnostics.Debug.Assert(sentence.AllBlocks.First.Value == sentence.Block );
+                            foreach (var block in sentence.AllBlocks)
+                            {
+                                var cloneBlock = block.Clone();
+                                group.AddBlock(block);
+                            }
+                        }
+                    }
+                    break;
+                case Symbol.Kinds.Section:
+                    {
+
+                    }
+                    break;
+            }
 
             if (throughProcedure != null)
             {
@@ -1091,50 +1221,45 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// Resolve a Goto from a block
+        /// Resolve all sentences targeted by the given symbol reference.
         /// </summary>
         /// <param name="target">The target section or paragraph
-        /// <returns>The List of sentences associated to the target, null otherwise</returns>
-        private LinkedList<BuilderSentence> ResolveSectionOrParagraph(Node node, SymbolReference target)
+        /// <returns>The Enumeration of sentences associated to the target, null otherwise</returns>
+        private IEnumerable<BuilderSentence> ResolveSectionOrParagraphSentences(Node node, SymbolReference target)
         {
-            var candidates = CurrentProgramCfgBuilder.ResolveSectionOrParagraphSymbol(target);
-            if (candidates.Count == 0)
-            {//No target
-                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                    node.CodeElement.Column,
-                    node.CodeElement.Column,
-                    node.CodeElement.Line,
-                    string.Format(Resource.UnknownSectionOrParagraph, target.Name));
-                Diagnostics.Add(d);
-                return null;
-
-            }
-            else if (candidates.Count > 1)
-            {//Multiple References
-                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                    node.CodeElement.Column,
-                    node.CodeElement.Column,
-                    node.CodeElement.Line,
-                    string.Format(Resource.AmbiguousSectionOrParagraph, target.Name));
-                Diagnostics.Add(d);
-                return null;
-            }
-            Symbol sym = candidates[0];
-            LinkedList<BuilderSentence> sentences = null;
-            //Get the target 
-            CurrentProgramCfgBuilder.SectionParagraphBlocks.TryGetValue(sym, out sentences);
-            if (sentences == null  || sentences.Count == 0)
+            var symbol = CheckSectionOrParagraph(node, target);
+            if (symbol != null)
             {
-                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                    node.CodeElement.Column,
-                    node.CodeElement.Column,
-                    node.CodeElement.Line,
-                    string.Format(Resource.UnknownSectionOrParagraph, target.Name));
-                Diagnostics.Add(d);
-                return null;
+                if (symbol.Kind == Symbol.Kinds.Paragraph)
+                {
+                    CfgParagraphSymbol cfgParaSymbol = (CfgParagraphSymbol)symbol;
+                    foreach (var sentence in cfgParaSymbol.Sentences)
+                    {
+                        yield return sentence;
+                    }
+                }
+                else
+                {//This is a section.  
+                    CfgSectionSymbol cfgSection = (CfgSectionSymbol)symbol;
+                    foreach (var part in cfgSection.SentencesParagraphs)
+                    {
+                        System.Diagnostics.Debug.Assert(part.Kind == Symbol.Kinds.Sentence || part.Kind == Symbol.Kinds.Paragraph);
+                        if (part.Kind == Symbol.Kinds.Paragraph)
+                        {
+                            CfgParagraphSymbol cfgParaSymbol = (CfgParagraphSymbol)part;
+                            foreach (var sentence in cfgParaSymbol.Sentences)
+                            {
+                                yield return sentence;
+                            }
+                        }
+                        else
+                        {
+                            BuilderSentence sentence = (BuilderSentence)part;
+                            yield return sentence;
+                        }
+                    }
+                }
             }
-
-            return sentences;
         }
 
         /// <summary>
@@ -1151,25 +1276,21 @@ namespace TypeCobol.Analysis.Cfg
             bool bResult = true;
             foreach(var sref in target)
             {
-                var sequences = ResolveSectionOrParagraph(@goto, target[0]);
-                if (sequences == null)
-                {//No target
-                    bResult = false;
-                }
-                else
-                {//Multiple References
-                    System.Diagnostics.Debug.Assert(sequences.Count > 0);
-                    if (sequences.Count > 0)
+                bool bHasOne = false;
+                IEnumerable<BuilderSentence> sentences = ResolveSectionOrParagraphSentences(@goto, target[0]);
+                foreach(var targetSentence in sentences)
+                {
+                    if (!block.SuccessorEdges.Contains(targetSentence.BlockIndex))
                     {
-                        var targetSentence = sequences.First.Value;
-                        if (!block.SuccessorEdges.Contains(targetSentence.BlockIndex))
-                        {
-                            block.SuccessorEdges.Add(targetSentence.BlockIndex);
-                        }
+                        block.SuccessorEdges.Add(targetSentence.BlockIndex);
                     }
+                    bHasOne = true;
+                    break;
                 }
+                if (!bHasOne)
+                    return false;
             }
-            return bResult;
+            return true;
         }
 
 
@@ -1196,7 +1317,7 @@ namespace TypeCobol.Analysis.Cfg
             {
                 this.CurrentProgramCfgBuilder.CurrentBasicBlock.SetFlag(BasicBlock<Node, D>.Flags.Ending, true);
             }
-            BasicBlockForNode nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null);
+            BasicBlockForNode nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
             if (node.CodeElement.StatementType == StatementType.GotoConditionalStatement)
             {//For a Conditional Statement the next block can be a continuation block.
                 this.CurrentProgramCfgBuilder.CurrentBasicBlock.SuccessorEdges.Add(this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count);
@@ -1234,7 +1355,7 @@ namespace TypeCobol.Analysis.Cfg
             this.CurrentProgramCfgBuilder.CurrentBasicBlock.SetFlag(BasicBlock<Node, D>.Flags.Ending, true);
 
             //Create a new current block unreachable.
-            this.CurrentProgramCfgBuilder.CurrentBasicBlock = this.CurrentProgramCfgBuilder.CreateBlock(null);
+            this.CurrentProgramCfgBuilder.CurrentBasicBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
         }
 
         /// <summary>
@@ -1384,7 +1505,7 @@ namespace TypeCobol.Analysis.Cfg
             this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctx);
             ctx.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
             //So the current block is now the If
-            var ifBlock = this.CurrentProgramCfgBuilder.CreateBlock(_if);
+            var ifBlock = this.CurrentProgramCfgBuilder.CreateBlock(_if, true);
             ctx.AddBranch(ifBlock);
             //The new Current Block is the If block
             this.CurrentProgramCfgBuilder.CurrentBasicBlock = ifBlock;
@@ -1404,7 +1525,7 @@ namespace TypeCobol.Analysis.Cfg
 
             bool branchToNext = ctx.Branches.Count == 1;//No Else
             //The next block.
-            var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null);             
+            var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);             
             ctx.End(branchToNext, nextBlock);
             this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
         }
@@ -1419,7 +1540,7 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
             MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
             //So the current block is now the Else
-            var elseBlock = this.CurrentProgramCfgBuilder.CreateBlock(_else);
+            var elseBlock = this.CurrentProgramCfgBuilder.CreateBlock(_else, true);
             ctx.AddBranch(elseBlock);
             //The new Current Block is the else block
             this.CurrentProgramCfgBuilder.CurrentBasicBlock = elseBlock;
@@ -1452,7 +1573,7 @@ namespace TypeCobol.Analysis.Cfg
             this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctx);
             ctx.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
             //So the current block is now the evaluate
-            var evalBlock = this.CurrentProgramCfgBuilder.CreateBlock(evaluate);
+            var evalBlock = this.CurrentProgramCfgBuilder.CreateBlock(evaluate, true);
             ctx.AddBranch(evalBlock);
             //The new Current Block is the Evaluate block
             this.CurrentProgramCfgBuilder.CurrentBasicBlock = evalBlock;
@@ -1475,7 +1596,7 @@ namespace TypeCobol.Analysis.Cfg
                 branchToNext = !ctx.Branches[ctx.Branches.Count - 1].HasFlag(BasicBlock<Node, D>.Flags.Default);
             }
             //The next block.
-            var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null);
+            var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
             ctx.End(branchToNext, nextBlock);
             this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
         }
@@ -1544,7 +1665,7 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(ctx.ContextualData != null);
             System.Diagnostics.Debug.Assert(ctx.ContextualData is List<Node>);
 
-            var whenCondBlock = this.CurrentProgramCfgBuilder.CreateBlock(null);
+            var whenCondBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
             //Associate all When Conditions to the block.
             List<Node> data = (List<Node>)ctx.ContextualData;
             foreach(var node in data)
@@ -1571,7 +1692,7 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(ctx.ContextualData != null);
             System.Diagnostics.Debug.Assert(ctx.ContextualData is List<Node>);
 
-            var whenOtherCondBlock = this.CurrentProgramCfgBuilder.CreateBlock(null);
+            var whenOtherCondBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
             whenOtherCondBlock.SetFlag(BasicBlock<Node, D>.Flags.Default, true);
             //Associate WhenOther Condition to the block.
             List<Node> data = (List<Node>)ctx.ContextualData;
@@ -1603,8 +1724,8 @@ namespace TypeCobol.Analysis.Cfg
             //Push and start the Perform context.
             this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctx);
             ctx.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
-            //So the current block is now the If
-            var performBlock = this.CurrentProgramCfgBuilder.CreateBlock(perform);
+            //So the current block is now the Perform
+            var performBlock = this.CurrentProgramCfgBuilder.CreateBlock(perform, true);
             ctx.AddBranch(performBlock);
             //The new Current Block is the perform block
             this.CurrentProgramCfgBuilder.CurrentBasicBlock = performBlock;
@@ -1640,7 +1761,7 @@ namespace TypeCobol.Analysis.Cfg
             ctx.GetTerminalSuccessorEdges(ctx.Branches[0], terminals);
             bool branchToNext = CanBeSkipped(perform);
             //The next block.
-            var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null);
+            var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
             ctx.End(branchToNext, nextBlock);
             // we must loop all terminal blocks if there are not ending blocks
             int loopIndex = ctx.BranchIndices[0];
@@ -1682,7 +1803,7 @@ namespace TypeCobol.Analysis.Cfg
                 this.CurrentProgramCfgBuilder.PendingNextSentences.AddLast(item);
 
                 //Create a new current block unreachable.
-                this.CurrentProgramCfgBuilder.CurrentBasicBlock = this.CurrentProgramCfgBuilder.CreateBlock(null);
+                this.CurrentProgramCfgBuilder.CurrentBasicBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
             }
 
         }
@@ -1722,7 +1843,7 @@ namespace TypeCobol.Analysis.Cfg
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
             //Create a Group Block Node
-            BasicBlockForNodeGroup group = CreateGroupBlock(node);
+            BasicBlockForNodeGroup group = CreateGroupBlock(node, true);
 
             //Link the current block to the Group
             int edgeIndex = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
@@ -1730,7 +1851,7 @@ namespace TypeCobol.Analysis.Cfg
             this.CurrentProgramCfgBuilder.CurrentBasicBlock.SuccessorEdges.Add(edgeIndex);
 
             //Create a next Current Block.
-            BasicBlockForNode nextBlock = CreateBlock(null);
+            BasicBlockForNode nextBlock = CreateBlock(null, true);
             int nextIndex = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
             this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(nextBlock);
             group.SuccessorEdges.Add(nextIndex);
@@ -1773,14 +1894,19 @@ namespace TypeCobol.Analysis.Cfg
         /// Create a basic block for a node.
         /// </summary>
         /// <param name="node">The leading node of the block</param>
+        /// <param name="addToCurrentSentence">true if the block must be added to the current Sentence, false otherwise.</param>
         /// <returns>The new Block</returns>
-        internal BasicBlockForNode CreateBlock(Node node)
+        internal BasicBlockForNode CreateBlock(Node node, bool addToCurrentSentence)
         {
             var block = new BasicBlockForNode();
             if (node != null)
             {
-                Cfg.BlockFor[node] = block;
+                this.CurrentProgramCfgBuilder.Cfg.BlockFor[node] = block;
                 block.Instructions.AddLast(node);
+            }
+            if (addToCurrentSentence && this.CurrentProgramCfgBuilder.CurrentSentence != null)
+            {
+                this.CurrentProgramCfgBuilder.CurrentSentence.AddBlock(block);                
             }
             return block;
         }
@@ -1789,14 +1915,19 @@ namespace TypeCobol.Analysis.Cfg
         /// Create a Group Basic Block for a node
         /// </summary>
         /// <param name="node">The leading node of the block</param>
+        /// <param name="addToCurrentSentence">true if the block must be added to the current Sentence, false otherwise.</param>
         /// <returns>The new Block</returns>
-        internal BasicBlockForNodeGroup CreateGroupBlock(Node node)
+        internal BasicBlockForNodeGroup CreateGroupBlock(Node node, bool addToCurrentSentence)
         {
             var block = new BasicBlockForNodeGroup();
             if (node != null)
             {
-                Cfg.BlockFor[node] = block;
+                this.CurrentProgramCfgBuilder.Cfg.BlockFor[node] = block;
                 block.Instructions.AddLast(node);
+            }
+            if (addToCurrentSentence && this.CurrentProgramCfgBuilder.CurrentSentence != null)
+            {
+                this.CurrentProgramCfgBuilder.CurrentSentence.AddBlock(block);
             }
             return block;
         }
@@ -1845,7 +1976,7 @@ namespace TypeCobol.Analysis.Cfg
             Cfg.RootBlocks.Add(startBlock);
             CurrentBasicBlock = startBlock;
             //Create a Root Section
-            SectionSymbol sym = new SectionSymbol("<<RootSection>>");
+            CfgSectionSymbol sym = new CfgSectionSymbol("<<RootSection>>");
             EnterSectionOrParagraphSymbol(sym);
             //The new current section.
             CurrentSection = sym;        
