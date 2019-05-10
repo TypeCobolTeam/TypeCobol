@@ -120,6 +120,9 @@
   <data name="AmbiguousSectionOrParagraph" xml:space="preserve">
     <value>Ambiguous Section or Paragraph reference : '{0}'</value>
   </data>
+  <data name="BadPerformProcedureThru" xml:space="preserve">
+    <value>PERFORM '{0}' THRU '{1}':  '{1}'  is declared before '{0}'</value>
+  </data>
   <data name="UnknownSectionOrParagraph" xml:space="preserve">
     <value>Unknown Section of Paragraph target : '{0}'</value>
   </data>

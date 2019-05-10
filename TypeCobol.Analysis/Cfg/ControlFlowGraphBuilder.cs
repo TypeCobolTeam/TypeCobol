@@ -412,7 +412,6 @@ namespace TypeCobol.Analysis.Cfg
                     case CodeElementType.ReleaseStatement:
                     case CodeElementType.ReturnStatement:
                     case CodeElementType.RewriteStatement:
-                    case CodeElementType.SearchStatement:
                     case CodeElementType.SetStatement:
                     case CodeElementType.SortStatement:
                     case CodeElementType.StartStatement:
@@ -425,6 +424,9 @@ namespace TypeCobol.Analysis.Cfg
                     case CodeElementType.XmlGenerateStatement:
                     case CodeElementType.XmlParseStatement:
                         break;
+                    case CodeElementType.SearchStatement:
+                        this.CurrentProgramCfgBuilder.EnterSearch((Search)node);
+                        break;
                     case CodeElementType.PerformStatement:
                         this.CurrentProgramCfgBuilder.EnterPerformLoop((Perform)node);
                         break;
@@ -433,6 +435,24 @@ namespace TypeCobol.Analysis.Cfg
                         break;
                     case CodeElementType.WhenOtherCondition:
                         this.CurrentProgramCfgBuilder.EnterWhenOther((WhenOther)node);
+                        break;
+                    case CodeElementType.WhenSearchCondition:
+                        this.CurrentProgramCfgBuilder.EnterWhenSearch((WhenSearch)node);
+                        break;
+                    // Statement conditions
+                    case CodeElementType.AtEndCondition:
+                    case CodeElementType.NotAtEndCondition:
+                    case CodeElementType.AtEndOfPageCondition:
+                    case CodeElementType.NotAtEndOfPageCondition:
+                    case CodeElementType.OnExceptionCondition:
+                    case CodeElementType.NotOnExceptionCondition:
+                    case CodeElementType.OnOverflowCondition:
+                    case CodeElementType.NotOnOverflowCondition:
+                    case CodeElementType.InvalidKeyCondition:
+                    case CodeElementType.NotInvalidKeyCondition:
+                    case CodeElementType.OnSizeErrorCondition:
+                    case CodeElementType.NotOnSizeErrorCondition:
+                        this.CurrentProgramCfgBuilder.EnterExceptionCondition(node);
                         break;
                     default:
                         break;
@@ -533,7 +553,6 @@ namespace TypeCobol.Analysis.Cfg
                     case CodeElementType.ReleaseStatement:
                     case CodeElementType.ReturnStatement:
                     case CodeElementType.RewriteStatement:
-                    case CodeElementType.SearchStatement:
                     case CodeElementType.SetStatement:
                     case CodeElementType.SortStatement:
                     case CodeElementType.StartStatement:
@@ -546,6 +565,9 @@ namespace TypeCobol.Analysis.Cfg
                     case CodeElementType.XmlGenerateStatement:
                     case CodeElementType.XmlParseStatement:
                         break;
+                    case CodeElementType.SearchStatement:
+                        this.CurrentProgramCfgBuilder.LeaveSearch((Search)node);
+                        break;
                     case CodeElementType.PerformStatement:
                         this.CurrentProgramCfgBuilder.LeavePerformLoop((Perform)node);
                         break;
@@ -554,6 +576,24 @@ namespace TypeCobol.Analysis.Cfg
                         break;
                     case CodeElementType.WhenOtherCondition:
                         this.CurrentProgramCfgBuilder.LeaveWhenOther((WhenOther)node);
+                        break;
+                    case CodeElementType.WhenSearchCondition:
+                        this.CurrentProgramCfgBuilder.LeaveWhenSearch((WhenSearch)node);
+                        break;
+                    // Statement conditions
+                    case CodeElementType.AtEndCondition:
+                    case CodeElementType.NotAtEndCondition:
+                    case CodeElementType.AtEndOfPageCondition:
+                    case CodeElementType.NotAtEndOfPageCondition:
+                    case CodeElementType.OnExceptionCondition:
+                    case CodeElementType.NotOnExceptionCondition:
+                    case CodeElementType.OnOverflowCondition:
+                    case CodeElementType.NotOnOverflowCondition:
+                    case CodeElementType.InvalidKeyCondition:
+                    case CodeElementType.NotInvalidKeyCondition:
+                    case CodeElementType.OnSizeErrorCondition:
+                    case CodeElementType.NotOnSizeErrorCondition:
+                        this.CurrentProgramCfgBuilder.LeaveExceptionCondition(node);
                         break;
                     default:
                         break;
@@ -1137,6 +1177,26 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
+        /// Store all procedure's sentence blocks in a group.
+        /// </summary>
+        /// <param name="procedureSymbol">The procedure symbol</param>
+        /// <param name="group">The Group in which to store all blocsk.</param>
+        private void StoreProcedureSentenceBlocks(Symbol procedureSymbol, BasicBlockForNodeGroup group)
+        {
+            IEnumerable<BuilderSentence> procedureSentences = YieldSectionOrParagraphSentences(procedureSymbol);
+            foreach (var sentence in procedureSentences)
+            {
+                //A Sentence has at least one block
+                System.Diagnostics.Debug.Assert(sentence.AllBlocks != null);
+                System.Diagnostics.Debug.Assert(sentence.AllBlocks.First.Value == sentence.Block);
+                foreach (var block in sentence.AllBlocks)
+                {//We must clone each block of the sequence and add them to the group.
+                    var cloneBlock = block.Clone();
+                    group.AddBlock(block);
+                }
+            }
+        }
+        /// <summary>
         /// Resolve a pending PERFORM procedure
         /// </summary>
         /// <param name="p">The procedure node</param>
@@ -1150,35 +1210,26 @@ namespace TypeCobol.Analysis.Cfg
             Symbol procedureSymbol = CheckSectionOrParagraph(p, procedure);
             if (procedureSymbol == null)
                 return false;
-            switch(procedureSymbol.Kind)
-            {
-                case Symbol.Kinds.Paragraph:
-                    {//We must clone each block of the sequence and add them to the group.
-                        CfgParagraphSymbol cfgParaSymbol = (CfgParagraphSymbol)procedureSymbol;
-                        Scope<BuilderSentence> sentences = cfgParaSymbol.Sentences;
-                        foreach(var sentence in sentences)
-                        {
-                            //A Sentence has at least one block
-                            System.Diagnostics.Debug.Assert(sentence.AllBlocks != null);                            
-                            System.Diagnostics.Debug.Assert(sentence.AllBlocks.First.Value == sentence.Block );
-                            foreach (var block in sentence.AllBlocks)
-                            {
-                                var cloneBlock = block.Clone();
-                                group.AddBlock(block);
-                            }
-                        }
-                    }
-                    break;
-                case Symbol.Kinds.Section:
-                    {
-
-                    }
-                    break;
-            }
-
+            StoreProcedureSentenceBlocks(procedureSymbol, group);
             if (throughProcedure != null)
             {
-
+                Symbol throughProcedureSymbol = CheckSectionOrParagraph(p, throughProcedure);
+                if (throughProcedureSymbol == null)
+                    return false;
+                if (throughProcedureSymbol != procedureSymbol)
+                {
+                    if(procedureSymbol.Number > throughProcedureSymbol.Number)
+                    {// the second procedure name is before the first one.
+                        Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                            p.CodeElement.Column,
+                            p.CodeElement.Column,
+                            p.CodeElement.Line,
+                            string.Format(Resource.BadPerformProcedureThru, procedure.ToString(), throughProcedure.ToString()));
+                        Diagnostics.Add(d);
+                        return false;
+                    }
+                    StoreProcedureSentenceBlocks(throughProcedureSymbol, group);
+                }
             }
             return true;
         }
@@ -1228,11 +1279,21 @@ namespace TypeCobol.Analysis.Cfg
         private IEnumerable<BuilderSentence> ResolveSectionOrParagraphSentences(Node node, SymbolReference target)
         {
             var symbol = CheckSectionOrParagraph(node, target);
-            if (symbol != null)
+            return YieldSectionOrParagraphSentences(symbol);
+        }
+
+        /// <summary>
+        /// Yield the all sentences associated to a Symbol which is a Section or a Paragraph.
+        /// </summary>
+        /// <param name="sectionOrParagraphSymbol">The Section or Paragraph symbol</param>
+        /// <returns>The Enumeration of sentences associated to the symbol, null otherwise</returns>
+        private IEnumerable<BuilderSentence> YieldSectionOrParagraphSentences(Symbol sectionOrParagraphSymbol)
+        {
+            if (sectionOrParagraphSymbol != null)
             {
-                if (symbol.Kind == Symbol.Kinds.Paragraph)
+                if (sectionOrParagraphSymbol.Kind == Symbol.Kinds.Paragraph)
                 {
-                    CfgParagraphSymbol cfgParaSymbol = (CfgParagraphSymbol)symbol;
+                    CfgParagraphSymbol cfgParaSymbol = (CfgParagraphSymbol)sectionOrParagraphSymbol;
                     foreach (var sentence in cfgParaSymbol.Sentences)
                     {
                         yield return sentence;
@@ -1240,7 +1301,7 @@ namespace TypeCobol.Analysis.Cfg
                 }
                 else
                 {//This is a section.  
-                    CfgSectionSymbol cfgSection = (CfgSectionSymbol)symbol;
+                    CfgSectionSymbol cfgSection = (CfgSectionSymbol)sectionOrParagraphSymbol;
                     foreach (var part in cfgSection.SentencesParagraphs)
                     {
                         System.Diagnostics.Debug.Assert(part.Kind == Symbol.Kinds.Sentence || part.Kind == Symbol.Kinds.Paragraph);
@@ -1273,7 +1334,6 @@ namespace TypeCobol.Analysis.Cfg
         /// <returns>true if all targets have been resolved, false otherwise.</returns>
         private bool ResolveGoto(Goto @goto, BasicBlockForNode block, SymbolReference[] target, bool simpleGoto)
         {
-            bool bResult = true;
             foreach(var sref in target)
             {
                 bool bHasOne = false;
@@ -1569,7 +1629,7 @@ namespace TypeCobol.Analysis.Cfg
             {
                 this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext>();
             }
-            //Push and start the if context.
+            //Push and start the Evaluate context.
             this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctx);
             ctx.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
             //So the current block is now the evaluate
@@ -1710,6 +1770,74 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
+        /// Enter a Search Statement.
+        /// </summary>
+        /// <param name="node">The Search node</param>
+        public virtual void EnterSearch(Search node)
+        {
+            System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
+            MultiBranchContext ctx = new MultiBranchContext(this.CurrentProgramCfgBuilder);
+            //Create a liste of node of contextual When or AtEnd nodes.
+            ctx.ContextualData = new List<Node>();
+            if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
+            {
+                this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext>();
+            }
+            //Push and start the Search context.
+            this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctx);
+            ctx.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
+            //So the current block is now the Search
+            var evalBlock = this.CurrentProgramCfgBuilder.CreateBlock(node, true);
+            ctx.AddBranch(evalBlock);
+            //The new Current Block is the Search block
+            this.CurrentProgramCfgBuilder.CurrentBasicBlock = evalBlock;
+        }
+
+        /// <summary>
+        /// Leave a Search Statement.
+        /// </summary>
+        /// <param name="node">The Search node</param>
+        public virtual void LeaveSearch(Search node)
+        {
+            System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
+            System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
+            MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
+            System.Diagnostics.Debug.Assert(ctx.Branches != null);
+
+            bool branchToNext = true;
+            //The next block.
+            var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
+            ctx.End(branchToNext, nextBlock);
+            this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
+        }
+
+        /// <summary>
+        /// Enter a When Search condition node
+        /// </summary>
+        /// <param name="node">The when search condition node</param>
+        protected virtual void EnterWhenSearch(WhenSearch node)
+        {
+            System.Diagnostics.Debug.Assert(node != null);
+            System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
+            System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
+            MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
+            System.Diagnostics.Debug.Assert(ctx.ContextualData != null);
+            System.Diagnostics.Debug.Assert(ctx.ContextualData is List<Node>);
+
+            List<Node> data = (List<Node>)ctx.ContextualData;
+            data.Add(node);
+        }
+
+        /// <summary>
+        /// Leave a When Serach condition node
+        /// </summary>
+        /// <param name="node">The when search condition node</param>
+        protected virtual void LeaveWhenSearch(WhenSearch node)
+        {
+
+        }
+
+        /// <summary>
         /// Enter a Perform which is a loop.
         /// </summary>
         /// <param name="perform">The perform node</param>
@@ -1779,7 +1907,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// Enter a Next Sentence node
         /// </summary>
-        /// <param name="node">the Neext Sentence node</param>
+        /// <param name="node">the Next Sentence node</param>
         protected virtual void EnterNextSentence(NextSentence node)
         {
             //This is an invariant there is always one sentence
@@ -1805,7 +1933,6 @@ namespace TypeCobol.Analysis.Cfg
                 //Create a new current block unreachable.
                 this.CurrentProgramCfgBuilder.CurrentBasicBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
             }
-
         }
 
         /// <summary>
@@ -1833,6 +1960,47 @@ namespace TypeCobol.Analysis.Cfg
         protected virtual void LeaveExit(Exit node)
         {
 
+        }
+
+        /// <summary>
+        /// Enter an Exception condition
+        /// </summary>
+        /// <param name="node">The exception condition to be entered</param>
+        protected virtual void EnterExceptionCondition(Node node)
+        {
+            System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
+            MultiBranchContext ctx = new MultiBranchContext(this.CurrentProgramCfgBuilder);
+            if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
+            {
+                this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext>();
+            }
+            //Push and start the Exception condition context.
+            this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctx);
+            ctx.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
+            //So the current block is now the the exception condition
+            var excCondBlock = this.CurrentProgramCfgBuilder.CreateBlock(node, true);
+            ctx.AddBranch(excCondBlock);
+            //The new Current Block is the Exception condition block
+            this.CurrentProgramCfgBuilder.CurrentBasicBlock = excCondBlock;
+        }
+
+        /// <summary>
+        /// Leave an Exception condition
+        /// </summary>
+        /// <param name="node">The exception condition to be leave</param>
+        protected virtual void LeaveExceptionCondition(Node node)
+        {
+            System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
+            System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
+            MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
+            System.Diagnostics.Debug.Assert(ctx.Branches != null);
+            System.Diagnostics.Debug.Assert(ctx.Branches.Count > 0);
+
+            bool branchToNext = true;
+            //The next block.
+            var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
+            ctx.End(branchToNext, nextBlock);
+            this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
         }
 
         /// <summary>
