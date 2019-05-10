@@ -119,7 +119,8 @@ namespace TypeCobol.Compiler.Scanner
             else if (textLine.Type == CobolTextLineType.MultiFormalizedComment)
             {
                 //If a '%' is spotted that isn't a multiline/formalized comment token or if a stop token is spotted without an associated start
-                if (!line.Trim().StartsWith("%<<") && !line.Trim().StartsWith("%>>") || !tokensLine.ScanState.InsideMultilineComments && !tokensLine.ScanState.InsideFormalizedComment && line.Trim().StartsWith("%>>"))
+                if (tokensLine.SourceText == null || !tokensLine.SourceText.StartsWith("<<") && !tokensLine.SourceText.StartsWith(">>") || 
+                    !tokensLine.ScanState.InsideMultilineComments && !tokensLine.ScanState.InsideFormalizedComment && tokensLine.SourceText.StartsWith(">>"))
                 {
                     tokensLine.AddDiagnostic(MessageCode.MultiFormalizedCommentIndicatorMisused, textLine.Indicator.StartIndex, textLine.Indicator.EndIndex, textLine.Indicator);
                     Token invalidToken = new Token(TokenType.InvalidToken, startIndex, lastIndex, tokensLine);
