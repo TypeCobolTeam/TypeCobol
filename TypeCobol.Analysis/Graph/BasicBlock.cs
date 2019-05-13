@@ -47,9 +47,10 @@ namespace TypeCobol.Analysis.Graph
         public enum Flags : uint
         {
 
-            Resolved = 0x01 << 0, //Flag if this basic block is totally resolved.
-            Ending = 0x01 << 1, //Flag if this basic block is an ending block.
-            Default = 0x01 << 2, //Flag if this basic block is  default block for instance a WhenOther block.
+            Resolved = 0x01 << 0,       //Flag if this basic block is totally resolved.
+            Ending = 0x01 << 1,         //Flag if this basic block is an ending block.
+            Default = 0x01 << 2,        //Flag if this basic block is  default block for instance a WhenOther block.
+            Declaratives = 0x02 << 3,   //Flag if this basic block is inside a declaratives section.
         }
 
         /// <summary>

@@ -26,6 +26,14 @@ namespace TypeCobol.Analysis.Cfg
         /// <typeparam name="D"></typeparam>
         public class BasicBlockForNode : BasicBlock<Node, D>
         {
+            /// <summary>
+            /// Any tag associated to this Node.
+            /// </summary>
+            public object Tag
+            {
+                get;
+                set;
+            }
         }
 
         /// <summary>
@@ -229,6 +237,35 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
+        /// DFS Depth First Search implementation
+        /// </summary>
+        /// <param name="block">The current block</param>
+        /// <param name="blockIndex">The current block index</param>
+        /// <param name="discovered">Array of already discovered nodes</param>
+        internal void DFS(BasicBlock<Node, D> block, int blockIndex, System.Collections.BitArray discovered)
+        {
+            discovered[blockIndex] = true;
+            foreach(var edge in block.SuccessorEdges)
+            {
+                if (!discovered[edge])
+                {
+                    DFS(Cfg.SuccessorEdges[edge], edge, discovered);
+                }
+            }
+        }
+
+        /// <summary>
+        /// DFS Depth First Search implementation
+        /// </summary>
+        /// <param name="rootBlock">The root block.</param>
+        /// <param name="rootBlockIndex">The root block index.</param>
+        public void DFS(BasicBlock<Node, D> rootBlock, int rootBlockIndex)
+        {
+            System.Collections.BitArray discovered = new System.Collections.BitArray(this.Cfg.SuccessorEdges.Count + 1);
+            DFS(rootBlock, rootBlockIndex, discovered);
+        }
+
+        /// <summary>
         /// Called when a Node has been completly parsed.
         /// </summary>
         /// <param name="node"></param>
@@ -340,6 +377,9 @@ namespace TypeCobol.Analysis.Cfg
                     case CodeElementType.ProcedureDivisionHeader:
                         this.CurrentProgramCfgBuilder.EnterProcedureDivision((ProcedureDivision)node);
                         break;
+                    case CodeElementType.DeclarativesHeader:
+                        EnterDeclaratives((Declaratives)node);
+                        break;
                     case CodeElementType.SectionHeader:
                         this.CurrentProgramCfgBuilder.EnterSection((Section)node);
                         break;
@@ -378,7 +418,7 @@ namespace TypeCobol.Analysis.Cfg
                     case CodeElementType.GobackStatement:
                         this.CurrentProgramCfgBuilder.EnterEnding(node);
                         break;
-                    //Other statementts
+                    //Other statements
                     case CodeElementType.AcceptStatement:
                     case CodeElementType.AddStatement:
                     //case CodeElementType.AlterStatement:
@@ -423,6 +463,7 @@ namespace TypeCobol.Analysis.Cfg
                     case CodeElementType.WriteStatement:
                     case CodeElementType.XmlGenerateStatement:
                     case CodeElementType.XmlParseStatement:
+                        this.CurrentProgramCfgBuilder.EnterStatement(node);
                         break;
                     case CodeElementType.SearchStatement:
                         this.CurrentProgramCfgBuilder.EnterSearch((Search)node);
@@ -478,6 +519,9 @@ namespace TypeCobol.Analysis.Cfg
                         break;
                     case CodeElementType.ProcedureDivisionHeader:
                         this.CurrentProgramCfgBuilder.LeaveProcedureDivision((ProcedureDivision)node);
+                        break;
+                    case CodeElementType.DeclarativesHeader:
+                        LeaveDeclaratives((Declaratives)node);
                         break;
                     case CodeElementType.SectionHeader:
                         this.CurrentProgramCfgBuilder.LeaveSection((Section)node);
@@ -564,6 +608,7 @@ namespace TypeCobol.Analysis.Cfg
                     case CodeElementType.WriteStatement:
                     case CodeElementType.XmlGenerateStatement:
                     case CodeElementType.XmlParseStatement:
+                        this.CurrentProgramCfgBuilder.LeaveStatement(node);
                         break;
                     case CodeElementType.SearchStatement:
                         this.CurrentProgramCfgBuilder.LeaveSearch((Search)node);
@@ -742,9 +787,21 @@ namespace TypeCobol.Analysis.Cfg
             /// </summary>
             public BuilderSentence()
             {
+                BlockIndex = -1;
                 Kind = Kinds.Sentence;
                 Name = "<<Sentence>>(" + (SentenceCounter++) + ")";
             }
+
+            /// <summary>
+            /// Set flags
+            /// </summary>
+            /// <param name="flag">The falg to be set</param>
+            /// <param name="value">The value to set</param>
+            internal void SetFlag(Symbol.Flags flag, bool value)
+            {
+                base.SetFlag(flag, value, false);
+            }
+
         }
 
         /// <summary>
@@ -759,6 +816,11 @@ namespace TypeCobol.Analysis.Cfg
             }
             this.CurrentProgramCfgBuilder.CurrentSentence.Number = this.CurrentProgramCfgBuilder.AllSentences.Count;
             this.CurrentProgramCfgBuilder.AllSentences.Add(this.CurrentProgramCfgBuilder.CurrentSentence);
+
+            if (this.CurrentProgramCfgBuilder.CurrentDeclarativesContext != null)
+            {
+                this.CurrentProgramCfgBuilder.CurrentSentence.SetFlag(Symbol.Flags.Declaratives, true);
+            }
 
             var block = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
             this.CurrentProgramCfgBuilder.CurrentSentence.Block = block;
@@ -909,12 +971,32 @@ namespace TypeCobol.Analysis.Cfg
                 this.CurrentProgramCfgBuilder.SectionsParagraphs[name] = scope;
             }
             scope.Add(sym);
-            if (AllSectionsParagraphs == null)
+            if (this.CurrentProgramCfgBuilder.AllSectionsParagraphs == null)
             {
-                AllSectionsParagraphs = new List<Symbol>();
+                this.CurrentProgramCfgBuilder.AllSectionsParagraphs = new List<Symbol>();
             }
-            sym.Number = AllSectionsParagraphs.Count;
-            AllSectionsParagraphs.Add(sym);
+            sym.Number = this.CurrentProgramCfgBuilder.AllSectionsParagraphs.Count;
+            this.CurrentProgramCfgBuilder.AllSectionsParagraphs.Add(sym);
+            //Special case Section or Pargraphe inside a Declarative
+            if (this.CurrentProgramCfgBuilder.CurrentDeclarativesContext != null)
+            { 
+                switch (sym.Kind)
+                {
+                    case Symbol.Kinds.Paragraph:
+                    {
+                        CfgParagraphSymbol cfgPara = (CfgParagraphSymbol)sym;
+                        cfgPara.SetFlag(Symbol.Flags.Declaratives, true);
+                    }
+                    break;
+                    case Symbol.Kinds.Section:
+                    {
+                        CfgSectionSymbol cfgSymbol = (CfgSectionSymbol)sym;
+                        cfgSymbol.SetFlag(Symbol.Flags.Declaratives, true);
+                        this.CurrentProgramCfgBuilder.CurrentDeclarativesContext.AddSection(cfgSymbol);
+                    }
+                    break;
+                }
+            }
         }
 
         /// <summary>
@@ -983,6 +1065,16 @@ namespace TypeCobol.Analysis.Cfg
                 base.AddParagraph(p);
                 SentencesParagraphs.Enter(p);
             }
+
+            /// <summary>
+            /// Set flags
+            /// </summary>
+            /// <param name="flag">The falg to be set</param>
+            /// <param name="value">The value to set</param>
+            internal void SetFlag(Symbol.Flags flag, bool value)
+            {
+                base.SetFlag(flag, value, false);
+            }
         }
 
         /// <summary>
@@ -1042,6 +1134,15 @@ namespace TypeCobol.Analysis.Cfg
             public CfgParagraphSymbol(string name) : base(name)
             {
                 Sentences = new Scope<BuilderSentence>(this);
+            }
+            /// <summary>
+            /// Set flags
+            /// </summary>
+            /// <param name="flag">The falg to be set</param>
+            /// <param name="value">The value to set</param>
+            internal void SetFlag(Symbol.Flags flag, bool value)
+            {
+                base.SetFlag(flag, value, false);
             }
         }
 
@@ -1445,6 +1546,10 @@ namespace TypeCobol.Analysis.Cfg
             /// </summary>
             internal object ContextualData;
 
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="currentProgramCfgBuilder">The related CFG Builder</param>
             internal MultiBranchContext(ControlFlowGraphBuilder<D> currentProgramCfgBuilder)
             {
                 Branches = new List<BasicBlockForNode>();
@@ -1540,7 +1645,7 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// The Muli Branch Stack during Graph Construction.
+        /// The Multi Branch Stack during Graph Construction.
         ///  Used for IF-THEN-ELSE or EVALUATE
         /// </summary>
         internal Stack<MultiBranchContext> MultiBranchContextStack
@@ -1548,6 +1653,101 @@ namespace TypeCobol.Analysis.Cfg
             get;
             set;
         }
+
+        /// <summary>
+        /// Declarative context class.
+        /// </summary>
+        internal class DeclarativesContext
+        {
+            /// <summary>
+            /// Current Block before all declaratives sections and paragraphs.
+            /// </summary>
+            internal BasicBlockForNode CurrentBlock;
+
+            /// <summary>
+            /// All sections inside this Declaratives.
+            /// </summary>
+            internal LinkedList<CfgSectionSymbol> Sections;
+
+            /// <summary>
+            /// The related CFG builder
+            /// </summary>
+            internal ControlFlowGraphBuilder<D> Builder;
+
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="currentProgramCfgBuilder">The related CFG Builder</param>
+            internal DeclarativesContext(ControlFlowGraphBuilder<D> currentProgramCfgBuilder)
+            {                
+                Sections = new LinkedList<CfgSectionSymbol>();
+                Builder = currentProgramCfgBuilder;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="currentBlock"></param>
+            internal void Start(BasicBlockForNode currentBlock)
+            {
+                CurrentBlock = currentBlock;
+            }
+            internal void AddSection(CfgSectionSymbol section)
+            {
+                Sections.AddLast(section);
+            }
+
+            /// <summary>
+            /// End the declaratives sections.
+            /// Each Section becomes a branch from the current block.
+            /// </summary>
+            internal void End(BasicBlockForNode nextBlock)
+            {
+                System.Diagnostics.Debug.Assert(Builder != null);
+                System.Diagnostics.Debug.Assert(CurrentBlock != null);
+                System.Diagnostics.Debug.Assert(nextBlock != null);
+
+                //First Current block is linked to the next block.
+                int nbIndex = Builder.Cfg.SuccessorEdges.Count;
+                Builder.Cfg.SuccessorEdges.Add(nextBlock);
+                CurrentBlock.SuccessorEdges.Add(nbIndex);
+
+                //For each section, link the current block to the first block of the section.
+                bool bFirstsection = true;
+                foreach(var section in Sections)
+                {
+                    var sentences = Builder.YieldSectionOrParagraphSentences(section);
+                    foreach(var sentence in sentences)
+                    {
+                        //Ensure that every first block of the section is linked.
+                        System.Diagnostics.Debug.Assert(sentence.BlockIndex >= 0);
+                        if (sentence.BlockIndex >= 0)
+                        {
+                            var block = sentence.Block;
+                            if (bFirstsection)
+                            {//The first block of the first section, should have been already linked to the Current Block.
+                                System.Diagnostics.Debug.Assert(CurrentBlock.SuccessorEdges.Contains(sentence.BlockIndex));
+                                if (!CurrentBlock.SuccessorEdges.Contains(sentence.BlockIndex))
+                                {
+                                    CurrentBlock.SuccessorEdges.Add(sentence.BlockIndex);
+                                }
+                            }
+                            else
+                            {
+                                CurrentBlock.SuccessorEdges.Add(sentence.BlockIndex);
+                            }
+                        }
+                        break;//We only need the first sentence.
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// The Current Declarative context if any.
+        /// </summary>
+        internal DeclarativesContext CurrentDeclarativesContext;
+
 
         /// <summary>
         /// Enter a If instruction
@@ -1884,7 +2084,7 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(ctx.Branches.Count == 1);
             System.Diagnostics.Debug.Assert(ctx.BranchIndices.Count == 1);
 
-            //Firt Get here all terminal blocks befor eending the context
+            //Firt Get here all terminal blocks before ending the context
             List<BasicBlockForNode> terminals = new List<BasicBlockForNode>();
             ctx.GetTerminalSuccessorEdges(ctx.Branches[0], terminals);
             bool branchToNext = CanBeSkipped(perform);
@@ -2041,13 +2241,57 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="node">The PERFORM Procedure node</param>
         protected virtual void LeavePerformProcedure(PerformProcedure node)
         {
+        }
+
+        /// <summary>
+        /// Ennter a Declarative
+        /// </summary>
+        /// <param name="node">The Declarative node</param>
+        protected virtual void EnterDeclaratives(Declaratives node)
+        {
+            System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentDeclarativesContext == null);
+            this.CurrentProgramCfgBuilder.CurrentDeclarativesContext = new DeclarativesContext(this.CurrentProgramCfgBuilder);
+            this.CurrentProgramCfgBuilder.CurrentDeclarativesContext.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);            
+        }
+
+        /// <summary>
+        /// Leave a Declarative
+        /// </summary>
+        /// <param name="node">The Declarative node</param>
+        protected virtual void LeaveDeclaratives(Declaratives node)
+        {
+            System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentDeclarativesContext != null);
+
+            //The next block.
+            var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
+            this.CurrentProgramCfgBuilder.CurrentDeclarativesContext.End(nextBlock);
+            this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
+            
+            this.CurrentProgramCfgBuilder.CurrentDeclarativesContext = null;
+        }
+
+        /// <summary>
+        /// Enter any Statement
+        /// </summary>
+        /// <param name="node">The Statement node to be entered</param>
+        protected virtual void EnterStatement(Node node)
+        {
+            AddCurrentBlockNode(node);
+        }
+
+        /// <summary>
+        /// Leave any Statement
+        /// </summary>
+        /// <param name="node">The Statement node to be leaves</param>
+        protected virtual void LeaveStatement(Node node)
+        {
 
         }
 
         /// <summary>
         /// Add a Node to the current block.
         /// </summary>
-        /// <param name="node">The nod etobe added</param>
+        /// <param name="node">The node to be added</param>
         protected virtual void AddCurrentBlockNode(Node node)
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
@@ -2074,7 +2318,11 @@ namespace TypeCobol.Analysis.Cfg
             }
             if (addToCurrentSentence && this.CurrentProgramCfgBuilder.CurrentSentence != null)
             {
-                this.CurrentProgramCfgBuilder.CurrentSentence.AddBlock(block);                
+                this.CurrentProgramCfgBuilder.CurrentSentence.AddBlock(block);
+            }
+            if (CurrentDeclarativesContext != null)
+            {//This block is created in the context of a Declaratives.
+                block.SetFlag(BasicBlock<Node, D>.Flags.Declaratives, true);
             }
             return block;
         }
@@ -2096,6 +2344,10 @@ namespace TypeCobol.Analysis.Cfg
             if (addToCurrentSentence && this.CurrentProgramCfgBuilder.CurrentSentence != null)
             {
                 this.CurrentProgramCfgBuilder.CurrentSentence.AddBlock(block);
+            }
+            if (CurrentDeclarativesContext != null)
+            {//This group is created in the context of a Declaratives.
+                block.SetFlag(BasicBlock<Node, D>.Flags.Declaratives, true);
             }
             return block;
         }
