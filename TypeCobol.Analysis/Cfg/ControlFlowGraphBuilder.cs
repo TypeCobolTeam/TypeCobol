@@ -237,35 +237,6 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// DFS Depth First Search implementation
-        /// </summary>
-        /// <param name="block">The current block</param>
-        /// <param name="blockIndex">The current block index</param>
-        /// <param name="discovered">Array of already discovered nodes</param>
-        internal void DFS(BasicBlock<Node, D> block, int blockIndex, System.Collections.BitArray discovered)
-        {
-            discovered[blockIndex] = true;
-            foreach(var edge in block.SuccessorEdges)
-            {
-                if (!discovered[edge])
-                {
-                    DFS(Cfg.SuccessorEdges[edge], edge, discovered);
-                }
-            }
-        }
-
-        /// <summary>
-        /// DFS Depth First Search implementation
-        /// </summary>
-        /// <param name="rootBlock">The root block.</param>
-        /// <param name="rootBlockIndex">The root block index.</param>
-        public void DFS(BasicBlock<Node, D> rootBlock, int rootBlockIndex)
-        {
-            System.Collections.BitArray discovered = new System.Collections.BitArray(this.Cfg.SuccessorEdges.Count + 1);
-            DFS(rootBlock, rootBlockIndex, discovered);
-        }
-
-        /// <summary>
         /// Called when a Node has been completly parsed.
         /// </summary>
         /// <param name="node"></param>
@@ -1292,7 +1263,10 @@ namespace TypeCobol.Analysis.Cfg
                 System.Diagnostics.Debug.Assert(sentence.AllBlocks.First.Value == sentence.Block);
                 foreach (var block in sentence.AllBlocks)
                 {//We must clone each block of the sequence and add them to the group.
-                    var cloneBlock = block.Clone();
+                    var cloneBlock = (BasicBlockForNode)block.Clone();
+                    //Give to the cloned a new Index, and added to all block.
+                    cloneBlock.Index = this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Count;
+                    this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Add(block);
                     group.AddBlock(block);
                 }
             }
@@ -2311,6 +2285,9 @@ namespace TypeCobol.Analysis.Cfg
         internal BasicBlockForNode CreateBlock(Node node, bool addToCurrentSentence)
         {
             var block = new BasicBlockForNode();
+            block.Index = this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Count;
+            this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Add(block);
+
             if (node != null)
             {
                 this.CurrentProgramCfgBuilder.Cfg.BlockFor[node] = block;
@@ -2336,6 +2313,8 @@ namespace TypeCobol.Analysis.Cfg
         internal BasicBlockForNodeGroup CreateGroupBlock(Node node, bool addToCurrentSentence)
         {
             var block = new BasicBlockForNodeGroup();
+            block.Index = this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Count;
+            this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Add(block);
             if (node != null)
             {
                 this.CurrentProgramCfgBuilder.Cfg.BlockFor[node] = block;
@@ -2391,7 +2370,7 @@ namespace TypeCobol.Analysis.Cfg
             Cfg.ProcedureNode = procDiv;
             Cfg.Initialize();
             //Create the starting block.
-            var startBlock = new BasicBlockForNode();
+            var startBlock = CreateBlock(null, false); 
             Cfg.BlockFor[procDiv] = startBlock;
             Cfg.RootBlocks.Add(startBlock);
             CurrentBasicBlock = startBlock;

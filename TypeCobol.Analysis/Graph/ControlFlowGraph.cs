@@ -15,6 +15,14 @@ namespace TypeCobol.Analysis.Graph
     public class ControlFlowGraph<N, D>
     {
         /// <summary>
+        /// BasicBlock calllback type.
+        /// </summary>
+        /// <param name="block">The BasicBlock</param>
+        /// <param name="cfg">The Control Flow Graph in with the basic Block belongs.</param>
+        /// <returns>true if ok, false otherwise</returns>
+        public delegate bool BasicBlockCallback(BasicBlock<N, D> block, ControlFlowGraph<N, D> cfg);
+
+        /// <summary>
         /// Root blocks. Usually it is a singleton it is the first block in the program, but alos on Exception handlers.
         /// </summary>
         public List<BasicBlock<N, D>> RootBlocks
@@ -94,6 +102,78 @@ namespace TypeCobol.Analysis.Graph
                 result.Add(SuccessorEdges[n]);
             }
             return result;
+        }
+
+        /// <summary>
+        /// DFS Depth First Search implementation
+        /// </summary>
+        /// <param name="block">The current block</param>
+        /// <param name="discovered">Array of already discovered nodes</param>
+        /// <param name="callback">CallBack function</param>
+        internal void DFS(BasicBlock<N, D> block, System.Collections.BitArray discovered, BasicBlockCallback callback)
+        {
+            discovered[block.Index] = true;
+            if (!callback(block, this))
+                return;//Means stop
+            foreach (var edge in block.SuccessorEdges)
+            {
+                if (!discovered[edge])
+                {
+                    DFS(SuccessorEdges[edge], discovered, callback);
+                }
+            }
+        }
+
+        /// <summary>
+        /// DFS Depth First Search implementation
+        /// </summary>
+        /// <param name="rootBlock">The root block.</param>
+        /// <param name="callback">CallBack function</param>
+        public void DFS(BasicBlock<N, D> rootBlock, BasicBlockCallback callback)
+        {
+            System.Collections.BitArray discovered = new System.Collections.BitArray(AllBlocks.Count);
+            DFS(rootBlock, discovered, callback);
+        }
+
+        /// <summary>
+        /// DFS Depth First Search implementation.
+        /// </summary>
+        /// <param name="callback">CallBack function</param>
+        public void DFS(BasicBlockCallback callback)
+        {
+            foreach(var root in RootBlocks)
+            { 
+                DFS(root, callback);
+            }
+        }
+
+        /// <summary>
+        /// Iterative version of DFS Depth First Search implementation
+        /// </summary>
+        /// <param name="callback">CallBack function</param>
+        public void DFSIterative(BasicBlockCallback callback)
+        {
+            System.Collections.BitArray discovered = new System.Collections.BitArray(AllBlocks.Count);
+            foreach (var root in RootBlocks)
+            {
+                Stack<BasicBlock<N, D>> stack = new Stack<BasicBlock<N, D>>();
+                stack.Push(root);
+                while (stack.Count > 0)
+                {
+                    BasicBlock<N, D> block = stack.Pop();
+                    if (!discovered[block.Index])
+                    {
+                        if (!callback(block, this))
+                        {   //Don't traverse edges
+                            continue;
+                        }
+                        foreach (var edge in block.SuccessorEdges)
+                        {
+                            stack.Push(SuccessorEdges[edge]);
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -14,6 +14,14 @@ namespace TypeCobol.Analysis.Graph
     public class BasicBlock<N, D> : ICloneable
     {
         /// <summary>
+        /// BasicBlock Index
+        /// </summary>
+        public int Index
+        {
+            get;
+            protected internal set;
+        }
+        /// <summary>
         /// Instructions making up this block.
         /// </summary>
         public LinkedList<N> Instructions
