@@ -1,0 +1,34 @@
+﻿      *Callee contains public procedures and types
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Callee.
+       DATA DIVISION.
+       working-storage section.
+
+       01 TechnicalContext TYPEDEF STRICT PUBLIC.
+            05 TechName PIC X(8).
+            05 Site TYPE SITE.
+
+       01 SITE TYPEDEF STRICT PUBLIC.
+            05 SiteName PIC X(8).
+
+       PROCEDURE DIVISION.
+       
+       declare procedure check public
+          input mydate        TYPE Date
+         .
+       END-DECLARE.
+
+       declare procedure check2 public
+          input mydate        type Date
+                ctx           type TechnicalContext
+         .
+       END-DECLARE.
+
+       DECLARE PROCEDURE MyPublicProcedure PUBLIC
+           INPUT mydate        TYPE Date
+                 format        PIC X(08)
+          OUTPUT okay          TYPE Bool
+                 actual-format PIC X(08).
+         .
+       END-DECLARE.
+       END PROGRAM Callee.

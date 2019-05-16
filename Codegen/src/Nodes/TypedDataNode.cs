@@ -19,9 +19,8 @@ namespace TypeCobol.Codegen.Nodes
     {
 
         private DataDescription Node;
-        public TypedDataNode(DataDescription node) : base(null) { this.Node = node; }
+        public TypedDataNode(DataDescription node) : base(node.CodeElement) { this.Node = node; }
 
-        public override CodeElement CodeElement { get { return this.Node.CodeElement; } }
 
         private List<ITextLine> _cache = null;
         public override IEnumerable<ITextLine> Lines
@@ -33,7 +32,7 @@ namespace TypeCobol.Codegen.Nodes
                     _cache = new List<ITextLine>();
                     if (this.Node.IsPartOfATypeDef) return _cache;
 
-                    var data = this.Node.CodeElement();
+                    var data = this.Node.CodeElement;
                     if (data.LevelNumber != null)
                     {
                         int level = (int) (data.LevelNumber.Value);
@@ -699,7 +698,7 @@ namespace TypeCobol.Codegen.Nodes
                     }
                     var type = data.TypeDefinition;
                     bool isCustomTypeToo = !(data is TypeDefinition) && (type != null);
-                    var dataDefinitionEntry = data.CodeElement as DataDefinitionEntry;
+                    var dataDefinitionEntry = data.CodeElement;
                     if (isCustomTypeToo && dataDefinitionEntry != null)
                     {                        
                         List<string> sub_acc = new List<string>();
@@ -788,11 +787,23 @@ namespace TypeCobol.Codegen.Nodes
             " {2}    {3}  {4}{5} pic S9(05) comp-5."
 
         };
+
         public static List<ITextLine> InsertChildren(ColumnsLayout? layout, List<string> rootProcedures, List< Tuple<string,string> > rootVariableName, DataDefinition ownerDefinition, DataDefinition type, int level, int indent)
         {
             var lines = new List<ITextLine>();
             foreach (var child in type.Children)
             {
+                bool bCanGenerate = !child.IsInsideCopy();
+                //Handle Typedef whose body is inside a COPY
+                if (child.IsFlagSet(Flag.InsideTypedefFromCopy))
+                {
+                    if (child.IsFlagSet(Flag.IsTypedefCopyNode))
+                    {
+                        lines.AddRange(child.Lines);
+                        continue;
+                    }
+                }
+
                 if (child is TypedDataNode) continue;
                 //Special cases BOOL / POINTER
                 if (child is TypeCobol.Compiler.Nodes.DataDescription)
@@ -801,17 +812,21 @@ namespace TypeCobol.Codegen.Nodes
                     string attr_type = (string)child["type"];
                     if (attr_type != null && attr_type.ToUpper().Equals("BOOL"))
                     {
-                        string attr_name = (string)child["name"];
-                        string margin = "";
-                        for (int i = 0; i < indent; i++)
-                            margin += "  ";
-                        string slevel = level.ToString("00");
-                        string svalue = child["value"] as string;
-                        foreach (string str in BoolTypeTemplate)
+                        if (bCanGenerate)
                         {
-                            string sline = string.Format(str, attr_name, slevel, margin, svalue?.Length == 0 ? "LOW-VALUE" : svalue);
-                            TextLineSnapshot line = new TextLineSnapshot(-1, sline, null);
-                            lines.Add(line);
+                            string attr_name = (string) child["name"];
+                            string margin = "";
+                            for (int i = 0; i < indent; i++)
+                                margin += "  ";
+                            string slevel = level.ToString("00");
+                            string svalue = child["value"] as string;
+                            foreach (string str in BoolTypeTemplate)
+                            {
+                                string sline = string.Format(str, attr_name, slevel, margin,
+                                    svalue?.Length == 0 ? "LOW-VALUE" : svalue);
+                                TextLineSnapshot line = new TextLineSnapshot(-1, sline, null);
+                                lines.Add(line);
+                            }
                         }
                         continue;
                     }
@@ -821,23 +836,26 @@ namespace TypeCobol.Codegen.Nodes
                         var attr_usage = child["usage"];
                         if (attr_usage != null && attr_usage.ToString().ToUpper().Equals("POINTER"))
                         {
-                            string attr_name = (string)child["name"];
-                            string margin = "";
-                            for (int i = 0; i < indent; i++)
-                                margin += "  ";
-                            string slevel = level.ToString("00");
-                            string shash = (string)child["hash"];
-                            foreach (string str in PointerUsageTemplate)
+                            if (bCanGenerate)
                             {
-                                string sline = string.Format(str,
-                                                             attr_name, 
-                                                             slevel,
-                                                             margin,
-                                                             (level+1).ToString("00"),
-                                                             attr_name.Length > 22 ? attr_name.Substring(0, 22) : attr_name,
-                                                             shash);
-                                TextLineSnapshot line = new TextLineSnapshot(-1, sline, null);
-                                lines.Add(line);
+                                string attr_name = (string) child["name"];
+                                string margin = "";
+                                for (int i = 0; i < indent; i++)
+                                    margin += "  ";
+                                string slevel = level.ToString("00");
+                                string shash = (string) child["hash"];
+                                foreach (string str in PointerUsageTemplate)
+                                {
+                                    string sline = string.Format(str,
+                                        attr_name,
+                                        slevel,
+                                        margin,
+                                        (level + 1).ToString("00"),
+                                        attr_name.Length > 22 ? attr_name.Substring(0, 22) : attr_name,
+                                        shash);
+                                    TextLineSnapshot line = new TextLineSnapshot(-1, sline, null);
+                                    lines.Add(line);
+                                }
                             }
                             continue;
                         }
@@ -855,10 +873,12 @@ namespace TypeCobol.Codegen.Nodes
                 }
 
                 bool isCustomTypeToo = !(child is TypeDefinition) && (typed.TypeDefinition != null);
-                var dataDefinitionEntry = typed.CodeElement as DataDefinitionEntry;
+                var dataDefinitionEntry = typed.CodeElement;
                 if (dataDefinitionEntry != null)
                 {
-                    lines.AddRange(CreateDataDefinition(child, child.SymbolTable, layout, rootProcedures, rootVariableName, typed, dataDefinitionEntry, level, indent, isCustomTypeToo, false, isCustomTypeToo ? typed.TypeDefinition : null));
+                    var texts = CreateDataDefinition(child, child.SymbolTable, layout, rootProcedures, rootVariableName, typed, dataDefinitionEntry, level, indent, isCustomTypeToo, false, isCustomTypeToo? typed.TypeDefinition: null);
+                    if (bCanGenerate)
+                        lines.AddRange(texts);
                 }
                 else
                 {//Humm ... It will be a bug.
@@ -869,11 +889,16 @@ namespace TypeCobol.Codegen.Nodes
                     List< Tuple<string,string> > newRootVariableName = new List<Tuple<string, string>>();
                     newRootVariableName.Add(new Tuple<string, string>(typed.Name, typed.TypeDefinition.Name));
                     newRootVariableName.AddRange(rootVariableName);
-                    lines.AddRange(InsertChildren(layout, rootProcedures, newRootVariableName, typed, typed.TypeDefinition, level + 1, indent + 1));
+                    var texts = InsertChildren(layout, rootProcedures, newRootVariableName, typed, typed.TypeDefinition,
+                        level + 1, indent + 1);
+                    lines.AddRange(texts);
                 }
                 else
-                    lines.AddRange(InsertChildren(layout, rootProcedures, rootVariableName, typed, typed, level + 1, indent + 1));
-
+                {
+                    var texts = InsertChildren(layout, rootProcedures, rootVariableName, typed, typed, level + 1,
+                        indent + 1);
+                    lines.AddRange(texts);
+                }
             }
             return lines;
         }

@@ -1,6 +1,6 @@
 --- Diagnostics ---
-Line 19[44,48] <27, Error, Syntax> - Syntax error : PICTURE clause incompatible with TYPE clause OffendingSymbol=[44,48:X(21)]<PictureCharacterString>
 Line 19[18,59] <30, Error, Semantics> - Semantic error: TYPE 'rib' is not referenced
+Line 19[44,48] <27, Error, Syntax> - Syntax error : PICTURE clause incompatible with TYPE clause OffendingSymbol=[44,48:X(21)]<PictureCharacterString>
 Line 23[44,48] <27, Error, Syntax> - Syntax error : PICTURE clause incompatible with TYPE clause OffendingSymbol=[44,48:X(08)]<PictureCharacterString>
 
 --- Program ---

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Tools;
 
@@ -10,40 +11,39 @@ namespace TypeCobol.Compiler.Parser
     /// <summary>
     /// An delegate for Factories used to create Node Listener
     /// </summary>
-    public delegate NodeListener<TCtx> NodeListenerFactory<TCtx>() where TCtx : class;
+    public delegate NodeListener NodeListenerFactory();
 
     /// <summary>
     /// Node Listener with a parsing context
     /// </summary>
-    /// <typeparam name="TCtx">Parsing context</typeparam>
-	public interface NodeListener<TCtx> where TCtx : class
+    public interface NodeListener
     {
         /// <summary>
         /// Called when a CodeElement is created during ProgramClassParserStep,
         /// if the CodeElement type equals one of those returned by GetCodeElements.
         /// </summary>
-        /// <param name="ce">CodeElement created</param>
-        /// <param name="context">Context associated to ce's creation</param>
+        /// <param name="node"></param>
         /// <param name="program">Current scope program</param>
-        void OnNode(Node node, TCtx context, CodeModel.Program program);
+        /// <param name="ce">CodeElement created</param>
+        void OnNode(Node node, Program program);
     }
 
-    public class NodeDispatcher<TCtx> : NodeListener<TCtx> where TCtx : class {
+    public class NodeDispatcher : NodeListener {
         /// <summary>
         /// List of Static NodeListener Factory
         /// </summary>
-        private static List<NodeListenerFactory<TCtx>> StaticNodeListenerFactory = null;
+        private static List<NodeListenerFactory> StaticNodeListenerFactory = null;
         /// <summary>
         /// Add Static NodeListenerFactory instance
         /// </summary>
         /// <param name="listener">The instance to be added</param>
-        public static void RegisterStaticNodeListenerFactory(NodeListenerFactory<TCtx> listener)
+        public static void RegisterStaticNodeListenerFactory(NodeListenerFactory listener)
         {
-            lock (typeof(NodeDispatcher<TCtx>))
+            lock (typeof(NodeDispatcher))
             {
                 if (StaticNodeListenerFactory == null && listener != null)
                 {
-                    StaticNodeListenerFactory = new List<NodeListenerFactory<TCtx>>();
+                    StaticNodeListenerFactory = new List<NodeListenerFactory>();
                 }
                 StaticNodeListenerFactory.Add(listener);
             }
@@ -52,9 +52,9 @@ namespace TypeCobol.Compiler.Parser
         /// Remove Static NodeListenerFactory instance
         /// </summary>
         /// <param name="listener">The instance to be removed</param>
-        public static void RemoveStaticNodeListenerFactory(NodeListenerFactory<TCtx> listener)
+        public static void RemoveStaticNodeListenerFactory(NodeListenerFactory listener)
         {
-            lock (typeof(NodeDispatcher<TCtx>))
+            lock (typeof(NodeDispatcher))
             {
                 if (StaticNodeListenerFactory != null && listener != null)
                 {
@@ -62,19 +62,18 @@ namespace TypeCobol.Compiler.Parser
                 }
             }
         }
-
-        public IList<System.Type> GetNodes() { return null; }
+        
 
         /// <summary>Notifies listeners about the creation of a new CodeElement.</summary>
-        public void OnNode(Node node, TCtx context, CodeModel.Program program)
+        public void OnNode(Node node, Program program)
         {
             foreach (var listener in _listeners)
             {
-                listener.OnNode(node, context, program);
+                listener.OnNode(node, program);
             }
         }
 
-        private IList<NodeListener<TCtx>> _listeners = null;
+        private IList<NodeListener> _listeners = null;
 
         /// <summary>
         /// Adds to listeners one instance of each type implementing CodeElementListener interface
@@ -83,23 +82,23 @@ namespace TypeCobol.Compiler.Parser
         /// </summary>
         internal void CreateListeners()
         {
-            //Do nothig if listners already exist
+            //Do nothing if listeners already exist
             if (_listeners != null)
             {
                 return;
             }
-            _listeners = new List<NodeListener<TCtx>>();
+            _listeners = new List<NodeListener>();
             //Return if no StaticNodeListenerFactory exist
             if (StaticNodeListenerFactory == null)
             {
                 return;
             }
-            lock (typeof(NodeDispatcher<TCtx>))
+            lock (typeof(NodeDispatcher))
             {
-                foreach (NodeListenerFactory<TCtx> factory in StaticNodeListenerFactory)
+                foreach (NodeListenerFactory factory in StaticNodeListenerFactory)
                 {
                     //Allocate listeners from static factories.
-                    NodeListener<TCtx> listener = factory();
+                    NodeListener listener = factory();
                     if (listener != null)
                     {
                         _listeners.Add(listener);

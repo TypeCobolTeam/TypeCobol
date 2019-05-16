@@ -34,6 +34,7 @@
        01 MyPerson.
            02 PersonId pic 9(10).
            02 LastName pic X(30).
+              88 Empty value space.
            02 FirstName pic X(30).
                                                 
        LINKAGE SECTION.
@@ -360,6 +361,7 @@
       *01 Person TYPEDEF STRICT PUBLIC.
       *    05 PersonId   pic 9(10).
       *    05 LastName   pic X(30).
+      *      88 Empty value space.
       *    05 FirstName  pic X(30).
        01  TC-PersonSe-FctList-Loaded PIC X(02).
            88 TC-PersonSe-FctList-IsLoaded      VALUE 'OK'.
@@ -534,6 +536,7 @@
        01 person.
            02 PersonId pic 9(10).
            02 LastName pic X(30).
+              88 Empty value space.
            02 FirstName pic X(30).
        PROCEDURE DIVISION
              USING BY REFERENCE person1Id

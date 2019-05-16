@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,9 +35,16 @@ namespace TypeCobol.Codegen.Generators
 
             //After generation get the generated cobol code and mix it with TypeCobol source using Transform project
             var mixedContent = new StringBuilder();
-            Transform.Decoder.Encode(compilationUnit.CobolTextLines.Select(l => l.Text).ToArray(), Destination.ToString().Split(new string[] {Environment.NewLine}, StringSplitOptions.None), mixedContent);
+            Transform.Decoder.Encode(compilationUnit.CobolTextLines.Select(l => l.Text).ToArray(), Destination.ToString().Split(new string[] {Environment.NewLine, "\n", "\r"}, StringSplitOptions.None), mixedContent);
             this.Destination.Clear();
             this.Destination.Append(mixedContent);
         }
+
+        public override void GenerateLineMapFile(Stream stream)
+        {
+            _usedGenerator.GenerateLineMapFile(stream);
+        }
+        public override bool HasLineMapData => _usedGenerator.HasLineMapData;
+
     }
 }

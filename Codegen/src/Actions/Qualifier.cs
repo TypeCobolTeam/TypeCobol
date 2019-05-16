@@ -153,8 +153,10 @@ namespace TypeCobol.Codegen.Actions
                 {
                     if (UsedStorageArea != null && UsedStorageArea.Contains(storageArea))
                         return;
-                    string name = storageArea.SymbolReference.Name;
-                    string qualified_name = this.CurrentNode.QualifiedStorageAreas[storageArea];
+
+
+                    string qualified_name = this.CurrentNode.GetQualifiedName(storageArea);
+                    
                     GenerateToken item = null;
                     string hashName = GeneratorHelper.ComputeIndexHashName(qualified_name, this.CurrentNode);
                     item = new GenerateToken(
@@ -255,7 +257,6 @@ namespace TypeCobol.Codegen.Actions
                                     if (index.Name.Equals(indexDefinition.Name))
                                     {
                                         Tuple<int, int, int, List<int>, List<int>> sourcePositions = this.Generator.FromToPositions(indexDefinition.Parent);
-                                        string name = index.Name;
                                         string qualified_name = indexDefinition.QualifiedName.ToString();
                                         GenerateToken item = null;
                                         string hashName = GeneratorHelper.ComputeIndexHashName(qualified_name, indexDefinition.Parent);
@@ -410,30 +411,29 @@ namespace TypeCobol.Codegen.Actions
                 TypeCobol.Compiler.Nodes.ProcedureStyleCall procStyleCall = CurrentNode as TypeCobol.Compiler.Nodes.ProcedureStyleCall;
                 if (procStyleCall != null)
                 {
-                    ProcedureStyleCallStatement procStyleCallStmt = procStyleCall.CodeElement as ProcedureStyleCallStatement;
-                    if (procStyleCallStmt != null)
-                    {
-                        TypeCobolQualifiedSymbolReference tcqsr = procStyleCallStmt.ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction as
-                            TypeCobolQualifiedSymbolReference ?? procStyleCallStmt.ProcdurePointerOrTCProcedureFunction as TypeCobolQualifiedSymbolReference;
+                    ProcedureStyleCallStatement procStyleCallStmt = procStyleCall.CodeElement;
+                   
+                    TypeCobolQualifiedSymbolReference tcqsr = procStyleCallStmt.ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction as
+                                                                  TypeCobolQualifiedSymbolReference ?? procStyleCallStmt.ProcdurePointerOrTCProcedureFunction as TypeCobolQualifiedSymbolReference;
 
-                        if (tcqsr != null)
-                        {
-                            IList<SymbolReference> names_items = tcqsr.AsList();
-                            if (names_items.Count != items.Count)
-                                return false;
-                            if (EqualItems(items, names_items))
-                            {//This is a reference to a Function Call.
-                                hashFunction = procStyleCall.FunctionDeclaration.Hash;
-                                if (ProcCallerStack != null && ProcCallerStack.Count > 0)
-                                {   //Memorize the (hash,ProcedureStyleCall) In the Program procedure style call dictionary.
-                                    var program = ProcCallerStack.Peek();
-                                    if (!program.ProcStyleCalls.ContainsKey(hashFunction))
-                                        program.ProcStyleCalls[hashFunction] = new Tuple<IList<SymbolReference>, TypeCobol.Compiler.Nodes.ProcedureStyleCall>(items, procStyleCall);
-                                }
-                                return true;
+                    if (tcqsr != null)
+                    {
+                        IList<SymbolReference> names_items = tcqsr.AsList();
+                        if (names_items.Count != items.Count)
+                            return false;
+                        if (EqualItems(items, names_items))
+                        {//This is a reference to a Function Call.
+                            hashFunction = procStyleCall.FunctionDeclaration.Hash;
+                            if (ProcCallerStack != null && ProcCallerStack.Count > 0)
+                            {   //Memorize the (hash,ProcedureStyleCall) In the Program procedure style call dictionary.
+                                var program = ProcCallerStack.Peek();
+                                if (!program.ProcStyleCalls.ContainsKey(hashFunction))
+                                    program.ProcStyleCalls[hashFunction] = new Tuple<IList<SymbolReference>, TypeCobol.Compiler.Nodes.ProcedureStyleCall>(items, procStyleCall);
                             }
+                            return true;
                         }
                     }
+                    
                 }
                 return false;
             }
@@ -528,7 +528,9 @@ namespace TypeCobol.Codegen.Actions
                         }
                         if (nCountInner == items.Count)
                         {
-                            qualified_name = sourceNode.QualifiedStorageAreas[storage_area];
+
+                            qualified_name = this.CurrentNode.GetQualifiedName(storage_area);
+
                             return true;
                         }
                     }
@@ -701,7 +703,7 @@ namespace TypeCobol.Codegen.Actions
                 base.ConsumedTokens = new List<TypeCobol.Compiler.Scanner.Token>();
                 base.ConsumedTokens.Add(token);
             }
-            public TokenCodeElement(List<TypeCobol.Compiler.Scanner.Token> consumedTokens)
+            public TokenCodeElement(IList<TypeCobol.Compiler.Scanner.Token> consumedTokens)
                 : base((CodeElementType)0)
             {
                 base.ConsumedTokens = consumedTokens;
@@ -711,7 +713,7 @@ namespace TypeCobol.Codegen.Actions
         /// <summary>
         /// A Node to just generate Qualifier tokens.
         /// </summary>
-        internal class GenerateToken : Compiler.Nodes.Node, GeneratedAndReplace
+        internal class GenerateToken : GenericNode<CodeElement>, GeneratedAndReplace
         {
             /// <summary>
             /// 
@@ -751,6 +753,55 @@ namespace TypeCobol.Codegen.Actions
             {
                 return true;
             }
+        }
+
+
+        /// <summary>
+        /// Add the given GenerateToken in the given node at the right position in the
+        /// node's children sorted by other GenerateToken instances locations.
+        /// </summary>
+        /// <param name="token">The token to add as child</param>
+        /// <param name="node">The parent node</param>
+        internal static void AddGenerateTokenAtSortedLocationIndex(GenerateToken token, Node node)
+        {
+            if (node.ChildrenCount == 0)
+            {
+                node.Add(token);
+                return;
+            }
+
+            int currentIndex = -1;//curent child index 
+            int insertIndex = -1;//Prefered position index
+            int lastIndex = -1;//Last index of a GenerateToken child
+            int line = token.CodeElement.ConsumedTokens[0].Line;
+            int column = token.CodeElement.ConsumedTokens[0].Column;
+            Node target = node.Children.FirstOrDefault(n =>
+                {
+                    bool istoken = n is GenerateToken;
+                    bool bResult =  istoken &&
+                                   (line <= n.CodeElement.ConsumedTokens[0].Line &&
+                                    column <= n.CodeElement.ConsumedTokens[0].Column);
+                    currentIndex++;
+                    if (bResult)
+                    {
+                        insertIndex = currentIndex;
+                    }
+
+                    if (istoken)
+                    {
+                        lastIndex = currentIndex;
+                    }
+                    return bResult;
+                }
+            );
+            if (target == null)
+            {//No Match
+                node.Add(token, lastIndex != -1 ? lastIndex + 1 : -1);
+            }
+            else
+            {
+                node.Add(token, insertIndex);
+            }            
         }
 
         /// <summary>

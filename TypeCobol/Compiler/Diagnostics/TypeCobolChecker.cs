@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Antlr4.Runtime;
 using System.Collections.Generic;
 using JetBrains.Annotations;
@@ -46,7 +46,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
         private static void checkReadOnly(Node node, [NotNull] Node receiving)
         {
-            var rtype = receiving.Parent as ITypedNode;
+            var rtype = receiving.Parent as DataDefinition;
             if (rtype == null) return;
             foreach (var type in READONLY_DATATYPES)
             {
@@ -54,6 +54,27 @@ namespace TypeCobol.Compiler.Diagnostics
                     DiagnosticUtils.AddError(node, type + " properties are read-only");
             }
         }
+    }
+
+    class DataDefinitionChecker
+    {
+        public static void OnNode(Node node, DataDescriptionEntry dataEntry = null)
+        {
+            if (dataEntry == null && node is DataDefinition)
+            {
+                dataEntry = node.CodeElement as DataDescriptionEntry;
+            }
+
+
+            if (dataEntry?.Usage != null &&
+                (dataEntry.Usage.Value == DataUsage.FloatingPoint || dataEntry.Usage.Value == DataUsage.LongFloatingPoint) &&
+                dataEntry.Picture != null)
+            {
+                DiagnosticUtils.AddError(node,
+                    "Variable with usage COMP-1 and COMP-2 cannot have a PICTURE", dataEntry);
+            }
+        }
+
     }
 
     class FunctionCallChecker
@@ -64,9 +85,6 @@ namespace TypeCobol.Compiler.Diagnostics
             if (functionCaller == null || functionCaller.FunctionCall == null ||
                 !functionCaller.FunctionCall.NeedDeclaration)
                 return;
-
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.FunctionCalled, functionCaller.FunctionCall.FunctionName,
-                LogType.TypeCobolUsage);
 
             if (functionCaller.FunctionDeclaration == null)
             {
@@ -129,7 +147,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     var potentialVariables =
                         node.SymbolTable.GetVariablesExplicit(new URI(functionCaller.FunctionCall.FunctionName));
 
-                    if (functionDeclarations.Count == 1 && !potentialVariables.Any())
+                    var potentialVariablesCount = potentialVariables.Count();
+                    if (functionDeclarations.Count == 1 && potentialVariablesCount == 0)
                     {
                         functionCaller.FunctionDeclaration = functionDeclarations.First();
                         return; //Everything seems to be ok, lets continue on the next one
@@ -139,7 +158,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName), null,
                             functionCaller.FunctionCall.Namespace);
 
-                    if (potentialVariables.Count() > 1)
+                    if (potentialVariablesCount > 1)
                     {
                         //If there is more than one variable with the same name, it's ambiguous
                         message = string.Format("Call to '{0}'(no arguments) is ambigous. '{0}' is defined {1} times",
@@ -149,7 +168,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         return;
                     }
 
-                    if (functionDeclarations.Count > 1 && !potentialVariables.Any())
+                    if (functionDeclarations.Count > 1 && potentialVariablesCount == 0)
                     {
                         message = string.Format("No suitable function signature found for '{0}(no arguments)'",
                             functionCaller.FunctionCall.FunctionName);
@@ -157,7 +176,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         return;
                     }
 
-                    if (functionDeclarations.Count >= 1 && potentialVariables.Count() == 1)
+                    if (functionDeclarations.Count >= 1 && potentialVariablesCount == 1)
                     {
                         message = string.Format("Warning: Risk of confusion in call of '{0}'",
                             functionCaller.FunctionCall.FunctionName);
@@ -165,7 +184,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         return;
                     }
 
-                    if (functionDeclarations.Count == 0 && !potentialVariables.Any())
+                    if (functionDeclarations.Count == 0 && potentialVariablesCount == 0)
                     {
                         message = string.Format("No function or variable found for '{0}'(no arguments)",
                             functionCaller.FunctionCall.FunctionName);
@@ -173,7 +192,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         return; //Do not continue the function/procedure does not exists
                     }
 
-                    if (potentialVariables.Count() == 1)
+                    if (potentialVariablesCount == 1)
                         return; //Stop here, it's a standard Cobol call
                 }
 
@@ -210,6 +229,16 @@ namespace TypeCobol.Compiler.Diagnostics
             for (int c = 0; c < parameters.Count; c++)
             {
                 var expected = parameters[c];
+
+                //Hack until we get a real concept of project to build all of the dependencies
+                if (expected.CodeElement.UserDefinedDataType != null && expected.TypeDefinition == null)
+                {
+                    TypeCobolLinker.ResolveType(expected);
+                    if (expected.TypeDefinition != null)
+                    {
+                        TypeCobolLinker.CheckCircularReferences(expected.TypeDefinition);
+                    }
+                }
                 if (c < callArgsCount)
                 {
                     //Omitted
@@ -257,8 +286,7 @@ namespace TypeCobol.Compiler.Diagnostics
                             }
 
                                // accepted format is "PIC [S]9(5..9) comp-5"
-                            if (expected.PrimitiveDataType.Name != "Numeric" || expected.Length < 5 ||
-                                expected.Length > 9 || expected.Usage != DataUsage.NativeBinary)
+                            if (expected.PrimitiveDataType.Name != "Numeric" || expected.PhysicalLength != 4 || expected.Usage != DataUsage.NativeBinary)
                             {
                                 DiagnosticUtils.AddError(node, "LENGTH can only be used as PIC S9(5..9) comp-5",
                                     actualSpecialRegister.SpecialRegisterName);
@@ -328,7 +356,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     
 
                     //Cobol 85 Type will be checked with their picture
-                        if (actualDataDefinition.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85 ||
+                    if (actualDataDefinition.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85 ||
                         expected.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85) 
                     {
                         if (actualDataDefinition.DataType.CobolLanguageLevel == CobolLanguageLevel.Cobol85 ||
@@ -346,17 +374,25 @@ namespace TypeCobol.Compiler.Diagnostics
                         {
                             TypeDefinition callerType = actualDataDefinition.TypeDefinition;
                             TypeDefinition calleeType = expected.TypeDefinition;
-                            if (callerType == null || calleeType == null)
+                            if (callerType != null && calleeType != null)
                             {
-                                //Ignore, it's an unknown DataType. It's already checked
-                            }
-                            else if (!Equals(callerType.QualifiedName, calleeType.QualifiedName))
-                            {
-                                var m = string.Format(
+                                //Compare reference of TypeDefinition
+                                if (callerType != calleeType)
+                                {
+                                    var m = string.Format(
                                         "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
                                         call.FunctionName, calleeType.Name, calleeType.DataType,
                                         callArgName ?? string.Format("position {0}", c + 1), callerType.DataType);
-                                DiagnosticUtils.AddError(node, m);
+                                    DiagnosticUtils.AddError(node, m);
+                                }
+                                //else
+                                //DataType were not written exactly the same in the source code
+                                //eg. we can have a type qualified with its program and the same type without the qualification, then DataType are not the same but TypeDefinition are
+                                //So no error here, it's ok
+                            }
+                            else
+                            {
+                                //Ignore, it's an unknown DataType. It's already checked by TypeCobolLinker
                             }
                         }
                     }
@@ -536,7 +572,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 else
                 {
                     var m = string.Format("Function '{0}' is missing parameter '{1}' of type {2} and length {3}",
-                        call.FunctionName, expected.Name, expected.DataType, expected.Length);
+                        call.FunctionName, expected.Name, expected.DataType, expected.PhysicalLength);
                     DiagnosticUtils.AddError(node, m);
                 }
             }
@@ -568,19 +604,20 @@ namespace TypeCobol.Compiler.Diagnostics
 
         private static string ToString(FunctionType type)
         {
-		if (type == FunctionType.Undefined) return "symbol";
-		if (type == FunctionType.Function) return "function";
-		if (type == FunctionType.Procedure) return "procedure";
-		return "function or procedure";
-	}
-}
+		    if (type == FunctionType.Undefined) return "symbol";
+		    if (type == FunctionType.Function) return "function";
+		    if (type == FunctionType.Procedure) return "procedure";
+		    return "function or procedure";
+	    }
+    }
+    
 
     class FunctionDeclarationChecker
     {
      
         public static void OnNode(FunctionDeclaration functionDeclaration)
         {
-            var header = functionDeclaration?.CodeElement as FunctionDeclarationHeader;
+            var header = functionDeclaration?.CodeElement;
             if (header == null) return; //not my job
 
             var filesection = functionDeclaration.Get<FileSection>("file");
@@ -603,12 +640,51 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(functionDeclaration,
                     "A function \"" + headerNameURI.Head + "\" with the same profile already exists in namespace \"" +
                     headerNameURI.Tail + "\".");
+
+
+            //// Set a Warning if the formalized comment parameter is unknown or if the function parameter have no description
+            if (header.FormalizedCommentDocumentation != null)
+            {
+                // Get the parameters inside the Formalized Comment that are not inside the function parameters
+                var formComParamOrphan = header.FormalizedCommentDocumentation.Parameters.Keys.Except(
+                    functionDeclaration.Profile.Parameters.Select(p => p.Name));
+
+                // For each of them, place a warning on the orphan parameter definition (UserDefinedWord Token inside the FormCom)
+                foreach (var orphan in formComParamOrphan)
+                {
+                    var tokens = header.ConsumedTokens.Where(t => t.TokenType == TokenType.UserDefinedWord && t.Text == orphan);
+                    foreach (var token in tokens)
+                    {
+                        DiagnosticUtils.AddError(header,
+                            "Parameter name does not match to any function parameter: " + orphan,
+                            token, code: MessageCode.Warning);
+                    }
+                }
+
+                // Get the parameters inside the function parameters that are not inside the Formalized Comment
+                var sameParameters = functionDeclaration.Profile.Parameters.Where(p =>
+                    header.FormalizedCommentDocumentation.Parameters.Keys.Contains(p.Name));
+
+                var functionParamWithoutDesc = functionDeclaration.Profile.Parameters.Except(sameParameters);
+
+                // For each of them, place a warning on the parameter definition
+                foreach (var param in functionParamWithoutDesc)
+                {
+                    var token = param.CodeElement.ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.UserDefinedWord);
+                    if (token != null)
+                    {
+                        DiagnosticUtils.AddError(header,
+                            "Parameter does not have any description inside the formalized comments: " + param.Name,
+                            token, code: MessageCode.Warning);
+                    }
+                }
+            }
         }
 
         private static void CheckNoGlobalOrExternal(DataDivision node)
         {
             if (node == null) return; // no DATA DIVISION
-            foreach (var section in node.Children())
+            foreach (var section in node.Children)
             {
                 // "storage" sections
                 foreach (var child in section.Children)
@@ -668,15 +744,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
-            if (parameter.Picture != null)
-            {
-                CrossCompleteChecker.CheckPicture(node, parameter);
-            }
-
-            var type = parameter.DataType;
-            TypeDefinition foundedType;
-            TypeDefinitionHelper.Check(node, type, out foundedType); //Check if the type exists and is not ambiguous
-
         }
 
         /// <summary>TCRFUN_DECLARATION_NO_DUPLICATE_NAME</summary>
@@ -692,28 +759,28 @@ namespace TypeCobol.Compiler.Diagnostics
                 var used = Validate(profile.ReturningParameter, description.Name);
                 if (used != null)
                 {
-                    AddErrorAlreadyParameter(description, description.QualifiedName);
+                    AddErrorAlreadyParameter(description, description.Name);
                     continue;
                 }
 
                 used = GetParameter(profile.InputParameters, description.Name);
                 if (used != null)
                 {
-                    AddErrorAlreadyParameter(description, description.QualifiedName);
+                    AddErrorAlreadyParameter(description, description.Name);
                     continue;
                 }
 
                 used = GetParameter(profile.OutputParameters, description.Name);
                 if (used != null)
                 {
-                    AddErrorAlreadyParameter(description, description.QualifiedName);
+                    AddErrorAlreadyParameter(description, description.Name);
                     continue;
                 }
 
                 used = GetParameter(profile.InoutParameters, description.Name);
                 if (used != null)
                 {
-                    AddErrorAlreadyParameter(description, description.QualifiedName);
+                    AddErrorAlreadyParameter(description, description.Name);
                     continue;
                 }
             }
@@ -747,9 +814,9 @@ namespace TypeCobol.Compiler.Diagnostics
             return null;
         }
 
-        private static void AddErrorAlreadyParameter([NotNull] Node node, [NotNull] QualifiedName name)
+        private static void AddErrorAlreadyParameter([NotNull] Node node, [NotNull] string parameterName)
         {
-            DiagnosticUtils.AddError(node, name.Head + " is already a parameter.");
+            DiagnosticUtils.AddError(node, parameterName + " is already a parameter.");
         }
 
         private static void CheckNoPerform(SymbolTable table, [NotNull] Node node)
@@ -832,7 +899,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
             }
 
-		    var pdiv = procedureDivision.CodeElement as ProcedureDivisionHeader;
+		    var pdiv = procedureDivision.CodeElement;
 
             //TCRFUN_LIBRARY_PROCEDURE_NO_USING 
             if (pdiv?.UsingParameters != null && pdiv.UsingParameters.Count > 0)
@@ -850,7 +917,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (statement != null)
             {
                 // Check receivers (incremented) 
-                var receivers = node?.StorageAreaWritesDataDefinition?.Values.Select(tuple => tuple.Item2);
+                var receivers = node?.StorageAreaWritesDataDefinition?.Values;
                 if (receivers == null)
                     return;
                 bool containsPointers = false;
@@ -860,17 +927,17 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (receiver.Usage == DataUsage.Pointer)
                     {
                         containsPointers = true;
-                        var levelNumber = ((DataDefinitionEntry) receiver.CodeElement).LevelNumber;
+                        var levelNumber = (receiver.CodeElement).LevelNumber;
                         if (levelNumber != null && levelNumber.Value > 49)
                         {
                             DiagnosticUtils.AddError(node,
-                                "Only pointer declared in level 01 to 49 can be use in instructions SET UP BY and SET DOWN BY.", (DataDefinitionEntry)receiver.CodeElement); 
+                                "Only pointer declared in level 01 to 49 can be use in instructions SET UP BY and SET DOWN BY.", receiver.CodeElement); 
                         }
 
                         if (receiver.Name.Length > 22)
                         {
                             DiagnosticUtils.AddError(node,
-                                "Pointer name '" + receiver.Name + "' is over 22 characters.", (DataDefinitionEntry)receiver.CodeElement);
+                                "Pointer name '" + receiver.Name + "' is over 22 characters.", receiver.CodeElement);
                         }
 
                         if (receiver.IsInsideCopy())
@@ -955,7 +1022,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (dataDefinition == null) return;
 
             //Check variable LevelNumber Rule - GLOBALSS_LIMIT48 
-            var data = dataDefinition.CodeElement as DataDefinitionEntry;
+            var data = dataDefinition.CodeElement;
             if (data?.LevelNumber != null && data.LevelNumber.Value == 77)
                 DiagnosticUtils.AddError(node,
                     "Level 77 is forbidden in global-storage section.", data);
@@ -966,9 +1033,9 @@ namespace TypeCobol.Compiler.Diagnostics
             if (dataDescription != null)
             {
                 if (dataDescription.IsGlobal) // GLOBALSS_NO_GLOBAL_KEYWORD 
-                    DiagnosticUtils.AddError(dataDescription, "Illegal GLOBAL clause in GLOBAL-STORAGE SECTION.", dataDescription);
+                    DiagnosticUtils.AddError(dataDefinition, "Illegal GLOBAL clause in GLOBAL-STORAGE SECTION.", dataDescription);
                 if (dataDescription.IsExternal) //GLOBALSS_NO_EXTERNAL
-                    DiagnosticUtils.AddError(dataDescription, "Illegal EXTERNAL clause in GLOBAL-STORAGE SECTION.", dataDescription);
+                    DiagnosticUtils.AddError(dataDefinition, "Illegal EXTERNAL clause in GLOBAL-STORAGE SECTION.", dataDescription);
             }
 
 

@@ -12,6 +12,7 @@ using LocalStorageSection = TypeCobol.Compiler.Nodes.LocalStorageSection;
 using ProcedureDivision = TypeCobol.Compiler.Nodes.ProcedureDivision;
 using WorkingStorageSection = TypeCobol.Compiler.Nodes.WorkingStorageSection;
 using System.Text;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Codegen.Generators
 {
@@ -45,8 +46,31 @@ namespace TypeCobol.Codegen.Generators
             var sourceFile = compilationUnit.ProgramClassDocumentSnapshot.Root;
             sourceFile.AcceptASTVisitor(new ExportToDependency());
             var lines = sourceFile.SelfAndChildrenLines;
+            bool insideFormalizedComment = false;
+            bool insideMultilineComment = false;
             foreach (var textLine in lines)
             {
+                string text = textLine is TextLineSnapshot ?
+                    CobolTextLine.Create(textLine.Text, ColumnsLayout.CobolReferenceFormat).First().Text :
+                    textLine.Text;
+
+                ITokensLine tokensLine = textLine as ITokensLine;
+                if (tokensLine != null)
+                {
+                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.FORMALIZED_COMMENTS_START))
+                        insideFormalizedComment = true;
+                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.MULTILINES_COMMENTS_START))
+                        insideMultilineComment = true;
+
+                    if (insideFormalizedComment || insideMultilineComment)
+                        text = text.Substring(0, 6) + '*' + text.Substring(7, text.Length - 7);
+
+                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.FORMALIZED_COMMENTS_STOP))
+                        insideFormalizedComment = false;
+                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.MULTILINES_COMMENTS_STOP))
+                        insideMultilineComment = false;
+                }
+
                 if (textLine is TextLineSnapshot)
                 {
                     var test = CobolTextLine.Create(textLine.Text, ColumnsLayout.CobolReferenceFormat);
@@ -59,8 +83,14 @@ namespace TypeCobol.Codegen.Generators
             }
         }
 
+        public void GenerateLineMapFile(Stream stream)
+        {            
+        }
+
         public List<Diagnostic> Diagnostics { get; }
         public string TypeCobolVersion { get; set; }
+
+        public bool HasLineMapData => false;
     }
 
 
@@ -93,7 +123,7 @@ namespace TypeCobol.Codegen.Generators
 
         public override bool Visit(FunctionDeclaration node)
         {
-            if (node.CodeElement().Visibility != AccessModifier.Public) {
+            if (node.CodeElement.Visibility != AccessModifier.Public) {
                 node.Remove();
                 return false;
             }
@@ -151,7 +181,7 @@ namespace TypeCobol.Codegen.Generators
             foreach (var child in children)
             {
                 var typeDefinition = child as TypeDefinition;
-                if (typeDefinition == null || typeDefinition.CodeElement().Visibility != AccessModifier.Public)
+                if (typeDefinition == null || typeDefinition.CodeElement.Visibility != AccessModifier.Public)
                 {
                     child.Remove();
                 }

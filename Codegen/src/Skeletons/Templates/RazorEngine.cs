@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using RazorEngine;
 using RazorEngine.Templating; // For extension methods.
 
@@ -9,24 +11,19 @@ namespace TypeCobol.Codegen.Skeletons.Templates {
     /// </summary>
 	public class RazorEngine: Solver {
 
-		public static string DEFAULT_DELIMITER = "%";
-
 		private string Template;
 		private Dictionary<string,object> Variables;
-		private string Delimiter;
 
-		public RazorEngine(): this("", new Dictionary<string,object>(), DEFAULT_DELIMITER) { }
+		public RazorEngine(): this("", new Dictionary<string,object>()) { }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="template">The template</param>
         /// <param name="variables">The substitution environment variables</param>
-        /// <param name="delimiter">Variable delimiter in the template</param>
-		public RazorEngine(string template, Dictionary<string,object> variables, string delimiter = null) {
+		public RazorEngine(string template, Dictionary<string,object> variables) {
 			this.Template = template;
 			this.Variables = variables;
-			this.Delimiter = delimiter;
 		}
 
         /// <summary>
@@ -34,7 +31,7 @@ namespace TypeCobol.Codegen.Skeletons.Templates {
         /// </summary>
         /// <returns>The result of the substitution applied to the template</returns>
 		public string Replace() {
-			return Replace(Template, Variables, Delimiter);
+			return Replace(Template, Variables);
 		}
 
         /// <summary>
@@ -42,14 +39,8 @@ namespace TypeCobol.Codegen.Skeletons.Templates {
         /// </summary>
         /// <param name="template">The template</param>
         /// <param name="variables">The substitution environment variables</param>
-        /// <param name="delimiter">Variable delimiter in the template</param>
         /// <returns>The result of the substitution applied to the template</returns>
-		public string Replace(string template, Dictionary<string,object> variables = null, string delimiter = null) {
-			if ("@".Equals(delimiter)) throw new System.ArgumentException("Illegal delimiter: @");
-			if (delimiter == null) delimiter = DEFAULT_DELIMITER;
-            //Replace all variable prefix (delimier) by @Model
-            //The @Model will contain all the data of the current page (that all substitution environment variables).
-			template = template.Replace(delimiter, "@Model.");
+		public string Replace(string template, Dictionary<string,object> variables = null) {
             //Dynamically create @Model
 			object model = variables == null ? new { } : CreateAnonymousObjectFromDictionary(variables);
 			// TODO: make key unique
@@ -102,10 +93,9 @@ namespace TypeCobol.Codegen.Skeletons.Templates {
         /// </summary>
         /// <param name="template">The template to be applied</param>
         /// <param name="variables">The substitution environment variables</param>
-        /// <param name="delimiter">Variable delimiter in the template</param>
         /// <returns>The Substitution solver instance</returns>
-		public static Solver Create(string template, Dictionary<string,object> variables, string delimiter) {
-			return new RazorEngine(template, variables ?? new Dictionary<string,object>(), delimiter ?? DEFAULT_DELIMITER);
+		public static Solver Create(string template, Dictionary<string,object> variables) {
+			return new RazorEngine(template, variables ?? new Dictionary<string,object>());
 		}
 	}
 }

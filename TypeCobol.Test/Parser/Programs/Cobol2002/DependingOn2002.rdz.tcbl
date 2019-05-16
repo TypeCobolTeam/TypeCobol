@@ -37,16 +37,17 @@
             05 DuplicatedCounter pic 999 comp-5.
 
        01 DependType TYPEDEF STRICT.
+            05 var1 TYPE MyType.
             05 VarCounter TYPE CounterType.
             05 ambigousCounter TYPE DuplicatedCounterType.
             05 ambigousCounter2 TYPE DuplicatedCounterType.
-            05 TypeCounter pic 999 comp-5.
+            05 TypeCounter2 pic 999 comp-5.
             05 MyGroup.
                 10 GroupCounter pic 999 comp-5.
 
       *OK, typecounter is declared locally
             05 secondTable pic x(1) occurs 5
-            depending on TypeCounter.
+            depending on TypeCounter2.
 
       *OK, VarCounter is declared in this context
             05 typedTable PIC X(1) occurs 5 
@@ -55,6 +56,14 @@
       *OK, Counter belongs to CounterType declared with VarCounter
             05 secondTypedTable PIC X(1) occurs 5 
             depending on Counter.
+
+      *OK, TypeCounter is a variable under var1
+            05 tableVar PIC X(1) occurs 5 
+            depending on TypeCounter.
+
+      *OK, TypeCounter is a variable under var1
+            05 tableVar PIC X(1) occurs 5 
+            depending on var1::TypeCounter.
 
       *KO, trying to use a variable declared outside typedef
             05 tableVar PIC X(1) occurs 5 

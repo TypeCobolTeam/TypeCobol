@@ -1,0 +1,158 @@
+Line 44[36,41] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: param4
+Line 63[34,39] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: param1
+Line 64[34,39] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: param3
+======================== Nodes properties ========================
+Name : DocForPrograms
+Description : Main Program 
+Visibility : 
+Namespace : DocForPrograms
+NodeType : Program
+IsDeprecated : False
+Deprecated : 
+ReplacedBy : 
+Restriction : restriction value 
+See : Thank you for your attention 
+Needs : 
+    This is my first need This is also my first need
+    This is my second need
+ToDo : 
+Parameters : 
+
+---------------------
+
+Name : NestedPgm
+Description : Nested Program 
+Visibility : 
+Namespace : DocForPrograms
+NodeType : Program
+IsDeprecated : False
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+    This is my only need
+ToDo : 
+    slap car roof
+Parameters : 
+    Name : param1
+    Info : This is my first param
+    PassingType : Unknown
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : X(8)
+    --------
+    Name : param2
+    Info : this is an output param
+    PassingType : Output
+    DataType : 
+        Usage : NativeBinary
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : S9(5)
+    --------
+    Name : param3
+    Info : this is an inout param
+    PassingType : InOut
+    DataType : 
+        Usage : Pointer
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : 
+    --------
+    Name : param4
+    Info : 
+    PassingType : Unknown
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : BOOL
+        Picture : 
+
+---------------------
+
+Name : StackedPgm
+Description : Stacked Program 
+Visibility : 
+Namespace : DocForPrograms
+NodeType : Program
+IsDeprecated : False
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+Parameters : 
+    Name : param1
+    Info : 
+    PassingType : Unknown
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : X(8)
+    --------
+    Name : param3
+    Info : 
+    PassingType : Unknown
+    DataType : 
+        Usage : Pointer
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : 
+
+---------------------
+
+======================== Code Element properties ========================
+== DocForPrograms ==
+Description : Main Program 
+Deprecated : 
+ReplacedBy : 
+Restriction : restriction value 
+See : Thank you for your attention 
+Needs : 
+    This is my first need This is also my first need
+    This is my second need
+ToDo : 
+Parameters : 
+
+---------------------
+
+== NestedPgm ==
+Description : Nested Program 
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+    This is my only need
+ToDo : 
+    slap car roof
+Parameters : 
+    param1 : This is my first param
+    param2 : Output this is an output param
+    param3 : inout - this is an inout param
+
+---------------------
+
+== StackedPgm ==
+Description : Stacked Program 
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+Parameters : 
+
+---------------------
+

@@ -26,6 +26,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,6 +35,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'EI_Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,6 +45,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'EI_Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -51,6 +54,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EI_Debug_Net40|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -60,6 +64,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EI_Release_Net40|AnyCPU'">
     <OutputPath>..\bin\EI_Release_Net40\</OutputPath>
@@ -69,6 +74,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -95,6 +101,12 @@
     </None>
     <None Include="ressources\Decode\input\EncodedTypeCobol2.tcmc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ressources\Decode\input\NoDecodableFile.cbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ressources\Decode\input\NoDecodableWithCblOps.cbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="ressources\Decode\input\WithLeftAndRightColumns.tcmc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -126,7 +138,13 @@
     <None Include="ressources\Decode\output_expected\Empty.c2tc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="ressources\Decode\output_expected\Result.tcbl" >
+    <None Include="ressources\Decode\output_expected\NoDecodableFile.cbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ressources\Decode\output_expected\NoDecodableWithCblOps.cbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ressources\Decode\output_expected\Result.tcbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="ressources\Decode\output_expected\Result2.tcbl">

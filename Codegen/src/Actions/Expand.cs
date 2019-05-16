@@ -66,8 +66,22 @@ namespace TypeCobol.Codegen.Actions
 
             // retrieve data
             int index;
+
             if (DestinationURI.EndsWith(".end")) index = this.Destination.Parent.Children.Count - 1;
             else index = this.Destination.Parent.IndexOf(this.Destination);
+
+            if (Source is FunctionDeclaration fun && fun.GenerateAsNested)
+            {
+                if (fun.CodeElement.Visibility == AccessModifier.Public)
+                {
+                    Destination = Destination.Root.MainProgram.Children.First();
+                }
+                else
+                {
+                    Destination = Destination.Children.First();
+                }
+                index = this.Destination.Parent.Children.Count - 2;
+            }
 
             Node nodegen = null;
             if (index > -1)

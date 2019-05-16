@@ -25,7 +25,7 @@ namespace TypeCobol.Compiler.Scanner
             }
             // Register the token strings corresponding to each token type (for keywords only)
             int keywordBegin = (int)TokenType.UserDefinedWord + 1;
-            int keywordEnd = (int)TokenType.QuestionMark - 1;
+            int keywordEnd = (int)TokenType.QUESTION_MARK - 1;
             tokenStringFromTokenType = new string[types.Length];
             for (int c = keywordBegin; c < types.Length; c++)
             {
@@ -84,6 +84,51 @@ namespace TypeCobol.Compiler.Scanner
                 return TokenType.UserDefinedWord;
             }
         }
+        
+        // Formalized Comments only to avoid Formalized Comments tokens detection in Cobol and Cobol tokens in Formalized Comments
+        internal static TokenType GetFormalComTokenTypeFromTokenString(string tokenString)
+        {
+            // The usual token detection method can not be applied because of the two possible keywords per tokenTypes
+            TokenType tokenType;
+
+            switch (tokenString.ToUpper())
+            {
+                case "DESCRIPTION":
+                case "DESC":
+                    tokenType = TokenType.FORMALIZED_COMMENTS_DESCRIPTION;
+                    break;
+                case "PARAMETERS":
+                case "PARAMS":
+                    tokenType = TokenType.FORMALIZED_COMMENTS_PARAMETERS;
+                    break;
+                case "DEPRECATED":
+                case "DEPREC":
+                    tokenType = TokenType.FORMALIZED_COMMENTS_DEPRECATED;
+                    break;
+                case "REPLACEDBY":
+                case "REPLBY":
+                    tokenType = TokenType.FORMALIZED_COMMENTS_REPLACED_BY;
+                    break;
+                case "RESTRICTION":
+                case "RSTRIC":
+                    tokenType = TokenType.FORMALIZED_COMMENTS_RESTRICTION;
+                    break;
+                case "NEED":
+                    tokenType = TokenType.FORMALIZED_COMMENTS_NEED;
+                    break;
+                case "SEE":
+                    tokenType = TokenType.FORMALIZED_COMMENTS_SEE;
+                    break;
+                case "TODO":
+                    tokenType = TokenType.FORMALIZED_COMMENTS_TODO;
+                    break;
+                default:
+                    tokenType = TokenType.UserDefinedWord;
+                    break;
+            }
+
+            return tokenType;
+        }
 
         public static Regex COBOL_INTRINSIC_FUNCTIONS = new Regex("^(ACOS|ANNUITY|ASIN|ATAN|CHAR|COS|CURRENT-DATE|DATE-OF-INTEGER|DATE-TO-YYYYMMDD|DAY-OF-INTEGER|DAY-TO-YYYYDDD|DISPLAY-OF|FACTORIAL|INTEGER|INTEGER-OF-DATE|INTEGER-OF-DAY|INTEGER-PART|LENGTH|LOG|LOG10|LOWER-CASE|MAX|MEAN|MEDIAN|MIDRANGE|MIN|MOD|NATIONAL-OF|NUMVAL|NUMVAL-C|ORD|ORD-MAX|ORD-MIN|PRESENT-VALUE|RANDOM|RANGE|REM|REVERSE|SIN|SQRT|STANDARD-DEVIATION|SUM|TAN|ULENGTH|UPOS|UPPER-CASE|USUBSTR|USUPPLEMENTARY|UVALID|UWIDTH|VARIANCE|WHEN-COMPILED|YEAR-TO-YYYY)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
@@ -127,6 +172,8 @@ namespace TypeCobol.Compiler.Scanner
                     return "TypeCobol keyword";
                 case TokenFamily.TypeCobolOperators:
                     return "TypeCobol Operators";
+                case TokenFamily.FormalizedCommentsFamily:
+                    return "Formalized Comments elements";  // Can be keyword or open/close markup
                 default:
                     return "...";
             }
@@ -220,7 +267,7 @@ namespace TypeCobol.Compiler.Scanner
                         return "user defined word";
                     case TokenType.SymbolicCharacter:
                         return "symbolic character";
-                    case TokenType.QuestionMark:
+                    case TokenType.QUESTION_MARK:
                         return "?";
                     default:
                         return "...";

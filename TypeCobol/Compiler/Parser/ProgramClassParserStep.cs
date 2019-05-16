@@ -48,7 +48,10 @@ namespace TypeCobol.Compiler.Parser
                 }
             }
         }
-        public static void CupParseProgramOrClass(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> codeElementsLines, TypeCobolOptions compilerOptions, SymbolTable customSymbols, PerfStatsForParserInvocation perfStatsForParserInvocation, out SourceFile root, out List<Diagnostic> diagnostics, out Dictionary<CodeElement, Node> nodeCodeElementLinkers)
+        public static void CupParseProgramOrClass(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> codeElementsLines, TypeCobolOptions compilerOptions, SymbolTable customSymbols, PerfStatsForParserInvocation perfStatsForParserInvocation, out SourceFile root, out List<Diagnostic> diagnostics, 
+            out Dictionary<CodeElement, Node> nodeCodeElementLinkers,
+            out List<DataDefinition> typedVariablesOutsideTypedef,
+            out List<TypeDefinition> typeThatNeedTypeLinking)
         {
             PrepareCupParser();
 #if DEBUG_ANTRL_CUP_TIME
@@ -62,9 +65,9 @@ namespace TypeCobol.Compiler.Parser
             parser.Builder = builder;
             ParserDiagnostic programClassBuilderError = null;
 
-            builder.SyntaxTree = new SyntaxTree<CodeElement>(); //Initializie SyntaxTree for the current source file
+            builder.SyntaxTree = new SyntaxTree(); //Initializie SyntaxTree for the current source file
             builder.CustomSymbols = customSymbols;
-            builder.Dispatcher = new NodeDispatcher<CodeElement>();
+            builder.Dispatcher = new NodeDispatcher();
             builder.Dispatcher.CreateListeners();
 
             // Try to parse a Cobol program or class, with cup w are also building the The Syntax Tree Node
@@ -89,8 +92,6 @@ namespace TypeCobol.Compiler.Parser
 
             perfStatsForParserInvocation.OnStartTreeBuilding();
 
-            //Create link between data definition an Types, will be stored in SymbolTable
-            root.AcceptASTVisitor(new TypeCobolLinker());
 
             //Stop measuring tree building performance
             perfStatsForParserInvocation.OnStopTreeBuilding();
@@ -98,6 +99,8 @@ namespace TypeCobol.Compiler.Parser
             // Register compiler results
             diagnostics = diagReporter.Diagnostics ?? new List<Diagnostic>();
             nodeCodeElementLinkers = builder.NodeCodeElementLinkers;
+            typedVariablesOutsideTypedef = builder.TypedVariablesOutsideTypedef;
+            typeThatNeedTypeLinking = builder.TypeThatNeedTypeLinking;
 
             if (programClassBuilderError != null)
             {
@@ -105,8 +108,12 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        public static void CrossCheckPrograms(SourceFile root)
+        public static void CrossCheckPrograms(SourceFile root, TemporarySemanticDocument temporarySemanticDocument)
         {
+            //Create link between data definition an Types, will be stored in SymbolTable
+            TypeCobolLinker.LinkedTypedVariables(temporarySemanticDocument.TypedVariablesOutsideTypedef, 
+                temporarySemanticDocument.TypeThatNeedTypeLinking);
+
             //Complete some information on Node and run checker that need a full AST
             root.AcceptASTVisitor(new CrossCompleteChecker());
         }

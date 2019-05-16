@@ -8,7 +8,9 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
+using String = System.String;
 
 namespace TypeCobol.Test.Utils
 {
@@ -102,6 +104,8 @@ namespace TypeCobol.Test.Utils
                 new NodeName(),
                 new TokenName(),
                 new AntlrName(),
+                new DocumentationName(),
+                new DocumentationPropName(),
 #if EUROINFO_RULES
                 new EIEmptyName(),
                 new EICodeElementName(),
@@ -235,10 +239,8 @@ namespace TypeCobol.Test.Utils
         }
     }
 
-
-
-
-
+    #region Comparators
+    
     internal interface Comparator
     {
         void Compare(CompilationUnit result, StreamReader expected, string expectedResultPath);
@@ -372,12 +374,11 @@ namespace TypeCobol.Test.Utils
     {
         public Multipass(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        internal class IndexNames : Names
+        internal class IndexNames : AbstractNames
         {
             internal int index = 0;
-            public string CreateName(string name) { return name+'.'+index; }
-            public Type GetComparatorType() { return typeof(Multipass); }
-            public bool IsEI() { return false; }
+            public override string CreateName(string name) { return name+'.'+index + Rextension; }
+            public override Type GetComparatorType() { return typeof(Multipass); }
         }
     }
 
@@ -504,81 +505,136 @@ namespace TypeCobol.Test.Utils
 	{
 	    public MemoryComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        public override void Compare(CompilationUnit result, StreamReader reader, string expectedResultPath) {
+        public override void Compare(CompilationUnit result, StreamReader reader, string expectedResultPath)
+        {
 			ProgramClassDocument pcd = result.ProgramClassDocumentSnapshot;
-            var symbolTables = new List<SymbolTable>();
-            symbolTables.Add(pcd.Root.SymbolTable);
-
-			Compare(symbolTables, reader, expectedResultPath);
+            var programs = new List<Program>();
+            foreach (var pgm in pcd.Root.Programs)
+            {
+                programs.Add(pgm);
+            }
+            
+			Compare(result, programs, reader, expectedResultPath);
 		}
 
-		internal void Compare(List<SymbolTable> tables, StreamReader expected, string expectedResultPath) {
-			string result = Dump(tables);
+		internal void Compare(CompilationUnit compUnit, List<Program> programs, StreamReader expected, string expectedResultPath)
+		{
+			string result = Dump(compUnit, programs);
 			if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
 			ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected, expectedResultPath);
 		}
 
-		private string Dump(List<SymbolTable> tables) {
+		private string Dump(CompilationUnit compUnit, List<Program> programs)
+		{
 			var str = new StringBuilder();
-			str.AppendLine("--------- FIELD LEVEL/NAME ---------- START     END  LENGTH");
-            foreach (var table in tables)
+            List<DataDefinition> dataDefinitions = new List<DataDefinition>();
+            str.AppendLine("Diagnostics");
+            str.AppendLine("------------");
+            var diags = compUnit.AllDiagnostics();
+            if (diags.Count > 0)
             {
-                foreach (var line in table.DataEntries)
+                foreach (var diag in compUnit.AllDiagnostics())
                 {
-                    foreach (var data in line.Value)
-                    {
-                        //TODO#249 print memory representation
-                        //					if (data is DataDefinition && ((DataDefinition)data).CodeElement().LevelNumber.Value == 1)
-                        //					if (data.LevelNumber.Value == 1) Dump(str, data, 0);
-                    }
+                    str.AppendLine(diag.ToString());
+                }
+            } else
+            {
+                str.AppendLine("  None");
+            }
+
+            str.AppendLine("   ");
+            str.AppendLine("--------- FIELD LEVEL|NAME ---------- START     END  LENGTH");
+
+            foreach (var program in programs)
+            {
+                foreach (Node node in program.Children.First(c => c is DataDivision).Children.Where(c => c is DataSection))
+                {
+                    dataDefinitions.AddRange(GetDataDefinitions(node));
+                }
+
+                foreach (var dataDefinition in dataDefinitions)
+                {
+                    //TODO: Issue #1192 handle correctly a DataRenames
+                    if (dataDefinition is DataRenames == false && dataDefinition.CodeElement?.LevelNumber?.Value != 88)
+                        str.AppendLine(CreateLine(dataDefinition, dataDefinition.SlackBytes == 0));
                 }
             }
 			
 			return str.ToString();
 		}
-		private void Dump(StringBuilder str, object data, int indent, string indexes = "", int baseaddress = 1) {
-/*TODO#249
-			long level = data.LevelNumber.Value;
-			string name = (data.DataName != null?data.DataName.Name:"?");
-			if (data.MemoryArea is TableInMemory) {
-				var table = data.MemoryArea as TableInMemory;
-				foreach(var e in table) {
-					str.AppendLine(CreateLine(level, name, e.Offset, e.Length, e.Index, table.Count, indent));
-					string strindexes = CreateIndexes(indexes, e.Index);
-					foreach(var child in data.Subordinates) Dump(str, child, indent+1, strindexes);
-				}
-			} else {
-				str.AppendLine(CreateLine(level, name, data.MemoryArea.Offset, data.MemoryArea.Length, 0, 1, indent));
-				foreach(var child in data.Subordinates) Dump(str, child, indent+1, indexes);
-			}
-*/
-		}
-		private string CreateLine(long level, string name, int offset, int length, int index, int max, int indent, string strindexes = "") {
+
+        private List<DataDefinition> GetDataDefinitions(Node node)
+        {
+            List<DataDefinition> dataDefinitions = new List<DataDefinition>();
+            foreach (var child in node.Children)
+            {
+                if (child is DataDefinition)
+                {
+                    dataDefinitions.Add(child as DataDefinition);
+                    if (child.Children.Count > 0)
+                    {
+                        dataDefinitions.AddRange(GetDataDefinitions(child));
+                    }
+                }
+            }
+
+            return dataDefinitions;
+        }
+
+		private string CreateLine(DataDefinition data, bool slackByteIsHandled)
+		{
+		    Node parentData = data.Parent;
 			var res = new StringBuilder();
-			BeginFirstColumn(res, indent, level, name);
-			EndFirstColumn(res, strindexes, index, max);
-			EndLine(res, offset, length);
-			return res.ToString();
+		    int indent = 4;
+
+		    while (parentData is DataSection == false)
+		    {
+		        parentData = parentData.Parent;
+		        res.Append(new string(' ', indent));
+		    }
+
+		    if (!slackByteIsHandled)
+		    {
+		        res.Append("SlackByte");
+
+		        res.AppendLine(InsertValues(res.Length, (data.StartPosition - data.SlackBytes).ToString(), (data.StartPosition - 1).ToString(),
+		            data.SlackBytes.ToString()));
+
+		        res.Append(CreateLine(data, true));
+		    }
+		    else
+		    {
+		        var dataEntry = data.CodeElement as DataDefinitionEntry;
+
+		        if (dataEntry != null)
+		        {
+		            if (data.IsTableOccurence)
+		                res.Append($"{dataEntry.LevelNumber} {data.Name} ({data.MaxOccurencesCount})");
+		            else
+		                res.Append($"{dataEntry.LevelNumber} {data.Name}");
+
+		            res.Append(InsertValues(res.Length, data.StartPosition.ToString(), data.PhysicalPosition.ToString(),
+		                data.PhysicalLength.ToString()));
+		        }
+		    }
+
+            return res.ToString();
 		}
-		private void BeginFirstColumn(StringBuilder str, int indent, long level, string name) {
-			for(int i=0; i<indent; i++) str.Append("  ");
-			if (level > 1) str.Append(System.String.Format("{0,2} ", level));
-			str.Append(name);
-		}
-		private void EndFirstColumn(StringBuilder str, string strprefix, int index, int max) {
-			if (strprefix.Length > 0 || (index >= 0 && max > 1)) {
-				str.Append('(').Append(CreateIndexes(strprefix,index)).Append(')');
-			}
-			while(str.Length < 36) str.Append(' ');
-		}
-		private void EndLine(StringBuilder str, int offset, int size, int baseaddress = 1) {
-			str.Append(System.String.Format(" {0,6:0} ", baseaddress + offset));//start
-			str.Append(System.String.Format(" {0,6:0} ", offset + size));//end
-			str.Append(System.String.Format(" {0,6:0} ", size));//length
-		}
-		private string CreateIndexes(string prefix, int index) {
-			return prefix + (index >= 0?((prefix.Length > 0?",":"")+(index+1)):"");
-		}
+
+
+        private string InsertValues(int lineLength, string startPosition, string physicalPosition, string physicalLength)
+	    {
+            StringBuilder str = new StringBuilder();
+	        const int columnStartPosition = 60;
+	        const int offsetBetweenValue = 8;
+
+
+	        str.Append(new string(' ', Math.Max(columnStartPosition - lineLength - startPosition.Length,0)) + startPosition);
+	        str.Append(new string(' ', offsetBetweenValue - physicalPosition.Length) + physicalPosition);
+	        str.Append(new string(' ', offsetBetweenValue - physicalLength.Length) + physicalLength);
+	        
+            return str.ToString();
+	    }
 	}
 
     internal class AntlrComparator : FilesComparator
@@ -598,6 +654,218 @@ namespace TypeCobol.Test.Utils
 
     }
 
+    internal class DocumentationComparator : FilesComparator
+    {
+        public DocumentationComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
+
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
+        {
+            ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
+            IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var diagnostic in diagnostics)
+            {
+                sb.AppendLine(diagnostic.ToString());
+            }
+            List<IDocumentable> documentedNodes = ParserUtils.GetDocumentedNodes(pcd.Root);
+
+            sb.AppendLine("======================== Documentation ========================");
+            foreach (var node in documentedNodes)
+            {
+                var doc = Documentation.CreateAppropriateDocumentation(node);
+                sb.Append(doc.SerializeToJson(true));
+                sb.AppendLine();
+                sb.AppendLine("---------------------");
+                sb.AppendLine();
+            }
+
+            string result = sb.ToString();
+            if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader, expectedResultPath);
+        }
+    }
+
+    internal class DocumentationPropertiesComparator : FilesComparator
+    {
+        public DocumentationPropertiesComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
+
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
+        {
+            ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
+            IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var diagnostic in diagnostics)
+            {
+                sb.AppendLine(diagnostic.ToString());
+            }
+
+            List<IDocumentable> documentedNodes = ParserUtils.GetDocumentedNodes(pcd.Root);
+
+            sb.AppendLine("======================== Nodes properties ========================");
+            foreach (var node in documentedNodes)
+            {
+                var doc = Documentation.CreateAppropriateDocumentation(node);
+                WriteDocumentedNodeProperties(doc, sb);
+                sb.AppendLine();
+                sb.AppendLine("---------------------");
+                sb.AppendLine();
+            }
+
+            sb.AppendLine("======================== Code Element properties ========================");
+            foreach (var node in documentedNodes)
+            {
+                var doc = Documentation.CreateAppropriateDocumentation(node);
+                WriteDocumentedCodeElementProperties(doc, sb);
+                sb.AppendLine();
+                sb.AppendLine("---------------------");
+                sb.AppendLine();
+            }
+
+
+            string result = sb.ToString();
+            if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader, expectedResultPath);
+        }
+
+        private void WriteDocumentedNodeProperties(Documentation doc, StringBuilder sb)
+        {
+            sb.AppendLine("Name : " + doc.Name);
+            sb.AppendLine("Description : " + doc.Description);
+            sb.AppendLine("Visibility : " + doc.Visibility);
+            sb.AppendLine("Namespace : " + doc.Namespace);
+            sb.AppendLine("NodeType : " + (doc.IsTypeDef ? "TypeDef" :
+                                               doc.IsFunction ? "Function" :
+                                               doc.IsProgram ? "Program" : ""));
+
+            sb.AppendLine("IsDeprecated : " + doc.IsDeprecated);
+            sb.AppendLine("Deprecated : " + doc.Deprecated);
+            sb.AppendLine("ReplacedBy : " + doc.ReplacedBy);
+            sb.AppendLine("Restriction : " + doc.Restriction);
+            sb.AppendLine("See : " + doc.See);
+            sb.AppendLine("Needs : ");
+            foreach (var need in doc.Needs ?? Enumerable.Empty<string>())
+                sb.AppendLine("    " + need);
+            sb.AppendLine("ToDo : ");
+            foreach (var toDo in doc.ToDo ?? Enumerable.Empty<string>())
+                sb.AppendLine("    " + toDo);
+
+            // Typedefs Specific:
+            DocumentationForType typeDoc = doc as DocumentationForType;
+            if (typeDoc != null)
+            {
+                sb.AppendLine("IsBlankWhenZero : " + typeDoc.IsBlankWhenZero);
+                sb.AppendLine("Justified : " + typeDoc.Justified);
+                sb.AppendLine("DocDataType : " + typeDoc.DocDataType);
+                WriteDocDataType(sb, typeDoc.DocDataType);
+                // Childrens is not initialized with an empty list to prevent the documentation export flooding
+                if (typeDoc.Childrens != null)
+                {
+                    foreach (var child in typeDoc.Childrens)
+                    {
+                        WriteTypeDefChildrens(sb, child);
+                    }
+                }
+            }
+
+            // Programs and Functions Specific:
+            DocumentationForFunction funcDoc = doc as DocumentationForFunction;
+            DocumentationForProgram pgmDoc = doc as DocumentationForProgram;
+            if (funcDoc != null || pgmDoc != null)
+            {
+                sb.AppendLine("Parameters : ");
+                bool isFirstParam = true;
+                foreach (var param in (funcDoc?.Parameters ?? pgmDoc?.Parameters) ?? Enumerable.Empty<DocumentationParameter>())
+                {
+                    if (isFirstParam)
+                        isFirstParam = false;
+                    else
+                        sb.AppendLine("    --------");
+                    sb.AppendLine("    " + "Name : " + param.Name);
+                    sb.AppendLine("    " + "Info : " + param.Info);
+                    sb.AppendLine("    " + "PassingType : " + param.PassingType);
+                    WriteDocDataType(sb, param.DocDataType, 1);
+                }
+            }
+        }
+
+        private void WriteDocumentedCodeElementProperties(Documentation doc, StringBuilder sb)
+        {
+
+            sb.AppendLine("== " + doc.Name + " ==");
+            FormalizedCommentDocumentation formCom = doc.FormCom;
+
+            if (formCom != null)
+            {
+                sb.AppendLine("Description : " + formCom.Description);
+                sb.AppendLine("Deprecated : "  + (formCom.Deprecated == "" ? "*is present*" : formCom.Deprecated));
+                sb.AppendLine("ReplacedBy : "  + formCom.ReplacedBy);
+                sb.AppendLine("Restriction : " + formCom.Restriction);
+                sb.AppendLine("See : "         + formCom.See);
+                sb.AppendLine("Needs : ");
+                foreach (var need in formCom.Needs ?? Enumerable.Empty<string>())
+                    sb.AppendLine("    " + need);
+                sb.AppendLine("ToDo : ");
+                foreach (var toDo in formCom.ToDo ?? Enumerable.Empty<string>())
+                    sb.AppendLine("    " + toDo);
+                sb.AppendLine("Parameters : ");
+                foreach (var parameter in formCom.Parameters ?? new Dictionary<string, string>())
+                {
+                    sb.AppendLine("    " + parameter.Key + " : " + parameter.Value);
+
+                }
+            }
+            else
+                sb.AppendLine("No formalized comment found");
+        }
+
+        private void WriteDocDataType(StringBuilder sb, DocumentationDataType docDataType, int level = 0)
+        {
+            sb.AppendLine(new string(' ', level * 4) + "DataType : ");
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "Usage : " + docDataType.Usage);
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "MaxOccurence : " + docDataType.MaxOccurence);
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "DefaultValue : " + docDataType.DefaultValue);
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "TypeName : " + docDataType.TypeName);
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "Picture : " + docDataType.Picture);
+        }
+
+        private void WriteTypeDefChildrens(StringBuilder sb, DocumentationTypeChildren child, int level = 0)
+        {
+            sb.AppendLine(new string(' ', level * 4) + "TypeDefChild : ");
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "Name : " + child.Name);
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "IsBlankWhenZero : " + child.IsBlankWhenZero);
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "Justified : " + child.Justified);
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "IsLevel77 : " + child.IsLevel77);
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "IsLevel88 : " + child.IsLevel88);
+
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "ConditionValues : ");
+            for (int i = 0; i < (child.ConditionValues?.Length ?? 0); i++)
+            {
+                sb.AppendLine(new string(' ', (level + 2) * 4) + $"Condition{i} : {child.ConditionValues[i]}");
+            }
+
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "ConditionValuesRanges : ");
+            for (int i = 0; i < (child.ConditionValuesRanges?.Length ?? 0) ; i++)
+            {
+                sb.AppendLine(new string(' ', (level + 2) * 4) + $"ConditionRanges{i} : {child.ConditionValuesRanges[i].MinValue} -> {child.ConditionValuesRanges[i].MaxValue}");
+            }
+
+            WriteDocDataType(sb, child.DocDataType, level + 1);
+
+            if (child.Childrens != null)
+            {
+                foreach (var subChild in child.Childrens)
+                {
+                    WriteTypeDefChildrens(sb, subChild, level + 1);
+                }
+            }
+        }
+    }
+
+    #endregion
+
+
     internal interface Names
     {
         string CreateName(string name);
@@ -612,6 +880,7 @@ namespace TypeCobol.Test.Utils
         public virtual bool IsEI() {
             return false;
         }
+        public string Rextension => ".txt";
     }
 
     internal abstract class AbstractEINames : AbstractNames
@@ -622,136 +891,132 @@ namespace TypeCobol.Test.Utils
     }
 
     #region DefaultNames
-    internal class EmptyName : Names
+    internal class EmptyName : AbstractNames
     {
-        public string CreateName(string name) { return name; }
-        public Type GetComparatorType() { return typeof(FilesComparator); }
-        public bool IsEI() { return false; }
+        private Names _namesImplementation;
+        public override string CreateName(string name) { return name + Rextension; }
+        public override Type GetComparatorType() { return typeof(FilesComparator); }
     }
 
-    internal class CodeElementName : Names
+    internal class CodeElementName : AbstractNames
     {
-        public string CreateName(string name) { return name + "CodeElements"; }
-        public Type GetComparatorType() { return typeof(FilesComparator); }
-        public bool IsEI() { return false; }
+        public override string CreateName(string name) { return name + "CodeElements" + Rextension; }
+        public override Type GetComparatorType() { return typeof(FilesComparator); }
     }
 
-    internal class RPNName : Names
+    internal class RPNName : AbstractNames
     {
-        public string CreateName(string name) { return name + "RPN"; }
-        public Type GetComparatorType() { return typeof(ArithmeticComparator); }
-        public bool IsEI() { return false; }
+        public override string CreateName(string name) { return name + "RPN" + Rextension; }
+        public override Type GetComparatorType() { return typeof(ArithmeticComparator); }
     }
 
-    internal class NYName : Names
+    internal class NYName : AbstractNames
     {
-        public string CreateName(string name) { return name + "NY"; }
-        public Type GetComparatorType() { return typeof(NYComparator); }
-        public bool IsEI() { return false; }
+        public override string CreateName(string name) { return name + "NY" + Rextension; }
+        public override Type GetComparatorType() { return typeof(NYComparator); }
     }
 
-    internal class PGMName : Names
+    internal class PGMName : AbstractNames
     {
-        public string CreateName(string name) { return name + "PGM"; }
-        public Type GetComparatorType() { return typeof(ProgramsComparator); }
-        public bool IsEI() { return false; }
+        public override string CreateName(string name) { return name + "PGM" + Rextension; }
+        public override Type GetComparatorType() { return typeof(ProgramsComparator); }
     }
     internal class MixDiagIntoSourceName : AbstractNames
     {
-        public override string CreateName(string name) { return name + "Mix"; }
+        public override string CreateName(string name) { return name + "Mix" + Rextension; }
         public override Type GetComparatorType() { return typeof(ProgramsComparator2); }
     }
 
-    internal class NodeName : Names
+    internal class NodeName : AbstractNames
     {
-        public string CreateName(string name) { return name + "-Nodes"; }
-        public Type GetComparatorType() { return typeof(NodeComparator); }
-        public bool IsEI() { return false; }
+        public override string CreateName(string name) { return name + "-Nodes" + Rextension; }
+        public override Type GetComparatorType() { return typeof(NodeComparator); }
     }
 
-    internal class TokenName : Names
+    internal class TokenName : AbstractNames
     {
-        public string CreateName(string name) { return name + "-Tokens"; }
-        public Type GetComparatorType() { return typeof(TokenComparator); }
-        public bool IsEI() { return false; }
+        public override string CreateName(string name) { return name + "-Tokens" + Rextension; }
+        public override Type GetComparatorType() { return typeof(TokenComparator); }
     }
 
-    internal class MemoryName : Names
+    internal class MemoryName : AbstractNames
     {
-        public string CreateName(string name) { return name + "MEM"; }
-        public Type GetComparatorType() { return typeof(MemoryComparator); }
-        public bool IsEI() { return false; }
+        public override string CreateName(string name) { return name + "MEM" + Rextension; }
+        public override Type GetComparatorType() { return typeof(MemoryComparator); }
     }
 
-    internal class AntlrName : Names
+    internal class AntlrName : AbstractNames
     {
-        public string CreateName(string name) { return name + "ANTLR"; }
-        public Type GetComparatorType() { return typeof(AntlrComparator); }
-        public bool IsEI() { return false; }
+        public override string CreateName(string name) { return name + "ANTLR" + Rextension; }
+        public override Type GetComparatorType() { return typeof(AntlrComparator); }
+    }
+
+    internal class DocumentationName : AbstractNames
+    {
+        public override string CreateName(string name) { return name + Rextension; }
+        public override Type GetComparatorType() { return typeof(DocumentationComparator); }
+        public new string Rextension => ".json";
+    }
+
+    internal class DocumentationPropName : AbstractNames
+    {
+        public override string CreateName(string name) { return name + "Doc" + Rextension; }
+        public override Type GetComparatorType() { return typeof(DocumentationPropertiesComparator); }
     }
     #endregion
 
     #region EINames
 #if EUROINFO_RULES
-    internal class EIEmptyName : Names
+    internal class EIEmptyName : AbstractEINames
     {
-        public string CreateName(string name) { return name + "-EI"; }
-        public Type GetComparatorType() { return typeof(FilesComparator); }
-
-        public bool IsEI() { return true; }
+        public override string CreateName(string name) { return name + "-EI" + Rextension; }
+        public override Type GetComparatorType() { return typeof(FilesComparator); }
     }
 
-    internal class EICodeElementName : Names
+    internal class EICodeElementName : AbstractEINames
     {
-        public string CreateName(string name) { return name + "CodeElements-EI"; }
-        public Type GetComparatorType() { return typeof(FilesComparator); }
-        public bool IsEI() { return true; }
+        public override string CreateName(string name) { return name + "CodeElements-EI" + Rextension; }
+        public override Type GetComparatorType() { return typeof(FilesComparator); }
     }
 
-    internal class EIRPNName : Names
+    internal class EIRPNName : AbstractEINames
     {
-        public string CreateName(string name) { return name + "RPN-EI"; }
-        public Type GetComparatorType() { return typeof(ArithmeticComparator); }
-        public bool IsEI() { return true; }
+        public override string CreateName(string name) { return name + "RPN-EI" + Rextension; }
+        public override Type GetComparatorType() { return typeof(ArithmeticComparator); }
     }
 
-    internal class EINYName : Names
+    internal class EINYName : AbstractEINames
     {
-        public string CreateName(string name) { return name + "NY-EI"; }
-        public Type GetComparatorType() { return typeof(NYComparator); }
-        public bool IsEI() { return true; }
+        public override string CreateName(string name) { return name + "NY-EI" + Rextension; }
+        public override Type GetComparatorType() { return typeof(NYComparator); }
     }
-    internal class EIPGMName : Names
+    internal class EIPGMName : AbstractEINames
     {
-        public string CreateName(string name) { return name + "PGM-EI"; }
-        public Type GetComparatorType() { return typeof(ProgramsComparator); }
-        public bool IsEI() { return true; }
+        public override string CreateName(string name) { return name + "PGM-EI" + Rextension; }
+        public override Type GetComparatorType() { return typeof(ProgramsComparator); }
     }
     internal class EIMixDiagIntoSourceName : AbstractEINames
     {
-        public override string CreateName(string name) { return name + "Mix-EI"; }
+        public override string CreateName(string name) { return name + "Mix-EI" + Rextension; }
         public override Type GetComparatorType() { return typeof(ProgramsComparator2); }
     }
 
-    internal class EINodeName : Names
+    internal class EINodeName : AbstractEINames
     {
-        public string CreateName(string name) { return name + "-Nodes-EI"; }
-        public Type GetComparatorType() { return typeof(NodeComparator); }
-        public bool IsEI() { return true; }
+        public override string CreateName(string name) { return name + "-Nodes-EI" + Rextension; }
+        public override Type GetComparatorType() { return typeof(NodeComparator); }
     }
 
-    internal class EITokenName : Names
+    internal class EITokenName : AbstractEINames
     {
-        public string CreateName(string name) { return name + "-Tokens-EI"; }
-        public Type GetComparatorType() { return typeof(TokenComparator); }
-        public bool IsEI() { return true; }
+        public override string CreateName(string name) { return name + "-Tokens-EI" + Rextension; }
+        public override Type GetComparatorType() { return typeof(TokenComparator); }
     }
 
-    internal class EIMemoryName : Names
+    internal class EIMemoryName : AbstractEINames
     {
-        public string CreateName(string name) { return name + "MEM-EI"; }
-        public Type GetComparatorType() { return typeof(MemoryComparator); }
-        public bool IsEI() { return true; }
+        public override string CreateName(string name) { return name + "MEM-EI" + Rextension; }
+        public override Type GetComparatorType() { return typeof(MemoryComparator); }
     }
 #endif
     #endregion
@@ -775,10 +1040,7 @@ namespace TypeCobol.Test.Utils
             SamplePath = samplePath;
             Resultnames = resultnames;
         }
-
-        private const string Rextension = ".txt";
-
-
+        
         /// <summary>
         /// Returns the sample filename with its extension
         /// </summary>
@@ -793,7 +1055,7 @@ namespace TypeCobol.Test.Utils
             {
                 string ResultFilePath = Path.GetDirectoryName(SamplePath)?.Substring(_sampleRoot.Length);
                 string ResultFileName = Path.GetFileNameWithoutExtension(SamplePath);
-                return _resultRoot + Path.DirectorySeparatorChar + ResultFilePath  + Path.DirectorySeparatorChar + Resultnames.CreateName(ResultFileName) + Rextension;
+                return _resultRoot + Path.DirectorySeparatorChar + ResultFilePath  + Path.DirectorySeparatorChar + Resultnames.CreateName(ResultFileName);
             }
             
         }

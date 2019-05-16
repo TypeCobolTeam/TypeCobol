@@ -1,12 +1,12 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
       
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-Line 6[6,6] <37, Warning, General> - Warning: Line exceed 80 chars
       
-Line 7[6,6] <27, Error, Syntax> - Syntax error : Line exceed 80 chars
+Line 7[6,6] <37, Warning, General> - Warning: Line exceed 80 chars
       *01  MyVarThatHasAVeryLongNameSoItWontFitToTheEightyCobolCharacterLimitation pic X(09).
+Line 8[6,6] <27, Error, Syntax> - Syntax error : Line exceed 80 chars
        01  MyVarFollowedByWhitespaces  pic X(50).                                             
        01  MyVar pic X.
             88 MyVar-A value "A".
@@ -14,8 +14,8 @@ Line 7[6,6] <27, Error, Syntax> - Syntax error : Line exceed 80 chars
             
        PROCEDURE DIVISION.
        
-Line 15[6,6] <27, Error, Syntax> - Syntax error : Line exceed 80 chars
            IF MyVar-A
+Line 16[6,6] <27, Error, Syntax> - Syntax error : Line exceed 80 chars
                 move "mlkjjmlkjmlkjmlkjmlkjmlkjmlkjmlkjmlkjmlkjmlkjmlk" to MyVarFollowedByWhitespaces.
 Line 17[17,24] <27, Error, Syntax> - Syntax error : mismatched input 'continue' expecting TO
                 continue

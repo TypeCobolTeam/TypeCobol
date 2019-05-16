@@ -1,0 +1,76 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MultilinesCommentsCodeGen.
+      %<<
+           Multiline 1
+      %>>
+       DATA DIVISION.
+      %<<
+           Multiline 2
+      %>>
+       WORKING-STORAGE SECTION.
+      %<<
+           Multiline 3
+      %>>
+       01 myType1 TYPEDEF STRICT.
+      %<<
+           Multiline 4
+      %>>
+           02  var0     PIC 9.
+      %<<
+           Multiline 5
+      %>>
+           02  var1     PIC 9(3).
+           02  myBool   TYPE BOOL.
+           02 subGroup.
+                05 var2 PIC XXX.
+      
+       01 var3          PIC X.
+       01 typedVar      TYPE myType1.
+      %<<
+           Multiline 6
+      %>>
+      
+       PROCEDURE DIVISION.
+      %<<
+           Multiline 7
+      %>>
+           MOVE 1 TO var3.
+      %<<
+           Multiline 8
+      %>>
+           CALL FUN INPUT typedVar::var1.
+           CONTINUE.
+      %<<
+           Multiline 9
+      %>>
+      
+       DECLARE PROCEDURE FUN
+      %<<
+           Multiline 10
+      %>>
+               INPUT y PIC 9(03).
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 funVar1       PIC 9(5).
+      %<<
+           Multiline 11
+      %>>
+       PROCEDURE DIVISION.
+      %<<
+           Multiline 12
+      %>>
+           MOVE 1 TO y
+      %<<
+           Multiline 13
+      %>>
+           CONTINUE.
+      %<<
+           Multiline 14
+      %>>
+      
+       END-DECLARE.
+      
+      %<<
+           Multiline 15
+      %>>
+       END PROGRAM MultilinesCommentsCodeGen.

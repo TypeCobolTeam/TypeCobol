@@ -1,0 +1,35 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DocForFunctions.
+
+       PROCEDURE DIVISION.
+
+      * Full formalised Comment
+      %<<<
+        @ description: MyProc1 description
+        @ parameters:
+          - myDate : sell date
+          - name : product name
+          - ID : will be ignored
+          - desc : this is not a description
+          - IDS: this will be truncated
+        @ deprecated 
+        @ replacedBy: ReplacedBy MyProc8
+        @ restriction: Do not support discount code
+        @ need: 
+          - first need
+          - second need
+        @ see: you later
+        @ todo: implement a call to MyProc8 in case of 
+                discount code
+      %>>>
+       DECLARE PROCEDURE MyProc1 PRIVATE
+           INPUT    myDate      TYPE Date
+                    name        Pic X(50)
+           IN-OUT   myBool      TYPE BOOL
+           OUTPUT   price       Pic S9(5)V9(2)
+                    desc        Pic X(200).
+           PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       END PROGRAM DocForFunctions.

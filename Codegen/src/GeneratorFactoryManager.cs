@@ -29,10 +29,12 @@ namespace TypeCobol.Codegen
         static GeneratorFactoryManager()
         {
             Singleton = new GeneratorFactoryManager();
-            Instance.RegisterFactory(OutputFormat.Cobol85.ToString(), (id, document, destination, skeletons, typeCobolVersion) => new DefaultGenerator(document, destination, skeletons, typeCobolVersion));
-            Instance.RegisterFactory(OutputFormat.PublicSignatures.ToString(), (id, document, destination, skeletons, typeCobolVersion) => new SignaturesGenerator(destination, typeCobolVersion));
-            Instance.RegisterFactory(OutputFormat.ExpandingCopy.ToString(), (id, document, destination, skeletons, typeCobolVersion) => new ExpandingCopyGenerator(document, destination));
-            Instance.RegisterFactory(OutputFormat.Cobol85Mixed.ToString(), (id, document, destination, skeletons, typeCobolVersion) => new MixedTransformGenerator(document, destination, skeletons, new DefaultGenerator(document, destination, skeletons, typeCobolVersion)));
+            Instance.RegisterFactory(OutputFormat.Cobol85.ToString(),          (id, document, destination, skeletons, typeCobolVersion, bWithLineMap) => bWithLineMap ? new DefaultGeneratorWithLineMap(document, destination, skeletons, typeCobolVersion) : new DefaultGenerator(document, destination, skeletons, typeCobolVersion));
+            Instance.RegisterFactory(OutputFormat.PublicSignatures.ToString(), (id, document, destination, skeletons, typeCobolVersion, bWithLineMap) => new SignaturesGenerator(destination, typeCobolVersion));
+            Instance.RegisterFactory(OutputFormat.ExpandingCopy.ToString(),    (id, document, destination, skeletons, typeCobolVersion, bWithLineMap) => new ExpandingCopyGenerator(document, destination));
+            Instance.RegisterFactory(OutputFormat.Cobol85Mixed.ToString(),     (id, document, destination, skeletons, typeCobolVersion, bWithLineMap) => new MixedTransformGenerator(document, destination, skeletons, bWithLineMap ? new DefaultGeneratorWithLineMap(document, destination, skeletons, typeCobolVersion) : new DefaultGenerator(document, destination, skeletons, typeCobolVersion)));
+            Instance.RegisterFactory(OutputFormat.Cobol85Nested.ToString(),    (id, document, destination, skeletons, typeCobolVersion, bWithLineMap) => new NestedGenerator(document, destination, skeletons, typeCobolVersion));
+            Instance.RegisterFactory(OutputFormat.Documentation.ToString(),    (id, document, destination, skeletons, typeCobolVersion, bWithLineMap) => new DocumentationGenerator(destination, typeCobolVersion));
         }
 
         /// <summary>
@@ -79,12 +81,13 @@ namespace TypeCobol.Codegen
         /// <param name="Document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
         /// <param name="skeletons">All skeletons pattern for code generation </param>
+        /// <param name="bWithLineMap">True if Line Map can be generated</param>
         /// <returns>The IGenerator instance if one has been created, null otherwise.</returns>
-        public IGenerator Create(string ID, TypeCobol.Compiler.CompilationDocument document, StringBuilder destination, List<Skeletons.Skeleton> skeletons, string typeCobolVersion)
+        public IGenerator Create(string ID, TypeCobol.Compiler.CompilationDocument document, StringBuilder destination, List<Skeletons.Skeleton> skeletons, string typeCobolVersion, bool bWithLineMap)
         {
             if (!RegistryMap.ContainsKey(ID))
                 return null;
-            return RegistryMap[ID](ID, document, destination, skeletons, typeCobolVersion);
+            return RegistryMap[ID](ID, document, destination, skeletons, typeCobolVersion, bWithLineMap);
         }
     }
 }

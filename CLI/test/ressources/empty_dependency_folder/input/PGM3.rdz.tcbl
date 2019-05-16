@@ -1,0 +1,13 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM3.
+
+       DATA DIVISION.
+       Working-STORAGE SECTION.
+
+       01  somedate     TYPE Date.
+       01  msg      PIC X(80).
+
+       PROCEDURE DIVISION.
+            GOBACK.
+
+       END PROGRAM PGM3.

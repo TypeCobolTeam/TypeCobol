@@ -125,6 +125,73 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("SupprMultipleLinesFromMiddlePreviousLine", LsrTestingOptions.LsrParsingPhaseTesting);
         }
+
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void MultiLineCommentIncScan()
+        {
+            LSRTestHelper.Test("MultiLineCommentIncScan", LsrTestingOptions.NoLsrTesting, false);
+        }
+
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void FormalizedCommentIncScan()
+        {
+            LSRTestHelper.Test("FormalizedCommentIncScan", LsrTestingOptions.NoLsrTesting, false, true);
+        }
+
+        /// <summary>
+        /// This test is releated to issue:https://github.com/TypeCobolTeam/TypeCobol/issues/1350
+        /// The following steps were raising an exception, before the fix.
+        /// 
+        /// Inside TypeCobol Editor: 
+        /// - Go to the beginning of a line for instance in the middle of a document
+        /// - Ctrl+Shift+End
+        /// - Suppr
+        /// - Ctrl+S
+        /// - Ctrl+Z
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void SelectEndSuppressSaveUndo()
+        {
+            LSRTestHelper.Test("SelectEndSuppressSaveUndo", LsrTestingOptions.NoLsrTesting, false);
+        }
+
+        /// <summary>
+        /// This test is releated to issue:https://github.com/TypeCobolTeam/TypeCobol/issues/1350
+        /// The following steps were raising an exception, before the fix.
+        /// 
+        /// Inside TypeCobol Editor: 
+        /// - Goto the beginning of the first line of a document.
+        /// - Enter
+        /// - Enter
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void BeginTopLineEnterEnter()
+        {
+            LSRTestHelper.Test("BeginTopLineEnterEnter", LsrTestingOptions.NoLsrTesting, false);
+        }
+
+        /// <summary>
+        /// Test for the fix of:https://github.com/TypeCobolTeam/TypeCobol/issues/1351 
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void FirstLineEditCommentBeforeIdentDiv()
+        {
+            LSRTestHelper.Test("FirstLineEditCommentBeforeIdentDiv", LsrTestingOptions.NoLsrTesting, false, true);
+        }
+        #endregion
+
+        #region SyntaxColoring
+        [TestMethod]
+        [TestCategory("SyntaxColoring")]
+        public void MultiCommentSyntaxColoring()
+        {
+            LSRTestHelper.Test("MultiCommentSyntaxColoring", LsrTestingOptions.NoLsrTesting, false, true);
+        }
         #endregion
 
         #region Sementic_Tests
@@ -133,6 +200,15 @@ namespace TypeCobol.LanguageServer.Test
         public void RemoveDataDivisionCtrlZWithDiag()
         {
             LSRTestHelper.Test("RemoveDataDivisionCtrlZWithDiag", LsrTestingOptions.NoLsrTesting, true);
+        }
+        #endregion
+
+        #region Sementic_Tests
+        [TestMethod]
+        [TestCategory("Semantic")]
+        public void MultiLineBlockDeleteUndo()
+        {
+            LSRTestHelper.Test("MultiLineBlockDeleteUndo", LsrTestingOptions.NoLsrTesting, false);
         }
         #endregion
 
@@ -169,7 +245,7 @@ namespace TypeCobol.LanguageServer.Test
         [TestCategory("Completion")]
         public void ProcedureCompletion()
         {
-            LSRTestHelper.Test("ProcedureCompletion", LsrTestingOptions.NoLsrTesting, true, null, null, "CustomDependencies");
+            LSRTestHelper.Test("ProcedureCompletion", LsrTestingOptions.NoLsrTesting, true, false, null, null, "CustomDependencies");
         }
 
         [TestMethod]
@@ -268,14 +344,14 @@ namespace TypeCobol.LanguageServer.Test
         [TestCategory("Completion")]
         public void CompletionUsingCopy()
         {
-            LSRTestHelper.Test("CompletionUsingCopy", LsrTestingOptions.NoLsrTesting, true, "CopyFolder");
+            LSRTestHelper.Test("CompletionUsingCopy", LsrTestingOptions.NoLsrTesting, true, false, "CopyFolder");
         }
 
         [TestMethod]
         [TestCategory("Completion")]
         public void ReplacingSyntaxOff()
         {
-            LSRTestHelper.Test("replacingSyntaxOff", LsrTestingOptions.NoLsrTesting, true, "CopyFolder");
+            LSRTestHelper.Test("replacingSyntaxOff", LsrTestingOptions.NoLsrTesting, true, false, "CopyFolder");
         }
 #endif
 
@@ -290,7 +366,13 @@ namespace TypeCobol.LanguageServer.Test
         [TestMethod]
         public void GoToDefinition()
         {
-            LSRTestHelper.Test("GoToDefinition", LsrTestingOptions.NoLsrTesting, true, "CopyFolder");
+            LSRTestHelper.Test("GoToDefinition", LsrTestingOptions.NoLsrTesting, true, false, "CopyFolder");
+        }
+
+        [TestMethod]
+        public void OnHover()
+        {
+            LSRTestHelper.Test("OnHover", LsrTestingOptions.NoLsrTesting, true, true);
         }
 
         [TestMethod]

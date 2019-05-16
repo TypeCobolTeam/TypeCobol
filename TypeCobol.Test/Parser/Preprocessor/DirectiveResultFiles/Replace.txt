@@ -1,26 +1,26 @@
-﻿-- Line 1 --
+-- Line 1 --
 *** DIRECTIVE REPLACE <REPLACE[SingleToken] toto BY titi>  ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,22:toto]<UserDefinedWord>[23,23: ]<SpaceSeparator>[24,25:==]<PseudoTextDelimiter>[26,26: ]<SpaceSeparator>[27,28:by]<BY>[29,29: ]<SpaceSeparator>[30,31:==]<PseudoTextDelimiter>[32,32: ]<SpaceSeparator>[33,36:titi]<UserDefinedWord>[37,37: ]<SpaceSeparator>[38,39:==]<PseudoTextDelimiter>[40,40+:.]<PeriodSeparator>) ***
 
 -- Line 2 --
 *** DIRECTIVE REPLACE <REPLACE[MultipleTokens] toto1,toto2 BY titi1,titi2> <REPLACE[SingleToken] other BY something>  ([8,14:replace]<REPLACE>[15,15: ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,23:toto1]<UserDefinedWord>) ***
 
 -- Line 3 --
-+++ CONTINUATION OF ReplaceDirective ([8,18:           ]<SpaceSeparator>[19,23:toto2]<UserDefinedWord>[24,24: ]<SpaceSeparator>[25,26:==]<PseudoTextDelimiter>[27,27: ]<SpaceSeparator>) +++
++++ CONTINUATION OF REPLACE_DIRECTIVE ([8,18:           ]<SpaceSeparator>[19,23:toto2]<UserDefinedWord>[24,24: ]<SpaceSeparator>[25,26:==]<PseudoTextDelimiter>[27,27: ]<SpaceSeparator>) +++
 
 -- Line 4 --
-+++ CONTINUATION OF ContinuationTokenGroup ([8,10:   ]<SpaceSeparator>[11,12:by]<BY>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,10:   ]<SpaceSeparator>[11,12:by]<BY>) +++
 
 -- Line 5 --
-+++ CONTINUATION OF ContinuationTokenGroup ([8,15:        ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,23:titi1]<UserDefinedWord>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,15:        ]<SpaceSeparator>[16,17:==]<PseudoTextDelimiter>[18,18: ]<SpaceSeparator>[19,23:titi1]<UserDefinedWord>) +++
 
 -- Line 6 --
-+++ CONTINUATION OF ContinuationTokenGroup ([8,18:           ]<SpaceSeparator>[19,23:titi2]<UserDefinedWord>[24,24: ]<SpaceSeparator>[25,26:==]<PseudoTextDelimiter>[27,27: ]<SpaceSeparator>[28,29:==]<PseudoTextDelimiter>[30,30: ]<SpaceSeparator>[31,35:other]<OTHER>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,18:           ]<SpaceSeparator>[19,23:titi2]<UserDefinedWord>[24,24: ]<SpaceSeparator>[25,26:==]<PseudoTextDelimiter>[27,27: ]<SpaceSeparator>[28,29:==]<PseudoTextDelimiter>[30,30: ]<SpaceSeparator>[31,35:other]<OTHER>) +++
 
 -- Line 7 --
-+++ CONTINUATION OF ContinuationTokenGroup ([8,16:         ]<SpaceSeparator>[17,18:==]<PseudoTextDelimiter>[19,19: ]<SpaceSeparator>[20,21:by]<BY>[22,22: ]<SpaceSeparator>[23,24:==]<PseudoTextDelimiter>[25,25: ]<SpaceSeparator>[26,34:something]<UserDefinedWord>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,16:         ]<SpaceSeparator>[17,18:==]<PseudoTextDelimiter>[19,19: ]<SpaceSeparator>[20,21:by]<BY>[22,22: ]<SpaceSeparator>[23,24:==]<PseudoTextDelimiter>[25,25: ]<SpaceSeparator>[26,34:something]<UserDefinedWord>) +++
 
 -- Line 8 --
-+++ CONTINUATION OF ContinuationTokenGroup ([8,9:==]<PseudoTextDelimiter>[10,10+:.]<PeriodSeparator>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,9:==]<PseudoTextDelimiter>[10,10+:.]<PeriodSeparator>) +++
 
 -- Line 9 --
 *** DIRECTIVE REPLACE_OFF ([8,14:REPLACE]<REPLACE>[15,15: ]<SpaceSeparator>[16,18:OFF]<OFF>[19,19+:.]<PeriodSeparator>) ***

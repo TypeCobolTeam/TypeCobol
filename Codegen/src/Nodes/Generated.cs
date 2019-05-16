@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Codegen.Nodes
+﻿using TypeCobol.Compiler.Nodes;
+
+namespace TypeCobol.Codegen.Nodes
 {
 
     using System.Collections.Generic;
@@ -28,16 +30,15 @@
     internal class GeneratedNode : Compiler.Nodes.Node, Generated
     {
         private Solver Solver;
-        /// <summary>
-        /// Code Element to appy to this Generated Node
-        /// </summary>
-        private CodeElement ApplyCodeElement;
-        public GeneratedNode(Solver solver) : base(null) { this.Solver = solver; }
-        public GeneratedNode(Solver solver, CodeElement codelement) : base(null)
+
+        public GeneratedNode(Solver solver)  { this.Solver = solver; }
+        public GeneratedNode(Solver solver, CodeElement codelement)
         {
             this.Solver = solver;
-            ApplyCodeElement = codelement;
+            this.InternalCodeElement = codelement;
         }
+
+        protected override CodeElement InternalCodeElement { get; }
 
         private IList<ITextLine> _cache = null;
         public override IEnumerable<ITextLine> Lines
@@ -58,17 +59,7 @@
                 return _cache;
             }
         }
-
-        /// <summary>
-        /// Get Associated Code Element
-        /// </summary>
-        public override CodeElement CodeElement
-        {
-            get
-            {
-                return ApplyCodeElement != null ? ApplyCodeElement : base.CodeElement;
-            }
-        }
+        
 
         public bool IsLeaf { get { return false; } }
 
@@ -82,10 +73,23 @@
 
     internal class GeneratedNode2 : Compiler.Nodes.Node, Generated
     {
-        public GeneratedNode2(string text, bool isLeaf) : base(null) {
+        /// <summary>
+        /// Code Element to appy to this Generated Node
+        /// </summary>
+
+        public GeneratedNode2(string text, bool isLeaf) {
             this.Text = text;
             this.IsLeaf = isLeaf;
         }
+
+        public GeneratedNode2(string text, bool isLeaf, CodeElement codelement) 
+        {
+            this.Text = text;
+            this.IsLeaf = isLeaf;
+            this.InternalCodeElement = codelement;
+        }
+
+        protected override CodeElement InternalCodeElement { get; }
 
         public bool IsLeaf { get; internal set; }
 
@@ -110,6 +114,8 @@
             }
         }
 
+
+
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             //Generated Node doesn't need to be visited
@@ -117,7 +123,7 @@
         }
     }
 
-    internal abstract class FakeGeneratedNode : Compiler.Nodes.Node, Generated
+    internal abstract class FakeGeneratedNode : GenericNode<CodeElement>, Generated
     {
         public FakeGeneratedNode(CodeElement CodeElement) : base(CodeElement) { }
 

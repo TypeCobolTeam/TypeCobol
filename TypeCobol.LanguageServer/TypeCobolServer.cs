@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using Analytics;
 using TypeCobol.Compiler;
@@ -13,6 +14,8 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.LanguageServer.Context;
+using TypeCobol.LanguageServer.Interfaces;
 using TypeCobol.LanguageServer.SignatureHelper;
 
 namespace TypeCobol.LanguageServer
@@ -73,6 +76,10 @@ namespace TypeCobol.LanguageServer
         /// Lstr Testing semantic phase
         /// </summary>
         public bool LsrSemanticTesting { get; set; }
+        /// <summary>
+        /// Are we supporting Syntax Coloring Notifications.    
+        /// </summary>
+        public bool UseSyntaxColoring { get; set; }
 
         /// <summary>
         /// Are Log message notifications enabled ? false if yes, true otherwise.
@@ -100,6 +107,7 @@ namespace TypeCobol.LanguageServer
             if (LsrPreprocessTesting) typeCobolWorkspace.IsLsrPreprocessinTesting = LsrPreprocessTesting;
             if (LsrParserTesting) typeCobolWorkspace.IsLsrParserTesting = LsrParserTesting;
             if (LsrSemanticTesting) typeCobolWorkspace.IsLsrSemanticTesting = LsrSemanticTesting;
+            typeCobolWorkspace.UseSyntaxColoring = UseSyntaxColoring;
 
             typeCobolWorkspace.UseAntlrProgramParsing = UseAntlrProgramParsing;
             typeCobolWorkspace.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;
@@ -129,27 +137,34 @@ namespace TypeCobol.LanguageServer
         }
 
         public override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
-        {
-            Uri objUri = new Uri(parameters.textDocument.uri);
-            if (objUri.IsFile)
+        {            
+            DocumentContext docContext = new DocumentContext(parameters.textDocument);
+            if (docContext.Uri.IsFile)
             {
                 //Subscribe to diagnostics event
                 typeCobolWorkspace.MissingCopiesEvent += MissingCopiesDetected;
                 typeCobolWorkspace.DiagnosticsEvent += DiagnosticsDetected;
 
-                typeCobolWorkspace.OpenSourceFile(objUri,
-                    parameters.text != null ? parameters.text : parameters.textDocument.text, Workspace.LsrTestOptions);
-                
+                //Create a ILanguageServer instance for the document.
+                docContext.LanguageServer = new TypeCobolLanguageServer(this.rpcServer, parameters.textDocument);
+                docContext.LanguageServer.UseSyntaxColoring = UseSyntaxColoring;
+
+                string text = parameters.text ?? parameters.textDocument.text;
+                //These are no longer needed.
+                parameters.text = null;
+                parameters.textDocument.text = null;                
+                typeCobolWorkspace.OpenTextDocument(docContext, text, Workspace.LsrTestOptions);
+
                 // DEBUG information
-                RemoteConsole.Log("Opened source file : " + objUri.LocalPath);
+                RemoteConsole.Log("Opened source file : " + docContext.Uri.LocalPath);
             }
         }
 
         public override void OnDidChangeTextDocument(DidChangeTextDocumentParams parameters)
         {
 
-            var fileCompiler = GetFileCompilerFromStringUri(parameters.uri, false); //Text Change do not have to trigger node phase, it's only a another event that will do it
-            if (fileCompiler == null)
+            var docContext = GetDocumentContextFromStringUri(parameters.uri, false); //Text Change do not have to trigger node phase, it's only a another event that will do it
+            if (docContext == null)
                 return;
 
             Uri objUri = new Uri(parameters.uri);
@@ -175,13 +190,14 @@ namespace TypeCobol.LanguageServer
                 }
 
                 // Document cleared
-                if (contentChange.range == null || contentChange.rangeLength == -1)
+                if (contentChange.range == null)
                 {
                     //JCM: I have noticed that if the entire text has changed, is better to reload the entire file
                     //To avoid crashes.
                     try
                     {
-                        typeCobolWorkspace.OpenSourceFile(objUri, contentChange.text, this.Workspace.LsrTestOptions);
+                        docContext.LanguageServerConnection(false);
+                        typeCobolWorkspace.OpenTextDocument(docContext, contentChange.text, this.Workspace.LsrTestOptions);
                         return;
                     }
                     catch (Exception e)
@@ -193,11 +209,12 @@ namespace TypeCobol.LanguageServer
                     }
                 }
                 // Document updated
-                else if (fileCompiler.CompilationResultsForProgram.CobolTextLines.Count != 0)
+                else if (docContext.FileCompiler.CompilationResultsForProgram.CobolTextLines.Count != 0)
                 {
                     // Get original lines text before change
-                    string originalFirstLineText =
-                        fileCompiler.CompilationResultsForProgram.CobolTextLines[contentChange.range.start.line]
+                    int lineCount = docContext.FileCompiler.CompilationResultsForProgram.CobolTextLines.Count;
+                    string originalFirstLineText = lineCount <= contentChange.range.start.line ? "" :
+                        docContext.FileCompiler.CompilationResultsForProgram.CobolTextLines[contentChange.range.start.line]
                             .Text;
                     string originalLastLineText = originalFirstLineText;
 
@@ -233,9 +250,9 @@ namespace TypeCobol.LanguageServer
                     if (lastLineIndex > firstLineIndex)
                     {
                         originalLastLineText =
-                            fileCompiler.CompilationResultsForProgram.CobolTextLines[
+                            docContext.FileCompiler.CompilationResultsForProgram.CobolTextLines[
                                 Math.Min(lastLineIndex,
-                                    fileCompiler.CompilationResultsForProgram.CobolTextLines.Count - 1)].Text;
+                                    docContext.FileCompiler.CompilationResultsForProgram.CobolTextLines.Count - 1)].Text;
                     }
 
                     // Text not modified at the beginning of the first replaced line
@@ -304,7 +321,6 @@ namespace TypeCobol.LanguageServer
             {
                 RemoteConsole.Log(" - " + textChange.ToString());
             }
-
         }
 
         public override void OnDidCloseTextDocument(DidCloseTextDocumentParams parameters)
@@ -348,38 +364,83 @@ namespace TypeCobol.LanguageServer
 
         public override Hover OnHover(TextDocumentPosition parameters)
         {
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.Hover, "Hover event", LogType.Completion);
+            Hover resultHover = new Hover();
 
-            var fileCompiler = GetFileCompilerFromStringUri(parameters.uri);
-            if (fileCompiler == null)
-                return null;
+            //Commented because it's too slow
+            //AnalyticsWrapper.Telemetry.TrackEvent(EventType.Hover, "Hover event", LogType.Completion);
+            var docContext = GetDocumentContextFromStringUri(parameters.uri);
+            if (docContext == null)
+                return resultHover;
+            System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
 
-            // Find the token located below the mouse pointer
-            var tokensLine =
-                fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.Lines[
-                    parameters.position.line];
-            var hoveredToken =
-                tokensLine.TokensWithCompilerDirectives.First(
-                    token =>
-                        token.StartIndex <= parameters.position.character &&
-                        token.StopIndex >= parameters.position.character);
+            var wrappedCodeElements = CodeElementFinder(docContext.FileCompiler, parameters.position);
+            if (wrappedCodeElements == null)
+                return resultHover;
 
-            // Return a text describing this token
-            if (hoveredToken != null)
+            Token userFilterToken = null;
+            Token lastSignificantToken = null;
+            //Try to get a significant token for competion and return the codeelement containing the matching token.
+            CodeElement matchingCodeElement = CodeElementMatcher.MatchCompletionCodeElement(parameters.position,
+                wrappedCodeElements,
+                out userFilterToken, out lastSignificantToken); //Magic happens here
+            if (matchingCodeElement == null)
             {
-                string tokenDescription = hoveredToken.TokenFamily.ToString() + " - " +
-                                          hoveredToken.TokenType.ToString();
-                return new Hover()
-                {
-                    range =
-                        new Range(parameters.position.line, hoveredToken.StartIndex, parameters.position.line,
-                            hoveredToken.StopIndex + 1),
-                    contents =
-                        new MarkedString[] {new MarkedString() {language = "Cobol", value = tokenDescription}}
-                };
+                return resultHover;
             }
 
-            return null;
+            docContext.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers.TryGetValue(((CodeElementWrapper)matchingCodeElement).CodeElement, out var matchingNode);
+            if (matchingNode == null)
+                return resultHover;
+
+            string message = string.Empty;
+
+            //Switch between all nodes that can return information
+            switch (matchingNode)
+            {
+                case DataDefinition data:
+                    if (data.TypeDefinition != null)
+                        message = data.TypeDefinition.ToString();
+                    break;
+                case ProcedureStyleCall call:
+                    //don't show hover on params
+                    if (call.FunctionDeclaration != null && lastSignificantToken.TokenType != TokenType.INPUT && lastSignificantToken.TokenType != TokenType.IN_OUT && lastSignificantToken.TokenType != TokenType.OUTPUT)
+                    {
+                        message = call.ToString();
+                    }
+                    break;
+                case FunctionDeclaration fun:
+                    //only for params of a function declaration
+                    if (userFilterToken != null && (lastSignificantToken.TokenType == TokenType.QualifiedNameSeparator || lastSignificantToken.TokenType == TokenType.TYPE))
+                    {
+                        foreach (var param in fun.Profile.Parameters)
+                        {
+                            //if the hovered position is inside this parameter
+                            //line + 1 : because start index is 0
+                            if (param.CodeElement.Line == parameters.position.line + 1 && 
+                                param.CodeElement.StartIndex < parameters.position.character && 
+                                param.CodeElement.StopIndex > parameters.position.character)
+                            {
+                                if (param.TypeDefinition != null)
+                                    message = param.TypeDefinition.ToString();
+                            }
+                        }
+                    }
+                    break;
+            }
+
+            if (message != string.Empty)
+            {
+                resultHover.range = new Range(matchingCodeElement.Line, matchingCodeElement.StartIndex,
+                    matchingCodeElement.Line,
+                    matchingCodeElement.StopIndex + 1);
+                resultHover.contents =
+                    new MarkedString[] { new MarkedString() { language = "Cobol", value = message } };
+                return resultHover;
+            }
+
+
+            return resultHover;
+
         }
 
         /// <summary>
@@ -389,16 +450,17 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public override List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
         {
-            var fileCompiler = GetFileCompilerFromStringUri(parameters.uri);
-            if (fileCompiler == null)
+            var docContext = GetDocumentContextFromStringUri(parameters.uri);
+            if (docContext == null)
                 return null;
+            System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
 
             List<CompletionItem> items = new List<CompletionItem>();
 
-            if (fileCompiler.CompilationResultsForProgram != null &&
-                fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot != null)
+            if (docContext.FileCompiler.CompilationResultsForProgram != null &&
+                docContext.FileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot != null)
             {
-                var wrappedCodeElements = CodeElementFinder(fileCompiler, parameters.position);
+                var wrappedCodeElements = CodeElementFinder(docContext.FileCompiler, parameters.position);
                 if (wrappedCodeElements == null)
                     return new List<CompletionItem>();
 
@@ -417,31 +479,31 @@ namespace TypeCobol.LanguageServer
                     {
                         case TokenType.PERFORM:
                         {
-                            items.AddRange(CompletionFactory.GetCompletionPerformParagraph(fileCompiler,
+                            items.AddRange(CompletionFactory.GetCompletionPerformParagraph(docContext.FileCompiler,
                                 matchingCodeElement, userFilterToken));
                             break;
                         }
                         case TokenType.CALL:
                         {
                             _FunctionDeclarationSignatureDictionary.Clear(); //Clear to avoid key collision
-                            items.AddRange(CompletionFactory.GetCompletionForProcedure(fileCompiler, matchingCodeElement,
+                            items.AddRange(CompletionFactory.GetCompletionForProcedure(docContext.FileCompiler, matchingCodeElement,
                                 userFilterToken, _FunctionDeclarationSignatureDictionary));
-                            items.AddRange(CompletionFactory.GetCompletionForLibrary(fileCompiler, matchingCodeElement,
+                            items.AddRange(CompletionFactory.GetCompletionForLibrary(docContext.FileCompiler, matchingCodeElement,
                                 userFilterToken));
                             break;
                         }
                         case TokenType.TYPE:
                         {
-                            items.AddRange(CompletionFactory.GetCompletionForType(fileCompiler, matchingCodeElement,
+                            items.AddRange(CompletionFactory.GetCompletionForType(docContext.FileCompiler, matchingCodeElement,
                                 userFilterToken));
-                            items.AddRange(CompletionFactory.GetCompletionForLibrary(fileCompiler, matchingCodeElement,
+                            items.AddRange(CompletionFactory.GetCompletionForLibrary(docContext.FileCompiler, matchingCodeElement,
                                 userFilterToken));
                             break;
                         }
                         case TokenType.QualifiedNameSeparator:
                         {
                             items.AddRange(CompletionFactory.GetCompletionForQualifiedName(parameters.position,
-                                fileCompiler, matchingCodeElement, lastSignificantToken, userFilterToken, _FunctionDeclarationSignatureDictionary));
+                                docContext.FileCompiler, matchingCodeElement, lastSignificantToken, userFilterToken, _FunctionDeclarationSignatureDictionary));
                             break;
                         }
                         case TokenType.INPUT:
@@ -449,31 +511,31 @@ namespace TypeCobol.LanguageServer
                         case TokenType.IN_OUT:
                         {
                             items.AddRange(CompletionFactory.GetCompletionForProcedureParameter(parameters.position,
-                                fileCompiler, matchingCodeElement, userFilterToken, lastSignificantToken, _SignatureCompletionContext));
+                                docContext.FileCompiler, matchingCodeElement, userFilterToken, lastSignificantToken, _SignatureCompletionContext));
                             break;
                         }
                         case TokenType.MOVE:
                         {
-                            items.AddRange(CompletionFactory.GetCompletionForVariable(fileCompiler, matchingCodeElement,
+                            items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
                                 da =>
                                     da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase) &&
                                     ((da.CodeElement != null &&
-                                      (da.CodeElement as DataDefinitionEntry).LevelNumber.Value < 88)
+                                      da.CodeElement.LevelNumber.Value < 88)
                                      || (da.CodeElement == null && da is IndexDefinition))));
                             //Ignore 88 level variable
                             break;
                         }
                         case TokenType.TO:
                         {
-                            items.AddRange(CompletionFactory.GetCompletionForTo(fileCompiler, matchingCodeElement,
+                            items.AddRange(CompletionFactory.GetCompletionForTo(docContext.FileCompiler, matchingCodeElement,
                                 userFilterToken, lastSignificantToken));
                             break;
                         }
                         case TokenType.INTO:
                         {
-                            items.AddRange(CompletionFactory.GetCompletionForVariable(fileCompiler, matchingCodeElement,
+                            items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
                                 v => v.Name.StartsWith(userFilterText, StringComparison.CurrentCultureIgnoreCase)
-                                     && ((v.CodeElement as DataDefinitionEntry) != null &&
+                                     && (v.CodeElement != null &&
                                          v.DataType == DataType.Alphabetic
                                          || v.DataType == DataType.Alphanumeric
                                          || v.DataType == DataType.AlphanumericEdited)
@@ -482,11 +544,11 @@ namespace TypeCobol.LanguageServer
                         }
                         case TokenType.SET:
                         {
-                            items.AddRange(CompletionFactory.GetCompletionForVariable(fileCompiler, matchingCodeElement,
+                            items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
                                 v => v.Name.StartsWith(userFilterText, StringComparison.CurrentCultureIgnoreCase)
                                      &&
-                                     (((v.CodeElement as DataDefinitionEntry) != null &&
-                                       (v.CodeElement as DataDefinitionEntry).LevelNumber.Value == 88)
+                                     ((v.CodeElement != null &&
+                                       v.CodeElement.LevelNumber.Value == 88)
                                       //Level 88 Variable
                                       || v.DataType == DataType.Numeric //Numeric Integer Variable
                                       || v.Usage == DataUsage.Pointer) //Or usage is pointer 
@@ -495,7 +557,7 @@ namespace TypeCobol.LanguageServer
                         }
                         case TokenType.OF:
                         {
-                            items.AddRange(CompletionFactory.GetCompletionForOf(fileCompiler, matchingCodeElement,
+                            items.AddRange(CompletionFactory.GetCompletionForOf(docContext.FileCompiler, matchingCodeElement,
                                 userFilterToken, parameters.position));
                             break;
                         }
@@ -517,7 +579,7 @@ namespace TypeCobol.LanguageServer
 
                         userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text; //Convert token to text
 
-                        items.AddRange(CompletionFactory.GetCompletionForVariable(fileCompiler,
+                        items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler,
                            wrappedCodeElements.First(), da => da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)));
                     }
                     else
@@ -558,13 +620,15 @@ namespace TypeCobol.LanguageServer
             Uri objUri = new Uri(parameters.uri);
             if (objUri.IsFile)
             {
-                var fileCompiler = typeCobolWorkspace.OpenedFileCompiler[objUri];
+                var docContext = typeCobolWorkspace.OpenedDocumentContext[objUri];
+                System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
 
-                if (fileCompiler.CompilationResultsForProgram != null &&
-                    fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot != null)
+
+                if (docContext.FileCompiler.CompilationResultsForProgram != null &&
+                    docContext.FileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot != null)
                 {
                     var matchingCodeElement =
-                        fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers
+                        docContext.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers
                             .Keys.FirstOrDefault(c => c.ConsumedTokens.Any(
                                 t => t.Line == parameters.position.line + 1 &&
                                      parameters.position.character >= t.StartIndex &&
@@ -573,7 +637,7 @@ namespace TypeCobol.LanguageServer
                     if (matchingCodeElement == null)
                         return defaultDefinition;
 
-                    var matchingNode = fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers[matchingCodeElement];
+                    var matchingNode = docContext.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers[matchingCodeElement];
                     if (matchingNode == null)
                         return defaultDefinition;
 
@@ -666,16 +730,19 @@ namespace TypeCobol.LanguageServer
         public override SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)
         {
             AnalyticsWrapper.Telemetry.TrackEvent(EventType.SignatureHelp, "Signature help event", LogType.Completion); //Send event to analytics
-            var fileCompiler = GetFileCompilerFromStringUri(parameters.uri);
+            var docContext = GetDocumentContextFromStringUri(parameters.uri);
+            if (docContext == null)
+                return null;
+            System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
 
-            if (fileCompiler?.CompilationResultsForProgram?.ProcessedTokensDocumentSnapshot == null) //Semantic snapshot is not available
+            if (docContext.FileCompiler?.CompilationResultsForProgram?.ProcessedTokensDocumentSnapshot == null) //Semantic snapshot is not available
                 return null;
 
-            var wrappedCodeElement = CodeElementFinder(fileCompiler, parameters.position).FirstOrDefault();
+            var wrappedCodeElement = CodeElementFinder(docContext.FileCompiler, parameters.position).FirstOrDefault();
             if (wrappedCodeElement == null) //No codeelements found
                 return null;
 
-            var node = CompletionFactory.GetMatchingNode(fileCompiler, wrappedCodeElement);
+            var node = CompletionFactory.GetMatchingNode(docContext.FileCompiler, wrappedCodeElement);
 
             //Get procedure name or qualified name
             string procedureName = CompletionFactoryHelpers.GetProcedureNameFromTokens(wrappedCodeElement.ArrangedConsumedTokens);
@@ -800,8 +867,11 @@ namespace TypeCobol.LanguageServer
 
         public override void OnDidReceiveNodeRefresh(NodeRefreshParams parameter)
         {
-            var fileCompiler = GetFileCompilerFromStringUri(parameter.textDocument.uri, false);
-            typeCobolWorkspace.RefreshSyntaxTree(fileCompiler, true);
+            var context = GetDocumentContextFromStringUri(parameter.textDocument.uri, false);
+            if (context != null && context.FileCompiler != null)
+            {
+                typeCobolWorkspace.RefreshSyntaxTree(context.FileCompiler, true);
+            }
         }
 
         #endregion
@@ -904,16 +974,16 @@ namespace TypeCobol.LanguageServer
             return codeElements.Select(c => new CodeElementWrapper(c));
         }
 
-        private FileCompiler GetFileCompilerFromStringUri(string uri, bool acceptNodeRefresh = true)
+        private DocumentContext GetDocumentContextFromStringUri(string uri, bool acceptNodeRefresh = true)
         {
             Uri objUri = new Uri(uri);
             if (objUri.IsFile)
             {
-                var fileCompiler = typeCobolWorkspace.OpenedFileCompiler[objUri];
+                var context = typeCobolWorkspace.OpenedDocumentContext[objUri];
                 // Get compilation info for the current file
                 if (acceptNodeRefresh)
-                    typeCobolWorkspace.RefreshSyntaxTree(fileCompiler); //Do a Node Refresh
-                return fileCompiler;
+                    typeCobolWorkspace.RefreshSyntaxTree(context.FileCompiler); //Do a Node Refresh
+                return context;
             }
 
             return null;
@@ -922,9 +992,11 @@ namespace TypeCobol.LanguageServer
     }
     public class CodeElementWrapper : CodeElement
     {
+        public CodeElement CodeElement { get; set; }
         public CodeElementWrapper(CodeElement codeElement)
             : base(codeElement.Type)
         {
+            this.CodeElement = codeElement;
             ConsumedTokens = codeElement.ConsumedTokens;
 
             ArrangedConsumedTokens = new List<Token>();

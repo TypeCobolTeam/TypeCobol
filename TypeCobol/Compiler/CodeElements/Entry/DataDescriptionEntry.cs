@@ -1,19 +1,32 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.CodeElements {
 
-	/// <summary>
-	/// Base class for all types of data definition entries :
-	/// - DataDescriptionEntry
-	/// - DataRedefinesEntry
-	/// - DataRenamesEntry
-	/// - DataConditionEntry
-	/// </summary>
-	public abstract class DataDefinitionEntry: NamedCodeElement {
+    /// <summary>
+    /// Base class for all types of data definition entries :
+    /// - DataDescriptionEntry
+    /// - DataRedefinesEntry
+    /// - DataRenamesEntry
+    /// - DataConditionEntry
+    ///
+    /// DataDefinitionEntry
+    ///     DataConditionEntry
+    ///     CommonDataDescriptionAndDataRedefines
+    ///         DataDescriptionEntry
+    ///             DataTypeDescriptionEntry
+    ///             SpecialRegisterDescriptionEntry
+    ///             ParameterDescriptionEntry
+    ///             FunctionCallResultDescriptionEntry
+    ///         DataRedefinesEntry
+    ///     DataRenamesEntry
+    /// 
+    /// </summary>
+    public abstract class DataDefinitionEntry: NamedCodeElement {
 	    protected DataDefinitionEntry(CodeElementType codeElementType) : base(codeElementType) {
 	        this.DataType = DataType.Unknown;
 	    }
@@ -98,15 +111,6 @@ namespace TypeCobol.Compiler.CodeElements {
                 }
             }
         }
-
-        /// <summary>
-        /// TODO This method should be split like this ?
-        /// - PhysicalLength (or length used when data is written to a file)
-        /// - PhysicalLengthWithChildren
-        /// - LogicalLength
-        /// - LogicalLengthWithChildren
-        /// </summary>
-        public abstract int Length{get;}
     }
 
 
@@ -176,13 +180,6 @@ namespace TypeCobol.Compiler.CodeElements {
         public SymbolReference UserDefinedDataType { get; internal set; }
 // [/COBOL 2002]
 
-        public override int Length {
-            get {
-                if (Picture == null) return 1;
-                var parts = Picture.Value.Split('(',')');
-                return parts.Length == 3 ? int.Parse(parts[1]) : 1;
-            }
-        }
 
         /// <summary>
         /// p188:
@@ -888,7 +885,7 @@ namespace TypeCobol.Compiler.CodeElements {
     /// The TYPEDEF clause cannot be specified in the same data description entry as the following clauses: 
     /// EXTERNAL, REDEFINES.
     /// </summary>
-    public class DataTypeDescriptionEntry : DataDescriptionEntry
+    public class DataTypeDescriptionEntry : DataDescriptionEntry, IFormalizedCommentable
     {
         public DataTypeDescriptionEntry() : base() { }
 
@@ -911,6 +908,8 @@ namespace TypeCobol.Compiler.CodeElements {
                     : Strict.Value ? RestrictionLevel.STRICT : RestrictionLevel.WEAK;
             }
         }
+
+        public FormalizedCommentDocumentation FormalizedCommentDocumentation { get; set; }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
@@ -1054,8 +1053,6 @@ namespace TypeCobol.Compiler.CodeElements {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                 && this.ContinueVisitToChildren(astVisitor, RenamesFromDataName, RenamesToDataName);
         }
-
-        public override int Length { get { return 1; } }
     }
     
     /// <summary>
@@ -1096,10 +1093,9 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// </summary>
 		public ValuesRange[] ConditionValuesRanges { get; set; }
 
-		public override DataType DataType { get { return DataType.Boolean; } }
-		public override int Length { get { return 1; } }
+		public override DataType DataType { get { return DataType.Level88; } }
 
-        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+	    public override bool VisitCodeElement(IASTVisitor astVisitor) {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor, ConditionName, DataType)
                    && this.ContinueVisitToChildren(astVisitor, ConditionValues, ConditionValuesRanges);

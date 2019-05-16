@@ -121,7 +121,11 @@ namespace TypeCobol.Compiler.Parser
 
             // Optionnaly activate Antlr Parser performance profiling
             // WARNING : use this in a single-treaded context only (uses static field)     
-            if (AntlrPerformanceProfiler == null && perfStatsForParserInvocation.ActivateDetailedAntlrPofiling) AntlrPerformanceProfiler = new AntlrPerformanceProfiler(cobolParser);
+            if (perfStatsForParserInvocation.ActivateDetailedAntlrPofiling)
+                AntlrPerformanceProfiler = new AntlrPerformanceProfiler(cobolParser);
+            else
+                AntlrPerformanceProfiler = null;
+
             if (AntlrPerformanceProfiler != null)
             {
                 // Replace the generated parser by a subclass which traces all rules invocations
@@ -146,8 +150,16 @@ namespace TypeCobol.Compiler.Parser
 
             // --- INCREMENTAL PARSING ---
 
+            //-------------------------------------------------------------------------------------
             // In case of incremental parsing, parse only the code sections we need to refresh
-
+            //-------------------------------------------------------------------------------------
+            // By https://github.com/TypeCobolTeam/TypeCobol/issues/1351 it can happend that the
+            // The scanning can go beyond the section to be reparsed by one line, this can happend
+            // If the previous line was only made of whitespaces or comments.
+            // So we maintains a set of CodeElementsLine to be reseted.
+            //-------------------------------------------------------------------------------------
+            HashSet<CodeElementsLine> ResetedCodeElementsLines = null;//Set of new incremental lines to reseted
+            int IncrementalLineLimit = -1;//Original limit of the incremental section
             if (largestRefreshParseSection != null)
             {
                 // Seek just before the next code element starting token
@@ -155,21 +167,16 @@ namespace TypeCobol.Compiler.Parser
                 tokenStream.StartLookingForStopToken(largestRefreshParseSection.StopToken);
 
                 //Remove all the code elements for the future line to parse.
-
-                for (int i = largestRefreshParseSection.StartLineIndex;
-                    i < (largestRefreshParseSection.StopLineIndex == documentLines.Count - 1 && largestRefreshParseSection.StopToken == null //If the last index is equals to number of line in document, make sure to also reset the last line, otherwise, reset lines normally. 
+                IncrementalLineLimit = (largestRefreshParseSection.StopLineIndex == documentLines.Count - 1 && largestRefreshParseSection.StopToken == null //If the last index is equals to number of line in document, make sure to also reset the last line, otherwise, reset lines normally. 
                         ? largestRefreshParseSection.StopLineIndex + 1
                         : largestRefreshParseSection.StopLineIndex);
-                    i++)
+                for (int i = largestRefreshParseSection.StartLineIndex; i < IncrementalLineLimit; i++)
                 {
                     if (documentLines[i].CodeElements != null)
                         documentLines[i].ResetCodeElements();
                 }
             }
-
-           
-
-
+          
             // Reset parsing error diagnostics
             cobolErrorStrategy.Reset(cobolParser);
 
@@ -218,6 +225,18 @@ namespace TypeCobol.Compiler.Parser
                         {
                             continue;
                         }
+                        if (IncrementalLineLimit >= 0 && tokenStart.Line >= IncrementalLineLimit)
+                        {
+                            if (ResetedCodeElementsLines == null)
+                            {
+                                ResetedCodeElementsLines = new HashSet<CodeElementsLine>();                                
+                            }                            
+                            if (ResetedCodeElementsLines.Count == 0 || !ResetedCodeElementsLines.Contains(codeElementsLine))
+                            {
+                                ResetedCodeElementsLines.Add(codeElementsLine);
+                                codeElementsLine.ResetCodeElements();
+                            }                            
+                        }
 
                         // Register that this line was updated
                         // COMMENTED FOR THE SAKE OF PERFORMANCE -- SEE ISSUE #160
@@ -251,6 +270,39 @@ namespace TypeCobol.Compiler.Parser
                         CodeElement codeElement = codeElementBuilder.CodeElement;
                         if (codeElement != null)
                         {
+                            // Add the multiline comments Token to the consumed Tokens in order to comment them in CodeGen
+                            if (!codeElement.IsInsideCopy() && codeElement.ConsumedTokens.Count >= 2)
+                            {
+                                bool tokenHasBeenInjected = false;
+
+                                // Do not iterate on a list that will be modified ☻
+                                int stopLine = codeElement.ConsumedTokens.Last().Line - 1;
+
+                                for (int lineIndex = codeElement.ConsumedTokens[0].Line -1 ;
+                                    lineIndex < stopLine && lineIndex < documentLines.Count;
+                                    lineIndex++)
+                                {
+                                    var multilineTokens = documentLines[lineIndex].SourceTokens.Where(t =>
+                                        t.TokenType == TokenType.MULTILINES_COMMENTS_START ||
+                                        t.TokenType == TokenType.MULTILINES_COMMENTS_STOP ||
+                                        t.TokenType == TokenType.CommentLine);
+
+
+                                    foreach (var multilineToken in multilineTokens)
+                                    {
+                                        tokenHasBeenInjected = true;
+                                        codeElement.ConsumedTokens.Add(multilineToken);
+                                    }
+                                }
+
+                                if (tokenHasBeenInjected)
+                                {
+                                    codeElement.ConsumedTokens = codeElement.ConsumedTokens.OrderBy(t => t.Line)
+                                        .ThenBy(t => t.Column).ToList();
+                                }
+                            }
+
+
                             // Attach consumed tokens and main document line numbers information to the code element
                             if (codeElement.ConsumedTokens.Count == 0)
                             {
@@ -411,6 +463,13 @@ namespace TypeCobol.Compiler.Parser
                 int nextLineIndex = lineIndex;
                 IEnumerator<CodeElementsLine> enumerator = documentLines.GetEnumerator(nextLineIndex + 1, -1, false);
                 bool nextLineHasCodeElements = false;
+                //----------------------------------------------------------------------------
+                // Because we use multi line comments once we have figure out
+                // the last line for stopping reparsing, we must consider the next for that,
+                // So that if figured out line is candidate for formalized comments, it will
+                // be entirely reparsed along with its formalized comment.
+                //----------------------------------------------------------------------------
+                bool oneMoreLine = false;
                 while (enumerator.MoveNext())
                 {
                     // Get the next line until non continuation line is encountered
@@ -448,10 +507,17 @@ namespace TypeCobol.Compiler.Parser
                         // Stop iterating forwards as soon as the start of an old CodeElement is found                   
                         if (nextLineHasCodeElements)
                         {
-                            currentParseSection.StopLineIndex = nextLineIndex;
-                            currentParseSection.StopToken = nextLine.CodeElements.First().ConsumedTokens.FirstOrDefault();
-                            currentParseSection.StopTokenIsFirstTokenOfTheLine = nextCodeElementStartsAtTheBeginningOfTheLine;
-                            break;
+                            if (oneMoreLine || !(nextLine.CodeElements.Any(ce => ce is IFormalizedCommentable)))
+                            {
+                                currentParseSection.StopLineIndex = nextLineIndex;
+                                currentParseSection.StopToken = nextLine.CodeElements.First().ConsumedTokens.FirstOrDefault();
+                                currentParseSection.StopTokenIsFirstTokenOfTheLine = nextCodeElementStartsAtTheBeginningOfTheLine;
+                                break;
+                            }
+                            else
+                            {   //Ok next line will be the last one.
+                                oneMoreLine = true;
+                            }
                         }
                     }
                 }

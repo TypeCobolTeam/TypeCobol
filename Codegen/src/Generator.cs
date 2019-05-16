@@ -118,7 +118,7 @@ namespace TypeCobol.Codegen
             if (!string.IsNullOrEmpty(TypeCobolVersion))
                 Destination.AppendLine("      *TypeCobol_Version:" + TypeCobolVersion);
 
-            Actions = new GeneratorActions(this, skeletons, document);
+            Actions = new GeneratorActions(this, skeletons, document, skeletons != null ? null : new TypeCobol.Codegen.Actions.Skeletons());
             //To Store Erased Nodes by the Erase Action.
             ErasedNodes = new List<Node>();
             //The After Action Listener
@@ -323,7 +323,9 @@ namespace TypeCobol.Codegen
         /// <param name="node">The node to process</param>
         /// <returns>true if child nodes must visited for acceptation, false otherwise.</returns>
         protected abstract bool Process(Node node);
+        public abstract void GenerateLineMapFile(Stream stream);
 
         public string TypeCobolVersion { get; set; }
+        public abstract bool HasLineMapData { get; }
     }
 }

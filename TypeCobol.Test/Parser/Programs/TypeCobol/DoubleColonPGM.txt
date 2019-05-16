@@ -26,7 +26,7 @@ PROGRAM: COLON common:False initial:False recursive:False
   T2-C:Alphanumeric
   T2-D1:Alphanumeric
   T2-D2:Alphanumeric
-  T2-D2-V1:BOOL
+  T2-D2-V1:Level88
   T3-A1:Alphanumeric
   T3-B1:Alphanumeric
   T3-B1:Alphanumeric

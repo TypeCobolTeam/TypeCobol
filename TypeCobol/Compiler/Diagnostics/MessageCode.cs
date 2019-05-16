@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,5 +47,10 @@ namespace TypeCobol.Compiler.Diagnostics
         Warning = 37,
         GenerationErrorLineExceed = 38,
         QuestionMarkShouldBeFollowedBySpace = 39,
+        WrongFormalizedCommentKeyword = 40,
+        WrongFormalizedCommentMarckupPosition = 41,
+        WrongMultilineCommentMarckupPosition = 42,
+        ErrorFormalizedCommentMissplaced = 43,
+        MultiFormalizedCommentIndicatorMisused = 44,
     }
 }

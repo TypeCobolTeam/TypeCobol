@@ -4,12 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Analytics;
+using Antlr4.Runtime.Atn;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
+using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Text;
+using String = System.String;
 
 namespace TypeCobol.Compiler.Scanner
 {
@@ -96,10 +100,11 @@ namespace TypeCobol.Compiler.Scanner
 
 #endif
 
+
             // Comment line => return only one token with type CommentLine
             // Debug line => treated as a comment line if debugging mode was not activated
             if (textLine.Type == CobolTextLineType.Comment ||
-               (textLine.Type == CobolTextLineType.Debug && !tokensLine.InitialScanState.WithDebuggingMode))
+                (textLine.Type == CobolTextLineType.Debug && !tokensLine.InitialScanState.WithDebuggingMode))
             {
                 if (tokensLine.ColumnsLayout == ColumnsLayout.CobolReferenceFormat && tokensLine.Text.Length > 80)
                 {
@@ -111,12 +116,29 @@ namespace TypeCobol.Compiler.Scanner
                 tokensLine.AddToken(commentToken);
                 return;
             }
+            else if (textLine.Type == CobolTextLineType.MultiFormalizedComment)
+            {
+                //If a '%' is spotted that isn't a multiline/formalized comment token or if a stop token is spotted without an associated start
+                if (tokensLine.SourceText == null || !tokensLine.SourceText.StartsWith("<<") && !tokensLine.SourceText.StartsWith(">>") || 
+                    !tokensLine.ScanState.InsideMultilineComments && !tokensLine.ScanState.InsideFormalizedComment && tokensLine.SourceText.StartsWith(">>"))
+                {
+                    tokensLine.AddDiagnostic(MessageCode.MultiFormalizedCommentIndicatorMisused, textLine.Indicator.StartIndex, textLine.Indicator.EndIndex, textLine.Indicator);
+                    Token invalidToken = new Token(TokenType.InvalidToken, startIndex, lastIndex, tokensLine);
+                    tokensLine.AddToken(invalidToken);
+                    return;
+                }
+                else
+                {
+                    if (tokensLine.ScannerDiagnostics.Count > 0)
+                        tokensLine.RemoveDiagnostics();
+                }
+
+            }
             // Invalid indicator, the line type is unknown => the whole line text is handled as a single invalid token
             else if (textLine.Type == CobolTextLineType.Invalid)
             {
-                // Invalid indicator => register an error
+                
                 tokensLine.AddDiagnostic(MessageCode.InvalidIndicatorCharacter, textLine.Indicator.StartIndex, textLine.Indicator.EndIndex, textLine.Indicator);
-
                 Token invalidToken = new Token(TokenType.InvalidToken, startIndex, lastIndex, tokensLine);
                 tokensLine.AddToken(invalidToken);
                 return;
@@ -143,7 +165,7 @@ namespace TypeCobol.Compiler.Scanner
             Scanner scanner = new Scanner(line, startIndex, lastIndex, tokensLine, compilerOptions);
             Token nextToken = null;
             while((nextToken = scanner.GetNextToken()) != null)
-            {                
+            {
                 tokensLine.AddToken(nextToken);
             }    
         }
@@ -626,6 +648,99 @@ namespace TypeCobol.Compiler.Scanner
                 return ScanPictureCharacterStringOrISOrSYMBOL(startIndex);
             }
 
+
+            if (currentState.InsideMultilineComments)
+            {
+                // We are inside a Multiline Comments
+                // if there is no Multiline Comments end marckup "*>>" then create a new Comment Token until the "*>>"
+                if (line.Length > currentIndex + 2 && line[currentIndex] == '%' && line[currentIndex + 1] == '>' && line[currentIndex + 2] == '>')
+                {
+                    // We are in the case of a Formalize Comment stop with the '*' on column other than 7 wich is forbidden
+                    tokensLine.AddDiagnostic(MessageCode.WrongMultilineCommentMarckupPosition,
+                        startIndex,
+                        startIndex + 2);
+                    // consume the * char and the three < chars
+                    currentIndex += 3;
+                    return new Token(TokenType.MULTILINES_COMMENTS_STOP, startIndex, startIndex + 2, tokensLine);
+                }
+                else if (line[currentIndex] == '>' && line[currentIndex - 1] == '%' && line.Length > currentIndex + 1 && line[currentIndex + 1] == '>')
+                {
+                    currentIndex += 2;
+                    return new Token(TokenType.MULTILINES_COMMENTS_STOP, startIndex-1, startIndex + 1, tokensLine);
+                }
+                else
+                {
+                    return ScanUntilDelimiter(startIndex, TokenType.CommentLine, "%>>");
+                }
+            }
+
+            // --- switch dedicated to formalized Comments as they are not compatible with TypeCobol grammar ---
+            if (currentState.InsideFormalizedComment)
+            {
+                switch (line[startIndex])
+                {
+                    case ' ':
+                        //SpaceSeparator=1,
+                        return ScanWhitespace(startIndex);
+                    case '-':
+                        currentIndex++;
+                        return new Token(TokenType.MinusOperator, startIndex, currentIndex - 1, tokensLine);
+                    case '@':
+                        currentIndex++;
+                        return new Token(TokenType.AT_SIGN, startIndex, currentIndex - 1, tokensLine); 
+                    case ':':
+                        currentIndex++;
+                        return new Token(TokenType.ColonSeparator, startIndex, currentIndex - 1, tokensLine);
+                    case '*':
+                        currentIndex ++;
+                        return new Token(TokenType.MultiplyOperator, startIndex, currentIndex - 1, tokensLine);
+                    case '%':
+                        if ((line.Length > currentIndex + 3) && line[currentIndex + 1] == '>' && line[currentIndex + 2] == '>' && line[currentIndex + 3] == '>')
+                        {
+                            // We are in the case of a Formalize Comment stop with the '*' on column other than 7 wich is forbidden
+                            tokensLine.AddDiagnostic(MessageCode.WrongFormalizedCommentMarckupPosition,
+                                startIndex,
+                                startIndex + 3);
+                            // consume the * char and the three < chars
+                            currentIndex += 4;
+                            return new Token(TokenType.FORMALIZED_COMMENTS_STOP, startIndex, startIndex + 3, tokensLine);
+                        }
+                        currentIndex++;
+                        return new Token(TokenType.InvalidToken, startIndex, currentIndex - 1, tokensLine);
+                    case '>':
+                        if ((line.Length > currentIndex + 2) && line[currentIndex - 1] == '%' && line[currentIndex + 1] == '>' && line[currentIndex + 2] == '>')
+                        {
+                            // We are in the case of a Formalize Comment stop with the '*' on column 7
+                            // consume the three > chars
+                            currentIndex += 3;
+                            return new Token(TokenType.FORMALIZED_COMMENTS_STOP, startIndex-1, startIndex + 2, tokensLine);
+                        }
+                        currentIndex++;
+                        return new Token(TokenType.GreaterThanOperator, startIndex, currentIndex - 1, tokensLine);
+                    default:
+                        // If the previous significant Token is an At Sign then the following word have to be a field keyword
+                        // If the previous significant Token is a Minus Operator then the following have to be a key in case of Params field
+                        if (tokensLine.ScanState.LastSignificantToken.TokenType == TokenType.AT_SIGN ||
+                            (tokensLine.ScanState.LastSignificantToken.TokenType == TokenType.MinusOperator &&
+                             tokensLine.ScanState.InsideParamsField))
+                        {
+                            Token token = ScanCharacterString(startIndex);
+                            if (tokensLine.ScanState.LastSignificantToken.TokenType == TokenType.AT_SIGN
+                                && token.TokenFamily != TokenFamily.FormalizedCommentsFamily)
+                            {
+                                tokensLine.AddDiagnostic(MessageCode.WrongFormalizedCommentKeyword, token);
+                            }
+                            else if (tokensLine.ScanState.LastSignificantToken.TokenType == TokenType.MinusOperator
+                                && token.TokenFamily == TokenFamily.FormalizedCommentsFamily)
+                            {
+                                token.CorrectType(TokenType.UserDefinedWord);
+                            }
+                            return token;
+                        }
+                        return ScanUntilDelimiter(startIndex, TokenType.FORMALIZED_COMMENTS_VALUE, "*>>>");
+                }
+            }
+
             // --- Main switch ---
 
             switch (line[startIndex])
@@ -650,9 +765,9 @@ namespace TypeCobol.Compiler.Scanner
                         return ScanOneCharFollowedBySpace(startIndex, TokenType.CommaSeparator, MessageCode.InvalidCharAfterComma, false);
                     }
                 case '?':
-                    //QuestionMark=460,
+                    //QUESTION_MARK=460,
                     //TypeCobol
-                    return ScanOneCharFollowedBySpace(startIndex, TokenType.QuestionMark, MessageCode.QuestionMarkShouldBeFollowedBySpace);         
+                    return ScanOneCharFollowedBySpace(startIndex, TokenType.QUESTION_MARK, MessageCode.QuestionMarkShouldBeFollowedBySpace);         
                 case ';':
                     //SemicolonSeparator=3,
                     // p46: A separator semicolon is composed of a semicolon followed by a space.
@@ -689,6 +804,7 @@ namespace TypeCobol.Compiler.Scanner
                     //FloatingComment=5,                    
                     else if (line[currentIndex + 1] == '>')
                     {
+                        
                         return ScanFloatingComment(startIndex);
                     }
                     // ASTERISK_CBL = "*CBL"
@@ -715,6 +831,52 @@ namespace TypeCobol.Compiler.Scanner
                         currentIndex++;
                         return new Token(TokenType.MultiplyOperator, startIndex, startIndex, tokensLine);
                     }
+                case '%':
+                    if (line.Length >= currentIndex + 2 && line[currentIndex + 1] == '>' && line[currentIndex + 2] == '>')
+                    {
+                        if (line.Length > currentIndex + 3 && line[currentIndex + 3] == '>')
+                        {
+                            // It is a Formalized Comment start that is not well positionned
+                            tokensLine.AddDiagnostic(MessageCode.WrongFormalizedCommentMarckupPosition,
+                                startIndex,
+                                startIndex + 3);
+                        }
+                        else
+                        {
+                            // It is a Multilines Comment start that is not well positionned
+                            tokensLine.AddDiagnostic(MessageCode.WrongMultilineCommentMarckupPosition,
+                                startIndex,
+                                startIndex + 2);
+                        }
+                    }
+                    // Multiline Comments or Formalized Comments start should begin on column 7
+                    if (line.Length > currentIndex + 2 && line[currentIndex + 1] == '<' && line[currentIndex + 2] == '<')
+                    {
+                        if (line.Length > currentIndex + 3 && line[currentIndex + 3] == '<')
+                        {
+                            // It is a Formalized Comment start that is not well positioned
+                            tokensLine.AddDiagnostic(MessageCode.WrongFormalizedCommentMarckupPosition,
+                                startIndex,
+                                startIndex + 3);
+                            // consume the * char and the three < chars
+                            currentIndex += 4;
+                            return new Token(TokenType.FORMALIZED_COMMENTS_START, startIndex, startIndex + 3, tokensLine);
+                        }
+                        else
+                        {
+                            // It is a Multiline Comment start that is not well positioned
+                            tokensLine.AddDiagnostic(MessageCode.WrongMultilineCommentMarckupPosition,
+                                startIndex,
+                                startIndex + 2);
+                            // We are in the case of a Multiline Comment start
+                            // consume the * char and the two < chars
+                            currentIndex += 3;
+                            return new Token(TokenType.MULTILINES_COMMENTS_START, startIndex, startIndex + 2, tokensLine);
+                        }
+                    }
+
+                    currentIndex += 1;
+                    return new Token(TokenType.InvalidToken, startIndex, startIndex, tokensLine);
                 case '.':
                     //PeriodSeparator=7,
                     // p46: A separator period is composed of a period followed by a space.
@@ -809,7 +971,25 @@ namespace TypeCobol.Compiler.Scanner
                         currentIndex++;
                         // scan the = char and a space
                         return ScanOneCharWithPossibleSpaceAfter(startIndex, TokenType.LessThanOrEqualOperator);
-                    } else {
+                    }
+                    else if (line[currentIndex - 1] == '%' && line[currentIndex + 1] == '<')
+                    {
+                        if (line.Length > currentIndex + 2 && line[currentIndex + 2] == '<')
+                        {
+                            // We are in the case of a Formalize Comment start
+                            // consume the three < chars
+                            currentIndex += 3;
+                            return new Token(TokenType.FORMALIZED_COMMENTS_START, startIndex-1, startIndex + 2, tokensLine);
+                        }
+                        else
+                        {
+                            // We are in the case of a Multiline comments start
+                            currentIndex += 2;
+                            return new Token(TokenType.MULTILINES_COMMENTS_START, startIndex-1, startIndex + 1, tokensLine);
+                        }
+                    }
+                    else
+                    {
                         // consume < char and try to match it as a less than operator
                         currentIndex++;
                         return new Token(TokenType.LessThanOperator, startIndex, startIndex, tokensLine);
@@ -839,7 +1019,8 @@ namespace TypeCobol.Compiler.Scanner
                         currentIndex++;
                         // scan the = char and a space
                         return ScanOneCharWithPossibleSpaceAfter(startIndex, TokenType.GreaterThanOrEqualOperator);
-                    } else {
+                    }
+                    else {
                         // consume > char and try to match it as a greater than operator
                         currentIndex++;
                         return new Token(TokenType.GreaterThanOperator, startIndex, startIndex, tokensLine);
@@ -1130,7 +1311,7 @@ namespace TypeCobol.Compiler.Scanner
             return ScanOneCharFollowedBySpace(startIndex, tokenType, MessageCode.ImplementationError, false);
         }
 
-    private Token ScanOneCharFollowedBySpace(int startIndex, TokenType tokenType, MessageCode messageCode, bool spaceAfterisMandatory =true)
+        private Token ScanOneCharFollowedBySpace(int startIndex, TokenType tokenType, MessageCode messageCode, bool spaceAfterisMandatory =true)
         {
             if (currentIndex == lastIndex)
             {
@@ -1768,6 +1949,10 @@ namespace TypeCobol.Compiler.Scanner
             {
                 tokenType = TokenType.IntrinsicFunctionName;
             }
+            else if (tokensLine.ScanState.InsideFormalizedComment)
+            {
+                tokenType = TokenUtils.GetFormalComTokenTypeFromTokenString(tokenText);
+            }
             else
             {
                 // p12: A reserved word is a character-string with a predefined meaning in a COBOL source
@@ -1959,7 +2144,7 @@ namespace TypeCobol.Compiler.Scanner
 
             // Create a single token including all the chars participating in the CBL/PROCESS directive 
             int stopIndex = currentIndex - 1;
-            Token sourceToken = new Token(TokenType.CompilerDirective, startIndex, stopIndex, tokensLine);
+            Token sourceToken = new Token(TokenType.COMPILER_DIRECTIVE, startIndex, stopIndex, tokensLine);
             
             // Wrap the source token in a CompilerDirectiveToken (which is a GroupToken by defaut)
             IList<Token> originalTokens = new List<Token>();
@@ -1972,6 +2157,15 @@ namespace TypeCobol.Compiler.Scanner
             return compilerDirectiveToken;
         }
 
+        private Token ScanUntilDelimiter(int startIndex, TokenType tokenType, string delimiter)
+        {
+            int end = line.IndexOf(delimiter, StringComparison.Ordinal) - 1;
+            if (end == -2)
+                end = lastIndex;
+            currentIndex = end + 1;
+            return new Token(tokenType, startIndex, end, tokensLine);
+        }
+        
         /// <summary>
         /// Look for pattern ':' (cobol word chars)+ ':'
         /// </summary>

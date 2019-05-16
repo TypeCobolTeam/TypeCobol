@@ -91,7 +91,11 @@ namespace TypeCobol.Compiler.Preprocessor
 
             // Optionnaly activate Antlr Parser performance profiling
             // WARNING : use this in a single-treaded context only (uses static field)       
-            if (AntlrPerformanceProfiler == null && perfStatsForParserInvocation.ActivateDetailedAntlrPofiling) AntlrPerformanceProfiler = new AntlrPerformanceProfiler(directivesParser);
+            if (perfStatsForParserInvocation.ActivateDetailedAntlrPofiling)
+                AntlrPerformanceProfiler = new AntlrPerformanceProfiler(directivesParser);
+            else
+                AntlrPerformanceProfiler = null;
+
             if (AntlrPerformanceProfiler != null)
             {
                 // Replace the generated parser by a subclass which traces all rules invocations
@@ -311,7 +315,7 @@ namespace TypeCobol.Compiler.Preprocessor
                             Token failedDirectiveToken = tokensLineWithCopyDirective.TokensWithCompilerDirectives
                                 .First(
                                     token =>
-                                        token.TokenType == TokenType.CopyImportDirective &&
+                                        token.TokenType == TokenType.COPY_IMPORT_DIRECTIVE &&
                                         ((CompilerDirectiveToken)token).CompilerDirective == copyDirective);
 
                             Diagnostic diag = new Diagnostic(
@@ -628,7 +632,7 @@ namespace TypeCobol.Compiler.Preprocessor
                             Token failedDirectiveToken = tokensLineWithCopyDirective.TokensWithCompilerDirectives
                                 .First(
                                     token =>
-                                        token.TokenType == TokenType.CopyImportDirective &&
+                                        token.TokenType == TokenType.COPY_IMPORT_DIRECTIVE &&
                                         ((CompilerDirectiveToken) token).CompilerDirective == copyDirective);
 
                             Diagnostic diag = new Diagnostic(

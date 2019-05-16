@@ -8,11 +8,13 @@ namespace TypeCobol.Compiler.CodeElements {
 	using System.Collections.Generic;
 
     /// <summary>TypeCobol function declaration</summary>
-    public class FunctionDeclarationHeader: CodeElement {
+    public class FunctionDeclarationHeader: CodeElement, IFormalizedCommentable
+    {
 	    public SymbolDefinition FunctionName { get; private set; }
 	    public AccessModifier Visibility { get; private set; }
 	    public FunctionType UserDefinedType { get; private set; }
-	    public FunctionType ActualType {
+        public FormalizedCommentDocumentation FormalizedCommentDocumentation { get; set; }
+        public FunctionType ActualType {
 		    get {
 			    if ( Profile.IsFunction && !Profile.IsProcedure) return FunctionType.Function;
 			    if (!Profile.IsFunction &&  Profile.IsProcedure) return FunctionType.Procedure;
@@ -24,12 +26,13 @@ namespace TypeCobol.Compiler.CodeElements {
 		    }
 	    }
 
-	    public FunctionDeclarationHeader(SymbolDefinition name, AccessModifier visibility, FunctionType type)
+	    public FunctionDeclarationHeader(SymbolDefinition name, AccessModifier visibility, FunctionType type, FormalizedCommentDocumentation formalizedCommentDocumentation = null)
 		    : base(CodeElementType.FunctionDeclarationHeader) {
 		    this.FunctionName = name;
 		    this.Visibility = visibility;
 		    this.UserDefinedType = type;
 		    this.Profile = new ParametersProfile();
+	        this.FormalizedCommentDocumentation = formalizedCommentDocumentation;
 	    }
 
 	    // TO DO : remove this and move to second parsing phase
@@ -186,7 +189,7 @@ namespace TypeCobol.Compiler.CodeElements {
 
             //Use the Token.Text of usage instead of the DataUsage enum. 
             //Because Cobol developers won't understand enum value (eg for "comp-3" in Token.Text you get "PackedDecimal" in the enum).
-            var usageToken = ((ParameterDescriptionEntry) parameter.CodeElement).Usage?.Token;
+            var usageToken = parameter.CodeElement.Usage?.Token;
             if (usageToken != null)
             {
                 if (addSpaceSeparatorBeforeUsage)

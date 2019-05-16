@@ -22,7 +22,7 @@ namespace TypeCobol.Compiler.Nodes {
 		    try {
 			    foreach(var attr in attribute.Split('.')) {
 				    if (value == null) break;
-				    value = attributes[attr].GetValue(value, table);
+				    value = attributes[attr.ToLower()].GetValue(value, table);
 			    }
 			    return value;
 		    } catch (KeyNotFoundException) {
@@ -45,18 +45,20 @@ namespace TypeCobol.Compiler.Nodes {
 		    attributes["definitions"] = new DefinitionsAttribute();
 	        attributes["usage"] = new UsageAttribute();
 	        attributes["hash"] = new HashAttribute();
-	        attributes["displayableReceivers"] = new PointerDisplayableReceiversAttribute();
+	        attributes["displayablereceivers"] = new PointerDisplayableReceiversAttribute();
 	        attributes["receivers"] = new PointerReceiversAttribute();
             attributes["receiverusage"] = new ReceiverUsageAttribute();
-	        attributes["incrementDirection"] = new incrementDirectionAttribute();
-	        attributes["needCompute"] = new NeedComputeAttribute();
+	        attributes["incrementdirection"] = new incrementDirectionAttribute();
+	        attributes["needcompute"] = new NeedComputeAttribute();
 	        attributes["ispointerincrementation"] = new IsPointerIncrementationAttribute();
+	        attributes["isnested"] = new IsNestedAttribute();
+	        attributes["containnested"] = new ContainNestedAttribute();
             attributes["global"] = new GlobalAttribute();
             //not used?
             attributes["typecobol"] = new TypeCobolAttribute();
 		    attributes["visibility"] = new VisibilityAttribute();
 		    attributes["copyname"] = new LibraryCopyAttribute();
-		    attributes["programName8"] = new ProgramName8Attribute();
+		    attributes["programname8"] = new ProgramName8Attribute();
             attributes["imports"] = new ProgramImportsAttribute();
 	    }
 	    private static ContainerAttribute DEFAULT = new ContainerAttribute();
@@ -163,7 +165,7 @@ namespace TypeCobol.Compiler.Nodes {
 
 		    var node = o as DataDescription;
 	        if (node != null) {
-                    var data = node.CodeElement as DataDescriptionEntry;
+                    var data = node.CodeElement;
 	            if (data != null) {
                         return /*data.Picture!=null? data.Picture.Value :*/ data.UserDefinedDataType != null ? data.UserDefinedDataType.Name : null;
                     }
@@ -183,7 +185,7 @@ namespace TypeCobol.Compiler.Nodes {
         {
             var data = o as DataDescription;
             if (data == null) return null;
-            TypeCobol.Compiler.CodeElements.Value value = ((DataDescriptionEntry)data.CodeElement).InitialValue;
+            TypeCobol.Compiler.CodeElements.Value value = data.CodeElement.InitialValue;
             if (value != null)
             {
                 if (value.LiteralType == Value.ValueLiteralType.Boolean)
@@ -202,7 +204,7 @@ namespace TypeCobol.Compiler.Nodes {
 	    {
 		    var data = o as DataDefinition;
 		    if (data == null) return null;
-		    return string.Format("{0:00}", ((DataDefinitionEntry)data.CodeElement)?.LevelNumber?.Value);
+		    return string.Format("{0:00}", data.CodeElement?.LevelNumber?.Value);
 	    }
     }
 
@@ -275,7 +277,7 @@ namespace TypeCobol.Compiler.Nodes {
             var node = (Node)o;
             if (node.IsFlagSet(Node.Flag.NodeContainsPointer))
             {
-                var setIndex = node.CodeElement as SetStatementForIndexes;
+                var setIndex = (node as Set)?.CodeElement as SetStatementForIndexes;
                 if (setIndex?.SendingVariable.ArithmeticExpression != null)
                     return true;
             }
@@ -291,8 +293,25 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    
+    internal class IsNestedAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var fun = o as FunctionDeclaration;
+            if (fun == null) return null;
+            return fun.GenerateAsNested.ToString();
+        }
+    }
 
+    internal class ContainNestedAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            if (o is Program == false) return false;
+
+            return DefinitionsAttribute.GetFunctionsGeneratedAsNested(o as Program).Public.Count > 0;
+        }
+    }
 
     internal class incrementDirectionAttribute : Attribute
     {
@@ -313,10 +332,14 @@ namespace TypeCobol.Compiler.Nodes {
         {
             var codeElement = ((Node)o).CodeElement;
             var variablesWritten = codeElement.StorageAreaWrites;
+            List<URI> variablesURI = new List<URI>();
             if (variablesWritten == null) return null;
             if (variablesWritten.Count == 0) return null;
-            if (variablesWritten.Count == 1) return new URI(variablesWritten[0].ToString());
-            throw new System.ArgumentOutOfRangeException("Too many receiving items (" + variablesWritten.Count + ")");
+            foreach (var codeElementStorageAreaWrite in variablesWritten)
+            {
+                variablesURI.Add(new URI(codeElementStorageAreaWrite.ToString()));
+            }
+            return variablesURI;
         }
     }
     internal class PointerDisplayableReceiversAttribute : Attribute
@@ -330,10 +353,10 @@ namespace TypeCobol.Compiler.Nodes {
                 foreach (var data in node.StorageAreaWritesDataDefinition)
                 {
                     // Usage of Regex.Replace to replace only the first ooccurence of dataDef.Name to avoid probleme with groups like myPtrGroup::myPtr
-                    var regex = new Regex(Regex.Escape(data.Value.Item2.Name));
+                    var regex = new Regex(Regex.Escape(data.Value.Name));
                     displayableWritten.Add(
                         regex.Replace(
-                            data.Key.ToString(), data.Value.Item2.Name + data.Value.Item2.Hash, 1)
+                            data.Key.ToString(), data.Value.Name + data.Value.Hash, 1)
                             .Replace(" IN ", " OF "));
                 }
 
@@ -350,7 +373,7 @@ namespace TypeCobol.Compiler.Nodes {
             var node = (Node)o;
             if (node.CodeElement is SetStatementForIndexes)
             {
-                return node.StorageAreaWritesDataDefinition.Values.Select(tuple => tuple.Item2);
+                return node.StorageAreaWritesDataDefinition.Values;
             }
             return null;
         }
@@ -466,6 +489,7 @@ internal class DefinitionsAttribute: Attribute {
 		var definitions = new Definitions();
 		definitions.types = GetTypes(table);
 		definitions.functions = GetFunctions(table);
+		definitions.functionsGeneratedAsNested = GetFunctionsGeneratedAsNested(o as Program);
 		return definitions;
 	}
 	private Definitions.NList GetTypes(SymbolTable table) {
@@ -478,14 +502,31 @@ internal class DefinitionsAttribute: Attribute {
 	private Definitions.NList GetFunctions(SymbolTable table) {
 		var list = new Definitions.NList();
 		if (table == null) return list;
-		foreach(var items in table.Functions) list.AddRange(items.Value);
+		foreach(var items in table.Functions) list.AddRange(items.Value.Where(fd => !fd.GenerateAsNested));
 		list.AddRange(GetFunctions(table.EnclosingScope));
 		return list;
 	}
-}
-public class Definitions {
+
+    internal static Definitions.NList GetFunctionsGeneratedAsNested(Program pgm)
+    {
+        var list = new Definitions.NList();
+        if (pgm == null) return list;
+
+        list.AddRange(pgm.Children.OfType<ProcedureDivision>().SelectMany(c => c.Children)
+            .Where(c => c is FunctionDeclaration fun && fun.GenerateAsNested));
+
+        foreach (var pgmNestedProgram in pgm.NestedPrograms)
+        {
+            list.AddRange(GetFunctionsGeneratedAsNested(pgmNestedProgram));
+        }
+        return list;
+    }
+
+    }
+    public class Definitions {
 	public NList types;
 	public NList functions;
+	public NList functionsGeneratedAsNested;
 
 	public override string ToString() {
 		var str = new System.Text.StringBuilder();
@@ -503,23 +544,33 @@ public class Definitions {
 		internal NList(): base() { }
 		public List<Node> Public  { get { return retrieve(AccessModifier.Public); } }
         public bool PublicIsNotEmpty { get { return retrieve(AccessModifier.Public).Count > 0; } }
-		public List<Node> Private { get { return retrieve(AccessModifier.Private); } }
-		private List<Node> retrieve(AccessModifier visibility) {
-			var results = new List<Node>();
-			foreach(var node in this) {
-				var fun = node as FunctionDeclaration;
-				if (fun == null) continue;
-				if (fun.CodeElement().Visibility == visibility) results.Add(node);
-			}
-			return results;
-		}
-	}
+        public List<Node> Private { get { return retrieve(AccessModifier.Private); } }
+
+	    private List<Node> retrieve(AccessModifier visibility) {
+	        var results = new List<Node>();
+	        foreach(var node in this) {
+	            if (!(node is FunctionDeclaration fun)) continue;
+	            if (fun.CodeElement.Visibility == visibility) results.Add(node);
+	        }
+	        return results;
+	    }
+
+        public IEnumerable<Node> Concat(List<Node> list, bool publicVisibility)
+        {
+            if (publicVisibility)
+            {
+                return this.Public.Concat(list);
+            }
+
+            return this.Private.Concat(list);
+        }
+    }
 }
 
 internal class VisibilityAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
 		var fun = o as FunctionDeclaration;
-		if (fun != null) return fun.CodeElement().Visibility.ToString();
+		if (fun != null) return fun.CodeElement.Visibility.ToString();
 		return null;
 	}
 }
@@ -527,9 +578,10 @@ internal class VisibilityAttribute: Attribute {
 internal class LibraryCopyAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
 		var pgm = ((Node)o).GetProgramNode();
-		var copies = pgm.GetCodeElementHolderChildren<LibraryCopyCodeElement>();
-		var copy = copies.Count > 0? ((LibraryCopy)copies[0]) : null;
-		return copy == null? "?TCRFUN_LIBRARY_COPY?" : copy.CodeElement().Name.Name;
+
+		var copies = pgm.GetChildren<LibraryCopy>();
+		var copy = copies.Count > 0? copies[0] : null;
+		return copy == null? "?TCRFUN_LIBRARY_COPY?" : copy.CodeElement.Name.Name;
 	}
 }
     /// <summary>
@@ -676,7 +728,7 @@ internal class LibraryCopyAttribute: Attribute {
                     FunctionDeclaration fun_decl = proc_style_call.FunctionDeclaration;
                     if (fun_decl != null)
                     {
-                        if (fun_decl.CodeElement().Visibility == AccessModifier.Private)
+                        if (fun_decl.CodeElement.Visibility == AccessModifier.Private)
                             continue;//Ignore a Private function ==> Cannot Import It.
                     }
                     var item_pgm = call.Item1[call.Item1.Count - 1];

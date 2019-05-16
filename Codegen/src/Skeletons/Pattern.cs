@@ -18,8 +18,6 @@ namespace TypeCobol.Codegen.Skeletons {
 		public Dictionary<string,string> Variables { get; internal set; }
 		/// <summary>Code template.</summary>
 		public string Template  { get; internal set; }
-		/// <summary>Variable Delimiter</summary>
-		internal string Delimiter = "%";
         /// <summary>
         /// True if a new line must be generated before the template
         /// </summary>

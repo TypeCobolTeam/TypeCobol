@@ -1,20 +1,20 @@
-﻿--- Program ---
+--- Program ---
 PROGRAM: MYPGM common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 --- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
 -- DATA --------
   PRTD20L:Alphanumeric
   PRTD20-RECH:Alphanumeric
-  PRTD20-VIDE:BOOL
+  PRTD20-VIDE:Level88
   PRTD20-I:Alphanumeric
   LDO-NO-DOSSIER:Numeric
   LDO-NO-DOSSIER:Numeric
   LDO-CD-ETA:Alphanumeric
   LDO-CD-ETA:Alphanumeric
-  LDO-CD-ETA-SAI:BOOL
-  LDO-CD-ETA-SAI:BOOL
-  LDO-CD-ETA-VAL:BOOL
-  LDO-CD-ETA-VAL:BOOL
+  LDO-CD-ETA-SAI:Level88
+  LDO-CD-ETA-SAI:Level88
+  LDO-CD-ETA-VAL:Level88
+  LDO-CD-ETA-VAL:Level88
   CONVEAL:Alphanumeric
   CONVEA-VEA-VEA-OUT-VEA:Alphanumeric
   CONVEA-VEA-VEA-OUT-VEA-2:Alphanumeric
@@ -29,7 +29,7 @@ PROGRAM: MYPGM common:False initial:False recursive:False
   CONVEA-TESTVEATEST:Alphanumeric
   PRTD20S:Alphanumeric
   PRTD20S-RECH:Alphanumeric
-  PRTD20S-VIDE:BOOL
+  PRTD20S-VIDE:Level88
   PRTD20S-I:Alphanumeric
   CONVEAS:Alphanumeric
   CONVEAS-VEAS-VEAS-OUT-VEA:Alphanumeric
