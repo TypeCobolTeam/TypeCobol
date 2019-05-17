@@ -18,7 +18,7 @@ namespace TypeCobol.Analysis.Graph
         /// BasicBlock calllback type.
         /// </summary>
         /// <param name="block">The BasicBlock</param>
-        /// <param name="cfg">The Control Flow Graph in with the basic Block belongs.</param>
+        /// <param name="cfg">The Control Flow Graph in wich the basic Block belongs to.</param>
         /// <returns>true if ok, false otherwise</returns>
         public delegate bool BasicBlockCallback(BasicBlock<N, D> block, ControlFlowGraph<N, D> cfg);
 

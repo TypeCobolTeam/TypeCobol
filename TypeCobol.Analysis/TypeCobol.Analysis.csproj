@@ -49,6 +49,8 @@
     <Compile Include="Cfg\DefaultControlFlowGraphBuilder.cs" />
     <Compile Include="Graph\BasicBlock.cs" />
     <Compile Include="Graph\ControlFlowGraph.cs" />
+    <Compile Include="Graph\CfgDotFileGenerator.cs" />
+    <Compile Include="Graph\ICfgFileGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resource.Designer.cs">
       <AutoGen>True</AutoGen>
