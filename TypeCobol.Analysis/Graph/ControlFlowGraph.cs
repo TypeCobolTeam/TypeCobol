@@ -18,9 +18,48 @@ namespace TypeCobol.Analysis.Graph
         /// BasicBlock calllback type.
         /// </summary>
         /// <param name="block">The BasicBlock</param>
-        /// <param name="cfg">The Control Flow Graph in with the basic Block belongs.</param>
+        /// <param name="cfg">The Control Flow Graph in wich the basic Block belongs to.</param>
         /// <returns>true if ok, false otherwise</returns>
         public delegate bool BasicBlockCallback(BasicBlock<N, D> block, ControlFlowGraph<N, D> cfg);
+
+        /// <summary>
+        /// Flag on a Cfg.
+        /// </summary>
+        [Flags]
+        public enum Flags : uint
+        {
+            Compound = 0x01 << 0,       //Flag to indicate that this Cfg graph has subgraphs.
+        }
+
+        /// <summary>
+        /// Symbol Flags.
+        /// </summary>
+        public Flags Flag
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// Set a set of flags to true or false.
+        /// </summary>
+        /// <param name="flag"></param>
+        /// <param name="value"></param>
+        internal virtual void SetFlag(Flags flag, bool value)
+        {
+            this.Flag = value ? (Flags)(this.Flag | flag)
+                              : (Flags)(this.Flag & ~flag);
+        }
+
+        /// <summary>
+        /// Determines if the given flag is set.
+        /// </summary>
+        /// <param name="flag">The flag to be tested</param>
+        /// <returns>true if yes, false otherwise.</returns>
+        public bool HasFlag(Flags flag)
+        {
+            return (this.Flag & flag) != 0;
+        }
 
         /// <summary>
         /// Root blocks. Usually it is a singleton it is the first block in the program, but alos on Exception handlers.
