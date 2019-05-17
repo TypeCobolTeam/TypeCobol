@@ -227,15 +227,19 @@ namespace TypeCobol.Compiler.Parser
                         }
                         if (IncrementalLineLimit >= 0 && tokenStart.Line >= IncrementalLineLimit)
                         {
-                            if (ResetedCodeElementsLines == null)
+                            bool tokenStartIsImported = tokenStart is TypeCobol.Compiler.Preprocessor.ImportedToken;
+                            if (!tokenStartIsImported)
                             {
-                                ResetedCodeElementsLines = new HashSet<CodeElementsLine>();                                
-                            }                            
-                            if (ResetedCodeElementsLines.Count == 0 || !ResetedCodeElementsLines.Contains(codeElementsLine))
-                            {
-                                ResetedCodeElementsLines.Add(codeElementsLine);
-                                codeElementsLine.ResetCodeElements();
-                            }                            
+                                if (ResetedCodeElementsLines == null)
+                                {
+                                    ResetedCodeElementsLines = new HashSet<CodeElementsLine>();
+                                }
+                                if (ResetedCodeElementsLines.Count == 0 || !ResetedCodeElementsLines.Contains(codeElementsLine))
+                                {
+                                    ResetedCodeElementsLines.Add(codeElementsLine);
+                                    codeElementsLine.ResetCodeElements();
+                                }
+                            }
                         }
 
                         // Register that this line was updated

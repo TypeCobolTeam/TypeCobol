@@ -183,6 +183,17 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("FirstLineEditCommentBeforeIdentDiv", LsrTestingOptions.NoLsrTesting, false, true);
         }
+
+
+        /// <summary>
+        /// Test for the fix of:https://github.com/TypeCobolTeam/TypeCobol/issues/1370 
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void IncrementalThruTokenInsideCopies()
+        {
+            LSRTestHelper.Test("IncrementalThruTokenInsideCopies", LsrTestingOptions.NoLsrTesting, false, true);
+        }        
         #endregion
 
         #region SyntaxColoring
