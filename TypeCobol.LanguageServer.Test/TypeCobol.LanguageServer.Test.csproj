@@ -87,6 +87,15 @@
     <None Include="LSRTests\FormalizedCommentIncScan\output_expected\FormalizedCommentIncScan.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\IncrementalThruTokenInsideCopies\input\IncrementalThruTokenInsideCopies.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\IncrementalThruTokenInsideCopies\input\YINIPG2.cpy">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\IncrementalThruTokenInsideCopies\output_expected\IncrementalThruTokenInsideCopies.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\OnHover\input\OnHover.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
