@@ -587,10 +587,23 @@ namespace TypeCobol.LanguageServer
         private void ProgramClassChanged(object cUnit, ProgramClassEvent programEvent)
         {
             var compilationUnit = cUnit as CompilationUnit;
-            var fileUri = OpenedDocumentContext.Keys.FirstOrDefault(k => compilationUnit != null && k.LocalPath.Contains(compilationUnit.TextSourceInfo.Name));
+            var fileUri = OpenedDocumentContext.Keys.FirstOrDefault(k =>
+                compilationUnit != null && k.LocalPath.Contains(compilationUnit.TextSourceInfo.Name));
 
-            var diags = compilationUnit?.AllDiagnostics().Take(TypeCobolConfiguration.MaximumDiagnostics == 0 ? 100 : TypeCobolConfiguration.MaximumDiagnostics);
-            DiagnosticsEvent(fileUri, new DiagnosticEvent() { Diagnostics = diags});
+            var test = compilationUnit?.AllDiagnostics().GroupBy(d => d.Info.Severity);
+            System.Collections.Generic.IEnumerable<Diagnostic> diags = new List<Diagnostic>();
+
+            var severityGroups = compilationUnit?.AllDiagnostics().GroupBy(d => d.Info.Severity);
+
+            if (severityGroups != null)
+            {
+                foreach (var group in severityGroups.OrderBy(d => d.Key))
+                {
+                    diags = diags.Any() ? diags.Concat(group) : group;
+                }
+            }
+            
+            DiagnosticsEvent(fileUri, new DiagnosticEvent() { Diagnostics = diags.Take(TypeCobolConfiguration.MaximumDiagnostics == 0 ? 200 : TypeCobolConfiguration.MaximumDiagnostics) });
 
             if (compilationUnit?.MissingCopies.Count > 0)
                 MissingCopiesEvent(fileUri, new MissingCopiesEvent() { Copies = compilationUnit.MissingCopies.Select(c => c.TextName).Distinct().ToList() });
