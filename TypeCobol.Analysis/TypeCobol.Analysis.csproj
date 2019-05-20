@@ -48,6 +48,7 @@
     <Compile Include="Cfg\ControlFlowGraphBuilder.cs" />
     <Compile Include="Cfg\DefaultControlFlowGraphBuilder.cs" />
     <Compile Include="Graph\BasicBlock.cs" />
+    <Compile Include="Graph\CfgDotFileForNodeGenerator.cs" />
     <Compile Include="Graph\ControlFlowGraph.cs" />
     <Compile Include="Graph\CfgDotFileGenerator.cs" />
     <Compile Include="Graph\ICfgFileGenerator.cs" />

@@ -58,7 +58,9 @@ namespace TypeCobol.Analysis.Graph
             Resolved = 0x01 << 0,       //Flag if this basic block is totally resolved.
             Ending = 0x01 << 1,         //Flag if this basic block is an ending block.
             Default = 0x01 << 2,        //Flag if this basic block is  default block for instance a WhenOther block.
-            Declaratives = 0x02 << 3,   //Flag if this basic block is inside a declaratives section.
+            Declaratives = 0x01 << 3,   //Flag if this basic block is inside a declaratives section.
+            Start = 0x01 << 4,           //Flag for a start node.
+            End = 0x01 << 5,           //Flag for a end node.
         }
 
         /// <summary>

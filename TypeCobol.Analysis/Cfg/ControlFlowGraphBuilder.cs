@@ -2373,6 +2373,7 @@ namespace TypeCobol.Analysis.Cfg
             var startBlock = CreateBlock(null, false); 
             Cfg.BlockFor[procDiv] = startBlock;
             Cfg.RootBlocks.Add(startBlock);
+            startBlock.SetFlag(BasicBlock<Node, D>.Flags.Start, true);
             CurrentBasicBlock = startBlock;
             //Create a Root Section
             CfgSectionSymbol sym = new CfgSectionSymbol("<<RootSection>>");

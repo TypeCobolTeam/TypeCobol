@@ -34,12 +34,47 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
+        /// The Digraph buffer
+        /// </summary>
+        private StringBuilder DigraphBuilder;
+
+        /// <summary>
+        /// Get the string representing an instruction.
+        /// </summary>
+        /// <param name="instruction">The instruction to get the string representation.</param>
+        protected virtual String InstructionToString(N instruction)
+        {
+            return instruction == null ? "<null>" : instruction.ToString();
+        }
+
+        /// <summary>
         /// Call back function for emitting a BasicBlock.
         /// </summary>
         /// <param name="block"></param>
         /// <param name="cfg"></param>
         private bool EmitBasicBlock(BasicBlock<N, D> block, ControlFlowGraph<N, D> cfg)
         {
+            Writer.WriteLine(string.Format("Block{0} [", block.Index));
+            StringBuilder sb = new StringBuilder("label = \"{");
+            sb.Append(block.HasFlag(BasicBlock<N, D>.Flags.Start) ? "START" :
+                block.HasFlag(BasicBlock<N, D>.Flags.End) ? "END" : ("Block" + block.Index));
+            sb.Append("|");
+
+            //Print all instructions inside the block.
+            foreach(var i in block.Instructions)
+            {
+                sb.Append(InstructionToString(i));
+                sb.Append("\\l");
+            }
+            sb.Append("\"}");
+            Writer.WriteLine("]");
+
+            //Emit the digraph
+            foreach(var edge in block.SuccessorEdges)
+            {
+                DigraphBuilder.AppendLine(string.Format("Block{0} -> Block{1}", block.Index, edge));
+            }
+
             return true;
         }
 
@@ -49,6 +84,7 @@ namespace TypeCobol.Analysis.Graph
         /// <param name="cfg"></param>
         public CfgDotFileGenerator()
         {
+
         }
 
         /// <summary>
@@ -66,9 +102,20 @@ namespace TypeCobol.Analysis.Graph
             this.Cfg = cfg;
             if (Cfg != null)
             {
-                Writer.WriteLine("digraph G {");
+                DigraphBuilder = new StringBuilder();
+                Writer.WriteLine("digraph Cfg {");
+                Writer.WriteLine("node [");
+                Writer.WriteLine("shape = \"record\"");
+                Writer.WriteLine("]");
+                Writer.WriteLine("");
+
+                Writer.WriteLine("edge [");
+                Writer.WriteLine("arrowtail = \"empty\"");
+                Writer.WriteLine("]");
+
                 //Run DFS on the flow graph, with the emiter callback method.
                 Cfg.DFS(EmitBasicBlock);
+                Writer.WriteLine(DigraphBuilder.ToString());
                 Writer.WriteLine("}");
             }
         }
