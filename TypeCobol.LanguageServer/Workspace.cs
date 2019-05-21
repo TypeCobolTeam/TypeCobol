@@ -590,8 +590,7 @@ namespace TypeCobol.LanguageServer
             var fileUri = OpenedDocumentContext.Keys.FirstOrDefault(k =>
                 compilationUnit != null && k.LocalPath.Contains(compilationUnit.TextSourceInfo.Name));
 
-            var test = compilationUnit?.AllDiagnostics().GroupBy(d => d.Info.Severity);
-            System.Collections.Generic.IEnumerable<Diagnostic> diags = new List<Diagnostic>();
+            IEnumerable<Diagnostic> diags = new List<Diagnostic>();
 
             var severityGroups = compilationUnit?.AllDiagnostics().GroupBy(d => d.Info.Severity);
 
