@@ -87,6 +87,12 @@
     <None Include="LSRTests\FormalizedCommentIncScan\output_expected\FormalizedCommentIncScan.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\IncrementalErrorHandling\input\IncrementalErrorHandling.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\IncrementalErrorHandling\output_expected\IncrementalErrorHandling.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\IncrementalThruTokenInsideCopies\input\IncrementalThruTokenInsideCopies.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -140,6 +140,13 @@ namespace TypeCobol.LanguageServer.Test
             LSRTestHelper.Test("FormalizedCommentIncScan", LsrTestingOptions.NoLsrTesting, false, true);
         }
 
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void IncrementalErrorHandling()
+        {
+            LSRTestHelper.Test("IncrementalErrorHandling", LsrTestingOptions.NoLsrTesting, false, true);
+        }
+
         /// <summary>
         /// This test is releated to issue:https://github.com/TypeCobolTeam/TypeCobol/issues/1350
         /// The following steps were raising an exception, before the fix.
