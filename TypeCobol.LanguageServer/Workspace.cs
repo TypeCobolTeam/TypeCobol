@@ -592,12 +592,15 @@ namespace TypeCobol.LanguageServer
 
             IEnumerable<Diagnostic> diags = new List<Diagnostic>();
 
+            // Need to handle the groups instead of the diagnostics, so the order of appearance will be the same within the groups
+            // This is meant to avoid the modification of the LSR tests 
             var severityGroups = compilationUnit?.AllDiagnostics().GroupBy(d => d.Info.Severity);
 
             if (severityGroups != null)
             {
                 foreach (var group in severityGroups.OrderBy(d => d.Key))
                 {
+                    // Add Errors first, then Warnings, then Infos
                     diags = diags.Any() ? diags.Concat(group) : group;
                 }
             }
