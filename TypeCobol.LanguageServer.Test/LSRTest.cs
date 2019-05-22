@@ -140,6 +140,13 @@ namespace TypeCobol.LanguageServer.Test
             LSRTestHelper.Test("FormalizedCommentIncScan", LsrTestingOptions.NoLsrTesting, false, true);
         }
 
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void IncrementalErrorHandling()
+        {
+            LSRTestHelper.Test("IncrementalErrorHandling", LsrTestingOptions.NoLsrTesting, false, true);
+        }
+
         /// <summary>
         /// This test is releated to issue:https://github.com/TypeCobolTeam/TypeCobol/issues/1350
         /// The following steps were raising an exception, before the fix.
@@ -183,6 +190,17 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("FirstLineEditCommentBeforeIdentDiv", LsrTestingOptions.NoLsrTesting, false, true);
         }
+
+
+        /// <summary>
+        /// Test for the fix of:https://github.com/TypeCobolTeam/TypeCobol/issues/1370 
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void IncrementalThruTokenInsideCopies()
+        {
+            LSRTestHelper.Test("IncrementalThruTokenInsideCopies", LsrTestingOptions.NoLsrTesting, false, true);
+        }        
         #endregion
 
         #region SyntaxColoring
