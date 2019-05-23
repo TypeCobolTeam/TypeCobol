@@ -1,0 +1,172 @@
+digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{LINK-TEST-01. Block1|    SET IN1 TO INDEX-1\l}"
+]
+Block2 [
+label = "{LINK-TEST-01. Block2|    MOVE DN1 (IN1) TO DN2 (1)\l}"
+]
+Block3 [
+label = "{LINK-TEST-02-01. Block3|    SET IN1 TO 1\l}"
+]
+Block4 [
+label = "{LINK-TEST-02-01. Block4|    SEARCH DN1 VARYING IN1\l}"
+]
+Block5 [
+label = "{Block5|        AT END\l        AT END MOVE \"Z\" TO DN2 (2)\l}"
+]
+Block7 [
+label = "{Block7|}"
+]
+Block8 [
+label = "{LINK-TEST-02-02. Block8|    SET IN1 TO 1\l}"
+]
+Block9 [
+label = "{LINK-TEST-02-02. Block9|    SEARCH DN1 VARYING IN1\l}"
+]
+Block10 [
+label = "{Block10|        AT END\l        AT END MOVE \"Y\" TO DN2 (3)\l}"
+]
+Block12 [
+label = "{Block12|}"
+]
+Block13 [
+label = "{LINK-TEST-02-03. Block13|    MOVE 7 TO DN3\l}"
+]
+Block14 [
+label = "{LINK-TEST-02-03. Block14|    SET IN1 TO 1\l}"
+]
+Block15 [
+label = "{LINK-TEST-02-03. Block15|    SEARCH DN1 VARYING IN1\l}"
+]
+Block16 [
+label = "{Block16|        AT END\l        AT END MOVE \"X\" TO DN2 (4)\l}"
+]
+Block18 [
+label = "{Block18|}"
+]
+Block19 [
+label = "{LINK-TEST-02-04. Block19|    SET IN1 TO 1\l}"
+]
+Block20 [
+label = "{LINK-TEST-02-04. Block20|    SEARCH DN1 VARYING IN1\l}"
+]
+Block21 [
+label = "{Block21|        AT END\l        AT END MOVE \"W\" TO DN2 (5)\l}"
+]
+Block23 [
+label = "{Block23|}"
+]
+Block24 [
+label = "{LINK-TEST-03. Block24|    MOVE 10 TO DN3\l}"
+]
+Block25 [
+label = "{LINK-TEST-03-01. Block25|}"
+]
+Block26 [
+label = "{Block26|    IF CN1 (1)\l    IF CN1 (1)  MOVE \"A\" TO DN2 (6)\l}"
+]
+Block27 [
+label = "{Block27|}"
+]
+Block28 [
+label = "{LINK-TEST-03-02. Block28|}"
+]
+Block29 [
+label = "{Block29|    IF CN1 (5)\l    IF CN1 (5)  MOVE \"N\" TO DN2 (7)\l}"
+]
+Block31 [
+label = "{Block31|}"
+]
+Block32 [
+label = "{LINK-TEST-03-03. Block32|}"
+]
+Block33 [
+label = "{Block33|    IF CN2 (8)\l    IF CN2 (8) MOVE \"H\" TO DN2 (8)\l}"
+]
+Block34 [
+label = "{Block34|}"
+]
+Block35 [
+label = "{LINK-TEST-04. Block35|    SET IN1 TO 2\l}"
+]
+Block36 [
+label = "{LINK-TEST-04. Block36|    SET INDEX-1 TO IN1\l}"
+]
+Block37 [
+label = "{LINK-TEST-04. Block37|    MOVE 9 TO DN3\l}"
+]
+Block38 [
+label = "{EXIT-IC208. Block38|    EXIT PROGRAM\l}"
+]
+Block30 [
+label = "{Block30|        ELSE\l        ELSE MOVE \"V\" TO DN2 (7)\l}"
+]
+Block22 [
+label = "{Block22|        WHEN DN1 (IN1) EQUAL TO \"G\"\l            MOVE \"G\" TO DN2 (5)\l}"
+]
+Block17 [
+label = "{Block17|        WHEN DN1 (IN1) EQUAL TO \"H\"\l            MOVE \"H\" TO DN2 (4)\l}"
+]
+Block11 [
+label = "{Block11|        WHEN DN1 (IN1) EQUAL TO \"B\"\l            MOVE \"B\" TO DN2 (3)\l}"
+]
+Block6 [
+label = "{Block6|        WHEN DN1 (IN1) EQUAL TO \"D\"\l            MOVE \"D\" TO DN2 (2)\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block2 -> Block3
+Block3 -> Block4
+Block4 -> Block5
+Block4 -> Block6
+Block5 -> Block7
+Block7 -> Block8
+Block8 -> Block9
+Block9 -> Block10
+Block9 -> Block11
+Block10 -> Block12
+Block12 -> Block13
+Block13 -> Block14
+Block14 -> Block15
+Block15 -> Block16
+Block15 -> Block17
+Block16 -> Block18
+Block18 -> Block19
+Block19 -> Block20
+Block20 -> Block21
+Block20 -> Block22
+Block21 -> Block23
+Block23 -> Block24
+Block24 -> Block25
+Block25 -> Block26
+Block25 -> Block27
+Block26 -> Block27
+Block27 -> Block28
+Block28 -> Block29
+Block28 -> Block30
+Block29 -> Block31
+Block31 -> Block32
+Block32 -> Block33
+Block32 -> Block34
+Block33 -> Block34
+Block34 -> Block35
+Block35 -> Block36
+Block36 -> Block37
+Block37 -> Block38
+Block30 -> Block31
+Block22 -> Block23
+Block17 -> Block18
+Block11 -> Block12
+Block6 -> Block7
+
+}

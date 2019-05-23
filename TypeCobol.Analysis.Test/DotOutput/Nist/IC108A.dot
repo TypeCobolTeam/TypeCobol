@@ -1,0 +1,33 @@
+digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{PARA-IC111. Block1|    MOVE \"IC111A\" TO DN3\l}"
+]
+Block2 [
+label = "{PARA-IC111. Block2|    ADD 1 TO DN6\l}"
+]
+Block3 [
+label = "{PARA-IC111. Block3|    MOVE \"A\" TO LS2\l}"
+]
+Block4 [
+label = "{PARA-IC111. Block4|    MOVE \"A\" TO LS1\l}"
+]
+Block5 [
+label = "{EXIT-IC111. Block5|    EXIT PROGRAM\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block2 -> Block3
+Block3 -> Block4
+Block4 -> Block5
+
+}

@@ -1,0 +1,33 @@
+﻿digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{Block1|    PERFORM VARYING I FROM 1 BY 1 UNTIL I \> 3\l}"
+]
+Block2 [
+label = "{Block2|      PERFORM VARYING M FROM 1 BY 1 UNTIL M \> 5\l         DISPLAY I\l         DISPLAY M\l}"
+]
+Block3 [
+label = "{Block3|}"
+]
+Block4 [
+label = "{Block4|}"
+]
+Block0 -> Block1
+Block0 -> Block4
+Block1 -> Block2
+Block1 -> Block3
+Block2 -> Block3
+Block2 -> Block2
+Block3 -> Block4
+Block3 -> Block1
+
+}
