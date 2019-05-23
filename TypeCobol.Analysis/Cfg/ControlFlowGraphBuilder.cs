@@ -850,6 +850,9 @@ namespace TypeCobol.Analysis.Cfg
             {//This is the main program or a stacked program with no parent.           
                 if (CurrentProgramCfgBuilder == null)
                 {//The Main program
+                    if (AllCfgBuilder == null)
+                        AllCfgBuilder = new List<ControlFlowGraphBuilder<D>>();
+                    this.AllCfgBuilder.Add(this);
                     this.CurrentProgramCfgBuilder = this;                    
                 }
                 else
@@ -1550,7 +1553,7 @@ namespace TypeCobol.Analysis.Cfg
                 System.Diagnostics.Debug.Assert(Builder != null);
                 System.Diagnostics.Debug.Assert(CurrentBlock != null);
                 System.Diagnostics.Debug.Assert(nextBlock != null);
-                //Add the next bloc to the successors.
+                //Add the next block to the successors.
                 int nbIndex = Builder.Cfg.SuccessorEdges.Count;
                 Builder.Cfg.SuccessorEdges.Add(nextBlock);
                 //Link current block to all branches.
@@ -2369,17 +2372,17 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(Cfg != null);
             Cfg.ProcedureNode = procDiv;
             Cfg.Initialize();
-            //Create the starting block.
-            var startBlock = CreateBlock(null, false); 
-            Cfg.BlockFor[procDiv] = startBlock;
-            Cfg.RootBlocks.Add(startBlock);
-            startBlock.SetFlag(BasicBlock<Node, D>.Flags.Start, true);
-            CurrentBasicBlock = startBlock;
             //Create a Root Section
             CfgSectionSymbol sym = new CfgSectionSymbol("<<RootSection>>");
             EnterSectionOrParagraphSymbol(sym);
             //The new current section.
-            CurrentSection = sym;        
+            CurrentSection = sym;
+            //Create a starting Section
+            StartBlockSentence();
+            //Make the starting block of the Root section a root block.            
+            Cfg.BlockFor[procDiv] = CurrentBasicBlock;
+            Cfg.RootBlocks.Add(CurrentBasicBlock);
+            CurrentBasicBlock.SetFlag(BasicBlock<Node, D>.Flags.Start, true);
         }
 
         /// <summary>

@@ -117,7 +117,7 @@ namespace TypeCobol.Analysis.Graph
                 return;//Means stop
             foreach (var edge in block.SuccessorEdges)
             {
-                if (!discovered[edge])
+                if (!discovered[SuccessorEdges[edge].Index])
                 {
                     DFS(SuccessorEdges[edge], discovered, callback);
                 }

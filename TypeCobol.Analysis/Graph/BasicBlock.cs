@@ -93,6 +93,17 @@ namespace TypeCobol.Analysis.Graph
             return (this.Flag & flag) != 0;
         }
 
+        /// <summary>
+        /// Determines if this block can be considered as a END block.
+        /// </summary>
+        public bool MaybeEndBlock
+        {
+            get
+            {
+                return HasFlag(Flags.End) || (SuccessorEdges.Count == 0 && Instructions.Count == 0);
+            }
+        }
+
         public object Clone()
         {
             return MemberwiseClone();
