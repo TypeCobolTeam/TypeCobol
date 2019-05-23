@@ -3,11 +3,13 @@
       
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01 A PIC P(2) VALUE 10.
+       01 A PIC 9(4) VALUE 10.
+       01 B PIC 9(4).
        PROCEDURE DIVISION.
            IF A = 10 THEN
-             DISPLAY "A = 10"
-             DISPLAY "RIGHT ?"
-           END-IF.
+             NEXT SENTENCE
+           END-IF
+           DISPLAY "AFTER".
+           DISPLAY "CONTINUE".
        END PROGRAM IFTHEN.
       

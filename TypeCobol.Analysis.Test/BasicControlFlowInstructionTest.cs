@@ -1,16 +1,11 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Tools.Options_Config;
 using TypeCobol.Compiler.Parser;
-using TypeCobol.Tools.Options_Config;
 using TypeCobol.Compiler.Domain;
 using TypeCobol.Compiler;
-using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Symbols;
-using TypeCobol.Compiler.Types;
-using Type = TypeCobol.Compiler.Types.Type;
 using System.IO;
 using TypeCobol.Analysis.Cfg;
 
@@ -104,17 +99,19 @@ namespace TypeCobol.Analysis.Test
             //var currentProgram = Builder.Programs[0];
             //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
             Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
-            //In this case we have firts the nested programs cfg builders of the main program, followed by stacked program cfg builders.
+            //In this case we have first the Main program cfg, followed by the nested programs cfg builders of the main program, followed by stacked program cfg builders.
             //Stack programs cfg builders have no parent cfg builders.
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 5);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 6);
             Assert.IsNull(CfgBuilder.ParentProgramCfgBuilder);
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder[0].ParentProgramCfgBuilder == CfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[0] == CfgBuilder);
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[0].ParentProgramCfgBuilder);
             Assert.IsTrue(CfgBuilder.AllCfgBuilder[1].ParentProgramCfgBuilder == CfgBuilder);
             Assert.IsTrue(CfgBuilder.AllCfgBuilder[2].ParentProgramCfgBuilder == CfgBuilder);
-            Assert.IsNull(CfgBuilder.AllCfgBuilder[3].ParentProgramCfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[3].ParentProgramCfgBuilder == CfgBuilder);
             Assert.IsNull(CfgBuilder.AllCfgBuilder[4].ParentProgramCfgBuilder);
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[5].ParentProgramCfgBuilder);
         }
-       
+
         /// <summary>
         /// This is a simple test to ensure that given a Cobol program,
         /// all staked and nested program are capured.
@@ -130,77 +127,153 @@ namespace TypeCobol.Analysis.Test
             //var currentProgram = Builder.Programs[0];
             //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
             Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
-            //In this case we have firts the nested functions and programs cfg builders of the main program, followed by stacked program cfg builders.
+            //In this case we have first the Main program cfg, followed by the nested functions and programs cfg builders of the main program, followed by stacked program cfg builders.
             //Stack programs cfg builders have no parent cfg builders.
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 7);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 8);
             Assert.IsNull(CfgBuilder.ParentProgramCfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[0] == CfgBuilder);
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[0].ParentProgramCfgBuilder);
 
             //Proc0
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder[0].ParentProgramCfgBuilder == CfgBuilder);
-            Assert.IsNotNull(CfgBuilder.AllCfgBuilder[0].Cfg);
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder[0].Cfg.ProgramNode is FunctionDeclaration);
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder[0].Cfg.ProgramNode.Name.Equals("Proc0"));
-
-            //Proc1
             Assert.IsTrue(CfgBuilder.AllCfgBuilder[1].ParentProgramCfgBuilder == CfgBuilder);
             Assert.IsNotNull(CfgBuilder.AllCfgBuilder[1].Cfg);
             Assert.IsTrue(CfgBuilder.AllCfgBuilder[1].Cfg.ProgramNode is FunctionDeclaration);
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder[1].Cfg.ProgramNode.Name.Equals("Proc1"));
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[1].Cfg.ProgramNode.Name.Equals("Proc0"));
 
-            //Nested0
+            //Proc1
             Assert.IsTrue(CfgBuilder.AllCfgBuilder[2].ParentProgramCfgBuilder == CfgBuilder);
             Assert.IsNotNull(CfgBuilder.AllCfgBuilder[2].Cfg);
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder[2].Cfg.ProgramNode is Program);
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder[2].Cfg.ProgramNode.Name.Equals("Nested0"));
-            Assert.IsNotNull(CfgBuilder.AllCfgBuilder[2].AllCfgBuilder);
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder[2].AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(CfgBuilder.AllCfgBuilder[2].AllCfgBuilder[0].Cfg);
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder[2].AllCfgBuilder[0].Cfg.ProgramNode is FunctionDeclaration);
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder[2].AllCfgBuilder[0].Cfg.ProgramNode.Name.Equals("NestedProc0"));
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[2].Cfg.ProgramNode is FunctionDeclaration);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[2].Cfg.ProgramNode.Name.Equals("Proc1"));
 
-            //Nested1
+            //Nested0
             Assert.IsTrue(CfgBuilder.AllCfgBuilder[3].ParentProgramCfgBuilder == CfgBuilder);
             Assert.IsNotNull(CfgBuilder.AllCfgBuilder[3].Cfg);
             Assert.IsTrue(CfgBuilder.AllCfgBuilder[3].Cfg.ProgramNode is Program);
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder[3].Cfg.ProgramNode.Name.Equals("Nested1"));
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[3].Cfg.ProgramNode.Name.Equals("Nested0"));
             Assert.IsNotNull(CfgBuilder.AllCfgBuilder[3].AllCfgBuilder);
             Assert.IsTrue(CfgBuilder.AllCfgBuilder[3].AllCfgBuilder.Count == 1);
             Assert.IsNotNull(CfgBuilder.AllCfgBuilder[3].AllCfgBuilder[0].Cfg);
             Assert.IsTrue(CfgBuilder.AllCfgBuilder[3].AllCfgBuilder[0].Cfg.ProgramNode is FunctionDeclaration);
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder[3].AllCfgBuilder[0].Cfg.ProgramNode.Name.Equals("NestedProc1"));
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[3].AllCfgBuilder[0].Cfg.ProgramNode.Name.Equals("NestedProc0"));
 
-            //Nested2
+            //Nested1
             Assert.IsTrue(CfgBuilder.AllCfgBuilder[4].ParentProgramCfgBuilder == CfgBuilder);
             Assert.IsNotNull(CfgBuilder.AllCfgBuilder[4].Cfg);
             Assert.IsTrue(CfgBuilder.AllCfgBuilder[4].Cfg.ProgramNode is Program);
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder[4].Cfg.ProgramNode.Name.Equals("Nested2"));
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[4].Cfg.ProgramNode.Name.Equals("Nested1"));
             Assert.IsNotNull(CfgBuilder.AllCfgBuilder[4].AllCfgBuilder);
             Assert.IsTrue(CfgBuilder.AllCfgBuilder[4].AllCfgBuilder.Count == 1);
             Assert.IsNotNull(CfgBuilder.AllCfgBuilder[4].AllCfgBuilder[0].Cfg);
             Assert.IsTrue(CfgBuilder.AllCfgBuilder[4].AllCfgBuilder[0].Cfg.ProgramNode is FunctionDeclaration);
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder[4].AllCfgBuilder[0].Cfg.ProgramNode.Name.Equals("NestedProc2"));
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[4].AllCfgBuilder[0].Cfg.ProgramNode.Name.Equals("NestedProc1"));
+
+            //Nested2
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[5].ParentProgramCfgBuilder == CfgBuilder);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder[5].Cfg);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[5].Cfg.ProgramNode is Program);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[5].Cfg.ProgramNode.Name.Equals("Nested2"));
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder[5].AllCfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[5].AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder[5].AllCfgBuilder[0].Cfg);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[5].AllCfgBuilder[0].Cfg.ProgramNode is FunctionDeclaration);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[5].AllCfgBuilder[0].Cfg.ProgramNode.Name.Equals("NestedProc2"));
 
             //Stacked0
-            Assert.IsNull(CfgBuilder.AllCfgBuilder[5].ParentProgramCfgBuilder);
-            Assert.IsNotNull(CfgBuilder.AllCfgBuilder[5].AllCfgBuilder);
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder[5].Cfg.ProgramNode is Program);
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder[5].Cfg.ProgramNode.Name.Equals("Stacke0"));
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder[5].AllCfgBuilder.Count == 1);
-            //StackedNestedProc0
-            Assert.IsNotNull(CfgBuilder.AllCfgBuilder[5].AllCfgBuilder[0].Cfg);
-            Assert.IsNotNull(CfgBuilder.AllCfgBuilder[5].AllCfgBuilder[0].Cfg.ProgramNode is FunctionDeclaration);
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder[5].AllCfgBuilder[0].Cfg.ProgramNode.Name.Equals("StackedNestedProc0"));
-
-            //Stacked1
             Assert.IsNull(CfgBuilder.AllCfgBuilder[6].ParentProgramCfgBuilder);
             Assert.IsNotNull(CfgBuilder.AllCfgBuilder[6].AllCfgBuilder);
             Assert.IsTrue(CfgBuilder.AllCfgBuilder[6].Cfg.ProgramNode is Program);
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder[6].Cfg.ProgramNode.Name.Equals("Stacke1"));
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[6].Cfg.ProgramNode.Name.Equals("Stacke0"));
             Assert.IsTrue(CfgBuilder.AllCfgBuilder[6].AllCfgBuilder.Count == 1);
-            //StackedNestedProc1
+            //StackedNestedProc0
             Assert.IsNotNull(CfgBuilder.AllCfgBuilder[6].AllCfgBuilder[0].Cfg);
             Assert.IsNotNull(CfgBuilder.AllCfgBuilder[6].AllCfgBuilder[0].Cfg.ProgramNode is FunctionDeclaration);
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder[6].AllCfgBuilder[0].Cfg.ProgramNode.Name.Equals("StackedNestedProc1"));
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[6].AllCfgBuilder[0].Cfg.ProgramNode.Name.Equals("StackedNestedProc0"));
+
+            //Stacked1
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[7].ParentProgramCfgBuilder);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder[7].AllCfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[7].Cfg.ProgramNode is Program);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[7].Cfg.ProgramNode.Name.Equals("Stacke1"));
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[7].AllCfgBuilder.Count == 1);
+            //StackedNestedProc1
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder[7].AllCfgBuilder[0].Cfg);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder[7].AllCfgBuilder[0].Cfg.ProgramNode is FunctionDeclaration);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[7].AllCfgBuilder[0].Cfg.ProgramNode.Name.Equals("StackedNestedProc1"));
         }
+
+        [TestMethod]
+        public void IfThenTest()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThen0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(Builder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThen0.dot");
+
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath);
+        }
+        [TestMethod]
+        public void IfThenAfterTest()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenAfter0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(Builder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenAfter0.dot");
+
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void IfThenElseTest()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenElse0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(Builder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElse0.dot");
+
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void IfThenNextSentence()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenNextSentence0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(Builder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenNextSentence0.dot");
+
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void IfThenElseNextSentence()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenElseNextSentence0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(Builder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElseNextSentence0.dot");
+
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath);
+        }        
     }
 }

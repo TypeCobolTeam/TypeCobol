@@ -48,10 +48,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicControlFlowInstructionTest.cs" />
+    <Compile Include="CfgTestUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="BasicCfgInstrs\IfThen0.cbl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="BasicCfgInstrs\IfThenAfter0.cbl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="BasicCfgInstrs\IfThenElse0.cbl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="BasicCfgInstrs\IfThenNextSentence0.cbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="BasicCfgInstrs\MixedStackedNestedPgms.cbl">
@@ -60,13 +70,36 @@
     <None Include="BasicCfgInstrs\MixedStackedNestedProcsPgms.tcbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="DotOutput\IfThen0.dot">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DotOutput\IfThenAfter0.dot">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DotOutput\IfThenElse0.dot">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DotOutput\IfThenElseNextSentence0.dot">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DotOutput\IfThenNextSentence0.dot">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="BasicCfgInstrs\IfThenElseNextSentence0.cbl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TypeCobol.Analysis\TypeCobol.Analysis.csproj">
       <Project>{c3250314-c22b-4eb6-9174-17d0791af7be}</Project>
       <Name>TypeCobol.Analysis</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TypeCobol.Test\TypeCobol.Test.csproj">
+      <Project>{323cc743-ed21-4a15-ad3f-3b7c937f6332}</Project>
+      <Name>TypeCobol.Test</Name>
     </ProjectReference>
     <ProjectReference Include="..\TypeCobol\TypeCobol.csproj">
       <Project>{7ac7a3e5-91f2-44bf-955d-86cc61375742}</Project>
