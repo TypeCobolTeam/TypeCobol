@@ -55,24 +55,29 @@ namespace TypeCobol.Analysis.Graph
         private bool EmitBasicBlock(BasicBlock<N, D> block, ControlFlowGraph<N, D> cfg)
         {
             Writer.WriteLine(string.Format("Block{0} [", block.Index));
-            StringBuilder sb = new StringBuilder("label = \"{");
-            sb.Append(block.HasFlag(BasicBlock<N, D>.Flags.Start) ? "START" :
+            Writer.Write("label = \"{");
+            Writer.Write(block.HasFlag(BasicBlock<N, D>.Flags.Start) ? "START" :
                 block.HasFlag(BasicBlock<N, D>.Flags.End) ? "END" : ("Block" + block.Index));
-            sb.Append("|");
+            Writer.Write("|");
 
             //Print all instructions inside the block.
             foreach(var i in block.Instructions)
             {
-                sb.Append(InstructionToString(i));
-                sb.Append("\\l");
+                Writer.Write(InstructionToString(i));
+                Writer.Write("\\l");
             }
-            sb.Append("\"}");
+            Writer.WriteLine("}\"");
+            //if (block.MaybeEndBlock)
+            //{
+            //    Writer.WriteLine("shape = \"Msquare\"");
+            //}
             Writer.WriteLine("]");
 
             //Emit the digraph
             foreach(var edge in block.SuccessorEdges)
             {
-                DigraphBuilder.AppendLine(string.Format("Block{0} -> Block{1}", block.Index, edge));
+                System.Diagnostics.Debug.Assert(edge >= 0 && edge < cfg.SuccessorEdges.Count);
+                DigraphBuilder.AppendLine(string.Format("Block{0} -> Block{1}", block.Index, cfg.SuccessorEdges[edge].Index));
             }
 
             return true;
@@ -93,6 +98,7 @@ namespace TypeCobol.Analysis.Graph
         /// <param name="cfg">The underlying Control Flow Graph</param>
         public CfgDotFileGenerator(ControlFlowGraph<N, D> cfg)
         {
+            this.Cfg = cfg;
         }
 
         public void Generate(TextWriter writer, ControlFlowGraph<N, D> cfg)
@@ -118,11 +124,39 @@ namespace TypeCobol.Analysis.Graph
                 Writer.WriteLine(DigraphBuilder.ToString());
                 Writer.WriteLine("}");
             }
+            Writer.Flush();            
         }
 
         public override void Report(TextWriter writer)
         {
             Generate(writer, Cfg);
+        }
+
+        /// <summary>
+        /// Escape a text string for the dot format
+        /// </summary>
+        /// <param name="text">The text string to be escaped</param>
+        /// <returns>The escaped string</returns>
+        public static string Escape(string text)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach(char c in text)
+            {
+                switch(c)
+                {
+                    case '\\':
+                    case '"':
+                    case '|':
+                    case '<':
+                    case '>':
+                    case '{':
+                    case '}':
+                        sb.Append('\\');
+                        break;
+                }
+                sb.Append(c);
+            }
+            return sb.ToString();
         }
     }
 }

@@ -24,12 +24,31 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="cfg">The underlying Control Flow Graph</param>
+        public CfgDotFileForNodeGenerator(ControlFlowGraph<Node, D> cfg) : base (cfg)
+        {
+        }
+
+        /// <summary>
+        /// Set whether full instruction must be generated are not.
+        /// If not only the instruction name will be generated.
+        /// </summary>
+        public bool FullInstruction
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Get the string representing an instruction.
         /// </summary>
         /// <param name="instruction">The instruction to get the string representation.</param>
         protected override string InstructionToString(Node instruction)
         {
-            return (instruction == null || instruction.CodeElement == null) ? "<null>" :                 
+            return (instruction == null || instruction.CodeElement == null) ? "<null>" :
+                FullInstruction ? Escape(instruction.CodeElement.SourceText) :
                 System.Enum.GetName(typeof(CodeElementType), instruction.CodeElement.Type);
         }
     }
