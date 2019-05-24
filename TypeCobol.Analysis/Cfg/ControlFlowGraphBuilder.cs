@@ -694,6 +694,8 @@ namespace TypeCobol.Analysis.Cfg
                 {
                     this.CurrentProgramCfgBuilder.CurrentParagraph.AddSentence(block);
                 }
+                //Give to this block the name of its paragraph as tag.
+                block.Block.Tag = curSecorPara.Name;
             }
         }
 
@@ -1415,7 +1417,7 @@ namespace TypeCobol.Analysis.Cfg
             foreach(var sref in target)
             {
                 bool bHasOne = false;
-                IEnumerable<BuilderSentence> sentences = ResolveSectionOrParagraphSentences(@goto, target[0]);
+                IEnumerable<BuilderSentence> sentences = ResolveSectionOrParagraphSentences(@goto, sref);
                 foreach(var targetSentence in sentences)
                 {
                     if (!block.SuccessorEdges.Contains(targetSentence.BlockIndex))
@@ -1593,13 +1595,19 @@ namespace TypeCobol.Analysis.Cfg
                     //Ending block has no successors.
                     if (!b.HasFlag(BasicBlock<Node, D>.Flags.Ending))
                     {
-                        b.SuccessorEdges.Add(nbIndex);
+                        if (b != Builder.Cfg.SuccessorEdges[nbIndex])
+                        {//Don't create recurssion to ourselves
+                            b.SuccessorEdges.Add(nbIndex);
+                        }
                     }
                 }
-                else foreach (var s in b.SuccessorEdges)
+                else
+                {
+                    foreach (var s in b.SuccessorEdges)
                     {
                         AddTerminalSuccessorEdge((BasicBlockForNode)Builder.Cfg.SuccessorEdges[s], nbIndex);
                     }
+                }
             }
 
             /// <summary>
@@ -2363,6 +2371,8 @@ namespace TypeCobol.Analysis.Cfg
             Cfg.ProgramNode = funDecl;
         }
 
+        public static readonly string ROOT_SECTION_NAME = "<< RootSection >>";
+
         /// <summary>
         /// Start the Cfg construction for a ProcedureDivision node
         /// </summary>
@@ -2373,7 +2383,7 @@ namespace TypeCobol.Analysis.Cfg
             Cfg.ProcedureNode = procDiv;
             Cfg.Initialize();
             //Create a Root Section
-            CfgSectionSymbol sym = new CfgSectionSymbol("<<RootSection>>");
+            CfgSectionSymbol sym = new CfgSectionSymbol(ROOT_SECTION_NAME);
             EnterSectionOrParagraphSymbol(sym);
             //The new current section.
             CurrentSection = sym;
