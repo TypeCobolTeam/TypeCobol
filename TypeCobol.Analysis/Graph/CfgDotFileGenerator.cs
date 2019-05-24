@@ -42,9 +42,21 @@ namespace TypeCobol.Analysis.Graph
         /// Get the string representing an instruction.
         /// </summary>
         /// <param name="instruction">The instruction to get the string representation.</param>
-        protected virtual String InstructionToString(N instruction)
+        protected virtual string InstructionToString(N instruction)
         {
             return instruction == null ? "<null>" : instruction.ToString();
+        }
+
+        /// <summary>
+        /// Get the dot format name of a block.
+        /// </summary>
+        /// <param name="block">The block to get the dot format name.</param>
+        /// <returns>The block's name</returns>
+        protected virtual string BlockName(BasicBlock<N, D> block)
+        {
+            string name = block.HasFlag(BasicBlock<N, D>.Flags.Start) ? "START" :
+                block.HasFlag(BasicBlock<N, D>.Flags.End) ? "END" : ("Block" + block.Index);
+            return name;
         }
 
         /// <summary>
@@ -56,8 +68,7 @@ namespace TypeCobol.Analysis.Graph
         {
             Writer.WriteLine(string.Format("Block{0} [", block.Index));
             Writer.Write("label = \"{");
-            Writer.Write(block.HasFlag(BasicBlock<N, D>.Flags.Start) ? "START" :
-                block.HasFlag(BasicBlock<N, D>.Flags.End) ? "END" : ("Block" + block.Index));
+            Writer.Write(BlockName(block));
             Writer.Write("|");
 
             //Print all instructions inside the block.
