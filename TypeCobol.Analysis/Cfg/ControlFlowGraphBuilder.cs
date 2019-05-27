@@ -1817,11 +1817,8 @@ namespace TypeCobol.Analysis.Cfg
             //Push and start the Evaluate context.
             this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctx);
             ctx.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
-            //So the current block is now the evaluate
-            var evalBlock = this.CurrentProgramCfgBuilder.CreateBlock(evaluate, true);
-            ctx.AddBranch(evalBlock);
-            //The new Current Block is the Evaluate block
-            this.CurrentProgramCfgBuilder.CurrentBasicBlock = evalBlock;
+            //Add the evaluate instruction to the current block
+            AddCurrentBlockNode(evaluate);
         }
 
         /// <summary>
@@ -1915,6 +1912,7 @@ namespace TypeCobol.Analysis.Cfg
             List<Node> data = (List<Node>)ctx.ContextualData;
             foreach(var node in data)
             {
+                whenCondBlock.Instructions.AddLast(node);
                 this.CurrentProgramCfgBuilder.Cfg.BlockFor[node] = whenCondBlock;
             }
 
