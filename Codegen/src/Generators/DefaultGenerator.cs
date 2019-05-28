@@ -16,6 +16,7 @@ using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.File;
 using static TypeCobol.Codegen.Generators.LinearNodeSourceCodeMapper;
 using System.Runtime.CompilerServices;
+using TypeCobol.Compiler;
 
 namespace TypeCobol.Codegen.Generators
 {
@@ -96,6 +97,7 @@ namespace TypeCobol.Codegen.Generators
             if (ClonedNodes.Count > 0)
             {
                 clonedMapper = new LinearNodeSourceCodeMapper(this);
+                clonedMapper.LinearMode = Mode.Cloned;
                 foreach (var cloned in ClonedNodes)
                 {
                     clonedMapper.Accept(cloned);
@@ -695,10 +697,21 @@ namespace TypeCobol.Codegen.Generators
             StringWriter sw = new StringWriter();
             sw.WriteLine("       IDENTIFICATION DIVISION.");
             sw.WriteLine("       PROGRAM-ID. a9a9a5eaTC-GetGlobal.");
-            sw.WriteLine("       ENVIRONMENT DIVISION.");
-            sw.WriteLine("       CONFIGURATION SECTION.");
-            sw.WriteLine("       SOURCE-COMPUTER.");
-            sw.WriteLine("       SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.");
+
+            if (CompilationResults is CompilationUnit cu)
+            {
+                Node environmentDiv =
+                    cu.ProgramClassDocumentSnapshot.Root.MainProgram.Children.FirstOrDefault(c => c is EnvironmentDivision);
+
+                if (environmentDiv != null)
+                {
+                    foreach (ITextLine environmentDivLine in environmentDiv.SelfAndChildrenLines)
+                    {
+                        sw.WriteLine(environmentDivLine.Text);
+                    }
+                }
+            }
+
             sw.WriteLine("       DATA DIVISION.");
             sw.WriteLine("       WORKING-STORAGE SECTION.");
             sw.WriteLine("       01 PIC X(8) value ':TC:GBLS'.");

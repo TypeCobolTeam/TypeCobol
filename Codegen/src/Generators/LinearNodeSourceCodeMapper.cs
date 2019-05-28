@@ -58,6 +58,20 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
+        /// Linearization mode
+        /// </summary>
+        public enum Mode
+        {
+            Normal, //Normal mode
+            Cloned, //Cloned nod emode
+        }
+
+        /// <summary>
+        /// Curent mode.
+        /// </summary>
+        public Mode LinearMode { get; set; }
+
+        /// <summary>
         /// Will we need a ProcessFactoryGeneratedNodeAttachment Phase ?
         /// </summary>
         private bool NeedProcessFactoryGeneratedNodeAttachment;
@@ -385,6 +399,7 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="generator">The Generator</param>
         public LinearNodeSourceCodeMapper(Generator generator)
         {
+            LinearMode = Mode.Normal;
             NodeCount = 0;//Count of Nodes Treated.
             Generator = generator;
             int count = generator.CompilationResults.TokensLines.Count;
@@ -1324,13 +1339,17 @@ namespace TypeCobol.Codegen.Generators
             //First Phase Linearization
             CurrentPhase = Phase.Linearization;            
             Visit(node);
-            //Second Phase Removed Nodes
-            CurrentPhase = Phase.RemovedNodes;
-            foreach (Node erased_node in this.Generator.ErasedNodes)
+            if (LinearMode == Mode.Normal)
             {
-                if (!erased_node.IsFlagSet(Node.Flag.PersistentNode))
-                    Visit(erased_node);//Only Erase non persistent node
+                //Second Phase Removed Nodes
+                CurrentPhase = Phase.RemovedNodes;
+                foreach (Node erased_node in this.Generator.ErasedNodes)
+                {
+                    if (!erased_node.IsFlagSet(Node.Flag.PersistentNode))
+                        Visit(erased_node); //Only Erase non persistent node
+                }
             }
+
             Nodes.TrimExcess();
 
             //Create All SourceTextBuffer Content associated to Nodes
