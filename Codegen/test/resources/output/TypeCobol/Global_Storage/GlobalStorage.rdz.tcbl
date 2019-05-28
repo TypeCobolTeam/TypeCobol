@@ -1,7 +1,7 @@
 ﻿      *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. GlobalStorageTest.
-      
+       ENVIRONMENT DIVISION.
        DATA DIVISION.
       
       *GLOBAL-STORAGE SECTION.
@@ -34,6 +34,7 @@
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. c0127659MyProc.
+       ENVIRONMENT DIVISION.
        Data division.
        WORKING-STORAGE Section.
       *GlobalStorageTest.MyProc - Params :
@@ -66,9 +67,6 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. a9a9a5eaTC-GetGlobal.
        ENVIRONMENT DIVISION.
-       CONFIGURATION SECTION.
-       SOURCE-COMPUTER.
-       SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01 PIC X(8) value ':TC:GBLS'.

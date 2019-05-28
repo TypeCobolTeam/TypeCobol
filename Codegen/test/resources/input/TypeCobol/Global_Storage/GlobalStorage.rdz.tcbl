@@ -1,6 +1,6 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. GlobalStorageTest.
-      
+       ENVIRONMENT DIVISION.
        DATA DIVISION.
       
        GLOBAL-STORAGE SECTION.
