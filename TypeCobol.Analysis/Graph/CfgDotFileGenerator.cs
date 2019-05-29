@@ -27,7 +27,7 @@ namespace TypeCobol.Analysis.Graph
         /// <summary>
         /// The Current Writer.
         /// </summary>
-        private TextWriter Writer
+        protected TextWriter Writer
         {
             get;
             set;
@@ -36,7 +36,7 @@ namespace TypeCobol.Analysis.Graph
         /// <summary>
         /// The Digraph buffer
         /// </summary>
-        private StringBuilder DigraphBuilder;
+        protected StringBuilder DigraphBuilder;
 
         /// <summary>
         /// Get the string representing an instruction.
@@ -64,7 +64,7 @@ namespace TypeCobol.Analysis.Graph
         /// </summary>
         /// <param name="block"></param>
         /// <param name="cfg"></param>
-        private bool EmitBasicBlock(BasicBlock<N, D> block, ControlFlowGraph<N, D> cfg)
+        protected virtual bool EmitBasicBlock(BasicBlock<N, D> block, ControlFlowGraph<N, D> cfg)
         {
             Writer.WriteLine(string.Format("Block{0} [", block.Index));
             Writer.Write("label = \"{");
@@ -121,6 +121,10 @@ namespace TypeCobol.Analysis.Graph
             {
                 DigraphBuilder = new StringBuilder();
                 Writer.WriteLine("digraph Cfg {");
+                if (cfg.HasFlag(ControlFlowGraph<N, D>.Flags.Compound))
+                {
+                    Writer.WriteLine("compound=true;");
+                }
                 Writer.WriteLine("node [");
                 Writer.WriteLine("shape = \"record\"");
                 Writer.WriteLine("]");
@@ -154,7 +158,7 @@ namespace TypeCobol.Analysis.Graph
             foreach(char c in text)
             {
                 switch(c)
-                {
+                {                    
                     case '\\':
                     case '"':
                     case '|':
@@ -164,6 +168,10 @@ namespace TypeCobol.Analysis.Graph
                     case '}':
                         sb.Append('\\');
                         break;
+                    case '\n':
+                    case '\r':
+                        sb.Append(' ');
+                        continue;
                 }
                 sb.Append(c);
             }
