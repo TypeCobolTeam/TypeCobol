@@ -1,0 +1,34 @@
+﻿digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|    SET IDX to 1\l}"
+]
+Block1 [
+label = "{Block1|}"
+]
+Block2 [
+label = "{Block2|    SEARCH ELEM\l           display NUM(IDX) \"/\" LIB(IDX)\l           when IDX \> IDX-END next sentence\l}"
+]
+Block5 [
+label = "{Block5|    display \"------------------------------------\"\l}"
+]
+Block6 [
+label = "{Block6|    stop \"Do Enter to continue\"\l}"
+]
+Block4 [
+label = "{Block4|}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block1 -> Block4
+Block2 -> Block5
+Block5 -> Block6
+Block4 -> Block5
+
+}
