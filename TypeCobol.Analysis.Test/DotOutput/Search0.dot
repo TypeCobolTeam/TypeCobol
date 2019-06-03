@@ -7,10 +7,10 @@ edge [
 arrowtail = "empty"
 ]
 Block0 [
-label = "{START|    SET IDX to 1\l}"
+label = "{START|    SET IDX to 1\l    SEARCH ELEM\l}"
 ]
 Block1 [
-label = "{Block1|    SEARCH ELEM\l           display NUM(IDX) \"/\" LIB(IDX)\l}"
+label = "{Block1|           when NBJ(IDX) = 28\l           display NUM(IDX) \"/\" LIB(IDX)\l}"
 ]
 Block2 [
 label = "{Block2|}"

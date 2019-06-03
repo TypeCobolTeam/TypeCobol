@@ -635,6 +635,21 @@ namespace TypeCobol.Analysis.Test
             Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
 
             CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath);
-        }        
+        }
+
+        [TestMethod]
+        public void SearchCond0()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "SearchCond0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(Builder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "SearchCond0.dot");
+
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath);
+        }
     }
 }
