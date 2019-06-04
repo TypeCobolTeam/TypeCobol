@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -351,7 +351,7 @@ namespace TypeCobol.Codegen.Generators
             //First of all compute any Global Storage Data
             if (clonedMapper != null && mapper.UseGlobalStorageSection && clonedMapper.ClonedGlobalStorageSection != null)
             {
-                GetGlobalStorageData(clonedMapper, Input);
+                GetGlobalStorageData(clonedMapper, Input, lmCtx);
             }
 
             for (int i = startLine; i < endLine; i++)
@@ -662,7 +662,7 @@ namespace TypeCobol.Codegen.Generators
             //5)//Generate stacked program for the global-storage section
             if (clonedMapper != null && mapper.UseGlobalStorageSection && clonedMapper.ClonedGlobalStorageSection != null)
             {
-                string gsSrcPrg = GenerateGlobalStorageSectionStackedProgram(clonedMapper, Input);
+                string gsSrcPrg = GenerateGlobalStorageSectionStackedProgram(clonedMapper, Input, lmCtx);
                 InsertLineMaybeSplit(targetSourceText, gsSrcPrg.ToString(), targetSourceText.Size, targetSourceText.Size, false);
             }
 
@@ -698,12 +698,13 @@ namespace TypeCobol.Codegen.Generators
         /// </summary>
         /// <param name="clonedMapper">The Linear Source Code Mapper contains the GlobalStorage Section.</param>
         /// <param name="Input">The list of program input lines</param>
+        /// <param name="lmCtx">Lime Mapping context</param>
         /// <returns>The Whole Staked Program source code</returns>
-        private string GenerateGlobalStorageSectionStackedProgram<A>(LinearNodeSourceCodeMapper clonedMapper, IReadOnlyList<A> Input) where A : ITextLine
+        private string GenerateGlobalStorageSectionStackedProgram<A>(LinearNodeSourceCodeMapper clonedMapper, IReadOnlyList<A> Input, LineMappingCtx lmCtx) where A : ITextLine
         {
             StringWriter sw = new StringWriter();
-            sw.WriteLine("       IDENTIFICATION DIVISION.");
-            sw.WriteLine("       PROGRAM-ID. a9a9a5eaTC-GetGlobal.");
+            sw.WriteLine("       IDENTIFICATION DIVISION."); GSLineOffset += 1;
+            sw.WriteLine("       PROGRAM-ID. a9a9a5eaTC-GetGlobal."); GSLineOffset += 1;
 
             if (CompilationResults is CompilationUnit cu)
             {
@@ -714,16 +715,26 @@ namespace TypeCobol.Codegen.Generators
                 {
                     foreach (ITextLine environmentDivLine in environmentDiv.SelfAndChildrenLines)
                     {
-                        sw.WriteLine(environmentDivLine.Text);
+                        sw.WriteLine(environmentDivLine.Text); GSLineOffset += 1;
                     }
                 }
             }
 
-            sw.WriteLine("       DATA DIVISION.");
-            sw.WriteLine("       WORKING-STORAGE SECTION.");
-            sw.WriteLine("       01 PIC X(8) value ':TC:GBLS'.");
+            sw.WriteLine("       DATA DIVISION."); GSLineOffset += 1;
+            sw.WriteLine("       WORKING-STORAGE SECTION."); GSLineOffset += 1;
+            sw.WriteLine("       01 PIC X(8) value ':TC:GBLS'."); GSLineOffset += 1;
 
-            sw.WriteLine(GetGlobalStorageData(clonedMapper, Input));
+            sw.WriteLine(GetGlobalStorageData(clonedMapper, Input, lmCtx));
+            //So Here we can relocate Global Storage Line Mapping
+            if (lmCtx != null)
+            {
+                for (int i = FirstGSLine; i < LastGSLine; i++)
+                {
+                    int firstLine = GSLmCtx.LineMapping[i].Item1;
+                    int lastLine = GSLmCtx.LineMapping[i].Item2;
+                    lmCtx.LineMapping[i] = new Tuple<int, int>(firstLine + lmCtx.startLineMapCounter + GSLineOffset - 1, lastLine + lmCtx.startLineMapCounter + GSLineOffset - 1);
+                }
+            }
 
             sw.WriteLine("       LINKAGE SECTION.");
             sw.WriteLine("       01 GlobalPointer pointer.");
@@ -737,16 +748,39 @@ namespace TypeCobol.Codegen.Generators
 
         public string GlobalStorageData = null;
         /// <summary>
-        /// Get the content of the TC-GlobalData structure
+        /// Global storage Line Mapping Context
         /// </summary>
+        LineMappingCtx GSLmCtx = null;
+        /// <summary>
+        /// The first Global Storage Line
+        /// </summary>
+        int FirstGSLine;
+        /// <summary>
+        /// The Last Global Storage Line.
+        /// </summary>
+        int LastGSLine;
+        /// <summary>
+        /// The Offset to apply to relocate GlobalStore Line Mapping.
+        /// </summary>
+        int GSLineOffset;
+
+        /// <summary>
+        /// Get the content of the TC-GlobalData structure.
+        /// </summary>
+        /// <typeparam name="A"></typeparam>
+        /// <param name="clonedMapper"></param>
+        /// <param name="Input"></param>
+        /// <param name="lmCtx"></param>
         /// <returns></returns>
-        public string GetGlobalStorageData<A>(LinearNodeSourceCodeMapper clonedMapper, IReadOnlyList<A> Input) where A : ITextLine
+        public string GetGlobalStorageData<A>(LinearNodeSourceCodeMapper clonedMapper, IReadOnlyList<A> Input, LineMappingCtx lmCtx) where A : ITextLine
         {
             if (GlobalStorageData != null)
                 return GlobalStorageData;
 
+            GSLineOffset = 0;
             StringWriter sw = new StringWriter();
             sw.WriteLine("       01 TC-GlobalData.");
+            GSLineOffset += 1;//IMPORTANT Update GS relocation offset ==> one more line.
 
 
             //Compute the last line of the Global Storage Node.
@@ -754,8 +788,12 @@ namespace TypeCobol.Codegen.Generators
             Node lastNode = null;
             clonedMapper.GetAfterLinearizationLastLine(clonedMapper.ClonedGlobalStorageSection, ref lastLine, ref lastNode);
 
-            SourceText gsSrcText = LinearGeneration(clonedMapper, null, Input, null, clonedMapper.ClonedGlobalStorageSection.CodeElement.Line - 1,
-                lastLine);
+            if (lmCtx != null)
+            {                
+                GSLmCtx = new LineMappingCtx(new Tuple<int, int>[lmCtx.LineMapping.Length]);
+            }
+            SourceText gsSrcText = LinearGeneration(clonedMapper, null, Input, GSLmCtx, FirstGSLine = clonedMapper.ClonedGlobalStorageSection.CodeElement.Line - 1,
+                LastGSLine = lastLine);
             string gsText = gsSrcText.GetTextAt(0, gsSrcText.Size);
             //Allocate a scanner to reparse and change increments level
             TokensLine tempTokensLine = new TokensLine(
