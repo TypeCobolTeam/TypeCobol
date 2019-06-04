@@ -167,13 +167,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
     class RenamesChecker
     {
-        public static void OnNode(Node node)
+        public static void OnNode(DataRenames renames)
         {
-            var renames = node as DataRenames;
-            if (renames == null)
-            {
-                return; //not my job
-            }
             if (renames.CodeElement?.RenamesFromDataName != null)
                 Check(renames.CodeElement.RenamesFromDataName, renames);
             if(renames.CodeElement?.RenamesToDataName != null)
@@ -220,10 +215,9 @@ namespace TypeCobol.Compiler.Diagnostics
 
         private static List<Node> browsedTypes = new List<Node>();
 
-        public static void OnNode(Node node)
+        public static void OnNode(DataDefinition dataDefinition)
         {
-            DataDefinition dataDefinition = node as DataDefinition;
-            if (dataDefinition == null || node is TypeDefinition)
+            if (dataDefinition is TypeDefinition)
             {
                 return; //not my job
             }
@@ -232,7 +226,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (data != null && data.UserDefinedDataType != null && data.Picture != null)
             {
                 string message = "PICTURE clause incompatible with TYPE clause";
-                DiagnosticUtils.AddError(node, message, data.Picture.Token);
+                DiagnosticUtils.AddError(dataDefinition, message, data.Picture.Token);
             }
 
             var type = dataDefinition.DataType;
@@ -243,14 +237,14 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (data.LevelNumber.Value == 88 || data.LevelNumber.Value == 66)
             {
-                DiagnosticUtils.AddError(node,
+                DiagnosticUtils.AddError(dataDefinition,
                     string.Format("A {0} level variable cannot be typed", data.LevelNumber.Value),
                     data, code: MessageCode.SemanticTCErrorInParser);
             }
 
             if (data.LevelNumber.Value == 77 && foundedType.Children.Count > 0)
             {
-                DiagnosticUtils.AddError(node, "A 77 level variable cannot be typed with a type containing children",
+                DiagnosticUtils.AddError(dataDefinition, "A 77 level variable cannot be typed with a type containing children",
                     data, code: MessageCode.SemanticTCErrorInParser);
             }
 
@@ -264,7 +258,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         string.Format(
                             "Variable '{0}' has to be limited to level {1} because of '{2}' maximum estimated children level",
                             data.Name, data.LevelNumber.Value - (simulatedTypeLevel - 49), foundedType.Name);
-                    DiagnosticUtils.AddError(node, message, data, code: MessageCode.SemanticTCErrorInParser);
+                    DiagnosticUtils.AddError(dataDefinition, message, data, code: MessageCode.SemanticTCErrorInParser);
                 }
             }
 
@@ -272,7 +266,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (type == DataType.Boolean && data.InitialValue != null &&
                 data.InitialValue.LiteralType != Value.ValueLiteralType.Boolean)
             {
-                DiagnosticUtils.AddError(node, "Boolean type requires TRUE/FALSE value clause",
+                DiagnosticUtils.AddError(dataDefinition, "Boolean type requires TRUE/FALSE value clause",
                     MessageCode.SemanticTCErrorInParser);
             }
         }
