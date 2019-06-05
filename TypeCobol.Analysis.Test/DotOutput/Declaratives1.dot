@@ -1,0 +1,116 @@
+﻿digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{DEPT-HEAD-USE. Block1|    USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
+]
+Block2 [
+label = "{DEPT-HEAD-PROC. Block2|    SET IDX to 1\l    SEARCH ELEM\l}"
+]
+Block3 [
+label = "{Block3|           when NBJ(IDX) = 28\l           display NUM(IDX) \"/\" LIB(IDX)\l}"
+]
+Block4 [
+label = "{Block4|}"
+]
+Block5 [
+label = "{DEPT-HEAD-PROC. Block5|    display \"--------------------------------------\"\l}"
+]
+Block6 [
+label = "{DEPT-HEAD-EXIT. Block6|EXIT\l}"
+]
+Block7 [
+label = "{EMPL-FOOT-USE. Block7|EMPL-FOOT-USE SECTION. USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
+]
+Block8 [
+label = "{EMPL-FOOT-PROC. Block8|MOVE NUM TO NBJ\l}"
+]
+Block9 [
+label = "{EMPL-FOOT-PROC. Block9|MOVE NBJ TO NUM\l}"
+]
+Block10 [
+label = "{EMPL-FOOT-EXIT. Block10|EXIT\l}"
+]
+Block11 [
+label = "{DEPT-FOOT-USE. Block11|DEPT-FOOT-USE SECTION. USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
+]
+Block12 [
+label = "{DEPT-FOOT-PROC. Block12|MOVE NUM TO NBJ\l}"
+]
+Block13 [
+label = "{DEPT-FOOT-PROC. Block13|MOVE NBJ TO NUM\l}"
+]
+Block14 [
+label = "{DEPT-FOOT-EXIT. Block14|EXIT\l}"
+]
+Block15 [
+label = "{COMP-FOOT-USE. Block15|COMP-FOOT-USE SECTION. USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
+]
+Block16 [
+label = "{COMP-FOOT-PROC. Block16|}"
+]
+Block17 [
+label = "{Block17|PERFORM COMP-FOOT-CALC  VARYING IDX FROM +1 BY +1  UNTIL IDX \> +6\l}"
+]
+subgraph cluster_1{
+color = blue;
+label = "COMP-FOOT-CALC";
+Block21 [
+label = "{COMP-FOOT-CALC. Block21|MOVE NUM TO NBJ\l}"
+]
+Block22 [
+label = "{COMP-FOOT-CALC. Block22|MOVE NBJ TO NUM\l}"
+]
+Block21 -> Block22
+
+}
+Block17 -> Block21 [style=dashed, arrowhead=none]
+
+Block18 [
+label = "{Block18|}"
+]
+Block19 [
+label = "{COMP-FOOT-PROC. Block19|GO TO COMP-FOOT-EXIT\l}"
+]
+Block23 [
+label = "{COMP-FOOT-EXIT. Block23|EXIT\l}"
+]
+Block24 [
+label = "{Block24|}"
+]
+Block0 -> Block1
+Block0 -> Block24
+Block0 -> Block7
+Block0 -> Block11
+Block0 -> Block15
+Block1 -> Block2
+Block2 -> Block3
+Block2 -> Block4
+Block3 -> Block4
+Block4 -> Block5
+Block5 -> Block6
+Block6 -> Block7
+Block7 -> Block8
+Block8 -> Block9
+Block9 -> Block10
+Block10 -> Block11
+Block11 -> Block12
+Block12 -> Block13
+Block13 -> Block14
+Block14 -> Block15
+Block15 -> Block16
+Block16 -> Block17
+Block17 -> Block18
+Block18 -> Block19
+Block19 -> Block23
+
+}
