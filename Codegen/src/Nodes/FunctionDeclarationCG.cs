@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Codegen.Contribution;
@@ -43,6 +43,14 @@ namespace TypeCobol.Codegen.Nodes {
                         DeclareProceduresParametersIntoLinkage(originalNode, linkageSection, originalNode.Profile);
                     }
                     
+                    if (originalNode.IsFlagSet(Node.Flag.UseGlobalStorage))
+                    {
+                        if (dataDivision == null)
+                        {
+                            dataDivision = GetOrCreateNode<Compiler.Nodes.DataDivision>(originalNode, () => new DataDivision());
+                        }
+                        (linkageSection ?? GetOrCreateNode<Compiler.Nodes.LinkageSection>(dataDivision, () => new LinkageSection(originalNode), dataDivision)).Add(new GlobalStorage.GlobalStorageNode());
+                    }
 
                     //Replace ProcedureDivision node with a new one and keep all original children
                     var sentences = new List<Node>();
@@ -51,13 +59,8 @@ namespace TypeCobol.Codegen.Nodes {
                     var pdiv = new ProcedureDivision(originalNode, sentences);
                     children.Add(pdiv);
 
-                    if (originalNode.IsFlagSet(Node.Flag.UseGlobalStorage))
-                    {
-                        (linkageSection ?? GetOrCreateNode<Compiler.Nodes.LinkageSection>(dataDivision, () => new LinkageSection(originalNode), dataDivision)).Add(new GlobalStorage.GlobalStorageNode());
-                    }
 
                     //Generate code if this procedure call a public procedure in another source
-
                     if (containsPublicCall) {
                         var workingStorageSection = GetOrCreateNode<Compiler.Nodes.WorkingStorageSection>(dataDivision, () => new WorkingStorageSection(originalNode), dataDivision);
 
@@ -72,6 +75,10 @@ namespace TypeCobol.Codegen.Nodes {
                         };
                         workingStorageSection.AddRange(toAddRange, 0);
                         GenerateCodeToCallPublicProc(originalNode, pdiv,  workingStorageSection, linkageSection);
+                    }
+                    else if (OriginalNode.IsFlagSet(Node.Flag.UseGlobalStorage))
+                    {
+                        pdiv.AddRange(GenerateCodeToCallGlobalStorage(4), 0);
                     }
                 } else {
                     if (child.CodeElement is FunctionDeclarationEnd)
@@ -176,7 +183,6 @@ namespace TypeCobol.Codegen.Nodes {
                 //After #655, TC-Initializations is not used
                 whereToGenerate.Add(new GeneratedNode2("    PERFORM TC-INITIALIZATIONS", true), 0);
 
-
                 //Generate "TC-Initializations" paragraph
                 procedureDivision.Add(
                     new GeneratedNode2("*=================================================================", true));
@@ -185,6 +191,11 @@ namespace TypeCobol.Codegen.Nodes {
                     new GeneratedNode2("*=================================================================", true));
                 procedureDivision.Add(new GeneratedNode2("     IF TC-FirstCall", true));
                 procedureDivision.Add(new GeneratedNode2("          SET TC-NthCall TO TRUE", true));
+                if (OriginalNode.IsFlagSet(Node.Flag.UseGlobalStorage))
+                {
+                    procedureDivision.AddRange(GenerateCodeToCallGlobalStorage(10));
+                }
+
                 foreach (var pgm in imports.Programs.Values)
                 {
                     foreach (var proc in pgm.Procedures.Values)
@@ -255,6 +266,17 @@ namespace TypeCobol.Codegen.Nodes {
                 }
             }
             
+        }
+
+        private Node[] GenerateCodeToCallGlobalStorage(int columnOffset)
+        {
+            return new Node[]
+            {
+                new GeneratedNode2("* Get the data from the global storage section", false),
+                new GeneratedNode2($"{new string(' ', columnOffset)}CALL '{OriginalNode.Root.MainProgram.Hash}' USING", true),
+                new GeneratedNode2($"{new string(' ', columnOffset)}    by reference address of TC-GlobalData", true),
+                new GeneratedNode2($"{new string(' ', columnOffset)}end-call", true),
+            };
         }
 
         private ParameterEntry CreateParameterEntry(ParameterDescription parameter, FunctionDeclaration node)

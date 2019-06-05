@@ -47,6 +47,12 @@
 
       
        PROCEDURE DIVISION.
+      * Get the data from the global storage section
+           CALL 'a9a9a5eaTC-GetGlobal' USING
+               by reference address of TC-GlobalData
+           end-call
+
+                          
       
       *DECLARE PROCEDURE MyProc PRIVATE
       *    INPUT    myDate      TYPE DATE.
@@ -113,11 +119,17 @@
            .
       *GlobalStorageTest.MyProc - Params :
       *		input(myDate: DATE)
+           CALL 'a9a9a5eaTC-GetGlobal' USING
+                    by reference address of TC-GlobalData
+           end-call
       *G-Date and G-TechCtx are accesible from GlobalStorage
            MOVE G-Date TO myDate.
       *    MOVE G-TechCtx TO TestCtx.
            MOVE G-TechCtx-value TO TestCtx-value.
        END PROGRAM c0127659MyProc.
+      *
+      * Global Storage Section variables
+      *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. a9a9a5eaTC-GetGlobal.
        ENVIRONMENT DIVISION.
@@ -154,5 +166,5 @@
        01 GlobalPointer pointer.
        PROCEDURE DIVISION USING BY REFERENCE GlobalPointer.
            set GlobalPointer to address of TC-GlobalData
-       .
+           .
        END PROGRAM a9a9a5eaTC-GetGlobal.
