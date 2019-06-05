@@ -12,42 +12,18 @@ using TypeCobol.Tools.Options_Config;
 namespace TypeCobol.Server {
 
     class Server {
-        enum StartClient {
-            No, HiddenWindow, NormalWindow
-        }
-
         static int Main(string[] argv)
         {
-
-
             bool help = false;
             bool version = false;
-            bool once = false;
-            StartClient startClient = StartClient.No;
+
             var config = new TypeCobolConfiguration();
             config.CommandLine = string.Join(" ", argv);
-            var pipename = "TypeCobol.Server";
-
 
             var p = new OptionSet();
 
             //Add custom options for CLI
             p.Add(string.Format("USAGE\n {0} [OPTIONS]... [PIPENAME]\n VERSION:\n {1} \n DESCRIPTION: \n Run the TypeCObol parser server", PROGNAME, PROGVERSION));
-            p.Add("p|pipename", "Pipename used if running as server. Default: \"TypeCobol.Server\"", v => pipename = v);
-            p.Add("k|startServer:",
-                "Start the server if not already started, and executes commandline.\n" + "By default the server is started in window mode\n" + "'{hidden}' hide the window.",
-                v =>
-                {
-                    if ("hidden".Equals(v, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        startClient = StartClient.HiddenWindow;
-                    }
-                    else
-                    {
-                        startClient = StartClient.NormalWindow;
-                    }
-                }); 
-            p.Add("1|once",  "Parse one set of files and exit. If present, this option does NOT launch the server.", v => once = (v != null));
             p.Add("h|help", "Output a usage message and exit.", v => help = (v != null));
             p.Add("V|version", "Output the version number of " + PROGNAME + " and exit.", v => version = (v != null));
 
@@ -169,5 +145,4 @@ namespace TypeCobol.Server {
             return exit(code, TypeCobolConfiguration.ErrorMessages[code].IsNullOrEmpty() ? "" : TypeCobolConfiguration.ErrorMessages[code]);
         }
     }
-
 }
