@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -703,6 +703,10 @@ namespace TypeCobol.Codegen.Generators
         private string GenerateGlobalStorageSectionStackedProgram<A>(LinearNodeSourceCodeMapper clonedMapper, IReadOnlyList<A> Input, LineMappingCtx lmCtx) where A : ITextLine
         {
             StringWriter sw = new StringWriter();
+
+            sw.WriteLine("      *"); GSLineOffset += 1;
+            sw.WriteLine("      * Global Storage Section variables"); GSLineOffset += 1;
+            sw.WriteLine("      *_________________________________________________________________"); GSLineOffset += 1;
             sw.WriteLine("       IDENTIFICATION DIVISION."); GSLineOffset += 1;
             sw.WriteLine("       PROGRAM-ID. a9a9a5eaTC-GetGlobal."); GSLineOffset += 1;
 
@@ -740,7 +744,7 @@ namespace TypeCobol.Codegen.Generators
             sw.WriteLine("       01 GlobalPointer pointer.");
             sw.WriteLine("       PROCEDURE DIVISION USING BY REFERENCE GlobalPointer.");
             sw.WriteLine("           set GlobalPointer to address of TC-GlobalData");
-            sw.WriteLine("       .");
+            sw.WriteLine("           .");
             sw.WriteLine("       END PROGRAM a9a9a5eaTC-GetGlobal.");
 
             return sw.ToString();

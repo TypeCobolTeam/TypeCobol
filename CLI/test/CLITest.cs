@@ -67,6 +67,7 @@ namespace CLI.Test
             CLITestHelper.Test("dependencies_5", ReturnCode.Success);
             CLITestHelper.Test("dependencies_6", ReturnCode.Success);
             CLITestHelper.Test("dependency_with_copy_loading", ReturnCode.Success);
+            CLITestHelper.Test("dependencies_8_import_function_with_global_storage", ReturnCode.Success);
 #if EUROINFO_RULES
             CLITestHelper.Test("ei_dependencies_1", ReturnCode.ParsingDiagnostics);
 #endif

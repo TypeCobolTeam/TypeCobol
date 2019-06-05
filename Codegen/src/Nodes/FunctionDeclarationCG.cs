@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Codegen.Contribution;
@@ -53,11 +53,11 @@ namespace TypeCobol.Codegen.Nodes {
 
                     if (originalNode.IsFlagSet(Node.Flag.UseGlobalStorage))
                     {
+                        dataDivision = GetOrCreateNode<Compiler.Nodes.DataDivision>(originalNode, () => new DataDivision());
                         (linkageSection ?? GetOrCreateNode<Compiler.Nodes.LinkageSection>(dataDivision, () => new LinkageSection(originalNode), dataDivision)).Add(new GlobalStorage.GlobalStorageNode());
                     }
 
                     //Generate code if this procedure call a public procedure in another source
-
                     if (containsPublicCall) {
                         var workingStorageSection = GetOrCreateNode<Compiler.Nodes.WorkingStorageSection>(dataDivision, () => new WorkingStorageSection(originalNode), dataDivision);
 
@@ -72,6 +72,17 @@ namespace TypeCobol.Codegen.Nodes {
                         };
                         workingStorageSection.AddRange(toAddRange, 0);
                         GenerateCodeToCallPublicProc(originalNode, pdiv,  workingStorageSection, linkageSection);
+                    }
+                    else if (OriginalNode.IsFlagSet(Node.Flag.UseGlobalStorage))
+                    {
+                        Node[] toAddRange =
+                        {
+                            new GeneratedNode2("    CALL 'a9a9a5eaTC-GetGlobal' USING", true),
+                            new GeneratedNode2("             by reference address of TC-GlobalData", true),
+                            new GeneratedNode2("    end-call", true),
+                        };
+                        var lastParagraphIndex = pdiv.Children.LastOrDefault(c => c is Paragraph)?.NodeIndex ?? 0;
+                        pdiv.AddRange(toAddRange, 0);
                     }
                 } else {
                     if (child.CodeElement is FunctionDeclarationEnd)
@@ -176,7 +187,6 @@ namespace TypeCobol.Codegen.Nodes {
                 //After #655, TC-Initializations is not used
                 whereToGenerate.Add(new GeneratedNode2("    PERFORM TC-INITIALIZATIONS", true), 0);
 
-
                 //Generate "TC-Initializations" paragraph
                 procedureDivision.Add(
                     new GeneratedNode2("*=================================================================", true));
@@ -185,6 +195,18 @@ namespace TypeCobol.Codegen.Nodes {
                     new GeneratedNode2("*=================================================================", true));
                 procedureDivision.Add(new GeneratedNode2("     IF TC-FirstCall", true));
                 procedureDivision.Add(new GeneratedNode2("          SET TC-NthCall TO TRUE", true));
+                if (OriginalNode.IsFlagSet(Node.Flag.UseGlobalStorage))
+                {
+                    Node[] globalCalltoAddRange =
+                    {
+                        new GeneratedNode2("* Get the data from the global storage section", false),
+                        new GeneratedNode2("     CALL 'a9a9a5eaTC-GetGlobal' USING", true),
+                        new GeneratedNode2("          by reference address of TC-GlobalData", true),
+                        new GeneratedNode2("     end-call", true),
+                    };
+                    procedureDivision.AddRange(globalCalltoAddRange);
+                }
+
                 foreach (var pgm in imports.Programs.Values)
                 {
                     foreach (var proc in pgm.Procedures.Values)

@@ -322,10 +322,12 @@ namespace TypeCobol.Codegen.Actions
                                 struct SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel
                                 {
                                                 public dynamic imports;
+                                                public dynamic useglobalstoragevariable;
                                                 
                                                 public SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel(TypeCobol.Compiler.Nodes.Node @Self)
                                                 {
                                                                 imports = @Self["imports"];
+                                                                useglobalstoragevariable = @Self["useglobalstoragevariable"];
                                                 }
                                                 private static Tuple<string,string>[] __ConditionsAttributes_0 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.CodeModel.Program")};
                                                 public static bool Conditions_0(TypeCobol.Compiler.Nodes.Node @Self)
@@ -1049,14 +1051,39 @@ namespace TypeCobol.Codegen.Actions
                                                                 if ((SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel.Conditions_0(@Self)))
                                                                 {
                                                                                 SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel @Model = new SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel(@Self);
+                                                                                if ((@Model.useglobalstoragevariable))
+                                                                                {
+                                                                                                StringBuilder @SelfResult = new StringBuilder();
+                                                                                                @SelfResult.Append(@"");
+        var clause = "";
+        if (!@Model.imports.HasPublicProcedures) {
+        clause += "* Get the data from the global storage section\n";
+        clause += "    CALL 'a9a9a5eaTC-GetGlobal' USING\n";
+        clause += "        by reference address of TC-GlobalData\n";
+        clause += "    end-call\n";
+        }
+        @SelfResult.Append(@"
+");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@clause}");@SelfResult.Append(@"");
+                                                                                                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", null, "program.procedure-division.declaratives-header.end,//program.procedure-division.sentence-([0-9]+).begin,//program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-([0-9]+).begin|program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-0.begin", null, true);
+                                                                                                if (@SelfAction != null)
+                                                                                                {
+                                                                                                                @SelfActions.Add(@SelfAction);
+                                                                                                }
+                                                                                }
+                                                                }
+                                                }
+                                                {
+                                                                if ((SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel.Conditions_0(@Self)))
+                                                                {
+                                                                                SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel @Model = new SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel(@Self);
                                                                                 if ((@Model.imports.HasPublicProcedures))
                                                                                 {
                                                                                                 StringBuilder @SelfResult = new StringBuilder();
                                                                                                 @SelfResult.Append(@"");
         var clause = "";
         if (@Model.imports.HasPublicProcedures) {
-        clause += "*\n";
-        clause += "    PERFORM TC-INITIALIZATIONS\n";
+          clause += "*\n";
+          clause += "    PERFORM TC-INITIALIZATIONS\n";
         }
         @SelfResult.Append(@"
 ");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@clause}");@SelfResult.Append(@"");
@@ -1083,6 +1110,12 @@ namespace TypeCobol.Codegen.Actions
         clause += "*=================================================================\n";
         clause += "     IF TC-FirstCall\n";
         clause += "          SET TC-NthCall TO TRUE\n";
+        if (@Model.useglobalstoragevariable) {
+          clause += "* Get the data from the global storage section\n";
+          clause += "          CALL 'a9a9a5eaTC-GetGlobal' USING\n";
+          clause += "              by reference address of TC-GlobalData\n";
+          clause += "          end-call\n";
+        }
         foreach (var pgm in @Model.imports.Programs.Values) {
         foreach (var proc in pgm.Procedures.Values) {
         clause += "          SET ADDRESS OF TC-"+pgm.Name + "-" + proc.Hash+"-Item  TO NULL\n";
