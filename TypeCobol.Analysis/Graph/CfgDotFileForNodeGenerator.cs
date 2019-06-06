@@ -75,35 +75,52 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
-        /// 
+        /// Memoïzed emitted group to avoid infinite recursion.
         /// </summary>
-        /// <param name="block"></param>
-        /// <param name="cfg"></param>
-        /// <returns></returns>
+        internal HashSet<int> EmittedGroupIndices
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Emit a basic block, with also handling recusive BasicBlock Groups that can appear for
+        /// instance for recursive PERFORM.
+        /// </summary>
+        /// <param name="block">The BasicBlock to emit</param>
+        /// <param name="cfg">The target Control Flow Graph that contains the Basic Block</param>
+        /// <returns>true</returns>
         protected override bool EmitBasicBlock(BasicBlock<Node, D> block, ControlFlowGraph<Node, D> cfg)
         {
             bool bResult = base.EmitBasicBlock(block, cfg);
             if ((block is ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup))
             {
                 ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup group = (ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup)block;
-                //we are emitting a sub graph.
-                CfgDotFileForNodeGenerator<D> cfgDot = new CfgDotFileForNodeGenerator<D>(cfg);
-                cfgDot.FullInstruction = true;
+                if (EmittedGroupIndices == null)
+                {
+                    EmittedGroupIndices = new HashSet<int>();
+                }
                 StringWriter sw = new StringWriter();
-                sw.WriteLine("subgraph cluster_" + group.GroupIndex + '{');
-                sw.WriteLine("color = blue;");
-                sw.WriteLine(string.Format("label = \"{0}\";", ((ControlFlowGraphBuilder<D>.BasicBlockForNode)group.Group.First.Value).Tag));
-                cfgDot.Writer = sw;
-                cfgDot.DigraphBuilder = new StringBuilder();
-                //Emit block starting at the first block.
-                LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
-                cfg.DFS(first.Value, (b, g) => cfgDot.EmitBasicBlock(b, g));
-                sw.WriteLine(cfgDot.DigraphBuilder.ToString());
-                sw.WriteLine('}');
+                if (!EmittedGroupIndices.Contains(group.GroupIndex))
+                {
+                    EmittedGroupIndices.Add(group.GroupIndex);
+                    //we are emitting a sub graph.
+                    CfgDotFileForNodeGenerator<D> cfgDot = new CfgDotFileForNodeGenerator<D>(cfg);
+                    cfgDot.EmittedGroupIndices = EmittedGroupIndices;
+                    cfgDot.FullInstruction = true;                    
+                    sw.WriteLine("subgraph cluster_" + group.GroupIndex + '{');
+                    sw.WriteLine("color = blue;");
+                    sw.WriteLine(string.Format("label = \"{0}\";", ((ControlFlowGraphBuilder<D>.BasicBlockForNode)group.Group.First.Value).Tag));
+                    cfgDot.Writer = sw;
+                    cfgDot.DigraphBuilder = new StringBuilder();
+                    //Emit block starting at the first block.
+                    LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
+                    cfg.DFS(first.Value, (b, g) => cfgDot.EmitBasicBlock(b, g));
+                    sw.WriteLine(cfgDot.DigraphBuilder.ToString());
+                    sw.WriteLine('}');
+                }
                 //Create dashed link to the group
                 sw.WriteLine(string.Format("Block{0} -> Block{1} [style=dashed, arrowhead=none]", block.Index, group.Group.First.Value.Index, group.GroupIndex));
-
-
                 sw.Flush();
                 this.Writer.WriteLine(sw.ToString());
             }
