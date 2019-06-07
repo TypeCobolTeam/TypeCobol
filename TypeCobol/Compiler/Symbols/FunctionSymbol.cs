@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Types;
 using Type = TypeCobol.Compiler.Types.Type;
@@ -108,22 +107,6 @@ namespace TypeCobol.Compiler.Symbols
         /// Get the type visibility mask for a procedure.
         /// </summary>
         public override Flags TypeVisibilityMask => Flags.Private | Flags.Public;
-
-        /// <summary>
-        /// Function have their types declared in their enclosing program.
-        /// So lookup is performed backward.
-        /// </summary>
-        /// <param name="rootScope">The top rootScope</param>
-        /// <param name="path">Looking path à la COBOL85 --> in Reverse order</param>
-        /// <param name="bCreate">true if the TypeDef symbol shall be created if not existing, false otherwise.</param>
-        /// <returns>The TypedefSymbol if found, null otherwise.</returns>
-        public override Scope<TypedefSymbol>.Entry ReverseResolveType(AbstractScope rootScope, string[] path,
-            bool bCreate)
-        {
-            System.Diagnostics.Debug.Assert(Owner.Kind == Kinds.Function || Owner.Kind == Kinds.Program);
-            ProgramSymbol prg = (ProgramSymbol) Owner;
-            return prg.ReverseResolveType(rootScope, path, bCreate);
-        }
 
         /// <summary>
         /// Dump this symbol in the given TextWriter instance

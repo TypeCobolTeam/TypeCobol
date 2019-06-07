@@ -181,7 +181,7 @@ namespace TypeCobol.Compiler.Scopes
 
         /// <summary>
         /// Enter a Symbol in this scope, if a previous symbol with the same name exits, then a MultySymbols entry
-        /// will be used to store the nes symbol.
+        /// will be used to store the new symbol.
         /// </summary>
         /// <param name="sym">The Symbol to enter</param>
         /// <returns>The entry of the symbol</returns>
@@ -196,14 +196,14 @@ namespace TypeCobol.Compiler.Scopes
             }
             Entry entry = null;
             String name = sym.Name;
-            if (!_symbols.ContainsKey(name))
+            
+            if (!_symbols.TryGetValue(name, out entry))
             {
                 _symbols[name] = entry = new Entry(sym);
             }
             else
             {
                 //Check if the symbol itself exits                
-                entry = _symbols[name];
                 if (entry.Exits(sym))
                     return entry;
                 MultiSymbols multi = null;
@@ -214,7 +214,7 @@ namespace TypeCobol.Compiler.Scopes
                 }
                 else
                 {
-                    multi = _symbols[name] as MultiSymbols;
+                    multi = (MultiSymbols)entry;
                 }
                 multi.Add(sym);
                 entry = multi;

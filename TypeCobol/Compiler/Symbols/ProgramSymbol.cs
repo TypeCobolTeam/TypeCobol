@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Xml;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Domain;
-using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
@@ -268,7 +267,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Resolve the given Symbol paths from this scope
         /// </summary>
-        /// <param name="paths">The qualified path of the symbol reference in COBOL85 order: MUST BE IN LOWER CASES</param>
+        /// <param name="paths">The qualified path of the symbol reference in COBOL85 order</param>
         /// <param name="results">The All discovered candidate symbol accumulator</param>
         /// <param name="bRecurseEnglobingPrograms">true to recurse into englobing variables to look for global variable, false otherwise</param>
         /// <param name="visibilityMask">Visibility Mask</param>

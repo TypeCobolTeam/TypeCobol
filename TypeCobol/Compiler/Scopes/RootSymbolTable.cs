@@ -15,7 +15,7 @@ namespace TypeCobol.Compiler.Scopes
         public VariableSymbol BottomVariable { get; private set;}
 
         /// <summary>
-        /// The count of all variable created in this GlobalSymbolTable
+        /// The count of all variable created in this RootSymbolTable
         /// </summary>
         private uint _variableSymbolCounter = 0;
         /// <summary>
@@ -67,7 +67,7 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
-        /// Add the given VariableSymbol instance in this Global Symbol Table universe
+        /// Add the given VariableSymbol instance in this Root Symbol Table universe
         /// </summary>
         /// <param name="varSym">The Variable Symbol to be added</param>
         /// <returns>The given VariableSymbol instance.</returns>
@@ -84,7 +84,7 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
-        /// All Ordered Symbol that can be reached from this Global Symbol Table.
+        /// All Ordered Symbol that can be reached from this Root Symbol Table.
         /// This is in fact the entire domain of variable within this Flobal Symbol Table.
         /// </summary>
         public IList<VariableSymbol> Universe

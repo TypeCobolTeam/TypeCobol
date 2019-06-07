@@ -100,11 +100,7 @@ namespace TypeCobol.Compiler.Domain
             };
             Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(BuilderNodeListenerFactory);
             //Put all Types from programs into the Global Namespace.
-            foreach (var pgm in Root.Programs)
-            {
-                TransfertIntrinsics(pgm);
-            }
-
+            TransfertAllProgramsToIntrinsics();
             try
             {
                 //path, skeletons, DocumentFormat.RDZReferenceFormat, typeCobolVersion, autoRemarks, copies
