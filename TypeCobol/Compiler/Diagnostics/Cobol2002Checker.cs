@@ -93,6 +93,20 @@ namespace TypeCobol.Compiler.Diagnostics
                 string message = "TYPEDEF \'" + typeDefinition.Name + "\' has no description.";
                 DiagnosticUtils.AddError(typeDefinition, message, MessageCode.SemanticTCErrorInParser);
             }
+
+            if (typeDefinition.IsInsideCopy())
+            {
+                string copyName = typeDefinition.CodeElement.FirstCopyDirective.TextName;
+                if (typeDefinition.IsStrictlyTyped)
+                {
+                    DiagnosticUtils.AddError(typeDefinition, $"TYPEDEF STRICT is not allowed within a copy. Please review the '{copyName}' copy.", MessageCode.SemanticTCErrorInParser);
+                }
+                else if (typeDefinition.CodeElement.HasExplicitVisibility)
+                {
+                    DiagnosticUtils.AddError(typeDefinition, $"TYPEDEF with explicit visibility qualifier is not allowed within a copy. Please review the '{copyName}' copy.", MessageCode.SemanticTCErrorInParser);
+                }
+            }
+
             if (typeDefinition.RestrictionLevel == RestrictionLevel.STRONG)
             {
                 foreach (var sub in typeDefinition.Children)
@@ -100,6 +114,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     CheckForValueClause(sub, typeDefinition.Name);
                 }
             }
+
             // Add a warning if a parameters field is set inside the formalized comment
             if (typeDefinition.CodeElement.FormalizedCommentDocumentation != null &&
                 !typeDefinition.CodeElement.FormalizedCommentDocumentation.Parameters.IsNullOrEmpty())
