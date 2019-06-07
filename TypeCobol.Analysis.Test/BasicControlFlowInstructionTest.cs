@@ -593,6 +593,21 @@ namespace TypeCobol.Analysis.Test
         }
 
         [TestMethod]
+        public void PerformProcedure1()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcedure1.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(Builder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcedure1.dot");
+
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
         public void PerformNested0()
         {
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformNested0.cbl");
@@ -740,6 +755,33 @@ namespace TypeCobol.Analysis.Test
             Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
 
             CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath);
-        }        
+        }
+
+        /// <summary>
+        /// "dot.exe" -Tpng CGM110.dot -o CGM110.png
+        /// "dot.exe" -Tsvg CGM110.dot -o CGM110.svg
+        /// </summary>
+        [TestMethod]
+        public void OneThidPartyCGM110()
+        {
+            string pwd = Directory.GetCurrentDirectory();
+            string solutionPath = Directory.GetParent(pwd)?.Parent?.FullName;
+            DirectoryInfo solDir = new DirectoryInfo(solutionPath);
+            DirectoryInfo rootSolDir = solDir.Parent;
+
+            string samples = @"ThirdParty" + Path.DirectorySeparatorChar + "CNAF" + Path.DirectorySeparatorChar + "Batch";
+
+            string path = Path.Combine(rootSolDir.FullName, "TypeCobol.Test", samples, "CGM110.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(Builder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "CGM110.dot");
+
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath, false);
+        }
+
     }
 }
