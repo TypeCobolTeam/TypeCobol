@@ -105,22 +105,32 @@ namespace TypeCobol.Analysis.Graph
                 {
                     EmittedGroupIndices.Add(group.GroupIndex);
                     //we are emitting a sub graph.
-                    CfgDotFileForNodeGenerator<D> cfgDot = new CfgDotFileForNodeGenerator<D>(cfg);
-                    cfgDot.EmittedGroupIndices = EmittedGroupIndices;
-                    cfgDot.FullInstruction = true;                    
                     sw.WriteLine("subgraph cluster_" + group.GroupIndex + '{');
                     sw.WriteLine("color = blue;");
-                    sw.WriteLine(string.Format("label = \"{0}\";", ((ControlFlowGraphBuilder<D>.BasicBlockForNode)group.Group.First.Value).Tag));
-                    cfgDot.Writer = sw;
-                    cfgDot.DigraphBuilder = new StringBuilder();
-                    //Emit block starting at the first block.
-                    LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
-                    cfg.DFS(first.Value, (b, g) => cfgDot.EmitBasicBlock(b, g));
-                    sw.WriteLine(cfgDot.DigraphBuilder.ToString());
+                    if (group.Group.Count > 0)
+                    {
+                        sw.WriteLine(string.Format("label = \"{0}\";", ((ControlFlowGraphBuilder<D>.BasicBlockForNode)group.Group.First.Value).Tag));
+                        CfgDotFileForNodeGenerator<D> cfgDot = new CfgDotFileForNodeGenerator<D>(cfg);
+                        cfgDot.EmittedGroupIndices = EmittedGroupIndices;
+                        cfgDot.FullInstruction = this.FullInstruction;
+                        cfgDot.Writer = sw;
+                        cfgDot.DigraphBuilder = new StringBuilder();
+                        //Emit block starting at the first block.
+                        LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
+                        cfg.DFS(first.Value, (b, g) => cfgDot.EmitBasicBlock(b, g));
+                        sw.WriteLine(cfgDot.DigraphBuilder.ToString());
+                    }
                     sw.WriteLine('}');
                 }
                 //Create dashed link to the group
-                sw.WriteLine(string.Format("Block{0} -> Block{1} [style=dashed, arrowhead=none]", block.Index, group.Group.First.Value.Index, group.GroupIndex));
+                if (group.Group.Count > 0)
+                {
+                    sw.WriteLine(string.Format("Block{0} -> Block{1} [style=dashed, arrowhead=none]", block.Index, group.Group.First.Value.Index));
+                }
+                else
+                {
+                    sw.WriteLine(string.Format("Block{0} -> \"\" [style=dashed, arrowhead=none]", block.Index));
+                }
                 sw.Flush();
                 this.Writer.WriteLine(sw.ToString());
             }
