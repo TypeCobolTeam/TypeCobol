@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using JetBrains.Annotations;
+using TypeCobol.Codegen.Contribution;
 
 namespace TypeCobol.Codegen.Nodes {
     using System.Collections.Generic;
@@ -50,9 +51,13 @@ namespace TypeCobol.Codegen.Nodes {
                     var pdiv = new ProcedureDivision(originalNode, sentences);
                     children.Add(pdiv);
 
-                    
+                    if (originalNode.IsFlagSet(Node.Flag.UseGlobalStorage))
+                    {
+                        (linkageSection ?? GetOrCreateNode<Compiler.Nodes.LinkageSection>(dataDivision, () => new LinkageSection(originalNode), dataDivision)).Add(new GlobalStorage.GlobalStorageNode());
+                    }
+
                     //Generate code if this procedure call a public procedure in another source
-                    
+
                     if (containsPublicCall) {
                         var workingStorageSection = GetOrCreateNode<Compiler.Nodes.WorkingStorageSection>(dataDivision, () => new WorkingStorageSection(originalNode), dataDivision);
 

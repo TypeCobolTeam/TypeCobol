@@ -17,6 +17,34 @@
       
        01 MyGroup PIC X(10).
            88 TestLevel VALUE "Test".
+       LINKAGE SECTION.
+
+       01 TC-GlobalData.
+
+      *01 G-Date            TYPE Date.
+       02 G-Date.
+           03 YYYY PIC 9(4).
+           03 MM PIC 9(2).
+           03 DD PIC 9(2).
+
+      *01 G-TechCtx         TYPE Bool.
+       02  G-TechCtx-value PIC X VALUE LOW-VALUE.
+           88  G-TechCtx       VALUE 'T'.
+           88  G-TechCtx-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+
+      *01 DuplicatedVar     TYPE Bool.
+       02  DuplicatedVar-value PIC X VALUE LOW-VALUE.
+           88  DuplicatedVar       VALUE 'T'.
+           88  DuplicatedVar-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+
+       02 purCblVar PIC X(22).
+       02 purCblGrp.
+          49 purCblVar PIC X(32).
+
       
        PROCEDURE DIVISION.
       
@@ -54,6 +82,32 @@
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
            02 DD PIC 9(2).
+       01 TC-GlobalData.
+
+      *01 G-Date            TYPE Date.
+       02 G-Date.
+           03 YYYY PIC 9(4).
+           03 MM PIC 9(2).
+           03 DD PIC 9(2).
+
+      *01 G-TechCtx         TYPE Bool.
+       02  G-TechCtx-value PIC X VALUE LOW-VALUE.
+           88  G-TechCtx       VALUE 'T'.
+           88  G-TechCtx-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+
+      *01 DuplicatedVar     TYPE Bool.
+       02  DuplicatedVar-value PIC X VALUE LOW-VALUE.
+           88  DuplicatedVar       VALUE 'T'.
+           88  DuplicatedVar-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+
+       02 purCblVar PIC X(22).
+       02 purCblGrp.
+          49 purCblVar PIC X(32).
+
        PROCEDURE DIVISION
              USING BY REFERENCE myDate
            .
@@ -95,6 +149,7 @@
        02 purCblVar PIC X(22).
        02 purCblGrp.
           49 purCblVar PIC X(32).
+
        LINKAGE SECTION.
        01 GlobalPointer pointer.
        PROCEDURE DIVISION USING BY REFERENCE GlobalPointer.

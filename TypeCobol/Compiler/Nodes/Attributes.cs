@@ -54,6 +54,7 @@ namespace TypeCobol.Compiler.Nodes {
 	        attributes["isnested"] = new IsNestedAttribute();
 	        attributes["containnested"] = new ContainNestedAttribute();
             attributes["global"] = new GlobalAttribute();
+            attributes["useglobalstoragevariable"] = new UseGlobalStorageVariableAttribute();
             //not used?
             attributes["typecobol"] = new TypeCobolAttribute();
 		    attributes["visibility"] = new VisibilityAttribute();
@@ -222,6 +223,23 @@ namespace TypeCobol.Compiler.Nodes {
             }
             else
                 return "";
+        }
+    }
+    internal class UseGlobalStorageVariableAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            if (o is Program pgm)
+            {
+                return pgm.IsFlagSet(Node.Flag.UseGlobalStorage);
+            }
+            else if (o is FunctionDeclaration fun)
+            {
+                return fun.IsFlagSet(Node.Flag.UseGlobalStorage);
+            }
+            
+            else
+                return false;
         }
     }
 
