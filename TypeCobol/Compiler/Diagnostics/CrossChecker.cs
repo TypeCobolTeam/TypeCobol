@@ -496,6 +496,10 @@ namespace TypeCobol.Compiler.Diagnostics
 
                 if (dataDefinitionFound.IsFlagSet(Node.Flag.GlobalStorageSection) || dataDefinitionPath != null && dataDefinitionPath.CurrentDataDefinition.IsFlagSet(Node.Flag.GlobalStorageSection))
                 {
+                    if (node is DataDefinition)
+                    {
+                        DiagnosticUtils.AddError(node, "A Global-Storage Section variable cannot be referenced in another Data Section", area.SymbolReference);
+                    }
                     //We must find the enclosing FunctionDeclaration or Program (if node is outside a function/procedure)
                     node.GetEnclosingProgramOrFunctionNode().SetFlag(Node.Flag.UseGlobalStorage, true);
                 }
