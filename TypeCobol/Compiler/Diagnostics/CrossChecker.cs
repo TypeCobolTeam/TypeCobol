@@ -655,6 +655,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (!node.QualifiedStorageAreas.ContainsKey(storageArea))
                 node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
         }
+
     }
     
     class SectionOrParagraphUsageChecker
