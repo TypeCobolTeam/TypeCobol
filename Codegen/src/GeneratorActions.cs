@@ -251,7 +251,12 @@ namespace TypeCobol.Codegen
             {
                 return new Clone(destination, this);
             }
-                System.Console.WriteLine("Unknown action: \"" + action + "\"");
+            if ("contribute".Equals(action))
+            {
+                return new Contribute(destination, pattern, code, group, index, newline);
+            }
+
+            System.Console.WriteLine("Unknown action: \"" + action + "\"");
             return null;
 
         }

@@ -437,6 +437,15 @@
       <pattern action="expand" location="NODE"></pattern>
     </patterns>
   </skeleton>
+
+  <skeleton name="PGM.USE.GLOBALSTORAGE" var="useglobalstoragevariable">
+    <conditions>
+      <condition node="TypeCobol.Compiler.CodeModel.Program" />
+    </conditions>
+    <patterns>
+      <pattern location="program.data-division.linkage.begin" name="TypeCobol.Codegen.Contribution.GlobalStorage" action="contribute" deprecated="false" boolean_property="useglobalstoragevariable" newline="true"></pattern>
+    </patterns>
+  </skeleton>
   
   <skeleton name="PROGRAM.IMPORT.FUN.PUBLIC" var="imports">
     <conditions>
@@ -462,6 +471,8 @@
         }
         @items
       </pattern>
+      
+
 
       <!-- CALLER LINKAGE SECTION WITHOUT EXTERNAL-->
       <pattern location="program.data-division.linkage.begin" action="create" boolean_property="imports.IsNotEmpty" deprecated="false">

@@ -347,6 +347,13 @@ namespace TypeCobol.Codegen.Generators
             //The previous line generation buffer 
             LineStringSourceText previousBuffer = null;
             bool insideMultilineComments = false;
+
+            //First of all compute any Global Storage Data
+            if (clonedMapper != null && mapper.UseGlobalStorageSection && clonedMapper.ClonedGlobalStorageSection != null)
+            {
+                GetGlobalStorageData(clonedMapper, Input);
+            }
+
             for (int i = startLine; i < endLine; i++)
             {
                 if (i == TypeCobolVersionLineNumber && this.TypeCobolVersion != null)
@@ -715,7 +722,32 @@ namespace TypeCobol.Codegen.Generators
             sw.WriteLine("       DATA DIVISION.");
             sw.WriteLine("       WORKING-STORAGE SECTION.");
             sw.WriteLine("       01 PIC X(8) value ':TC:GBLS'.");
+
+            sw.WriteLine(GetGlobalStorageData(clonedMapper, Input));
+
+            sw.WriteLine("       LINKAGE SECTION.");
+            sw.WriteLine("       01 GlobalPointer pointer.");
+            sw.WriteLine("       PROCEDURE DIVISION USING BY REFERENCE GlobalPointer.");
+            sw.WriteLine("           set GlobalPointer to address of TC-GlobalData");
+            sw.WriteLine("       .");
+            sw.WriteLine("       END PROGRAM a9a9a5eaTC-GetGlobal.");
+
+            return sw.ToString();
+        }
+
+        public string GlobalStorageData = null;
+        /// <summary>
+        /// Get the content of the TC-GlobalData structure
+        /// </summary>
+        /// <returns></returns>
+        public string GetGlobalStorageData<A>(LinearNodeSourceCodeMapper clonedMapper, IReadOnlyList<A> Input) where A : ITextLine
+        {
+            if (GlobalStorageData != null)
+                return GlobalStorageData;
+
+            StringWriter sw = new StringWriter();
             sw.WriteLine("       01 TC-GlobalData.");
+
 
             //Compute the last line of the Global Storage Node.
             int lastLine = -1;
@@ -768,14 +800,8 @@ namespace TypeCobol.Codegen.Generators
                 AdvanceToNextStateAndAdjustTokenProperties(tempTokensLine, t);
             }
 
-            sw.WriteLine("       LINKAGE SECTION.");
-            sw.WriteLine("       01 GlobalPointer pointer.");
-            sw.WriteLine("       PROCEDURE DIVISION USING BY REFERENCE GlobalPointer.");
-            sw.WriteLine("           set GlobalPointer to address of TC-GlobalData");
-            sw.WriteLine("       .");
-            sw.WriteLine("       END PROGRAM a9a9a5eaTC-GetGlobal.");
-
-            return sw.ToString();
+            GlobalStorageData = sw.ToString();
+            return GlobalStorageData;
         }
 
         /// <summary>
@@ -1074,6 +1100,13 @@ namespace TypeCobol.Codegen.Generators
         /// <returns>The Node's lines</returns>
         IEnumerable<ITextLine> NodeLines(Node node)
         {
+            //Check for a node that need a IGeneratorContext data
+            if (node is IGeneratorContext)
+            {
+                IGeneratorContext genCtx = node as IGeneratorContext;
+                genCtx.Generator = this;
+            }
+
             node.Layout = Layout;
             return node.Lines;
         }

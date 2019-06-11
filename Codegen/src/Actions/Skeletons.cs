@@ -303,6 +303,22 @@ namespace TypeCobol.Codegen.Actions
                                                 }
                                 }
 
+                                struct SkeleTonPGM_USE_GLOBALSTORAGEModel
+                                {
+                                                public dynamic useglobalstoragevariable;
+                                                
+                                                public SkeleTonPGM_USE_GLOBALSTORAGEModel(TypeCobol.Compiler.Nodes.Node @Self)
+                                                {
+                                                                useglobalstoragevariable = @Self["useglobalstoragevariable"];
+                                                }
+                                                private static Tuple<string,string>[] __ConditionsAttributes_0 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.CodeModel.Program")};
+                                                public static bool Conditions_0(TypeCobol.Compiler.Nodes.Node @Self)
+                                                {
+                                                                return CheckConditions(@Self, __ConditionsAttributes_0);
+                                                }
+
+                                }
+
                                 struct SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel
                                 {
                                                 public dynamic imports;
@@ -933,6 +949,22 @@ namespace TypeCobol.Codegen.Actions
                                 public static List<TypeCobol.Codegen.Actions.Action> TypeCobol_Compiler_CodeModel_Program(TypeCobol.Compiler.Nodes.Node @Self, TypeCobol.Codegen.GeneratorActions @SelfContext)
                                 {
                                                 List<TypeCobol.Codegen.Actions.Action> @SelfActions = new List<TypeCobol.Codegen.Actions.Action>();
+                                                {
+                                                                if ((SkeleTonPGM_USE_GLOBALSTORAGEModel.Conditions_0(@Self)))
+                                                                {
+                                                                                SkeleTonPGM_USE_GLOBALSTORAGEModel @Model = new SkeleTonPGM_USE_GLOBALSTORAGEModel(@Self);
+                                                                                if ((@Model.useglobalstoragevariable))
+                                                                                {
+                                                                                                StringBuilder @SelfResult = new StringBuilder();
+                                                                                                @SelfResult.Append(@"");
+                                                                                                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, "TypeCobol.Codegen.Contribution.GlobalStorage", @SelfResult.ToString(), "contribute", null, "program.data-division.linkage.begin", null, true);
+                                                                                                if (@SelfAction != null)
+                                                                                                {
+                                                                                                                @SelfActions.Add(@SelfAction);
+                                                                                                }
+                                                                                }
+                                                                }
+                                                }
                                                 {
                                                                 if ((SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel.Conditions_0(@Self)))
                                                                 {
