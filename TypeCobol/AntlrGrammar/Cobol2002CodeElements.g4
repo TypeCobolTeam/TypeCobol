@@ -36,6 +36,6 @@ cobol2002TypeClause:    TYPE dataTypeNameReference;
 // Updated INITIALIZE statement using COBOL v6.1 specs
 initializeStatement:
 	INITIALIZE storageArea1+ (WITH? FILLER)?
-	(ALL|categoryName=dataCategory TO? VALUE)?
+	((ALL|categoryName=dataCategory) TO? VALUE)?
 	(THEN? REPLACING initializeReplacingDirective+)?
 	(THEN? TO? DEFAULT)?;
