@@ -65,6 +65,7 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             FunctionDeclarationChecker.OnNode(functionDeclaration);
             CheckMultipleFormComParam(functionDeclaration.CodeElement);
+            functionDeclaration.SetFlag(Node.Flag.UseGlobalStorage, IsGlobalStorageVariableUsed(functionDeclaration.Children.FirstOrDefault(c => c is ProcedureDivision)));
             return true;
         }
 
@@ -274,6 +275,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                 }
             }
+
+            program.SetFlag(Node.Flag.UseGlobalStorage, IsGlobalStorageVariableUsed(program.Children.FirstOrDefault(c => c is ProcedureDivision)));
 
             return true;
         }
@@ -654,6 +657,51 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (!node.QualifiedStorageAreas.ContainsKey(storageArea))
                 node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
+        }
+
+        /// <summary>
+        /// Check if the children of the node are using any global storage variable
+        /// </summary>
+        /// <param name="node">The current node</param>
+        /// <returns>True if the children of the node are using a global storage variable, false otherwise</returns>
+        private bool IsGlobalStorageVariableUsed(Node node)
+        {
+            if (node != null)
+            {
+                if (node.CodeElement != null)
+                {
+                    var ce = node.CodeElement;
+                    IEnumerable<SymbolReference> symbolReferences = new List<SymbolReference>();
+
+                    //Concat symbol references used in the program
+                    if (ce.StorageAreaWrites != null)
+                        symbolReferences = symbolReferences.Concat(ce.StorageAreaWrites.Select(saw => saw.MainSymbolReference));
+
+                    if (ce.StorageAreaReads != null)
+                        symbolReferences = symbolReferences.Concat(ce.StorageAreaReads.Select(sar => sar.SymbolReference));
+
+                    //Get only the Symbol References that are not null (can happen if we start writting a qualified variable)
+                    foreach (var symbolReference in symbolReferences.Where(sr => sr != null))
+                    {
+                        //Get the global storage symbol table
+                        SymbolTable globalStorageTable = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.GlobalStorage);
+                        if (globalStorageTable != null && globalStorageTable.GetVariables(symbolReference).Any())
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                //Exclude Function declaration because a program that declares a FunctionDeclaration using a global storage variable is not using a global storage variable
+                foreach (Node child in node.Children.Where(c => c is FunctionDeclaration == false))
+                {
+                    //Recurse on all children
+                    if (IsGlobalStorageVariableUsed(child))
+                        return true;
+                }
+            }
+
+            return false;
         }
     }
     
