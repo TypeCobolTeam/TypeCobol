@@ -173,6 +173,7 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 		private static Nodes.TypeDefinition CreateBase(DataType type) {
 			var entry = new DataTypeDescriptionEntry();
+		    entry.Visibility = AccessModifier.Public;
 			entry.LevelNumber = new GeneratedIntegerValue(1);
 			entry.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(type.Name), SymbolType.DataName);
 			entry.DataType = type;
@@ -189,6 +190,7 @@ namespace TypeCobol.Compiler.CodeElements
 	    private static Nodes.TypeDefinition CreateCurrency()
 	    {
 	        var entry = new DataTypeDescriptionEntry();
+	        entry.Visibility = AccessModifier.Public;
 	        entry.LevelNumber = new GeneratedIntegerValue(1);
 	        entry.DataName = new SymbolDefinition(new GeneratedAlphanumericValue("CURRENCY"), SymbolType.DataName);
             entry.Picture = new GeneratedAlphanumericValue(string.Format("{0}({1})", 'X', 3));
