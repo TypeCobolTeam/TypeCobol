@@ -370,6 +370,15 @@ namespace TypeCobol.Compiler.Diagnostics
                 return true;
             }
 
+            if (dataDefinition.Parent is GlobalStorageSection == false)
+            {
+                if (IsGlobalStorageVariableUsed(dataDefinition))
+                {
+                    DiagnosticUtils.AddError(dataDefinition,
+                        "A Global-Storage Section variable cannot be referenced in another Data Section");
+                }
+            }
+
             DataDefinitionChecker.OnNode(dataDefinition);
 
             return true;
