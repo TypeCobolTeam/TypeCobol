@@ -757,6 +757,213 @@ namespace TypeCobol.Analysis.Test
             CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath);
         }
 
+        [TestMethod]
+        public void CfgInNestedPrg0()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "CfgInNestedPrg0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+
+            //Here we have the main program, followed by stacked programs.
+            Assert.IsTrue(Builder.Programs.Count == 3);
+            //var currentProgram = Builder.Programs[0];
+            //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+            //In this case we have first the Main program cfg, followed by the nested programs cfg builders of the main program, followed by stacked program cfg builders.
+            //Stack programs cfg builders have no parent cfg builders.
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 6);
+            Assert.IsNull(CfgBuilder.ParentProgramCfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[0] == CfgBuilder);
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[0].ParentProgramCfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[1].ParentProgramCfgBuilder == CfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[2].ParentProgramCfgBuilder == CfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[3].ParentProgramCfgBuilder == CfgBuilder);
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[4].ParentProgramCfgBuilder);
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[5].ParentProgramCfgBuilder);
+
+            //We have taken the same CFG than for IfThenElseCascade0    
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElseCascade0.dot");
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.AllCfgBuilder[2].Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void CfgInNestedPrg1()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "CfgInNestedPrg1.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+
+            //Here we have the main program, followed by stacked programs.
+            Assert.IsTrue(Builder.Programs.Count == 3);
+            //var currentProgram = Builder.Programs[0];
+            //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+            //In this case we have first the Main program cfg, followed by the nested programs cfg builders of the main program, followed by stacked program cfg builders.
+            //Stack programs cfg builders have no parent cfg builders.
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 6);
+            Assert.IsNull(CfgBuilder.ParentProgramCfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[0] == CfgBuilder);
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[0].ParentProgramCfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[1].ParentProgramCfgBuilder == CfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[2].ParentProgramCfgBuilder == CfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[3].ParentProgramCfgBuilder == CfgBuilder);
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[4].ParentProgramCfgBuilder);
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[5].ParentProgramCfgBuilder);
+
+            //We have taken the same CFG than for PerformProcedure0  
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcedure0.dot");
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.AllCfgBuilder[3].Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void CfgInNestedPrg2()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "CfgInNestedPrg2.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+
+            //Here we have the main program, followed by stacked programs.
+            Assert.IsTrue(Builder.Programs.Count == 3);
+            //var currentProgram = Builder.Programs[0];
+            //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+            //In this case we have first the Main program cfg, followed by the nested programs cfg builders of the main program, followed by stacked program cfg builders.
+            //Stack programs cfg builders have no parent cfg builders.
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 6);
+            Assert.IsNull(CfgBuilder.ParentProgramCfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[0] == CfgBuilder);
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[0].ParentProgramCfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[1].ParentProgramCfgBuilder == CfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[2].ParentProgramCfgBuilder == CfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[3].ParentProgramCfgBuilder == CfgBuilder);
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[4].ParentProgramCfgBuilder);
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[5].ParentProgramCfgBuilder);
+
+            //We have taken the same CFG than for MixPeformEvaluateIf0  
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "MixPeformEvaluateIf0.dot");
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.AllCfgBuilder[1].Cfg, path, expectedPath);
+        }
+
+
+        [TestMethod]
+        public void CfgInStackedPrg0()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "CfgInStackedPrg0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+
+            //Here we have the main program, followed by stacked programs.
+            Assert.IsTrue(Builder.Programs.Count == 3);
+            //var currentProgram = Builder.Programs[0];
+            //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+            //In this case we have first the Main program cfg, followed by the nested programs cfg builders of the main program, followed by stacked program cfg builders.
+            //Stack programs cfg builders have no parent cfg builders.
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 6);
+            Assert.IsNull(CfgBuilder.ParentProgramCfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[0] == CfgBuilder);
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[0].ParentProgramCfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[1].ParentProgramCfgBuilder == CfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[2].ParentProgramCfgBuilder == CfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[3].ParentProgramCfgBuilder == CfgBuilder);
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[4].ParentProgramCfgBuilder);
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[5].ParentProgramCfgBuilder);
+
+            //We have taken the same CFG than for PerformProcedure0  
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcedure0.dot");
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.AllCfgBuilder[4].Cfg, path, expectedPath);
+        }
+
+
+        [TestMethod]
+        public void CfgInStackedPrg1()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "CfgInStackedPrg1.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+
+            //Here we have the main program, followed by stacked programs.
+            Assert.IsTrue(Builder.Programs.Count == 3);
+            //var currentProgram = Builder.Programs[0];
+            //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+            //In this case we have first the Main program cfg, followed by the nested programs cfg builders of the main program, followed by stacked program cfg builders.
+            //Stack programs cfg builders have no parent cfg builders.
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 6);
+            Assert.IsNull(CfgBuilder.ParentProgramCfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[0] == CfgBuilder);
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[0].ParentProgramCfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[1].ParentProgramCfgBuilder == CfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[2].ParentProgramCfgBuilder == CfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[3].ParentProgramCfgBuilder == CfgBuilder);
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[4].ParentProgramCfgBuilder);
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[5].ParentProgramCfgBuilder);
+
+            //We have taken the same CFG than for MixPeformEvaluateIf0  
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "MixPeformEvaluateIf0.dot");
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.AllCfgBuilder[5].Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void CfgInProcedure0()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "CfgInProcedure0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+
+            //Here we have the main program, followed by stacked programs.
+            Assert.IsTrue(Builder.Programs.Count == 3);
+            //var currentProgram = Builder.Programs[0];
+            //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+            //In this case we have first the Main program cfg, followed by the nested functions and programs cfg builders of the main program, followed by stacked program cfg builders.
+            //Stack programs cfg builders have no parent cfg builders.
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 8);
+            Assert.IsNull(CfgBuilder.ParentProgramCfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[0] == CfgBuilder);
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[0].ParentProgramCfgBuilder);
+
+            //Proc0
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[1].ParentProgramCfgBuilder == CfgBuilder);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder[1].Cfg);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[1].Cfg.ProgramNode is FunctionDeclaration);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[1].Cfg.ProgramNode.Name.Equals("Proc0"));
+
+            //We have taken the same CFG than for IfThenElseCascade0  
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElseCascade0.dot");
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.AllCfgBuilder[1].Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void CfgInProcedure1()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "CfgInProcedure1.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+
+            //Here we have the main program, followed by stacked programs.
+            Assert.IsTrue(Builder.Programs.Count == 3);
+            //var currentProgram = Builder.Programs[0];
+            //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+            //In this case we have first the Main program cfg, followed by the nested functions and programs cfg builders of the main program, followed by stacked program cfg builders.
+            //Stack programs cfg builders have no parent cfg builders.
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 8);
+            Assert.IsNull(CfgBuilder.ParentProgramCfgBuilder);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[0] == CfgBuilder);
+            Assert.IsNull(CfgBuilder.AllCfgBuilder[0].ParentProgramCfgBuilder);
+
+            //Proc1
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[2].ParentProgramCfgBuilder == CfgBuilder);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder[2].Cfg);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[2].Cfg.ProgramNode is FunctionDeclaration);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder[2].Cfg.ProgramNode.Name.Equals("Proc1"));
+
+            //We have taken the same CFG than for ComplexGotoPara0  
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "ComplexGotoPara0.dot");
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.AllCfgBuilder[2].Cfg, path, expectedPath);
+        }
+
         /// <summary>
         /// "dot.exe" -Tpng CGM110.dot -o CGM110.png
         /// "dot.exe" -Tsvg CGM110.dot -o CGM110.svg
@@ -783,5 +990,107 @@ namespace TypeCobol.Analysis.Test
             CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath, false);
         }
 
+        /// <summary>
+        /// This test contains a PERFOM instruction to a PARAGRAPH that conatins a GOTO to another
+        /// Paragraph, there is an Diagnostic which is Raised.
+        /// </summary>
+        [TestMethod]
+        [Ignore]
+        public void OneThidPartyIX105A()
+        {
+            string pwd = Directory.GetCurrentDirectory();
+            string solutionPath = Directory.GetParent(pwd)?.Parent?.FullName;
+            DirectoryInfo solDir = new DirectoryInfo(solutionPath);
+            DirectoryInfo rootSolDir = solDir.Parent;
+
+            string samples = @"ThirdParty" + Path.DirectorySeparatorChar + "Nist";
+
+            string path = Path.Combine(rootSolDir.FullName, "TypeCobol.Test", samples, "IX105A.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(Builder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IX105A.dot");
+
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath, false);
+        }
+
+        /// <summary>
+        /// This Test is only used to generate all .dot files corresponding to the Nist source samples.
+        /// This dot files contains full instructions source code
+        /// </summary>
+        [TestMethod]
+        [Ignore]
+        public void GenAllNistSrcDots()
+        {
+            string pwd = Directory.GetCurrentDirectory();
+            string solutionPath = Directory.GetParent(pwd)?.Parent?.FullName;
+            DirectoryInfo solDir = new DirectoryInfo(solutionPath);
+            DirectoryInfo rootSolDir = solDir.Parent;
+
+            string samples = @"ThirdParty" + Path.DirectorySeparatorChar + "Nist";
+
+            string path = Path.Combine(rootSolDir.FullName, "TypeCobol.Test", samples);
+            string[] files = Directory.GetFiles(path, "*.cbl", SearchOption.AllDirectories);
+            foreach(string f in files)
+            {
+                string dotFile = f.Substring(0, f.LastIndexOf('.')) + ".dot";
+                FileInfo fofi = new FileInfo(dotFile);
+                string dotName = fofi.Name;
+
+                Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Nist"));
+                string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Nist", dotName);
+
+                var document = TypeCobol.Parser.Parse(f, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                    false, /*copies*/ null);
+
+                Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+
+                CfgTestUtils.GenDotCfgFile(CfgBuilder.Cfg, expectedPath);
+
+                TestCleanup();
+                TestInitialize();
+            }
+        }
+
+        /// <summary>
+        /// This Test is only used to generate all .dot files corresponding to the Nist source samples.
+        /// This dot files contains instructions names only.
+        /// </summary>
+        [TestMethod]
+        [Ignore]
+        public void GenAllNistDots()
+        {
+            string pwd = Directory.GetCurrentDirectory();
+            string solutionPath = Directory.GetParent(pwd)?.Parent?.FullName;
+            DirectoryInfo solDir = new DirectoryInfo(solutionPath);
+            DirectoryInfo rootSolDir = solDir.Parent;
+
+            string samples = @"ThirdParty" + Path.DirectorySeparatorChar + "Nist";
+
+            string path = Path.Combine(rootSolDir.FullName, "TypeCobol.Test", samples);
+            string[] files = Directory.GetFiles(path, "*.cbl", SearchOption.AllDirectories);
+            foreach (string f in files)
+            {
+                string dotFile = f.Substring(0, f.LastIndexOf('.')) + ".dot";
+                FileInfo fofi = new FileInfo(dotFile);
+                string dotName = "_" + fofi.Name;
+
+                Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Nist"));
+                string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Nist", dotName);
+
+                var document = TypeCobol.Parser.Parse(f, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                    false, /*copies*/ null);
+
+                Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+
+                CfgTestUtils.GenDotCfgFile(CfgBuilder.Cfg, expectedPath, false);
+
+                TestCleanup();
+                TestInitialize();
+            }
+        }
     }
 }

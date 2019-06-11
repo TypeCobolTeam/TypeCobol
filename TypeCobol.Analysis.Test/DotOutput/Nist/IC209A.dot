@@ -1,0 +1,21 @@
+digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{CALL-TEST-3. Block1|    MOVE \"Y\" TO TEST3\l}"
+]
+Block2 [
+label = "{IC212-EXIT. Block2|    EXIT PROGRAM\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+
+}

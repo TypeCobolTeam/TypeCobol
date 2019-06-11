@@ -16,11 +16,12 @@ namespace TypeCobol.Analysis.Test
         /// </summary>
         /// <param name="cfg">The CFG to generate the dot file</param>
         /// <param name="dotFilePath">The Dot File to be generated.</param>
-        public static void GenDotCfgFile(ControlFlowGraph<Node, object> cfg, string dotFilePath)
+        /// <param name="bFullInstructions">true if full instruction source code must be generated, false if only instruction names.</param>
+        public static void GenDotCfgFile(ControlFlowGraph<Node, object> cfg, string dotFilePath, bool bFullInstructions = true)
         {
             //Create a Dot File Generator            
             CfgDotFileForNodeGenerator<object> dotGen = new CfgDotFileForNodeGenerator<object>(cfg);
-            dotGen.FullInstruction = true;
+            dotGen.FullInstruction = bFullInstructions;
             StringWriter writer = new StringWriter();
             dotGen.Filepath = dotFilePath;
             dotGen.Report();
