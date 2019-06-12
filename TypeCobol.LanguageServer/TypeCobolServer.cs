@@ -36,7 +36,6 @@ namespace TypeCobol.LanguageServer
         private Queue<MessageActionWrapper> _MessagesActionsQueue;
         private FunctionDeclaration _SignatureCompletionContext;
         private Dictionary<SignatureInformation, FunctionDeclaration> _FunctionDeclarationSignatureDictionary;
-        private TypeCobolRemoteConsole _TCobRemoteControl { get { return (TypeCobolRemoteConsole)RemoteConsole; } }
 
         /// <summary>
         /// Timer Disabled for TypeCobol.LanguageServer.
@@ -93,7 +92,7 @@ namespace TypeCobol.LanguageServer
 
         #region Override LSP Methods
 
-        public override InitializeResult OnInitialize(InitializeParams parameters)
+        protected override InitializeResult OnInitialize(InitializeParams parameters)
         {
             this.RemoteConsole.NoLogsMessageNotification = NoLogsMessageNotification;
             var rootDirectory = new DirectoryInfo(parameters.rootPath);
@@ -132,11 +131,17 @@ namespace TypeCobol.LanguageServer
 
         private bool Logger(string message, Uri uri)
         {
-            _TCobRemoteControl.UriLog(message, uri);
+            var uriLogMessageParams = new UriLogMessageParams()
+            {
+                type = MessageType.Log,
+                message = message,
+                textDocument = new TextDocumentIdentifier(uri.ToString())
+            };
+            this.RpcServer.SendNotification(UriLogMessageNotification.Type, uriLogMessageParams);
             return true;
         }
 
-        public override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
+        protected override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
         {            
             DocumentContext docContext = new DocumentContext(parameters.textDocument);
             if (docContext.Uri.IsFile)
@@ -146,7 +151,7 @@ namespace TypeCobol.LanguageServer
                 typeCobolWorkspace.DiagnosticsEvent += DiagnosticsDetected;
 
                 //Create a ILanguageServer instance for the document.
-                docContext.LanguageServer = new TypeCobolLanguageServer(this.rpcServer, parameters.textDocument);
+                docContext.LanguageServer = new TypeCobolLanguageServer(this.RpcServer, parameters.textDocument);
                 docContext.LanguageServer.UseSyntaxColoring = UseSyntaxColoring;
 
                 string text = parameters.text ?? parameters.textDocument.text;
@@ -160,7 +165,7 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        public override void OnDidChangeTextDocument(DidChangeTextDocumentParams parameters)
+        protected override void OnDidChangeTextDocument(DidChangeTextDocumentParams parameters)
         {
 
             var docContext = GetDocumentContextFromStringUri(parameters.uri, false); //Text Change do not have to trigger node phase, it's only a another event that will do it
@@ -323,7 +328,7 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        public override void OnDidCloseTextDocument(DidCloseTextDocumentParams parameters)
+        protected override void OnDidCloseTextDocument(DidCloseTextDocumentParams parameters)
         {
             Uri objUri = new Uri(parameters.textDocument.uri);
             if (objUri.IsFile)
@@ -335,7 +340,7 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        public override void OnDidSaveTextDocument(DidSaveTextDocumentParams parameters)
+        protected override void OnDidSaveTextDocument(DidSaveTextDocumentParams parameters)
         {
             if (parameters.text != null)
             {
@@ -347,7 +352,7 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        public override void OnDidChangeConfiguration(DidChangeConfigurationParams parameters)
+        protected override void OnDidChangeConfiguration(DidChangeConfigurationParams parameters)
         {
             if (parameters.settings is Newtonsoft.Json.Linq.JArray)
             {
@@ -362,7 +367,7 @@ namespace TypeCobol.LanguageServer
         }
         // ----------------------------------------------------------------------------------------------- //
 
-        public override Hover OnHover(TextDocumentPosition parameters)
+        protected override Hover OnHover(TextDocumentPosition parameters)
         {
             Hover resultHover = new Hover();
 
@@ -448,7 +453,7 @@ namespace TypeCobol.LanguageServer
         /// parameter is of type[TextDocumentPosition](#TextDocumentPosition) the response
         /// is of type[CompletionItem[]](#CompletionItem) or a Thenable that resolves to such.
         /// </summary>
-        public override List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
+        protected override List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
         {
             var docContext = GetDocumentContextFromStringUri(parameters.uri);
             if (docContext == null)
@@ -613,7 +618,7 @@ namespace TypeCobol.LanguageServer
             return items;
         }
 
-        public override Definition OnDefinition(TextDocumentPosition parameters)
+        protected override Definition OnDefinition(TextDocumentPosition parameters)
         {
             AnalyticsWrapper.Telemetry.TrackEvent(EventType.Definition, "Definition event", LogType.Completion); //Send event to analytics
             var defaultDefinition = new Definition(parameters.uri, new Range());
@@ -727,7 +732,7 @@ namespace TypeCobol.LanguageServer
                 _SignatureCompletionContext = retrievedFuncDeclarationPair.Value;
         }
 
-        public override SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)
+        protected override SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)
         {
             AnalyticsWrapper.Telemetry.TrackEvent(EventType.SignatureHelp, "Signature help event", LogType.Completion); //Send event to analytics
             var docContext = GetDocumentContextFromStringUri(parameters.uri);
@@ -852,7 +857,7 @@ namespace TypeCobol.LanguageServer
             return signatureHelp;
         }
 
-        public override void OnShutdown()
+        protected override void OnShutdown()
         {
             typeCobolWorkspace.MissingCopiesEvent -= MissingCopiesDetected;
             typeCobolWorkspace.DiagnosticsEvent -= DiagnosticsDetected;
@@ -875,6 +880,11 @@ namespace TypeCobol.LanguageServer
         }
 
         #endregion
+
+        new public void NotifyException(Exception e)
+        {
+            base.NotifyException(e);
+        }
 
         /// <summary>
         /// Event Method triggered when missing copies are detected.
@@ -910,7 +920,7 @@ namespace TypeCobol.LanguageServer
 
             diagParameter.uri = fileUri.ToString();
             diagParameter.diagnostics = diagList.ToArray();
-            SendDiagnostics(diagParameter);
+            this.RpcServer.SendNotification(PublishDiagnosticsNotification.Type, diagParameter);
         }
 
         private void LoadingIssueDetected(object sender, LoadingIssueEvent loadingIssueEvent)

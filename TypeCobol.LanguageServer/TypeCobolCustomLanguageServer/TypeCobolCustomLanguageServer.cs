@@ -8,9 +8,9 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 {
     class TypeCobolCustomLanguageServer : VsCodeProtocol.LanguageServer
     {
-        public TypeCobolCustomLanguageServer(IRPCServer rpcServer) : base(rpcServer)
+        public TypeCobolCustomLanguageServer(IRPCServer rpcServer)
+            : base(rpcServer)
         {
-            RemoteConsole = new LanguageServer.TypeCobolCustomLanguageServerProtocol.TypeCobolRemoteConsole(rpcServer);
             rpcServer.RegisterNotificationMethod(MissingCopiesNotification.Type, CallReceiveMissingCopies);
             rpcServer.RegisterNotificationMethod(NodeRefreshNotification.Type, ReceivedRefreshNodeDemand);
             rpcServer.RegisterRequestMethod(NodeRefreshRequest.Type, ReceivedRefreshNodeRequest);
@@ -99,7 +99,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// </summary>
         public virtual void SendMissingCopies(MissingCopiesParams parameters)
         {
-            this.rpcServer.SendNotification(MissingCopiesNotification.Type, parameters);
+            this.RpcServer.SendNotification(MissingCopiesNotification.Type, parameters);
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// </summary>
         public virtual void SendLoadingIssue(LoadingIssueParams parameters)
         {
-            this.rpcServer.SendNotification(LoadingIssueNotification.Type, parameters);
+            this.RpcServer.SendNotification(LoadingIssueNotification.Type, parameters);
         }
     }
 }

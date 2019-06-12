@@ -12,7 +12,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     {
         public LanguageServer(IRPCServer rpcServer)
         {
-            this.rpcServer = rpcServer;
+            this.RpcServer = rpcServer;
             rpcServer.RegisterRequestMethod(CodeActionRequest.Type, CallCodeAction);
             rpcServer.RegisterRequestMethod(CodeLensRequest.Type, CallCodeLens);
             rpcServer.RegisterRequestMethod(CodeLensResolveRequest.Type, CallCodeLensResolve);
@@ -44,15 +44,15 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         }
 
         // RPC server used to send Remote Procedure Calls to the client
-        public IRPCServer rpcServer { get; private set; }
+        protected IRPCServer RpcServer { get; }
 
-        public void NotifyException(Exception e)
+        protected void NotifyException(Exception e)
         {
             AnalyticsWrapper.Telemetry.TrackException(e, null);
             this.RemoteWindow.ShowErrorMessage(e.Message + "\n" + e.StackTrace);
         }
 
-        public void NotifyWarning(string message)
+        protected void NotifyWarning(string message)
         {
             this.RemoteWindow.ShowWarningMessage(message);
         }
@@ -460,7 +460,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// the response if of type [InitializeResult](#InitializeResult) of a Thenable that
         /// resolves to such.
         /// </summary>
-        public virtual InitializeResult OnInitialize(InitializeParams parameters)
+        protected virtual InitializeResult OnInitialize(InitializeParams parameters)
         {
             var capabilities = new ServerCapabilities();
             capabilities.textDocumentSync = TextDocumentSyncKind.Incremental;
@@ -490,41 +490,41 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// server.The only notification that is sent after a shudown request
         /// is the exit event.
         /// </summary>
-        public virtual void OnShutdown()
+        protected virtual void OnShutdown()
         { }
 
         /// <summary>
         /// The exit event is sent from the client to the server to
         /// ask the server to exit its process.
         /// </summary>
-        public virtual void OnExit()
+        protected virtual void OnExit()
         { }
 
         /// <summary>
         /// The log message notification is send from the server to the client to ask
         /// the client to log a particular message.
         /// </summary>
-        public RemoteConsole RemoteConsole { get; protected set; }
+        protected RemoteConsole RemoteConsole { get; }
 
         /// <summary>
         /// The show message notification is sent from a server to a client to ask
         /// the client to display a particular message in the user interface.
         /// </summary>
-        public RemoteWindow RemoteWindow { get; private set; }
+        protected RemoteWindow RemoteWindow { get; }
 
         /// <summary>
         /// The configuration change notification is sent from the client to the server
         /// when the client's configuration has changed. The notification contains
         /// the changed configuration as defined by the language client.
         /// </summary>
-        public virtual void OnDidChangeConfiguration(DidChangeConfigurationParams parameters)
+        protected virtual void OnDidChangeConfiguration(DidChangeConfigurationParams parameters)
         { }
 
         /// <summary>
         /// The watched files notification is sent from the client to the server when
         /// the client detects changes to file watched by the lanaguage client.
         /// </summary>
-        public virtual void OnDidChangeWatchedFiles(DidChangeWatchedFilesParams parameters)
+        protected virtual void OnDidChangeWatchedFiles(DidChangeWatchedFilesParams parameters)
         { }
 
         /// <summary>
@@ -533,14 +533,14 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// and the server must not try to read the document's truth using the document's
         /// uri.
         /// </summary>
-        public virtual void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
+        protected virtual void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
         { }
 
         /// <summary>
         /// The document change notification is sent from the client to the server to signal
         /// changes to a text document.
         /// </summary>
-        public virtual void OnDidChangeTextDocument(DidChangeTextDocumentParams parameters)
+        protected virtual void OnDidChangeTextDocument(DidChangeTextDocumentParams parameters)
         { }
 
         /// <summary>
@@ -549,32 +549,21 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// where the document's uri points to (e.g. if the document's uri is a file uri
         /// the truth now exists on disk).
         /// </summary>
-        public virtual void OnDidCloseTextDocument(DidCloseTextDocumentParams parameters)
+        protected virtual void OnDidCloseTextDocument(DidCloseTextDocumentParams parameters)
         { }
 
         /// <summary>
         /// The document save notification is sent from the client to the server when the document for saved in the client.
         /// </summary>
-        public virtual void OnDidSaveTextDocument(DidSaveTextDocumentParams parameters)
+        protected virtual void OnDidSaveTextDocument(DidSaveTextDocumentParams parameters)
         { }
-
-        /// <summary>
-        /// Diagnostics notification are sent from the server to the client to signal
-        /// results of validation runs.
-        /// </summary>
-        public virtual void SendDiagnostics(PublishDiagnosticsParams parameters)
-        {
-            rpcServer.SendNotification(PublishDiagnosticsNotification.Type, parameters);
-        }
-
-       
 
         /// <summary>
         /// Request to request hover information at a given text document position. The request's
         /// parameter is of type[TextDocumentPosition](#TextDocumentPosition) the response is of
         /// type[Hover](#Hover) or a Thenable that resolves to such.
         /// </summary>
-        public virtual Hover OnHover(TextDocumentPosition parameters)
+        protected virtual Hover OnHover(TextDocumentPosition parameters)
         {
             return null;
         }
@@ -584,7 +573,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// parameter is of type[TextDocumentPosition](#TextDocumentPosition) the response
         /// is of type[CompletionItem[]](#CompletionItem) or a Thenable that resolves to such.
         /// </summary>
-        public virtual List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
+        protected virtual List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
         {
             return null;
         }
@@ -594,7 +583,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// parameter is of type[CompletionItem](#CompletionItem) the response
         /// is of type[CompletionItem](#CompletionItem) or a Thenable that resolves to such.
         /// </summary>
-        public virtual CompletionItem OnCompletionResolve(CompletionItem parameters)
+        protected virtual CompletionItem OnCompletionResolve(CompletionItem parameters)
         {
             return null;
         }
@@ -604,7 +593,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// callable. There can be multiple signature but only one
         /// active and only one active parameter.
         /// </summary>
-        public virtual SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)
+        protected virtual SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)
         {
             return null;
         }
@@ -615,7 +604,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// (#TextDocumentPosition) the response is of type [Definition](#Definition) or a
         /// Thenable that resolves to such.
         /// </summary>
-        public virtual Definition OnDefinition(TextDocumentPosition parameters)
+        protected virtual Definition OnDefinition(TextDocumentPosition parameters)
         {
             throw new ArgumentException("No definition");            
         }
@@ -626,7 +615,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// type[ReferenceParams](#ReferenceParams) the response is of type
         /// [Location[]](#Location) or a Thenable that resolves to such.
         /// </summary>
-        public virtual List<Location> OnReferences(ReferenceParams parameters)
+        protected virtual List<Location> OnReferences(ReferenceParams parameters)
         {
             return null;
         }
@@ -637,7 +626,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// (#TextDocumentPosition) the request reponse is of type [DocumentHighlight[]]
         /// (#DocumentHighlight) or a Thenable that resolves to such.
         /// </summary>
-        public virtual List<DocumentHighlight> OnDocumentHighlight(TextDocumentPosition parameters)
+        protected virtual List<DocumentHighlight> OnDocumentHighlight(TextDocumentPosition parameters)
         {
             return null;
         }
@@ -648,7 +637,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// response is of type[SymbolInformation[]](#SymbolInformation) or a Thenable
         /// that resolves to such.
         /// </summary>
-        public virtual List<SymbolInformation> OnDocumentSymbol(TextDocumentIdentifier parameters)
+        protected virtual List<SymbolInformation> OnDocumentSymbol(TextDocumentIdentifier parameters)
         {
             return null;
         }
@@ -659,7 +648,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// of type[SymbolInformation[]](#SymbolInformation) or a Thenable that
         /// resolves to such.
         /// </summary>
-        public virtual List<SymbolInformation> OnWorkspaceSymbol(WorkspaceSymbolParams parameters)
+        protected virtual List<SymbolInformation> OnWorkspaceSymbol(WorkspaceSymbolParams parameters)
         {
             return null;
         }
@@ -667,7 +656,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// <summary>
         /// A request to provide commands for the given text document and range.
         /// </summary>
-        public virtual List<Command> OnCodeAction(CodeActionParams parameters)
+        protected virtual List<Command> OnCodeAction(CodeActionParams parameters)
         {
             return null;
         }
@@ -675,7 +664,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// <summary>
         /// A request to provide code lens for the given text document.
         /// </summary>
-        public virtual List<CodeLens> OnCodeLens(TextDocumentIdentifier parameters)
+        protected virtual List<CodeLens> OnCodeLens(TextDocumentIdentifier parameters)
         {
             return null;
         }
@@ -683,7 +672,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// <summary>
         /// A request to resolve a command for a given code lens.
         /// </summary>
-        public virtual CodeLens OnCodeLensResolve(CodeLens parameters)
+        protected virtual CodeLens OnCodeLensResolve(CodeLens parameters)
         {
             return null;
         }
@@ -691,7 +680,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// <summary>
         /// A request to to format a whole document.
         /// </summary>
-        public virtual List<TextEdit> OnDocumentFormatting(DocumentFormattingParams parameters)
+        protected virtual List<TextEdit> OnDocumentFormatting(DocumentFormattingParams parameters)
         {
             return null;
         }
@@ -699,7 +688,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// <summary>
         /// A request to to format a range in a document.
         /// </summary>
-        public virtual List<TextEdit> OnDocumentRangeFormatting(DocumentRangeFormattingParams parameters)
+        protected virtual List<TextEdit> OnDocumentRangeFormatting(DocumentRangeFormattingParams parameters)
         {
             return null;
         }
@@ -707,7 +696,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// <summary>
         /// A request to format a document on type.
         /// </summary>
-        public virtual List<TextEdit> OnDocumentOnTypeFormatting(DocumentOnTypeFormattingParams parameters)
+        protected virtual List<TextEdit> OnDocumentOnTypeFormatting(DocumentOnTypeFormattingParams parameters)
         {
             return null;
         }
@@ -715,7 +704,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// <summary>
         /// A request to rename a symbol.
         /// </summary>
-        public virtual WorkspaceEdit OnRename(RenameParams parameters)
+        protected virtual WorkspaceEdit OnRename(RenameParams parameters)
         {
             return null;
         }
