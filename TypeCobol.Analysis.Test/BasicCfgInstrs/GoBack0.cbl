@@ -8,6 +8,6 @@
        01 IPC PIC 9(03).
        PROCEDURE DIVISION USING IPC1, IPC2, IPC.
           COMPUTE IPC = IPC1 * IPC2.
-          GO BACK.
+          GOBACK.
        END PROGRAM SUBPROG.
       
