@@ -34,6 +34,23 @@ namespace TypeCobol.Analysis.Cfg
                 get;
                 set;
             }
+
+            /// <summary>
+            /// Set whether full instruction must be generated are not.
+            /// If not only the instruction name will be generated.
+            /// </summary>
+            public bool FullInstruction
+            {
+                get;
+                set;
+            }
+
+            protected override string InstructionToString(Node instruction)
+            {
+                return (instruction == null || instruction.CodeElement == null) ? "<null>" :
+                    FullInstruction ? instruction.CodeElement.SourceText :
+                    System.Enum.GetName(typeof(CodeElementType), instruction.CodeElement.Type);
+            }
         }
 
         /// <summary>
@@ -215,6 +232,11 @@ namespace TypeCobol.Analysis.Cfg
         protected LinkedList<Tuple<Alter, BasicBlockForNode>> PendingALTERs;
 
         /// <summary>
+        /// More Symbol Reference associated to altered GOTO statement.
+        /// </summary>
+        protected Dictionary<Goto, HashSet<SymbolReference> > PendingAlteredGOTOS;
+
+        /// <summary>
         /// All pending Next Sentence instructions that will be handled at the end of the Procedure Division.
         /// </summary>
         internal LinkedList<Tuple<NextSentence, BasicBlockForNode, BuilderSentence>> PendingNextSentences;
@@ -375,6 +397,7 @@ namespace TypeCobol.Analysis.Cfg
                         break;
                     //Procedure-Branching
                     case CodeElementType.AlterStatement:
+                        this.CurrentProgramCfgBuilder.EnterAlter((Alter)node);
                         break;
                     case CodeElementType.ExitStatement:
                         this.CurrentProgramCfgBuilder.EnterExit((Exit)node);
@@ -518,6 +541,7 @@ namespace TypeCobol.Analysis.Cfg
                         break;
                     //Procedure-Branching
                     case CodeElementType.AlterStatement:
+                        this.CurrentProgramCfgBuilder.LeaveAlter((Alter)node);
                         break;
                     case CodeElementType.ExitStatement:
                         this.CurrentProgramCfgBuilder.LeaveExit((Exit)node);
@@ -1209,7 +1233,20 @@ namespace TypeCobol.Analysis.Cfg
                         case StatementType.GotoSimpleStatement:
                             {
                                 GotoSimpleStatement simpleGoto = (GotoSimpleStatement)@goto.CodeElement;
-                                target = new SymbolReference[] { simpleGoto.ProcedureName };
+                                HashSet<SymbolReference> alteredSymbolRefs = null;
+                                //Check if we have altered GOTOs to take in account.
+                                if (PendingAlteredGOTOS != null && PendingAlteredGOTOS.TryGetValue(@goto, out alteredSymbolRefs))
+                                {
+                                    int i = 0;
+                                    target = new SymbolReference[alteredSymbolRefs.Count + 1];
+                                    foreach (SymbolReference sr in alteredSymbolRefs)
+                                        target[++i] = sr;
+                                }
+                                else
+                                {
+                                    target = new SymbolReference[1];
+                                }
+                                target[0] = simpleGoto.ProcedureName;
                                 ResolveGoto(@goto, block, target, true);
                             }
                             break;
@@ -1224,6 +1261,7 @@ namespace TypeCobol.Analysis.Cfg
                     System.Diagnostics.Debug.Assert(target != null);
                 }
                 this.CurrentProgramCfgBuilder.PendingGOTOs = null;
+                this.CurrentProgramCfgBuilder.PendingAlteredGOTOS = null;
             }
         }
 
@@ -1264,10 +1302,11 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// Store all procedure's sentence blocks in a group.
         /// </summary>
+        /// <param name="p">The procedure node</param>
         /// <param name="procedureSymbol">The procedure symbol</param>
         /// <param name="group">The Group in which to store all blocks.</param>
         /// <param name="clonedBlockIndexMap">The Map of cloned map indices from the original indices to the new indicess of block</param>
-        private void StoreProcedureSentenceBlocks(Symbol procedureSymbol, BasicBlockForNodeGroup group, Dictionary<int,int> clonedBlockIndexMap)
+        private void StoreProcedureSentenceBlocks(PerformProcedure p, Symbol procedureSymbol, BasicBlockForNodeGroup group, Dictionary<int,int> clonedBlockIndexMap)
         {
             IEnumerable<BuilderSentence> procedureSentences = YieldSectionOrParagraphSentences(procedureSymbol);
             foreach (var sentence in procedureSentences)
@@ -1286,6 +1325,17 @@ namespace TypeCobol.Analysis.Cfg
                         cloneBlock.Index = this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Count;
                         this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Add(block);
                         group.AddBlock(block);
+                    }
+                    else
+                    {//Recursive blocks detection.
+                        block.FullInstruction = true;
+                        string strBlock = block.ToString();
+                        Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                            p.CodeElement.Column,
+                            p.CodeElement.Column,
+                            p.CodeElement.Line,
+                            string.Format(Resource.RecursiveBlockOnPerformProcedure, procedureSymbol.ToString(), strBlock));
+                        Diagnostics.Add(d);
                     }
                 }
             }
@@ -1322,19 +1372,19 @@ namespace TypeCobol.Analysis.Cfg
                         Diagnostics.Add(d);
                         return false;
                     }
-                    StoreProcedureSentenceBlocks(procedureSymbol, group, clonedBlockIndexMap);
+                    StoreProcedureSentenceBlocks(p, procedureSymbol, group, clonedBlockIndexMap);
                     //Store all sentences or paragraphs between.
                     for (int i = procedureSymbol.Number + 1; i < throughProcedureSymbol.Number; i++)
                     {
                         Symbol subSectionOrParagraph = this.CurrentProgramCfgBuilder.AllSectionsParagraphs[i];
-                        StoreProcedureSentenceBlocks(subSectionOrParagraph, group, clonedBlockIndexMap);
+                        StoreProcedureSentenceBlocks(p, subSectionOrParagraph, group, clonedBlockIndexMap);
                     }
-                    StoreProcedureSentenceBlocks(throughProcedureSymbol, group, clonedBlockIndexMap);
+                    StoreProcedureSentenceBlocks(p, throughProcedureSymbol, group, clonedBlockIndexMap);
                 }
             }
             else
             {
-                StoreProcedureSentenceBlocks(procedureSymbol, group, clonedBlockIndexMap);
+                StoreProcedureSentenceBlocks(p, procedureSymbol, group, clonedBlockIndexMap);
             }
             //Now Clone the Graph.
             if (!RelocateBasicBlockForNodeGroupGraph(p, group, clonedBlockIndexMap))
@@ -1425,6 +1475,8 @@ namespace TypeCobol.Analysis.Cfg
             }
             //Link pending Next Sentences
             ResolvePendingNextSentences();
+            //First resolve ALTERS before resolving Pending GOTOs
+            ResolvePendingALTERs();
             //Resolve and Link Pending GOTOs
             ResolvePendingGOTOs();
             //Resolve Pending PERFORMs Procedure
@@ -1437,10 +1489,11 @@ namespace TypeCobol.Analysis.Cfg
         /// Resolve all sentences targeted by the given symbol reference.
         /// </summary>
         /// <param name="target">The target section or paragraph
+        /// <paramref name="symbol"/>The Symbol which resolved to the target
         /// <returns>The Enumeration of sentences associated to the target, null otherwise</returns>
-        private IEnumerable<BuilderSentence> ResolveSectionOrParagraphSentences(Node node, SymbolReference target)
+        private IEnumerable<BuilderSentence> ResolveSectionOrParagraphSentences(Node node, SymbolReference target, out Symbol symbol)
         {
-            var symbol = CheckSectionOrParagraph(node, target);
+            symbol = CheckSectionOrParagraph(node, target);
             return YieldSectionOrParagraphSentences(symbol);
         }
 
@@ -1496,21 +1549,37 @@ namespace TypeCobol.Analysis.Cfg
         /// <returns>true if all targets have been resolved, false otherwise.</returns>
         private bool ResolveGoto(Goto @goto, BasicBlockForNode block, SymbolReference[] target, bool simpleGoto)
         {
+            HashSet<Symbol> targetSymbols = new HashSet<Symbol>();
             foreach(var sref in target)
-            {
+            {                
                 bool bHasOne = false;
-                IEnumerable<BuilderSentence> sentences = ResolveSectionOrParagraphSentences(@goto, sref);
-                foreach(var targetSentence in sentences)
+                Symbol targetSymbol = null;
+                IEnumerable<BuilderSentence> sentences = ResolveSectionOrParagraphSentences(@goto, sref, out targetSymbol);
+                if (targetSymbol == null)
                 {
-                    if (!block.SuccessorEdges.Contains(targetSentence.BlockIndex))
-                    {
-                        block.SuccessorEdges.Add(targetSentence.BlockIndex);
-                    }
-                    bHasOne = true;
-                    break;
+                    Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                        @goto.CodeElement.Column,
+                        @goto.CodeElement.Column,
+                        @goto.CodeElement.Line,
+                        string.Format(Resource.UnknownSectionOrParagraph, sref.ToString()));
+                    Diagnostics.Add(d);
+                    continue;
                 }
-                if (!bHasOne)
-                    return false;
+                if (!targetSymbols.Contains(targetSymbol))
+                {
+                    targetSymbols.Add(targetSymbol);
+                    foreach (var targetSentence in sentences)
+                    {
+                        if (!block.SuccessorEdges.Contains(targetSentence.BlockIndex))
+                        {
+                            block.SuccessorEdges.Add(targetSentence.BlockIndex);
+                        }
+                        bHasOne = true;
+                        break;
+                    }
+                    if (!bHasOne)
+                        return false;
+                }
             }
             return true;
         }
@@ -2299,6 +2368,103 @@ namespace TypeCobol.Analysis.Cfg
         /// </summary>
         /// <param name="node">The EXIT node</param>
         protected virtual void LeaveExit(Exit node)
+        {
+
+        }
+
+        /// <summary>
+        /// Resolve all pending ALTERs
+        /// </summary>
+        private void ResolvePendingALTERs()
+        {
+            if (this.CurrentProgramCfgBuilder.PendingALTERs != null)
+            {
+                foreach (var item in this.CurrentProgramCfgBuilder.PendingALTERs)
+                {
+                    Alter alter = item.Item1;
+                    AlterGotoInstruction[] gotos = alter.CodeElement.AlterGotoInstructions;
+                    foreach (AlterGotoInstruction alterGoto in gotos)
+                    {
+                        SymbolReference alterProc = alterGoto.AlteredProcedure;
+                        SymbolReference targetProc = alterGoto.NewTargetProcedure;
+                        //So lookup the paragraph
+                        Symbol alterProcSymbol = CheckSectionOrParagraph(alter, alterProc);
+                        if (alterProcSymbol == null)
+                            continue;
+
+                        //So also Resolve the target.
+                        Symbol targetProcSymbol = CheckSectionOrParagraph(alter, targetProc);
+                        if (targetProcSymbol == null)
+                            continue;
+
+                        Symbol resolveAlterProcSymbol = null;
+                        IEnumerable<BuilderSentence> sectionOrPara = this.CurrentProgramCfgBuilder.ResolveSectionOrParagraphSentences(alter, alterProc, out resolveAlterProcSymbol);
+                        System.Diagnostics.Debug.Assert(resolveAlterProcSymbol == alterProcSymbol);
+                        //So Look for the first Goto Instruction
+                        foreach (var sb in sectionOrPara)
+                        {
+                            bool bResolved = false;
+                            if (sb.Block != null && sb.Block.Instructions != null && sb.Block.Instructions.Count > 0)
+                            {//The first instruction must be a GOTO Instruction.
+                                Node first = sb.Block.Instructions.First.Value;
+                                if (first.CodeElement != null && first.CodeElement.Type == CodeElementType.GotoStatement)
+                                {//StatementType.GotoSimpleStatement
+                                    Goto @goto = (Goto)first;
+                                    if (@goto.CodeElement.StatementType == StatementType.GotoSimpleStatement)
+                                    {
+                                        if (this.CurrentProgramCfgBuilder.PendingAlteredGOTOS == null)
+                                            this.CurrentProgramCfgBuilder.PendingAlteredGOTOS = new Dictionary<Goto, HashSet<SymbolReference>>();
+
+                                        HashSet<SymbolReference> targetSymbols = null;
+                                        if (!this.CurrentProgramCfgBuilder.PendingAlteredGOTOS.TryGetValue(@goto, out targetSymbols))
+                                        {
+                                            targetSymbols = new HashSet<SymbolReference>();
+                                            this.CurrentProgramCfgBuilder.PendingAlteredGOTOS[@goto] = targetSymbols;
+                                        }
+                                        targetSymbols.Add(targetProc);
+                                        bResolved = true;
+                                    }
+                                }
+                            }
+                            if (!bResolved)
+                            {
+                                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                                    alter.CodeElement.Column,
+                                    alter.CodeElement.Column,
+                                    alter.CodeElement.Line,
+                                    Resource.BadAlterIntrWithNoSiblingGotoInstr);
+                                Diagnostics.Add(d);
+                            }
+                        }
+                    }
+                }
+                this.CurrentProgramCfgBuilder.PendingALTERs = null;                
+            }
+        }
+
+        /// <summary>
+        /// Enter and ALTER Statement
+        /// </summary>
+        /// <param name="node">The ALTER node</param>
+        protected virtual void EnterAlter(Alter node)
+        {
+            System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
+            if (this.CurrentProgramCfgBuilder.PendingALTERs == null)
+            {
+                this.CurrentProgramCfgBuilder.PendingALTERs = new LinkedList<Tuple<Alter, BasicBlockForNode>>();
+            }
+            Tuple<Alter, BasicBlockForNode> item = new Tuple<Alter, BasicBlockForNode>(node, this.CurrentProgramCfgBuilder.CurrentBasicBlock);
+            this.CurrentProgramCfgBuilder.PendingALTERs.AddLast(item);
+
+            this.CurrentProgramCfgBuilder.CurrentBasicBlock.Instructions.AddLast(node);
+            this.CurrentProgramCfgBuilder.Cfg.BlockFor[node] = this.CurrentProgramCfgBuilder.CurrentBasicBlock;
+        }
+
+        /// <summary>
+        /// Enter and LEAVE Statement
+        /// </summary>
+        /// <param name="node">The ALTER node</param>
+        protected virtual void LeaveAlter(Alter node)
         {
 
         }

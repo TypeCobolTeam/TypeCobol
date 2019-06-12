@@ -110,6 +110,31 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
+        /// Instruction to string
+        /// </summary>
+        /// <param name="instruction">The instruction to get the string representation</param>
+        /// <returns>The string representation of the instruction.</returns>
+        protected virtual string InstructionToString(N instruction)
+        {
+            return instruction == null ? "<null>" : instruction.ToString();
+        }
+        /// <summary>
+        /// String representation of a block.
+        /// </summary>
+        /// <returns>The string representation of a block.</returns>
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Block[" + Index + "] { ");
+            foreach (N i in Instructions)
+            {
+                sb.AppendLine(InstructionToString(i));
+            }
+            sb.AppendLine("}");
+            return sb.ToString();
+        }
+
+        /// <summary>
         /// Empty constructor.
         /// </summary>
         public BasicBlock()
