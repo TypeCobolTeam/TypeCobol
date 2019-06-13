@@ -43,29 +43,9 @@ namespace TypeCobol.LanguageServer
         public bool NoLogsMessageNotification { get; set; }
 
         /// <summary>
-        /// Lstr Testing Source document
+        /// Lsr testing level (Source, Scan, Preprocess, Parse, Check)
         /// </summary>
-        public bool LsrSourceTesting { get; set; }
-
-        /// <summary>
-        /// Lstr Testing Source document
-        /// </summary>
-        public bool LsrScannerTesting { get; set; }
-
-        /// <summary>
-        /// Lstr Testing preprocessed Source document
-        /// </summary>
-        public bool LsrPreprocessTesting { get; set; }
-
-        /// <summary>
-        /// Lstr Testing parsing
-        /// </summary>
-        public bool LsrParserTesting { get; set; }
-
-        /// <summary>
-        /// Lstr Testing semantic phase
-        /// </summary>
-        public bool LsrSemanticTesting { get; set; }
+        public LsrTestingOptions LsrTestingLevel { get; set; }
 
         /// <summary>
         /// Are we supporting Syntax Coloring Notifications.    
@@ -225,11 +205,7 @@ namespace TypeCobol.LanguageServer
             this.Workspace = new Workspace(rootDirectory.FullName, workspaceName, _messagesActionsQueue, Logger);
 
             // Propagate LSR testing options.
-            if (LsrSourceTesting) this.Workspace.IsLsrSourceTesting = LsrSourceTesting;
-            if (LsrScannerTesting) this.Workspace.IsLsrScannerTesting = LsrScannerTesting;
-            if (LsrPreprocessTesting) this.Workspace.IsLsrPreprocessinTesting = LsrPreprocessTesting;
-            if (LsrParserTesting) this.Workspace.IsLsrParserTesting = LsrParserTesting;
-            if (LsrSemanticTesting) this.Workspace.IsLsrSemanticTesting = LsrSemanticTesting;
+            this.Workspace.LsrTestOptions = LsrTestingLevel;
             this.Workspace.UseSyntaxColoring = UseSyntaxColoring;
             this.Workspace.UseAntlrProgramParsing = UseAntlrProgramParsing;
             this.Workspace.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;
