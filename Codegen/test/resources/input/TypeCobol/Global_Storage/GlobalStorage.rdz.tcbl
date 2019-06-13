@@ -1,14 +1,22 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. GlobalStorageTest.
        ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+                      WITH DEBUGGING MODE
+                      .
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
        DATA DIVISION.
       
        GLOBAL-STORAGE SECTION.
+      D01 dbgCblVar PIC X(22).
        01 G-Date            TYPE Date.
        01 G-TechCtx         TYPE Bool.
        01 DuplicatedVar     TYPE Bool.
        01 purCblVar PIC X(22).
+      D01 dbgCblVar2 PIC X(22).
        01 purCblGrp.
+      D   48 dbgCblVar PIC X(32).
           48 purCblVar PIC X(32).
       
        WORKING-STORAGE SECTION.
@@ -34,3 +42,4 @@
        MOVE DuplicatedVar TO G-TechCtx.
       
        END PROGRAM GlobalStorageTest.
+      
