@@ -50,9 +50,8 @@ namespace TypeCobol.Codegen.Actions
             if (ContributeClass != null)
             {
                 object objInstance = Activator.CreateInstance(ContributeClass);
-                if (objInstance is IContribute)
+                if (objInstance is IContribute contribute)
                 {
-                    IContribute contribute = objInstance as IContribute;
                     //Expand the node with the contribution
                     Node child = contribute.Contribute(Parent, Pattern, Code, Group, Position, Newline);
                     if (child != null)

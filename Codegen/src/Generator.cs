@@ -217,9 +217,8 @@ namespace TypeCobol.Codegen
         {
             Codegen.Actions.Action action = (Codegen.Actions.Action)e;
              //Collect erased nodes.
-            if (action is TypeCobol.Codegen.Actions.IEraseAction)
+            if (action is TypeCobol.Codegen.Actions.IEraseAction erase)
             {
-                TypeCobol.Codegen.Actions.IEraseAction erase = (TypeCobol.Codegen.Actions.IEraseAction)action;
                 IList<Node> nodes = erase.ErasedNodes;
                 if (nodes != null)
                 {
@@ -231,9 +230,8 @@ namespace TypeCobol.Codegen
                 }
             }
             //Collect cloned nodes.
-            if (action is TypeCobol.Codegen.Actions.ICloneAction)
+            if (action is TypeCobol.Codegen.Actions.ICloneAction clone)
             {
-                TypeCobol.Codegen.Actions.ICloneAction clone = (TypeCobol.Codegen.Actions.ICloneAction)action;
                 IList<Node> nodes = clone.ClonedNodes;
                 if (nodes != null)
                 {

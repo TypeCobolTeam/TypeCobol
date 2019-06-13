@@ -31,9 +31,8 @@ namespace TypeCobol.Codegen.Contribution
                 {
                     if (Text == null && _cache == null)
                     {
-                        if (Generator is DefaultGenerator)
+                        if (Generator is DefaultGenerator defGen)
                         {
-                            DefaultGenerator defGen = (DefaultGenerator) Generator;
                             Text = defGen.GlobalStorageData ?? "";
 
                             _cache = new List<ITextLine>();

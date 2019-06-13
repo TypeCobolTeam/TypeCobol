@@ -546,7 +546,6 @@ namespace TypeCobol.Compiler.Nodes {
         /// <summary>
         /// Get the encolsing Program or Function Node corresponding to a Child
         /// </summary>
-        /// <param name="child">The Child Node</param>
         /// <returns>The Program Node</returns>
         public Node GetEnclosingProgramOrFunctionNode()
         {
@@ -558,22 +557,6 @@ namespace TypeCobol.Compiler.Nodes {
 
             return _enclosingProgramOrFunctionNode;
         }
-
-
-        /// <summary>Search for all children of a specific Name</summary>
-        /// <param name="name">Name we search for</param>
-        /// <param name="deep">true for deep search, false for shallow search</param>
-        /// <returns>List of all children with the proper name ; empty list if there is none</returns>
-        public IList<T> GetChildren<T>(string name, bool deep) where T : Node {
-            var results = new List<T>();
-            foreach (var child in children) {
-                var typedChild = child as T;
-                if (typedChild != null && name.Equals(child.Name, StringComparison.OrdinalIgnoreCase)) results.Add(typedChild);
-                if (deep) results.AddRange(child.GetChildren<T>(name, true));
-            }
-            return results;
-        }
-
 
         /// <summary>Adds a node as a children of this one.</summary>
         /// <param name="child">Child to-be.</param>

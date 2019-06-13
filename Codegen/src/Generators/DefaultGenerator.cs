@@ -1143,9 +1143,8 @@ namespace TypeCobol.Codegen.Generators
         IEnumerable<ITextLine> NodeLines(Node node)
         {
             //Check for a node that need a IGeneratorContext data
-            if (node is IGeneratorContext)
+            if (node is IGeneratorContext genCtx)
             {
-                IGeneratorContext genCtx = node as IGeneratorContext;
                 genCtx.Generator = this;
             }
 
