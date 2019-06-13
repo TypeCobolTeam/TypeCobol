@@ -2,14 +2,25 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. GlobalStorageTest.
        ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+                      WITH DEBUGGING MODE
+                      .
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
        DATA DIVISION.
       
       *GLOBAL-STORAGE SECTION.
+      *01 dbgCblVar PIC X(22).
+      D                       
       *01 G-Date            TYPE Date.
       *01 G-TechCtx         TYPE Bool.
       *01 DuplicatedVar     TYPE Bool.
       *01 purCblVar PIC X(22).
+      *01 dbgCblVar2 PIC X(22).
+      D                        
       *01 purCblGrp.
+      *   48 dbgCblVar PIC X(32).
+      D                          
       *   48 purCblVar PIC X(32).
       
        WORKING-STORAGE SECTION.
@@ -21,6 +32,7 @@
 
        01 TC-GlobalData.
 
+      D02 dbgCblVar PIC X(22).
       *01 G-Date            TYPE Date.
        02 G-Date.
            03 YYYY PIC 9(4).
@@ -42,7 +54,9 @@
                            'U' thru X'FF'.
 
        02 purCblVar PIC X(22).
+      D02 dbgCblVar2 PIC X(22).
        02 purCblGrp.
+      D   49 dbgCblVar PIC X(32).
           49 purCblVar PIC X(32).
 
       
@@ -62,6 +76,7 @@
        MOVE DuplicatedVar-value TO G-TechCtx-value.
       
        END PROGRAM GlobalStorageTest.
+      
       *
       *DECLARE PROCEDURE MyProc PRIVATE
       *    INPUT    myDate      TYPE DATE.
@@ -69,6 +84,11 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. c0127659MyProc.
        ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+                      WITH DEBUGGING MODE
+                      .
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
        Data division.
        WORKING-STORAGE Section.
       *GlobalStorageTest.MyProc - Params :
@@ -90,6 +110,7 @@
            02 DD PIC 9(2).
        01 TC-GlobalData.
 
+      D02 dbgCblVar PIC X(22).
       *01 G-Date            TYPE Date.
        02 G-Date.
            03 YYYY PIC 9(4).
@@ -111,7 +132,9 @@
                            'U' thru X'FF'.
 
        02 purCblVar PIC X(22).
+      D02 dbgCblVar2 PIC X(22).
        02 purCblGrp.
+      D   49 dbgCblVar PIC X(32).
           49 purCblVar PIC X(32).
 
        PROCEDURE DIVISION
@@ -133,11 +156,17 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. a9a9a5eaTC-GetGlobal.
        ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+                      WITH DEBUGGING MODE
+                      .
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01 PIC X(8) value ':TC:GBLS'.
        01 TC-GlobalData.
        
+      D02 dbgCblVar PIC X(22).
       *01 G-Date            TYPE Date.
        02 G-Date.
            03 YYYY PIC 9(4).
@@ -159,7 +188,9 @@
                            'U' thru X'FF'.
                                       
        02 purCblVar PIC X(22).
+      D02 dbgCblVar2 PIC X(22).
        02 purCblGrp.
+      D   49 dbgCblVar PIC X(32).
           49 purCblVar PIC X(32).
 
        LINKAGE SECTION.

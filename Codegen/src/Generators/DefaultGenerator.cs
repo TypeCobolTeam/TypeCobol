@@ -690,7 +690,7 @@ namespace TypeCobol.Codegen.Generators
                         tempTokensLine.ScanState.LastSignificantToken = null;
                         tempTokensLine.ScanState.BeforeLastSignificantToken = null;
                     }
-                }
+                }                
             }
         }
         /// <summary>
@@ -798,48 +798,70 @@ namespace TypeCobol.Codegen.Generators
             }
             SourceText gsSrcText = LinearGeneration(clonedMapper, null, Input, GSLmCtx, FirstGSLine = clonedMapper.ClonedGlobalStorageSection.CodeElement.Line - 1,
                 LastGSLine = lastLine);
-            string gsText = gsSrcText.GetTextAt(0, gsSrcText.Size);
-            //Allocate a scanner to reparse and change increments level
-            TokensLine tempTokensLine = new TokensLine(
-                new TextLineSnapshot(0, gsText, null),
-                ColumnsLayout.FreeTextFormat);
+            //Take interessting scan state values from the original input
+            TypeCobol.Compiler.Parser.CodeElementsLine cel = Input[FirstGSLine] as TypeCobol.Compiler.Parser.CodeElementsLine;
             //first true argument => we are in a DataDivision.
-            MultilineScanState scanState = new MultilineScanState(true, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147));
-            tempTokensLine.InitializeScanState(scanState);
-            Scanner scanner = new Scanner(gsText, 0, gsText.Length - 1, tempTokensLine, null, false);
-            scanner.BeSmartWithLevelNumber = true;
-            Token t = null;
-
-            while ((t = scanner.GetNextToken()) != null)
+            System.Diagnostics.Debug.Assert(cel.ScanState.InsideDataDivision);
+            string gsText = gsSrcText.GetTextAt(0, gsSrcText.Size);
+            using (StringReader sr = new StringReader(gsText))
             {
-                if (t.TokenType == TokenType.GLOBAL_STORAGE)
-                {//Skip GLOBAL-STORAGE SECTION. tokens
-                    while ((t = scanner.GetNextToken()) != null && t.TokenType != TokenType.PeriodSeparator)
+                string line;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    //Allocate a scanner to reparse and change increments level
+                    TokensLine tempTokensLine = new TokensLine(
+                        new TextLineSnapshot(0, line, null),
+                        base.Layout);
+
+                    int startIndex = 0;
+                    if (tempTokensLine.Type == CobolTextLineType.Debug && cel.ScanState.WithDebuggingMode && base.Layout == ColumnsLayout.CobolReferenceFormat)
+                    {//Handling special debugging mode.
+                        System.Diagnostics.Debug.Assert(line.Length >= 7 && (line[6] == 'D' || line[6] == 'd'));
+                        if (line.Length >= 7 && (line[6] == 'D' || line[6] == 'd'))
+                        {
+                            startIndex = 7;
+                            sw.Write(line.Substring(0, 7));
+                        }
+                    }
+
+                    MultilineScanState scanState = new MultilineScanState(true, cel.ScanState.DecimalPointIsComma, cel.ScanState.WithDebuggingMode, cel.ScanState.EncodingForAlphanumericLiterals ?? IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147));
+                    tempTokensLine.InitializeScanState(scanState);
+                    Scanner scanner = new Scanner(line, startIndex, line.Length - 1, tempTokensLine, null, true);
+                    Token t = null;
+
+                    while ((t = scanner.GetNextToken()) != null)
                     {
+                        if (t.TokenType == TokenType.GLOBAL_STORAGE)
+                        {//Skip GLOBAL-STORAGE SECTION. tokens
+                            while ((t = scanner.GetNextToken()) != null && t.TokenType != TokenType.PeriodSeparator)
+                            {
+                                AdvanceToNextStateAndAdjustTokenProperties(tempTokensLine, t);
+                            }
+                            AdvanceToNextStateAndAdjustTokenProperties(tempTokensLine, t);
+                            continue;
+                        }
+                        else if (t.TokenType == TokenType.LevelNumber)
+                        {
+                            TypeCobol.Compiler.Scanner.IntegerLiteralTokenValue intValue =
+                                (TypeCobol.Compiler.Scanner.IntegerLiteralTokenValue)t.LiteralValue;
+                            long level = intValue.Number + 1;
+                            if (level <= 49)
+                            {
+                                sw.Write(level.ToString("00"));
+                            }
+                            else
+                            {
+                                sw.Write(t.Text);
+                            }
+                        }
+                        else
+                        {
+                            sw.Write(t.Text);
+                        }
                         AdvanceToNextStateAndAdjustTokenProperties(tempTokensLine, t);
                     }
-                    AdvanceToNextStateAndAdjustTokenProperties(tempTokensLine, t);
-                    continue;
+                    sw.WriteLine();
                 }
-                else if (t.TokenType == TokenType.LevelNumber)
-                {
-                    TypeCobol.Compiler.Scanner.IntegerLiteralTokenValue intValue =
-                        (TypeCobol.Compiler.Scanner.IntegerLiteralTokenValue)t.LiteralValue;
-                    long level = intValue.Number + 1;
-                    if (level <= 49)
-                    {
-                        sw.Write(level.ToString("00"));
-                    }
-                    else
-                    {
-                        sw.Write(t.Text);
-                    }
-                }
-                else
-                {
-                    sw.Write(t.Text);
-                }
-                AdvanceToNextStateAndAdjustTokenProperties(tempTokensLine, t);
             }
 
             GlobalStorageData = sw.ToString();
