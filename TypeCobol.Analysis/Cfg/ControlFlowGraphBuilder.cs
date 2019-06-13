@@ -1318,7 +1318,7 @@ namespace TypeCobol.Analysis.Cfg
                 {//We must clone each block of the sequence and add them to the group.
                     var cloneBlock = (BasicBlockForNode)block.Clone();
                     //Give to the cloned a new Index, and added to all blocks.
-                    System.Diagnostics.Debug.Assert(!clonedBlockIndexMap.ContainsKey(block.Index));
+                    //System.Diagnostics.Debug.Assert(!clonedBlockIndexMap.ContainsKey(block.Index));
                     if (!clonedBlockIndexMap.ContainsKey(block.Index))
                     {//If this block has been already add, this mean there are recursive GOTOs
                         clonedBlockIndexMap[block.Index] = this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Count;
@@ -1418,17 +1418,18 @@ namespace TypeCobol.Analysis.Cfg
                         var block = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges[edge];
                         int cloneBlockIndex = 0;
                         if (!clonedBlockIndexMap.TryGetValue(block.Index, out cloneBlockIndex))
-                        {   //Hum this Group is not the last group and it goes beyond the group limit ==> we don't support that.
+                        {   
                             if (b != group.Group.Last.Value)
-                            {
+                            {//Hum this Group is not the last group and it goes beyond the group limit ==> we don't support that.
                                 Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
                                     p.CodeElement.Column,
                                     p.CodeElement.Column,
                                     p.CodeElement.Line,
                                     string.Format(Resource.BasicBlockGroupGoesBeyondTheLimit, ((BasicBlockForNode)block).Tag != null ? ((BasicBlockForNode)block).Tag.ToString() : "???", block.Index));
                                 Diagnostics.Add(d);
-
-                                return false;
+                                //So in this case in order to not break the graph and to see the target branch that went out, add it as well....
+                                b.SuccessorEdges.Add(edge);                                
+                                continue;
                             }
                             else
                             {//Don't add the continuation edge
