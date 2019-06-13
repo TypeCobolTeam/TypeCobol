@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.StdioHttp;
+using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 using TypeCobol.LanguageServer.Utilities;
 
 namespace TypeCobol.LanguageServer
@@ -259,7 +260,7 @@ namespace TypeCobol.LanguageServer
                     httpServer.RedirectedOutpuStream = Process.StandardInput;
                 }
                 var jsonRPCServer = new JsonRPCServer(httpServer);
-                var typeCobolServer = new TypeCobolServer(jsonRPCServer, MessagesActionQueue);
+                var typeCobolServer = new TypeCobolCustomLanguageServer(jsonRPCServer, MessagesActionQueue);
 
                 typeCobolServer.NoLogsMessageNotification = NoLogsMessageNotification;
 
@@ -346,7 +347,6 @@ namespace TypeCobol.LanguageServer
                         typeCobolServer.NotifyException(e);
                     }
                 }
-
             }
         }
     }

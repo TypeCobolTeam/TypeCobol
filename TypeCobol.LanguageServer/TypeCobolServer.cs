@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using Analytics;
 using TypeCobol.Compiler;
@@ -15,7 +14,6 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.LanguageServer.Context;
-using TypeCobol.LanguageServer.Interfaces;
 using TypeCobol.LanguageServer.SignatureHelper;
 
 namespace TypeCobol.LanguageServer
@@ -23,27 +21,56 @@ namespace TypeCobol.LanguageServer
     /// <summary>
     /// Override methods of the base language server to implement TypeCobol editor experiences
     /// </summary>
-    class TypeCobolServer : TypeCobolCustomLanguageServer
+    class TypeCobolServer : VsCodeProtocol.LanguageServer
     {
-        public TypeCobolServer(IRPCServer rpcServer, Queue<MessageActionWrapper> messagesActionsQueue) : base(rpcServer)
+        private readonly Queue<MessageActionWrapper> _messagesActionsQueue;
+        protected Dictionary<SignatureInformation, FunctionDeclaration> FunctionDeclarations { get; }
+
+        public TypeCobolServer(IRPCServer rpcServer, Queue<MessageActionWrapper> messagesActionsQueue)
+            : base(rpcServer)
         {
-            _MessagesActionsQueue = messagesActionsQueue;
-            _FunctionDeclarationSignatureDictionary = new Dictionary<SignatureInformation, FunctionDeclaration>();
+            this._messagesActionsQueue = messagesActionsQueue;
+            this.FunctionDeclarations = new Dictionary<SignatureInformation, FunctionDeclaration>();
         }
 
-        // -- Initialization : create workspace and return language server capabilities --
-        private Workspace typeCobolWorkspace;
-        private Queue<MessageActionWrapper> _MessagesActionsQueue;
-        private FunctionDeclaration _SignatureCompletionContext;
-        private Dictionary<SignatureInformation, FunctionDeclaration> _FunctionDeclarationSignatureDictionary;
+        protected Workspace Workspace { get; private set; }
+
+        protected FunctionDeclaration SignatureCompletionContext { get; set; }
 
         /// <summary>
-        /// Timer Disabled for TypeCobol.LanguageServer.
+        /// Are Log message notifications enabled ? false if yes, true otherwise.
         /// </summary>
-        public bool TimerDisabledOption
-        {
-            get; set;
-        }
+        public bool NoLogsMessageNotification { get; set; }
+
+        /// <summary>
+        /// Lstr Testing Source document
+        /// </summary>
+        public bool LsrSourceTesting { get; set; }
+
+        /// <summary>
+        /// Lstr Testing Source document
+        /// </summary>
+        public bool LsrScannerTesting { get; set; }
+
+        /// <summary>
+        /// Lstr Testing preprocessed Source document
+        /// </summary>
+        public bool LsrPreprocessTesting { get; set; }
+
+        /// <summary>
+        /// Lstr Testing parsing
+        /// </summary>
+        public bool LsrParserTesting { get; set; }
+
+        /// <summary>
+        /// Lstr Testing semantic phase
+        /// </summary>
+        public bool LsrSemanticTesting { get; set; }
+
+        /// <summary>
+        /// Are we supporting Syntax Coloring Notifications.    
+        /// </summary>
+        public bool UseSyntaxColoring { get; set; }
 
         /// <summary>
         /// True to use ANTLR for parsing a program
@@ -56,78 +83,9 @@ namespace TypeCobol.LanguageServer
         public bool UseEuroInformationLegacyReplacingSyntax { get; set; }
 
         /// <summary>
-        /// Lstr Testing Source document
+        /// Timer Disabled for TypeCobol.LanguageServer.
         /// </summary>
-        public bool LsrSourceTesting { get; set; }
-        /// <summary>
-        /// Lstr Testing Source document
-        /// </summary>
-        public bool LsrScannerTesting { get; set; }
-        /// <summary>
-        /// Lstr Testing preprocessed Source document
-        /// </summary>
-        public bool LsrPreprocessTesting { get; set; }
-        /// <summary>
-        /// Lstr Testing parsing
-        /// </summary>
-        public bool LsrParserTesting { get; set; }
-        /// <summary>
-        /// Lstr Testing semantic phase
-        /// </summary>
-        public bool LsrSemanticTesting { get; set; }
-        /// <summary>
-        /// Are we supporting Syntax Coloring Notifications.    
-        /// </summary>
-        public bool UseSyntaxColoring { get; set; }
-
-        /// <summary>
-        /// Are Log message notifications enabled ? false if yes, true otherwise.
-        /// </summary>
-        public bool NoLogsMessageNotification { get; set; }
-
-        public Workspace Workspace
-        {
-            get { return typeCobolWorkspace; }
-        }
-
-        #region Override LSP Methods
-
-        protected override InitializeResult OnInitialize(InitializeParams parameters)
-        {
-            this.RemoteConsole.NoLogsMessageNotification = NoLogsMessageNotification;
-            var rootDirectory = new DirectoryInfo(parameters.rootPath);
-            string workspaceName = rootDirectory.Name + "#" + parameters.processId;
-
-            // Initialize the workspace
-            typeCobolWorkspace = new Workspace(rootDirectory.FullName, workspaceName, _MessagesActionsQueue, Logger);
-            //Propagate LSR testing options.
-            if (LsrSourceTesting) typeCobolWorkspace.IsLsrSourceTesting = LsrSourceTesting;
-            if (LsrScannerTesting) typeCobolWorkspace.IsLsrScannerTesting = LsrScannerTesting;
-            if (LsrPreprocessTesting) typeCobolWorkspace.IsLsrPreprocessinTesting = LsrPreprocessTesting;
-            if (LsrParserTesting) typeCobolWorkspace.IsLsrParserTesting = LsrParserTesting;
-            if (LsrSemanticTesting) typeCobolWorkspace.IsLsrSemanticTesting = LsrSemanticTesting;
-            typeCobolWorkspace.UseSyntaxColoring = UseSyntaxColoring;
-
-            typeCobolWorkspace.UseAntlrProgramParsing = UseAntlrProgramParsing;
-            typeCobolWorkspace.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;
-            typeCobolWorkspace.TimerDisabledOption = TimerDisabledOption;
-            typeCobolWorkspace.LoadingIssueEvent += LoadingIssueDetected;
-            typeCobolWorkspace.ExceptionTriggered += ExceptionTriggered;
-            typeCobolWorkspace.WarningTrigger += WarningTrigger;
-            // Return language server capabilities
-            var initializeResult = base.OnInitialize(parameters);
-            initializeResult.capabilities.textDocumentSync = TextDocumentSyncKind.Incremental;
-            initializeResult.capabilities.hoverProvider = true;
-            CompletionOptions completionOptions = new CompletionOptions();
-            completionOptions.resolveProvider = false;
-            completionOptions.triggerCharacters = new string[] {"::"};
-            initializeResult.capabilities.completionProvider = completionOptions;
-            SignatureHelpOptions sigHelpOptions = new SignatureHelpOptions {triggerCharacters = new string[0]};
-            initializeResult.capabilities.signatureHelpProvider = sigHelpOptions;
-
-            return initializeResult;
-        }
-        // -- Files synchronization : maintain a list of opened files, apply all updates to their content -- //
+        public bool TimerDisabledOption { get; set; }
 
         private bool Logger(string message, Uri uri)
         {
@@ -141,14 +99,190 @@ namespace TypeCobol.LanguageServer
             return true;
         }
 
+        private IEnumerable<CodeElementWrapper> CodeElementFinder(FileCompiler fileCompiler, Position position)
+        {
+            List<CodeElement> codeElements = new List<CodeElement>();
+            List<CodeElement> ignoredCodeElements = new List<CodeElement>();
+            int lineIndex = position.line;
+            // Find the token located below the mouse pointer
+            if (fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines.Count != 0)
+            {
+                while (codeElements.Count == 0)
+                {
+                    var codeElementsLine =
+                        fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines[lineIndex];
+
+                    if (codeElementsLine != null && codeElementsLine.CodeElements != null && !(codeElementsLine.CodeElements[0] is SentenceEnd))
+                    {
+                        //Ignore all the EndOfFile token 
+                        var tempCodeElements = codeElementsLine.CodeElements.Where(c => c.ConsumedTokens.Any(t => t.TokenType != TokenType.EndOfFile));
+
+                        foreach (var tempCodeElement in tempCodeElements.Reverse())
+                        {
+                            if (!tempCodeElement.ConsumedTokens.Any(t => /*CompletionElligibleTokens.IsCompletionElligibleToken(t) &&*/
+                            ((t.Line == position.line + 1 && t.StopIndex + 1 <= position.character) || t.Line < position.line + 1)))
+                                ignoredCodeElements.Add(tempCodeElement);
+                            else
+                                codeElements.Add(tempCodeElement);
+                        }
+
+                        if (tempCodeElements.Any(c => c.ConsumedTokens.Any(t => t.TokenType == TokenType.PeriodSeparator && !(t is Compiler.AntlrUtils.MissingToken))))
+                            break;
+                    }
+
+                    lineIndex--; //decrease lineIndex to get the previous line of TypeCobol Tree.
+                }
+
+                codeElements.AddRange(ignoredCodeElements);
+                //Add the previously ignored Code Elements, may be they are usefull to help completion.
+
+                if (!codeElements.Any(c => c.ConsumedTokens.Any(t => t.Line <= position.line + 1)))
+                    return null; //If nothing is found near the cursor we can't do anything
+            }
+
+            //Create a list of CodeElementWrapper in order to loose the ConsumedTokens ref. 
+            return codeElements.Select(c => new CodeElementWrapper(c));
+        }
+
+        private void LoadingIssueDetected(object sender, LoadingIssueEvent loadingIssueEvent)
+        {
+            this.RpcServer.SendNotification(LoadingIssueNotification.Type, new LoadingIssueParams() { Message = loadingIssueEvent.Message });
+        }
+
+        private void ExceptionTriggered(object sender, ThreadExceptionEventArgs exception)
+        {
+            this.NotifyException(exception.Exception);
+        }
+
+        private void WarningTrigger(object sender, string message)
+        {
+            this.NotifyWarning(message);
+        }
+
+        /// <summary>
+        /// Event Method triggered when missing copies are detected.
+        /// </summary>
+        /// <param name="fileUri">File URI to be send to the client</param>
+        /// <param name="missingCopies">List of missing copies name</param>
+        private void MissingCopiesDetected(object fileUri, MissingCopiesEvent missingCopiesEvent)
+        {
+            //Send missing copies to client
+            var missingCopiesParam = new MissingCopiesParams();
+            missingCopiesParam.Copies = missingCopiesEvent.Copies;
+            missingCopiesParam.textDocument = new TextDocumentIdentifier(fileUri.ToString());
+            this.RpcServer.SendNotification(MissingCopiesNotification.Type, missingCopiesParam);
+        }
+
+        /// <summary>
+        /// Event Method triggered when diagnostics are detected.
+        /// </summary>
+        /// <param name="fileUri">File URI to be send to the client</param>
+        /// <param name="diagnostics">List of TypeCobol compiler diagnostics</param>
+        private void DiagnosticsDetected(object fileUri, DiagnosticEvent diagnosticEvent)
+        {
+            var diagParameter = new PublishDiagnosticsParams();
+            var diagList = new List<Diagnostic>();
+
+            foreach (var diag in diagnosticEvent.Diagnostics)
+            {
+                diagList.Add(new Diagnostic(new Range(diag.Line, diag.ColumnStart, diag.Line, diag.ColumnEnd),
+                    diag.Message, (DiagnosticSeverity)diag.Info.Severity, diag.Info.Code.ToString(),
+                    diag.Info.ReferenceText));
+            }
+
+            diagParameter.uri = fileUri.ToString();
+            diagParameter.diagnostics = diagList.ToArray();
+            this.RpcServer.SendNotification(PublishDiagnosticsNotification.Type, diagParameter);
+        }
+
+        protected DocumentContext GetDocumentContextFromStringUri(string uri, bool acceptNodeRefresh = true)
+        {
+            Uri objUri = new Uri(uri);
+            if (objUri.IsFile)
+            {
+                var context = this.Workspace.OpenedDocumentContext[objUri];
+                // Get compilation info for the current file
+                if (acceptNodeRefresh)
+                    this.Workspace.RefreshSyntaxTree(context.FileCompiler); //Do a Node Refresh
+                return context;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Creates workspace and returns language server capabilities.
+        /// </summary>
+        /// <param name="parameters">Initialization parameters</param>
+        /// <returns>Init result describing server capabilities.</returns>
+        protected override InitializeResult OnInitialize(InitializeParams parameters)
+        {
+            this.RemoteConsole.NoLogsMessageNotification = NoLogsMessageNotification;
+            var rootDirectory = new DirectoryInfo(parameters.rootPath);
+            string workspaceName = rootDirectory.Name + "#" + parameters.processId;
+
+            // Initialize the workspace.
+            this.Workspace = new Workspace(rootDirectory.FullName, workspaceName, _messagesActionsQueue, Logger);
+
+            // Propagate LSR testing options.
+            if (LsrSourceTesting) this.Workspace.IsLsrSourceTesting = LsrSourceTesting;
+            if (LsrScannerTesting) this.Workspace.IsLsrScannerTesting = LsrScannerTesting;
+            if (LsrPreprocessTesting) this.Workspace.IsLsrPreprocessinTesting = LsrPreprocessTesting;
+            if (LsrParserTesting) this.Workspace.IsLsrParserTesting = LsrParserTesting;
+            if (LsrSemanticTesting) this.Workspace.IsLsrSemanticTesting = LsrSemanticTesting;
+            this.Workspace.UseSyntaxColoring = UseSyntaxColoring;
+            this.Workspace.UseAntlrProgramParsing = UseAntlrProgramParsing;
+            this.Workspace.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;
+            this.Workspace.TimerDisabledOption = TimerDisabledOption;
+
+            // Attach event handlers.
+            this.Workspace.LoadingIssueEvent += LoadingIssueDetected;
+            this.Workspace.ExceptionTriggered += ExceptionTriggered;
+            this.Workspace.WarningTrigger += WarningTrigger;
+
+            // Return language server capabilities
+            var initializeResult = base.OnInitialize(parameters);
+            initializeResult.capabilities.textDocumentSync = TextDocumentSyncKind.Incremental;
+            initializeResult.capabilities.hoverProvider = true;
+            CompletionOptions completionOptions = new CompletionOptions();
+            completionOptions.resolveProvider = false;
+            completionOptions.triggerCharacters = new string[] { "::" };
+            initializeResult.capabilities.completionProvider = completionOptions;
+            SignatureHelpOptions sigHelpOptions = new SignatureHelpOptions { triggerCharacters = new string[0] };
+            initializeResult.capabilities.signatureHelpProvider = sigHelpOptions;
+            return initializeResult;
+        }
+
+        protected override void OnShutdown()
+        {
+            this.Workspace.MissingCopiesEvent -= MissingCopiesDetected;
+            this.Workspace.DiagnosticsEvent -= DiagnosticsDetected;
+
+            base.OnShutdown();
+        }
+
+        protected override void OnDidChangeConfiguration(DidChangeConfigurationParams parameters)
+        {
+            if (parameters.settings is Newtonsoft.Json.Linq.JArray)
+            {
+                Newtonsoft.Json.Linq.JArray array = parameters.settings as Newtonsoft.Json.Linq.JArray;
+                IEnumerable<string> arguments = array.Select(t => t.ToString());
+                this.Workspace.DidChangeConfigurationParams(arguments);
+            }
+            else
+            {
+                this.Workspace.DidChangeConfigurationParams(parameters.settings.ToString());
+            }
+        }
+
         protected override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
-        {            
+        {
             DocumentContext docContext = new DocumentContext(parameters.textDocument);
             if (docContext.Uri.IsFile)
             {
                 //Subscribe to diagnostics event
-                typeCobolWorkspace.MissingCopiesEvent += MissingCopiesDetected;
-                typeCobolWorkspace.DiagnosticsEvent += DiagnosticsDetected;
+                this.Workspace.MissingCopiesEvent += MissingCopiesDetected;
+                this.Workspace.DiagnosticsEvent += DiagnosticsDetected;
 
                 //Create a ILanguageServer instance for the document.
                 docContext.LanguageServer = new TypeCobolLanguageServer(this.RpcServer, parameters.textDocument);
@@ -157,8 +291,8 @@ namespace TypeCobol.LanguageServer
                 string text = parameters.text ?? parameters.textDocument.text;
                 //These are no longer needed.
                 parameters.text = null;
-                parameters.textDocument.text = null;                
-                typeCobolWorkspace.OpenTextDocument(docContext, text, Workspace.LsrTestOptions);
+                parameters.textDocument.text = null;
+                this.Workspace.OpenTextDocument(docContext, text, this.Workspace.LsrTestOptions);
 
                 // DEBUG information
                 RemoteConsole.Log("Opened source file : " + docContext.Uri.LocalPath);
@@ -190,7 +324,7 @@ namespace TypeCobol.LanguageServer
                     //Allow to know if a new line was added
                     //Split on \r \n to know the number of lines added
                     lineUpdates = contentChange.text.Replace("\r", "").Split('\n').ToList();
-                    if(string.IsNullOrEmpty(lineUpdates.FirstOrDefault()) && replacementTextStartsWithNewLine)
+                    if (string.IsNullOrEmpty(lineUpdates.FirstOrDefault()) && replacementTextStartsWithNewLine)
                         lineUpdates.RemoveAt(0);
                 }
 
@@ -202,7 +336,7 @@ namespace TypeCobol.LanguageServer
                     try
                     {
                         docContext.LanguageServerConnection(false);
-                        typeCobolWorkspace.OpenTextDocument(docContext, contentChange.text, this.Workspace.LsrTestOptions);
+                        this.Workspace.OpenTextDocument(docContext, contentChange.text, this.Workspace.LsrTestOptions);
                         return;
                     }
                     catch (Exception e)
@@ -234,7 +368,7 @@ namespace TypeCobol.LanguageServer
                         firstLineChar = 0;
                     }
                     else if (replacementTextStartsWithNewLine)
-                        //Detected that the add line appeared inside an existing line
+                    //Detected that the add line appeared inside an existing line
                     {
                         lineUpdates.Add(lineUpdates.First());
                         //Add the default 7 spaces + add lineUpdates in order to update the current line and add the new one. 
@@ -318,7 +452,7 @@ namespace TypeCobol.LanguageServer
             #endregion
 
             // Update the source file with the computed text changes
-            typeCobolWorkspace.UpdateSourceFile(objUri, textChangedEvent);
+            this.Workspace.UpdateSourceFile(objUri, textChangedEvent);
 
             // DEBUG information
             RemoteConsole.Log("Udpated source file : " + objUri.LocalPath);
@@ -333,7 +467,7 @@ namespace TypeCobol.LanguageServer
             Uri objUri = new Uri(parameters.textDocument.uri);
             if (objUri.IsFile)
             {
-                typeCobolWorkspace.CloseSourceFile(objUri);
+                this.Workspace.CloseSourceFile(objUri);
 
                 // DEBUG information
                 RemoteConsole.Log("Closed source file : " + objUri.LocalPath);
@@ -347,25 +481,10 @@ namespace TypeCobol.LanguageServer
                 DidChangeTextDocumentParams dctdp = new DidChangeTextDocumentParams(parameters.textDocument.uri);
                 TextDocumentContentChangeEvent tdcce = new TextDocumentContentChangeEvent();
                 tdcce.text = parameters.text;
-                dctdp.contentChanges = new TextDocumentContentChangeEvent[] {tdcce};
+                dctdp.contentChanges = new TextDocumentContentChangeEvent[] { tdcce };
                 OnDidChangeTextDocument(dctdp);
             }
         }
-
-        protected override void OnDidChangeConfiguration(DidChangeConfigurationParams parameters)
-        {
-            if (parameters.settings is Newtonsoft.Json.Linq.JArray)
-            {
-                Newtonsoft.Json.Linq.JArray array = parameters.settings as Newtonsoft.Json.Linq.JArray;
-                IEnumerable<string> arguments = array.Select(t => t.ToString());
-                typeCobolWorkspace.DidChangeConfigurationParams(arguments);
-            }
-            else
-            {
-                typeCobolWorkspace.DidChangeConfigurationParams(parameters.settings.ToString());
-            }
-        }
-        // ----------------------------------------------------------------------------------------------- //
 
         protected override Hover OnHover(TextDocumentPosition parameters)
         {
@@ -421,8 +540,8 @@ namespace TypeCobol.LanguageServer
                         {
                             //if the hovered position is inside this parameter
                             //line + 1 : because start index is 0
-                            if (param.CodeElement.Line == parameters.position.line + 1 && 
-                                param.CodeElement.StartIndex < parameters.position.character && 
+                            if (param.CodeElement.Line == parameters.position.line + 1 &&
+                                param.CodeElement.StartIndex < parameters.position.character &&
                                 param.CodeElement.StopIndex > parameters.position.character)
                             {
                                 if (param.TypeDefinition != null)
@@ -483,89 +602,89 @@ namespace TypeCobol.LanguageServer
                     switch (lastSignificantToken.TokenType)
                     {
                         case TokenType.PERFORM:
-                        {
-                            items.AddRange(CompletionFactory.GetCompletionPerformParagraph(docContext.FileCompiler,
-                                matchingCodeElement, userFilterToken));
-                            break;
-                        }
+                            {
+                                items.AddRange(CompletionFactory.GetCompletionPerformParagraph(docContext.FileCompiler,
+                                    matchingCodeElement, userFilterToken));
+                                break;
+                            }
                         case TokenType.CALL:
-                        {
-                            _FunctionDeclarationSignatureDictionary.Clear(); //Clear to avoid key collision
-                            items.AddRange(CompletionFactory.GetCompletionForProcedure(docContext.FileCompiler, matchingCodeElement,
-                                userFilterToken, _FunctionDeclarationSignatureDictionary));
-                            items.AddRange(CompletionFactory.GetCompletionForLibrary(docContext.FileCompiler, matchingCodeElement,
-                                userFilterToken));
-                            break;
-                        }
+                            {
+                                this.FunctionDeclarations.Clear(); //Clear to avoid key collision
+                                items.AddRange(CompletionFactory.GetCompletionForProcedure(docContext.FileCompiler, matchingCodeElement,
+                                    userFilterToken, this.FunctionDeclarations));
+                                items.AddRange(CompletionFactory.GetCompletionForLibrary(docContext.FileCompiler, matchingCodeElement,
+                                    userFilterToken));
+                                break;
+                            }
                         case TokenType.TYPE:
-                        {
-                            items.AddRange(CompletionFactory.GetCompletionForType(docContext.FileCompiler, matchingCodeElement,
-                                userFilterToken));
-                            items.AddRange(CompletionFactory.GetCompletionForLibrary(docContext.FileCompiler, matchingCodeElement,
-                                userFilterToken));
-                            break;
-                        }
+                            {
+                                items.AddRange(CompletionFactory.GetCompletionForType(docContext.FileCompiler, matchingCodeElement,
+                                    userFilterToken));
+                                items.AddRange(CompletionFactory.GetCompletionForLibrary(docContext.FileCompiler, matchingCodeElement,
+                                    userFilterToken));
+                                break;
+                            }
                         case TokenType.QualifiedNameSeparator:
-                        {
-                            items.AddRange(CompletionFactory.GetCompletionForQualifiedName(parameters.position,
-                                docContext.FileCompiler, matchingCodeElement, lastSignificantToken, userFilterToken, _FunctionDeclarationSignatureDictionary));
-                            break;
-                        }
+                            {
+                                items.AddRange(CompletionFactory.GetCompletionForQualifiedName(parameters.position,
+                                    docContext.FileCompiler, matchingCodeElement, lastSignificantToken, userFilterToken, this.FunctionDeclarations));
+                                break;
+                            }
                         case TokenType.INPUT:
                         case TokenType.OUTPUT:
                         case TokenType.IN_OUT:
-                        {
-                            items.AddRange(CompletionFactory.GetCompletionForProcedureParameter(parameters.position,
-                                docContext.FileCompiler, matchingCodeElement, userFilterToken, lastSignificantToken, _SignatureCompletionContext));
-                            break;
-                        }
+                            {
+                                items.AddRange(CompletionFactory.GetCompletionForProcedureParameter(parameters.position,
+                                    docContext.FileCompiler, matchingCodeElement, userFilterToken, lastSignificantToken, this.SignatureCompletionContext));
+                                break;
+                            }
                         case TokenType.MOVE:
-                        {
-                            items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
-                                da =>
-                                    da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase) &&
-                                    ((da.CodeElement != null &&
-                                      da.CodeElement.LevelNumber.Value < 88)
-                                     || (da.CodeElement == null && da is IndexDefinition))));
-                            //Ignore 88 level variable
-                            break;
-                        }
+                            {
+                                items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
+                                    da =>
+                                        da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase) &&
+                                        ((da.CodeElement != null &&
+                                          da.CodeElement.LevelNumber.Value < 88)
+                                         || (da.CodeElement == null && da is IndexDefinition))));
+                                //Ignore 88 level variable
+                                break;
+                            }
                         case TokenType.TO:
-                        {
-                            items.AddRange(CompletionFactory.GetCompletionForTo(docContext.FileCompiler, matchingCodeElement,
-                                userFilterToken, lastSignificantToken));
-                            break;
-                        }
+                            {
+                                items.AddRange(CompletionFactory.GetCompletionForTo(docContext.FileCompiler, matchingCodeElement,
+                                    userFilterToken, lastSignificantToken));
+                                break;
+                            }
                         case TokenType.INTO:
-                        {
-                            items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
-                                v => v.Name.StartsWith(userFilterText, StringComparison.CurrentCultureIgnoreCase)
-                                     && (v.CodeElement != null &&
-                                         v.DataType == DataType.Alphabetic
-                                         || v.DataType == DataType.Alphanumeric
-                                         || v.DataType == DataType.AlphanumericEdited)
-                            ));
-                            break;
-                        }
+                            {
+                                items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
+                                    v => v.Name.StartsWith(userFilterText, StringComparison.CurrentCultureIgnoreCase)
+                                         && (v.CodeElement != null &&
+                                             v.DataType == DataType.Alphabetic
+                                             || v.DataType == DataType.Alphanumeric
+                                             || v.DataType == DataType.AlphanumericEdited)
+                                ));
+                                break;
+                            }
                         case TokenType.SET:
-                        {
-                            items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
-                                v => v.Name.StartsWith(userFilterText, StringComparison.CurrentCultureIgnoreCase)
-                                     &&
-                                     ((v.CodeElement != null &&
-                                       v.CodeElement.LevelNumber.Value == 88)
-                                      //Level 88 Variable
-                                      || v.DataType == DataType.Numeric //Numeric Integer Variable
-                                      || v.Usage == DataUsage.Pointer) //Or usage is pointer 
-                            ));
-                            break;
-                        }
+                            {
+                                items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
+                                    v => v.Name.StartsWith(userFilterText, StringComparison.CurrentCultureIgnoreCase)
+                                         &&
+                                         ((v.CodeElement != null &&
+                                           v.CodeElement.LevelNumber.Value == 88)
+                                          //Level 88 Variable
+                                          || v.DataType == DataType.Numeric //Numeric Integer Variable
+                                          || v.Usage == DataUsage.Pointer) //Or usage is pointer 
+                                ));
+                                break;
+                            }
                         case TokenType.OF:
-                        {
-                            items.AddRange(CompletionFactory.GetCompletionForOf(docContext.FileCompiler, matchingCodeElement,
-                                userFilterToken, parameters.position));
-                            break;
-                        }
+                            {
+                                items.AddRange(CompletionFactory.GetCompletionForOf(docContext.FileCompiler, matchingCodeElement,
+                                    userFilterToken, parameters.position));
+                                break;
+                            }
                         default:
                             break;
                     }
@@ -618,14 +737,140 @@ namespace TypeCobol.LanguageServer
             return items;
         }
 
+        protected override SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)
+        {
+            AnalyticsWrapper.Telemetry.TrackEvent(EventType.SignatureHelp, "Signature help event", LogType.Completion); //Send event to analytics
+            var docContext = GetDocumentContextFromStringUri(parameters.uri);
+            if (docContext == null)
+                return null;
+            System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
+
+            if (docContext.FileCompiler?.CompilationResultsForProgram?.ProcessedTokensDocumentSnapshot == null) //Semantic snapshot is not available
+                return null;
+
+            var wrappedCodeElement = CodeElementFinder(docContext.FileCompiler, parameters.position).FirstOrDefault();
+            if (wrappedCodeElement == null) //No codeelements found
+                return null;
+
+            var node = CompletionFactory.GetMatchingNode(docContext.FileCompiler, wrappedCodeElement);
+
+            //Get procedure name or qualified name
+            string procedureName = CompletionFactoryHelpers.GetProcedureNameFromTokens(wrappedCodeElement.ArrangedConsumedTokens);
+
+            //Try to get procedure by its name
+            var calledProcedures =
+                node.SymbolTable.GetFunctions(
+                    p =>
+                        p.Name.Equals(procedureName) ||
+                        p.QualifiedName.ToString().Equals(procedureName),
+                        SymbolTable.Scope.Intrinsic
+                    );
+            var signatureHelp = new SignatureHelp();
+
+            if (calledProcedures == null)
+                return null;
+
+            if (calledProcedures.Count() == 1)
+            {
+                var calledProcedure = calledProcedures.First();
+                //Create and return SignatureHelp object 
+                signatureHelp.signatures = new SignatureInformation[1];
+                signatureHelp.signatures[0] = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(calledProcedure);
+                signatureHelp.activeSignature = 0; //Set the active signature as the one just created
+                //Select the current parameter the user is expecting
+                signatureHelp.activeParameter = ProcedureSignatureHelper.SignatureHelperParameterSelecter(calledProcedure, wrappedCodeElement, parameters.position);
+
+                //There is only one possibility so the context can be set right now 
+                this.SignatureCompletionContext = calledProcedure;
+
+                return signatureHelp;
+            }
+
+            //Else try to find the best matching signature
+
+            //Get all given INPUT
+            var givenInputParameters = CompletionFactoryHelpers.AggregateTokens(
+                wrappedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.INPUT)
+                    .Skip(1) //Ignore the INPUT Token
+                    .TakeWhile(t => !(t.TokenType == TokenType.OUTPUT || t.TokenType == TokenType.IN_OUT))).ToList();
+            //Get all given OUTPUT
+            var givenOutputParameters = CompletionFactoryHelpers.AggregateTokens(
+               wrappedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.OUTPUT)
+                   .Skip(1) //Ignore the INPUT Token
+                   .TakeWhile(t => !(t.TokenType == TokenType.INPUT || t.TokenType == TokenType.IN_OUT))).ToList();
+            //Get all given INOUT
+            var givenInoutParameters = CompletionFactoryHelpers.AggregateTokens(
+              wrappedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.IN_OUT)
+                  .Skip(1) //Ignore the INPUT Token
+                  .TakeWhile(t => !(t.TokenType == TokenType.OUTPUT || t.TokenType == TokenType.INPUT))).ToList();
+            var totalGivenParameters = givenInputParameters.Count + givenInoutParameters.Count + givenOutputParameters.Count;
+
+            var signatureInformation = new List<SignatureInformation>();
+            this.FunctionDeclarations.Clear();
+            FunctionDeclaration bestmatchingProcedure = null;
+            int previousMatchingWeight = 0, selectedSignatureIndex = 0;
+
+            if (totalGivenParameters == 0)
+            {
+                foreach (var procedure in calledProcedures) //No parameters given, return all possibilities
+                {
+                    var formattedSignatureInformation = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(procedure);
+                    signatureInformation.Add(formattedSignatureInformation);
+                    this.FunctionDeclarations.Add(formattedSignatureInformation, procedure);
+                }
+            }
+            else
+            {
+                foreach (var procedure in calledProcedures)
+                {
+                    //The commented parts allow to restrict the potential compatible signature to return to the client
+                    int matchingWeight = 0;
+                    //Test INPUT parameters
+                    matchingWeight = matchingWeight + ProcedureSignatureHelper.ParametersTester(procedure.Profile.InputParameters, givenInputParameters, node);
+
+                    //Test OUTPUT parameters
+                    matchingWeight = matchingWeight + ProcedureSignatureHelper.ParametersTester(procedure.Profile.OutputParameters, givenOutputParameters, node);
+
+                    //Test INOUT parameters 
+                    matchingWeight = matchingWeight + ProcedureSignatureHelper.ParametersTester(procedure.Profile.InoutParameters, givenInoutParameters, node);
+
+                    if (matchingWeight > 0 && matchingWeight >= previousMatchingWeight && totalGivenParameters > 0)
+                    {
+                        if (matchingWeight > previousMatchingWeight)
+                            signatureInformation.Clear();  //If the matchingWeight is superior than previous, it means that the previous signature is not precise enough.
+
+                        var formattedSignatureInformation = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(procedure);
+                        signatureInformation.Add(formattedSignatureInformation);
+                        this.FunctionDeclarations.Add(formattedSignatureInformation, procedure);
+
+                        previousMatchingWeight = matchingWeight;
+                        bestmatchingProcedure = procedure;
+                    }
+                    selectedSignatureIndex++;
+                }
+            }
+
+            signatureHelp.signatures = signatureInformation.ToArray();
+
+            if (signatureInformation.Count == 1)
+            {
+                this.SignatureCompletionContext = bestmatchingProcedure; //Set the completion context 
+                signatureHelp.activeSignature = 0; //Select the only signature for the client
+                signatureHelp.activeParameter = ProcedureSignatureHelper.SignatureHelperParameterSelecter(bestmatchingProcedure, wrappedCodeElement, parameters.position); //Select the current parameter
+            }
+
+            return signatureHelp;
+        }
+
         protected override Definition OnDefinition(TextDocumentPosition parameters)
         {
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.Definition, "Definition event", LogType.Completion); //Send event to analytics
+            AnalyticsWrapper.Telemetry.TrackEvent(EventType.Definition, "Definition event",
+                LogType.Completion); //Send event to analytics
             var defaultDefinition = new Definition(parameters.uri, new Range());
             Uri objUri = new Uri(parameters.uri);
             if (objUri.IsFile)
             {
-                var docContext = typeCobolWorkspace.OpenedDocumentContext[objUri];
+                var docContext = this.Workspace.OpenedDocumentContext[objUri];
                 System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
 
 
@@ -633,23 +878,26 @@ namespace TypeCobol.LanguageServer
                     docContext.FileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot != null)
                 {
                     var matchingCodeElement =
-                        docContext.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers
+                        docContext.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot
+                            .NodeCodeElementLinkers
                             .Keys.FirstOrDefault(c => c.ConsumedTokens.Any(
-                                t => t.Line == parameters.position.line + 1 &&
-                                     parameters.position.character >= t.StartIndex &&
-                                     parameters.position.character <= t.StopIndex + 1) &&
-                                     !c.IsInsideCopy());
+                                                          t => t.Line == parameters.position.line + 1 &&
+                                                               parameters.position.character >= t.StartIndex &&
+                                                               parameters.position.character <= t.StopIndex + 1) &&
+                                                      !c.IsInsideCopy());
                     if (matchingCodeElement == null)
                         return defaultDefinition;
 
-                    var matchingNode = docContext.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers[matchingCodeElement];
+                    var matchingNode =
+                        docContext.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot
+                            .NodeCodeElementLinkers[matchingCodeElement];
                     if (matchingNode == null)
                         return defaultDefinition;
 
                     var matchingToken = matchingCodeElement.ConsumedTokens.FirstOrDefault(t =>
-                                            t.Line == parameters.position.line + 1 &&
-                                            parameters.position.character >= t.StartIndex &&
-                                            parameters.position.character <= t.StopIndex+1);
+                        t.Line == parameters.position.line + 1 &&
+                        parameters.position.character >= t.StartIndex &&
+                        parameters.position.character <= t.StopIndex + 1);
                     if (matchingToken == null)
                         return defaultDefinition;
 
@@ -657,7 +905,9 @@ namespace TypeCobol.LanguageServer
                     Token lastSignificantToken = null;
                     var potentialDefinitionNodes = new List<Node>();
 
-                    CodeElementMatcher.MatchCompletionCodeElement(parameters.position, new List<CodeElementWrapper>() {new CodeElementWrapper(matchingCodeElement)}, out userFilterToken, out lastSignificantToken); //Magic happens here
+                    CodeElementMatcher.MatchCompletionCodeElement(parameters.position,
+                        new List<CodeElementWrapper>() {new CodeElementWrapper(matchingCodeElement)},
+                        out userFilterToken, out lastSignificantToken); //Magic happens here
                     if (lastSignificantToken != null)
                     {
                         switch (lastSignificantToken.TokenType)
@@ -666,25 +916,29 @@ namespace TypeCobol.LanguageServer
                             {
                                 potentialDefinitionNodes.AddRange(
                                     matchingNode.SymbolTable.GetParagraphs(
-                                        p => p.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase)));
+                                        p => p.Name.Equals(matchingToken.Text,
+                                            StringComparison.InvariantCultureIgnoreCase)));
                                 break;
                             }
+
                             case TokenType.CALL:
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetFunctions(
                                     f => f.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
-                                        SymbolTable.Scope.GlobalStorage
-                                    ));
+                                    SymbolTable.Scope.GlobalStorage
+                                ));
                                 break;
                             }
+
                             case TokenType.TYPE:
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetTypes(
                                     t => t.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
-                                        SymbolTable.Scope.GlobalStorage
-                                    ));
+                                    SymbolTable.Scope.GlobalStorage
+                                ));
                                 break;
                             }
+
                             case TokenType.INPUT:
                             case TokenType.OUTPUT:
                             case TokenType.IN_OUT:
@@ -712,294 +966,8 @@ namespace TypeCobol.LanguageServer
 
             return defaultDefinition;
         }
-
-
-        public override void OnDidReceiveSignatureHelpContext(SignatureHelpContextParams parameters)
-        {
-            if (parameters?.signatureInformation == null) //Means that the client leave the context
-            {
-                //Make the context signature completion null
-                _SignatureCompletionContext = null;
-                //Clean up the dictionary
-                _FunctionDeclarationSignatureDictionary.Clear();
-                return;
-            }
-
-            var retrievedFuncDeclarationPair =
-                _FunctionDeclarationSignatureDictionary.FirstOrDefault(item => item.Key.Equals(parameters.signatureInformation));
-
-            if (retrievedFuncDeclarationPair.Key != null)
-                _SignatureCompletionContext = retrievedFuncDeclarationPair.Value;
-        }
-
-        protected override SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)
-        {
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.SignatureHelp, "Signature help event", LogType.Completion); //Send event to analytics
-            var docContext = GetDocumentContextFromStringUri(parameters.uri);
-            if (docContext == null)
-                return null;
-            System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
-
-            if (docContext.FileCompiler?.CompilationResultsForProgram?.ProcessedTokensDocumentSnapshot == null) //Semantic snapshot is not available
-                return null;
-
-            var wrappedCodeElement = CodeElementFinder(docContext.FileCompiler, parameters.position).FirstOrDefault();
-            if (wrappedCodeElement == null) //No codeelements found
-                return null;
-
-            var node = CompletionFactory.GetMatchingNode(docContext.FileCompiler, wrappedCodeElement);
-
-            //Get procedure name or qualified name
-            string procedureName = CompletionFactoryHelpers.GetProcedureNameFromTokens(wrappedCodeElement.ArrangedConsumedTokens);
-
-            //Try to get procedure by its name
-            var calledProcedures =
-                node.SymbolTable.GetFunctions(
-                    p =>
-                        p.Name.Equals(procedureName) ||
-                        p.QualifiedName.ToString().Equals(procedureName), 
-                        SymbolTable.Scope.Intrinsic
-                    );
-            var signatureHelp = new SignatureHelp();
-
-            if (calledProcedures == null)
-                return null;
-
-            if (calledProcedures.Count() == 1)
-            {
-                var calledProcedure = calledProcedures.First();
-                //Create and return SignatureHelp object 
-                signatureHelp.signatures = new SignatureInformation[1];
-                signatureHelp.signatures[0] = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(calledProcedure);
-                signatureHelp.activeSignature = 0; //Set the active signature as the one just created
-                //Select the current parameter the user is expecting
-                signatureHelp.activeParameter = ProcedureSignatureHelper.SignatureHelperParameterSelecter(calledProcedure, wrappedCodeElement, parameters.position);
-
-                //There is only one possibility so the context can be set right now 
-                _SignatureCompletionContext = calledProcedure;
-
-                return signatureHelp;
-            }
-
-            //Else try to find the best matching signature
-            
-            //Get all given INPUT
-            var givenInputParameters = CompletionFactoryHelpers.AggregateTokens(
-                wrappedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.INPUT)
-                    .Skip(1) //Ignore the INPUT Token
-                    .TakeWhile(t => !(t.TokenType == TokenType.OUTPUT || t.TokenType == TokenType.IN_OUT))).ToList();
-            //Get all given OUTPUT
-            var givenOutputParameters = CompletionFactoryHelpers.AggregateTokens(
-               wrappedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.OUTPUT)
-                   .Skip(1) //Ignore the INPUT Token
-                   .TakeWhile(t => !(t.TokenType == TokenType.INPUT || t.TokenType == TokenType.IN_OUT))).ToList();
-            //Get all given INOUT
-            var givenInoutParameters = CompletionFactoryHelpers.AggregateTokens(
-              wrappedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.IN_OUT)
-                  .Skip(1) //Ignore the INPUT Token
-                  .TakeWhile(t => !(t.TokenType == TokenType.OUTPUT || t.TokenType == TokenType.INPUT))).ToList();
-            var totalGivenParameters = givenInputParameters.Count + givenInoutParameters.Count + givenOutputParameters.Count;
-     
-            var signatureInformation = new List<SignatureInformation>();
-            _FunctionDeclarationSignatureDictionary.Clear();
-            FunctionDeclaration bestmatchingProcedure = null;
-            int previousMatchingWeight = 0, selectedSignatureIndex = 0;
-
-            if (totalGivenParameters == 0)
-            {
-                foreach (var procedure in calledProcedures) //No parameters given, return all possibilities
-                {
-                    var formattedSignatureInformation = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(procedure);
-                    signatureInformation.Add(formattedSignatureInformation);
-                    _FunctionDeclarationSignatureDictionary.Add(formattedSignatureInformation, procedure);
-                }
-            }
-            else
-            {
-                foreach (var procedure in calledProcedures)
-                {
-                    //The commented parts allow to restrict the potential compatible signature to return to the client
-                    int matchingWeight = 0;
-                    //Test INPUT parameters
-                    matchingWeight = matchingWeight + ProcedureSignatureHelper.ParametersTester(procedure.Profile.InputParameters, givenInputParameters, node);
-
-                    //Test OUTPUT parameters
-                    matchingWeight = matchingWeight + ProcedureSignatureHelper.ParametersTester(procedure.Profile.OutputParameters, givenOutputParameters, node);
-
-                    //Test INOUT parameters 
-                    matchingWeight = matchingWeight + ProcedureSignatureHelper.ParametersTester(procedure.Profile.InoutParameters, givenInoutParameters, node);
-
-                    if (matchingWeight > 0 && matchingWeight >= previousMatchingWeight && totalGivenParameters > 0)
-                    {
-                        if (matchingWeight > previousMatchingWeight)
-                            signatureInformation.Clear();  //If the matchingWeight is superior than previous, it means that the previous signature is not precise enough.
-
-                        var formattedSignatureInformation = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(procedure);
-                        signatureInformation.Add(formattedSignatureInformation);
-                        _FunctionDeclarationSignatureDictionary.Add(formattedSignatureInformation, procedure);
-
-                        previousMatchingWeight = matchingWeight;
-                        bestmatchingProcedure = procedure;
-                    }
-                    selectedSignatureIndex++;
-                }
-            }
-
-            signatureHelp.signatures = signatureInformation.ToArray();
-
-            if (signatureInformation.Count == 1)
-            {
-                _SignatureCompletionContext = bestmatchingProcedure; //Set the completion context 
-                signatureHelp.activeSignature = 0; //Select the only signature for the client
-                signatureHelp.activeParameter = ProcedureSignatureHelper.SignatureHelperParameterSelecter(bestmatchingProcedure, wrappedCodeElement, parameters.position); //Select the current parameter
-            }
-
-            return signatureHelp;
-        }
-
-        protected override void OnShutdown()
-        {
-            typeCobolWorkspace.MissingCopiesEvent -= MissingCopiesDetected;
-            typeCobolWorkspace.DiagnosticsEvent -= DiagnosticsDetected;
-
-            base.OnShutdown();
-        }
-
-        public override void OnDidReceiveMissingCopies(MissingCopiesParams parameter)
-        {
-            typeCobolWorkspace.UpdateMissingCopies(new Uri(parameter.textDocument.uri), parameter.Copies);
-        }
-
-        public override void OnDidReceiveNodeRefresh(NodeRefreshParams parameter)
-        {
-            var context = GetDocumentContextFromStringUri(parameter.textDocument.uri, false);
-            if (context != null && context.FileCompiler != null)
-            {
-                typeCobolWorkspace.RefreshSyntaxTree(context.FileCompiler, true);
-            }
-        }
-
-        #endregion
-
-        new public void NotifyException(Exception e)
-        {
-            base.NotifyException(e);
-        }
-
-        /// <summary>
-        /// Event Method triggered when missing copies are detected.
-        /// </summary>
-        /// <param name="fileUri">File URI to be send to the client</param>
-        /// <param name="missingCopies">List of missing copies name</param>
-        private void MissingCopiesDetected(object fileUri, MissingCopiesEvent missingCopiesEvent)
-        {
-            //Send missing copies to client
-            var missingCopiesParam = new MissingCopiesParams();
-            missingCopiesParam.Copies = missingCopiesEvent.Copies;
-            missingCopiesParam.textDocument = new TextDocumentIdentifier(fileUri.ToString());
-
-            SendMissingCopies(missingCopiesParam);
-        }
-
-        /// <summary>
-        /// Event Method triggered when diagnostics are detected.
-        /// </summary>
-        /// <param name="fileUri">File URI to be send to the client</param>
-        /// <param name="diagnostics">List of TypeCobol compiler diagnostics</param>
-        private void DiagnosticsDetected(object fileUri, DiagnosticEvent diagnosticEvent)
-        {
-            var diagParameter = new PublishDiagnosticsParams();
-            var diagList = new List<Diagnostic>();
-
-            foreach (var diag in diagnosticEvent.Diagnostics)
-            {
-                diagList.Add(new Diagnostic(new Range(diag.Line, diag.ColumnStart, diag.Line, diag.ColumnEnd),
-                    diag.Message, (DiagnosticSeverity) diag.Info.Severity, diag.Info.Code.ToString(),
-                    diag.Info.ReferenceText));
-            }
-
-            diagParameter.uri = fileUri.ToString();
-            diagParameter.diagnostics = diagList.ToArray();
-            this.RpcServer.SendNotification(PublishDiagnosticsNotification.Type, diagParameter);
-        }
-
-        private void LoadingIssueDetected(object sender, LoadingIssueEvent loadingIssueEvent)
-        {
-            SendLoadingIssue(new LoadingIssueParams() {Message = loadingIssueEvent.Message});
-        }
-
-        private void ExceptionTriggered(object sender, ThreadExceptionEventArgs exception)
-        {
-            this.NotifyException(exception.Exception);
-        }
-
-        private void WarningTrigger(object sender, string message)
-        {
-            this.NotifyWarning(message);
-        }
-
-
-        private IEnumerable<CodeElementWrapper> CodeElementFinder(FileCompiler fileCompiler, Position position)
-        {
-            List<CodeElement> codeElements = new List<CodeElement>();
-            List<CodeElement> ignoredCodeElements = new List<CodeElement>();
-            int lineIndex = position.line;
-            // Find the token located below the mouse pointer
-            if (fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines.Count != 0)
-            {
-                while (codeElements.Count == 0)
-                    {
-                        var codeElementsLine =
-                            fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines[lineIndex];
-                        
-                        if (codeElementsLine != null && codeElementsLine.CodeElements != null && !(codeElementsLine.CodeElements[0] is SentenceEnd))
-                        {
-                            //Ignore all the EndOfFile token 
-                            var tempCodeElements = codeElementsLine.CodeElements.Where(c => c.ConsumedTokens.Any(t => t.TokenType != TokenType.EndOfFile));
-                            
-                            foreach (var tempCodeElement in tempCodeElements.Reverse())
-                            {
-                                if (!tempCodeElement.ConsumedTokens.Any(t => /*CompletionElligibleTokens.IsCompletionElligibleToken(t) &&*/
-                                ((t.Line == position.line + 1 && t.StopIndex + 1 <= position.character) || t.Line < position.line + 1)))
-                                    ignoredCodeElements.Add(tempCodeElement);
-                                else
-                                    codeElements.Add(tempCodeElement);
-                            }
-
-                            if (tempCodeElements.Any(c => c.ConsumedTokens.Any(t => t.TokenType == TokenType.PeriodSeparator && !(t is Compiler.AntlrUtils.MissingToken))))
-                                break;
-                        }
-
-                        lineIndex--; //decrease lineIndex to get the previous line of TypeCobol Tree.
-                    }
-                    
-                    codeElements.AddRange(ignoredCodeElements);
-                    //Add the previously ignored Code Elements, may be they are usefull to help completion.
-
-                    if (!codeElements.Any(c => c.ConsumedTokens.Any(t => t.Line <= position.line + 1)))
-                        return null; //If nothing is found near the cursor we can't do anything
-            }
-
-            //Create a list of CodeElementWrapper in order to loose the ConsumedTokens ref. 
-            return codeElements.Select(c => new CodeElementWrapper(c));
-        }
-
-        private DocumentContext GetDocumentContextFromStringUri(string uri, bool acceptNodeRefresh = true)
-        {
-            Uri objUri = new Uri(uri);
-            if (objUri.IsFile)
-            {
-                var context = typeCobolWorkspace.OpenedDocumentContext[objUri];
-                // Get compilation info for the current file
-                if (acceptNodeRefresh)
-                    typeCobolWorkspace.RefreshSyntaxTree(context.FileCompiler); //Do a Node Refresh
-                return context;
-            }
-
-            return null;
-        }
-
     }
+
     public class CodeElementWrapper : CodeElement
     {
         public CodeElement CodeElement { get; set; }
