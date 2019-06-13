@@ -1739,164 +1739,720 @@ label = "{IF-WRITE-GF-Y. Block508|}"
 Block509 [
 label = "{Block509|IfStatement\lGotoStatement\l}"
 ]
+Block515 [
+label = "{TEST-EXIT. Block515|ExitStatement\l}"
+]
+Block516 [
+label = "{CCVS-999999. Block516|GotoStatement\l}"
+]
+Block10 [
+label = "{CLOSE-FILES. Block10|}"
+]
+Block11 [
+label = "{Block11|PerformProcedureStatement\l}"
+]
+subgraph cluster_2{
+color = blue;
+label = "END-ROUTINE";
+Block77 [
+label = "{END-ROUTINE. Block77|MoveStatement\l}"
+]
+Block78 [
+label = "{END-ROUTINE. Block78|}"
+]
+Block79 [
+label = "{Block79|PerformProcedureStatement\l}"
+]
+subgraph cluster_14{
+color = blue;
+label = "WRITE-LINE";
+Block125 [
+label = "{WRITE-LINE. Block125|AddStatement\l}"
+]
+Block126 [
+label = "{WRITE-LINE. Block126|}"
+]
+Block127 [
+label = "{Block127|IfStatement\lMoveStatement\lMoveStatement\lWriteStatement\lMoveStatement\l}"
+]
+Block128 [
+label = "{Block128|PerformProcedureStatement\l}"
+]
+Block128 -> Block138 [style=dashed, arrowhead=none]
+
+Block129 [
+label = "{Block129|MoveStatement\l}"
+]
+Block130 [
+label = "{Block130|PerformProcedureStatement\l}"
+]
+Block130 -> Block138 [style=dashed, arrowhead=none]
+
+Block131 [
+label = "{Block131|MoveStatement\l}"
+]
+Block132 [
+label = "{Block132|PerformProcedureStatement\l}"
+]
+Block132 -> Block138 [style=dashed, arrowhead=none]
+
+Block133 [
+label = "{Block133|MoveStatement\lMoveStatement\l}"
+]
+Block134 [
+label = "{Block134|}"
+]
+Block135 [
+label = "{WRITE-LINE. Block135|}"
+]
+Block136 [
+label = "{Block136|PerformProcedureStatement\l}"
+]
+Block136 -> Block138 [style=dashed, arrowhead=none]
+
+Block137 [
+label = "{Block137|}"
+]
+Block125 -> Block126
+Block126 -> Block127
+Block126 -> Block134
+Block127 -> Block128
+Block128 -> Block129
+Block129 -> Block130
+Block130 -> Block131
+Block131 -> Block132
+Block132 -> Block133
+Block133 -> Block134
+Block134 -> Block135
+Block135 -> Block136
+Block136 -> Block137
+
+}
+Block79 -> Block125 [style=dashed, arrowhead=none]
+
+Block80 [
+label = "{Block80|}"
+]
+Block81 [
+label = "{END-RTN-EXIT. Block81|MoveStatement\l}"
+]
+Block82 [
+label = "{END-RTN-EXIT. Block82|}"
+]
+Block83 [
+label = "{Block83|PerformProcedureStatement\l}"
+]
+subgraph cluster_15{
+color = blue;
+label = "WRITE-LINE";
+Block125 [
+label = "{WRITE-LINE. Block125|AddStatement\l}"
+]
+Block126 [
+label = "{WRITE-LINE. Block126|}"
+]
+Block127 [
+label = "{Block127|IfStatement\lMoveStatement\lMoveStatement\lWriteStatement\lMoveStatement\l}"
+]
+Block128 [
+label = "{Block128|PerformProcedureStatement\l}"
+]
+Block128 -> Block138 [style=dashed, arrowhead=none]
+
+Block129 [
+label = "{Block129|MoveStatement\l}"
+]
+Block130 [
+label = "{Block130|PerformProcedureStatement\l}"
+]
+Block130 -> Block138 [style=dashed, arrowhead=none]
+
+Block131 [
+label = "{Block131|MoveStatement\l}"
+]
+Block132 [
+label = "{Block132|PerformProcedureStatement\l}"
+]
+Block132 -> Block138 [style=dashed, arrowhead=none]
+
+Block133 [
+label = "{Block133|MoveStatement\lMoveStatement\l}"
+]
+Block134 [
+label = "{Block134|}"
+]
+Block135 [
+label = "{WRITE-LINE. Block135|}"
+]
+Block136 [
+label = "{Block136|PerformProcedureStatement\l}"
+]
+Block136 -> Block138 [style=dashed, arrowhead=none]
+
+Block137 [
+label = "{Block137|}"
+]
+Block125 -> Block126
+Block126 -> Block127
+Block126 -> Block134
+Block127 -> Block128
+Block128 -> Block129
+Block129 -> Block130
+Block130 -> Block131
+Block131 -> Block132
+Block132 -> Block133
+Block133 -> Block134
+Block134 -> Block135
+Block135 -> Block136
+Block136 -> Block137
+
+}
+Block83 -> Block125 [style=dashed, arrowhead=none]
+
+Block84 [
+label = "{Block84|}"
+]
+Block85 [
+label = "{END-ROUTINE-1. Block85|AddStatement\lAddStatement\l}"
+]
+Block86 [
+label = "{END-ROUTINE-1. Block86|AddStatement\l}"
+]
+Block87 [
+label = "{END-ROUTINE-1. Block87|AddStatement\l}"
+]
+Block88 [
+label = "{END-ROUTINE-1. Block88|MoveStatement\l}"
+]
+Block89 [
+label = "{END-ROUTINE-1. Block89|MoveStatement\l}"
+]
+Block90 [
+label = "{END-ROUTINE-1. Block90|MoveStatement\l}"
+]
+Block91 [
+label = "{END-ROUTINE-1. Block91|MoveStatement\l}"
+]
+Block92 [
+label = "{Block92|PerformProcedureStatement\l}"
+]
+subgraph cluster_16{
+color = blue;
+label = "WRITE-LINE";
+Block125 [
+label = "{WRITE-LINE. Block125|AddStatement\l}"
+]
+Block126 [
+label = "{WRITE-LINE. Block126|}"
+]
+Block127 [
+label = "{Block127|IfStatement\lMoveStatement\lMoveStatement\lWriteStatement\lMoveStatement\l}"
+]
+Block128 [
+label = "{Block128|PerformProcedureStatement\l}"
+]
+Block128 -> Block138 [style=dashed, arrowhead=none]
+
+Block129 [
+label = "{Block129|MoveStatement\l}"
+]
+Block130 [
+label = "{Block130|PerformProcedureStatement\l}"
+]
+Block130 -> Block138 [style=dashed, arrowhead=none]
+
+Block131 [
+label = "{Block131|MoveStatement\l}"
+]
+Block132 [
+label = "{Block132|PerformProcedureStatement\l}"
+]
+Block132 -> Block138 [style=dashed, arrowhead=none]
+
+Block133 [
+label = "{Block133|MoveStatement\lMoveStatement\l}"
+]
+Block134 [
+label = "{Block134|}"
+]
+Block135 [
+label = "{WRITE-LINE. Block135|}"
+]
+Block136 [
+label = "{Block136|PerformProcedureStatement\l}"
+]
+Block136 -> Block138 [style=dashed, arrowhead=none]
+
+Block137 [
+label = "{Block137|}"
+]
+Block125 -> Block126
+Block126 -> Block127
+Block126 -> Block134
+Block127 -> Block128
+Block128 -> Block129
+Block129 -> Block130
+Block130 -> Block131
+Block131 -> Block132
+Block132 -> Block133
+Block133 -> Block134
+Block134 -> Block135
+Block135 -> Block136
+Block136 -> Block137
+
+}
+Block92 -> Block125 [style=dashed, arrowhead=none]
+
+Block93 [
+label = "{Block93|}"
+]
+Block94 [
+label = "{END-ROUTINE-12. Block94|MoveStatement\l}"
+]
+Block95 [
+label = "{END-ROUTINE-12. Block95|}"
+]
+Block96 [
+label = "{Block96|IfStatement\lMoveStatement\l}"
+]
+Block98 [
+label = "{Block98|}"
+]
+Block99 [
+label = "{END-ROUTINE-12. Block99|MoveStatement\l}"
+]
+Block100 [
+label = "{END-ROUTINE-12. Block100|}"
+]
+Block101 [
+label = "{Block101|PerformProcedureStatement\l}"
+]
+subgraph cluster_17{
+color = blue;
+label = "WRITE-LINE";
+Block125 [
+label = "{WRITE-LINE. Block125|AddStatement\l}"
+]
+Block126 [
+label = "{WRITE-LINE. Block126|}"
+]
+Block127 [
+label = "{Block127|IfStatement\lMoveStatement\lMoveStatement\lWriteStatement\lMoveStatement\l}"
+]
+Block128 [
+label = "{Block128|PerformProcedureStatement\l}"
+]
+Block128 -> Block138 [style=dashed, arrowhead=none]
+
+Block129 [
+label = "{Block129|MoveStatement\l}"
+]
+Block130 [
+label = "{Block130|PerformProcedureStatement\l}"
+]
+Block130 -> Block138 [style=dashed, arrowhead=none]
+
+Block131 [
+label = "{Block131|MoveStatement\l}"
+]
+Block132 [
+label = "{Block132|PerformProcedureStatement\l}"
+]
+Block132 -> Block138 [style=dashed, arrowhead=none]
+
+Block133 [
+label = "{Block133|MoveStatement\lMoveStatement\l}"
+]
+Block134 [
+label = "{Block134|}"
+]
+Block135 [
+label = "{WRITE-LINE. Block135|}"
+]
+Block136 [
+label = "{Block136|PerformProcedureStatement\l}"
+]
+Block136 -> Block138 [style=dashed, arrowhead=none]
+
+Block137 [
+label = "{Block137|}"
+]
+Block125 -> Block126
+Block126 -> Block127
+Block126 -> Block134
+Block127 -> Block128
+Block128 -> Block129
+Block129 -> Block130
+Block130 -> Block131
+Block131 -> Block132
+Block132 -> Block133
+Block133 -> Block134
+Block134 -> Block135
+Block135 -> Block136
+Block136 -> Block137
+
+}
+Block101 -> Block125 [style=dashed, arrowhead=none]
+
+Block102 [
+label = "{Block102|}"
+]
+Block103 [
+label = "{END-ROUTINE-13. Block103|}"
+]
+Block104 [
+label = "{Block104|IfStatement\lMoveStatement\l}"
+]
+Block106 [
+label = "{Block106|}"
+]
+Block107 [
+label = "{END-ROUTINE-13. Block107|MoveStatement\l}"
+]
+Block108 [
+label = "{END-ROUTINE-13. Block108|MoveStatement\l}"
+]
+Block109 [
+label = "{END-ROUTINE-13. Block109|}"
+]
+Block110 [
+label = "{Block110|PerformProcedureStatement\l}"
+]
+subgraph cluster_18{
+color = blue;
+label = "WRITE-LINE";
+Block125 [
+label = "{WRITE-LINE. Block125|AddStatement\l}"
+]
+Block126 [
+label = "{WRITE-LINE. Block126|}"
+]
+Block127 [
+label = "{Block127|IfStatement\lMoveStatement\lMoveStatement\lWriteStatement\lMoveStatement\l}"
+]
+Block128 [
+label = "{Block128|PerformProcedureStatement\l}"
+]
+Block128 -> Block138 [style=dashed, arrowhead=none]
+
+Block129 [
+label = "{Block129|MoveStatement\l}"
+]
+Block130 [
+label = "{Block130|PerformProcedureStatement\l}"
+]
+Block130 -> Block138 [style=dashed, arrowhead=none]
+
+Block131 [
+label = "{Block131|MoveStatement\l}"
+]
+Block132 [
+label = "{Block132|PerformProcedureStatement\l}"
+]
+Block132 -> Block138 [style=dashed, arrowhead=none]
+
+Block133 [
+label = "{Block133|MoveStatement\lMoveStatement\l}"
+]
+Block134 [
+label = "{Block134|}"
+]
+Block135 [
+label = "{WRITE-LINE. Block135|}"
+]
+Block136 [
+label = "{Block136|PerformProcedureStatement\l}"
+]
+Block136 -> Block138 [style=dashed, arrowhead=none]
+
+Block137 [
+label = "{Block137|}"
+]
+Block125 -> Block126
+Block126 -> Block127
+Block126 -> Block134
+Block127 -> Block128
+Block128 -> Block129
+Block129 -> Block130
+Block130 -> Block131
+Block131 -> Block132
+Block132 -> Block133
+Block133 -> Block134
+Block134 -> Block135
+Block135 -> Block136
+Block136 -> Block137
+
+}
+Block110 -> Block125 [style=dashed, arrowhead=none]
+
+Block111 [
+label = "{Block111|}"
+]
+Block112 [
+label = "{END-ROUTINE-13. Block112|}"
+]
+Block113 [
+label = "{Block113|IfStatement\lMoveStatement\l}"
+]
+Block115 [
+label = "{Block115|}"
+]
+Block116 [
+label = "{END-ROUTINE-13. Block116|MoveStatement\l}"
+]
+Block117 [
+label = "{END-ROUTINE-13. Block117|MoveStatement\l}"
+]
+Block118 [
+label = "{END-ROUTINE-13. Block118|}"
+]
+Block119 [
+label = "{Block119|PerformProcedureStatement\l}"
+]
+subgraph cluster_19{
+color = blue;
+label = "WRITE-LINE";
+Block125 [
+label = "{WRITE-LINE. Block125|AddStatement\l}"
+]
+Block126 [
+label = "{WRITE-LINE. Block126|}"
+]
+Block127 [
+label = "{Block127|IfStatement\lMoveStatement\lMoveStatement\lWriteStatement\lMoveStatement\l}"
+]
+Block128 [
+label = "{Block128|PerformProcedureStatement\l}"
+]
+Block128 -> Block138 [style=dashed, arrowhead=none]
+
+Block129 [
+label = "{Block129|MoveStatement\l}"
+]
+Block130 [
+label = "{Block130|PerformProcedureStatement\l}"
+]
+Block130 -> Block138 [style=dashed, arrowhead=none]
+
+Block131 [
+label = "{Block131|MoveStatement\l}"
+]
+Block132 [
+label = "{Block132|PerformProcedureStatement\l}"
+]
+Block132 -> Block138 [style=dashed, arrowhead=none]
+
+Block133 [
+label = "{Block133|MoveStatement\lMoveStatement\l}"
+]
+Block134 [
+label = "{Block134|}"
+]
+Block135 [
+label = "{WRITE-LINE. Block135|}"
+]
+Block136 [
+label = "{Block136|PerformProcedureStatement\l}"
+]
+Block136 -> Block138 [style=dashed, arrowhead=none]
+
+Block137 [
+label = "{Block137|}"
+]
+Block125 -> Block126
+Block126 -> Block127
+Block126 -> Block134
+Block127 -> Block128
+Block128 -> Block129
+Block129 -> Block130
+Block130 -> Block131
+Block131 -> Block132
+Block132 -> Block133
+Block133 -> Block134
+Block134 -> Block135
+Block135 -> Block136
+Block136 -> Block137
+
+}
+Block119 -> Block125 [style=dashed, arrowhead=none]
+
+Block120 [
+label = "{Block120|}"
+]
+Block121 [
+label = "{END-ROUTINE-13. Block121|MoveStatement\l}"
+]
+Block122 [
+label = "{END-ROUTINE-13. Block122|}"
+]
+Block123 [
+label = "{Block123|PerformProcedureStatement\l}"
+]
+subgraph cluster_20{
+color = blue;
+label = "WRITE-LINE";
+Block125 [
+label = "{WRITE-LINE. Block125|AddStatement\l}"
+]
+Block126 [
+label = "{WRITE-LINE. Block126|}"
+]
+Block127 [
+label = "{Block127|IfStatement\lMoveStatement\lMoveStatement\lWriteStatement\lMoveStatement\l}"
+]
+Block128 [
+label = "{Block128|PerformProcedureStatement\l}"
+]
+Block128 -> Block138 [style=dashed, arrowhead=none]
+
+Block129 [
+label = "{Block129|MoveStatement\l}"
+]
+Block130 [
+label = "{Block130|PerformProcedureStatement\l}"
+]
+Block130 -> Block138 [style=dashed, arrowhead=none]
+
+Block131 [
+label = "{Block131|MoveStatement\l}"
+]
+Block132 [
+label = "{Block132|PerformProcedureStatement\l}"
+]
+Block132 -> Block138 [style=dashed, arrowhead=none]
+
+Block133 [
+label = "{Block133|MoveStatement\lMoveStatement\l}"
+]
+Block134 [
+label = "{Block134|}"
+]
+Block135 [
+label = "{WRITE-LINE. Block135|}"
+]
+Block136 [
+label = "{Block136|PerformProcedureStatement\l}"
+]
+Block136 -> Block138 [style=dashed, arrowhead=none]
+
+Block137 [
+label = "{Block137|}"
+]
+Block125 -> Block126
+Block126 -> Block127
+Block126 -> Block134
+Block127 -> Block128
+Block128 -> Block129
+Block129 -> Block130
+Block130 -> Block131
+Block131 -> Block132
+Block132 -> Block133
+Block133 -> Block134
+Block134 -> Block135
+Block135 -> Block136
+Block136 -> Block137
+
+}
+Block123 -> Block125 [style=dashed, arrowhead=none]
+
+Block124 [
+label = "{Block124|}"
+]
+Block114 [
+label = "{Block114|ElseCondition\lMoveStatement\l}"
+]
+Block105 [
+label = "{Block105|ElseCondition\lMoveStatement\l}"
+]
+Block97 [
+label = "{Block97|ElseCondition\lMoveStatement\l}"
+]
+Block77 -> Block78
+Block78 -> Block79
+Block79 -> Block80
+Block80 -> Block81
+Block81 -> Block82
+Block82 -> Block83
+Block83 -> Block84
+Block84 -> Block85
+Block85 -> Block86
+Block86 -> Block87
+Block87 -> Block88
+Block88 -> Block89
+Block89 -> Block90
+Block90 -> Block91
+Block91 -> Block92
+Block92 -> Block93
+Block93 -> Block94
+Block94 -> Block95
+Block95 -> Block96
+Block95 -> Block97
+Block96 -> Block98
+Block98 -> Block99
+Block99 -> Block100
+Block100 -> Block101
+Block101 -> Block102
+Block102 -> Block103
+Block103 -> Block104
+Block103 -> Block105
+Block104 -> Block106
+Block106 -> Block107
+Block107 -> Block108
+Block108 -> Block109
+Block109 -> Block110
+Block110 -> Block111
+Block111 -> Block112
+Block112 -> Block113
+Block112 -> Block114
+Block113 -> Block115
+Block115 -> Block116
+Block116 -> Block117
+Block117 -> Block118
+Block118 -> Block119
+Block119 -> Block120
+Block120 -> Block121
+Block121 -> Block122
+Block122 -> Block123
+Block123 -> Block124
+Block114 -> Block115
+Block105 -> Block106
+Block97 -> Block98
+
+}
+Block11 -> Block77 [style=dashed, arrowhead=none]
+
+Block12 [
+label = "{Block12|}"
+]
+Block13 [
+label = "{CLOSE-FILES. Block13|CloseStatement\l}"
+]
+Block14 [
+label = "{TERMINATE-CCVS. Block14|StopStatement\l}"
+]
 Block511 [
 label = "{Block511|}"
 ]
 Block512 [
 label = "{IF-WRITE-GF-Y. Block512|SubtractStatement\l}"
 ]
-Block513 [
-label = "{IF-RETURN-GF-Y. Block513|GotoStatement\l}"
-]
-Block429 [
-label = "{IF-TEST-GF-Y. Block429|MoveStatement\l}"
-]
-Block430 [
-label = "{IF-TEST-GF-Y. Block430|}"
-]
-Block431 [
-label = "{Block431|IfStatement\l}"
-]
-Block432 [
-label = "{Block432|IfStatement\l}"
-]
-Block433 [
-label = "{Block433|IfStatement\l}"
-]
-Block434 [
-label = "{Block434|IfStatement\l}"
-]
-Block435 [
-label = "{Block435|IfStatement\l}"
-]
-Block436 [
-label = "{Block436|IfStatement\l}"
-]
-Block437 [
-label = "{Block437|IfStatement\l}"
-]
-Block438 [
-label = "{Block438|IfStatement\l}"
-]
-Block439 [
-label = "{Block439|IfStatement\l}"
-]
-Block440 [
-label = "{Block440|IfStatement\l}"
-]
-Block441 [
-label = "{Block441|IfStatement\l}"
-]
-Block442 [
-label = "{Block442|IfStatement\l}"
-]
-Block443 [
-label = "{Block443|IfStatement\l}"
-]
-Block444 [
-label = "{Block444|IfStatement\l}"
-]
-Block445 [
-label = "{Block445|IfStatement\l}"
-]
-Block446 [
-label = "{Block446|IfStatement\l}"
-]
-Block447 [
-label = "{Block447|IfStatement\l}"
-]
-Block448 [
-label = "{Block448|IfStatement\l}"
-]
-Block449 [
-label = "{Block449|IfStatement\l}"
-]
-Block450 [
-label = "{Block450|IfStatement\l}"
-]
-Block451 [
-label = "{Block451|IfStatement\lMoveStatement\l}"
-]
-Block452 [
-label = "{Block452|}"
-]
-Block453 [
-label = "{Block453|}"
-]
-Block454 [
-label = "{Block454|}"
-]
-Block455 [
-label = "{Block455|}"
-]
-Block456 [
-label = "{Block456|}"
-]
-Block457 [
-label = "{Block457|}"
-]
-Block458 [
-label = "{Block458|}"
-]
-Block459 [
-label = "{Block459|}"
-]
-Block460 [
-label = "{Block460|}"
-]
-Block461 [
-label = "{Block461|}"
-]
-Block462 [
-label = "{Block462|}"
-]
-Block463 [
-label = "{Block463|}"
-]
-Block464 [
-label = "{Block464|}"
-]
-Block465 [
-label = "{Block465|}"
-]
-Block466 [
-label = "{Block466|}"
-]
-Block467 [
-label = "{Block467|}"
-]
-Block468 [
-label = "{Block468|}"
-]
-Block469 [
-label = "{Block469|}"
-]
-Block470 [
-label = "{Block470|}"
-]
-Block471 [
-label = "{Block471|}"
-]
-Block472 [
-label = "{Block472|}"
-]
-Block473 [
-label = "{IF-TEST-GF-Y. Block473|}"
-]
-Block474 [
-label = "{Block474|IfStatement\l}"
-]
-Block475 [
-label = "{Block475|PerformProcedureStatement\l}"
-]
-Block475 -> Block18 [style=dashed, arrowhead=none]
+Block503 -> Block504
+Block504 -> Block505
+Block505 -> Block506
+Block506 -> Block507
+Block507 -> Block508
+Block508 -> Block509
+Block508 -> Block511
+Block509 -> Block515
+Block515 -> Block516
+Block516 -> Block10
+Block10 -> Block11
+Block11 -> Block12
+Block12 -> Block13
+Block13 -> Block14
+Block511 -> Block512
 
-Block476 [
-label = "{Block476|}"
-]
-Block477 [
-label = "{Block477|PerformProcedureStatement\l}"
-]
+}
 Block477 -> Block503 [style=dashed, arrowhead=none]
 
 Block478 [
@@ -1931,6 +2487,58 @@ Block483 -> Block18 [style=dashed, arrowhead=none]
 Block484 [
 label = "{Block484|GotoStatement\l}"
 ]
+Block503 [
+label = "{IF-WRITE-GF-Y. Block503|MoveStatement\l}"
+]
+Block504 [
+label = "{IF-WRITE-GF-Y. Block504|AddStatement\l}"
+]
+Block505 [
+label = "{IF-WRITE-GF-Y. Block505|}"
+]
+Block506 [
+label = "{Block506|PerformProcedureStatement\l}"
+]
+Block506 -> Block25 [style=dashed, arrowhead=none]
+
+Block507 [
+label = "{Block507|}"
+]
+Block508 [
+label = "{IF-WRITE-GF-Y. Block508|}"
+]
+Block509 [
+label = "{Block509|IfStatement\lGotoStatement\l}"
+]
+Block515 [
+label = "{TEST-EXIT. Block515|ExitStatement\l}"
+]
+Block516 [
+label = "{CCVS-999999. Block516|GotoStatement\l}"
+]
+Block10 [
+label = "{CLOSE-FILES. Block10|}"
+]
+Block11 [
+label = "{Block11|PerformProcedureStatement\l}"
+]
+Block11 -> Block77 [style=dashed, arrowhead=none]
+
+Block12 [
+label = "{Block12|}"
+]
+Block13 [
+label = "{CLOSE-FILES. Block13|CloseStatement\l}"
+]
+Block14 [
+label = "{TERMINATE-CCVS. Block14|StopStatement\l}"
+]
+Block511 [
+label = "{Block511|}"
+]
+Block512 [
+label = "{IF-WRITE-GF-Y. Block512|SubtractStatement\l}"
+]
 Block486 [
 label = "{Block486|ElseCondition\lGotoStatement\l}"
 ]
@@ -1961,180 +2569,6 @@ label = "{FAIL. Block21|AddStatement\l}"
 Block20 -> Block21
 
 }
-Block501 -> Block20 [style=dashed, arrowhead=none]
-
-Block502 [
-label = "{Block502|}"
-]
-Block503 -> Block504
-Block504 -> Block505
-Block505 -> Block506
-Block506 -> Block507
-Block507 -> Block508
-Block508 -> Block509
-Block508 -> Block511
-Block511 -> Block512
-Block512 -> Block513
-Block513 -> Block429
-Block429 -> Block430
-Block430 -> Block431
-Block430 -> Block472
-Block431 -> Block432
-Block431 -> Block471
-Block432 -> Block433
-Block432 -> Block470
-Block433 -> Block434
-Block433 -> Block469
-Block434 -> Block435
-Block434 -> Block468
-Block435 -> Block436
-Block435 -> Block467
-Block436 -> Block437
-Block436 -> Block466
-Block437 -> Block438
-Block437 -> Block465
-Block438 -> Block439
-Block438 -> Block464
-Block439 -> Block440
-Block439 -> Block463
-Block440 -> Block441
-Block440 -> Block462
-Block441 -> Block442
-Block441 -> Block461
-Block442 -> Block443
-Block442 -> Block460
-Block443 -> Block444
-Block443 -> Block459
-Block444 -> Block445
-Block444 -> Block458
-Block445 -> Block446
-Block445 -> Block457
-Block446 -> Block447
-Block446 -> Block456
-Block447 -> Block448
-Block447 -> Block455
-Block448 -> Block449
-Block448 -> Block454
-Block449 -> Block450
-Block449 -> Block453
-Block450 -> Block451
-Block450 -> Block452
-Block451 -> Block452
-Block452 -> Block453
-Block453 -> Block454
-Block454 -> Block455
-Block455 -> Block456
-Block456 -> Block457
-Block457 -> Block458
-Block458 -> Block459
-Block459 -> Block460
-Block460 -> Block461
-Block461 -> Block462
-Block462 -> Block463
-Block463 -> Block464
-Block464 -> Block465
-Block465 -> Block466
-Block466 -> Block467
-Block467 -> Block468
-Block468 -> Block469
-Block469 -> Block470
-Block470 -> Block471
-Block471 -> Block472
-Block472 -> Block473
-Block473 -> Block474
-Block473 -> Block480
-Block474 -> Block475
-Block475 -> Block476
-Block476 -> Block477
-Block477 -> Block478
-Block478 -> Block429
-Block480 -> Block481
-Block481 -> Block482
-Block481 -> Block486
-Block482 -> Block483
-Block483 -> Block484
-Block484 -> Block503
-Block486 -> Block497
-Block497 -> Block498
-Block498 -> Block499
-Block499 -> Block500
-Block500 -> Block501
-Block501 -> Block502
-Block502 -> Block503
-
-}
-Block477 -> Block503 [style=dashed, arrowhead=none]
-
-Block478 [
-label = "{Block478|SubtractStatement\lGotoStatement\l}"
-]
-Block480 [
-label = "{Block480|}"
-]
-Block481 [
-label = "{IF-TEST-GF-Y. Block481|}"
-]
-Block482 [
-label = "{Block482|IfStatement\l}"
-]
-Block483 [
-label = "{Block483|PerformProcedureStatement\l}"
-]
-Block483 -> Block18 [style=dashed, arrowhead=none]
-
-Block484 [
-label = "{Block484|GotoStatement\l}"
-]
-Block503 [
-label = "{IF-WRITE-GF-Y. Block503|MoveStatement\l}"
-]
-Block504 [
-label = "{IF-WRITE-GF-Y. Block504|AddStatement\l}"
-]
-Block505 [
-label = "{IF-WRITE-GF-Y. Block505|}"
-]
-Block506 [
-label = "{Block506|PerformProcedureStatement\l}"
-]
-Block506 -> Block25 [style=dashed, arrowhead=none]
-
-Block507 [
-label = "{Block507|}"
-]
-Block508 [
-label = "{IF-WRITE-GF-Y. Block508|}"
-]
-Block509 [
-label = "{Block509|IfStatement\lGotoStatement\l}"
-]
-Block511 [
-label = "{Block511|}"
-]
-Block512 [
-label = "{IF-WRITE-GF-Y. Block512|SubtractStatement\l}"
-]
-Block513 [
-label = "{IF-RETURN-GF-Y. Block513|GotoStatement\l}"
-]
-Block486 [
-label = "{Block486|ElseCondition\lGotoStatement\l}"
-]
-Block497 [
-label = "{IF-FAIL-GF-Y. Block497|MoveStatement\l}"
-]
-Block498 [
-label = "{IF-FAIL-GF-Y. Block498|MoveStatement\l}"
-]
-Block499 [
-label = "{IF-FAIL-GF-Y. Block499|MoveStatement\l}"
-]
-Block500 [
-label = "{IF-FAIL-GF-Y. Block500|}"
-]
-Block501 [
-label = "{Block501|PerformProcedureStatement\l}"
-]
 Block501 -> Block20 [style=dashed, arrowhead=none]
 
 Block502 [
@@ -2897,9 +3331,14 @@ Block506 -> Block507
 Block507 -> Block508
 Block508 -> Block509
 Block508 -> Block511
+Block509 -> Block515
+Block515 -> Block516
+Block516 -> Block10
+Block10 -> Block11
+Block11 -> Block12
+Block12 -> Block13
+Block13 -> Block14
 Block511 -> Block512
-Block512 -> Block513
-Block513 -> Block429
 Block486 -> Block497
 Block497 -> Block498
 Block498 -> Block499

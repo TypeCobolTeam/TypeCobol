@@ -10,7 +10,7 @@ Block0 [
 label = "{START|}"
 ]
 Block1 [
-label = "{NC303M-CONTROL. Block1|}"
+label = "{NC303M-CONTROL. Block1|AlterStatement\l}"
 ]
 Block2 [
 label = "{NC303M-CONTROL. Block2|StopStatement\l}"

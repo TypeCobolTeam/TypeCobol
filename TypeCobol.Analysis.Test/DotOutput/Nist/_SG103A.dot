@@ -629,7 +629,7 @@ Block377 [
 label = "{P8001. Block377|GotoStatement\l}"
 ]
 Block379 [
-label = "{P8002. Block379|}"
+label = "{P8002. Block379|AlterStatement\l}"
 ]
 Block380 [
 label = "{P8002. Block380|AddStatement\l}"
@@ -640,10 +640,15 @@ label = "{P8002. Block381|GotoStatement\l}"
 Block384 [
 label = "{P8004. Block384|ExitStatement\l}"
 ]
+Block383 [
+label = "{P8003. Block383|MoveStatement\l}"
+]
 Block377 -> Block379
+Block377 -> Block383
 Block379 -> Block380
 Block380 -> Block381
 Block381 -> Block384
+Block383 -> Block384
 
 }
 Block185 -> Block377 [style=dashed, arrowhead=none]
@@ -664,7 +669,7 @@ Block377 [
 label = "{P8001. Block377|GotoStatement\l}"
 ]
 Block379 [
-label = "{P8002. Block379|}"
+label = "{P8002. Block379|AlterStatement\l}"
 ]
 Block380 [
 label = "{P8002. Block380|AddStatement\l}"
@@ -675,10 +680,15 @@ label = "{P8002. Block381|GotoStatement\l}"
 Block384 [
 label = "{P8004. Block384|ExitStatement\l}"
 ]
+Block383 [
+label = "{P8003. Block383|MoveStatement\l}"
+]
 Block377 -> Block379
+Block377 -> Block383
 Block379 -> Block380
 Block380 -> Block381
 Block381 -> Block384
+Block383 -> Block384
 
 }
 Block188 -> Block377 [style=dashed, arrowhead=none]
@@ -1802,7 +1812,7 @@ Block396 [
 label = "{P9501. Block396|MoveStatement\l}"
 ]
 Block397 [
-label = "{P9501. Block397|}"
+label = "{P9501. Block397|AlterStatement\l}"
 ]
 Block396 -> Block397
 
@@ -2000,7 +2010,7 @@ Block311 [
 label = "{P5102. Block311|GotoStatement\l}"
 ]
 Block313 [
-label = "{P5103. Block313|}"
+label = "{P5103. Block313|AlterStatement\l}"
 ]
 Block314 [
 label = "{P5103. Block314|MoveStatement\l}"
@@ -2181,7 +2191,7 @@ Block398 [
 label = "{P9901. Block398|GotoStatement\l}"
 ]
 Block400 [
-label = "{P9902. Block400|}"
+label = "{P9902. Block400|AlterStatement\l}"
 ]
 Block401 [
 label = "{P9902. Block401|}"
@@ -3075,6 +3085,12 @@ label = "{Block361|}"
 Block362 [
 label = "{PARA-7B. Block362|GotoStatement\l}"
 ]
+Block407 [
+label = "{P9903. Block407|MoveStatement\l}"
+]
+Block408 [
+label = "{P9903. Block408|GotoStatement\l}"
+]
 Block331 [
 label = "{Block331|}"
 ]
@@ -3115,6 +3131,9 @@ label = "{Block323|}"
 ]
 Block324 [
 label = "{P5106. Block324|GotoStatement\l}"
+]
+Block317 [
+label = "{P5104. Block317|MoveStatement\l}"
 ]
 Block289 [
 label = "{Block289|}"
@@ -3340,6 +3359,9 @@ Block266 -> Block24 [style=dashed, arrowhead=none]
 Block267 [
 label = "{Block267|}"
 ]
+Block260 [
+label = "{ALTER-RES2. Block260|MoveStatement\l}"
+]
 Block237 [
 label = "{Block237|ElseCondition\lMoveStatement\lMoveStatement\l}"
 ]
@@ -3469,6 +3491,7 @@ Block252 -> Block253
 Block253 -> Block254
 Block254 -> Block255
 Block255 -> Block257
+Block255 -> Block260
 Block257 -> Block258
 Block258 -> Block261
 Block261 -> Block262
@@ -3491,6 +3514,7 @@ Block286 -> Block287
 Block286 -> Block289
 Block287 -> Block311
 Block311 -> Block313
+Block311 -> Block317
 Block313 -> Block314
 Block314 -> Block315
 Block315 -> Block318
@@ -3511,6 +3535,7 @@ Block345 -> Block346
 Block346 -> Block347
 Block347 -> Block398
 Block398 -> Block400
+Block398 -> Block407
 Block400 -> Block401
 Block401 -> Block402
 Block401 -> Block404
@@ -3540,6 +3565,8 @@ Block359 -> Block360
 Block360 -> Block361
 Block361 -> Block362
 Block362 -> Block367
+Block407 -> Block408
+Block408 -> Block351
 Block331 -> Block332
 Block332 -> Block333
 Block333 -> Block334
@@ -3549,6 +3576,7 @@ Block336 -> Block337
 Block337 -> Block342
 Block323 -> Block324
 Block324 -> Block279
+Block317 -> Block318
 Block289 -> Block290
 Block290 -> Block291
 Block291 -> Block292
@@ -3573,6 +3601,7 @@ Block284 -> Block285
 Block265 -> Block266
 Block266 -> Block267
 Block267 -> Block268
+Block260 -> Block261
 Block237 -> Block238
 Block238 -> Block239
 Block239 -> Block240
