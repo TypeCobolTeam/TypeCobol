@@ -165,47 +165,49 @@ namespace TypeCobol.Compiler.CodeElements
         public static readonly DataType String = new DataType("STRING", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
 
         public static Nodes.TypeDefinition CreateBuiltIn(DataType type)
-		{
-            var builtInNode = type == DataType.Date ? CreateDate() : (type == DataType.Currency ? CreateCurrency() : CreateBase(type));
-            builtInNode.SetFlag(Node.Flag.NodeIsIntrinsic, true); //Mark BuiltIn Type as Instrinsic
+        {
+            var dataTypeDescriptionEntry = CreateBuiltInDataTypeDescriptionEntry(type);
+            Nodes.TypeDefinition typeDefinition;
+            if (type == DataType.Date)
+            {
+                typeDefinition = new Nodes.TypeDefinition(dataTypeDescriptionEntry);
+                typeDefinition.Add(CreateData(5, "YYYY", '9', 4, typeDefinition));
+                typeDefinition.Add(CreateData(5, "MM", '9', 2, typeDefinition));
+                typeDefinition.Add(CreateData(5, "DD", '9', 2, typeDefinition));
+            }
+            else if (type == DataType.Currency)
+            {
+                dataTypeDescriptionEntry.Picture = new GeneratedAlphanumericValue(string.Format("{0}({1})", 'X', 3));
+                var tokenLine = TokensLine.CreateVirtualLineForInsertedToken(dataTypeDescriptionEntry.Line, "01 CURRENCY TYPEDEF STRICT PUBLIC PIC X(03).");
+                dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.LevelNumber, 0, 1, tokenLine));
+                dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.UserDefinedWord, 3, 10, tokenLine));
+                dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.TYPEDEF, 12, 18, tokenLine));
+                dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.STRICT, 20, 25, tokenLine));
+                dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.PUBLIC, 27, 32, tokenLine));
+                dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.PIC, 34, 36, tokenLine));
+                dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.PictureCharacterString, 38, 42, tokenLine));
+                dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.PeriodSeparator, 43, 43, tokenLine));
+                typeDefinition = new Nodes.TypeDefinition(dataTypeDescriptionEntry);
+            }
+            else // Boolean and String
+            {
+                typeDefinition = new Nodes.TypeDefinition(dataTypeDescriptionEntry);
+            }
+            typeDefinition.SetFlag(Node.Flag.NodeIsIntrinsic, true); //Mark BuiltIn Type as Instrinsic
+            return typeDefinition;
+        }
 
-		    return builtInNode;
-		}
-		private static Nodes.TypeDefinition CreateBase(DataType type) {
-			var entry = new DataTypeDescriptionEntry();
-		    entry.Visibility = AccessModifier.Public;
-			entry.LevelNumber = new GeneratedIntegerValue(1);
-			entry.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(type.Name), SymbolType.DataName);
-			entry.DataType = type;
+        private static DataTypeDescriptionEntry CreateBuiltInDataTypeDescriptionEntry(DataType type)
+        {
+            return new DataTypeDescriptionEntry
+            {
+                Visibility = AccessModifier.Public,
+                LevelNumber = new GeneratedIntegerValue(1),
+                DataName = new SymbolDefinition(new GeneratedAlphanumericValue(type.Name), SymbolType.DataName),
+                DataType = type
+            };
+        }
 
-			return new Nodes.TypeDefinition(entry);
-		}
-		private static Nodes.TypeDefinition CreateDate() {
-			var node = CreateBase(DataType.Date);
-			node.Add(CreateData(5, "YYYY", '9',4, node));
-			node.Add(CreateData(5, "MM",   '9',2, node));
-			node.Add(CreateData(5, "DD",   '9',2, node));
-			return node;
-	    }
-	    private static Nodes.TypeDefinition CreateCurrency()
-	    {
-	        var entry = new DataTypeDescriptionEntry();
-	        entry.Visibility = AccessModifier.Public;
-	        entry.LevelNumber = new GeneratedIntegerValue(1);
-	        entry.DataName = new SymbolDefinition(new GeneratedAlphanumericValue("CURRENCY"), SymbolType.DataName);
-            entry.Picture = new GeneratedAlphanumericValue(string.Format("{0}({1})", 'X', 3));
-	        entry.DataType = DataType.Currency;
-	        var tokenLine = TokensLine.CreateVirtualLineForInsertedToken(entry.Line, "01 CURRENCY TYPEDEF STRICT PUBLIC PIC X(03).");
-	        entry.ConsumedTokens.Add(new Token(TokenType.LevelNumber, 0, 1, tokenLine));
-	        entry.ConsumedTokens.Add(new Token(TokenType.UserDefinedWord, 3, 10, tokenLine));
-	        entry.ConsumedTokens.Add(new Token(TokenType.TYPEDEF, 12, 18, tokenLine));
-	        entry.ConsumedTokens.Add(new Token(TokenType.STRICT, 20, 25, tokenLine));
-	        entry.ConsumedTokens.Add(new Token(TokenType.PUBLIC, 27, 32, tokenLine));
-            entry.ConsumedTokens.Add(new Token(TokenType.PIC, 34, 36, tokenLine));
-	        entry.ConsumedTokens.Add(new Token(TokenType.PictureCharacterString, 38, 42, tokenLine));
-	        entry.ConsumedTokens.Add(new Token(TokenType.PeriodSeparator, 43, 43, tokenLine));
-            return new Nodes.TypeDefinition(entry);
-	    }
         private static Nodes.DataDescription CreateData(int level, string name, char type, int length, TypeDefinition parentTypeDef) {
 			var data = new DataDescriptionEntry();
 			data.LevelNumber = new GeneratedIntegerValue(level);
@@ -213,7 +215,6 @@ namespace TypeCobol.Compiler.CodeElements
 			data.Picture = new GeneratedAlphanumericValue(string.Format("{0}({1})", type, length));
 			data.DataType = DataType.Create(data.Picture.Value);
             var node = new Nodes.DataDescription(data);
-
             node.ParentTypeDefinition = parentTypeDef;
 			return node;
 		}
