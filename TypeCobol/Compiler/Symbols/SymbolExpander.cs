@@ -121,7 +121,7 @@ namespace TypeCobol.Compiler.Symbols
         public override Symbol VisitVariableSymbol(VariableSymbol s, Symbol owner)
         {
             if (s.Type?.MayExpand ?? false)
-            {//Expand thru the Type Maybe a Record or an ArrayType.
+            {//Expand thru the Type Maybe a Group or an ArrayType.
                 Types.Type newType = s.Type.Accept(TypExpander, s);
                 if (newType != s.Type)
                 {//The type has changed

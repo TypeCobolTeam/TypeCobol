@@ -10,7 +10,7 @@ namespace TypeCobol.Compiler.Types
 {
     /// <summary>
     /// Perform the expansion of a TypeCobol type to a plain Cobol85 type.
-    /// TYPEDEF are expanded, Record Types are cloned with fresh fields.
+    /// TYPEDEF are expanded, Group Types are cloned with fresh fields.
     /// </summary>
     public class TypedefExpander : Type.AbstractTypeVisitor<Type, Symbol>
     {
@@ -77,7 +77,7 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// A Record Type is cloned with a a new Scope with new fresh field is created.
+        /// A Group Type is cloned with a a new Scope with new fresh field is created.
         /// </summary>
         /// <param name="t"></param>
         /// <param name="owner"></param>
