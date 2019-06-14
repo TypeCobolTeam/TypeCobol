@@ -432,65 +432,55 @@ namespace TypeCobol.Compiler.Parser
 		internal InitializeStatement CreateInitializeStatement(CodeElementsParser.InitializeStatementContext context) {
 			var statement = new InitializeStatement();
 			statement.ReceivingStorageAreas = BuildObjectArrayFromParserRules(context.storageArea1(), ctx => CobolExpressionsBuilder.CreateStorageArea(ctx));
+		    statement.Filler = CreateSyntaxProperty(true, context.FILLER()); // CreateSyntaxProperty returns null when second argument (ITerminalNode) is null.
+		    statement.DataCategory = CreateSyntaxPropertyInitializeDataCategory(context.categoryName, context.ALL());
 			statement.ReplacingInstructions = BuildObjectArrayFromParserRules(context.initializeReplacingDirective(), ctx => CreateInitializeReplacingInstruction(ctx));
-			return statement;
+		    statement.Default = CreateSyntaxProperty(true, context.DEFAULT()); // CreateSyntaxProperty returns null when second argument (ITerminalNode) is null.
+            return statement;
 		}
 
-		private InitializeReplacingInstruction CreateInitializeReplacingInstruction(CodeElementsParser.InitializeReplacingDirectiveContext context)
+	    private SyntaxProperty<InitializeDataCategory> CreateSyntaxPropertyInitializeDataCategory(CodeElementsParser.DataCategoryContext context, ITerminalNode all = null)
+	    {
+	        if (all != null)
+	            return CreateSyntaxProperty(InitializeDataCategory.ALL, all);
+
+	        if (context == null) return null;
+
+	        if (context.ALPHABETIC() != null)
+	            return CreateSyntaxProperty(InitializeDataCategory.ALPHABETIC, context.ALPHABETIC());
+
+	        if (context.ALPHANUMERIC() != null)
+	            return CreateSyntaxProperty(InitializeDataCategory.ALPHANUMERIC, context.ALPHANUMERIC());
+
+	        if (context.ALPHANUMERIC_EDITED() != null)
+	            return CreateSyntaxProperty(InitializeDataCategory.ALPHANUMERIC_EDITED, context.ALPHANUMERIC_EDITED());
+
+	        if (context.NATIONAL() != null)
+	            return CreateSyntaxProperty(InitializeDataCategory.NATIONAL, context.NATIONAL());
+
+	        if (context.NATIONAL_EDITED() != null)
+	            return CreateSyntaxProperty(InitializeDataCategory.NATIONAL_EDITED, context.NATIONAL_EDITED());
+
+	        if (context.NUMERIC() != null)
+	            return CreateSyntaxProperty(InitializeDataCategory.NUMERIC, context.NUMERIC());
+
+	        if (context.NUMERIC_EDITED() != null)
+	            return CreateSyntaxProperty(InitializeDataCategory.NUMERIC_EDITED, context.NUMERIC_EDITED());
+
+	        if (context.DBCS() != null)
+	            return CreateSyntaxProperty(InitializeDataCategory.DBCS, context.DBCS());
+
+	        if (context.EGCS() != null)
+	            return CreateSyntaxProperty(InitializeDataCategory.EGCS, context.EGCS());
+
+            return null;
+	    }
+
+        private InitializeReplacingInstruction CreateInitializeReplacingInstruction(CodeElementsParser.InitializeReplacingDirectiveContext context)
 		{
 			var replacingInstruction = new InitializeReplacingInstruction();
-
-			if (context.dataCategory() != null)
-			{
-				if (context.dataCategory().ALPHABETIC() != null)
-				{
-					replacingInstruction.ReplaceDataCategory = CreateSyntaxProperty(InitializeDataCategory.ALPHABETIC,
-						context.dataCategory().ALPHABETIC());
-				}
-				else if (context.dataCategory().ALPHANUMERIC() != null)
-				{
-					replacingInstruction.ReplaceDataCategory = CreateSyntaxProperty(InitializeDataCategory.ALPHANUMERIC,
-						context.dataCategory().ALPHANUMERIC());
-				}
-				else if (context.dataCategory().ALPHANUMERIC_EDITED() != null)
-				{
-					replacingInstruction.ReplaceDataCategory = CreateSyntaxProperty(InitializeDataCategory.ALPHANUMERIC_EDITED,
-						context.dataCategory().ALPHANUMERIC_EDITED());
-				}
-				else if (context.dataCategory().NATIONAL() != null)
-				{
-					replacingInstruction.ReplaceDataCategory = CreateSyntaxProperty(InitializeDataCategory.NATIONAL,
-						context.dataCategory().NATIONAL());
-				}
-				else if (context.dataCategory().NATIONAL_EDITED() != null)
-				{
-					replacingInstruction.ReplaceDataCategory = CreateSyntaxProperty(InitializeDataCategory.NATIONAL_EDITED,
-						context.dataCategory().NATIONAL_EDITED());
-				}
-				else if (context.dataCategory().NUMERIC() != null)
-				{
-					replacingInstruction.ReplaceDataCategory = CreateSyntaxProperty(InitializeDataCategory.NUMERIC,
-						context.dataCategory().NUMERIC());
-				}
-				else if (context.dataCategory().NUMERIC_EDITED() != null)
-				{
-					replacingInstruction.ReplaceDataCategory = CreateSyntaxProperty(InitializeDataCategory.NUMERIC_EDITED,
-						context.dataCategory().NUMERIC_EDITED());
-				}
-				else if (context.dataCategory().DBCS() != null)
-				{
-					replacingInstruction.ReplaceDataCategory = CreateSyntaxProperty(InitializeDataCategory.DBCS,
-						context.dataCategory().DBCS());
-				}
-				else if (context.dataCategory().EGCS() != null)
-				{
-					replacingInstruction.ReplaceDataCategory = CreateSyntaxProperty(InitializeDataCategory.EGCS,
-						context.dataCategory().EGCS());
-				}
-			}
-
+		    replacingInstruction.ReplaceDataCategory = CreateSyntaxPropertyInitializeDataCategory(context.dataCategory());
 			replacingInstruction.BySendingVariable = CobolExpressionsBuilder.CreateVariable(context.variable6());
-
 			return replacingInstruction;
 		}
 
