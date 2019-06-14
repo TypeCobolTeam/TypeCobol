@@ -28,10 +28,6 @@
       <HintPath>..\..\packages\MsgPack.Cli.0.6.5\lib\net45\MsgPack.dll</HintPath>
       <Private>True</Private>
     </Reference-->
-    <Reference Include="SimpleMsgPack, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SimpleMsgPack.1.0.0.0\lib\net40\SimpleMsgPack.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Analytics\Analytics.csproj">
@@ -54,7 +50,9 @@
     <Content Include="DefaultCopies\SQLCA.cpy">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="config\skeletons.xml">

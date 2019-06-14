@@ -1,1 +1,1 @@
-﻿-1 -i input\WrongCodeElement.rdz.tcbl  -d output\error.txt  --exectostep=Scanner -e rdz
+﻿-i input\WrongCodeElement.rdz.tcbl  -d output\error.txt  --exectostep=Scanner -e rdz
