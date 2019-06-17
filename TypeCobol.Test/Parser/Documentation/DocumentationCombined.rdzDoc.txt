@@ -8,7 +8,7 @@ Line 67[21,24] <37, Warning, General> - Warning: Parameter does not have any des
 Name : DocCombined
 Description : My program 
 description 
-Visibility : 
+Visibility : Local
 Namespace : DocCombined
 NodeType : Program
 IsDeprecated : True
@@ -52,7 +52,7 @@ DataType :
 
 Name : Vect2D
 Description : Vect2D 
-Visibility : Private
+Visibility : Local
 Namespace : DocCombined
 NodeType : TypeDef
 IsDeprecated : False
@@ -187,7 +187,7 @@ Parameters :
 
 Name : MyPivateProc
 Description : MyPivateProc is a Proc but Pivate 
-Visibility : Private
+Visibility : Local
 Namespace : DocCombined
 NodeType : Function
 IsDeprecated : True

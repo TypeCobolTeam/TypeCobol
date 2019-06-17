@@ -278,6 +278,7 @@
   <skeleton name="FUN.DECLARE.PRIVATE" var="definitions">
     <conditions>
       <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" visibility="private" />
+      <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" visibility="local" />
     </conditions>
     <patterns>
       <pattern action="expand" location="program.end"></pattern>

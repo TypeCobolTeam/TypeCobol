@@ -542,18 +542,10 @@ internal class DefinitionsAttribute: Attribute {
 
 	public class NList: List<Node> {
 		internal NList(): base() { }
-		public List<Node> Public  { get { return retrieve(AccessModifier.Public); } }
-        public bool PublicIsNotEmpty { get { return retrieve(AccessModifier.Public).Count > 0; } }
-        public List<Node> Private { get { return retrieve(AccessModifier.Private); } }
 
-	    private List<Node> retrieve(AccessModifier visibility) {
-	        var results = new List<Node>();
-	        foreach(var node in this) {
-	            if (!(node is FunctionDeclaration fun)) continue;
-	            if (fun.CodeElement.Visibility == visibility) results.Add(node);
-	        }
-	        return results;
-	    }
+        public List<Node> Public => this.FindAll(node => node is FunctionDeclaration fd && fd.CodeElement.Visibility == AccessModifier.Public);
+
+        public List<Node> Private => this.FindAll(node => node is FunctionDeclaration fd && fd.CodeElement.Visibility != AccessModifier.Public);
 
         public IEnumerable<Node> Concat(List<Node> list, bool publicVisibility)
         {
@@ -728,8 +720,8 @@ internal class LibraryCopyAttribute: Attribute {
                     FunctionDeclaration fun_decl = proc_style_call.FunctionDeclaration;
                     if (fun_decl != null)
                     {
-                        if (fun_decl.CodeElement.Visibility == AccessModifier.Private)
-                            continue;//Ignore a Private function ==> Cannot Import It.
+                        if (fun_decl.CodeElement.Visibility != AccessModifier.Public)
+                            continue;//Ignore a non-Public function ==> Cannot Import It.
                     }
                     var item_pgm = call.Item1[call.Item1.Count - 1];
                     if (name_low.Equals(item_pgm.Name.ToLower()))

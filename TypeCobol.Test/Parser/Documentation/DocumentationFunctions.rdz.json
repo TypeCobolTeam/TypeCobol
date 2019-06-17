@@ -26,7 +26,7 @@ Line 29[21,25] <37, Warning, General> - Warning: Parameter does not have any des
   "ToDos": [
     "implement a call to MyProc8 in case of discount code"
   ],
-  "Visibility": 1,
+  "Visibility": 2,
   "Parameters": [
     {
       "DocDataType": {

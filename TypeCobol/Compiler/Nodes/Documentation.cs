@@ -88,7 +88,7 @@ namespace TypeCobol.Compiler.Nodes
         public string Name { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
-        public AccessModifier? Visibility { get; set; }
+        public AccessModifier Visibility { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
         public string Namespace { get; set; }
@@ -413,9 +413,9 @@ namespace TypeCobol.Compiler.Nodes
         /// <param name="functionDeclaration">The Node to serialize</param>
         public DocumentationForFunction(FunctionDeclaration functionDeclaration) : base(functionDeclaration)
         {
-            FunctionDeclarationHeader ce = functionDeclaration.CodeElement as FunctionDeclarationHeader;
+            FunctionDeclarationHeader ce = functionDeclaration.CodeElement;
 
-            Visibility = ce?.Visibility;
+            Visibility = ce.Visibility;
 
             Parameters = new List<DocumentationParameter>();
 
