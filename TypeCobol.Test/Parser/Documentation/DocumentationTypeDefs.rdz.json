@@ -138,6 +138,7 @@ Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not suppor
   "Description": "Description for Type21 ",
   "Name": "Type21",
   "Namespace": "DocForTypeDefs",
+  "Visibility": 1,
   "Childrens": [
     {
       "DocDataType": {
@@ -231,6 +232,7 @@ Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not suppor
   "Needs": [
     "see here what is needed"
   ],
+  "Visibility": 2,
   "Childrens": [
     {
       "DocDataType": {

@@ -4,6 +4,8 @@ Line 54[21,26] <37, Warning, General> - Warning: Parameter does not have any des
 Line 56[21,23] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli
 Line 66[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myDate
 Line 67[21,24] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: toto
+Line 77[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myDate
+Line 78[21,24] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: toto
 ======================== Documentation ========================
 {
   "__type": "DocumentationForProgram:#TypeCobol.Compiler.Nodes",
@@ -140,8 +142,39 @@ Line 67[21,24] <37, Warning, General> - Warning: Parameter does not have any des
 {
   "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
   "Deprecated": "",
-  "Description": "MyPivateProc is a Proc but Pivate ",
-  "Name": "MyPivateProc",
+  "Description": "MyPrivateProc is a Proc but Private ",
+  "Name": "MyPrivateProc",
+  "Namespace": "DocCombined",
+  "ToDos": [
+    "Add a body"
+  ],
+  "Visibility": 2,
+  "Parameters": [
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "DATE"
+      },
+      "Name": "myDate",
+      "PassingType": 0
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "BOOL"
+      },
+      "Name": "toto",
+      "PassingType": 1
+    }
+  ]
+}
+---------------------
+
+{
+  "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
+  "Deprecated": "",
+  "Description": "MyLocalProc is a Proc but Local (no access modifier) ",
+  "Name": "MyLocalProc",
   "Namespace": "DocCombined",
   "ToDos": [
     "Add a body"
