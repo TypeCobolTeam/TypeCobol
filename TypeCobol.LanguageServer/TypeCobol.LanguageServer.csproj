@@ -64,7 +64,6 @@
     <Compile Include="TypeCobolCustomLanguageServer\SyntaxColoring\SyntaxColoringParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\SyntaxColoring\Token.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\TypeCobolCustomLanguageServer.cs" />
-    <Compile Include="TypeCobolCustomLanguageServer\TypeCobolRemoteConsole.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Uri Log Notification\UriLogMessageNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Uri Log Notification\UriLogMessageParams.cs" />
     <Compile Include="TypeCobolLanguageServer.cs" />

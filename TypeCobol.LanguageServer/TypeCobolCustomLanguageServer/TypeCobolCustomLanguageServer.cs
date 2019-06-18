@@ -1,16 +1,15 @@
 ﻿using System;
-using TypeCobol.Compiler.Nodes;
+using System.Collections.Generic;
+using System.Linq;
 using TypeCobol.LanguageServer.JsonRPC;
-using TypeCobol.LanguageServer.VsCodeProtocol;
-using String = System.String;
 
 namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 {
-    class TypeCobolCustomLanguageServer : VsCodeProtocol.LanguageServer
+    class TypeCobolCustomLanguageServer : TypeCobolServer
     {
-        public TypeCobolCustomLanguageServer(IRPCServer rpcServer) : base(rpcServer)
+        public TypeCobolCustomLanguageServer(IRPCServer rpcServer, Queue<MessageActionWrapper> messagesActionsQueue)
+            : base(rpcServer, messagesActionsQueue)
         {
-            RemoteConsole = new LanguageServer.TypeCobolCustomLanguageServerProtocol.TypeCobolRemoteConsole(rpcServer);
             rpcServer.RegisterNotificationMethod(MissingCopiesNotification.Type, CallReceiveMissingCopies);
             rpcServer.RegisterNotificationMethod(NodeRefreshNotification.Type, ReceivedRefreshNodeDemand);
             rpcServer.RegisterRequestMethod(NodeRefreshRequest.Type, ReceivedRefreshNodeRequest);
@@ -71,11 +70,11 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 
         /// <summary>
         /// The Missing copies notification is sent from the client to the server
-        /// when the client failled to load copies, it send back a list of missing copies to the server.
+        /// when the client failed to load copies, it send back a list of missing copies to the server.
         /// </summary>
-        public virtual void OnDidReceiveMissingCopies(MissingCopiesParams parameter)
+        protected virtual void OnDidReceiveMissingCopies(MissingCopiesParams parameter)
         {
-            //Nothing to do for now, maybe add some telemetry here...
+            this.Workspace.UpdateMissingCopies(new Uri(parameter.textDocument.uri), parameter.Copies);
         }
 
         /// <summary>
@@ -83,32 +82,30 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// It will force the server to do a Node Phase analyze. 
         /// </summary>
         /// <param name="parameter"></param>
-        public virtual void OnDidReceiveNodeRefresh(NodeRefreshParams parameter)
+        protected virtual void OnDidReceiveNodeRefresh(NodeRefreshParams parameter)
         {
-            
+            var context = GetDocumentContextFromStringUri(parameter.textDocument.uri, false);
+            if (context != null && context.FileCompiler != null)
+            {
+                this.Workspace.RefreshSyntaxTree(context.FileCompiler, true);
+            }
         }
 
-        public virtual void OnDidReceiveSignatureHelpContext(SignatureHelpContextParams procedureHash)
+        protected virtual void OnDidReceiveSignatureHelpContext(SignatureHelpContextParams parameters)
         {
-            
-        }
+            if (parameters?.signatureInformation == null) //Means that the client leave the context
+            {
+                //Make the context signature completion null
+                this.SignatureCompletionContext = null;
+                //Clean up the dictionary
+                this.FunctionDeclarations.Clear();
+                return;
+            }
 
-        /// <summary>
-        /// Missing copies notifications are sent from the server to the client to signal
-        /// that some copies where missing during TypeCobol parsing.
-        /// </summary>
-        public virtual void SendMissingCopies(MissingCopiesParams parameters)
-        {
-            this.rpcServer.SendNotification(MissingCopiesNotification.Type, parameters);
-        }
+            var retrievedFuncDeclarationPair = this.FunctionDeclarations.FirstOrDefault(item => item.Key.Equals(parameters.signatureInformation));
 
-        /// <summary>
-        /// Loading Issue notification is sent from the server to the client
-        /// Usefull to let the client knows that a error occured while trying to load Intrinsic/Dependencies. 
-        /// </summary>
-        public virtual void SendLoadingIssue(LoadingIssueParams parameters)
-        {
-            this.rpcServer.SendNotification(LoadingIssueNotification.Type, parameters);
+            if (retrievedFuncDeclarationPair.Key != null)
+                this.SignatureCompletionContext = retrievedFuncDeclarationPair.Value;
         }
     }
 }
