@@ -134,6 +134,15 @@ namespace TypeCobol.Codegen.Generators
             /// Set of relocated lines from a function declaration.
             /// </summary>
             public HashSet<int> RelocatedLines;
+            /// <summary>
+            /// The 1-based, Delta of the Global Storage line in this Line Mapping if any.
+            /// </summary>
+            public List<int> AllGlobalStorageLineDelta;
+            /// <summary>
+            /// The Inverse Line Mappling list if any. The inverse line mapping is a line number
+            /// from the output source to original source code.
+            /// </summary>
+            public List<Tuple<int, int>> InverseLineMapping;
 
             /// <summary>
             /// Constructor
@@ -269,12 +278,30 @@ namespace TypeCobol.Codegen.Generators
                         LineMapping[i] = new Tuple<int, int>(LineMapping[i].Item1 + startLineMapCounter, LineMapping[i].Item2 + startLineMapCounter);
                     }
                 }
+                //If we have GlobalStorage relocate it also
+                if (funData.GlobalStorageLineDelta != 0)
+                {
+                    funData.GlobalStorageLineDelta += startLineMapCounter;
+                    AddGlobalStorageLineDelta(funData.GlobalStorageLineDelta);
+                }
+
                 //We update the new position.
                 startLineMapCounter += interval.Item2 - interval.Item1 + 1;
                 if (bNested)
                 {
                     currentGenLineOffset = mainSourceText.Size;
-                }
+                }                
+            }
+
+            /// <summary>
+            /// Add a Global Storage declaration delta from the Main Program or a Nested Program.
+            /// </summary>
+            /// <param name="delta">The delta to be added</param>
+            internal void AddGlobalStorageLineDelta(int delta)
+            {
+                if (this.AllGlobalStorageLineDelta == null)
+                    this.AllGlobalStorageLineDelta = new List<int>();
+                this.AllGlobalStorageLineDelta.Add(delta);
             }
 
             /// <summary>
@@ -513,7 +540,7 @@ namespace TypeCobol.Codegen.Generators
                             string code = (node as GeneratedAndReplace).ReplaceCode;
                             GenerateIntoBufferCheckLineExceed(from, to, curSourceText, code, i + 1);
                         }
-                        else foreach (var line in NodeLines(node, generated_node))
+                        else foreach (var line in NodeLines(node, generated_node, curSourceText?? targetSourceText))
                             {
                                 bool bInsertSplit = false;
                                 StringWriter sw = new StringWriter();
@@ -577,6 +604,7 @@ namespace TypeCobol.Codegen.Generators
                             {
                                 stackLineMappingCtx.Push(lmCtx);
                                 lmCtx = new LineMappingCtx(lmCtx.LineMapping, funData);
+                                CurrentLineMappinCtx = lmCtx;
                             }
                             //Now Generate in Function Declaration Buffer.
                             targetSourceText = funData.FunctionDeclBuffer;
@@ -604,6 +632,7 @@ namespace TypeCobol.Codegen.Generators
                             if (lmCtx != null)
                             {
                                 lmCtx = stackLineMappingCtx.Pop();
+                                CurrentLineMappinCtx = lmCtx;
                             }
                         }
                         previousBuffer = curSourceText;
@@ -694,7 +723,7 @@ namespace TypeCobol.Codegen.Generators
             }
         }
         /// <summary>
-        /// 
+        /// Generates the Stacked program that declares ll Global Storage Variables.
         /// </summary>
         /// <param name="clonedMapper">The Linear Source Code Mapper contains the GlobalStorage Section.</param>
         /// <param name="Input">The list of program input lines</param>
@@ -738,6 +767,26 @@ namespace TypeCobol.Codegen.Generators
                     int lastLine = GSLmCtx.LineMapping[i].Item2;
                     lmCtx.LineMapping[i] = new Tuple<int, int>(firstLine + lmCtx.startLineMapCounter + GSLineOffset - 1, lastLine + lmCtx.startLineMapCounter + GSLineOffset - 1);
                 }
+
+                //Create also the inverse line mapping for Global Storage generated in nested programs and procedures
+                if (lmCtx.AllGlobalStorageLineDelta != null)
+                {
+                    lmCtx.InverseLineMapping = new List<Tuple<int, int>>();
+                    foreach (int gsDelta in lmCtx.AllGlobalStorageLineDelta)
+                    {
+                        int baseLine = GSLmCtx.LineMapping[FirstGSLine].Item1 + lmCtx.startLineMapCounter + GSLineOffset - 1;
+                        for (int i = FirstGSLine; i < LastGSLine; i++)
+                        {
+                            int firstLine = GSLmCtx.LineMapping[i].Item1 + lmCtx.startLineMapCounter + GSLineOffset - 1;
+                            int lastLine = GSLmCtx.LineMapping[i].Item2 + lmCtx.startLineMapCounter + GSLineOffset - 1;
+                            for (int j = firstLine; j <= lastLine; j++)
+                            {
+                                Tuple<int, int> inv = new Tuple<int, int>(-(j - baseLine + gsDelta + GSLineOffsetInverse), i + 1);
+                                lmCtx.InverseLineMapping.Add(inv);
+                            }
+                        }
+                    }
+                }
             }
 
             sw.WriteLine("       LINKAGE SECTION.");
@@ -767,6 +816,14 @@ namespace TypeCobol.Codegen.Generators
         /// The Offset to apply to relocate GlobalStore Line Mapping.
         /// </summary>
         int GSLineOffset;
+        /// <summary>
+        /// The Offset to apply to relocate GlobalStore Line Mapping for the inverse Line Mapping.
+        /// </summary>
+        int GSLineOffsetInverse;
+        /// <summary>
+        /// The Current Line Mapping context.
+        /// </summary>
+        public LineMappingCtx CurrentLineMappinCtx { get; protected set; }
 
         /// <summary>
         /// Get the content of the TC-GlobalData structure.
@@ -782,9 +839,11 @@ namespace TypeCobol.Codegen.Generators
                 return GlobalStorageData;
 
             GSLineOffset = 0;
+            GSLineOffsetInverse = 0;
             StringWriter sw = new StringWriter();
             sw.WriteLine("       01 TC-GlobalData.");
             GSLineOffset += 1;//IMPORTANT Update GS relocation offset ==> one more line.
+            GSLineOffsetInverse += 1;
 
 
             //Compute the last line of the Global Storage Node.
@@ -1161,13 +1220,15 @@ namespace TypeCobol.Codegen.Generators
         /// Get the Lines gnerated for a Node.
         /// </summary>
         /// <param name="node">The node to get the lines</param>
+        /// <param name="sourceText">The potential source text buffer in to which the line will be generated</param>
         /// <returns>The Node's lines</returns>
-        IEnumerable<ITextLine> NodeLines(Node node)
+        IEnumerable<ITextLine> NodeLines(Node node, SourceText sourceText)
         {
             //Check for a node that need a IGeneratorContext data
             if (node is IGeneratorContext genCtx)
             {
                 genCtx.Generator = this;
+                genCtx.SourceTextBuffer = sourceText;
             }
 
             node.Layout = Layout;
@@ -1179,15 +1240,16 @@ namespace TypeCobol.Codegen.Generators
         /// </summary>
         /// <param name="node">The node to get all line</param>
         /// <param name="all_lines">All line accumulator</param>
-        void RecursiveNodeLines(Node node, BitArray generated_node, List<ITextLine> all_lines)
+        /// <param name="sourceText">The potential source text buffer in to which the line will be generated</param>
+        void RecursiveNodeLines(Node node, BitArray generated_node, List<ITextLine> all_lines, SourceText sourceText)
         {
-            foreach (var l in NodeLines(node))
+            foreach (var l in NodeLines(node, sourceText))
                 all_lines.Add(l);
             foreach (Node child in node.Children)
             {
                 if (child.NodeIndex >= 0)
                     generated_node[child.NodeIndex] = true;
-                RecursiveNodeLines(child, generated_node, all_lines);
+                RecursiveNodeLines(child, generated_node, all_lines, sourceText);
             }
         }
         /// <summary>
@@ -1196,19 +1258,20 @@ namespace TypeCobol.Codegen.Generators
         /// </summary>
         /// <param name="node"></param>
         /// <param name="generated_node"></param>
+        /// <param name="sourceText">The potential source text buffer in to which the line will be generated</param>
         /// <returns></returns>
-        public virtual IEnumerable<ITextLine> NodeLines(Node node, BitArray generated_node)
+        public virtual IEnumerable<ITextLine> NodeLines(Node node, BitArray generated_node, SourceText sourceText)
         {
             if (node.IsFlagSet(Node.Flag.FullyGenerateRecursivelyFactoryGeneratedNode))
             {
                 List<ITextLine> all_lines = new List<ITextLine>();
-                RecursiveNodeLines(node, generated_node, all_lines);
+                RecursiveNodeLines(node, generated_node, all_lines, sourceText);
                 foreach (var l in all_lines)
                     yield return l;
             }
             else
             {
-                foreach (var l in NodeLines(node))
+                foreach (var l in NodeLines(node, sourceText))
                     yield return l;
                 if (node.IsFlagSet(Node.Flag.FactoryGeneratedNodeKeepInsertionIndex))
                 {
@@ -1220,7 +1283,7 @@ namespace TypeCobol.Codegen.Generators
                         {
                             if (child.NodeIndex >= 0)
                                 generated_node[child.NodeIndex] = true;
-                            foreach (var cl in NodeLines(child))
+                            foreach (var cl in NodeLines(child, sourceText))
                             {
                                 yield return cl;
                             }

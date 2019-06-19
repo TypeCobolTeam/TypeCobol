@@ -12,5 +12,9 @@ namespace TypeCobol.Codegen
     public interface IGeneratorContext
     {
         IGenerator Generator { set; }
+        /// <summary>
+        /// A Source text buffer if any
+        /// </summary>
+        Compiler.Source.SourceText SourceTextBuffer { set; }
     }
 }

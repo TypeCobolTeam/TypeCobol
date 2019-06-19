@@ -7,6 +7,7 @@ using TypeCobol.Codegen.Actions;
 using TypeCobol.Codegen.Generators;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Source;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Codegen.Contribution
@@ -21,6 +22,9 @@ namespace TypeCobol.Codegen.Contribution
             public IGenerator Generator
             {get; set; }
 
+            public SourceText SourceTextBuffer
+            { get;  set; }
+
             public GlobalStorageNode() : base(null, true)
             {
             }
@@ -31,6 +35,24 @@ namespace TypeCobol.Codegen.Contribution
                 {
                     if (Text == null && _cache == null)
                     {
+                        if (Generator is DefaultGeneratorWithLineMap defGenLM && defGenLM.CurrentLineMappinCtx != null)
+                        {
+                            int add = this.IsFlagSet(Flag.FactoryGeneratedNodeWithFirstNewLine) ? 1 : 0;
+                            if (defGenLM.CurrentLineMappinCtx.funData != null)
+                            {   //Function have their own buffer
+                                int count = defGenLM.CurrentLineMappinCtx.funData.FunctionDeclBuffer.LineCount(0, defGenLM.CurrentLineMappinCtx.funData.FunctionDeclBuffer.Size);
+                                defGenLM.CurrentLineMappinCtx.funData.GlobalStorageLineDelta = count + add;
+                            }
+                            else
+                            {
+                                int count = defGenLM.CurrentLineMappinCtx.startLineMapCounter;
+                                if (this.SourceTextBuffer != null)
+                                {
+                                    count = this.SourceTextBuffer.LineCount(0, this.SourceTextBuffer.Size) + 1;
+                                }
+                                defGenLM.CurrentLineMappinCtx.AddGlobalStorageLineDelta(count + add);
+                            }
+                        }
                         if (Generator is DefaultGenerator defGen)
                         {
                             Text = defGen.GlobalStorageData ?? "";
@@ -42,13 +64,11 @@ namespace TypeCobol.Codegen.Contribution
                             {
                                 _cache.Add(new CobolTextLine(new TextLineSnapshot(-1, line, null), ColumnsLayout.FreeTextFormat));
                             }
-
                         }
                     }
-
                     return _cache;
                 }
-            }
+            }            
         }
         public Node Contribute(Node parent, string pattern, string code, string @group, int? position, bool newline)
         {
