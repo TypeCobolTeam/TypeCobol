@@ -347,6 +347,10 @@ namespace TypeCobol.Codegen.Generators
             /// </summary>
             public int LineMapLastIndex;
             /// <summary>
+            /// The 1-based, Delta of the Global Storage line in the corresponding Line Mapping if any.
+            /// </summary>
+            internal int GlobalStorageLineDelta;
+            /// <summary>
             /// Constructor
             /// </summary>
             public NodeFunctionData()
