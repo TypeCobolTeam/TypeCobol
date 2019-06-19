@@ -1,0 +1,8 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MainProgram.
+       data division.
+       working-storage section.
+         COPY TypedefStrong.
+         01 var1 type TypedefStrong1.
+         01 var2 type TypedefStrong2.
+       END PROGRAM MainProgram.

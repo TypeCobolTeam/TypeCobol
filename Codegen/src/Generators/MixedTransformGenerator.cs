@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,5 +39,12 @@ namespace TypeCobol.Codegen.Generators
             this.Destination.Clear();
             this.Destination.Append(mixedContent);
         }
+
+        public override void GenerateLineMapFile(Stream stream)
+        {
+            _usedGenerator.GenerateLineMapFile(stream);
+        }
+        public override bool HasLineMapData => _usedGenerator.HasLineMapData;
+
     }
 }

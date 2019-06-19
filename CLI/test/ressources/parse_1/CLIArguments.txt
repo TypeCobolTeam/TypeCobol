@@ -1,1 +1,1 @@
-﻿-1 -i input\ProcedureCall-Public.rdz.tcbl -d output\error.txt -ets preprocessor -e rdz
+﻿-i input\ProcedureCall-Public.rdz.tcbl -d output\error.txt -ets preprocessor -e rdz

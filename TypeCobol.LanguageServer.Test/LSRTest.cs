@@ -140,6 +140,67 @@ namespace TypeCobol.LanguageServer.Test
             LSRTestHelper.Test("FormalizedCommentIncScan", LsrTestingOptions.NoLsrTesting, false, true);
         }
 
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void IncrementalErrorHandling()
+        {
+            LSRTestHelper.Test("IncrementalErrorHandling", LsrTestingOptions.NoLsrTesting, false, true);
+        }
+
+        /// <summary>
+        /// This test is releated to issue:https://github.com/TypeCobolTeam/TypeCobol/issues/1350
+        /// The following steps were raising an exception, before the fix.
+        /// 
+        /// Inside TypeCobol Editor: 
+        /// - Go to the beginning of a line for instance in the middle of a document
+        /// - Ctrl+Shift+End
+        /// - Suppr
+        /// - Ctrl+S
+        /// - Ctrl+Z
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void SelectEndSuppressSaveUndo()
+        {
+            LSRTestHelper.Test("SelectEndSuppressSaveUndo", LsrTestingOptions.NoLsrTesting, false);
+        }
+
+        /// <summary>
+        /// This test is releated to issue:https://github.com/TypeCobolTeam/TypeCobol/issues/1350
+        /// The following steps were raising an exception, before the fix.
+        /// 
+        /// Inside TypeCobol Editor: 
+        /// - Goto the beginning of the first line of a document.
+        /// - Enter
+        /// - Enter
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void BeginTopLineEnterEnter()
+        {
+            LSRTestHelper.Test("BeginTopLineEnterEnter", LsrTestingOptions.NoLsrTesting, false);
+        }
+
+        /// <summary>
+        /// Test for the fix of:https://github.com/TypeCobolTeam/TypeCobol/issues/1351 
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void FirstLineEditCommentBeforeIdentDiv()
+        {
+            LSRTestHelper.Test("FirstLineEditCommentBeforeIdentDiv", LsrTestingOptions.NoLsrTesting, false, true);
+        }
+
+
+        /// <summary>
+        /// Test for the fix of:https://github.com/TypeCobolTeam/TypeCobol/issues/1370 
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void IncrementalThruTokenInsideCopies()
+        {
+            LSRTestHelper.Test("IncrementalThruTokenInsideCopies", LsrTestingOptions.NoLsrTesting, false, true);
+        }        
         #endregion
 
         #region SyntaxColoring

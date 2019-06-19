@@ -1,1 +1,1 @@
-﻿-1 -i input\Test.rdz.tcbl  -o fakePath\output.txt -s  input\badSkeleton1 -s  input\badSkeleton2
+﻿-i input\Test.rdz.tcbl  -o fakePath\output.txt -s  input\badSkeleton1 -s  input\badSkeleton2

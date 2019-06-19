@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.StdioHttp;
+using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 using TypeCobol.LanguageServer.Utilities;
 
 namespace TypeCobol.LanguageServer
@@ -265,15 +266,15 @@ namespace TypeCobol.LanguageServer
                     httpServer.RedirectedOutpuStream = Process.StandardInput;
                 }
                 var jsonRPCServer = new JsonRPCServer(httpServer);
-                var typeCobolServer = new TypeCobolServer(jsonRPCServer, MessagesActionQueue);
+                var typeCobolServer = new TypeCobolCustomLanguageServer(jsonRPCServer, MessagesActionQueue);
 
                 typeCobolServer.NoLogsMessageNotification = NoLogsMessageNotification;
 
-                typeCobolServer.LsrSourceTesting = LsrSourceTesting;
-                typeCobolServer.LsrScannerTesting = LsrScannerTesting;
-                typeCobolServer.LsrPreprocessTesting = LsrPreprocessTesting;
-                typeCobolServer.LsrParserTesting = LsrParserTesting;
-                typeCobolServer.LsrSemanticTesting = LsrSemanticTesting;
+                if (LsrSourceTesting) typeCobolServer.LsrTestingLevel = LsrTestingOptions.LsrSourceDocumentTesting;
+                if (LsrScannerTesting) typeCobolServer.LsrTestingLevel = LsrTestingOptions.LsrScanningPhaseTesting;
+                if (LsrPreprocessTesting) typeCobolServer.LsrTestingLevel = LsrTestingOptions.LsrPreprocessingPhaseTesting;
+                if (LsrParserTesting) typeCobolServer.LsrTestingLevel = LsrTestingOptions.LsrParsingPhaseTesting;
+                if (LsrSemanticTesting) typeCobolServer.LsrTestingLevel = LsrTestingOptions.LsrSemanticPhaseTesting;
                 typeCobolServer.TimerDisabledOption = TimerDisabledOption;
                 typeCobolServer.UseAntlrProgramParsing = UseAntlrProgramParsing;
                 typeCobolServer.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;
@@ -353,7 +354,6 @@ namespace TypeCobol.LanguageServer
                         typeCobolServer.NotifyException(e);
                     }
                 }
-
             }
         }
     }

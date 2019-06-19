@@ -43,6 +43,8 @@ namespace TypeCobol.Codegen.Generators
         public List<Diagnostic> Diagnostics { get; set; }
         public string TypeCobolVersion { get; set; }
 
+        public bool HasLineMapData => false;
+
         /// <summary>
         /// Serialize the object (this) into Json
         /// </summary>
@@ -67,6 +69,10 @@ namespace TypeCobol.Codegen.Generators
             StreamReader sr = new StreamReader(memStream);
             sb.Append(sr.ReadToEnd());
             return sb.ToString();
+        }
+
+        public void GenerateLineMapFile(Stream stream)
+        {            
         }
     }
 
