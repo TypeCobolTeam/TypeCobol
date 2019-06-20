@@ -16,5 +16,9 @@ namespace TypeCobol.Codegen
         /// A Source text buffer if any
         /// </summary>
         Compiler.Source.SourceText SourceTextBuffer { set; }
+        /// <summary>
+        /// Determine if yes or no the SourceTextBuffer property refers a global source text buffer or a local source text buffer.
+        /// </summary>
+        bool IsGlobalSourceTextBuffer { set; }
     }
 }
