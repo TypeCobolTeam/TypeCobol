@@ -25,9 +25,12 @@ namespace TypeCobol.Codegen.Contribution
             public SourceText SourceTextBuffer
             { get;  set; }
 
+            public bool IsGlobalSourceTextBuffer
+            { get; set; }
+
             public GlobalStorageNode() : base(null, true)
             {
-            }
+            }            
 
             public override IEnumerable<ITextLine> Lines
             {
@@ -45,10 +48,10 @@ namespace TypeCobol.Codegen.Contribution
                             }
                             else
                             {
-                                int count = defGenLM.CurrentLineMappinCtx.startLineMapCounter;
+                                int count = IsGlobalSourceTextBuffer ? 0 : defGenLM.CurrentLineMappinCtx.startLineMapCounter;
                                 if (this.SourceTextBuffer != null)
                                 {
-                                    count = this.SourceTextBuffer.LineCount(0, this.SourceTextBuffer.Size) + 1;
+                                    count += this.SourceTextBuffer.LineCount(0, this.SourceTextBuffer.Size) + 1;
                                 }
                                 defGenLM.CurrentLineMappinCtx.AddGlobalStorageLineDelta(count + add);
                             }
@@ -68,7 +71,7 @@ namespace TypeCobol.Codegen.Contribution
                     }
                     return _cache;
                 }
-            }            
+            }           
         }
         public Node Contribute(Node parent, string pattern, string code, string @group, int? position, bool newline)
         {

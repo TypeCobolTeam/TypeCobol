@@ -3,6 +3,7 @@
        PROGRAM-ID. GlobalStorageTest.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
+      
        SOURCE-COMPUTER. IBM-370
                       WITH DEBUGGING MODE
                       .
@@ -59,7 +60,6 @@
       D   49 dbgCblVar PIC X(32).
           49 purCblVar PIC X(32).
 
-      
        PROCEDURE DIVISION.
       * Get the data from the global storage section
            CALL 'a9a9a5eaTC-GetGlobal' USING
@@ -67,16 +67,68 @@
            end-call
 
                           
-      
       *DECLARE PROCEDURE MyProc PRIVATE
       *    INPUT    myDate      TYPE DATE.
       
-       MOVE G-Date TO G-Date.
+       MOVE G-Date TO  G-Date.
+      
       *MOVE DuplicatedVar TO G-TechCtx.
        MOVE DuplicatedVar-value TO G-TechCtx-value.
       
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Nested.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *01 TestCtx TYPE Bool.
+       01  TestCtx-value PIC X VALUE LOW-VALUE.
+           88  TestCtx       VALUE 'T'.
+           88  TestCtx-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                            
+       LINKAGE SECTION.
+
+       01 TC-GlobalData.
+
+      D02 dbgCblVar PIC X(22).
+      *01 G-Date            TYPE Date.
+       02 G-Date.
+           03 YYYY PIC 9(4).
+           03 MM PIC 9(2).
+           03 DD PIC 9(2).
+
+      *01 G-TechCtx         TYPE Bool.
+       02  G-TechCtx-value PIC X VALUE LOW-VALUE.
+           88  G-TechCtx       VALUE 'T'.
+           88  G-TechCtx-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+
+      *01 DuplicatedVar     TYPE Bool.
+       02  DuplicatedVar-value PIC X VALUE LOW-VALUE.
+           88  DuplicatedVar       VALUE 'T'.
+           88  DuplicatedVar-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+
+       02 purCblVar PIC X(22).
+      D02 dbgCblVar2 PIC X(22).
+       02 purCblGrp.
+      D   49 dbgCblVar PIC X(32).
+          49 purCblVar PIC X(32).
+
+       PROCEDURE DIVISION.
+      * Get the data from the global storage section
+           CALL 'a9a9a5eaTC-GetGlobal' USING
+               by reference address of TC-GlobalData
+           end-call
+
+                          
+      *G-Date and G-TechCtx are accesible from GlobalStorage
+      *    MOVE G-TechCtx TO TestCtx.
+           MOVE G-TechCtx-value TO TestCtx-value.
+       END PROGRAM Nested.
        END PROGRAM GlobalStorageTest.
-      
       *
       *DECLARE PROCEDURE MyProc PRIVATE
       *    INPUT    myDate      TYPE DATE.

@@ -540,7 +540,7 @@ namespace TypeCobol.Codegen.Generators
                             string code = (node as GeneratedAndReplace).ReplaceCode;
                             GenerateIntoBufferCheckLineExceed(from, to, curSourceText, code, i + 1);
                         }
-                        else foreach (var line in NodeLines(node, generated_node, curSourceText?? targetSourceText))
+                        else foreach (var line in NodeLines(node, generated_node, curSourceText?? targetSourceText, curSourceText == null))
                             {
                                 bool bInsertSplit = false;
                                 StringWriter sw = new StringWriter();
@@ -723,7 +723,7 @@ namespace TypeCobol.Codegen.Generators
             }
         }
         /// <summary>
-        /// Generates the Stacked program that declares ll Global Storage Variables.
+        /// Generates the Stacked program that declares all Global Storage Variables.
         /// </summary>
         /// <param name="clonedMapper">The Linear Source Code Mapper contains the GlobalStorage Section.</param>
         /// <param name="Input">The list of program input lines</param>
@@ -1221,14 +1221,16 @@ namespace TypeCobol.Codegen.Generators
         /// </summary>
         /// <param name="node">The node to get the lines</param>
         /// <param name="sourceText">The potential source text buffer in to which the line will be generated</param>
+        /// <param name="isGlobalBuffer">Determine if yes or no the sourceText parameter refers a global source text buffer or a local source text buffer</param>
         /// <returns>The Node's lines</returns>
-        IEnumerable<ITextLine> NodeLines(Node node, SourceText sourceText)
+        IEnumerable<ITextLine> NodeLines(Node node, SourceText sourceText, bool isGlobalBuffer)
         {
             //Check for a node that need a IGeneratorContext data
             if (node is IGeneratorContext genCtx)
             {
                 genCtx.Generator = this;
                 genCtx.SourceTextBuffer = sourceText;
+                genCtx.IsGlobalSourceTextBuffer = isGlobalBuffer;
             }
 
             node.Layout = Layout;
@@ -1241,15 +1243,16 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="node">The node to get all line</param>
         /// <param name="all_lines">All line accumulator</param>
         /// <param name="sourceText">The potential source text buffer in to which the line will be generated</param>
-        void RecursiveNodeLines(Node node, BitArray generated_node, List<ITextLine> all_lines, SourceText sourceText)
+        /// <param name="isGlobalBuffer">Determine if yes or no the sourceText parameter refers a global source text buffer or a local source text buffer</param>
+        void RecursiveNodeLines(Node node, BitArray generated_node, List<ITextLine> all_lines, SourceText sourceText, bool isGlobalBuffer)
         {
-            foreach (var l in NodeLines(node, sourceText))
+            foreach (var l in NodeLines(node, sourceText, isGlobalBuffer))
                 all_lines.Add(l);
             foreach (Node child in node.Children)
             {
                 if (child.NodeIndex >= 0)
                     generated_node[child.NodeIndex] = true;
-                RecursiveNodeLines(child, generated_node, all_lines, sourceText);
+                RecursiveNodeLines(child, generated_node, all_lines, sourceText, isGlobalBuffer);
             }
         }
         /// <summary>
@@ -1259,19 +1262,20 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="node"></param>
         /// <param name="generated_node"></param>
         /// <param name="sourceText">The potential source text buffer in to which the line will be generated</param>
+        /// <param name="isGlobalBuffer">Determine if yes or no the sourceText parameter refers a global source text buffer or a local source text buffer</param>
         /// <returns></returns>
-        public virtual IEnumerable<ITextLine> NodeLines(Node node, BitArray generated_node, SourceText sourceText)
+        public virtual IEnumerable<ITextLine> NodeLines(Node node, BitArray generated_node, SourceText sourceText, bool isGlobalBuffer)
         {
             if (node.IsFlagSet(Node.Flag.FullyGenerateRecursivelyFactoryGeneratedNode))
             {
                 List<ITextLine> all_lines = new List<ITextLine>();
-                RecursiveNodeLines(node, generated_node, all_lines, sourceText);
+                RecursiveNodeLines(node, generated_node, all_lines, sourceText, isGlobalBuffer);
                 foreach (var l in all_lines)
                     yield return l;
             }
             else
             {
-                foreach (var l in NodeLines(node, sourceText))
+                foreach (var l in NodeLines(node, sourceText, isGlobalBuffer))
                     yield return l;
                 if (node.IsFlagSet(Node.Flag.FactoryGeneratedNodeKeepInsertionIndex))
                 {
@@ -1283,7 +1287,7 @@ namespace TypeCobol.Codegen.Generators
                         {
                             if (child.NodeIndex >= 0)
                                 generated_node[child.NodeIndex] = true;
-                            foreach (var cl in NodeLines(child, sourceText))
+                            foreach (var cl in NodeLines(child, sourceText, isGlobalBuffer))
                             {
                                 yield return cl;
                             }

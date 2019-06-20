@@ -2,6 +2,7 @@
        PROGRAM-ID. GlobalStorageTest.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
+      
        SOURCE-COMPUTER. IBM-370
                       WITH DEBUGGING MODE
                       .
@@ -24,9 +25,7 @@
       
        01 MyGroup PIC X(10).
            88 TestLevel VALUE "Test".
-      
        PROCEDURE DIVISION.
-      
        DECLARE PROCEDURE MyProc PRIVATE
            INPUT    myDate      TYPE DATE.
        Data division.
@@ -38,8 +37,17 @@
            MOVE G-TechCtx TO TestCtx.
         END-DECLARE.
       
-       MOVE G-Date TO G-Date.
+       MOVE G-Date TO  G-Date.
+      
        MOVE DuplicatedVar TO G-TechCtx.
       
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Nested.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 TestCtx TYPE Bool.
+       PROCEDURE DIVISION.
+      *G-Date and G-TechCtx are accesible from GlobalStorage
+           MOVE G-TechCtx TO TestCtx.
+       END PROGRAM Nested.
        END PROGRAM GlobalStorageTest.
-      
