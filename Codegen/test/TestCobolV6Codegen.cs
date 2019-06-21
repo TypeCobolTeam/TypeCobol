@@ -13,5 +13,13 @@ namespace TypeCobol.Codegen
         {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("CobolV6", "DynamicAllocationStatements") + ".rdz.cbl");
         }
+
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void TestInitializeStatements()
+        {
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("CobolV6", "InitializeStatements") + ".rdz.cbl");
+        }
     }
 }
