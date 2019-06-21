@@ -21,5 +21,14 @@ namespace TypeCobol.Codegen
         {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("CobolV6", "InitializeStatements") + ".rdz.cbl");
         }
+
+        // UNBOUNDED keyword in OCCURS clause is actually part of Cobol v5.1 specs not 6.1.
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void TestOccursUnbounded()
+        {
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("CobolV6", "OccursUnbounded") + ".rdz.cbl");
+        }
     }
 }
