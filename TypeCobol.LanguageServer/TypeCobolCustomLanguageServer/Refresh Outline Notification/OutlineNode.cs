@@ -97,7 +97,12 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             }
             else
             {
-                this.childNodes = null;
+                if (this.childNodes != null)
+                {
+                    this.childNodes = null;
+                    return true;
+                }
+                
                 return false;
             }
 
@@ -134,14 +139,14 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                 {
                     this.childNodes[i].isUpdated = this.childNodes[i].Update(derivationNode);
 
-                    if (this.childIndex != i)
+                    if (this.childNodes[i].childIndex != i)
                     {
                         this.childNodes[i].childIndex = i;
                         this.childNodes[i].isUpdated = true;
                     }
 
                     //Get first line of the Node that is not a commented line
-                    var tokensLine = derivationNode.Lines.OfType<TokensLine>().FirstOrDefault(l => l.ScanState.InsideFormalizedComment == false && l.ScanState.InsideMultilineComments == false && l.IndicatorChar != '%');
+                    var tokensLine = derivationNode.Lines.OfType<TokensLine>().FirstOrDefault(l => l.ScanState.InsideFormalizedComment == false && l.ScanState.InsideMultilineComments == false && l.IndicatorChar != '%' && l.IndicatorChar != '*');
                     if (tokensLine != null) 
                     {
                         //Compare lines index, if different, replace

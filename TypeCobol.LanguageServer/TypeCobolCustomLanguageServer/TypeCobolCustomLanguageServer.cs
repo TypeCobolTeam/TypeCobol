@@ -42,7 +42,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         protected override void OnDidCloseTextDocument(DidCloseTextDocumentParams parameters)
         {
             base.OnDidCloseTextDocument(parameters);
-            if (UseOutlineRefresh && this.Workspace.DocumentModifiedEvent != null)
+            if (UseOutlineRefresh && this.Workspace.DocumentModifiedEvent != null && this.Workspace.OpenedDocumentContext.Count == 0)
                 this.Workspace.DocumentModifiedEvent -= DocumentModified;
 
         }
