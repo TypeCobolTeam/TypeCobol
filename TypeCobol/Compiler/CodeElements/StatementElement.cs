@@ -81,6 +81,7 @@ namespace TypeCobol.Compiler.CodeElements
         ExitMethodStatement,
         ExitProgramStatement,
         ExitStatement,
+        FreeStatement,
         GobackStatement,
         GotoSimpleStatement,
         GotoConditionalStatement,

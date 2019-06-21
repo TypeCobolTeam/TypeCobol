@@ -415,6 +415,12 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         void OnExitProgramStatement([NotNull] ExitProgramStatement stmt);
 
         /// <summary>
+        /// Free statement seen
+        /// </summary>
+        /// <param name="stmt">Free Statement code element</param>
+        void OnFreeStatement([NotNull] FreeStatement stmt);
+
+        /// <summary>
         /// GoBack Statement seen
         /// </summary>
         /// <param name="stmt">GoBack Statement code element</param>

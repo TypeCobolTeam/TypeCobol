@@ -189,6 +189,9 @@ codeElement:
 	returnStatement |
 	returnStatementEnd |
 	sortStatement |
+
+	// --- Dynamic allocation statements ---
+	freeStatement |
 	
 	// --- Conditions for conditional statements  ---
 	atEndCondition |
@@ -8243,3 +8246,7 @@ execStatementEnd: END_EXEC;
 // ------------------------------
 // End of DB2 coprocessor
 // ------------------------------
+
+// New Cobol v6.1 FREE statement that releases dynamic storage that was previously obtained with an ALLOCATE statement.
+freeStatement:
+	FREE dataItemReference+;

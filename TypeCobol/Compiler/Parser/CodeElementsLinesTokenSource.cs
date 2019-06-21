@@ -318,6 +318,9 @@ namespace TypeCobol.Compiler.Parser
                     case CodeElementType.ExitStatement:
                         codeElement = new ExitStatement();
                         break;
+                    case CodeElementType.FreeStatement:
+                        codeElement = new FreeStatement();
+                        break;
                     case CodeElementType.GobackStatement:
                         codeElement = new GobackStatement();
                         break;
