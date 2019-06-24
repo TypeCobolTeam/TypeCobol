@@ -190,8 +190,10 @@ codeElement:
 	returnStatementEnd |
 	sortStatement |
 
+//	 [COBOLV6]
 	// --- Dynamic allocation statements ---
 	freeStatement |
+//	[/COBOLV6]
 	
 	// --- Conditions for conditional statements  ---
 	atEndCondition |
@@ -213,6 +215,13 @@ codeElement:
 // what is here is not important as long as it is not epsilon
 tcCodeElement: PUBLIC | PRIVATE | UNSAFE;
 //	[/TYPECOBOL]
+
+
+//	 [COBOLV6]
+// dummy definition of Cobol v6 code elements, not used but required by Antlr.
+// see Cobol2002CodeElements.g4 for the proper definition.
+freeStatement: UNSAFE;
+//	[/COBOLV6]
 
 
 // --- Individual code elements syntax ---
@@ -8246,7 +8255,3 @@ execStatementEnd: END_EXEC;
 // ------------------------------
 // End of DB2 coprocessor
 // ------------------------------
-
-// New Cobol v6.1 FREE statement that releases dynamic storage that was previously obtained with an ALLOCATE statement.
-freeStatement:
-	FREE dataItemReference+;
