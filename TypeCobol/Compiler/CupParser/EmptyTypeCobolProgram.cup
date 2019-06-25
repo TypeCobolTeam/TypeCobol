@@ -48,6 +48,7 @@ terminal TypeCobol.Compiler.CodeElements.SpecialNamesParagraph SpecialNamesParag
 terminal TypeCobol.Compiler.CodeElements.RepositoryParagraph RepositoryParagraph;
 terminal TypeCobol.Compiler.CodeElements.AcceptStatement AcceptStatement;
 terminal TypeCobol.Compiler.CodeElements.AddStatement AddStatement;
+terminal TypeCobol.Compiler.CodeElements.AllocateStatement AllocateStatement;
 terminal TypeCobol.Compiler.CodeElements.AlterStatement AlterStatement;
 terminal TypeCobol.Compiler.CodeElements.CallStatement CallStatement;
 terminal TypeCobol.Compiler.CodeElements.CancelStatement CancelStatement;
@@ -811,6 +812,8 @@ singleStatement ::=
 	| ExecStatement:stmt
 	{:  :}
 // -- dynamic allocation --
+	| AllocateStatement:stmt
+	{:  :}
 	| FreeStatement:stmt
 	{:  :}
 	;

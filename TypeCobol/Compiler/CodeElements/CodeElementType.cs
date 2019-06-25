@@ -70,6 +70,7 @@ namespace TypeCobol.Compiler.CodeElements
 
         AcceptStatement,
         AddStatement,
+        AllocateStatement,
         AlterStatement,
         CallStatement,
         CancelStatement,

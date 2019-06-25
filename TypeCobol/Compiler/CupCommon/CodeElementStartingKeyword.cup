@@ -6,6 +6,7 @@
 codeElementStartingKeyword ::=
  ACCEPT
 |ADD
+|ALLOCATE
 |ALTER
 |APPLY
 |CALL

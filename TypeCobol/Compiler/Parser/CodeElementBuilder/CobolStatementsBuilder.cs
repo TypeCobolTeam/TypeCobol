@@ -5,6 +5,7 @@ using System.Linq;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -143,11 +144,26 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 
-		  /////////////////////
-		 // ALTER STATEMENT //
-		/////////////////////
+        ////////////////////////
+        // ALLOCATE STATEMENT //
+        ////////////////////////
 
-		internal CodeElement CreateAlterStatement(CodeElementsParser.AlterStatementContext context) {
+        internal AllocateStatement CreateAllocateStatement(CodeElementsParser.AllocateStatementContext context)
+        {
+            return new AllocateStatement
+                   {
+                       AllocatedSize = CobolExpressionsBuilder.CreateArithmeticExpression(context.arithmeticExpression()),
+                       AllocatedArea = CobolWordsBuilder.CreateDataNameReference(context.dataNameReference()),
+                       Initialized = context.KeywordINITIALIZED != null ? new SyntaxProperty<bool>(true, (Token)context.KeywordINITIALIZED) : null,
+                       ReturningPointer = CobolExpressionsBuilder.CreateDataItemReference(context.dataItemReference())
+                   };
+        }
+
+        /////////////////////
+        // ALTER STATEMENT //
+        /////////////////////
+
+        internal CodeElement CreateAlterStatement(CodeElementsParser.AlterStatementContext context) {
 			var statement = new AlterStatement();
 			int alterInstructionsCount = context.procedureName().Length / 2;
 			statement.AlterGotoInstructions = new AlterGotoInstruction[alterInstructionsCount];

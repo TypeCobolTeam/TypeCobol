@@ -99,6 +99,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] AddSimpleStatement addSimpleStatement);
         bool Visit([NotNull] AddGivingStatement addGivingStatement);
         bool Visit([NotNull] AddCorrespondingStatement addCorrespondingStatement);
+        bool Visit([NotNull] AllocateStatement allocateStatement);
         bool Visit([NotNull] AlterStatement alterStatement);
         bool Visit([NotNull] CallStatement callStatement);
         bool Visit([NotNull] CancelStatement cancelStatement);
@@ -262,6 +263,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] End end);
 
         bool Visit([NotNull] Accept accept);
+        bool Visit([NotNull] Allocate allocate);
         bool Visit([NotNull] Alter alter);
         bool Visit([NotNull] Call call);
         bool Visit([NotNull] ProcedureStyleCall procedureStyleCall);
@@ -425,6 +427,11 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(AddCorrespondingStatement addCorrespondingStatement) {
+            return true;
+        }
+
+        public virtual bool Visit(AllocateStatement allocateStatement)
+        {
             return true;
         }
 
@@ -1013,6 +1020,11 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(Accept accept) {
+            return true;
+        }
+
+        public virtual bool Visit(Allocate allocate)
+        {
             return true;
         }
 

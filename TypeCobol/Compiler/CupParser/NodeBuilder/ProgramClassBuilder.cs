@@ -864,6 +864,12 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
         }
 
+        public virtual void OnAllocateStatement(AllocateStatement stmt)
+        {
+            Enter(new Allocate(stmt), stmt);
+            Exit();
+        }
+
         public virtual void OnFreeStatement(FreeStatement stmt)
         {
             Enter(new Free(stmt), stmt);
