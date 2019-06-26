@@ -145,9 +145,7 @@ namespace TypeCobol.Compiler.Types
         public static GroupType DateCobol85 { get; private set;  }
         public static Type DateYYYYType = new PictureType(new PictureValidator("9(04)", false));
         public static Type DateMMType = new PictureType(new PictureValidator("9(02)", false));
-        public static Type DateDDType = DateMMType;
-        public static Type PicX = new PictureType(new PictureValidator("X", false));
-
+        public static Type DateDDType = DateMMType;       
 
         /// <summary>
         /// Expand a Custom Type.
