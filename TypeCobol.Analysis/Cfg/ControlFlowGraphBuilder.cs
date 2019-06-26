@@ -194,7 +194,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// The current Sentence in the current Paragraph.
         /// </summary>
-        internal BuilderSentence CurrentSentence
+        internal CfgSentence CurrentSentence
         {
             get;
             set;
@@ -239,12 +239,12 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// All pending Next Sentence instructions that will be handled at the end of the Procedure Division.
         /// </summary>
-        internal LinkedList<Tuple<NextSentence, BasicBlockForNode, BuilderSentence>> PendingNextSentences;
+        internal LinkedList<Tuple<NextSentence, BasicBlockForNode, CfgSentence>> PendingNextSentences;
 
         /// <summary>
         /// All encoutered sentences
         /// </summary>
-        internal List<BuilderSentence> AllSentences;
+        internal List<CfgSentence> AllSentences;
 
         public IList<Diagnostic> Diagnostics { get; private set; }
         /// <summary>
@@ -711,7 +711,7 @@ namespace TypeCobol.Analysis.Cfg
         /// Link this sentence to the current section or paragraph if any.
         /// </summary>
         /// <param name="block">The block to link</param>
-        private void LinkBlockSentenceToCurrentSectionParagraph(BuilderSentence block)
+        private void LinkBlockSentenceToCurrentSectionParagraph(CfgSentence block)
         {
             Symbol curSecorPara = ((Symbol)this.CurrentProgramCfgBuilder.CurrentParagraph) ?? this.CurrentProgramCfgBuilder.CurrentSection;
             if (curSecorPara != null)
@@ -732,7 +732,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// A Sentence used for our builder. A Senetence is a special symbol.
         /// </summary>
-        internal class BuilderSentence : Symbol
+        internal class CfgSentence : Symbol
         {
             /// <summary>
             /// Private symbol owner.
@@ -788,7 +788,7 @@ namespace TypeCobol.Analysis.Cfg
             /// <summary>
             /// ctor
             /// </summary>
-            public BuilderSentence()
+            public CfgSentence()
             {
                 BlockIndex = -1;
                 Kind = Kinds.Sentence;
@@ -812,10 +812,10 @@ namespace TypeCobol.Analysis.Cfg
         /// </summary>
         private void StartBlockSentence()
         {
-            this.CurrentProgramCfgBuilder.CurrentSentence = new BuilderSentence();
+            this.CurrentProgramCfgBuilder.CurrentSentence = new CfgSentence();
             if (this.CurrentProgramCfgBuilder.AllSentences == null)
             {
-                this.CurrentProgramCfgBuilder.AllSentences = new List<BuilderSentence>();
+                this.CurrentProgramCfgBuilder.AllSentences = new List<CfgSentence>();
             }
             this.CurrentProgramCfgBuilder.CurrentSentence.Number = this.CurrentProgramCfgBuilder.AllSentences.Count;
             this.CurrentProgramCfgBuilder.AllSentences.Add(this.CurrentProgramCfgBuilder.CurrentSentence);
@@ -1056,7 +1056,7 @@ namespace TypeCobol.Analysis.Cfg
             /// Enters a sentence symbol in this Paragraph.
             /// </summary>
             /// <param name="p">The paragraph to enter</param>
-            public void AddSentence(BuilderSentence s)
+            public void AddSentence(CfgSentence s)
             {
                 s.SetOwner(this);
                 SentencesParagraphs.Enter(s);
@@ -1119,7 +1119,7 @@ namespace TypeCobol.Analysis.Cfg
             /// <summary>
             /// All sentences in this paragraph in the order of appearance
             /// </summary>
-            public Scope<BuilderSentence> Sentences
+            public Scope<CfgSentence> Sentences
             {
                 get;
                 protected set;
@@ -1129,7 +1129,7 @@ namespace TypeCobol.Analysis.Cfg
             /// Enters a sentence symbol in this Paragraph.
             /// </summary>
             /// <param name="p">The paragraph to enter</param>
-            public void AddSentence(BuilderSentence s)
+            public void AddSentence(CfgSentence s)
             {
                 s.SetOwner(this);
                 Sentences.Enter(s);
@@ -1141,7 +1141,7 @@ namespace TypeCobol.Analysis.Cfg
             /// <param name="name">Pargarph's name</param>
             public CfgParagraphSymbol(string name) : base(name)
             {
-                Sentences = new Scope<BuilderSentence>(this);
+                Sentences = new Scope<CfgSentence>(this);
             }
             /// <summary>
             /// Set flags
@@ -1203,10 +1203,10 @@ namespace TypeCobol.Analysis.Cfg
                 foreach (var next in this.CurrentProgramCfgBuilder.PendingNextSentences)
                 {
                     BasicBlockForNode block = next.Item2;
-                    BuilderSentence sentence = next.Item3;
+                    CfgSentence sentence = next.Item3;
                     if (sentence.Number < this.CurrentProgramCfgBuilder.AllSentences.Count - 1)
                     {
-                        BuilderSentence nextSentence = AllSentences[sentence.Number + 1];
+                        CfgSentence nextSentence = AllSentences[sentence.Number + 1];
                         System.Diagnostics.Debug.Assert(!block.SuccessorEdges.Contains(nextSentence.BlockIndex));
                         block.SuccessorEdges.Add(nextSentence.BlockIndex);
                     }
@@ -1308,7 +1308,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="clonedBlockIndexMap">The Map of cloned map indices from the original indices to the new indicess of block</param>
         private void StoreProcedureSentenceBlocks(PerformProcedure p, Symbol procedureSymbol, BasicBlockForNodeGroup group, Dictionary<int,int> clonedBlockIndexMap)
         {
-            IEnumerable<BuilderSentence> procedureSentences = YieldSectionOrParagraphSentences(procedureSymbol);
+            IEnumerable<CfgSentence> procedureSentences = YieldSectionOrParagraphSentences(procedureSymbol);
             foreach (var sentence in procedureSentences)
             {
                 //A Sentence has at least one block
@@ -1492,7 +1492,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="target">The target section or paragraph
         /// <paramref name="symbol"/>The Symbol which resolved to the target
         /// <returns>The Enumeration of sentences associated to the target, null otherwise</returns>
-        private IEnumerable<BuilderSentence> ResolveSectionOrParagraphSentences(Node node, SymbolReference target, out Symbol symbol)
+        private IEnumerable<CfgSentence> ResolveSectionOrParagraphSentences(Node node, SymbolReference target, out Symbol symbol)
         {
             symbol = CheckSectionOrParagraph(node, target);
             return YieldSectionOrParagraphSentences(symbol);
@@ -1503,7 +1503,7 @@ namespace TypeCobol.Analysis.Cfg
         /// </summary>
         /// <param name="sectionOrParagraphSymbol">The Section or Paragraph symbol</param>
         /// <returns>The Enumeration of sentences associated to the symbol, null otherwise</returns>
-        private IEnumerable<BuilderSentence> YieldSectionOrParagraphSentences(Symbol sectionOrParagraphSymbol)
+        private IEnumerable<CfgSentence> YieldSectionOrParagraphSentences(Symbol sectionOrParagraphSymbol)
         {
             if (sectionOrParagraphSymbol != null)
             {
@@ -1531,7 +1531,7 @@ namespace TypeCobol.Analysis.Cfg
                         }
                         else
                         {
-                            BuilderSentence sentence = (BuilderSentence)part;
+                            CfgSentence sentence = (CfgSentence)part;
                             yield return sentence;
                         }
                     }
@@ -1555,7 +1555,7 @@ namespace TypeCobol.Analysis.Cfg
             {                
                 bool bHasOne = false;
                 Symbol targetSymbol = null;
-                IEnumerable<BuilderSentence> sentences = ResolveSectionOrParagraphSentences(@goto, sref, out targetSymbol);
+                IEnumerable<CfgSentence> sentences = ResolveSectionOrParagraphSentences(@goto, sref, out targetSymbol);
                 if (targetSymbol == null)
                 {
                     Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
@@ -2333,10 +2333,10 @@ namespace TypeCobol.Analysis.Cfg
 
                 if (this.CurrentProgramCfgBuilder.PendingNextSentences == null)
                 {
-                    this.CurrentProgramCfgBuilder.PendingNextSentences = new LinkedList<Tuple<NextSentence, BasicBlockForNode, BuilderSentence>>();
+                    this.CurrentProgramCfgBuilder.PendingNextSentences = new LinkedList<Tuple<NextSentence, BasicBlockForNode, CfgSentence>>();
                 }
                 //Track pending Next Sentences.
-                Tuple<NextSentence, BasicBlockForNode, BuilderSentence> item = new Tuple<NextSentence, BasicBlockForNode, BuilderSentence>(
+                Tuple<NextSentence, BasicBlockForNode, CfgSentence> item = new Tuple<NextSentence, BasicBlockForNode, CfgSentence>(
                     node, this.CurrentProgramCfgBuilder.CurrentBasicBlock, this.CurrentProgramCfgBuilder.CurrentSentence
                     );
                 this.CurrentProgramCfgBuilder.PendingNextSentences.AddLast(item);
@@ -2399,7 +2399,7 @@ namespace TypeCobol.Analysis.Cfg
                             continue;
 
                         Symbol resolveAlterProcSymbol = null;
-                        IEnumerable<BuilderSentence> sectionOrPara = this.CurrentProgramCfgBuilder.ResolveSectionOrParagraphSentences(alter, alterProc, out resolveAlterProcSymbol);
+                        IEnumerable<CfgSentence> sectionOrPara = this.CurrentProgramCfgBuilder.ResolveSectionOrParagraphSentences(alter, alterProc, out resolveAlterProcSymbol);
                         System.Diagnostics.Debug.Assert(resolveAlterProcSymbol == alterProcSymbol);
                         //So Look for the first Goto Instruction
                         foreach (var sb in sectionOrPara)
