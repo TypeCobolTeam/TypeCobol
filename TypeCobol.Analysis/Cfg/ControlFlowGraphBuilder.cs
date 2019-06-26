@@ -713,10 +713,10 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="block">The block to link</param>
         private void LinkBlockSentenceToCurrentSectionParagraph(CfgSentence block)
         {
-            Symbol curSecorPara = ((Symbol)this.CurrentProgramCfgBuilder.CurrentParagraph) ?? this.CurrentProgramCfgBuilder.CurrentSection;
-            if (curSecorPara != null)
+            Symbol curSecOrPara = ((Symbol)this.CurrentProgramCfgBuilder.CurrentParagraph) ?? this.CurrentProgramCfgBuilder.CurrentSection;
+            if (curSecOrPara != null)
             {
-                if (curSecorPara.Kind == Symbol.Kinds.Section)
+                if (curSecOrPara.Kind == Symbol.Kinds.Section)
                 {
                     this.CurrentProgramCfgBuilder.CurrentSection.AddSentence(block);
                 }
@@ -725,12 +725,12 @@ namespace TypeCobol.Analysis.Cfg
                     this.CurrentProgramCfgBuilder.CurrentParagraph.AddSentence(block);
                 }
                 //Give to this block the name of its paragraph as tag.
-                block.Block.Tag = curSecorPara.Name;
+                block.Block.Tag = curSecOrPara.Name;
             }
         }
 
         /// <summary>
-        /// A Sentence used for our builder. A Senetence is a special symbol.
+        /// A Sentence used for our builder. A Sentence is a special symbol.
         /// </summary>
         internal class CfgSentence : Symbol
         {
@@ -742,7 +742,7 @@ namespace TypeCobol.Analysis.Cfg
                 Owner = owner;
             }
             /// <summary>
-            /// First Block asociated to this sentence.
+            /// First Block associated to this sentence.
             /// </summary>
             internal BasicBlockForNode Block
             {
@@ -798,7 +798,7 @@ namespace TypeCobol.Analysis.Cfg
             /// <summary>
             /// Set flags
             /// </summary>
-            /// <param name="flag">The falg to be set</param>
+            /// <param name="flag">The flag to be set</param>
             /// <param name="value">The value to set</param>
             internal void SetFlag(Symbol.Flags flag, bool value)
             {
@@ -983,7 +983,7 @@ namespace TypeCobol.Analysis.Cfg
             }
             sym.Number = this.CurrentProgramCfgBuilder.AllSectionsParagraphs.Count;
             this.CurrentProgramCfgBuilder.AllSectionsParagraphs.Add(sym);
-            //Special case Section or Pargraphe inside a Declarative
+            //Special case Section or Paragraph inside a Declarative
             if (this.CurrentProgramCfgBuilder.CurrentDeclarativesContext != null)
             { 
                 switch (sym.Kind)
@@ -1008,7 +1008,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// Resolve a section or a paragraph symbol reference
         /// </summary>
-        /// <param name="symRef">The Symbol Reference instance to a section or a pargraph.</param>
+        /// <param name="symRef">The Symbol Reference instance to a section or a paragraph.</param>
         /// <returns>The scope of symbols found</returns>
         internal Scope<Symbol>.MultiSymbols ResolveSectionOrParagraphSymbol(SymbolReference symRef)
         {
@@ -1044,7 +1044,7 @@ namespace TypeCobol.Analysis.Cfg
             }
 
             /// <summary>
-            /// All sentences and paragraph in this section in the order of appearance.
+            /// All sentences and paragraphs in this section in the order of appearance.
             /// </summary>
             public Scope<Symbol> SentencesParagraphs
             {
