@@ -81,6 +81,11 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         public static void CheckTypeDefinition(TypeDefinition typeDefinition)
         {
+            if (typeDefinition.IsFlagSet(Node.Flag.GlobalStorageSection))
+            {
+                DiagnosticUtils.AddError(typeDefinition, "Illegal Type Definition in Global-Storage Section");
+            }
+
             if (typeDefinition.SymbolTable.GetType(new URI(typeDefinition.DataType.Name)).Any(t => t != typeDefinition))
             {
                 var message = string.Format("TYPE '{0}' has already been declared", typeDefinition.DataType.Name);

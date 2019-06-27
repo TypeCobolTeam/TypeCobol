@@ -9,6 +9,8 @@
        01 G-Date            TYPE Date.
        01 G-TechCtx         TYPE Bool.
        01 DuplicatedVar     TYPE Bool.
+      *KO, no typedef allowed in global-storage
+       01 ForbiddenTypedef typedef strict pic X.
 
        01 Test48.
           49 NoVar PIC X.
@@ -25,6 +27,8 @@
        01 DuplicatedVar     TYPE Bool.
        01 MyGroup PIC X(10).
            88 TestLevel VALUE "Test".
+      *KO TypeDefs in Global-Storage Section are not referenced in SymbolTable
+       01 invalidTypedVar TYPE ForbiddenTypedef.
 
        PROCEDURE DIVISION.
 
