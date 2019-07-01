@@ -43,6 +43,14 @@ namespace TypeCobol.Codegen.Nodes {
                         DeclareProceduresParametersIntoLinkage(originalNode, linkageSection, originalNode.Profile);
                     }
                     
+                    if (originalNode.IsFlagSet(Node.Flag.UseGlobalStorage))
+                    {
+                        if (dataDivision == null)
+                        {
+                            dataDivision = GetOrCreateNode<Compiler.Nodes.DataDivision>(originalNode, () => new DataDivision());
+                        }
+                        (linkageSection ?? GetOrCreateNode<Compiler.Nodes.LinkageSection>(dataDivision, () => new LinkageSection(originalNode), dataDivision)).Add(new GlobalStorage.GlobalStorageNode());
+                    }
 
                     //Replace ProcedureDivision node with a new one and keep all original children
                     var sentences = new List<Node>();
@@ -51,11 +59,6 @@ namespace TypeCobol.Codegen.Nodes {
                     var pdiv = new ProcedureDivision(originalNode, sentences);
                     children.Add(pdiv);
 
-                    if (originalNode.IsFlagSet(Node.Flag.UseGlobalStorage))
-                    {
-                        dataDivision = GetOrCreateNode<Compiler.Nodes.DataDivision>(originalNode, () => new DataDivision());
-                        (linkageSection ?? GetOrCreateNode<Compiler.Nodes.LinkageSection>(dataDivision, () => new LinkageSection(originalNode), dataDivision)).Add(new GlobalStorage.GlobalStorageNode());
-                    }
 
                     //Generate code if this procedure call a public procedure in another source
                     if (containsPublicCall) {
@@ -81,7 +84,6 @@ namespace TypeCobol.Codegen.Nodes {
                             new GeneratedNode2("             by reference address of TC-GlobalData", true),
                             new GeneratedNode2("    end-call", true),
                         };
-                        var lastParagraphIndex = pdiv.Children.LastOrDefault(c => c is Paragraph)?.NodeIndex ?? 0;
                         pdiv.AddRange(toAddRange, 0);
                     }
                 } else {

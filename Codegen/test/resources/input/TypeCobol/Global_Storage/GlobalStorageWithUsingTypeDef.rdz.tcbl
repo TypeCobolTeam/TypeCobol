@@ -1,0 +1,36 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. GlobalStorageTest.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+      
+       SOURCE-COMPUTER. IBM-370.
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+       DATA DIVISION.
+       GLOBAL-STORAGE SECTION.
+       01 SetSharedDataIsDone   type BOOL.
+       01 SharedData            type SharedData.
+      
+      
+       WORKING-STORAGE SECTION.
+       01 SharedData typedef strict public.
+           05 LevelMore.
+               10 PgmInfo1 TYPE PgmInfo.
+           05 PlusOneLevel.
+               10 UselessVar1                     PIC X(9).
+      
+       01 PgmInfo   TYPEDEF STRICT PUBLIC.
+           05 ProgramName                     PIC X(08).
+           05 TechnicalContext                type Date.
+      
+      
+       PROCEDURE DIVISION.
+       INIT-LIBRARY.
+           move "foo" to SharedData::LevelMore::PgmInfo1::ProgramName
+           .
+      
+       DECLARE PROCEDURE ReadEconomicData PUBLIC.
+       PROCEDURE DIVISION.
+               move "foo" to SharedData::ProgramName
+           .
+       END-DECLARE.
+       END PROGRAM GlobalStorageTest.

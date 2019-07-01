@@ -494,7 +494,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     IndexAndFlagDataDefiniton(dataDefinitionPath, dataDefinitionFound, node, area, storageArea);
                 }
 
-                if (dataDefinitionFound.IsFlagSet(Node.Flag.GlobalStorageSection))
+                if (dataDefinitionFound.IsFlagSet(Node.Flag.GlobalStorageSection) || dataDefinitionPath != null && dataDefinitionPath.CurrentDataDefinition.IsFlagSet(Node.Flag.GlobalStorageSection))
                 {
                     if (node is DataDefinition)
                     {

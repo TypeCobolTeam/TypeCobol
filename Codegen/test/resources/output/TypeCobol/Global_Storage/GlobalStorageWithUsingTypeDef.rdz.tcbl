@@ -1,0 +1,184 @@
+﻿      *TypeCobol_Version:TestTypeCobolVersion
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. GlobalStorageTest.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+      
+       SOURCE-COMPUTER. IBM-370.
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+       DATA DIVISION.
+      *GLOBAL-STORAGE SECTION.
+      *01 SetSharedDataIsDone   type BOOL.
+      *01 SharedData            type SharedData.
+      
+      
+       WORKING-STORAGE SECTION.
+      *01 SharedData typedef strict public.
+      *    05 LevelMore.
+      *        10 PgmInfo1 TYPE PgmInfo.
+      *    05 PlusOneLevel.
+      *        10 UselessVar1                     PIC X(9).
+      
+      *01 PgmInfo   TYPEDEF STRICT PUBLIC.
+      *    05 ProgramName                     PIC X(08).
+      *    05 TechnicalContext                type Date.
+       01  TC-GlobalSt-FctList-Loaded PIC X(02).
+           88 TC-GlobalSt-FctList-IsLoaded      VALUE 'OK'.
+       01 TC-GlobalSt-PntTab.
+           05 TC-GlobalSt-PntNbr         PIC S9(04) COMP VALUE 1.
+      *To call program dc31cc72ReadEconomicData
+      *Which is generated code for GlobalStorageTest.ReadEconomicData
+      *Declared in source file GlobalStorageWithUsingTypeDef.rdz.tcbl
+           05 TC-GlobalSt-dc31cc72-Idt   PIC X(08) VALUE 'dc31cc72'.
+           05 TC-GlobalSt-dc31cc72 PROCEDURE-POINTER.
+
+       LINKAGE SECTION.
+
+       01 TC-GlobalData.
+
+      *01 SetSharedDataIsDone   type BOOL.
+       02  SetSharedDataIsDone-value PIC X VALUE LOW-VALUE.
+           88  SetSharedDataIsDone       VALUE 'T'.
+           88  SetSharedDataIsDone-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+
+      *01 SharedData            type SharedData.
+       02 SharedData.
+           03 LevelMore.
+             04 PgmInfo1.
+               05 ProgramName PIC X(08).
+               05 TechnicalContext.
+                 06 YYYY PIC 9(4).
+                 06 MM PIC 9(2).
+                 06 DD PIC 9(2).
+           03 PlusOneLevel.
+             04 UselessVar1 PIC X(9).
+
+
+       01 PntTab-Pnt POINTER.
+
+      
+      
+       PROCEDURE DIVISION USING PntTab-Pnt.
+                          
+      *
+      *    IF CallIsCopy
+      *      PERFORM Copy-Process-Mode
+      *    ELSE
+           PERFORM FctList-Process-Mode
+           perform INIT-LIBRARY
+      *    END-IF
+
+           GOBACK.
+
+        FctList-Process-Mode.
+            IF NOT TC-GlobalSt-FctList-IsLoaded
+              SET TC-GlobalSt-dc31cc72   TO ENTRY 'dc31cc72'
+
+              SET TC-GlobalSt-FctList-IsLoaded TO TRUE
+            END-IF
+               .
+
+            set PntTab-Pnt TO ADDRESS OF TC-GlobalSt-PntTab
+
+           .
+                          
+       INIT-LIBRARY.
+      * Get the data from the global storage section
+           CALL 'a9a9a5eaTC-GetGlobal' USING
+               by reference address of TC-GlobalData
+           end-call
+
+                    
+      *    move "foo" to SharedData::LevelMore::PgmInfo1::ProgramName
+           move "foo" to ProgramName OF PgmInfo1 OF LevelMore OF 
+                                                SharedData
+           .
+      
+      *DECLARE PROCEDURE ReadEconomicData PUBLIC.
+       END PROGRAM GlobalStorageTest.
+      *
+      *DECLARE PROCEDURE ReadEconomicData PUBLIC.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. dc31cc72ReadEconomicData.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370.
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+       DATA DIVISION.
+       LINKAGE SECTION.
+      *GlobalStorageTest.ReadEconomicData  - No Params
+       01 TC-GlobalData.
+
+      *01 SetSharedDataIsDone   type BOOL.
+       02  SetSharedDataIsDone-value PIC X VALUE LOW-VALUE.
+           88  SetSharedDataIsDone       VALUE 'T'.
+           88  SetSharedDataIsDone-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+
+      *01 SharedData            type SharedData.
+       02 SharedData.
+           03 LevelMore.
+             04 PgmInfo1.
+               05 ProgramName PIC X(08).
+               05 TechnicalContext.
+                 06 YYYY PIC 9(4).
+                 06 MM PIC 9(2).
+                 06 DD PIC 9(2).
+           03 PlusOneLevel.
+             04 UselessVar1 PIC X(9).
+
+
+       PROCEDURE DIVISION
+           .
+      *GlobalStorageTest.ReadEconomicData  - No Params
+           CALL 'a9a9a5eaTC-GetGlobal' USING
+                    by reference address of TC-GlobalData
+           end-call
+      *        move "foo" to SharedData::ProgramName
+               move "foo" to ProgramName OF SharedData
+           .
+       END PROGRAM dc31cc72ReadEconomicData.
+      *
+      * Global Storage Section variables
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. a9a9a5eaTC-GetGlobal.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370.
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 PIC X(8) value ':TC:GBLS'.
+       01 TC-GlobalData.
+       
+      *01 SetSharedDataIsDone   type BOOL.
+       02  SetSharedDataIsDone-value PIC X VALUE LOW-VALUE.
+           88  SetSharedDataIsDone       VALUE 'T'.
+           88  SetSharedDataIsDone-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                                          
+      *01 SharedData            type SharedData.
+       02 SharedData.
+           03 LevelMore.
+             04 PgmInfo1.
+               05 ProgramName PIC X(08).
+               05 TechnicalContext.
+                 06 YYYY PIC 9(4).
+                 06 MM PIC 9(2).
+                 06 DD PIC 9(2).
+           03 PlusOneLevel.
+             04 UselessVar1 PIC X(9).
+                                                
+
+       LINKAGE SECTION.
+       01 GlobalPointer pointer.
+       PROCEDURE DIVISION USING BY REFERENCE GlobalPointer.
+           set GlobalPointer to address of TC-GlobalData
+           .
+       END PROGRAM a9a9a5eaTC-GetGlobal.
