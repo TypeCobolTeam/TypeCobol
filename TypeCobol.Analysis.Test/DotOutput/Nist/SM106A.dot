@@ -64,7 +64,7 @@ label = "{WRT-LN. Block130|    MOVE SPACE TO DUMMY-RECORD\l}"
 Block129 -> Block130
 
 }
-Block127 -> Block129 [style=dashed, arrowhead=none]
+Block127 -> Block129 [style=dashed]
 
 Block128 [
 label = "{Block128|}"
@@ -74,7 +74,7 @@ Block126 -> Block127
 Block127 -> Block128
 
 }
-Block51 -> Block125 [style=dashed, arrowhead=none]
+Block51 -> Block125 [style=dashed]
 
 Block52 [
 label = "{Block52|}"
@@ -100,7 +100,7 @@ label = "{WRITE-LINE. Block126|}"
 Block127 [
 label = "{Block127|    PERFORM WRT-LN\l}"
 ]
-Block127 -> Block129 [style=dashed, arrowhead=none]
+Block127 -> Block129 [style=dashed]
 
 Block128 [
 label = "{Block128|}"
@@ -110,7 +110,7 @@ Block126 -> Block127
 Block127 -> Block128
 
 }
-Block55 -> Block125 [style=dashed, arrowhead=none]
+Block55 -> Block125 [style=dashed]
 
 Block56 [
 label = "{Block56|}"
@@ -136,7 +136,7 @@ label = "{WRITE-LINE. Block126|}"
 Block127 [
 label = "{Block127|    PERFORM WRT-LN\l}"
 ]
-Block127 -> Block129 [style=dashed, arrowhead=none]
+Block127 -> Block129 [style=dashed]
 
 Block128 [
 label = "{Block128|}"
@@ -146,7 +146,7 @@ Block126 -> Block127
 Block127 -> Block128
 
 }
-Block59 -> Block125 [style=dashed, arrowhead=none]
+Block59 -> Block125 [style=dashed]
 
 Block60 [
 label = "{Block60|}"
@@ -172,7 +172,7 @@ label = "{WRITE-LINE. Block126|}"
 Block127 [
 label = "{Block127|    PERFORM WRT-LN\l}"
 ]
-Block127 -> Block129 [style=dashed, arrowhead=none]
+Block127 -> Block129 [style=dashed]
 
 Block128 [
 label = "{Block128|}"
@@ -182,7 +182,7 @@ Block126 -> Block127
 Block127 -> Block128
 
 }
-Block63 -> Block125 [style=dashed, arrowhead=none]
+Block63 -> Block125 [style=dashed]
 
 Block64 [
 label = "{Block64|}"
@@ -208,7 +208,7 @@ label = "{WRITE-LINE. Block126|}"
 Block127 [
 label = "{Block127|    PERFORM WRT-LN\l}"
 ]
-Block127 -> Block129 [style=dashed, arrowhead=none]
+Block127 -> Block129 [style=dashed]
 
 Block128 [
 label = "{Block128|}"
@@ -218,7 +218,7 @@ Block126 -> Block127
 Block127 -> Block128
 
 }
-Block67 -> Block125 [style=dashed, arrowhead=none]
+Block67 -> Block125 [style=dashed]
 
 Block68 [
 label = "{Block68|}"
@@ -244,7 +244,7 @@ label = "{WRITE-LINE. Block126|}"
 Block127 [
 label = "{Block127|    PERFORM WRT-LN\l}"
 ]
-Block127 -> Block129 [style=dashed, arrowhead=none]
+Block127 -> Block129 [style=dashed]
 
 Block128 [
 label = "{Block128|}"
@@ -254,7 +254,7 @@ Block126 -> Block127
 Block127 -> Block128
 
 }
-Block71 -> Block125 [style=dashed, arrowhead=none]
+Block71 -> Block125 [style=dashed]
 
 Block72 [
 label = "{Block72|}"
@@ -280,7 +280,7 @@ label = "{WRITE-LINE. Block126|}"
 Block127 [
 label = "{Block127|    PERFORM WRT-LN\l}"
 ]
-Block127 -> Block129 [style=dashed, arrowhead=none]
+Block127 -> Block129 [style=dashed]
 
 Block128 [
 label = "{Block128|}"
@@ -290,7 +290,7 @@ Block126 -> Block127
 Block127 -> Block128
 
 }
-Block75 -> Block125 [style=dashed, arrowhead=none]
+Block75 -> Block125 [style=dashed]
 
 Block76 [
 label = "{Block76|}"
@@ -324,7 +324,7 @@ Block74 -> Block75
 Block75 -> Block76
 
 }
-Block6 -> Block49 [style=dashed, arrowhead=none]
+Block6 -> Block49 [style=dashed]
 
 Block7 [
 label = "{Block7|}"
@@ -356,7 +356,7 @@ label = "{WRITE-LINE. Block126|}"
 Block127 [
 label = "{Block127|    PERFORM WRT-LN\l}"
 ]
-Block127 -> Block129 [style=dashed, arrowhead=none]
+Block127 -> Block129 [style=dashed]
 
 Block128 [
 label = "{Block128|}"
@@ -366,7 +366,7 @@ Block126 -> Block127
 Block127 -> Block128
 
 }
-Block179 -> Block125 [style=dashed, arrowhead=none]
+Block179 -> Block125 [style=dashed]
 
 Block180 [
 label = "{Block180|}"
@@ -398,7 +398,7 @@ label = "{WRT-LN. Block130|    MOVE SPACE TO DUMMY-RECORD\l}"
 Block129 -> Block130
 
 }
-Block132 -> Block129 [style=dashed, arrowhead=none]
+Block132 -> Block129 [style=dashed]
 
 Block133 [
 label = "{Block133|}"
@@ -407,7 +407,7 @@ Block131 -> Block132
 Block132 -> Block133
 
 }
-Block182 -> Block131 [style=dashed, arrowhead=none]
+Block182 -> Block131 [style=dashed]
 
 Block183 [
 label = "{Block183|}"
@@ -433,7 +433,7 @@ label = "{WRITE-LINE. Block126|}"
 Block127 [
 label = "{Block127|    PERFORM WRT-LN\l}"
 ]
-Block127 -> Block129 [style=dashed, arrowhead=none]
+Block127 -> Block129 [style=dashed]
 
 Block128 [
 label = "{Block128|}"
@@ -443,7 +443,7 @@ Block126 -> Block127
 Block127 -> Block128
 
 }
-Block186 -> Block125 [style=dashed, arrowhead=none]
+Block186 -> Block125 [style=dashed]
 
 Block187 [
 label = "{Block187|}"
@@ -466,7 +466,7 @@ label = "{INSPT. Block17|INSPT. MOVE \"INSPT\" TO P-OR-F. ADD 1 TO INSPECT-COUNT
 Block16 -> Block17
 
 }
-Block189 -> Block16 [style=dashed, arrowhead=none]
+Block189 -> Block16 [style=dashed]
 
 Block190 [
 label = "{Block190|}"
@@ -504,7 +504,7 @@ label = "{WRITE-LINE. Block126|}"
 Block127 [
 label = "{Block127|    PERFORM WRT-LN\l}"
 ]
-Block127 -> Block129 [style=dashed, arrowhead=none]
+Block127 -> Block129 [style=dashed]
 
 Block128 [
 label = "{Block128|}"
@@ -514,7 +514,7 @@ Block126 -> Block127
 Block127 -> Block128
 
 }
-Block79 -> Block125 [style=dashed, arrowhead=none]
+Block79 -> Block125 [style=dashed]
 
 Block80 [
 label = "{Block80|}"
@@ -540,7 +540,7 @@ label = "{WRITE-LINE. Block126|}"
 Block127 [
 label = "{Block127|    PERFORM WRT-LN\l}"
 ]
-Block127 -> Block129 [style=dashed, arrowhead=none]
+Block127 -> Block129 [style=dashed]
 
 Block128 [
 label = "{Block128|}"
@@ -550,7 +550,7 @@ Block126 -> Block127
 Block127 -> Block128
 
 }
-Block83 -> Block125 [style=dashed, arrowhead=none]
+Block83 -> Block125 [style=dashed]
 
 Block84 [
 label = "{Block84|}"
@@ -591,7 +591,7 @@ label = "{WRITE-LINE. Block126|}"
 Block127 [
 label = "{Block127|    PERFORM WRT-LN\l}"
 ]
-Block127 -> Block129 [style=dashed, arrowhead=none]
+Block127 -> Block129 [style=dashed]
 
 Block128 [
 label = "{Block128|}"
@@ -601,7 +601,7 @@ Block126 -> Block127
 Block127 -> Block128
 
 }
-Block92 -> Block125 [style=dashed, arrowhead=none]
+Block92 -> Block125 [style=dashed]
 
 Block93 [
 label = "{Block93|}"
@@ -610,10 +610,10 @@ Block94 [
 label = "{END-ROUTINE-12. Block94|     MOVE \"TEST(S) FAILED\" TO ENDER-DESC\l}"
 ]
 Block95 [
-label = "{END-ROUTINE-12. Block95|}"
+label = "{END-ROUTINE-12. Block95|    IF       ERROR-COUNTER IS EQUAL TO ZERO\l}"
 ]
 Block96 [
-label = "{Block96|    IF       ERROR-COUNTER IS EQUAL TO ZERO\l        MOVE \"NO \" TO ERROR-TOTAL\l}"
+label = "{Block96|        MOVE \"NO \" TO ERROR-TOTAL\l}"
 ]
 Block98 [
 label = "{Block98|}"
@@ -639,7 +639,7 @@ label = "{WRITE-LINE. Block126|}"
 Block127 [
 label = "{Block127|    PERFORM WRT-LN\l}"
 ]
-Block127 -> Block129 [style=dashed, arrowhead=none]
+Block127 -> Block129 [style=dashed]
 
 Block128 [
 label = "{Block128|}"
@@ -649,16 +649,16 @@ Block126 -> Block127
 Block127 -> Block128
 
 }
-Block101 -> Block125 [style=dashed, arrowhead=none]
+Block101 -> Block125 [style=dashed]
 
 Block102 [
 label = "{Block102|}"
 ]
 Block103 [
-label = "{END-ROUTINE-13. Block103|}"
+label = "{END-ROUTINE-13. Block103|    IF DELETE-COUNTER IS EQUAL TO ZERO\l}"
 ]
 Block104 [
-label = "{Block104|    IF DELETE-COUNTER IS EQUAL TO ZERO\l        MOVE \"NO \" TO ERROR-TOTAL\l}"
+label = "{Block104|        MOVE \"NO \" TO ERROR-TOTAL\l}"
 ]
 Block106 [
 label = "{Block106|}"
@@ -687,7 +687,7 @@ label = "{WRITE-LINE. Block126|}"
 Block127 [
 label = "{Block127|    PERFORM WRT-LN\l}"
 ]
-Block127 -> Block129 [style=dashed, arrowhead=none]
+Block127 -> Block129 [style=dashed]
 
 Block128 [
 label = "{Block128|}"
@@ -697,16 +697,16 @@ Block126 -> Block127
 Block127 -> Block128
 
 }
-Block110 -> Block125 [style=dashed, arrowhead=none]
+Block110 -> Block125 [style=dashed]
 
 Block111 [
 label = "{Block111|}"
 ]
 Block112 [
-label = "{END-ROUTINE-13. Block112|}"
+label = "{END-ROUTINE-13. Block112|     IF   INSPECT-COUNTER EQUAL TO ZERO\l}"
 ]
 Block113 [
-label = "{Block113|     IF   INSPECT-COUNTER EQUAL TO ZERO\l         MOVE \"NO \" TO ERROR-TOTAL\l}"
+label = "{Block113|         MOVE \"NO \" TO ERROR-TOTAL\l}"
 ]
 Block115 [
 label = "{Block115|}"
@@ -735,7 +735,7 @@ label = "{WRITE-LINE. Block126|}"
 Block127 [
 label = "{Block127|    PERFORM WRT-LN\l}"
 ]
-Block127 -> Block129 [style=dashed, arrowhead=none]
+Block127 -> Block129 [style=dashed]
 
 Block128 [
 label = "{Block128|}"
@@ -745,7 +745,7 @@ Block126 -> Block127
 Block127 -> Block128
 
 }
-Block119 -> Block125 [style=dashed, arrowhead=none]
+Block119 -> Block125 [style=dashed]
 
 Block120 [
 label = "{Block120|}"
@@ -771,7 +771,7 @@ label = "{WRITE-LINE. Block126|}"
 Block127 [
 label = "{Block127|    PERFORM WRT-LN\l}"
 ]
-Block127 -> Block129 [style=dashed, arrowhead=none]
+Block127 -> Block129 [style=dashed]
 
 Block128 [
 label = "{Block128|}"
@@ -781,7 +781,7 @@ Block126 -> Block127
 Block127 -> Block128
 
 }
-Block123 -> Block125 [style=dashed, arrowhead=none]
+Block123 -> Block125 [style=dashed]
 
 Block124 [
 label = "{Block124|}"
@@ -847,7 +847,7 @@ Block105 -> Block106
 Block97 -> Block98
 
 }
-Block11 -> Block77 [style=dashed, arrowhead=none]
+Block11 -> Block77 [style=dashed]
 
 Block12 [
 label = "{Block12|}"

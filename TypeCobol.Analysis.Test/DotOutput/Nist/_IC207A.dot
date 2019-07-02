@@ -70,28 +70,28 @@ Block24 [
 label = "{LINK-TEST-03. Block24|MoveStatement\l}"
 ]
 Block25 [
-label = "{LINK-TEST-03-01. Block25|}"
+label = "{LINK-TEST-03-01. Block25|IfStatement\l}"
 ]
 Block26 [
-label = "{Block26|IfStatement\lMoveStatement\l}"
+label = "{Block26|MoveStatement\l}"
 ]
 Block27 [
 label = "{Block27|}"
 ]
 Block28 [
-label = "{LINK-TEST-03-02. Block28|}"
+label = "{LINK-TEST-03-02. Block28|IfStatement\l}"
 ]
 Block29 [
-label = "{Block29|IfStatement\lMoveStatement\l}"
+label = "{Block29|MoveStatement\l}"
 ]
 Block31 [
 label = "{Block31|}"
 ]
 Block32 [
-label = "{LINK-TEST-03-03. Block32|}"
+label = "{LINK-TEST-03-03. Block32|IfStatement\l}"
 ]
 Block33 [
-label = "{Block33|IfStatement\lMoveStatement\l}"
+label = "{Block33|MoveStatement\l}"
 ]
 Block34 [
 label = "{Block34|}"

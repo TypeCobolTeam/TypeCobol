@@ -74,7 +74,7 @@ Block18 -> Block20
 Block19 -> Block20
 
 }
-Block3 -> Block9 [style=dashed, arrowhead=none]
+Block3 -> Block9 [style=dashed]
 
 Block4 [
 label = "{Block4|}"

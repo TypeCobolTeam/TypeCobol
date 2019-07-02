@@ -13,10 +13,10 @@ Block1 [
 label = "{LINK-TEST-08. Block1|    ADD 1 TO COUNT-OF-RECORDS\l}"
 ]
 Block2 [
-label = "{LINK-TEST-08. Block2|}"
+label = "{LINK-TEST-08. Block2|    IF COUNT-OF-RECORDS NOT EQUAL TO XRECORD-NUMBER\l}"
 ]
 Block3 [
-label = "{Block3|    IF COUNT-OF-RECORDS NOT EQUAL TO XRECORD-NUMBER\l        GO TO LINK-FAIL-08\l}"
+label = "{Block3|        GO TO LINK-FAIL-08\l}"
 ]
 Block24 [
 label = "{LINK-FAIL-08. Block24|    ADD 1 TO RECORDS-IN-ERROR\l}"
@@ -34,37 +34,37 @@ Block5 [
 label = "{Block5|}"
 ]
 Block6 [
-label = "{LINK-TEST-08. Block6|}"
+label = "{LINK-TEST-08. Block6|    IF REELUNIT-NUMBER-GROUP NOT EQUAL TO \"/0\"\l}"
 ]
 Block7 [
-label = "{Block7|    IF REELUNIT-NUMBER-GROUP NOT EQUAL TO \"/0\"\l        GO TO LINK-FAIL-08\l}"
+label = "{Block7|        GO TO LINK-FAIL-08\l}"
 ]
 Block9 [
 label = "{Block9|}"
 ]
 Block10 [
-label = "{LINK-TEST-08. Block10|}"
+label = "{LINK-TEST-08. Block10|    IF XFILE-NAME NOT EQUAL TO \"SQ-FS3\"\l}"
 ]
 Block11 [
-label = "{Block11|    IF XFILE-NAME NOT EQUAL TO \"SQ-FS3\"\l        GO TO LINK-FAIL-08\l}"
+label = "{Block11|        GO TO LINK-FAIL-08\l}"
 ]
 Block13 [
 label = "{Block13|}"
 ]
 Block14 [
-label = "{LINK-TEST-08. Block14|}"
+label = "{LINK-TEST-08. Block14|    IF XRECORD-NAME NOT EQUAL TO \"R1-F-G\"\l}"
 ]
 Block15 [
-label = "{Block15|    IF XRECORD-NAME NOT EQUAL TO \"R1-F-G\"\l        GO TO LINK-FAIL-08\l}"
+label = "{Block15|        GO TO LINK-FAIL-08\l}"
 ]
 Block17 [
 label = "{Block17|}"
 ]
 Block18 [
-label = "{LINK-TEST-08. Block18|}"
+label = "{LINK-TEST-08. Block18|    IF XLABEL-TYPE NOT EQUAL TO \"S\"\l}"
 ]
 Block19 [
-label = "{Block19|    IF XLABEL-TYPE NOT EQUAL TO \"S\"\l        GO TO LINK-FAIL-08\l}"
+label = "{Block19|        GO TO LINK-FAIL-08\l}"
 ]
 Block21 [
 label = "{Block21|}"

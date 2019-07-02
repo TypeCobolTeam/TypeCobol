@@ -10,18 +10,21 @@ Block0 [
 label = "{START|}"
 ]
 Block1 [
-label = "{Block1|    PERFORM UNTIL posibility\l    DISPLAY \"action = \" NO ADVANCING\l      ACCEPT action\l}"
+label = "{Block1|    PERFORM UNTIL posibility\l}"
 ]
 Block2 [
-label = "{Block2|    DISPLAY \"Right action !\"\l}"
+label = "{Block2|    DISPLAY \"action = \" NO ADVANCING\l      ACCEPT action\l}"
 ]
 Block3 [
-label = "{Block3|    STOP RUN\l}"
+label = "{Block3|    DISPLAY \"Right action !\"\l}"
+]
+Block4 [
+label = "{Block4|    STOP RUN\l}"
 ]
 Block0 -> Block1
-Block0 -> Block2
 Block1 -> Block2
-Block1 -> Block1
-Block2 -> Block3
+Block1 -> Block3
+Block2 -> Block1
+Block3 -> Block4
 
 }

@@ -10,37 +10,37 @@ Block0 [
 label = "{START|}"
 ]
 Block1 [
-label = "{IF403M-PRESENT-VALUE. Block1|}"
+label = "{IF403M-PRESENT-VALUE. Block1|    IF FUNCTION PRESENT-VALUE (0, 23, 12, 9) =          FUNCTION PRESENT-VALUE (0, 23, 12, 9)\l}"
 ]
 Block2 [
-label = "{Block2|    IF FUNCTION PRESENT-VALUE (0, 23, 12, 9) =          FUNCTION PRESENT-VALUE (0, 23, 12, 9)\l                CONTINUE\l}"
+label = "{Block2|                CONTINUE\l}"
 ]
 Block3 [
 label = "{Block3|}"
 ]
 Block4 [
-label = "{IF403M-RANDOM. Block4|}"
+label = "{IF403M-RANDOM. Block4|    IF FUNCTION RANDOM (1) = FUNCTION RANDOM (1)\l}"
 ]
 Block5 [
-label = "{Block5|    IF FUNCTION RANDOM (1) = FUNCTION RANDOM (1)\l                CONTINUE\l}"
+label = "{Block5|                CONTINUE\l}"
 ]
 Block6 [
 label = "{Block6|}"
 ]
 Block7 [
-label = "{IF403M-RANGE. Block7|}"
+label = "{IF403M-RANGE. Block7|    IF FUNCTION RANGE (5, -2, -14, 0) =          FUNCTION RANGE (5, -2, -14, 0)\l}"
 ]
 Block8 [
-label = "{Block8|    IF FUNCTION RANGE (5, -2, -14, 0) =          FUNCTION RANGE (5, -2, -14, 0)\l                CONTINUE\l}"
+label = "{Block8|                CONTINUE\l}"
 ]
 Block9 [
 label = "{Block9|}"
 ]
 Block10 [
-label = "{IF403M-REM. Block10|}"
+label = "{IF403M-REM. Block10|    IF FUNCTION REM (0, 20) = FUNCTION REM (0, 20)\l}"
 ]
 Block11 [
-label = "{Block11|    IF FUNCTION REM (0, 20) = FUNCTION REM (0, 20)\l                CONTINUE\l}"
+label = "{Block11|                CONTINUE\l}"
 ]
 Block12 [
 label = "{Block12|}"
@@ -49,46 +49,46 @@ Block13 [
 label = "{IF403M-REVERSE. Block13|    MOVE FUNCTION REVERSE (\"ABC\") TO WS-AN-TEMP\l}"
 ]
 Block14 [
-label = "{IF403M-SIN. Block14|}"
+label = "{IF403M-SIN. Block14|    IF FUNCTION SIN (1.0) = FUNCTION SIN (1.0)\l}"
 ]
 Block15 [
-label = "{Block15|    IF FUNCTION SIN (1.0) = FUNCTION SIN (1.0)\l                CONTINUE\l}"
+label = "{Block15|                CONTINUE\l}"
 ]
 Block16 [
 label = "{Block16|}"
 ]
 Block17 [
-label = "{IF403M-SQRT. Block17|}"
+label = "{IF403M-SQRT. Block17|    IF FUNCTION SQRT (0) = FUNCTION SQRT (0)\l}"
 ]
 Block18 [
-label = "{Block18|    IF FUNCTION SQRT (0) = FUNCTION SQRT (0)\l                CONTINUE\l}"
+label = "{Block18|                CONTINUE\l}"
 ]
 Block19 [
 label = "{Block19|}"
 ]
 Block20 [
-label = "{IF403M-STANDARD-DEVIATION. Block20|}"
+label = "{IF403M-STANDARD-DEVIATION. Block20|    IF FUNCTION STANDARD-DEVIATION (5, -2, -14, 0) =          FUNCTION STANDARD-DEVIATION (5, -2, -14, 0)\l}"
 ]
 Block21 [
-label = "{Block21|    IF FUNCTION STANDARD-DEVIATION (5, -2, -14, 0) =          FUNCTION STANDARD-DEVIATION (5, -2, -14, 0)\l                CONTINUE\l}"
+label = "{Block21|                CONTINUE\l}"
 ]
 Block22 [
 label = "{Block22|}"
 ]
 Block23 [
-label = "{IF403M-SUM. Block23|}"
+label = "{IF403M-SUM. Block23|    IF FUNCTION SUM (5, -2, -14, 0) =          FUNCTION SUM (5, -2, -14, 0)\l}"
 ]
 Block24 [
-label = "{Block24|    IF FUNCTION SUM (5, -2, -14, 0) =          FUNCTION SUM (5, -2, -14, 0)\l                CONTINUE\l}"
+label = "{Block24|                CONTINUE\l}"
 ]
 Block25 [
 label = "{Block25|}"
 ]
 Block26 [
-label = "{IF403M-TAN. Block26|}"
+label = "{IF403M-TAN. Block26|    IF FUNCTION TAN (1.0) = FUNCTION TAN (1.0)\l}"
 ]
 Block27 [
-label = "{Block27|    IF FUNCTION TAN (1.0) = FUNCTION TAN (1.0)\l                CONTINUE\l}"
+label = "{Block27|                CONTINUE\l}"
 ]
 Block28 [
 label = "{Block28|}"
@@ -97,10 +97,10 @@ Block29 [
 label = "{IF403M-UPPER-CASE. Block29|    MOVE FUNCTION UPPER-CASE (\"abc\") TO WS-AN-TEMP\l}"
 ]
 Block30 [
-label = "{IF403M-VARIANCE. Block30|}"
+label = "{IF403M-VARIANCE. Block30|    IF FUNCTION VARIANCE (5, -2, -14, 0) =          FUNCTION VARIANCE (5, -2, -14, 0)\l}"
 ]
 Block31 [
-label = "{Block31|    IF FUNCTION VARIANCE (5, -2, -14, 0) =          FUNCTION VARIANCE (5, -2, -14, 0)\l                CONTINUE\l}"
+label = "{Block31|                CONTINUE\l}"
 ]
 Block32 [
 label = "{Block32|}"

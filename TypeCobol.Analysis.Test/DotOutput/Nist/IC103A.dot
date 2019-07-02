@@ -10,22 +10,22 @@ Block0 [
 label = "{START|}"
 ]
 Block1 [
-label = "{EXIT-TEST-001. Block1|}"
+label = "{EXIT-TEST-001. Block1|    IF DN1 IS NOT EQUAL TO 1\l}"
 ]
 Block2 [
-label = "{Block2|    IF DN1 IS NOT EQUAL TO 1\l         GO TO EXIT-TEST-002\l}"
+label = "{Block2|         GO TO EXIT-TEST-002\l}"
 ]
 Block8 [
-label = "{EXIT-TEST-002. Block8|}"
+label = "{EXIT-TEST-002. Block8|    IF DN1 IS NOT EQUAL TO 2\l}"
 ]
 Block9 [
-label = "{Block9|    IF DN1 IS NOT EQUAL TO 2\l         GO TO EXIT-TEST-003\l}"
+label = "{Block9|         GO TO EXIT-TEST-003\l}"
 ]
 Block15 [
-label = "{EXIT-TEST-003. Block15|}"
+label = "{EXIT-TEST-003. Block15|    IF DN1 NOT EQUAL TO 3\l}"
 ]
 Block16 [
-label = "{Block16|    IF DN1 NOT EQUAL TO 3\l         GO TO EXIT-TEST-004\l}"
+label = "{Block16|         GO TO EXIT-TEST-004\l}"
 ]
 Block22 [
 label = "{EXIT-TEST-004. Block22|    MOVE 4 TO DN2\l}"

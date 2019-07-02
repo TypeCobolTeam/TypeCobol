@@ -16,10 +16,10 @@ Block2 [
 label = "{Block2|    MOVE 300 TO WS-C\l}"
 ]
 Block3 [
-label = "{Block3|}"
+label = "{Block3|    IF WS-A \> ZERO AND WS-B \> ZERO THEN\l}"
 ]
 Block4 [
-label = "{Block4|    IF WS-A \> ZERO AND WS-B \> ZERO THEN\l      DISPLAY 'One of the input amount are positive '\l      DISPLAY 'WS-A value ', WS-A\l      DISPLAY 'WS-B value ', WS-B\l}"
+label = "{Block4|      DISPLAY 'One of the input amount are positive '\l      DISPLAY 'WS-A value ', WS-A\l      DISPLAY 'WS-B value ', WS-B\l}"
 ]
 Block7 [
 label = "{Block7|    ADD WS-A TO WS-C\l}"

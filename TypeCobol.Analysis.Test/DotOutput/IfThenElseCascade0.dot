@@ -7,37 +7,37 @@ edge [
 arrowtail = "empty"
 ]
 Block0 [
-label = "{START|}"
+label = "{START|    IF (menu-input = \"0\") THEN\l}"
 ]
 Block1 [
-label = "{Block1|    IF (menu-input = \"0\") THEN\l      DISPLAY \"OPTION 0\"\l}"
+label = "{Block1|      DISPLAY \"OPTION 0\"\l}"
 ]
 Block12 [
 label = "{Block12|}"
 ]
 Block2 [
-label = "{Block2|    ELSE\l}"
+label = "{Block2|    ELSE\l     IF (menu-input \>= \"1\") AND (menu-input \<= \"9\") THEN\l}"
 ]
 Block3 [
-label = "{Block3|     IF (menu-input \>= \"1\") AND (menu-input \<= \"9\") THEN\l       DISPLAY \"OPTION 1-9\"\l}"
+label = "{Block3|       DISPLAY \"OPTION 1-9\"\l}"
 ]
 Block11 [
 label = "{Block11|}"
 ]
 Block4 [
-label = "{Block4|     ELSE\l}"
+label = "{Block4|     ELSE\l       IF (menu-input = \"R\") THEN\l}"
 ]
 Block5 [
-label = "{Block5|       IF (menu-input = \"R\") THEN\l         DISPLAY \"OPTION R\"\l}"
+label = "{Block5|         DISPLAY \"OPTION R\"\l}"
 ]
 Block10 [
 label = "{Block10|}"
 ]
 Block6 [
-label = "{Block6|       ELSE\l}"
+label = "{Block6|       ELSE\l         IF (menu-input = \"X\") THEN\l}"
 ]
 Block7 [
-label = "{Block7|         IF (menu-input = \"X\") THEN\l             DISPLAY \"OPTION X\"\l}"
+label = "{Block7|             DISPLAY \"OPTION X\"\l}"
 ]
 Block9 [
 label = "{Block9|}"

@@ -10,37 +10,37 @@ Block0 [
 label = "{START|}"
 ]
 Block1 [
-label = "{IF401M-ACOS. Block1|}"
+label = "{IF401M-ACOS. Block1|IfStatement\l}"
 ]
 Block2 [
-label = "{Block2|IfStatement\lContinueStatement\l}"
+label = "{Block2|ContinueStatement\l}"
 ]
 Block3 [
 label = "{Block3|}"
 ]
 Block4 [
-label = "{IF401M-ANNUITY. Block4|}"
+label = "{IF401M-ANNUITY. Block4|IfStatement\l}"
 ]
 Block5 [
-label = "{Block5|IfStatement\lContinueStatement\l}"
+label = "{Block5|ContinueStatement\l}"
 ]
 Block6 [
 label = "{Block6|}"
 ]
 Block7 [
-label = "{IF401M-ASIN. Block7|}"
+label = "{IF401M-ASIN. Block7|IfStatement\l}"
 ]
 Block8 [
-label = "{Block8|IfStatement\lContinueStatement\l}"
+label = "{Block8|ContinueStatement\l}"
 ]
 Block9 [
 label = "{Block9|}"
 ]
 Block10 [
-label = "{IF401M-ATAN. Block10|}"
+label = "{IF401M-ATAN. Block10|IfStatement\l}"
 ]
 Block11 [
-label = "{Block11|IfStatement\lContinueStatement\l}"
+label = "{Block11|ContinueStatement\l}"
 ]
 Block12 [
 label = "{Block12|}"
@@ -49,10 +49,10 @@ Block13 [
 label = "{IF401M-CHAR. Block13|MoveStatement\l}"
 ]
 Block14 [
-label = "{IF401M-COS. Block14|}"
+label = "{IF401M-COS. Block14|IfStatement\l}"
 ]
 Block15 [
-label = "{Block15|IfStatement\lContinueStatement\l}"
+label = "{Block15|ContinueStatement\l}"
 ]
 Block16 [
 label = "{Block16|}"
@@ -61,64 +61,64 @@ Block17 [
 label = "{IF401M-CURRENT-DATE. Block17|MoveStatement\l}"
 ]
 Block18 [
-label = "{IF401M-DATE-OF-INTEGER. Block18|}"
+label = "{IF401M-DATE-OF-INTEGER. Block18|IfStatement\l}"
 ]
 Block19 [
-label = "{Block19|IfStatement\lContinueStatement\l}"
+label = "{Block19|ContinueStatement\l}"
 ]
 Block20 [
 label = "{Block20|}"
 ]
 Block21 [
-label = "{IF401M-DAY-OF-INTEGER. Block21|}"
+label = "{IF401M-DAY-OF-INTEGER. Block21|IfStatement\l}"
 ]
 Block22 [
-label = "{Block22|IfStatement\lContinueStatement\l}"
+label = "{Block22|ContinueStatement\l}"
 ]
 Block23 [
 label = "{Block23|}"
 ]
 Block24 [
-label = "{IF401M-FACTORIAL. Block24|}"
+label = "{IF401M-FACTORIAL. Block24|IfStatement\l}"
 ]
 Block25 [
-label = "{Block25|IfStatement\lContinueStatement\l}"
+label = "{Block25|ContinueStatement\l}"
 ]
 Block26 [
 label = "{Block26|}"
 ]
 Block27 [
-label = "{IF401M-INTEGER. Block27|}"
+label = "{IF401M-INTEGER. Block27|IfStatement\l}"
 ]
 Block28 [
-label = "{Block28|IfStatement\lContinueStatement\l}"
+label = "{Block28|ContinueStatement\l}"
 ]
 Block29 [
 label = "{Block29|}"
 ]
 Block30 [
-label = "{IF401M-INTEGER-OF-DATE. Block30|}"
+label = "{IF401M-INTEGER-OF-DATE. Block30|IfStatement\l}"
 ]
 Block31 [
-label = "{Block31|IfStatement\lContinueStatement\l}"
+label = "{Block31|ContinueStatement\l}"
 ]
 Block32 [
 label = "{Block32|}"
 ]
 Block33 [
-label = "{IF401M-INTEGER-OF-DAY. Block33|}"
+label = "{IF401M-INTEGER-OF-DAY. Block33|IfStatement\l}"
 ]
 Block34 [
-label = "{Block34|IfStatement\lContinueStatement\l}"
+label = "{Block34|ContinueStatement\l}"
 ]
 Block35 [
 label = "{Block35|}"
 ]
 Block36 [
-label = "{IF401M-INTEGER-PART. Block36|}"
+label = "{IF401M-INTEGER-PART. Block36|IfStatement\l}"
 ]
 Block37 [
-label = "{Block37|IfStatement\lContinueStatement\l}"
+label = "{Block37|ContinueStatement\l}"
 ]
 Block38 [
 label = "{Block38|}"

@@ -24,7 +24,7 @@ label = "{A-STARTUP. Block9|    OPEN INPUT USER-FILE\l}"
 ]
 
 }
-Block2 -> Block9 [style=dashed, arrowhead=none]
+Block2 -> Block9 [style=dashed]
 
 Block3 [
 label = "{Block3|}"
@@ -35,7 +35,7 @@ label = "{Block4|    PERFORM B-PROCESS\l}"
 subgraph cluster_2{
 color = blue;
 }
-Block4 -> "" [style=dashed, arrowhead=none]
+Block4 -> "" [style=dashed]
 
 Block5 [
 label = "{Block5|}"
@@ -51,7 +51,7 @@ label = "{C-CLEANUP. Block18|    CLOSE USER-FILE\l}"
 ]
 
 }
-Block6 -> Block18 [style=dashed, arrowhead=none]
+Block6 -> Block18 [style=dashed]
 
 Block7 [
 label = "{Block7|    STOP RUN\l}"

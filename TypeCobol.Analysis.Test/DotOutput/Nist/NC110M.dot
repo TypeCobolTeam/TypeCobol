@@ -69,7 +69,7 @@ label = "{PASS. Block30|    DISPLAY      \"             PASS\"\l}"
 ]
 
 }
-Block19 -> Block30 [style=dashed, arrowhead=none]
+Block19 -> Block30 [style=dashed]
 
 Block20 [
 label = "{Block20|}"

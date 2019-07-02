@@ -13,10 +13,10 @@ Block1 [
 label = "{LINK-TEST-08. Block1|AddStatement\l}"
 ]
 Block2 [
-label = "{LINK-TEST-08. Block2|}"
+label = "{LINK-TEST-08. Block2|IfStatement\l}"
 ]
 Block3 [
-label = "{Block3|IfStatement\lGotoStatement\l}"
+label = "{Block3|GotoStatement\l}"
 ]
 Block24 [
 label = "{LINK-FAIL-08. Block24|AddStatement\l}"
@@ -34,37 +34,37 @@ Block5 [
 label = "{Block5|}"
 ]
 Block6 [
-label = "{LINK-TEST-08. Block6|}"
+label = "{LINK-TEST-08. Block6|IfStatement\l}"
 ]
 Block7 [
-label = "{Block7|IfStatement\lGotoStatement\l}"
+label = "{Block7|GotoStatement\l}"
 ]
 Block9 [
 label = "{Block9|}"
 ]
 Block10 [
-label = "{LINK-TEST-08. Block10|}"
+label = "{LINK-TEST-08. Block10|IfStatement\l}"
 ]
 Block11 [
-label = "{Block11|IfStatement\lGotoStatement\l}"
+label = "{Block11|GotoStatement\l}"
 ]
 Block13 [
 label = "{Block13|}"
 ]
 Block14 [
-label = "{LINK-TEST-08. Block14|}"
+label = "{LINK-TEST-08. Block14|IfStatement\l}"
 ]
 Block15 [
-label = "{Block15|IfStatement\lGotoStatement\l}"
+label = "{Block15|GotoStatement\l}"
 ]
 Block17 [
 label = "{Block17|}"
 ]
 Block18 [
-label = "{LINK-TEST-08. Block18|}"
+label = "{LINK-TEST-08. Block18|IfStatement\l}"
 ]
 Block19 [
-label = "{Block19|IfStatement\lGotoStatement\l}"
+label = "{Block19|GotoStatement\l}"
 ]
 Block21 [
 label = "{Block21|}"

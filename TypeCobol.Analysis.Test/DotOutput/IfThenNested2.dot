@@ -7,16 +7,16 @@ edge [
 arrowtail = "empty"
 ]
 Block0 [
-label = "{START|}"
+label = "{START|    IF A = 10 THEN\l}"
 ]
 Block1 [
-label = "{Block1|    IF A = 10 THEN\l      DISPLAY \"A = 10\"\l      DISPLAY \"RIGHT ?\"\l}"
+label = "{Block1|      DISPLAY \"A = 10\"\l      DISPLAY \"RIGHT ?\"\l      IF B = 20 THEN\l}"
 ]
 Block2 [
-label = "{Block2|      IF B = 20 THEN\l         DISPLAY \"B = 20\"\l         DISPLAY \"INSIDE A\"\l}"
+label = "{Block2|         DISPLAY \"B = 20\"\l         DISPLAY \"INSIDE A\"\l         IF C = 30 THEN\l}"
 ]
 Block3 [
-label = "{Block3|         IF C = 30 THEN\l             DISPLAY \"C = 30\"\l             DISPLAY \"INSIDE B\"\l}"
+label = "{Block3|             DISPLAY \"C = 30\"\l             DISPLAY \"INSIDE B\"\l}"
 ]
 Block4 [
 label = "{Block4|         DISPLAY \"TEST C DONE\"\l}"

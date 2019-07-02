@@ -9,18 +9,22 @@ arrowtail = "empty"
 Block0 [
 label = "{START|}"
 ]
-Block1 [
-label = "{Block1|    PERFORM TEST AFTER UNTIL posibility\l    DISPLAY \"action = \" NO ADVANCING\l      ACCEPT action\l}"
-]
 Block2 [
-label = "{Block2|    DISPLAY \"Saisie correcte !\"\l}"
+label = "{Block2|    DISPLAY \"action = \" NO ADVANCING\l      ACCEPT action\l}"
+]
+Block1 [
+label = "{Block1|    PERFORM TEST AFTER UNTIL posibility\l}"
 ]
 Block3 [
-label = "{Block3|    STOP RUN\l}"
+label = "{Block3|    DISPLAY \"Saisie correcte !\"\l}"
 ]
-Block0 -> Block1
+Block4 [
+label = "{Block4|    STOP RUN\l}"
+]
+Block0 -> Block2
+Block2 -> Block1
 Block1 -> Block2
-Block1 -> Block1
-Block2 -> Block3
+Block1 -> Block3
+Block3 -> Block4
 
 }

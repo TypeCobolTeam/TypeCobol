@@ -73,7 +73,7 @@ label = "{COMP-FOOT-CALC. Block22|MOVE NBJ TO NUM\l}"
 Block21 -> Block22
 
 }
-Block17 -> Block21 [style=dashed, arrowhead=none]
+Block17 -> Block21 [style=dashed]
 
 Block18 [
 label = "{Block18|}"

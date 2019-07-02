@@ -47,10 +47,10 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
@@ -67,7 +67,7 @@ label = "{WRT-LN. Block147|    MOVE SPACE TO DUMMY-RECORD\l}"
 Block146 -> Block147
 
 }
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -87,7 +87,7 @@ label = "{WRT-LN. Block147|    MOVE SPACE TO DUMMY-RECORD\l}"
 Block146 -> Block147
 
 }
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -107,7 +107,7 @@ label = "{WRT-LN. Block147|    MOVE SPACE TO DUMMY-RECORD\l}"
 Block146 -> Block147
 
 }
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -127,7 +127,7 @@ label = "{WRT-LN. Block147|    MOVE SPACE TO DUMMY-RECORD\l}"
 Block146 -> Block147
 
 }
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -147,7 +147,7 @@ label = "{WRT-LN. Block147|    MOVE SPACE TO DUMMY-RECORD\l}"
 Block146 -> Block147
 
 }
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -167,7 +167,7 @@ label = "{WRT-LN. Block147|    MOVE SPACE TO DUMMY-RECORD\l}"
 Block146 -> Block147
 
 }
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -187,7 +187,7 @@ label = "{WRT-LN. Block147|    MOVE SPACE TO DUMMY-RECORD\l}"
 Block146 -> Block147
 
 }
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -213,7 +213,7 @@ label = "{WRT-LN. Block147|    MOVE SPACE TO DUMMY-RECORD\l}"
 Block146 -> Block147
 
 }
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -241,7 +241,7 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block51 -> Block125 [style=dashed, arrowhead=none]
+Block51 -> Block125 [style=dashed]
 
 Block52 [
 label = "{Block52|}"
@@ -262,15 +262,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -278,7 +278,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -286,7 +286,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -294,7 +294,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -302,7 +302,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -310,7 +310,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -318,7 +318,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -332,7 +332,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -360,7 +360,7 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block55 -> Block125 [style=dashed, arrowhead=none]
+Block55 -> Block125 [style=dashed]
 
 Block56 [
 label = "{Block56|}"
@@ -381,15 +381,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -397,7 +397,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -405,7 +405,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -413,7 +413,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -421,7 +421,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -429,7 +429,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -437,7 +437,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -451,7 +451,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -479,7 +479,7 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block59 -> Block125 [style=dashed, arrowhead=none]
+Block59 -> Block125 [style=dashed]
 
 Block60 [
 label = "{Block60|}"
@@ -500,15 +500,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -516,7 +516,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -524,7 +524,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -532,7 +532,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -540,7 +540,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -548,7 +548,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -556,7 +556,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -570,7 +570,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -598,7 +598,7 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block63 -> Block125 [style=dashed, arrowhead=none]
+Block63 -> Block125 [style=dashed]
 
 Block64 [
 label = "{Block64|}"
@@ -619,15 +619,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -635,7 +635,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -643,7 +643,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -651,7 +651,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -659,7 +659,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -667,7 +667,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -675,7 +675,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -689,7 +689,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -717,7 +717,7 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block67 -> Block125 [style=dashed, arrowhead=none]
+Block67 -> Block125 [style=dashed]
 
 Block68 [
 label = "{Block68|}"
@@ -738,15 +738,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -754,7 +754,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -762,7 +762,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -770,7 +770,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -778,7 +778,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -786,7 +786,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -794,7 +794,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -808,7 +808,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -836,7 +836,7 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block71 -> Block125 [style=dashed, arrowhead=none]
+Block71 -> Block125 [style=dashed]
 
 Block72 [
 label = "{Block72|}"
@@ -857,15 +857,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -873,7 +873,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -881,7 +881,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -889,7 +889,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -897,7 +897,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -905,7 +905,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -913,7 +913,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -927,7 +927,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -955,7 +955,7 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block75 -> Block125 [style=dashed, arrowhead=none]
+Block75 -> Block125 [style=dashed]
 
 Block76 [
 label = "{Block76|}"
@@ -989,7 +989,7 @@ Block74 -> Block75
 Block75 -> Block76
 
 }
-Block6 -> Block49 [style=dashed, arrowhead=none]
+Block6 -> Block49 [style=dashed]
 
 Block7 [
 label = "{Block7|}"
@@ -1013,10 +1013,10 @@ Block208 [
 label = "{F-FACTORIAL-TEST-01. Block208|    COMPUTE WS-NUM = FUNCTION FACTORIAL(0)\l}"
 ]
 Block209 [
-label = "{F-FACTORIAL-TEST-01. Block209|}"
+label = "{F-FACTORIAL-TEST-01. Block209|    IF WS-NUM = 1 THEN\l}"
 ]
 Block210 [
-label = "{Block210|    IF WS-NUM = 1 THEN\l}"
+label = "{Block210|}"
 ]
 Block211 [
 label = "{Block211|                   PERFORM PASS\l}"
@@ -1033,7 +1033,7 @@ label = "{PASS. Block19|PASS.  MOVE \"PASS \" TO P-OR-F.  ADD 1 TO PASS-COUNTER\
 Block18 -> Block19
 
 }
-Block211 -> Block18 [style=dashed, arrowhead=none]
+Block211 -> Block18 [style=dashed]
 
 Block212 [
 label = "{Block212|}"
@@ -1057,10 +1057,10 @@ subgraph cluster_40{
 color = blue;
 label = "PRINT-DETAIL";
 Block25 [
-label = "{PRINT-DETAIL. Block25|}"
+label = "{PRINT-DETAIL. Block25|    IF REC-CT NOT EQUAL TO ZERO\l}"
 ]
 Block26 [
-label = "{Block26|    IF REC-CT NOT EQUAL TO ZERO\l            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
+label = "{Block26|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
 ]
 Block27 [
 label = "{Block27|}"
@@ -1081,15 +1081,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -1097,7 +1097,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -1105,7 +1105,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -1113,7 +1113,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -1121,7 +1121,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -1129,7 +1129,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -1137,7 +1137,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -1151,7 +1151,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -1179,16 +1179,16 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block30 -> Block125 [style=dashed, arrowhead=none]
+Block30 -> Block125 [style=dashed]
 
 Block31 [
 label = "{Block31|}"
 ]
 Block32 [
-label = "{PRINT-DETAIL. Block32|}"
+label = "{PRINT-DETAIL. Block32|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
 ]
 Block33 [
-label = "{Block33|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
+label = "{Block33|}"
 ]
 Block34 [
 label = "{Block34|    IF P-OR-F EQUAL TO \"FAIL*\"  PERFORM WRITE-LINE\l}"
@@ -1200,15 +1200,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -1216,7 +1216,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -1224,7 +1224,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -1232,7 +1232,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -1240,7 +1240,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -1248,7 +1248,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -1256,7 +1256,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -1270,7 +1270,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -1298,7 +1298,7 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block34 -> Block125 [style=dashed, arrowhead=none]
+Block34 -> Block125 [style=dashed]
 
 Block35 [
 label = "{Block35|}"
@@ -1310,10 +1310,10 @@ subgraph cluster_5{
 color = blue;
 label = "FAIL-ROUTINE";
 Block151 [
-label = "{FAIL-ROUTINE. Block151|}"
+label = "{FAIL-ROUTINE. Block151|    IF     COMPUTED-X NOT EQUAL TO SPACE\l}"
 ]
 Block152 [
-label = "{Block152|    IF     COMPUTED-X NOT EQUAL TO SPACE\l           GO TO FAIL-ROUTINE-WRITE\l}"
+label = "{Block152|           GO TO FAIL-ROUTINE-WRITE\l}"
 ]
 Block168 [
 label = "{FAIL-ROUTINE-WRITE. Block168|    MOVE   TEST-COMPUTED TO PRINT-REC\l}"
@@ -1328,15 +1328,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -1344,7 +1344,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -1352,7 +1352,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -1360,7 +1360,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -1368,7 +1368,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -1376,7 +1376,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -1384,7 +1384,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -1398,7 +1398,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -1426,7 +1426,7 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block169 -> Block125 [style=dashed, arrowhead=none]
+Block169 -> Block125 [style=dashed]
 
 Block170 [
 label = "{Block170|}"
@@ -1435,10 +1435,10 @@ Block171 [
 label = "{FAIL-ROUTINE-WRITE. Block171|    MOVE   ANSI-REFERENCE TO COR-ANSI-REFERENCE                               CORMA-ANSI-REFERENCE\l}"
 ]
 Block172 [
-label = "{FAIL-ROUTINE-WRITE. Block172|}"
+label = "{FAIL-ROUTINE-WRITE. Block172|    IF CORRECT-MIN NOT EQUAL TO SPACES THEN\l}"
 ]
 Block173 [
-label = "{Block173|    IF CORRECT-MIN NOT EQUAL TO SPACES THEN\l          MOVE TEST-CORRECT-MIN TO PRINT-REC\l}"
+label = "{Block173|          MOVE TEST-CORRECT-MIN TO PRINT-REC\l}"
 ]
 Block174 [
 label = "{Block174|          MOVE TEST-CORRECT-MIN TO PRINT-REC PERFORM WRITE-LINE\l}"
@@ -1450,15 +1450,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -1466,7 +1466,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -1474,7 +1474,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -1482,7 +1482,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -1490,7 +1490,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -1498,7 +1498,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -1506,7 +1506,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -1520,7 +1520,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -1548,7 +1548,7 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block174 -> Block125 [style=dashed, arrowhead=none]
+Block174 -> Block125 [style=dashed]
 
 Block175 [
 label = "{Block175|          MOVE TEST-CORRECT-MAX TO PRINT-REC\l}"
@@ -1563,15 +1563,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -1579,7 +1579,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -1587,7 +1587,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -1595,7 +1595,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -1603,7 +1603,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -1611,7 +1611,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -1619,7 +1619,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -1633,7 +1633,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -1661,7 +1661,7 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block176 -> Block125 [style=dashed, arrowhead=none]
+Block176 -> Block125 [style=dashed]
 
 Block177 [
 label = "{Block177|}"
@@ -1682,15 +1682,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -1698,7 +1698,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -1706,7 +1706,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -1714,7 +1714,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -1722,7 +1722,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -1730,7 +1730,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -1738,7 +1738,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -1752,7 +1752,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -1780,7 +1780,7 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block183 -> Block125 [style=dashed, arrowhead=none]
+Block183 -> Block125 [style=dashed]
 
 Block184 [
 label = "{Block184|}"
@@ -1804,15 +1804,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -1820,7 +1820,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -1828,7 +1828,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -1836,7 +1836,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -1844,7 +1844,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -1852,7 +1852,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -1860,7 +1860,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -1874,7 +1874,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -1902,7 +1902,7 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block179 -> Block125 [style=dashed, arrowhead=none]
+Block179 -> Block125 [style=dashed]
 
 Block180 [
 label = "{Block180|}"
@@ -1911,10 +1911,10 @@ Block154 [
 label = "{Block154|}"
 ]
 Block155 [
-label = "{FAIL-ROUTINE. Block155|}"
+label = "{FAIL-ROUTINE. Block155|    IF     CORRECT-X NOT EQUAL TO SPACE\l}"
 ]
 Block156 [
-label = "{Block156|    IF     CORRECT-X NOT EQUAL TO SPACE\l    IF     CORRECT-X NOT EQUAL TO SPACE GO TO FAIL-ROUTINE-WRITE\l}"
+label = "{Block156|    IF     CORRECT-X NOT EQUAL TO SPACE GO TO FAIL-ROUTINE-WRITE\l}"
 ]
 Block158 [
 label = "{Block158|}"
@@ -1941,15 +1941,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -1957,7 +1957,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -1965,7 +1965,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -1973,7 +1973,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -1981,7 +1981,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -1989,7 +1989,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -1997,7 +1997,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -2011,7 +2011,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -2039,7 +2039,7 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block163 -> Block125 [style=dashed, arrowhead=none]
+Block163 -> Block125 [style=dashed]
 
 Block164 [
 label = "{Block164|}"
@@ -2087,7 +2087,7 @@ Block165 -> Block166
 Block166 -> Block186
 
 }
-Block36 -> Block151 [style=dashed, arrowhead=none]
+Block36 -> Block151 [style=dashed]
 
 Block37 [
 label = "{Block37|}"
@@ -2105,10 +2105,10 @@ Block44 [
 label = "{PRINT-DETAIL. Block44|    MOVE SPACE TO CORRECT-X\l}"
 ]
 Block45 [
-label = "{PRINT-DETAIL. Block45|}"
+label = "{PRINT-DETAIL. Block45|    IF     REC-CT EQUAL TO ZERO\l}"
 ]
 Block46 [
-label = "{Block46|    IF     REC-CT EQUAL TO ZERO\l    IF     REC-CT EQUAL TO ZERO  MOVE SPACE TO PAR-NAME\l}"
+label = "{Block46|    IF     REC-CT EQUAL TO ZERO  MOVE SPACE TO PAR-NAME\l}"
 ]
 Block47 [
 label = "{Block47|}"
@@ -2126,10 +2126,10 @@ subgraph cluster_6{
 color = blue;
 label = "BAIL-OUT";
 Block187 [
-label = "{BAIL-OUT. Block187|}"
+label = "{BAIL-OUT. Block187|    IF     COMPUTED-A NOT EQUAL TO SPACE\l}"
 ]
 Block188 [
-label = "{Block188|    IF     COMPUTED-A NOT EQUAL TO SPACE\l    IF     COMPUTED-A NOT EQUAL TO SPACE GO TO BAIL-OUT-WRITE\l}"
+label = "{Block188|    IF     COMPUTED-A NOT EQUAL TO SPACE GO TO BAIL-OUT-WRITE\l}"
 ]
 Block195 [
 label = "{BAIL-OUT-WRITE. Block195|    MOVE CORRECT-A TO XXCORRECT\l}"
@@ -2156,15 +2156,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -2172,7 +2172,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -2180,7 +2180,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -2188,7 +2188,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -2196,7 +2196,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -2204,7 +2204,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -2212,7 +2212,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -2226,7 +2226,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -2254,7 +2254,7 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block200 -> Block125 [style=dashed, arrowhead=none]
+Block200 -> Block125 [style=dashed]
 
 Block201 [
 label = "{Block201|}"
@@ -2269,10 +2269,10 @@ Block190 [
 label = "{Block190|}"
 ]
 Block191 [
-label = "{BAIL-OUT. Block191|}"
+label = "{BAIL-OUT. Block191|    IF     CORRECT-A EQUAL TO SPACE\l}"
 ]
 Block192 [
-label = "{Block192|    IF     CORRECT-A EQUAL TO SPACE\l    IF     CORRECT-A EQUAL TO SPACE GO TO BAIL-OUT-EX\l}"
+label = "{Block192|    IF     CORRECT-A EQUAL TO SPACE GO TO BAIL-OUT-EX\l}"
 ]
 Block194 [
 label = "{Block194|}"
@@ -2295,7 +2295,7 @@ Block192 -> Block203
 Block194 -> Block195
 
 }
-Block39 -> Block187 [style=dashed, arrowhead=none]
+Block39 -> Block187 [style=dashed]
 
 Block40 [
 label = "{Block40|}"
@@ -2328,16 +2328,16 @@ Block39 -> Block40
 Block40 -> Block41
 
 }
-Block226 -> Block25 [style=dashed, arrowhead=none]
+Block226 -> Block25 [style=dashed]
 
 Block227 [
 label = "{Block227|}"
 ]
 Block228 [
-label = "{F-FACTORIAL-02. Block228|    EVALUATE FUNCTION FACTORIAL(3)\l}"
+label = "{F-FACTORIAL-02. Block228|    EVALUATE FUNCTION FACTORIAL(3)\l    WHEN 6\l}"
 ]
 Block229 [
-label = "{Block229|    WHEN 6\l}"
+label = "{Block229|}"
 ]
 Block230 [
 label = "{Block230|                   PERFORM PASS\l}"
@@ -2354,7 +2354,7 @@ label = "{PASS. Block19|PASS.  MOVE \"PASS \" TO P-OR-F.  ADD 1 TO PASS-COUNTER\
 Block18 -> Block19
 
 }
-Block230 -> Block18 [style=dashed, arrowhead=none]
+Block230 -> Block18 [style=dashed]
 
 Block231 [
 label = "{Block231|}"
@@ -2378,10 +2378,10 @@ subgraph cluster_44{
 color = blue;
 label = "PRINT-DETAIL";
 Block25 [
-label = "{PRINT-DETAIL. Block25|}"
+label = "{PRINT-DETAIL. Block25|    IF REC-CT NOT EQUAL TO ZERO\l}"
 ]
 Block26 [
-label = "{Block26|    IF REC-CT NOT EQUAL TO ZERO\l            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
+label = "{Block26|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
 ]
 Block27 [
 label = "{Block27|}"
@@ -2395,21 +2395,21 @@ label = "{PRINT-DETAIL. Block29|}"
 Block30 [
 label = "{Block30|    MOVE     TEST-RESULTS TO PRINT-REC. PERFORM WRITE-LINE\l}"
 ]
-Block30 -> Block125 [style=dashed, arrowhead=none]
+Block30 -> Block125 [style=dashed]
 
 Block31 [
 label = "{Block31|}"
 ]
 Block32 [
-label = "{PRINT-DETAIL. Block32|}"
+label = "{PRINT-DETAIL. Block32|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
 ]
 Block33 [
-label = "{Block33|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
+label = "{Block33|}"
 ]
 Block34 [
 label = "{Block34|    IF P-OR-F EQUAL TO \"FAIL*\"  PERFORM WRITE-LINE\l}"
 ]
-Block34 -> Block125 [style=dashed, arrowhead=none]
+Block34 -> Block125 [style=dashed]
 
 Block35 [
 label = "{Block35|}"
@@ -2417,7 +2417,7 @@ label = "{Block35|}"
 Block36 [
 label = "{Block36|       PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX\l}"
 ]
-Block36 -> Block151 [style=dashed, arrowhead=none]
+Block36 -> Block151 [style=dashed]
 
 Block37 [
 label = "{Block37|}"
@@ -2435,10 +2435,10 @@ Block44 [
 label = "{PRINT-DETAIL. Block44|    MOVE SPACE TO CORRECT-X\l}"
 ]
 Block45 [
-label = "{PRINT-DETAIL. Block45|}"
+label = "{PRINT-DETAIL. Block45|    IF     REC-CT EQUAL TO ZERO\l}"
 ]
 Block46 [
-label = "{Block46|    IF     REC-CT EQUAL TO ZERO\l    IF     REC-CT EQUAL TO ZERO  MOVE SPACE TO PAR-NAME\l}"
+label = "{Block46|    IF     REC-CT EQUAL TO ZERO  MOVE SPACE TO PAR-NAME\l}"
 ]
 Block47 [
 label = "{Block47|}"
@@ -2452,7 +2452,7 @@ label = "{Block38|         ELSE\l}"
 Block39 [
 label = "{Block39|         ELSE PERFORM BAIL-OUT THRU BAIL-OUT-EX\l}"
 ]
-Block39 -> Block187 [style=dashed, arrowhead=none]
+Block39 -> Block187 [style=dashed]
 
 Block40 [
 label = "{Block40|}"
@@ -2485,16 +2485,16 @@ Block39 -> Block40
 Block40 -> Block41
 
 }
-Block245 -> Block25 [style=dashed, arrowhead=none]
+Block245 -> Block25 [style=dashed]
 
 Block246 [
 label = "{Block246|}"
 ]
 Block247 [
-label = "{F-FACTORIAL-03. Block247|}"
+label = "{F-FACTORIAL-03. Block247|    IF FUNCTION FACTORIAL(A) = 120 THEN\l}"
 ]
 Block248 [
-label = "{Block248|    IF FUNCTION FACTORIAL(A) = 120 THEN\l}"
+label = "{Block248|}"
 ]
 Block249 [
 label = "{Block249|                   PERFORM PASS\l}"
@@ -2511,7 +2511,7 @@ label = "{PASS. Block19|PASS.  MOVE \"PASS \" TO P-OR-F.  ADD 1 TO PASS-COUNTER\
 Block18 -> Block19
 
 }
-Block249 -> Block18 [style=dashed, arrowhead=none]
+Block249 -> Block18 [style=dashed]
 
 Block250 [
 label = "{Block250|}"
@@ -2535,10 +2535,10 @@ subgraph cluster_48{
 color = blue;
 label = "PRINT-DETAIL";
 Block25 [
-label = "{PRINT-DETAIL. Block25|}"
+label = "{PRINT-DETAIL. Block25|    IF REC-CT NOT EQUAL TO ZERO\l}"
 ]
 Block26 [
-label = "{Block26|    IF REC-CT NOT EQUAL TO ZERO\l            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
+label = "{Block26|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
 ]
 Block27 [
 label = "{Block27|}"
@@ -2552,21 +2552,21 @@ label = "{PRINT-DETAIL. Block29|}"
 Block30 [
 label = "{Block30|    MOVE     TEST-RESULTS TO PRINT-REC. PERFORM WRITE-LINE\l}"
 ]
-Block30 -> Block125 [style=dashed, arrowhead=none]
+Block30 -> Block125 [style=dashed]
 
 Block31 [
 label = "{Block31|}"
 ]
 Block32 [
-label = "{PRINT-DETAIL. Block32|}"
+label = "{PRINT-DETAIL. Block32|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
 ]
 Block33 [
-label = "{Block33|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
+label = "{Block33|}"
 ]
 Block34 [
 label = "{Block34|    IF P-OR-F EQUAL TO \"FAIL*\"  PERFORM WRITE-LINE\l}"
 ]
-Block34 -> Block125 [style=dashed, arrowhead=none]
+Block34 -> Block125 [style=dashed]
 
 Block35 [
 label = "{Block35|}"
@@ -2574,7 +2574,7 @@ label = "{Block35|}"
 Block36 [
 label = "{Block36|       PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX\l}"
 ]
-Block36 -> Block151 [style=dashed, arrowhead=none]
+Block36 -> Block151 [style=dashed]
 
 Block37 [
 label = "{Block37|}"
@@ -2592,10 +2592,10 @@ Block44 [
 label = "{PRINT-DETAIL. Block44|    MOVE SPACE TO CORRECT-X\l}"
 ]
 Block45 [
-label = "{PRINT-DETAIL. Block45|}"
+label = "{PRINT-DETAIL. Block45|    IF     REC-CT EQUAL TO ZERO\l}"
 ]
 Block46 [
-label = "{Block46|    IF     REC-CT EQUAL TO ZERO\l    IF     REC-CT EQUAL TO ZERO  MOVE SPACE TO PAR-NAME\l}"
+label = "{Block46|    IF     REC-CT EQUAL TO ZERO  MOVE SPACE TO PAR-NAME\l}"
 ]
 Block47 [
 label = "{Block47|}"
@@ -2609,7 +2609,7 @@ label = "{Block38|         ELSE\l}"
 Block39 [
 label = "{Block39|         ELSE PERFORM BAIL-OUT THRU BAIL-OUT-EX\l}"
 ]
-Block39 -> Block187 [style=dashed, arrowhead=none]
+Block39 -> Block187 [style=dashed]
 
 Block40 [
 label = "{Block40|}"
@@ -2642,7 +2642,7 @@ Block39 -> Block40
 Block40 -> Block41
 
 }
-Block264 -> Block25 [style=dashed, arrowhead=none]
+Block264 -> Block25 [style=dashed]
 
 Block265 [
 label = "{Block265|}"
@@ -2654,10 +2654,10 @@ Block267 [
 label = "{F-FACTORIAL-TEST-04. Block267|    COMPUTE WS-NUM = FUNCTION FACTORIAL(IND(4))\l}"
 ]
 Block268 [
-label = "{F-FACTORIAL-TEST-04. Block268|}"
+label = "{F-FACTORIAL-TEST-04. Block268|    IF WS-NUM = 6 THEN\l}"
 ]
 Block269 [
-label = "{Block269|    IF WS-NUM = 6 THEN\l}"
+label = "{Block269|}"
 ]
 Block270 [
 label = "{Block270|                   PERFORM PASS\l}"
@@ -2674,7 +2674,7 @@ label = "{PASS. Block19|PASS.  MOVE \"PASS \" TO P-OR-F.  ADD 1 TO PASS-COUNTER\
 Block18 -> Block19
 
 }
-Block270 -> Block18 [style=dashed, arrowhead=none]
+Block270 -> Block18 [style=dashed]
 
 Block271 [
 label = "{Block271|}"
@@ -2698,10 +2698,10 @@ subgraph cluster_52{
 color = blue;
 label = "PRINT-DETAIL";
 Block25 [
-label = "{PRINT-DETAIL. Block25|}"
+label = "{PRINT-DETAIL. Block25|    IF REC-CT NOT EQUAL TO ZERO\l}"
 ]
 Block26 [
-label = "{Block26|    IF REC-CT NOT EQUAL TO ZERO\l            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
+label = "{Block26|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
 ]
 Block27 [
 label = "{Block27|}"
@@ -2715,21 +2715,21 @@ label = "{PRINT-DETAIL. Block29|}"
 Block30 [
 label = "{Block30|    MOVE     TEST-RESULTS TO PRINT-REC. PERFORM WRITE-LINE\l}"
 ]
-Block30 -> Block125 [style=dashed, arrowhead=none]
+Block30 -> Block125 [style=dashed]
 
 Block31 [
 label = "{Block31|}"
 ]
 Block32 [
-label = "{PRINT-DETAIL. Block32|}"
+label = "{PRINT-DETAIL. Block32|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
 ]
 Block33 [
-label = "{Block33|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
+label = "{Block33|}"
 ]
 Block34 [
 label = "{Block34|    IF P-OR-F EQUAL TO \"FAIL*\"  PERFORM WRITE-LINE\l}"
 ]
-Block34 -> Block125 [style=dashed, arrowhead=none]
+Block34 -> Block125 [style=dashed]
 
 Block35 [
 label = "{Block35|}"
@@ -2737,7 +2737,7 @@ label = "{Block35|}"
 Block36 [
 label = "{Block36|       PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX\l}"
 ]
-Block36 -> Block151 [style=dashed, arrowhead=none]
+Block36 -> Block151 [style=dashed]
 
 Block37 [
 label = "{Block37|}"
@@ -2755,10 +2755,10 @@ Block44 [
 label = "{PRINT-DETAIL. Block44|    MOVE SPACE TO CORRECT-X\l}"
 ]
 Block45 [
-label = "{PRINT-DETAIL. Block45|}"
+label = "{PRINT-DETAIL. Block45|    IF     REC-CT EQUAL TO ZERO\l}"
 ]
 Block46 [
-label = "{Block46|    IF     REC-CT EQUAL TO ZERO\l    IF     REC-CT EQUAL TO ZERO  MOVE SPACE TO PAR-NAME\l}"
+label = "{Block46|    IF     REC-CT EQUAL TO ZERO  MOVE SPACE TO PAR-NAME\l}"
 ]
 Block47 [
 label = "{Block47|}"
@@ -2772,7 +2772,7 @@ label = "{Block38|         ELSE\l}"
 Block39 [
 label = "{Block39|         ELSE PERFORM BAIL-OUT THRU BAIL-OUT-EX\l}"
 ]
-Block39 -> Block187 [style=dashed, arrowhead=none]
+Block39 -> Block187 [style=dashed]
 
 Block40 [
 label = "{Block40|}"
@@ -2805,7 +2805,7 @@ Block39 -> Block40
 Block40 -> Block41
 
 }
-Block285 -> Block25 [style=dashed, arrowhead=none]
+Block285 -> Block25 [style=dashed]
 
 Block286 [
 label = "{Block286|}"
@@ -2817,10 +2817,10 @@ Block288 [
 label = "{F-FACTORIAL-TEST-05. Block288|    COMPUTE WS-NUM = FUNCTION FACTORIAL(IND(A))\l}"
 ]
 Block289 [
-label = "{F-FACTORIAL-TEST-05. Block289|}"
+label = "{F-FACTORIAL-TEST-05. Block289|    IF WS-NUM = 5040 THEN\l}"
 ]
 Block290 [
-label = "{Block290|    IF WS-NUM = 5040 THEN\l}"
+label = "{Block290|}"
 ]
 Block291 [
 label = "{Block291|                   PERFORM PASS\l}"
@@ -2837,7 +2837,7 @@ label = "{PASS. Block19|PASS.  MOVE \"PASS \" TO P-OR-F.  ADD 1 TO PASS-COUNTER\
 Block18 -> Block19
 
 }
-Block291 -> Block18 [style=dashed, arrowhead=none]
+Block291 -> Block18 [style=dashed]
 
 Block292 [
 label = "{Block292|}"
@@ -2861,10 +2861,10 @@ subgraph cluster_56{
 color = blue;
 label = "PRINT-DETAIL";
 Block25 [
-label = "{PRINT-DETAIL. Block25|}"
+label = "{PRINT-DETAIL. Block25|    IF REC-CT NOT EQUAL TO ZERO\l}"
 ]
 Block26 [
-label = "{Block26|    IF REC-CT NOT EQUAL TO ZERO\l            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
+label = "{Block26|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
 ]
 Block27 [
 label = "{Block27|}"
@@ -2878,21 +2878,21 @@ label = "{PRINT-DETAIL. Block29|}"
 Block30 [
 label = "{Block30|    MOVE     TEST-RESULTS TO PRINT-REC. PERFORM WRITE-LINE\l}"
 ]
-Block30 -> Block125 [style=dashed, arrowhead=none]
+Block30 -> Block125 [style=dashed]
 
 Block31 [
 label = "{Block31|}"
 ]
 Block32 [
-label = "{PRINT-DETAIL. Block32|}"
+label = "{PRINT-DETAIL. Block32|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
 ]
 Block33 [
-label = "{Block33|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
+label = "{Block33|}"
 ]
 Block34 [
 label = "{Block34|    IF P-OR-F EQUAL TO \"FAIL*\"  PERFORM WRITE-LINE\l}"
 ]
-Block34 -> Block125 [style=dashed, arrowhead=none]
+Block34 -> Block125 [style=dashed]
 
 Block35 [
 label = "{Block35|}"
@@ -2900,7 +2900,7 @@ label = "{Block35|}"
 Block36 [
 label = "{Block36|       PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX\l}"
 ]
-Block36 -> Block151 [style=dashed, arrowhead=none]
+Block36 -> Block151 [style=dashed]
 
 Block37 [
 label = "{Block37|}"
@@ -2918,10 +2918,10 @@ Block44 [
 label = "{PRINT-DETAIL. Block44|    MOVE SPACE TO CORRECT-X\l}"
 ]
 Block45 [
-label = "{PRINT-DETAIL. Block45|}"
+label = "{PRINT-DETAIL. Block45|    IF     REC-CT EQUAL TO ZERO\l}"
 ]
 Block46 [
-label = "{Block46|    IF     REC-CT EQUAL TO ZERO\l    IF     REC-CT EQUAL TO ZERO  MOVE SPACE TO PAR-NAME\l}"
+label = "{Block46|    IF     REC-CT EQUAL TO ZERO  MOVE SPACE TO PAR-NAME\l}"
 ]
 Block47 [
 label = "{Block47|}"
@@ -2935,7 +2935,7 @@ label = "{Block38|         ELSE\l}"
 Block39 [
 label = "{Block39|         ELSE PERFORM BAIL-OUT THRU BAIL-OUT-EX\l}"
 ]
-Block39 -> Block187 [style=dashed, arrowhead=none]
+Block39 -> Block187 [style=dashed]
 
 Block40 [
 label = "{Block40|}"
@@ -2968,7 +2968,7 @@ Block39 -> Block40
 Block40 -> Block41
 
 }
-Block306 -> Block25 [style=dashed, arrowhead=none]
+Block306 -> Block25 [style=dashed]
 
 Block307 [
 label = "{Block307|}"
@@ -2980,10 +2980,10 @@ Block309 [
 label = "{F-FACTORIAL-TEST-06. Block309|    COMPUTE WS-NUM = FUNCTION FACTORIAL(                       FUNCTION FACTORIAL(3))\l}"
 ]
 Block310 [
-label = "{F-FACTORIAL-TEST-06. Block310|}"
+label = "{F-FACTORIAL-TEST-06. Block310|    IF WS-NUM = 720 THEN\l}"
 ]
 Block311 [
-label = "{Block311|    IF WS-NUM = 720 THEN\l}"
+label = "{Block311|}"
 ]
 Block312 [
 label = "{Block312|                   PERFORM PASS\l}"
@@ -3000,7 +3000,7 @@ label = "{PASS. Block19|PASS.  MOVE \"PASS \" TO P-OR-F.  ADD 1 TO PASS-COUNTER\
 Block18 -> Block19
 
 }
-Block312 -> Block18 [style=dashed, arrowhead=none]
+Block312 -> Block18 [style=dashed]
 
 Block313 [
 label = "{Block313|}"
@@ -3024,10 +3024,10 @@ subgraph cluster_60{
 color = blue;
 label = "PRINT-DETAIL";
 Block25 [
-label = "{PRINT-DETAIL. Block25|}"
+label = "{PRINT-DETAIL. Block25|    IF REC-CT NOT EQUAL TO ZERO\l}"
 ]
 Block26 [
-label = "{Block26|    IF REC-CT NOT EQUAL TO ZERO\l            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
+label = "{Block26|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
 ]
 Block27 [
 label = "{Block27|}"
@@ -3041,21 +3041,21 @@ label = "{PRINT-DETAIL. Block29|}"
 Block30 [
 label = "{Block30|    MOVE     TEST-RESULTS TO PRINT-REC. PERFORM WRITE-LINE\l}"
 ]
-Block30 -> Block125 [style=dashed, arrowhead=none]
+Block30 -> Block125 [style=dashed]
 
 Block31 [
 label = "{Block31|}"
 ]
 Block32 [
-label = "{PRINT-DETAIL. Block32|}"
+label = "{PRINT-DETAIL. Block32|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
 ]
 Block33 [
-label = "{Block33|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
+label = "{Block33|}"
 ]
 Block34 [
 label = "{Block34|    IF P-OR-F EQUAL TO \"FAIL*\"  PERFORM WRITE-LINE\l}"
 ]
-Block34 -> Block125 [style=dashed, arrowhead=none]
+Block34 -> Block125 [style=dashed]
 
 Block35 [
 label = "{Block35|}"
@@ -3063,7 +3063,7 @@ label = "{Block35|}"
 Block36 [
 label = "{Block36|       PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX\l}"
 ]
-Block36 -> Block151 [style=dashed, arrowhead=none]
+Block36 -> Block151 [style=dashed]
 
 Block37 [
 label = "{Block37|}"
@@ -3081,10 +3081,10 @@ Block44 [
 label = "{PRINT-DETAIL. Block44|    MOVE SPACE TO CORRECT-X\l}"
 ]
 Block45 [
-label = "{PRINT-DETAIL. Block45|}"
+label = "{PRINT-DETAIL. Block45|    IF     REC-CT EQUAL TO ZERO\l}"
 ]
 Block46 [
-label = "{Block46|    IF     REC-CT EQUAL TO ZERO\l    IF     REC-CT EQUAL TO ZERO  MOVE SPACE TO PAR-NAME\l}"
+label = "{Block46|    IF     REC-CT EQUAL TO ZERO  MOVE SPACE TO PAR-NAME\l}"
 ]
 Block47 [
 label = "{Block47|}"
@@ -3098,7 +3098,7 @@ label = "{Block38|         ELSE\l}"
 Block39 [
 label = "{Block39|         ELSE PERFORM BAIL-OUT THRU BAIL-OUT-EX\l}"
 ]
-Block39 -> Block187 [style=dashed, arrowhead=none]
+Block39 -> Block187 [style=dashed]
 
 Block40 [
 label = "{Block40|}"
@@ -3131,7 +3131,7 @@ Block39 -> Block40
 Block40 -> Block41
 
 }
-Block327 -> Block25 [style=dashed, arrowhead=none]
+Block327 -> Block25 [style=dashed]
 
 Block328 [
 label = "{Block328|}"
@@ -3143,10 +3143,10 @@ Block330 [
 label = "{F-FACTORIAL-TEST-07. Block330|    COMPUTE WS-NUM = FUNCTION FACTORIAL(1) + B\l}"
 ]
 Block331 [
-label = "{F-FACTORIAL-TEST-07. Block331|}"
+label = "{F-FACTORIAL-TEST-07. Block331|    IF WS-NUM = 8 THEN\l}"
 ]
 Block332 [
-label = "{Block332|    IF WS-NUM = 8 THEN\l}"
+label = "{Block332|}"
 ]
 Block333 [
 label = "{Block333|                   PERFORM PASS\l}"
@@ -3163,7 +3163,7 @@ label = "{PASS. Block19|PASS.  MOVE \"PASS \" TO P-OR-F.  ADD 1 TO PASS-COUNTER\
 Block18 -> Block19
 
 }
-Block333 -> Block18 [style=dashed, arrowhead=none]
+Block333 -> Block18 [style=dashed]
 
 Block334 [
 label = "{Block334|}"
@@ -3187,10 +3187,10 @@ subgraph cluster_64{
 color = blue;
 label = "PRINT-DETAIL";
 Block25 [
-label = "{PRINT-DETAIL. Block25|}"
+label = "{PRINT-DETAIL. Block25|    IF REC-CT NOT EQUAL TO ZERO\l}"
 ]
 Block26 [
-label = "{Block26|    IF REC-CT NOT EQUAL TO ZERO\l            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
+label = "{Block26|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
 ]
 Block27 [
 label = "{Block27|}"
@@ -3204,21 +3204,21 @@ label = "{PRINT-DETAIL. Block29|}"
 Block30 [
 label = "{Block30|    MOVE     TEST-RESULTS TO PRINT-REC. PERFORM WRITE-LINE\l}"
 ]
-Block30 -> Block125 [style=dashed, arrowhead=none]
+Block30 -> Block125 [style=dashed]
 
 Block31 [
 label = "{Block31|}"
 ]
 Block32 [
-label = "{PRINT-DETAIL. Block32|}"
+label = "{PRINT-DETAIL. Block32|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
 ]
 Block33 [
-label = "{Block33|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
+label = "{Block33|}"
 ]
 Block34 [
 label = "{Block34|    IF P-OR-F EQUAL TO \"FAIL*\"  PERFORM WRITE-LINE\l}"
 ]
-Block34 -> Block125 [style=dashed, arrowhead=none]
+Block34 -> Block125 [style=dashed]
 
 Block35 [
 label = "{Block35|}"
@@ -3226,7 +3226,7 @@ label = "{Block35|}"
 Block36 [
 label = "{Block36|       PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX\l}"
 ]
-Block36 -> Block151 [style=dashed, arrowhead=none]
+Block36 -> Block151 [style=dashed]
 
 Block37 [
 label = "{Block37|}"
@@ -3244,10 +3244,10 @@ Block44 [
 label = "{PRINT-DETAIL. Block44|    MOVE SPACE TO CORRECT-X\l}"
 ]
 Block45 [
-label = "{PRINT-DETAIL. Block45|}"
+label = "{PRINT-DETAIL. Block45|    IF     REC-CT EQUAL TO ZERO\l}"
 ]
 Block46 [
-label = "{Block46|    IF     REC-CT EQUAL TO ZERO\l    IF     REC-CT EQUAL TO ZERO  MOVE SPACE TO PAR-NAME\l}"
+label = "{Block46|    IF     REC-CT EQUAL TO ZERO  MOVE SPACE TO PAR-NAME\l}"
 ]
 Block47 [
 label = "{Block47|}"
@@ -3261,7 +3261,7 @@ label = "{Block38|         ELSE\l}"
 Block39 [
 label = "{Block39|         ELSE PERFORM BAIL-OUT THRU BAIL-OUT-EX\l}"
 ]
-Block39 -> Block187 [style=dashed, arrowhead=none]
+Block39 -> Block187 [style=dashed]
 
 Block40 [
 label = "{Block40|}"
@@ -3294,7 +3294,7 @@ Block39 -> Block40
 Block40 -> Block41
 
 }
-Block348 -> Block25 [style=dashed, arrowhead=none]
+Block348 -> Block25 [style=dashed]
 
 Block349 [
 label = "{Block349|}"
@@ -3306,10 +3306,10 @@ Block351 [
 label = "{F-FACTORIAL-TEST-08. Block351|    COMPUTE WS-NUM = FUNCTION FACTORIAL(4) +                        FUNCTION FACTORIAL(2)\l}"
 ]
 Block352 [
-label = "{F-FACTORIAL-TEST-08. Block352|}"
+label = "{F-FACTORIAL-TEST-08. Block352|    IF WS-NUM = 26 THEN\l}"
 ]
 Block353 [
-label = "{Block353|    IF WS-NUM = 26 THEN\l}"
+label = "{Block353|}"
 ]
 Block354 [
 label = "{Block354|                   PERFORM PASS\l}"
@@ -3326,7 +3326,7 @@ label = "{PASS. Block19|PASS.  MOVE \"PASS \" TO P-OR-F.  ADD 1 TO PASS-COUNTER\
 Block18 -> Block19
 
 }
-Block354 -> Block18 [style=dashed, arrowhead=none]
+Block354 -> Block18 [style=dashed]
 
 Block355 [
 label = "{Block355|}"
@@ -3350,10 +3350,10 @@ subgraph cluster_68{
 color = blue;
 label = "PRINT-DETAIL";
 Block25 [
-label = "{PRINT-DETAIL. Block25|}"
+label = "{PRINT-DETAIL. Block25|    IF REC-CT NOT EQUAL TO ZERO\l}"
 ]
 Block26 [
-label = "{Block26|    IF REC-CT NOT EQUAL TO ZERO\l            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
+label = "{Block26|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
 ]
 Block27 [
 label = "{Block27|}"
@@ -3367,21 +3367,21 @@ label = "{PRINT-DETAIL. Block29|}"
 Block30 [
 label = "{Block30|    MOVE     TEST-RESULTS TO PRINT-REC. PERFORM WRITE-LINE\l}"
 ]
-Block30 -> Block125 [style=dashed, arrowhead=none]
+Block30 -> Block125 [style=dashed]
 
 Block31 [
 label = "{Block31|}"
 ]
 Block32 [
-label = "{PRINT-DETAIL. Block32|}"
+label = "{PRINT-DETAIL. Block32|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
 ]
 Block33 [
-label = "{Block33|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
+label = "{Block33|}"
 ]
 Block34 [
 label = "{Block34|    IF P-OR-F EQUAL TO \"FAIL*\"  PERFORM WRITE-LINE\l}"
 ]
-Block34 -> Block125 [style=dashed, arrowhead=none]
+Block34 -> Block125 [style=dashed]
 
 Block35 [
 label = "{Block35|}"
@@ -3389,7 +3389,7 @@ label = "{Block35|}"
 Block36 [
 label = "{Block36|       PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX\l}"
 ]
-Block36 -> Block151 [style=dashed, arrowhead=none]
+Block36 -> Block151 [style=dashed]
 
 Block37 [
 label = "{Block37|}"
@@ -3407,10 +3407,10 @@ Block44 [
 label = "{PRINT-DETAIL. Block44|    MOVE SPACE TO CORRECT-X\l}"
 ]
 Block45 [
-label = "{PRINT-DETAIL. Block45|}"
+label = "{PRINT-DETAIL. Block45|    IF     REC-CT EQUAL TO ZERO\l}"
 ]
 Block46 [
-label = "{Block46|    IF     REC-CT EQUAL TO ZERO\l    IF     REC-CT EQUAL TO ZERO  MOVE SPACE TO PAR-NAME\l}"
+label = "{Block46|    IF     REC-CT EQUAL TO ZERO  MOVE SPACE TO PAR-NAME\l}"
 ]
 Block47 [
 label = "{Block47|}"
@@ -3424,7 +3424,7 @@ label = "{Block38|         ELSE\l}"
 Block39 [
 label = "{Block39|         ELSE PERFORM BAIL-OUT THRU BAIL-OUT-EX\l}"
 ]
-Block39 -> Block187 [style=dashed, arrowhead=none]
+Block39 -> Block187 [style=dashed]
 
 Block40 [
 label = "{Block40|}"
@@ -3457,7 +3457,7 @@ Block39 -> Block40
 Block40 -> Block41
 
 }
-Block369 -> Block25 [style=dashed, arrowhead=none]
+Block369 -> Block25 [style=dashed]
 
 Block370 [
 label = "{Block370|}"
@@ -3479,7 +3479,7 @@ label = "{F-FACTORIAL-TEST-09. Block380|    COMPUTE ARG1 = ARG1 + 1\l}"
 ]
 
 }
-Block373 -> Block380 [style=dashed, arrowhead=none]
+Block373 -> Block380 [style=dashed]
 
 Block374 [
 label = "{Block374|}"
@@ -3502,7 +3502,7 @@ label = "{PASS. Block19|PASS.  MOVE \"PASS \" TO P-OR-F.  ADD 1 TO PASS-COUNTER\
 Block18 -> Block19
 
 }
-Block376 -> Block18 [style=dashed, arrowhead=none]
+Block376 -> Block18 [style=dashed]
 
 Block377 [
 label = "{Block377|}"
@@ -3523,10 +3523,10 @@ subgraph cluster_72{
 color = blue;
 label = "PRINT-DETAIL";
 Block25 [
-label = "{PRINT-DETAIL. Block25|}"
+label = "{PRINT-DETAIL. Block25|    IF REC-CT NOT EQUAL TO ZERO\l}"
 ]
 Block26 [
-label = "{Block26|    IF REC-CT NOT EQUAL TO ZERO\l            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
+label = "{Block26|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
 ]
 Block27 [
 label = "{Block27|}"
@@ -3540,21 +3540,21 @@ label = "{PRINT-DETAIL. Block29|}"
 Block30 [
 label = "{Block30|    MOVE     TEST-RESULTS TO PRINT-REC. PERFORM WRITE-LINE\l}"
 ]
-Block30 -> Block125 [style=dashed, arrowhead=none]
+Block30 -> Block125 [style=dashed]
 
 Block31 [
 label = "{Block31|}"
 ]
 Block32 [
-label = "{PRINT-DETAIL. Block32|}"
+label = "{PRINT-DETAIL. Block32|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
 ]
 Block33 [
-label = "{Block33|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
+label = "{Block33|}"
 ]
 Block34 [
 label = "{Block34|    IF P-OR-F EQUAL TO \"FAIL*\"  PERFORM WRITE-LINE\l}"
 ]
-Block34 -> Block125 [style=dashed, arrowhead=none]
+Block34 -> Block125 [style=dashed]
 
 Block35 [
 label = "{Block35|}"
@@ -3562,7 +3562,7 @@ label = "{Block35|}"
 Block36 [
 label = "{Block36|       PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX\l}"
 ]
-Block36 -> Block151 [style=dashed, arrowhead=none]
+Block36 -> Block151 [style=dashed]
 
 Block37 [
 label = "{Block37|}"
@@ -3580,10 +3580,10 @@ Block44 [
 label = "{PRINT-DETAIL. Block44|    MOVE SPACE TO CORRECT-X\l}"
 ]
 Block45 [
-label = "{PRINT-DETAIL. Block45|}"
+label = "{PRINT-DETAIL. Block45|    IF     REC-CT EQUAL TO ZERO\l}"
 ]
 Block46 [
-label = "{Block46|    IF     REC-CT EQUAL TO ZERO\l    IF     REC-CT EQUAL TO ZERO  MOVE SPACE TO PAR-NAME\l}"
+label = "{Block46|    IF     REC-CT EQUAL TO ZERO  MOVE SPACE TO PAR-NAME\l}"
 ]
 Block47 [
 label = "{Block47|}"
@@ -3597,7 +3597,7 @@ label = "{Block38|         ELSE\l}"
 Block39 [
 label = "{Block39|         ELSE PERFORM BAIL-OUT THRU BAIL-OUT-EX\l}"
 ]
-Block39 -> Block187 [style=dashed, arrowhead=none]
+Block39 -> Block187 [style=dashed]
 
 Block40 [
 label = "{Block40|}"
@@ -3630,7 +3630,7 @@ Block39 -> Block40
 Block40 -> Block41
 
 }
-Block388 -> Block25 [style=dashed, arrowhead=none]
+Block388 -> Block25 [style=dashed]
 
 Block389 [
 label = "{Block389|}"
@@ -3663,15 +3663,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -3679,7 +3679,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -3687,7 +3687,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -3695,7 +3695,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -3703,7 +3703,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -3711,7 +3711,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -3719,7 +3719,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -3733,7 +3733,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -3761,7 +3761,7 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block79 -> Block125 [style=dashed, arrowhead=none]
+Block79 -> Block125 [style=dashed]
 
 Block80 [
 label = "{Block80|}"
@@ -3782,15 +3782,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -3798,7 +3798,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -3806,7 +3806,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -3814,7 +3814,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -3822,7 +3822,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -3830,7 +3830,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -3838,7 +3838,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -3852,7 +3852,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -3880,7 +3880,7 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block83 -> Block125 [style=dashed, arrowhead=none]
+Block83 -> Block125 [style=dashed]
 
 Block84 [
 label = "{Block84|}"
@@ -3916,15 +3916,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -3932,7 +3932,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -3940,7 +3940,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -3948,7 +3948,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -3956,7 +3956,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -3964,7 +3964,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -3972,7 +3972,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -3986,7 +3986,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -4014,7 +4014,7 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block92 -> Block125 [style=dashed, arrowhead=none]
+Block92 -> Block125 [style=dashed]
 
 Block93 [
 label = "{Block93|}"
@@ -4023,10 +4023,10 @@ Block94 [
 label = "{END-ROUTINE-12. Block94|     MOVE \"TEST(S) FAILED\" TO ENDER-DESC\l}"
 ]
 Block95 [
-label = "{END-ROUTINE-12. Block95|}"
+label = "{END-ROUTINE-12. Block95|    IF       ERROR-COUNTER IS EQUAL TO ZERO\l}"
 ]
 Block96 [
-label = "{Block96|    IF       ERROR-COUNTER IS EQUAL TO ZERO\l        MOVE \"NO \" TO ERROR-TOTAL\l}"
+label = "{Block96|        MOVE \"NO \" TO ERROR-TOTAL\l}"
 ]
 Block98 [
 label = "{Block98|}"
@@ -4047,15 +4047,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -4063,7 +4063,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -4071,7 +4071,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -4079,7 +4079,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -4087,7 +4087,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -4095,7 +4095,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -4103,7 +4103,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -4117,7 +4117,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -4145,16 +4145,16 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block101 -> Block125 [style=dashed, arrowhead=none]
+Block101 -> Block125 [style=dashed]
 
 Block102 [
 label = "{Block102|}"
 ]
 Block103 [
-label = "{END-ROUTINE-13. Block103|}"
+label = "{END-ROUTINE-13. Block103|    IF DELETE-COUNTER IS EQUAL TO ZERO\l}"
 ]
 Block104 [
-label = "{Block104|    IF DELETE-COUNTER IS EQUAL TO ZERO\l        MOVE \"NO \" TO ERROR-TOTAL\l}"
+label = "{Block104|        MOVE \"NO \" TO ERROR-TOTAL\l}"
 ]
 Block106 [
 label = "{Block106|}"
@@ -4178,15 +4178,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -4194,7 +4194,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -4202,7 +4202,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -4210,7 +4210,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -4218,7 +4218,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -4226,7 +4226,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -4234,7 +4234,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -4248,7 +4248,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -4276,16 +4276,16 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block110 -> Block125 [style=dashed, arrowhead=none]
+Block110 -> Block125 [style=dashed]
 
 Block111 [
 label = "{Block111|}"
 ]
 Block112 [
-label = "{END-ROUTINE-13. Block112|}"
+label = "{END-ROUTINE-13. Block112|     IF   INSPECT-COUNTER EQUAL TO ZERO\l}"
 ]
 Block113 [
-label = "{Block113|     IF   INSPECT-COUNTER EQUAL TO ZERO\l         MOVE \"NO \" TO ERROR-TOTAL\l}"
+label = "{Block113|         MOVE \"NO \" TO ERROR-TOTAL\l}"
 ]
 Block115 [
 label = "{Block115|}"
@@ -4309,15 +4309,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -4325,7 +4325,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -4333,7 +4333,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -4341,7 +4341,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -4349,7 +4349,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -4357,7 +4357,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -4365,7 +4365,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -4379,7 +4379,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -4407,7 +4407,7 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block119 -> Block125 [style=dashed, arrowhead=none]
+Block119 -> Block125 [style=dashed]
 
 Block120 [
 label = "{Block120|}"
@@ -4428,15 +4428,15 @@ Block125 [
 label = "{WRITE-LINE. Block125|    ADD 1 TO RECORD-COUNT\l}"
 ]
 Block126 [
-label = "{WRITE-LINE. Block126|}"
+label = "{WRITE-LINE. Block126|    IF RECORD-COUNT GREATER 42\l}"
 ]
 Block127 [
-label = "{Block127|    IF RECORD-COUNT GREATER 42\l        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
+label = "{Block127|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-H-1  TO DUMMY-RECORD\l}"
 ]
 Block128 [
 label = "{Block128|        MOVE CCVS-H-1  TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block128 -> Block146 [style=dashed, arrowhead=none]
+Block128 -> Block146 [style=dashed]
 
 Block129 [
 label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
@@ -4444,7 +4444,7 @@ label = "{Block129|        MOVE CCVS-H-2A TO DUMMY-RECORD\l}"
 Block130 [
 label = "{Block130|        MOVE CCVS-H-2A TO DUMMY-RECORD  PERFORM WRT-LN 2 TIMES\l}"
 ]
-Block130 -> Block146 [style=dashed, arrowhead=none]
+Block130 -> Block146 [style=dashed]
 
 Block131 [
 label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
@@ -4452,7 +4452,7 @@ label = "{Block131|        MOVE CCVS-H-2B TO DUMMY-RECORD\l}"
 Block132 [
 label = "{Block132|        MOVE CCVS-H-2B TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block132 -> Block146 [style=dashed, arrowhead=none]
+Block132 -> Block146 [style=dashed]
 
 Block133 [
 label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
@@ -4460,7 +4460,7 @@ label = "{Block133|        MOVE CCVS-H-3  TO DUMMY-RECORD\l}"
 Block134 [
 label = "{Block134|        MOVE CCVS-H-3  TO DUMMY-RECORD  PERFORM WRT-LN 3 TIMES\l}"
 ]
-Block134 -> Block146 [style=dashed, arrowhead=none]
+Block134 -> Block146 [style=dashed]
 
 Block135 [
 label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
@@ -4468,7 +4468,7 @@ label = "{Block135|        MOVE CCVS-C-1  TO DUMMY-RECORD\l}"
 Block136 [
 label = "{Block136|        MOVE CCVS-C-1  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block136 -> Block146 [style=dashed, arrowhead=none]
+Block136 -> Block146 [style=dashed]
 
 Block137 [
 label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
@@ -4476,7 +4476,7 @@ label = "{Block137|        MOVE CCVS-C-2  TO DUMMY-RECORD\l}"
 Block138 [
 label = "{Block138|        MOVE CCVS-C-2  TO DUMMY-RECORD  PERFORM WRT-LN\l}"
 ]
-Block138 -> Block146 [style=dashed, arrowhead=none]
+Block138 -> Block146 [style=dashed]
 
 Block139 [
 label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
@@ -4484,7 +4484,7 @@ label = "{Block139|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 Block140 [
 label = "{Block140|        MOVE HYPHEN-LINE TO DUMMY-RECORD PERFORM WRT-LN\l}"
 ]
-Block140 -> Block146 [style=dashed, arrowhead=none]
+Block140 -> Block146 [style=dashed]
 
 Block141 [
 label = "{Block141|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
@@ -4498,7 +4498,7 @@ label = "{WRITE-LINE. Block143|}"
 Block144 [
 label = "{Block144|    PERFORM WRT-LN\l}"
 ]
-Block144 -> Block146 [style=dashed, arrowhead=none]
+Block144 -> Block146 [style=dashed]
 
 Block145 [
 label = "{Block145|}"
@@ -4526,7 +4526,7 @@ Block143 -> Block144
 Block144 -> Block145
 
 }
-Block123 -> Block125 [style=dashed, arrowhead=none]
+Block123 -> Block125 [style=dashed]
 
 Block124 [
 label = "{Block124|}"
@@ -4592,7 +4592,7 @@ Block105 -> Block106
 Block97 -> Block98
 
 }
-Block11 -> Block77 [style=dashed, arrowhead=none]
+Block11 -> Block77 [style=dashed]
 
 Block12 [
 label = "{Block12|}"
@@ -4621,7 +4621,7 @@ label = "{FAIL. Block21|FAIL.  MOVE \"FAIL*\" TO P-OR-F.  ADD 1 TO ERROR-COUNTER
 Block20 -> Block21
 
 }
-Block357 -> Block20 [style=dashed, arrowhead=none]
+Block357 -> Block20 [style=dashed]
 
 Block358 [
 label = "{Block358|}"
@@ -4644,7 +4644,7 @@ label = "{FAIL. Block21|FAIL.  MOVE \"FAIL*\" TO P-OR-F.  ADD 1 TO ERROR-COUNTER
 Block20 -> Block21
 
 }
-Block336 -> Block20 [style=dashed, arrowhead=none]
+Block336 -> Block20 [style=dashed]
 
 Block337 [
 label = "{Block337|}"
@@ -4667,7 +4667,7 @@ label = "{FAIL. Block21|FAIL.  MOVE \"FAIL*\" TO P-OR-F.  ADD 1 TO ERROR-COUNTER
 Block20 -> Block21
 
 }
-Block315 -> Block20 [style=dashed, arrowhead=none]
+Block315 -> Block20 [style=dashed]
 
 Block316 [
 label = "{Block316|}"
@@ -4690,7 +4690,7 @@ label = "{FAIL. Block21|FAIL.  MOVE \"FAIL*\" TO P-OR-F.  ADD 1 TO ERROR-COUNTER
 Block20 -> Block21
 
 }
-Block294 -> Block20 [style=dashed, arrowhead=none]
+Block294 -> Block20 [style=dashed]
 
 Block295 [
 label = "{Block295|}"
@@ -4713,7 +4713,7 @@ label = "{FAIL. Block21|FAIL.  MOVE \"FAIL*\" TO P-OR-F.  ADD 1 TO ERROR-COUNTER
 Block20 -> Block21
 
 }
-Block273 -> Block20 [style=dashed, arrowhead=none]
+Block273 -> Block20 [style=dashed]
 
 Block274 [
 label = "{Block274|}"
@@ -4736,7 +4736,7 @@ label = "{FAIL. Block21|FAIL.  MOVE \"FAIL*\" TO P-OR-F.  ADD 1 TO ERROR-COUNTER
 Block20 -> Block21
 
 }
-Block252 -> Block20 [style=dashed, arrowhead=none]
+Block252 -> Block20 [style=dashed]
 
 Block253 [
 label = "{Block253|}"
@@ -4759,7 +4759,7 @@ label = "{FAIL. Block21|FAIL.  MOVE \"FAIL*\" TO P-OR-F.  ADD 1 TO ERROR-COUNTER
 Block20 -> Block21
 
 }
-Block233 -> Block20 [style=dashed, arrowhead=none]
+Block233 -> Block20 [style=dashed]
 
 Block234 [
 label = "{Block234|}"
@@ -4782,7 +4782,7 @@ label = "{FAIL. Block21|FAIL.  MOVE \"FAIL*\" TO P-OR-F.  ADD 1 TO ERROR-COUNTER
 Block20 -> Block21
 
 }
-Block214 -> Block20 [style=dashed, arrowhead=none]
+Block214 -> Block20 [style=dashed]
 
 Block215 [
 label = "{Block215|}"

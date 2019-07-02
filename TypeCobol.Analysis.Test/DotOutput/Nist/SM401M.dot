@@ -24,7 +24,7 @@ label = "{SM401M-COPYREP. Block6|    DISPLAY \"COW SHEEP PIG HORSE LAMB DOG CAT 
 ]
 
 }
-Block2 -> Block6 [style=dashed, arrowhead=none]
+Block2 -> Block6 [style=dashed]
 
 Block3 [
 label = "{Block3|}"

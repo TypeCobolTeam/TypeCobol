@@ -24,7 +24,7 @@ label = "{SM301M-COPY. Block6|DisplayStatement\l}"
 ]
 
 }
-Block2 -> Block6 [style=dashed, arrowhead=none]
+Block2 -> Block6 [style=dashed]
 
 Block3 [
 label = "{Block3|}"

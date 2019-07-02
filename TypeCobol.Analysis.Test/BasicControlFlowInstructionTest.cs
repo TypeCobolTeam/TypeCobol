@@ -1071,7 +1071,7 @@ namespace TypeCobol.Analysis.Test
         /// "dot.exe" -Tsvg CGM110.dot -o CGM110.svg
         /// </summary>
         [TestMethod]
-        [Ignore]//Very big
+        //[Ignore]//Very big
         public void OneThidPartyCGM110()
         {
             string pwd = Directory.GetCurrentDirectory();
@@ -1081,7 +1081,7 @@ namespace TypeCobol.Analysis.Test
 
             string samples = @"ThirdParty" + Path.DirectorySeparatorChar + "CNAF" + Path.DirectorySeparatorChar + "Batch";
 
-            string path = Path.Combine(rootSolDir.FullName, "TypeCobol.Test", samples, "CGM110.cbl");
+            string path = Path.Combine(solDir.FullName, "TypeCobol.Test", samples, "CGM110.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
             Assert.IsTrue(Builder.Programs.Count == 1);
@@ -1108,7 +1108,7 @@ namespace TypeCobol.Analysis.Test
 
             string samples = @"ThirdParty" + Path.DirectorySeparatorChar + "Nist";
 
-            string path = Path.Combine(rootSolDir.FullName, "TypeCobol.Test", samples, "IX105A.cbl");
+            string path = Path.Combine(solDir.FullName, "TypeCobol.Test", samples, "IX105A.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
             Assert.IsTrue(Builder.Programs.Count == 1);
@@ -1135,7 +1135,7 @@ namespace TypeCobol.Analysis.Test
 
             string samples = @"ThirdParty" + Path.DirectorySeparatorChar + "Nist";
 
-            string path = Path.Combine(rootSolDir.FullName, "TypeCobol.Test", samples, "SG102A.cbl");
+            string path = Path.Combine(solDir.FullName, "TypeCobol.Test", samples, "SG102A.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
             Assert.IsTrue(Builder.Programs.Count == 1);
@@ -1162,7 +1162,7 @@ namespace TypeCobol.Analysis.Test
 
             string samples = @"ThirdParty" + Path.DirectorySeparatorChar + "Nist";
 
-            string path = Path.Combine(rootSolDir.FullName, "TypeCobol.Test", samples);
+            string path = Path.Combine(solDir.FullName, "TypeCobol.Test", samples);
             string[] files = Directory.GetFiles(path, "*.cbl", SearchOption.AllDirectories);
             foreach(string f in files)
             {
@@ -1200,7 +1200,7 @@ namespace TypeCobol.Analysis.Test
 
             string samples = @"ThirdParty" + Path.DirectorySeparatorChar + "Nist";
 
-            string path = Path.Combine(rootSolDir.FullName, "TypeCobol.Test", samples);
+            string path = Path.Combine(solDir.FullName, "TypeCobol.Test", samples);
             string[] files = Directory.GetFiles(path, "*.cbl", SearchOption.AllDirectories);
             foreach (string f in files)
             {

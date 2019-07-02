@@ -32,7 +32,7 @@ Block5 -> Block6
 Block6 -> Block7
 
 }
-Block2 -> Block5 [style=dashed, arrowhead=none]
+Block2 -> Block5 [style=dashed]
 
 Block3 [
 label = "{Block3|      DISPLAY 'DOING PERFORM THRU'\l      DISPLAY 'PARA NAME IS  FIRST-PARA'\l      STOP RUN\l}"

@@ -7,10 +7,10 @@ edge [
 arrowtail = "empty"
 ]
 Block0 [
-label = "{START|}"
+label = "{START|    IF A = 10 THEN\l}"
 ]
 Block1 [
-label = "{Block1|    IF A = 10 THEN\l      NEXT SENTENCE\l}"
+label = "{Block1|      NEXT SENTENCE\l}"
 ]
 Block4 [
 label = "{Block4|    DISPLAY \"CONTINUE\"\l}"

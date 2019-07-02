@@ -24,7 +24,7 @@ label = "{A-STARTUP. Block9|    OPEN INPUT USER-FILE\l}"
 ]
 
 }
-Block2 -> Block9 [style=dashed, arrowhead=none]
+Block2 -> Block9 [style=dashed]
 
 Block3 [
 label = "{Block3|}"
@@ -87,7 +87,7 @@ Block21 -> Block23
 Block22 -> Block23
 
 }
-Block14 -> Block16 [style=dashed, arrowhead=none]
+Block14 -> Block16 [style=dashed]
 
 Block15 [
 label = "{Block15|}"
@@ -100,7 +100,7 @@ Block13 -> Block14
 Block14 -> Block15
 
 }
-Block4 -> Block10 [style=dashed, arrowhead=none]
+Block4 -> Block10 [style=dashed]
 
 Block5 [
 label = "{Block5|}"
@@ -116,7 +116,7 @@ label = "{C-CLEANUP. Block24|    CLOSE USER-FILE\l}"
 ]
 
 }
-Block6 -> Block24 [style=dashed, arrowhead=none]
+Block6 -> Block24 [style=dashed]
 
 Block7 [
 label = "{Block7|    STOP RUN\l}"

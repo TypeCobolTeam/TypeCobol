@@ -7,30 +7,46 @@ edge [
 arrowtail = "empty"
 ]
 Block0 [
-label = "{START|    EVALUATE menu-input\l}"
+label = "{START|    EVALUATE menu-input\l      WHEN 'A'\l      WHEN 'B'\l      WHEN 'C'\l      WHEN 'D'\l}"
 ]
 Block1 [
-label = "{Block1|      WHEN 'A'\l      WHEN 'B'\l      WHEN 'C'\l      WHEN 'D'\l        DISPLAY \"OPTION [A-B]\"\l}"
+label = "{Block1|        DISPLAY \"OPTION [A-B]\"\l}"
 ]
-Block5 [
-label = "{Block5|}"
+Block9 [
+label = "{Block9|}"
 ]
 Block2 [
-label = "{Block2|      WHEN \"E\"\l        DISPLAY \"OPTION E\"\l}"
+label = "{Block2|      WHEN \"E\"\l}"
 ]
 Block3 [
-label = "{Block3|      WHEN \"F\"\l      WHEN \"G\"\l        DISPLAY \"OPTION F and G\"\l}"
+label = "{Block3|        DISPLAY \"OPTION E\"\l}"
+]
+Block8 [
+label = "{Block8|}"
 ]
 Block4 [
-label = "{Block4|         DISPLAY \"BAD OPTION\"\l}"
+label = "{Block4|      WHEN \"F\"\l      WHEN \"G\"\l}"
+]
+Block5 [
+label = "{Block5|        DISPLAY \"OPTION F and G\"\l}"
+]
+Block7 [
+label = "{Block7|}"
+]
+Block6 [
+label = "{Block6|         DISPLAY \"BAD OPTION\"\l}"
 ]
 Block0 -> Block1
 Block0 -> Block2
-Block0 -> Block3
-Block0 -> Block4
-Block1 -> Block5
-Block2 -> Block5
-Block3 -> Block5
+Block1 -> Block9
+Block2 -> Block3
+Block2 -> Block4
+Block3 -> Block8
+Block8 -> Block9
 Block4 -> Block5
+Block4 -> Block6
+Block5 -> Block7
+Block7 -> Block8
+Block6 -> Block7
 
 }

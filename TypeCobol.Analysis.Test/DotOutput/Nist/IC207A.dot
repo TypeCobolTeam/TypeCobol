@@ -70,28 +70,28 @@ Block24 [
 label = "{LINK-TEST-03. Block24|    MOVE 10 TO DN3\l}"
 ]
 Block25 [
-label = "{LINK-TEST-03-01. Block25|}"
+label = "{LINK-TEST-03-01. Block25|    IF CN1 (1)\l}"
 ]
 Block26 [
-label = "{Block26|    IF CN1 (1)\l    IF CN1 (1)  MOVE \"A\" TO DN2 (6)\l}"
+label = "{Block26|    IF CN1 (1)  MOVE \"A\" TO DN2 (6)\l}"
 ]
 Block27 [
 label = "{Block27|}"
 ]
 Block28 [
-label = "{LINK-TEST-03-02. Block28|}"
+label = "{LINK-TEST-03-02. Block28|    IF CN1 (5)\l}"
 ]
 Block29 [
-label = "{Block29|    IF CN1 (5)\l    IF CN1 (5)  MOVE \"N\" TO DN2 (7)\l}"
+label = "{Block29|    IF CN1 (5)  MOVE \"N\" TO DN2 (7)\l}"
 ]
 Block31 [
 label = "{Block31|}"
 ]
 Block32 [
-label = "{LINK-TEST-03-03. Block32|}"
+label = "{LINK-TEST-03-03. Block32|    IF CN2 (8)\l}"
 ]
 Block33 [
-label = "{Block33|    IF CN2 (8)\l    IF CN2 (8) MOVE \"H\" TO DN2 (8)\l}"
+label = "{Block33|    IF CN2 (8) MOVE \"H\" TO DN2 (8)\l}"
 ]
 Block34 [
 label = "{Block34|}"

@@ -16,10 +16,10 @@ Block2 [
 label = "{Block2|    MOVE 300 TO WS-C\l}"
 ]
 Block3 [
-label = "{Block3|}"
+label = "{Block3|    IF WS-A \> ZERO AND WS-B \> ZERO THEN\l}"
 ]
 Block4 [
-label = "{Block4|    IF WS-A \> ZERO AND WS-B \> ZERO THEN\l      NEXT SENTENCE\l}"
+label = "{Block4|      NEXT SENTENCE\l}"
 ]
 Block8 [
 label = "{Block8|    DISPLAY 'WS-C value ', WS-C\l}"

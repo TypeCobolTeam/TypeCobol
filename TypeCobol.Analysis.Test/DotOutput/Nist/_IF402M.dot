@@ -10,28 +10,28 @@ Block0 [
 label = "{START|}"
 ]
 Block1 [
-label = "{IF402M-LENGTH. Block1|}"
+label = "{IF402M-LENGTH. Block1|IfStatement\l}"
 ]
 Block2 [
-label = "{Block2|IfStatement\lContinueStatement\l}"
+label = "{Block2|ContinueStatement\l}"
 ]
 Block3 [
 label = "{Block3|}"
 ]
 Block4 [
-label = "{IF402M-LOG. Block4|}"
+label = "{IF402M-LOG. Block4|IfStatement\l}"
 ]
 Block5 [
-label = "{Block5|IfStatement\lContinueStatement\l}"
+label = "{Block5|ContinueStatement\l}"
 ]
 Block6 [
 label = "{Block6|}"
 ]
 Block7 [
-label = "{IF402M-LOG10. Block7|}"
+label = "{IF402M-LOG10. Block7|IfStatement\l}"
 ]
 Block8 [
-label = "{Block8|IfStatement\lContinueStatement\l}"
+label = "{Block8|ContinueStatement\l}"
 ]
 Block9 [
 label = "{Block9|}"
@@ -40,10 +40,10 @@ Block10 [
 label = "{IF402M-LOWER-CASE. Block10|MoveStatement\l}"
 ]
 Block11 [
-label = "{IF402M-MAX. Block11|}"
+label = "{IF402M-MAX. Block11|IfStatement\l}"
 ]
 Block12 [
-label = "{Block12|IfStatement\lContinueStatement\l}"
+label = "{Block12|ContinueStatement\l}"
 ]
 Block13 [
 label = "{Block13|}"
@@ -52,37 +52,37 @@ Block14 [
 label = "{IF402M-MAX. Block14|MoveStatement\l}"
 ]
 Block15 [
-label = "{IF402M-MEAN. Block15|}"
+label = "{IF402M-MEAN. Block15|IfStatement\l}"
 ]
 Block16 [
-label = "{Block16|IfStatement\lContinueStatement\l}"
+label = "{Block16|ContinueStatement\l}"
 ]
 Block17 [
 label = "{Block17|}"
 ]
 Block18 [
-label = "{IF402M-MEDIAN. Block18|}"
+label = "{IF402M-MEDIAN. Block18|IfStatement\l}"
 ]
 Block19 [
-label = "{Block19|IfStatement\lContinueStatement\l}"
+label = "{Block19|ContinueStatement\l}"
 ]
 Block20 [
 label = "{Block20|}"
 ]
 Block21 [
-label = "{IF402M-MIDRANGE. Block21|}"
+label = "{IF402M-MIDRANGE. Block21|IfStatement\l}"
 ]
 Block22 [
-label = "{Block22|IfStatement\lContinueStatement\l}"
+label = "{Block22|ContinueStatement\l}"
 ]
 Block23 [
 label = "{Block23|}"
 ]
 Block24 [
-label = "{IF402M-MIN. Block24|}"
+label = "{IF402M-MIN. Block24|IfStatement\l}"
 ]
 Block25 [
-label = "{Block25|IfStatement\lContinueStatement\l}"
+label = "{Block25|ContinueStatement\l}"
 ]
 Block26 [
 label = "{Block26|}"
@@ -91,55 +91,55 @@ Block27 [
 label = "{IF402M-MIN. Block27|MoveStatement\l}"
 ]
 Block28 [
-label = "{IF402M-MOD. Block28|}"
+label = "{IF402M-MOD. Block28|IfStatement\l}"
 ]
 Block29 [
-label = "{Block29|IfStatement\lContinueStatement\l}"
+label = "{Block29|ContinueStatement\l}"
 ]
 Block30 [
 label = "{Block30|}"
 ]
 Block31 [
-label = "{IF402M-NUMVAL. Block31|}"
+label = "{IF402M-NUMVAL. Block31|IfStatement\l}"
 ]
 Block32 [
-label = "{Block32|IfStatement\lContinueStatement\l}"
+label = "{Block32|ContinueStatement\l}"
 ]
 Block33 [
 label = "{Block33|}"
 ]
 Block34 [
-label = "{IF402M-NUMVAL-C. Block34|}"
+label = "{IF402M-NUMVAL-C. Block34|IfStatement\l}"
 ]
 Block35 [
-label = "{Block35|IfStatement\lContinueStatement\l}"
+label = "{Block35|ContinueStatement\l}"
 ]
 Block36 [
 label = "{Block36|}"
 ]
 Block37 [
-label = "{IF402M-ORD. Block37|}"
+label = "{IF402M-ORD. Block37|IfStatement\l}"
 ]
 Block38 [
-label = "{Block38|IfStatement\lContinueStatement\l}"
+label = "{Block38|ContinueStatement\l}"
 ]
 Block39 [
 label = "{Block39|}"
 ]
 Block40 [
-label = "{IF402M-ORD-MAX. Block40|}"
+label = "{IF402M-ORD-MAX. Block40|IfStatement\l}"
 ]
 Block41 [
-label = "{Block41|IfStatement\lContinueStatement\l}"
+label = "{Block41|ContinueStatement\l}"
 ]
 Block42 [
 label = "{Block42|}"
 ]
 Block43 [
-label = "{IF402M-ORD-MIN. Block43|}"
+label = "{IF402M-ORD-MIN. Block43|IfStatement\l}"
 ]
 Block44 [
-label = "{Block44|IfStatement\lContinueStatement\l}"
+label = "{Block44|ContinueStatement\l}"
 ]
 Block45 [
 label = "{Block45|}"

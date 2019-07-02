@@ -10,12 +10,16 @@ Block0 [
 label = "{START|}"
 ]
 Block1 [
-label = "{Block1|    PERFORM\l      MOVE a TO b\l      DISPLAY a\l}"
+label = "{Block1|    PERFORM\l}"
 ]
 Block2 [
-label = "{Block2|}"
+label = "{Block2|      MOVE a TO b\l      DISPLAY a\l}"
+]
+Block3 [
+label = "{Block3|}"
 ]
 Block0 -> Block1
 Block1 -> Block2
+Block2 -> Block3
 
 }

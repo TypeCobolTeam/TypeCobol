@@ -17,10 +17,10 @@ subgraph cluster_1{
 color = blue;
 label = "pararec";
 Block4 [
-label = "{PARAREC. Block4|    add 1 to n\l    display n\l}"
+label = "{PARAREC. Block4|    add 1 to n\l    display n\l    if n \< 3\l}"
 ]
 Block5 [
-label = "{Block5|    if n \< 3\l       display 'before perform'\l}"
+label = "{Block5|       display 'before perform'\l}"
 ]
 Block6 [
 label = "{Block6|       perform pararec\l}"
@@ -29,15 +29,15 @@ subgraph cluster_2{
 color = blue;
 label = "pararec";
 Block4 [
-label = "{PARAREC. Block4|    add 1 to n\l    display n\l}"
+label = "{PARAREC. Block4|    add 1 to n\l    display n\l    if n \< 3\l}"
 ]
 Block5 [
-label = "{Block5|    if n \< 3\l       display 'before perform'\l}"
+label = "{Block5|       display 'before perform'\l}"
 ]
 Block6 [
 label = "{Block6|       perform pararec\l}"
 ]
-Block6 -> Block4 [style=dashed, arrowhead=none]
+Block6 -> Block4 [style=dashed]
 
 Block7 [
 label = "{Block7|       display 'after peform'\l}"
@@ -56,7 +56,7 @@ Block7 -> Block9
 Block8 -> Block9
 
 }
-Block6 -> Block4 [style=dashed, arrowhead=none]
+Block6 -> Block4 [style=dashed]
 
 Block7 [
 label = "{Block7|       display 'after peform'\l}"
@@ -75,7 +75,7 @@ Block7 -> Block9
 Block8 -> Block9
 
 }
-Block1 -> Block4 [style=dashed, arrowhead=none]
+Block1 -> Block4 [style=dashed]
 
 Block2 [
 label = "{Block2|    goback\l}"

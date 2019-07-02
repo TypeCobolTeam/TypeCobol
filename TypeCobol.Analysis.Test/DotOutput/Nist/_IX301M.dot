@@ -39,7 +39,7 @@ label = "{INV-PARA. Block44|MoveStatement\l}"
 ]
 
 }
-Block10 -> Block44 [style=dashed, arrowhead=none]
+Block10 -> Block44 [style=dashed]
 
 Block11 [
 label = "{Block11|}"
@@ -61,7 +61,7 @@ label = "{DONE-PARA. Block45|MoveStatement\l}"
 ]
 
 }
-Block14 -> Block45 [style=dashed, arrowhead=none]
+Block14 -> Block45 [style=dashed]
 
 Block15 [
 label = "{Block15|}"
@@ -86,7 +86,7 @@ label = "{INV-PARA. Block44|MoveStatement\l}"
 ]
 
 }
-Block19 -> Block44 [style=dashed, arrowhead=none]
+Block19 -> Block44 [style=dashed]
 
 Block20 [
 label = "{Block20|}"
@@ -108,7 +108,7 @@ label = "{DONE-PARA. Block45|MoveStatement\l}"
 ]
 
 }
-Block23 -> Block45 [style=dashed, arrowhead=none]
+Block23 -> Block45 [style=dashed]
 
 Block24 [
 label = "{Block24|}"
@@ -133,7 +133,7 @@ label = "{INV-PARA. Block44|MoveStatement\l}"
 ]
 
 }
-Block28 -> Block44 [style=dashed, arrowhead=none]
+Block28 -> Block44 [style=dashed]
 
 Block29 [
 label = "{Block29|}"
@@ -155,7 +155,7 @@ label = "{DONE-PARA. Block45|MoveStatement\l}"
 ]
 
 }
-Block32 -> Block45 [style=dashed, arrowhead=none]
+Block32 -> Block45 [style=dashed]
 
 Block33 [
 label = "{Block33|}"
@@ -180,7 +180,7 @@ label = "{INV-PARA. Block44|MoveStatement\l}"
 ]
 
 }
-Block37 -> Block44 [style=dashed, arrowhead=none]
+Block37 -> Block44 [style=dashed]
 
 Block38 [
 label = "{Block38|}"
@@ -202,7 +202,7 @@ label = "{DONE-PARA. Block45|MoveStatement\l}"
 ]
 
 }
-Block41 -> Block45 [style=dashed, arrowhead=none]
+Block41 -> Block45 [style=dashed]
 
 Block42 [
 label = "{Block42|}"
@@ -255,7 +255,7 @@ Block41 -> Block42
 Block42 -> Block43
 
 }
-Block3 -> Block8 [style=dashed, arrowhead=none]
+Block3 -> Block8 [style=dashed]
 
 Block4 [
 label = "{Block4|}"
