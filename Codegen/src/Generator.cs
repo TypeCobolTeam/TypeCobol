@@ -105,7 +105,7 @@ namespace TypeCobol.Codegen
             private set;
         }
 
-        public List<Diagnostic> Diagnostics
+        public virtual List<Diagnostic> Diagnostics
         {
             get;
             private set;
