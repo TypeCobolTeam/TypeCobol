@@ -17,5 +17,11 @@
 
 [[MoveStatement]] [1,4:MOVE]<MOVE> --> [18,18:)]<RightParenthesisSeparator>
 
+[[MoveStatement]] [1,4:MOVE]<MOVE> --> [18,27:result-xml]<UserDefinedWord>
+
+[[MoveStatement]] [1,4:MOVE]<MOVE> --> [19,34:result-json-code]<UserDefinedWord>
+
+[[MoveStatement]] [1,4:MOVE]<MOVE> --> [21,38:result-json-status]<UserDefinedWord>
+
 [[MoveStatement]] [18,21:MOVE]<MOVE> --> [46,54:SOMEWHERE]<UserDefinedWord>
 
