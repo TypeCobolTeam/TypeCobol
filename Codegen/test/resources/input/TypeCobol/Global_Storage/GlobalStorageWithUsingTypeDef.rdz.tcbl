@@ -9,6 +9,9 @@
        GLOBAL-STORAGE SECTION.
        01 SetSharedDataIsDone   type BOOL.
        01 SharedData            type SharedData.
+       01 Group1.
+           05  Var1                  PIC X(10).
+           05  Var2  REDEFINES Var1  PIC 9(10).
       
       
        WORKING-STORAGE SECTION.

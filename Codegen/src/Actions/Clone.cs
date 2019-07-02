@@ -39,7 +39,11 @@ namespace TypeCobol.Codegen.Actions
         /// <param name="actions"></param>
         private void CollectActions(Node node, List<Action> actions)
         {
-            actions.AddRange(GA.GetActions(node));
+            var retrievedActions = GA.GetActions(node);
+            if (retrievedActions != null)
+                actions.AddRange(retrievedActions);
+
+            //actions.AddRange(GA.GetActions(node));
             foreach (var child in node.Children)
             {
                 CollectActions(child, actions);

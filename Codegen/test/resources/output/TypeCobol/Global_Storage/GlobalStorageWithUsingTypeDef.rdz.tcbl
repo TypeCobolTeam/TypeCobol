@@ -10,6 +10,9 @@
       *GLOBAL-STORAGE SECTION.
       *01 SetSharedDataIsDone   type BOOL.
       *01 SharedData            type SharedData.
+      *01 Group1.
+      *    05  Var1                  PIC X(10).
+      *    05  Var2  REDEFINES Var1  PIC 9(10).
       
       
        WORKING-STORAGE SECTION.
@@ -55,6 +58,9 @@
            03 PlusOneLevel.
              04 UselessVar1 PIC X(9).
 
+       02 Group1.
+           06  Var1                  PIC X(10).
+           06  Var2  REDEFINES Var1  PIC 9(10).
 
        01 PntTab-Pnt POINTER.
 
@@ -131,6 +137,9 @@
            03 PlusOneLevel.
              04 UselessVar1 PIC X(9).
 
+       02 Group1.
+           06  Var1                  PIC X(10).
+           06  Var2  REDEFINES Var1  PIC 9(10).
 
        PROCEDURE DIVISION
            .
@@ -175,6 +184,9 @@
            03 PlusOneLevel.
              04 UselessVar1 PIC X(9).
                                                 
+       02 Group1.
+           06  Var1                  PIC X(10).
+           06  Var2  REDEFINES Var1  PIC 9(10).
 
        LINKAGE SECTION.
        01 GlobalPointer pointer.
