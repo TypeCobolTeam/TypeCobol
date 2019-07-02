@@ -594,26 +594,4 @@ namespace TypeCobol.Compiler.Scanner
         MULTILINES_COMMENTS_START=523,
         MULTILINES_COMMENTS_STOP=524,
     }
-
-    public static class TokenConst {
-        private static readonly TokenType[] TypeCobolTokenType =
-        {
-            TokenType.DECLARE, TokenType.END_DECLARE, TokenType.PUBLIC, TokenType.PRIVATE, TokenType.IN_OUT,
-            TokenType.UNSAFE, TokenType.STRICT, TokenType.QUESTION_MARK
-        };
-
-        private static readonly TokenType[] Cobol2002TokenType = {TokenType.STRONG, TokenType.TYPEDEF};
-
-        public static CobolLanguageLevel GetCobolLanguageLevel(TokenType tokenType) {
-            if (TypeCobolTokenType.Contains(tokenType))
-            {
-                return CobolLanguageLevel.TypeCobol;
-            }
-            if (Cobol2002TokenType.Contains(tokenType))
-            {
-                return CobolLanguageLevel.Cobol2002;
-            }
-            return CobolLanguageLevel.Cobol85;
-        }
-    }
 }
