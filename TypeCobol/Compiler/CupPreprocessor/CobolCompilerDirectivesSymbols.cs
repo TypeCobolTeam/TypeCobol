@@ -41,6 +41,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int NullTerminatedAlphanumericLiteral = 29;
   public const int COMP_2 = 248;
   public const int AUTHOR = 227;
+  public const int MULTILINES_COMMENTS_START = 528;
   public const int EXEC_SQL = 53;
   public const int NATIONAL_EDITED = 336;
   public const int END_DECLARE = 85;
@@ -94,6 +95,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int AFTER = 209;
   public const int PseudoTextDelimiter = 16;
   public const int LEFT = 323;
+  public const int FORMALIZED_COMMENTS_VALUE = 526;
   public const int PAGE = 360;
   public const int OPTIONAL = 350;
   public const int QUEUE = 482;
@@ -103,7 +105,9 @@ public class CobolCompilerDirectivesSymbols {
   public const int DEBUG_ITEM = 162;
   public const int INPUT = 312;
   public const int PROCESS = 55;
+  public const int FORMALIZED_COMMENTS_STOP = 517;
   public const int SPACES = 200;
+  public const int FORMALIZED_COMMENTS_REPLACED_BY = 521;
   public const int REMAINDER = 384;
   public const int ANY = 220;
   public const int MultiplyOperator = 20;
@@ -135,6 +139,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int INTO = 314;
   public const int THROUGH = 421;
   public const int END_SUBTRACT = 100;
+  public const int CONTINUATION_TOKEN_GROUP = 515;
   public const int SERVICE_CD = 59;
   public const int GLOBAL = 303;
   public const int COM_REG = 243;
@@ -172,6 +177,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int TIME = 423;
   public const int FINAL = 464;
   public const int WRITE_ONLY = 443;
+  public const int FORMALIZED_COMMENTS_START = 516;
   public const int NUMBER = 475;
   public const int VARYING = 440;
   public const int ACCEPT = 64;
@@ -212,6 +218,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int QUOTES = 198;
   public const int ARE = 221;
   public const int PLUS = 479;
+  public const int FORMALIZED_COMMENTS_DESCRIPTION = 518;
   public const int NO = 340;
   public const int POSITION = 365;
   public const int RECEIVE = 484;
@@ -258,6 +265,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int RESERVE = 388;
   public const int NEW = 339;
   public const int COLUMN = 450;
+  public const int AT_SIGN = 527;
   public const int INPUT_OUTPUT = 120;
   public const int STATUS = 410;
   public const int NEGATIVE = 338;
@@ -292,6 +300,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int STANDARD_2 = 409;
   public const int CODE_SET = 241;
   public const int END_JSON = 501;
+  public const int FORMALIZED_COMMENTS_DEPRECATED = 520;
   public const int DEBUG_SUB_3 = 167;
   public const int DECLARE = 76;
   public const int ADD = 65;
@@ -305,6 +314,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int RF = 488;
   public const int TRUE = 429;
   public const int CommentLine = 10;
+  public const int REPLACE_DIRECTIVE = 514;
   public const int IF = 118;
   public const int SPECIAL_NAMES = 148;
   public const int USAGE = 436;
@@ -336,6 +346,8 @@ public class CobolCompilerDirectivesSymbols {
   public const int INVOKE = 122;
   public const int BINARY = 230;
   public const int SYMBOL = 412;
+  public const int FORMALIZED_COMMENTS_PARAMETERS = 519;
+  public const int FORMALIZED_COMMENTS_NEED = 523;
   public const int DAY = 268;
   public const int SEPARATE = 399;
   public const int EJECT = 51;
@@ -346,11 +358,13 @@ public class CobolCompilerDirectivesSymbols {
   public const int ENVIRONMENT = 105;
   public const int COMPUTATIONAL_4 = 256;
   public const int CORR = 261;
+  public const int FORMALIZED_COMMENTS_TODO = 525;
   public const int FACTORY = 292;
   public const int INITIATE = 469;
   public const int RightParenthesisSeparator = 15;
   public const int PUBLIC = 507;
   public const int TABLE = 497;
+  public const int FORMALIZED_COMMENTS_SEE = 524;
   public const int CLOSE = 70;
   public const int COMP_4 = 250;
   public const int MESSAGE = 474;
@@ -387,6 +401,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int PROGRAM_ID = 372;
   public const int CUP_ANY_TOKEN = 2;
   public const int SymbolicCharacter = 204;
+  public const int COPY_IMPORT_DIRECTIVE = 513;
   public const int END_ADD = 82;
   public const int COMP_1 = 247;
   public const int VALUES = 439;
@@ -478,6 +493,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int JUST = 317;
   public const int PRINTING = 480;
   public const int SET = 145;
+  public const int COMPILER_DIRECTIVE = 512;
   public const int LINE_COUNTER = 473;
   public const int LIMITS = 472;
   public const int TYPEDEF = 504;
@@ -498,6 +514,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int REPLACING = 387;
   public const int RETURN_CODE = 171;
   public const int END_STRING = 99;
+  public const int FORMALIZED_COMMENTS_RESTRICTION = 522;
   public const int OBJECT_COMPUTER = 130;
   public const int SQL = 405;
   public const int UserDefinedWord = 44;
@@ -507,6 +524,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int ID = 116;
   public const int XML_EVENT = 183;
   public const int UNTIL = 433;
+  public const int MULTILINES_COMMENTS_STOP = 529;
   public const int CONTROL = 452;
   public const int READ = 134;
   public const int CD = 446;
