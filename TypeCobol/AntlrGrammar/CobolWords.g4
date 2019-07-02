@@ -215,6 +215,8 @@ tokens
     DEBUG_SUB_2,
     DEBUG_SUB_3,
     JNIENVPTR,
+    JSON_CODE,
+    JSON_STATUS,
     LENGTH,
     LINAGE_COUNTER,
     RETURN_CODE,
@@ -747,6 +749,8 @@ specialRegisterReference: (DEBUG_CONTENTS |
                   DEBUG_SUB_2 |
                   DEBUG_SUB_3 |
                   JNIENVPTR |
+                  JSON_CODE |
+                  JSON_STATUS |
                   RETURN_CODE |
                   SHIFT_IN |
                   SHIFT_OUT |
@@ -1757,6 +1761,8 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     DEBUG_SUB_2 |
     DEBUG_SUB_3 |
     JNIENVPTR |
+    JSON_CODE |
+    JSON_STATUS |
     LENGTH |
     LINAGE_COUNTER |
     RETURN_CODE |

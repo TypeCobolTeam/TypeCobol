@@ -221,6 +221,8 @@ terminal TypeCobol.Compiler.Scanner.Token DEBUG_SUB_1;
 terminal TypeCobol.Compiler.Scanner.Token DEBUG_SUB_2;
 terminal TypeCobol.Compiler.Scanner.Token DEBUG_SUB_3;
 terminal TypeCobol.Compiler.Scanner.Token JNIENVPTR;
+terminal TypeCobol.Compiler.Scanner.Token JSON_CODE;
+terminal TypeCobol.Compiler.Scanner.Token JSON_STATUS;
 terminal TypeCobol.Compiler.Scanner.Token LENGTH;
 terminal TypeCobol.Compiler.Scanner.Token LINAGE_COUNTER;
 terminal TypeCobol.Compiler.Scanner.Token RETURN_CODE;

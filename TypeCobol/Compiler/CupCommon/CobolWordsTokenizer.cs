@@ -720,6 +720,8 @@ namespace TypeCobol.Compiler.CupCommon
                 case TokenType.DEBUG_SUB_2:
                 case TokenType.DEBUG_SUB_3:
                 case TokenType.JNIENVPTR:
+                case TokenType.JSON_CODE:
+                case TokenType.JSON_STATUS:
                 case TokenType.LENGTH:
                 case TokenType.LINAGE_COUNTER:
                 case TokenType.RETURN_CODE:
