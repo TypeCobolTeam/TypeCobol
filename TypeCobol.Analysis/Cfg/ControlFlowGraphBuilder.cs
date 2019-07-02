@@ -234,7 +234,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// More Symbol Reference associated to altered GOTO statement.
         /// </summary>
-        protected Dictionary<Goto, HashSet<SymbolReference> > PendingAlteredGOTOS;
+        protected Dictionary<Goto, HashSet<SymbolReference>> PendingAlteredGOTOS;
 
         /// <summary>
         /// All pending Next Sentence instructions that will be handled at the end of the Procedure Division.
@@ -250,7 +250,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// Empty constructor.
         /// </summary>
-        public ControlFlowGraphBuilder() : this (null)
+        public ControlFlowGraphBuilder() : this(null)
         {
         }
 
@@ -262,6 +262,7 @@ namespace TypeCobol.Analysis.Cfg
         {
             this.ParentProgramCfgBuilder = parentCfgBuilder;
             this.Diagnostics = new List<Diagnostic>();
+            this.UseEvaluateCascade = true;
         }
 
         /// <summary>
@@ -285,7 +286,7 @@ namespace TypeCobol.Analysis.Cfg
             var ce = node.CodeElement;
             if (ce == null)
                 return false;
-            switch(ce.Type)
+            switch (ce.Type)
             {
                 //Decision
                 case CodeElementType.IfStatement:
@@ -365,7 +366,7 @@ namespace TypeCobol.Analysis.Cfg
                 this.CurrentProgramCfgBuilder.CheckStartSentence(node);
             if (node.CodeElement != null)
             {
-                switch(node.CodeElement.Type)
+                switch (node.CodeElement.Type)
                 {
                     case CodeElementType.ProgramIdentification:
                         EnterProgram((Program)node);
@@ -868,7 +869,7 @@ namespace TypeCobol.Analysis.Cfg
             //If we are not in a sentence start a sentence.
             if (this.CurrentProgramCfgBuilder.CurrentSentence == null)
             {
-                StartBlockSentence();                
+                StartBlockSentence();
             }
         }
 
@@ -885,7 +886,7 @@ namespace TypeCobol.Analysis.Cfg
                     if (AllCfgBuilder == null)
                         AllCfgBuilder = new List<ControlFlowGraphBuilder<D>>();
                     this.AllCfgBuilder.Add(this);
-                    this.CurrentProgramCfgBuilder = this;                    
+                    this.CurrentProgramCfgBuilder = this;
                 }
                 else
                 {//Stacked Program.         
@@ -928,7 +929,7 @@ namespace TypeCobol.Analysis.Cfg
             {//Nested program get the parent control Flow Builder.
                 this.CurrentProgramCfgBuilder = this.CurrentProgramCfgBuilder.ParentProgramCfgBuilder;
                 this.CurrentProgram = this.CurrentProgramCfgBuilder.CurrentProgram;
-            }            
+            }
         }
 
         /// <summary>
@@ -985,22 +986,22 @@ namespace TypeCobol.Analysis.Cfg
             this.CurrentProgramCfgBuilder.AllSectionsParagraphs.Add(sym);
             //Special case Section or Paragraph inside a Declarative
             if (this.CurrentProgramCfgBuilder.CurrentDeclarativesContext != null)
-            { 
+            {
                 switch (sym.Kind)
                 {
                     case Symbol.Kinds.Paragraph:
-                    {
-                        CfgParagraphSymbol cfgPara = (CfgParagraphSymbol)sym;
-                        cfgPara.SetFlag(Symbol.Flags.Declaratives, true);
-                    }
-                    break;
+                        {
+                            CfgParagraphSymbol cfgPara = (CfgParagraphSymbol)sym;
+                            cfgPara.SetFlag(Symbol.Flags.Declaratives, true);
+                        }
+                        break;
                     case Symbol.Kinds.Section:
-                    {
-                        CfgSectionSymbol cfgSymbol = (CfgSectionSymbol)sym;
-                        cfgSymbol.SetFlag(Symbol.Flags.Declaratives, true);
-                        this.CurrentProgramCfgBuilder.CurrentDeclarativesContext.AddSection(cfgSymbol);
-                    }
-                    break;
+                        {
+                            CfgSectionSymbol cfgSymbol = (CfgSectionSymbol)sym;
+                            cfgSymbol.SetFlag(Symbol.Flags.Declaratives, true);
+                            this.CurrentProgramCfgBuilder.CurrentDeclarativesContext.AddSection(cfgSymbol);
+                        }
+                        break;
                 }
             }
         }
@@ -1306,7 +1307,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="procedureSymbol">The procedure symbol</param>
         /// <param name="group">The Group in which to store all blocks.</param>
         /// <param name="clonedBlockIndexMap">The Map of cloned map indices from the original indices to the new indicess of block</param>
-        private void StoreProcedureSentenceBlocks(PerformProcedure p, Symbol procedureSymbol, BasicBlockForNodeGroup group, Dictionary<int,int> clonedBlockIndexMap)
+        private void StoreProcedureSentenceBlocks(PerformProcedure p, Symbol procedureSymbol, BasicBlockForNodeGroup group, Dictionary<int, int> clonedBlockIndexMap)
         {
             IEnumerable<CfgSentence> procedureSentences = YieldSectionOrParagraphSentences(procedureSymbol);
             foreach (var sentence in procedureSentences)
@@ -1354,7 +1355,7 @@ namespace TypeCobol.Analysis.Cfg
             Symbol procedureSymbol = CheckSectionOrParagraph(p, procedure);
             if (procedureSymbol == null)
                 return false;
-            Dictionary<int, int> clonedBlockIndexMap = new Dictionary<int, int>();            
+            Dictionary<int, int> clonedBlockIndexMap = new Dictionary<int, int>();
             if (throughProcedure != null)
             {
                 Symbol throughProcedureSymbol = CheckSectionOrParagraph(p, throughProcedure);
@@ -1362,7 +1363,7 @@ namespace TypeCobol.Analysis.Cfg
                     return false;
                 if (throughProcedureSymbol != procedureSymbol)
                 {
-                    if(procedureSymbol.Number > throughProcedureSymbol.Number)
+                    if (procedureSymbol.Number > throughProcedureSymbol.Number)
                     {// the second procedure name is before the first one.
                         Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
                             p.CodeElement.Column,
@@ -1418,7 +1419,7 @@ namespace TypeCobol.Analysis.Cfg
                         var block = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges[edge];
                         int cloneBlockIndex = 0;
                         if (!clonedBlockIndexMap.TryGetValue(block.Index, out cloneBlockIndex))
-                        {   
+                        {
                             if (b != group.Group.Last.Value)
                             {//Hum this Group is not the last group and it goes beyond the group limit ==> we don't support that.
                                 Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
@@ -1428,7 +1429,7 @@ namespace TypeCobol.Analysis.Cfg
                                     string.Format(Resource.BasicBlockGroupGoesBeyondTheLimit, ((BasicBlockForNode)block).Tag != null ? ((BasicBlockForNode)block).Tag.ToString() : "???", block.Index));
                                 Diagnostics.Add(d);
                                 //So in this case in order to not break the graph and to see the target branch that went out, add it as well....
-                                b.SuccessorEdges.Add(edge);                                
+                                b.SuccessorEdges.Add(edge);
                                 continue;
                             }
                             else
@@ -1483,7 +1484,7 @@ namespace TypeCobol.Analysis.Cfg
             //Resolve Pending PERFORMs Procedure
             ResolvePendingPERFORMProcedures();
 
-            this.CurrentProgramCfgBuilder.EndCfg(procDiv);            
+            this.CurrentProgramCfgBuilder.EndCfg(procDiv);
         }
 
         /// <summary>
@@ -1551,8 +1552,8 @@ namespace TypeCobol.Analysis.Cfg
         private bool ResolveGoto(Goto @goto, BasicBlockForNode block, SymbolReference[] target, bool simpleGoto)
         {
             HashSet<Symbol> targetSymbols = new HashSet<Symbol>();
-            foreach(var sref in target)
-            {                
+            foreach (var sref in target)
+            {
                 bool bHasOne = false;
                 Symbol targetSymbol = null;
                 IEnumerable<CfgSentence> sentences = ResolveSectionOrParagraphSentences(@goto, sref, out targetSymbol);
@@ -1840,7 +1841,7 @@ namespace TypeCobol.Analysis.Cfg
             /// </summary>
             /// <param name="currentProgramCfgBuilder">The related CFG Builder</param>
             internal DeclarativesContext(ControlFlowGraphBuilder<D> currentProgramCfgBuilder)
-            {                
+            {
                 Sections = new LinkedList<CfgSectionSymbol>();
                 Builder = currentProgramCfgBuilder;
             }
@@ -1875,10 +1876,10 @@ namespace TypeCobol.Analysis.Cfg
 
                 //For each section, link the current block to the first block of the section.
                 bool bFirstsection = true;
-                foreach(var section in Sections)
+                foreach (var section in Sections)
                 {
                     var sentences = Builder.YieldSectionOrParagraphSentences(section);
-                    foreach(var sentence in sentences)
+                    foreach (var sentence in sentences)
                     {
                         //Ensure that every first block of the section is linked.
                         System.Diagnostics.Debug.Assert(sentence.BlockIndex >= 0);
@@ -1889,7 +1890,7 @@ namespace TypeCobol.Analysis.Cfg
                             {//The first block of the first section, should have been already linked to the Current Block.
                                 System.Diagnostics.Debug.Assert(CurrentBlock.SuccessorEdges.Contains(sentence.BlockIndex));
                                 if (!CurrentBlock.SuccessorEdges.Contains(sentence.BlockIndex))
-                                {                                    
+                                {
                                     CurrentBlock.SuccessorEdges.Add(sentence.BlockIndex);
                                 }
                                 bFirstsection = false;
@@ -1918,7 +1919,7 @@ namespace TypeCobol.Analysis.Cfg
         protected virtual void EnterIf(If _if)
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
-            MultiBranchContext ctx = new MultiBranchContext(this.CurrentProgramCfgBuilder, _if);            
+            MultiBranchContext ctx = new MultiBranchContext(this.CurrentProgramCfgBuilder, _if);
             if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
             {
                 this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext>();
@@ -1926,8 +1927,10 @@ namespace TypeCobol.Analysis.Cfg
             //Push and start the if context.
             this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctx);
             ctx.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
-            //So the current block is now the If
-            var ifBlock = this.CurrentProgramCfgBuilder.CreateBlock(_if, true);
+            //Add the if instruction in the current block.
+            AddCurrentBlockNode(_if);
+            //So the current block is now the If            
+            var ifBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
             ctx.AddBranch(ifBlock);
             //The new Current Block is the If block
             this.CurrentProgramCfgBuilder.CurrentBasicBlock = ifBlock;
@@ -1947,7 +1950,7 @@ namespace TypeCobol.Analysis.Cfg
 
             bool branchToNext = ctx.Branches.Count == 1;//No Else
             //The next block.
-            var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);             
+            var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
             ctx.End(branchToNext, nextBlock);
             this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
         }
@@ -1975,6 +1978,16 @@ namespace TypeCobol.Analysis.Cfg
         protected virtual void LeaveElse(Else _else)
         {
 
+        }
+
+        /// <summary>
+        /// Set wheither or not the EVALUATE statement shall be translated using cascading IF-THEN-ELSE, false
+        /// otherwise.
+        /// </summary>
+        public bool UseEvaluateCascade
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -2009,15 +2022,34 @@ namespace TypeCobol.Analysis.Cfg
             MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
             System.Diagnostics.Debug.Assert(ctx.Branches != null);
 
-            bool branchToNext = true;
-            if (ctx.Branches.Count > 0)
-            {
-                branchToNext = !ctx.Branches[ctx.Branches.Count - 1].HasFlag(BasicBlock<Node, D>.Flags.Default);
+            if (UseEvaluateCascade)
+            {   //Pop each MultiBranchContextStack instance till to the EVALUATE one
+                //and close each one.
+                while (ctx.Instruction == null)
+                {
+                    System.Diagnostics.Debug.Assert(ctx.Branches.Count > 0);
+
+                    bool branchToNext = ctx.Branches.Count == 1;//No Else
+                                                                //The next block.
+                    var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
+                    ctx.End(branchToNext, nextBlock);
+                    this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
+
+                    ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
+                }
             }
-            //The next block.
-            var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
-            ctx.End(branchToNext, nextBlock);
-            this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
+            else
+            {
+                bool branchToNext = true;
+                if (ctx.Branches.Count > 0)
+                {
+                    branchToNext = !ctx.Branches[ctx.Branches.Count - 1].HasFlag(BasicBlock<Node, D>.Flags.Default);
+                }
+                //The next block.
+                var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
+                ctx.End(branchToNext, nextBlock);
+                this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
+            }
         }
 
         /// <summary>
@@ -2078,26 +2110,76 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="conditions"></param>
         public override void StartWhenConditionClause(List<TypeCobol.Compiler.CodeElements.CodeElement> conditions)
         {
+            if (UseEvaluateCascade)
+            {
+                StartWhenConditionClauseCascade(conditions);
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
+                System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
+                MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
+                System.Diagnostics.Debug.Assert(ctx.ContextualData != null);
+                System.Diagnostics.Debug.Assert(ctx.ContextualData is List<Node>);
+
+                var whenCondBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
+                //Associate all When Conditions to the block.
+                List<Node> data = (List<Node>)ctx.ContextualData;
+                foreach (var node in data)
+                {
+                    whenCondBlock.Instructions.AddLast(node);
+                    this.CurrentProgramCfgBuilder.Cfg.BlockFor[node] = whenCondBlock;
+                }
+
+                ctx.AddBranch(whenCondBlock);
+                //The new Current Block is the When condition block
+                this.CurrentProgramCfgBuilder.CurrentBasicBlock = whenCondBlock;
+                //Clear the current data
+                data.Clear();
+            }
+        }
+
+        /// <summary>
+        /// Here is when we can capture the beginning of a set of WhenConditionClause so we can start a new Basic Block. 
+        /// But were it is the cascading version.
+        /// </summary>
+        /// <param name="conditions"></param>
+        public void StartWhenConditionClauseCascade(List<TypeCobol.Compiler.CodeElements.CodeElement> conditions)
+        {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
             MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
-            System.Diagnostics.Debug.Assert(ctx.ContextualData != null);
-            System.Diagnostics.Debug.Assert(ctx.ContextualData is List<Node>);
-
-            var whenCondBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
-            //Associate all When Conditions to the block.
-            List<Node> data = (List<Node>)ctx.ContextualData;
-            foreach(var node in data)
-            {
-                whenCondBlock.Instructions.AddLast(node);
-                this.CurrentProgramCfgBuilder.Cfg.BlockFor[node] = whenCondBlock;
+            if (!(ctx.Instruction != null && ctx.Instruction.CodeElement.Type == CodeElementType.EvaluateStatement))
+            {  //Create the else alternatives
+                EnterElse(null);
             }
 
-            ctx.AddBranch(whenCondBlock);
+            //Create Whens context
+            MultiBranchContext ctxWhens = new MultiBranchContext(this.CurrentProgramCfgBuilder, null);
+            ctxWhens.ContextualData = new List<Node>();
+            //Push and start the Whens context.
+            this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctxWhens);
+            ctxWhens.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
+
+            //Associate all When Conditions to the block.
+            List<Node> data = (List<Node>)ctx.ContextualData;
+            foreach (var node in data)
+            {
+                AddCurrentBlockNode(node);
+            }
+
+            //So the current block is now the whenBlock            
+            var whenCondBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
+            ctxWhens.AddBranch(whenCondBlock);
             //The new Current Block is the When condition block
             this.CurrentProgramCfgBuilder.CurrentBasicBlock = whenCondBlock;
             //Clear the current data
             data.Clear();
+        }
+
+        public override void EndWhenConditionClause()
+        {
+
         }
 
         /// <summary>
@@ -2128,7 +2210,7 @@ namespace TypeCobol.Analysis.Cfg
             //Clear the current data
             data.Clear();
         }
-        
+
         /// <summary>
         /// Enter a Search Statement.
         /// </summary>
@@ -2245,11 +2327,43 @@ namespace TypeCobol.Analysis.Cfg
             //Push and start the Perform context.
             this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctx);
             ctx.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
-            //So the current block is now the Perform
+            //Creare a Perfom standalone instruction block.
             var performBlock = this.CurrentProgramCfgBuilder.CreateBlock(perform, true);
             ctx.AddBranch(performBlock);
-            //The new Current Block is the perform block
-            this.CurrentProgramCfgBuilder.CurrentBasicBlock = performBlock;
+            //Add a branch for the Loop Body
+            var bodyBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
+            ctx.AddBranch(bodyBlock);
+
+            int bodyBlockIndex = -1;
+            int performBlockIndex = -1;
+            if (IsAfter(perform))
+            {
+                bodyBlockIndex = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
+                this.CurrentProgramCfgBuilder.CurrentBasicBlock.SuccessorEdges.Add(this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count);
+                this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(bodyBlock);
+            }
+            else
+            {
+                performBlockIndex = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
+                this.CurrentProgramCfgBuilder.CurrentBasicBlock.SuccessorEdges.Add(this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count);
+                this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(performBlock);
+            }
+            if (bodyBlockIndex == -1)
+            {
+                bodyBlockIndex = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
+                this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(bodyBlock);
+            }
+            else
+            {
+                performBlockIndex = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
+                this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(performBlock);
+            }
+            performBlock.SuccessorEdges.Add(bodyBlockIndex);
+            ctx.BranchIndices.Add(performBlockIndex);
+            ctx.BranchIndices.Add(bodyBlockIndex);
+
+            //The new Current Block is the body block
+            this.CurrentProgramCfgBuilder.CurrentBasicBlock = bodyBlock;
         }
 
         /// <summary>
@@ -2260,7 +2374,7 @@ namespace TypeCobol.Analysis.Cfg
         private static bool IsNonIterative(Perform perform)
         {
             var element = perform.CodeElement;
-            return element.IterationType == null || element.IterationType.Value == PerformIterationType.None;                
+            return element.IterationType == null || element.IterationType.Value == PerformIterationType.None;
         }
 
         /// <summary>
@@ -2280,6 +2394,16 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
+        /// Test if the a perform loop is an AFTER
+        /// </summary>
+        /// <param name="perform"></param>
+        /// <returns>true if the PERFORM loop is an AFTER, fals eotherwise</returns>
+        private static bool IsAfter(Perform perform)
+        {
+            return perform.CodeElement.TerminationConditionTestTime != null && perform.CodeElement.TerminationConditionTestTime.Value == TerminationConditionTestTime.AfterIteration;
+        }
+
+        /// <summary>
         /// Leave a Perform which is a loop.
         /// </summary>
         /// <param name="perform">The perform node</param>
@@ -2289,26 +2413,40 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
             MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
             System.Diagnostics.Debug.Assert(ctx.Branches != null);
-            System.Diagnostics.Debug.Assert(ctx.Branches.Count == 1);
-            System.Diagnostics.Debug.Assert(ctx.BranchIndices.Count == 0);
+            System.Diagnostics.Debug.Assert(ctx.Branches.Count == 2);
+            System.Diagnostics.Debug.Assert(ctx.BranchIndices.Count == 2);
 
-            //Firt Get here all terminal blocks before ending the context
+            //Firt Get here all terminal blocks of the loop body
             List<BasicBlockForNode> terminals = new List<BasicBlockForNode>();
-            ctx.GetTerminalSuccessorEdges(ctx.Branches[0], terminals);
-            bool branchToNext = CanBeSkipped(perform);
-            //The next block.
+            ctx.GetTerminalSuccessorEdges(ctx.Branches[1], terminals);
+
+            int performBlockIndex = ctx.BranchIndices[0];
+            System.Diagnostics.Debug.Assert(performBlockIndex >= 0);
+            int bodyBlockIndex = ctx.BranchIndices[1];
+            System.Diagnostics.Debug.Assert(bodyBlockIndex >= 0);
+
+            //The next block, add it as a successor
             var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
-            ctx.End(branchToNext, nextBlock);
-            // we must loop all terminal blocks if there are not ending blocks
+            int nextBlockIndex = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
+            this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(nextBlock);
+
+
+            int transBlockIndex = -1;
             if (!IsNonIterative(perform))
+            {   //For an Iterative perform, body transition is the perform instruction
+                //the nextblock is a transition for the perform. 
+                ctx.Branches[0].SuccessorEdges.Add(nextBlockIndex);
+                transBlockIndex = performBlockIndex;
+            }
+            else
+            {//For a non iterative perform body transition is the next block
+                transBlockIndex = nextBlockIndex;
+            }
+            foreach (var term in terminals)
             {
-                int loopIndex = ctx.BranchIndices[0];
-                foreach (var term in terminals)
+                if (!term.HasFlag(BasicBlock<Node, D>.Flags.Ending))
                 {
-                    if (!term.HasFlag(BasicBlock<Node, D>.Flags.Ending))
-                    {
-                        term.SuccessorEdges.Add(loopIndex);
-                    }
+                    term.SuccessorEdges.Add(transBlockIndex);
                 }
             }
 
@@ -2439,7 +2577,7 @@ namespace TypeCobol.Analysis.Cfg
                         }
                     }
                 }
-                this.CurrentProgramCfgBuilder.PendingALTERs = null;                
+                this.CurrentProgramCfgBuilder.PendingALTERs = null;
             }
         }
 
@@ -2601,7 +2739,7 @@ namespace TypeCobol.Analysis.Cfg
             var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
             this.CurrentProgramCfgBuilder.CurrentDeclarativesContext.End(nextBlock);
             this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
-            
+
             this.CurrentProgramCfgBuilder.CurrentDeclarativesContext = null;
         }
 
@@ -2701,7 +2839,7 @@ namespace TypeCobol.Analysis.Cfg
         /// Create a Fresh Control Flow Graph Builder.
         /// </summary>
         /// <returns>The fresh Control Flow Graph Builder</returns>
-        protected virtual ControlFlowGraphBuilder<D>  CreateFreshControlFlowGraphBuilder(ControlFlowGraphBuilder<D> parentCfgBuilder = null)
+        protected virtual ControlFlowGraphBuilder<D> CreateFreshControlFlowGraphBuilder(ControlFlowGraphBuilder<D> parentCfgBuilder = null)
         {
             return new ControlFlowGraphBuilder<D>();
         }
