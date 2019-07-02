@@ -125,11 +125,11 @@ namespace TypeCobol.Analysis.Graph
                 //Create dashed link to the group
                 if (group.Group.Count > 0)
                 {
-                    sw.WriteLine(string.Format("Block{0} -> Block{1} [style=dashed, arrowhead=none]", block.Index, group.Group.First.Value.Index));
+                    sw.WriteLine(string.Format("Block{0} -> Block{1} [style=dashed]", block.Index, group.Group.First.Value.Index));
                 }
                 else
                 {
-                    sw.WriteLine(string.Format("Block{0} -> \"\" [style=dashed, arrowhead=none]", block.Index));
+                    sw.WriteLine(string.Format("Block{0} -> \"\" [style=dashed]", block.Index));
                 }
                 sw.Flush();
                 this.Writer.WriteLine(sw.ToString());
