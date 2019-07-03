@@ -33,6 +33,10 @@ cobol2002TypedefClause: TYPEDEF STRONG?;
 
 cobol2002TypeClause:    TYPE dataTypeNameReference;
 
+cobol2002Statement:
+    // Dynamic allocation statements
+	freeStatement;
+
 // Updated INITIALIZE statement using COBOL v6.1 specs
 initializeStatement:
 	INITIALIZE storageArea1+ (WITH? FILLER)?

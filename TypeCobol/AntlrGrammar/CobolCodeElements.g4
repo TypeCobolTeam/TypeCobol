@@ -190,10 +190,9 @@ codeElement:
 	returnStatementEnd |
 	sortStatement |
 
-//	 [COBOLV6]
-	// --- Dynamic allocation statements ---
-	freeStatement |
-//	[/COBOLV6]
+//	[COBOL2002]
+    cobol2002Statement |
+//	[/COBOL2002]
 	
 	// --- Conditions for conditional statements  ---
 	atEndCondition |
@@ -209,7 +208,7 @@ codeElement:
 	onSizeErrorCondition |
 	notOnSizeErrorCondition
 
-//	 [TYPECOBOL]
+//	[TYPECOBOL]
 	| tcCodeElement;
 
 // what is here is not important as long as it is not epsilon
@@ -217,11 +216,11 @@ tcCodeElement: PUBLIC | PRIVATE | UNSAFE;
 //	[/TYPECOBOL]
 
 
-//	 [COBOLV6]
-// dummy definition of Cobol v6 code elements, not used but required by Antlr.
+//	[COBOL2002]
+// dummy definition of Cobol 2002 or V6 code elements, not used but required by Antlr.
 // see Cobol2002CodeElements.g4 for the proper definition.
-freeStatement: UNSAFE;
-//	[/COBOLV6]
+cobol2002Statement: UNSAFE;
+//	[/COBOL2002]
 
 
 // --- Individual code elements syntax ---
