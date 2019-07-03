@@ -220,6 +220,11 @@ namespace TypeCobol.Codegen.Actions
                                                 {
                                                                 return CheckConditions(@Self, __ConditionsAttributes_0);
                                                 }
+                                                private static Tuple<string,string>[] __ConditionsAttributes_1 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.Nodes.FunctionDeclaration"), new Tuple<string,string>("visibility","local")};
+                                                public static bool Conditions_1(TypeCobol.Compiler.Nodes.Node @Self)
+                                                {
+                                                                return CheckConditions(@Self, __ConditionsAttributes_1);
+                                                }
 
                                 }
 
@@ -684,7 +689,7 @@ namespace TypeCobol.Codegen.Actions
                                                                 }
                                                 }
                                                 {
-                                                                if ((SkeleTonFUN_DECLARE_PRIVATEModel.Conditions_0(@Self)))
+                                                                if ((SkeleTonFUN_DECLARE_PRIVATEModel.Conditions_0(@Self) || SkeleTonFUN_DECLARE_PRIVATEModel.Conditions_1(@Self)))
                                                                 {
                                                                                 SkeleTonFUN_DECLARE_PRIVATEModel @Model = new SkeleTonFUN_DECLARE_PRIVATEModel(@Self);
                                                                                 StringBuilder @SelfResult = new StringBuilder();

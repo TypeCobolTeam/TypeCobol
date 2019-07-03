@@ -1027,7 +1027,8 @@ namespace TypeCobol.Compiler.Parser
                 typedef.Strong = new SyntaxProperty<bool>(strong != null, ParseTreeUtils.GetFirstToken(strong));
                 typedef.Strict = new SyntaxProperty<bool>(strict != null, ParseTreeUtils.GetFirstToken(strict));
                 
-                //Set visibility if any qualifier is present
+                //Set visibility if any qualifier is present otherwise the Local visibility is used.
+                typedef.Visibility = AccessModifier.Local;
                 if (context.cobol2002TypedefClause().PRIVATE() != null) typedef.Visibility = AccessModifier.Private;
                 if (context.cobol2002TypedefClause().PUBLIC() != null) typedef.Visibility = AccessModifier.Public;
 
