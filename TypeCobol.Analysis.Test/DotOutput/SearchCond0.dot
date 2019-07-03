@@ -13,31 +13,40 @@ Block1 [
 label = "{Block1|    SEARCH ELEM\l}"
 ]
 Block2 [
-label = "{Block2|         AT END\l            MOVE 0 TO NUM\l}"
-]
-Block6 [
-label = "{Block6|}"
-]
-Block7 [
-label = "{Block7|    display \"------------------------------------\"\l}"
-]
-Block8 [
-label = "{Block8|    stop \"Do Enter to continue\"\l}"
-]
-Block3 [
-label = "{Block3|           when NBJ(IDX) = 28\l           display NUM(IDX) \"/\" LIB(IDX)\l}"
+label = "{Block2|           when NBJ(IDX) = 28\l}"
 ]
 Block4 [
-label = "{Block4|           when IDX \> IDX-END\l           when IDX \> IDX-END next sentence\l}"
+label = "{Block4|           display NUM(IDX) \"/\" LIB(IDX)\l}"
+]
+Block9 [
+label = "{Block9|}"
+]
+Block10 [
+label = "{Block10|    display \"------------------------------------\"\l}"
+]
+Block11 [
+label = "{Block11|    stop \"Do Enter to continue\"\l}"
+]
+Block5 [
+label = "{Block5|           when IDX \> IDX-END\l}"
+]
+Block6 [
+label = "{Block6|           when IDX \> IDX-END next sentence\l}"
+]
+Block3 [
+label = "{Block3|         AT END\l            MOVE 0 TO NUM\l}"
 ]
 Block0 -> Block1
 Block1 -> Block2
 Block1 -> Block3
-Block1 -> Block4
-Block2 -> Block6
-Block6 -> Block7
-Block7 -> Block8
-Block3 -> Block6
-Block4 -> Block7
+Block2 -> Block4
+Block2 -> Block5
+Block4 -> Block9
+Block9 -> Block10
+Block10 -> Block11
+Block5 -> Block6
+Block5 -> Block1
+Block6 -> Block10
+Block3 -> Block9
 
 }

@@ -14,89 +14,96 @@ Block1 [
 label = "{DEPT-HEAD-USE. Block1|    USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
 ]
 Block2 [
-label = "{DEPT-HEAD-PROC. Block2|    SET IDX to 1\l    SEARCH ELEM\l}"
+label = "{DEPT-HEAD-PROC. Block2|    SET IDX to 1\l}"
 ]
 Block3 [
-label = "{Block3|           when NBJ(IDX) = 28\l           display NUM(IDX) \"/\" LIB(IDX)\l}"
+label = "{Block3|    SEARCH ELEM\l}"
 ]
 Block4 [
-label = "{Block4|}"
+label = "{Block4|           when NBJ(IDX) = 28\l}"
 ]
 Block5 [
-label = "{DEPT-HEAD-PROC. Block5|    display \"--------------------------------------\"\l}"
+label = "{Block5|           display NUM(IDX) \"/\" LIB(IDX)\l}"
 ]
 Block6 [
-label = "{DEPT-HEAD-EXIT. Block6|EXIT\l}"
+label = "{Block6|}"
 ]
 Block7 [
-label = "{EMPL-FOOT-USE. Block7|EMPL-FOOT-USE SECTION. USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
+label = "{DEPT-HEAD-PROC. Block7|    display \"--------------------------------------\"\l}"
 ]
 Block8 [
-label = "{EMPL-FOOT-PROC. Block8|MOVE NUM TO NBJ\l}"
+label = "{DEPT-HEAD-EXIT. Block8|EXIT\l}"
 ]
 Block9 [
-label = "{EMPL-FOOT-PROC. Block9|MOVE NBJ TO NUM\l}"
+label = "{EMPL-FOOT-USE. Block9|EMPL-FOOT-USE SECTION. USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
 ]
 Block10 [
-label = "{EMPL-FOOT-EXIT. Block10|EXIT\l}"
+label = "{EMPL-FOOT-PROC. Block10|MOVE NUM TO NBJ\l}"
 ]
 Block11 [
-label = "{DEPT-FOOT-USE. Block11|DEPT-FOOT-USE SECTION. USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
+label = "{EMPL-FOOT-PROC. Block11|MOVE NBJ TO NUM\l}"
 ]
 Block12 [
-label = "{DEPT-FOOT-PROC. Block12|MOVE NUM TO NBJ\l}"
+label = "{EMPL-FOOT-EXIT. Block12|EXIT\l}"
 ]
 Block13 [
-label = "{DEPT-FOOT-PROC. Block13|MOVE NBJ TO NUM\l}"
+label = "{DEPT-FOOT-USE. Block13|DEPT-FOOT-USE SECTION. USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
 ]
 Block14 [
-label = "{DEPT-FOOT-EXIT. Block14|EXIT\l}"
+label = "{DEPT-FOOT-PROC. Block14|MOVE NUM TO NBJ\l}"
 ]
 Block15 [
-label = "{COMP-FOOT-USE. Block15|COMP-FOOT-USE SECTION. USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
+label = "{DEPT-FOOT-PROC. Block15|MOVE NBJ TO NUM\l}"
 ]
 Block16 [
-label = "{COMP-FOOT-PROC. Block16|}"
+label = "{DEPT-FOOT-EXIT. Block16|EXIT\l}"
 ]
 Block17 [
-label = "{Block17|PERFORM COMP-FOOT-CALC  VARYING IDX FROM +1 BY +1  UNTIL IDX \> +6\l}"
+label = "{COMP-FOOT-USE. Block17|COMP-FOOT-USE SECTION. USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
+]
+Block18 [
+label = "{COMP-FOOT-PROC. Block18|}"
+]
+Block19 [
+label = "{Block19|PERFORM COMP-FOOT-CALC  VARYING IDX FROM +1 BY +1  UNTIL IDX \> +6\l}"
 ]
 subgraph cluster_1{
 color = blue;
 label = "COMP-FOOT-CALC";
-Block21 [
-label = "{COMP-FOOT-CALC. Block21|MOVE NUM TO NBJ\l}"
-]
-Block22 [
-label = "{COMP-FOOT-CALC. Block22|MOVE NBJ TO NUM\l}"
-]
-Block21 -> Block22
-
-}
-Block17 -> Block21 [style=dashed]
-
-Block18 [
-label = "{Block18|}"
-]
-Block19 [
-label = "{COMP-FOOT-PROC. Block19|GO TO COMP-FOOT-EXIT\l}"
-]
 Block23 [
-label = "{COMP-FOOT-EXIT. Block23|EXIT\l}"
+label = "{COMP-FOOT-CALC. Block23|MOVE NUM TO NBJ\l}"
 ]
 Block24 [
-label = "{Block24|}"
+label = "{COMP-FOOT-CALC. Block24|MOVE NBJ TO NUM\l}"
+]
+Block23 -> Block24
+
+}
+Block19 -> Block23 [style=dashed]
+
+Block20 [
+label = "{Block20|}"
+]
+Block21 [
+label = "{COMP-FOOT-PROC. Block21|GO TO COMP-FOOT-EXIT\l}"
+]
+Block25 [
+label = "{COMP-FOOT-EXIT. Block25|EXIT\l}"
+]
+Block26 [
+label = "{Block26|}"
 ]
 Block0 -> Block1
-Block0 -> Block24
-Block0 -> Block7
-Block0 -> Block11
-Block0 -> Block15
+Block0 -> Block26
+Block0 -> Block9
+Block0 -> Block13
+Block0 -> Block17
 Block1 -> Block2
 Block2 -> Block3
-Block2 -> Block4
 Block3 -> Block4
+Block3 -> Block6
 Block4 -> Block5
+Block4 -> Block3
 Block5 -> Block6
 Block6 -> Block7
 Block7 -> Block8
@@ -111,6 +118,8 @@ Block15 -> Block16
 Block16 -> Block17
 Block17 -> Block18
 Block18 -> Block19
-Block19 -> Block23
+Block19 -> Block20
+Block20 -> Block21
+Block21 -> Block25
 
 }

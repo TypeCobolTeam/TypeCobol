@@ -2684,36 +2684,36 @@ Block435 [
 label = "{IDX-TEST-F2-9. Block435|SearchStatement\l}"
 ]
 Block436 [
-label = "{Block436|AtEndCondition\lGotoStatement\l}"
+label = "{Block436|WhenSearchCondition\l}"
 ]
-Block448 [
-label = "{IDX-FAIL-F2-9. Block448|MoveStatement\lMoveStatement\lMoveStatement\l}"
+Block439 [
+label = "{Block439|}"
 ]
-Block449 [
-label = "{Block449|PerformProcedureStatement\l}"
+Block440 [
+label = "{Block440|PerformProcedureStatement\l}"
 ]
-subgraph cluster_65{
+subgraph cluster_63{
 color = blue;
-label = "FAIL";
-Block22 [
-label = "{FAIL. Block22|MoveStatement\l}"
+label = "PASS";
+Block20 [
+label = "{PASS. Block20|MoveStatement\l}"
 ]
-Block23 [
-label = "{FAIL. Block23|AddStatement\l}"
+Block21 [
+label = "{PASS. Block21|AddStatement\l}"
 ]
-Block22 -> Block23
+Block20 -> Block21
 
 }
-Block449 -> Block22 [style=dashed]
+Block440 -> Block20 [style=dashed]
 
-Block450 [
-label = "{Block450|}"
-]
-Block451 [
-label = "{IDX-WRITE-F2-9. Block451|}"
+Block441 [
+label = "{Block441|GotoStatement\l}"
 ]
 Block452 [
-label = "{Block452|PerformProcedureStatement\l}"
+label = "{IDX-WRITE-F2-9. Block452|}"
+]
+Block453 [
+label = "{Block453|PerformProcedureStatement\l}"
 ]
 subgraph cluster_66{
 color = blue;
@@ -2826,13 +2826,10 @@ Block41 -> Block42
 Block42 -> Block43
 
 }
-Block452 -> Block27 [style=dashed]
+Block453 -> Block27 [style=dashed]
 
-Block453 [
-label = "{Block453|}"
-]
 Block454 [
-label = "{IDX-INIT-F2-10. Block454|MoveStatement\l}"
+label = "{Block454|}"
 ]
 Block455 [
 label = "{IDX-INIT-F2-10. Block455|MoveStatement\l}"
@@ -2841,39 +2838,48 @@ Block456 [
 label = "{IDX-INIT-F2-10. Block456|MoveStatement\l}"
 ]
 Block457 [
-label = "{IDX-INIT-F2-10. Block457|SetStatement\l}"
+label = "{IDX-INIT-F2-10. Block457|MoveStatement\l}"
 ]
 Block458 [
-label = "{IDX-TEST-F2-10. Block458|SearchStatement\l}"
+label = "{IDX-INIT-F2-10. Block458|SetStatement\l}"
 ]
 Block459 [
-label = "{Block459|AtEndCondition\l}"
+label = "{IDX-TEST-F2-10. Block459|SearchStatement\l}"
 ]
 Block460 [
-label = "{Block460|PerformProcedureStatement\l}"
+label = "{Block460|WhenSearchCondition\l}"
 ]
-subgraph cluster_67{
-color = blue;
-label = "PASS";
-Block20 [
-label = "{PASS. Block20|MoveStatement\l}"
+Block465 [
+label = "{Block465|GotoStatement\l}"
 ]
-Block21 [
-label = "{PASS. Block21|AddStatement\l}"
-]
-Block20 -> Block21
-
-}
-Block460 -> Block20 [style=dashed]
-
-Block461 [
-label = "{Block461|GotoStatement\l}"
+Block473 [
+label = "{IDX-FAIL-F2-10. Block473|MoveStatement\lMoveStatement\l}"
 ]
 Block474 [
-label = "{IDX-WRITE-F2-10. Block474|}"
+label = "{Block474|PerformProcedureStatement\l}"
 ]
+subgraph cluster_69{
+color = blue;
+label = "FAIL";
+Block22 [
+label = "{FAIL. Block22|MoveStatement\l}"
+]
+Block23 [
+label = "{FAIL. Block23|AddStatement\l}"
+]
+Block22 -> Block23
+
+}
+Block474 -> Block22 [style=dashed]
+
 Block475 [
-label = "{Block475|PerformProcedureStatement\l}"
+label = "{Block475|}"
+]
+Block476 [
+label = "{IDX-WRITE-F2-10. Block476|}"
+]
+Block477 [
+label = "{Block477|PerformProcedureStatement\l}"
 ]
 subgraph cluster_70{
 color = blue;
@@ -2986,57 +2992,57 @@ Block41 -> Block42
 Block42 -> Block43
 
 }
-Block475 -> Block27 [style=dashed]
+Block477 -> Block27 [style=dashed]
 
-Block476 [
-label = "{Block476|}"
-]
-Block477 [
-label = "{IDX-INIT-F2-11. Block477|MoveStatement\l}"
-]
 Block478 [
-label = "{IDX-INIT-F2-11. Block478|MoveStatement\l}"
+label = "{Block478|}"
 ]
 Block479 [
 label = "{IDX-INIT-F2-11. Block479|MoveStatement\l}"
 ]
 Block480 [
-label = "{IDX-INIT-F2-11. Block480|SetStatement\l}"
+label = "{IDX-INIT-F2-11. Block480|MoveStatement\l}"
 ]
 Block481 [
-label = "{IDX-TEST-F2-11. Block481|SearchStatement\l}"
+label = "{IDX-INIT-F2-11. Block481|MoveStatement\l}"
 ]
 Block482 [
-label = "{Block482|AtEndCondition\lGotoStatement\l}"
+label = "{IDX-INIT-F2-11. Block482|SetStatement\l}"
 ]
-Block494 [
-label = "{IDX-FAIL-F2-11. Block494|MoveStatement\lMoveStatement\l}"
+Block483 [
+label = "{IDX-TEST-F2-11. Block483|SearchStatement\l}"
 ]
-Block495 [
-label = "{Block495|PerformProcedureStatement\l}"
+Block484 [
+label = "{Block484|WhenSearchCondition\l}"
 ]
-subgraph cluster_73{
+Block487 [
+label = "{Block487|}"
+]
+Block488 [
+label = "{Block488|PerformProcedureStatement\l}"
+]
+subgraph cluster_71{
 color = blue;
-label = "FAIL";
-Block22 [
-label = "{FAIL. Block22|MoveStatement\l}"
+label = "PASS";
+Block20 [
+label = "{PASS. Block20|MoveStatement\l}"
 ]
-Block23 [
-label = "{FAIL. Block23|AddStatement\l}"
+Block21 [
+label = "{PASS. Block21|AddStatement\l}"
 ]
-Block22 -> Block23
+Block20 -> Block21
 
 }
-Block495 -> Block22 [style=dashed]
+Block488 -> Block20 [style=dashed]
 
-Block496 [
-label = "{Block496|MoveStatement\l}"
+Block489 [
+label = "{Block489|GotoStatement\l}"
 ]
-Block497 [
-label = "{IDX-WRITE-F2-11. Block497|}"
+Block500 [
+label = "{IDX-WRITE-F2-11. Block500|}"
 ]
-Block498 [
-label = "{Block498|PerformProcedureStatement\l}"
+Block501 [
+label = "{Block501|PerformProcedureStatement\l}"
 ]
 subgraph cluster_74{
 color = blue;
@@ -3149,63 +3155,63 @@ Block41 -> Block42
 Block42 -> Block43
 
 }
-Block498 -> Block27 [style=dashed]
+Block501 -> Block27 [style=dashed]
 
-Block499 [
-label = "{Block499|}"
-]
-Block500 [
-label = "{IDX-INIT-F2-12. Block500|MoveStatement\l}"
-]
-Block501 [
-label = "{IDX-INIT-F2-12. Block501|MoveStatement\l}"
-]
 Block502 [
-label = "{IDX-INIT-F2-12. Block502|MoveStatement\l}"
+label = "{Block502|}"
 ]
 Block503 [
 label = "{IDX-INIT-F2-12. Block503|MoveStatement\l}"
 ]
 Block504 [
-label = "{IDX-INIT-F2-12. Block504|SetStatement\l}"
+label = "{IDX-INIT-F2-12. Block504|MoveStatement\l}"
 ]
 Block505 [
-label = "{IDX-INIT-F2-12. Block505|SetStatement\l}"
+label = "{IDX-INIT-F2-12. Block505|MoveStatement\l}"
 ]
 Block506 [
-label = "{IDX-TEST-F2-12. Block506|SearchStatement\l}"
+label = "{IDX-INIT-F2-12. Block506|MoveStatement\l}"
 ]
 Block507 [
-label = "{Block507|AtEndCondition\lGotoStatement\l}"
+label = "{IDX-INIT-F2-12. Block507|SetStatement\l}"
 ]
-Block519 [
-label = "{IDX-FAIL-F2-12. Block519|MoveStatement\lMoveStatement\lMoveStatement\l}"
+Block508 [
+label = "{IDX-INIT-F2-12. Block508|SetStatement\l}"
 ]
-Block520 [
-label = "{Block520|PerformProcedureStatement\l}"
+Block509 [
+label = "{IDX-TEST-F2-12. Block509|SearchStatement\l}"
 ]
-subgraph cluster_77{
+Block510 [
+label = "{Block510|WhenSearchCondition\l}"
+]
+Block513 [
+label = "{Block513|}"
+]
+Block514 [
+label = "{Block514|PerformProcedureStatement\l}"
+]
+subgraph cluster_75{
 color = blue;
-label = "FAIL";
-Block22 [
-label = "{FAIL. Block22|MoveStatement\l}"
+label = "PASS";
+Block20 [
+label = "{PASS. Block20|MoveStatement\l}"
 ]
-Block23 [
-label = "{FAIL. Block23|AddStatement\l}"
+Block21 [
+label = "{PASS. Block21|AddStatement\l}"
 ]
-Block22 -> Block23
+Block20 -> Block21
 
 }
-Block520 -> Block22 [style=dashed]
+Block514 -> Block20 [style=dashed]
 
-Block521 [
-label = "{Block521|}"
+Block515 [
+label = "{Block515|GotoStatement\l}"
 ]
-Block522 [
-label = "{IDX-WRITE-F2-12. Block522|}"
+Block526 [
+label = "{IDX-WRITE-F2-12. Block526|}"
 ]
-Block523 [
-label = "{Block523|PerformProcedureStatement\l}"
+Block527 [
+label = "{Block527|PerformProcedureStatement\l}"
 ]
 subgraph cluster_78{
 color = blue;
@@ -3318,57 +3324,57 @@ Block41 -> Block42
 Block42 -> Block43
 
 }
-Block523 -> Block27 [style=dashed]
+Block527 -> Block27 [style=dashed]
 
-Block524 [
-label = "{Block524|}"
-]
-Block525 [
-label = "{IDX-INIT-F2-13. Block525|MoveStatement\l}"
-]
-Block526 [
-label = "{IDX-INIT-F2-13. Block526|MoveStatement\l}"
-]
-Block527 [
-label = "{IDX-INIT-F2-13. Block527|MoveStatement\l}"
-]
 Block528 [
-label = "{IDX-INIT-F2-13. Block528|SetStatement\l}"
+label = "{Block528|}"
 ]
 Block529 [
-label = "{IDX-TEST-F2-13. Block529|SearchStatement\l}"
+label = "{IDX-INIT-F2-13. Block529|MoveStatement\l}"
 ]
 Block530 [
-label = "{Block530|AtEndCondition\lGotoStatement\l}"
+label = "{IDX-INIT-F2-13. Block530|MoveStatement\l}"
 ]
-Block542 [
-label = "{IDX-FAIL-F2-13. Block542|MoveStatement\lMoveStatement\lMoveStatement\l}"
+Block531 [
+label = "{IDX-INIT-F2-13. Block531|MoveStatement\l}"
 ]
-Block543 [
-label = "{Block543|PerformProcedureStatement\l}"
+Block532 [
+label = "{IDX-INIT-F2-13. Block532|SetStatement\l}"
 ]
-subgraph cluster_81{
+Block533 [
+label = "{IDX-TEST-F2-13. Block533|SearchStatement\l}"
+]
+Block534 [
+label = "{Block534|WhenSearchCondition\l}"
+]
+Block537 [
+label = "{Block537|}"
+]
+Block538 [
+label = "{Block538|PerformProcedureStatement\l}"
+]
+subgraph cluster_79{
 color = blue;
-label = "FAIL";
-Block22 [
-label = "{FAIL. Block22|MoveStatement\l}"
+label = "PASS";
+Block20 [
+label = "{PASS. Block20|MoveStatement\l}"
 ]
-Block23 [
-label = "{FAIL. Block23|AddStatement\l}"
+Block21 [
+label = "{PASS. Block21|AddStatement\l}"
 ]
-Block22 -> Block23
+Block20 -> Block21
 
 }
-Block543 -> Block22 [style=dashed]
+Block538 -> Block20 [style=dashed]
 
-Block544 [
-label = "{Block544|}"
+Block539 [
+label = "{Block539|GotoStatement\l}"
 ]
-Block545 [
-label = "{IDX-WRITE-F2-13. Block545|}"
+Block550 [
+label = "{IDX-WRITE-F2-13. Block550|}"
 ]
-Block546 [
-label = "{Block546|PerformProcedureStatement\l}"
+Block551 [
+label = "{Block551|PerformProcedureStatement\l}"
 ]
 subgraph cluster_82{
 color = blue;
@@ -3481,13 +3487,13 @@ Block41 -> Block42
 Block42 -> Block43
 
 }
-Block546 -> Block27 [style=dashed]
+Block551 -> Block27 [style=dashed]
 
-Block547 [
-label = "{Block547|}"
+Block552 [
+label = "{Block552|}"
 ]
-Block548 [
-label = "{CCVS-999999. Block548|GotoStatement\l}"
+Block553 [
+label = "{CCVS-999999. Block553|GotoStatement\l}"
 ]
 Block10 [
 label = "{CLOSE-FILES. Block10|}"
@@ -4174,85 +4180,16 @@ label = "{CLOSE-FILES. Block13|CloseStatement\l}"
 Block14 [
 label = "{TERMINATE-CCVS. Block14|ExitProgramStatement\l}"
 ]
-Block532 [
-label = "{Block532|WhenSearchCondition\l}"
+Block535 [
+label = "{Block535|AtEndCondition\lGotoStatement\l}"
 ]
-Block533 [
-label = "{Block533|PerformProcedureStatement\l}"
+Block547 [
+label = "{IDX-FAIL-F2-13. Block547|MoveStatement\lMoveStatement\lMoveStatement\l}"
 ]
-subgraph cluster_79{
-color = blue;
-label = "PASS";
-Block20 [
-label = "{PASS. Block20|MoveStatement\l}"
+Block548 [
+label = "{Block548|PerformProcedureStatement\l}"
 ]
-Block21 [
-label = "{PASS. Block21|AddStatement\l}"
-]
-Block20 -> Block21
-
-}
-Block533 -> Block20 [style=dashed]
-
-Block534 [
-label = "{Block534|GotoStatement\l}"
-]
-Block509 [
-label = "{Block509|WhenSearchCondition\l}"
-]
-Block510 [
-label = "{Block510|PerformProcedureStatement\l}"
-]
-subgraph cluster_75{
-color = blue;
-label = "PASS";
-Block20 [
-label = "{PASS. Block20|MoveStatement\l}"
-]
-Block21 [
-label = "{PASS. Block21|AddStatement\l}"
-]
-Block20 -> Block21
-
-}
-Block510 -> Block20 [style=dashed]
-
-Block511 [
-label = "{Block511|GotoStatement\l}"
-]
-Block484 [
-label = "{Block484|WhenSearchCondition\l}"
-]
-Block485 [
-label = "{Block485|PerformProcedureStatement\l}"
-]
-subgraph cluster_71{
-color = blue;
-label = "PASS";
-Block20 [
-label = "{PASS. Block20|MoveStatement\l}"
-]
-Block21 [
-label = "{PASS. Block21|AddStatement\l}"
-]
-Block20 -> Block21
-
-}
-Block485 -> Block20 [style=dashed]
-
-Block486 [
-label = "{Block486|GotoStatement\l}"
-]
-Block463 [
-label = "{Block463|WhenSearchCondition\lGotoStatement\l}"
-]
-Block471 [
-label = "{IDX-FAIL-F2-10. Block471|MoveStatement\lMoveStatement\l}"
-]
-Block472 [
-label = "{Block472|PerformProcedureStatement\l}"
-]
-subgraph cluster_69{
+subgraph cluster_81{
 color = blue;
 label = "FAIL";
 Block22 [
@@ -4264,18 +4201,70 @@ label = "{FAIL. Block23|AddStatement\l}"
 Block22 -> Block23
 
 }
-Block472 -> Block22 [style=dashed]
+Block548 -> Block22 [style=dashed]
 
-Block473 [
-label = "{Block473|}"
+Block549 [
+label = "{Block549|}"
 ]
-Block438 [
-label = "{Block438|WhenSearchCondition\l}"
+Block511 [
+label = "{Block511|AtEndCondition\lGotoStatement\l}"
 ]
-Block439 [
-label = "{Block439|PerformProcedureStatement\l}"
+Block523 [
+label = "{IDX-FAIL-F2-12. Block523|MoveStatement\lMoveStatement\lMoveStatement\l}"
 ]
-subgraph cluster_63{
+Block524 [
+label = "{Block524|PerformProcedureStatement\l}"
+]
+subgraph cluster_77{
+color = blue;
+label = "FAIL";
+Block22 [
+label = "{FAIL. Block22|MoveStatement\l}"
+]
+Block23 [
+label = "{FAIL. Block23|AddStatement\l}"
+]
+Block22 -> Block23
+
+}
+Block524 -> Block22 [style=dashed]
+
+Block525 [
+label = "{Block525|}"
+]
+Block485 [
+label = "{Block485|AtEndCondition\lGotoStatement\l}"
+]
+Block497 [
+label = "{IDX-FAIL-F2-11. Block497|MoveStatement\lMoveStatement\l}"
+]
+Block498 [
+label = "{Block498|PerformProcedureStatement\l}"
+]
+subgraph cluster_73{
+color = blue;
+label = "FAIL";
+Block22 [
+label = "{FAIL. Block22|MoveStatement\l}"
+]
+Block23 [
+label = "{FAIL. Block23|AddStatement\l}"
+]
+Block22 -> Block23
+
+}
+Block498 -> Block22 [style=dashed]
+
+Block499 [
+label = "{Block499|MoveStatement\l}"
+]
+Block461 [
+label = "{Block461|AtEndCondition\l}"
+]
+Block462 [
+label = "{Block462|PerformProcedureStatement\l}"
+]
+subgraph cluster_67{
 color = blue;
 label = "PASS";
 Block20 [
@@ -4287,10 +4276,36 @@ label = "{PASS. Block21|AddStatement\l}"
 Block20 -> Block21
 
 }
-Block439 -> Block20 [style=dashed]
+Block462 -> Block20 [style=dashed]
 
-Block440 [
-label = "{Block440|GotoStatement\l}"
+Block463 [
+label = "{Block463|GotoStatement\l}"
+]
+Block437 [
+label = "{Block437|AtEndCondition\lGotoStatement\l}"
+]
+Block449 [
+label = "{IDX-FAIL-F2-9. Block449|MoveStatement\lMoveStatement\lMoveStatement\l}"
+]
+Block450 [
+label = "{Block450|PerformProcedureStatement\l}"
+]
+subgraph cluster_65{
+color = blue;
+label = "FAIL";
+Block22 [
+label = "{FAIL. Block22|MoveStatement\l}"
+]
+Block23 [
+label = "{FAIL. Block23|AddStatement\l}"
+]
+Block22 -> Block23
+
+}
+Block450 -> Block22 [style=dashed]
+
+Block451 [
+label = "{Block451|}"
 ]
 Block415 [
 label = "{Block415|}"
@@ -4704,12 +4719,12 @@ Block432 -> Block433
 Block433 -> Block434
 Block434 -> Block435
 Block435 -> Block436
-Block435 -> Block438
-Block436 -> Block448
-Block448 -> Block449
-Block449 -> Block450
-Block450 -> Block451
-Block451 -> Block452
+Block435 -> Block437
+Block436 -> Block439
+Block436 -> Block435
+Block439 -> Block440
+Block440 -> Block441
+Block441 -> Block452
 Block452 -> Block453
 Block453 -> Block454
 Block454 -> Block455
@@ -4717,10 +4732,12 @@ Block455 -> Block456
 Block456 -> Block457
 Block457 -> Block458
 Block458 -> Block459
-Block458 -> Block463
 Block459 -> Block460
-Block460 -> Block461
-Block461 -> Block474
+Block459 -> Block461
+Block460 -> Block465
+Block460 -> Block459
+Block465 -> Block473
+Block473 -> Block474
 Block474 -> Block475
 Block475 -> Block476
 Block476 -> Block477
@@ -4729,14 +4746,14 @@ Block478 -> Block479
 Block479 -> Block480
 Block480 -> Block481
 Block481 -> Block482
-Block481 -> Block484
-Block482 -> Block494
-Block494 -> Block495
-Block495 -> Block496
-Block496 -> Block497
-Block497 -> Block498
-Block498 -> Block499
-Block499 -> Block500
+Block482 -> Block483
+Block483 -> Block484
+Block483 -> Block485
+Block484 -> Block487
+Block484 -> Block483
+Block487 -> Block488
+Block488 -> Block489
+Block489 -> Block500
 Block500 -> Block501
 Block501 -> Block502
 Block502 -> Block503
@@ -4744,48 +4761,56 @@ Block503 -> Block504
 Block504 -> Block505
 Block505 -> Block506
 Block506 -> Block507
-Block506 -> Block509
-Block507 -> Block519
-Block519 -> Block520
-Block520 -> Block521
-Block521 -> Block522
-Block522 -> Block523
-Block523 -> Block524
-Block524 -> Block525
-Block525 -> Block526
+Block507 -> Block508
+Block508 -> Block509
+Block509 -> Block510
+Block509 -> Block511
+Block510 -> Block513
+Block510 -> Block509
+Block513 -> Block514
+Block514 -> Block515
+Block515 -> Block526
 Block526 -> Block527
 Block527 -> Block528
 Block528 -> Block529
 Block529 -> Block530
-Block529 -> Block532
-Block530 -> Block542
-Block542 -> Block543
-Block543 -> Block544
-Block544 -> Block545
-Block545 -> Block546
-Block546 -> Block547
-Block547 -> Block548
-Block548 -> Block10
+Block530 -> Block531
+Block531 -> Block532
+Block532 -> Block533
+Block533 -> Block534
+Block533 -> Block535
+Block534 -> Block537
+Block534 -> Block533
+Block537 -> Block538
+Block538 -> Block539
+Block539 -> Block550
+Block550 -> Block551
+Block551 -> Block552
+Block552 -> Block553
+Block553 -> Block10
 Block10 -> Block11
 Block11 -> Block12
 Block12 -> Block13
 Block13 -> Block14
-Block532 -> Block533
-Block533 -> Block534
-Block534 -> Block545
-Block509 -> Block510
-Block510 -> Block511
-Block511 -> Block522
-Block484 -> Block485
-Block485 -> Block486
-Block486 -> Block497
-Block463 -> Block471
-Block471 -> Block472
-Block472 -> Block473
-Block473 -> Block474
-Block438 -> Block439
-Block439 -> Block440
-Block440 -> Block451
+Block535 -> Block547
+Block547 -> Block548
+Block548 -> Block549
+Block549 -> Block550
+Block511 -> Block523
+Block523 -> Block524
+Block524 -> Block525
+Block525 -> Block526
+Block485 -> Block497
+Block497 -> Block498
+Block498 -> Block499
+Block499 -> Block500
+Block461 -> Block462
+Block462 -> Block463
+Block463 -> Block476
+Block437 -> Block449
+Block449 -> Block450
+Block450 -> Block451
+Block451 -> Block452
 Block415 -> Block416
 Block416 -> Block423
 Block423 -> Block424
