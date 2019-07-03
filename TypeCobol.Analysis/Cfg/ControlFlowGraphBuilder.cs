@@ -263,6 +263,7 @@ namespace TypeCobol.Analysis.Cfg
             this.ParentProgramCfgBuilder = parentCfgBuilder;
             this.Diagnostics = new List<Diagnostic>();
             this.UseEvaluateCascade = true;
+            this.UseSearchCascade = true;
         }
 
         /// <summary>
@@ -1657,7 +1658,7 @@ namespace TypeCobol.Analysis.Cfg
         internal class MultiBranchContext
         {
             /// <summary>
-            /// Current Block befaore multi branches
+            /// Current Block before multi branches
             /// </summary>
             internal BasicBlockForNode CurrentBlock;
             /// <summary>
@@ -1672,6 +1673,14 @@ namespace TypeCobol.Analysis.Cfg
             /// Indices in the SuccessorEdges of all blocks in Branches
             /// </summary>
             internal List<int> BranchIndices;
+            /// <summary>
+            /// Root Block of the multi branches
+            /// </summary>
+            internal BasicBlockForNode RootBlock;
+            /// <summary>
+            /// The Index in the SuccessorEdge of the RootBlock if any, -1 otherwise.
+            /// </summary>
+            internal int RootBlockSuccessorIndex;
 
             /// <summary>
             /// The instruction associated to this context.
@@ -1694,6 +1703,7 @@ namespace TypeCobol.Analysis.Cfg
                 BranchIndices = new List<int>();
                 Builder = currentProgramCfgBuilder;
                 Instruction = instruction;
+                RootBlockSuccessorIndex = -1;
             }
 
             /// <summary>
@@ -1712,8 +1722,18 @@ namespace TypeCobol.Analysis.Cfg
             /// <param name="nextBlock">The next block for all branches</param>
             internal void End(bool branchToNext, BasicBlockForNode nextBlock)
             {
+                End(branchToNext, CurrentBlock, nextBlock);
+            }
+            /// <summary>
+            /// End the multi branching.
+            /// </summary>
+            /// <param name="branchToNext">True if the CurrentBlock must be linked to the next branch also, false otherwise</param>
+            /// <param name="rootBlock">Root block of the multi branch</param>
+            /// <param name="nextBlock">The next block for all branches</param>
+            internal void End(bool branchToNext, BasicBlockForNode rootBlock, BasicBlockForNode nextBlock)            
+            {
                 System.Diagnostics.Debug.Assert(Builder != null);
-                System.Diagnostics.Debug.Assert(CurrentBlock != null);
+                System.Diagnostics.Debug.Assert(rootBlock != null);
                 System.Diagnostics.Debug.Assert(nextBlock != null);
                 //Add the next block to the successors.
                 int nbIndex = Builder.Cfg.SuccessorEdges.Count;
@@ -1723,14 +1743,14 @@ namespace TypeCobol.Analysis.Cfg
                 {
                     //Add branch to the successors
                     BranchIndices.Add(Builder.Cfg.SuccessorEdges.Count);
-                    CurrentBlock.SuccessorEdges.Add(Builder.Cfg.SuccessorEdges.Count);
+                    rootBlock.SuccessorEdges.Add(Builder.Cfg.SuccessorEdges.Count);
                     Builder.Cfg.SuccessorEdges.Add(b);
                     //Next Block is a successor of the branch.
                     AddTerminalSuccessorEdge(b, nbIndex);
                 }
                 if (branchToNext)
                 {
-                    CurrentBlock.SuccessorEdges.Add(nbIndex);
+                    rootBlock.SuccessorEdges.Add(nbIndex);
                 }
             }
 
@@ -1799,9 +1819,9 @@ namespace TypeCobol.Analysis.Cfg
                     accumulator.Add(b);
                 }
                 else foreach (var s in b.SuccessorEdges)
-                    {
-                        GetTerminalSuccessorEdges((BasicBlockForNode)Builder.Cfg.SuccessorEdges[s], accumulator, visitedBlockIndex);
-                    }
+                {
+                    GetTerminalSuccessorEdges((BasicBlockForNode)Builder.Cfg.SuccessorEdges[s], accumulator, visitedBlockIndex);
+                }
             }
 
         }
@@ -1985,6 +2005,16 @@ namespace TypeCobol.Analysis.Cfg
         /// otherwise.
         /// </summary>
         public bool UseEvaluateCascade
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Set wheither or not the SEARCH statement shall be translated using cascading IF-THEN-ELSE, false
+        /// otherwise.
+        /// </summary>
+        public bool UseSearchCascade
         {
             get;
             set;
@@ -2225,11 +2255,40 @@ namespace TypeCobol.Analysis.Cfg
             {
                 this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext>();
             }
-            //Push and start the Search context.
-            this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctx);
-            ctx.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
-            //Add the search instruction to the current block
-            AddCurrentBlockNode(node);
+            if (UseSearchCascade)
+            {
+                var searchBlock = this.CurrentProgramCfgBuilder.CurrentBasicBlock;
+                if (this.CurrentProgramCfgBuilder.CurrentBasicBlock.Instructions.Count > 0)
+                {//Create a Search Block if the previous one is not empty.               
+                    searchBlock = this.CurrentProgramCfgBuilder.CreateBlock(node, true);
+                    ctx.RootBlockSuccessorIndex = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
+                    this.CurrentProgramCfgBuilder.CurrentBasicBlock.SuccessorEdges.Add(ctx.RootBlockSuccessorIndex);
+                    this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(searchBlock);
+                }
+                else
+                {
+                    AddCurrentBlockNode(node);
+                }
+                ctx.RootBlock = searchBlock;
+
+                //Create a new empty block for other instructions
+                var bodyBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
+                searchBlock.SuccessorEdges.Add(this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count);
+                this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(bodyBlock);
+                
+                //Push and start the Search context.
+                this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctx);
+                ctx.Start(bodyBlock);
+                this.CurrentProgramCfgBuilder.CurrentBasicBlock = bodyBlock;
+            }
+            else
+            {
+                //Push and start the Search context.
+                this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctx);
+                ctx.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
+                //Add the search instruction to the current block
+                AddCurrentBlockNode(node);
+            }
         }
 
         /// <summary>
@@ -2245,23 +2304,81 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(ctx.ContextualData != null);
             System.Diagnostics.Debug.Assert(ctx.ContextualData is List<Node>);
 
-            var whenCondBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
-            if (condition == null)
-            {//This is like a default condition.
-                whenCondBlock.SetFlag(BasicBlock<Node, D>.Flags.Default, true);
-            }
-            //Associate all When SearchConditions to the block.
-            List<Node> data = (List<Node>)ctx.ContextualData;
-            foreach (var node in data)
+            if (UseSearchCascade)
             {
-                whenCondBlock.Instructions.AddLast(node);
-                this.CurrentProgramCfgBuilder.Cfg.BlockFor[node] = whenCondBlock;
+                if (condition == null)
+                {
+                    var whenCondBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
+                    //This is like a default condition.
+                    whenCondBlock.SetFlag(BasicBlock<Node, D>.Flags.Default, true);
+                    //Associate all When SearchConditions to the block.
+                    List<Node> data = (List<Node>)ctx.ContextualData;
+                    foreach (var node in data)
+                    {
+                        whenCondBlock.Instructions.AddLast(node);
+                        this.CurrentProgramCfgBuilder.Cfg.BlockFor[node] = whenCondBlock;
+                    }
+                    ctx.AddBranch(whenCondBlock);
+                    //The new Current Block is the When condition block
+                    this.CurrentProgramCfgBuilder.CurrentBasicBlock = whenCondBlock;
+                    //Clear the current data
+                    data.Clear();
+                }
+                else
+                {
+                    if (ctx.Instruction == null || ctx.Instruction.CodeElement.Type != CodeElementType.SearchStatement)
+                    {  //Create the else alternatives
+                        EnterElse(null);
+                    }
+                    else if (ctx.Branches.Count == 1)
+                    {//We had an At END Condition ==> So the Current basick block is the Search Block
+                        this.CurrentProgramCfgBuilder.CurrentBasicBlock = ctx.CurrentBlock;
+                    }
+                    //Create Whens context
+                    MultiBranchContext ctxWhens = new MultiBranchContext(this.CurrentProgramCfgBuilder, null);
+                    ctxWhens.ContextualData = new List<Node>();
+                    ctxWhens.RootBlock = ctx.RootBlock;
+                    ctxWhens.RootBlockSuccessorIndex = ctx.RootBlockSuccessorIndex;
+                    //Push and start the Whens context.
+                    this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctxWhens);
+                    ctxWhens.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
+
+                    //Associate all When Conditions to the block.
+                    List<Node> data = (List<Node>)ctx.ContextualData;
+                    foreach (var node in data)
+                    {
+                        AddCurrentBlockNode(node);
+                    }
+
+                    //So the current block is now the whenBlock            
+                    var whenCondBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
+                    ctxWhens.AddBranch(whenCondBlock);
+                    //The new Current Block is the When condition block
+                    this.CurrentProgramCfgBuilder.CurrentBasicBlock = whenCondBlock;
+                    //Clear the current data
+                    data.Clear();
+                }
             }
-            ctx.AddBranch(whenCondBlock);
-            //The new Current Block is the When condition block
-            this.CurrentProgramCfgBuilder.CurrentBasicBlock = whenCondBlock;
-            //Clear the current data
-            data.Clear();
+            else
+            {
+                var whenCondBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
+                if (condition == null)
+                {//This is like a default condition.
+                    whenCondBlock.SetFlag(BasicBlock<Node, D>.Flags.Default, true);
+                }
+                //Associate all When SearchConditions to the block.
+                List<Node> data = (List<Node>)ctx.ContextualData;
+                foreach (var node in data)
+                {
+                    whenCondBlock.Instructions.AddLast(node);
+                    this.CurrentProgramCfgBuilder.Cfg.BlockFor[node] = whenCondBlock;
+                }
+                ctx.AddBranch(whenCondBlock);
+                //The new Current Block is the When condition block
+                this.CurrentProgramCfgBuilder.CurrentBasicBlock = whenCondBlock;
+                //Clear the current data
+                data.Clear();
+            }
         }
 
         /// <summary>
@@ -2274,16 +2391,53 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
             MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
             System.Diagnostics.Debug.Assert(ctx.Branches != null);
+            if (UseSearchCascade)
+            {
+                //Pop each MultiBranchContextStack instance till to the SEARCH one
+                //and close each one.
+                bool bLastBranch = true;
+                int rootNodeIndex = ctx.RootBlockSuccessorIndex;
+                while (ctx.Instruction == null)
+                {
+                    System.Diagnostics.Debug.Assert(ctx.Branches.Count > 0);
 
-            bool branchToNext = true;
-            if (ctx.Branches.Count > 0)
-            {//If there is an AT END Condition
-                branchToNext = !ctx.Branches[0].HasFlag(BasicBlock<Node, D>.Flags.Default);
+                    bool branchToNext = ctx.Branches.Count == 1;//No Else
+                                                                //The next block.
+                    var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
+                    if (bLastBranch)
+                    {//This is the last branch of the cascade, next block is the SearchBlock, thus the root.
+                        bLastBranch = false;
+                        ctx.End(false, nextBlock);
+                        //Branch this terminal block to the search block
+                        if (rootNodeIndex == -1)
+                        {
+                            rootNodeIndex = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
+                            this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(ctx.RootBlock);
+                        }
+                        ctx.CurrentBlock.SuccessorEdges.Add(rootNodeIndex);
+                    }
+                    else
+                    {
+                        ctx.End(branchToNext, nextBlock);                                               
+                    }
+                    this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
+                    ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
+                }
+                //If we have and AT Condition haandle it
+                ctx.End(ctx.Branches.Count == 0, ctx.RootBlock, this.CurrentProgramCfgBuilder.CurrentBasicBlock);
             }
-            //The next block.
-            var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
-            ctx.End(branchToNext, nextBlock);
-            this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
+            else
+            {
+                bool branchToNext = true;
+                if (ctx.Branches.Count > 0)
+                {//If there is an AT END Condition
+                    branchToNext = !ctx.Branches[0].HasFlag(BasicBlock<Node, D>.Flags.Default);
+                }
+                //The next block.
+                var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
+                ctx.End(branchToNext, nextBlock);
+                this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
+            }
         }
 
         /// <summary>
