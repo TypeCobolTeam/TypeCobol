@@ -17,6 +17,10 @@
 000000     FREE var1 var2 var3
 000000     FREE var5 OF var4
 000000     FREE var7 IN var6
+      *    FREE var4::var5
+000000     FREE var5 OF var4
+      *    FREE var6::var7
+000000     FREE var7 OF var6
 000000     .
 000000
 000000 END PROGRAM FreeStatements.
