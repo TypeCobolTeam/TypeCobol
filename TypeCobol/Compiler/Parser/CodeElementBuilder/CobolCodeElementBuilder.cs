@@ -1796,7 +1796,14 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = new ExitProgramStatement();
 		}
 
-		// --- GOBACK ---
+        // --- FREE ---
+        public override void EnterFreeStatement(CodeElementsParser.FreeStatementContext context)
+        {
+            Context = context;
+            CodeElement = CobolStatementsBuilder.CreateFreeStatement(context);
+        }
+
+        // --- GOBACK ---
 				
 		public override void EnterGobackStatement(CodeElementsParser.GobackStatementContext context) {
 			Context = context;

@@ -1,6 +1,7 @@
 ﻿using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
@@ -392,11 +393,23 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 
-		  ////////////////////
-		 // GOTO STATEMENT //
-		////////////////////
+        ////////////////////
+        // FREE STATEMENT //
+        ////////////////////
 
-		internal CodeElement CreateGotoStatement(CodeElementsParser.GotoSimpleContext context) {
+        internal CodeElement CreateFreeStatement(CodeElementsParser.FreeStatementContext context)
+        {
+            return new FreeStatement
+                   {
+                       TargetStorageAreas = context.dataItemReference().Select(this.CobolExpressionsBuilder.CreateDataItemReference).ToArray()
+                   };
+        }
+
+        ////////////////////
+        // GOTO STATEMENT //
+        ////////////////////
+
+        internal CodeElement CreateGotoStatement(CodeElementsParser.GotoSimpleContext context) {
 			var statement = new GotoSimpleStatement();
 			statement.ProcedureName = CobolWordsBuilder.CreateProcedureName(context.procedureName());
 			return statement;
