@@ -107,19 +107,14 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         protected virtual void OnDidReceiveExtractUseCopies(ExtractUseCopiesParams parameter)
         {
             var docContext = GetDocumentContextFromStringUri(parameter.textDocument.uri, false);
-            if (docContext.FileCompiler != null && docContext.FileCompiler.CompilationResultsForProgram != null &&
-                docContext.FileCompiler.CompilationResultsForProgram.CopyTextNamesVariations != null)
+            if (docContext?.FileCompiler?.CompilationResultsForProgram?.CopyTextNamesVariations != null)
             {
-                var copiesName = docContext.FileCompiler.CompilationResultsForProgram.CopyTextNamesVariations.Select(cp => cp.TextNameWithSuffix).Distinct();
-                var missingCopiesParam = new MissingCopiesParams();
-                missingCopiesParam.textDocument = parameter.textDocument;
-                missingCopiesParam.Copies = new List<string>();
-                foreach (var c in copiesName)
+                List<string> copiesName = docContext.FileCompiler.CompilationResultsForProgram.CopyTextNamesVariations.Select(cp => cp.TextNameWithSuffix).Distinct().ToList();
+                if (copiesName.Count > 0)
                 {
-                    missingCopiesParam.Copies.Add(c);
-                }
-                if (missingCopiesParam.Copies.Count > 0)
-                {
+                    var missingCopiesParam = new MissingCopiesParams();
+                    missingCopiesParam.textDocument = parameter.textDocument;
+                    missingCopiesParam.Copies = copiesName;
                     this.RpcServer.SendNotification(MissingCopiesNotification.Type, missingCopiesParam);
                 }
             }
