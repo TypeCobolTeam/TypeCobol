@@ -190,7 +190,7 @@
         items += "    05 TC-" + @Model.programName8 + "-PntNbr         PIC S9(04) COMP VALUE "+@Model.definitions.functions.Public.Count+".\n";
         }
         foreach (var f in @Model.definitions.functions.Public) {
-        items += "*To call program " + f.Hash + f.Name + '\n';
+        items += "*To call program " + f.Hash + '\n';
         items += "*Which is generated code for " + f.QualifiedName + '\n';
         items += "*Declared in source file " + f.CodeElement.TokenSource.SourceName + '\n';
         items += "    05 TC-"+@Model.programName8 + "-" + f.Hash +"-Idt   PIC X(08) VALUE '" + f.Hash + "'.\n";
@@ -337,7 +337,7 @@
         }
 
         items += "    ENTRY '" + function.Hash + "' USING" + usingVariables + '\n';
-        items += "        CALL \"" + function.Hash + function.Name + "\" USING" + usingVariables + '\n';
+        items += "        CALL \"" + function.Hash + "\" USING" + usingVariables + '\n';
         items += "        GOBACK.\n\n";
         }
         }
@@ -364,7 +364,7 @@
         items += "    05 TC-" + @Model.programName8 + "-PntNbr         PIC S9(04) COMP VALUE "+(@Model.definitions.functionsGeneratedAsNested.Public.Count + @Model.definitions.functions.Public.Count) +".\n";
         }
         foreach (var f in @Model.definitions.functionsGeneratedAsNested.Concat(@Model.definitions.functions.Public, true)) {
-        items += "*To call program " + f.Hash + f.Name + '\n';
+        items += "*To call program " + f.Hash + '\n';
         items += "*Which is generated code for " + f.QualifiedName + '\n';
         items += "*Declared in source file " + f.CodeElement.TokenSource.SourceName + '\n';
         items += "    05 TC-"+@Model.programName8 + "-" + f.Hash +"-Idt   PIC X(08) VALUE '" + f.Hash + "'.\n";
@@ -521,7 +521,7 @@
           foreach (var pgm in @Model.imports.Programs.Values) {
             foreach (var proc in pgm.Procedures.Values) {
               proc.IsNotByExternalPointer=true;
-              items += "*To call program "+proc.Hash+proc.Name+" in module "+proc.ProcStyleCall.FunctionDeclaration.QualifiedName.Tail+'\n';
+              items += "*To call program " + proc.Hash + " in module "+proc.ProcStyleCall.FunctionDeclaration.QualifiedName.Tail+'\n';
               items += "*Which is generated code for "+proc.ProcStyleCall.FunctionDeclaration.QualifiedName+'\n';
               items += "*Declared in source file " + proc.ProcStyleCall.FunctionDeclaration.CodeElement.TokenSource.SourceName + '\n';
               items += "01 TC-"+pgm.Name + "-" + proc.Hash+"-Item.\n";
