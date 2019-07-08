@@ -318,6 +318,9 @@ namespace TypeCobol.Compiler.Parser
                     case CodeElementType.ExitStatement:
                         codeElement = new ExitStatement();
                         break;
+                    case CodeElementType.FreeStatement:
+                        codeElement = new FreeStatement();
+                        break;
                     case CodeElementType.GobackStatement:
                         codeElement = new GobackStatement();
                         break;
@@ -517,7 +520,7 @@ namespace TypeCobol.Compiler.Parser
                         codeElement = new LibraryCopyCodeElement();
                         break;
                     case CodeElementType.FunctionDeclarationHeader:
-                        codeElement = new FunctionDeclarationHeader(null, AccessModifier.Private, FunctionType.Undefined);
+                        codeElement = new FunctionDeclarationHeader();
                         break;
                     case CodeElementType.FunctionDeclarationEnd:
                         codeElement = new FunctionDeclarationEnd();

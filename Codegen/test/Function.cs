@@ -20,13 +20,13 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 		}
 
 		/// <summary>Creates function.</summary>
-		public Function(QualifiedName name, IList<ParameterDescriptionEntry> inputs, ParameterDescriptionEntry returning, AccessModifier visibility = AccessModifier.Private)
+		public Function(QualifiedName name, IList<ParameterDescriptionEntry> inputs, ParameterDescriptionEntry returning, AccessModifier visibility = AccessModifier.Local)
 			: this(name, inputs, null, null, returning, visibility) { }
 		/// <summary>Creates procedure.</summary>
-		public Function(QualifiedName name, IList<ParameterDescriptionEntry> inputs, IList<ParameterDescriptionEntry> outputs, IList<ParameterDescriptionEntry> inouts = null, AccessModifier visibility = AccessModifier.Private)
+		public Function(QualifiedName name, IList<ParameterDescriptionEntry> inputs, IList<ParameterDescriptionEntry> outputs, IList<ParameterDescriptionEntry> inouts = null, AccessModifier visibility = AccessModifier.Local)
 			: this(name, inputs, outputs, inouts, null, visibility) { }
 		/// <summary>Creates functions or procedure</summary>
-		public Function(QualifiedName name, IList<ParameterDescriptionEntry> inputs, IList<ParameterDescriptionEntry> outputs, IList<ParameterDescriptionEntry> inouts, ParameterDescriptionEntry returning, AccessModifier visibility = AccessModifier.Private) {
+		public Function(QualifiedName name, IList<ParameterDescriptionEntry> inputs, IList<ParameterDescriptionEntry> outputs, IList<ParameterDescriptionEntry> inouts, ParameterDescriptionEntry returning, AccessModifier visibility = AccessModifier.Local) {
 			QualifiedName = name;
 			Profile = new ParametersProfile();
 			Profile.InputParameters  = inputs  ?? new List<ParameterDescriptionEntry>();

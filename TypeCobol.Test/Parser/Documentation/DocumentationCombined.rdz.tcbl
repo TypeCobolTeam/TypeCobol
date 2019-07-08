@@ -58,11 +58,22 @@
            CONTINUE.
        END-DECLARE.
 
-      %<<< MyPivateProc is a Proc but Pivate
+      %<<< MyPrivateProc is a Proc but Private
         @deprecated
           @ todo: Add a body
       %>>>
-       DECLARE PROCEDURE MyPivateProc
+       DECLARE PROCEDURE MyPrivateProc PRIVATE
+           INPUT    myDate      TYPE Date
+           OUTPUT   toto        TYPE BOOL.
+           PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+      %<<< MyLocalProc is a Proc but Local (no access modifier)
+        @deprecated
+          @ todo: Add a body
+      %>>>
+       DECLARE PROCEDURE MyLocalProc
            INPUT    myDate      TYPE Date
            OUTPUT   toto        TYPE BOOL.
            PROCEDURE DIVISION.

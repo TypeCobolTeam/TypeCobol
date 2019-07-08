@@ -141,6 +141,20 @@
         }
     }
 
+    public class Free : GenericNode<FreeStatement>, Statement
+    {
+        public Free(FreeStatement statement)
+            : base(statement)
+        {
+
+        }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
+    }
+
     public class Goback: GenericNode<GobackStatement>, Statement {
 	    public Goback(GobackStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)

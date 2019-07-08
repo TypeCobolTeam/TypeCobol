@@ -53,6 +53,7 @@ codeElementStartingKeyword ::=
 |FD
 |FILE
 |FILE_CONTROL
+|FREE
 |GO
 |GOBACK
 |I_O_CONTROL

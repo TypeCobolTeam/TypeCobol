@@ -887,8 +887,6 @@ namespace TypeCobol.Compiler.CodeElements {
     /// </summary>
     public class DataTypeDescriptionEntry : DataDescriptionEntry, IFormalizedCommentable
     {
-        private AccessModifier? _visibility;
-
         public DataTypeDescriptionEntry() : base() { }
 
         /// <summary>
@@ -899,18 +897,7 @@ namespace TypeCobol.Compiler.CodeElements {
 
         public SyntaxProperty<bool> Strong { get; internal set; }
         public SyntaxProperty<bool> Strict { get; internal set; }
-        public AccessModifier Visibility
-        {
-            //TCTYPE_DEFAULT_ACCESS_MODIFIER  rule is respected here. 
-            //By default a TYPE is private even if PRIVATE keyword is not given. 
-            get { return _visibility.HasValue ? _visibility.Value : AccessModifier.Private; }
-            internal set { _visibility = value; }
-        }
-
-        public bool HasExplicitVisibility
-        {
-            get { return _visibility.HasValue; }
-        }
+        public AccessModifier Visibility { get; internal set; }
 
         public RestrictionLevel RestrictionLevel
         {
@@ -921,6 +908,8 @@ namespace TypeCobol.Compiler.CodeElements {
                     : Strict.Value ? RestrictionLevel.STRICT : RestrictionLevel.WEAK;
             }
         }
+
+        public bool HasExplicitVisibility => this.Visibility != AccessModifier.Local;
 
         public FormalizedCommentDocumentation FormalizedCommentDocumentation { get; set; }
 

@@ -10,9 +10,9 @@ namespace TypeCobol.Compiler.CodeElements {
     /// <summary>TypeCobol function declaration</summary>
     public class FunctionDeclarationHeader: CodeElement, IFormalizedCommentable
     {
-	    public SymbolDefinition FunctionName { get; private set; }
-	    public AccessModifier Visibility { get; private set; }
-	    public FunctionType UserDefinedType { get; private set; }
+	    public SymbolDefinition FunctionName { get; set; }
+	    public AccessModifier Visibility { get; set; }
+	    public FunctionType UserDefinedType { get; set; }
         public FormalizedCommentDocumentation FormalizedCommentDocumentation { get; set; }
         public FunctionType ActualType {
 		    get {
@@ -26,16 +26,13 @@ namespace TypeCobol.Compiler.CodeElements {
 		    }
 	    }
 
-	    public FunctionDeclarationHeader(SymbolDefinition name, AccessModifier visibility, FunctionType type, FormalizedCommentDocumentation formalizedCommentDocumentation = null)
-		    : base(CodeElementType.FunctionDeclarationHeader) {
-		    this.FunctionName = name;
-		    this.Visibility = visibility;
-		    this.UserDefinedType = type;
-		    this.Profile = new ParametersProfile();
-	        this.FormalizedCommentDocumentation = formalizedCommentDocumentation;
-	    }
+        public FunctionDeclarationHeader()
+            : base(CodeElementType.FunctionDeclarationHeader)
+        {
+            this.Profile = new ParametersProfile();
+        }
 
-	    // TO DO : remove this and move to second parsing phase
+        // TO DO : remove this and move to second parsing phase
 	    private string libraryName;
 	    public string Name { get { return libraryName != null ? libraryName + "." + FunctionName.Name : FunctionName.Name; } }
 	    public void SetLibrary(string libname) { libraryName = libname; }
@@ -66,7 +63,8 @@ namespace TypeCobol.Compiler.CodeElements {
     }
 
     public enum AccessModifier {
-	    Public,
+        Local,
+        Public,
 	    Private,
     }
 

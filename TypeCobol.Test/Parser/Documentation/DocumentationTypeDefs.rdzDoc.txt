@@ -3,7 +3,7 @@ Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not suppor
 ======================== Nodes properties ========================
 Name : DocForTypeDefs
 Description : 
-Visibility : 
+Visibility : Local
 Namespace : DocForTypeDefs
 NodeType : Program
 IsDeprecated : False
@@ -19,7 +19,7 @@ Parameters :
 
 Name : Type10
 Description : 
-Visibility : Private
+Visibility : Local
 Namespace : DocForTypeDefs
 NodeType : TypeDef
 IsDeprecated : False
@@ -43,7 +43,7 @@ DataType :
 
 Name : Type11
 Description : Description for Type11 
-Visibility : Private
+Visibility : Local
 Namespace : DocForTypeDefs
 NodeType : TypeDef
 IsDeprecated : False
@@ -67,7 +67,7 @@ DataType :
 
 Name : Type12
 Description : Description for Type12 
-Visibility : Private
+Visibility : Local
 Namespace : DocForTypeDefs
 NodeType : TypeDef
 IsDeprecated : True
@@ -91,7 +91,7 @@ DataType :
 
 Name : Type20
 Description : 
-Visibility : Private
+Visibility : Local
 Namespace : DocForTypeDefs
 NodeType : TypeDef
 IsDeprecated : False
@@ -242,7 +242,7 @@ TypeDefChild :
 
 Name : Type21
 Description : Description for Type21 
-Visibility : Private
+Visibility : Public
 Namespace : DocForTypeDefs
 NodeType : TypeDef
 IsDeprecated : False

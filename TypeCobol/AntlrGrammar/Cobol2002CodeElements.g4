@@ -33,9 +33,17 @@ cobol2002TypedefClause: TYPEDEF STRONG?;
 
 cobol2002TypeClause:    TYPE dataTypeNameReference;
 
+cobol2002Statement:
+    // Dynamic allocation statements
+	freeStatement;
+
 // Updated INITIALIZE statement using COBOL v6.1 specs
 initializeStatement:
 	INITIALIZE storageArea1+ (WITH? FILLER)?
 	((ALL|categoryName=dataCategory) TO? VALUE)?
 	(THEN? REPLACING initializeReplacingDirective+)?
 	(THEN? TO? DEFAULT)?;
+
+// New Cobol v6.1 FREE statement that releases dynamic storage that was previously obtained with an ALLOCATE statement.
+freeStatement:
+	FREE dataItemReference+;

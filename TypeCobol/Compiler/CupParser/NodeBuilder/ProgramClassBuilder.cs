@@ -864,6 +864,12 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
         }
 
+        public virtual void OnFreeStatement(FreeStatement stmt)
+        {
+            Enter(new Free(stmt), stmt);
+            Exit();
+        }
+
         public virtual void OnGobackStatement(GobackStatement stmt)
         {
             Enter(new Goback(stmt), stmt);
