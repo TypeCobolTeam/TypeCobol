@@ -153,9 +153,9 @@ namespace TypeCobol.Compiler.Parser
             return new AllocateStatement
                    {
                        AllocatedSize = CobolExpressionsBuilder.CreateArithmeticExpression(context.arithmeticExpression()),
-                       AllocatedArea = CobolWordsBuilder.CreateDataNameReference(context.dataNameReference()),
+                       AllocatedArea = CobolExpressionsBuilder.CreateStorageArea(context.storageArea2()),
                        Initialized = context.KeywordINITIALIZED != null ? new SyntaxProperty<bool>(true, (Token)context.KeywordINITIALIZED) : null,
-                       ReturningPointer = CobolExpressionsBuilder.CreateDataItemReference(context.dataItemReference())
+                       ReturningPointer = CobolExpressionsBuilder.CreateStorageArea(context.pointerStorageArea())
                    };
         }
 

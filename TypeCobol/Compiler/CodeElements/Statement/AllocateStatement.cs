@@ -31,7 +31,7 @@
         /// Cannot be a group item that contains an unbounded table.
         /// <remarks>Mutually exclusive with <see cref="AllocatedSize"/></remarks>
         /// </summary>
-        public SymbolReference AllocatedArea { get; set; }
+        public ReceivingStorageArea AllocatedArea { get; set; }
 
         /// <summary>
         /// The INITIALIZED phrase initializes the allocated storage:
@@ -56,7 +56,7 @@
         /// was used. If a RETURNING data item is also specified, the pointer data item will
         /// contain that address.
         /// </summary>
-        public DataOrConditionStorageArea ReturningPointer { get; set; }
+        public ReceivingStorageArea ReturningPointer { get; set; }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {

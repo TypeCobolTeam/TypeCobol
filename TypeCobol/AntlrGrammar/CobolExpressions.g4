@@ -1058,6 +1058,8 @@ storageArea1: identifier;
 
 storageArea2: dataNameReference;
 
+pointerStorageArea: dataItemReference;
+
 
 // --- Variables or storage areas shared between a caller and callee during a program, method, or function call ---
 

@@ -46,11 +46,11 @@ initializeStatement:
 	(THEN? TO? DEFAULT)?;
 
 // New Cobol v6.1 ALLOCATE statement to obtain dynamic storage.
-// 'INITIALIZED' is defined here as a contextual keyword. The dataNameReference is therefore not allowed to be named 'INITIALIZED' in this statement.
+// 'INITIALIZED' is defined here as a contextual keyword. The storageArea2 is therefore not allowed to be named 'INITIALIZED' in this statement.
 allocateStatement:
-	ALLOCATE ((arithmeticExpression CHARACTERS) | { !string.Equals(CurrentToken.Text, "INITIALIZED", System.StringComparison.InvariantCultureIgnoreCase) }? dataNameReference)
+	ALLOCATE ((arithmeticExpression CHARACTERS) | { !string.Equals(CurrentToken.Text, "INITIALIZED", System.StringComparison.InvariantCultureIgnoreCase) }? storageArea2)
 	({ string.Equals(CurrentToken.Text, "INITIALIZED", System.StringComparison.InvariantCultureIgnoreCase) }? KeywordINITIALIZED=UserDefinedWord)?
-	(RETURNING dataItemReference)?;
+	(RETURNING pointerStorageArea)?;
 
 // New Cobol v6.1 FREE statement that releases dynamic storage that was previously obtained with an ALLOCATE statement.
 freeStatement:
