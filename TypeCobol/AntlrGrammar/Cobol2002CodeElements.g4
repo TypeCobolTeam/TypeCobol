@@ -54,4 +54,4 @@ allocateStatement:
 
 // New Cobol v6.1 FREE statement that releases dynamic storage that was previously obtained with an ALLOCATE statement.
 freeStatement:
-	FREE dataItemReference+;
+	FREE pointerStorageArea+;

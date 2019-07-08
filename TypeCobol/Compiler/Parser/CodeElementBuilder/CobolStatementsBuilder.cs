@@ -417,7 +417,7 @@ namespace TypeCobol.Compiler.Parser
         {
             return new FreeStatement
                    {
-                       TargetStorageAreas = context.dataItemReference().Select(this.CobolExpressionsBuilder.CreateDataItemReference).ToArray()
+                       TargetStorageAreas = context.pointerStorageArea().Select(this.CobolExpressionsBuilder.CreateStorageArea).ToArray()
                    };
         }
 
