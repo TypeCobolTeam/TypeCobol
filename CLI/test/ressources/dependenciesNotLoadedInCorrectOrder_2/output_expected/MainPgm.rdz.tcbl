@@ -58,7 +58,7 @@
            88 TC-TCOSMPL2-FctList-IsLoaded      VALUE 'OK'.
        01 TC-TCOSMPL2-PntTab.
            05 TC-TCOSMPL2-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program ea2e07d4GetTecMsg
+      *To call program ea2e07d4
       *Which is generated code for TCOSMPL2.GetTecMsg
       *Declared in source file MainPgm.rdz.tcbl
            05 TC-TCOSMPL2-ea2e07d4-Idt   PIC X(08) VALUE 'ea2e07d4'.
@@ -74,7 +74,7 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *To call program a93b0351GetTecMsg in module DVZTEST1
+      *To call program a93b0351 in module DVZTEST1
       *Which is generated code for DVZTEST1.GetTecMsg
       *Declared in source file DVZTEST1.rdz.tcbl
        01 TC-DVZTEST1-a93b0351-Item.
@@ -121,7 +121,7 @@
              OR TC-DVZTEST1-a93b0351-Idt not = 'a93b0351'
                PERFORM TC-LOAD-POINTERS-DVZTEST1
            END-IF
-      *    Equivalent to call a93b0351GetTecMsg in module DVZTEST1
+      *    Equivalent to call a93b0351 in module DVZTEST1
            CALL TC-DVZTEST1-a93b0351 USING
                                  t1
                     by reference s1
@@ -130,7 +130,7 @@
       
       *    call GetTecMsg input t1
       *    in-out s1
-           CALL 'ea2e07d4GetTecMsg' USING
+           CALL 'ea2e07d4' USING
                                  t1
                     by reference s1
            end-call
@@ -179,7 +179,7 @@
       *    .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ea2e07d4GetTecMsg.
+       PROGRAM-ID. ea2e07d4.
        DATA DIVISION.
        LINKAGE SECTION.
       *TCOSMPL2.GetTecMsg - Params :
@@ -210,4 +210,4 @@
       *		in-out(msg: DVZTEST2.Span)
            continue
            .
-       END PROGRAM ea2e07d4GetTecMsg.
+       END PROGRAM ea2e07d4.

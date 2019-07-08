@@ -44,13 +44,13 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *To call program ebb060eaMyPublicProcedure in module Callee
+      *To call program ebb060ea in module Callee
       *Which is generated code for Callee.MyPublicProcedure
       *Declared in source file Callee.rdz.tcbl
        01 TC-Callee-ebb060ea-Item.
           05 TC-Callee-ebb060ea-Idt PIC X(08).
           05 TC-Callee-ebb060ea PROCEDURE-POINTER.
-      *To call program ca0ab46ccheck in module Callee
+      *To call program ca0ab46c in module Callee
       *Which is generated code for Callee.check
       *Declared in source file Callee.rdz.tcbl
        01 TC-Callee-ca0ab46c-Item.
@@ -90,7 +90,7 @@
              OR TC-Callee-ebb060ea-Idt not = 'ebb060ea'
                PERFORM TC-LOAD-POINTERS-Callee
            END-IF
-      *    Equivalent to call ebb060eaMyPublicProcedure in module Callee
+      *    Equivalent to call ebb060ea in module Callee
            CALL TC-Callee-ebb060ea USING
                                  somedate
                                  someformat
@@ -107,7 +107,7 @@
              OR TC-Callee-ebb060ea-Idt not = 'ebb060ea'
                PERFORM TC-LOAD-POINTERS-Callee
            END-IF
-      *    Equivalent to call ebb060eaMyPublicProcedure in module Callee
+      *    Equivalent to call ebb060ea in module Callee
            CALL TC-Callee-ebb060ea USING
                                  somedate
                                  someformat
@@ -121,7 +121,7 @@
       *    CALL Pgm1PrivateValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'fde394fbPgm1PrivateValidateDat' USING
+           CALL 'fde394fb' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -133,7 +133,7 @@
       *    CALL PGM1::Pgm1PrivateValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'fde394fbPgm1PrivateValidateDat' USING
+           CALL 'fde394fb' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -144,13 +144,13 @@
 
       *OK  call check of PGM1
       *   call check input somedate
-          CALL 'a0508f35check' USING
+          CALL 'a0508f35' USING
                                  somedate
            end-call
                                    
       *OK 
       *   call PGM1::check input somedate
-          CALL 'a0508f35check' USING
+          CALL 'a0508f35' USING
                                  somedate
            end-call
                                          
@@ -161,7 +161,7 @@
              OR TC-Callee-ca0ab46c-Idt not = 'ca0ab46c'
                PERFORM TC-LOAD-POINTERS-Callee
            END-IF
-      *    Equivalent to call ca0ab46ccheck in module Callee
+      *    Equivalent to call ca0ab46c in module Callee
            CALL TC-Callee-ca0ab46c USING
                                  somedate
            end-call
@@ -208,7 +208,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a0508f35check.
+       PROGRAM-ID. a0508f35.
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.check - Params :
@@ -223,7 +223,7 @@
       *PGM1.check - Params :
       *		input(mydate: DATE)
            CONTINUE.
-       END PROGRAM a0508f35check.
+       END PROGRAM a0508f35.
       *
       *DECLARE PROCEDURE Pgm1PrivateValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
@@ -233,7 +233,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. fde394fbPgm1PrivateValidateDat.
+       PROGRAM-ID. fde394fb.
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.Pgm1PrivateValidateDateFormat - Params :
@@ -260,4 +260,4 @@
       *		input(mydate: DATE, format: pic X(08))
       *		output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
-       END PROGRAM fde394fbPgm1PrivateValidateDat.
+       END PROGRAM fde394fb.
