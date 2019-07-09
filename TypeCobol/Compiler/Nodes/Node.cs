@@ -994,8 +994,6 @@ namespace TypeCobol.Compiler.Nodes {
         /// </summary>
         public Dictionary<string, string> GeneratedCobolHashes { get; set; }
 
-        public Program GlobalStorageProgram { get; set; }
-
         public IEnumerable<Program> Programs {
             get
             {

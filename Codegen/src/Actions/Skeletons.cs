@@ -328,11 +328,13 @@ namespace TypeCobol.Codegen.Actions
                                 {
                                                 public dynamic imports;
                                                 public dynamic useglobalstoragevariable;
+                                                public dynamic sourceprogramhash;
                                                 
                                                 public SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel(TypeCobol.Compiler.Nodes.Node @Self)
                                                 {
                                                                 imports = @Self["imports"];
                                                                 useglobalstoragevariable = @Self["useglobalstoragevariable"];
+                                                                sourceprogramhash = @Self["sourceprogramhash"];
                                                 }
                                                 private static Tuple<string,string>[] __ConditionsAttributes_0 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.CodeModel.Program")};
                                                 public static bool Conditions_0(TypeCobol.Compiler.Nodes.Node @Self)
@@ -1063,7 +1065,7 @@ namespace TypeCobol.Codegen.Actions
         var clause = "";
         if (!@Model.imports.HasPublicProcedures) {
         clause += "* Get the data from the global storage section\n";
-        clause += "    CALL 'a9a9a5eaTC-GetGlobal' USING\n";
+        clause += "    CALL '" + @Model.sourceprogramhash + "' USING\n";
         clause += "        by reference address of TC-GlobalData\n";
         clause += "    end-call\n";
         }
@@ -1117,7 +1119,7 @@ namespace TypeCobol.Codegen.Actions
         clause += "          SET TC-NthCall TO TRUE\n";
         if (@Model.useglobalstoragevariable) {
           clause += "* Get the data from the global storage section\n";
-          clause += "          CALL 'a9a9a5eaTC-GetGlobal' USING\n";
+          clause += "          CALL '" + @Model.sourceprogramhash + "' USING\n";
           clause += "              by reference address of TC-GlobalData\n";
           clause += "          end-call\n";
         }

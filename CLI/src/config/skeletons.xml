@@ -448,7 +448,7 @@
     </patterns>
   </skeleton>
   
-  <skeleton name="PROGRAM.IMPORT.FUN.PUBLIC" var="imports, useglobalstoragevariable">
+  <skeleton name="PROGRAM.IMPORT.FUN.PUBLIC" var="imports, useglobalstoragevariable, sourceprogramhash">
     <conditions>
       <condition node="TypeCobol.Compiler.CodeModel.Program"/>
     </conditions>
@@ -533,7 +533,7 @@
         var clause = "";
         if (!@Model.imports.HasPublicProcedures) {
         clause += "* Get the data from the global storage section\n";
-        clause += "    CALL 'a9a9a5eaTC-GetGlobal' USING\n";
+        clause += "    CALL '" + @Model.sourceprogramhash + "' USING\n";
         clause += "        by reference address of TC-GlobalData\n";
         clause += "    end-call\n";
         }
@@ -564,7 +564,7 @@
         clause += "          SET TC-NthCall TO TRUE\n";
         if (@Model.useglobalstoragevariable) {
           clause += "* Get the data from the global storage section\n";
-          clause += "          CALL 'a9a9a5eaTC-GetGlobal' USING\n";
+          clause += "          CALL '" + @Model.sourceprogramhash + "' USING\n";
           clause += "              by reference address of TC-GlobalData\n";
           clause += "          end-call\n";
         }
