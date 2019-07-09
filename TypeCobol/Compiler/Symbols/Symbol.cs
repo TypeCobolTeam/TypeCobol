@@ -114,16 +114,30 @@ namespace TypeCobol.Compiler.Symbols
             internal set;
         }
 
-#if DOMAIN_CHECKER
+        private System.WeakReference _myTargetNode = null;
         /// <summary>
-        /// The target semantic node if nay
+        /// The target AST node if any
         /// </summary>
         public Node TargetNode
         {
-            get;
-            internal set;
+            get
+            {
+                lock (this)
+                {
+                    return (Node)_myTargetNode?.Target;
+                }
+            }
+            internal set
+            {
+                lock (this)
+                {
+                    if (_myTargetNode == null)
+                        _myTargetNode = new System.WeakReference(value);
+                    else
+                        _myTargetNode.Target = value;
+                }
+            }
         }
-#endif
 
         /// <summary>
         /// A Typed name is the name followed by a type, by default is the name..

@@ -51,7 +51,7 @@ namespace TypeCobol.Compiler.Scopes
             /// </summary>
             /// <param name="sym">The symbol to check</param>
             /// <returns>true if yes, false otherwise</returns>
-            public virtual bool Exits(T sym)
+            public virtual bool Exists(T sym)
             {
                 foreach (var t in this)
                 {
@@ -204,7 +204,7 @@ namespace TypeCobol.Compiler.Scopes
             else
             {
                 //Check if the symbol itself exits                
-                if (entry.Exits(sym))
+                if (entry.Exists(sym))
                     return entry;
                 MultiSymbols multi = null;
                 if (entry.Count == 1)

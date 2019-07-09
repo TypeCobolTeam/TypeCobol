@@ -68,12 +68,10 @@ namespace TypeCobol.Compiler.Nodes {
                         _mySemanticData = new System.WeakReference(value);
                     else
                         _mySemanticData.Target = value;
-#if DOMAIN_CHECKER
                     if (value != null && value.SemanticKind == SemanticKinds.Symbol)
                     {
                         ((Symbol) value).TargetNode = this;
                     }
-#endif
                 }
             }
         }
