@@ -37,7 +37,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c40368ddPOW.
+       PROGRAM-ID. c40368dd.
        DATA DIVISION.
        LINKAGE SECTION.
       *Functions.POW - Params :
@@ -55,4 +55,4 @@
       *		input(x: pic 9(05), y: pic 9(03))
       *		returns(result: pic 9(08))
            CONTINUE.
-       END PROGRAM c40368ddPOW.
+       END PROGRAM c40368dd.

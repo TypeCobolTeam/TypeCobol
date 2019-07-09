@@ -14,7 +14,7 @@
            88 TC-PGM1-FctList-IsLoaded      VALUE 'OK'.
        01 TC-PGM1-PntTab.
            05 TC-PGM1-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program efe09aceGetPersonById
+      *To call program efe09ace
       *Which is generated code for PGM1.GetPersonById
       *Declared in source file CallPublicProcInsideProcOfSameProgram.rdz
       *.tcbl
@@ -62,7 +62,7 @@
        TRAITEMENT.
       *OK  call check of PGM1
       *   call check input mydate1
-          CALL 'a0508f35check' USING
+          CALL 'a0508f35' USING
                                  mydate1
            end-call
                                   
@@ -78,7 +78,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a0508f35check.
+       PROGRAM-ID. a0508f35.
        data division.
        working-storage section.
       *PGM1.check - Params :
@@ -98,18 +98,18 @@
       *PGM1.check - Params :
       *		input(mydate: DATE)
       *    Call GetPersonById input mydate
-           CALL 'efe09aceGetPersonById' USING
+           CALL 'efe09ace' USING
                                  mydate
            end-call
                                           
            .
-       END PROGRAM a0508f35check.
+       END PROGRAM a0508f35.
       *
       *declare procedure GetPersonById public
       *   input  personId  type date.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. efe09aceGetPersonById.
+       PROGRAM-ID. efe09ace.
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.GetPersonById - Params :
@@ -124,4 +124,4 @@
       *PGM1.GetPersonById - Params :
       *		input(personId: DATE)
            CONTINUE.
-       END PROGRAM efe09aceGetPersonById.
+       END PROGRAM efe09ace.

@@ -19,7 +19,7 @@
       *     INPUT EventList type EventList.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c715cbccDisplayEventList.
+       PROGRAM-ID. c715cbcc.
        DATA DIVISION.
        LINKAGE SECTION.
       *DVZF0OS3.DisplayEventList - Params :
@@ -35,4 +35,4 @@
       *DVZF0OS3.DisplayEventList - Params :
       *		input(EventList: EventList)
            GOBACK.
-       END PROGRAM c715cbccDisplayEventList.
+       END PROGRAM c715cbcc.

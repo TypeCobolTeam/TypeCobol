@@ -51,7 +51,7 @@
       *    Multiline 8
       *>>
       *    CALL FUN INPUT typedVar::var1.
-           CALL 'bee79d5eFUN' USING
+           CALL 'bee79d5e' USING
                                  var1 IN typedVar
            end-call
                                         .
@@ -79,7 +79,7 @@
       *        INPUT y PIC 9(03).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. bee79d5eFUN.
+       PROGRAM-ID. bee79d5e.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *MultilinesCommentsCodeGen.FUN - Params :
@@ -109,4 +109,4 @@
       *<<
       *    Multiline 14
       *>>
-       END PROGRAM bee79d5eFUN.
+       END PROGRAM bee79d5e.

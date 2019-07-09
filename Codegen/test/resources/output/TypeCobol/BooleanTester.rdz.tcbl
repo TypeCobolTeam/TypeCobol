@@ -50,12 +50,12 @@
 
 
       *CALL MyProc INPUT ADDRESS OF MyBool.
-       CALL 'a278a8a5MyProc' USING
+       CALL 'a278a8a5' USING
                                  address of MyBool-value
            end-call
                                           .
       *CALL MyProc INPUT LENGTH OF MyBool.
-       CALL 'a278a8a5MyProc' USING
+       CALL 'a278a8a5' USING
                                  length of MyBool-value
            end-call
                                          .
@@ -124,5 +124,5 @@
       *    INPUT    NumericInput PIC S9(9) COMP-5.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a278a8a5MyProc.
-       END PROGRAM a278a8a5MyProc.
+       PROGRAM-ID. a278a8a5.
+       END PROGRAM a278a8a5.

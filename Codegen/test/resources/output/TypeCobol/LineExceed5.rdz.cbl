@@ -7,7 +7,7 @@
            88 TC-PGM1-FctList-IsLoaded      VALUE 'OK'.
        01 TC-PGM1-PntTab.
            05 TC-PGM1-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program f1c0385cStartCheckpoint
+      *To call program f1c0385c
       *Which is generated code for PGM1.StartCheckpoint
       *Declared in source file LineExceed5.rdz.cbl
            05 TC-PGM1-f1c0385c-Idt   PIC X(08) VALUE 'f1c0385c'.
@@ -55,7 +55,7 @@
            88 TC-PGM2-FctList-IsLoaded      VALUE 'OK'.
        01 TC-PGM2-PntTab.
            05 TC-PGM2-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program f73481e6CheckContract
+      *To call program f73481e6
       *Which is generated code for PGM2.CheckContract
       *Declared in source file LineExceed5.rdz.cbl
            05 TC-PGM2-f73481e6-Idt   PIC X(08) VALUE 'f73481e6'.
@@ -104,14 +104,14 @@
       *        input param1 pic X.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. f1c0385cStartCheckpoint.
-       END PROGRAM f1c0385cStartCheckpoint.
+       PROGRAM-ID. f1c0385c.
+       END PROGRAM f1c0385c.
       *
       *declare procedure CheckContract public
       *        input param1 pic X.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. f73481e6CheckContract.
+       PROGRAM-ID. f73481e6.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *PGM1.CheckContract - Params :
@@ -135,7 +135,7 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *To call program f1c0385cStartCheckpoint in module PGM1
+      *To call program f1c0385c in module PGM1
       *Which is generated code for PGM1.StartCheckpoint
       *Declared in source file LineExceed5.rdz.cbl
        01 TC-PGM1-f1c0385c-Item.
@@ -154,7 +154,7 @@
              OR TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
                PERFORM TC-LOAD-POINTERS-PGM1
            END-IF
-      *    Equivalent to call f1c0385cStartCheckpoint in module PGM1
+      *    Equivalent to call f1c0385c in module PGM1
            CALL TC-PGM1-f1c0385c USING
                                  param1
            end-call
@@ -186,12 +186,12 @@
                 END-EVALUATE
             END-PERFORM
             .
-       END PROGRAM f73481e6CheckContract.
+       END PROGRAM f73481e6.
       *
       *declare procedure testos private.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. bfc74757testos.
+       PROGRAM-ID. bfc74757.
        data division.
        working-storage section.
       *PGM1.testos  - No Params
@@ -215,7 +215,7 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *To call program f1c0385cStartCheckpoint in module PGM1
+      *To call program f1c0385c in module PGM1
       *Which is generated code for PGM1.StartCheckpoint
       *Declared in source file LineExceed5.rdz.cbl
        01 TC-PGM1-f1c0385c-Item.
@@ -231,7 +231,7 @@
              OR TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
                PERFORM TC-LOAD-POINTERS-PGM1
            END-IF
-      *    Equivalent to call f1c0385cStartCheckpoint in module PGM1
+      *    Equivalent to call f1c0385c in module PGM1
            CALL TC-PGM1-f1c0385c USING
                                  param1
            end-call
@@ -263,4 +263,4 @@
                 END-EVALUATE
             END-PERFORM
             .
-       END PROGRAM bfc74757testos.
+       END PROGRAM bfc74757.

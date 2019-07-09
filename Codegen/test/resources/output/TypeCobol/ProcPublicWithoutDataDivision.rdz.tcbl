@@ -9,7 +9,7 @@
            88 TC-TestMe-FctList-IsLoaded      VALUE 'OK'.
        01 TC-TestMe-PntTab.
            05 TC-TestMe-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program f18df3d0StartCheckpoint
+      *To call program f18df3d0
       *Which is generated code for TestMe.StartCheckpoint
       *Declared in source file ProcPublicWithoutDataDivision.rdz.tcbl
            05 TC-TestMe-f18df3d0-Idt   PIC X(08) VALUE 'f18df3d0'.
@@ -53,7 +53,7 @@
       *    input  PgmName          pic X(08).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. f18df3d0StartCheckpoint.
+       PROGRAM-ID. f18df3d0.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
-       END PROGRAM f18df3d0StartCheckpoint.
+       END PROGRAM f18df3d0.
