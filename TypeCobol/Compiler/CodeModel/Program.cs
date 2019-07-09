@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -45,6 +46,20 @@ namespace TypeCobol.Compiler.CodeModel
         public override string Name
         {
             get { return Identification != null ? (Identification.ProgramName.Name != null ? Identification.ProgramName.Name : ID) : ID; }
+        }
+
+        private string _hash;
+        /// <summary>
+        /// Returns an 8-char-long hash for this program based on its Name.
+        /// </summary>
+        public string Hash
+        {
+            get
+            {
+                if (_hash == null)
+                    _hash = Tools.Hash.CreateCOBOLNameHash(Name, 8, this);
+                return _hash;
+            }
         }
 
         //TODO: As to change in the future when implementing the full namespace functionnality.

@@ -80,9 +80,9 @@ namespace TypeCobol.Codegen.Nodes {
                     {
                         Node[] toAddRange =
                         {
-                            new GeneratedNode2("    CALL 'a9a9a5eaTC-GetGlobal' USING", true),
-                            new GeneratedNode2("             by reference address of TC-GlobalData", true),
-                            new GeneratedNode2("    end-call", true),
+                            new GeneratedNode2($"    CALL '{OriginalNode.Root.MainProgram.Hash}' USING", true),
+                            new GeneratedNode2( "             by reference address of TC-GlobalData", true),
+                            new GeneratedNode2( "    end-call", true),
                         };
                         pdiv.AddRange(toAddRange, 0);
                     }
@@ -202,9 +202,9 @@ namespace TypeCobol.Codegen.Nodes {
                     Node[] globalCalltoAddRange =
                     {
                         new GeneratedNode2("* Get the data from the global storage section", false),
-                        new GeneratedNode2("     CALL 'a9a9a5eaTC-GetGlobal' USING", true),
-                        new GeneratedNode2("          by reference address of TC-GlobalData", true),
-                        new GeneratedNode2("     end-call", true),
+                        new GeneratedNode2($"     CALL '{OriginalNode.Root.MainProgram.Hash}' USING", true),
+                        new GeneratedNode2( "          by reference address of TC-GlobalData", true),
+                        new GeneratedNode2( "     end-call", true),
                     };
                     procedureDivision.AddRange(globalCalltoAddRange);
                 }

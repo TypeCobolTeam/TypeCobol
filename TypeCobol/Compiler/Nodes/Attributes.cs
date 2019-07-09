@@ -55,6 +55,7 @@ namespace TypeCobol.Compiler.Nodes {
 	        attributes["containnested"] = new ContainNestedAttribute();
             attributes["global"] = new GlobalAttribute();
             attributes["useglobalstoragevariable"] = new UseGlobalStorageVariableAttribute();
+            attributes["sourceprogramhash"] = new SourceProgramHashAttribute();
             //not used?
             attributes["typecobol"] = new TypeCobolAttribute();
 		    attributes["visibility"] = new VisibilityAttribute();
@@ -240,6 +241,18 @@ namespace TypeCobol.Compiler.Nodes {
             
             else
                 return false;
+        }
+    }
+
+    /// <summary>
+    /// Gives access to the hash of the main program in which a given Node is defined.
+    /// Returns <code>null</code> when retrieved on anything that is not a Node.
+    /// </summary>
+    internal class SourceProgramHashAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            return o is Node node ? node.Root.MainProgram.Hash : null;
         }
     }
 

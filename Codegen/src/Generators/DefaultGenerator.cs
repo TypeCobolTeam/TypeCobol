@@ -733,11 +733,11 @@ namespace TypeCobol.Codegen.Generators
         {
             StringWriter sw = new StringWriter();
 
-            sw.WriteLine("      *"); GSLineOffset += 1;
-            sw.WriteLine("      * Global Storage Section variables"); GSLineOffset += 1;
-            sw.WriteLine("      *_________________________________________________________________"); GSLineOffset += 1;
-            sw.WriteLine("       IDENTIFICATION DIVISION."); GSLineOffset += 1;
-            sw.WriteLine("       PROGRAM-ID. a9a9a5eaTC-GetGlobal."); GSLineOffset += 1;
+            sw.WriteLine( "      *"); GSLineOffset += 1;
+            sw.WriteLine( "      * Global Storage Section variables"); GSLineOffset += 1;
+            sw.WriteLine( "      *_________________________________________________________________"); GSLineOffset += 1;
+            sw.WriteLine( "       IDENTIFICATION DIVISION."); GSLineOffset += 1;
+            sw.WriteLine($"       PROGRAM-ID. {RootNode.MainProgram.Hash}."); GSLineOffset += 1;
 
             if (CompilationResults is CompilationUnit cu)
             {
@@ -789,12 +789,12 @@ namespace TypeCobol.Codegen.Generators
                 }
             }
 
-            sw.WriteLine("       LINKAGE SECTION.");
-            sw.WriteLine("       01 GlobalPointer pointer.");
-            sw.WriteLine("       PROCEDURE DIVISION USING BY REFERENCE GlobalPointer.");
-            sw.WriteLine("           set GlobalPointer to address of TC-GlobalData");
-            sw.WriteLine("           .");
-            sw.WriteLine("       END PROGRAM a9a9a5eaTC-GetGlobal.");
+            sw.WriteLine( "       LINKAGE SECTION.");
+            sw.WriteLine( "       01 GlobalPointer pointer.");
+            sw.WriteLine( "       PROCEDURE DIVISION USING BY REFERENCE GlobalPointer.");
+            sw.WriteLine( "           set GlobalPointer to address of TC-GlobalData");
+            sw.WriteLine( "           .");
+            sw.WriteLine($"       END PROGRAM {RootNode.MainProgram.Hash}.");
 
             return sw.ToString();
         }

@@ -81,7 +81,7 @@
             IF TC-FirstCall
                  SET TC-NthCall TO TRUE
       * Get the data from the global storage section
-                 CALL 'a9a9a5eaTC-GetGlobal' USING
+                 CALL 'fecb93f5' USING
                      by reference address of TC-GlobalData
                  end-call
                  SET ADDRESS OF TC-Callee-a78211ce-Item  TO NULL
@@ -174,7 +174,7 @@
        PROCEDURE DIVISION
            .
       *PGM1.MyProcedureUsingGlobalStorage  - No Params
-           CALL 'a9a9a5eaTC-GetGlobal' USING
+           CALL 'fecb93f5' USING
                     by reference address of TC-GlobalData
            end-call
       *    MOVE G-Bool TO P-Bool.
@@ -342,7 +342,7 @@
             IF TC-FirstCall
                  SET TC-NthCall TO TRUE
       * Get the data from the global storage section
-            CALL 'a9a9a5eaTC-GetGlobal' USING
+            CALL 'fecb93f5' USING
                  by reference address of TC-GlobalData
             end-call
                  SET ADDRESS OF TC-Callee-a78211ce-Item  TO NULL
@@ -371,7 +371,7 @@
       * Global Storage Section variables
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a9a9a5eaTC-GetGlobal.
+       PROGRAM-ID. fecb93f5.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01 PIC X(8) value ':TC:GBLS'.
@@ -396,4 +396,4 @@
        PROCEDURE DIVISION USING BY REFERENCE GlobalPointer.
            set GlobalPointer to address of TC-GlobalData
            .
-       END PROGRAM a9a9a5eaTC-GetGlobal.
+       END PROGRAM fecb93f5.
