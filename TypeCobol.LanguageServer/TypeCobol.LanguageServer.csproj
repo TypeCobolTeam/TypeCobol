@@ -53,6 +53,8 @@
     <Compile Include="StdioHttp\IMessageServer.cs" />
     <Compile Include="StdioHttp\ServerLogLevel.cs" />
     <Compile Include="StdioHttp\StdioHttpServer.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Extract Used Copies\ExtractUseCopiesNotification.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Extract Used Copies\ExtractUseCopiesParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Loading Issue Notification\LoadingIssueNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Loading Issue Notification\LoadingIssueParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Node Refresh Notification\NodeRefreshNotification.cs" />

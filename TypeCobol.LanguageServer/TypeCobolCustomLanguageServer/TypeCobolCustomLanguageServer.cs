@@ -14,6 +14,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             rpcServer.RegisterNotificationMethod(NodeRefreshNotification.Type, ReceivedRefreshNodeDemand);
             rpcServer.RegisterRequestMethod(NodeRefreshRequest.Type, ReceivedRefreshNodeRequest);
             rpcServer.RegisterNotificationMethod(SignatureHelpContextNotification.Type, ReceivedSignatureHelpContext);
+            rpcServer.RegisterNotificationMethod(ExtractUseCopiesNotification.Type, ReceivedExtractUseCopiesNotification);
         }
 
         private void CallReceiveMissingCopies(NotificationType notificationType, object parameters)
@@ -88,6 +89,34 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             if (context != null && context.FileCompiler != null)
             {
                 this.Workspace.RefreshSyntaxTree(context.FileCompiler, true);
+            }
+        }
+
+        private void ReceivedExtractUseCopiesNotification(NotificationType notificationType, object parameters)
+        {
+            try
+            {
+                OnDidReceiveExtractUseCopies((ExtractUseCopiesParams)parameters);
+            }
+            catch (Exception e)
+            {
+                RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
+            }
+        }
+
+        protected virtual void OnDidReceiveExtractUseCopies(ExtractUseCopiesParams parameter)
+        {
+            var docContext = GetDocumentContextFromStringUri(parameter.textDocument.uri, false);
+            if (docContext?.FileCompiler?.CompilationResultsForProgram?.CopyTextNamesVariations != null)
+            {
+                List<string> copiesName = docContext.FileCompiler.CompilationResultsForProgram.CopyTextNamesVariations.Select(cp => cp.TextNameWithSuffix).Distinct().ToList();
+                if (copiesName.Count > 0)
+                {
+                    var missingCopiesParam = new MissingCopiesParams();
+                    missingCopiesParam.textDocument = parameter.textDocument;
+                    missingCopiesParam.Copies = copiesName;
+                    this.RpcServer.SendNotification(MissingCopiesNotification.Type, missingCopiesParam);
+                }
             }
         }
 
