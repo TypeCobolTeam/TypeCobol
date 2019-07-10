@@ -20,16 +20,17 @@ namespace TypeCobol.Analysis.Graph
         /// Constructor
         /// </summary>
         /// <param name="cfg"></param>
-        public CfgDotFileForNodeGenerator()
-        {
-
+        /// <param name="bInverse">True if an inverse graph must be generated, that is to say using predecessor edges</param>
+        public CfgDotFileForNodeGenerator(bool bInverse = false) : base(bInverse)
+        {            
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="cfg">The underlying Control Flow Graph</param>
-        public CfgDotFileForNodeGenerator(ControlFlowGraph<Node, D> cfg) : base (cfg)
+        /// <param name="bInverse">True if an inverse graph must be generated, that is to say using predecessor edges</param>
+        public CfgDotFileForNodeGenerator(ControlFlowGraph<Node, D> cfg, bool bInverse = false) : base (cfg, bInverse)
         {
         }
 
@@ -110,14 +111,19 @@ namespace TypeCobol.Analysis.Graph
                     if (group.Group.Count > 0)
                     {
                         sw.WriteLine(string.Format("label = \"{0}\";", ((ControlFlowGraphBuilder<D>.BasicBlockForNode)group.Group.First.Value).Tag));
-                        CfgDotFileForNodeGenerator<D> cfgDot = new CfgDotFileForNodeGenerator<D>(cfg);
-                        cfgDot.EmittedGroupIndices = EmittedGroupIndices;
-                        cfgDot.FullInstruction = this.FullInstruction;
-                        cfgDot.Writer = sw;
-                        cfgDot.DigraphBuilder = new StringBuilder();
+                        CfgDotFileForNodeGenerator<D> cfgDot = new CfgDotFileForNodeGenerator<D>(cfg, this.Inverse)
+                        {
+                            EmittedGroupIndices = EmittedGroupIndices,
+                            FullInstruction = this.FullInstruction,
+                            Writer = sw,
+                            DigraphBuilder = new StringBuilder()
+                        };
                         //Emit block starting at the first block.
                         LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
-                        cfg.DFS(first.Value, (b, g) => cfgDot.EmitBasicBlock(b, g));
+                        if (Inverse)
+                            cfg.DFSInverse(first.Value, (b, g) => cfgDot.EmitBasicBlock(b, g));
+                        else
+                            cfg.DFS(first.Value, (b, g) => cfgDot.EmitBasicBlock(b, g));
                         sw.WriteLine(cfgDot.DigraphBuilder.ToString());
                     }
                     sw.WriteLine('}');
@@ -125,7 +131,10 @@ namespace TypeCobol.Analysis.Graph
                 //Create dashed link to the group
                 if (group.Group.Count > 0)
                 {
-                    sw.WriteLine(string.Format("Block{0} -> Block{1} [style=dashed]", block.Index, group.Group.First.Value.Index));
+                    if (Inverse)
+                        sw.WriteLine(string.Format("Block{1} -> Block{0} [style=dashed]", block.Index, group.Group.First.Value.Index));
+                    else
+                        sw.WriteLine(string.Format("Block{0} -> Block{1} [style=dashed]", block.Index, group.Group.First.Value.Index));
                 }
                 else
                 {
