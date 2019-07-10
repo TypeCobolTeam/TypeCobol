@@ -71,6 +71,15 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
+        /// Terminals blocks, those blocks that don't have successors.
+        /// </summary>
+        public LinkedList<BasicBlock<N, D>> TerminalsBlocks
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
         /// All blocks. A list of basic blocks in the graph.
         /// </summary>
         public List<BasicBlock<N, D>> AllBlocks
@@ -92,6 +101,15 @@ namespace TypeCobol.Analysis.Graph
         /// The list of all Successor edges. The successor list for each basic block is a sublist of this list
         /// </summary>
         public List<BasicBlock<N, D>> SuccessorEdges
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// The list of all Predeccessor edges. The predeccessor list for each basic block is a sublist of this list
+        /// </summary>
+        public List<BasicBlock<N, D>> PredecessorEdges
         {
             get;
             internal set;
@@ -144,6 +162,46 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
+        /// Set up the Precessor Edges list, and do it for all blocks.
+        /// </summary>
+        public void SetupPredecessorEdges()
+        {
+            if (this.PredecessorEdges != null || this.SuccessorEdges == null)
+                return;
+            this.TerminalsBlocks = new LinkedList<BasicBlock<N, D>>();
+            this.PredecessorEdges = new List<BasicBlock<N, D>>(this.SuccessorEdges.Count);
+            foreach(BasicBlock<N, D> block in AllBlocks)
+            {
+                if (block.PredecessorEdges == null)
+                {
+                    block.PredecessorEdges = new List<int>(0);
+                }
+                if (block.SuccessorEdges.Count == 0)
+                {
+                    TerminalsBlocks.AddLast(block);
+                }
+                else
+                {
+                    int predIndex = -1;
+                    foreach (int successor in block.SuccessorEdges)
+                    {
+                        BasicBlock<N, D> successorBlock = SuccessorEdges[successor];
+                        if (successorBlock.PredecessorEdges == null)
+                        {
+                            successorBlock.PredecessorEdges = new List<int>();
+                        }
+                        if (predIndex == -1)
+                        {
+                            predIndex = this.PredecessorEdges.Count;
+                            this.PredecessorEdges.Add(block);
+                        }
+                        successorBlock.PredecessorEdges.Add(predIndex);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// DFS Depth First Search implementation
         /// </summary>
         /// <param name="block">The current block</param>
@@ -187,6 +245,49 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
+        /// DFSInverse Depth First Search implementation using predecessors edge.
+        /// </summary>
+        /// <param name="block">The current block</param>
+        /// <param name="discovered">Array of already discovered nodes</param>
+        /// <param name="callback">CallBack function</param>
+        internal void DFSInverse(BasicBlock<N, D> block, System.Collections.BitArray discovered, BasicBlockCallback callback)
+        {
+            discovered[block.Index] = true;
+            if (!callback(block, this))
+                return;//Means stop
+            foreach (var edge in block.PredecessorEdges)
+            {
+                if (!discovered[PredecessorEdges[edge].Index])
+                {
+                    DFSInverse(PredecessorEdges[edge], discovered, callback);
+                }
+            }
+        }
+
+        /// <summary>
+        /// DFSInverse Depth First Search implementation using predecessors edge.
+        /// </summary>
+        /// <param name="terminalBlock">The terminal block.</param>
+        /// <param name="callback">CallBack function</param>
+        public void DFSInverse(BasicBlock<N, D> terminalBlock, BasicBlockCallback callback)
+        {
+            System.Collections.BitArray discovered = new System.Collections.BitArray(AllBlocks.Count);
+            DFSInverse(terminalBlock, discovered, callback);
+        }
+
+        /// <summary>
+        /// DFSInverse Depth First Search implementation using predecessors edge.
+        /// </summary>
+        /// <param name="callback">CallBack function</param>
+        public void DFSInverse(BasicBlockCallback callback)
+        {
+            foreach (var terminal in TerminalsBlocks)
+            {
+                DFSInverse(terminal, callback);
+            }
+        }
+
+        /// <summary>
         /// Iterative version of DFS Depth First Search implementation
         /// </summary>
         /// <param name="callback">CallBack function</param>
@@ -214,6 +315,34 @@ namespace TypeCobol.Analysis.Graph
                 }
             }
         }
+
+        /// <summary>
+        /// Iterative version of DFS Depth First Search implementation using predecessors edge.
+        /// </summary>
+        /// <param name="callback">CallBack function</param>
+        public void DFSIterativeInverse(BasicBlockCallback callback)
+        {
+            System.Collections.BitArray discovered = new System.Collections.BitArray(AllBlocks.Count);
+            foreach (var root in TerminalsBlocks)
+            {
+                Stack<BasicBlock<N, D>> stack = new Stack<BasicBlock<N, D>>();
+                stack.Push(root);
+                while (stack.Count > 0)
+                {
+                    BasicBlock<N, D> block = stack.Pop();
+                    if (!discovered[block.Index])
+                    {
+                        if (!callback(block, this))
+                        {   //Don't traverse edges
+                            continue;
+                        }
+                        foreach (var edge in block.PredecessorEdges)
+                        {
+                            stack.Push(PredecessorEdges[edge]);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
-
