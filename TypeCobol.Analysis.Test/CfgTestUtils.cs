@@ -33,10 +33,11 @@ namespace TypeCobol.Analysis.Test
         /// <param name="cfg">The Control Flow Graph instance</param>
         /// <param name="expectedDotFile">The expected dot file</param>
         /// <param name="bFullInstruction">true if full istruction must be displayed, false otherwise</param>
-        public static void GenDotCfgAndCompare(ControlFlowGraph<Node, object> cfg, string testPath, string expectedDotFile, bool bFullInstruction = true)
+        /// <param name="bInverse">true if an invers eCfg must be generated, false otherwise</param>
+        public static void GenDotCfgAndCompare(ControlFlowGraph<Node, object> cfg, string testPath, string expectedDotFile, bool bFullInstruction = true, bool bInverse = false)
         {
             //Create a Dot File Generator            
-            CfgDotFileForNodeGenerator<object> dotGen = new CfgDotFileForNodeGenerator<object>(cfg);
+            CfgDotFileForNodeGenerator<object> dotGen = new CfgDotFileForNodeGenerator<object>(cfg, bInverse);            
             dotGen.FullInstruction = bFullInstruction;
             StringWriter writer = new StringWriter();
             dotGen.Report(writer);

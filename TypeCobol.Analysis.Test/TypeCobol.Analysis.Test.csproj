@@ -267,6 +267,12 @@
     <None Include="DotOutput\IfThenNextSentence0.dot">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="DotOutput\InverseCfg\IfThenElseCascadeInverse.dot">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DotOutput\InverseCfg\PerformProcedureInverse0.dot">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="DotOutput\MixPeformEvaluateIf0.dot">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -1222,5 +1222,43 @@ namespace TypeCobol.Analysis.Test
                 TestInitialize();
             }
         }
+
+        /// <summary>
+        /// Simple test for testing inverse CFG graph generation, using the If-Then-Else cascacde.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("InverseCfg")]
+        public void IfThenElseCascadeInverse0()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenElseCascade0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(Builder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "InverseCfg", "IfThenElseCascadeInverse.dot");
+
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+
+            CfgBuilder.Cfg.SetupPredecessorEdges();
+
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath, true, true);
+        }
+
+        [TestMethod]
+        public void PerformProcedureInverse0()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcedure0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(Builder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "InverseCfg", "PerformProcedureInverse0.dot");
+
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+
+            CfgBuilder.Cfg.SetupPredecessorEdges();
+
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath, true, true);
+        }
     }
 }
