@@ -58,6 +58,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
+    <Compile Include="Util\BitSet.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TypeCobol\TypeCobol.csproj">
