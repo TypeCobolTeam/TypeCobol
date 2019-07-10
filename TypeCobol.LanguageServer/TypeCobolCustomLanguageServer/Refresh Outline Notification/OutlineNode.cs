@@ -173,9 +173,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                     this.childNodes[i].isUpdated = true;
                     this.childNodes[i].childIndex = i;
                     childrenCount++;
-
-                    if (interestingNodes.ElementAt(i).ChildrenCount > 0)
-                        continue;
+                    continue;
                 }
 
                 i++;
