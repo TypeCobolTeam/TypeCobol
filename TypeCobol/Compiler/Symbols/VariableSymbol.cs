@@ -91,7 +91,7 @@ namespace TypeCobol.Compiler.Symbols
         /// Conditions or not variable but conditions associated to variables.
         /// 
         /// So A condtional variable is always subordinate to another data item.
-        /// Condtional name identifies the particular value associated to verify during the flow.
+        /// Conditional name identifies the particular value associated to verify during the flow.
         /// VALUE clause should be associated with conditional names.
         ///     
         /// Rules:

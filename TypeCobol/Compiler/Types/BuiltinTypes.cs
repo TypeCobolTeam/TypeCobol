@@ -66,21 +66,21 @@ namespace TypeCobol.Compiler.Types
         /// </summary>
         static BuiltinTypes()
         {
-            Comp1Type = new Type(Type.Tags.Usage, Type.UsageFormat.Comp1);
+            Comp1Type = UsageComp1Type;
             FloatType = Comp1Type;
             FloatType.SetFlag(Symbol.Flags.BuiltinType, true);
-            Comp2Type = new Type(Type.Tags.Usage, Type.UsageFormat.Comp2);
+            Comp2Type = UsageComp2Type;
             DoubleType = Comp2Type;
             DoubleType.SetFlag(Symbol.Flags.BuiltinType, true);
-            PointerType = new Type(Type.Tags.Usage, Type.UsageFormat.Pointer);
+            PointerType = UsagePointerType;
             PointerType.SetFlag(Symbol.Flags.BuiltinType, true);
-            FunctionPointerType = new Type(Type.Tags.Usage, Type.UsageFormat.FunctionPointer);
+            FunctionPointerType = UsageFunctionPointerType;
             FunctionPointerType.SetFlag(Symbol.Flags.BuiltinType, true);
-            ProcedurePointerType = new Type(Type.Tags.Usage, Type.UsageFormat.ProcedurePointer);
+            ProcedurePointerType = UsageProcedurePointerType;
             ProcedurePointerType.SetFlag(Symbol.Flags.BuiltinType, true);
-            IndexType = new Type(Type.Tags.Usage, Type.UsageFormat.Index);
+            IndexType = UsageIndexType;
             IndexType.SetFlag(Symbol.Flags.BuiltinType, true);
-            ObjectReferenceType = new Type(Type.Tags.Usage, Type.UsageFormat.ObjectReference);
+            ObjectReferenceType = UsageObjectReferenceType;
             ObjectReferenceType.SetFlag(Symbol.Flags.BuiltinType, true);
 
             OmittedType = new Type(Type.Tags.Usage, Type.UsageFormat.Omitted);
