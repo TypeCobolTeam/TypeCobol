@@ -194,6 +194,7 @@
            .
       *GlobalStorageTest.MyProc - Params :
       *		input(myDate: DATE)
+      * Get the data from the global storage section
            CALL 'b14e12b4' USING
                     by reference address of TC-GlobalData
            end-call

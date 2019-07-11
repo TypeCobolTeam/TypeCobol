@@ -78,13 +78,7 @@ namespace TypeCobol.Codegen.Nodes {
                     }
                     else if (OriginalNode.IsFlagSet(Node.Flag.UseGlobalStorage))
                     {
-                        Node[] toAddRange =
-                        {
-                            new GeneratedNode2($"    CALL '{OriginalNode.Root.MainProgram.Hash}' USING", true),
-                            new GeneratedNode2( "             by reference address of TC-GlobalData", true),
-                            new GeneratedNode2( "    end-call", true),
-                        };
-                        pdiv.AddRange(toAddRange, 0);
+                        pdiv.AddRange(GenerateCodeToCallGlobalStorage(), 0);
                     }
                 } else {
                     if (child.CodeElement is FunctionDeclarationEnd)
@@ -199,14 +193,7 @@ namespace TypeCobol.Codegen.Nodes {
                 procedureDivision.Add(new GeneratedNode2("          SET TC-NthCall TO TRUE", true));
                 if (OriginalNode.IsFlagSet(Node.Flag.UseGlobalStorage))
                 {
-                    Node[] globalCalltoAddRange =
-                    {
-                        new GeneratedNode2("* Get the data from the global storage section", false),
-                        new GeneratedNode2($"     CALL '{OriginalNode.Root.MainProgram.Hash}' USING", true),
-                        new GeneratedNode2( "          by reference address of TC-GlobalData", true),
-                        new GeneratedNode2( "     end-call", true),
-                    };
-                    procedureDivision.AddRange(globalCalltoAddRange);
+                    procedureDivision.AddRange(GenerateCodeToCallGlobalStorage());
                 }
 
                 foreach (var pgm in imports.Programs.Values)
@@ -279,6 +266,17 @@ namespace TypeCobol.Codegen.Nodes {
                 }
             }
             
+        }
+
+        private Node[] GenerateCodeToCallGlobalStorage()
+        {
+            return new Node[]
+            {
+                new GeneratedNode2("* Get the data from the global storage section", false),
+                new GeneratedNode2($"    CALL '{OriginalNode.Root.MainProgram.Hash}' USING", true),
+                new GeneratedNode2( "             by reference address of TC-GlobalData", true),
+                new GeneratedNode2( "    end-call", true),
+            };
         }
 
         private ParameterEntry CreateParameterEntry(ParameterDescription parameter, FunctionDeclaration node)

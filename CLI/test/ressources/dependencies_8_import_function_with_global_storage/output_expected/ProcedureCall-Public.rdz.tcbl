@@ -174,6 +174,7 @@
        PROCEDURE DIVISION
            .
       *PGM1.MyProcedureUsingGlobalStorage  - No Params
+      * Get the data from the global storage section
            CALL 'fecb93f5' USING
                     by reference address of TC-GlobalData
            end-call
@@ -342,9 +343,9 @@
             IF TC-FirstCall
                  SET TC-NthCall TO TRUE
       * Get the data from the global storage section
-            CALL 'fecb93f5' USING
-                 by reference address of TC-GlobalData
-            end-call
+           CALL 'fecb93f5' USING
+                    by reference address of TC-GlobalData
+           end-call
                  SET ADDRESS OF TC-Callee-a78211ce-Item  TO NULL
             END-IF
             .

@@ -530,6 +530,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             var node = new TypeDefinition(typedef);
             Enter(node, null, symbolTable);
 
+            //GLOBALSS_NOTYPEDEF
+            //No TypeDefs are allowed to be defined in the Global Storage Section
             if (_IsInsideGlobalStorageSection)
             {
                 node.SetFlag(Node.Flag.GlobalStorageSection, true);

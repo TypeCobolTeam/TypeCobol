@@ -63,7 +63,7 @@ namespace TypeCobol.Codegen.Contribution
                             _cache = new List<ITextLine>();
                             if (this.IsFlagSet(Flag.FactoryGeneratedNodeWithFirstNewLine))
                                 _cache.Add(new TextLineSnapshot(-1, "", null));
-                            foreach (string line in Text.Split('\n'))
+                            foreach (string line in Text.Split(new string[] { Environment.NewLine, "\n", "\r" }, StringSplitOptions.None))
                             {
                                 _cache.Add(new CobolTextLine(new TextLineSnapshot(-1, line, null), ColumnsLayout.FreeTextFormat));
                             }
