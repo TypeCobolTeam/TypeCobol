@@ -273,6 +273,9 @@ namespace TypeCobol.Compiler.Parser
                     case CodeElementType.AddStatement:
                         codeElement = new AddSimpleStatement();
                         break;
+                    case CodeElementType.AllocateStatement:
+                        codeElement = new AllocateStatement();
+                        break;
                     case CodeElementType.AlterStatement:
                         codeElement = new AlterStatement();
                         break;

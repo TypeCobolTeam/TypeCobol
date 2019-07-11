@@ -19,6 +19,20 @@
         }
     }
 
+    public class Allocate : GenericNode<AllocateStatement>, Statement
+    {
+        public Allocate(AllocateStatement statement)
+            : base(statement)
+        {
+
+        }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
+    }
+
     public class Alter: GenericNode<AlterStatement>, Statement {
 	    public Alter(AlterStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)

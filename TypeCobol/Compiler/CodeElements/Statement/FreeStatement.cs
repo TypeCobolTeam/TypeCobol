@@ -37,7 +37,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// statement.
         /// </summary>
         [ItemNotNull]
-        public DataOrConditionStorageArea[] TargetStorageAreas { get; set; }
+        public ReceivingStorageArea[] TargetStorageAreas { get; set; }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {

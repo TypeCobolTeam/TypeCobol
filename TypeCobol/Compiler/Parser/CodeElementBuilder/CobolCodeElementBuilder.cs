@@ -1796,6 +1796,13 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = new ExitProgramStatement();
 		}
 
+        // --- ALLOCATE ---
+        public override void EnterAllocateStatement(CodeElementsParser.AllocateStatementContext context)
+        {
+            Context = context;
+            CodeElement = CobolStatementsBuilder.CreateAllocateStatement(context);
+        }
+
         // --- FREE ---
         public override void EnterFreeStatement(CodeElementsParser.FreeStatementContext context)
         {
