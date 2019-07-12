@@ -165,9 +165,9 @@ namespace TypeCobol.Compiler.Scanner
                 case TokenFamily.SpecialObjectIdentifierKeyword:
                     return "special object identifier";
                 case TokenFamily.SyntaxKeyword:
-                    return "keyword";
+                case TokenFamily.CobolV6Keyword:
                 case TokenFamily.Cobol2002Keyword:
-                    return "cobol 2002 keyword";
+                    return "keyword";
                 case TokenFamily.TypeCobolKeyword:
                     return "TypeCobol keyword";
                 case TokenFamily.TypeCobolOperators:

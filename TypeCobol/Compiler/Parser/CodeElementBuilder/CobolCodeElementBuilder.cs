@@ -1879,9 +1879,23 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = CobolStatementsBuilder.CreateInvokeStatement(context);
 		}
 
-		// --- MERGE ---
+        // --- JSON Statements ---
 
-		public override void EnterMergeStatement(CodeElementsParser.MergeStatementContext context) {
+        public override void EnterJsonGenerateStatement(CodeElementsParser.JsonGenerateStatementContext context)
+        {
+            Context = context;
+            CodeElement = CobolStatementsBuilder.CreateJsonGenerateStatement(context);
+        }
+
+        public override void EnterJsonStatementEnd(CodeElementsParser.JsonStatementEndContext context)
+        {
+            Context = context;
+            CodeElement = new JsonStatementEnd();
+        }
+
+        // --- MERGE ---
+
+        public override void EnterMergeStatement(CodeElementsParser.MergeStatementContext context) {
 			Context = context;
 			var mergeStatement = CobolStatementsBuilder.CreateMergeStatement(context);
 		    CodeElement = mergeStatement;
