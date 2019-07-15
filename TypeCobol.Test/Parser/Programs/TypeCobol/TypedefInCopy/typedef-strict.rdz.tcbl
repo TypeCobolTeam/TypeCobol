@@ -1,0 +1,7 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MainProgram.
+       data division.
+       working-storage section.
+         COPY TypedefStrict.
+         01 var1 type TypedefStrict1.
+       END PROGRAM MainProgram.

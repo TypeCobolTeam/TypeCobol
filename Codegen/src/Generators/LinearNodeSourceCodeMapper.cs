@@ -58,6 +58,20 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
+        /// Linearization mode
+        /// </summary>
+        public enum Mode
+        {
+            Normal, //Normal mode
+            Cloned, //Cloned nod emode
+        }
+
+        /// <summary>
+        /// Curent mode.
+        /// </summary>
+        public Mode LinearMode { get; set; }
+
+        /// <summary>
         /// Will we need a ProcessFactoryGeneratedNodeAttachment Phase ?
         /// </summary>
         private bool NeedProcessFactoryGeneratedNodeAttachment;
@@ -93,6 +107,38 @@ namespace TypeCobol.Codegen.Generators
             get; set;
         }
 
+        public class LineStringSourceText : StringSourceText
+        {
+            /// <summary>
+            /// Lines that participate to this Buffer.
+            /// </summary>
+            public HashSet<int> Lines
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
+            /// Is this a relocated buffer ?
+            /// </summary>
+            public bool Reallocated
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
+            /// Add a line number that participate to this buffer
+            /// </summary>
+            /// <param name="i">The line number to be added</param>
+            public void AddLine(int i)
+            {
+                if (Lines == null)
+                    Lines = new HashSet<int>();
+                Lines.Add(i);
+            }
+        }
+
         /// <summary>
         /// Line Informations
         /// </summary>
@@ -105,11 +151,11 @@ namespace TypeCobol.Codegen.Generators
             /// <summary>
             /// The Buffer associated to this line.
             /// </summary>
-            public StringSourceText Buffer;
+            public LineStringSourceText Buffer;
             /// <summary>
             /// The Buffer associated to this line when it is generated in a function body.
             /// </summary>
-            public StringSourceText FunctionBodyBuffer;
+            public LineStringSourceText FunctionBodyBuffer;
             /// <summary>
             /// Force the Generator to skip this line, if it has no nodes associated to it.
             /// </summary>
@@ -256,7 +302,7 @@ namespace TypeCobol.Codegen.Generators
             /// <summary>
             /// The Buffer where this Node is Generated.
             /// </summary>
-            public StringSourceText Buffer;
+            public LineStringSourceText Buffer;
             /// <summary>
             /// From Position in the Source Text Buffer
             /// </summary>
@@ -292,6 +338,18 @@ namespace TypeCobol.Codegen.Generators
             /// The commented Header of a Function declaration
             /// </summary>
             public StringBuilder CommentedHeader;
+            /// <summary>
+            /// The Fisrt index in the LineIntervalMap of this function
+            /// </summary>
+            public int LineMapFirstIndex;
+            /// <summary>
+            /// The Lat Index in the LineIntervalMap of this function
+            /// </summary>
+            public int LineMapLastIndex;
+            /// <summary>
+            /// The 1-based, Delta of the Global Storage line in the corresponding Line Mapping if any.
+            /// </summary>
+            internal int GlobalStorageLineDelta;
             /// <summary>
             /// Constructor
             /// </summary>
@@ -345,6 +403,7 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="generator">The Generator</param>
         public LinearNodeSourceCodeMapper(Generator generator)
         {
+            LinearMode = Mode.Normal;
             NodeCount = 0;//Count of Nodes Treated.
             Generator = generator;
             int count = generator.CompilationResults.TokensLines.Count;
@@ -755,6 +814,16 @@ namespace TypeCobol.Codegen.Generators
             //During the Linearization Phase, collect data, index of all Nodes.
             //1) Get the Positions of the Node: 
             //  Tuple(from,to,span, lineNumbers, lineOffsets);
+            if (node.IsFlagSet(Node.Flag.UseGlobalStorage))
+            {
+                UseGlobalStorageSection = true;
+            }
+
+            if (node.CodeElement != null && node.CodeElement.Type == CodeElementType.GlobalStorageSectionHeader && node.IsFlagSet(Node.Flag.IsCloned))
+            {
+                //Remember the Global Storage Section node.
+                this.ClonedGlobalStorageSection = (GlobalStorageSection)node;
+            }
             Tuple<int, int, int, List<int>, List<int>> positions = this.Generator.FromToPositions(node);
             if (positions == null)
             { //Node without positions probably a generated node.
@@ -855,7 +924,7 @@ namespace TypeCobol.Codegen.Generators
 
             //Is This Node marked as to be commented ?
             bool bCommented = node.Comment.HasValue ? node.Comment.Value : false;
-            StringSourceText buffer = null;
+            LineStringSourceText buffer = null;
             //The first line number of the target buffer
             int lineindex_buffer = -1;
             foreach (int i in data.Positions.Item4)
@@ -880,16 +949,22 @@ namespace TypeCobol.Codegen.Generators
                     buffer = functionBody ? LineData[lineIndex].FunctionBodyBuffer : LineData[lineIndex].Buffer;
                     if (buffer == null)
                     {
-                        buffer = new StringSourceText();
+                        buffer = new LineStringSourceText();
                         BufferLineMap[buffer] = lineIndex;
                     }
                     lineindex_buffer = BufferLineMap[buffer];
                 }
                 //Associate its buffer to the current line depending if the current Node is A FunctionDeclaration
                 if (functionBody)
-                    LineData[lineIndex].FunctionBodyBuffer = buffer;
+                {
+                    LineData[lineIndex].FunctionBodyBuffer = buffer;                    
+                }
                 else
-                    LineData[lineIndex].Buffer = buffer;
+                {
+                    LineData[lineIndex].Buffer = buffer;                    
+                }
+                //Add the participating line buffer
+                buffer.AddLine(lineIndex);
                 //Propagate Comment from buffer line index to current line.
                 //That is to say mark all line concerned by a Commnented Node as commented.
                 if (bCommented)
@@ -987,6 +1062,10 @@ namespace TypeCobol.Codegen.Generators
             return true;
         }
 
+        public GlobalStorageSection ClonedGlobalStorageSection { get; set; }
+
+        public bool UseGlobalStorageSection { get; set; }
+
         /// <summary>
         /// Collect all lines that have not been associated to a Node during Function Declaration
         /// processing phase. The lines are then associated to Dummy nodes, that have a buffer containing
@@ -1032,7 +1111,8 @@ namespace TypeCobol.Codegen.Generators
                     //Set the associated Function Declaration Node
                     data.FunctionBodyNode = funData.node;
                     //Create the source code buffer in which the text of the line will be stored
-                    data.Buffer = new StringSourceText();
+                    data.Buffer = new LineStringSourceText();
+                    data.Buffer.Reallocated = true;
                     //Read the line of the text in the buffer
                     TypeCobol.Compiler.Scanner.ITokensLine line = Input[i - 1];
                     data.Buffer.Insert(line.Text, data.Buffer.Size, data.Buffer.Size);
@@ -1093,6 +1173,7 @@ namespace TypeCobol.Codegen.Generators
                     if (lineGot != i)
                     {
                         LineData[lineGot - 1].FunctionBodyBuffer = LineData[lineGot - 1].Buffer = data.Buffer;
+                        data.Buffer.AddLine(i - 1);
                         //Skip the current line if not needed.
                         LineData[i - 1].Skip = true;
                     }
@@ -1209,6 +1290,7 @@ namespace TypeCobol.Codegen.Generators
                     TypeCobol.Compiler.Scanner.ITokensLine line = Input[i];
                     LineData[i].Buffer.Insert(line.Text, LineData[i].Buffer.Size, LineData[i].Buffer.Size);
                     LineData[i].Buffer.Insert(Environment.NewLine, LineData[i].Buffer.Size, LineData[i].Buffer.Size);
+                    LineData[i].Buffer.AddLine(i);
                 }
                 //Deal with Function buffer
                 if (LineData[i].FunctionBodyBuffer != null)
@@ -1216,6 +1298,7 @@ namespace TypeCobol.Codegen.Generators
                     TypeCobol.Compiler.Scanner.ITokensLine line = Input[i];
                     LineData[i].FunctionBodyBuffer.Insert(line.Text, LineData[i].FunctionBodyBuffer.Size, LineData[i].FunctionBodyBuffer.Size);
                     LineData[i].FunctionBodyBuffer.Insert(Environment.NewLine, LineData[i].FunctionBodyBuffer.Size, LineData[i].FunctionBodyBuffer.Size);
+                    LineData[i].FunctionBodyBuffer.AddLine(i);
                 }
             }
             //Create All Node's positions in the corresponding source text buffer.
@@ -1260,13 +1343,17 @@ namespace TypeCobol.Codegen.Generators
             //First Phase Linearization
             CurrentPhase = Phase.Linearization;            
             Visit(node);
-            //Second Phase Removed Nodes
-            CurrentPhase = Phase.RemovedNodes;
-            foreach (Node erased_node in this.Generator.ErasedNodes)
+            if (LinearMode == Mode.Normal)
             {
-                if (!erased_node.IsFlagSet(Node.Flag.PersistentNode))
-                    Visit(erased_node);//Only Erase non persistent node
+                //Second Phase Removed Nodes
+                CurrentPhase = Phase.RemovedNodes;
+                foreach (Node erased_node in this.Generator.ErasedNodes)
+                {
+                    if (!erased_node.IsFlagSet(Node.Flag.PersistentNode))
+                        Visit(erased_node); //Only Erase non persistent node
+                }
             }
+
             Nodes.TrimExcess();
 
             //Create All SourceTextBuffer Content associated to Nodes
@@ -1375,7 +1462,7 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="lastLine">output le last line number</param>
         /// <param name="lastNode">The last node of the last line number</param>
         /// <returns></returns>
-        private void GetAfterLinearizationLastLine(Node node, ref int lastLine, ref Node lastNode)
+        internal void GetAfterLinearizationLastLine(Node node, ref int lastLine, ref Node lastNode)
         {
             if (node == null)
                 return;

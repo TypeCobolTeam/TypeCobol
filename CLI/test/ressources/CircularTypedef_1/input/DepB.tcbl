@@ -1,0 +1,44 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DepB.
+
+       DATA DIVISION.
+       Working-STORAGE SECTION.
+      *Circular reference from MainType -> DepA -> DepB -> MainType
+      *Will be used by a variable
+       01 Type1 TYPEDEF STRICT PUBLIC.
+            05 DepBvar1-1 pic X.
+            05 DepBvar1-2 type MainPgm::MainType1.
+
+      *Circular reference from MainType -> DepA -> DepB -> MainType
+      *Will be used by a procedure parameter
+       01 Type2 TYPEDEF STRICT PUBLIC.
+            05 DepBvar2-1 pic X.
+            05 DepBvar2-2 type MainPgm::MainType2.
+
+      *Circular reference 
+      *MainType -> DepA -> DepB -> MainType (unused types)
+       01 UnusedType3 TYPEDEF STRICT PUBLIC.
+            05 DepBvar3-1 pic X.
+            05 DepBvar3-2 type MainPgm::UnusedMainType3.
+
+
+      *Circular reference from MainType -> DepB -> DepA -> MainType
+      *Will be used by a variable
+       01 Type11 TYPEDEF STRICT PUBLIC.
+            05 DepBvar11-1 pic X.
+            05 DepBvar11-2 type DepA::Type11.
+
+      *Circular reference from MainType -> DepB -> DepA -> MainType
+      *Will be used by a procedure parameter
+       01 Type12 TYPEDEF STRICT PUBLIC.
+            05 DepBvar12-1 pic X.
+            05 DepBvar12-2 type DepA::Type12.
+
+      *Circular reference 
+      *MainType -> DepB -> DepA -> MainType (unused types)
+       01 UnusedType13 TYPEDEF STRICT PUBLIC.
+            05 DepBvar13-1 pic X.
+            05 DepBvar13-2 type DepA::UnusedType13.
+
+       END PROGRAM DepB.
+

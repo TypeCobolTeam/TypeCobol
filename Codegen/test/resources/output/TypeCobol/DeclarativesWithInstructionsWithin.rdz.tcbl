@@ -33,7 +33,7 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *To call program ca0ab46ccheck in module Callee
+      *To call program ca0ab46c in module Callee
       *Which is generated code for Callee.check
       *Declared in source file DeclarativesWithInstructionsWithin.rdz.tc
       *bl
@@ -67,7 +67,7 @@
              OR TC-Callee-ca0ab46c-Idt not = 'ca0ab46c'
                PERFORM TC-LOAD-POINTERS-Callee
            END-IF
-      *    Equivalent to call ca0ab46ccheck in module Callee
+      *    Equivalent to call ca0ab46c in module Callee
            CALL TC-Callee-ca0ab46c USING
                                  somedate
            end-call
@@ -114,7 +114,7 @@
            88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
        01 TC-Callee-PntTab.
            05 TC-Callee-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program ca0ab46ccheck
+      *To call program ca0ab46c
       *Which is generated code for Callee.check
       *Declared in source file DeclarativesWithInstructionsWithin.rdz.tc
       *bl
@@ -166,16 +166,16 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ca0ab46ccheck.
-       END PROGRAM ca0ab46ccheck.
+       PROGRAM-ID. ca0ab46c.
+       END PROGRAM ca0ab46c.
       *
       *declare procedure check private
       *   input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a0508f35check.
+       PROGRAM-ID. a0508f35.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SOURCE-COMPUTER. IBM-370 WITH DEBUGGING MODE.
-       END PROGRAM a0508f35check.
+       END PROGRAM a0508f35.

@@ -7,7 +7,7 @@
            88 TC-PGM1-FctList-IsLoaded      VALUE 'OK'.
        01 TC-PGM1-PntTab.
            05 TC-PGM1-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program e3685b69StartCheckpoint
+      *To call program e3685b69
       *Which is generated code for PGM1.StartCheckpoint
       *Declared in source file CallPublicProcFromPublicProc-Declaratives
       *NoDebug.rdz.tcbl
@@ -63,7 +63,7 @@
            88 TC-MyPGM-FctList-IsLoaded      VALUE 'OK'.
        01 TC-MyPGM-PntTab.
            05 TC-MyPGM-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program bfc74757testos
+      *To call program bfc74757
       *Which is generated code for MyPGM.testos
       *Declared in source file CallPublicProcFromPublicProc-Declaratives
       *NoDebug.rdz.tcbl
@@ -105,7 +105,7 @@
       *declare procedure testos public.
        INIT-LIBRARY.
       *    call testos.
-           CALL 'bfc74757testos'
+           CALL 'bfc74757'
            end-call
                       .
        FOO.
@@ -115,13 +115,13 @@
       *declare procedure StartCheckpoint public.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e3685b69StartCheckpoint.
-       END PROGRAM e3685b69StartCheckpoint.
+       PROGRAM-ID. e3685b69.
+       END PROGRAM e3685b69.
       *
       *declare procedure testos public.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. bfc74757testos.
+       PROGRAM-ID. bfc74757.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *PGM1.testos  - No Params
@@ -143,7 +143,7 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *To call program e3685b69StartCheckpoint in module PGM1
+      *To call program e3685b69 in module PGM1
       *Which is generated code for PGM1.StartCheckpoint
       *Declared in source file CallPublicProcFromPublicProc-Declaratives
       *NoDebug.rdz.tcbl
@@ -164,7 +164,7 @@
              OR TC-PGM1-e3685b69-Idt not = 'e3685b69'
                PERFORM TC-LOAD-POINTERS-PGM1
            END-IF
-      *    Equivalent to call e3685b69StartCheckpoint in module PGM1
+      *    Equivalent to call e3685b69 in module PGM1
            CALL TC-PGM1-e3685b69
            end-call
                                      
@@ -195,4 +195,4 @@
                 END-EVALUATE
             END-PERFORM
             .
-       END PROGRAM bfc74757testos.
+       END PROGRAM bfc74757.

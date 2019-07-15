@@ -35,7 +35,7 @@
       *    INPUT EventList type _EVENT_LIST_.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. bd8b7be7DisplayEventList.
+       PROGRAM-ID. bd8b7be7.
        DATA DIVISION.
        LINKAGE SECTION.
       *TYPDEFQU.DisplayEventList - Params :
@@ -61,4 +61,4 @@
               display "test"
            END-PERFORM.
            GOBACK.
-       END PROGRAM bd8b7be7DisplayEventList.
+       END PROGRAM bd8b7be7.

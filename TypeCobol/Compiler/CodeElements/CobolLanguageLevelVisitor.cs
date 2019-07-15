@@ -99,6 +99,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] AddSimpleStatement addSimpleStatement);
         bool Visit([NotNull] AddGivingStatement addGivingStatement);
         bool Visit([NotNull] AddCorrespondingStatement addCorrespondingStatement);
+        bool Visit([NotNull] AllocateStatement allocateStatement);
         bool Visit([NotNull] AlterStatement alterStatement);
         bool Visit([NotNull] CallStatement callStatement);
         bool Visit([NotNull] CancelStatement cancelStatement);
@@ -114,6 +115,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] ExitMethodStatement exitMethodStatement);
         bool Visit([NotNull] ExitProgramStatement exitProgramStatement);
         bool Visit([NotNull] ExitStatement exitStatement);
+        bool Visit([NotNull] FreeStatement freeStatement);
         bool Visit([NotNull] GobackStatement gobackStatement);
         bool Visit([NotNull] GotoStatement gotoStatement);
         bool Visit([NotNull] IfStatement ifStatement);
@@ -261,6 +263,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] End end);
 
         bool Visit([NotNull] Accept accept);
+        bool Visit([NotNull] Allocate allocate);
         bool Visit([NotNull] Alter alter);
         bool Visit([NotNull] Call call);
         bool Visit([NotNull] ProcedureStyleCall procedureStyleCall);
@@ -273,6 +276,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] Exit exit);
         bool Visit([NotNull] ExitMethod exitMethod);
         bool Visit([NotNull] ExitProgram exitProgram);
+        bool Visit([NotNull] Free free);
         bool Visit([NotNull] Goback goback);
         bool Visit([NotNull] Goto gotoNode);
         bool Visit([NotNull] Initialize initialize);
@@ -426,6 +430,11 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
 
+        public virtual bool Visit(AllocateStatement allocateStatement)
+        {
+            return true;
+        }
+
         public virtual bool Visit(AlterStatement alterStatement) {
             return true;
         }
@@ -483,6 +492,11 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(ExitStatement exitStatement) {
+            return true;
+        }
+
+        public virtual bool Visit(FreeStatement freeStatement)
+        {
             return true;
         }
 
@@ -1009,6 +1023,11 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
 
+        public virtual bool Visit(Allocate allocate)
+        {
+            return true;
+        }
+
         public virtual bool Visit(Alter alter) {
             return true;
         }
@@ -1054,6 +1073,11 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(ExitProgram exitProgram) {
+            return true;
+        }
+
+        public virtual bool Visit(Free free)
+        {
             return true;
         }
 
@@ -1403,168 +1427,4 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
     }
-
-
-
-
-    public  class Cobol85Visitor : AbstractAstVisitor {
-        protected internal bool NeedGeneration { get; set; }
-        private Node CurrentNode { get; set; }
-
-        public override bool BeginNode(Node node) {
-            NeedGeneration = false;
-            CurrentNode = node;
-            return !node.NeedGeneration;
-        }
-
-        public override void EndNode(Node node) {
-            CurrentNode.NeedGeneration = NeedGeneration;
-        }
-
-
-        public override bool Visit(MoveStatement moveStatement) {
-            return VisitVariableWriter(moveStatement);
-        }
-
-        public override bool VisitVariableWriter(VariableWriter variableWriter) {
-            if (variableWriter.IsUnsafe) {
-                NeedGeneration = true;
-            }
-            return !NeedGeneration;
-        }
-
-        public override bool Visit(FunctionCall functionCall) {
-            if (functionCall is UserDefinedFunctionCall || functionCall is ProcedureCall) {
-                NeedGeneration = true;
-            }
-            return !NeedGeneration;
-        }
-
-        public override bool Visit(Token token) {
-            var tokenLanguageLevel = TokenConst.GetCobolLanguageLevel(token.TokenType);
-            if (tokenLanguageLevel > CobolLanguageLevel.Cobol85)
-            {
-                NeedGeneration = true;
-            }
-            return !NeedGeneration;
-        }
-
-        public override bool Visit(SymbolInformation symbolInformation) {
-            var symbolInfoLanguageLevel = SymbolTypeUtils.GetCobolLanguageLevel(symbolInformation.Type);
-            if (symbolInfoLanguageLevel > CobolLanguageLevel.Cobol85)
-            {
-                NeedGeneration = true;
-            }
-            return !NeedGeneration;
-        }
-
-        public override bool Visit(TypeCobolQualifiedSymbolReference typeCobolQualifiedSymbolReference)
-        {
-            NeedGeneration = true;
-            return false;
-        }
-
-        public override bool Visit(DataType dataType) {
-            if (dataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
-            {
-                NeedGeneration = true;
-            }
-            return !NeedGeneration;
-        }
-    }
-
-    /// <summary>
-    /// Visitor which mark all node that must be generated to target the IBM Z/OS Cobol V5 compiler
-    /// </summary>
-    public class IBMZOSCobolV5Compiler : AbstractAstVisitor
-    {
-        protected internal bool NeedGeneration { get; set; }
-        private Node CurrentNode { get; set; }
-
-        public override bool BeginNode(Node node) {
-            NeedGeneration = false;
-            CurrentNode = node;
-            return !node.NeedGeneration;
-        }
-
-        public override void EndNode(Node node)
-        {
-            CurrentNode.NeedGeneration = NeedGeneration;
-        }
-
-
-        public override bool BeginCodeElement(CodeElement codeElement) {
-            //TODO incremental mode: find a way to store the information into the CodeElement
-            //Determine if we allo to generate the same Nodes to multiple target: 
-            //Cobol 85, Cobol 2002, IBM Z/OS Cobol V6 Compiler, ...
-            return base.BeginCodeElement(codeElement);
-        }
-
-        public override bool VisitVariableWriter(VariableWriter variableWriter)
-        {
-            if (variableWriter.IsUnsafe) {
-                NeedGeneration = true;
-                return false;
-            }
-            //TODO analyse variables written
-            return true;
-        }
-
-        public override bool Visit(FunctionCall functionCall)
-        {
-            if (functionCall is UserDefinedFunctionCall || functionCall is ProcedureCall) {
-                NeedGeneration = true;
-                return false;
-            }
-            return true;
-        }
-
-        public override bool Visit(Token token)
-        {
-            var tokenLanguageLevel = TokenConst.GetCobolLanguageLevel(token.TokenType);
-            if (tokenLanguageLevel >= CobolLanguageLevel.Cobol2002) {
-                NeedGeneration = true;
-                return false;
-            }
-            return true;
-        }
-
-        public override bool Visit(SymbolInformation symbolInformation)
-        {
-            var symbolInfoLanguageLevel = SymbolTypeUtils.GetCobolLanguageLevel(symbolInformation.Type);
-            if (symbolInfoLanguageLevel >= CobolLanguageLevel.Cobol2002)
-            {
-                NeedGeneration = true;
-                return false;
-            }
-            return true;
-        }
-
-        public override bool Visit(TypeCobolQualifiedSymbolReference typeCobolQualifiedSymbolReference)
-        {
-            NeedGeneration = true;
-            return false;
-        }
-
-        public override bool Visit(DataType dataType)
-        {
-            if (dataType.CobolLanguageLevel >= CobolLanguageLevel.Cobol2002)
-            {
-                NeedGeneration = true;
-                return false;
-            }
-            return true;
-        }
-
-        public override bool Visit(FunctionDeclarationEnd functionDeclarationEnd) {
-            NeedGeneration = true;
-            return false;
-        }
-
-        public override bool Visit(FunctionDeclarationHeader functionDeclarationHeader) {
-            NeedGeneration = true;
-                return false;
-        }
-    }
 }
-

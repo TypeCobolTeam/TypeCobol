@@ -45,12 +45,13 @@ namespace TypeCobol.Compiler.Diagnostics
                 CheckVariable(node, codeElement.StorageAreaGroupsCorrespondingImpact.ReceivingGroupItem, false);
             }
 
-            FunctionCallChecker.OnNode(node);
-            TypedDeclarationChecker.OnNode(node);
-            RenamesChecker.OnNode(node);
-            ReadOnlyPropertiesChecker.OnNode(node);
-            GlobalStorageSectionChecker.OnNode(node);
+            return true;
+        }
 
+
+        public override bool Visit(GlobalStorageSection globalStorageSection)
+        {
+            GlobalStorageSectionChecker.OnNode(globalStorageSection);
             return true;
         }
 
@@ -72,6 +73,19 @@ namespace TypeCobol.Compiler.Diagnostics
             RedefinesChecker.OnNode(dataRedefines);
             return true;
         }
+        public override bool Visit(DataRenames dataRenames)
+        {
+            RenamesChecker.OnNode(dataRenames);
+            return true;
+        }
+
+        public override bool Visit(ProcedureStyleCall call)
+        {
+            FunctionCallChecker.OnNode(call);
+            return true;
+        }
+
+        
 
         public override bool Visit(PerformProcedure performProcedureNode)
         {
@@ -267,11 +281,14 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool VisitVariableWriter(VariableWriter variableWriter)
         {
             WriteTypeConsistencyChecker.OnNode(variableWriter, CurrentNode);
+            ReadOnlyPropertiesChecker.OnNode(variableWriter, CurrentNode);
             return true;
         }
 
         public override bool Visit(DataDefinition dataDefinition)
         {
+            TypedDeclarationChecker.OnNode(dataDefinition);
+
             var commonDataDataDefinitionCodeElement = dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines;
             if (commonDataDataDefinitionCodeElement!=null)
             {
@@ -291,7 +308,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (dataDefinitionParent != null)
                 {
                     //Check if DataDefinition is level 88 and declared under a Type BOOL variable
-                    if (dataDefinitionParent.DataType == DataType.Boolean && levelNumberValue == 88)
+                    //Perf note: first compare levelNumberValue because it's faster than DataType
+                    if (levelNumberValue == 88 && dataDefinitionParent.DataType == DataType.Boolean)
                     {
                         DiagnosticUtils.AddError(dataDefinition,
                             "The Level 88 symbol '" + dataDefinition.Name + "' cannot be declared under a BOOL typed symbol");
@@ -358,12 +376,24 @@ namespace TypeCobol.Compiler.Diagnostics
         /// Test if the received DataDefinition has other children than DataConditionEntry or DataRenamesEntry
         /// </summary>
         /// <param name="dataDefinition">Item to check</param>
-        /// <returns>True if there are only DataConditionEntry or DataRenamesEntry childrens</returns>
-        private static bool HasChildrenThatDeclareData(DataDefinition dataDefinition)
+        /// <returns>True if there are only DataConditionEntry or DataRenamesEntry children</returns>
+        private static bool HasChildrenThatDeclareData([NotNull] DataDefinition dataDefinition)
         {
-            return dataDefinition.Children.Any(elem=>elem.CodeElement != null && 
-                                                     elem.CodeElement.Type != CodeElementType.DataConditionEntry && 
-                                                     elem.CodeElement.Type != CodeElementType.DataRenamesEntry);
+            //We only need to check the last children:
+            //DataConditionEntry is a level 88, DataRenamesEntry is level 66 and they cannot have children
+            //DataDescription and DataRedefines are level between 1 and 49 inclusive.
+            //As the level number drive the positioning of Node inside the Children property DataConditionEntry and DataRenamesEntry will always be
+            //positioned before dataDescription.
+            if (dataDefinition.ChildrenCount > 0)
+            {
+                var lastChild = ((DataDefinition) dataDefinition.Children[dataDefinition.ChildrenCount - 1]);
+
+                return lastChild.CodeElement != null 
+                       && lastChild.CodeElement.Type != CodeElementType.DataConditionEntry 
+                       && lastChild.CodeElement.Type != CodeElementType.DataRenamesEntry;
+            }
+
+            return false;
         }
 
         public override bool Visit(IndexDefinition indexDefinition)
@@ -462,6 +492,16 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (foundQualified.Count == 1)
                 {
                     IndexAndFlagDataDefiniton(dataDefinitionPath, dataDefinitionFound, node, area, storageArea);
+                }
+
+                if (dataDefinitionFound.IsFlagSet(Node.Flag.GlobalStorageSection) || dataDefinitionPath != null && dataDefinitionPath.CurrentDataDefinition.IsFlagSet(Node.Flag.GlobalStorageSection))
+                {
+                    if (node is DataDefinition)
+                    {
+                        DiagnosticUtils.AddError(node, "A Global-Storage Section variable cannot be referenced in another Data Section", area.SymbolReference);
+                    }
+                    //We must find the enclosing FunctionDeclaration or Program (if node is outside a function/procedure)
+                    node.GetEnclosingProgramOrFunctionNode().SetFlag(Node.Flag.UseGlobalStorage, true);
                 }
                 //add the found DataDefinition to a dictionary depending on the storage area type
                 if (isReadStorageArea)
@@ -619,6 +659,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (!node.QualifiedStorageAreas.ContainsKey(storageArea))
                 node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
         }
+
     }
     
     class SectionOrParagraphUsageChecker

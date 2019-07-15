@@ -10,7 +10,7 @@
       *declare toto input IsOk type bool.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. da82b615toto.
+       PROGRAM-ID. da82b615.
        DATA DIVISION.
        linkage section.
       *DVZF0OSM.toto - Params :
@@ -36,4 +36,4 @@
       *DVZF0OSM.toto - Params :
       *		input(IsOk: BOOL)
            .
-       END PROGRAM da82b615toto.
+       END PROGRAM da82b615.

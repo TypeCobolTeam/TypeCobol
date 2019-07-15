@@ -1,14 +1,16 @@
-﻿Line 9[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
+Line 9[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
 Line 49[12,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
 Line 54[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
 Line 56[21,23] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli
 Line 66[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myDate
 Line 67[21,24] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: toto
+Line 77[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myDate
+Line 78[21,24] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: toto
 ======================== Documentation ========================
 {
   "__type": "DocumentationForProgram:#TypeCobol.Compiler.Nodes",
   "Deprecated": "",
-  "Description": "My program description ",
+  "Description": "My program \u000d\u000adescription ",
   "Name": "DocCombined",
   "Namespace": "DocCombined",
   "Needs": [
@@ -32,7 +34,7 @@ Line 67[21,24] <37, Warning, General> - Warning: Parameter does not have any des
   "Name": "myType",
   "Namespace": "DocCombined",
   "Restriction": "Do not Use BOOL var ",
-  "Visibility": 0,
+  "Visibility": 1,
   "DocDataType": {
     "MaxOccurence": 1,
     "Picture": "X(01)"
@@ -45,7 +47,6 @@ Line 67[21,24] <37, Warning, General> - Warning: Parameter does not have any des
   "Description": "Vect2D ",
   "Name": "Vect2D",
   "Namespace": "DocCombined",
-  "Visibility": 1,
   "Childrens": [
     {
       "Childrens": [
@@ -79,7 +80,7 @@ Line 67[21,24] <37, Warning, General> - Warning: Parameter does not have any des
 {
   "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
   "Deprecated": "It is deprecated ",
-  "Description": "MyProc info ",
+  "Description": "MyProc info \u000d\u000a",
   "Name": "MyProc",
   "Namespace": "DocCombined",
   "Needs": [
@@ -89,7 +90,7 @@ Line 67[21,24] <37, Warning, General> - Warning: Parameter does not have any des
     "todo1",
     "todo 2"
   ],
-  "Visibility": 0,
+  "Visibility": 1,
   "Parameters": [
     {
       "DocDataType": {
@@ -141,13 +142,43 @@ Line 67[21,24] <37, Warning, General> - Warning: Parameter does not have any des
 {
   "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
   "Deprecated": "",
-  "Description": "MyPivateProc is a Proc but Pivate ",
-  "Name": "MyPivateProc",
+  "Description": "MyPrivateProc is a Proc but Private ",
+  "Name": "MyPrivateProc",
   "Namespace": "DocCombined",
   "ToDos": [
     "Add a body"
   ],
-  "Visibility": 1,
+  "Visibility": 2,
+  "Parameters": [
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "DATE"
+      },
+      "Name": "myDate",
+      "PassingType": 0
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "BOOL"
+      },
+      "Name": "toto",
+      "PassingType": 1
+    }
+  ]
+}
+---------------------
+
+{
+  "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
+  "Deprecated": "",
+  "Description": "MyLocalProc is a Proc but Local (no access modifier) ",
+  "Name": "MyLocalProc",
+  "Namespace": "DocCombined",
+  "ToDos": [
+    "Add a body"
+  ],
   "Parameters": [
     {
       "DocDataType": {

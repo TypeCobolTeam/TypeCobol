@@ -221,6 +221,8 @@ terminal TypeCobol.Compiler.Scanner.Token DEBUG_SUB_1;
 terminal TypeCobol.Compiler.Scanner.Token DEBUG_SUB_2;
 terminal TypeCobol.Compiler.Scanner.Token DEBUG_SUB_3;
 terminal TypeCobol.Compiler.Scanner.Token JNIENVPTR;
+terminal TypeCobol.Compiler.Scanner.Token JSON_CODE;
+terminal TypeCobol.Compiler.Scanner.Token JSON_STATUS;
 terminal TypeCobol.Compiler.Scanner.Token LENGTH;
 terminal TypeCobol.Compiler.Scanner.Token LINAGE_COUNTER;
 terminal TypeCobol.Compiler.Scanner.Token RETURN_CODE;
@@ -570,6 +572,28 @@ terminal TypeCobol.Compiler.Scanner.Token PRIVATE;
 terminal TypeCobol.Compiler.Scanner.Token IN_OUT;
 terminal TypeCobol.Compiler.Scanner.Token STRICT;
 terminal TypeCobol.Compiler.Scanner.Token QUESTION_MARK;
+// Compiler Directives
+terminal TypeCobol.Compiler.Scanner.Token COMPILER_DIRECTIVE;
+terminal TypeCobol.Compiler.Scanner.Token COPY_IMPORT_DIRECTIVE;
+terminal TypeCobol.Compiler.Scanner.Token REPLACE_DIRECTIVE;
+// Internal token groups
+terminal TypeCobol.Compiler.Scanner.Token CONTINUATION_TOKEN_GROUP;
+// Formalized Comments Tokens
+terminal TypeCobol.Compiler.Scanner.Token FORMALIZED_COMMENTS_START;
+terminal TypeCobol.Compiler.Scanner.Token FORMALIZED_COMMENTS_STOP;
+terminal TypeCobol.Compiler.Scanner.Token FORMALIZED_COMMENTS_DESCRIPTION;
+terminal TypeCobol.Compiler.Scanner.Token FORMALIZED_COMMENTS_PARAMETERS;
+terminal TypeCobol.Compiler.Scanner.Token FORMALIZED_COMMENTS_DEPRECATED;
+terminal TypeCobol.Compiler.Scanner.Token FORMALIZED_COMMENTS_REPLACED_BY;
+terminal TypeCobol.Compiler.Scanner.Token FORMALIZED_COMMENTS_RESTRICTION;
+terminal TypeCobol.Compiler.Scanner.Token FORMALIZED_COMMENTS_NEED;
+terminal TypeCobol.Compiler.Scanner.Token FORMALIZED_COMMENTS_SEE;
+terminal TypeCobol.Compiler.Scanner.Token FORMALIZED_COMMENTS_TODO;
+terminal TypeCobol.Compiler.Scanner.Token FORMALIZED_COMMENTS_VALUE;
+terminal TypeCobol.Compiler.Scanner.Token AT_SIGN;
+// Multilines Comments Tokens
+terminal TypeCobol.Compiler.Scanner.Token MULTILINES_COMMENTS_START;
+terminal TypeCobol.Compiler.Scanner.Token MULTILINES_COMMENTS_STOP;
 
 // Non terminals
 non terminal TypeCobol.Compiler.Scanner.Token numericLiteralToken;

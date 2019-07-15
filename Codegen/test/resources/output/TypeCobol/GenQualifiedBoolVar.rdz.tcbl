@@ -29,12 +29,12 @@
 
 
       *CALL check Output local::overflw.
-       CALL 'ea379882check' USING
+       CALL 'ea379882' USING
                     by reference overflw-value IN local
            end-call
                                        .
       *CALL check Output local::grp::overflw2.
-       CALL 'ea379882check' USING
+       CALL 'ea379882' USING
                     by reference overflw2-value IN grp IN local
            end-call
                                              .
@@ -47,7 +47,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ea379882check.
+       PROGRAM-ID. ea379882.
        DATA DIVISION.
        LINKAGE SECTION.
       *MyPgm.check - Params :
@@ -63,4 +63,4 @@
       *MyPgm.check - Params :
       *		output(mydate: BOOL)
            CONTINUE.
-       END PROGRAM ea379882check.
+       END PROGRAM ea379882.

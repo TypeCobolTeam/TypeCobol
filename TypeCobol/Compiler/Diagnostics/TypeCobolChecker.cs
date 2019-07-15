@@ -21,14 +21,8 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         private static string[] READONLY_DATATYPES = {"DATE",};
 
-        public static void OnNode([NotNull] Node node)
+        public static void OnNode([NotNull] VariableWriter variableWriter, Node node)
         {
-            VariableWriter variableWriter = node as VariableWriter;
-            if (variableWriter == null)
-            {
-                return; //not our job
-            }
-
             var element = node.CodeElement as VariableWriter;
             if (element?.VariablesWritten != null)
                 foreach (var pair in element.VariablesWritten)
@@ -47,10 +41,10 @@ namespace TypeCobol.Compiler.Diagnostics
         private static void checkReadOnly(Node node, [NotNull] Node receiving)
         {
             var rtype = receiving.Parent as DataDefinition;
-            if (rtype == null) return;
+            if (rtype == null || rtype.DataType.CobolLanguageLevel == CobolLanguageLevel.Cobol85) return;
             foreach (var type in READONLY_DATATYPES)
             {
-                if (type.Equals(rtype.DataType.Name.ToUpper()))
+                if (type.Equals(rtype.DataType.Name, StringComparison.OrdinalIgnoreCase))
                     DiagnosticUtils.AddError(node, type + " properties are read-only");
             }
         }
@@ -229,6 +223,16 @@ namespace TypeCobol.Compiler.Diagnostics
             for (int c = 0; c < parameters.Count; c++)
             {
                 var expected = parameters[c];
+
+                //Hack until we get a real concept of project to build all of the dependencies
+                if (expected.CodeElement.UserDefinedDataType != null && expected.TypeDefinition == null)
+                {
+                    TypeCobolLinker.ResolveType(expected);
+                    if (expected.TypeDefinition != null)
+                    {
+                        TypeCobolLinker.CheckCircularReferences(expected.TypeDefinition);
+                    }
+                }
                 if (c < callArgsCount)
                 {
                     //Omitted
@@ -989,14 +993,11 @@ namespace TypeCobol.Compiler.Diagnostics
 
     public class GlobalStorageSectionChecker
     {
-        public static void OnNode([NotNull] Node node)
+        public static void OnNode([NotNull] GlobalStorageSection globalStorageSection)
         {
-            var globalStorageSection = node as GlobalStorageSection;
-            if (globalStorageSection == null) return;
-
             //Check if GlobalStorageSection is declared in main program Rule - GLOBALSS_ONLY_IN_MAIN 
             if (!globalStorageSection.GetProgramNode().IsMainProgram)
-                DiagnosticUtils.AddError(node,
+                DiagnosticUtils.AddError(globalStorageSection,
                     "GLOBAL-STORAGE SECTION is only authorized in the main program of this source file.");
 
             //Check every GlobalStorageSection DataDefinition (children)
@@ -1016,6 +1017,10 @@ namespace TypeCobol.Compiler.Diagnostics
             if (data?.LevelNumber != null && data.LevelNumber.Value == 77)
                 DiagnosticUtils.AddError(node,
                     "Level 77 is forbidden in global-storage section.", data);
+
+            if (data?.LevelNumber != null && data.LevelNumber.Value == 49)
+                DiagnosticUtils.AddError(node,
+                    "Data declaration in global-storage section cannot be level 49", data);
 
             //Check variable no Global / External keyword 
             // Rules : - GLOBALSS_NO_GLOBAL_KEYWORD - GLOBALSS_NO_EXTERNAL 

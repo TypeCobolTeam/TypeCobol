@@ -27,7 +27,7 @@
       *    .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ae4b6d10LoopTraceback.
+       PROGRAM-ID. ae4b6d10.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SOURCE-COMPUTER. IBM-370
@@ -73,4 +73,4 @@
       *		output(errCode: ErrorCode)
            goback
            .
-       END PROGRAM ae4b6d10LoopTraceback.
+       END PROGRAM ae4b6d10.

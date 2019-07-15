@@ -1,0 +1,21 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZTEST1.
+       data division.
+       working-storage section.
+       01 NamedSpan typedef strict public.
+           05 name      pic X(10).
+           05 group1.
+               10 span      type DVZTEST2::Span.
+        
+       01 NamedSpanArray typedef strict public.
+           05 namedSpan type DVZTEST1::NamedSpan
+       PROCEDURE DIVISION.
+       declare procedure GetTecMsg public
+           input capt     type DVZTEST2::Span
+           in-out msg     type DVZTEST2::Span
+           .
+       PROCEDURE DIVISION.
+            continue
+            .
+       end-declare.
+       end program DVZTEST1.

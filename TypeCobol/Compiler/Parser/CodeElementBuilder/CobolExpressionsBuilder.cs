@@ -1584,7 +1584,9 @@ namespace TypeCobol.Compiler.Parser
 		}
 
 		internal ReceivingStorageArea CreateStorageArea(CodeElementsParser.StorageArea2Context context) {
-		    var receivingStorageArea = new ReceivingStorageArea(StorageDataType.Any,
+            if (context == null) return null;
+
+            var receivingStorageArea = new ReceivingStorageArea(StorageDataType.Any,
 		        new DataOrConditionStorageArea(
 		            CobolWordsBuilder.CreateDataNameReference(context.dataNameReference())));
             
@@ -1593,6 +1595,18 @@ namespace TypeCobol.Compiler.Parser
 
             return receivingStorageArea;
 		}
+
+        internal ReceivingStorageArea CreateStorageArea(CodeElementsParser.PointerStorageAreaContext context)
+        {
+            if (context == null) return null;
+
+            var receivingStorageArea = new ReceivingStorageArea(StorageDataType.DataPointer, CreateDataItemReference(context.dataItemReference()));
+
+            // Collect storage area read/writes at the code element level
+            this.storageAreaWrites.Add(receivingStorageArea);
+
+            return receivingStorageArea;
+        }
 
         #endregion
 

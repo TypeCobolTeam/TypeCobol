@@ -17,6 +17,7 @@ namespace TypeCobol.Codegen.Actions
                                 {
                                                 NodeActionsProviderMap = new Dictionary<System.Type, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>>>();
                                                 NodeActionsProviderMap[typeof(TypeCobol.Compiler.Nodes.TypeDefinition)]=TypeCobol_Compiler_Nodes_TypeDefinition;
+                                                NodeActionsProviderMap[typeof(TypeCobol.Compiler.Nodes.GlobalStorageSection)]=TypeCobol_Compiler_Nodes_GlobalStorageSection;
                                                 NodeActionsProviderMap[typeof(TypeCobol.Compiler.Nodes.DataDescription)]=TypeCobol_Compiler_Nodes_DataDescription;
                                                 NodeActionsProviderMap[typeof(TypeCobol.Compiler.Nodes.Set)]=TypeCobol_Compiler_Nodes_Set;
                                                 NodeActionsProviderMap[typeof(TypeCobol.Compiler.CodeElements.VariableWriter)]=TypeCobol_Compiler_CodeElements_VariableWriter;
@@ -58,6 +59,19 @@ namespace TypeCobol.Codegen.Actions
                                                 {
                                                 }
                                                 private static Tuple<string,string>[] __ConditionsAttributes_0 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.Nodes.TypeDefinition")};
+                                                public static bool Conditions_0(TypeCobol.Compiler.Nodes.Node @Self)
+                                                {
+                                                                return CheckConditions(@Self, __ConditionsAttributes_0);
+                                                }
+
+                                }
+
+                                struct SkeleTonGlobalStorageSectionModel
+                                {
+                                                public SkeleTonGlobalStorageSectionModel(TypeCobol.Compiler.Nodes.Node @Self)
+                                                {
+                                                }
+                                                private static Tuple<string,string>[] __ConditionsAttributes_0 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.Nodes.GlobalStorageSection")};
                                                 public static bool Conditions_0(TypeCobol.Compiler.Nodes.Node @Self)
                                                 {
                                                                 return CheckConditions(@Self, __ConditionsAttributes_0);
@@ -220,6 +234,11 @@ namespace TypeCobol.Codegen.Actions
                                                 {
                                                                 return CheckConditions(@Self, __ConditionsAttributes_0);
                                                 }
+                                                private static Tuple<string,string>[] __ConditionsAttributes_1 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.Nodes.FunctionDeclaration"), new Tuple<string,string>("visibility","local")};
+                                                public static bool Conditions_1(TypeCobol.Compiler.Nodes.Node @Self)
+                                                {
+                                                                return CheckConditions(@Self, __ConditionsAttributes_1);
+                                                }
 
                                 }
 
@@ -289,13 +308,33 @@ namespace TypeCobol.Codegen.Actions
                                                 }
                                 }
 
+                                struct SkeleTonPGM_USE_GLOBALSTORAGEModel
+                                {
+                                                public dynamic useglobalstoragevariable;
+                                                
+                                                public SkeleTonPGM_USE_GLOBALSTORAGEModel(TypeCobol.Compiler.Nodes.Node @Self)
+                                                {
+                                                                useglobalstoragevariable = @Self["useglobalstoragevariable"];
+                                                }
+                                                private static Tuple<string,string>[] __ConditionsAttributes_0 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.CodeModel.Program")};
+                                                public static bool Conditions_0(TypeCobol.Compiler.Nodes.Node @Self)
+                                                {
+                                                                return CheckConditions(@Self, __ConditionsAttributes_0);
+                                                }
+
+                                }
+
                                 struct SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel
                                 {
                                                 public dynamic imports;
+                                                public dynamic useglobalstoragevariable;
+                                                public dynamic sourceprogramhash;
                                                 
                                                 public SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel(TypeCobol.Compiler.Nodes.Node @Self)
                                                 {
                                                                 imports = @Self["imports"];
+                                                                useglobalstoragevariable = @Self["useglobalstoragevariable"];
+                                                                sourceprogramhash = @Self["sourceprogramhash"];
                                                 }
                                                 private static Tuple<string,string>[] __ConditionsAttributes_0 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.CodeModel.Program")};
                                                 public static bool Conditions_0(TypeCobol.Compiler.Nodes.Node @Self)
@@ -360,6 +399,38 @@ namespace TypeCobol.Codegen.Actions
                                                                 if ((SkeleTonTYPEDEFModel.Conditions_0(@Self)))
                                                                 {
                                                                                 SkeleTonTYPEDEFModel @Model = new SkeleTonTYPEDEFModel(@Self);
+                                                                                StringBuilder @SelfResult = new StringBuilder();
+                                                                                @SelfResult.Append(@"");
+                                                                                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "comment", null, "NODE", null, false);
+                                                                                if (@SelfAction != null)
+                                                                                {
+                                                                                                @SelfActions.Add(@SelfAction);
+                                                                                }
+                                                                }
+                                                }
+                                                return @SelfActions;
+                                }
+
+                                public static List<TypeCobol.Codegen.Actions.Action> TypeCobol_Compiler_Nodes_GlobalStorageSection(TypeCobol.Compiler.Nodes.Node @Self, TypeCobol.Codegen.GeneratorActions @SelfContext)
+                                {
+                                                List<TypeCobol.Codegen.Actions.Action> @SelfActions = new List<TypeCobol.Codegen.Actions.Action>();
+                                                {
+                                                                if ((SkeleTonGlobalStorageSectionModel.Conditions_0(@Self)))
+                                                                {
+                                                                                SkeleTonGlobalStorageSectionModel @Model = new SkeleTonGlobalStorageSectionModel(@Self);
+                                                                                StringBuilder @SelfResult = new StringBuilder();
+                                                                                @SelfResult.Append(@"");
+                                                                                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "clone", null, "NODE", null, false);
+                                                                                if (@SelfAction != null)
+                                                                                {
+                                                                                                @SelfActions.Add(@SelfAction);
+                                                                                }
+                                                                }
+                                                }
+                                                {
+                                                                if ((SkeleTonGlobalStorageSectionModel.Conditions_0(@Self)))
+                                                                {
+                                                                                SkeleTonGlobalStorageSectionModel @Model = new SkeleTonGlobalStorageSectionModel(@Self);
                                                                                 StringBuilder @SelfResult = new StringBuilder();
                                                                                 @SelfResult.Append(@"");
                                                                                 TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "comment", null, "NODE", null, false);
@@ -595,7 +666,7 @@ namespace TypeCobol.Codegen.Actions
         items += "    05 TC-" + @Model.programName8 + "-PntNbr         PIC S9(04) COMP VALUE "+@Model.definitions.functions.Public.Count+".\n";
         }
         foreach (var f in @Model.definitions.functions.Public) {
-        items += "*To call program " + f.Hash + f.Name + '\n';
+        items += "*To call program " + f.Hash + '\n';
         items += "*Which is generated code for " + f.QualifiedName + '\n';
         items += "*Declared in source file " + f.CodeElement.TokenSource.SourceName + '\n';
         items += "    05 TC-"+@Model.programName8 + "-" + f.Hash +"-Idt   PIC X(08) VALUE '" + f.Hash + "'.\n";
@@ -684,7 +755,7 @@ namespace TypeCobol.Codegen.Actions
                                                                 }
                                                 }
                                                 {
-                                                                if ((SkeleTonFUN_DECLARE_PRIVATEModel.Conditions_0(@Self)))
+                                                                if ((SkeleTonFUN_DECLARE_PRIVATEModel.Conditions_0(@Self) || SkeleTonFUN_DECLARE_PRIVATEModel.Conditions_1(@Self)))
                                                                 {
                                                                                 SkeleTonFUN_DECLARE_PRIVATEModel @Model = new SkeleTonFUN_DECLARE_PRIVATEModel(@Self);
                                                                                 StringBuilder @SelfResult = new StringBuilder();
@@ -764,7 +835,7 @@ namespace TypeCobol.Codegen.Actions
         }
 
         items += "    ENTRY '" + function.Hash + "' USING" + usingVariables + '\n';
-        items += "        CALL \"" + function.Hash + function.Name + "\" USING" + usingVariables + '\n';
+        items += "        CALL \"" + function.Hash + "\" USING" + usingVariables + '\n';
         items += "        GOBACK.\n\n";
         }
         }
@@ -809,7 +880,7 @@ namespace TypeCobol.Codegen.Actions
         items += "    05 TC-" + @Model.programName8 + "-PntNbr         PIC S9(04) COMP VALUE "+(@Model.definitions.functionsGeneratedAsNested.Public.Count + @Model.definitions.functions.Public.Count) +".\n";
         }
         foreach (var f in @Model.definitions.functionsGeneratedAsNested.Concat(@Model.definitions.functions.Public, true)) {
-        items += "*To call program " + f.Hash + f.Name + '\n';
+        items += "*To call program " + f.Hash + '\n';
         items += "*Which is generated code for " + f.QualifiedName + '\n';
         items += "*Declared in source file " + f.CodeElement.TokenSource.SourceName + '\n';
         items += "    05 TC-"+@Model.programName8 + "-" + f.Hash +"-Idt   PIC X(08) VALUE '" + f.Hash + "'.\n";
@@ -888,6 +959,22 @@ namespace TypeCobol.Codegen.Actions
                                 {
                                                 List<TypeCobol.Codegen.Actions.Action> @SelfActions = new List<TypeCobol.Codegen.Actions.Action>();
                                                 {
+                                                                if ((SkeleTonPGM_USE_GLOBALSTORAGEModel.Conditions_0(@Self)))
+                                                                {
+                                                                                SkeleTonPGM_USE_GLOBALSTORAGEModel @Model = new SkeleTonPGM_USE_GLOBALSTORAGEModel(@Self);
+                                                                                if ((@Model.useglobalstoragevariable))
+                                                                                {
+                                                                                                StringBuilder @SelfResult = new StringBuilder();
+                                                                                                @SelfResult.Append(@"");
+                                                                                                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, "TypeCobol.Codegen.Contribution.GlobalStorage", @SelfResult.ToString(), "contribute", null, "program.data-division.linkage.begin", null, true);
+                                                                                                if (@SelfAction != null)
+                                                                                                {
+                                                                                                                @SelfActions.Add(@SelfAction);
+                                                                                                }
+                                                                                }
+                                                                }
+                                                }
+                                                {
                                                                 if ((SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel.Conditions_0(@Self)))
                                                                 {
                                                                                 SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel @Model = new SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel(@Self);
@@ -949,7 +1036,7 @@ namespace TypeCobol.Codegen.Actions
           foreach (var pgm in @Model.imports.Programs.Values) {
             foreach (var proc in pgm.Procedures.Values) {
               proc.IsNotByExternalPointer=true;
-              items += "*To call program "+proc.Hash+proc.Name+" in module "+proc.ProcStyleCall.FunctionDeclaration.QualifiedName.Tail+'\n';
+              items += "*To call program " + proc.Hash + " in module "+proc.ProcStyleCall.FunctionDeclaration.QualifiedName.Tail+'\n';
               items += "*Which is generated code for "+proc.ProcStyleCall.FunctionDeclaration.QualifiedName+'\n';
               items += "*Declared in source file " + proc.ProcStyleCall.FunctionDeclaration.CodeElement.TokenSource.SourceName + '\n';
               items += "01 TC-"+pgm.Name + "-" + proc.Hash+"-Item.\n";
@@ -971,14 +1058,39 @@ namespace TypeCobol.Codegen.Actions
                                                                 if ((SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel.Conditions_0(@Self)))
                                                                 {
                                                                                 SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel @Model = new SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel(@Self);
+                                                                                if ((@Model.useglobalstoragevariable))
+                                                                                {
+                                                                                                StringBuilder @SelfResult = new StringBuilder();
+                                                                                                @SelfResult.Append(@"");
+        var clause = "";
+        if (!@Model.imports.HasPublicProcedures) {
+        clause += "* Get the data from the global storage section\n";
+        clause += "    CALL '" + @Model.sourceprogramhash + "' USING\n";
+        clause += "        by reference address of TC-GlobalData\n";
+        clause += "    end-call\n";
+        }
+        @SelfResult.Append(@"
+");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@clause}");@SelfResult.Append(@"");
+                                                                                                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", null, "program.procedure-division.declaratives-header.end,//program.procedure-division.sentence-([0-9]+).begin,//program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-([0-9]+).begin|program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-0.begin", null, true);
+                                                                                                if (@SelfAction != null)
+                                                                                                {
+                                                                                                                @SelfActions.Add(@SelfAction);
+                                                                                                }
+                                                                                }
+                                                                }
+                                                }
+                                                {
+                                                                if ((SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel.Conditions_0(@Self)))
+                                                                {
+                                                                                SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel @Model = new SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel(@Self);
                                                                                 if ((@Model.imports.HasPublicProcedures))
                                                                                 {
                                                                                                 StringBuilder @SelfResult = new StringBuilder();
                                                                                                 @SelfResult.Append(@"");
         var clause = "";
         if (@Model.imports.HasPublicProcedures) {
-        clause += "*\n";
-        clause += "    PERFORM TC-INITIALIZATIONS\n";
+          clause += "*\n";
+          clause += "    PERFORM TC-INITIALIZATIONS\n";
         }
         @SelfResult.Append(@"
 ");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@clause}");@SelfResult.Append(@"");
@@ -1005,6 +1117,12 @@ namespace TypeCobol.Codegen.Actions
         clause += "*=================================================================\n";
         clause += "     IF TC-FirstCall\n";
         clause += "          SET TC-NthCall TO TRUE\n";
+        if (@Model.useglobalstoragevariable) {
+          clause += "* Get the data from the global storage section\n";
+          clause += "          CALL '" + @Model.sourceprogramhash + "' USING\n";
+          clause += "              by reference address of TC-GlobalData\n";
+          clause += "          end-call\n";
+        }
         foreach (var pgm in @Model.imports.Programs.Values) {
         foreach (var proc in pgm.Procedures.Values) {
         clause += "          SET ADDRESS OF TC-"+pgm.Name + "-" + proc.Hash+"-Item  TO NULL\n";

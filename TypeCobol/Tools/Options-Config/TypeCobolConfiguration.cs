@@ -24,6 +24,7 @@ namespace TypeCobol.Tools.Options_Config
         public List<string> CopyFolders = new List<string>();
         public List<string> InputFiles = new List<string>();
         public List<string> OutputFiles = new List<string>();
+        public List<string> LineMapFiles = new List<string>();
         public ExecutionStep ExecToStep = ExecutionStep.Generate; //Default value is Generate
         public string ErrorFile = null;
         public string skeletonPath = "";
@@ -155,7 +156,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "i|input=", "{PATH} to an input file to parse. This option can be specified more than once.", v => typeCobolConfig.InputFiles.Add(v) },
                 { "o|output=","{PATH} to an output file where to generate code. This option can be specified more than once.", v => typeCobolConfig.OutputFiles.Add(v) },
                 { "d|diagnostics=", "{PATH} to the error diagnostics file.", v => typeCobolConfig.ErrorFile = v },
-                { "s|skeletons=", "{PATH} to the skeletons file.", v => typeCobolConfig.skeletonPath = v },
+                { "s|skeletons=", "{PATH} to the skeletons file.", v => typeCobolConfig.skeletonPath = null },
                 { "a|autoremarks", "Enable automatic remarks creation while parsing and generating Cobol.", v => typeCobolConfig.AutoRemarks = true },
                 { "hc|haltonmissingcopy=", "HaltOnMissingCopy will generate a file to list all the absent copies.", v => typeCobolConfig.HaltOnMissingCopyFilePath = v },
                 { "ets|exectostep=", "ExecToStep will execute TypeCobol Compiler until the included given step (Scanner/0, Preprocessor/1, SyntaxCheck/2, SemanticCheck/3, CrossCheck/4, Generate/5).", v => typeCobolConfig.RawExecToStep = v},
@@ -172,7 +173,8 @@ namespace TypeCobol.Tools.Options_Config
                 { "alr|antlrprogparse", "Use ANTLR to parse a program.", v => typeCobolConfig.UseAntlrProgramParsing = true},
                 { "cmr|copymovereport=", "{PATH} to Report all Move and Initialize statements that target a COPY.", v => typeCobolConfig.ReportCopyMoveInitializeFilePath = v },
                 { "zcr|zcallreport=", "{PATH} to report of all program called by zcallpgm.", v => typeCobolConfig.ReportZCallFilePath = v },
-                { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing.", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false }
+                { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing.", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false },
+                { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
             };
             return commonOptions;
         }

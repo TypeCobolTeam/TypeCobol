@@ -1,0 +1,400 @@
+      *TypeCobol_Version:0.1(alpha)
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM1.
+       DATA DIVISION.
+      *GLOBAL-STORAGE SECTION.
+      *01 G-Date TYPE DATE.
+      *01 G-Bool TYPE BOOL.
+
+       WORKING-STORAGE SECTION.
+       01 TC-Callee pic X(08) value 'CALLEE'.
+       01 TC-Call          PIC X VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'
+                            X'00' thru 'S'
+                            'U' thru X'FF'.
+
+                               
+      *01 P-Date TYPE DATE.
+       01 P-Date.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+                           
+       LINKAGE SECTION.
+      *Common to all librairies used by the program.
+       01 TC-Library-PntTab.
+          05 TC-Library-PntNbr          PIC S9(04) COMP.
+          05 TC-Library-Item OCCURS 1000
+                               DEPENDING ON TC-Library-PntNbr
+                               INDEXED   BY TC-Library-Idx.
+              10 TC-Library-Item-Idt      PIC X(08).
+              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
+
+      *To call program a78211ceDoNothing in module Callee
+      *Which is generated code for Callee.DoNothing
+      *Declared in source file Callee.rdz.tcbl
+       01 TC-Callee-a78211ce-Item.
+          05 TC-Callee-a78211ce-Idt PIC X(08).
+          05 TC-Callee-a78211ce PROCEDURE-POINTER.
+
+
+       01 TC-GlobalData.
+
+      *01 G-Date TYPE DATE.
+       02 G-Date.
+           03 YYYY PIC 9(4).
+           03 MM PIC 9(2).
+           03 DD PIC 9(2).
+
+      *01 G-Bool TYPE BOOL.
+       02  G-Bool-value PIC X VALUE LOW-VALUE.
+           88  G-Bool       VALUE 'T'.
+           88  G-Bool-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+
+
+
+       PROCEDURE DIVISION.
+      *
+           PERFORM TC-INITIALIZATIONS
+
+                          
+           
+
+           MOVE P-Date TO G-Date.
+      *    CALL Callee::DoNothing.
+           
+           IF ADDRESS OF TC-Callee-a78211ce-Item = NULL
+             OR TC-Callee-a78211ce-Idt not = 'a78211ce'
+               PERFORM TC-LOAD-POINTERS-Callee
+           END-IF
+      *    Equivalent to call a78211ceDoNothing in module Callee
+           CALL TC-Callee-a78211ce
+           end-call
+                                 .
+           CONTINUE.
+      *=================================================================
+       TC-INITIALIZATIONS.
+      *=================================================================
+            IF TC-FirstCall
+                 SET TC-NthCall TO TRUE
+      * Get the data from the global storage section
+                 CALL 'fecb93f5' USING
+                     by reference address of TC-GlobalData
+                 end-call
+                 SET ADDRESS OF TC-Callee-a78211ce-Item  TO NULL
+            END-IF
+            .
+      *=================================================================
+        TC-LOAD-POINTERS-Callee.
+      *=================================================================
+            CALL 'ZCALLPGM' USING TC-Callee
+            ADDRESS OF TC-Library-PntTab
+            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
+            UNTIL TC-Library-Idx > TC-Library-PntNbr
+                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
+                WHEN 'a78211ce'
+                     SET ADDRESS OF
+                     TC-Callee-a78211ce-Item
+                     TO ADDRESS OF
+                     TC-Library-Item(TC-Library-Idx)
+                WHEN OTHER
+                     CONTINUE
+                END-EVALUATE
+            END-PERFORM
+            .
+
+
+      *DECLARE PROCEDURE MyProcedureUsingNothing.
+
+      *DECLARE PROCEDURE MyProcedureUsingGlobalStorage.
+
+      *DECLARE PROCEDURE MyProcedureImportProc.
+
+      *DECLARE PROCEDURE MyProcedureUsingGlobalStorageAndImportProc.
+       END PROGRAM PGM1.
+
+      *
+      *DECLARE PROCEDURE MyProcedureUsingNothing.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. dc113db8MyProcedureUsingNothin.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *PGM1.MyProcedureUsingNothing  - No Params
+                               
+      *01 P-Bool TYPE BOOL.
+       01  P-Bool-value PIC X VALUE LOW-VALUE.
+           88  P-Bool       VALUE 'T'.
+           88  P-Bool-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                           
+       PROCEDURE DIVISION
+           .
+      *PGM1.MyProcedureUsingNothing  - No Params
+           CONTINUE.
+       END PROGRAM dc113db8MyProcedureUsingNothin.
+      *
+      *DECLARE PROCEDURE MyProcedureUsingGlobalStorage.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. bf501b85MyProcedureUsingGlobal.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *PGM1.MyProcedureUsingGlobalStorage  - No Params
+                               
+      *01 P-Bool TYPE BOOL.
+       01  P-Bool-value PIC X VALUE LOW-VALUE.
+           88  P-Bool       VALUE 'T'.
+           88  P-Bool-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                           
+       LINKAGE SECTION.
+      *PGM1.MyProcedureUsingGlobalStorage  - No Params
+       01 TC-GlobalData.
+
+      *01 G-Date TYPE DATE.
+       02 G-Date.
+           03 YYYY PIC 9(4).
+           03 MM PIC 9(2).
+           03 DD PIC 9(2).
+
+      *01 G-Bool TYPE BOOL.
+       02  G-Bool-value PIC X VALUE LOW-VALUE.
+           88  G-Bool       VALUE 'T'.
+           88  G-Bool-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+
+
+       PROCEDURE DIVISION
+           .
+      *PGM1.MyProcedureUsingGlobalStorage  - No Params
+      * Get the data from the global storage section
+           CALL 'fecb93f5' USING
+               by reference address of TC-GlobalData
+           end-call
+      *    MOVE G-Bool TO P-Bool.
+           MOVE G-Bool-value TO P-Bool-value.
+           CONTINUE.
+       END PROGRAM bf501b85MyProcedureUsingGlobal.
+      *
+      *DECLARE PROCEDURE MyProcedureImportProc.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. bd627c4bMyProcedureImportProc.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *PGM1.MyProcedureImportProc  - No Params
+                               
+       01 TC-Callee pic X(08) value 'CALLEE'.
+
+       01 TC-Call          PIC X     VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'
+                            X'00' thru 'S'
+                            'U' thru X'FF'.
+      *01 P-Bool TYPE BOOL.
+       01  P-Bool-value PIC X VALUE LOW-VALUE.
+           88  P-Bool       VALUE 'T'.
+           88  P-Bool-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                           
+       LINKAGE SECTION.
+      *PGM1.MyProcedureImportProc  - No Params
+      *Common to all librairies used by the program.
+       01 TC-Library-PntTab.
+           05 TC-Library-PntNbr          PIC S9(04) COMP.
+           05 TC-Library-Item OCCURS 1000
+                               DEPENDING ON TC-Library-PntNbr
+                               INDEXED   BY TC-Library-Idx.
+              10 TC-Library-Item-Idt      PIC X(08).
+              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
+
+      *To call program a78211ceDoNothing in module Callee
+      *Which is generated code for Callee.DoNothing
+      *Declared in source file Callee.rdz.tcbl
+       01 TC-Callee-a78211ce-Item.
+          05 TC-Callee-a78211ce-Idt PIC X(08).
+          05 TC-Callee-a78211ce PROCEDURE-POINTER.
+       PROCEDURE DIVISION
+           .
+      *PGM1.MyProcedureImportProc  - No Params
+           PERFORM TC-INITIALIZATIONS
+      *    CALL Callee::DoNothing.
+           
+           IF ADDRESS OF TC-Callee-a78211ce-Item = NULL
+             OR TC-Callee-a78211ce-Idt not = 'a78211ce'
+               PERFORM TC-LOAD-POINTERS-Callee
+           END-IF
+      *    Equivalent to call a78211ceDoNothing in module Callee
+           CALL TC-Callee-a78211ce
+           end-call
+                                 .
+           CONTINUE.
+      *=================================================================
+       TC-INITIALIZATIONS.
+      *=================================================================
+            IF TC-FirstCall
+                 SET TC-NthCall TO TRUE
+                 SET ADDRESS OF TC-Callee-a78211ce-Item  TO NULL
+            END-IF
+            .
+      *=================================================================
+       TC-LOAD-POINTERS-Callee.
+      *=================================================================
+            CALL 'ZCALLPGM' USING TC-Callee
+            ADDRESS OF TC-Library-PntTab
+            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
+            UNTIL TC-Library-Idx > TC-Library-PntNbr
+                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
+                WHEN 'a78211ce'
+                     SET ADDRESS OF
+                     TC-Callee-a78211ce-Item
+                     TO ADDRESS OF
+                     TC-Library-Item(TC-Library-Idx)
+                WHEN OTHER
+                     CONTINUE
+                END-EVALUATE
+            END-PERFORM
+            .
+       END PROGRAM bd627c4bMyProcedureImportProc.
+      *
+      *DECLARE PROCEDURE MyProcedureUsingGlobalStorageAndImportProc.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. bd34ecc2MyProcedureUsingGlobal.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *PGM1.MyProcedureUsingGlobalStorageAndImportProc  - No Params
+                               
+       01 TC-Callee pic X(08) value 'CALLEE'.
+
+       01 TC-Call          PIC X     VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'
+                            X'00' thru 'S'
+                            'U' thru X'FF'.
+      *01 P-Bool TYPE BOOL.
+       01  P-Bool-value PIC X VALUE LOW-VALUE.
+           88  P-Bool       VALUE 'T'.
+           88  P-Bool-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                           
+       LINKAGE SECTION.
+      *PGM1.MyProcedureUsingGlobalStorageAndImportProc  - No Params
+      *Common to all librairies used by the program.
+       01 TC-Library-PntTab.
+           05 TC-Library-PntNbr          PIC S9(04) COMP.
+           05 TC-Library-Item OCCURS 1000
+                               DEPENDING ON TC-Library-PntNbr
+                               INDEXED   BY TC-Library-Idx.
+              10 TC-Library-Item-Idt      PIC X(08).
+              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
+
+      *To call program a78211ceDoNothing in module Callee
+      *Which is generated code for Callee.DoNothing
+      *Declared in source file Callee.rdz.tcbl
+       01 TC-Callee-a78211ce-Item.
+          05 TC-Callee-a78211ce-Idt PIC X(08).
+          05 TC-Callee-a78211ce PROCEDURE-POINTER.
+       01 TC-GlobalData.
+
+      *01 G-Date TYPE DATE.
+       02 G-Date.
+           03 YYYY PIC 9(4).
+           03 MM PIC 9(2).
+           03 DD PIC 9(2).
+
+      *01 G-Bool TYPE BOOL.
+       02  G-Bool-value PIC X VALUE LOW-VALUE.
+           88  G-Bool       VALUE 'T'.
+           88  G-Bool-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+
+
+       PROCEDURE DIVISION
+           .
+      *PGM1.MyProcedureUsingGlobalStorageAndImportProc  - No Params
+           PERFORM TC-INITIALIZATIONS
+      *    MOVE G-Bool TO P-Bool.
+           MOVE G-Bool-value TO P-Bool-value.
+      *    CALL Callee::DoNothing.
+           
+           IF ADDRESS OF TC-Callee-a78211ce-Item = NULL
+             OR TC-Callee-a78211ce-Idt not = 'a78211ce'
+               PERFORM TC-LOAD-POINTERS-Callee
+           END-IF
+      *    Equivalent to call a78211ceDoNothing in module Callee
+           CALL TC-Callee-a78211ce
+           end-call
+                                 .
+           CONTINUE.
+      *=================================================================
+       TC-INITIALIZATIONS.
+      *=================================================================
+            IF TC-FirstCall
+                 SET TC-NthCall TO TRUE
+      * Get the data from the global storage section
+                 CALL 'fecb93f5' USING
+                     by reference address of TC-GlobalData
+                 end-call
+                 SET ADDRESS OF TC-Callee-a78211ce-Item  TO NULL
+            END-IF
+            .
+      *=================================================================
+       TC-LOAD-POINTERS-Callee.
+      *=================================================================
+            CALL 'ZCALLPGM' USING TC-Callee
+            ADDRESS OF TC-Library-PntTab
+            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
+            UNTIL TC-Library-Idx > TC-Library-PntNbr
+                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
+                WHEN 'a78211ce'
+                     SET ADDRESS OF
+                     TC-Callee-a78211ce-Item
+                     TO ADDRESS OF
+                     TC-Library-Item(TC-Library-Idx)
+                WHEN OTHER
+                     CONTINUE
+                END-EVALUATE
+            END-PERFORM
+            .
+       END PROGRAM bd34ecc2MyProcedureUsingGlobal.
+      *
+      * Global Storage Section variables
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. fecb93f5.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 PIC X(8) value ':TC:GBLS'.
+       01 TC-GlobalData.
+       
+      *01 G-Date TYPE DATE.
+       02 G-Date.
+           03 YYYY PIC 9(4).
+           03 MM PIC 9(2).
+           03 DD PIC 9(2).
+                           
+      *01 G-Bool TYPE BOOL.
+       02  G-Bool-value PIC X VALUE LOW-VALUE.
+           88  G-Bool       VALUE 'T'.
+           88  G-Bool-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                           
+
+       LINKAGE SECTION.
+       01 GlobalPointer pointer.
+       PROCEDURE DIVISION USING BY REFERENCE GlobalPointer.
+           set GlobalPointer to address of TC-GlobalData
+           .
+       END PROGRAM fecb93f5.

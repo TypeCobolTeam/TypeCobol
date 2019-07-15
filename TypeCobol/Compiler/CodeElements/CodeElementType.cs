@@ -70,6 +70,7 @@ namespace TypeCobol.Compiler.CodeElements
 
         AcceptStatement,
         AddStatement,
+        AllocateStatement,
         AlterStatement,
         CallStatement,
         CancelStatement,
@@ -85,6 +86,7 @@ namespace TypeCobol.Compiler.CodeElements
         ExitMethodStatement,
         ExitProgramStatement,
         ExitStatement,
+        FreeStatement,
         GobackStatement,
         GotoStatement,
         IfStatement,
@@ -155,8 +157,8 @@ namespace TypeCobol.Compiler.CodeElements
         SubtractStatementEnd,
         UnstringStatementEnd,
         WriteStatementEnd,
-        XmlStatementEnd,
-// [TYPECOBOL]
+        XmlStatementEnd, 
+        // [TYPECOBOL]
 		LibraryCopy,
 		FunctionDeclarationHeader,
 		FunctionDeclarationEnd,
@@ -164,9 +166,7 @@ namespace TypeCobol.Compiler.CodeElements
         GlobalStorageSectionHeader,
         // [/TYPECOBOL]
 
-
         Program,
         ParametersProfile,
-    
     }
 }

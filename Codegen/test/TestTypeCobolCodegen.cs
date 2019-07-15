@@ -798,8 +798,8 @@ namespace TypeCobol.Codegen {
 	    [TestProperty("Time", "fast")]
 	    public void FormalizedCommentsTest()
 	    {
-	        var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
-	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "FormalizedComments") + ".tcbl", skeletons, false, "TestTypeCobolVersion");
+	        var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "FormalizedComments") + ".tcbl", skeletons, false, "TestTypeCobolVersion");
 	    }
 
 	    [TestMethod]
@@ -807,8 +807,8 @@ namespace TypeCobol.Codegen {
 	    [TestProperty("Time", "fast")]
 	    public void MultilinesCommentsTest()
 	    {
-	        var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
-	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "MultilinesComments") + ".tcbl", skeletons, false, "TestTypeCobolVersion");
+	        var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "MultilinesComments") + ".tcbl", skeletons, false, "TestTypeCobolVersion");
 	    }
 
 	    [TestMethod]
@@ -816,8 +816,8 @@ namespace TypeCobol.Codegen {
 	    [TestProperty("Time", "fast")]
 	    public void MoveUnsafeToQualifiedInsideFunction()
 	    {
-	        var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
-	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "MoveUnsafeToQualifiedInsideFunction") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
+	        var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "MoveUnsafeToQualifiedInsideFunction") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
 	    }
 	    
         [TestMethod]
@@ -830,6 +830,26 @@ namespace TypeCobol.Codegen {
 	        string copies = Path.Combine(dir, "resources", "input", "TypeCobol", "TypedefCopys");
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefCopys", "TypedefBodyInsideCopy") + ".rdz.tcbl", skeletons, false,
 	            null, new List<string>() {copies});
+	    }
+
+
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void GlobalStorageLineMapping()
+        {
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
+            CodegenTestUtils.ParseGenerateCompareWithLineMapping(Path.Combine("TypeCobol", "Global_Storage", "GlobalStorage") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
+        }
+
+        [TestMethod]
+	    [TestCategory("Codegen")]
+	    [TestProperty("Time", "fast")]
+	    public void GlobalStorage()
+	    {
+	        var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Global_Storage", "GlobalStorage") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Global_Storage", "GlobalStorageWithUsingTypeDef") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
 	    }
 
 #if EUROINFO_RULES
