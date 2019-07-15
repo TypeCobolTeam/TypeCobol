@@ -1,0 +1,96 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TypeCobol.Analysis.Dfa
+{
+    /// <summary>
+    /// Basic Block information for Data Flow Analysis.
+    /// </summary>
+    /// <typeparam name="N">Type of the Instructions</typeparam>
+    public class DfaBasicBlockInfo<N>
+    {
+        /// <summary>
+        /// Generated definitions bit set: The set of locally available defintions in b.
+        /// This is a set of data which is created to identify which data definitions are made within a basic block.
+        /// </summary>
+        public Util.BitSet Gen
+        {
+            get;
+            internal set;
+        }
+        /// <summary>
+        /// Killed definitions bit set: The Kill set represents those variables defined outside the basic block
+        /// which also have definitions inside the block.
+        /// </summary>
+        public Util.BitSet Kill
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// Definitions live on entry to basic block.
+        /// </summary>
+        public Util.BitSet In
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// Definitions live on basic block exit
+        /// </summary>
+        public Util.BitSet Out
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// Temporary linked list of generated definitions
+        /// </summary>
+        internal LinkedList<N> GenTmp
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Temporary linked list of killed definitions
+        /// </summary>
+        internal LinkedList<N> KillTmp
+        {
+            get;
+            set;
+        }
+
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="cardinality">The cardinality of the dataflow domain</param>
+        public DfaBasicBlockInfo(int cardinality)
+        {
+            Gen = new Util.BitSet(cardinality);
+            Kill = new Util.BitSet(cardinality);
+            In = new Util.BitSet(cardinality);
+            Out = new Util.BitSet(cardinality);
+        }
+
+
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="other">Instance to copy from</param>
+        public DfaBasicBlockInfo(DfaBasicBlockInfo<N> other)
+        {
+            Gen = other.Gen.Clone();
+            Kill = other.Kill.Clone();
+            In = other.In.Clone();
+            Out = other.Out.Clone();
+        }
+    }
+}

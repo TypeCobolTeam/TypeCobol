@@ -22,7 +22,7 @@ namespace TypeCobol.Analysis.Test
         public static NodeListenerFactory BuilderNodeListenerFactory = null;
         public static string DefaultIntrinsicPath = null;
 
-        public static DefaultControlFlowGraphBuilder CfgBuilder;
+        public static DefaultControlFlowGraphBuilder<object> CfgBuilder;
 
         [TestInitialize]
         public void TestInitialize()
@@ -51,7 +51,7 @@ namespace TypeCobol.Analysis.Test
             //Alocate a static Default Control Flow Graph Builder
             BuilderNodeListenerFactory = () =>
             {
-                CfgBuilder = new DefaultControlFlowGraphBuilder();
+                CfgBuilder = new DefaultControlFlowGraphBuilder<object>();
                 return CfgBuilder;
             };
             NodeDispatcher.RegisterStaticNodeListenerFactory(BuilderNodeListenerFactory);

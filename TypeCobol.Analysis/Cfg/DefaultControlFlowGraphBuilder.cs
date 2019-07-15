@@ -9,13 +9,13 @@ namespace TypeCobol.Analysis.Cfg
     /// <summary>
     /// Default Control Flow Graph Builder with any object has Data.
     /// </summary>
-    public class DefaultControlFlowGraphBuilder : ControlFlowGraphBuilder<object>
+    public class DefaultControlFlowGraphBuilder<D> : ControlFlowGraphBuilder<D>  where D : new()
     {
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="parentCfgBuilder">Parent Control Flow Builder for a nested program</param>
-        public DefaultControlFlowGraphBuilder(ControlFlowGraphBuilder<object> parentCfgBuilder = null) : base(parentCfgBuilder)
+        public DefaultControlFlowGraphBuilder(ControlFlowGraphBuilder<D> parentCfgBuilder = null) : base(parentCfgBuilder)
         {
 
         }
@@ -24,9 +24,9 @@ namespace TypeCobol.Analysis.Cfg
         /// Create a Fresh Control Flow Graph Builder.
         /// </summary>
         /// <returns>The fresh Control Flow Graph Builder</returns>
-        protected override ControlFlowGraphBuilder<object> CreateFreshControlFlowGraphBuilder(ControlFlowGraphBuilder<object> parentCfgBuilder = null)            
+        protected override ControlFlowGraphBuilder<D> CreateFreshControlFlowGraphBuilder(ControlFlowGraphBuilder<D> parentCfgBuilder = null)            
         {
-            return new DefaultControlFlowGraphBuilder(parentCfgBuilder);
+            return new DefaultControlFlowGraphBuilder<D>(parentCfgBuilder);
         }
     }
 }
