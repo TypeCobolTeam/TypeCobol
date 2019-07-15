@@ -31,7 +31,7 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *To call program a78211ceDoNothing in module Callee
+      *To call program a78211ce in module Callee
       *Which is generated code for Callee.DoNothing
       *Declared in source file Callee.rdz.tcbl
        01 TC-Callee-a78211ce-Item.
@@ -70,7 +70,7 @@
              OR TC-Callee-a78211ce-Idt not = 'a78211ce'
                PERFORM TC-LOAD-POINTERS-Callee
            END-IF
-      *    Equivalent to call a78211ceDoNothing in module Callee
+      *    Equivalent to call a78211ce in module Callee
            CALL TC-Callee-a78211ce
            end-call
                                  .
@@ -120,7 +120,7 @@
       *DECLARE PROCEDURE MyProcedureUsingNothing.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. dc113db8MyProcedureUsingNothin.
+       PROGRAM-ID. dc113db8.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *PGM1.MyProcedureUsingNothing  - No Params
@@ -136,12 +136,12 @@
            .
       *PGM1.MyProcedureUsingNothing  - No Params
            CONTINUE.
-       END PROGRAM dc113db8MyProcedureUsingNothin.
+       END PROGRAM dc113db8.
       *
       *DECLARE PROCEDURE MyProcedureUsingGlobalStorage.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. bf501b85MyProcedureUsingGlobal.
+       PROGRAM-ID. bf501b85.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *PGM1.MyProcedureUsingGlobalStorage  - No Params
@@ -181,12 +181,12 @@
       *    MOVE G-Bool TO P-Bool.
            MOVE G-Bool-value TO P-Bool-value.
            CONTINUE.
-       END PROGRAM bf501b85MyProcedureUsingGlobal.
+       END PROGRAM bf501b85.
       *
       *DECLARE PROCEDURE MyProcedureImportProc.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. bd627c4bMyProcedureImportProc.
+       PROGRAM-ID. bd627c4b.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *PGM1.MyProcedureImportProc  - No Params
@@ -216,7 +216,7 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *To call program a78211ceDoNothing in module Callee
+      *To call program a78211ce in module Callee
       *Which is generated code for Callee.DoNothing
       *Declared in source file Callee.rdz.tcbl
        01 TC-Callee-a78211ce-Item.
@@ -232,7 +232,7 @@
              OR TC-Callee-a78211ce-Idt not = 'a78211ce'
                PERFORM TC-LOAD-POINTERS-Callee
            END-IF
-      *    Equivalent to call a78211ceDoNothing in module Callee
+      *    Equivalent to call a78211ce in module Callee
            CALL TC-Callee-a78211ce
            end-call
                                  .
@@ -263,12 +263,12 @@
                 END-EVALUATE
             END-PERFORM
             .
-       END PROGRAM bd627c4bMyProcedureImportProc.
+       END PROGRAM bd627c4b.
       *
       *DECLARE PROCEDURE MyProcedureUsingGlobalStorageAndImportProc.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. bd34ecc2MyProcedureUsingGlobal.
+       PROGRAM-ID. bd34ecc2.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *PGM1.MyProcedureUsingGlobalStorageAndImportProc  - No Params
@@ -298,7 +298,7 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *To call program a78211ceDoNothing in module Callee
+      *To call program a78211ce in module Callee
       *Which is generated code for Callee.DoNothing
       *Declared in source file Callee.rdz.tcbl
        01 TC-Callee-a78211ce-Item.
@@ -332,7 +332,7 @@
              OR TC-Callee-a78211ce-Idt not = 'a78211ce'
                PERFORM TC-LOAD-POINTERS-Callee
            END-IF
-      *    Equivalent to call a78211ceDoNothing in module Callee
+      *    Equivalent to call a78211ce in module Callee
            CALL TC-Callee-a78211ce
            end-call
                                  .
@@ -367,7 +367,7 @@
                 END-EVALUATE
             END-PERFORM
             .
-       END PROGRAM bd34ecc2MyProcedureUsingGlobal.
+       END PROGRAM bd34ecc2.
       *
       * Global Storage Section variables
       *_________________________________________________________________

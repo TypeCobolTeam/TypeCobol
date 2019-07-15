@@ -29,7 +29,7 @@
            88 TC-GlobalSt-FctList-IsLoaded      VALUE 'OK'.
        01 TC-GlobalSt-PntTab.
            05 TC-GlobalSt-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program dc31cc72ReadEconomicData
+      *To call program dc31cc72
       *Which is generated code for GlobalStorageTest.ReadEconomicData
       *Declared in source file GlobalStorageWithUsingTypeDef.rdz.tcbl
            05 TC-GlobalSt-dc31cc72-Idt   PIC X(08) VALUE 'dc31cc72'.
@@ -108,7 +108,7 @@
       *DECLARE PROCEDURE ReadEconomicData PUBLIC.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. dc31cc72ReadEconomicData.
+       PROGRAM-ID. dc31cc72.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SOURCE-COMPUTER. IBM-370.
@@ -151,7 +151,7 @@
       *        move "foo" to SharedData::ProgramName
                move "foo" to ProgramName OF SharedData
            .
-       END PROGRAM dc31cc72ReadEconomicData.
+       END PROGRAM dc31cc72.
       *
       * Global Storage Section variables
       *_________________________________________________________________

@@ -134,7 +134,7 @@
       *    INPUT    myDate      TYPE DATE.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c0127659MyProc.
+       PROGRAM-ID. c0127659.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SOURCE-COMPUTER. IBM-370
@@ -202,7 +202,7 @@
            MOVE G-Date TO myDate.
       *    MOVE G-TechCtx TO TestCtx.
            MOVE G-TechCtx-value TO TestCtx-value.
-       END PROGRAM c0127659MyProc.
+       END PROGRAM c0127659.
       *
       * Global Storage Section variables
       *_________________________________________________________________
