@@ -1018,6 +1018,10 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(node,
                     "Level 77 is forbidden in global-storage section.", data);
 
+            if (data?.LevelNumber != null && data.LevelNumber.Value == 49)
+                DiagnosticUtils.AddError(node,
+                    "Data declaration in global-storage section cannot be level 49", data);
+
             //Check variable no Global / External keyword 
             // Rules : - GLOBALSS_NO_GLOBAL_KEYWORD - GLOBALSS_NO_EXTERNAL 
             var dataDescription = dataDefinition.CodeElement as DataDescriptionEntry;

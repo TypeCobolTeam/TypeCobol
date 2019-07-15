@@ -30,12 +30,15 @@ namespace TypeCobol.Compiler.Nodes {
         private int WhereShouldIAdd(System.Type section) {
             if (Tools.Reflection.IsTypeOf(section, typeof(FileSection))) return 0;
             int ifile = -2;
+            int iglobal = -2;
             int iworking = -2;
             int ilocal = -2;
             int ilinkage = -2;
             int c = 0;
             foreach(var child in this.Children()) {
                 if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(FileSection))) ifile = c;
+                else
+                if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(GlobalStorageSection))) iglobal = c;
                 else
                 if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(WorkingStorageSection))) iworking = c;
                 else
@@ -44,9 +47,10 @@ namespace TypeCobol.Compiler.Nodes {
                 if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(LinkageSection))) ilinkage = c;
                 c++;
             }
-            if (Tools.Reflection.IsTypeOf(section, typeof(WorkingStorageSection))) return Math.Max(0,ifile+1);
-            if (Tools.Reflection.IsTypeOf(section, typeof(LocalStorageSection))) return Math.Max(0,Math.Max(ifile+1,iworking+1));
-            if (Tools.Reflection.IsTypeOf(section, typeof(LinkageSection))) return Math.Max(0,Math.Max(ifile+1,Math.Max(iworking+1,ilocal+1)));
+            if (Tools.Reflection.IsTypeOf(section, typeof(GlobalStorageSection))) return Math.Max(0,ifile+1);
+            if (Tools.Reflection.IsTypeOf(section, typeof(WorkingStorageSection))) return Math.Max(0, Math.Max(ifile + 1, iglobal + 1));
+            if (Tools.Reflection.IsTypeOf(section, typeof(LocalStorageSection))) return Math.Max(0,Math.Max(Math.Max(ifile+1, iglobal+1), iworking + 1));
+            if (Tools.Reflection.IsTypeOf(section, typeof(LinkageSection))) return Math.Max(0, Math.Max(Math.Max(Math.Max(ifile + 1, iglobal + 1), iworking + 1), ilocal + 1));
             return 0;
         }
 

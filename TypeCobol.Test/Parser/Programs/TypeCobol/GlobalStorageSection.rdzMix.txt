@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. GlobalStorageTest.
 
        DATA DIVISION.
@@ -12,21 +12,34 @@ Line 8[12,19] <27, Error, Syntax> - Syntax error : Data must be declared between
        01 G-Date            TYPE Date.
        01 G-TechCtx         TYPE Bool.
        01 DuplicatedVar     TYPE Bool.
+      *KO, no typedef allowed in global-storage
+Line 13[8,48] <27, Error, Syntax> - Syntax error : Illegal Type Definition in Global-Storage Section
+       01 ForbiddenTypedef typedef strict pic X.
+
+       01 Test48.
+Line 16[14,18] <27, Error, Syntax> - Syntax error : Data declaration in global-storage section cannot be level 49
+          49 NoVar PIC X.
 
        01 MyGroup.
       *Global clause is not authorized inside Global Storage
-Line 15[15,32] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in GLOBAL-STORAGE SECTION.
+Line 20[15,32] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in GLOBAL-STORAGE SECTION.
            05 ForbiddenGlobalVar     PIC x(10) GLOBAL.
            88 zedzed                VALUE 'TEST'.
       *External clause is not authorized inside Global Storage
-Line 18[11,30] <27, Error, Syntax> - Syntax error : Illegal EXTERNAL clause in GLOBAL-STORAGE SECTION.
+Line 23[11,30] <27, Error, Syntax> - Syntax error : Illegal EXTERNAL clause in GLOBAL-STORAGE SECTION.
        01 ForbiddenExternalVar   PIC 10 EXTERNAL.
 
+       01 DefInGlobalStorageAndNested pic X.
 
        WORKING-STORAGE SECTION.
        01 DuplicatedVar     TYPE Bool.
        01 MyGroup PIC X(10).
            88 TestLevel VALUE "Test".
+      *KO TypeDefs in Global-Storage Section are not referenced in SymbolTable
+Line 32[8,48] <30, Error, Semantics> - Semantic error: TYPE 'ForbiddenTypedef' is not referenced
+       01 invalidTypedVar TYPE ForbiddenTypedef.
+
+       01 DefInMainAsGlobalAndNested global pic X.
 
        PROCEDURE DIVISION.
 
@@ -42,7 +55,7 @@ Line 18[11,30] <27, Error, Syntax> - Syntax error : Illegal EXTERNAL clause in G
         END-DECLARE.
 
        MOVE G-Date TO G-Date.
-Line 40[13,25] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DuplicatedVar 
+Line 50[13,25] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DuplicatedVar 
 Symbols found: GlobalStorageTest::DuplicatedVar | GlobalStorageTest::DuplicatedVar
        MOVE DuplicatedVar TO G-TechCtx.
 
@@ -52,7 +65,7 @@ Symbols found: GlobalStorageTest::DuplicatedVar | GlobalStorageTest::DuplicatedV
        DATA DIVISION.
       *Global Storage Section cannot 
       * be define inside nested program
-Line 48[8,30] <27, Error, Syntax> - Syntax error : GLOBAL-STORAGE SECTION is only authorized in the main program of this source file.
+Line 58[8,30] <27, Error, Syntax> - Syntax error : GLOBAL-STORAGE SECTION is only authorized in the main program of this source file.
        GLOBAL-STORAGE SECTION.
        WORKING-STORAGE SECTION.
        01 MyDate TYPE Date.
@@ -65,11 +78,25 @@ Line 48[8,30] <27, Error, Syntax> - Syntax error : GLOBAL-STORAGE SECTION is onl
        Data division.
        WORKING-STORAGE Section.
        01 TestCtx TYPE Bool.
+       01 DefInGlobalStorageAndNested pic X.
+       01 DefInMainAsGlobalAndNested pic X.
        PROCEDURE DIVISION.
       *G-Date and G-TechCtx are accessible 
       * in nested procedure from Global Storage
        MOVE G-Date TO myDate.
        MOVE G-TechCtx TO TestCtx.
+
+      *KO Rule GLOBALSS_ALWAYS_RESOLVE
+Line 79[6,6] <1, Error, TextFormat> - Invalid indicator character '[6,6]' : use space for source lines, * or / for comment lines, D or d for debugging lines, - for continuation lines
+	  *DefInGlobalStorageAndNested is defined twice
+Line 80[17,43] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DefInGlobalStorageAndNested 
+Symbols found: GlobalStorageTest::NestedProc::MyProc::DefInGlobalStorageAndNested | GlobalStorageTest::DefInGlobalStorageAndNested
+           move DefInGlobalStorageAndNested
+      *KO but it's a bug, it will become OK when #1360 is fixed
+Line 82[17,42] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DefInMainAsGlobalAndNested 
+Symbols found: GlobalStorageTest::NestedProc::MyProc::DefInMainAsGlobalAndNested | GlobalStorageTest::DefInMainAsGlobalAndNested
+             to DefInMainAsGlobalAndNested
+           .
        END-DECLARE.
 
        END PROGRAM NestedProc.
@@ -83,7 +110,7 @@ Line 48[8,30] <27, Error, Syntax> - Syntax error : GLOBAL-STORAGE SECTION is onl
        DATA DIVISION.
       *Global Storage Section cannot 
       * be define inside stacked program
-Line 78[8,30] <27, Error, Syntax> - Syntax error : GLOBAL-STORAGE SECTION is only authorized in the main program of this source file.
+Line 97[8,30] <27, Error, Syntax> - Syntax error : GLOBAL-STORAGE SECTION is only authorized in the main program of this source file.
        GLOBAL-STORAGE SECTION.
 
        WORKING-STORAGE SECTION.
@@ -91,7 +118,7 @@ Line 78[8,30] <27, Error, Syntax> - Syntax error : GLOBAL-STORAGE SECTION is onl
 
        PROCEDURE DIVISION.
       *G-Date is not accessible in StackedProgram
-Line 85[13,18] <27, Error, Syntax> - Syntax error : Symbol G-Date is not referenced
+Line 104[13,18] <27, Error, Syntax> - Syntax error : Symbol G-Date is not referenced
        MOVE G-Date TO MyDate.
 
        END PROGRAM StackedProg.

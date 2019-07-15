@@ -58,6 +58,20 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
+        /// Linearization mode
+        /// </summary>
+        public enum Mode
+        {
+            Normal, //Normal mode
+            Cloned, //Cloned nod emode
+        }
+
+        /// <summary>
+        /// Curent mode.
+        /// </summary>
+        public Mode LinearMode { get; set; }
+
+        /// <summary>
         /// Will we need a ProcessFactoryGeneratedNodeAttachment Phase ?
         /// </summary>
         private bool NeedProcessFactoryGeneratedNodeAttachment;
@@ -333,6 +347,10 @@ namespace TypeCobol.Codegen.Generators
             /// </summary>
             public int LineMapLastIndex;
             /// <summary>
+            /// The 1-based, Delta of the Global Storage line in the corresponding Line Mapping if any.
+            /// </summary>
+            internal int GlobalStorageLineDelta;
+            /// <summary>
             /// Constructor
             /// </summary>
             public NodeFunctionData()
@@ -385,6 +403,7 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="generator">The Generator</param>
         public LinearNodeSourceCodeMapper(Generator generator)
         {
+            LinearMode = Mode.Normal;
             NodeCount = 0;//Count of Nodes Treated.
             Generator = generator;
             int count = generator.CompilationResults.TokensLines.Count;
@@ -795,6 +814,16 @@ namespace TypeCobol.Codegen.Generators
             //During the Linearization Phase, collect data, index of all Nodes.
             //1) Get the Positions of the Node: 
             //  Tuple(from,to,span, lineNumbers, lineOffsets);
+            if (node.IsFlagSet(Node.Flag.UseGlobalStorage))
+            {
+                UseGlobalStorageSection = true;
+            }
+
+            if (node.CodeElement != null && node.CodeElement.Type == CodeElementType.GlobalStorageSectionHeader && node.IsFlagSet(Node.Flag.IsCloned))
+            {
+                //Remember the Global Storage Section node.
+                this.ClonedGlobalStorageSection = (GlobalStorageSection)node;
+            }
             Tuple<int, int, int, List<int>, List<int>> positions = this.Generator.FromToPositions(node);
             if (positions == null)
             { //Node without positions probably a generated node.
@@ -1032,6 +1061,10 @@ namespace TypeCobol.Codegen.Generators
             }
             return true;
         }
+
+        public GlobalStorageSection ClonedGlobalStorageSection { get; set; }
+
+        public bool UseGlobalStorageSection { get; set; }
 
         /// <summary>
         /// Collect all lines that have not been associated to a Node during Function Declaration
@@ -1310,13 +1343,17 @@ namespace TypeCobol.Codegen.Generators
             //First Phase Linearization
             CurrentPhase = Phase.Linearization;            
             Visit(node);
-            //Second Phase Removed Nodes
-            CurrentPhase = Phase.RemovedNodes;
-            foreach (Node erased_node in this.Generator.ErasedNodes)
+            if (LinearMode == Mode.Normal)
             {
-                if (!erased_node.IsFlagSet(Node.Flag.PersistentNode))
-                    Visit(erased_node);//Only Erase non persistent node
+                //Second Phase Removed Nodes
+                CurrentPhase = Phase.RemovedNodes;
+                foreach (Node erased_node in this.Generator.ErasedNodes)
+                {
+                    if (!erased_node.IsFlagSet(Node.Flag.PersistentNode))
+                        Visit(erased_node); //Only Erase non persistent node
+                }
             }
+
             Nodes.TrimExcess();
 
             //Create All SourceTextBuffer Content associated to Nodes
@@ -1425,7 +1462,7 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="lastLine">output le last line number</param>
         /// <param name="lastNode">The last node of the last line number</param>
         /// <returns></returns>
-        private void GetAfterLinearizationLastLine(Node node, ref int lastLine, ref Node lastNode)
+        internal void GetAfterLinearizationLastLine(Node node, ref int lastLine, ref Node lastNode)
         {
             if (node == null)
                 return;

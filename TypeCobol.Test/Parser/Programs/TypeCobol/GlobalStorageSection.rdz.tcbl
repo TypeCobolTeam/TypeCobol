@@ -9,6 +9,11 @@
        01 G-Date            TYPE Date.
        01 G-TechCtx         TYPE Bool.
        01 DuplicatedVar     TYPE Bool.
+      *KO, no typedef allowed in global-storage
+       01 ForbiddenTypedef typedef strict pic X.
+
+       01 Test48.
+          49 NoVar PIC X.
 
        01 MyGroup.
       *Global clause is not authorized inside Global Storage
@@ -17,11 +22,16 @@
       *External clause is not authorized inside Global Storage
        01 ForbiddenExternalVar   PIC 10 EXTERNAL.
 
+       01 DefInGlobalStorageAndNested pic X.
 
        WORKING-STORAGE SECTION.
        01 DuplicatedVar     TYPE Bool.
        01 MyGroup PIC X(10).
            88 TestLevel VALUE "Test".
+      *KO TypeDefs in Global-Storage Section are not referenced in SymbolTable
+       01 invalidTypedVar TYPE ForbiddenTypedef.
+
+       01 DefInMainAsGlobalAndNested global pic X.
 
        PROCEDURE DIVISION.
 
@@ -57,11 +67,20 @@
        Data division.
        WORKING-STORAGE Section.
        01 TestCtx TYPE Bool.
+       01 DefInGlobalStorageAndNested pic X.
+       01 DefInMainAsGlobalAndNested pic X.
        PROCEDURE DIVISION.
       *G-Date and G-TechCtx are accessible 
       * in nested procedure from Global Storage
        MOVE G-Date TO myDate.
        MOVE G-TechCtx TO TestCtx.
+
+      *KO Rule GLOBALSS_ALWAYS_RESOLVE
+	  *DefInGlobalStorageAndNested is defined twice
+           move DefInGlobalStorageAndNested
+      *KO but it's a bug, it will become OK when #1360 is fixed
+             to DefInMainAsGlobalAndNested
+           .
        END-DECLARE.
 
        END PROGRAM NestedProc.

@@ -37,27 +37,27 @@
            88 TC-DVZZDATE-FctList-IsLoaded      VALUE 'OK'.
        01 TC-DVZZDATE-PntTab.
            05 TC-DVZZDATE-PntNbr         PIC S9(04) COMP VALUE 5.
-      *To call program db42865ccurrentDate
+      *To call program db42865c
       *Which is generated code for DVZZDATE.currentDate
       *Declared in source file Library.rdz.cbl
            05 TC-DVZZDATE-db42865c-Idt   PIC X(08) VALUE 'db42865c'.
            05 TC-DVZZDATE-db42865c PROCEDURE-POINTER.
-      *To call program fa5ee5e9currentDateDB2
+      *To call program fa5ee5e9
       *Which is generated code for DVZZDATE.currentDateDB2
       *Declared in source file Library.rdz.cbl
            05 TC-DVZZDATE-fa5ee5e9-Idt   PIC X(08) VALUE 'fa5ee5e9'.
            05 TC-DVZZDATE-fa5ee5e9 PROCEDURE-POINTER.
-      *To call program cf63e86fcurrentDateJulian
+      *To call program cf63e86f
       *Which is generated code for DVZZDATE.currentDateJulian
       *Declared in source file Library.rdz.cbl
            05 TC-DVZZDATE-cf63e86f-Idt   PIC X(08) VALUE 'cf63e86f'.
            05 TC-DVZZDATE-cf63e86f PROCEDURE-POINTER.
-      *To call program cfc290cecurrentDateFreeFormat
+      *To call program cfc290ce
       *Which is generated code for DVZZDATE.currentDateFreeFormat
       *Declared in source file Library.rdz.cbl
            05 TC-DVZZDATE-cfc290ce-Idt   PIC X(08) VALUE 'cfc290ce'.
            05 TC-DVZZDATE-cfc290ce PROCEDURE-POINTER.
-      *To call program b8721d20currentDateString
+      *To call program b8721d20
       *Which is generated code for DVZZDATE.currentDateString
       *Declared in source file Library.rdz.cbl
            05 TC-DVZZDATE-b8721d20-Idt   PIC X(08) VALUE 'b8721d20'.
@@ -129,7 +129,7 @@
       *    RETURNING Result TYPE date.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. db42865ccurrentDate.
+       PROGRAM-ID. db42865c.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
@@ -148,13 +148,13 @@
       *		returns(Result: DATE)
            ACCEPT Result FROM DATE YYYYMMDD
            .
-       END PROGRAM db42865ccurrentDate.
+       END PROGRAM db42865c.
       *
       *DECLARE FUNCTION currentDateDB2 PUBLIC
       *    RETURNING Result Type dateDB2.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. fa5ee5e9currentDateDB2.
+       PROGRAM-ID. fa5ee5e9.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
@@ -196,14 +196,14 @@
       *    move '-'                 to Result(8:1)
            
            .
-       END PROGRAM fa5ee5e9currentDateDB2.
+       END PROGRAM fa5ee5e9.
       *
       *DECLARE FUNCTION currentDateJulian PUBLIC
       * my comment
       *    RETURNING Result Type dateJulian.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. cf63e86fcurrentDateJulian.
+       PROGRAM-ID. cf63e86f.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
@@ -235,7 +235,7 @@
       *    move unsafe W-Dat to Result
            move        W-Dat to Result
            .
-       END PROGRAM cf63e86fcurrentDateJulian.
+       END PROGRAM cf63e86f.
       *
       *DECLARE FUNCTION currentDateFreeFormat PUBLIC
       *                   INPUT dateType   PIC X(01)
@@ -247,7 +247,7 @@
       *                   RETURNING Result PIC X(40).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. cfc290cecurrentDateFreeFormat.
+       PROGRAM-ID. cfc290ce.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
@@ -293,13 +293,13 @@
 
            continue
            .
-       END PROGRAM cfc290cecurrentDateFreeFormat.
+       END PROGRAM cfc290ce.
       *
       *DECLARE FUNCTION currentDateString PUBLIC
       *    RETURNING Result TYPE dateString.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. b8721d20currentDateString.
+       PROGRAM-ID. b8721d20.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
@@ -315,4 +315,4 @@
       *		returns(Result: dateString)
            ACCEPT Result FROM DATE YYYYMMDD
            .
-       END PROGRAM b8721d20currentDateString.
+       END PROGRAM b8721d20.

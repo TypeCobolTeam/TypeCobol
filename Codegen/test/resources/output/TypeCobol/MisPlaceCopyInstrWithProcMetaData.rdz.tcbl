@@ -21,7 +21,7 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *To call program bdb3e928Foo in module DVZF0OS2
+      *To call program bdb3e928 in module DVZF0OS2
       *Which is generated code for DVZF0OS2.Foo
       *Declared in source file MisPlaceCopyInstrWithProcMetaData.rdz.tcb
       *l
@@ -43,7 +43,7 @@
              OR TC-DVZF0OS2-bdb3e928-Idt not = 'bdb3e928'
                PERFORM TC-LOAD-POINTERS-DVZF0OS2
            END-IF
-      *    Equivalent to call bdb3e928Foo in module DVZF0OS2
+      *    Equivalent to call bdb3e928 in module DVZF0OS2
            CALL TC-DVZF0OS2-bdb3e928
            end-call
                              
@@ -87,7 +87,7 @@
            88 TC-DVZF0OS2-FctList-IsLoaded      VALUE 'OK'.
        01 TC-DVZF0OS2-PntTab.
            05 TC-DVZF0OS2-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program bdb3e928Foo
+      *To call program bdb3e928
       *Which is generated code for DVZF0OS2.Foo
       *Declared in source file MisPlaceCopyInstrWithProcMetaData.rdz.tcb
       *l
@@ -128,5 +128,5 @@
       *declare procedure Foo public.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. bdb3e928Foo.
-       END PROGRAM bdb3e928Foo.
+       PROGRAM-ID. bdb3e928.
+       END PROGRAM bdb3e928.
