@@ -33,7 +33,7 @@
       *declare procedure Dump.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c1f451c9Dump.
+       PROGRAM-ID. c1f451c9.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SOURCE-COMPUTER. IBM-370
@@ -51,12 +51,12 @@
       DEND DECLARATIVES.
            goback
            .
-       END PROGRAM c1f451c9Dump.
+       END PROGRAM c1f451c9.
       *
       *declare procedure Dump2.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e4c075b4Dump2.
+       PROGRAM-ID. e4c075b4.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SOURCE-COMPUTER. IBM-370
@@ -68,4 +68,4 @@
       *TCOZFCPT.Dump2  - No Params
            goback
            .
-       END PROGRAM e4c075b4Dump2.
+       END PROGRAM e4c075b4.

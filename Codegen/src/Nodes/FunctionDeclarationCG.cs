@@ -11,7 +11,6 @@ namespace TypeCobol.Codegen.Nodes {
     using TypeCobol.Compiler.Text;
 
     internal class FunctionDeclarationCG : Compiler.Nodes.FunctionDeclaration, Generated {
-        private string OriginalProcName = string.Empty; //Limited to 22 characters
         FunctionDeclaration OriginalNode = null;
 
         public FunctionDeclarationCG(Compiler.Nodes.FunctionDeclaration originalNode) : base(originalNode.CodeElement) {
@@ -22,9 +21,6 @@ namespace TypeCobol.Codegen.Nodes {
                              (originalNode.CodeElement.Profile.ReturningParameter != null ? 1 : 0) > 0;
             //we'll generate things for public call
             var containsPublicCall = originalNode.ProcStyleCalls != null && originalNode.ProcStyleCalls.Count > 0;
-
-            //Get procedure original name and truncate it to 22 chars if over. 
-            OriginalProcName = originalNode.Name.Substring(0,Math.Min(originalNode.Name.Length, 22));
 
             foreach (var child in originalNode.Children) {
                 if (child is Compiler.Nodes.ProcedureDivision) {
@@ -83,7 +79,7 @@ namespace TypeCobol.Codegen.Nodes {
                 } else {
                     if (child.CodeElement is FunctionDeclarationEnd)
                     {
-                        children.Add(new ProgramEnd(new URI(OriginalHash), OriginalProcName, child.CodeElement.Line));
+                        children.Add(new ProgramEnd(new URI(OriginalHash), child.CodeElement.Line));
                     } else {
                         // TCRFUN_CODEGEN_NO_ADDITIONAL_DATA_SECTION
                         // TCRFUN_CODEGEN_DATA_SECTION_AS_IS
@@ -141,7 +137,7 @@ namespace TypeCobol.Codegen.Nodes {
                 foreach (var proc in pgm.Procedures.Values) {
                     proc.IsNotByExternalPointer = true;
                     toAddRange.Add(new GeneratedNode2(" ", true));
-                    toAddRange.Add(new GeneratedNode2("*To call program " + proc.Hash + proc.Name + " in module " + proc.ProcStyleCall.FunctionDeclaration.QualifiedName.Tail, false));
+                    toAddRange.Add(new GeneratedNode2("*To call program " + proc.Hash + " in module " + proc.ProcStyleCall.FunctionDeclaration.QualifiedName.Tail, false));
                     toAddRange.Add(new GeneratedNode2("*Which is generated code for " + proc.ProcStyleCall.FunctionDeclaration.QualifiedName, false));
                     toAddRange.Add(new GeneratedNode2("*Declared in source file " + proc.ProcStyleCall.FunctionDeclaration.CodeElement.TokenSource.SourceName, false));
                     toAddRange.Add(new GeneratedNode2("01 TC-" + pgm.Name + "-" + proc.Hash + "-Item.", false));
@@ -313,11 +309,11 @@ namespace TypeCobol.Codegen.Nodes {
                     _cache.Add(new TextLineSnapshot(-1, "IDENTIFICATION DIVISION.", null));
                     if (OriginalNode.GenerateAsNested)
                     {
-                        _cache.Add(new TextLineSnapshot(-1, "PROGRAM-ID. " + OriginalHash + OriginalProcName + " IS COMMON.", null));
+                        _cache.Add(new TextLineSnapshot(-1, "PROGRAM-ID. " + OriginalHash + " IS COMMON.", null));
                     }
                     else
                     {
-                        _cache.Add(new TextLineSnapshot(-1, "PROGRAM-ID. " + OriginalHash + OriginalProcName + '.', null));
+                        _cache.Add(new TextLineSnapshot(-1, "PROGRAM-ID. " + OriginalHash + '.', null));
                     }
 
                     var envDiv = OriginalNode.GetProgramNode().GetChildren<EnvironmentDivision>();

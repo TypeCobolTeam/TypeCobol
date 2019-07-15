@@ -24,7 +24,7 @@
            88 TC-DVZF0OSM-FctList-IsLoaded      VALUE 'OK'.
        01 TC-DVZF0OSM-PntTab.
            05 TC-DVZF0OSM-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program d6385c17Titi
+      *To call program d6385c17
       *Which is generated code for DVZF0OSM.Titi
       *Declared in source file DeclarativesWithProcedures.tcbl
            05 TC-DVZF0OSM-d6385c17-Idt   PIC X(08) VALUE 'd6385c17'.
@@ -79,7 +79,7 @@
       *declare procedure Titi PUBLIC.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. d6385c17Titi.
+       PROGRAM-ID. d6385c17.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SOURCE-COMPUTER. IBM-370
@@ -115,12 +115,12 @@
             set ae5bf0a5Idx-TaxElm to 1
            goback
            .
-       END PROGRAM d6385c17Titi.
+       END PROGRAM d6385c17.
       *
       *declare procedure Toto.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c9ad76ebToto.
+       PROGRAM-ID. c9ad76eb.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SOURCE-COMPUTER. IBM-370
@@ -148,4 +148,4 @@
             set ac7b6441Idx-TaxElm to 1
            goback
            .
-       END PROGRAM c9ad76ebToto.
+       END PROGRAM c9ad76eb.
