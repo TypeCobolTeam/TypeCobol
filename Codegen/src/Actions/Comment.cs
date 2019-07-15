@@ -20,26 +20,42 @@ namespace TypeCobol.Codegen.Actions
             private set;
         }
 
+        private bool Commented
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="node">The target node to be commented</param>
-        public Comment(Node node) 
+        /// <param name="bComment">true to comment, false to uncomment</param>
+        public Comment(Node node, bool bComment = true) 
         { 
-            this.Node = node; 
+            this.Node = node;
+            this.Commented = bComment;
         }
 
         /// <summary>
         /// Execute the action
         /// </summary>
-        public void Execute() 
-        { 
-            comment(this.Node);
-            List<Node> erasedNodes = new List<Node>();
-            erasedNodes.Add(this.Node);
-            this.Node.ListChildren(erasedNodes);
-            erasedNodes.TrimExcess();
-            ErasedNodes = erasedNodes;
+        public IList<Action> Execute() 
+        {
+            if (!this.Node.IsFlagSet(Node.Flag.IgnoreCommentAction))
+            {
+                comment(this.Node);
+                if (Commented)
+                {
+                    List<Node> erasedNodes = new List<Node>();
+                    erasedNodes.Add(this.Node);
+                    this.Node.ListChildren(erasedNodes);
+                    erasedNodes.TrimExcess();
+                    ErasedNodes = erasedNodes;
+                }
+            }
+
+            return null;
         }
         /// <summary>
         /// Mark this node that it must be commented with all its chilbren.
@@ -47,8 +63,8 @@ namespace TypeCobol.Codegen.Actions
         /// <param name="node"></param>
         private void comment(Node node)
         {
-            node.Comment = true;
-            foreach (var child in node.Children) 
+            node.Comment = Commented;
+            foreach (var child in node.Children)
                 comment(child);
         }
     }

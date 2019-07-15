@@ -20,7 +20,7 @@ namespace TypeCobol.Compiler.Scanner
             _ScannerDiagnostics = new List<Diagnostic>();
         }
 
-        internal void InitializeScanState(MultilineScanState initialScanState)
+        public void InitializeScanState(MultilineScanState initialScanState)
         {
             InitialScanState = initialScanState;
             ScanState = initialScanState != null ?  initialScanState.Clone(): null;

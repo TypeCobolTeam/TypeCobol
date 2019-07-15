@@ -833,14 +833,15 @@ namespace TypeCobol.Codegen.Actions
         /// Execute the Qualification action
         /// <param name="generator">The Genarator instance</param>
         /// </summary>
-        public void Execute()
+        public IList<Action> Execute()
         {
             if (Source == null)
-                return;
+                return null;
             if (Source.IsFlagSet(Node.Flag.HasBeenTypeCobolQualifierVisited))
-                return;
+                return null;
             TypeCobolCobolQualifierVistor visitor = new TypeCobolCobolQualifierVistor(Generator);
             Source.AcceptASTVisitor(visitor);
+            return null;
         }
     }
 }

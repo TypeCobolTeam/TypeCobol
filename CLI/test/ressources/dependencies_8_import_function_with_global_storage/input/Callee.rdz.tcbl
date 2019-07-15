@@ -1,0 +1,10 @@
+﻿      *Callee contains public procedures and types
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Callee.
+       PROCEDURE DIVISION.
+           CONTINUE.
+       DECLARE PROCEDURE DoNothing PUBLIC.
+       PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       END PROGRAM Callee.

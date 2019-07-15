@@ -55,7 +55,7 @@ namespace TypeCobol.Codegen.Actions
         /// <summary>
         /// Perform the creation action, the new GeneratedNode is added as child in the Parent node.
         /// </summary>
-        public void Execute()
+        public IList<Action> Execute()
         {
             int index = (position ?? -1);
             Parent.Add(Child, index);
@@ -63,6 +63,7 @@ namespace TypeCobol.Codegen.Actions
             {
                 Child.SetFlag(Node.Flag.FactoryGeneratedNodeKeepInsertionIndex, true);
             }
+            return null;
         }
     }
 }
