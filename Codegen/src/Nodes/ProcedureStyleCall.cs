@@ -75,10 +75,10 @@ namespace TypeCobol.Codegen.Nodes {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
 				var hash = Node.FunctionDeclaration.Hash;
-                var originalProcName = Node.FunctionDeclaration.Name.Substring(0, Math.Min(Node.FunctionDeclaration.Name.Length, 22));
+
                 //Rule: TCCODEGEN_FIXFOR_ALIGN_FUNCALL
                 TypeCobol.Compiler.Nodes.FunctionDeclaration fun_decl = this.Node.FunctionDeclaration;
-                string callString = null;
+                string callString;
 
                 //We don't need end-if anymore, but I let it for now. Because this generated code still need to be tested on production
                 bool bNeedEndIf = false;
