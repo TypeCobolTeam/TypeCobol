@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TypeCobol.LanguageServer.JsonRPC;
+using TypeCobol.LanguageServer.VsCodeProtocol;
 
 namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 {
@@ -15,6 +16,31 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             rpcServer.RegisterRequestMethod(NodeRefreshRequest.Type, ReceivedRefreshNodeRequest);
             rpcServer.RegisterNotificationMethod(SignatureHelpContextNotification.Type, ReceivedSignatureHelpContext);
             rpcServer.RegisterNotificationMethod(ExtractUseCopiesNotification.Type, ReceivedExtractUseCopiesNotification);
+        }
+
+        protected override void OnShutdown()
+        {
+            if (this.Workspace.DocumentModifiedEvent != null)
+                this.Workspace.DocumentModifiedEvent -= DocumentModified;
+
+            base.OnShutdown();
+        }
+
+        protected override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
+        {
+            if (this.Workspace.DocumentModifiedEvent == null)
+            {
+                this.Workspace.DocumentModifiedEvent += DocumentModified;
+            }
+            base.OnDidOpenTextDocument(parameters);
+        }
+
+        protected override void OnDidCloseTextDocument(DidCloseTextDocumentParams parameters)
+        {
+            base.OnDidCloseTextDocument(parameters);
+            if (this.Workspace.DocumentModifiedEvent != null && this.Workspace.OpenedDocumentContext.Count == 0)
+                this.Workspace.DocumentModifiedEvent -= DocumentModified;
+
         }
 
         private void CallReceiveMissingCopies(NotificationType notificationType, object parameters)
@@ -135,6 +161,40 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 
             if (retrievedFuncDeclarationPair.Key != null)
                 this.SignatureCompletionContext = retrievedFuncDeclarationPair.Value;
+        }
+
+        /// <summary>
+        /// The refresh Outline notification is received for each document modification 
+        /// It will update the main OutlineNode with the new information. 
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <param name="bForced">Force the server to send the program OutlineNodes</param>
+        protected virtual void OnDidReceiveRefreshOutline(string uri, bool bForced)
+        {
+            var context = GetDocumentContextFromStringUri(uri, false);
+
+            if (context != null && context.FileCompiler != null)
+            {
+                var refreshOutlineParams = context.LanguageServer.UpdateOutline(context.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot);
+                if (refreshOutlineParams != null)
+                {
+                    SendOutlineData(refreshOutlineParams);
+                }
+            }
+
+        }
+
+        public void DocumentModified(object sender, EventArgs args)
+        {
+            OnDidReceiveRefreshOutline(sender.ToString(), false);
+        }
+
+        /// <summary>
+        /// Outline data notification are sent from the server to the client to send data when changing focused document.
+        /// </summary>
+        public virtual void SendOutlineData(RefreshOutlineParams parameters)
+        {
+            this.RpcServer.SendNotification(RefreshOutlineNotification.Type, parameters);
         }
     }
 }
