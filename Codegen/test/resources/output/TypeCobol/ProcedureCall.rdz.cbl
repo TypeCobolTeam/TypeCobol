@@ -75,14 +75,14 @@
 
       *CALL GetPtrFn
       *      INPUT funcPointer procPointer.
-       CALL 'd03c3701GetPtrFn' USING
+       CALL 'd03c3701' USING
                                  funcPointer
                                  procPointer
            end-call
                                           .
 
       *CALL ProcedureWithANameOver22Chars.
-       CALL 'eb292c28ProcedureWithANameOver'
+       CALL 'eb292c28'
            end-call
                                          .
 
@@ -91,7 +91,7 @@
       *    CALL ValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'df9b9795ValidateDateFormat' USING
+           CALL 'df9b9795' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -102,7 +102,7 @@
       *    CALL ValidateDateFormat
       *             INPUT      somedate by content 'YYYYMMDD'
       *             OUTPUT     flag     realformat
-           CALL 'df9b9795ValidateDateFormat' USING
+           CALL 'df9b9795' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference flag-value
@@ -114,14 +114,14 @@
       *      however, this is parsed as a standard COBOL call
       *    Will change after issue #366
       *    CALL ValidateDateFormat END-CALL
-           CALL 'f0da699bValidateDateFormat'
+           CALL 'f0da699b'
                                    END-CALL
       * __________________________________________________
       * OK with INPUT on the same line as call
       *    CALL ValidateDateFormat INPUT      somedate
       *                                       by content 'YYYYMMDD'
       *                            OUTPUT     flag     realformat
-           CALL 'df9b9795ValidateDateFormat' USING
+           CALL 'df9b9795' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference flag-value
@@ -134,7 +134,7 @@
       *    CALL ValidateDateFormat INPUT     by content somedate
       *                                        'YYYYMMDD'
       *                            OUTPUT     flag     realformat
-           CALL 'df9b9795ValidateDateFormat' USING
+           CALL 'df9b9795' USING
                     by content   somedate
                                  'YYYYMMDD'
                     by reference flag-value
@@ -150,7 +150,7 @@
       *                           address of myDate2
       *                 IN-OUT myDate3 myDate4
       *                            OUTPUT     flag     realformat
-           CALL 'e6e45a7dmyProc' USING
+           CALL 'e6e45a7d' USING
                     by content   somedate
                                  'YYYYMMDD'
                                  myDate2
@@ -171,7 +171,7 @@
       *                        myDate4
       *                 OUTPUT flag
       *                        realformat
-           CALL 'e6e45a7dmyProc' USING
+           CALL 'e6e45a7d' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference myDate2
@@ -192,7 +192,7 @@
       *                        myDate4
       *                 OUTPUT flag
       *                        realformat
-           CALL 'e6e45a7dmyProc' USING
+           CALL 'e6e45a7d' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference myDate2
@@ -212,7 +212,7 @@
       *           ptrPr procedure-pointer.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. d03c3701GetPtrFn.
+       PROGRAM-ID. d03c3701.
        DATA DIVISION.
        LINKAGE SECTION.
       *ProcedureCall.GetPtrFn - Params :
@@ -226,19 +226,19 @@
       *ProcedureCall.GetPtrFn - Params :
       *		input(ptrFn: function-pointer, ptrPr: procedure-pointer)
            CONTINUE.
-       END PROGRAM d03c3701GetPtrFn.
+       END PROGRAM d03c3701.
       *
       *DECLARE PROCEDURE ProcedureWithANameOver22Chars PRIVATE.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. eb292c28ProcedureWithANameOver.
-       END PROGRAM eb292c28ProcedureWithANameOver.
+       PROGRAM-ID. eb292c28.
+       END PROGRAM eb292c28.
       *
       *DECLARE PROCEDURE ValidateDateFormat PRIVATE.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. f0da699bValidateDateFormat.
-       END PROGRAM f0da699bValidateDateFormat.
+       PROGRAM-ID. f0da699b.
+       END PROGRAM f0da699b.
       *
       *DECLARE PROCEDURE ValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
@@ -248,7 +248,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. df9b9795ValidateDateFormat.
+       PROGRAM-ID. df9b9795.
        DATA DIVISION.
        LINKAGE SECTION.
       *ProcedureCall.ValidateDateFormat - Params :
@@ -275,7 +275,7 @@
       *		input(mydate: DATE, format: pic X(08))
       *		output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
-       END PROGRAM df9b9795ValidateDateFormat.
+       END PROGRAM df9b9795.
       *
       *DECLARE PROCEDURE myProc PRIVATE
       *   INPUT  mydate        TYPE Date
@@ -289,7 +289,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e6e45a7dmyProc.
+       PROGRAM-ID. e6e45a7d.
        DATA DIVISION.
        LINKAGE SECTION.
       *ProcedureCall.myProc - Params :
@@ -337,4 +337,4 @@
       *		in-out(myDate3: DATE, myDate4: DATE)
       *		output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
-       END PROGRAM e6e45a7dmyProc.
+       END PROGRAM e6e45a7d.

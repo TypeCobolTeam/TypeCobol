@@ -67,10 +67,41 @@ namespace CLI.Test
             CLITestHelper.Test("dependencies_5", ReturnCode.Success);
             CLITestHelper.Test("dependencies_6", ReturnCode.Success);
             CLITestHelper.Test("dependency_with_copy_loading", ReturnCode.Success);
+            CLITestHelper.Test("dependencies_8_import_function_with_global_storage", ReturnCode.Success);
 #if EUROINFO_RULES
             CLITestHelper.Test("ei_dependencies_1", ReturnCode.ParsingDiagnostics);
 #endif
         }
+
+        /// <summary>
+        /// Test various case of usage of dependencies that all ends with errors.
+        /// The purpose is also to not have a too big TestDependencies method/
+        /// </summary>
+        [TestMethod]
+        public void TestDependenciesWithErrors() {
+            CLITestHelper.Test("dependencies_7_bad_call_proc", ReturnCode.ParsingDiagnostics);
+        }
+
+        /// <summary>
+        /// Tests with a dependency that depends on a dependency which is loaded after itself.
+        /// </summary>
+        [TestMethod]
+        public void TestDpendenciesNotLoadedInCorrectOrder() {
+            CLITestHelper.Test("dependenciesNotLoadedInCorrectOrder", ReturnCode.ParsingDiagnostics);
+            CLITestHelper.Test("dependenciesNotLoadedInCorrectOrder_2", ReturnCode.Success);
+        }
+
+
+
+
+        
+
+            [TestMethod]
+        public void TestCircularTypedef_1()
+        {
+            CLITestHelper.Test("CircularTypedef_1", ReturnCode.ParsingDiagnostics);
+        }
+
 
         [TestMethod]
         public void TestEmptyDependency()
@@ -202,7 +233,7 @@ namespace CLI.Test
         {
             CLITestHelper.ReadConsole("arguments_errors_1", ReturnCode.MultipleErrors);
             CLITestHelper.ReadConsole("arguments_errors_2", ReturnCode.MultipleErrors);
-            CLITestHelper.ReadConsole("arguments_errors_3", ReturnCode.MultipleErrors);
+            CLITestHelper.ReadConsole("arguments_errors_3", ReturnCode.OutputPathError);
         }
 
         /// <summary>

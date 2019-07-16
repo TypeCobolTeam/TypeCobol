@@ -189,6 +189,10 @@ codeElement:
 	returnStatement |
 	returnStatementEnd |
 	sortStatement |
+
+//	[COBOL2002]
+    cobol2002Statement |
+//	[/COBOL2002]
 	
 	// --- Conditions for conditional statements  ---
 	atEndCondition |
@@ -204,12 +208,19 @@ codeElement:
 	onSizeErrorCondition |
 	notOnSizeErrorCondition
 
-//	 [TYPECOBOL]
+//	[TYPECOBOL]
 	| tcCodeElement;
 
 // what is here is not important as long as it is not epsilon
 tcCodeElement: PUBLIC | PRIVATE | UNSAFE;
 //	[/TYPECOBOL]
+
+
+//	[COBOL2002]
+// dummy definition of Cobol 2002 or V6 code elements, not used but required by Antlr.
+// see Cobol2002CodeElements.g4 for the proper definition.
+cobol2002Statement: UNSAFE;
+//	[/COBOL2002]
 
 
 // --- Individual code elements syntax ---

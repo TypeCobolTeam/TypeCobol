@@ -20,7 +20,7 @@
        TRAITEMENT.
       *OK  call check of PGM1
       *   call check input mydate1
-          CALL 'a0508f35check' USING
+          CALL 'a0508f35' USING
                                  mydate1
            end-call
                                   
@@ -37,7 +37,7 @@
            88 TC-PersonSe-FctList-IsLoaded      VALUE 'OK'.
        01 TC-PersonSe-PntTab.
            05 TC-PersonSe-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program cd991005GetPersonById
+      *To call program cd991005
       *Which is generated code for PersonService.GetPersonById
       *Declared in source file CallPublicProcFromPrivateProc.rdz.tcbl
            05 TC-PersonSe-cd991005-Idt   PIC X(08) VALUE 'cd991005'.
@@ -83,7 +83,7 @@
       *   input  personId  type date.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. cd991005GetPersonById.
+       PROGRAM-ID. cd991005.
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.GetPersonById - Params :
@@ -98,14 +98,14 @@
       *PGM1.GetPersonById - Params :
       *		input(personId: DATE)
            CONTINUE.
-       END PROGRAM cd991005GetPersonById.
+       END PROGRAM cd991005.
       *
       *declare procedure check private
       *   input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a0508f35check.
+       PROGRAM-ID. a0508f35.
        data division.
        working-storage section.
       *PGM1.check - Params :
@@ -131,7 +131,7 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *To call program cd991005GetPersonById in module PersonService
+      *To call program cd991005 in module PersonService
       *Which is generated code for PersonService.GetPersonById
       *Declared in source file CallPublicProcFromPrivateProc.rdz.tcbl
        01 TC-PersonSe-cd991005-Item.
@@ -153,8 +153,7 @@
              OR TC-PersonSe-cd991005-Idt not = 'cd991005'
                PERFORM TC-LOAD-POINTERS-PersonSe
            END-IF
-      *    Equivalent to call cd991005GetPersonById in module PersonServ
-      *ice
+      *    Equivalent to call cd991005 in module PersonService
            CALL TC-PersonSe-cd991005 USING
                                  mydate
            end-call
@@ -186,4 +185,4 @@
                 END-EVALUATE
             END-PERFORM
             .
-       END PROGRAM a0508f35check.
+       END PROGRAM a0508f35.

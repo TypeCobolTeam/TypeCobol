@@ -4,14 +4,18 @@
        DATA DIVISION.
        LOCAL-STORAGE SECTION.
        
-      %<<< 
+000000%<<< 
           @ description : inline typedef
           @ params:
             - none: Type doesn't have any params
           @deprec
           @Restriction : Do not Use BOOL var 
-      %>>>
+000000%>>>
        01 myType TYPEDEF STRICT PUBLIC pic X(01).
+
+000111%<<
+           a multiline comment
+000112%>>
 
       %<<< Vect2D
       %>>>

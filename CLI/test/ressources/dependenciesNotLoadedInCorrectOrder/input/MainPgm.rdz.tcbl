@@ -1,0 +1,33 @@
+﻿       identification division.
+       program-id. TCOSMPL2.
+       data division.
+       working-storage section.
+       01 type1 typedef strict private.
+       05 blabla pic X.
+      
+       01 s1 type DVZTEST2::Span.
+       01 dat type date.
+       01 t1 type type1.
+      
+       procedure division.
+       INIT-LIBRARY.
+      
+           call DVZTEST1::GetTecMsg INPUT t1
+           in-out s1
+      
+           call GetTecMsg input t1
+           in-out s1
+      
+      
+           goback.
+      *----------------------------------------------------------------
+       declare procedure GetTecMsg public
+           input capt     type DVZTEST2::Span
+           in-out msg     type DVZTEST2::Span
+           .
+       procedure division.
+           continue
+           .
+       end-declare.
+      
+       end program TCOSMPL2.

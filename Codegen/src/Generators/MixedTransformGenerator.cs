@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Text;
 
@@ -23,6 +25,17 @@ namespace TypeCobol.Codegen.Generators
             _usedGenerator = generator;
         }
 
+        /// <summary>
+        /// Lines of Erased Nodes.
+        /// </summary>
+        public new List<Node> ErasedNodes
+        {
+            get;
+            private set;
+        }
+
+        public override List<Diagnostic> Diagnostics => _usedGenerator.Diagnostics;
+
         protected override bool Process(Node node)
         {
             throw new NotImplementedException();
@@ -38,5 +51,12 @@ namespace TypeCobol.Codegen.Generators
             this.Destination.Clear();
             this.Destination.Append(mixedContent);
         }
+
+        public override void GenerateLineMapFile(Stream stream)
+        {
+            _usedGenerator.GenerateLineMapFile(stream);
+        }
+        public override bool HasLineMapData => _usedGenerator.HasLineMapData;
+
     }
 }

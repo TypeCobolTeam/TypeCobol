@@ -152,7 +152,7 @@ namespace TypeCobol.Codegen.Actions
         /// <summary>
         /// Perform the action
         /// </summary>
-        public void Execute()
+        public IList<Action> Execute()
         {
             //No need to replace an erased node.
             if (!Old.IsFlagSet(Node.Flag.GeneratorErasedNode) || Old.IsFlagSet(Node.Flag.PersistentNode))
@@ -173,6 +173,7 @@ namespace TypeCobol.Codegen.Actions
                     parent.Add(New, index + 1);
                 }
             }
+            return null;
         }
     }
 }

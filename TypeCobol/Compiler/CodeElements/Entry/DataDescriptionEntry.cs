@@ -909,6 +909,8 @@ namespace TypeCobol.Compiler.CodeElements {
             }
         }
 
+        public bool HasExplicitVisibility => this.Visibility != AccessModifier.Local;
+
         public FormalizedCommentDocumentation FormalizedCommentDocumentation { get; set; }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)

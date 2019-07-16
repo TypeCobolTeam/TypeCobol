@@ -75,10 +75,10 @@ namespace TypeCobol.Codegen.Nodes {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
 				var hash = Node.FunctionDeclaration.Hash;
-                var originalProcName = Node.FunctionDeclaration.Name.Substring(0, Math.Min(Node.FunctionDeclaration.Name.Length, 22));
+
                 //Rule: TCCODEGEN_FIXFOR_ALIGN_FUNCALL
                 TypeCobol.Compiler.Nodes.FunctionDeclaration fun_decl = this.Node.FunctionDeclaration;
-                string callString = null;
+                string callString;
 
                 //We don't need end-if anymore, but I let it for now. Because this generated code still need to be tested on production
                 bool bNeedEndIf = false;
@@ -112,7 +112,7 @@ namespace TypeCobol.Codegen.Nodes {
                         ptrCheckGuardTextLine = new TextLineSnapshot(-1, ptrCheckGuard, null);
                         _cache.Add(ptrCheckGuardTextLine);
 
-                        callString = string.Format("*{0}Equivalent to call {1} in module {2}", new string(' ', genIndent * 4), hash + originalProcName, fun_decl.Library);
+                        callString = string.Format("*{0}Equivalent to call {1} in module {2}", new string(' ', genIndent * 4), hash, fun_decl.Library);
                         var callTextLine = new TextLineSnapshot(-1, callString, null);
                         _cache.Add(callTextLine);
 
@@ -125,7 +125,7 @@ namespace TypeCobol.Codegen.Nodes {
                         var callTextLine = new TextLineSnapshot(-1, "", null);
                         _cache.Add(callTextLine);
 
-                        callString = string.Format("*Equivalent to call {0} in module {1}", hash + originalProcName, fun_decl.Library);
+                        callString = string.Format("*Equivalent to call {0} in module {1}", hash, fun_decl.Library);
                         callTextLine = new TextLineSnapshot(-1, callString, null);
                         _cache.Add(callTextLine);
 
@@ -136,7 +136,7 @@ namespace TypeCobol.Codegen.Nodes {
                 }
                 else
                 {
-                    callString = string.Format("CALL '{0}{1}'{2}", hash, originalProcName, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
+                    callString = string.Format("CALL '{0}'{1}", hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
                     var callTextLine = new TextLineSnapshot(-1, callString, null);
                     _cache.Add(callTextLine);
 

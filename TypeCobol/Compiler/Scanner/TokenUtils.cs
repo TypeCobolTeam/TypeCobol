@@ -162,7 +162,7 @@ namespace TypeCobol.Compiler.Scanner
                     return "special register";
                 case TokenFamily.FigurativeConstantKeyword:
                     return "figurative constant";
-                case TokenFamily.SpecialObjetIdentifierKeyword:
+                case TokenFamily.SpecialObjectIdentifierKeyword:
                     return "special object identifier";
                 case TokenFamily.SyntaxKeyword:
                     return "keyword";

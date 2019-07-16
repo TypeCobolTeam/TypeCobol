@@ -25,7 +25,7 @@
       *DECLARE PROCEDURE IsDateValid.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ee0864c9IsDateValid.
+       PROGRAM-ID. ee0864c9.
        DATA DIVISION .
        working-storage section.
       *DVZF0OSM.IsDateValid  - No Params
@@ -46,4 +46,4 @@
                SET Result-false TO TRUE
                                    
            .
-       END PROGRAM ee0864c9IsDateValid.
+       END PROGRAM ee0864c9.

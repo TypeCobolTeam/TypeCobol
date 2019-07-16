@@ -30,12 +30,15 @@ namespace TypeCobol.Compiler.Nodes {
         private int WhereShouldIAdd(System.Type section) {
             if (Tools.Reflection.IsTypeOf(section, typeof(FileSection))) return 0;
             int ifile = -2;
+            int iglobal = -2;
             int iworking = -2;
             int ilocal = -2;
             int ilinkage = -2;
             int c = 0;
             foreach(var child in this.Children()) {
                 if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(FileSection))) ifile = c;
+                else
+                if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(GlobalStorageSection))) iglobal = c;
                 else
                 if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(WorkingStorageSection))) iworking = c;
                 else
@@ -44,9 +47,10 @@ namespace TypeCobol.Compiler.Nodes {
                 if (Tools.Reflection.IsTypeOf(child.GetType(), typeof(LinkageSection))) ilinkage = c;
                 c++;
             }
-            if (Tools.Reflection.IsTypeOf(section, typeof(WorkingStorageSection))) return Math.Max(0,ifile+1);
-            if (Tools.Reflection.IsTypeOf(section, typeof(LocalStorageSection))) return Math.Max(0,Math.Max(ifile+1,iworking+1));
-            if (Tools.Reflection.IsTypeOf(section, typeof(LinkageSection))) return Math.Max(0,Math.Max(ifile+1,Math.Max(iworking+1,ilocal+1)));
+            if (Tools.Reflection.IsTypeOf(section, typeof(GlobalStorageSection))) return Math.Max(0,ifile+1);
+            if (Tools.Reflection.IsTypeOf(section, typeof(WorkingStorageSection))) return Math.Max(0, Math.Max(ifile + 1, iglobal + 1));
+            if (Tools.Reflection.IsTypeOf(section, typeof(LocalStorageSection))) return Math.Max(0,Math.Max(Math.Max(ifile+1, iglobal+1), iworking + 1));
+            if (Tools.Reflection.IsTypeOf(section, typeof(LinkageSection))) return Math.Max(0, Math.Max(Math.Max(Math.Max(ifile + 1, iglobal + 1), iworking + 1), ilocal + 1));
             return 0;
         }
 
@@ -261,6 +265,7 @@ namespace TypeCobol.Compiler.Nodes {
             get { return _typeDefinition; }
             set
             {
+                //Implementation note : Only TypeCobolLinker should set this value
                 if (_typeDefinition == null)
                     _typeDefinition = value;
             }
@@ -815,7 +820,10 @@ namespace TypeCobol.Compiler.Nodes {
     // [COBOL 2002]
     public class TypeDefinition: DataDefinition, Parent<DataDescription>, IDocumentable
     {
-        public TypeDefinition([NotNull] DataTypeDescriptionEntry entry) : base(entry) { }
+        public TypeDefinition([NotNull] DataTypeDescriptionEntry entry) : base(entry)
+        {
+            TypedChildren = new List<DataDefinition>();
+        }
 
         [NotNull]
         public new DataTypeDescriptionEntry CodeElement => (DataTypeDescriptionEntry) base.CodeElement;
@@ -826,6 +834,17 @@ namespace TypeCobol.Compiler.Nodes {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
         }
 
+        /// <summary>
+        /// List of all children that reference a type.
+        /// Element of this list can be null if :
+        ///  - the child reference an unknown type, it'll be set to null in this list.
+        ///  - We detect a circular reference between type. To avoid infinite loop one link of the circular reference will be set to null.
+        ///
+        /// ProgramClassBuilder to initialize this list.
+        /// Only TypeCobolLinker can check the link and set items to null.
+        /// </summary>
+        [NotNull][ItemCanBeNull]
+        public List<DataDefinition>  TypedChildren { get;  }
 
         public override bool IsPartOfATypeDef => true;
 
@@ -870,7 +889,7 @@ namespace TypeCobol.Compiler.Nodes {
                     }
                     else if (line.IndicatorChar != '*')
                     {
-                        sb.AppendLine(line.Text);
+                        sb.AppendLine(line.Text.Remove(0, 7));
                     }
                 }
                 i++;

@@ -1026,10 +1026,11 @@ namespace TypeCobol.Compiler.Parser
            
                 typedef.Strong = new SyntaxProperty<bool>(strong != null, ParseTreeUtils.GetFirstToken(strong));
                 typedef.Strict = new SyntaxProperty<bool>(strict != null, ParseTreeUtils.GetFirstToken(strict));
-                //TCTYPE_DEFAULT_ACCESS_MODIFIER  rule is respected here. 
-                //By default a TYPE is private even if PRIVATE keyword is not given. 
-                //If PUBLIC keyword is set, the TYPE as to be set PUBLIC.  
-                typedef.Visibility = context.cobol2002TypedefClause().PUBLIC() != null ? AccessModifier.Public : AccessModifier.Private;
+                
+                //Set visibility if any qualifier is present otherwise the Local visibility is used.
+                typedef.Visibility = AccessModifier.Local;
+                if (context.cobol2002TypedefClause().PRIVATE() != null) typedef.Visibility = AccessModifier.Private;
+                if (context.cobol2002TypedefClause().PUBLIC() != null) typedef.Visibility = AccessModifier.Public;
 
                 var restrictionLevel = typedef.Strong.Value ? RestrictionLevel.STRONG 
                                         : typedef.Strict.Value ? RestrictionLevel.STRICT 
@@ -1795,7 +1796,21 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = new ExitProgramStatement();
 		}
 
-		// --- GOBACK ---
+        // --- ALLOCATE ---
+        public override void EnterAllocateStatement(CodeElementsParser.AllocateStatementContext context)
+        {
+            Context = context;
+            CodeElement = CobolStatementsBuilder.CreateAllocateStatement(context);
+        }
+
+        // --- FREE ---
+        public override void EnterFreeStatement(CodeElementsParser.FreeStatementContext context)
+        {
+            Context = context;
+            CodeElement = CobolStatementsBuilder.CreateFreeStatement(context);
+        }
+
+        // --- GOBACK ---
 				
 		public override void EnterGobackStatement(CodeElementsParser.GobackStatementContext context) {
 			Context = context;

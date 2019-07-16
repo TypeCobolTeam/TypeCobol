@@ -23,7 +23,76 @@
             05 MySecVariable PIC X.
             05 SelfRef    TYPE myType.
 
+       01 A1 typedef strict.
+            05 var1 type B1.
+
+       01 B1 typedef strict.
+            05 var1 type C1.
+
+       01 C1 typedef strict.
+            05 var1 type A1.
+
+
+      *Now backward
+       01 C2 typedef strict.
+            05 var2 type A2.
+
+       01 B2 typedef strict.
+            05 var2 type C2.
+
+       01 A2 typedef strict.
+            05 var2 type B2.
+
+      *Now backward
+       01 B3 typedef strict.
+            05 var3 type C3.
+
+       01 C3 typedef strict.
+            05 var3 type A3.
+
+       01 A3 typedef strict.
+            05 var3 type B3.
+
+
 
        PROCEDURE DIVISION.
             move MyVar1::myVar to MyVar2::secondGroup.
+       declare procedure CheckCircular private.
+       data division.
+       working-storage section.
+
+       01 A4 typedef strict.
+            05 var1 type B4.
+
+       01 B4 typedef strict.
+            05 var1 type C4.
+
+       01 C4 typedef strict.
+            05 var1 type A4.
+
+
+       end-declare.
+
+       declare procedure CheckCircular2 private.
+       data division.
+       working-storage section.
+
+       01 A5 typedef strict.
+            05 A5var type B5.
+
+       01 B5 typedef strict.
+            05 B5var type C5.
+
+       01 C5 typedef strict.
+            05 C5var type A5.
+
+       01 MyVar type A5.
+       procedure division.
+          move MyVar::A5var::B5Var::C5Var to MyVar::A5var::B5Var::C5Var
+ 
+      *KO, A5Var must not be a valid child of C5Var as it's a circular reference
+          move MyVar::A5var::B5Var::C5Var::A5Var 
+            to MyVar::A5var::B5Var::C5Var::A5Var
+          .
+       end-declare.
        END PROGRAM CircularRefCheck.

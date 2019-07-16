@@ -9,6 +9,9 @@ MOVE x TO LENGTH OF x
 MOVE x TO LENGTH x
 MOVE x TO Tab(TALLY)
 MOVE x TO Tab(ALL)
+MOVE XML-CODE TO result-xml
+MOVE JSON-CODE TO result-json-code
+MOVE JSON-STATUS TO result-json-status
 * continuations
                  MOVE 'Lorem ipsum dolor sit amet, consectetur adi
 -               'piscing elit, sed do eiusmod tempor incididunt ut

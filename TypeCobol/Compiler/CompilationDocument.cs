@@ -319,7 +319,7 @@ namespace TypeCobol.Compiler
                         case TextChangeType.LineRemoved:
                             if (compilationDocumentLines.LastOrDefault() == null)
                                 continue;
-                            if (compilationDocumentLines.Count < textChange.LineIndex) //Avoid line remove exception
+                            if (compilationDocumentLines.Count <= textChange.LineIndex) //Avoid line remove exception
                                 continue;
 
                             compilationDocumentLines.RemoveAt(textChange.LineIndex);
