@@ -79,8 +79,24 @@ namespace TypeCobol.Compiler.CodeModel
         private void GetFromTableAndEnclosing2<T>([NotNull] string head,
            Func<SymbolTable, IDictionary<string, List<T>>> getTableFunction, List<T> result, Scope maxScope = Scope.Intrinsic) where T : Node
         {
+            // maxScope is GlobalStorage or Namespace or Intrinsic.
+            System.Diagnostics.Debug.Assert(maxScope <= Scope.GlobalStorage);
+
             var table = getTableFunction.Invoke(this);
             GetFromTable(head, table, result);
+
+            if (result.Any() && CurrentScope > Scope.GlobalStorage)
+            {
+                // GLOBALSS_ALWAYS_RESOLVE : we always force search in GlobalStorage.
+                SymbolTable globalStorageSymbolTable = this.EnclosingScope;
+                while (globalStorageSymbolTable.CurrentScope > Scope.GlobalStorage)
+                {
+                    globalStorageSymbolTable = globalStorageSymbolTable.EnclosingScope;
+                }
+                globalStorageSymbolTable.GetFromTableAndEnclosing2(head, getTableFunction, result, maxScope);
+                return;
+            }
+
             if (EnclosingScope != null && EnclosingScope.CurrentScope >= maxScope)
             {
                 EnclosingScope.GetFromTableAndEnclosing2(head, getTableFunction, result, maxScope);
