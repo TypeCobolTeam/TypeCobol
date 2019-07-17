@@ -67,6 +67,11 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
+        /// Variable section mask.
+        /// </summary>
+        internal const Flags SectionMask = Flags.GLOBAL_STORAGE | Flags.WORKING_STORAGE | Flags.LINKAGE | Flags.FILE_SECTION | Flags.LOCAL_STORAGE;
+
+        /// <summary>
         /// The Visibility mask that a symbol can take.
         /// </summary>
         public const Flags SymbolVisibilityMask = Flags.Public | Flags.Private | Flags.External | Flags.Global;
