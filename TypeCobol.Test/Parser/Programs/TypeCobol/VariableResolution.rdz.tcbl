@@ -1,0 +1,23 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZFSCT0.
+       DATA DIVISION.
+       GLOBAL-STORAGE SECTION.
+       01 a pic X.
+       WORKING-STORAGE SECTION.
+       01 b pic X global.
+      
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Nested.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 a pic X.
+       01 b pic X.
+       01 r pic X.
+       procedure division.
+      *KO a is ambiguous
+           move a to r
+      *OK b refers to Nested::b
+           move b to r
+           .
+       END PROGRAM Nested.
+       END PROGRAM DVZFSCT0.

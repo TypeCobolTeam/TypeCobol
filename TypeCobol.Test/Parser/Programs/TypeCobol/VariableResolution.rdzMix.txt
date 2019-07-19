@@ -1,0 +1,25 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZFSCT0.
+       DATA DIVISION.
+       GLOBAL-STORAGE SECTION.
+       01 a pic X.
+       WORKING-STORAGE SECTION.
+       01 b pic X global.
+      
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Nested.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 a pic X.
+       01 b pic X.
+       01 r pic X.
+       procedure division.
+      *KO a is ambiguous
+Line 18[17,17] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol a 
+Symbols found: DVZFSCT0::Nested::a | DVZFSCT0::a
+           move a to r
+      *OK b refers to Nested::b
+           move b to r
+           .
+       END PROGRAM Nested.
+       END PROGRAM DVZFSCT0.
