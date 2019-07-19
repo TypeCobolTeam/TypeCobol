@@ -90,6 +90,69 @@ namespace TypeCobol.Test.Domain
         }
 
         /// <summary>
+        /// This Test tests the expansion of a Type Currency inside a program.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("SemanticDomain")]
+        [TestProperty("Object", "TypeExpander")]
+#if DOMAIN_CHECKER
+        [Ignore]//Ignore because CrossCheck performs a program expansion
+#endif
+        public void CurrenyTypeExpanderCheck()
+        {
+            string path = Path.Combine(GetTestLocation(), "Parser", "Programs", "TypeCobol", "Type-Currency.tcbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.FreeTextFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+
+            Assert.IsTrue(Builder.Programs.Count == 1);
+            var currentProgram = Builder.Programs[0];
+
+            //Get oldCurrency symbol
+            var oldCurrency = currentProgram.ResolveReference(new string[] { "oldCurrency" }, false);
+            Assert.IsTrue(oldCurrency.Count == 1);
+            Assert.IsNotNull(oldCurrency.Symbol.Type);
+            TypedefExpander tdExpander = new TypedefExpander(currentProgram);
+            Type te_oldCurrency = oldCurrency.Symbol.Type.Accept(tdExpander, oldCurrency.Symbol);
+            Assert.AreEqual(te_oldCurrency, oldCurrency.Symbol.Type);
+
+            //Get myCurrency1 symbol
+            var myCurrency1 = currentProgram.ResolveReference(new string[] { "myCurrency1" }, false);
+            Assert.IsTrue(myCurrency1.Count == 1);
+            Assert.IsNotNull(myCurrency1.Symbol.Type);
+            Assert.IsTrue(myCurrency1.Symbol.Type.Tag == Type.Tags.Typedef);
+            Assert.IsTrue(myCurrency1.Symbol.Type == BuiltinTypes.CurrencyType);
+
+            //Get myCurrency2 symbol
+            var myCurrency2 = currentProgram.ResolveReference(new string[] { "myCurrency2" }, false);
+            Assert.IsTrue(myCurrency2.Count == 1);
+            Assert.IsNotNull(myCurrency2.Symbol.Type);
+            Assert.IsTrue(myCurrency2.Symbol.Type.Tag == Type.Tags.Typedef);
+            Assert.IsTrue(myCurrency2.Symbol.Type == BuiltinTypes.CurrencyType);
+
+            //Get myCurrency3 symbol
+            var myCurrency3 = currentProgram.ResolveReference(new string[] { "myCurrency3" }, false);
+            Assert.IsTrue(myCurrency3.Count == 1);
+            Assert.IsNotNull(myCurrency3.Symbol.Type);
+            Assert.IsTrue(myCurrency3.Symbol.Type.Tag == Type.Tags.Typedef);
+            Assert.IsTrue(myCurrency3.Symbol.Type == BuiltinTypes.CurrencyType);
+
+            SymbolExpander symExpander = new SymbolExpander(currentProgram);
+            currentProgram.Accept(symExpander, null);
+            //After expansion
+            Assert.IsNotNull(myCurrency1.Symbol.Type);
+            Assert.IsTrue(myCurrency1.Symbol.Type.Tag == Type.Tags.Picture);
+            Assert.IsTrue(myCurrency1.Symbol.Type == BuiltinTypes.CurrencyType.TypeComponent);
+
+            Assert.IsNotNull(myCurrency2.Symbol.Type);
+            Assert.IsTrue(myCurrency2.Symbol.Type.Tag == Type.Tags.Picture);
+            Assert.IsTrue(myCurrency2.Symbol.Type == BuiltinTypes.CurrencyType.TypeComponent);
+
+            Assert.IsNotNull(myCurrency3.Symbol.Type);
+            Assert.IsTrue(myCurrency3.Symbol.Type.Tag == Type.Tags.Picture);
+            Assert.IsTrue(myCurrency3.Symbol.Type == BuiltinTypes.CurrencyType.TypeComponent);
+        }
+
+        /// <summary>
         /// This Test tests the expansion of a Type Date inside a program.
         /// </summary>
         [TestMethod]
@@ -120,7 +183,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(today.Count == 1);
             Assert.IsNotNull(today.Symbol.Type);
             Assert.IsTrue(today.Symbol.Type.Tag == Type.Tags.Typedef);
-            Assert.IsTrue(today.Symbol.Type.TypeComponent == BuiltinTypes.DateType);
+            Assert.IsTrue(today.Symbol.Type == BuiltinTypes.DateType);
 
             //Before expansion there are no YYYY, MM, DD variables in the program
             var yyyy = currentProgram.ResolveReference(new string[] { "yyyy" }, false);

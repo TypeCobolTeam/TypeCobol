@@ -72,8 +72,6 @@ namespace TypeCobol.Compiler.Types
 
             //Special Usage for builtin Types
             Boolean,
-            Date,
-            Currency,
             String
         }
 
