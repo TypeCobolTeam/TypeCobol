@@ -58,36 +58,52 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         /// <summary>
-        /// GetFromTableAndEnclosing 2 
+        /// Search Nodes that match a given name within current and enclosing scopes.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="head"></param>
-        /// <param name="getTableFunction"></param>
-        /// <param name="maxScope"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">Type of Node to look for.</typeparam>
+        /// <param name="name">Lookup name.</param>
+        /// <param name="getTable">Lambda to select target nodes from a given SymbolTable.</param>
+        /// <param name="maxScope">Widest scope allowed during the search.</param>
+        /// <param name="force">Boolean to force search in maxScope. Default is false.</param>
+        /// <returns>A list of Nodes that match the supplied name.</returns>
         [NotNull]
-        private List<T> GetFromTableAndEnclosing<T>(string head,
-            Func<SymbolTable, IDictionary<string, List<T>>> getTableFunction, Scope maxScope = Scope.Intrinsic) where T : Node
+        private List<T> GetFromTableAndEnclosing<T>(string name, Func<SymbolTable, IDictionary<string, List<T>>> getTable, Scope maxScope = Scope.Intrinsic, bool force = false)
+            where T : Node
         {
-            System.Diagnostics.Debug.Assert(head != null);
-            var result = new List<T>();
-            this.GetFromTableAndEnclosing2(head, getTableFunction, result, maxScope);
-            
-            return result;
-        }
+            System.Diagnostics.Debug.Assert(name != null);
+            System.Diagnostics.Debug.Assert(getTable != null);
 
-        private void GetFromTableAndEnclosing2<T>([NotNull] string head,
-           Func<SymbolTable, IDictionary<string, List<T>>> getTableFunction, List<T> result, Scope maxScope = Scope.Intrinsic) where T : Node
-        {
-            var table = getTableFunction.Invoke(this);
-            GetFromTable(head, table, result);
-            if (EnclosingScope != null && EnclosingScope.CurrentScope >= maxScope)
+            // Search in current and enclosing scopes.
+            var results = new List<T>();
+            var resultScope = GetFromTableAndEnclosing(name, getTable, maxScope, results);
+
+            // Perform additional search if requested.
+            if (force && resultScope > maxScope)
             {
-                EnclosingScope.GetFromTableAndEnclosing2(head, getTableFunction, result, maxScope);
+                var requiredScopeSymbolTable = GetTableFromScope(maxScope);
+                if (requiredScopeSymbolTable != null)
+                {
+                    GetFromTable(name, getTable(requiredScopeSymbolTable), results);
+                }
             }
+
+            return results;
         }
 
+        private Scope GetFromTableAndEnclosing<T>(string name, Func<SymbolTable, IDictionary<string, List<T>>> getTable, Scope maxScope, List<T> results)
+            where T : Node
+        {
+            // Search in current scope.
+            GetFromTable(name, getTable(this), results);
 
+            // If nothing found, search in enclosing scope up to maxScope.
+            if (results.Count == 0 && EnclosingScope != null && EnclosingScope.CurrentScope >= maxScope)
+            {
+                return EnclosingScope.GetFromTableAndEnclosing(name, getTable, maxScope, results);
+            }
+
+            return CurrentScope;
+        }
 
         [NotNull]
         private List<T> GetFromTable<T>(string head, IDictionary<string, List<T>> table) where T : Node
@@ -191,10 +207,8 @@ namespace TypeCobol.Compiler.CodeModel
 
         private IList<DataDefinition> GetVariables(string name)
         {
-            //Try to get variable in the current program
-            var found = GetFromTableAndEnclosing(name, GetDataDefinitionTable, Scope.GlobalStorage);
-           
-            return found;
+            // Try to get the variables in program, enclosing programs and ensure that the GlobalStorage is always searched.
+            return GetFromTableAndEnclosing(name, GetDataDefinitionTable, Scope.GlobalStorage, true);
         }
 
         /// <summary>
@@ -977,7 +991,8 @@ namespace TypeCobol.Compiler.CodeModel
 
         private List<TypeDefinition> GetType(string name)
         {
-            return GetFromTableAndEnclosing(name, GetTypeTable);
+            // Look for type in all scopes, ensuring that Intrinsics are always searched.
+            return GetFromTableAndEnclosing(name, GetTypeTable, Scope.Intrinsic, true);
         }
 
         private IDictionary<string, List<TypeDefinition>> GetTypeTable(SymbolTable symbolTable)
