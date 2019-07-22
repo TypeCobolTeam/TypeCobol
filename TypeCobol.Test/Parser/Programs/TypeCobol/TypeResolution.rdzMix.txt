@@ -3,15 +3,15 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *KO bool is already defined in Intrinsics
-Line 6[8,32] <30, Error, Semantics> - Semantic error: TYPE 'bool' has already been declared
-       01 bool typedef pic 9(1).
-       01 a typedef pic X global.
+Line 6[8,39] <30, Error, Semantics> - Semantic error: TYPE 'bool' has already been declared
+       01 bool typedef strict pic 9(1).
+       01 a typedef strict pic X global.
       
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Nested.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01 a typedef pic X.
+       01 a typedef strict pic X.
       *OK Nested::a is used here
        01 b type a.
        END PROGRAM Nested.
