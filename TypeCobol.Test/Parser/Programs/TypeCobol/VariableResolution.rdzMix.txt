@@ -5,6 +5,17 @@
        01 a pic X.
        WORKING-STORAGE SECTION.
        01 b pic X global.
+	   
+       01 Type1 typedef strict public.
+          05 Champ1 PIC X.
+          05 Champ2 PIC X.
+      
+       01 Type2 typedef strict public.
+          05 Champ3 PIC X.
+          05 Champ4 type Type1.
+      
+       01 ST1 type Type2.
+       01 ST2 type Type2 global.
       
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Nested.
@@ -12,14 +23,17 @@
        WORKING-STORAGE SECTION.
        01 a pic X.
        01 b pic X.
+       01 ST2 type DVZFSCT0::Type2.
        01 r pic X.
        procedure division.
       *KO a is ambiguous
-Line 18[17,17] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol a 
+Line 30[17,17] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol a 
 Symbols found: DVZFSCT0::Nested::a | DVZFSCT0::a
            move a to r
       *OK b refers to Nested::b
            move b to r
+      *OK Champ1 refers to Nested::ST2(::Type2)::Champ4(::Type1)::Champ1
+           move ST2::Champ4::Champ1 to r
            .
        END PROGRAM Nested.
        END PROGRAM DVZFSCT0.

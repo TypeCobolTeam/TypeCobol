@@ -25,12 +25,12 @@ namespace TypeCobol.Compiler.CodeModel
         public Dictionary<TypeDefinition, List<DataDefinition>> TypesReferences { get; set; }
 
         /// <summary>
-        /// Allow to get all the Type's references from any Enclosing Scope or Program
+        /// Allow to get the Type's references from any Enclosing Scope or Program.
+        /// The search is performed up to GlobalStorage scope but stops on first scope that contains any reference.
         /// </summary>
-        public IEnumerable<DataDefinition> GetAllEnclosingTypeReferences(TypeDefinition currentTypeDef)
+        private IEnumerable<DataDefinition> GetTypeReferencesFromTableAndEnclosing(TypeDefinition currentTypeDef)
         {
             var result = new List<DataDefinition>();
-            
 
             SymbolTable symbolTable = this;//By default set this symboltable as the starting point
 
@@ -39,12 +39,13 @@ namespace TypeCobol.Compiler.CodeModel
                 if (symbolTable.TypesReferences.TryGetValue(currentTypeDef, out var typeReferences))
                 {
                     result.AddRange(typeReferences);
-
+                    break;
                 }
 
                 symbolTable = symbolTable.EnclosingScope; //Go to the next enclosing scope. 
             }
-            return result.Distinct();//Distinct we are using path from 2 multiple SymbolTable and can have duplicate
+
+            return result;
         }
 
 
@@ -548,7 +549,7 @@ namespace TypeCobol.Compiler.CodeModel
             
             if (currentTypeDef != null) //We've found that we are currently onto a typedef. 
             {
-                IEnumerable<DataDefinition> references = GetAllEnclosingTypeReferences(currentTypeDef); //Let's get typeReferences (built by TypeCobolLinker phase)
+                IEnumerable<DataDefinition> references = GetTypeReferencesFromTableAndEnclosing(currentTypeDef); //Let's get typeReferences (built by TypeCobolLinker phase)
 
                 //If typeDefContext is set : Ignore references of this typedefContext to avoid loop seeking
                 //                           Only takes variable references that are declared inside the typeDefContext
@@ -582,7 +583,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="currentDataDefinition"></param>
         private void AddAllReference(List<KeyValuePair<DataDefinitionPath, DataDefinition>> foundedVariables, DataDefinition headDataDefinition, [NotNull] TypeDefinition currentDataDefinition, DataDefinitionPath dataDefinitionPath, TypeDefinition typeDefContext)
         {
-            IEnumerable<DataDefinition> references = GetAllEnclosingTypeReferences(currentDataDefinition);
+            IEnumerable<DataDefinition> references = GetTypeReferencesFromTableAndEnclosing(currentDataDefinition);
 
             //If typedefcontext is setted : Ignore references of this typedefContext to avoid loop seeking
             //                              + Only takes variable references that are declared inside the typeDefContext
