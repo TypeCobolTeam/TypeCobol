@@ -34,6 +34,7 @@
        01 MyPerson.
            02 PersonId pic 9(10).
            02 LastName pic X(30).
+              88 Empty value space.
            02 FirstName pic X(30).
                                                 
        LINKAGE SECTION.
@@ -46,19 +47,19 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *To call program ebb060eaMyPublicProcedure in module Callee
+      *To call program ebb060ea in module Callee
       *Which is generated code for Callee.MyPublicProcedure
       *Declared in source file ProcedureCall-Public.rdz.tcbl
        01 TC-Callee-ebb060ea-Item.
           05 TC-Callee-ebb060ea-Idt PIC X(08).
           05 TC-Callee-ebb060ea PROCEDURE-POINTER.
-      *To call program ca0ab46ccheck in module Callee
+      *To call program ca0ab46c in module Callee
       *Which is generated code for Callee.check
       *Declared in source file ProcedureCall-Public.rdz.tcbl
        01 TC-Callee-ca0ab46c-Item.
           05 TC-Callee-ca0ab46c-Idt PIC X(08).
           05 TC-Callee-ca0ab46c PROCEDURE-POINTER.
-      *To call program d2b57642GetPersonById in module PersonService
+      *To call program d2b57642 in module PersonService
       *Which is generated code for PersonService.GetPersonById
       *Declared in source file ProcedureCall-Public.rdz.tcbl
        01 TC-PersonSe-d2b57642-Item.
@@ -96,7 +97,7 @@
              OR TC-Callee-ebb060ea-Idt not = 'ebb060ea'
                PERFORM TC-LOAD-POINTERS-Callee
            END-IF
-      *    Equivalent to call ebb060eaMyPublicProcedure in module Callee
+      *    Equivalent to call ebb060ea in module Callee
            CALL TC-Callee-ebb060ea USING
                                  somedate
                                  someformat
@@ -113,7 +114,7 @@
              OR TC-Callee-ebb060ea-Idt not = 'ebb060ea'
                PERFORM TC-LOAD-POINTERS-Callee
            END-IF
-      *    Equivalent to call ebb060eaMyPublicProcedure in module Callee
+      *    Equivalent to call ebb060ea in module Callee
            CALL TC-Callee-ebb060ea USING
                                  somedate
                                  someformat
@@ -130,7 +131,7 @@
       *                        length of somedate
       *                        length of somedate::YYYY
       *             OUTPUT     flag     realformat
-           CALL 'f3a0a09cPgm1PrivateValidateDat' USING
+           CALL 'f3a0a09c' USING
                                  somedate
                                  someformat
                                  length of somedate
@@ -147,8 +148,7 @@
              OR TC-PersonSe-d2b57642-Idt not = 'd2b57642'
                PERFORM TC-LOAD-POINTERS-PersonSe
            END-IF
-      *    Equivalent to call d2b57642GetPersonById in module PersonServ
-      *ice
+      *    Equivalent to call d2b57642 in module PersonService
            CALL TC-PersonSe-d2b57642 USING
                                  person1Id
                     by reference MyPerson
@@ -162,7 +162,7 @@
       *                        length of someformat
       *                        length of MyPerson
       *             OUTPUT     flag     realformat
-           CALL 'f3a0a09cPgm1PrivateValidateDat' USING
+           CALL 'f3a0a09c' USING
                                  somedate
                                  someformat
                                  length of someformat
@@ -175,13 +175,13 @@
 
       *OK  call check of PGM1
       *    call check input somedate
-           CALL 'a0508f35check' USING
+           CALL 'a0508f35' USING
                                  somedate
            end-call
                                     
       *OK 
       *    call PGM1::check input somedate
-           CALL 'a0508f35check' USING
+           CALL 'a0508f35' USING
                                  somedate
            end-call
                                           
@@ -192,7 +192,7 @@
              OR TC-Callee-ca0ab46c-Idt not = 'ca0ab46c'
                PERFORM TC-LOAD-POINTERS-Callee
            END-IF
-      *    Equivalent to call ca0ab46ccheck in module Callee
+      *    Equivalent to call ca0ab46c in module Callee
            CALL TC-Callee-ca0ab46c USING
                                  somedate
            end-call
@@ -278,22 +278,22 @@
            88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
        01 TC-Callee-PntTab.
            05 TC-Callee-PntNbr         PIC S9(04) COMP VALUE 4.
-      *To call program ca0ab46ccheck
+      *To call program ca0ab46c
       *Which is generated code for Callee.check
       *Declared in source file ProcedureCall-Public.rdz.tcbl
            05 TC-Callee-ca0ab46c-Idt   PIC X(08) VALUE 'ca0ab46c'.
            05 TC-Callee-ca0ab46c PROCEDURE-POINTER.
-      *To call program d0a59141check2
+      *To call program d0a59141
       *Which is generated code for Callee.check2
       *Declared in source file ProcedureCall-Public.rdz.tcbl
            05 TC-Callee-d0a59141-Idt   PIC X(08) VALUE 'd0a59141'.
            05 TC-Callee-d0a59141 PROCEDURE-POINTER.
-      *To call program e5b741a8check2
+      *To call program e5b741a8
       *Which is generated code for Callee.check2
       *Declared in source file ProcedureCall-Public.rdz.tcbl
            05 TC-Callee-e5b741a8-Idt   PIC X(08) VALUE 'e5b741a8'.
            05 TC-Callee-e5b741a8 PROCEDURE-POINTER.
-      *To call program ebb060eaMyPublicProcedure
+      *To call program ebb060ea
       *Which is generated code for Callee.MyPublicProcedure
       *Declared in source file ProcedureCall-Public.rdz.tcbl
            05 TC-Callee-ebb060ea-Idt   PIC X(08) VALUE 'ebb060ea'.
@@ -360,12 +360,13 @@
       *01 Person TYPEDEF STRICT PUBLIC.
       *    05 PersonId   pic 9(10).
       *    05 LastName   pic X(30).
+      *      88 Empty value space.
       *    05 FirstName  pic X(30).
        01  TC-PersonSe-FctList-Loaded PIC X(02).
            88 TC-PersonSe-FctList-IsLoaded      VALUE 'OK'.
        01 TC-PersonSe-PntTab.
            05 TC-PersonSe-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program d2b57642GetPersonById
+      *To call program d2b57642
       *Which is generated code for PersonService.GetPersonById
       *Declared in source file ProcedureCall-Public.rdz.tcbl
            05 TC-PersonSe-d2b57642-Idt   PIC X(08) VALUE 'd2b57642'.
@@ -414,7 +415,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ca0ab46ccheck.
+       PROGRAM-ID. ca0ab46c.
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.check - Params :
@@ -429,14 +430,14 @@
       *PGM1.check - Params :
       *		input(mydate: DATE)
            CONTINUE.
-       END PROGRAM ca0ab46ccheck.
+       END PROGRAM ca0ab46c.
       *
       *declare procedure check2 public
       *   input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. d0a59141check2.
+       PROGRAM-ID. d0a59141.
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.check2 - Params :
@@ -451,7 +452,7 @@
       *PGM1.check2 - Params :
       *		input(mydate: DATE)
            CONTINUE.
-       END PROGRAM d0a59141check2.
+       END PROGRAM d0a59141.
       *
       *declare procedure check2 public
       *   input mydate        TYPE Date
@@ -459,7 +460,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e5b741a8check2.
+       PROGRAM-ID. e5b741a8.
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.check2 - Params :
@@ -479,7 +480,7 @@
       *PGM1.check2 - Params :
       *		input(mydate: DATE, myDate2: DATE)
            CONTINUE.
-       END PROGRAM e5b741a8check2.
+       END PROGRAM e5b741a8.
       *
       *DECLARE PROCEDURE MyPublicProcedure PUBLIC
       *    INPUT mydate        TYPE Date
@@ -489,7 +490,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ebb060eaMyPublicProcedure.
+       PROGRAM-ID. ebb060ea.
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.MyPublicProcedure - Params :
@@ -516,7 +517,7 @@
       *		input(mydate: DATE, format: pic X(08))
       *		output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
-       END PROGRAM ebb060eaMyPublicProcedure.
+       END PROGRAM ebb060ea.
       *
       *declare procedure GetPersonById public
       *   input  person1Id  pic 9(10)
@@ -524,7 +525,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. d2b57642GetPersonById.
+       PROGRAM-ID. d2b57642.
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.GetPersonById - Params :
@@ -534,6 +535,7 @@
        01 person.
            02 PersonId pic 9(10).
            02 LastName pic X(30).
+              88 Empty value space.
            02 FirstName pic X(30).
        PROCEDURE DIVISION
              USING BY REFERENCE person1Id
@@ -543,14 +545,14 @@
       *		input(person1Id: pic 9(10))
       *		output(person: Person)
            CONTINUE.
-       END PROGRAM d2b57642GetPersonById.
+       END PROGRAM d2b57642.
       *
       *declare procedure check private
       *   input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a0508f35check.
+       PROGRAM-ID. a0508f35.
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.check - Params :
@@ -565,7 +567,7 @@
       *PGM1.check - Params :
       *		input(mydate: DATE)
            CONTINUE.
-       END PROGRAM a0508f35check.
+       END PROGRAM a0508f35.
       *
       *DECLARE PROCEDURE Pgm1PrivateValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
@@ -577,7 +579,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. f3a0a09cPgm1PrivateValidateDat.
+       PROGRAM-ID. f3a0a09c.
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.Pgm1PrivateValidateDateFormat - Params :
@@ -610,4 +612,4 @@
       *, anotherlength: pic S9(05) comp-5)
       *		output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
-       END PROGRAM f3a0a09cPgm1PrivateValidateDat.
+       END PROGRAM f3a0a09c.

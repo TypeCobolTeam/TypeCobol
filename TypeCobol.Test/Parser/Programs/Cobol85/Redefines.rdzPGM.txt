@@ -1,4 +1,4 @@
-﻿--- Diagnostics ---
+--- Diagnostics ---
 Line 27[34,39] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'MyVar1' is not referenced OffendingSymbol=[34,39:MyVar1]<UserDefinedWord>
 
 --- Program ---
@@ -15,10 +15,10 @@ PROGRAM: RedefinesTest common:False initial:False recursive:False
   one:Alphanumeric
   one:Alphanumeric
   one:Alphanumeric
-  one-1:BOOL
-  one-1:BOOL
-  one-1:BOOL
-  one-1:BOOL
+  one-1:Level88
+  one-1:Level88
+  one-1:Level88
+  one-1:Level88
   MyRedifines2:Alphanumeric
   MyRedifines3:Alphanumeric
   MyRedifines3:Alphanumeric

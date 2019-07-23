@@ -6,8 +6,8 @@ PROGRAM: MyPGM common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 --- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
 -- DATA --------
-  ASCII-v:BOOL
-  EBCDIC-v:BOOL
+  ASCII-v:Level88
+  EBCDIC-v:Level88
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL

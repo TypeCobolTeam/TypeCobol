@@ -83,8 +83,14 @@ namespace TypeCobol.Codegen.Generators
             }
         }
 
+        public void GenerateLineMapFile(Stream stream)
+        {            
+        }
+
         public List<Diagnostic> Diagnostics { get; }
         public string TypeCobolVersion { get; set; }
+
+        public bool HasLineMapData => false;
     }
 
 

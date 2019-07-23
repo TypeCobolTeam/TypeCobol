@@ -419,6 +419,16 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         }
 
+        public virtual void OnAllocateStatement([NotNull] AllocateStatement stmt)
+        {
+
+        }
+
+        public virtual void OnFreeStatement([NotNull] FreeStatement stmt)
+        {
+
+        }
+
         public virtual void OnGobackStatement([NotNull] GobackStatement stmt)
         {
 

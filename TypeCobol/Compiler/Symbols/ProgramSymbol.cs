@@ -238,7 +238,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Get the type visibility mask for a Program.
         /// </summary>
-        public virtual Flags TypeVisibilityMask => IsNested ? (Flags.Global | Flags.Private | Flags.Public) : 0;
+        public virtual Flags TypeVisibilityMask => IsNested ? (Flags.Global | Flags.Public) : 0;
 
         /// <summary>
         /// Determines if a Type is accessible from this Program.

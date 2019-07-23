@@ -49,7 +49,7 @@
       *              StringArray::Var1(StringIdx)(1:50)
       *     OUTPUT
       *              MyPicVar(1:10)
-            CALL 'ff1c836eCompressString' USING
+            CALL 'ff1c836e' USING
                                  Pnt IN StringArray (StringIdx)
                                  Lgt IN StringArray (StringIdx)
                                  PrcTyp IN StringArray (StringIdx)
@@ -61,35 +61,35 @@
      
       *     CALL Foo INPUT MyArray2D_Date (1 , 2)
       *                    MyArray2D_PicX(12,2)(1:)
-            CALL 'ff0c38e9Foo' USING
+            CALL 'ff0c38e9' USING
                                  MyArray2D_Date (1, 2)
                                  MyArray2D_PicX (12, 2)(1:)
            end-call
                                                    
       *     CALL Foo INPUT MyArray2D_Date (1, 2)
       *                    MyArray2D_PicX(12,2)(1:50)
-            CALL 'ff0c38e9Foo' USING
+            CALL 'ff0c38e9' USING
                                  MyArray2D_Date (1, 2)
                                  MyArray2D_PicX (12, 2)(1:50)
            end-call
                                                      
       *     CALL Foo INPUT MyArray2D_Date (1,2)
       *                    MyArray2D_PicX(12,2)
-            CALL 'ff0c38e9Foo' USING
+            CALL 'ff0c38e9' USING
                                  MyArray2D_Date (1, 2)
                                  MyArray2D_PicX (12, 2)
            end-call
                                                
       *     CALL Foo INPUT MyArray2D_Date (1 2)
       *                    MyArray2D_PicX(12,2)(MyValue:50)
-            CALL 'ff0c38e9Foo' USING
+            CALL 'ff0c38e9' USING
                                  MyArray2D_Date (1, 2)
                                  MyArray2D_PicX (12, 2)(MyValue:50)
            end-call
                                                            
       *     CALL Foo INPUT MyArray2D_Date (1  2)
       *                    MyArray2D_PicX(12,2)(MyValue:)
-            CALL 'ff0c38e9Foo' USING
+            CALL 'ff0c38e9' USING
                                  MyArray2D_Date (1, 2)
                                  MyArray2D_PicX (12, 2)(MyValue:)
            end-call
@@ -103,8 +103,8 @@
       *             arg2      pic X(50).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ff0c38e9Foo.
-       END PROGRAM ff0c38e9Foo.
+       PROGRAM-ID. ff0c38e9.
+       END PROGRAM ff0c38e9.
       *
       *DECLARE PROCEDURE CompressString PRIVATE
       *    INPUT    arg1      POINTER
@@ -115,5 +115,5 @@
       *    OUTPUT   FinalLength     PIC X(10).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ff1c836eCompressString.
-       END PROGRAM ff1c836eCompressString.
+       PROGRAM-ID. ff1c836e.
+       END PROGRAM ff1c836e.

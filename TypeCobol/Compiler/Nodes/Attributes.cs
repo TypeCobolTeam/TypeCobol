@@ -51,7 +51,11 @@ namespace TypeCobol.Compiler.Nodes {
 	        attributes["incrementdirection"] = new incrementDirectionAttribute();
 	        attributes["needcompute"] = new NeedComputeAttribute();
 	        attributes["ispointerincrementation"] = new IsPointerIncrementationAttribute();
+	        attributes["isnested"] = new IsNestedAttribute();
+	        attributes["containnested"] = new ContainNestedAttribute();
             attributes["global"] = new GlobalAttribute();
+            attributes["useglobalstoragevariable"] = new UseGlobalStorageVariableAttribute();
+            attributes["sourceprogramhash"] = new SourceProgramHashAttribute();
             //not used?
             attributes["typecobol"] = new TypeCobolAttribute();
 		    attributes["visibility"] = new VisibilityAttribute();
@@ -222,6 +226,35 @@ namespace TypeCobol.Compiler.Nodes {
                 return "";
         }
     }
+    internal class UseGlobalStorageVariableAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            if (o is Program pgm)
+            {
+                return pgm.IsFlagSet(Node.Flag.UseGlobalStorage);
+            }
+            else if (o is FunctionDeclaration fun)
+            {
+                return fun.IsFlagSet(Node.Flag.UseGlobalStorage);
+            }
+            
+            else
+                return false;
+        }
+    }
+
+    /// <summary>
+    /// Gives access to the hash of the main program in which a given Node is defined.
+    /// Returns <code>null</code> when retrieved on anything that is not a Node.
+    /// </summary>
+    internal class SourceProgramHashAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            return o is Node node ? node.Root.MainProgram.Hash : null;
+        }
+    }
 
     internal class TypeCobolAttribute: Attribute
     {
@@ -291,8 +324,25 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    
+    internal class IsNestedAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var fun = o as FunctionDeclaration;
+            if (fun == null) return null;
+            return fun.GenerateAsNested.ToString();
+        }
+    }
 
+    internal class ContainNestedAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            if (o is Program == false) return false;
+
+            return DefinitionsAttribute.GetFunctionsGeneratedAsNested(o as Program).Public.Count > 0;
+        }
+    }
 
     internal class incrementDirectionAttribute : Attribute
     {
@@ -334,10 +384,10 @@ namespace TypeCobol.Compiler.Nodes {
                 foreach (var data in node.StorageAreaWritesDataDefinition)
                 {
                     // Usage of Regex.Replace to replace only the first ooccurence of dataDef.Name to avoid probleme with groups like myPtrGroup::myPtr
-                    var regex = new Regex(Regex.Escape(data.Value.Item2.Name));
+                    var regex = new Regex(Regex.Escape(data.Value.Name));
                     displayableWritten.Add(
                         regex.Replace(
-                            data.Key.ToString(), data.Value.Item2.Name + data.Value.Item2.Hash, 1)
+                            data.Key.ToString(), data.Value.Name + data.Value.Hash, 1)
                             .Replace(" IN ", " OF "));
                 }
 
@@ -354,7 +404,7 @@ namespace TypeCobol.Compiler.Nodes {
             var node = (Node)o;
             if (node.CodeElement is SetStatementForIndexes)
             {
-                return node.StorageAreaWritesDataDefinition.Values.Select(tuple => tuple.Item2);
+                return node.StorageAreaWritesDataDefinition.Values;
             }
             return null;
         }
@@ -470,6 +520,7 @@ internal class DefinitionsAttribute: Attribute {
 		var definitions = new Definitions();
 		definitions.types = GetTypes(table);
 		definitions.functions = GetFunctions(table);
+		definitions.functionsGeneratedAsNested = GetFunctionsGeneratedAsNested(o as Program);
 		return definitions;
 	}
 	private Definitions.NList GetTypes(SymbolTable table) {
@@ -482,14 +533,31 @@ internal class DefinitionsAttribute: Attribute {
 	private Definitions.NList GetFunctions(SymbolTable table) {
 		var list = new Definitions.NList();
 		if (table == null) return list;
-		foreach(var items in table.Functions) list.AddRange(items.Value);
+		foreach(var items in table.Functions) list.AddRange(items.Value.Where(fd => !fd.GenerateAsNested));
 		list.AddRange(GetFunctions(table.EnclosingScope));
 		return list;
 	}
-}
-public class Definitions {
+
+    internal static Definitions.NList GetFunctionsGeneratedAsNested(Program pgm)
+    {
+        var list = new Definitions.NList();
+        if (pgm == null) return list;
+
+        list.AddRange(pgm.Children.OfType<ProcedureDivision>().SelectMany(c => c.Children)
+            .Where(c => c is FunctionDeclaration fun && fun.GenerateAsNested));
+
+        foreach (var pgmNestedProgram in pgm.NestedPrograms)
+        {
+            list.AddRange(GetFunctionsGeneratedAsNested(pgmNestedProgram));
+        }
+        return list;
+    }
+
+    }
+    public class Definitions {
 	public NList types;
 	public NList functions;
+	public NList functionsGeneratedAsNested;
 
 	public override string ToString() {
 		var str = new System.Text.StringBuilder();
@@ -505,19 +573,21 @@ public class Definitions {
 
 	public class NList: List<Node> {
 		internal NList(): base() { }
-		public List<Node> Public  { get { return retrieve(AccessModifier.Public); } }
-        public bool PublicIsNotEmpty { get { return retrieve(AccessModifier.Public).Count > 0; } }
-		public List<Node> Private { get { return retrieve(AccessModifier.Private); } }
-		private List<Node> retrieve(AccessModifier visibility) {
-			var results = new List<Node>();
-			foreach(var node in this) {
-				var fun = node as FunctionDeclaration;
-				if (fun == null) continue;
-				if (fun.CodeElement.Visibility == visibility) results.Add(node);
-			}
-			return results;
-		}
-	}
+
+        public List<Node> Public => this.FindAll(node => node is FunctionDeclaration fd && fd.CodeElement.Visibility == AccessModifier.Public);
+
+        public List<Node> Private => this.FindAll(node => node is FunctionDeclaration fd && fd.CodeElement.Visibility != AccessModifier.Public);
+
+        public IEnumerable<Node> Concat(List<Node> list, bool publicVisibility)
+        {
+            if (publicVisibility)
+            {
+                return this.Public.Concat(list);
+            }
+
+            return this.Private.Concat(list);
+        }
+    }
 }
 
 internal class VisibilityAttribute: Attribute {
@@ -681,8 +751,8 @@ internal class LibraryCopyAttribute: Attribute {
                     FunctionDeclaration fun_decl = proc_style_call.FunctionDeclaration;
                     if (fun_decl != null)
                     {
-                        if (fun_decl.CodeElement.Visibility == AccessModifier.Private)
-                            continue;//Ignore a Private function ==> Cannot Import It.
+                        if (fun_decl.CodeElement.Visibility != AccessModifier.Public)
+                            continue;//Ignore a non-Public function ==> Cannot Import It.
                     }
                     var item_pgm = call.Item1[call.Item1.Count - 1];
                     if (name_low.Equals(item_pgm.Name.ToLower()))

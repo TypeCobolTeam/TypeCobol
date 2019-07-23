@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeModel
 {
@@ -44,6 +46,20 @@ namespace TypeCobol.Compiler.CodeModel
         public override string Name
         {
             get { return Identification != null ? (Identification.ProgramName.Name != null ? Identification.ProgramName.Name : ID) : ID; }
+        }
+
+        private string _hash;
+        /// <summary>
+        /// Returns an 8-char-long hash for this program based on its Name.
+        /// </summary>
+        public string Hash
+        {
+            get
+            {
+                if (_hash == null)
+                    _hash = Tools.Hash.CreateCOBOLNameHash(Name, 8, this);
+                return _hash;
+            }
         }
 
         //TODO: As to change in the future when implementing the full namespace functionnality.
@@ -128,7 +144,9 @@ namespace TypeCobol.Compiler.CodeModel
         /// <summary>
         /// A nested program is a program that is contained in another program.
         /// </summary>
-        public IList<NestedProgram> NestedPrograms { get; set; }
+        public IEnumerable<NestedProgram> NestedPrograms {
+            get { return this.children.OfType<NestedProgram>(); }
+        }
     }
 
     /// <summary>
@@ -226,4 +244,5 @@ namespace TypeCobol.Compiler.CodeModel
             return astVisitor.Visit(this);
         }
     }
+
 }

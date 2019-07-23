@@ -7,7 +7,6 @@
        01 var1 PIC X(12).
        01 var2 PIC X(12).
        01 var3 PIC X(12).
-Line 10[8,29] <30, Error, Semantics> - Semantic error: TYPE 'POINT' is not referenced
        01 MyPoint TYPE POINT.
       
        WORKING-STORAGE SECTION.
@@ -27,6 +26,8 @@ Line 25[17,20] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbo
 Symbols found: GlobalStorageTest::var1 | GlobalStorageTest::var1
            MOVE var1 TO result.
       *KO MyPoint::XX with GS
+Line 27[26,27] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol MyPoint.XX 
+Symbols found: GlobalStorageTest::MyPoint::POINT::XX | GlobalStorageTest::MyPoint::POINT::XX
            MOVE MyPoint::XX TO xxyy.
       
        IDENTIFICATION DIVISION.

@@ -113,68 +113,48 @@ namespace TypeCobol.Test
 
                 report.AppendLine("");
                 report.AppendLine("First compilation performance");
-                report.AppendLine("- " + compiler.PerfStatsForText.FirstCompilationTime + " ms" +
-                                  FormatPrecentage(compiler.PerfStatsForText.FirstCompilationTime, totalTime) +
-                                  " : text update");
-                report.AppendLine("- " + compiler.PerfStatsForScanner.FirstCompilationTime + " ms" +
-                                  FormatPrecentage(compiler.PerfStatsForScanner.FirstCompilationTime, totalTime) +
-                                  " : scanner");
-                report.AppendLine("- " + compiler.PerfStatsForPreprocessor.FirstCompilationTime + " ms" +
-                                  FormatPrecentage(compiler.PerfStatsForPreprocessor.FirstCompilationTime, totalTime) +
-                                  " : preprocessor");
-                report.AppendLine("- " + compiler.PerfStatsForCodeElementsParser.FirstCompilationTime + " ms" +
-                                  FormatPrecentage(compiler.PerfStatsForCodeElementsParser.FirstCompilationTime,
-                                      totalTime) + " : code elements parser");
-                report.AppendLine("- " + compiler.PerfStatsForTemporarySemantic.FirstCompilationTime + " ms" +
-                                  FormatPrecentage(compiler.PerfStatsForTemporarySemantic.FirstCompilationTime,
-                                      totalTime) + " : temporary semantic class parser");
-                report.AppendLine("- " + compiler.PerfStatsForProgramCrossCheck.FirstCompilationTime + " ms" +
-                                  FormatPrecentage(compiler.PerfStatsForProgramCrossCheck.FirstCompilationTime,
-                                      totalTime) + " : cross check class parser");
-                report.AppendLine("TAT " + totalTime + " - ms");
-                report.AppendLine("*TAT - Total average time");
+                FormatLine(compiler.PerfStatsForText.FirstCompilationTime, totalTime, "text update");
+                FormatLine(compiler.PerfStatsForScanner.FirstCompilationTime, totalTime, "scanner");
+                FormatLine(compiler.PerfStatsForPreprocessor.FirstCompilationTime, totalTime, "preprocessor");
+                FormatLine(compiler.PerfStatsForCodeElementsParser.FirstCompilationTime, totalTime, "code elements parser");
+                FormatLine(compiler.PerfStatsForTemporarySemantic.FirstCompilationTime, totalTime, "temporary semantic class parser");
+                FormatLine(compiler.PerfStatsForProgramCrossCheck.FirstCompilationTime, totalTime, "cross check class parser");
+
+                report.AppendLine("Total: " + totalTime.ToString("##0.00") + " ms");
             }
 
             report.AppendLine("");
             report.AppendLine(compiler != null
                 ? "Incremental compilation performance (average time)"
                 : "Full compilation performance (average time)");
-            report.AppendLine("- " + stats.AverageTextUpdateTime + " ms " +
-                              FormatPrecentage(stats.AverageTextUpdateTime, stats.AverageTotalProcessingTime) +
-                              " : text update");
-            report.AppendLine("- " + stats.AverageScannerTime + " ms " +
-                              FormatPrecentage(stats.AverageScannerTime, stats.AverageTotalProcessingTime) +
-                              " : scanner");
-            report.AppendLine("- " + stats.AveragePreprocessorTime + " ms" +
-                              FormatPrecentage(stats.AveragePreprocessorTime, stats.AverageTotalProcessingTime) +
-                              " : preprocessor");
-            report.AppendLine("- " + stats.AverageCodeElementParserTime + " ms" +
-                              FormatPrecentage(stats.AverageCodeElementParserTime,
-                                  stats.AverageTotalProcessingTime) + " : code elements parser");
-            report.AppendLine("- " + stats.AverateTemporarySemanticsParserTime + " ms " +
-                              FormatPrecentage(stats.AverateTemporarySemanticsParserTime,
-                                  stats.AverageTotalProcessingTime) + " : temporary semantic class parser");
-            report.AppendLine("- " + stats.AverageCrossCheckerParserTime + " ms " +
-                              FormatPrecentage(stats.AverageCrossCheckerParserTime,
-                                  stats.AverageTotalProcessingTime) + " : cross check class parser");
-            report.AppendLine("TAT " + stats.AverageTotalProcessingTime + " - ms");
-            report.AppendLine("*TAT - Total average time");
+
+            FormatLine(stats.AverageTextUpdateTime, stats.AverageTotalProcessingTime, "text update");
+            FormatLine(stats.AverageScannerTime, stats.AverageTotalProcessingTime, "scanner");
+            FormatLine(stats.AveragePreprocessorTime, stats.AverageTotalProcessingTime, "preprocessor");
+            FormatLine(stats.AverageCodeElementParserTime, stats.AverageTotalProcessingTime, "code elements parser");
+            FormatLine(stats.AverateTemporarySemanticsParserTime, stats.AverageTotalProcessingTime, "temporary semantic class parser");
+            FormatLine(stats.AverageCrossCheckerParserTime, stats.AverageTotalProcessingTime, "cross check class parser");
+
+            report.AppendLine("Total average time: " + stats.AverageTotalProcessingTime.ToString("##0.00") + " ms");
 
             var reportFile = reportName + "_" + cobolFileName.Split('.')[0] + "_" +
                                 DateTime.Now.ToString("yyyMMdd_HH_mm_ss") + ".txt";
             Directory.CreateDirectory(GetReportDirectoryPath());
             File.WriteAllText(Path.Combine(localDirectoryFullName, reportFile), report.ToString());
             Console.WriteLine(report.ToString());
+
+
+            void FormatLine(float time, float totalTime, string text)
+            {
+                report.AppendLine($"{time,10:#####0.00} ms " + FormatPercentage(time, totalTime) + " " + text);
+            }
         }
 
-        private static string FormatPrecentage(float averageTime, float totalTime)
-        {
-            return " ( " + (averageTime * 100 / totalTime).ToString("##.##") + " % of TAT)";
-        }
+        
 
-        private static string FormatPrecentage(int averageTime, int totalTime)
+        private static string FormatPercentage(float averageTime, float totalTime)
         {
-            return " ( " + (averageTime * 100 / (float)totalTime).ToString("##.##") + " % of TAT)";
+            return $" ({(averageTime * 100 / totalTime),5:#0.00} %)";
         }
 
 

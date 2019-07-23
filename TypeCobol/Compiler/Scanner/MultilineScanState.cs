@@ -59,7 +59,6 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public bool InsideMultilineComments { get; private set; }
 
-
         /// <summary>
         /// True as soon as the keyword DECIMAL-POINT has been encountered
         /// </summary>
@@ -118,7 +117,9 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Initialize scanner state
         /// </summary>
-        public MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions, bool insideFormalizedComment, bool insideMultilineComments, bool insideParamsField, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals)
+        public MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions, 
+                bool insideFormalizedComment, bool insideMultilineComments, bool insideParamsField,
+                bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals)
         {
             InsideDataDivision = insideDataDivision;
             InsideProcedureDivision = insideProcedureDivision;
@@ -137,7 +138,9 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public MultilineScanState Clone()
         {
-            MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, InsideSymbolicCharacterDefinitions, InsideFormalizedComment, InsideMultilineComments, InsideParamsField, DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
+            MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, InsideSymbolicCharacterDefinitions,
+                InsideFormalizedComment, InsideMultilineComments, InsideParamsField, 
+                DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
             if (LastSignificantToken != null) clone.LastSignificantToken = LastSignificantToken;
             if (BeforeLastSignificantToken != null) clone.BeforeLastSignificantToken = BeforeLastSignificantToken;
             if (SymbolicCharacters != null)
@@ -251,7 +254,7 @@ namespace TypeCobol.Compiler.Scanner
                     InsideParamsField = false;
                     break;
                 case TokenType.MULTILINES_COMMENTS_START:
-                    // Register the begin of the formalized Comments
+                    // Register the begin of the formalized Comments                    
                     InsideMultilineComments = true;
                     break;
                 case TokenType.MULTILINES_COMMENTS_STOP:

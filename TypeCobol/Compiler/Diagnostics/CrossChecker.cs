@@ -47,12 +47,13 @@ namespace TypeCobol.Compiler.Diagnostics
                 CheckVariable(node, codeElement.StorageAreaGroupsCorrespondingImpact.ReceivingGroupItem, false);
             }
 
-            FunctionCallChecker.OnNode(node);
-            TypedDeclarationChecker.OnNode(node);
-            RenamesChecker.OnNode(node);
-            ReadOnlyPropertiesChecker.OnNode(node);
-            GlobalStorageSectionChecker.OnNode(node);
+            return true;
+        }
 
+
+        public override bool Visit(GlobalStorageSection globalStorageSection)
+        {
+            GlobalStorageSectionChecker.OnNode(globalStorageSection);
             return true;
         }
 
@@ -74,6 +75,19 @@ namespace TypeCobol.Compiler.Diagnostics
             RedefinesChecker.OnNode(dataRedefines);
             return true;
         }
+        public override bool Visit(DataRenames dataRenames)
+        {
+            RenamesChecker.OnNode(dataRenames);
+            return true;
+        }
+
+        public override bool Visit(ProcedureStyleCall call)
+        {
+            FunctionCallChecker.OnNode(call);
+            return true;
+        }
+
+        
 
         public override bool Visit(PerformProcedure performProcedureNode)
         {
@@ -269,11 +283,14 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool VisitVariableWriter(VariableWriter variableWriter)
         {
             WriteTypeConsistencyChecker.OnNode(variableWriter, CurrentNode);
+            ReadOnlyPropertiesChecker.OnNode(variableWriter, CurrentNode);
             return true;
         }
 
         public override bool Visit(DataDefinition dataDefinition)
         {
+            TypedDeclarationChecker.OnNode(dataDefinition);
+
             var commonDataDataDefinitionCodeElement = dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines;
             if (commonDataDataDefinitionCodeElement!=null)
             {
@@ -293,7 +310,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (dataDefinitionParent != null)
                 {
                     //Check if DataDefinition is level 88 and declared under a Type BOOL variable
-                    if (dataDefinitionParent.DataType == DataType.Boolean && levelNumberValue == 88)
+                    //Perf note: first compare levelNumberValue because it's faster than DataType
+                    if (levelNumberValue == 88 && dataDefinitionParent.DataType == DataType.Boolean)
                     {
                         DiagnosticUtils.AddError(dataDefinition,
                             "The Level 88 symbol '" + dataDefinition.Name + "' cannot be declared under a BOOL typed symbol");
@@ -360,12 +378,24 @@ namespace TypeCobol.Compiler.Diagnostics
         /// Test if the received DataDefinition has other children than DataConditionEntry or DataRenamesEntry
         /// </summary>
         /// <param name="dataDefinition">Item to check</param>
-        /// <returns>True if there are only DataConditionEntry or DataRenamesEntry childrens</returns>
-        private static bool HasChildrenThatDeclareData(DataDefinition dataDefinition)
+        /// <returns>True if there are only DataConditionEntry or DataRenamesEntry children</returns>
+        private static bool HasChildrenThatDeclareData([NotNull] DataDefinition dataDefinition)
         {
-            return dataDefinition.Children.Any(elem=>elem.CodeElement != null && 
-                                                     elem.CodeElement.Type != CodeElementType.DataConditionEntry && 
-                                                     elem.CodeElement.Type != CodeElementType.DataRenamesEntry);
+            //We only need to check the last children:
+            //DataConditionEntry is a level 88, DataRenamesEntry is level 66 and they cannot have children
+            //DataDescription and DataRedefines are level between 1 and 49 inclusive.
+            //As the level number drive the positioning of Node inside the Children property DataConditionEntry and DataRenamesEntry will always be
+            //positioned before dataDescription.
+            if (dataDefinition.ChildrenCount > 0)
+            {
+                var lastChild = ((DataDefinition) dataDefinition.Children[dataDefinition.ChildrenCount - 1]);
+
+                return lastChild.CodeElement != null 
+                       && lastChild.CodeElement.Type != CodeElementType.DataConditionEntry 
+                       && lastChild.CodeElement.Type != CodeElementType.DataRenamesEntry;
+            }
+
+            return false;
         }
 
         public override bool Visit(IndexDefinition indexDefinition)
@@ -603,7 +633,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     // Multiline Version
                     //errorMessage += Environment.NewLine + "\t" + symbol.Key.Replace(".", "::");
                     // Inline version
-                    errorMessage += (isFirst ? "" : " | ") + symbol.Key.Replace(".", "::");
+                    //                                        if qualified name list is not null, create a string          otherwise is the qualified name of the DataDefinition
+                    errorMessage += (isFirst ? "" : " | ") + (symbol.Key != null ? symbol.Key.ToString().Replace(".", "::") : symbol.Value.QualifiedName.ToString().Replace(".", "::"));
                     isFirst = false;
                 }
                 DiagnosticUtils.AddError(node, errorMessage, area.SymbolReference);
@@ -611,39 +642,53 @@ namespace TypeCobol.Compiler.Diagnostics
             else if (foundCount == 1)
             {
                 var dataDefinitionFound = found.First();
-                string completeQualifiedName = foundQualified.First().Key;
+                DataDefinitionPath dataDefinitionPath = foundQualified.First().Key;                
 #if DOMAIN_CHECKER
                 if (result != null && result.Symbol != null)
                 {
-                    if (result.Symbol.TargetNode == null)
+                    System.Diagnostics.Debug.Assert(result.Symbol.TargetNode == null || result.Symbol.TargetNode == foundQualified.First().Value);
+                    if (dataDefinitionPath != null)
                     {
-                        //Special CASE DATE we don't capture the Target Node wich is created dynamically by TypeCobol.
-                        System.Diagnostics.Debug.Assert(
-                            (dataDefinitionFound.Name == "YYYY" || dataDefinitionFound.Name == "DD" ||
-                             dataDefinitionFound.Name == "MM") &&
-                            result.Symbol.Owner != null && result.Symbol.Owner.HasFlag(Symbol.Flags.HasATypedefType)
-                            && result.Symbol.Owner is VariableTypeSymbol &&
-                            ((VariableTypeSymbol) result.Symbol.Owner).Typedef == BuiltinSymbols.Date);
-                        //But ensure that the parent Node is the same
-                        //System.Diagnostics.Debug.Assert(dataDefinitionFound.Parent == result.Symbol.Owner.TargetNode);
-                    }
-                    else
-                        System.Diagnostics.Debug.Assert(dataDefinitionFound == result.Symbol.TargetNode);
+                        string completeQualifiedName = dataDefinitionPath.ToString().Replace("::", ".");
+                        if (result.Symbol.TargetNode == null)
+                        {
+                            //Special CASE DATE we don't capture the Target Node wich is created dynamically by TypeCobol.
+                            System.Diagnostics.Debug.Assert(
+                                (dataDefinitionFound.Name == "YYYY" || dataDefinitionFound.Name == "DD" ||
+                                 dataDefinitionFound.Name == "MM") &&
+                                result.Symbol.Owner != null && result.Symbol.Owner.HasFlag(Symbol.Flags.HasATypedefType)
+                                && result.Symbol.Owner is VariableTypeSymbol &&
+                                ((VariableTypeSymbol)result.Symbol.Owner).Typedef == BuiltinSymbols.Date);
+                            //But ensure that the parent Node is the same
+                            //System.Diagnostics.Debug.Assert(dataDefinitionFound.Parent == result.Symbol.Owner.TargetNode);
+                        }
+                        else
+                            System.Diagnostics.Debug.Assert(dataDefinitionFound == result.Symbol.TargetNode);
 
-                    //Check that the qualified name of the variable found is the same.
-                    //I cannot do that because: Actually TypeCobol Path variable includes TYPEDEF.NAMES,
-                    //New Domain doesn't include TYPEDEF.NAMES in paths. ==> cannot compare qualified path names.
-                    string qname = foundSymbolTypedPaths != null
-                        ? NormalizePathNames(foundSymbolTypedPaths[0])
-                        : result.Symbol.FullTypedDotName;
-                    System.Diagnostics.Debug.Assert(NormalizePathNames(completeQualifiedName).ToLower()
-                        .Equals(qname.ToLower()));
+                        //Check that the qualified name of the variable found is the same.
+                        //I cannot do that because: Actually TypeCobol Path variable includes TYPEDEF.NAMES,
+                        //New Domain doesn't include TYPEDEF.NAMES in paths. ==> cannot compare qualified path names.
+                        string qname = foundSymbolTypedPaths != null
+                            ? NormalizePathNames(foundSymbolTypedPaths[0])
+                            : result.Symbol.FullTypedDotName;
+                        System.Diagnostics.Debug.Assert(NormalizePathNames(completeQualifiedName).ToLower()
+                            .Equals(qname.ToLower()));
+                    }
                 }
 #endif
-
                 if (foundQualified.Count == 1)
                 {
-                    IndexAndFlagDataDefiniton(completeQualifiedName, dataDefinitionFound, node, area, storageArea);
+                    IndexAndFlagDataDefiniton(dataDefinitionPath, dataDefinitionFound, node, area, storageArea);
+                }
+
+                if (dataDefinitionFound.IsFlagSet(Node.Flag.GlobalStorageSection) || dataDefinitionPath != null && dataDefinitionPath.CurrentDataDefinition.IsFlagSet(Node.Flag.GlobalStorageSection))
+                {
+                    if (node is DataDefinition)
+                    {
+                        DiagnosticUtils.AddError(node, "A Global-Storage Section variable cannot be referenced in another Data Section", area.SymbolReference);
+                    }
+                    //We must find the enclosing FunctionDeclaration or Program (if node is outside a function/procedure)
+                    node.GetEnclosingProgramOrFunctionNode().SetFlag(Node.Flag.UseGlobalStorage, true);
                 }
                 //add the found DataDefinition to a dictionary depending on the storage area type
                 if (isReadStorageArea)
@@ -651,18 +696,18 @@ namespace TypeCobol.Compiler.Diagnostics
                     //need to initialize the dictionaries
                     if (node.StorageAreaReadsDataDefinition == null)
                     {
-                        node.StorageAreaReadsDataDefinition = new Dictionary<StorageArea, Tuple<string, DataDefinition>>();
+                        node.StorageAreaReadsDataDefinition = new Dictionary<StorageArea, DataDefinition>();
                     }
-                    node.StorageAreaReadsDataDefinition.Add(storageArea, new Tuple<string, DataDefinition>(completeQualifiedName, dataDefinitionFound));
+                    node.StorageAreaReadsDataDefinition.Add(storageArea,dataDefinitionFound);
                 }
                 else
                 {
                     //need to initialize the dictionaries
                     if (node.StorageAreaWritesDataDefinition == null)
                     {
-                        node.StorageAreaWritesDataDefinition = new Dictionary<StorageArea, Tuple<string, DataDefinition>>();
+                        node.StorageAreaWritesDataDefinition = new Dictionary<StorageArea, DataDefinition>();
                     }
-                    node.StorageAreaWritesDataDefinition.Add(storageArea, new Tuple<string, DataDefinition>(completeQualifiedName, dataDefinitionFound));
+                    node.StorageAreaWritesDataDefinition.Add(storageArea,dataDefinitionFound);
                 }
 
                 return dataDefinitionFound;
@@ -671,7 +716,7 @@ namespace TypeCobol.Compiler.Diagnostics
             return null;
         }
 
-        private static void IndexAndFlagDataDefiniton(string completeQualifiedName, DataDefinition dataDefinition,
+        private static void IndexAndFlagDataDefiniton(DataDefinitionPath dataDefinitionPath, DataDefinition dataDefinition,
             Node node, StorageArea area, StorageArea storageArea)
         {
             if (dataDefinition.IsIndex)
@@ -700,13 +745,12 @@ namespace TypeCobol.Compiler.Diagnostics
                 //Index name is qualified or belongs to a typedef
                 {
                     //Mark this node for generator
-                    FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, node, storageArea,
-                        completeQualifiedName);
+                    FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, node, storageArea, dataDefinitionPath);
 
                     foreach (var reference in index.GetReferences())
                     {
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, reference.Value,
-                            reference.Key, completeQualifiedName);
+                            reference.Key, dataDefinitionPath);
                     }
                 }
                 else if (!area.SymbolReference.IsQualifiedReference)
@@ -716,7 +760,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (index.IsFlagSet(Node.Flag.IndexUsedWithQualifiedName))
                     {
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, node, storageArea,
-                            completeQualifiedName);
+                            dataDefinitionPath);
                     }
                 }
 
@@ -728,20 +772,19 @@ namespace TypeCobol.Compiler.Diagnostics
                     index.SetFlag(Node.Flag.IndexUsedWithQualifiedName, true);
                 }
 
-                if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
-                    DiagnosticUtils.AddError(node,
-                        "Index can not be use with OF or IN qualifiers " + area, area.SymbolReference);
-            }
-            else if (dataDefinition.DataType == DataType.Boolean &&
-                     (dataDefinition.CodeElement)?.LevelNumber?.Value != 88)
-            {
-                if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.PerformProcedure || node is Nodes.WhenSearch || node is Nodes.When) || storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)//Ignore If/Set/Perform/WhenSearch Statement
-                {
-                    //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
-                    FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea,
-                        completeQualifiedName);
+                    if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
+                        DiagnosticUtils.AddError(node,
+                            "Index can not be use with OF or IN qualifiers " + area, area.SymbolReference);
                 }
-            }
+                else if (dataDefinition.DataType == DataType.Boolean)
+                {
+                    if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.PerformProcedure || node is Nodes.WhenSearch || node is Nodes.When ) || storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)//Ignore If/Set/Perform/WhenSearch Statement
+                    {
+                        //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
+                        FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea,
+                            dataDefinitionPath);
+                    }
+                }
 
             var specialRegister = storageArea as StorageAreaPropertySpecialRegister;
             if (specialRegister != null
@@ -798,15 +841,16 @@ namespace TypeCobol.Compiler.Diagnostics
         }
 
         private static void FlagNodeAndCreateQualifiedStorageAreas(Node.Flag flag, Node node, StorageArea storageArea,
-            string completeQualifiedName)
+            DataDefinitionPath dataDefinitionPath)
         {
             node.SetFlag(flag, true);
             if (node.QualifiedStorageAreas == null)
-                node.QualifiedStorageAreas = new Dictionary<StorageArea, string>();
+                node.QualifiedStorageAreas = new Dictionary<StorageArea, DataDefinitionPath>();
 
             if (!node.QualifiedStorageAreas.ContainsKey(storageArea))
-                node.QualifiedStorageAreas.Add(storageArea, completeQualifiedName);
+                node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
         }
+
     }
     
     class SectionOrParagraphUsageChecker
@@ -902,13 +946,13 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (sent == null || wname == null) return; //Both items needed
             //var wsymbol = CrossCompleteChecker.CheckVariable(node, wname,false);
-            Tuple<string, DataDefinition> searchExistingDataDefinition;
+            DataDefinition searchExistingDataDefinition;
             DataDefinition wsymbol = null;
             //check if dico not null
             if (node.StorageAreaWritesDataDefinition != null)
             {
                 node.StorageAreaWritesDataDefinition.TryGetValue(wname, out searchExistingDataDefinition);
-                wsymbol = searchExistingDataDefinition?.Item2;
+                wsymbol = searchExistingDataDefinition;
             }
 
 
@@ -929,7 +973,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (node.StorageAreaReadsDataDefinition != null)
                 {
                     node.StorageAreaReadsDataDefinition.TryGetValue((StorageArea)sent, out searchExistingDataDefinition);
-                    rsymbol = searchExistingDataDefinition?.Item2;
+                    rsymbol = searchExistingDataDefinition;
                 }
 
                 if (rsymbol != null)

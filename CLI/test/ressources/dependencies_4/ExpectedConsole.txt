@@ -1,2 +1,2 @@
-﻿Code: 1029 TypeCobol.CLI.exe: Dependencies files given are unreachable.
+﻿Code: 1029 TypeCobol.CLI.exe: Dependencies files given are unreachable: input\DoesntExists.rdz.tcbl
 Try TypeCobol.CLI.exe --help for usage information.

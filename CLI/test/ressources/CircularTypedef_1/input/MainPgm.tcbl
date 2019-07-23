@@ -1,0 +1,86 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MainPgm.
+
+       DATA DIVISION.
+       working-storage section.
+
+
+      *Circular reference from MainType -> DepA -> DepB -> MainType
+      *Will be used by a variable
+       01 MainType1 TYPEDEF STRICT PUBLIC.
+            05 var1-1 pic X.
+            05 var1-2 type DepA::Type1.
+       01 foo1 type DepA::Type1.
+
+      *Circular reference from MainType -> DepA -> DepB -> MainType
+      *Will be used by a procedure parameter
+       01 MainType2 TYPEDEF STRICT PUBLIC.
+            05 var2-1 pic X.
+            05 var2-2 type DepA::Type2.
+
+      *Circular reference
+      *MainType -> DepA -> DepB -> MainType (unused types)
+      *Should be KO, but diagnostics on dependencies are not shown
+      * we except:
+      *Line 22[13,56] <30, Error, Semantics> - Semantic error: 
+      *TYPE 'MainPgm.MainUnusedType3' is not referenced
+       01 UnusedMainType3 TYPEDEF STRICT PUBLIC.
+            05 var3-1 pic X.
+            05 var3-2 type DepA::UnusedType3.
+
+
+      *Circular reference from MainType -> DepB -> DepA -> MainType
+      *Will be used by a variable
+       01 MainType11 TYPEDEF STRICT PUBLIC.
+            05 var11-1 pic X.
+            05 var11-2 type DepB::Type11.
+       01 foo10 type DepB::Type11.
+
+      *Circular reference from MainType -> DepB -> DepA -> MainType
+      *Will be used by a procedure parameter
+       01 MainType12 TYPEDEF STRICT PUBLIC.
+            05 var12-1 pic X.
+            05 var2-2 type DepB::Type12.
+
+      *Circular reference
+      *MainType -> DepB -> DepA -> MainType (unused types)
+      *Should be KO, but diagnostics on dependencies are not shown
+      * we except:
+      *Line 42[13,58] <30, Error, Semantics> - Semantic error: 
+      *TYPE 'MainPgm.MainUnusedType13' is not referenced
+       01 UnusedMainType13 TYPEDEF STRICT PUBLIC.
+            05 var13-1 pic X.
+            05 var13-2 type DepB::UnusedType13.
+
+
+
+       PROCEDURE DIVISION.
+           move foo1::var1-1 to var1-1
+           move foo10::var10-1 to var-10-1
+
+           .
+
+       declare procedure foo private
+      *Reference the type "MainType1" twice but in a different SymbolTable
+      *It's useful to check if TypeCobolLinker don't go in a infinite loop
+          input foo-var1       TYPE MainType1
+         .
+       PROCEDURE DIVISION.
+           move foo-var1::var1-2::DepAvar1-2::DepBvar1-2 to DepBvar1-2.
+       END-DECLARE.
+
+       declare procedure UseMainType2 private
+          input param2-1        TYPE DepA::Type2
+         .
+       PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       declare procedure UseDepBType12 private
+          input param12-1        TYPE DepB::Type12
+         .
+       PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       
+       END PROGRAM MainPgm.

@@ -127,6 +127,23 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
+        /// Collect a token
+        /// </summary>
+        /// <param name="token">The token to be collected</param>
+        private void CollectToken(TypeCobol.Compiler.Scanner.Token token)
+        {
+            int tline = token.Line;
+            int tcolumn = token.Column;
+            int tcolumnEnd = token.EndColumn;
+            Range currentFormaCommentTokenRange = new Range();
+            currentFormaCommentTokenRange.start = new Position(tline - 1, tcolumn - 1);
+            currentFormaCommentTokenRange.end = new Position(tline - 1, tcolumnEnd - 1);
+            AddToken(tline - 1, new TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token(
+                TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.TokenType.FormalComment,
+                currentFormaCommentTokenRange));
+        }
+
+        /// <summary>
         /// Collect all interesting token from a line.
         /// </summary>
         /// <param name="line"></param>
@@ -141,16 +158,13 @@ namespace TypeCobol.LanguageServer
                 {//Collect all token inside multi line comments.
                     foreach (TypeCobol.Compiler.Scanner.Token token in line.SourceTokens)
                     {
-                        int tline = token.Line;
-                        int tcolumn = token.Column;
-                        int tcolumnEnd = token.EndColumn;
-                        Range currentFormaCommentTokenRange = new Range();
-                        currentFormaCommentTokenRange.start = new Position(tline - 1, tcolumn - 1);
-                        currentFormaCommentTokenRange.end = new Position(tline - 1, tcolumnEnd - 1);
-                        AddToken(tline - 1, new TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token(
-                            TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.TokenType.FormalComment,
-                            currentFormaCommentTokenRange));
+                        CollectToken(token);
                     }
+                }
+                else if (tlines.SourceTokens != null && tlines.SourceTokens.Count >= 1 && 
+                    (tlines.SourceTokens[0].Type == (int)TokenType.MULTILINES_COMMENTS_STOP || tlines.SourceTokens[0].Type == (int)TokenType.FORMALIZED_COMMENTS_STOP))
+                {//This is the last multiline tokens stop which is not par of a MultiLine comments context.
+                    CollectToken(tlines.SourceTokens[0]);
                 }
             }
         }

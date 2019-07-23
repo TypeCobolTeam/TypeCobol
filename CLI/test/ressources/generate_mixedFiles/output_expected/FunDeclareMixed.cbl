@@ -34,19 +34,19 @@
       *DECLARE FUNCTION DoesNothing PRIVATE.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c49a4761DoesNothing.
+       PROGRAM-ID. c49a4761.
        PROCEDURE DIVISION
            .
       *FunDeclare.DoesNothing  - No Params
            DISPLAY 'I DO NOTHING'
            .
-       END PROGRAM c49a4761DoesNothing.
+       END PROGRAM c49a4761.
       *
       *DECLARE FUNCTION ReturnsZero PRIVATE
       *      RETURNING result PIC 9(04).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e61a1c43ReturnsZero.
+       PROGRAM-ID. e61a1c43.
        DATA DIVISION.
        LINKAGE SECTION.
       *FunDeclare.ReturnsZero  - No Params
@@ -59,13 +59,13 @@
       *		returns(result: pic 9(04))
            MOVE 0 TO result.
            .
-       END PROGRAM e61a1c43ReturnsZero.
+       END PROGRAM e61a1c43.
       *
       *DECLARE FUNCTION DoesNothing PRIVATE
       *      INPUT x PIC 9(04).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. cd51a7fdDoesNothing.
+       PROGRAM-ID. cd51a7fd.
        DATA DIVISION.
        LINKAGE SECTION.
       *FunDeclare.DoesNothing - Params :
@@ -78,7 +78,7 @@
       *		input(x: pic 9(04))
            DISPLAY 'I DO NOTHING WITH ' x
            .
-       END PROGRAM cd51a7fdDoesNothing.
+       END PROGRAM cd51a7fd.
       *
       *DECLARE FUNCTION StrangelyReturnsItsInput PRIVATE
       *      INPUT     x      PIC 9(04)
@@ -86,7 +86,7 @@
       *    .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c498f2f1StrangelyReturnsItsInp.
+       PROGRAM-ID. c498f2f1.
        DATA DIVISION.
        LINKAGE SECTION.
       *FunDeclare.StrangelyReturnsItsInput - Params :
@@ -107,13 +107,13 @@
            ELSE
              MOVE x TO result
            END-IF.
-       END PROGRAM c498f2f1StrangelyReturnsItsInp.
+       END PROGRAM c498f2f1.
       *
       *declare function UseACopy private
       *         input  x pic X.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e7b552c0UseACopy.
+       PROGRAM-ID. e7b552c0.
        data division.
        working-storage section.
       *FunDeclare.UseACopy - Params :
@@ -131,7 +131,7 @@
       *		input(x: pic X)
            display "Hello"
            .
-       END PROGRAM e7b552c0UseACopy.
+       END PROGRAM e7b552c0.
 
 000000*£TC-PART3££££££££££££££££££££££££££££££££££££££££££££££££££££££££
 000000*IDENTIFICATION DIVISION.

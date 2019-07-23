@@ -84,7 +84,7 @@
       *  input ptr pointer.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e0410090PointerProcedure.
+       PROGRAM-ID. e0410090.
   
          data division.
            working-storage section.
@@ -107,4 +107,4 @@
                             
              goback
              .
-       END PROGRAM e0410090PointerProcedure.
+       END PROGRAM e0410090.

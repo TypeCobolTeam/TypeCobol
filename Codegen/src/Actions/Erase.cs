@@ -83,10 +83,10 @@ namespace TypeCobol.Codegen.Actions
         /// <summary>
         /// Perform the action.
         /// </summary>
-        public void Execute()
+        public IList<Action> Execute()
         {
             if (!HasErasedWord)
-                return;
+                return null;
             //Add all Erased Tokens
             foreach (Qualifier.GenerateToken token in ErasedTokens)
             {
@@ -94,6 +94,7 @@ namespace TypeCobol.Codegen.Actions
             }
             // comment out original "line" (=~ non expanded node)
             this.Node.Comment = true;
+            return null;
         }
     }
 }

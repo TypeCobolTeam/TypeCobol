@@ -70,7 +70,7 @@
       
        procedure division.
       *    call DisplayEventList input MyEventList
-           CALL 'd1447c56DisplayEventList' USING
+           CALL 'd1447c56' USING
                                  MyEventList
            end-call
                                                   
@@ -120,7 +120,7 @@
       *     INPUT EventList type EventList.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. d1447c56DisplayEventList.
+       PROGRAM-ID. d1447c56.
        data division.
        working-storage section.
       *DVZF0OS3.DisplayEventList - Params :
@@ -160,13 +160,13 @@
              display "test"
            END-PERFORM
            GOBACK.
-       END PROGRAM d1447c56DisplayEventList.
+       END PROGRAM d1447c56.
       *
       *DECLARE PROCEDURE DisplayEventList PRIVATE
       *     INPUT EventList type EventList.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c715cbccDisplayEventList.
+       PROGRAM-ID. c715cbcc.
        data division.
        working-storage section.
       *DVZF0OS3.DisplayEventList - Params :
@@ -205,13 +205,13 @@
              display "test"
            END-PERFORM
            GOBACK.
-       END PROGRAM c715cbccDisplayEventList.
+       END PROGRAM c715cbcc.
       *
       *DECLARE PROCEDURE DisplayEventList PRIVATE
       *     INPUT EventList type EventList.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e427e27cDisplayEventList.
+       PROGRAM-ID. e427e27c.
        data division.
        working-storage section.
       *DVZF0OS3.DisplayEventList - Params :
@@ -251,4 +251,4 @@
              display "test"
            END-PERFORM
            GOBACK.
-       END PROGRAM e427e27cDisplayEventList.
+       END PROGRAM e427e27c.

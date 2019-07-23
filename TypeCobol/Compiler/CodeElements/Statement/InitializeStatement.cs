@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -50,6 +51,12 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public ReceivingStorageArea[] ReceivingStorageAreas { get; set; }
 
+        [CanBeNull]
+        public SyntaxProperty<bool> Filler { get; set; }
+
+        [CanBeNull]
+        public SyntaxProperty<InitializeDataCategory> DataCategory { get; set; }
+
         // Sending areas.
         //
         // p344:
@@ -69,6 +76,9 @@ namespace TypeCobol.Compiler.CodeElements
         //    were the sending operand in an implicit MOVE statement to the receiving item.
         /// </summary>
         public InitializeReplacingInstruction[] ReplacingInstructions { get; set; }
+
+        [CanBeNull]
+        public SyntaxProperty<bool> Default { get; set; }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor) {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
@@ -122,7 +132,7 @@ namespace TypeCobol.Compiler.CodeElements
         public bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return this.ContinueVisitToChildren(astVisitor, ReplaceDataCategory, BySendingVariable);
         }
-    }      
+    }
 
     public enum InitializeDataCategory
     {
@@ -135,6 +145,15 @@ namespace TypeCobol.Compiler.CodeElements
         NUMERIC,
         NUMERIC_EDITED,
         DBCS,
-        EGCS        
+        EGCS,
+        ALL = ALPHABETIC |
+              ALPHANUMERIC |
+              ALPHANUMERIC_EDITED |
+              NATIONAL |
+              NATIONAL_EDITED |
+              NUMERIC |
+              NUMERIC_EDITED |
+              DBCS |
+              EGCS
     }
 }

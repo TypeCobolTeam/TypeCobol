@@ -9,14 +9,14 @@
        procedure division.
       *    call DVZZOSM5::DisplayCounter
       *             input Disp::LIG-DET
-           CALL 'e08dc03aDisplayCounter' USING
+           CALL 'e08dc03a' USING
                                  LIG-DET IN Disp
            end-call
                                        
                                      
       *    call DisplayCounter
       *             input Disp::LIG-DET
-           CALL 'e08dc03aDisplayCounter' USING
+           CALL 'e08dc03a' USING
                                  LIG-DET IN Disp
            end-call
                                        
@@ -35,5 +35,5 @@
       *         input LineDetail pic X(50).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e08dc03aDisplayCounter.
-       END PROGRAM e08dc03aDisplayCounter.
+       PROGRAM-ID. e08dc03a.
+       END PROGRAM e08dc03a.

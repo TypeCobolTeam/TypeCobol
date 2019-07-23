@@ -23,13 +23,28 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         private Program Program { get; set; }
         public SyntaxTree SyntaxTree { get; set; }
 
-        private TypeDefinition _CurrentTypeDefinition;
+        private TypeDefinition _CurrentTypeDefinition
+        {
+            get => _currentTypeDefinition;
+            set
+            {
+                _currentTypeDefinition = value;
+                //Reset that this type was already added to the list TypeThatNeedTypeLinking
+                typeAlreadyAddedToTypeToLink = false;
+            }
+        }
+
+        private bool typeAlreadyAddedToTypeToLink = false;
+
         private bool _IsInsideWorkingStorageContext;
         private bool _IsInsideLinkageSectionContext;
         private bool _IsInsideLocalStorageSectionContext;
         private bool _IsInsideFileSectionContext;
-        private bool _IsInsideProcedure;
         private bool _IsInsideGlobalStorageSection;
+        private FunctionDeclaration _ProcedureDeclaration;
+
+        public List<DataDefinition> TypedVariablesOutsideTypedef { get; } = new List<DataDefinition>();
+        public List<TypeDefinition> TypeThatNeedTypeLinking { get; } = new List<TypeDefinition>();
 
         // Programs can be nested => track current programs being analyzed
         private Stack<Program> programsStack = null;
@@ -104,7 +119,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         private void Enter(Node node, CodeElement context = null, SymbolTable table = null)
         {
             node.SymbolTable = table ?? SyntaxTree.CurrentNode.SymbolTable;
-            if (_IsInsideProcedure)
+            if (_ProcedureDeclaration != null)
             {
                 node.SetFlag(Node.Flag.InsideProcedure, true);      //Set flag to know that this node belongs a Procedure or Function
             }
@@ -187,25 +202,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             }
             if (LastLevel1Def != null)
                 Dispatcher.OnLevel1Definition((DataDefinition)LastLevel1Def);
-        }
-
-        private void AddToSymbolTable(DataDescription node)
-        {
-            var table = node.SymbolTable;
-            if (node.CodeElement.IsGlobal && table.CurrentScope != SymbolTable.Scope.GlobalStorage)
-                table = table.GetTableFromScope(SymbolTable.Scope.Global);
-            else
-            {
-                var parent = node.Parent as DataDescription;
-                while (parent != null)
-                {
-                    if (parent.CodeElement.IsGlobal && table.CurrentScope != SymbolTable.Scope.GlobalStorage)
-                        table = table.GetTableFromScope(SymbolTable.Scope.Global);
-                    parent = parent.Parent as DataDescription;
-                }
-            }
-
-            table.AddVariable(node);
         }
 
         public virtual void StartCobolCompilationUnit()
@@ -410,7 +406,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartGlobalStorageSection(GlobalStorageSectionHeader header)
         {
-            Enter(new GlobalStorageSection(header), header, SyntaxTree.CurrentNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.GlobalStorage));
+            GlobalStorageSection gs = new GlobalStorageSection(header);
+            Enter(gs, header, SyntaxTree.CurrentNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.GlobalStorage));
             _IsInsideGlobalStorageSection = true;
             Dispatcher.StartGlobalStorageSection(header);
         }
@@ -453,36 +450,31 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             {
                 SetCurrentNodeToTopLevelItem(entry.LevelNumber);
 
+                var symbolTable = SyntaxTree.CurrentNode.SymbolTable;
+                if (entry.IsGlobal)
+                    symbolTable = symbolTable.GetTableFromScope(SymbolTable.Scope.Global);
+
                 //Update DataType of CodeElement by searching info on the declared Type into SymbolTable.
                 //Note that the AST is not complete here, but you can only refer to a Type that has previously been defined.
                 var node = new DataDescription(entry);
                 if (_CurrentTypeDefinition != null)
                     node.ParentTypeDefinition = _CurrentTypeDefinition;
-                Enter(node);
+                Enter(node, null, symbolTable);
 
                 if (entry.Indexes != null && entry.Indexes.Any())
                 {
-                    var table = node.SymbolTable;
+                    
                     foreach (var index in entry.Indexes)
                     {
-                        if (node.CodeElement.IsGlobal)
-                            table = table.GetTableFromScope(SymbolTable.Scope.Global);
-
                         var indexNode = new IndexDefinition(index);
-                        Enter(indexNode, null, table);
+                        Enter(indexNode, null, symbolTable);
                         if (_CurrentTypeDefinition != null)
                             indexNode.ParentTypeDefinition = _CurrentTypeDefinition;
-                        table.AddVariable(indexNode);
+                        symbolTable.AddVariable(indexNode);
                         Exit();
                     }
                 }
 
-                var types = node.SymbolTable.GetType(node);
-                if (types.Count == 1)
-                {
-                    entry.DataType.RestrictionLevel = types[0].DataType.RestrictionLevel;
-                }
-                //else do nothing, it's an error that will be handled by Cobol2002Checker
 
                 if (_IsInsideWorkingStorageContext)
                     node.SetFlag(Node.Flag.WorkingSectionNode, true);      //Set flag to know that this node belongs to Working Storage Section
@@ -495,20 +487,59 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 if (_IsInsideGlobalStorageSection)
                     node.SetFlag(Node.Flag.GlobalStorageSection, true);         //Set flag to know that this node belongs to Global Storage Section
 
-                AddToSymbolTable(node);
                 Dispatcher.StartDataDescriptionEntry(entry);
+
+                node.SymbolTable.AddVariable(node);
+                CheckIfItsTyped(node, node.CodeElement);
             }
         }
+
+        private void CheckIfItsTyped(DataDefinition dataDefinition, CommonDataDescriptionAndDataRedefines commonDataDescriptionAndDataRedefines)
+        {
+            //Is a type referenced
+            if (commonDataDescriptionAndDataRedefines.UserDefinedDataType != null)
+            {
+                if (_CurrentTypeDefinition != null)
+                {
+                    _CurrentTypeDefinition.TypedChildren.Add(dataDefinition);
+                }
+                else
+                {
+                    TypedVariablesOutsideTypedef.Add(dataDefinition);
+                }
+            }
+
+            //Special case for Depending On.
+            //Depending on inside typedef can reference other variable declared in type referenced in this typedef
+            //To resolve variable after "depending on" we first have to resolve all types used in this typedef.
+            //This resolution must be recursive until all sub types have been resolved.
+            if (commonDataDescriptionAndDataRedefines.OccursDependingOn != null)
+            {
+                if (_CurrentTypeDefinition != null && !typeAlreadyAddedToTypeToLink)
+                {
+                    TypeThatNeedTypeLinking.Add(_CurrentTypeDefinition);
+                    typeAlreadyAddedToTypeToLink = true;
+                }
+            }
+        }
+
 
         public virtual void StartDataRedefinesEntry(DataRedefinesEntry entry)
         {
             SetCurrentNodeToTopLevelItem(entry.LevelNumber);
+            var symbolTable = SyntaxTree.CurrentNode.SymbolTable;
+            if (entry.IsGlobal)
+                symbolTable = symbolTable.GetTableFromScope(SymbolTable.Scope.Global);
+
             var node = new DataRedefines(entry);
             if (_CurrentTypeDefinition != null)
                 node.ParentTypeDefinition = _CurrentTypeDefinition;
-            Enter(node);
+            Enter(node, null, symbolTable);
             node.SymbolTable.AddVariable(node);
+
             Dispatcher.StartDataRedefinesEntry(entry);
+
+            CheckIfItsTyped(node, node.CodeElement);
         }
 
         public virtual void StartDataRenamesEntry(DataRenamesEntry entry)
@@ -536,23 +567,35 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         public virtual void StartTypeDefinitionEntry(DataTypeDescriptionEntry typedef)
         {
             SetCurrentNodeToTopLevelItem(typedef.LevelNumber);
-            var node = new TypeDefinition(typedef);
-            Enter(node);
+
             // TCTYPE_GLOBAL_TYPEDEF
-            var table = node.SymbolTable.GetTableFromScope(node.CodeElement.IsGlobal ? SymbolTable.Scope.Global : SymbolTable.Scope.Declarations);
-            table.AddType(node);
+            var symbolTable = SyntaxTree.CurrentNode.SymbolTable.GetTableFromScope(typedef.IsGlobal ? SymbolTable.Scope.Global : SymbolTable.Scope.Declarations);
+
+            var node = new TypeDefinition(typedef);
+            Enter(node, null, symbolTable);
+
+            //GLOBALSS_NOTYPEDEF
+            //No TypeDefs are allowed to be defined in the Global Storage Section
+            if (_IsInsideGlobalStorageSection)
+            {
+                node.SetFlag(Node.Flag.GlobalStorageSection, true);
+            }
+            else
+            {
+                symbolTable.AddType(node);
+            }
+
 
             _CurrentTypeDefinition = node;
-
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.TypeDeclared, node.Name, LogType.TypeCobolUsage);
             Dispatcher.StartTypeDefinitionEntry(typedef);
+            CheckIfItsTyped(node, node.CodeElement);
         }
 
         public virtual void StartWorkingStorageSection(WorkingStorageSectionHeader header)
         {
             Enter(new WorkingStorageSection(header), header);
             _IsInsideWorkingStorageContext = true;
-            if (_IsInsideProcedure)
+            if (_ProcedureDeclaration != null)
             {
                 CurrentNode.SetFlag(Node.Flag.ForceGetGeneratedLines, true);
             }
@@ -571,7 +614,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             Enter(new LocalStorageSection(header), header);
             _IsInsideLocalStorageSectionContext = true;
-            if (_IsInsideProcedure)
+            if (_ProcedureDeclaration != null)
             {
                 CurrentNode.SetFlag(Node.Flag.ForceGetGeneratedLines, true);
             }
@@ -590,7 +633,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             Enter(new LinkageSection(header), header);
             _IsInsideLinkageSectionContext = true;
-            if (_IsInsideProcedure)
+            if (_ProcedureDeclaration != null)
             {
                 CurrentNode.SetFlag(Node.Flag.ForceGetGeneratedLines, true);
             }
@@ -608,7 +651,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         public virtual void StartProcedureDivision(ProcedureDivisionHeader header)
         {
             Enter(new ProcedureDivision(header), header);
-            if (_IsInsideProcedure)
+            if (_ProcedureDeclaration != null)
             {
                 CurrentNode.SetFlag(Node.Flag.ForceGetGeneratedLines, true);
             }
@@ -642,6 +685,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         }
 
         private Tools.UIDStore uidfactory = new Tools.UIDStore();
+        private TypeDefinition _currentTypeDefinition;
+
         public virtual void StartFunctionDeclaration(FunctionDeclarationHeader header)
         {
             header.SetLibrary(CurrentProgram.Identification.ProgramName.Name);
@@ -650,7 +695,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 Label = uidfactory.FromOriginal(header?.FunctionName.Name),
                 Library = CurrentProgram.Identification.ProgramName.Name
             };
-            _IsInsideProcedure = true;
+            _ProcedureDeclaration = node;
             CurrentProgram.Root.SetFlag(Node.Flag.ContainsProcedure, true);
             //DO NOT change this without checking all references of Library. 
             // (SymbolTable - function, type finding could be impacted) 
@@ -673,6 +718,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
                 paramNode.SetParent(CurrentNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
+                CheckIfItsTyped(paramNode, paramNode.CodeElement);
             }
             foreach (var parameter in declaration.Profile.OutputParameters) //Set Output Parameters
             {
@@ -684,6 +730,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
                 paramNode.SetParent(CurrentNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
+                CheckIfItsTyped(paramNode, paramNode.CodeElement);
             }
             foreach (var parameter in declaration.Profile.InoutParameters) //Set Inout Parameters
             {
@@ -695,6 +742,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
                 paramNode.SetParent(CurrentNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
+                CheckIfItsTyped(paramNode, paramNode.CodeElement);
             }
 
             if (declaration.Profile.ReturningParameter != null) //Set Returning Parameters
@@ -706,6 +754,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
                 paramNode.SetParent(CurrentNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
+                CheckIfItsTyped(paramNode, paramNode.CodeElement);
             }
 
             AnalyticsWrapper.Telemetry.TrackEvent(EventType.FunctionDeclared, declaration.FunctionName.ToString(), LogType.TypeCobolUsage);
@@ -717,8 +766,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Enter(new FunctionEnd(end), end);
             Exit();
             Exit();// exit DECLARE FUNCTION
-            _IsInsideProcedure = false;
             Dispatcher.EndFunctionDeclaration(end);
+            _ProcedureDeclaration = null;
         }
 
         public virtual void StartFunctionProcedureDivision(ProcedureDivisionHeader header)
@@ -815,6 +864,23 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void EndExecStatement()
         {
+            //Code duplicated in OnExecStatement
+            //EndExecStatement (therefore StartExecStatement) is fired if the exec is in a procedure division and is the first instruction
+            //OnExecStatement is fired if the exec is in a procedure division and is not the first instruction
+
+            //Code to generate a specific ProcedureDeclaration as Nested when an Exec Statement is spotted. See Issue #1209
+            //This might be helpful for later
+            //if (_ProcedureDeclaration != null)
+            //{
+            //    _ProcedureDeclaration.SetFlag(Node.Flag.GenerateAsNested, true);
+            //}
+
+            //Code to generate all ProcedureDeclarations as Nested when an Exec Statement is spotted. See Issue #1209
+            //This is the selected solution until we determine the more optimal way to generate a program that contains Exec Statements
+            if (_ProcedureDeclaration != null)
+            {
+                CurrentNode.Root.MainProgram.SetFlag(Node.Flag.GenerateAsNested, true);
+            }
             Exit();
             Dispatcher.EndExecStatement();
         }
@@ -887,6 +953,18 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Enter(new ExitProgram(stmt), stmt);
             Exit();
             Dispatcher.OnExitProgramStatement(stmt);
+        }
+
+        public virtual void OnAllocateStatement(AllocateStatement stmt)
+        {
+            Enter(new Allocate(stmt), stmt);
+            Exit();
+        }
+
+        public virtual void OnFreeStatement(FreeStatement stmt)
+        {
+            Enter(new Free(stmt), stmt);
+            Exit();
         }
 
         public virtual void OnGobackStatement(GobackStatement stmt)
@@ -984,6 +1062,24 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         public virtual void OnExecStatement(ExecStatement stmt)
         {
             Enter(new Exec(stmt), stmt);
+
+            //Code duplicated in OnExecStatement
+            //EndExecStatement (therefore StartExecStatement) is fired if the exec is in a procedure division and is the first instruction
+            //OnExecStatement is fired if the exec is in a procedure division and is not the first instruction
+
+            //Code to generate a specific ProcedureDeclaration as Nested when an Exec Statement is spotted. See Issue #1209
+            //This might be helpful for later
+            //if (_ProcedureDeclaration != null)
+            //{
+            //    _ProcedureDeclaration.SetFlag(Node.Flag.GenerateAsNested, true);
+            //}
+
+            //Code to generate all ProcedureDeclarations as Nested when an Exec Statement is spotted. See Issue #1209
+            //This is the selected solution until we determine the more optimal way to generate a program that contains Exec Statements
+            if (_ProcedureDeclaration != null)
+            {
+                CurrentNode.Root.MainProgram.SetFlag(Node.Flag.GenerateAsNested, true);
+            }
             Exit();
             Dispatcher.OnExecStatement(stmt);
         }

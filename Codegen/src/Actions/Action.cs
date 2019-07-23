@@ -7,6 +7,6 @@ namespace TypeCobol.Codegen.Actions
     {
         string Group { get; }
         /// <summary>Modifies AST.</summary>
-        void Execute();
+        IList<Action> Execute();
     }
 }

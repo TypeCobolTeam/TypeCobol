@@ -1801,7 +1801,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(var2.Count == 1);
             Assert.IsTrue(var2.Symbol.Type == typeOfDaysPrivate.Symbol.Type);
             //Check the the type was accessible
-            Assert.IsTrue(nestPrgSym.IsTypeAccessible(typeOfDaysPrivate.Symbol));
+            Assert.IsFalse(nestPrgSym.IsTypeAccessible(typeOfDaysPrivate.Symbol));
 
             //Lookup the type "typeOfDaysNoModifier"
             var typeOfDaysNoModifier = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysNoModifier" }, false);
@@ -1820,7 +1820,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(var3.Count == 1);
             Assert.IsTrue(var3.Symbol.Type == typeOfDaysNoModifier.Symbol.Type);
             //Check the the type was accessible
-            Assert.IsTrue(nestPrgSym.IsTypeAccessible(typeOfDaysNoModifier.Symbol));
+            Assert.IsFalse(nestPrgSym.IsTypeAccessible(typeOfDaysNoModifier.Symbol));
 
         }
     }

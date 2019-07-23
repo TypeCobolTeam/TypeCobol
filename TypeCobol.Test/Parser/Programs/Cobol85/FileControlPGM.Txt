@@ -8,9 +8,9 @@ PROGRAM: FileControl common:False initial:False recursive:False
 -- DATA --------
   FIC-APPEL:Alphanumeric
   MyData:Alphanumeric
-  MyData-val1:BOOL
-  MyData-val2:BOOL
-  MyData-val3:BOOL
+  MyData-val1:Level88
+  MyData-val2:Level88
+  MyData-val3:Level88
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL

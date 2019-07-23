@@ -1,0 +1,2 @@
+ReturnCode=Success_
+No error in "input\MainPgm.rdz.tcbl".
