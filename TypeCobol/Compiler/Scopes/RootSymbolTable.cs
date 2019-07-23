@@ -12,6 +12,9 @@ namespace TypeCobol.Compiler.Scopes
     /// </summary>
     public class RootSymbolTable : NamespaceSymbol
     {
+        /// <summary>
+        /// This is the first variable of the universe that can be assimilated to the 0 or null variable.
+        /// </summary>
         public VariableSymbol BottomVariable { get; private set;}
 
         /// <summary>

@@ -75,7 +75,7 @@ namespace TypeCobol.Compiler.Domain.Validator
                         result = false;
                         break;
                     case Tags.Group:
-                    {//Validate each Symbol in the Record
+                    {//Validate each Symbol in the Group
                         GroupType recType = (GroupType) s.Type;
                         foreach (var field in recType.Scope)
                         {
@@ -87,7 +87,7 @@ namespace TypeCobol.Compiler.Domain.Validator
                 }
             }
             
-            //We use a flat representation so RECORD Symbols are flattened.
+            //We use a flat representation so Group Symbols are flattened.
             if (FromSeen && s.Type != null && s.Type.Tag != Tags.Group)
             {//We can start building the renames type
                 if (this.Type == null)

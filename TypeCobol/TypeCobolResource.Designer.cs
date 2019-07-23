@@ -135,9 +135,9 @@ namespace TypeCobol {
         /// <summary>
         ///   Looks up a localized string similar to RENAMES object &quot;{0}&quot; is not a record..
         /// </summary>
-        public static string RenamesNotARecord {
+        public static string RenamesNotAGroup {
             get {
-                return ResourceManager.GetString("RenamesNotARecord", resourceCulture);
+                return ResourceManager.GetString("RenamesNotAGroup", resourceCulture);
             }
         }
         

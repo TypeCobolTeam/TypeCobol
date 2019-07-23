@@ -136,7 +136,7 @@
     <value>Unknow REDEFINES Symbol : "{0}"</value>
     <comment>level-number--+-------------+--REDEFINES--data-name-2  --- data-name2 is unknown.</comment>
   </data>
-  <data name="RenamesNotARecord" xml:space="preserve">
+  <data name="RenamesNotAGroup" xml:space="preserve">
     <value>RENAMES object "{0}" is not a record.</value>
   </data>
   <data name="RenamesObjectNotFound" xml:space="preserve">
