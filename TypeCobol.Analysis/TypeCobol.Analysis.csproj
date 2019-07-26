@@ -47,8 +47,11 @@
   <ItemGroup>
     <Compile Include="Cfg\ControlFlowGraphBuilder.cs" />
     <Compile Include="Cfg\DefaultControlFlowGraphBuilder.cs" />
+    <Compile Include="Dfa\DfaDefPoint.cs" />
+    <Compile Include="Dfa\DfaUsePoint.cs" />
     <Compile Include="Dfa\DataFlowGraphBuilder.cs" />
     <Compile Include="Dfa\DfaBasicBlockInfo.cs" />
+    <Compile Include="Dfa\TypeCobolDataFlowGraphBuilder.cs" />
     <Compile Include="Graph\BasicBlock.cs" />
     <Compile Include="Graph\CfgDotFileForNodeGenerator.cs" />
     <Compile Include="Graph\ControlFlowGraph.cs" />
