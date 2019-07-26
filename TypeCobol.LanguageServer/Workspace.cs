@@ -48,6 +48,7 @@ namespace TypeCobol.LanguageServer
         private List<FileCompiler> _fileCompilerWaittingForNodePhase;
         public Dictionary<Uri, DocumentContext> OpenedDocumentContext { get; private set; }
         public EventHandler<DiagnosticEvent> DiagnosticsEvent { get; set; }
+        public EventHandler<EventArgs> DocumentModifiedEvent { get; set; }
         public EventHandler<MissingCopiesEvent> MissingCopiesEvent { get; set; }
         public EventHandler<LoadingIssueEvent> LoadingIssueEvent { get; set; }
         public EventHandler<ThreadExceptionEventArgs> ExceptionTriggered { get; set; }
@@ -118,6 +119,10 @@ namespace TypeCobol.LanguageServer
         /// Are we supporting Syntax Coloring Notifications.    
         /// </summary>
         public bool UseSyntaxColoring { get; set; }
+        /// <summary>
+        /// Are we supporting OutlineRefresh Notifications.    
+        /// </summary>
+        public bool UseOutlineRefresh { get; set; }
 
         #endregion
 
@@ -586,6 +591,8 @@ namespace TypeCobol.LanguageServer
 
             if (compilationUnit?.MissingCopies.Count > 0)
                 MissingCopiesEvent(fileUri, new MissingCopiesEvent() { Copies = compilationUnit.MissingCopies.Select(c => c.TextName).Distinct().ToList() });
+
+            DocumentModifiedEvent?.Invoke(fileUri, new EventArgs());
         }
     }
 
