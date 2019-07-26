@@ -67,7 +67,49 @@ namespace TypeCobol.Analysis.Dfa
             set;
         }
 
-        
+        /// <summary>
+        /// The Index of the first entry in a Cfg UseList of the first use in this block.
+        /// </summary>
+        public int UseListFirstIndex
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// Count of uses in this block
+        /// </summary>
+        public int UseCount
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// The Index of the first entry in a Cfg DefList of the first definition in this block.
+        /// </summary>
+        public int DefListFirstIndex
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// Count of definition in this block
+        /// </summary>
+        public int DefCount
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public DfaBasicBlockInfo()
+        {
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -87,10 +129,14 @@ namespace TypeCobol.Analysis.Dfa
         /// <param name="other">Instance to copy from</param>
         public DfaBasicBlockInfo(DfaBasicBlockInfo<N> other)
         {
-            Gen = other.Gen.Clone();
-            Kill = other.Kill.Clone();
-            In = other.In.Clone();
-            Out = other.Out.Clone();
+            Gen = other.Gen?.Clone();
+            Kill = other.Kill?.Clone();
+            In = other.In?.Clone();
+            Out = other.Out?.Clone();
+            UseListFirstIndex = other.UseListFirstIndex;
+            UseCount = other.UseCount;
+            DefListFirstIndex = other.DefListFirstIndex;
+            DefCount = other.DefCount;
         }
     }
 }
