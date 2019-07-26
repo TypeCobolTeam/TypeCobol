@@ -46,12 +46,14 @@ namespace TypeCobol.Codegen.Generators
         /// //4) Flush of Function declations.
         /// <param name="mapper">The linearization representation</param>
         /// <param name="Input">Input source lines</param>
+        /// <param name="clonedMapper">Linear mapper for cloned nodes</param>
         /// <returns>The Generated Source Document</returns>
         /// </summary>
-        protected override SourceText LinearGeneration<A>(LinearNodeSourceCodeMapper mapper, IReadOnlyList<A> Input)
+        protected override SourceText LinearGeneration<A>(LinearNodeSourceCodeMapper mapper, IReadOnlyList<A> Input, LinearNodeSourceCodeMapper clonedMapper = null)
         {
             LineMappingCtx lmCtx = new LineMappingCtx(this.LineMapping);
-            return base.LinearGeneration<A>(mapper, Input, lmCtx);
+            CurrentLineMappinCtx = lmCtx;
+            return base.LinearGeneration<A>(mapper, clonedMapper, Input, lmCtx, 0, mapper.LineData.Length);
         }
 
         /// <summary>
@@ -75,6 +77,16 @@ namespace TypeCobol.Codegen.Generators
                     if (range != null)
                     {
                         string lm = String.Format("{0};{1};{2}{3}", i + 1, range.Item1, range.Item2, Environment.NewLine);
+                        byte[] bytes = ASCIIEncoding.Default.GetBytes(lm);
+                        stream.Write(bytes, 0, bytes.Length);
+                    }
+                }
+                //If there are inverse line mapping generate also
+                if (CurrentLineMappinCtx.InverseLineMapping != null)
+                {
+                    foreach(var inv in CurrentLineMappinCtx.InverseLineMapping)
+                    {
+                        string lm = String.Format("{0};{1};{2}{3}", inv.Item1, inv.Item2, inv.Item2, Environment.NewLine);
                         byte[] bytes = ASCIIEncoding.Default.GetBytes(lm);
                         stream.Write(bytes, 0, bytes.Length);
                     }

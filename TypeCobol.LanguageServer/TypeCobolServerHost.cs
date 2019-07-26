@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.StdioHttp;
+using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 using TypeCobol.LanguageServer.Utilities;
 
 namespace TypeCobol.LanguageServer
@@ -111,6 +112,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public static bool UseSyntaxColoring { get; set; }
 
+        /// <summary>
+        /// Are we supporting Outline Refresh Notifications.    
+        /// </summary>
+        public static bool UseOutlineRefresh { get; set; }
+
         public static System.Diagnostics.Process Process;
 
         /// <summary>
@@ -198,6 +204,7 @@ namespace TypeCobol.LanguageServer
                 { "antlrp",  "Use ANTLR to parse a Program.", _ => UseAntlrProgramParsing = true},
                 { "dcs|disablecopysuffixing", "Deactictivate Euro Information suffixing", v => UseEuroInformationLegacyReplacingSyntax = false },
                 { "sc|syntaxcolor",  "Syntax Coloring Support.", _ => UseSyntaxColoring = true},
+                { "ol|outlineRefresh",  "Outline Support.", _ => UseOutlineRefresh = true},
             };
 
             System.Collections.Generic.List<string> arguments;
@@ -259,19 +266,20 @@ namespace TypeCobol.LanguageServer
                     httpServer.RedirectedOutpuStream = Process.StandardInput;
                 }
                 var jsonRPCServer = new JsonRPCServer(httpServer);
-                var typeCobolServer = new TypeCobolServer(jsonRPCServer, MessagesActionQueue);
+                var typeCobolServer = new TypeCobolCustomLanguageServer(jsonRPCServer, MessagesActionQueue);
 
                 typeCobolServer.NoLogsMessageNotification = NoLogsMessageNotification;
 
-                typeCobolServer.LsrSourceTesting = LsrSourceTesting;
-                typeCobolServer.LsrScannerTesting = LsrScannerTesting;
-                typeCobolServer.LsrPreprocessTesting = LsrPreprocessTesting;
-                typeCobolServer.LsrParserTesting = LsrParserTesting;
-                typeCobolServer.LsrSemanticTesting = LsrSemanticTesting;
+                if (LsrSourceTesting) typeCobolServer.LsrTestingLevel = LsrTestingOptions.LsrSourceDocumentTesting;
+                if (LsrScannerTesting) typeCobolServer.LsrTestingLevel = LsrTestingOptions.LsrScanningPhaseTesting;
+                if (LsrPreprocessTesting) typeCobolServer.LsrTestingLevel = LsrTestingOptions.LsrPreprocessingPhaseTesting;
+                if (LsrParserTesting) typeCobolServer.LsrTestingLevel = LsrTestingOptions.LsrParsingPhaseTesting;
+                if (LsrSemanticTesting) typeCobolServer.LsrTestingLevel = LsrTestingOptions.LsrSemanticPhaseTesting;
                 typeCobolServer.TimerDisabledOption = TimerDisabledOption;
                 typeCobolServer.UseAntlrProgramParsing = UseAntlrProgramParsing;
                 typeCobolServer.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;
                 typeCobolServer.UseSyntaxColoring = UseSyntaxColoring;
+                typeCobolServer.UseOutlineRefresh = UseOutlineRefresh;
 
 
                 //Creating the thread that will read mesages and handle them 
@@ -346,7 +354,6 @@ namespace TypeCobol.LanguageServer
                         typeCobolServer.NotifyException(e);
                     }
                 }
-
             }
         }
     }

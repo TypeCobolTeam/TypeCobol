@@ -1,1 +1,1 @@
-﻿-1 -i input\MainPgm.rdz.tcbl -o output\MainPgm.rdz.tcbl -d output\error.txt -e rdz --autoremarks --dependencies input\DVZTEST1.rdz.tcbl --dependencies input\DVZTEST2.rdz.tcbl
+﻿-i input\MainPgm.rdz.tcbl -o output\MainPgm.rdz.tcbl -d output\error.txt -e rdz --autoremarks --dependencies input\DVZTEST1.rdz.tcbl --dependencies input\DVZTEST2.rdz.tcbl

@@ -122,21 +122,26 @@ namespace TypeCobol.Codegen
         /// Performs all actions
         /// <param name="tree">The tree on which to operate</param>
         /// </summary>
-        public void Perform(SourceFile tree)
+        public void Perform(Node tree)
         {
             if (tree == null)
                 return;
             tree.Accept(this);
             var groups = new List<string>();
-            foreach (var action in this)
+            for(int i = 0; i < this.Count; i++)
             {
+                var action = this[i];
                 try
                 {
                     if (action.Group != null && groups.Contains(action.Group)) 
                     continue;
                     if (BeforeAction != null)
                         BeforeAction(this, (EventArgs)action);
-                    action.Execute();
+                    var subActions = action.Execute();
+                    if (subActions != null)
+                    {
+                        this.AddRange(subActions);
+                    }
                     if (AfterAction != null)
                         AfterAction(this, (EventArgs)action);
                     if (action.Group != null)
@@ -242,6 +247,15 @@ namespace TypeCobol.Codegen
             {
                 return new Remarks(source, destination, location, CompilationDocument);
             }
+            if ("clone".Equals(action))
+            {
+                return new Clone(destination, this);
+            }
+            if ("contribute".Equals(action))
+            {
+                return new Contribute(destination, pattern, code, group, index, newline);
+            }
+
             System.Console.WriteLine("Unknown action: \"" + action + "\"");
             return null;
 

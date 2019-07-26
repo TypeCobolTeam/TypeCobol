@@ -95,7 +95,7 @@ namespace TypeCobol.Codegen.Nodes
 
         public string Text { get; internal set; }
 
-        private IList<ITextLine> _cache = null;
+        protected IList<ITextLine> _cache = null;
         public override IEnumerable<ITextLine> Lines
         {
             get

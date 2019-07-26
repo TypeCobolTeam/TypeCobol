@@ -37,7 +37,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a0508f35check IS COMMON.
+       PROGRAM-ID. a0508f35 IS COMMON.
        data division.
        working-storage section.
       *PGM1.check - Params :
@@ -65,7 +65,7 @@
              WHERE LOT_SOC             = :ERIM04-LOT-SOC
            END-EXEC  
            CONTINUE.
-       END PROGRAM a0508f35check.
+       END PROGRAM a0508f35.
       *
       *declare procedure check private
       *   input mydate        TYPE Date
@@ -73,7 +73,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. efd9419fcheck IS COMMON.
+       PROGRAM-ID. efd9419f IS COMMON.
        data division.
        working-storage section.
       *PGM1.check - Params :
@@ -107,14 +107,14 @@
              WHERE LOT_SOC             = :ERIM04-LOT-SOC
            END-EXEC  
            CONTINUE.
-       END PROGRAM efd9419fcheck.
+       END PROGRAM efd9419f.
       *
       *declare procedure checkName private
       *   input myname        PIC X(15)
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a02a7aa5checkName IS COMMON.
+       PROGRAM-ID. a02a7aa5 IS COMMON.
        data division.
        working-storage section.
       *PGM1.checkName - Params :
@@ -137,11 +137,11 @@
       *PGM1.checkName - Params :
       *		input(myname: pic X(15))
       *    Call check input var1
-           CALL 'a0508f35check' USING
+           CALL 'a0508f35' USING
                                  var1
            end-call
                                 
            .
-       END PROGRAM a02a7aa5checkName.
+       END PROGRAM a02a7aa5.
        END PROGRAM PGM1.
 

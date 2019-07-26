@@ -10,9 +10,9 @@ Line 59[1,7] <27, Error, Syntax> - Syntax error : Incompatible parameter clauses
 fun():():():():Public:Undefined/Function
 fun():():():():Public:Function/Function
 pro():():():():Private:Procedure/Procedure
-NoVisibility():():():():Private:Undefined/Function
-NoVisibility():():():():Private:Function/Function
-NoVisibility():():():():Private:Procedure/Procedure
+NoVisibility():():():():Local:Undefined/Function
+NoVisibility():():():():Local:Function/Function
+NoVisibility():():():():Local:Procedure/Procedure
 fun(i:Numeric):():():():Private:Function/Function
 fun(i:Wherever, j:Numeric, k:Whenever):():():():Public:Function/Function
 fun():():():(k:Numeric):Public:Function/Function

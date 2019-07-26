@@ -1,1 +1,1 @@
-﻿-1 -ets BadExecToStep1 -ets BadExecToStep2 -e BadEncoding1 -e BadEncoding2 -md 2 -md 56 -f CoBoL85 -f 1
+﻿-ets BadExecToStep1 -ets BadExecToStep2 -e BadEncoding1 -e BadEncoding2 -md 2 -md 56 -f CoBoL85 -f 1

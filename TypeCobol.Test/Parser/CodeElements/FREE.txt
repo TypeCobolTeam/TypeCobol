@@ -1,0 +1,16 @@
+﻿--- Diagnostics ---
+Line 8[1,4] <27, Error, Syntax> - Syntax error : mismatched input 'FREE' expecting user defined word RuleStack=codeElement>cobol2002Statement>freeStatement,  OffendingSymbol=[1,4:FREE]<FREE>
+Line 8[6,8] <27, Error, Syntax> - Syntax error : mismatched input ''x'' expecting user defined word RuleStack=codeElement>cobol2002Statement>freeStatement,  OffendingSymbol=[6,8+:'x']<AlphanumericLiteral>(',Y,Y){x}
+--- Code Elements ---
+[[FreeStatement]] [1,4:FREE]<FREE> --> [6,6:x]<UserDefinedWord>
+
+[[FreeStatement]] [1,4:FREE]<FREE> --> [10,10:z]<UserDefinedWord>
+
+[[FreeStatement]] [1,4:FREE]<FREE> --> [11,11:y]<UserDefinedWord>
+
+[[FreeStatement]] [1,4:FREE]<FREE> --> [11,11:y]<UserDefinedWord>
+
+[[FreeStatement]] [1,4:FREE]<FREE> --> [1,4:FREE]<FREE>
+
+[[FreeStatement]] [1,4:FREE]<FREE> --> [6,8+:'x']<AlphanumericLiteral>(',Y,Y){x}
+

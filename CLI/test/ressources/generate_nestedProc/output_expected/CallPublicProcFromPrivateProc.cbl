@@ -17,12 +17,12 @@
 
        01 TC-PGM1-PntTab.
            05 TC-PGM1-PntNbr         PIC S9(04) COMP VALUE 2.
-      *To call program a0508f35check
+      *To call program a0508f35
       *Which is generated code for PGM1.check
       *Declared in source file CallPublicProcFromPrivateProc.rdz.tcbl
            05 TC-PGM1-a0508f35-Idt   PIC X(08) VALUE 'a0508f35'.
            05 TC-PGM1-a0508f35 PROCEDURE-POINTER.
-      *To call program cd991005GetPersonById
+      *To call program cd991005
       *Which is generated code for PersonService.GetPersonById
       *Declared in source file CallPublicProcFromPrivateProc.rdz.tcbl
            05 TC-PGM1-cd991005-Idt   PIC X(08) VALUE 'cd991005'.
@@ -71,18 +71,18 @@
        TRAITEMENT.
       *OK  call check of PGM1
       *    call check input mydate1
-           CALL 'a0508f35check' USING
+           CALL 'a0508f35' USING
                                  mydate1
            end-call
                                    
            .
        PA-ALL-ENTRIES.
            ENTRY 'a0508f35' USING TC-A1
-               CALL "a0508f35check" USING TC-A1
+               CALL "a0508f35" USING TC-A1
                GOBACK.
 
            ENTRY 'cd991005' USING TC-A1
-               CALL "cd991005GetPersonById" USING TC-A1
+               CALL "cd991005" USING TC-A1
                GOBACK.
 
 
@@ -101,7 +101,7 @@
       *   input  name  pic x(15).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. f6b6da00GetPersonByName IS COMMON.
+       PROGRAM-ID. f6b6da00 IS COMMON.
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.GetPersonByName - Params :
@@ -113,7 +113,7 @@
       *PGM1.GetPersonByName - Params :
       *		input(name: pic x(15))
            CONTINUE.
-       END PROGRAM f6b6da00GetPersonByName.
+       END PROGRAM f6b6da00.
        END PROGRAM PersonService.
 
 
@@ -123,7 +123,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a0508f35check IS COMMON.
+       PROGRAM-ID. a0508f35 IS COMMON.
        data division.
        working-storage section.
       *PGM1.check - Params :
@@ -149,7 +149,7 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *To call program cd991005GetPersonById in module PersonService
+      *To call program cd991005 in module PersonService
       *Which is generated code for PersonService.GetPersonById
       *Declared in source file CallPublicProcFromPrivateProc.rdz.tcbl
        01 TC-PersonSe-cd991005-Item.
@@ -171,8 +171,7 @@
              OR TC-PersonSe-cd991005-Idt not = 'cd991005'
                PERFORM TC-LOAD-POINTERS-PersonSe
            END-IF
-      *    Equivalent to call cd991005GetPersonById in module PersonServ
-      *ice
+      *    Equivalent to call cd991005 in module PersonService
            CALL TC-PersonSe-cd991005 USING
                                  mydate
            end-call
@@ -204,14 +203,14 @@
                 END-EVALUATE
             END-PERFORM
             .
-       END PROGRAM a0508f35check.
+       END PROGRAM a0508f35.
       *
       *declare procedure checkName private
       *   input myname        PIC X(15)
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a02a7aa5checkName IS COMMON.
+       PROGRAM-ID. a02a7aa5 IS COMMON.
        data division.
        working-storage section.
       *PGM1.checkName - Params :
@@ -228,13 +227,13 @@
       *PGM1.checkName - Params :
       *		input(myname: pic X(15))
            CONTINUE.
-       END PROGRAM a02a7aa5checkName.
+       END PROGRAM a02a7aa5.
       *
       *declare procedure GetPersonById public
       *   input  personId  type date.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. cd991005GetPersonById IS COMMON.
+       PROGRAM-ID. cd991005 IS COMMON.
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.GetPersonById - Params :
@@ -249,6 +248,6 @@
       *PGM1.GetPersonById - Params :
       *		input(personId: DATE)
            CONTINUE.
-       END PROGRAM cd991005GetPersonById.
+       END PROGRAM cd991005.
        END PROGRAM PGM1.
 

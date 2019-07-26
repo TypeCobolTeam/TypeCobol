@@ -270,6 +270,9 @@
     <None Include="LSRTests\GlobalStorageCompletion\output_expected\GlobalStorageCompletion.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\OutlineRefresh\input\OutlineRefresh.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\PerformCompletion\input\PerformCompletion.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -311,6 +314,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\QualifiedNameCompletionWithFiller\output_expected\QualifiedNameCompletionWithFiller.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\OutlineRefresh\output_expected\OutlineRefresh.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\RemoveDataDivisionCtrlZWithDiag\input\RemoveDataDivisionCtrlZWithDiag.tlsp">

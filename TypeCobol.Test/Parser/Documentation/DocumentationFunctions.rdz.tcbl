@@ -32,4 +32,26 @@
            CONTINUE.
        END-DECLARE.
 
+      * Simple formalized comment on local procedure
+      %<<<
+        @ description: MyProc2 description
+      %>>>
+       DECLARE PROCEDURE MyProc2
+           INPUT    name        Pic X(50)
+           OUTPUT   price       Pic S9(5)V9(2).
+           PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+      * Simple formalized comment on public procedure
+      %<<<
+        @ description: MyProc3 description
+      %>>>
+       DECLARE PROCEDURE MyProc3 PUBLIC
+           INPUT    name        Pic X(50)
+           OUTPUT   price       Pic S9(5)V9(2).
+           PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
        END PROGRAM DocForFunctions.
