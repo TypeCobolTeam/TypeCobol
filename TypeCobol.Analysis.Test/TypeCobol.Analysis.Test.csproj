@@ -102,6 +102,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Compile Include="BasicControlFlowInstructionTest.cs" />
+    <Compile Include="DfaBuildUseAndDefListTest.cs" />
     <Compile Include="CfgTestUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
