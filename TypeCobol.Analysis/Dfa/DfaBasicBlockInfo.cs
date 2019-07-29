@@ -9,8 +9,8 @@ namespace TypeCobol.Analysis.Dfa
     /// <summary>
     /// Basic Block information for Data Flow Analysis.
     /// </summary>
-    /// <typeparam name="N">Type of the Instructions</typeparam>
-    public class DfaBasicBlockInfo<N>
+    /// <typeparam name="V">Type of variables</typeparam>
+    public class DfaBasicBlockInfo<V>
     {
         /// <summary>
         /// Generated definitions bit set: The set of locally available defintions in b.
@@ -50,18 +50,9 @@ namespace TypeCobol.Analysis.Dfa
         }
 
         /// <summary>
-        /// Temporary linked list of generated definitions
+        /// The dictionary of GEN Variable within the block to their DEF List index.
         /// </summary>
-        internal LinkedList<N> GenTmp
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Temporary linked list of killed definitions
-        /// </summary>
-        internal LinkedList<N> KillTmp
+        internal Dictionary<V,int> GenVariableDictionary
         {
             get;
             set;
@@ -127,7 +118,7 @@ namespace TypeCobol.Analysis.Dfa
         /// Copy constructor
         /// </summary>
         /// <param name="other">Instance to copy from</param>
-        public DfaBasicBlockInfo(DfaBasicBlockInfo<N> other)
+        public DfaBasicBlockInfo(DfaBasicBlockInfo<V> other)
         {
             Gen = other.Gen?.Clone();
             Kill = other.Kill?.Clone();

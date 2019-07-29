@@ -13,7 +13,7 @@ namespace TypeCobol.Analysis.Dfa
     /// <summary>
     /// Data Flow Graph Builder for Data Flow Analysis, a TypeCobol Specialization.
     /// </summary>
-    public class TypeCobolDataFlowGraphBuilder : DataFlowGraphBuilder<Node, DfaBasicBlockInfo<Node>, Symbol>
+    public class TypeCobolDataFlowGraphBuilder : DataFlowGraphBuilder<Node, DfaBasicBlockInfo<Symbol>, Symbol>
     {
         /// <summary>
         /// Vistor on StorageArea to collect them.
@@ -91,7 +91,7 @@ namespace TypeCobol.Analysis.Dfa
         /// Constructor
         /// </summary>
         /// <param name="cfg"></param>
-        public TypeCobolDataFlowGraphBuilder(ControlFlowGraph<Node, DfaBasicBlockInfo<Node>> cfg) : base(cfg)
+        public TypeCobolDataFlowGraphBuilder(ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>> cfg) : base(cfg)
         {
         }
 
