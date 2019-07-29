@@ -25,7 +25,7 @@ namespace TypeCobol.Analysis.Test
         public static string DefaultIntrinsicPath = null;
 
         //A Cfg for DataFlow Analysis on Node
-        public static DefaultControlFlowGraphBuilder<DfaBasicBlockInfo<Node>> CfgBuilder;
+        public static DefaultControlFlowGraphBuilder<DfaBasicBlockInfo<Symbol>> CfgBuilder;
 
         [TestInitialize]
         public void TestInitialize()
@@ -54,7 +54,7 @@ namespace TypeCobol.Analysis.Test
             //Alocate a static Default Control Flow Graph Builder
             CfgBuilderNodeListenerFactory = () =>
             {
-                CfgBuilder = new DefaultControlFlowGraphBuilder<DfaBasicBlockInfo<Node>>();
+                CfgBuilder = new DefaultControlFlowGraphBuilder<DfaBasicBlockInfo<Symbol>>();
                 return CfgBuilder;
             };
             NodeDispatcher.RegisterStaticNodeListenerFactory(CfgBuilderNodeListenerFactory);

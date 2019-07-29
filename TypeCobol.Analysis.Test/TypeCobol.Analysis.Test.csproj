@@ -104,6 +104,7 @@
     <Compile Include="BasicControlFlowInstructionTest.cs" />
     <Compile Include="DfaBuildUseAndDefListTest.cs" />
     <Compile Include="CfgTestUtils.cs" />
+    <Compile Include="DfaGenAndKillSetTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -189,6 +190,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="BasicCfgInstrs\MixedStackedNestedProcsPgms.tcbl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="BasicDfaSamples\SampleGotos0.cbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="DotOutput\Alter0.dot">
