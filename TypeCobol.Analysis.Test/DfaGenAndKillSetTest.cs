@@ -185,9 +185,9 @@ namespace TypeCobol.Analysis.Test
             //----------------------------------------------------------
             //checked that GEN(Block(1)) = "101" : bit 0 and 2 are set
             //----------------------------------------------------------
-            Assert.IsNotNull(dfaBuilder.Cfg.AllBlocks[1].Data.Gen);
-            //MOVE 2 TO I
+            Assert.IsNotNull(dfaBuilder.Cfg.AllBlocks[1].Data.Gen);            
             Assert.AreEqual("{0, 2}", dfaBuilder.Cfg.AllBlocks[1].Data.Gen.ToString());
+            //MOVE 2 TO I
             Assert.IsTrue(dfaBuilder.Cfg.AllBlocks[1].Data.Gen.Get(0));
             Assert.AreEqual(Compiler.CodeElements.CodeElementType.MoveStatement, dfaBuilder.DefList[0].Instruction.CodeElement.Type);
             Assert.AreEqual(I, dfaBuilder.DefList[0].Variable);
@@ -202,9 +202,9 @@ namespace TypeCobol.Analysis.Test
             //---------------------------------------------------------
             //checked that GEN(Block(2)) = "0001" : bit 3 is set
             //---------------------------------------------------------
-            Assert.IsNotNull(dfaBuilder.Cfg.AllBlocks[2].Data.Gen);
-            //MOVE 1 TO I
+            Assert.IsNotNull(dfaBuilder.Cfg.AllBlocks[2].Data.Gen);            
             Assert.AreEqual("{3}", dfaBuilder.Cfg.AllBlocks[2].Data.Gen.ToString());
+            //MOVE 1 TO I
             Assert.IsTrue(dfaBuilder.Cfg.AllBlocks[2].Data.Gen.Get(3));
             Assert.AreEqual(Compiler.CodeElements.CodeElementType.MoveStatement, dfaBuilder.DefList[3].Instruction.CodeElement.Type);
             Assert.AreEqual(I, dfaBuilder.DefList[3].Variable);
@@ -212,9 +212,9 @@ namespace TypeCobol.Analysis.Test
             //---------------------------------------------------------
             //checked that GEN(Block(6)) = "00001" : bit 4 is set
             //---------------------------------------------------------
-            Assert.IsNotNull(dfaBuilder.Cfg.AllBlocks[6].Data.Gen);
-            //ADD 1 TO J
+            Assert.IsNotNull(dfaBuilder.Cfg.AllBlocks[6].Data.Gen);            
             Assert.AreEqual("{4}", dfaBuilder.Cfg.AllBlocks[6].Data.Gen.ToString());
+            //ADD 1 TO J
             Assert.IsTrue(dfaBuilder.Cfg.AllBlocks[6].Data.Gen.Get(4));
             Assert.AreEqual(Compiler.CodeElements.CodeElementType.AddStatement, dfaBuilder.DefList[4].Instruction.CodeElement.Type);
             Assert.AreEqual(J, dfaBuilder.DefList[4].Variable);
@@ -222,12 +222,124 @@ namespace TypeCobol.Analysis.Test
             //---------------------------------------------------------
             //checked that GEN(Block(9)) = "000001" : bit 5 is set
             //---------------------------------------------------------
-            Assert.IsNotNull(dfaBuilder.Cfg.AllBlocks[9].Data.Gen);
-            //SUBSTRACT 4 FROM J
+            Assert.IsNotNull(dfaBuilder.Cfg.AllBlocks[9].Data.Gen);            
             Assert.AreEqual("{5}", dfaBuilder.Cfg.AllBlocks[9].Data.Gen.ToString());
+            //SUBSTRACT 4 FROM J
             Assert.IsTrue(dfaBuilder.Cfg.AllBlocks[9].Data.Gen.Get(5));
             Assert.AreEqual(Compiler.CodeElements.CodeElementType.SubtractStatement, dfaBuilder.DefList[5].Instruction.CodeElement.Type);
             Assert.AreEqual(J, dfaBuilder.DefList[5].Variable);
         }
+
+        [TestMethod]
+        public void KILL_SampleGotos0()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicDfaSamples", "SampleGotos0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+
+            Assert.IsTrue(Builder.Programs.Count == 1);
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+
+            //Create a Dot File Generator            
+            CfgDotFileForNodeGenerator<DfaBasicBlockInfo<Symbol>> dotGen = new CfgDotFileForNodeGenerator<DfaBasicBlockInfo<Symbol>>(CfgBuilder.Cfg, false);
+            dotGen.FullInstruction = true;
+            StringWriter writer = new StringWriter();
+            dotGen.Report(writer);
+
+            // Generate teh dot of the sample
+            string result = writer.ToString();
+
+            //Resolve variable I,J
+            var multiI = Builder.Programs[0].ResolveReference(new string[] { "I" }, true);
+            Assert.AreEqual(1, multiI.Count);
+            Symbol I = multiI.Symbol;
+
+            var multiJ = Builder.Programs[0].ResolveReference(new string[] { "J" }, true);
+            Assert.AreEqual(1, multiJ.Count);
+            Symbol J = multiJ.Symbol;
+
+            TypeCobolDataFlowGraphBuilder dfaBuilder = new TypeCobolDataFlowGraphBuilder(CfgBuilder.Cfg);
+            dfaBuilder.ComputeKillSet();
+
+            Assert.IsNull(dfaBuilder.Cfg.AllBlocks[0].Data.Kill);
+            Assert.IsNull(dfaBuilder.Cfg.AllBlocks[3].Data.Kill);
+            Assert.IsNull(dfaBuilder.Cfg.AllBlocks[4].Data.Kill);
+            Assert.IsNull(dfaBuilder.Cfg.AllBlocks[5].Data.Kill);
+            Assert.IsNull(dfaBuilder.Cfg.AllBlocks[7].Data.Kill);
+            Assert.IsNull(dfaBuilder.Cfg.AllBlocks[8].Data.Kill);
+            Assert.IsNull(dfaBuilder.Cfg.AllBlocks[10].Data.Kill);
+
+            //----------------------------------------------------------------
+            //checked that KILL(Block(1)) = "000111" : 
+            //----------------------------------------------------------------
+            Assert.IsNotNull(dfaBuilder.Cfg.AllBlocks[1].Data.Kill);            
+            Assert.AreEqual("{3, 4, 5}", dfaBuilder.Cfg.AllBlocks[1].Data.Kill.ToString());
+            //ADD 1 TO I : From Block3
+            Assert.IsTrue(dfaBuilder.Cfg.AllBlocks[1].Data.Kill.Get(3));            
+            Assert.AreEqual(Compiler.CodeElements.CodeElementType.MoveStatement, dfaBuilder.DefList[3].Instruction.CodeElement.Type);
+            Assert.AreEqual(I, dfaBuilder.DefList[3].Variable);
+
+            //ADD 1 TO J : From Block 6
+            Assert.IsTrue(dfaBuilder.Cfg.AllBlocks[1].Data.Kill.Get(4));
+            Assert.AreEqual(Compiler.CodeElements.CodeElementType.AddStatement, dfaBuilder.DefList[4].Instruction.CodeElement.Type);
+            Assert.AreEqual(J, dfaBuilder.DefList[4].Variable);
+
+            //SUBSTRACT 4 FROM J : From block 9
+            Assert.IsTrue(dfaBuilder.Cfg.AllBlocks[1].Data.Kill.Get(5));
+            Assert.AreEqual(Compiler.CodeElements.CodeElementType.SubtractStatement, dfaBuilder.DefList[5].Instruction.CodeElement.Type);
+            Assert.AreEqual(J, dfaBuilder.DefList[5].Variable);
+
+            //----------------------------------------------------------------
+            //checked that KILL(Block(2)) = "1" : 
+            //----------------------------------------------------------------
+            Assert.IsNotNull(dfaBuilder.Cfg.AllBlocks[2].Data.Kill);
+            //MOVE I TO J : From Block1
+            Assert.AreEqual("{0}", dfaBuilder.Cfg.AllBlocks[2].Data.Kill.ToString());
+            Assert.IsTrue(dfaBuilder.Cfg.AllBlocks[2].Data.Kill.Get(0));
+            Assert.AreEqual(Compiler.CodeElements.CodeElementType.MoveStatement, dfaBuilder.DefList[0].Instruction.CodeElement.Type);
+            Assert.AreEqual(I, dfaBuilder.DefList[0].Variable);
+
+            //----------------------------------------------------------------
+            //checked that KILL(Block(6)) = "011001" : 
+            //----------------------------------------------------------------
+            Assert.IsNotNull(dfaBuilder.Cfg.AllBlocks[6].Data.Kill);            
+            Assert.AreEqual("{1, 2, 5}", dfaBuilder.Cfg.AllBlocks[6].Data.Kill.ToString());
+            //MOVE I TO J : From Block1
+            Assert.IsTrue(dfaBuilder.Cfg.AllBlocks[6].Data.Kill.Get(1));
+            Assert.AreEqual(Compiler.CodeElements.CodeElementType.MoveStatement, dfaBuilder.DefList[1].Instruction.CodeElement.Type);
+            Assert.AreEqual(J, dfaBuilder.DefList[1].Variable);
+
+            //ADD 1 TO J : From Block1
+            Assert.IsTrue(dfaBuilder.Cfg.AllBlocks[6].Data.Kill.Get(2));
+            Assert.AreEqual(Compiler.CodeElements.CodeElementType.AddStatement, dfaBuilder.DefList[2].Instruction.CodeElement.Type);
+            Assert.AreEqual(J, dfaBuilder.DefList[2].Variable);
+
+            //SUBSTRACT 4 FROM J : From block 9
+            Assert.IsTrue(dfaBuilder.Cfg.AllBlocks[6].Data.Kill.Get(5));
+            Assert.AreEqual(Compiler.CodeElements.CodeElementType.SubtractStatement, dfaBuilder.DefList[5].Instruction.CodeElement.Type);
+            Assert.AreEqual(J, dfaBuilder.DefList[5].Variable);
+
+            //----------------------------------------------------------------
+            //checked that KILL(Block(9)) = "01101" : 
+            //----------------------------------------------------------------
+            Assert.IsNotNull(dfaBuilder.Cfg.AllBlocks[9].Data.Kill);
+            Assert.AreEqual("{1, 2, 4}", dfaBuilder.Cfg.AllBlocks[9].Data.Kill.ToString());
+            //MOVE I TO J : From Block1
+            Assert.IsTrue(dfaBuilder.Cfg.AllBlocks[9].Data.Kill.Get(1));
+            Assert.AreEqual(Compiler.CodeElements.CodeElementType.MoveStatement, dfaBuilder.DefList[1].Instruction.CodeElement.Type);
+            Assert.AreEqual(J, dfaBuilder.DefList[1].Variable);
+
+            //ADD 1 TO J : From Block1
+            Assert.IsTrue(dfaBuilder.Cfg.AllBlocks[9].Data.Kill.Get(2));
+            Assert.AreEqual(Compiler.CodeElements.CodeElementType.AddStatement, dfaBuilder.DefList[2].Instruction.CodeElement.Type);
+            Assert.AreEqual(J, dfaBuilder.DefList[2].Variable);
+
+            //ADD 1 TO J : From Block6
+            Assert.IsTrue(dfaBuilder.Cfg.AllBlocks[9].Data.Kill.Get(4));
+            Assert.AreEqual(Compiler.CodeElements.CodeElementType.AddStatement, dfaBuilder.DefList[4].Instruction.CodeElement.Type);
+            Assert.AreEqual(J, dfaBuilder.DefList[4].Variable);
+        }
+
     }
 }
