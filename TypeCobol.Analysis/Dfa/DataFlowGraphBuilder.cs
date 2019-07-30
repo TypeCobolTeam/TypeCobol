@@ -162,7 +162,16 @@ namespace TypeCobol.Analysis.Dfa
         /// <summary>
         /// Determine if GEN set as been calculated
         /// </summary>
-        public bool IsGenSetCalcualted
+        public bool IsGenSetCalculated
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// Determine if KILL set as been calculated
+        /// </summary>
+        public bool IsKillSetCalculated
         {
             get;
             internal set;
@@ -176,10 +185,10 @@ namespace TypeCobol.Analysis.Dfa
         /// </summary>
         public void ComputeGenSet()
         {
-            lock(this)
+            lock (this)
             {
-                if (IsGenSetCalcualted)
-                    return;                
+                if (IsGenSetCalculated)
+                    return;
                 //prerequisites: Compute the DefList
                 ComputeDefList();
 
@@ -208,7 +217,45 @@ namespace TypeCobol.Analysis.Dfa
                         block.Data.GenVariableDictionary = variables;
                     }
                 }
-                IsGenSetCalcualted = true;
+                IsGenSetCalculated = true;
+            }
+        }
+
+        /// <summary>
+        /// Build the KILL set for each basic block.
+        /// The Kill set represents those variables defined outside the basic block which also have definitions inside the block.
+        /// Those definitions outside the block are destroyed by the redefinitions inside the block.
+        /// </summary>
+        public void ComputeKillSet()
+        {
+            lock (this)
+            {
+                if (IsKillSetCalculated)
+                    return;
+                //prerequisites: Compute the GEN set
+                ComputeGenSet();
+                foreach (var block in Cfg.AllBlocks)
+                {
+                    if (block.Instructions == null || block.Data == null || block.Data.DefCount == 0)
+                        continue;//No Def variables in the block.
+
+                    //Allocate a temporary KILL set.
+                    BitSet kill = new BitSet(DefList.Count);
+
+                    //for each definition outside the basic block
+                    foreach (var def in DefList)
+                    {
+                        if (def.BlockIndex == block.Index)
+                            continue;//Inside the current block
+                        int defIndex;
+                        if (block.Data.GenVariableDictionary.TryGetValue(def.Variable, out defIndex))
+                        {//The def variable is in the Block's GEN, kill the definition outside the block.
+                            kill.Set(def.Index);
+                        }
+                    }
+                    block.Data.Kill = kill;
+                }
+                IsKillSetCalculated = true;
             }
         }
     }
