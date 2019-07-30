@@ -3,11 +3,11 @@
        data DIVISION.
        working-storage section.
       
-       01 Event TYPEDEF STRICT public global.
+       01 Event TYPEDEF STRICT public.
           05 IDT pic X(05).
           05 Periodicity pic 9(03).
       
-       01 EventList TYPEDEF STRICT public global.
+       01 EventList TYPEDEF STRICT public.
           05 Counter pic 9(04) comp-5.
           05 EventArray.
              10 Event TYPE DVZF0OS3::Event occurs 10
@@ -31,6 +31,8 @@
            GOBACK.
        end-declare
            .
+
+      *KO until #1081 - visibility refactoring is fully implemented.
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Imbrique.
        data DIVISION.
