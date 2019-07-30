@@ -258,5 +258,100 @@ namespace TypeCobol.Analysis.Dfa
                 IsKillSetCalculated = true;
             }
         }
+
+        /// <summary>
+        /// Determine if InOuts sets as been calculated
+        /// </summary>
+        public bool IsInOutSetCalculated
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// Initialize the Computation of IN and OUT Sets
+        /// </summary>
+        private void IntializeInOutSetsComputation()
+        {
+            //prerequisites: Compute the KILL sets which will force GEN sets calculation.
+            ComputeKillSet();
+
+            //Initalization
+            foreach (var block in Cfg.AllBlocks)
+            {
+                if (block.Data == null)
+                {
+                    block.Data = new DfaBasicBlockInfo<V>(DefList.Count);
+                }
+                else
+                {
+                    if (block.Data.In == null)
+                        block.Data.In = new BitSet(DefList.Count);
+                    else
+                        block.Data.In.Clear();
+                    if (block.Data.Out == null)
+                        block.Data.Out = new BitSet(DefList.Count);
+                    else
+                        block.Data.Out.Clear();
+                }
+                if (block.Data.Gen != null)
+                { ///Intialize OUT(b) = GEN(b)
+                    block.Data.Out.Or(block.Data.Gen);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Build IN and OUT sets for each basic Block.
+        /// IN sets represent data which reach a point just before the first instruction of a block.
+        /// OUT sets represent definitions which reach a point just after the last instruction of a basic.
+        /// The equations relating IN and OUT sets are:
+        /// 
+        ///     OUT(b) = IN(b) - KILL(b) U GEN(b)
+        ///     IN(b) = U OUT(p)  whepre p belongs to Predecessor(b)
+        /// </summary>
+        public void ComputeInOutSet()
+        {
+            lock (this)
+            {
+                if (IsInOutSetCalculated)
+                    return;
+
+                //Initalization
+                IntializeInOutSetsComputation();
+
+                //Compute Predecessors
+                this.Cfg.SetupPredecessorEdges();
+
+                BitSet newIn = new BitSet(DefList.Count);
+                bool bChange = true;
+                while (bChange)
+                {
+                    bChange = false;
+                    foreach (var b in Cfg.AllBlocks)
+                    {
+                        foreach(var p in b.PredecessorEdges)
+                        {
+                            var a = Cfg.PredecessorEdges[p];
+                            newIn.Or(a.Data.Out);
+                        }
+                        if (!newIn.Equals(b.Data.In))
+                        {
+                            bChange = true;
+                            b.Data.In.Copy(newIn);
+                        }
+                        newIn.Clear();
+                        BitSet live = b.Data.Kill != null ? b.Data.In.Difference(b.Data.Kill) : b.Data.In.Clone();
+                        if (b.Data.Gen != null)
+                        {
+                            live.Or(b.Data.Gen);
+                        }
+                        b.Data.Out = live;
+                    }                    
+                }
+
+                IsInOutSetCalculated = true;
+            }
+        }
     }
 }

@@ -146,6 +146,21 @@ namespace TypeCobol.Analysis.Util
             _data[element] &= ~(1UL << (index % BitsPerElement));
         }
 
+        public void Clear()
+        {
+            for (int i = 0; i < _data.Length; i++)
+                _data[i] = 0;
+        }
+
+        public void Copy(BitSet from)
+        {
+            if (_data.Length != from._data.Length)
+            {
+                _data = new ulong[from._data.Length];                
+            }
+            Array.Copy(from._data, _data, _data.Length);
+        }
+
         public bool this[int index]
         {
             get
