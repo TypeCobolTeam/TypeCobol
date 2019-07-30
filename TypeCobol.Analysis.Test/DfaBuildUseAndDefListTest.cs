@@ -30,6 +30,7 @@ namespace TypeCobol.Analysis.Test
         [TestInitialize]
         public void TestInitialize()
         {
+            SymbolTableBuilder.Root = null;
             //Create a default configurations for options
             DefaultConfig = new TypeCobolConfiguration();
             if (File.Exists(DefaultIntrinsicPath))
@@ -76,14 +77,12 @@ namespace TypeCobol.Analysis.Test
             if (BuilderNodeListenerFactory != null)
             {
                 NodeDispatcher.RemoveStaticNodeListenerFactory(BuilderNodeListenerFactory);
-                if (Builder.Programs.Count != 0)
-                {
-                    foreach (var prog in Builder.Programs)
-                    {
-                        RemovePrograms(prog);
-                    }
-                }
             }
+            if (CfgBuilderNodeListenerFactory != null)
+            {
+                NodeDispatcher.RemoveStaticNodeListenerFactory(CfgBuilderNodeListenerFactory);
+            }
+            CfgBuilder = null;
         }
 
         [TestMethod]
@@ -100,7 +99,7 @@ namespace TypeCobol.Analysis.Test
 
             TypeCobolDataFlowGraphBuilder dfaBuilder = new TypeCobolDataFlowGraphBuilder(CfgBuilder.Cfg);
             dfaBuilder.ComputeUseList();
-            Assert.IsTrue(dfaBuilder.UseList.Count == 1);
+            Assert.AreEqual(1, dfaBuilder.UseList.Count);
             Assert.IsTrue(dfaBuilder.UseList[0].Instruction.CodeElement.Type == Compiler.CodeElements.CodeElementType.IfStatement);
             Assert.AreEqual(dfaBuilder.UseList[0].Variable.Name, "A");
 

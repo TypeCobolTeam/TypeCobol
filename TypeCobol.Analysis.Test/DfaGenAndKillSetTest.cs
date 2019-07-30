@@ -85,10 +85,65 @@ namespace TypeCobol.Analysis.Test
                     }
                 }
             }
+            if (CfgBuilderNodeListenerFactory != null)
+            {
+                NodeDispatcher.RegisterStaticNodeListenerFactory(CfgBuilderNodeListenerFactory);
+            }
         }
 
+        /// <summary>
+        /// This test check the GEN set of the sample SampleGotos0.cbl according to its corresponding
+        /// dot graph.
+        /// 
+        //digraph Cfg {
+        //    node[
+        //    shape = "record"
+        //    ]
+        //edge[
+        //arrowtail = "empty"
+        //]
+        //            Block0[
+        //            label = "{START|}"
+        //            ]
+        //            Block1[
+        //            label = "{L1. Block1|    MOVE 2 TO I\l    MOVE I TO J\l    ADD 1 TO J\l}"
+        //            ]
+        //            Block2[
+        //            label = "{L2. Block2|    MOVE 1 TO I\l    IF J = 999 THEN\l}"
+        //            ]
+        //            Block3[
+        //            label = "{Block3|         GO TO L4\l}"
+        //            ]
+        //            Block10[
+        //            label = "{L4. Block10|    GO TO L2\l}"
+        //            ]
+        //            Block5[
+        //            label = "{Block5|}"
+        //            ]
+        //            Block6[
+        //            label = "{L3. Block6|    ADD 1 TO J\l    IF J = 999 THEN\l}"
+        //            ]
+        //            Block7[
+        //            label = "{Block7|         GO TO L4\l}"
+        //            ]
+        //            Block9[
+        //            label = "{Block9|    SUBTRACT 4 FROM J\l}"
+        //            ]
+        //            Block0->Block1
+        //            Block1->Block2
+        //            Block2->Block3
+        //            Block2->Block5
+        //            Block3->Block10
+        //            Block10->Block2
+        //            Block5->Block6
+        //            Block6->Block7
+        //            Block6->Block9
+        //            Block7->Block10
+        //            Block9->Block10
+        //}
+        /// </summary>
         [TestMethod]
-        public void SampleGotos0()
+        public void GEN_SampleGotos0()
         {
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicDfaSamples", "SampleGotos0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
@@ -104,12 +159,75 @@ namespace TypeCobol.Analysis.Test
             StringWriter writer = new StringWriter();
             dotGen.Report(writer);
 
-            // compare with expected result
+            // Generate teh dot of the sample
             string result = writer.ToString();
+
+            //Resolve variable I,J
+            var multiI = Builder.Programs[0].ResolveReference(new string[]{ "I"}, true);
+            Assert.AreEqual(1, multiI.Count);
+            Symbol I = multiI.Symbol;
+
+            var multiJ = Builder.Programs[0].ResolveReference(new string[] { "J" }, true);
+            Assert.AreEqual(1, multiJ.Count);
+            Symbol J = multiJ.Symbol;
 
             TypeCobolDataFlowGraphBuilder dfaBuilder = new TypeCobolDataFlowGraphBuilder(CfgBuilder.Cfg);
             dfaBuilder.ComputeGenSet();
 
+            Assert.IsNull(dfaBuilder.Cfg.AllBlocks[0].Data.Gen);            
+            Assert.IsNull(dfaBuilder.Cfg.AllBlocks[3].Data.Gen);
+            Assert.IsNull(dfaBuilder.Cfg.AllBlocks[4].Data.Gen);
+            Assert.IsNull(dfaBuilder.Cfg.AllBlocks[5].Data.Gen);
+            Assert.IsNull(dfaBuilder.Cfg.AllBlocks[7].Data.Gen);
+            Assert.IsNull(dfaBuilder.Cfg.AllBlocks[8].Data.Gen);
+            Assert.IsNull(dfaBuilder.Cfg.AllBlocks[10].Data.Gen);
+
+            //----------------------------------------------------------
+            //checked that GEN(Block(1)) = "101" : bit 0 and 2 are set
+            //----------------------------------------------------------
+            Assert.IsNotNull(dfaBuilder.Cfg.AllBlocks[1].Data.Gen);
+            //MOVE 2 TO I
+            Assert.AreEqual("{0, 2}", dfaBuilder.Cfg.AllBlocks[1].Data.Gen.ToString());
+            Assert.IsTrue(dfaBuilder.Cfg.AllBlocks[1].Data.Gen.Get(0));
+            Assert.AreEqual(Compiler.CodeElements.CodeElementType.MoveStatement, dfaBuilder.DefList[0].Instruction.CodeElement.Type);
+            Assert.AreEqual(I, dfaBuilder.DefList[0].Variable);
+            //MOCE I TO J
+            Assert.IsFalse(dfaBuilder.Cfg.AllBlocks[1].Data.Gen.Get(1));
+
+            //ADD 1 TO J
+            Assert.IsTrue(dfaBuilder.Cfg.AllBlocks[1].Data.Gen.Get(2));
+            Assert.AreEqual(Compiler.CodeElements.CodeElementType.AddStatement, dfaBuilder.DefList[2].Instruction.CodeElement.Type);
+            Assert.AreEqual(J, dfaBuilder.DefList[2].Variable);
+
+            //---------------------------------------------------------
+            //checked that GEN(Block(2)) = "0001" : bit 3 is set
+            //---------------------------------------------------------
+            Assert.IsNotNull(dfaBuilder.Cfg.AllBlocks[2].Data.Gen);
+            //MOVE 1 TO I
+            Assert.AreEqual("{3}", dfaBuilder.Cfg.AllBlocks[2].Data.Gen.ToString());
+            Assert.IsTrue(dfaBuilder.Cfg.AllBlocks[2].Data.Gen.Get(3));
+            Assert.AreEqual(Compiler.CodeElements.CodeElementType.MoveStatement, dfaBuilder.DefList[3].Instruction.CodeElement.Type);
+            Assert.AreEqual(I, dfaBuilder.DefList[3].Variable);
+
+            //---------------------------------------------------------
+            //checked that GEN(Block(6)) = "00001" : bit 4 is set
+            //---------------------------------------------------------
+            Assert.IsNotNull(dfaBuilder.Cfg.AllBlocks[6].Data.Gen);
+            //ADD 1 TO J
+            Assert.AreEqual("{4}", dfaBuilder.Cfg.AllBlocks[6].Data.Gen.ToString());
+            Assert.IsTrue(dfaBuilder.Cfg.AllBlocks[6].Data.Gen.Get(4));
+            Assert.AreEqual(Compiler.CodeElements.CodeElementType.AddStatement, dfaBuilder.DefList[4].Instruction.CodeElement.Type);
+            Assert.AreEqual(J, dfaBuilder.DefList[4].Variable);
+
+            //---------------------------------------------------------
+            //checked that GEN(Block(9)) = "000001" : bit 5 is set
+            //---------------------------------------------------------
+            Assert.IsNotNull(dfaBuilder.Cfg.AllBlocks[9].Data.Gen);
+            //SUBSTRACT 4 FROM J
+            Assert.AreEqual("{5}", dfaBuilder.Cfg.AllBlocks[9].Data.Gen.ToString());
+            Assert.IsTrue(dfaBuilder.Cfg.AllBlocks[9].Data.Gen.Get(5));
+            Assert.AreEqual(Compiler.CodeElements.CodeElementType.SubtractStatement, dfaBuilder.DefList[5].Instruction.CodeElement.Type);
+            Assert.AreEqual(J, dfaBuilder.DefList[5].Variable);
         }
     }
 }

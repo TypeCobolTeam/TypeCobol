@@ -20,6 +20,7 @@ namespace TypeCobol.Analysis.Test
         public static TypeCobolConfiguration DefaultConfig = null;
         public static ProgramSymbolTableBuilder Builder = null;
         public static NodeListenerFactory BuilderNodeListenerFactory = null;
+        public static NodeListenerFactory CfgBuilderNodeListenerFactory = null;
         public static string DefaultIntrinsicPath = null;
 
         public static DefaultControlFlowGraphBuilder<object> CfgBuilder;
@@ -49,12 +50,12 @@ namespace TypeCobol.Analysis.Test
             NodeDispatcher.RegisterStaticNodeListenerFactory(BuilderNodeListenerFactory);
 
             //Alocate a static Default Control Flow Graph Builder
-            BuilderNodeListenerFactory = () =>
+            CfgBuilderNodeListenerFactory = () =>
             {
                 CfgBuilder = new DefaultControlFlowGraphBuilder<object>();
                 return CfgBuilder;
             };
-            NodeDispatcher.RegisterStaticNodeListenerFactory(BuilderNodeListenerFactory);
+            NodeDispatcher.RegisterStaticNodeListenerFactory(CfgBuilderNodeListenerFactory);
         }
 
         private static void RemovePrograms(ProgramSymbol prog)
@@ -81,8 +82,11 @@ namespace TypeCobol.Analysis.Test
                     }
                 }
             }
+            if (CfgBuilderNodeListenerFactory != null)
+            {
+                NodeDispatcher.RegisterStaticNodeListenerFactory(CfgBuilderNodeListenerFactory);                
+            }
         }
-
 
         /// <summary>
         /// This is a simple test to ensure that given a Cobol program,
