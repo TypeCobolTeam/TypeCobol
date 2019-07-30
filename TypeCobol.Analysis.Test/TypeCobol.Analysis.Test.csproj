@@ -105,6 +105,7 @@
     <Compile Include="DfaBuildUseAndDefListTest.cs" />
     <Compile Include="CfgTestUtils.cs" />
     <Compile Include="DfaGenAndKillSetTest.cs" />
+    <Compile Include="DfaInOutSetsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
