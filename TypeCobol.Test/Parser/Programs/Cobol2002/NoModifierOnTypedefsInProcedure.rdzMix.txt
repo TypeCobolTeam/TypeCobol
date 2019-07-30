@@ -1,0 +1,73 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZFSCT0.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       PROCEDURE DIVISION.
+           DECLARE PROCEDURE Proc1.
+           DATA DIVISION.
+           WORKING-STORAGE SECTION.
+Line 9[14,37] <30, Error, Semantics> - Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a procedure.
+             01 type1 typedef public.
+                05 champ1 pic x.
+Line 11[14,38] <30, Error, Semantics> - Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a procedure.
+             01 type2 typedef private.
+                05 champ1 pic x.
+Line 13[17,21] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in function data item.
+             01 type3 typedef global.
+                05 champ1 pic x.
+           PROCEDURE DIVISION.
+             .
+           END-DECLARE.
+           .
+      
+      *Nested ----------------------------------------------------------
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Nested.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       PROCEDURE DIVISION.
+           DECLARE PROCEDURE Proc2.
+           DATA DIVISION.
+           WORKING-STORAGE SECTION.
+Line 29[14,37] <30, Error, Semantics> - Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a procedure.
+             01 type4 typedef public.
+                05 champ1 pic x.
+Line 31[14,38] <30, Error, Semantics> - Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a procedure.
+             01 type5 typedef private.
+                05 champ1 pic x.
+Line 33[17,21] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in function data item.
+             01 type6 typedef global.
+                05 champ1 pic x.
+           PROCEDURE DIVISION.
+             .
+           END-DECLARE.
+           .
+       END PROGRAM Nested.
+      *End Nested ------------------------------------------------------
+      
+       END PROGRAM DVZFSCT0.
+      
+      *Stacked ---------------------------------------------------------
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID Stacked.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       PROCEDURE DIVISION.
+           DECLARE PROCEDURE Proc3.
+           DATA DIVISION.
+           WORKING-STORAGE SECTION.
+Line 53[14,37] <30, Error, Semantics> - Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a procedure.
+             01 type7 typedef public.
+                05 champ1 pic x.
+Line 55[14,38] <30, Error, Semantics> - Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a procedure.
+             01 type8 typedef private.
+                05 champ1 pic x.
+Line 57[17,21] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in function data item.
+             01 type9 typedef global.
+                05 champ1 pic x.
+           PROCEDURE DIVISION.
+             .
+           END-DECLARE.
+           .
+       END PROGRAM Stacked.
+      *End Stacked -----------------------------------------------------

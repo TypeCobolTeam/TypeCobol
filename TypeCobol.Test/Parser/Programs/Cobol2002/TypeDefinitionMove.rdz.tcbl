@@ -14,7 +14,7 @@
        01 realVar TYPE Real.
        01 floatVar TYPE Float. 
      
-       01 toto typedef strict public global pic X.
+       01 toto typedef strict public pic X.
        01 var1 type toto.
        01 var2 type DVZF0OS3bis::toto.
        01 var3 type toto global.
@@ -30,6 +30,7 @@
            MOVE true TO MyBoolean
            MOVE 10 TO floatVar
            .
+      *KO until #1081 - visibility refactoring is fully implemented.
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Nested.
        data DIVISION.
