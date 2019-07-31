@@ -174,13 +174,85 @@ namespace TypeCobol.Analysis.Test
             TypeCobolDataFlowGraphBuilder dfaBuilder = new TypeCobolDataFlowGraphBuilder(CfgBuilder.Cfg);
             dfaBuilder.ComputeInOutSet();
 
+            //------------------------------------
+            // All definitions
+            // d(0) : MOVE 2 TO I
+            // d(1) : MOVE 1 TO J
+            // d(2) : ADD 1 TO J
+            // d(3) : MOVE 1 TO I
+            // d(4) : ADD 1 TO J
+            // d(5) : SUBSTRACT 4 FROM J
+            //-----------------------------------
+            // Block(0)
+            //-----------------------------------
+            Assert.AreEqual("{}", dfaBuilder.Cfg.AllBlocks[0].Data.In.ToString());
+            Assert.AreEqual("{}", dfaBuilder.Cfg.AllBlocks[0].Data.Out.ToString());
+
             //-----------------------------------
             // Block(1)
             //-----------------------------------
             Assert.AreEqual("{}", dfaBuilder.Cfg.AllBlocks[1].Data.In.ToString());
-            //MOVE 2 TO I
-            //ADD 1 TO J
             Assert.AreEqual("{0, 2}", dfaBuilder.Cfg.AllBlocks[1].Data.Out.ToString());
+
+            //-----------------------------------
+            // Block(2)
+            //-----------------------------------
+            Assert.AreEqual("{0, 2, 3, 4, 5}", dfaBuilder.Cfg.AllBlocks[2].Data.In.ToString());
+            Assert.AreEqual("{2, 3, 4, 5}", dfaBuilder.Cfg.AllBlocks[2].Data.Out.ToString());
+
+            //-----------------------------------
+            // Block(3)
+            //-----------------------------------
+            Assert.AreEqual("{2, 3, 4, 5}", dfaBuilder.Cfg.AllBlocks[3].Data.In.ToString());
+            Assert.AreEqual("{2, 3, 4, 5}", dfaBuilder.Cfg.AllBlocks[3].Data.Out.ToString());
+
+            //-----------------------------------
+            // Block(4)
+            //-----------------------------------
+            Assert.AreEqual("{}", dfaBuilder.Cfg.AllBlocks[4].Data.In.ToString());
+            Assert.AreEqual("{}", dfaBuilder.Cfg.AllBlocks[4].Data.Out.ToString());
+
+            //-----------------------------------
+            // Block(5)
+            //-----------------------------------
+            Assert.AreEqual("{2, 3, 4, 5}", dfaBuilder.Cfg.AllBlocks[5].Data.In.ToString());
+            Assert.AreEqual("{2, 3, 4, 5}", dfaBuilder.Cfg.AllBlocks[5].Data.Out.ToString());
+
+            //-----------------------------------
+            // Block(6)
+            //-----------------------------------
+            Assert.AreEqual("{2, 3, 4, 5}", dfaBuilder.Cfg.AllBlocks[6].Data.In.ToString());
+            Assert.AreEqual("{3, 4}", dfaBuilder.Cfg.AllBlocks[6].Data.Out.ToString());
+
+            //-----------------------------------
+            // Block(7)
+            //-----------------------------------
+            Assert.AreEqual("{3, 4}", dfaBuilder.Cfg.AllBlocks[7].Data.In.ToString());
+            Assert.AreEqual("{3, 4}", dfaBuilder.Cfg.AllBlocks[7].Data.Out.ToString());
+
+            //-----------------------------------
+            // Block(8)
+            //-----------------------------------
+            Assert.AreEqual("{}", dfaBuilder.Cfg.AllBlocks[8].Data.In.ToString());
+            Assert.AreEqual("{}", dfaBuilder.Cfg.AllBlocks[8].Data.Out.ToString());
+
+            //-----------------------------------
+            // Block(9)
+            //-----------------------------------
+            Assert.AreEqual("{3, 4}", dfaBuilder.Cfg.AllBlocks[9].Data.In.ToString());
+            Assert.AreEqual("{3, 5}", dfaBuilder.Cfg.AllBlocks[9].Data.Out.ToString());
+
+            //-----------------------------------
+            // Block(10)
+            //-----------------------------------
+            Assert.AreEqual("{2, 3, 4, 5}", dfaBuilder.Cfg.AllBlocks[10].Data.In.ToString());
+            Assert.AreEqual("{2, 3, 4, 5}", dfaBuilder.Cfg.AllBlocks[10].Data.Out.ToString());
+
+            //-----------------------------------
+            // Block(11)
+            //-----------------------------------
+            Assert.AreEqual("{}", dfaBuilder.Cfg.AllBlocks[11].Data.In.ToString());
+            Assert.AreEqual("{}", dfaBuilder.Cfg.AllBlocks[11].Data.Out.ToString());
         }
     }
 }
