@@ -23,6 +23,15 @@ namespace TypeCobol.Analysis.Dfa
         }
 
         /// <summary>
+        /// Instruction's index with its basic block.
+        /// </summary>
+        public int InstructionIndex
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         public V Variable
@@ -37,6 +46,16 @@ namespace TypeCobol.Analysis.Dfa
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// The Use-Def set: set of information which tells uses of this variable 
+        /// within a basic block are defined.
+        /// </summary>
+        public Util.BitSet UseDef
+        {
+            get;
+            internal set;
         }
     }
 }

@@ -31,6 +31,15 @@ namespace TypeCobol.Analysis.Dfa
         }
 
         /// <summary>
+        /// Instruction's index with its basic bloc.
+        /// </summary>
+        public int InstructionIndex
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         public V Variable

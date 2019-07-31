@@ -54,6 +54,17 @@ namespace TypeCobol.Analysis.Dfa
         }
 
         /// <summary>
+        /// The dictionary which gives for each Variable defined its Def set.
+        /// That is to say all definitions of this variable.
+        /// This Dictionary id built during the GEN set computation.
+        /// </summary>
+        public Dictionary<V, BitSet> VariableDefMap
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
         /// The Definitions counter
         /// </summary>
         private int DefCounter = 0;
@@ -71,6 +82,7 @@ namespace TypeCobol.Analysis.Dfa
         /// <param name="node"></param>
         /// <returns>The USE variable set</returns>
         public abstract HashSet<V> GetDefVariables(N node);
+
 
         /// <summary>
         /// Compute the Use List
@@ -90,6 +102,7 @@ namespace TypeCobol.Analysis.Dfa
                         {
                             block.Data = new DfaBasicBlockInfo<V>();
                         }
+                        int instrIndex = 0;
                         foreach (var instr in block.Instructions)
                         {
                             HashSet<V> uses = GetUseVariables(instr);
@@ -103,12 +116,14 @@ namespace TypeCobol.Analysis.Dfa
                                 {
                                     DfaUsePoint<N, V> up = new DfaUsePoint<N, V>();
                                     up.Instruction = instr;
+                                    up.InstructionIndex = instrIndex;
                                     up.Variable = v;
                                     up.BlockIndex = block.Index;
                                     UseList.Add(up);
                                 }
                                 block.Data.UseCount += uses.Count;
                             }
+                            instrIndex++;
                         }
                     }
                 }
@@ -133,6 +148,7 @@ namespace TypeCobol.Analysis.Dfa
                         {
                             block.Data = new DfaBasicBlockInfo<V>();
                         }
+                        int instrIndex = 0;
                         foreach (var instr in block.Instructions)
                         {
                             HashSet<V> defs = GetDefVariables(instr);
@@ -147,12 +163,14 @@ namespace TypeCobol.Analysis.Dfa
                                     DfaDefPoint<N, V> dp = new DfaDefPoint<N, V>();
                                     dp.Index = DefCounter++;
                                     dp.Instruction = instr;
+                                    dp.InstructionIndex = instrIndex;
                                     dp.Variable = v;
                                     dp.BlockIndex = block.Index;
                                     DefList.Add(dp);
                                 }
                                 block.Data.DefCount += defs.Count;
                             }
+                            instrIndex++;
                         }
                     }
                 }
@@ -160,7 +178,7 @@ namespace TypeCobol.Analysis.Dfa
         }
 
         /// <summary>
-        /// Determine if GEN set as been calculated
+        /// Determine if GEN set has been calculated
         /// </summary>
         public bool IsGenSetCalculated
         {
@@ -192,6 +210,8 @@ namespace TypeCobol.Analysis.Dfa
                 //prerequisites: Compute the DefList
                 ComputeDefList();
 
+                VariableDefMap = new Dictionary<V, BitSet>();
+
                 foreach (var block in Cfg.AllBlocks)
                 {
                     if (block.Instructions != null && block.Data.DefCount > 0)
@@ -211,6 +231,13 @@ namespace TypeCobol.Analysis.Dfa
                                 gen.Set(i);
                                 variables[variable] = i;
                             }
+                            BitSet vdefs = null;
+                            if (!VariableDefMap.TryGetValue(variable, out vdefs))
+                            {
+                                vdefs = new BitSet(DefList.Count);
+                                VariableDefMap[variable] = vdefs;
+                            }
+                            vdefs.Set(i);
                         }
                         //Set the gen set of the basic block.
                         block.Data.Gen = gen;
@@ -304,7 +331,7 @@ namespace TypeCobol.Analysis.Dfa
         /// <summary>
         /// Build IN and OUT sets for each basic Block.
         /// IN sets represent data which reach a point just before the first instruction of a block.
-        /// OUT sets represent definitions which reach a point just after the last instruction of a basic.
+        /// OUT sets represent definitions which reach a point just after the last instruction of a basic block.
         /// The equations relating IN and OUT sets are:
         /// 
         ///     OUT(b) = IN(b) - KILL(b) U GEN(b)
@@ -330,7 +357,8 @@ namespace TypeCobol.Analysis.Dfa
                     bChange = false;
                     foreach (var b in Cfg.AllBlocks)
                     {
-                        foreach(var p in b.PredecessorEdges)
+                        //// IN(b) = U OUT(p)  whepre p belongs to Predecessor(b)
+                        foreach (var p in b.PredecessorEdges)
                         {
                             var a = Cfg.PredecessorEdges[p];
                             newIn.Or(a.Data.Out);
@@ -341,16 +369,81 @@ namespace TypeCobol.Analysis.Dfa
                             b.Data.In.Copy(newIn);
                         }
                         newIn.Clear();
+                        //OUT(b) = IN(b) - KILL(b) U GEN(b)
                         BitSet live = b.Data.Kill != null ? b.Data.In.Difference(b.Data.Kill) : b.Data.In.Clone();
                         if (b.Data.Gen != null)
                         {
                             live.Or(b.Data.Gen);
                         }
                         b.Data.Out = live;
-                    }                    
+                    }
                 }
 
                 IsInOutSetCalculated = true;
+            }
+        }
+
+        /// <summary>
+        /// Determine if UseDef set has been calculated
+        /// </summary>
+        public bool IsUseDefSetCalculated
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// Build the USE-DEF chain for each basic block
+        /// The UseDef set is a set of information which tells where particular uses of a variable within a basic block 
+        /// are defined.
+        /// </summary>
+        public void ComputeUseDefSet()
+        {
+            lock (this)
+            {
+                if (IsUseDefSetCalculated)
+                    return;
+
+                //prerequisites: UseLiast and Compute the IN-OUT sets
+                ComputeUseList();
+                ComputeInOutSet();
+
+                foreach (var b in Cfg.AllBlocks)
+                {
+                    if (b.Data != null && b.Data.UseCount > 0)
+                    {   //For each USE point in the block
+                        for (int i = b.Data.UseListFirstIndex; i < b.Data.UseListFirstIndex + b.Data.UseCount; i++)
+                        {
+                            DfaUsePoint<N, V> up = UseList[i];
+                            //Check if there is a definition of the Variable in this block.
+                            bool bFound = false;
+                            for (int j = b.Data.DefListFirstIndex + b.Data.DefCount - 1; j >= b.Data.DefListFirstIndex && !bFound; j--)
+                            {
+                                DfaDefPoint<N, V> dp = DefList[j];
+                                if (up.Variable.Equals(dp.Variable) && dp.InstructionIndex < up.InstructionIndex)
+                                {//We got the definition of the variable preceding its usage
+                                    up.UseDef = new BitSet(DefList.Count);
+                                    up.UseDef.Set(dp.Index);
+                                    bFound = true;
+                                }
+                            }
+                            if (!bFound)
+                            {//No definition was found in the basic block for the use, 
+                             //so the defintions of this use in the IN set form the UseDef?
+                                BitSet vdefs = null;
+                                if (VariableDefMap.TryGetValue(up.Variable, out vdefs))
+                                {
+                                    BitSet vInDefs = vdefs.Intersection(b.Data.In);
+                                    if (vInDefs.Cardinality() > 0)
+                                    {
+                                        up.UseDef = vInDefs;
+                                    }                                    
+                                }
+                            }
+                        }
+                    }
+                }
+                IsUseDefSetCalculated = true;
             }
         }
     }
