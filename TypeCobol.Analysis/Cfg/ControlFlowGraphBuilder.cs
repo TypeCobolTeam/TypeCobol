@@ -91,6 +91,26 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
+        /// CFG Modes.
+        /// Normal: is the normal mode, Paragraph blocs target by a PERFORM are not expanded.
+        /// Extended: Paragraph blocs target by a PERFORM are expanded.
+        /// </summary>
+        public enum CfgMode
+        {
+            Normal,
+            Extended,
+        }
+
+        /// <summary>
+        /// Set the CFG Mode
+        /// </summary>
+        public CfgMode Mode
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// The parent rogram Control Flow Builder, for nested Program..
         /// </summary>
         public ControlFlowGraphBuilder<D> ParentProgramCfgBuilder
@@ -264,6 +284,7 @@ namespace TypeCobol.Analysis.Cfg
             this.Diagnostics = new List<Diagnostic>();
             this.UseEvaluateCascade = true;
             this.UseSearchCascade = true;
+            Mode = CfgMode.Normal;
         }
 
         /// <summary>
@@ -875,6 +896,15 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
+        /// Propagate properties to the given ControlFrowGraphBuilder
+        /// </summary>
+        /// <param name="currentProgramCfgBuilder">The CFG Builder to propagate properties to</param>
+        private void PropagateProperties(ControlFlowGraphBuilder<D> currentProgramCfgBuilder)
+        {
+            currentProgramCfgBuilder.Mode = Mode;
+        }
+
+        /// <summary>
         /// Enter a program.
         /// </summary>
         /// <param name="program"></param>
@@ -893,6 +923,7 @@ namespace TypeCobol.Analysis.Cfg
                 {//Stacked Program.         
                     //New Control Flow Graph
                     this.CurrentProgramCfgBuilder = CreateFreshControlFlowGraphBuilder();
+                    PropagateProperties(this.CurrentProgramCfgBuilder);
                     if (AllCfgBuilder == null)
                         AllCfgBuilder = new List<ControlFlowGraphBuilder<D>>();
                     this.AllCfgBuilder.Add(this.CurrentProgramCfgBuilder);
@@ -907,6 +938,7 @@ namespace TypeCobol.Analysis.Cfg
                     this.CurrentProgramCfgBuilder.AllCfgBuilder = new List<ControlFlowGraphBuilder<D>>();
                 }
                 var nestedCfg = CreateFreshControlFlowGraphBuilder(this.CurrentProgramCfgBuilder);
+                PropagateProperties(this.CurrentProgramCfgBuilder);
                 this.CurrentProgramCfgBuilder.AllCfgBuilder.Add(nestedCfg);
                 this.CurrentProgramCfgBuilder = nestedCfg;
                 this.CurrentProgramCfgBuilder.CurrentProgramCfgBuilder = this.CurrentProgramCfgBuilder;
@@ -945,6 +977,7 @@ namespace TypeCobol.Analysis.Cfg
                 this.CurrentProgramCfgBuilder.AllCfgBuilder = new List<ControlFlowGraphBuilder<D>>();
             }
             var nestedCfg = CreateFreshControlFlowGraphBuilder(this.CurrentProgramCfgBuilder);
+            PropagateProperties(nestedCfg);
             this.CurrentProgramCfgBuilder.AllCfgBuilder.Add(nestedCfg);
             this.CurrentProgramCfgBuilder = nestedCfg;
             this.CurrentProgramCfgBuilder.InitializeCfg(funDecl);
@@ -1317,16 +1350,24 @@ namespace TypeCobol.Analysis.Cfg
                 System.Diagnostics.Debug.Assert(sentence.AllBlocks != null);
                 System.Diagnostics.Debug.Assert(sentence.AllBlocks.First.Value == sentence.Block);
                 foreach (var block in sentence.AllBlocks)
-                {//We must clone each block of the sequence and add them to the group.
-                    var cloneBlock = (BasicBlockForNode)block.Clone();
-                    //Give to the cloned a new Index, and added to all blocks.
+                {//We must clone each block of the sequence and add them to the group.                    
                     //System.Diagnostics.Debug.Assert(!clonedBlockIndexMap.ContainsKey(block.Index));
                     if (!clonedBlockIndexMap.ContainsKey(block.Index))
                     {//If this block has been already add, this mean there are recursive GOTOs
-                        clonedBlockIndexMap[block.Index] = this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Count;
-                        cloneBlock.Index = this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Count;
-                        this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Add(block);
-                        group.AddBlock(block);
+                        if (Mode == CfgMode.Normal)
+                        {
+                            clonedBlockIndexMap[block.Index] = block.Index;
+                            group.AddBlock(block);
+                        }
+                        else
+                        {
+                            var cloneBlock = (BasicBlockForNode)block.Clone();
+                            //Give to the cloned a new Index, and added to all blocks.
+                            clonedBlockIndexMap[block.Index] = this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Count;
+                            cloneBlock.Index = this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Count;
+                            this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Add(cloneBlock);
+                            group.AddBlock(cloneBlock);
+                        }
                     }
                     else
                     {//Recursive blocks detection.
