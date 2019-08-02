@@ -93,7 +93,7 @@ namespace TypeCobol.Analysis.Graph
         protected override bool EmitBasicBlock(BasicBlock<Node, D> block, ControlFlowGraph<Node, D> cfg)
         {
             bool bResult = base.EmitBasicBlock(block, cfg);
-            if ((block is ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup))
+            if ((block is ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup) && ! block.HasFlag(BasicBlock<Node, D>.Flags.GroupGrafted))
             {
                 ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup group = (ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup)block;
                 if (EmittedGroupIndices == null)
