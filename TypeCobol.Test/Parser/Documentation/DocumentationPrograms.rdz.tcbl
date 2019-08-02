@@ -4,14 +4,14 @@
        DATA DIVISION.
        LOCAL-STORAGE SECTION.
 
-      *<<< Main Program
+      %<<< Main Program
         @ rEsTrIcTiOn : restriction value
         @ need:
           - This is my first need
             This is also my first need
           - This is my second need
         @ see : Thank you for your attention
-      *>>>
+      %>>>
        PROCEDURE DIVISION.
        GOBACK.
 
@@ -23,7 +23,7 @@
              01 param2 PIC S9(5) comp-5.
              01 param3 Pointer.
              01 param4 Type BOOL.
-      *<<<
+      %<<<
             Nested Program
             @ params : 
               - param1:
@@ -36,7 +36,7 @@
               - param3: inout - this is an inout param
             @ need: This is my only need
             @ todo : slap car roof
-      *>>>
+      %>>>
            PROCEDURE DIVISION
                 USING BY REFERENCE param1
                       BY REFERENCE param2
@@ -57,8 +57,8 @@
            01 param2 PIC S9(5) comp-5.
            01 param3 Pointer.
            01 param4 Type BOOL.
-      *<<< Stacked Program
-      *>>>
+      %<<< Stacked Program
+      %>>>
          PROCEDURE DIVISION
               USING BY REFERENCE param1
                                  param3

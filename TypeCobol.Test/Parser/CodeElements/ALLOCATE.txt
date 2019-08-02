@@ -1,0 +1,28 @@
+﻿--- Diagnostics ---
+Line 12[1,8] <27, Error, Syntax> - Syntax error : extraneous input 'ALLOCATE' expecting {separator, arithmetic operator, numeric literal, symbol, special register, figurative constant, keyword} RuleStack=codeElement>cobol2002Statement>allocateStatement,  OffendingSymbol=[1,8:ALLOCATE]<ALLOCATE>
+Line 12[10,20] <27, Error, Syntax> - Syntax error : no viable alternative at input 'INITIALIZED' RuleStack=codeElement>cobol2002Statement>allocateStatement,  OffendingSymbol=[10,20:INITIALIZED]<UserDefinedWord>
+Line 16[1,8] <27, Error, Syntax> - Syntax error : missing CHARACTERS at 'ALLOCATE' RuleStack=codeElement>cobol2002Statement>allocateStatement,  OffendingSymbol=[1,8:ALLOCATE]<ALLOCATE>
+Line 16[13,21] <27, Error, Syntax> - Syntax error : missing CHARACTERS at 'RETURNING' RuleStack=codeElement>cobol2002Statement>allocateStatement,  OffendingSymbol=[13,21:RETURNING]<RETURNING>
+--- Code Elements ---
+[[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [33,41:myPointer]<UserDefinedWord>
+
+[[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [45,53:myPointer]<UserDefinedWord>
+
+[[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [43,51:myPointer]<UserDefinedWord>
+
+[[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [57,65:myPointer]<UserDefinedWord>
+
+[[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [10,13:var1]<UserDefinedWord>
+
+[[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [15,25:INITIALIZED]<UserDefinedWord>
+
+[[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [25,33:myPointer]<UserDefinedWord>
+
+[[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [37,45:myPointer]<UserDefinedWord>
+
+[[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [10,20:INITIALIZED]<UserDefinedWord>
+
+[[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [2,1:<missing CHARACTERS>]<CHARACTERS>
+
+[[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [23,31:myPointer]<UserDefinedWord>
+

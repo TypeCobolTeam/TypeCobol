@@ -13,7 +13,7 @@
            88 TC-Declarat-FctList-IsLoaded      VALUE 'OK'.
        01 TC-Declarat-PntTab.
            05 TC-Declarat-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program da2f236eMyProc
+      *To call program da2f236e
       *Which is generated code for DeclarativesTest.MyProc
       *Declared in source file Declaratives.rdz.tcbl
            05 TC-Declarat-da2f236e-Idt   PIC X(08) VALUE 'da2f236e'.
@@ -64,7 +64,7 @@
       *DECLARE PROCEDURE MyProc public.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. da2f236eMyProc.
+       PROGRAM-ID. da2f236e.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SOURCE-COMPUTER. IBM-370
@@ -82,4 +82,4 @@
            .
       *DeclarativesTest.MyProc  - No Params
         .
-       END PROGRAM da2f236eMyProc.
+       END PROGRAM da2f236e.

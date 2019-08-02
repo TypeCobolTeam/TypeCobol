@@ -38,10 +38,10 @@ namespace TypeCobol.Compiler.Parser
             if (context.PROCEDURE() != null) type = FunctionType.Procedure;
             if (context.FUNCTION() != null) type = FunctionType.Function;
 
-            //TCRFUN_DEFAULT_ACCESS_MODIFIER  rule is respected here. 
-            //By default a function or procedure is private even if PRIVATE keyword is not given. 
-            //If PUBLIC keyword is set, the function/procedure as to be set PUBLIC. 
-            var visibility = context.PUBLIC() != null ? AccessModifier.Public : AccessModifier.Private;
+            //Set visibility if any qualifier is present otherwise the Local visibility is used.
+            var visibility = AccessModifier.Local;
+            if (context.PRIVATE() != null) visibility = AccessModifier.Private;
+            if (context.PUBLIC() != null) visibility = AccessModifier.Public;
 
             SymbolDefinition name = null;
             if (context.functionNameDefinition() != null)
@@ -54,7 +54,13 @@ namespace TypeCobol.Compiler.Parser
                 formalizedCommentDocumentation = new FormalizedCommentDocumentation(context.formalizedComment().formalizedCommentLine());
 
             Context = context;
-            CodeElement = new FunctionDeclarationHeader(name, visibility, type, formalizedCommentDocumentation);
+            CodeElement = new FunctionDeclarationHeader
+                          {
+                              FunctionName = name,
+                              Visibility = visibility,
+                              UserDefinedType = type,
+                              FormalizedCommentDocumentation = formalizedCommentDocumentation
+                          };
         }
 
         public override void EnterInputPhrase(CodeElementsParser.InputPhraseContext context)
@@ -208,7 +214,7 @@ namespace TypeCobol.Compiler.Parser
             if (context.groupUsageClause() != null)
             {
                 var groupUsageClauseContext = context.groupUsageClause();
-                parameter.IsJustified = new SyntaxProperty<bool>(true,
+                parameter.IsGroupUsageNational = new SyntaxProperty<bool>(true,
                     ParseTreeUtils.GetFirstToken(groupUsageClauseContext.NATIONAL()));
             }
 

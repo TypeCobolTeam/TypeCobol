@@ -27,7 +27,7 @@
       *declare procedure Toto.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c9ad76ebToto.
+       PROGRAM-ID. c9ad76eb.
        data division.
        working-storage section.
       *DVZF0OSM.Toto  - No Params
@@ -49,4 +49,4 @@
             set ac7b6441Idx-TaxElm to 1
            goback
            .
-       END PROGRAM c9ad76ebToto.
+       END PROGRAM c9ad76eb.

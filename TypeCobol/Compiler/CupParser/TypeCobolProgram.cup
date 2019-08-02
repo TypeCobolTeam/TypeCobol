@@ -142,6 +142,7 @@ terminal TypeCobol.Compiler.CodeElements.SpecialNamesParagraph SpecialNamesParag
 terminal TypeCobol.Compiler.CodeElements.RepositoryParagraph RepositoryParagraph;
 terminal TypeCobol.Compiler.CodeElements.AcceptStatement AcceptStatement;
 terminal TypeCobol.Compiler.CodeElements.AddStatement AddStatement;
+terminal TypeCobol.Compiler.CodeElements.AllocateStatement AllocateStatement;
 terminal TypeCobol.Compiler.CodeElements.AlterStatement AlterStatement;
 terminal TypeCobol.Compiler.CodeElements.CallStatement CallStatement;
 terminal TypeCobol.Compiler.CodeElements.CancelStatement CancelStatement;
@@ -157,6 +158,7 @@ terminal TypeCobol.Compiler.CodeElements.ExecStatement ExecStatement;
 terminal TypeCobol.Compiler.CodeElements.ExitMethodStatement ExitMethodStatement;
 terminal TypeCobol.Compiler.CodeElements.ExitProgramStatement ExitProgramStatement;
 terminal TypeCobol.Compiler.CodeElements.ExitStatement ExitStatement;
+terminal TypeCobol.Compiler.CodeElements.FreeStatement FreeStatement;
 terminal TypeCobol.Compiler.CodeElements.GobackStatement GobackStatement;
 terminal TypeCobol.Compiler.CodeElements.GotoStatement GotoStatement;
 terminal TypeCobol.Compiler.CodeElements.IfStatement IfStatement;
@@ -1025,6 +1027,11 @@ singleStatement ::=
 // -- DB2 & CICS integration --
 	| ExecStatement:stmt
 	{: my_parser.Builder.OnExecStatement(stmt); :}
+// -- dynamic allocation --
+	| AllocateStatement:stmt
+	{: my_parser.Builder.OnAllocateStatement(stmt); :}
+	| FreeStatement:stmt
+	{: my_parser.Builder.OnFreeStatement(stmt); :}
 	;
 	
 // Statements with optional body  

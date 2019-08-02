@@ -10,7 +10,7 @@ namespace TypeCobol.Compiler.Types
 {
     /// <summary>
     /// Perform the expansion of a TypeCobol type to a plain Cobol85 type.
-    /// TYPEDEF are expanded, Record Types are cloned with fresh fields.
+    /// TYPEDEF are expanded, Group Types are cloned with fresh fields.
     /// </summary>
     public class TypedefExpander : Type.AbstractTypeVisitor<Type, Symbol>
     {
@@ -77,7 +77,7 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// A Record Type is cloned with a a new Scope with new fresh field is created.
+        /// A Group Type is cloned with a a new Scope with new fresh field is created.
         /// </summary>
         /// <param name="t"></param>
         /// <param name="owner"></param>
@@ -140,16 +140,6 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// The Cobol85 representation off a date type.
-        /// </summary>
-        public static GroupType DateCobol85 { get; private set;  }
-        public static Type DateYYYYType = new PictureType(new PictureValidator("9(04)", false));
-        public static Type DateMMType = new PictureType(new PictureValidator("9(02)", false));
-        public static Type DateDDType = DateMMType;
-        public static Type PicX = new PictureType(new PictureValidator("X", false));
-
-
-        /// <summary>
         /// Expand a Custom Type.
         /// </summary>
         /// <param name="t"></param>
@@ -161,28 +151,6 @@ namespace TypeCobol.Compiler.Types
             VariableSymbol varSym = (VariableSymbol) s;
             if (t == BuiltinTypes.BooleanType)
             {//Do nothing
-            }
-            else if (t == BuiltinTypes.DateType)
-            {                
-                GroupType recType = new GroupType(s);
-                VariableSymbol yyyy = new VariableSymbol("YYYY") {Level = varSym.Level + 1, Type = DateYYYYType, Owner = s};
-                recType.Scope.Enter(yyyy);
-                //Inherits flags
-                yyyy.Flag = s.Flag;
-                //Important add to the domain the new field.
-                Program.AddToDomain(yyyy);
-
-                VariableSymbol mm = new VariableSymbol("MM") {Level = varSym.Level + 1, Type = DateMMType, Owner = s };
-                recType.Scope.Enter(mm);
-                mm.Flag = s.Flag;
-                Program.AddToDomain(mm);
-
-                VariableSymbol dd = new VariableSymbol("DD") {Level = varSym.Level + 1, Type = DateDDType, Owner = s };
-                recType.Scope.Enter(dd);
-                dd.Flag = s.Flag;
-                Program.AddToDomain(dd);
-
-                return recType;
             }
             return t;
         }

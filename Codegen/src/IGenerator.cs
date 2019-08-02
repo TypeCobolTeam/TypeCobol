@@ -23,5 +23,17 @@ namespace TypeCobol.Codegen
         List<Diagnostic> Diagnostics { get; }
 
         string TypeCobolVersion { get; set; }
+
+        /// <summary>
+        /// Determine if this generator has line Map data.
+        /// </summary>
+        bool HasLineMapData { get; }
+
+        /// <summary>
+        /// Generate any line map data in the given stream.
+        /// </summary>
+        /// <param name="stream">The Stream into which to generate the Line Mapping data</param>
+        /// <exception cref="IOException">If an Input/Output exception is raide.</exception>
+        void GenerateLineMapFile(System.IO.Stream stream);
     }
 }

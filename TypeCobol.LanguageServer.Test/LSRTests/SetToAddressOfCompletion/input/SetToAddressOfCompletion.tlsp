@@ -43,7 +43,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"47\",\"result\":[{\"label\":\"W-Numeric (Numeric) (W-Numeric)\",\"kind\":6,\"insertText\":\"W-Numeric\"},{\"label\":\"TestLevel88 (BOOL) (TestLevel::TestLevel88)\",\"kind\":6,\"insertText\":\"TestLevel::TestLevel88\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"47\",\"result\":[{\"label\":\"W-Numeric (Numeric) (W-Numeric)\",\"kind\":6,\"insertText\":\"W-Numeric\"},{\"label\":\"TestLevel88 (Level88) (TestLevel::TestLevel88)\",\"kind\":6,\"insertText\":\"TestLevel::TestLevel88\"}]}"
     },
     {
       "category": 0,

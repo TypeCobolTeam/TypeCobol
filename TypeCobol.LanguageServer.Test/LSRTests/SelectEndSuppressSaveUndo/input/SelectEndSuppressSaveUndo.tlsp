@@ -1,0 +1,43 @@
+{
+  "name": "SelectEndSuppressSaveUndo.tlsp",
+  "session": "C:\\Users\\MAYANJE\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2019_04_12_12_12_24_908\\TestSuite_2019_04_12_12_12_24_908.slsp",
+  "user": "MAYANJE",
+  "date": "2019/04/12 12:12:24 928",
+  "uri": "file:///C:/Users/MAYANJE/Source/Repos/1350_LSRaiseExceptions/TypeCobol/TypeCobol.LanguageServer.Test/LSRTests/SelectEndSuppressSaveUndo/SelectEndSuppressSaveUndo.tlsp",
+  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\Users\\\\MAYANJE\\\\Source\\\\Repos\\\\1350_LSRaiseExceptions\\\\TypeCobol\\\\bin\\\\Debug\",\"rootUri\":\"file:/C:/Users/MAYANJE/Source/Repos/1350_LSRaiseExceptions/TypeCobol/bin/Debug/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"signatureHelp\":{\"dynamicRegistration\":true},\"references\":{\"dynamicRegistration\":true},\"documentHighlight\":{\"dynamicRegistration\":true},\"documentSymbol\":{\"dynamicRegistration\":true},\"formatting\":{\"dynamicRegistration\":true},\"rangeFormatting\":{\"dynamicRegistration\":true},\"onTypeFormatting\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true},\"codeAction\":{\"dynamicRegistration\":true},\"codeLens\":{\"dynamicRegistration\":true},\"documentLink\":{\"dynamicRegistration\":true},\"rename\":{\"dynamicRegistration\":true}}},\"trace\":\"off\"}}",
+  "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
+  "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\Users\\\\MAYANJE\\\\Source\\\\Repos\\\\1350_LSRaiseExceptions\\\\TypeCobol\\\\bin\\\\Debug\\\\TypeCobol.CLI.exe\",\"-1\",\"-s\",\"C:\\\\TypeCobol\\\\Sources\\\\##Latest_Release##\\\\skeletons.xml\",\"-e\",\"rdz\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\",\"-y\",\"C:\\\\TypeCobol\\\\Sources\\\\##Latest_Release##\\\\Intrinsic\\\\Intrinsic.txt\",\"--autoremarks\",\"--outputFormat\\u003dCobol85Mixed\",\"-md\",\"30\"]}}",
+  "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZXERRM.\\r\\n       DATA DIVISION.\\r\\n       WORKING-STORAGE SECTION.\\r\\n       LINKAGE SECTION.\\r\\n      * 66 RPOINT2 RENAMES RX OF MPOINT THRU RY OF MPOINT.\\r\\n\\r\\n      * A true comment\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n      * INNER Cannot be seen by the parent, event if it global\\r\\n      *   DISPLAY INNER0.\\r\\n      *    DISPLAY DOIT2 OF PITS3 OF PITS.\\r\\n       declare procedure TT PUBLIC.\\r\\n      D    input a TYPE MyT.\\r\\n       DATA DIVISION.\\r\\n       WORKING-STORAGE SECTION.\\r\\n        01 MyT TYPEDEF STRICT PIC X(9).\\r\\n       procedure division.\\r\\n           .\\r\\n       end-declare.\\r\\n\\r\\n       END PROGRAM DVZXERRM.\"}}}",
+  "messages": [
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\"},\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":5,\"character\":0},\"end\":{\"line\":22,\"character\":28}},\"rangeLength\":508,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":1,\"character\":8},\"end\":{\"line\":1,\"character\":28}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"END PROGRAM\\\" is missing.\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZXERRM.\\r\\n       DATA DIVISION.\\r\\n       WORKING-STORAGE SECTION.\\r\\n       LINKAGE SECTION.\\r\\n\"}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":1,\"character\":8},\"end\":{\"line\":1,\"character\":28}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"END PROGRAM\\\" is missing.\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\"},\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":5,\"character\":0},\"end\":{\"line\":5,\"character\":0}},\"rangeLength\":0,\"text\":\"      * 66 RPOINT2 RENAMES RX OF MPOINT THRU RY OF MPOINT.\\r\\n\\r\\n      * A true comment\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n      * INNER Cannot be seen by the parent, event if it global\\r\\n      *   DISPLAY INNER0.\\r\\n      *    DISPLAY DOIT2 OF PITS3 OF PITS.\\r\\n       declare procedure TT PUBLIC.\\r\\n      D    input a TYPE MyT.\\r\\n       DATA DIVISION.\\r\\n       WORKING-STORAGE SECTION.\\r\\n        01 MyT TYPEDEF STRICT PIC X(9).\\r\\n       procedure division.\\r\\n           .\\r\\n       end-declare.\\r\\n\\r\\n       END PROGRAM DVZXERRM.\"}]}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\",\"diagnostics\":[]}}"
+    }
+  ],
+  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\"}}}",
+  "IsValid": true
+}

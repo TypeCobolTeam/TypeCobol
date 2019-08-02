@@ -777,24 +777,24 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Create a Record Symbol
+        /// Create a Group Symbol
         /// </summary>
         /// <param name="dataDef">The DataDefinition instance</param>
         /// <param name="parentScope">The current parent scope</param>
         /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns></returns>
-        internal VariableSymbol CreateRecordSymbol(DataDefinition dataDef, Scope<VariableSymbol> parentScope, TypedefSymbol typedef)
+        internal VariableSymbol CreateGroupSymbol(DataDefinition dataDef, Scope<VariableSymbol> parentScope, TypedefSymbol typedef)
         {
-            //We create a record symbol having the record type
+            //We create a group symbol having the group type
             VariableSymbol sym = IsRedefinedDataDefinition(dataDef)
                 ? CreateRedefinesSymbol(dataDef, parentScope)
                 : new VariableSymbol(dataDef.Name);
 
             if (sym != null)
-            {               
-                //We create the record type
+            {
+                //We create the group type
                 GroupType recType = new GroupType(sym);
-                //Store the symbol associated to this Record Type.
+                //Store the symbol associated to this Group Type.
                 recType.Symbol = sym;
                 sym.Type = recType;
                 //Set any leading type.
@@ -814,7 +814,7 @@ namespace TypeCobol.Compiler.Domain
                     CurrentProgram.AddToDomain(sym);
                 else
                     typedef.Add(sym);
-                //We build the RecordType fields
+                //We build the GroupType fields
                 foreach (var child in dataDef.Children)
                 {
                     DataDefinition df = (DataDefinition)child;
@@ -909,7 +909,7 @@ namespace TypeCobol.Compiler.Domain
             //Ignore the variable symbol, but only take the underlying type.
             tdSym.Type = new TypedefType(tdSym, varSym.Type);
             tdSym.Type.Symbol = tdSym;
-            //Important if the target Type is a Record Type we must change the parent Scope to the TypedefSymbol.
+            //Important if the target Type is a Group Type we must change the parent Scope to the TypedefSymbol.
             Types.Type elemType = tdSym.Type?.TypeComponent;
             if (elemType != null && elemType.Tag == Type.Tags.Group)
             {
@@ -1221,7 +1221,7 @@ namespace TypeCobol.Compiler.Domain
                     return null;
             }
 
-            //It must renames the last record
+            //It must renames the last group
             System.Diagnostics.Debug.Assert(parentScope.Owner != null);
             Symbol zeroOneParent = parentScope.Owner.LookupParentLevelSymbol(01, true);
             VariableSymbol lastSymbol = zeroOneParent != null && zeroOneParent.Kind == Symbol.Kinds.Variable
@@ -1232,7 +1232,7 @@ namespace TypeCobol.Compiler.Domain
                     from.NameLiteral.Token.Column,
                     from.NameLiteral.Token.EndColumn,
                     from.NameLiteral.Token.Line,
-                    string.Format(TypeCobolResource.RenamesNotARecord, dataDef.Name));
+                    string.Format(TypeCobolResource.RenamesNotAGroup, dataDef.Name));
                 Diagnostics.Add(d);
                 return null;
             }
@@ -1339,12 +1339,12 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Checks if the given DataDefinition maybe a record, that is to say
+        /// Checks if the given DataDefinition maybe a group, that is to say
         /// It has Children but none of them are IndexDefinition.
         /// </summary>
         /// <param name="dataDef"></param>
         /// <returns></returns>
-        private bool MaybeRecord(DataDefinition dataDef)
+        private bool MaybeGroup(DataDefinition dataDef)
         {
             if (dataDef.ChildrenCount == 0)
                 return false;
@@ -1390,7 +1390,7 @@ namespace TypeCobol.Compiler.Domain
                             }
                             else
                             {
-                                if (!MaybeRecord(dataDef))
+                                if (!MaybeGroup(dataDef))
                                 {//No Type symbol
                                     if (dataDef.DataType != null || (entry != null && entry.UserDefinedDataType != null))
                                     {
@@ -1410,8 +1410,8 @@ namespace TypeCobol.Compiler.Domain
                                     }
                                 }
                                 else
-                                {//This is a record Type
-                                    sym = CreateRecordSymbol(dataDef, parentScope, typedef);
+                                {//This is a group Type
+                                    sym = CreateGroupSymbol(dataDef, parentScope, typedef);
                                 }
                             }
                         }

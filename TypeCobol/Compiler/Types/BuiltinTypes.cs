@@ -66,21 +66,21 @@ namespace TypeCobol.Compiler.Types
         /// </summary>
         static BuiltinTypes()
         {
-            Comp1Type = new Type(Type.Tags.Usage, Type.UsageFormat.Comp1);
+            Comp1Type = UsageComp1Type;
             FloatType = Comp1Type;
             FloatType.SetFlag(Symbol.Flags.BuiltinType, true);
-            Comp2Type = new Type(Type.Tags.Usage, Type.UsageFormat.Comp2);
+            Comp2Type = UsageComp2Type;
             DoubleType = Comp2Type;
             DoubleType.SetFlag(Symbol.Flags.BuiltinType, true);
-            PointerType = new Type(Type.Tags.Usage, Type.UsageFormat.Pointer);
+            PointerType = UsagePointerType;
             PointerType.SetFlag(Symbol.Flags.BuiltinType, true);
-            FunctionPointerType = new Type(Type.Tags.Usage, Type.UsageFormat.FunctionPointer);
+            FunctionPointerType = UsageFunctionPointerType;
             FunctionPointerType.SetFlag(Symbol.Flags.BuiltinType, true);
-            ProcedurePointerType = new Type(Type.Tags.Usage, Type.UsageFormat.ProcedurePointer);
+            ProcedurePointerType = UsageProcedurePointerType;
             ProcedurePointerType.SetFlag(Symbol.Flags.BuiltinType, true);
-            IndexType = new Type(Type.Tags.Usage, Type.UsageFormat.Index);
+            IndexType = UsageIndexType;
             IndexType.SetFlag(Symbol.Flags.BuiltinType, true);
-            ObjectReferenceType = new Type(Type.Tags.Usage, Type.UsageFormat.ObjectReference);
+            ObjectReferenceType = UsageObjectReferenceType;
             ObjectReferenceType.SetFlag(Symbol.Flags.BuiltinType, true);
 
             OmittedType = new Type(Type.Tags.Usage, Type.UsageFormat.Omitted);
@@ -104,10 +104,13 @@ namespace TypeCobol.Compiler.Types
 
             BooleanType = new Type(Type.Tags.Usage, Type.UsageFormat.Boolean);
             BooleanType.SetFlag(Symbol.Flags.BuiltinType, true);
-            DateType = new Type(Type.Tags.Usage, Type.UsageFormat.Date);
+
+            DateType = BuiltinTypes.CreateDateType(new TypedefSymbol(string.Intern("Date")));
             DateType.SetFlag(Symbol.Flags.BuiltinType, true);
-            CurrencyType = new Type(Type.Tags.Usage, Type.UsageFormat.Currency);
+
+            CurrencyType = BuiltinTypes.CreateCurrencyType(new TypedefSymbol(string.Intern("Currency")));
             CurrencyType.SetFlag(Symbol.Flags.BuiltinType, true);
+
             StringType = new Type(Type.Tags.Usage, Type.UsageFormat.String);
             StringType.SetFlag(Symbol.Flags.BuiltinType, true);
         }
@@ -164,5 +167,50 @@ namespace TypeCobol.Compiler.Types
             }
         }
 
+        public static Type DateYYYYType = new PictureType(new PictureValidator("9(04)", false));
+        public static Type DateMMType = new PictureType(new PictureValidator("9(02)", false));
+        public static Type DateDDType = DateMMType;
+        public static Type CY_pic = new PictureType(new PictureValidator("X(03)", false));
+
+
+        /// <summary>
+        /// Create the Date Type.
+        /// </summary>
+        /// <param name="symbol">The Typedef symbol to be associated to the Date type</param>
+        /// <returns>The Date type</returns>
+        internal static Type CreateDateType(TypedefSymbol symbol)
+        {
+            symbol.Level = 1;
+            GroupType recType = new GroupType(symbol);
+            VariableSymbol yyyy = new VariableSymbol("YYYY") { Level = 2, Type = DateYYYYType, Owner = symbol };
+            recType.Scope.Enter(yyyy);
+
+            VariableSymbol mm = new VariableSymbol("MM") { Level = 2, Type = DateMMType, Owner = symbol };
+            recType.Scope.Enter(mm);
+
+            VariableSymbol dd = new VariableSymbol("DD") { Level = 2, Type = DateDDType, Owner = symbol };
+            recType.Scope.Enter(dd);
+
+            TypedefType dateType = new TypedefType(symbol, recType);            
+            symbol.Type = dateType;
+            //IMPORTANT Mark all symbol has belonging to a TYPEDEF, in order that the expander works.
+            symbol.SetFlag(Symbol.Flags.InsideTypdef, true, true);
+            return dateType;
+        }
+
+        /// <summary>
+        /// Create the Currency Type.
+        /// </summary>
+        /// <param name="symbol">The Typedef symbol to be associated to the Currency type</param>
+        /// <returns>The Currency type</returns>
+        internal static Type CreateCurrencyType(TypedefSymbol symbol)
+        {
+            symbol.Level = 1;
+            TypedefType currencyType = new TypedefType(symbol, CY_pic);
+            symbol.Type = currencyType;
+            //IMPORTANT Mark all symbol has belonging to a TYPEDEF, in order that the expander works.
+            symbol.SetFlag(Symbol.Flags.InsideTypdef, true, true);
+            return currencyType;
+        }
     }
 }

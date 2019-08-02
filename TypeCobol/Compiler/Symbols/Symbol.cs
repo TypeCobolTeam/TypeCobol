@@ -69,6 +69,11 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
+        /// Variable section mask.
+        /// </summary>
+        internal const Flags SectionMask = Flags.GLOBAL_STORAGE | Flags.WORKING_STORAGE | Flags.LINKAGE | Flags.FILE_SECTION | Flags.LOCAL_STORAGE;
+
+        /// <summary>
         /// The Visibility mask that a symbol can take.
         /// </summary>
         public const Flags SymbolVisibilityMask = Flags.Public | Flags.Private | Flags.External | Flags.Global;
@@ -125,16 +130,30 @@ namespace TypeCobol.Compiler.Symbols
             protected set;
         }
 
-#if DOMAIN_CHECKER
+        private System.WeakReference _myTargetNode = null;
         /// <summary>
-        /// The target semantic node if nay
+        /// The target AST node if any
         /// </summary>
         public Node TargetNode
         {
-            get;
-            internal set;
+            get
+            {
+                lock (this)
+                {
+                    return (Node)_myTargetNode?.Target;
+                }
+            }
+            internal set
+            {
+                lock (this)
+                {
+                    if (_myTargetNode == null)
+                        _myTargetNode = new System.WeakReference(value);
+                    else
+                        _myTargetNode.Target = value;
+                }
+            }
         }
-#endif
 
         /// <summary>
         /// A Typed name is the name followed by a type, by default is the name..

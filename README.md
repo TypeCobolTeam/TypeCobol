@@ -54,14 +54,10 @@ If you are interested don't hesitate to contact us so we can give you more infor
 # Architecture overview
 
 ## Visual Studio solution and projects
-
-The solution was uploaded to Github using [Visual Studio 2015 Community RC](http://go.microsoft.com/fwlink/?LinkId=524433) and the [GitHub Extension for Visual Studio](https://visualstudiogallery.msdn.microsoft.com/75be44fb-0794-4391-8865-c3279527e97d).
-
 The best way to test this project is to download and install both tools (for free) on your local machine, [login to Github from Visual Studio Team Explorer](http://channel9.msdn.com/Series/ConnectOn-Demand/217), then refresh this page and click on the *Open in Visual Studio* button which should appear on the right of the repository : this action will clone the solution in your local Git repository and open it in Visual Studio.
 
 The solution contains these projects :
 - **TypeCobol** is the main project, it implements a complete Cobol compiler front-end
-- **TypeCobol.Grammar** uses Antlr4 to generate C# parsers for Cobol compiler directives and Cobol statements
 - **TypeCobol.Test** provides unit tests which can be launched from the *Test Explorer* in Visual Studio
 - **Codegen** provides the mechanism to transform TypeCobol code to Cobol 85
 - **TypeCobol.LanguageServer** implements the LanguageServer protocol
@@ -78,6 +74,4 @@ The following librairies are included in the Visual Studio projects by the Nuget
 - [Reactive Extensions - Main Library](http://introtorx.com/) : Reactive Extensions Main Library combining the interfaces, core, LINQ, and platform services libraries. The Reactive Extensions (Rx) is a library to compose asynchronous and event-based programs using observable collections and LINQ-style query operators.
 
 - [System.Collections.Immutable](http://blogs.msdn.com/b/dotnet/archive/2013/09/25/immutable-collections-ready-for-prime-time.aspx) : This package provides collections that are thread safe and guaranteed to never change their contents, also known as immutable collections. Like strings, any methods that perform modifications will not change the existing instance but instead return a new instance. For efficiency reasons, the implementation uses a sharing mechanism to ensure that newly created instances share as much data as possible with the previous instance while ensuring that operations have a predictable time complexity.
- 
-- [AvalonEdit](http://avalonedit.net/) : AvalonEdit is a WPF-based text editor component. It was written by Daniel Grunwald for the SharpDevelop IDE. Starting with version 5.0, AvalonEdit is released under the MIT license.
 

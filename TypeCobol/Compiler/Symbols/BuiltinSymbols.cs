@@ -58,10 +58,8 @@ namespace TypeCobol.Compiler.Symbols
 
             Boolean = new TypedefSymbol(string.Intern("Bool"));
             Boolean.Type = new TypedefType(Boolean, BuiltinTypes.BooleanType);
-            Date = new TypedefSymbol(string.Intern("Date"));
-            Date.Type = new TypedefType(Date, BuiltinTypes.DateType);
-            Currency = new TypedefSymbol(string.Intern("Currency"));
-            Currency.Type = new TypedefType(Currency, BuiltinTypes.CurrencyType);
+            Date = (TypedefSymbol)BuiltinTypes.DateType.Symbol;
+            Currency = (TypedefSymbol)BuiltinTypes.CurrencyType.Symbol;
             String = new TypedefSymbol(string.Intern("String"));
             String.Type = new TypedefType(String, BuiltinTypes.StringType);
         }

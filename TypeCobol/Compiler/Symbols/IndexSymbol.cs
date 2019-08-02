@@ -60,10 +60,11 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="scope"></param>
         internal override void NormalizeExpandedSymbol(Scope<VariableSymbol> scope)
         {
+            base.NormalizeExpandedSymbol(scope);
             Scope<VariableSymbol>.Entry entry = scope.Lookup(Indexed.Name);
             System.Diagnostics.Debug.Assert(entry != null);
             System.Diagnostics.Debug.Assert(entry.Count == 1);
-            Indexed = entry.Symbol;
+            Indexed = entry.Symbol;            
         }
 
         public override TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitIndexSymbol(this, arg); }

@@ -10,6 +10,17 @@
     </patterns>
   </skeleton>
 
+  <!-- comment GLOBAL_STORAGE SECTION -->
+  <skeleton name="GlobalStorageSection">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.GlobalStorageSection"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="clone"></pattern>
+      <pattern location="NODE" action="comment"></pattern>
+    </patterns>
+  </skeleton>
+
   <!-- replace TYPE BOOL declarations -->
   <skeleton name="BOOL.DECLARE" var="level,name,value,global">
     <conditions>
@@ -163,23 +174,12 @@
   <!-- replace DECLARE FUNCTION PUBLIC by a stacked program -->
   <skeleton name="FUN.DECLARE.PUBLIC" var="definitions,copyname,programName8">
     <conditions>
-      <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" visibility="public" />
+      <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" visibility="public" isnested="false"/>
     </conditions>
     <patterns>      
       <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_IS_LOADED">
 01  TC-@Model.programName8-FctList-Loaded PIC X(02).
     88 TC-@Model.programName8-FctList-IsLoaded      VALUE 'OK'.
-      </pattern>
-      <!-- CALLEE WORKING-STORAGE SECTION WITH EXTERNAL : Deprecated-->
-      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_POINTER_ARRAY" deprecated="true">
-        @{
-        var items = "";
-        foreach (var f in @Model.definitions.functions.Public) {
-        items += "*"+@Model.programName8 + "::" +f.Name+'\n';
-        items += " 01 TC-"+@Model.programName8 + "-" + f.Hash+" PROCEDURE-POINTER EXTERNAL.\n";
-        }
-        }
-        @items
       </pattern>
       <!-- CALLEE WORKING-STORAGE SECTION WITHOUT EXTERNAL -->
       <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_POINTER_ARRAY" deprecated="false">
@@ -190,7 +190,7 @@
         items += "    05 TC-" + @Model.programName8 + "-PntNbr         PIC S9(04) COMP VALUE "+@Model.definitions.functions.Public.Count+".\n";
         }
         foreach (var f in @Model.definitions.functions.Public) {
-        items += "*To call program " + f.Hash + f.Name + '\n';
+        items += "*To call program " + f.Hash + '\n';
         items += "*Which is generated code for " + f.QualifiedName + '\n';
         items += "*Declared in source file " + f.CodeElement.TokenSource.SourceName + '\n';
         items += "    05 TC-"+@Model.programName8 + "-" + f.Hash +"-Idt   PIC X(08) VALUE '" + f.Hash + "'.\n";
@@ -211,32 +211,6 @@
       </pattern>
 
       <pattern action="expand" location="program.end"></pattern>
-      <!-- CALLEE WORKING-STORAGE SECTION WITH EXTERNAL : Deprecated-->
-      <pattern location="program.procedure-division.sentence-0.begin" action="create" newline="true" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR" deprecated="true">
-*
-*    IF CallIsCopy
-*      PERFORM Copy-Process-Mode
-*    ELSE
-    PERFORM FctList-Process-Mode
-    perform INIT-LIBRARY
-*    END-IF
-
-    GOBACK.
-        @{
-        var entries = "";
-        int c = 0;
-        foreach (var f in @Model.definitions.functions.Public) {
-        entries += "       SET TC-"+@Model.programName8 + "-" +f.Hash+"   TO ENTRY \'"+f.Hash+"\'\n";
-        }
-        }
- FctList-Process-Mode.
-     IF NOT TC-@Model.programName8-FctList-IsLoaded
-@entries
-       SET TC-@Model.programName8-FctList-IsLoaded TO TRUE
-     END-IF
-        .
-        
-      </pattern>
 
       <!-- CALLEE WORKING-STORAGE SECTION WITHOUT EXTERNAL-->
       <pattern name="ProcedureDivisionCalleeWithoutExternal" location="program.procedure-division.sentence-([0-9]+).begin" action="create" newline="true" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR" deprecated="false">
@@ -272,18 +246,139 @@
       </pattern>
 
     </patterns>
-   
   </skeleton>
+  
   <!-- replace DECLARE FUNCTION PRIVATE by a stacked program -->
   <skeleton name="FUN.DECLARE.PRIVATE" var="definitions">
     <conditions>
       <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" visibility="private" />
+      <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" visibility="local" />
     </conditions>
     <patterns>
       <pattern action="expand" location="program.end"></pattern>
     </patterns>
   </skeleton>
 
+  <!-- replace DECLARE PUBLIC NESTED FUNCTION by a nested program -->
+  <skeleton name="FUN.DECLARE.NESTED" var="definitions">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" visibility="public" isnested="true"/>
+    </conditions>
+    <patterns>
+      <pattern action="expand" location="program.end"></pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- generate code going with the generation of a public nested program in the main program-->
+  <skeleton name="MAIN.DECLARE.NESTED" var="definitions,programName8">
+    <conditions>
+      <condition node="TypeCobol.Compiler.CodeModel.SourceProgram" containnested="true"/>
+    </conditions>
+    <patterns>
+      <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_POINTER_LINKAGE" deprecated="false">
+        @{
+        var items = "";
+        if (@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
+        items += "01 PntTab-Pnt POINTER.\n";
+        }
+        int maxVarCount = 0;
+        foreach (var function in @Model.definitions.functionsGeneratedAsNested.Public) {
+        if (function.Profile.Parameters.Count > maxVarCount) {
+        maxVarCount = function.Profile.Parameters.Count;
+        }
+        }
+        for (int i = 1; i &lt;= maxVarCount; i++) {
+        items += "01 TC-A" + i + " PIC X.\n";
+        }
+        }
+        @items
+      </pattern>
+
+      <pattern location="program.procedure-division.end" action="create" group="TCRFUN_CODEGEN_ENTRYPOINT" deprecated="false">
+        @{
+        var items = "";
+        if (@Model.definitions.functionsGeneratedAsNested.Public.Count &gt; 0) {
+        items += "PA-ALL-ENTRIES.\n";
+        string usingVariables;
+
+        foreach (var functionNode in @Model.definitions.functionsGeneratedAsNested.Public) {
+
+        TypeCobol.Compiler.Nodes.FunctionDeclaration function = (TypeCobol.Compiler.Nodes.FunctionDeclaration) functionNode;
+        usingVariables = string.Empty;
+
+        for (int i = 1; i &lt;= function.Profile.Parameters.Count; i++) {
+        usingVariables += " TC-A" + i;
+        }
+
+        items += "    ENTRY '" + function.Hash + "' USING" + usingVariables + '\n';
+        items += "        CALL \"" + function.Hash + "\" USING" + usingVariables + '\n';
+        items += "        GOBACK.\n\n";
+        }
+        }
+        }
+        @items
+      </pattern>
+      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_IS_LOADED">
+        @{
+        var items = "";
+        if (@Model.definitions.functionsGeneratedAsNested.Public.Count &gt; 0) {
+        items += "01  TC-"+ @Model.programName8 + "-FctList-Loaded PIC X(02).\n";
+        items += "    88 TC-"+ @Model.programName8 + "-FctList-IsLoaded      VALUE 'OK'.\n";
+        }
+        }
+        @items
+      </pattern>
+
+      <!--CALLEE WORKING-STORAGE SECTION WITHOUT EXTERNAL-->
+      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_POINTER_ARRAY" deprecated="false">
+        @{
+        var items = "";
+        if (@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
+        items += "01 TC-"+ @Model.programName8 + "-PntTab.\n";
+        items += "    05 TC-" + @Model.programName8 + "-PntNbr         PIC S9(04) COMP VALUE "+(@Model.definitions.functionsGeneratedAsNested.Public.Count + @Model.definitions.functions.Public.Count) +".\n";
+        }
+        foreach (var f in @Model.definitions.functionsGeneratedAsNested.Concat(@Model.definitions.functions.Public, true)) {
+        items += "*To call program " + f.Hash + '\n';
+        items += "*Which is generated code for " + f.QualifiedName + '\n';
+        items += "*Declared in source file " + f.CodeElement.TokenSource.SourceName + '\n';
+        items += "    05 TC-"+@Model.programName8 + "-" + f.Hash +"-Idt   PIC X(08) VALUE '" + f.Hash + "'.\n";
+        items += "    05 TC-"+@Model.programName8 + "-" + f.Hash +" PROCEDURE-POINTER.\n";
+        }
+        }
+        @items
+      </pattern>
+
+      <!--CALLEE WORKING-STORAGE SECTION WITHOUT EXTERNAL-->
+      <pattern name="ProcedureDivisionCalleeWithoutExternal" location="program.procedure-division.sentence-([0-9]+).begin" action="create" newline="true" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR" deprecated="false">
+        @{
+        var items = "";
+        if (@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
+        items += "*\n";
+        items += "*    IF CallIsCopy\n";
+        items += "*      PERFORM Copy-Process-Mode\n";
+        items += "*    ELSE\n";
+        items += "    PERFORM FctList-Process-Mode\n";
+        items += "    perform INIT-LIBRARY\n";
+        items += "*    END-IF\n\n";
+
+        items += "    GOBACK.\n\n";
+
+        items += " FctList-Process-Mode.\n";
+        items += "     IF NOT TC-" + @Model.programName8 + "-FctList-IsLoaded\n";
+        foreach (var f in @Model.definitions.functionsGeneratedAsNested.Concat(@Model.definitions.functions.Public, true))
+        items += "       SET TC-"+@Model.programName8 + "-" +f.Hash+"   TO ENTRY \'"+f.Hash+"\'\n";
+
+        items += "       SET TC-" + @Model.programName8 + "-FctList-IsLoaded TO TRUE\n";
+        items += "     END-IF\n";
+        items += "        .\n\n";
+
+        items += "     set PntTab-Pnt TO ADDRESS OF TC-"+@Model.programName8+"-PntTab\n";
+        }
+        }
+        @items
+      </pattern>
+    </patterns>
+  </skeleton>
 
 
   <!-- replace function invocation by a CALL and create utility variables -->
@@ -344,28 +439,21 @@
     </patterns>
   </skeleton>
 
-  <skeleton name="PROGRAM.IMPORT.FUN.PUBLIC" var="imports">
+  <skeleton name="PGM.USE.GLOBALSTORAGE" var="useglobalstoragevariable">
+    <conditions>
+      <condition node="TypeCobol.Compiler.CodeModel.Program" />
+    </conditions>
+    <patterns>
+      <pattern location="program.data-division.linkage.begin" name="TypeCobol.Codegen.Contribution.GlobalStorage" action="contribute" deprecated="false" boolean_property="useglobalstoragevariable" newline="true"></pattern>
+    </patterns>
+  </skeleton>
+  
+  <skeleton name="PROGRAM.IMPORT.FUN.PUBLIC" var="imports, useglobalstoragevariable, sourceprogramhash">
     <conditions>
       <condition node="TypeCobol.Compiler.CodeModel.Program"/>
     </conditions>
     <patterns>
       <pattern location="NODE" action="remarks"></pattern> <!-- Remarks Directive -->
-      <!-- CALLER WORKING-STORAGE SECTION WITH EXTERNAL : Deprecated-->
-      <pattern location="program.data-division.working-storage" action="create" boolean_property="imports.IsNotEmpty" deprecated="true">
-        @{
-          var items = "";
-          foreach (var pgm in @Model.imports.Programs.Values) {
-            items += "01 TC-"+ pgm.Name + " pic X(08) value '" + pgm.Name.ToUpperInvariant() + "'.\n";
-            items += "01 TC-"+ pgm.Name + "-FctList-Loaded PIC X(02) EXTERNAL.\n";
-            items += "    88 TC-" + pgm.Name + "-FctList-IsLoaded      VALUE 'OK'.\n";
-            foreach (var proc in pgm.Procedures.Values) {
-              items += "*"+ pgm.Name + "::" +proc.Name+'\n';
-              items += " 01 TC-"+pgm.Name + "-" + proc.Hash+" PROCEDURE-POINTER EXTERNAL.\n";
-            }
-          }
-        }
-        @items
-      </pattern>
 
       <!-- CALLER WORKING-STORAGE SECTION WITHOUT EXTERNAL-->
       <pattern location="program.data-division.working-storage.begin" action="create" boolean_property="imports.IsNotEmpty" deprecated="false">
@@ -384,6 +472,8 @@
         }
         @items
       </pattern>
+      
+
 
       <!-- CALLER LINKAGE SECTION WITHOUT EXTERNAL-->
       <pattern location="program.data-division.linkage.begin" action="create" boolean_property="imports.IsNotEmpty" deprecated="false">
@@ -400,7 +490,7 @@
           foreach (var pgm in @Model.imports.Programs.Values) {
             foreach (var proc in pgm.Procedures.Values) {
               proc.IsNotByExternalPointer=true;
-              items += "*To call program "+proc.Hash+proc.Name+" in module "+proc.ProcStyleCall.FunctionDeclaration.QualifiedName.Tail+'\n';
+              items += "*To call program " + proc.Hash + " in module "+proc.ProcStyleCall.FunctionDeclaration.QualifiedName.Tail+'\n';
               items += "*Which is generated code for "+proc.ProcStyleCall.FunctionDeclaration.QualifiedName+'\n';
               items += "*Declared in source file " + proc.ProcStyleCall.FunctionDeclaration.CodeElement.TokenSource.SourceName + '\n';
               items += "01 TC-"+pgm.Name + "-" + proc.Hash+"-Item.\n";
@@ -434,38 +524,30 @@
  TC-Initializations.
 *=================================================================
      .
-      </pattern>-->
+      </pattern>-->     
       
-      <!-- CALLER PROCEDURE DIVISION WITH EXTERNAL-->
-      <!--<pattern location="program.procedure-division.end" action="create"  boolean_property="imports.IsNotEmpty" deprecated="true">
-        <conditions>
-          <condition node="TypeCobol.Compiler.CodeModel.Program"/>
-        </conditions>
+      
+      
+      <pattern location="program.procedure-division.declaratives-header.end,//program.procedure-division.sentence-([0-9]+).begin,//program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-([0-9]+).begin|program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-0.begin" action="create" newline="true"  boolean_property="useglobalstoragevariable">
         @{
         var clause = "";
-        if (!@Model.imports.IsEmpty) {
-        --><!--clause += "*=================================================================\n";
-        clause += " TC-Initializations.\n";
-        clause += "*=================================================================\n";--><!--
-        foreach (var pgm in @Model.imports.Programs.Values) {
-        clause += "     IF NOT TC-" + pgm.Name + "-FctList-IsLoaded\n";
-        clause += "         CALL 'ZCALLPGM' USING TC-"+ pgm.Name +"\n";
-        clause += "     END-IF\n";
-        }
-        clause += "     .\n";
+        if (!@Model.imports.HasPublicProcedures) {
+        clause += "* Get the data from the global storage section\n";
+        clause += "    CALL '" + @Model.sourceprogramhash + "' USING\n";
+        clause += "        by reference address of TC-GlobalData\n";
+        clause += "    end-call\n";
         }
         }
         @clause
-      </pattern>-->
-
+      </pattern>
       
       <!-- CALLER PROCEDURE DIVISION WITHOUT EXTERNAL-->
-      <pattern location="program.procedure-division.declaratives-header.end,//program.procedure-division.sentence-([0-9]+).begin,//program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-([0-9]+).begin|program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-0.begin" action="create" newline="false"  boolean_property="imports.HasPublicProcedures">
+      <pattern location="program.procedure-division.declaratives-header.end,//program.procedure-division.sentence-([0-9]+).begin,//program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-([0-9]+).begin|program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-0.begin" action="create" newline="false" boolean_property="imports.HasPublicProcedures">
         @{
         var clause = "";
         if (@Model.imports.HasPublicProcedures) {
-        clause += "*\n";
-        clause += "    PERFORM TC-INITIALIZATIONS\n";
+          clause += "*\n";
+          clause += "    PERFORM TC-INITIALIZATIONS\n";
         }
         }
         @clause
@@ -480,6 +562,12 @@
         clause += "*=================================================================\n";
         clause += "     IF TC-FirstCall\n";
         clause += "          SET TC-NthCall TO TRUE\n";
+        if (@Model.useglobalstoragevariable) {
+          clause += "* Get the data from the global storage section\n";
+          clause += "          CALL '" + @Model.sourceprogramhash + "' USING\n";
+          clause += "              by reference address of TC-GlobalData\n";
+          clause += "          end-call\n";
+        }
         foreach (var pgm in @Model.imports.Programs.Values) {
         foreach (var proc in pgm.Procedures.Values) {
         clause += "          SET ADDRESS OF TC-"+pgm.Name + "-" + proc.Hash+"-Item  TO NULL\n";

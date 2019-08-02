@@ -1,0 +1,49 @@
+﻿IDENTIFICATION DIVISION.
+  PROGRAM-ID. MemoryLayout.
+
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+
+01  ZONE.
+    05 ZONE01            PIC N(10).
+    05 ZONE02 GROUP-USAGE IS NATIONAL.
+        10 ZONE03         PIC 9(05).
+        10 ZONE04         PIC N(10).
+        10 ZONE05         PIC N(20).
+        10 ZONE06.
+        15 ZONE061      PIC 9(05)V9(02).
+        15 ZONE062      PIC V9(02).
+    05 ZONE08            PIC X(30).
+    05 ZONE09            PIC 9(05).99.
+    05 ZONE10 OCCURS 5.
+        10 ZONE11         PIC N(05).
+        10 ZONE12         PIC 9(05).
+        10 ZONE131        PIC N USAGE NATIONAL.
+        10 ZONE132        PIC Z USAGE NATIONAL.
+        10 ZONE133        PIC 9 USAGE NATIONAL.
+    05 ZONE20 GROUP-USAGE IS NATIONAL.
+        10 ZONE21 OCCURS 5.
+            15 ZONE22      PIC N(10).
+            15 ZONE23      PIC S99 Sign Is Leading, Separate.
+    05 ZONE30 GROUP-USAGE IS NATIONAL VALUE 'AB12CD34EF56'.
+        10 ZONE31 OCCURS 3.
+            15 ZONE32      PIC NN.
+            15 ZONE33      PIC 99.
+    05 ZONE40            PIC S9(02).
+    05 ZONE41            PIC S9(02) Sign Leading Separate.
+    05 ZONE50.
+        10 ZONE51.
+            15 ZONE52      PIC X(05).
+            15 ZONE53      PIC 999.
+        10 ZONE54 GROUP-USAGE NATIONAL.
+            15 ZONE52      PIC N(05).
+            15 ZONE53      PIC 999.
+    05 ZONE60            PIC N(10) USAGE NATIONAL.
+    05 ZONE61            PIC 9(03).99 USAGE IS NATIONAL.
+    05 ZONE62            PIC ZZ9.99 USAGE IS NATIONAL.
+
+Procedure Division.
+    goback
+    .
+      
+END PROGRAM MemoryLayout.

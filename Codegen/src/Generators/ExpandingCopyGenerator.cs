@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -466,6 +467,12 @@ namespace TypeCobol.Codegen.Generators
             //System.Console.Out.WriteLine(date_diff);
         }
 
+        public void GenerateLineMapFile(Stream stream)
+        {            
+        }
+
         public string TypeCobolVersion { get; set; }
+
+        public bool HasLineMapData => false;
     }
 }

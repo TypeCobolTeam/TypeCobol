@@ -247,6 +247,10 @@ specialRegisterReference ::= DEBUG_CONTENTS : srr
 	{: RESULT = srr; :}
 	| JNIENVPTR : srr
 	{: RESULT = srr; :}
+	| JSON_CODE : srr
+	{: RESULT = srr; :}
+	| JSON_STATUS : srr
+	{: RESULT = srr; :}
 	| RETURN_CODE : srr
 	{: RESULT = srr; :}
 	| SHIFT_IN : srr

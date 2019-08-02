@@ -1,93 +1,33 @@
       *TypeCobol_Version:TestTypeCobolVersion
-      *<< 
-      *   Multiline Comment 1 here
-      *>>
        IDENTIFICATION DIVISION.
-      *<< 
-      *   Multiline Comment 2 here
-      *>>
        PROGRAM-ID. MultilinesCommentsCodeGen.
-      *<< 
-      *   Multiline Comment 3 here
+      *<<
+      *    Multiline 1
       *>>
        DATA DIVISION.
-      *<< Multiline Comment 4 here
+      *<<
+      *    Multiline 2
       *>>
        WORKING-STORAGE SECTION.
-      *<< 
-      *   Multiline Comment 5 here
-      *>>
-      *01 myType TYPEDEF STRICT.
-      *<< 
-      *   Multiline Comment 6 here
-      *>>
-      * 02  var0 PIC 9.
-      *<< 
-      *   Multiline Comment 7 here
-      *>>
-      * 02  var1 PIC 9(3).
-      *<< 
-      *   Multiline Comment 8 here
-      *>>
-      * 02  myBool Type BOOL.
-      *<< 
-      *   Multiline Comment 9 here
-      *>>
-      * 02 subGroup.
-      *<< 
-      *   Multiline Comment 10 here
-      *>>
-      *  05 var2 Pic XXX.
-      *<< 
-      *   Multiline Comment 11 here
-      *>>
-
-       PROCEDURE DIVISION.
-      *<< 
-      *   Multiline Comment 12 here
-      *>>
-       
-      *  DECLARE function FUN
       *<<
-      *   Multiline Comment 13 here
+      *    Multiline 3
       *>>
-      *        INPUT x Type myType
+      *01 myType1 TYPEDEF STRICT.
       *<<
-      *   Multiline Comment 14 here
+      *    Multiline 4
       *>>
-      *              y PIC 9(03).
-      *<< 
-      *   Multiline Comment 17 here
-      *>>
-      *<< 
-      *   Multiline Comment 18 here
-      *>>
-
-      *<< 
-      *   Multiline Comment 19 here
-      *>>
-       END PROGRAM MultilinesCommentsCodeGen.
-      *<< 
-      *   Multiline Comment 20 here
-      *>>
-      *
-      *  DECLARE function FUN
+      *    02  var0     PIC 9.
       *<<
-      *   Multiline Comment 13 here
+      *    Multiline 5
       *>>
-      *        INPUT x Type myType
-      *<<
-      *   Multiline Comment 14 here
-      *>>
-      *              y PIC 9(03).
-      *_________________________________________________________________
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. acc4f1bfFUN.
-       DATA DIVISION.
-       LINKAGE SECTION.
-      *MultilinesCommentsCodeGen.FUN - Params :
-      *		input(x: myType, y: pic 9(03))
-       01 x.
+      *    02  var1     PIC 9(3).
+      *    02  myBool   TYPE BOOL.
+      *    02 subGroup.
+      *         05 var2 PIC XXX.
+      
+       01 var3          PIC X.
+      *01 typedVar      TYPE myType1.
+       01 typedVar.
            02 var0 PIC 9.
            02 var1 PIC 9(3).
           02  myBool-value PIC X VALUE LOW-VALUE.
@@ -96,20 +36,77 @@
                              X'00' thru 'S'
                              'U' thru X'FF'.
            02 subGroup.
-             03 var2 Pic XXX.
+             03 var2 PIC XXX.
+                                     
+      *<<
+      *    Multiline 6
+      *>>
+      
+       PROCEDURE DIVISION.
+      *<<
+      *    Multiline 7
+      *>>
+           MOVE 1 TO var3.
+      *<<
+      *    Multiline 8
+      *>>
+      *    CALL FUN INPUT typedVar::var1.
+           CALL 'bee79d5e' USING
+                                 var1 IN typedVar
+           end-call
+                                        .
+           CONTINUE.
+      *<<
+      *    Multiline 9
+      *>>
+      
+      *DECLARE PROCEDURE FUN
+      *<<
+      *    Multiline 10
+      *>>
+      *        INPUT y PIC 9(03).
+      
+      
+      *<<
+      *    Multiline 15
+      *>>
+       END PROGRAM MultilinesCommentsCodeGen.
+      *
+      *DECLARE PROCEDURE FUN
+      *<<
+      *    Multiline 10
+      *>>
+      *        INPUT y PIC 9(03).
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. bee79d5e.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *MultilinesCommentsCodeGen.FUN - Params :
+      *		input(y: pic 9(03))
+                               
+       01 funVar1       PIC 9(5).
+      *<<
+      *    Multiline 11
+      *>>
+       LINKAGE SECTION.
+      *MultilinesCommentsCodeGen.FUN - Params :
+      *		input(y: pic 9(03))
        01 y PIC 9(03).
        PROCEDURE DIVISION
-             USING BY REFERENCE x
-                   BY REFERENCE y
+             USING BY REFERENCE y
            .
       *MultilinesCommentsCodeGen.FUN - Params :
-      *		input(x: myType, y: pic 9(03))
-      *<< 
-      *   Multiline Comment 15 here
+      *		input(y: pic 9(03))
+      *<<
+      *    Multiline 12
       *>>
-
-      *<< 
-      *   Multiline Comment 16 here
+           MOVE 1 TO y
+      *<<
+      *    Multiline 13
       *>>
-             CONTINUE.
-       END PROGRAM acc4f1bfFUN.
+           CONTINUE.
+      *<<
+      *    Multiline 14
+      *>>
+       END PROGRAM bee79d5e.

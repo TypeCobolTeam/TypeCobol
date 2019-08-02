@@ -1,0 +1,12 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZTEST1.
+       PROCEDURE DIVISION.
+       declare procedure GetTecMsg public
+           input capt     type DVZTEST2::Span
+           in-out msg     type DVZTEST2::Span
+           .
+       PROCEDURE DIVISION.
+            continue
+            .
+       end-declare.
+       end program DVZTEST1.

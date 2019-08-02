@@ -129,6 +129,7 @@
        01 Person TYPEDEF STRICT PUBLIC.
            05 PersonId   pic 9(10).
            05 LastName   pic X(30).
+             88 Empty value space.
            05 FirstName  pic X(30).
        PROCEDURE DIVISION.
        

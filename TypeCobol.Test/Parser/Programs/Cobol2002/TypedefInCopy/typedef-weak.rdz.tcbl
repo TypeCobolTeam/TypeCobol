@@ -1,0 +1,8 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MainProgram.
+       data division.
+       working-storage section.
+         COPY TypedefWeak.
+         01 var1 type TypedefWeak1.
+         01 var2 type TypedefWeak2.
+       END PROGRAM MainProgram.

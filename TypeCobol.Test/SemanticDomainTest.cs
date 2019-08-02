@@ -26,6 +26,11 @@ namespace TypeCobol.Test.Domain
     [TestClass]
     public class SemanticDomainTest
     {
+        private static string GetTestLocation()
+        {
+            return Path.Combine(Directory.GetCurrentDirectory(), @"..\..\TypeCobol.Test");
+        }
+
         public static TypeCobolConfiguration DefaultConfig = null;
         public static ProgramSymbolTableBuilder Builder = null;
         public static NodeListenerFactory BuilderNodeListenerFactory = null;
@@ -42,7 +47,7 @@ namespace TypeCobol.Test.Domain
                 DefaultConfig.Copies.Add(DefaultIntrinsicPath);
             }
 
-            DefaultConfig.Dependencies.Add(Path.Combine(Directory.GetCurrentDirectory(), "resources", "dependencies"));
+            DefaultConfig.Dependencies.Add(Path.Combine(GetTestLocation(), "resources", "dependencies"));
             SymbolTableBuilder.Config = DefaultConfig;
 
             //Force the creation of the Global Symbol Table
@@ -85,6 +90,69 @@ namespace TypeCobol.Test.Domain
         }
 
         /// <summary>
+        /// This Test tests the expansion of a Type Currency inside a program.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("SemanticDomain")]
+        [TestProperty("Object", "TypeExpander")]
+#if DOMAIN_CHECKER
+        [Ignore]//Ignore because CrossCheck performs a program expansion
+#endif
+        public void CurrenyTypeExpanderCheck()
+        {
+            string path = Path.Combine(GetTestLocation(), "Parser", "Programs", "TypeCobol", "Type-Currency.tcbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.FreeTextFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+
+            Assert.IsTrue(Builder.Programs.Count == 1);
+            var currentProgram = Builder.Programs[0];
+
+            //Get oldCurrency symbol
+            var oldCurrency = currentProgram.ResolveReference(new string[] { "oldCurrency" }, false);
+            Assert.IsTrue(oldCurrency.Count == 1);
+            Assert.IsNotNull(oldCurrency.Symbol.Type);
+            TypedefExpander tdExpander = new TypedefExpander(currentProgram);
+            Type te_oldCurrency = oldCurrency.Symbol.Type.Accept(tdExpander, oldCurrency.Symbol);
+            Assert.AreEqual(te_oldCurrency, oldCurrency.Symbol.Type);
+
+            //Get myCurrency1 symbol
+            var myCurrency1 = currentProgram.ResolveReference(new string[] { "myCurrency1" }, false);
+            Assert.IsTrue(myCurrency1.Count == 1);
+            Assert.IsNotNull(myCurrency1.Symbol.Type);
+            Assert.IsTrue(myCurrency1.Symbol.Type.Tag == Type.Tags.Typedef);
+            Assert.IsTrue(myCurrency1.Symbol.Type == BuiltinTypes.CurrencyType);
+
+            //Get myCurrency2 symbol
+            var myCurrency2 = currentProgram.ResolveReference(new string[] { "myCurrency2" }, false);
+            Assert.IsTrue(myCurrency2.Count == 1);
+            Assert.IsNotNull(myCurrency2.Symbol.Type);
+            Assert.IsTrue(myCurrency2.Symbol.Type.Tag == Type.Tags.Typedef);
+            Assert.IsTrue(myCurrency2.Symbol.Type == BuiltinTypes.CurrencyType);
+
+            //Get myCurrency3 symbol
+            var myCurrency3 = currentProgram.ResolveReference(new string[] { "myCurrency3" }, false);
+            Assert.IsTrue(myCurrency3.Count == 1);
+            Assert.IsNotNull(myCurrency3.Symbol.Type);
+            Assert.IsTrue(myCurrency3.Symbol.Type.Tag == Type.Tags.Typedef);
+            Assert.IsTrue(myCurrency3.Symbol.Type == BuiltinTypes.CurrencyType);
+
+            SymbolExpander symExpander = new SymbolExpander(currentProgram);
+            currentProgram.Accept(symExpander, null);
+            //After expansion
+            Assert.IsNotNull(myCurrency1.Symbol.Type);
+            Assert.IsTrue(myCurrency1.Symbol.Type.Tag == Type.Tags.Picture);
+            Assert.IsTrue(myCurrency1.Symbol.Type == BuiltinTypes.CurrencyType.TypeComponent);
+
+            Assert.IsNotNull(myCurrency2.Symbol.Type);
+            Assert.IsTrue(myCurrency2.Symbol.Type.Tag == Type.Tags.Picture);
+            Assert.IsTrue(myCurrency2.Symbol.Type == BuiltinTypes.CurrencyType.TypeComponent);
+
+            Assert.IsNotNull(myCurrency3.Symbol.Type);
+            Assert.IsTrue(myCurrency3.Symbol.Type.Tag == Type.Tags.Picture);
+            Assert.IsTrue(myCurrency3.Symbol.Type == BuiltinTypes.CurrencyType.TypeComponent);
+        }
+
+        /// <summary>
         /// This Test tests the expansion of a Type Date inside a program.
         /// </summary>
         [TestMethod]
@@ -95,7 +163,7 @@ namespace TypeCobol.Test.Domain
 #endif
         public void DateTypeExpanderCheck()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "Parser", "Programs", "TypeCobol", "Type-Date.tcbl");
+            string path = Path.Combine(GetTestLocation(), "Parser", "Programs", "TypeCobol", "Type-Date.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.FreeTextFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
@@ -115,7 +183,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(today.Count == 1);
             Assert.IsNotNull(today.Symbol.Type);
             Assert.IsTrue(today.Symbol.Type.Tag == Type.Tags.Typedef);
-            Assert.IsTrue(today.Symbol.Type.TypeComponent == BuiltinTypes.DateType);
+            Assert.IsTrue(today.Symbol.Type == BuiltinTypes.DateType);
 
             //Before expansion there are no YYYY, MM, DD variables in the program
             var yyyy = currentProgram.ResolveReference(new string[] { "yyyy" }, false);
@@ -155,6 +223,45 @@ namespace TypeCobol.Test.Domain
 //            Assert.AreEqual(dump_today, today_str);
         }
 
+        [TestMethod]
+        [TestCategory("SemanticDomain")]
+        [TestProperty("Object", "GlobalStorage")]
+        public void GlobalStorageVisibilityCheck()
+        {
+            string path = Path.Combine(GetTestLocation(), "Parser", "Programs", "TypeCobol", "GlobalStorageVisibility.rdz.tcbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.FreeTextFormat, /*autoRemarks*/
+                false, /*copies*/ null, executionStep:ExecutionStep.SemanticCheck);
+
+            Assert.IsTrue(Builder.Programs.Count == 1);
+            var currentProgram = Builder.Programs[0];
+
+            Assert.IsTrue(currentProgram.Programs.Count == 1);
+            var nestedPrg = currentProgram.Programs[0];
+
+            SymbolExpander symExpander = new SymbolExpander(currentProgram);
+            currentProgram.Accept(symExpander, null);
+
+            TypeCobol.Compiler.Scopes.Scope<VariableSymbol>.MultiSymbols result;
+
+            // Main pgm
+            result = currentProgram.ResolveReference(new[] { "var1" }, true);
+            Assert.IsTrue(result.Count == 2);
+            result = currentProgram.ResolveReference(new[] { "XX", "MyPoint" }, true);
+            Assert.IsTrue(result.Count == 2);
+
+            // Nested pgm
+            result = nestedPrg.ResolveReference(new[] { "var1" }, true);
+            Assert.IsTrue(result.Count == 2);
+            result = nestedPrg.ResolveReference(new[] { "var2" }, true);
+            Assert.IsTrue(result.Count == 2);
+            result = nestedPrg.ResolveReference(new[] { "var3" }, true);
+            Assert.IsTrue(result.Count == 2);
+            result = nestedPrg.ResolveReference(new[] { "var4" }, true);
+            Assert.IsTrue(result.Count == 1);
+            result = nestedPrg.ResolveReference(new[] { "XX", "MyPoint" }, true);
+            Assert.IsTrue(result.Count == 2);
+        }
+
         /// <summary>
         /// This Test tests the expansion of all Types Date inside a program.
         /// </summary>
@@ -166,7 +273,7 @@ namespace TypeCobol.Test.Domain
 #endif
         public void AllDateTypeExpanderCheck()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "Parser", "Programs", "TypeCobol", "Type-Date.tcbl");
+            string path = Path.Combine(GetTestLocation(), "Parser", "Programs", "TypeCobol", "Type-Date.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.FreeTextFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
@@ -220,7 +327,7 @@ namespace TypeCobol.Test.Domain
         [TestProperty("Object", "TypeExpander")]
         public void BoolTypeNotExpanderCheck()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "Parser", "Programs", "TypeCobol", "Type-Bool.tcbl");
+            string path = Path.Combine(GetTestLocation(), "Parser", "Programs", "TypeCobol", "Type-Bool.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.FreeTextFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
@@ -265,7 +372,7 @@ namespace TypeCobol.Test.Domain
         [TestProperty("Object", "TypeExpander")]
         public void BasicTypeExpanderCheck()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "Parser", "Programs", "TypeCobol", "Typedef-public.rdz.tcbl");
+            string path = Path.Combine(GetTestLocation(), "Parser", "Programs", "TypeCobol", "Typedef-public.rdz.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
@@ -373,7 +480,7 @@ namespace TypeCobol.Test.Domain
         [TestProperty("Object", "TypeExpander")]
         public void ComplexTypeExpanderCheck()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "SemanticDomain", "ComplexTypeExpand.tcbl");
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "ComplexTypeExpand.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
@@ -580,7 +687,7 @@ namespace TypeCobol.Test.Domain
         [TestProperty("Object", "TypeExpander")]
         public void LevelRenumberTypeExpand()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "SemanticDomain", "ComplexTypeExpand.tcbl");
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "ComplexTypeExpand.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
@@ -770,7 +877,7 @@ namespace TypeCobol.Test.Domain
         public void ErrRedefinesImmediatlyPrecede()
         {
             //string path, List<Skeleton> skeletons = null, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null, Compiler.CodeModel.SymbolTable baseSymTable = null            
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "SemanticDomain", "ErrRedefinesImmPrec.cbl");
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "ErrRedefinesImmPrec.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
             Assert.IsTrue(Builder.Diagnostics.Count == 1);
@@ -785,7 +892,7 @@ namespace TypeCobol.Test.Domain
         public void RedefinesTest()
         {
             //string path, List<Skeleton> skeletons = null, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null, Compiler.CodeModel.SymbolTable baseSymTable = null            
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "Parser", "Programs", "Cobol85", "Redefines.rdz.cbl");
+            string path = Path.Combine(GetTestLocation(), "Parser", "Programs", "Cobol85", "Redefines.rdz.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
@@ -852,7 +959,7 @@ namespace TypeCobol.Test.Domain
         [TestProperty("Object", "RenamesSymbol")]
         public void RenamesResolve0()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "SemanticDomain", "RenamesResolve0.cbl");
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "RenamesResolve0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
@@ -874,7 +981,7 @@ namespace TypeCobol.Test.Domain
         [TestProperty("Object", "RenamesSymbol")]
         public void RenamePgmTest()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "Parser", "Programs", "Cobol2002", "Renames.rdz.cbl");
+            string path = Path.Combine(GetTestLocation(), "Parser", "Programs", "Cobol2002", "Renames.rdz.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
@@ -896,7 +1003,7 @@ namespace TypeCobol.Test.Domain
         [TestProperty("Object", "RenamesSymbol")]
         public void BadRenames0()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "SemanticDomain", "BadRenames0.cbl");
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "BadRenames0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
@@ -921,7 +1028,7 @@ namespace TypeCobol.Test.Domain
         public void TypedefCyclic0()
         {
             //string path, List<Skeleton> skeletons = null, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null, Compiler.CodeModel.SymbolTable baseSymTable = null            
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "SemanticDomain", "TypedefCyclic0.cbl");
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "TypedefCyclic0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
             Assert.IsTrue(Builder.Programs.Count == 1);
@@ -1025,7 +1132,7 @@ namespace TypeCobol.Test.Domain
         [TestProperty("Object", "Visibility")]
         public void VisibilityProgramVariable0()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "SemanticDomain", "VisPrgVar0.cbl");
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "VisPrgVar0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
             Assert.IsTrue(Builder.Programs.Count == 1);
@@ -1064,7 +1171,7 @@ namespace TypeCobol.Test.Domain
         [TestProperty("Object", "Visibility")]
         public void VisibilityProgramGlobalVariable0()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "SemanticDomain", "VisPrgGblVar0.tcbl");
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "VisPrgGblVar0.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
             Assert.IsTrue(Builder.Programs.Count == 1);
@@ -1113,7 +1220,7 @@ namespace TypeCobol.Test.Domain
 #endif
         public void VisibilityProgramProcedureVariable0()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "SemanticDomain", "VisPrgProcVar0.tcbl");
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "VisPrgProcVar0.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
             Assert.IsTrue(Builder.Programs.Count == 1);
@@ -1212,7 +1319,7 @@ namespace TypeCobol.Test.Domain
         [TestProperty("Object", "Visibility")]
         public void VisibilityNestedProgramVariable0()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "SemanticDomain", "VisNestedPrgVar0.tcbl");
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "VisNestedPrgVar0.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
             Assert.IsTrue(Builder.Programs.Count == 1);
@@ -1357,7 +1464,7 @@ namespace TypeCobol.Test.Domain
         [TestProperty("Object", "Visibility")]
         public void VisibilityNestedProgramVariable1()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "SemanticDomain", "VisNestedPrgVar0.tcbl");
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "VisNestedPrgVar0.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
             Assert.IsTrue(Builder.Programs.Count == 1);
@@ -1530,7 +1637,7 @@ namespace TypeCobol.Test.Domain
 #endif
         public void VisibilityProgramNestedProcedureVariable0()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "SemanticDomain", "VisPrgNestedProcVar0.tcbl");
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "VisPrgNestedProcVar0.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
             Assert.IsTrue(Builder.Programs.Count == 1);
@@ -1634,7 +1741,7 @@ namespace TypeCobol.Test.Domain
         [TestProperty("Object", "Visibility")]
         public void TypeDefPublicPrivateVisibilityNestedProgram()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "Parser", "Programs", "TypeCobol", "Typedef-public.rdz.tcbl");
+            string path = Path.Combine(GetTestLocation(), "Parser", "Programs", "TypeCobol", "Typedef-public.rdz.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
@@ -1694,7 +1801,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(var2.Count == 1);
             Assert.IsTrue(var2.Symbol.Type == typeOfDaysPrivate.Symbol.Type);
             //Check the the type was accessible
-            Assert.IsTrue(nestPrgSym.IsTypeAccessible(typeOfDaysPrivate.Symbol));
+            Assert.IsFalse(nestPrgSym.IsTypeAccessible(typeOfDaysPrivate.Symbol));
 
             //Lookup the type "typeOfDaysNoModifier"
             var typeOfDaysNoModifier = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysNoModifier" }, false);
@@ -1713,7 +1820,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(var3.Count == 1);
             Assert.IsTrue(var3.Symbol.Type == typeOfDaysNoModifier.Symbol.Type);
             //Check the the type was accessible
-            Assert.IsTrue(nestPrgSym.IsTypeAccessible(typeOfDaysNoModifier.Symbol));
+            Assert.IsFalse(nestPrgSym.IsTypeAccessible(typeOfDaysNoModifier.Symbol));
 
         }
     }

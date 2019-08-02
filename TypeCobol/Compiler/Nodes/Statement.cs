@@ -19,6 +19,20 @@
         }
     }
 
+    public class Allocate : GenericNode<AllocateStatement>, Statement
+    {
+        public Allocate(AllocateStatement statement)
+            : base(statement)
+        {
+
+        }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
+    }
+
     public class Alter: GenericNode<AlterStatement>, Statement {
 	    public Alter(AlterStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -57,6 +71,15 @@
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
+        }
+
+        public override string ToString()
+        {
+            var doc = FunctionDeclaration.CodeElement.FormalizedCommentDocumentation;
+            if (doc != null)
+                return doc.ToString();
+
+            return string.Empty;
         }
     }
 
@@ -126,6 +149,20 @@
 
     public class ExitProgram: GenericNode<ExitProgramStatement>, Statement {
 	    public ExitProgram(ExitProgramStatement statement): base(statement) { }
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
+    }
+
+    public class Free : GenericNode<FreeStatement>, Statement
+    {
+        public Free(FreeStatement statement)
+            : base(statement)
+        {
+
+        }
+
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);

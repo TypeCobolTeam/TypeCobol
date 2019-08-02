@@ -64,7 +64,8 @@ namespace TypeCobol.Compiler.CodeElements {
 	    ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointer,
 	    ProcedurePointerOrFunctionPointerOrTCFunctionName,
 	    ClassNameOrObjectReference,
-	    MethodName
+	    MethodName,
+        DataPointer
     }
 
     public class IntegerVariable: VariableBase {

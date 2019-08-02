@@ -24,7 +24,7 @@
       *    OUTPUT    FinalLength   PIC 9(09) COMP.
 
       *    call CompressString INPUT 0 0 0 0 0 0 OUTPUT FLength.
-           CALL 'a9d5681cCompressString' USING
+           CALL 'a9d5681c' USING
                                  0
                                  0
                                  0
@@ -47,7 +47,7 @@
       *    OUTPUT    FinalLength   PIC 9(09) COMP.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a9d5681cCompressString.
+       PROGRAM-ID. a9d5681c.
        DATA DIVISION.
        LINKAGE SECTION.
       *ParamIntrinsic.CompressString - Params :
@@ -75,4 +75,4 @@
       *rim: pic X(01), I-nOption: MyInteger, P1: MySmallInt, P2: MyReal)
       *		output(FinalLength: pic 9(09) COMP)
            DISPLAY "TOTO".
-       END PROGRAM a9d5681cCompressString.
+       END PROGRAM a9d5681c.

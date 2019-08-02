@@ -18,7 +18,10 @@ namespace TypeCobol.Compiler.Types
     public class Type : ISemanticData, ICloneable
     {
         /// <summary>
-        /// Type tags
+        /// Type tags, used to quickly determine the Kind of the type, this Type
+        /// represents based on a Type instance, and not have to use the C# is operator
+        /// for that purpose, so that a static cast can be used if needed, rather
+        /// than a dynamic cast.
         /// </summary>
         public enum Tags
         {
@@ -69,8 +72,6 @@ namespace TypeCobol.Compiler.Types
 
             //Special Usage for builtin Types
             Boolean,
-            Date,
-            Currency,
             String
         }
 

@@ -29,6 +29,10 @@ namespace TypeCobol.Compiler.Text
         /// </summary>
         Continuation,
         /// <summary>
+        /// '%' indicator in column 7
+        /// </summary>
+        MultiFormalizedComment,
+        /// <summary>
         /// A blank line contains nothing but spaces in column 7 through column 72
         /// </summary>
         Blank,
@@ -410,6 +414,9 @@ namespace TypeCobol.Compiler.Text
                     break;
                 case '-':
                     Type = CobolTextLineType.Continuation;
+                    break;
+                case '%':
+                    Type = CobolTextLineType.MultiFormalizedComment;
                     break;
                 default:
                     Type = CobolTextLineType.Invalid;
