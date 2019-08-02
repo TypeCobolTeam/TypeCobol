@@ -162,6 +162,63 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
+        /// Set up the Precessor Edges list from the start block.
+        /// </summary>
+        public void SetupPredecessorEdgesFromStart()
+        {
+            if (AllBlocks.Count > 0)
+                SetupPredecessorEdgesFromRoot(AllBlocks[0]);
+        }
+        /// <summary>
+        /// Set up the Precessor Edges list from a root block.
+        /// </summary>
+        /// <param name="root">The Root block</param>
+        public void SetupPredecessorEdgesFromRoot(BasicBlock<N, D> root)
+        {
+            if (this.PredecessorEdges != null || this.SuccessorEdges == null)
+                return;
+            this.TerminalsBlocks = new LinkedList<BasicBlock<N, D>>();
+            this.PredecessorEdges = new List<BasicBlock<N, D>>(this.SuccessorEdges.Count);
+            System.Collections.BitArray discovered = new System.Collections.BitArray(AllBlocks.Count);
+            Stack<BasicBlock<N, D>> stack = new Stack<BasicBlock<N, D>>();
+            stack.Push(root);
+            while(stack.Count > 0)
+            {
+                BasicBlock < N, D > block = stack.Pop();
+                if (discovered.Get(block.Index))
+                    continue;
+                discovered.Set(block.Index, true);
+                if (block.PredecessorEdges == null)
+                {
+                    block.PredecessorEdges = new List<int>(0);
+                }
+                if (block.SuccessorEdges.Count == 0)
+                {
+                    TerminalsBlocks.AddLast(block);
+                }
+                else
+                {
+                    int predIndex = -1;
+                    foreach (int successor in block.SuccessorEdges)
+                    {
+                        BasicBlock<N, D> successorBlock = SuccessorEdges[successor];
+                        stack.Push(successorBlock);
+                        if (successorBlock.PredecessorEdges == null)
+                        {
+                            successorBlock.PredecessorEdges = new List<int>();
+                        }
+                        if (predIndex == -1)
+                        {
+                            predIndex = this.PredecessorEdges.Count;
+                            this.PredecessorEdges.Add(block);
+                        }
+                        successorBlock.PredecessorEdges.Add(predIndex);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Set up the Precessor Edges list, and do it for all blocks.
         /// </summary>
         public void SetupPredecessorEdges()
