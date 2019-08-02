@@ -73,6 +73,15 @@ namespace TypeCobol.Analysis.Cfg
             }
 
             /// <summary>
+            /// Terminal blocks within this Group.
+            /// </summary>
+            internal List<BasicBlockForNode> TerminalBlocks
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
             /// Constructor.
             /// </summary>
             public BasicBlockForNodeGroup()
@@ -1354,20 +1363,8 @@ namespace TypeCobol.Analysis.Cfg
                     //System.Diagnostics.Debug.Assert(!clonedBlockIndexMap.ContainsKey(block.Index));
                     if (!clonedBlockIndexMap.ContainsKey(block.Index))
                     {//If this block has been already add, this mean there are recursive GOTOs
-                        if (Mode == CfgMode.Normal)
-                        {
-                            clonedBlockIndexMap[block.Index] = block.Index;
-                            group.AddBlock(block);
-                        }
-                        else
-                        {
-                            var cloneBlock = (BasicBlockForNode)block.Clone();
-                            //Give to the cloned a new Index, and added to all blocks.
-                            clonedBlockIndexMap[block.Index] = this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Count;
-                            cloneBlock.Index = this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Count;
-                            this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Add(cloneBlock);
-                            group.AddBlock(cloneBlock);
-                        }
+                        clonedBlockIndexMap[block.Index] = block.Index;
+                        group.AddBlock(block);
                     }
                     else
                     {//Recursive blocks detection.
@@ -1503,7 +1500,125 @@ namespace TypeCobol.Analysis.Cfg
                     BasicBlockForNodeGroup group = item.Item2;
                     ResolvePendingPERFORMProcedure(p, group);
                 }
+                if (Mode == CfgMode.Extended)
+                {
+                    foreach (var item in this.CurrentProgramCfgBuilder.PendingPERFORMProcedures)
+                    {
+                        PerformProcedure p = item.Item1;
+                        BasicBlockForNodeGroup group = item.Item2;
+                        GraftBasicBlockGroup(group);
+                    }
+                }
             }
+        }
+
+        /// <summary>
+        /// Compute the terminal blocks associated to Group
+        /// 
+        /// </summary>
+        /// <param name="group">The group to compute the terminal blocks</param>
+        private void ComputeBasicBlockGroupTerminalBlocks(BasicBlockForNodeGroup group)
+        {
+            if (group.Group.Count > 0)
+            {
+                LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
+                MultiBranchContext ctx = new MultiBranchContext(this.CurrentProgramCfgBuilder, null);
+                List<BasicBlockForNode> terminals = new List<BasicBlockForNode>();
+                ctx.GetTerminalSuccessorEdges((BasicBlockForNode)first.Value, terminals);
+                group.TerminalBlocks = terminals;
+            }
+        }
+
+        /// <summary>
+        /// Extend BasicBlockForNodeGroup instance to point to the first block and make all terminal blocks
+        /// have for successor the block successor.
+        /// </summary>
+        /// <param name="group">The group to be continuted</param>
+        private void ContinueBasicBlockGroup(BasicBlockForNodeGroup group)
+        {
+            if (group.Group.Count > 0)
+            {
+                System.Diagnostics.Debug.Assert(group.SuccessorEdges.Count == 1);
+                int succIndex = group.SuccessorEdges[0];
+                group.SuccessorEdges.Clear();
+
+                //Make the First block the successor of the group
+                LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
+                int firstIndex = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
+                group.SuccessorEdges.Add(firstIndex);
+                this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(first.Value);
+
+                //Make all terminal blocks of the group have the original successor of the block.
+                foreach(var termBlock in group.TerminalBlocks)
+                {
+                    if (!termBlock.SuccessorEdges.Contains(succIndex))
+                    {
+                        if (!termBlock.HasFlag(BasicBlock<Node, D>.Flags.Ending))
+                        {
+                            termBlock.SuccessorEdges.Add(succIndex);
+                        }
+                    }
+                }
+                group.SetFlag(BasicBlock<Node, D>.Flags.GroupGrafted, true);
+            }            
+        }
+
+        /// <summary>
+        /// Graft the content of a Basic Block group by duplicating all its blocks and connecting all blocks to the CFG continuation.
+        /// </summary>
+        /// <param name="group">The group to be grafted</param>
+        private void GraftBasicBlockGroup(BasicBlockForNodeGroup group)
+        {
+            if (group.Group.Count == 0)
+                return;
+            //The new group to build.
+            LinkedList<BasicBlock<Node, D>> newGroup = new LinkedList<BasicBlock<Node, D>>();
+            //Map of block : (Original Block Index, [new Block Index, Successor Edge Index])
+            Dictionary<int, int[]> BlockMap = new Dictionary<int, int[]>();
+            //Fill the map
+            foreach(var b in group.Group)
+            {                
+                //Clone a new block.
+                BasicBlock<Node, D> newBlock = (BasicBlock<Node, D>)b.Clone();
+                if (newBlock is BasicBlockForNodeGroup)
+                {//We are Cloning a Group ==> recursion
+                    BasicBlockForNodeGroup newBG = (BasicBlockForNodeGroup)newBlock;
+                    GraftBasicBlockGroup(newBG);
+                }
+                newBlock.Index = this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Count;
+                this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Add(newBlock);
+                BlockMap[b.Index] = new int[2] { newBlock.Index, -1 };
+                newGroup.AddLast(newBlock);
+            }
+            //Handle successors
+            foreach (var b in group.Group)
+            {
+                int[] desc = BlockMap[b.Index];
+                BasicBlock<Node, D> newBlock = this.CurrentProgramCfgBuilder.Cfg.AllBlocks[desc[0]];
+                newBlock.SuccessorEdges = new List<int>(b.SuccessorEdges.Count);//new Block will have new successors
+                foreach(var s in b.SuccessorEdges)
+                {
+                    BasicBlock<Node, D> succBlock = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges[s];
+                    int[] succDesc = null;
+                    if (!BlockMap.TryGetValue(succBlock.Index, out succDesc))
+                    {//Successor block is not in our scope ==> just add it
+                        newBlock.SuccessorEdges.Add(s);
+                    }
+                    else
+                    {
+                        if (succDesc[1] == -1)
+                        {//Create a successor entry
+                            succDesc[1] = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
+                            BasicBlock<Node, D> newSuccBlock = this.CurrentProgramCfgBuilder.Cfg.AllBlocks[succDesc[0]];
+                            this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(newSuccBlock);
+                        }
+                        newBlock.SuccessorEdges.Add(succDesc[1]);
+                    }
+                }
+            }
+            group.Group = newGroup;
+            ComputeBasicBlockGroupTerminalBlocks(group);
+            ContinueBasicBlockGroup(group);
         }
 
         /// <summary>

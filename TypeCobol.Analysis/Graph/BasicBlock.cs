@@ -61,6 +61,7 @@ namespace TypeCobol.Analysis.Graph
             Declaratives = 0x01 << 3,   //Flag if this basic block is inside a declaratives section.
             Start = 0x01 << 4,           //Flag for a start node.
             End = 0x01 << 5,           //Flag for a end node.
+            GroupGrafted = 0x01 << 6,           //Flag a Grafted Group.
         }
 
         /// <summary>
