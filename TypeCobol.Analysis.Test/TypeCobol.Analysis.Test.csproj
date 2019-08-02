@@ -46,6 +46,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BasicCfgProgramTest.cs" />
     <Compile Include="BitSetTest.cs" />
     <None Include="BasicCfgInstrs\Alter0.cbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -194,6 +195,9 @@
     <None Include="BasicCfgInstrs\MixedStackedNestedProcsPgms.tcbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="BasicCfgPrograms\HanoiPrg.cbl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="BasicDfaSamples\SampleGotos0.cbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -205,6 +209,9 @@
     </None>
     <None Include="DotOutput\Alter2.dot">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DotOutput\CfgPrograms\HanoiPrg.dot">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="DotOutput\CGM110.dot">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
