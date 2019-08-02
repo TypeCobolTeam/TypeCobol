@@ -109,13 +109,16 @@ namespace TypeCobol.Compiler.Nodes {
 	    public override string ID { get { return Name; } }
 	    public string Label { get; internal set; }
 
-	    public override string Name { get { return QualifiedName.Head; } }
-	    public override CodeElements.Expressions.QualifiedName QualifiedName { get { return new CodeElements.Expressions.URI(this.CodeElement.Name); } }
+	    public override string Name => this.CodeElement.FunctionName.Name;
+        public override CodeElements.Expressions.QualifiedName QualifiedName { get { return new CodeElements.Expressions.URI(this.CodeElement.Name); } }
 
 	    public string Library { get; internal set; }
 	    public string Copy { get { return Library+"cpy"; } }
 	    //public ParametersProfile Profile { get { return this.CodeElement().Profile; } }
         public ParametersProfileNode Profile{ get; set; }
+        //For specific FunctionDeclaration generation as nested, check flag on FunctionDeclaration node
+        //Don't forget to set the flag on the right node in ProgramClassBuilder
+        public bool GenerateAsNested => this.Root.MainProgram.IsFlagSet(Flag.GenerateAsNested);
 
 
         private string _hash;
@@ -150,7 +153,11 @@ namespace TypeCobol.Compiler.Nodes {
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            return astVisitor.Visit(this);
+            return astVisitor.Visit(this) && this.ContinueVisitToChildren(astVisitor, Profile.InputParameters)
+                                          && this.ContinueVisitToChildren(astVisitor, Profile.InoutParameters)
+                                          && this.ContinueVisitToChildren(astVisitor, Profile.OutputParameters)
+                                          && this.ContinueVisitToChildren(astVisitor, Profile.ReturningParameter );
+
         }
 
         public Dictionary<string, Tuple<IList<SymbolReference>, ProcedureStyleCall>> ProcStyleCalls { get; set; }

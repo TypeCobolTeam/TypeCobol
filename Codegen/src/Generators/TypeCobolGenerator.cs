@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using TypeCobol.Codegen.Skeletons;
 namespace TypeCobol.Codegen.Generators
@@ -24,5 +25,12 @@ namespace TypeCobol.Codegen.Generators
         {
             throw new NotImplementedException();
         }
+
+        public override void GenerateLineMapFile(Stream stream)
+        {
+        }
+
+        public override bool HasLineMapData => false;
+
     }
 }

@@ -70,7 +70,7 @@
       *               .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. d5479a8frechercheListeElements.
+       PROGRAM-ID. d5479a8f.
        DATA DIVISION.                                                   12340000
        WORKING-STORAGE SECTION. 
       *MOVECORR.rechercheListeElements - Params :
@@ -213,4 +213,4 @@
 
              GOBACK                                                     12930000
            .                                                            12940000
-       END PROGRAM d5479a8frechercheListeElements.
+       END PROGRAM d5479a8f.

@@ -22,8 +22,8 @@ PROGRAM: Simple common:False initial:True recursive:False
   E1:Alphanumeric
   E2:Alphanumeric
   E3:Alphanumeric
-  A:BOOL
-  B:BOOL
+  A:Level88
+  B:Level88
   sqlcode:NumericEdited
   toto:Alphanumeric
 -- PARAGRAPHS --

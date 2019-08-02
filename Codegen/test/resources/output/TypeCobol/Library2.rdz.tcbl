@@ -6,7 +6,7 @@
            88 TC-DVZZDATE-FctList-IsLoaded      VALUE 'OK'.
        01 TC-DVZZDATE-PntTab.
            05 TC-DVZZDATE-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program b8721d20currentDateString
+      *To call program b8721d20
       *Which is generated code for DVZZDATE.currentDateString
       *Declared in source file Library2.rdz.tcbl
            05 TC-DVZZDATE-b8721d20-Idt   PIC X(08) VALUE 'b8721d20'.
@@ -53,7 +53,7 @@
       *    RETURNING Result TYPE dateString.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. b8721d20currentDateString.
+       PROGRAM-ID. b8721d20.
        DATA DIVISION.
        LINKAGE SECTION.
       *DVZZDATE.currentDateString  - No Params
@@ -66,4 +66,4 @@
       *		returns(Result: dateString)
            display "toto"
            .
-       END PROGRAM b8721d20currentDateString.
+       END PROGRAM b8721d20.

@@ -9,7 +9,7 @@
       *DECLARE PROCEDURE InitFrom PRIVATE
       *    INPUT arg PIC 9.
       *CALL InitFrom INPUT RECCTR-DPO-DAT-FIN-CTR-CAT.
-       CALL 'd1dd0726InitFrom' USING
+       CALL 'd1dd0726' USING
                                  RECCTR-DPO-DAT-FIN-CTR-CAT
            end-call
                                                      .
@@ -19,7 +19,7 @@
       *    INPUT arg PIC 9.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. d1dd0726InitFrom.
+       PROGRAM-ID. d1dd0726.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *Functions.InitFrom - Params :
@@ -56,4 +56,4 @@
               MOVE SPACE               TO DueDate OF OutputAccount
            END-EVALUATE
            .
-       END PROGRAM d1dd0726InitFrom.
+       END PROGRAM d1dd0726.

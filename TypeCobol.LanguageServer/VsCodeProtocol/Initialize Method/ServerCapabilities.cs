@@ -10,7 +10,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     /// server.
     /// </summary>
     public class ServerCapabilities
-    {
+    {        
         /// <summary>
         /// Defines how text documents are synced.
         /// </summary>
@@ -85,5 +85,10 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// The server provides rename support.
         /// </summary>
         public bool renameProvider { get; set; }
+
+        /// <summary>
+        /// Experimental value.
+        /// </summary>
+        public object experimental;
     }
 }

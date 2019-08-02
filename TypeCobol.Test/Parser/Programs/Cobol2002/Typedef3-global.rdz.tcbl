@@ -35,19 +35,19 @@
 
 
       *Complex USED Typedef
-       01 Typedef1 TYPEDEF STRICT.
+       01 Typedef1 TYPEDEF STRICT global.
            05 td-var1         pic X.
            05 td-var10.
               10 td-var11     pic X.
               10 td-var12     pic X.
               10 td-var13     type Typedef2.
-       01 Typedef2 TYPEDEF STRICT.
+       01 Typedef2 TYPEDEF STRICT global.
            05 td-var2         pic X.
            05 td-var20.
               10 td-var21     pic X.
               10 td-var22     pic X.
               10 td-var23     type MainProgram::Typedef3.
-       01 Typedef3 TYPEDEF STRICT.
+       01 Typedef3 TYPEDEF STRICT global.
            05 td-var3         pic X.
            05 td-var30.
               10 td-var31     pic X.

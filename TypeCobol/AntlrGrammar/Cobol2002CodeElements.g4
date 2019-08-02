@@ -32,3 +32,26 @@ dataDescriptionEntry:
 cobol2002TypedefClause: TYPEDEF STRONG?;
 
 cobol2002TypeClause:    TYPE dataTypeNameReference;
+
+cobol2002Statement:
+    // Dynamic allocation statements
+	allocateStatement |
+	freeStatement;
+
+// Updated INITIALIZE statement using COBOL v6.1 specs
+initializeStatement:
+	INITIALIZE storageArea1+ (WITH? FILLER)?
+	((ALL|categoryName=dataCategory) TO? VALUE)?
+	(THEN? REPLACING initializeReplacingDirective+)?
+	(THEN? TO? DEFAULT)?;
+
+// New Cobol v6.1 ALLOCATE statement to obtain dynamic storage.
+// 'INITIALIZED' is defined here as a contextual keyword. The storageArea2 is therefore not allowed to be named 'INITIALIZED' in this statement.
+allocateStatement:
+	ALLOCATE ((arithmeticExpression CHARACTERS) | { !string.Equals(CurrentToken.Text, "INITIALIZED", System.StringComparison.InvariantCultureIgnoreCase) }? storageArea2)
+	({ string.Equals(CurrentToken.Text, "INITIALIZED", System.StringComparison.InvariantCultureIgnoreCase) }? KeywordINITIALIZED=UserDefinedWord)?
+	(RETURNING pointerStorageArea)?;
+
+// New Cobol v6.1 FREE statement that releases dynamic storage that was previously obtained with an ALLOCATE statement.
+freeStatement:
+	FREE pointerStorageArea+;

@@ -140,14 +140,6 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// The Cobol85 representation off a date type.
-        /// </summary>
-        public static GroupType DateCobol85 { get; private set;  }
-        public static Type DateYYYYType = new PictureType(new PictureValidator("9(04)", false));
-        public static Type DateMMType = new PictureType(new PictureValidator("9(02)", false));
-        public static Type DateDDType = DateMMType;       
-
-        /// <summary>
         /// Expand a Custom Type.
         /// </summary>
         /// <param name="t"></param>
@@ -159,28 +151,6 @@ namespace TypeCobol.Compiler.Types
             VariableSymbol varSym = (VariableSymbol) s;
             if (t == BuiltinTypes.BooleanType)
             {//Do nothing
-            }
-            else if (t == BuiltinTypes.DateType)
-            {                
-                GroupType recType = new GroupType(s);
-                VariableSymbol yyyy = new VariableSymbol("YYYY") {Level = varSym.Level + 1, Type = DateYYYYType, Owner = s};
-                recType.Scope.Enter(yyyy);
-                //Inherits flags
-                yyyy.Flag = s.Flag;
-                //Important add to the domain the new field.
-                Program.AddToDomain(yyyy);
-
-                VariableSymbol mm = new VariableSymbol("MM") {Level = varSym.Level + 1, Type = DateMMType, Owner = s };
-                recType.Scope.Enter(mm);
-                mm.Flag = s.Flag;
-                Program.AddToDomain(mm);
-
-                VariableSymbol dd = new VariableSymbol("DD") {Level = varSym.Level + 1, Type = DateDDType, Owner = s };
-                recType.Scope.Enter(dd);
-                dd.Flag = s.Flag;
-                Program.AddToDomain(dd);
-
-                return recType;
             }
             return t;
         }

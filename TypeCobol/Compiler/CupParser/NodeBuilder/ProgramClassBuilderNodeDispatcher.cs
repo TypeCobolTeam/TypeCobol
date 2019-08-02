@@ -679,6 +679,22 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 }
         }
 
+        public void OnAllocateStatement([NotNull] AllocateStatement stmt)
+        {
+            if (_builderListeners != null) foreach (var l in _builderListeners)
+                {
+                    l.OnAllocateStatement(stmt);
+                }
+        }
+
+        public void OnFreeStatement([NotNull] FreeStatement stmt)
+        {
+            if (_builderListeners != null) foreach (var l in _builderListeners)
+                {
+                    l.OnFreeStatement(stmt);
+                }
+        }
+
         public void OnGobackStatement([NotNull] GobackStatement stmt)
         {
             if (_builderListeners != null) foreach (var l in _builderListeners)

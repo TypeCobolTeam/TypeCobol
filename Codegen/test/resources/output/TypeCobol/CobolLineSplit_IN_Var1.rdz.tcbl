@@ -50,7 +50,7 @@
       *    call check
       *         Output
       *    W-PERSON1::Grp1234567890123123456789::LastName.
-           CALL 'cb5016dbcheck' USING
+           CALL 'cb5016db' USING
                     by reference LastName IN Grp1234567890123123456789 I
       -    N W-PERSON1
            end-call
@@ -63,7 +63,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. cb5016dbcheck.
+       PROGRAM-ID. cb5016db.
        DATA DIVISION.
        LINKAGE SECTION.
       *CobolLineSplitINVar.check - Params :
@@ -75,4 +75,4 @@
       *CobolLineSplitINVar.check - Params :
       *		output(mydate: pic X(30))
            CONTINUE.
-       END PROGRAM cb5016dbcheck.
+       END PROGRAM cb5016db.

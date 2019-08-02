@@ -1,14 +1,22 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using TypeCobol.Codegen.Actions;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Source;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.File;
+using static TypeCobol.Codegen.Generators.LinearNodeSourceCodeMapper;
+using System.Runtime.CompilerServices;
+using TypeCobol.Compiler;
 
 namespace TypeCobol.Codegen.Generators
 {
@@ -55,7 +63,14 @@ namespace TypeCobol.Codegen.Generators
             : base(document, destination, skeletons, null)
         {
             TypeCobolVersion = typeCobolVersion;
+            int count = CompilationResults.TokensLines.Count;
         }
+
+        public override void GenerateLineMapFile(Stream stream)
+        {
+        }
+
+        public override bool HasLineMapData => false;
 
         /// <summary>
         /// 
@@ -77,10 +92,242 @@ namespace TypeCobol.Codegen.Generators
             LinearNodeSourceCodeMapper mapper = new LinearNodeSourceCodeMapper(this);
             mapper.Accept(RootNode);
             //mapper.DebugDump();
-            SourceText generatedDocument = LinearGeneration(mapper, CompilationResults.TokensLines);
+            //If the node has Cloned node create a second linear node source code mapper and visit each cloned node.
+            LinearNodeSourceCodeMapper clonedMapper = null;
+            if (ClonedNodes.Count > 0)
+            {
+                clonedMapper = new LinearNodeSourceCodeMapper(this);
+                clonedMapper.LinearMode = Mode.Cloned;
+                foreach (var cloned in ClonedNodes)
+                {
+                    clonedMapper.Accept(cloned);
+                }
+            }
+            SourceText generatedDocument = LinearGeneration(mapper, CompilationResults.TokensLines, clonedMapper);
             // Step 3: Write target document
             //TCCODEGEN_NO_TRAILING_SPACES
             generatedDocument.Write(Destination);
+        }
+
+        /// <summary>
+        /// Line Mapping context
+        /// </summary>
+        public class LineMappingCtx
+        {
+            /// <summary>
+            /// Starting the line mapping at ine 1
+            /// </summary>
+            public int startLineMapCounter;
+            /// <summary>
+            /// Current base offset in the source code advance.
+            /// </summary>
+            public int currentGenLineOffset = 0;
+            /// <summary>
+            /// The current function declaration data if any
+            /// </summary>
+            public NodeFunctionData funData;
+            /// <summary>
+            /// The line mapping data
+            /// </summary>
+            public Tuple<int, int>[] LineMapping;
+            /// <summary>
+            /// Set of relocated lines from a function declaration.
+            /// </summary>
+            public HashSet<int> RelocatedLines;
+            /// <summary>
+            /// The 1-based, Delta of the Global Storage line in this Line Mapping if any.
+            /// </summary>
+            public List<int> AllGlobalStorageLineDelta;
+            /// <summary>
+            /// The Inverse Line Mappling list if any. The inverse line mapping is a line number
+            /// from the output source to original source code.
+            /// </summary>
+            public List<Tuple<int, int>> InverseLineMapping;
+
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="lineMap"></param>
+            public LineMappingCtx(Tuple<int,int>[] lineMap)
+            {
+                this.LineMapping = lineMap;
+                this.startLineMapCounter = 1;
+            }
+
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="lineMap"></param>
+            /// <param name="funData"></param>
+            public LineMappingCtx(Tuple<int, int>[] lineMap, NodeFunctionData funData)
+            {
+                this.LineMapping = lineMap;
+                this.funData = funData;
+                this.startLineMapCounter = 0;
+            }
+
+            /// <summary>
+            /// Add arelocated line
+            /// </summary>
+            /// <param name="l"></param>
+            private void AddRelocatedLine(int l)
+            {
+                if (RelocatedLines == null)
+                {
+                    RelocatedLines = new HashSet<int>();
+                }
+                RelocatedLines.Add(l);
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private bool IsRelocatedLine(int i)
+            {
+                return RelocatedLines != null ? RelocatedLines.Contains(i) : false;
+            }
+            /// <summary>
+            /// Update the line map from the given buffer.
+            /// </summary>
+            /// <param name="i">Current zero based line number</param>
+            /// <param name="targetSourceText">The buffer containing the text</param>
+            /// <param name="flushingBuffer">The buffer whish being flushed</param>
+            public void UpdateLineMap(int i, SourceText targetSourceText, LineStringSourceText flushingBuffer)
+            {
+                if (flushingBuffer == null)
+                {//No buffer ==> This is a line that must be generated as it is in the original source code.
+                    System.Diagnostics.Debug.Assert(LineMapping[i] == null || IsRelocatedLine(i));
+                    if (!(LineMapping[i] == null || IsRelocatedLine(i)))
+                        return;//Don't take risk if assertion failure.
+                    if (!IsRelocatedLine(i))
+                    {
+                        //We are inside a function declaration.
+                        if (funData != null && funData.LineMapFirstIndex == 0)
+                        {
+                            funData.LineMapFirstIndex = i;
+                        }
+                        var interval = GenLineMapping(startLineMapCounter, currentGenLineOffset, targetSourceText);
+                        LineMapping[i] = interval;
+                        currentGenLineOffset = targetSourceText.Size;
+                        startLineMapCounter += interval.Item2 - interval.Item1 + 1;
+                        if (funData != null)
+                        {
+                            funData.LineMapLastIndex = i;
+                        }
+                    }
+                }
+                else
+                {
+                    if (flushingBuffer.Lines != null)
+                    {
+                        var interval = GenLineMapping(startLineMapCounter, currentGenLineOffset, targetSourceText);
+                        foreach (var l in flushingBuffer.Lines)
+                        {
+                            System.Diagnostics.Debug.Assert(LineMapping[l] == null || flushingBuffer.Reallocated);
+                            if (!(LineMapping[l] == null || flushingBuffer.Reallocated))
+                                return;//Don't take risk if assertion failure.
+                            if (funData != null && funData.LineMapFirstIndex == 0)
+                            {
+                                funData.LineMapFirstIndex = l;
+                            }
+                            LineMapping[l] = interval;
+                            if (flushingBuffer.Reallocated)
+                            {
+                                AddRelocatedLine(l);
+                            }
+                            if (funData != null)
+                            {
+                                funData.LineMapLastIndex = l;
+                            }
+                        }
+                        startLineMapCounter += interval.Item2 - interval.Item1 + 1;
+                        currentGenLineOffset = targetSourceText.Size;
+                    }                                        
+                }
+            }
+
+            /// <summary>
+            /// Relocate the Range mapping of a function declaration
+            /// </summary>
+            /// <param name="funData">Function declaration data</param>
+            /// <param name="funSourceText">The current function source code for relocation</param>
+            /// <param name="mainSourceText">The main source code buffer into which the relocation is performed </param>
+            /// <param name="bNested">true if we are relocating a function declaration generated as a nested program, false otherwise</param>
+            public void RelocateFunctionRanges(NodeFunctionData funData, StringSourceText funSourceText, SourceText mainSourceText, bool bNested)
+            {
+                Tuple<int, int> interval = GenLineMapping(0, 0, funSourceText);
+                if (funData.LineMapFirstIndex == 0 && funData.LineMapLastIndex == 0)
+                {//Special case the body of the function is empty. ==> So take the range of lines in its buffer
+                    foreach (var l in funData.Buffer.Lines)
+                    {
+                        if (funData.LineMapFirstIndex == 0)
+                        {
+                            funData.LineMapFirstIndex = l;
+                        }
+                        else
+                        {
+                            funData.LineMapFirstIndex = Math.Min(funData.LineMapFirstIndex, l);
+                        }
+                    }
+                    funData.LineMapLastIndex = funData.LineMapFirstIndex;                   
+                    LineMapping[funData.LineMapFirstIndex] = interval;
+                }
+
+                for (int i = funData.LineMapFirstIndex; i <= funData.LineMapLastIndex; i++)
+                {
+                    if (LineMapping[i] != null)
+                    {
+                        LineMapping[i] = new Tuple<int, int>(LineMapping[i].Item1 + startLineMapCounter, LineMapping[i].Item2 + startLineMapCounter);
+                    }
+                }
+                //If we have GlobalStorage relocate it also
+                if (funData.GlobalStorageLineDelta != 0)
+                {
+                    funData.GlobalStorageLineDelta += startLineMapCounter;
+                    AddGlobalStorageLineDelta(funData.GlobalStorageLineDelta);
+                }
+
+                //We update the new position.
+                startLineMapCounter += interval.Item2 - interval.Item1 + 1;
+                if (bNested)
+                {
+                    currentGenLineOffset = mainSourceText.Size;
+                }                
+            }
+
+            /// <summary>
+            /// Add a Global Storage declaration delta from the Main Program or a Nested Program.
+            /// </summary>
+            /// <param name="delta">The delta to be added</param>
+            internal void AddGlobalStorageLineDelta(int delta)
+            {
+                if (this.AllGlobalStorageLineDelta == null)
+                    this.AllGlobalStorageLineDelta = new List<int>();
+                this.AllGlobalStorageLineDelta.Add(delta);
+            }
+
+            /// <summary>
+            /// Generate the Line
+            /// </summary>        
+            /// <param name="startLine">The starting line number</param>
+            /// <param name="interval">[out] The interval</param>
+            /// <param name="startOffset">The starting offset in the document</param>
+            /// <param name="targetSourceText">The current source codument</param>
+            /// <returns></returns>
+            private Tuple<int, int> GenLineMapping(int startLine, int startOffset, SourceText targetSourceText)
+            {
+                int count = targetSourceText.LineCount(startOffset, targetSourceText.Size);
+                return new Tuple<int, int>(startLine, startLine + count - 1);
+            }
+
+            /// <summary>
+            /// Update all delta based on the content of the urrent buffer.
+            /// </summary>
+            /// <param name="targetSourceText">The current buffer</param>
+            internal void UpdateDeltas(SourceText targetSourceText)
+            {
+                var interval = GenLineMapping(startLineMapCounter, currentGenLineOffset, targetSourceText);
+                currentGenLineOffset = targetSourceText.Size;
+                startLineMapCounter += interval.Item2 - interval.Item1 + 1;
+            }
         }
 
         /// <summary>
@@ -91,23 +338,50 @@ namespace TypeCobol.Codegen.Generators
         /// //4) Flush of Function declations.
         /// <param name="mapper">The linearization representation</param>
         /// <param name="Input">Input source lines</param>
+        /// <param name="clonedMapper">Linear mapper for cloned nodes</param>
         /// <returns>The Generated Source Document</returns>
         /// </summary>
-        private SourceText LinearGeneration<A>(LinearNodeSourceCodeMapper mapper, IReadOnlyList<A> Input) where A : ITextLine
+        protected virtual SourceText LinearGeneration<A>(LinearNodeSourceCodeMapper mapper, IReadOnlyList<A> Input, LinearNodeSourceCodeMapper clonedMapper = null) where A : ITextLine
         {
+            return LinearGeneration<A>(mapper, clonedMapper, Input, null, 0, mapper.LineData.Length);
+        }
+
+        /// <summary>
+        /// /// Perform a linear Generation
+        /// </summary>
+        /// <typeparam name="A"></typeparam>
+        /// <param name="mapper">The linearization representation</param>
+        /// <param name="clonedMapper">Linear mapper for cloned nodes</param>
+        /// <param name="Input">Input source lines</param>
+        /// <param name="startLine">The starting line (0 based)</param>
+        /// <param name="endLine">The ending line (0- based and excluded)</param>
+        /// <returns>The Generated Source Document</returns>
+        protected SourceText LinearGeneration<A>(LinearNodeSourceCodeMapper mapper, LinearNodeSourceCodeMapper clonedMapper, IReadOnlyList<A> Input, LineMappingCtx lmCtx, int startLine, int endLine) where A : ITextLine
+        {
+            /// Marker of all line that have beeen already generated has commented.
+            BitArray CommentedLinesDone = new BitArray(CompilationResults.TokensLines.Count);
+            //Final Generated source code
             SourceText targetSourceText = new GapSourceText();
             //Stack Used to save current generation buffer when switching in a function declaration generation.
             //Beacuse a function declartion has its own buffer.
             Stack<SourceText> stackOuterBuffer = new Stack<SourceText>();
             Stack<SourceText> stackLocalBuffer = new Stack<SourceText>();
+            Stack<LineMappingCtx> stackLineMappingCtx = new Stack<LineMappingCtx>();
             //Bit Array of Generated Nodes.
             BitArray generated_node = new BitArray(mapper.NodeCount);
             //For detecting line having characters in columns [73-80]
             Lines_73_80_Flags = new HashSet<int>();
             //The previous line generation buffer 
-            StringSourceText previousBuffer = null;
+            LineStringSourceText previousBuffer = null;
             bool insideMultilineComments = false;
-            for (int i = 0; i < mapper.LineData.Length; i++)
+
+            //First of all compute any Global Storage Data
+            if (clonedMapper != null && mapper.UseGlobalStorageSection && clonedMapper.ClonedGlobalStorageSection != null)
+            {
+                GetGlobalStorageData(clonedMapper, Input, lmCtx);
+            }
+
+            for (int i = startLine; i < endLine; i++)
             {
                 if (i == TypeCobolVersionLineNumber && this.TypeCobolVersion != null)
                 {
@@ -125,14 +399,17 @@ namespace TypeCobol.Codegen.Generators
                         if (previousBuffer != null)
                         {
                             if (!mapper.IsGeneratedEmptyBuffer(previousBuffer))
+                            {
                                 AppendBufferContent(targetSourceText, previousBuffer);
+                                lmCtx?.UpdateLineMap(i, targetSourceText, previousBuffer);
+                            }
                             previousBuffer = null;
                         }
                         string text = Input[i].Text;
 
                         // Comment the multilines comments
 
-                        if (text.Trim().StartsWith("*<<"))
+                        if ((Input[i] as Compiler.Scanner.TokensLine)?.SourceTokens.Any(st => st.TokenType == Compiler.Scanner.TokenType.MULTILINES_COMMENTS_START) == true)
                         {
                             insideMultilineComments = true;
                         }
@@ -145,9 +422,9 @@ namespace TypeCobol.Codegen.Generators
                         if (mapper.LineData[i].Buffer != null)
                         {
                             //This line has been assigned a target Buffer
-                            mapper.LineData[i].Buffer.Insert(text, targetSourceText.Size, targetSourceText.Size);
-                            mapper.LineData[i].Buffer.Insert(Environment.NewLine, targetSourceText.Size,
-                                targetSourceText.Size);
+                            mapper.LineData[i].Buffer.Insert(text, mapper.LineData[i].Buffer.Size, mapper.LineData[i].Buffer.Size);
+                            mapper.LineData[i].Buffer.Insert(Environment.NewLine, mapper.LineData[i].Buffer.Size,
+                                mapper.LineData[i].Buffer.Size);
                         }
                         else
                         {
@@ -155,10 +432,14 @@ namespace TypeCobol.Codegen.Generators
                             targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
                         }
 
-                        if (text.Trim().EndsWith("*>>"))
+                        if ((Input[i] as Compiler.Scanner.TokensLine)?.SourceTokens.Any(st => st.TokenType == Compiler.Scanner.TokenType.MULTILINES_COMMENTS_STOP) == true)
                         {
                             insideMultilineComments = false;
                         }
+                    }
+                    if (mapper.LineData[i].Buffer == null)
+                    {
+                        lmCtx?.UpdateLineMap(i, targetSourceText, null);
                     }
                     continue;
                 }
@@ -170,29 +451,46 @@ namespace TypeCobol.Codegen.Generators
                 if (previousBuffer != null && mapper.CommentedLines[i])
                 {
                     if (!mapper.IsGeneratedEmptyBuffer(previousBuffer))
+                    {
                         AppendBufferContent(targetSourceText, previousBuffer);
+                        lmCtx?.UpdateLineMap(i, targetSourceText, previousBuffer);
+                    }
                     previousBuffer = null;
                 }
                 for (int j = i; mapper.CommentedLines[j]; j++)
-                {
+                {                    
                     List<int> current_nodes = mapper.LineData[j].LineNodes;
-                    if (!LinearNodeSourceCodeMapper.HasIntersection(line_nodes, current_nodes))
-                        break;//This commented line has no nodes which intersect with the previous line.
-                    IEnumerable<ITextLine> lines = Indent(Input[j], true);
-                    foreach (var line in lines)
-                    {
-                        string text = line.Text.TrimEnd();
-                        targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
-                        targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
-                        CheckFunctionDeclCommentedheader(mapper, current_nodes, text);
+                    if (!CommentedLinesDone[j])
+                    {//Don't comment twice same lines
+                        if (!LinearNodeSourceCodeMapper.HasIntersection(line_nodes, current_nodes))
+                            break; //This commented line has no nodes which intersect with the previous line.
+                        IEnumerable<ITextLine> lines = Indent(Input[j], true);
+                        foreach (var line in lines)
+                        {
+                            string text = line.Text.TrimEnd();
+                            targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
+                            targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
+                            CheckFunctionDeclCommentedheader(mapper, current_nodes, text);
+                        }
+
+                        if (current_nodes != null)
+                        {
+                            //Inform only if the node has other nodes
+                            mapper.CommentedLines[j] = false; //This commented line has been generated now
+                        }
+                        CommentedLinesDone[j] = true;
                     }
-                    mapper.CommentedLines[j] = false;//This commented line has been generated now
+                    
                     line_nodes = current_nodes;
                 }
                 //--------------------------------------------------------------------------------------------------------------
                 //3)For each node related to this line, and not already generated.
                 line_nodes = mapper.LineData[i].LineNodes;
-                foreach (int node_index in line_nodes)
+                if (line_nodes == null)
+                {//No Node to generate
+                    continue;
+                }
+                foreach(int node_index in line_nodes)
                 {
                     if (node_index == -1 || mapper.Nodes[node_index].node.IsFlagSet(Node.Flag.GeneratorCanIgnoreIt))
                     {//bad Node
@@ -201,11 +499,14 @@ namespace TypeCobol.Codegen.Generators
                     if (generated_node[node_index])
                         continue;//Already Generated.
                     bool bFunctionBodyNode = mapper.Nodes[node_index].FunctionBodyNode != null;//Is this node in a function body ?
-                    StringSourceText curSourceText = mapper.Nodes[node_index].Buffer;
+                    LineStringSourceText curSourceText = mapper.Nodes[node_index].Buffer;
                     if (curSourceText != previousBuffer && previousBuffer != null)
                     {//Flush previous buffer
                         if (!mapper.IsGeneratedEmptyBuffer(previousBuffer))
+                        {
                             AppendBufferContent(targetSourceText, previousBuffer);
+                            lmCtx?.UpdateLineMap(i, targetSourceText, previousBuffer);
+                        }
                         previousBuffer = null;
                     }
                     Node node = mapper.Nodes[node_index].node;
@@ -239,7 +540,7 @@ namespace TypeCobol.Codegen.Generators
                             string code = (node as GeneratedAndReplace).ReplaceCode;
                             GenerateIntoBufferCheckLineExceed(from, to, curSourceText, code, i + 1);
                         }
-                        else foreach (var line in NodeLines(node, generated_node))
+                        else foreach (var line in NodeLines(node, generated_node, curSourceText?? targetSourceText, curSourceText == null))
                             {
                                 bool bInsertSplit = false;
                                 StringWriter sw = new StringWriter();
@@ -299,6 +600,12 @@ namespace TypeCobol.Codegen.Generators
                             LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[node_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
                             stackLocalBuffer.Push(curSourceText);
                             stackOuterBuffer.Push(targetSourceText);
+                            if (lmCtx != null)
+                            {
+                                stackLineMappingCtx.Push(lmCtx);
+                                lmCtx = new LineMappingCtx(lmCtx.LineMapping, funData);
+                                CurrentLineMappinCtx = lmCtx;
+                            }
                             //Now Generate in Function Declaration Buffer.
                             targetSourceText = funData.FunctionDeclBuffer;
                             curSourceText = null;
@@ -311,15 +618,44 @@ namespace TypeCobol.Codegen.Generators
                         if (previousBuffer != null)
                         {
                             if (!mapper.IsGeneratedEmptyBuffer(previousBuffer))
+                            {
                                 AppendBufferContent(targetSourceText, previousBuffer);
+                                lmCtx?.UpdateLineMap(i, targetSourceText, previousBuffer);
+                            }
                             previousBuffer = null;
                         }
                         System.Diagnostics.Debug.Assert(stackOuterBuffer.Count > 0 && stackLocalBuffer.Count > 0);
                         if (stackOuterBuffer.Count > 0 && stackLocalBuffer.Count > 0)
                         {
                             targetSourceText = stackOuterBuffer.Pop();
-                            curSourceText = (StringSourceText)stackLocalBuffer.Pop();
+                            curSourceText = (LineStringSourceText)stackLocalBuffer.Pop();
+                            if (lmCtx != null)
+                            {
+                                lmCtx = stackLineMappingCtx.Pop();
+                                CurrentLineMappinCtx = lmCtx;
+                            }
                         }
+                        previousBuffer = curSourceText;
+                    }
+                    else if (mapper.Nodes[node_index].node.CodeElement is Compiler.CodeElements.ProgramEnd)
+                    {
+                        //for each typecobol nested procedure declaration in procedure division
+                        foreach (var functionDeclaration in mapper.Nodes[node_index].node.Parent.Children.OfType<FunctionDeclarationCG>().Where(c => c.GenerateAsNested))
+                        {
+                            //for each procedure generated in pgm
+                            foreach (var functionIndex in mapper.FunctionDeclarationNodeIndices)
+                            {
+                                LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[functionIndex] as LinearNodeSourceCodeMapper.NodeFunctionData;
+                                FunctionDeclarationCG function = funData.node as FunctionDeclarationCG;
+                                if (funData.node.QualifiedName.Matches(functionDeclaration.QualifiedName) && 
+                                    function?.OriginalHash != null && function.OriginalHash == functionDeclaration.OriginalHash)
+                                {
+                                    AppendBufferContent(targetSourceText, funData.FunctionDeclBuffer);
+                                    lmCtx?.RelocateFunctionRanges(funData, funData.FunctionDeclBuffer, targetSourceText, true);
+                                }
+                            }
+                        }
+
                         previousBuffer = curSourceText;
                     }
                     else
@@ -333,19 +669,262 @@ namespace TypeCobol.Codegen.Generators
             if (previousBuffer != null)
             {
                 if (!mapper.IsGeneratedEmptyBuffer(previousBuffer))
+                {
                     AppendBufferContent(targetSourceText, previousBuffer);
+                    lmCtx?.UpdateLineMap(mapper.LineData.Length, targetSourceText, previousBuffer);
+                }
                 previousBuffer = null;
-            }
+            }            
             //--------------------------------------------------------------------------------------------------------------
-            //4)//Flush of Function declation body
+            //4)//Flush of Function declaration body that shouldn't be generated as nested
             foreach (int fun_index in mapper.FunctionDeclarationNodeIndices)
             {
-                LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[fun_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
-                AppendBufferContent(targetSourceText, funData.FunctionDeclBuffer);
+                FunctionDeclarationCG functionDeclaration = mapper.Nodes[fun_index].node as FunctionDeclarationCG;
+                if (functionDeclaration != null && !functionDeclaration.GenerateAsNested)
+                {
+                    LinearNodeSourceCodeMapper.NodeFunctionData funData =
+                        mapper.Nodes[fun_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
+                    AppendBufferContent(targetSourceText, funData.FunctionDeclBuffer);
+                    lmCtx?.RelocateFunctionRanges(funData, funData.FunctionDeclBuffer, targetSourceText, false);
+                }
             }
-            //5)//Generate Line Exceed Diagnostics
+            //5)//Generate stacked program for the global-storage section
+            if (clonedMapper != null && mapper.UseGlobalStorageSection && clonedMapper.ClonedGlobalStorageSection != null)
+            {
+                string gsSrcPrg = GenerateGlobalStorageSectionStackedProgram(clonedMapper, Input, lmCtx);
+                InsertLineMaybeSplit(targetSourceText, gsSrcPrg.ToString(), targetSourceText.Size, targetSourceText.Size, false);
+            }
+
+            //6)//Generate Line Exceed Diagnostics
             GenerateExceedLineDiagnostics();
             return targetSourceText;
+        }
+
+        /// <summary>
+        /// Check if this is a token to skip while parsing Global-Storage section.
+        /// Also handle scan state properties.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        private static void AdvanceToNextStateAndAdjustTokenProperties(TokensLine tempTokensLine, Token t)
+        {
+            bool bSkip =  t == null || t.TokenFamily == TokenFamily.Whitespace || t.TokenFamily == TokenFamily.Comments || (t.TokenType == TokenType.UserDefinedWord &&  t.Text.Trim().Length == 0);
+            if (!bSkip)
+            {
+                tempTokensLine.ScanState.AdvanceToNextStateAndAdjustTokenProperties(t);
+                if (t.TokenType == TokenType.PictureCharacterString)
+                {//Strange case a Picture string can end with a '.' in this case reset last Significant token as if it was a PeriodSeparator.
+                    if (t.Text.Trim().EndsWith("."))
+                    {
+                        tempTokensLine.ScanState.LastSignificantToken = null;
+                        tempTokensLine.ScanState.BeforeLastSignificantToken = null;
+                    }
+                }                
+            }
+        }
+        /// <summary>
+        /// Generates the Stacked program that declares all Global Storage Variables.
+        /// </summary>
+        /// <param name="clonedMapper">The Linear Source Code Mapper contains the GlobalStorage Section.</param>
+        /// <param name="Input">The list of program input lines</param>
+        /// <param name="lmCtx">Lime Mapping context</param>
+        /// <returns>The Whole Staked Program source code</returns>
+        private string GenerateGlobalStorageSectionStackedProgram<A>(LinearNodeSourceCodeMapper clonedMapper, IReadOnlyList<A> Input, LineMappingCtx lmCtx) where A : ITextLine
+        {
+            StringWriter sw = new StringWriter();
+
+            sw.WriteLine( "      *"); GSLineOffset += 1;
+            sw.WriteLine( "      * Global Storage Section variables"); GSLineOffset += 1;
+            sw.WriteLine( "      *_________________________________________________________________"); GSLineOffset += 1;
+            sw.WriteLine( "       IDENTIFICATION DIVISION."); GSLineOffset += 1;
+            sw.WriteLine($"       PROGRAM-ID. {RootNode.MainProgram.Hash}."); GSLineOffset += 1;
+
+            if (CompilationResults is CompilationUnit cu)
+            {
+                Node environmentDiv =
+                    cu.ProgramClassDocumentSnapshot.Root.MainProgram.Children.FirstOrDefault(c => c is EnvironmentDivision);
+
+                if (environmentDiv != null)
+                {
+                    foreach (ITextLine environmentDivLine in environmentDiv.SelfAndChildrenLines)
+                    {
+                        sw.WriteLine(environmentDivLine.Text); GSLineOffset += 1;
+                    }
+                }
+            }
+
+            sw.WriteLine("       DATA DIVISION."); GSLineOffset += 1;
+            sw.WriteLine("       WORKING-STORAGE SECTION."); GSLineOffset += 1;
+            sw.WriteLine("       01 PIC X(8) value ':TC:GBLS'."); GSLineOffset += 1;
+
+            sw.WriteLine(GetGlobalStorageData(clonedMapper, Input, lmCtx));
+            //So Here we can relocate Global Storage Line Mapping
+            if (lmCtx != null)
+            {
+                for (int i = FirstGSLine; i < LastGSLine; i++)
+                {
+                    int firstLine = GSLmCtx.LineMapping[i].Item1;
+                    int lastLine = GSLmCtx.LineMapping[i].Item2;
+                    lmCtx.LineMapping[i] = new Tuple<int, int>(firstLine + lmCtx.startLineMapCounter + GSLineOffset - 1, lastLine + lmCtx.startLineMapCounter + GSLineOffset - 1);
+                }
+
+                //Create also the inverse line mapping for Global Storage generated in nested programs and procedures
+                if (lmCtx.AllGlobalStorageLineDelta != null)
+                {
+                    lmCtx.InverseLineMapping = new List<Tuple<int, int>>();
+                    foreach (int gsDelta in lmCtx.AllGlobalStorageLineDelta)
+                    {
+                        int baseLine = GSLmCtx.LineMapping[FirstGSLine].Item1 + lmCtx.startLineMapCounter + GSLineOffset - 1;
+                        for (int i = FirstGSLine; i < LastGSLine; i++)
+                        {
+                            int firstLine = GSLmCtx.LineMapping[i].Item1 + lmCtx.startLineMapCounter + GSLineOffset - 1;
+                            int lastLine = GSLmCtx.LineMapping[i].Item2 + lmCtx.startLineMapCounter + GSLineOffset - 1;
+                            for (int j = firstLine; j <= lastLine; j++)
+                            {
+                                Tuple<int, int> inv = new Tuple<int, int>(-(j - baseLine + gsDelta + GSLineOffsetInverse), i + 1);
+                                lmCtx.InverseLineMapping.Add(inv);
+                            }
+                        }
+                    }
+                }
+            }
+
+            sw.WriteLine( "       LINKAGE SECTION.");
+            sw.WriteLine( "       01 GlobalPointer pointer.");
+            sw.WriteLine( "       PROCEDURE DIVISION USING BY REFERENCE GlobalPointer.");
+            sw.WriteLine( "           set GlobalPointer to address of TC-GlobalData");
+            sw.WriteLine( "           .");
+            sw.WriteLine($"       END PROGRAM {RootNode.MainProgram.Hash}.");
+
+            return sw.ToString();
+        }
+
+        public string GlobalStorageData = null;
+        /// <summary>
+        /// Global storage Line Mapping Context
+        /// </summary>
+        LineMappingCtx GSLmCtx = null;
+        /// <summary>
+        /// The first Global Storage Line
+        /// </summary>
+        int FirstGSLine;
+        /// <summary>
+        /// The Last Global Storage Line.
+        /// </summary>
+        int LastGSLine;
+        /// <summary>
+        /// The Offset to apply to relocate GlobalStore Line Mapping.
+        /// </summary>
+        int GSLineOffset;
+        /// <summary>
+        /// The Offset to apply to relocate GlobalStore Line Mapping for the inverse Line Mapping.
+        /// </summary>
+        int GSLineOffsetInverse;
+        /// <summary>
+        /// The Current Line Mapping context.
+        /// </summary>
+        public LineMappingCtx CurrentLineMappinCtx { get; protected set; }
+
+        /// <summary>
+        /// Get the content of the TC-GlobalData structure.
+        /// </summary>
+        /// <typeparam name="A"></typeparam>
+        /// <param name="clonedMapper"></param>
+        /// <param name="Input"></param>
+        /// <param name="lmCtx"></param>
+        /// <returns></returns>
+        public string GetGlobalStorageData<A>(LinearNodeSourceCodeMapper clonedMapper, IReadOnlyList<A> Input, LineMappingCtx lmCtx) where A : ITextLine
+        {
+            if (GlobalStorageData != null)
+                return GlobalStorageData;
+
+            GSLineOffset = 0;
+            GSLineOffsetInverse = 0;
+            StringWriter sw = new StringWriter();
+            sw.WriteLine("       01 TC-GlobalData.");
+            GSLineOffset += 1;//IMPORTANT Update GS relocation offset ==> one more line.
+            GSLineOffsetInverse += 1;
+
+
+            //Compute the last line of the Global Storage Node.
+            int lastLine = -1;
+            Node lastNode = null;
+            clonedMapper.GetAfterLinearizationLastLine(clonedMapper.ClonedGlobalStorageSection, ref lastLine, ref lastNode);
+
+            if (lmCtx != null)
+            {                
+                GSLmCtx = new LineMappingCtx(new Tuple<int, int>[lmCtx.LineMapping.Length]);
+            }
+            SourceText gsSrcText = LinearGeneration(clonedMapper, null, Input, GSLmCtx, FirstGSLine = clonedMapper.ClonedGlobalStorageSection.CodeElement.Line - 1,
+                LastGSLine = lastLine);
+            //Take interessting scan state values from the original input
+            TypeCobol.Compiler.Parser.CodeElementsLine cel = Input[FirstGSLine] as TypeCobol.Compiler.Parser.CodeElementsLine;
+            //first true argument => we are in a DataDivision.
+            System.Diagnostics.Debug.Assert(cel.ScanState.InsideDataDivision);
+            string gsText = gsSrcText.GetTextAt(0, gsSrcText.Size);
+            using (StringReader sr = new StringReader(gsText))
+            {
+                string line;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    //Allocate a scanner to reparse and change increments level
+                    TokensLine tempTokensLine = new TokensLine(
+                        new TextLineSnapshot(0, line, null),
+                        base.Layout);
+
+                    int startIndex = 0;
+                    if (tempTokensLine.Type == CobolTextLineType.Debug && cel.ScanState.WithDebuggingMode && base.Layout == ColumnsLayout.CobolReferenceFormat)
+                    {//Handling special debugging mode.
+                        System.Diagnostics.Debug.Assert(line.Length >= 7 && (line[6] == 'D' || line[6] == 'd'));
+                        if (line.Length >= 7 && (line[6] == 'D' || line[6] == 'd'))
+                        {
+                            startIndex = 7;
+                            sw.Write(line.Substring(0, 7));
+                        }
+                    }
+
+                    MultilineScanState scanState = new MultilineScanState(true, cel.ScanState.DecimalPointIsComma, cel.ScanState.WithDebuggingMode, cel.ScanState.EncodingForAlphanumericLiterals ?? IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147));
+                    tempTokensLine.InitializeScanState(scanState);
+                    Scanner scanner = new Scanner(line, startIndex, line.Length - 1, tempTokensLine, null, true);
+                    Token t = null;
+
+                    while ((t = scanner.GetNextToken()) != null)
+                    {
+                        if (t.TokenType == TokenType.GLOBAL_STORAGE)
+                        {//Skip GLOBAL-STORAGE SECTION. tokens
+                            while ((t = scanner.GetNextToken()) != null && t.TokenType != TokenType.PeriodSeparator)
+                            {
+                                AdvanceToNextStateAndAdjustTokenProperties(tempTokensLine, t);
+                            }
+                            AdvanceToNextStateAndAdjustTokenProperties(tempTokensLine, t);
+                            continue;
+                        }
+                        else if (t.TokenType == TokenType.LevelNumber)
+                        {
+                            TypeCobol.Compiler.Scanner.IntegerLiteralTokenValue intValue =
+                                (TypeCobol.Compiler.Scanner.IntegerLiteralTokenValue)t.LiteralValue;
+                            long level = intValue.Number + 1;
+                            if (level <= 49)
+                            {
+                                sw.Write(level.ToString("00"));
+                            }
+                            else
+                            {
+                                sw.Write(t.Text);
+                            }
+                        }
+                        else
+                        {
+                            sw.Write(t.Text);
+                        }
+                        AdvanceToNextStateAndAdjustTokenProperties(tempTokensLine, t);
+                    }
+                    sw.WriteLine();
+                }
+            }
+
+            GlobalStorageData = sw.ToString();
+            return GlobalStorageData;
         }
 
         /// <summary>
@@ -641,9 +1220,19 @@ namespace TypeCobol.Codegen.Generators
         /// Get the Lines gnerated for a Node.
         /// </summary>
         /// <param name="node">The node to get the lines</param>
+        /// <param name="sourceText">The potential source text buffer in to which the line will be generated</param>
+        /// <param name="isGlobalBuffer">Determine if yes or no the sourceText parameter refers a global source text buffer or a local source text buffer</param>
         /// <returns>The Node's lines</returns>
-        IEnumerable<ITextLine> NodeLines(Node node)
+        IEnumerable<ITextLine> NodeLines(Node node, SourceText sourceText, bool isGlobalBuffer)
         {
+            //Check for a node that need a IGeneratorContext data
+            if (node is IGeneratorContext genCtx)
+            {
+                genCtx.Generator = this;
+                genCtx.SourceTextBuffer = sourceText;
+                genCtx.IsGlobalSourceTextBuffer = isGlobalBuffer;
+            }
+
             node.Layout = Layout;
             return node.Lines;
         }
@@ -653,15 +1242,17 @@ namespace TypeCobol.Codegen.Generators
         /// </summary>
         /// <param name="node">The node to get all line</param>
         /// <param name="all_lines">All line accumulator</param>
-        void RecursiveNodeLines(Node node, BitArray generated_node, List<ITextLine> all_lines)
+        /// <param name="sourceText">The potential source text buffer in to which the line will be generated</param>
+        /// <param name="isGlobalBuffer">Determine if yes or no the sourceText parameter refers a global source text buffer or a local source text buffer</param>
+        void RecursiveNodeLines(Node node, BitArray generated_node, List<ITextLine> all_lines, SourceText sourceText, bool isGlobalBuffer)
         {
-            foreach (var l in NodeLines(node))
+            foreach (var l in NodeLines(node, sourceText, isGlobalBuffer))
                 all_lines.Add(l);
             foreach (Node child in node.Children)
             {
                 if (child.NodeIndex >= 0)
                     generated_node[child.NodeIndex] = true;
-                RecursiveNodeLines(child, generated_node, all_lines);
+                RecursiveNodeLines(child, generated_node, all_lines, sourceText, isGlobalBuffer);
             }
         }
         /// <summary>
@@ -670,19 +1261,21 @@ namespace TypeCobol.Codegen.Generators
         /// </summary>
         /// <param name="node"></param>
         /// <param name="generated_node"></param>
+        /// <param name="sourceText">The potential source text buffer in to which the line will be generated</param>
+        /// <param name="isGlobalBuffer">Determine if yes or no the sourceText parameter refers a global source text buffer or a local source text buffer</param>
         /// <returns></returns>
-        public virtual IEnumerable<ITextLine> NodeLines(Node node, BitArray generated_node)
+        public virtual IEnumerable<ITextLine> NodeLines(Node node, BitArray generated_node, SourceText sourceText, bool isGlobalBuffer)
         {
             if (node.IsFlagSet(Node.Flag.FullyGenerateRecursivelyFactoryGeneratedNode))
             {
                 List<ITextLine> all_lines = new List<ITextLine>();
-                RecursiveNodeLines(node, generated_node, all_lines);
+                RecursiveNodeLines(node, generated_node, all_lines, sourceText, isGlobalBuffer);
                 foreach (var l in all_lines)
                     yield return l;
             }
             else
             {
-                foreach (var l in NodeLines(node))
+                foreach (var l in NodeLines(node, sourceText, isGlobalBuffer))
                     yield return l;
                 if (node.IsFlagSet(Node.Flag.FactoryGeneratedNodeKeepInsertionIndex))
                 {
@@ -694,7 +1287,7 @@ namespace TypeCobol.Codegen.Generators
                         {
                             if (child.NodeIndex >= 0)
                                 generated_node[child.NodeIndex] = true;
-                            foreach (var cl in NodeLines(child))
+                            foreach (var cl in NodeLines(child, sourceText, isGlobalBuffer))
                             {
                                 yield return cl;
                             }

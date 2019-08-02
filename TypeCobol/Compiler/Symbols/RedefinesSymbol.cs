@@ -51,10 +51,11 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="scope"></param>
         internal override void NormalizeExpandedSymbol(Scope<VariableSymbol> scope)
         {
+            base.NormalizeExpandedSymbol(scope);
             Scope<VariableSymbol>.Entry entry = scope.Lookup(Redefined.Name);
             System.Diagnostics.Debug.Assert(entry != null);
             System.Diagnostics.Debug.Assert(entry.Count == 1);
-            Redefined = entry.Symbol;
+            Redefined = entry.Symbol;            
         }
 
         /// <summary>

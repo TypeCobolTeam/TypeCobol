@@ -6,7 +6,7 @@
 -- Line 2 --
 [2,5:    ]<SpaceSeparator>
 =>continuation:[6,28:comment on severallines without delimiter]<CommentEntry>
-Line -1[1,1] <24, Error, TextFormat> - A hyphen indicator (continuation line) is not permitted in comment entries
+Line 0[1,1] <24, Error, TextFormat> - A hyphen indicator (continuation line) is not permitted in comment entries
 
 -- Line 3 --
 [1,12:INSTALLATION]<INSTALLATION>
@@ -17,6 +17,6 @@ Line -1[1,1] <24, Error, TextFormat> - A hyphen indicator (continuation line) is
 
 -- Line 5 --
 =>continuation:[2,9:comment1comment2]<CommentEntry>
-Line -1[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
-Line -1[1,1] <24, Error, TextFormat> - A hyphen indicator (continuation line) is not permitted in comment entries
+Line 0[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
+Line 0[1,1] <24, Error, TextFormat> - A hyphen indicator (continuation line) is not permitted in comment entries
 

@@ -1,4 +1,4 @@
-﻿--- Diagnostics ---
+--- Diagnostics ---
 Line 21[11,16] <27, Error, Syntax> - Syntax error : Group item  MyVar2 cannot have a "TYPE" OffendingSymbol=[11,16:MyVar2]<UserDefinedWord>
 Line 23[11,16] <30, Error, Semantics> - Semantic error: Variable 'MyVar1' has to be limited to level 45 because of 'myType' maximum estimated children level OffendingSymbol=[11,16:MyVar1]<UserDefinedWord>
 Line 29[11,16] <30, Error, Semantics> - Semantic error: A 77 level variable cannot be typed with a type containing children OffendingSymbol=[11,16:MYVar5]<UserDefinedWord>
@@ -17,7 +17,7 @@ PROGRAM: LevelChecker common:False initial:False recursive:False
   MYVar4:BOOL
   MYVar5:DATE
   BooleanVar:BOOL
-  WrongVarHere:BOOL
+  WrongVarHere:Level88
   len:Numeric
   MyLevel1Test:Alphanumeric
   buf:Alphanumeric

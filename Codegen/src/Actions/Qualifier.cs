@@ -153,8 +153,10 @@ namespace TypeCobol.Codegen.Actions
                 {
                     if (UsedStorageArea != null && UsedStorageArea.Contains(storageArea))
                         return;
-                    string name = storageArea.SymbolReference.Name;
-                    string qualified_name = this.CurrentNode.QualifiedStorageAreas[storageArea];
+
+
+                    string qualified_name = this.CurrentNode.GetQualifiedName(storageArea);
+                    
                     GenerateToken item = null;
                     string hashName = GeneratorHelper.ComputeIndexHashName(qualified_name, this.CurrentNode);
                     item = new GenerateToken(
@@ -255,7 +257,6 @@ namespace TypeCobol.Codegen.Actions
                                     if (index.Name.Equals(indexDefinition.Name))
                                     {
                                         Tuple<int, int, int, List<int>, List<int>> sourcePositions = this.Generator.FromToPositions(indexDefinition.Parent);
-                                        string name = index.Name;
                                         string qualified_name = indexDefinition.QualifiedName.ToString();
                                         GenerateToken item = null;
                                         string hashName = GeneratorHelper.ComputeIndexHashName(qualified_name, indexDefinition.Parent);
@@ -527,7 +528,9 @@ namespace TypeCobol.Codegen.Actions
                         }
                         if (nCountInner == items.Count)
                         {
-                            qualified_name = sourceNode.QualifiedStorageAreas[storage_area];
+
+                            qualified_name = this.CurrentNode.GetQualifiedName(storage_area);
+
                             return true;
                         }
                     }
@@ -700,7 +703,7 @@ namespace TypeCobol.Codegen.Actions
                 base.ConsumedTokens = new List<TypeCobol.Compiler.Scanner.Token>();
                 base.ConsumedTokens.Add(token);
             }
-            public TokenCodeElement(List<TypeCobol.Compiler.Scanner.Token> consumedTokens)
+            public TokenCodeElement(IList<TypeCobol.Compiler.Scanner.Token> consumedTokens)
                 : base((CodeElementType)0)
             {
                 base.ConsumedTokens = consumedTokens;
@@ -830,14 +833,15 @@ namespace TypeCobol.Codegen.Actions
         /// Execute the Qualification action
         /// <param name="generator">The Genarator instance</param>
         /// </summary>
-        public void Execute()
+        public IList<Action> Execute()
         {
             if (Source == null)
-                return;
+                return null;
             if (Source.IsFlagSet(Node.Flag.HasBeenTypeCobolQualifierVisited))
-                return;
+                return null;
             TypeCobolCobolQualifierVistor visitor = new TypeCobolCobolQualifierVistor(Generator);
             Source.AcceptASTVisitor(visitor);
+            return null;
         }
     }
 }

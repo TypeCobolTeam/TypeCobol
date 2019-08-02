@@ -22,7 +22,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// The Type Expander to use.
         /// </summary>
-        public TypedefExpander TypExpander
+        public TypedefExpander TypeExpander
         {
             get;
             internal set;
@@ -33,7 +33,7 @@ namespace TypeCobol.Compiler.Symbols
         /// If this Symbol Expander is used for several symbol, it will be necessary for each
         /// Acceptation to reset this variable to false before. 
         /// </summary>
-        public bool ShallLeverRenumber
+        public bool ShallLevelRenumber
         {
             get;
             internal set;
@@ -45,7 +45,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="program">The program requesting the expansion</param>
         public SymbolExpander(ProgramSymbol program) : this(program, new TypedefExpander(program))
         {
-            TypExpander.SymExpander = this;
+            TypeExpander.SymExpander = this;
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace TypeCobol.Compiler.Symbols
         public SymbolExpander(ProgramSymbol program, TypedefExpander typeExpander)
         {
             this.Program = program;
-            TypExpander = typeExpander ?? new TypedefExpander(program, this);
+            TypeExpander = typeExpander ?? new TypedefExpander(program, this);
         }
 
         public override Symbol VisitSymbol(Symbol s, Symbol owner)
@@ -86,7 +86,7 @@ namespace TypeCobol.Compiler.Symbols
             //We are the new expanding program
             Program = s;
             //Change the current Program in the TypeExpander
-            this.TypExpander.Program = Program;
+            this.TypeExpander.Program = Program;
             try
             {
                 //We don't expand TypeSymbol.
@@ -108,7 +108,7 @@ namespace TypeCobol.Compiler.Symbols
                 //Restore the expanding program.
                 Program = saveProgram;
                 //Restore the current Program in the TypeExpander
-                this.TypExpander.Program = Program;
+                this.TypeExpander.Program = Program;
             }
             return s;
         }
@@ -122,11 +122,11 @@ namespace TypeCobol.Compiler.Symbols
         {
             if (s.Type?.MayExpand ?? false)
             {//Expand thru the Type Maybe a Group or an ArrayType.
-                Types.Type newType = s.Type.Accept(TypExpander, s);
+                Types.Type newType = s.Type.Accept(TypeExpander, s);
                 if (newType != s.Type)
                 {//The type has changed
                     s.Type = newType;
-                    ShallLeverRenumber = true;
+                    ShallLevelRenumber = true;
                 }
             }
 
@@ -144,11 +144,11 @@ namespace TypeCobol.Compiler.Symbols
             Types.Type type = s.Type;
             if (type != null)
             {
-                Types.Type newType = type.Accept(TypExpander, s);
+                Types.Type newType = type.Accept(TypeExpander, s);
                 if (newType != type)
                 {//The type has changed
                     s.Type = newType;
-                    ShallLeverRenumber = true;
+                    ShallLevelRenumber = true;
                 }
             }
             return s;

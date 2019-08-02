@@ -238,7 +238,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Get the type visibility mask for a Program.
         /// </summary>
-        public virtual Flags TypeVisibilityMask => IsNested ? (Flags.Global | Flags.Private | Flags.Public) : 0;
+        public virtual Flags TypeVisibilityMask => IsNested ? (Flags.Global | Flags.Public) : 0;
 
         /// <summary>
         /// Determines if a Type is accessible from this Program.
@@ -262,6 +262,18 @@ namespace TypeCobol.Compiler.Symbols
             {//Different programs ==> only public.
                 return typeSym.HasFlag(Flags.Public);
             }
+        }
+
+        /// <summary>
+        /// Get the top program.
+        /// </summary>
+        /// <param name="curPrg"></param>
+        /// <returns></returns>
+        static ProgramSymbol GetTopProgram(ProgramSymbol curPrg)
+        {
+            ProgramSymbol top = (ProgramSymbol)curPrg.TopParent(Symbol.Kinds.Program);
+            if (top == null || top == curPrg) return curPrg;
+            return GetTopProgram(top);
         }
 
         /// <summary>
@@ -293,13 +305,21 @@ namespace TypeCobol.Compiler.Symbols
                 }
             }
 
-            if (results.Count == 0 && bRecurseEnglobingPrograms)
+            if (bRecurseEnglobingPrograms)
             {
-                ProgramSymbol curProg = this;
-                if (curProg.Owner != null && curProg.Owner.Kind == Kinds.Program)
+                if (results.Count == 0)
                 {
-                    curProg = (ProgramSymbol)curProg.Owner;
-                    curProg.ResolveReference(paths, results, bRecurseEnglobingPrograms, visibilityMask == 0 ? VariableVisibilityMask : visibilityMask);
+                    ProgramSymbol curProg = this;
+                    if (curProg.Owner != null && curProg.Owner.Kind == Kinds.Program)
+                    {
+                        curProg = (ProgramSymbol)curProg.Owner;
+                        curProg.ResolveReference(paths, results, bRecurseEnglobingPrograms, visibilityMask == 0 ? VariableVisibilityMask : visibilityMask);
+                    }
+                }
+                else if ((visibilityMask & Flags.GLOBAL_STORAGE) == 0 && IsNested)
+                {
+                    var topPgm = GetTopProgram(this);
+                    topPgm.ResolveReference(paths, results, false, Flags.GLOBAL_STORAGE);
                 }
             }
             return results;

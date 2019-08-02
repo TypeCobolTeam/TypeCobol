@@ -295,7 +295,7 @@ namespace TypeCobol.Server
                     {
                         StringBuilder generatedCobolStringBuilder = new StringBuilder();
                         var generator = GeneratorFactoryManager.Instance.Create(TypeCobol.Tools.Options_Config.OutputFormat.ExpandingCopy.ToString(),
-                            parser.Results, generatedCobolStringBuilder, null, null);
+                            parser.Results, generatedCobolStringBuilder, null, null, false);
                         var streamWriter =  new StreamWriter(config.ExpandingCopyFilePath);
                         generator.Generate(parser.Results, ColumnsLayout.CobolReferenceFormat);
                         streamWriter.Write(generatedCobolStringBuilder);
@@ -384,10 +384,11 @@ namespace TypeCobol.Server
                             }
 
                             var sb = new StringBuilder();
+                            bool bNeedLineMap = config.LineMapFiles.Count > fileIndex;
                             //Get Generator from specified config.OutputFormat
                             var generator = GeneratorFactoryManager.Instance.Create(config.OutputFormat.ToString(),
                                 parser.Results,
-                                sb, skeletons, AnalyticsWrapper.Telemetry.TypeCobolVersion);
+                                sb, skeletons, AnalyticsWrapper.Telemetry.TypeCobolVersion, bNeedLineMap);
 
                             if (generator == null)
                             {
@@ -415,6 +416,26 @@ namespace TypeCobol.Server
                             }
                             else
                             {
+                                //Output Line Map Data.
+                                if (bNeedLineMap && generator.HasLineMapData)
+                                {
+                                    using (var fstream = new FileStream(config.LineMapFiles[fileIndex], FileMode.Create))
+                                    {
+                                        try
+                                        {
+                                            generator.GenerateLineMapFile(fstream);
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            //Fail to generate Line Map File
+                                            System.Console.WriteLine(string.Format("Fail to generate Line Mapping File {0} : {1}", config.LineMapFiles[fileIndex],  e.Message));
+                                        }
+                                        finally
+                                        {
+                                            fstream.Close();
+                                        }
+                                    }
+                                }
                                 var lockWriter = new StreamWriter(lockFilePath);
                                 lockWriter.Flush();
                                 lockWriter.Close();

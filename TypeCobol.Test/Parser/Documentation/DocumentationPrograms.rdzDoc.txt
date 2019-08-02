@@ -4,7 +4,7 @@ Line 64[34,39] <37, Warning, General> - Warning: Parameter does not have any des
 ======================== Nodes properties ========================
 Name : DocForPrograms
 Description : Main Program 
-Visibility : 
+Visibility : Local
 Namespace : DocForPrograms
 NodeType : Program
 IsDeprecated : False
@@ -22,7 +22,7 @@ Parameters :
 
 Name : NestedPgm
 Description : Nested Program 
-Visibility : 
+Visibility : Local
 Namespace : DocForPrograms
 NodeType : Program
 IsDeprecated : False
@@ -79,7 +79,7 @@ Parameters :
 
 Name : StackedPgm
 Description : Stacked Program 
-Visibility : 
+Visibility : Local
 Namespace : DocForPrograms
 NodeType : Program
 IsDeprecated : False

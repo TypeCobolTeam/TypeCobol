@@ -96,7 +96,16 @@ namespace TypeCobol.Codegen
             private set;
         }
 
-        public List<Diagnostic> Diagnostics
+        /// <summary>
+        /// Lines of Cloned Nodes.
+        /// </summary>
+        public List<Node> ClonedNodes
+        {
+            get;
+            private set;
+        }
+
+        public virtual List<Diagnostic> Diagnostics
         {
             get;
             private set;
@@ -121,6 +130,8 @@ namespace TypeCobol.Codegen
             Actions = new GeneratorActions(this, skeletons, document, skeletons != null ? null : new TypeCobol.Codegen.Actions.Skeletons());
             //To Store Erased Nodes by the Erase Action.
             ErasedNodes = new List<Node>();
+            //To Store Cloned Nodes by the Clone Action.
+            ClonedNodes = new List<Node>();
             //The After Action Listener
             Actions.AfterAction += OnAfterAction;
         }
@@ -206,9 +217,8 @@ namespace TypeCobol.Codegen
         {
             Codegen.Actions.Action action = (Codegen.Actions.Action)e;
              //Collect erased nodes.
-            if (action is TypeCobol.Codegen.Actions.IEraseAction)
+            if (action is TypeCobol.Codegen.Actions.IEraseAction erase)
             {
-                TypeCobol.Codegen.Actions.IEraseAction erase = (TypeCobol.Codegen.Actions.IEraseAction)action;
                 IList<Node> nodes = erase.ErasedNodes;
                 if (nodes != null)
                 {
@@ -217,6 +227,18 @@ namespace TypeCobol.Codegen
                         node.SetFlag(Node.Flag.GeneratorErasedNode, true);
                         ErasedNodes.Add(node);
                     }                    
+                }
+            }
+            //Collect cloned nodes.
+            if (action is TypeCobol.Codegen.Actions.ICloneAction clone)
+            {
+                IList<Node> nodes = clone.ClonedNodes;
+                if (nodes != null)
+                {
+                    foreach (Node node in nodes)
+                    {                        
+                        ClonedNodes.Add(node);
+                    }
                 }
             }
         }
@@ -323,7 +345,9 @@ namespace TypeCobol.Codegen
         /// <param name="node">The node to process</param>
         /// <returns>true if child nodes must visited for acceptation, false otherwise.</returns>
         protected abstract bool Process(Node node);
+        public abstract void GenerateLineMapFile(Stream stream);
 
         public string TypeCobolVersion { get; set; }
+        public abstract bool HasLineMapData { get; }
     }
 }

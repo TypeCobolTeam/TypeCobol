@@ -77,55 +77,32 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Lsr Test Options.
         /// </summary>
-        public LsrTestingOptions LsrTestOptions
-        {
-            get; set;
-        }
+        public LsrTestingOptions LsrTestOptions { get; set; }
 
         /// <summary>
         /// LSR always test the source code at least
         /// </summary>
-        public bool IsLsrSourceTesting
-        {
-            get { return (LsrTestOptions & LsrTestingOptions.LsrSourceDocumentTesting) == LsrTestingOptions.LsrSourceDocumentTesting; }
-            set { LsrTestOptions = value  ? (LsrTestOptions | LsrTestingOptions.LsrSourceDocumentTesting) : LsrTestingOptions.NoLsrTesting; }
-        }
+        public bool IsLsrSourceTesting => LsrTestOptions.HasFlag(LsrTestingOptions.LsrSourceDocumentTesting);
 
         /// <summary>
         /// LSR testing the Source document and scanning phase ?
         /// </summary>
-        public bool IsLsrScannerTesting
-        {
-            get { return (LsrTestOptions & LsrTestingOptions.LsrScanningPhaseTesting) == LsrTestingOptions.LsrScanningPhaseTesting; }
-            set { LsrTestOptions = value ? (LsrTestOptions | LsrTestingOptions.LsrScanningPhaseTesting) : LsrTestingOptions.NoLsrTesting; }
-        }
+        public bool IsLsrScannerTesting => LsrTestOptions.HasFlag(LsrTestingOptions.LsrScanningPhaseTesting);
 
         /// <summary>
         /// LSR testing the Source document, scanning phase, and preprocessing phase ?
         /// </summary>
-        public bool IsLsrPreprocessinTesting
-        {
-            get { return (LsrTestOptions & LsrTestingOptions.LsrPreprocessingPhaseTesting) == LsrTestingOptions.LsrPreprocessingPhaseTesting; }
-            set { LsrTestOptions = value ? (LsrTestOptions | LsrTestingOptions.LsrPreprocessingPhaseTesting) : LsrTestingOptions.NoLsrTesting; }
-        }
+        public bool IsLsrPreprocessingTesting => LsrTestOptions.HasFlag(LsrTestingOptions.LsrPreprocessingPhaseTesting);
 
         /// <summary>
         /// Testing the Source document, the scanning phase and code elements parsing phase.
         /// </summary>
-        public bool IsLsrParserTesting
-        {
-            get { return (LsrTestOptions & LsrTestingOptions.LsrParsingPhaseTesting) == LsrTestingOptions.LsrParsingPhaseTesting; }
-            set { LsrTestOptions = value ? (LsrTestOptions | LsrTestingOptions.LsrParsingPhaseTesting) : LsrTestingOptions.NoLsrTesting; }
-        }
+        public bool IsLsrParserTesting => LsrTestOptions.HasFlag(LsrTestingOptions.LsrParsingPhaseTesting);
 
         /// <summary>
         /// Testing the Source document the scanning phase, the code elements parsing phase and the semantic analysis phase.
         /// </summary>
-        public bool IsLsrSemanticTesting
-        {
-            get { return (LsrTestOptions & LsrTestingOptions.LsrSemanticPhaseTesting) == LsrTestingOptions.LsrSemanticPhaseTesting; }
-            set { LsrTestOptions = value ? (LsrTestOptions | LsrTestingOptions.LsrSemanticPhaseTesting) : LsrTestingOptions.NoLsrTesting; }
-        }
+        public bool IsLsrSemanticTesting => LsrTestOptions.HasFlag(LsrTestingOptions.LsrSemanticPhaseTesting);
 
         /// <summary>
         /// True to use ANTLR for parsing a program
@@ -310,7 +287,7 @@ namespace TypeCobol.LanguageServer
                     }
                     break;
                 case ExecutionStep.Preprocessor:
-                    if (IsLsrPreprocessinTesting)
+                    if (IsLsrPreprocessingTesting)
                     {
                         //Return log information about updated processed tokens
                         var sb = new StringBuilder();
@@ -590,21 +567,30 @@ namespace TypeCobol.LanguageServer
         private void ProgramClassChanged(object cUnit, ProgramClassEvent programEvent)
         {
             var compilationUnit = cUnit as CompilationUnit;
-            var fileUri = OpenedDocumentContext.Keys.FirstOrDefault(k => compilationUnit != null && k.LocalPath.Contains(compilationUnit.TextSourceInfo.Name));
+            var fileUri = OpenedDocumentContext.Keys.FirstOrDefault(k =>
+                compilationUnit != null && k.LocalPath.Contains(compilationUnit.TextSourceInfo.Name));
 
-            var diags = compilationUnit?.AllDiagnostics().Take(TypeCobolConfiguration.MaximumDiagnostics == 0 ? 100 : TypeCobolConfiguration.MaximumDiagnostics);
-            DiagnosticsEvent(fileUri, new DiagnosticEvent() { Diagnostics = diags});
+            IEnumerable<Diagnostic> diags = new List<Diagnostic>();
+
+            // Need to handle the groups instead of the diagnostics, so the order of appearance will be the same within the groups
+            // This is meant to avoid the modification of the LSR tests 
+            var severityGroups = compilationUnit?.AllDiagnostics().GroupBy(d => d.Info.Severity);
+
+            if (severityGroups != null)
+            {
+                foreach (var group in severityGroups.OrderBy(d => d.Key))
+                {
+                    // Add Errors first, then Warnings, then Infos
+                    diags = diags.Any() ? diags.Concat(group) : group;
+                }
+            }
+            
+            DiagnosticsEvent(fileUri, new DiagnosticEvent() { Diagnostics = diags.Take(TypeCobolConfiguration.MaximumDiagnostics == 0 ? 200 : TypeCobolConfiguration.MaximumDiagnostics) });
 
             if (compilationUnit?.MissingCopies.Count > 0)
                 MissingCopiesEvent(fileUri, new MissingCopiesEvent() { Copies = compilationUnit.MissingCopies.Select(c => c.TextName).Distinct().ToList() });
         }
-
-
-       
-
-  
     }
-
 
     [Flags]
     public enum LsrTestingOptions
@@ -615,15 +601,6 @@ namespace TypeCobol.LanguageServer
         LsrPreprocessingPhaseTesting = LsrScanningPhaseTesting | 0x01 << 2,
         LsrParsingPhaseTesting = LsrPreprocessingPhaseTesting | 0x01 << 3,
         LsrSemanticPhaseTesting = LsrParsingPhaseTesting | 0x1 << 4
-    }
-
-
-    public static class LsrTestingOptionsExtensions
-    {
-        public static bool HasFlag(this LsrTestingOptions value, LsrTestingOptions flag)
-        {
-            return (value & flag) != 0;
-        }
     }
 
     public class DiagnosticEvent : EventArgs

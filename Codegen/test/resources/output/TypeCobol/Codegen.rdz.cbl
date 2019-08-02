@@ -55,7 +55,7 @@
       *                 RETURNING result PIC 9(32).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c0ca92c2GetValue.
+       PROGRAM-ID. c0ca92c2.
        DATA DIVISION.
        LINKAGE SECTION.
       *Codegen.GetValue - Params :
@@ -78,4 +78,4 @@
 000170                                                                  000170
 000180     display "test codegen"
 000180     CONTINUE.                                                    000180
-       END PROGRAM c0ca92c2GetValue.
+       END PROGRAM c0ca92c2.

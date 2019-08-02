@@ -41,7 +41,7 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *To call program abf66ff1ToSpan in module IRLLBIRL
+      *To call program abf66ff1 in module IRLLBIRL
       *Which is generated code for IRLLBIRL.ToSpan
       *Declared in source file IRLLBIRL.tcbl
        01 TC-IRLLBIRL-abf66ff1-Item.
@@ -64,7 +64,7 @@
              OR TC-IRLLBIRL-abf66ff1-Idt not = 'abf66ff1'
                PERFORM TC-LOAD-POINTERS-IRLLBIRL
            END-IF
-      *    Equivalent to call abf66ff1ToSpan in module IRLLBIRL
+      *    Equivalent to call abf66ff1 in module IRLLBIRL
            CALL TC-IRLLBIRL-abf66ff1 USING
                                  AlphaNum
                     by reference span IN SpanArrayVar

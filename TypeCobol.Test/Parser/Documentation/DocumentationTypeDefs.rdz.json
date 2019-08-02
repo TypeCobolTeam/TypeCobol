@@ -1,4 +1,4 @@
-﻿Line 19[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
+Line 19[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
 Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
 ======================== Documentation ========================
 {
@@ -12,7 +12,6 @@ Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not suppor
   "__type": "DocumentationForType:#TypeCobol.Compiler.Nodes",
   "Name": "Type10",
   "Namespace": "DocForTypeDefs",
-  "Visibility": 1,
   "DocDataType": {
     "MaxOccurence": 1,
     "Picture": "X(8)"
@@ -25,7 +24,6 @@ Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not suppor
   "Description": "Description for Type11 ",
   "Name": "Type11",
   "Namespace": "DocForTypeDefs",
-  "Visibility": 1,
   "DocDataType": {
     "MaxOccurence": 1,
     "Picture": "X(8)"
@@ -40,7 +38,6 @@ Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not suppor
   "Name": "Type12",
   "Namespace": "DocForTypeDefs",
   "ReplacedBy": "Type42 ",
-  "Visibility": 1,
   "DocDataType": {
     "MaxOccurence": 1,
     "Picture": "X(8)"
@@ -52,7 +49,6 @@ Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not suppor
   "__type": "DocumentationForType:#TypeCobol.Compiler.Nodes",
   "Name": "Type20",
   "Namespace": "DocForTypeDefs",
-  "Visibility": 1,
   "Childrens": [
     {
       "DocDataType": {
@@ -117,8 +113,7 @@ Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not suppor
             }
           ],
           "DocDataType": {
-            "MaxOccurence": 1,
-            "TypeName": "BOOL"
+            "MaxOccurence": 1
           },
           "IsLevel88": true,
           "Name": "TestMember5"
@@ -208,8 +203,7 @@ Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not suppor
             }
           ],
           "DocDataType": {
-            "MaxOccurence": 1,
-            "TypeName": "BOOL"
+            "MaxOccurence": 1
           },
           "IsLevel88": true,
           "Name": "TestMember5"
@@ -238,7 +232,7 @@ Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not suppor
   "Needs": [
     "see here what is needed"
   ],
-  "Visibility": 1,
+  "Visibility": 2,
   "Childrens": [
     {
       "DocDataType": {
@@ -303,8 +297,7 @@ Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not suppor
             }
           ],
           "DocDataType": {
-            "MaxOccurence": 1,
-            "TypeName": "BOOL"
+            "MaxOccurence": 1
           },
           "IsLevel88": true,
           "Name": "TestMember5"

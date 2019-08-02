@@ -25,7 +25,7 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// The Gloabal index associated to this variable.
+        /// The Global index associated to this variable.
         /// </summary>
         public uint GlobalIndex
         {
@@ -36,7 +36,7 @@ namespace TypeCobol.Compiler.Symbols
         private int m_Level;
         /// <summary>
         /// Level of this variable.
-        /// Un number beetwen (01 and 49 for groups and their elements),
+        /// A number beetwen (01 and 49 for groups and their elements),
         /// 77 for isolate variables , 88 for condition, 66 for RENAMES.
         /// </summary>
         public int Level
@@ -68,7 +68,7 @@ namespace TypeCobol.Compiler.Symbols
         ///
         /// It Represents Noncontiguous data items or constants that are not subdivided and no hierarchical relationship
         /// to another data items.
-        /// These data items are only defined in the WORKING-STORAGE and LINKAGE SECTIONS.
+        /// These data items are only defined in the WORKING-STORAGE, LOCAL-STORAGE and LINKAGE SECTIONS.
         /// Each name used for a noncontiguous data item must be unique since it cannot be qualified.
         /// 
         /// Rules:
@@ -78,7 +78,7 @@ namespace TypeCobol.Compiler.Symbols
         /// Exemple:
         ///     77 TOTAL-DAY  pic 9(6)V99.
         /// </summary>
-        public bool IsIsoloate
+        public bool IsIsolate
         {
             get
             {
@@ -91,7 +91,7 @@ namespace TypeCobol.Compiler.Symbols
         /// Conditions or not variable but conditions associated to variables.
         /// 
         /// So A condtional variable is always subordinate to another data item.
-        /// Condtional name identifies the particular value associated to verify during the flow.
+        /// Conditional name identifies the particular value associated to verify during the flow.
         /// VALUE clause should be associated with conditional names.
         ///     
         /// Rules:
@@ -188,11 +188,14 @@ namespace TypeCobol.Compiler.Symbols
 
         /// <summary>
         /// Call to normalize an expanded symbol.
+        /// An expanded symbol must ihnerits section flags from its owner plus its GLOBAL flag.
         /// </summary>
         /// <param name="scope">The normalization scope</param>
         internal virtual void NormalizeExpandedSymbol(Scope<VariableSymbol> scope)
         {
-
+            System.Diagnostics.Debug.Assert(scope.Owner != null);
+            this.Flag &= ~Symbol.SectionMask;
+            this.Flag |= scope.Owner.Flag & (Symbol.SectionMask | Flags.Global);
         }
 
         private Types.Type MyExpandedType { get; set; }
