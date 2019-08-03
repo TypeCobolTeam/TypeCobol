@@ -84,7 +84,7 @@ namespace TypeCobol.Analysis.Test
             }
             if (CfgBuilderNodeListenerFactory != null)
             {
-                NodeDispatcher.RegisterStaticNodeListenerFactory(CfgBuilderNodeListenerFactory);                
+                NodeDispatcher.RemoveStaticNodeListenerFactory(CfgBuilderNodeListenerFactory);                
             }
         }
 
