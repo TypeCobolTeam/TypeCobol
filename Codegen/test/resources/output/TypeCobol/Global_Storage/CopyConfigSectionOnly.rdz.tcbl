@@ -1,0 +1,71 @@
+      *TypeCobol_Version:TestTypeCobolVersion
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. BSATEST6.
+
+      *=================================================================
+       ENVIRONMENT DIVISION.
+      *-----------------------------------------------------------------
+       CONFIGURATION SECTION.
+      *-----------------------------------------------------------------
+      *SOURCE-COMPUTER. IBM-370 WITH DEBUGGING MODE.
+
+      *vvvvv attention vvvvvv ne jamais commenter :
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT FDS-FILE  ASSIGN TO UT-S-DVZFILE
+                    .
+      *=================================================================
+       DATA DIVISION.
+       FILE SECTION.
+       FD  FDS-FILE
+           RECORDING MODE F
+           LABEL RECORD STANDARD
+           BLOCK CONTAINS 0
+           DATA RECORD IS ENR-DVZFILE.
+       01  ENR-DVZFILE                           PIC X(80).
+
+      *global-storage  section.
+      *01 GlobalVar   PIC X.
+       LINKAGE SECTION.
+
+       01 TC-GlobalData.
+
+       02 GlobalVar   PIC X.
+
+
+       Procedure Division.
+      * Get the data from the global storage section
+           CALL 'f735c3f6' USING
+               by reference address of TC-GlobalData
+           end-call
+
+                          
+           move 'A' to GlobalVar
+           open input FDS-FILE
+           close FDS-FILE
+           goback
+           .
+       end program BSATEST6.
+      *
+      * Global Storage Section variables
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. f735c3f6.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 PIC X(8) value ':TC:GBLS'.
+       01 TC-GlobalData.
+       
+       02 GlobalVar   PIC X.
+
+       LINKAGE SECTION.
+       01 GlobalPointer pointer.
+       PROCEDURE DIVISION USING BY REFERENCE GlobalPointer.
+           set GlobalPointer to address of TC-GlobalData
+           .
+       END PROGRAM f735c3f6.
