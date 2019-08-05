@@ -1,0 +1,37 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. BSATEST6.
+
+      *=================================================================
+       ENVIRONMENT DIVISION.
+      *-----------------------------------------------------------------
+       CONFIGURATION SECTION.
+      *-----------------------------------------------------------------
+      *SOURCE-COMPUTER. IBM-370 WITH DEBUGGING MODE.
+
+      *vvvvv attention vvvvvv ne jamais commenter :
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT FDS-FILE  ASSIGN TO UT-S-DVZFILE
+                    .
+      *=================================================================
+       DATA DIVISION.
+       FILE SECTION.
+       FD  FDS-FILE
+           RECORDING MODE F
+           LABEL RECORD STANDARD
+           BLOCK CONTAINS 0
+           DATA RECORD IS ENR-DVZFILE.
+       01  ENR-DVZFILE                           PIC X(80).
+
+       global-storage  section.
+       01 GlobalVar   PIC X.
+
+       Procedure Division.
+           move 'A' to GlobalVar
+           open input FDS-FILE
+           close FDS-FILE
+           goback
+           .
+       end program BSATEST6.
