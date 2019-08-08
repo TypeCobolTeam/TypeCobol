@@ -268,34 +268,8 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             //Note : dataDefinition.CodeElement cannot be null, only Index have a null CodeElement and Index cannot be typed
 
-
-            //Special hack until Visibility are fixed (#1081 and #938)
-            //As "Global" and "GlobalStorage" Scopes are above "Declarations" they cannot have access to "Declarations" scope.
-            //So types in "Declarations" scope cannot be reached from the SymbolTable of a variable declared as global or a variable inside global-storage.
-
-            //But a variable NOT global and not in global-storage can access the SymbolTable "Declarations" and "Global".
-            //So if we are in scopes "Global" or "GlobalStorage" we first need to retrieve a SymbolTable under "Declarations" and resolve the type using this SymbolTable.
-            List<TypeDefinition> types;
-            SymbolTable declarationsSymbolTable;
-            if (dataDefinition.SymbolTable.CurrentScope <= SymbolTable.Scope.Global)
-            {
-                //Retrieve the Scope Declarations by retrieving the SymbolTable of the program which is of Scope "Program".
-                //Then use the EnclosingScope which is of scope "Declarations"
-                declarationsSymbolTable = dataDefinition.GetProgramNode().SymbolTable.EnclosingScope;
-            }
-            else
-            {
-                declarationsSymbolTable = dataDefinition.SymbolTable;
-            }
-            System.Diagnostics.Debug.Assert(declarationsSymbolTable.CurrentScope >= SymbolTable.Scope.Declarations, "Scope of SymbolTable must be under Declarations until (#1081 and #938) are fixed");
-
-            types = declarationsSymbolTable.GetType(dataDefinition.CodeElement.DataType);
-            //End special hack
-
-            //When (#1081 and #938) are fixed, remove the hack above and simply use the following line: 
-            //var types = dataDefinition.SymbolTable.GetType(dataDefinition.CodeElement.DataType);
-
-
+            //A Global variable may be typed with a Local type. In that case, type resolution should fail as the type is not visible in global variable SymbolTable.
+            var types = dataDefinition.SymbolTable.GetType(dataDefinition.CodeElement.DataType);
 
             if (types.Count < 1)
             {
