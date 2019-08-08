@@ -192,7 +192,7 @@ namespace TypeCobol.Compiler.CodeModel
         private IList<DataDefinition> GetVariables(string name)
         {
             //Try to get variable in the current program
-            var found = GetFromTableAndEnclosing(name, GetDataDefinitionTable, Scope.GlobalStorage);
+            var found = GetFromTableAndEnclosing(name, GetDataDefinitionTable, Scope.Program);
            
             return found;
         }
@@ -599,26 +599,34 @@ namespace TypeCobol.Compiler.CodeModel
         /// <returns>Direct or indirect subordinates of a custom type</returns>
         private List<DataDefinition> GetCustomTypesSubordinatesNamed(string name)
         {
+            //Search through local types if we are on a Function
             var foundDataDef = new List<DataDefinition>();
+            if (CurrentScope == Scope.Function)
+            {
+                var functionLocalCandidates = GetVariablesUnderTypeDefinition(name, this);
+                if (functionLocalCandidates != null) foundDataDef.AddRange(functionLocalCandidates);
+            }
 
             //Get programs from Namespace table
             var programList = this.GetProgramsTable(GetTableFromScope(Scope.Namespace));
-            foreach (var programs in programList) {
-
+            foreach (var programs in programList)
+            {
                 //Get Custom Types from program 
-                foreach (var pgm in programs.Value) { //we shouldn't have more than one program with the same name
+                foreach (var pgm in programs.Value)
+                {
+                    //we shouldn't have more than one program with the same name
                     //but just in case it changes 
-                    GetVariablesUnderTypeDefForPublicType(pgm.SymbolTable, name, foundDataDef);
+                    GetVariablesUnderTypeDefForPublicType(pgm.SymbolTable, name, pgm.IsNested, foundDataDef);
                 }
             }
 
-            
             //Get Custom Types from Intrinsic table 
             var intrinsicTable = this.GetTableFromScope(Scope.Intrinsic);
             var variablesUnderTypeDefinition = GetVariablesUnderTypeDefinition(name, intrinsicTable);
             if (variablesUnderTypeDefinition != null) {
                 foundDataDef.AddRange(variablesUnderTypeDefinition);
             }
+
             return foundDataDef;
         }
 
@@ -645,32 +653,28 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="name">name of the variable to search for</param>
         /// <param name="resultDataDefinitions">Data definitions found with the specified name and under a type</param>
         /// <returns>List of found DataDefinition</returns>
-        private static void GetVariablesUnderTypeDefForPublicType(SymbolTable symbolTable, string name, List<DataDefinition> resultDataDefinitions)
+        private static void GetVariablesUnderTypeDefForPublicType(SymbolTable symbolTable, string name, bool isNested, List<DataDefinition> resultDataDefinitions)
         {
             var currSymbolTable = symbolTable;
-            //Start at scope Declarations because scope below cannot contains public type
-            while (currSymbolTable.CurrentScope != Scope.Declarations)
-            {
-                currSymbolTable = currSymbolTable.EnclosingScope;
-            }
 
             //Stop at namespace because Namespace don't contains any type and Intrinsic is shared between all programs
             //and will be searched separately
-            while (currSymbolTable != null && currSymbolTable.CurrentScope != Scope.Namespace) {
+            while (currSymbolTable != null && currSymbolTable.CurrentScope != Scope.Namespace)
+            {
                 var temp = GetVariablesUnderTypeDefinition(name, currSymbolTable);
-                if (temp != null) {
+                if (temp != null)
+                {
                     resultDataDefinitions.AddRange(temp);
                 }
 
-                //Stop when we reach the first Global scope, because otherwise a nested program can end up searching in it the global scope of its parent
-                //Global is the most upper scope that can contains Typedef (GlobalStorage cannot contains typedef)
-                if (currSymbolTable.CurrentScope == Scope.Global) 
+                //When searching in Nested, we stop at first Global level to avoid duplicates in Global and Program from Main
+                if (currSymbolTable.CurrentScope == Scope.Global && isNested)
                 {
                     break;
                 }
+
                 currSymbolTable = currSymbolTable.EnclosingScope;
             }
-
         }
 
         
@@ -910,22 +914,20 @@ namespace TypeCobol.Compiler.CodeModel
                 var dataToSeek = currentTable.Types.Values.SelectMany(t => t);
                 if (currentTable.CurrentScope == Scope.Namespace)
                 {
-                    //For namespace scope, we need to browse every program
-                    dataToSeek = currentTable
-                        .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Declarations)
-                            .Types.Values.SelectMany(t => t));
-
-                    dataToSeek = dataToSeek.Concat(currentTable
-                        .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Global)
-                            .Types.Values.SelectMany(t => t)));
+                    // For namespace scope, we collect public types from every programs
+                    dataToSeek = currentTable.Programs.SelectMany(p => p.Value) // all programs in Namespace scope
+                        .Select(program => program.SymbolTable.GetTableFromScope(Scope.Program)) // access to Program scope which contains private and public types
+                        .SelectMany(symbolTable => symbolTable.Types)
+                        .SelectMany(p => p.Value) // all types
+                        .Where(typeDefinition => typeDefinition.CodeElement.Visibility == AccessModifier.Public); // all public types
+                }
+                else if (currentTable.CurrentScope == Scope.Intrinsic)
+                {
+                    // For Intrinsic scope, we collect public types only
+                    dataToSeek = dataToSeek.Where(typeDefinition => typeDefinition.CodeElement.Visibility == AccessModifier.Public);
                 }
 
                 var results = dataToSeek.AsQueryable().Where(predicate);
-
-                if (currentTable.CurrentScope == Scope.Intrinsic || currentTable.CurrentScope == Scope.Namespace)
-                    results = results.Where(tp =>
-                        tp.CodeElement != null &&
-                        tp.CodeElement.Visibility == AccessModifier.Public);
 
                 foundedTypes.AddRange(results);
 
@@ -950,14 +952,10 @@ namespace TypeCobol.Compiler.CodeModel
             if (program != null)
             {
                 //Get all TYPEDEF PUBLIC from this program
-                var programTypes = GetPublicTypes(program.SymbolTable.GetTableFromScope(Scope.Declarations).Types);
+                var programTypes = GetPublicTypes(program.SymbolTable.GetTableFromScope(Scope.Program).Types);
 
-                found = GetFromTable(name.Head, programTypes); //Check if there is a type that correspond to the given name (head)
-
-                //Get all GLOBAL TYPEDEF PUBLIC from this program
-                var globalTypedef = GetPublicTypes(program.SymbolTable.GetTableFromScope(Scope.Global).Types);
-
-                found.AddRange(GetFromTable(name.Head, globalTypedef)); //Check if there is a type that correspond to the given name (head)
+                //Check if there is a type that correspond to the given name (head)
+                return GetFromTable(name.Head, programTypes); 
             }
 
             return found;
@@ -1023,7 +1021,7 @@ namespace TypeCobol.Compiler.CodeModel
                 {
                     //For namespace scope, we need to browse every program
                     dataToSeek = currentTable
-                        .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Declarations)
+                        .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Program)
                             .Functions.Values.SelectMany(t => t));
                 }
 
@@ -1115,7 +1113,7 @@ namespace TypeCobol.Compiler.CodeModel
             var program = GetProgramHelper(nameSpace); //Get the program corresponding to the given namespace
             if(program != null)
             {
-                var programFunctions = program.SymbolTable.GetTableFromScope(Scope.Declarations).Functions; //Get all function from this program
+                var programFunctions = program.SymbolTable.GetTableFromScope(Scope.Program).Functions; //Get all function from this program
                 programFunctions = programFunctions
                                     .Where(p =>
                                             p.Value.All(f => (f.CodeElement).Visibility == AccessModifier.Public))
@@ -1212,61 +1210,47 @@ namespace TypeCobol.Compiler.CodeModel
         
         /// <summary>
         /// Cobol has compile time binding for variables, sometimes called static scope.
-        /// Within that, Cobol supports several layers of scope: Global and Program scope.
-        ///
-        /// TypeCobol has Intrinsic scope used for standard library types and variables.
-        /// TypeCobol has Function scope used for types and variables declared inside a function.
+        /// Within that, Cobol supports several layers of scope: Global and Local scope.
+        /// TypeCobol introduces :
+        /// - Intrinsic scope is used for standard library types and variables.
+        /// - Namespace is used for programs from external dependencies.
+        /// - Program contains private and public types which shared across the whole program definition.
+        /// - Function scope is used for types and variables declared inside a function.
         /// </summary>
         public enum Scope
         {
             /// <summary>
-            /// Intrinsic scope is a specific to TypeCobol.
+            /// TC specific, contains external types and procedures loaded from intrinsic files.
             /// </summary>
             Intrinsic,
 
             /// <summary>
-            /// Namespace scope is a specific to TypeCobol. It registers all the different parsed programs. 
+            /// TC specific, contains all known programs at compile time
+            /// (that includes current main, nesteds and stackeds and also external dependencies).
             /// </summary>
             Namespace,
 
             /// <summary>
-            /// GlobalStorage scope is TypeCobol specific. It will store all the DataEntry data are decalred inside a GLOBAL-STORAGE SECTION
-            /// These variables will be accessible by all the nested programs. All the procedures will also have access to these variables. 
-            /// Issue #805
-            /// SymbolTable Enclosing Scopes allows to respect the rules : 
-            ///     - GLOBALSS_RANGE 
-            ///     - GLOBALSS_NOT_FOR_STACKED 
+            /// TC specific, contains private and public types/procedures and also variables declared in global-storage section.
+            /// Public and private types/procedures from Nested are bound to Program Scope from Main
+            /// which means they are visible from Main itself and all Nesteds.
             /// </summary>
-            GlobalStorage,
+            Program,
 
             /// <summary>
-            /// Variables and TYPEDEF declared in DATA DIVISION as GLOBAL are visible
-            /// to the entire program in which they are declared and
-            /// in all nested subprograms contained in that program.
+            /// Cobol, contains variables flagged with GLOBAL keyword. 
             /// </summary>
             Global,
 
             /// <summary>
-            /// Declaration of PROCEDURES/FUNCTIONS and TYPEDEF (not marked as Global).
+            /// Cobol, contains types, procedures and variables declared without any modifier.
             /// </summary>
-            Declarations,
+            Local,
 
             /// <summary>
-            /// Contains variables declared in DATA DIVISION.
-            /// 
-            /// Variables declared in WORKING STORAGE are visible
-            /// to the entire program in which they are declared.
-            /// Variables declared in LOCAL STORAGE are visible
-            /// to the entire program in which they are declared,
-            /// but are deleted and reinitialized on every invocation.
-            /// An infinite number of programs can be contained within a program,
-            /// and the variables of each are visible only within the scope
-            /// of that individual program.
+            /// TC specific, contains types and variables declared within a procedure.
             /// </summary>
-            Program,
-            // [TYPECOBOL]
-            Function,
-            // [/TYPECOBOL]
+            Function
         }
 
         private Program GetProgramHelper(string nameSpace)
