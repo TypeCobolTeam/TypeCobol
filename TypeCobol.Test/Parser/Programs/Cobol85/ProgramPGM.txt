@@ -6,7 +6,7 @@ Line 57[16,19] <27, Error, Syntax> - Syntax error : mismatched input 'TYPE' expe
 --- Program ---
 PROGRAM: Simple common:False initial:True recursive:False
  author: WIZTIGERS. written: NOVEMBER 2015 compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
   str:Alphanumeric
   str:Alphanumeric

@@ -8,7 +8,7 @@ Symbols found: VariableSeeking::MyVar1::MySimpleType::bla | VariableSeeking::MyV
 --- Program ---
 PROGRAM: VariableSeeking common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
   Account1:Account
   Account2:Account
@@ -20,7 +20,6 @@ PROGRAM: VariableSeeking common:False initial:False recursive:False
   Group1:Alphanumeric
   itemBuffer:Alphanumeric
   toto:MyTypeUnderRedefines
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations
 -- TYPES -------
   Account:Account
   Account2:Account2
@@ -30,6 +29,8 @@ PROGRAM: VariableSeeking common:False initial:False recursive:False
   MyType:MyType
   MySimpleType:MySimpleType
   MySuperType:MySuperType
+--- Intrinsic:Namespace:Program
+-- TYPES -------
   MyTypeUnderRedefines:MyTypeUnderRedefines
 --- Intrinsic
 -- TYPES -------
