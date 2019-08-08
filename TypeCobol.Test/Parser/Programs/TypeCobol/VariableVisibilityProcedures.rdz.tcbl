@@ -1,116 +1,122 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. MainProgram.
        data division.
+       global-storage section.
+       01 dataMainGlobalStorage pic X.
        working-storage section.
-       01 dataMain1 pic X.
-       01 dataMain2 pic X global.
+       01 dataMainLocal  pic X.
+       01 dataMainGlobal pic X global.
       
        procedure division.
-      *KO dataNested21 and dataNested22 don't exists in MainProgram
-            move dataNested21 to dataNested22
-      *KO dataNested1 and dataNested2 don't exists in MainProgram
-            move dataNested1 to dataNested2
-            move dataMain1 to dataMain2
-            .
-
-
-       declare procedure checkMain private
-                 input paramMain1 pic X.
+      *In Main all dataMain* variables are visible
+      *Variables declared in Nested or Procs are not visible
+      *OK
+           move dataMainGlobalStorage to dataMainLocal
+           display dataMainGlobal
+      *KO
+           move dataProcMain to dataNestedLocal
+           move dataNestedGlobal to dataProcNested
+           move dataSubNestedLocal to dataSubNestedGlobal
+           display dataProcSubNested
+           .
+      
+       declare procedure procInMain private
+               input paramMain pic X.
        data division.
        working-storage section.
-       01 dataProc1 pic X.
+       01 dataProcMain pic X.
        procedure division.
-            move dataProc1 to paramMain1
-      *KO dataNestedProc1 and paramNested1 only exist in procedure checkNested
-            move dataNestedProc1 to paramNested1
-      *KO dataNestedProc21 and paramNested21 only exist 
-      *   in procedure checkNested2
-            move dataNestedProc21 to paramNested21
-      *KO dataNested21 and dataNested22 don't exist in checkMain
-            move dataNested21 to dataNested22
-      *KO dataNested1 and dataNested2 don't exist in checkMain
-            move dataNested1 to dataNested2
-      *KO dataMain1 don't exist in checkMain
-      *OK for dataMain2
-            move dataMain1 to dataMain2
-            .
+      *Procedure has access to GlobalStorage and its local variables
+      *OK
+           move paramMain to dataProcMain
+           display dataMainGlobalStorage
+      *
+           move dataMainLocal to dataMainGlobal
+           move dataNestedLocal to dataNestedGlobal
+           move dataProcNested to dataSubNestedLocal
+           move dataSubNestedGlobal to dataProcSubNested
+           .
        end-declare.
       
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Nested.
        data division.
        working-storage section.
-       01 dataNested1 pic X.
-       01 dataNested2 pic X global.
+       01 dataNestedLocal  pic X.
+       01 dataNestedGlobal pic X global.
       
        PROCEDURE DIVISION.
-      *KO dataNested21 and dataNested22 don't exists in Nested
-            move dataNested21 to dataNested22
-            move dataNested1 to dataNested2
-      *KO dataMain1 is not declared as global
-      *OK for dataMain2
-            move dataMain1 to dataMain2
-            .
-
-       declare procedure checkNested private
-                 input paramNested1 pic X.
+      *Nested pgm has access to :
+      * - its own local and global variables
+      * - global variables from parent
+      * - variables in global-storage
+      *OK
+           move dataNestedLocal to dataNestedGlobal
+           move dataMainGlobal to dataMainGlobalStorage
+      *KO
+           move dataMainLocal to dataProcMain
+           move dataProcNested to dataSubNestedLocal
+           move dataSubNestedGlobal to dataProcSubNested
+           .
+      
+       declare procedure procInNested private
+               input paramNested pic X.
        data division.
        working-storage section.
-       01 dataNestedProc1 pic X.
+       01 dataProcNested pic X.
        procedure division.
-      *KO dataProc1 and paramMain1 only exist in procedure checkMain
-            move dataProc1 to paramMain1
-
-            move dataNestedProc1 to paramNested1
-      *KO dataNestedProc21 and paramNested21 only exist 
-      *   in procedure checkNested2
-            move dataNestedProc21 to paramNested21
-      *KO dataNested21 and dataNested22 don't exist in checkNested
-            move dataNested21 to dataNested22
-      *KO dataNested1 is not declared as global
-      *OK dataNested2 is marked global
-            move dataNested1 to dataNested2
-      *KO dataMain1 is not declared as global
-      *OK for dataMain2
-            move dataMain1 to dataMain2
-            .
+      *Same as procInMain (own local + GS)
+      *OK
+           move paramNested to dataProcNested
+           display dataMainGlobalStorage
+      *KO
+           move dataMainLocal to dataMainGlobal
+           move dataProcMain to dataNestedLocal
+           move dataNestedGlobal to dataSubNestedLocal
+           move dataSubNestedGlobal to dataProcSubNested
+           .
        end-declare.
-
+      
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. Nested2.
+       PROGRAM-ID. SubNested.
        data division.
        working-storage section.
-       01 dataNested21 pic X.
-       01 dataNested22 pic X global.
+       01 dataSubNestedLocal  pic X.
+       01 dataSubNestedGlobal pic X global.
       
        PROCEDURE DIVISION.
-            move dataNested21 to dataNested22
-      *KO dataNested1 is not declared as global
-            move dataNested1 to dataNested2
-      *KO dataMain1 is not declared as global
-            move dataMain1 to dataMain2
-            .
-       declare procedure checkNested2 private
-                 input paramNested21 pic X.
+      *SubNested has access to
+      * - its own local and global variables
+      * - global variables from both Nested and Main
+      * - variables from GlobalStorage
+      *OK
+           move dataSubNestedLocal to dataSubNestedGlobal
+           move dataNestedGlobal to dataMainGlobal
+           display dataMainGlobalStorage
+      *KO
+           move dataMainLocal to dataProcMain
+           move dataNestedLocal to dataProcNested
+           display dataProcSubNested
+           .
+      
+       declare procedure procInSubNested private
+               input paramSubNested pic X.
        data division.
        working-storage section.
-       01 dataNestedProc21 pic X.
+       01 dataProcSubNested pic X.
        procedure division.
-      *KO dataProc1 and paramMain1 only exist in procedure checkMain
-            move dataProc1 to paramMain1
-      *KO dataNestedProc1 and paramNested1 only exist in procedure checkNested
-            move dataNestedProc1 to paramNested1
-
-            move dataNestedProc21 to paramNested21
-      *KO dataNested21 is not marked global, 
-      *OK for dataNested22 marked as global
-            move dataNested21 to dataNested22
-      *KO dataNested1 is not global, OK for dataNested2 which is global
-            move dataNested1 to dataNested2
-      *KO dataMain1 is not global, OK for dataMain2 which is global
-            move dataMain1 to dataMain2
-            .
+      *Same as procInMain (own local + GS)
+      *OK
+           move paramSubNested to dataProcSubNested
+           display dataMainGlobalStorage
+      *KO
+           move dataMainLocal to dataMainGlobal
+           move dataProcMain to dataNestedLocal
+           move dataNestedGlobal to dataProcNested
+           move dataSubNestedLocal to dataSubNestedGlobal
+           .
        end-declare.
+      
        END PROGRAM Nested2.
        END PROGRAM Nested.
        END PROGRAM MainProgram.
