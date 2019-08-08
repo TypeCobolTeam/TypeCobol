@@ -30,7 +30,6 @@
            MOVE true TO MyBoolean
            MOVE 10 TO floatVar
            .
-      *KO until #1081 - visibility refactoring is fully implemented.
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Nested.
        data DIVISION.
