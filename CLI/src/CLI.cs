@@ -109,36 +109,56 @@ namespace TypeCobol.Server
 
         private static ReturnCode runOnce2(TypeCobolConfiguration config, AbstractErrorWriter errorWriter)
         {
+            if (!string.IsNullOrEmpty(config.HaltOnMissingCopyFilePath))
+            {
+                //Delete the file
+                File.Delete(config.HaltOnMissingCopyFilePath);
+            }
+
             SymbolTable baseTable = null;
 
             #region Dependencies parsing
             var depParser = new Parser();
             bool diagDetected = false;
-            if (config.ExecToStep > ExecutionStep.Preprocessor)
+            
+            #region Event Diags Handler
+            EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DiagnosticsErrorEvent = delegate (object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
             {
-                #region Event Diags Handler
-                EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DiagnosticsErrorEvent = delegate (object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
-                {
-                    //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
-                    diagDetected = true;
-                    var diagnostic = diagEvent.Diagnostic;
-                    Server.AddError(errorWriter, MessageCode.IntrinsicLoading,
-                        diagnostic.ColumnStart, diagnostic.ColumnEnd, diagnostic.Line,
-                        "Error while parsing " + diagEvent.Path + ": " + diagnostic, diagEvent.Path);
-                };
-                EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DependencyErrorEvent = delegate (object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
-                {
-                    //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
-                    Server.AddError(errorWriter, diagEvent.Path, diagEvent.Diagnostic);
-                };
-                #endregion
+                //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
+                diagDetected = true;
+                var diagnostic = diagEvent.Diagnostic;
+                Server.AddError(errorWriter, MessageCode.IntrinsicLoading,
+                    diagnostic.ColumnStart, diagnostic.ColumnEnd, diagnostic.Line,
+                    "Error while parsing " + diagEvent.Path + ": " + diagnostic, diagEvent.Path);
+            };
+            EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DependencyErrorEvent = delegate (object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
+            {
+                //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
+                Server.AddError(errorWriter, diagEvent.Path, diagEvent.Diagnostic);
+            };
+            #endregion
 
-                depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load intrinsic
-                depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, depParser.CustomSymbols, config.InputFiles, config.CopyFolders, DependencyErrorEvent); //Load dependencies
+            depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load intrinsic
+            depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, depParser.CustomSymbols, config.InputFiles, config.CopyFolders, DependencyErrorEvent, out List<RemarksDirective.TextNameVariation> usedCopies, out List<CopyDirective> missingCopies); //Load dependencies
 
-                if (diagDetected)
-                    throw new CopyLoadingException("Diagnostics detected while parsing Intrinsic file", null, null, logged: false, needMail: false);
+            //Create extracted copies file even if copy are missing
+            CreateExtractedCopiesFile(config, usedCopies);
+
+            if (missingCopies.Count > 0 && !string.IsNullOrEmpty(config.HaltOnMissingCopyFilePath))
+            {
+                //Collect the missing copies
+                File.WriteAllLines(config.HaltOnMissingCopyFilePath, missingCopies.Select(c => c.TextName).Distinct());
+
+
+
+                //If copies are missing, don't try to parse main input files.
+                throw new MissingCopyException("Some copy are missing", config.Dependencies.FirstOrDefault(), null, logged: false, needMail: false);
             }
+            
+
+            if (diagDetected)
+                throw new CopyLoadingException("Diagnostics detected while parsing Intrinsic file", null, null, logged: false, needMail: false);
+            
 
             baseTable = depParser.CustomSymbols;
             #endregion
@@ -209,47 +229,19 @@ namespace TypeCobol.Server
                         : config.MaximumDiagnostics)); //Write diags into error file
                 
 
-                if (!string.IsNullOrEmpty(config.HaltOnMissingCopyFilePath))
+                if (!string.IsNullOrEmpty(config.HaltOnMissingCopyFilePath) && parser.MissingCopys.Count > 0)
                 {
-                    if (parser.MissingCopys.Count > 0)
-                    {
-                        //Collect the missing copies
-                        copyAreMissing = true;
-                        File.WriteAllLines(config.HaltOnMissingCopyFilePath, parser.MissingCopys);
-                    }
-                    else
-                    {
-                        //Delete the file
-                        File.Delete(config.HaltOnMissingCopyFilePath);
-                    }
+                    //Collect the missing copies
+                    copyAreMissing = true;
+                    File.WriteAllLines(config.HaltOnMissingCopyFilePath, parser.MissingCopys);
                 }
 
-                if (config.ExecToStep >= ExecutionStep.Preprocessor && !string.IsNullOrEmpty(config.ExtractedCopiesFilePath))
-                {
-                    if (parser.Results.CopyTextNamesVariations.Count > 0)
-                    {
-#if EUROINFO_RULES
-                        IEnumerable<string> copiesName;
-                        if (config.UseEuroInformationLegacyReplacingSyntax)
-                        {
-                            copiesName = parser.Results.CopyTextNamesVariations.Select(cp => cp.TextName).Distinct(); //Get copies without suffix
-                        }
-                        else
-                        {
-                            copiesName = parser.Results.CopyTextNamesVariations.Select(cp => cp.TextNameWithSuffix).Distinct(); //Get copies with suffix
-                        }
-#else
-                        var copiesName = parser.Results.CopyTextNamesVariations.Select(cp => cp.TextNameWithSuffix).Distinct(); //Get copies with suffix
-#endif
-                        //Create an output document of all the copy encountered by the parser
-                        File.WriteAllLines(config.ExtractedCopiesFilePath, copiesName);
-                    }
-                    else
-                        File.Delete(config.ExtractedCopiesFilePath);
-                }
+                //Create extraced copies file even if copy are missing
+                CreateExtractedCopiesFile(config, parser.Results.CopyTextNamesVariations);
 
                 if (copyAreMissing)
                     throw new MissingCopyException("Some copy are missing", inputFilePath, null, logged: false, needMail: false);
+
 
                 if (parser.Results.CodeElementsDocumentSnapshot == null &&config.ExecToStep > ExecutionStep.Preprocessor)
                 {
@@ -465,6 +457,34 @@ namespace TypeCobol.Server
             }
 
             return returnCode;
-        }   
+        } 
+        
+
+        private static void CreateExtractedCopiesFile(TypeCobolConfiguration config, List<RemarksDirective.TextNameVariation> copiesUsed)
+        {
+            if (config.ExecToStep >= ExecutionStep.Preprocessor && !string.IsNullOrEmpty(config.ExtractedCopiesFilePath))
+            {
+                if (copiesUsed.Count > 0)
+                {
+#if EUROINFO_RULES
+                    IEnumerable<string> copiesName;
+                    if (config.UseEuroInformationLegacyReplacingSyntax)
+                    {
+                        copiesName = copiesUsed.Select(cp => cp.TextName).Distinct(); //Get copies without suffix
+                    }
+                    else
+                    {
+                        copiesName = copiesUsed.Select(cp => cp.TextNameWithSuffix).Distinct(); //Get copies with suffix
+                    }
+#else
+                    var copiesName = copiesUsed.Select(cp => cp.TextNameWithSuffix).Distinct(); //Get copies with suffix
+#endif
+                    //Create an output document of all the copy encountered by the parser
+                    File.WriteAllLines(config.ExtractedCopiesFilePath, copiesName);
+                }
+                else
+                    File.Delete(config.ExtractedCopiesFilePath);
+            }
+        }
     }
 }
