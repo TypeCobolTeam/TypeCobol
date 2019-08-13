@@ -139,7 +139,7 @@ namespace TypeCobol.Server
             #endregion
 
             depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load intrinsic
-            depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, depParser.CustomSymbols, config.InputFiles, config.CopyFolders, DependencyErrorEvent, out List<RemarksDirective.TextNameVariation> usedCopies, out List<CopyDirective> missingCopies); //Load dependencies
+            depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, depParser.CustomSymbols, config.InputFiles, config.CopyFolders, DependencyErrorEvent, out List<RemarksDirective.TextNameVariation> usedCopies, out IDictionary<string, IEnumerable<string>> missingCopies); //Load dependencies
 
             //Create extracted copies file even if copy are missing
             CreateExtractedCopiesFile(config, usedCopies);
@@ -147,12 +147,13 @@ namespace TypeCobol.Server
             if (missingCopies.Count > 0 && !string.IsNullOrEmpty(config.HaltOnMissingCopyFilePath))
             {
                 //Collect the missing copies
-                File.WriteAllLines(config.HaltOnMissingCopyFilePath, missingCopies.Select(c => c.TextName).Distinct());
+                File.WriteAllLines(config.HaltOnMissingCopyFilePath, missingCopies.SelectMany(mc => mc.Value).Distinct());
 
 
 
-                //If copies are missing, don't try to parse main input files.
-                throw new MissingCopyException("Some copy are missing", config.Dependencies.FirstOrDefault(), null, logged: false, needMail: false);
+                //If copies are missing, don't try to parse main input files
+                //throw  an exception for the first dependency file
+                throw new MissingCopyException("Copy are missing in dependencies", missingCopies.First().Key, null, logged: false, needMail: false);
             }
             
 
