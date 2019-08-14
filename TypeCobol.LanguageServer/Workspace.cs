@@ -44,8 +44,8 @@ namespace TypeCobol.LanguageServer
         private bool _timerDisabled;
 
 
-        private TypeCobolConfiguration TypeCobolConfiguration { get; set; }
         private List<FileCompiler> _fileCompilerWaittingForNodePhase;
+        public TypeCobolConfiguration TypeCobolConfiguration { get; private set; }
         public Dictionary<Uri, DocumentContext> OpenedDocumentContext { get; private set; }
         public EventHandler<DiagnosticEvent> DiagnosticsEvent { get; set; }
         public EventHandler<EventArgs> DocumentModifiedEvent { get; set; }

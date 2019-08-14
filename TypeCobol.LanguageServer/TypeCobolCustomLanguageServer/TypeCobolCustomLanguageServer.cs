@@ -149,7 +149,13 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             var docContext = GetDocumentContextFromStringUri(parameter.textDocument.uri, false);
             if (docContext?.FileCompiler?.CompilationResultsForProgram?.CopyTextNamesVariations != null)
             {
+                var _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(this.Workspace.TypeCobolConfiguration.Copies, this.Workspace.TypeCobolConfiguration.Format, null); //Refresh Intrinsics
+                IEnumerable<string> dependenciesMissingCopies = Tools.APIHelpers.Helpers.GetDependenciesMissingCopies(this.Workspace.TypeCobolConfiguration.Dependencies,
+                    this.Workspace.TypeCobolConfiguration.Format, _customSymbols,
+                    this.Workspace.TypeCobolConfiguration.CopyFolders, null);
+
                 List<string> copiesName = docContext.FileCompiler.CompilationResultsForProgram.CopyTextNamesVariations.Select(cp => cp.TextNameWithSuffix).Distinct().ToList();
+                copiesName.AddRange(dependenciesMissingCopies);
                 if (copiesName.Count > 0)
                 {
                     var missingCopiesParam = new MissingCopiesParams();

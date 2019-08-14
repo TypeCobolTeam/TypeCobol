@@ -461,7 +461,6 @@ namespace TypeCobol.LanguageServer
             if (objUri.IsFile)
             {
                 this.Workspace.CloseSourceFile(objUri);
-                this.Workspace.MissingCopiesEvent -= MissingCopiesDetected;
                 this.Workspace.DiagnosticsEvent -= DiagnosticsDetected;
 
                 // DEBUG information
