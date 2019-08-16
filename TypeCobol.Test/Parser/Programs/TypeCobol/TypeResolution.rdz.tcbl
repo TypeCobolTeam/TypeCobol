@@ -1,0 +1,17 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZFSCT0.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *KO bool is already defined in Intrinsics
+       01 bool typedef strict pic 9(1).
+       01 a typedef strict pic X global.
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Nested.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 a typedef strict pic X.
+      *OK Nested::a is used here
+       01 b type a.
+       END PROGRAM Nested.
+       END PROGRAM DVZFSCT0.
