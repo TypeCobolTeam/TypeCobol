@@ -48,6 +48,15 @@ namespace TypeCobol.LanguageServer
                 return;
 
             _TypeCobolWorkSpace.CompilationProject.ClearImportedCompilationDocumentsCache();
+
+            Action refreshAction = () => { _TypeCobolWorkSpace.RefreshOpenedFiles(); };
+            lock (_TypeCobolWorkSpace.MessagesActionsQueue)
+            {
+                if (_TypeCobolWorkSpace.MessagesActionsQueue.All(mw => mw.Action != refreshAction))
+                {
+                    _TypeCobolWorkSpace.MessagesActionsQueue.Enqueue(new MessageActionWrapper(refreshAction));
+                }
+            }
         }
 
         public void Dispose()
