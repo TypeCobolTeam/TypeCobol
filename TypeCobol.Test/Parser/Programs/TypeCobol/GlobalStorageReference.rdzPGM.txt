@@ -1,5 +1,5 @@
 ﻿--- Diagnostics ---
-Line 19[31,47] <27, Error, Syntax> - Syntax error : A Global-Storage Section variable cannot be referenced in another Data Section OffendingSymbol=[31,47:dependOnVarGlobal]<UserDefinedWord>
+Line 23[31,47] <27, Error, Syntax> - Syntax error : A Global-Storage Section variable cannot be referenced in another Data Section OffendingSymbol=[31,47:dependOnVarGlobal]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: GlobalStorageTest common:False initial:False recursive:False
@@ -12,6 +12,7 @@ PROGRAM: GlobalStorageTest common:False initial:False recursive:False
 --- Intrinsic:Namespace:Program
 -- DATA --------
   dependOnVarGlobal:Alphanumeric
+  TEST1-ELT0:Alphanumeric
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL
