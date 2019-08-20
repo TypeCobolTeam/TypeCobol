@@ -9,10 +9,12 @@ namespace TypeCobol.LanguageServer
     {
         private Workspace _TypeCobolWorkSpace;
         private List<FileSystemWatcher> fileWatchers = new List<FileSystemWatcher>();
+        private readonly Action refreshAction;
 
-        public CopyWatcher(Workspace workspace)
+        public CopyWatcher(Workspace workspace, Action refreshAction)
         {
             _TypeCobolWorkSpace = workspace;
+            this.refreshAction = refreshAction;
         }
 
         public void SetDirectoryWatcher(string directoryPath)
@@ -49,9 +51,9 @@ namespace TypeCobol.LanguageServer
 
             _TypeCobolWorkSpace.CompilationProject.ClearImportedCompilationDocumentsCache();
 
-            Action refreshAction = () => { _TypeCobolWorkSpace.RefreshOpenedFiles(); };
             lock (_TypeCobolWorkSpace.MessagesActionsQueue)
             {
+                // Check if there isn't another refresh action from another fileWatcher in the queue
                 if (_TypeCobolWorkSpace.MessagesActionsQueue.All(mw => mw.Action != refreshAction))
                 {
                     _TypeCobolWorkSpace.MessagesActionsQueue.Enqueue(new MessageActionWrapper(refreshAction));

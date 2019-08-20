@@ -150,8 +150,11 @@ namespace TypeCobol.LanguageServer
                 this.CompilationProject.CompilationOptions.UseEuroInformationLegacyReplacingSyntax ||
                 UseEuroInformationLegacyReplacingSyntax;
 
-            _DepWatcher = new DependenciesFileWatcher(this);
-            _CopyWatcher = new CopyWatcher(this);
+            // Create the refresh action that will be used by file watchers
+            Action refreshAction = RefreshOpenedFiles;
+
+            _DepWatcher = new DependenciesFileWatcher(this, refreshAction);
+            _CopyWatcher = new CopyWatcher(this, refreshAction);
         }
 
         /// <summary>
