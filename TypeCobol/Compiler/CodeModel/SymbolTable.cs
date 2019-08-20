@@ -55,15 +55,18 @@ namespace TypeCobol.Compiler.CodeModel
             while (currentSymbolTable != null && currentSymbolTable.CurrentScope >= maxScope)
             {
                 // Retrieve candidates from current SymbolTable
-                if (!getEntries(currentSymbolTable).TryGetValue(name.Head, out var candidates)) candidates = new List<T>();
+                getEntries(currentSymbolTable).TryGetValue(name.Head, out var candidates);
 
                 // We don't have to perform matching if we already have found a result (except if current scope is required)
                 if (!skipParentGlobal || currentSymbolTable.CurrentScope == requiredScope)
                 {
                     // Proceed to matching
-                    foreach (var candidate in candidates)
+                    if (candidates != null)
                     {
-                        match(result, candidate, name, name.Count - 1, candidate);
+                        foreach (var candidate in candidates)
+                        {
+                            match(result, candidate, name, name.Count - 1, candidate);
+                        }
                     }
 
                     // Skip Global SymbolTable from parent if we already have found a match
@@ -80,7 +83,7 @@ namespace TypeCobol.Compiler.CodeModel
         private static void MatchUsingName<T>(List<T> found, in T head, in QualifiedName name, int nameIndex, in T current)
             where T : Node
         {
-            if (Match(head.QualifiedName, name))
+            if (Match(head, name))
             {
                 found.Add(head);
             }
@@ -663,33 +666,39 @@ namespace TypeCobol.Compiler.CodeModel
             }
         }
 
-        private static bool Match(QualifiedName name1, QualifiedName name2)
+        /// <summary>
+        /// Indicates whether a given Node correspond to a QualifiedName.
+        /// A node matches a name when every part of both names are equal, starting from the innermost part.
+        /// </summary>
+        /// <param name="node">The node being tested</param>
+        /// <param name="name">The name being tested</param>
+        /// <returns>True when node matches, false otherwise.</returns>
+        private static bool Match([NotNull] Node node, [NotNull] QualifiedName name)
         {
-            QualifiedName candidate, spec;
-            if (name1.Count > name2.Count)
+            Node current = node;
+            int index = name.Count - 1;
+            while (current != null && index >= 0) // Stop on shortest name, either node name or supplied name.
             {
-                candidate = name2;
-                spec = name1;
-            }
-            else
-            {
-                candidate = name1;
-                spec = name2;
-            }
-            int offset = spec.Count - 1;
-            for (int c = candidate.Count - 1; c >= 0; c--)
-            {
-                string candidatePart = candidate[c];
-                string specPart = spec[offset];
-                if (candidatePart.Equals(specPart, StringComparison.OrdinalIgnoreCase))
+                // Skip unnamed levels in node hierarchy (i.e. data div, working storage, etc)
+                if (!string.IsNullOrEmpty(current.Name))
                 {
-                    offset--;
+                    if (current.Name.Equals(name[index], StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Name parts match, go one level up in QualifiedName
+                        index--;
+                    }
+                    else
+                    {
+                        // As soon as a difference is detected, we can leave the method returning False value
+                        return false;
+                    }
                 }
-                else
-                {
-                    return false;
-                }
+
+                // Go to upper level in node hierarchy
+                current = current.Parent;
             }
+
+            // No more parts to compare and all parts tested are equal, we return True
             return true;
         }
 
