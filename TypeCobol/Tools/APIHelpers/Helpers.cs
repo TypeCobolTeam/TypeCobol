@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using JetBrains.Annotations;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.AntlrUtils;
@@ -11,15 +9,14 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.Nodes;
 using TypeCobol.CustomExceptions;
-using String = System.String;
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Tools.APIHelpers
 {
     public static class Helpers
     {
-        public static string[] dependenciesExtensions = { ".tcbl", ".cbl", ".cpy" };
+        private static string[] _DependenciesExtensions = { ".tcbl", ".cbl", ".cpy" };
 
         public static SymbolTable LoadIntrinsic(List<string> paths, DocumentFormat intrinsicDocumentFormat, EventHandler<DiagnosticsErrorEvent> diagEvent)
         {
@@ -127,7 +124,7 @@ namespace TypeCobol.Tools.APIHelpers
             var dependencies = new List<string>();
             foreach (var path in paths)
             {
-                var dependenciesFound = Tools.FileSystem.GetFiles(path, dependenciesExtensions, true);
+                var dependenciesFound = Tools.FileSystem.GetFiles(path, _DependenciesExtensions, true);
                 //Issue #668, warn if dependencies path are invalid
                 if (diagEvent != null && dependenciesFound.Count == 0)
                 {
