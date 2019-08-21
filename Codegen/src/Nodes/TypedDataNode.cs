@@ -159,11 +159,13 @@ namespace TypeCobol.Codegen.Nodes
         /// <summary>
         /// Tries to detect a TYPEDEF construction for a scalar type.
         /// </summary>
+        /// <param name="layout">Columns layout kind.</param>
+        /// <param name="dataDescriptionEntry">The data desc entry of the node</param>
         /// <param name="customtype">The TypeDef definition node</param>
         /// <param name="bHasPeriod">out true if a period separator has been encountered, false otherwise.</param>
         /// <param name="bIgnoreGlobal">true if the GLOBAL keyword must be ignored</param>
         /// <returns>The string representing the TYPEDEF type</returns>
-        internal static string ExtractAnyCobolScalarTypeDef(ColumnsLayout? layout, TypeDefinition customtype, out bool bHasPeriod, bool bIgnoreGlobal)
+        internal static string ExtractAnyCobolScalarTypeDef(ColumnsLayout? layout, DataDescriptionEntry dataDescriptionEntry, TypeDefinition customtype, out bool bHasPeriod, bool bIgnoreGlobal)
         {
             bHasPeriod = false;
             StringBuilder sb = new StringBuilder();
@@ -199,7 +201,13 @@ namespace TypeCobol.Codegen.Nodes
                         bHasPeriod = false;
                         return "";
                     }
-                    FlushConsumedTokens(layout, i - 1, customtype.CodeElement.ConsumedTokens, sb, out bHasPeriod);
+                    FlushConsumedTokens(layout, i - 1, customtype.CodeElement.ConsumedTokens, sb, out bHasPeriod, token => token.TokenType == TokenType.PeriodSeparator ? string.Empty : token.Text);
+
+                    //Add any VALUE clause from dataDescriptionEntry
+                    i = 0;
+                    while (i < dataDescriptionEntry.ConsumedTokens.Count && dataDescriptionEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.VALUE && dataDescriptionEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.VALUES)
+                        i++;
+                    FlushConsumedTokens(layout, i - 1, dataDescriptionEntry.ConsumedTokens, sb, out bHasPeriod);
                 }
             }
             return sb.ToString();
@@ -623,7 +631,7 @@ namespace TypeCobol.Codegen.Nodes
                     PreGenDependingOnAndIndexed(node, table, rootProcedures, rootVariableName, ownerDefinition, data_def, out bHasDependingOn, out bHasIndexes,
                         out dependingOnAccessPath, out indexesMap);
 
-                    string text = !(bHasDependingOn || bHasIndexes) ? ExtractAnyCobolScalarTypeDef(layout, customtype, out bHasPeriod, false) : "";
+                    string text = !(bHasDependingOn || bHasIndexes) ? ExtractAnyCobolScalarTypeDef(layout, data, customtype, out bHasPeriod, false) : "";
 
                     if (text.Length != 0)
                     {

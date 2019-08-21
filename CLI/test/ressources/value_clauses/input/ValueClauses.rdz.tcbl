@@ -1,0 +1,34 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZZMFT0.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      
+       01 StructureType typedef strict PRIVATE.
+          05 champ PIC X(1).
+      
+       01 ScalarType typedef strict PRIVATE PIC X(1).
+      
+       01 C-DatePivot   TYPE Date VALUE '20190101'.
+       01 C-DefaultRate TYPE Rate VALUE 3.55.
+      
+       01 Structure TYPE StructureType     VALUE 'A'.
+       01 Scalar    TYPE ScalarType        VALUE 'B'.
+       01 Inline    PIC X(1)               VALUE 'C'.
+      
+       PROCEDURE DIVISION.
+       DECLARE PROCEDURE Proc PRIVATE
+          INPUT paramIntrinsicDate TYPE Date VALUE '20190102'
+                paramIntrinsicRate TYPE Rate VALUE 4.09
+                paramStructure     TYPE StructureType VALUE 'D'
+                paramScalar        TYPE ScalarType    VALUE 'E'
+                paramInline        PIC X(1)           VALUE 'F'.
+       PROCEDURE DIVISION.
+          DISPLAY paramIntrinsicDate
+          DISPLAY paramIntrinsicRate
+          DISPLAY paramStructure
+          DISPLAY paramScalar
+          DISPLAY paramInline
+          .
+       END-DECLARE.
+          .
+       END PROGRAM DVZZMFT0.
