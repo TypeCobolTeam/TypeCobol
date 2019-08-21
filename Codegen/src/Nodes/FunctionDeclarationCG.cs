@@ -81,8 +81,8 @@ namespace TypeCobol.Codegen.Nodes {
                     {
                         children.Add(new ProgramEnd(new URI(OriginalHash), child.CodeElement.Line));
                     } else {
-                        // TCRFUN_CODEGEN_NO_ADDITIONAL_DATA_SECTION
-                        // TCRFUN_CODEGEN_DATA_SECTION_AS_IS
+                        // TCRFUN-CODEGEN-NO-ADDITIONAL-DATA-SECTION
+                        // TCRFUN-CODEGEN-DATA-SECTION-AS-IS
                         children.Add(child);
                     }
                 }
@@ -234,7 +234,7 @@ namespace TypeCobol.Codegen.Nodes {
         private void DeclareProceduresParametersIntoLinkage(Compiler.Nodes.FunctionDeclaration node, Compiler.Nodes.LinkageSection linkage, ParametersProfileNode profile) {
             var data = linkage.Children();
 
-            // TCRFUN_CODEGEN_PARAMETERS_ORDER
+            // TCRFUN-CODEGEN-PARAMETERS-ORDER
             var generated = new List<string>();
             foreach (var parameter in profile.InputParameters) {
                 if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
@@ -301,7 +301,7 @@ namespace TypeCobol.Codegen.Nodes {
         public override IEnumerable<ITextLine> Lines {
             get {
                 if (_cache == null) {
-                    _cache = new List<ITextLine>(); // TCRFUN_CODEGEN_AS_NESTED_PROGRAM
+                    _cache = new List<ITextLine>(); // TCRFUN-CODEGEN-AS-NESTED-PROGRAM
                     //_cache.Add(new TextLineSnapshot(-1, "*", null));
                     //TODO add Function signature as comment
                     _cache.Add(new TextLineSnapshot(-1, "*_________________________________________________________________",
