@@ -341,6 +341,7 @@ namespace TypeCobol.Compiler.Diagnostics
                             "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot have USAGE.", dataDefinitionEntry);
                     }
                 }
+
             }
 
 
@@ -372,12 +373,47 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(DataDescription dataDescription)
+        {
+            DataDescriptionEntry dataDescriptionEntry = dataDescription.CodeElement;
+
+            var levelNumber = dataDescriptionEntry.LevelNumber;
+            if (levelNumber != null)
+            {
+
+                int childIndex = dataDescription.Parent.ChildIndex(dataDescription);
+
+                if (dataDescription.IsDataDescriptionGroup && dataDescription.ChildrenCount == 0)
+                {
+                    if (dataDescription.Parent.ChildrenCount > childIndex + 1 &&
+                        dataDescription.Parent.Children[childIndex + 1].CodeElement is DataDefinitionEntry
+                            nextDataDefinitionEntry && nextDataDefinitionEntry.IsInsideCopy() == true)
+                    {
+                        if (levelNumber.Value >= nextDataDefinitionEntry.LevelNumber?.Value)
+                        {
+                            DiagnosticUtils.AddError(dataDescription,
+                                "The group item is incompatible with the clause " +
+                                nextDataDefinitionEntry.FirstCopyDirective + " due to its level number.",
+                                dataDescriptionEntry);
+                        }
+                    }
+                    else
+                    {
+                        DiagnosticUtils.AddError(dataDescription, "A group item cannot be empty.",
+                            dataDescriptionEntry);
+                    }
+                }
+            }
+
+            return true;
+        }
+
         /// <summary>
-        /// Test if the received DataDefinition has other children than DataConditionEntry or DataRenamesEntry
-        /// </summary>
-        /// <param name="dataDefinition">Item to check</param>
-        /// <returns>True if there are only DataConditionEntry or DataRenamesEntry children</returns>
-        private static bool HasChildrenThatDeclareData([NotNull] DataDefinition dataDefinition)
+            /// Test if the received DataDefinition has other children than DataConditionEntry or DataRenamesEntry
+            /// </summary>
+            /// <param name="dataDefinition">Item to check</param>
+            /// <returns>True if there are only DataConditionEntry or DataRenamesEntry children</returns>
+            private static bool HasChildrenThatDeclareData([NotNull] DataDefinition dataDefinition)
         {
             //We only need to check the last children:
             //DataConditionEntry is a level 88, DataRenamesEntry is level 66 and they cannot have children
