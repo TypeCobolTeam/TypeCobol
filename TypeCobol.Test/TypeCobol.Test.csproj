@@ -97,6 +97,7 @@
   <ItemGroup>
     <Compile Include="**\*.cs" />
     <Content Include="Parser\**\*" Exclude="Parser\**\*.cs" />
+    <Content Include="Parser\Programs\Cobol85\CopyProcedure8.cbl" />
     <None Include="Report\Input\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -107,6 +108,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="NewTestsToFix\**" />
+    <Content Include="Parser\Programs\Cobol85\CopyProcedure8.txt" />
+    <Content Include="Parser\Programs\Cobol85\CopyProcedure8PGM.txt" />
     <Content Include="ThirdParty\**" />
     <Content Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

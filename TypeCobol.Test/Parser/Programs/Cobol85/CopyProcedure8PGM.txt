@@ -1,0 +1,19 @@
+--- Diagnostics ---
+Line 7[8,20] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[8,20:COPYCONTAINER]<UserDefinedWord>
+
+--- Program ---
+PROGRAM: TypeCobol common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+-- DATA --------
+  STR:Alphanumeric
+  VAR1:Alphanumeric
+  COPYCONTAINER:Alphanumeric
+  myVar:Alphanumeric
+  myVar:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
