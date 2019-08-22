@@ -37,13 +37,14 @@ namespace TypeCobol.LanguageServer
         private SymbolTable _customSymbols;
         private string _rootDirectoryFullName;
         private string _workspaceName;
-        private CompilationProject CompilationProject;
         private string[] _extensions = { ".cbl", ".cpy" };
         private DependenciesFileWatcher _DepWatcher;
+        private CopyWatcher _CopyWatcher;
         private System.Timers.Timer _semanticUpdaterTimer;
         private bool _timerDisabled;
 
 
+        internal CompilationProject CompilationProject { get; private set; }
         private TypeCobolConfiguration TypeCobolConfiguration { get; set; }
         private List<FileCompiler> _fileCompilerWaittingForNodePhase;
         public Dictionary<Uri, DocumentContext> OpenedDocumentContext { get; private set; }
@@ -149,7 +150,11 @@ namespace TypeCobol.LanguageServer
                 this.CompilationProject.CompilationOptions.UseEuroInformationLegacyReplacingSyntax ||
                 UseEuroInformationLegacyReplacingSyntax;
 
-            _DepWatcher = new DependenciesFileWatcher(this);
+            // Create the refresh action that will be used by file watchers
+            Action refreshAction = RefreshOpenedFiles;
+
+            _DepWatcher = new DependenciesFileWatcher(this, refreshAction);
+            _CopyWatcher = new CopyWatcher(this, refreshAction);
         }
 
         /// <summary>
@@ -439,6 +444,11 @@ namespace TypeCobol.LanguageServer
 
             //Dispose previous watcher before setting new ones
             _DepWatcher.Dispose();
+            _CopyWatcher.Dispose();
+            foreach (var depFolder in TypeCobolConfiguration.CopyFolders)
+            {
+                _CopyWatcher.SetDirectoryWatcher(depFolder);
+            }
             foreach (var depFolder in TypeCobolConfiguration.Dependencies)
             {
                 _DepWatcher.SetDirectoryWatcher(depFolder);
