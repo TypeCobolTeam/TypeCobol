@@ -10,11 +10,11 @@
             05 secondGroup.
                 10 typedGroupvar TYPE secondType.
       
-                10 tutu occurs 1 depending on 
+                10 tutu PIC X occurs 1 depending on 
             MyGroup::vargroup.
-                10 titi occurs 1 depending on 
+                10 titi PIC X occurs 1 depending on 
             vargroup.
-                10 toto occurs 1 depending on myVar.
+                10 toto PIC X occurs 1 depending on myVar.
       
        01 secondType TYPEDEF STRICT.
             05 MyGroup.
