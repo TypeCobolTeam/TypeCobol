@@ -22,7 +22,7 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
     public ProcedureDivision(Compiler.Nodes.FunctionDeclaration declaration, [NotNull] List<Compiler.Nodes.Node> sentences): base(null) {
 		table = declaration.SymbolTable;
         UsingParameters = new List<CallTargetParameter>();
-		// TCRFUN_CODEGEN_PARAMETERS_ORDER
+		// TCRFUN-CODEGEN-PARAMETERS-ORDER
 		foreach(var parameter in declaration.Profile.InputParameters)
 			if (parameter.LevelNumber.Value == 1)
 				UsingParameters.Add(new GeneratedParameter(parameter.DataName));
@@ -32,7 +32,7 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 		foreach(var parameter in declaration.Profile.OutputParameters)
 			if (parameter.LevelNumber.Value == 1)
 				UsingParameters.Add(new GeneratedParameter(parameter.DataName));
-		// TCRFUN_CODEGEN_RETURNING_PARAMETER
+		// TCRFUN-CODEGEN-RETURNING-PARAMETER
 		if (declaration.Profile.ReturningParameter != null)
 			if (declaration.Profile.ReturningParameter.LevelNumber.Value == 1)
 				ReturningParameter = new CallTargetParameter() { StorageArea = GeneratedParameter.CreateReceivingStorageArea(declaration.Profile.ReturningParameter.DataName) };
