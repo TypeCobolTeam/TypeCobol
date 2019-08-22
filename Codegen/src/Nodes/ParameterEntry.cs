@@ -107,7 +107,7 @@ internal class ParameterEntry: GenericNode<ParameterDescriptionEntry>, Generated
 					    str.Append('.');
 					_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
                         
-					// TCRFUN_CODEGEN_PARAMETERS_IN_LINKAGE_SECTION
+					// TCRFUN-CODEGEN-PARAMETERS-IN-LINKAGE-SECTION
 					foreach(var child in this.GetChildren<DataCondition>()) {
 						str.Clear();
 						var entry = child.CodeElement;
