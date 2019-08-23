@@ -152,6 +152,21 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// This test should return MissingCopy.
+        /// It test if in case of missing copy and with the proper arguments extracted copies file and missing copie file ar present and well formed.
+        /// </summary>
+        [TestMethod]
+        public void TestCopyInsideTypeDefInsideDependency()
+        {
+#if EUROINFO_RULES
+            CLITestHelper.Test("CopyInsideTypeDefInsideDependency_EI", ReturnCode.Success);
+#else
+            CLITestHelper.Test("CopyInsideTypeDefInsideDependency", ReturnCode.Success);
+#endif
+
+        }
+
+        /// <summary>
         /// Test if Euro Information suffixing rule is deactivated
         /// </summary>
         [TestMethod]
