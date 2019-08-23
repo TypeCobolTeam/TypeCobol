@@ -134,7 +134,7 @@ namespace TypeCobol.Server
                 #endregion
 
                 depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load intrinsic
-                depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, depParser.CustomSymbols, config.InputFiles, config.CopyFolders, DependencyErrorEvent); //Load dependencies
+                depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config, depParser.CustomSymbols, DependencyErrorEvent); //Load dependencies
 
                 if (diagDetected)
                     throw new CopyLoadingException("Diagnostics detected while parsing Intrinsic file", null, null, logged: false, needMail: false);
@@ -144,10 +144,6 @@ namespace TypeCobol.Server
             #endregion
 
             var typeCobolOptions = new TypeCobolOptions(config);
-
-#if EUROINFO_RULES
-            typeCobolOptions.AutoRemarksEnable = config.AutoRemarks;
-#endif
 
             ReturnCode returnCode = ReturnCode.Success;
             List<Parser> parsers = new List<Parser>();

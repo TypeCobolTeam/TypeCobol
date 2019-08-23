@@ -420,10 +420,6 @@ namespace TypeCobol.LanguageServer
 
             var typeCobolOptions = new TypeCobolOptions(TypeCobolConfiguration);
 
-#if EUROINFO_RULES
-            typeCobolOptions.AutoRemarksEnable = TypeCobolConfiguration.AutoRemarks;
-#endif
-
             CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, _extensions, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.EndOfLineDelimiter, TypeCobolConfiguration.Format.FixedLineLength, TypeCobolConfiguration.Format.ColumnsLayout, typeCobolOptions);
 
             if (TypeCobolConfiguration.CopyFolders != null && TypeCobolConfiguration.CopyFolders.Count > 0)
@@ -527,7 +523,7 @@ namespace TypeCobol.LanguageServer
             try
             {
                 _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(TypeCobolConfiguration.Copies, TypeCobolConfiguration.Format, DiagnosticsErrorEvent); //Refresh Intrinsics
-                _customSymbols = Tools.APIHelpers.Helpers.LoadDependencies(TypeCobolConfiguration.Dependencies, TypeCobolConfiguration.Format, _customSymbols, TypeCobolConfiguration.InputFiles, TypeCobolConfiguration.CopyFolders, DiagnosticsErrorEvent); //Refresh Dependencies
+                _customSymbols = Tools.APIHelpers.Helpers.LoadDependencies(TypeCobolConfiguration, _customSymbols, DiagnosticsErrorEvent); //Refresh Dependencies
 
                 if (diagDetected)
                 {
