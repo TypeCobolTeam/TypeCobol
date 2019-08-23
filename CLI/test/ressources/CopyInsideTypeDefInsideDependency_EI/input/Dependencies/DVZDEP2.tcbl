@@ -1,0 +1,13 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZDEP2.
+      
+       DATA DIVISION.
+       working-storage section.
+      
+       01 TypeDefUsingCopyInsideTypeDef TYPEDEF STRICT PUBLIC.
+            05 MyCopyInsideTypeDef  TYPE DVZDEP1::CopiesInsideTypeDef.
+      
+      
+       PROCEDURE DIVISION.
+      
+       END PROGRAM DVZDEP2.
