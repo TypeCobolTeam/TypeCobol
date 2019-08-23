@@ -13,6 +13,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.CustomExceptions;
+using TypeCobol.Tools.Options_Config;
 using String = System.String;
 
 namespace TypeCobol.Tools.APIHelpers
@@ -73,8 +74,7 @@ namespace TypeCobol.Tools.APIHelpers
             return table;
         }
 
-        public static SymbolTable LoadDependencies([NotNull] List<string> paths, DocumentFormat format, SymbolTable intrinsicTable,
-            [NotNull] List<string> inputFiles, List<string> copyFolders, EventHandler<DiagnosticsErrorEvent> diagEvent)
+        public static SymbolTable LoadDependencies(TypeCobolConfiguration config, SymbolTable intrinsicTable, EventHandler<DiagnosticsErrorEvent> diagEvent)
         {
 
             var parser = new Parser(intrinsicTable);
@@ -83,7 +83,7 @@ namespace TypeCobol.Tools.APIHelpers
 
             var dependencies = new List<string>();
             string[] extensions = { ".tcbl", ".cbl", ".cpy" };
-            foreach (var path in paths)
+            foreach (var path in config.Dependencies)
             {
                 var dependenciesFound = Tools.FileSystem.GetFiles(path, extensions, true);
                 //Issue #668, warn if dependencies path are invalid
@@ -97,7 +97,7 @@ namespace TypeCobol.Tools.APIHelpers
 #if EUROINFO_RULES
             //Create list of inputFileName according to our naming convention in the case of an usage with RDZ
             var programsNames = new List<string>();
-            foreach (var inputFile in inputFiles)
+            foreach (var inputFile in config.InputFiles)
             {
                 string PgmName = null;
                 foreach (var line in File.ReadLines(inputFile))
@@ -140,8 +140,14 @@ namespace TypeCobol.Tools.APIHelpers
 #endif
                 try
                 {
+                    TypeCobolOptions options = new TypeCobolOptions(config);
+                    options.ExecToStep = ExecutionStep.SemanticCheck;
+
+#if EUROINFO_RULES
+                    options.AutoRemarksEnable = config.AutoRemarks;
+#endif
                     parser.CustomSymbols = table; //Update SymbolTable
-                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, format, copyFolders);
+                    parser.Init(path,  options, config.Format, config.CopyFolders);
                     parser.Parse(path); //Parse the dependency file
 
                     diagnostics.AddRange(parser.Results.AllDiagnostics());
