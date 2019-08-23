@@ -76,32 +76,31 @@ namespace TypeCobol.Tools.APIHelpers
         /// Parse one dependency
         /// </summary>
         /// <param name="path">Path of the dependency to parse</param>
-        /// <param name="format"></param>
+        /// <param name="config">Current configuration</param>
         /// <param name="customSymbols">Intrinsic or Namespace SymbolTable</param>
-        /// <param name="copyFolders"></param>
         /// <returns></returns>
-        private static CompilationUnit ParseDependency(string path, DocumentFormat format, SymbolTable customSymbols,
-            List<string> copyFolders)
+        private static CompilationUnit ParseDependency(string path, [NotNull] TypeCobolConfiguration config, SymbolTable customSymbols)
         {
+            var options = new TypeCobolOptions(config) { ExecToStep = ExecutionStep.SemanticCheck };
             var parser = new Parser(customSymbols);
 
-            parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, format, copyFolders);
+            parser.Init(path, options, config.Format, config.CopyFolders);
             parser.Parse(path); //Parse the dependency file
 
             return parser.Results;
         }
 
-        public static IEnumerable<string> GetDependenciesMissingCopies([NotNull] List<string> dependenciesPaths, DocumentFormat format, SymbolTable intrinsicTable, List<string> copyFolders, EventHandler<DiagnosticsErrorEvent> diagEvent)
+        public static IEnumerable<string> GetDependenciesMissingCopies([NotNull] TypeCobolConfiguration config, SymbolTable intrinsicTable, EventHandler<DiagnosticsErrorEvent> diagEvent)
         {
             List<CopyDirective> missingCopies = new List<CopyDirective>();
 
             // For all paths given in preferences
-            foreach (var path in dependenciesPaths)
+            foreach (var path in config.Dependencies)
             {
                 // For each dependency source found in path
-                foreach (string dependency in Tools.FileSystem.GetFiles(path, dependenciesExtensions, true))
+                foreach (string dependency in Tools.FileSystem.GetFiles(path, _DependenciesExtensions, true))
                 {
-                    missingCopies.AddRange(ParseDependency(dependency, format, intrinsicTable, copyFolders).MissingCopies);
+                    missingCopies.AddRange(ParseDependency(dependency, config, intrinsicTable).MissingCopies);
                 }
             }
 
@@ -109,8 +108,7 @@ namespace TypeCobol.Tools.APIHelpers
             return missingCopies.Select(mc => mc.TextName);
         }
 
-        public static SymbolTable LoadDependencies([NotNull] List<string> paths, DocumentFormat format, SymbolTable intrinsicTable,
-            [NotNull] List<string> inputFiles, List<string> copyFolders, EventHandler<DiagnosticsErrorEvent> diagEvent, 
+        public static SymbolTable LoadDependencies([NotNull] TypeCobolConfiguration config, SymbolTable intrinsicTable, EventHandler<DiagnosticsErrorEvent> diagEvent,
             out List<RemarksDirective.TextNameVariation> usedCopies,
             //Key : path of the dependency
             //Copy name not found
@@ -122,7 +120,7 @@ namespace TypeCobol.Tools.APIHelpers
             var table = new SymbolTable(intrinsicTable, SymbolTable.Scope.Namespace); //Generate a table of NameSPace containing the dependencies programs based on the previously created intrinsic table. 
 
             var dependencies = new List<string>();
-            foreach (var path in paths)
+            foreach (var path in config.Dependencies)
             {
                 var dependenciesFound = Tools.FileSystem.GetFiles(path, _DependenciesExtensions, true);
                 //Issue #668, warn if dependencies path are invalid
@@ -136,7 +134,7 @@ namespace TypeCobol.Tools.APIHelpers
 #if EUROINFO_RULES
             //Create list of inputFileName according to our naming convention in the case of an usage with RDZ
             var programsNames = new List<string>();
-            foreach (var inputFile in inputFiles)
+            foreach (var inputFile in config.InputFiles)
             {
                 string PgmName = null;
                 foreach (var line in File.ReadLines(inputFile))
@@ -178,7 +176,7 @@ namespace TypeCobol.Tools.APIHelpers
 #endif
                 try
                 {
-                    CompilationUnit parsingResult = ParseDependency(path, format, table, copyFolders);
+                    CompilationUnit parsingResult = ParseDependency(path, config, table);
 
                     //Gather copies used
                     usedCopies.AddRange(parsingResult.CopyTextNamesVariations);

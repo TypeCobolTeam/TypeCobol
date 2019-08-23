@@ -50,6 +50,10 @@ namespace TypeCobol.Compiler.Directives
             ExecToStep = config.ExecToStep;
             UseAntlrProgramParsing = config.UseAntlrProgramParsing;
             UseEuroInformationLegacyReplacingSyntax = config.UseEuroInformationLegacyReplacingSyntax;
+
+#if EUROINFO_RULES
+            AutoRemarksEnable = config.AutoRemarks;
+#endif
         }
 
         public TypeCobolOptions()

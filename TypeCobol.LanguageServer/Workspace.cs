@@ -524,8 +524,7 @@ namespace TypeCobol.LanguageServer
             try
             {
                 _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(Configuration.Copies, Configuration.Format, DiagnosticsErrorEvent); //Refresh Intrinsics
-                _customSymbols = Tools.APIHelpers.Helpers.LoadDependencies(Configuration.Dependencies, Configuration.Format, _customSymbols, Configuration.InputFiles, 
-                    Configuration.CopyFolders, DiagnosticsErrorEvent, out List<RemarksDirective.TextNameVariation> usedCopies, out IDictionary<string, IEnumerable<string>> missingCopies); //Refresh Dependencies
+                _customSymbols = Tools.APIHelpers.Helpers.LoadDependencies(Configuration, _customSymbols, DiagnosticsErrorEvent, out List<RemarksDirective.TextNameVariation> usedCopies, out IDictionary<string, IEnumerable<string>> missingCopies); //Refresh Dependencies
 
                 if (missingCopies.Count > 0)
                 {
