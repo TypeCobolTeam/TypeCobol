@@ -74,9 +74,12 @@ namespace TypeCobol.Codegen.Nodes
             bHasPeriod = false;
             while (i < consumedTokens.Count)
             {
-                if ((i != consumedTokens.Count - 1) || (consumedTokens[i].TokenType != Compiler.Scanner.TokenType.PeriodSeparator))
+                string tokenText = tokenFilter != null ? tokenFilter(consumedTokens[i]) : consumedTokens[i].Text;
+
+                if (!string.IsNullOrEmpty(tokenText) && (i != consumedTokens.Count - 1 || consumedTokens[i].TokenType != TokenType.PeriodSeparator))
                     if (baseToken?.Line == consumedTokens[i].Line)
-                        sb.Append(string.Intern(" "));//Add a space but not before a Period Separator
+                        sb.Append(string.Intern(" ")); //Add a space but not before Period Separator and space
+
                 if (baseToken?.Line != consumedTokens[i].Line)
                 {
                     int nPad = consumedTokens[i].Column;
@@ -92,7 +95,7 @@ namespace TypeCobol.Codegen.Nodes
                     sb.Append(pad);
                     baseToken = consumedTokens[i];
                 }
-                sb.Append(tokenFilter != null ? tokenFilter(consumedTokens[i]) : consumedTokens[i].Text);
+                sb.Append(tokenText);
                 if (i == consumedTokens.Count - 1)
                     bHasPeriod = consumedTokens[i].TokenType == Compiler.Scanner.TokenType.PeriodSeparator;
                 i++;
@@ -201,13 +204,49 @@ namespace TypeCobol.Codegen.Nodes
                         bHasPeriod = false;
                         return "";
                     }
-                    FlushConsumedTokens(layout, i - 1, customtype.CodeElement.ConsumedTokens, sb, out bHasPeriod, token => token.TokenType == TokenType.PeriodSeparator ? string.Empty : token.Text);
+                    FlushConsumedTokens(layout, i - 1, customtype.CodeElement.ConsumedTokens, sb, out bHasPeriod);
 
                     //Add any VALUE clause from dataDescriptionEntry
+                    if (bHasPeriod)
+                    {
+                        sb.Length--; //Trim trailing PeriodSeparator if any.
+                        bHasPeriod = false;
+                    }
                     i = 0;
-                    while (i < dataDescriptionEntry.ConsumedTokens.Count && dataDescriptionEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.VALUE && dataDescriptionEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.VALUES)
+                    while (i < dataDescriptionEntry.ConsumedTokens.Count && dataDescriptionEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.VALUE)
                         i++;
-                    FlushConsumedTokens(layout, i - 1, dataDescriptionEntry.ConsumedTokens, sb, out bHasPeriod);
+                    bool first = true;
+                    bool stop = false;
+                    FlushConsumedTokens(layout, i - 1, dataDescriptionEntry.ConsumedTokens, sb, out bHasPeriod, StopOnNextKeyword);
+
+                    string StopOnNextKeyword(Token token)
+                    {
+                        if (first)
+                        {
+                            first = false;
+                            return token.Text;
+                        }
+
+                        if (stop)
+                        {
+                            if (token.TokenType == TokenType.PeriodSeparator) return token.Text;
+                            return string.Empty;
+                        }
+
+                        if (token.TokenFamily == TokenFamily.SyntaxKeyword
+                            ||
+                            token.TokenFamily == TokenFamily.CobolV6Keyword
+                            ||
+                            token.TokenFamily == TokenFamily.Cobol2002Keyword
+                            ||
+                            token.TokenFamily == TokenFamily.TypeCobolKeyword)
+                        {
+                            stop = true;
+                            return string.Empty;
+                        }
+
+                        return token.Text;
+                    }
                 }
             }
             return sb.ToString();
@@ -223,27 +262,33 @@ namespace TypeCobol.Codegen.Nodes
             out bool globalSeen,
             Func<Compiler.Scanner.Token, string> tokenFilter = null)
         {
-            globalSeen = false;
-            bHasPeriod = false;
             StringBuilder sb = new StringBuilder();
-            if (dataDescEntry.ConsumedTokens != null)
+
+            int i = 0;
+            while (i < dataDescEntry.ConsumedTokens.Count && dataDescEntry.ConsumedTokens[i].TokenType != TokenType.TYPE && dataDescEntry.ConsumedTokens[i].TokenType != TokenType.VALUE)
+                i++;
+
+            bool hasGlobal = false;
+            bool skipNext = false;
+            string SkipTypeName(Token token)
             {
-                int i = 0;
-                while (i < dataDescEntry.ConsumedTokens.Count && dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.TYPE)
-                    i++;
-                i++;//Ignore the Name of the Type.
-
-                ++i;
-
-                //Ignore qualified type name
-                while (i < dataDescEntry.ConsumedTokens.Count &&
-                       dataDescEntry.ConsumedTokens[i].TokenType == Compiler.Scanner.TokenType.QualifiedNameSeparator)
-                {                    
-                    i += 2; //skip  :: and the next type name
+                if (token.TokenType == TokenType.TYPE || token.TokenType == TokenType.QualifiedNameSeparator)
+                {
+                    skipNext = true;
+                    return string.Empty;
                 }
-                globalSeen = ContainsToken(dataDescEntry.ConsumedTokens, i - 1, TokenType.GLOBAL);
-                FlushConsumedTokens(layout, i - 1, dataDescEntry.ConsumedTokens, sb, out bHasPeriod, tokenFilter);
+
+                if (skipNext)
+                {
+                    skipNext = false;
+                    return string.Empty;
+                }
+
+                hasGlobal |= token.TokenType == TokenType.GLOBAL;
+                return tokenFilter != null ? tokenFilter(token) : token.Text;
             }
+            FlushConsumedTokens(layout, i - 1, dataDescEntry.ConsumedTokens, sb, out bHasPeriod, SkipTypeName);
+            globalSeen = hasGlobal;
             return sb.ToString();
         }
 
