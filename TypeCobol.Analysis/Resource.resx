@@ -129,6 +129,9 @@
   <data name="BasicBlockGroupGoesBeyondTheLimit" xml:space="preserve">
     <value>Inside group '{0}' there is a branch '{0}' outside the group.</value>
   </data>
+  <data name="RecursiveBasicBlockGroupInstructions" xml:space="preserve">
+    <value>Recursive Basic Block Group with the following instruction : {0}</value>
+  </data>
   <data name="RecursiveBlockOnPerformProcedure" xml:space="preserve">
     <value>A Recursive block has been encountered while analysing PERFORM instruction to '{0}' : {1}</value>
   </data>

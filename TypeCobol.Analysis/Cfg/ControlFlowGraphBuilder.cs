@@ -1322,7 +1322,7 @@ namespace TypeCobol.Analysis.Cfg
 
             if (symbols.Count == 0)
             {
-                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                Diagnostic d = new Diagnostic(MessageCode.ControlFlowGraphDiagnostic,
                     node.CodeElement.Column,
                     node.CodeElement.Column,
                     node.CodeElement.Line,
@@ -1332,7 +1332,7 @@ namespace TypeCobol.Analysis.Cfg
             }
             if (symbols.Count > 1)
             {
-                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                Diagnostic d = new Diagnostic(MessageCode.ControlFlowGraphDiagnostic,
                     node.CodeElement.Column,
                     node.CodeElement.Column,
                     node.CodeElement.Line,
@@ -1370,7 +1370,7 @@ namespace TypeCobol.Analysis.Cfg
                     {//Recursive blocks detection.
                         block.FullInstruction = true;
                         string strBlock = block.ToString();
-                        Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                        Diagnostic d = new Diagnostic(MessageCode.ControlFlowGraphDiagnostic,
                             p.CodeElement.Column,
                             p.CodeElement.Column,
                             p.CodeElement.Line,
@@ -1404,7 +1404,7 @@ namespace TypeCobol.Analysis.Cfg
                 {
                     if (procedureSymbol.Number > throughProcedureSymbol.Number)
                     {// the second procedure name is before the first one.
-                        Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                        Diagnostic d = new Diagnostic(MessageCode.ControlFlowGraphDiagnostic,
                             p.CodeElement.Column,
                             p.CodeElement.Column,
                             p.CodeElement.Line,
@@ -1461,7 +1461,7 @@ namespace TypeCobol.Analysis.Cfg
                         {
                             if (b != group.Group.Last.Value)
                             {//Hum this Group is not the last group and it goes beyond the group limit ==> we don't support that.
-                                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                                Diagnostic d = new Diagnostic(MessageCode.ControlFlowGraphDiagnostic,
                                     p.CodeElement.Column,
                                     p.CodeElement.Column,
                                     p.CodeElement.Line,
@@ -1567,10 +1567,28 @@ namespace TypeCobol.Analysis.Cfg
         /// Graft the content of a Basic Block group by duplicating all its blocks and connecting all blocks to the CFG continuation.
         /// </summary>
         /// <param name="group">The group to be grafted</param>
-        private void GraftBasicBlockGroup(BasicBlockForNodeGroup group)
+        /// <param name="visitedGroupIndex">Set of Visited Group Index to avoid infinite recursion</param>
+        private void GraftBasicBlockGroup(BasicBlockForNodeGroup group, HashSet<int> visitedGroupIndex = null)
         {
             if (group.Group.Count == 0)
                 return;
+            if (visitedGroupIndex == null)
+            {
+                visitedGroupIndex = new HashSet<int>();
+            }
+            else if (visitedGroupIndex.Contains(group.GroupIndex))
+            {
+                var firstGroup = group.Group.FirstOrDefault(b => b.Instructions.Count > 0 && b.Instructions.Any(i => i.CodeElement != null));
+                //we must emit an error here and return.                
+                Diagnostic d = new Diagnostic(MessageCode.ControlFlowGraphDiagnostic,
+                    firstGroup.Instructions.First.Value.CodeElement.Column,
+                    firstGroup.Instructions.First.Value.CodeElement.Column,
+                    firstGroup.Instructions.First.Value.CodeElement.Line,
+                    string.Format(Resource.RecursiveBasicBlockGroupInstructions, group.ToString()));
+                Diagnostics.Add(d);
+                return;
+            }
+            visitedGroupIndex.Add(group.GroupIndex);
             //The new group to build.
             LinkedList<BasicBlock<Node, D>> newGroup = new LinkedList<BasicBlock<Node, D>>();
             //Map of block : (Original Block Index, [new Block Index, Successor Edge Index])
@@ -1583,7 +1601,7 @@ namespace TypeCobol.Analysis.Cfg
                 if (newBlock is BasicBlockForNodeGroup)
                 {//We are Cloning a Group ==> recursion
                     BasicBlockForNodeGroup newBG = (BasicBlockForNodeGroup)newBlock;
-                    GraftBasicBlockGroup(newBG);
+                    GraftBasicBlockGroup(newBG, visitedGroupIndex);
                 }
                 newBlock.Index = this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Count;
                 this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Add(newBlock);
@@ -1716,7 +1734,7 @@ namespace TypeCobol.Analysis.Cfg
                 IEnumerable<CfgSentence> sentences = ResolveSectionOrParagraphSentences(@goto, sref, out targetSymbol);
                 if (targetSymbol == null)
                 {
-                    Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                    Diagnostic d = new Diagnostic(MessageCode.ControlFlowGraphDiagnostic,
                         @goto.CodeElement.Column,
                         @goto.CodeElement.Column,
                         @goto.CodeElement.Line,
@@ -2877,7 +2895,7 @@ namespace TypeCobol.Analysis.Cfg
                             }
                             if (!bResolved)
                             {
-                                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                                Diagnostic d = new Diagnostic(MessageCode.ControlFlowGraphDiagnostic,
                                     alter.CodeElement.Column,
                                     alter.CodeElement.Column,
                                     alter.CodeElement.Line,

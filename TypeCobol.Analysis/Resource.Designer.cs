@@ -22,7 +22,7 @@ namespace TypeCobol.Analysis {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resource {
+    public class Resource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace TypeCobol.Analysis {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("TypeCobol.Analysis.Resource", typeof(Resource).Assembly);
@@ -51,7 +51,7 @@ namespace TypeCobol.Analysis {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace TypeCobol.Analysis {
         /// <summary>
         ///   Looks up a localized string similar to Ambiguous Section or Paragraph reference : &apos;{0}&apos;.
         /// </summary>
-        internal static string AmbiguousSectionOrParagraph {
+        public static string AmbiguousSectionOrParagraph {
             get {
                 return ResourceManager.GetString("AmbiguousSectionOrParagraph", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace TypeCobol.Analysis {
         /// <summary>
         ///   Looks up a localized string similar to Bad ALTER instruction with No sibling altered Goto..
         /// </summary>
-        internal static string BadAlterIntrWithNoSiblingGotoInstr {
+        public static string BadAlterIntrWithNoSiblingGotoInstr {
             get {
                 return ResourceManager.GetString("BadAlterIntrWithNoSiblingGotoInstr", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace TypeCobol.Analysis {
         /// <summary>
         ///   Looks up a localized string similar to PERFORM &apos;{0}&apos; THRU &apos;{1}&apos;:  &apos;{1}&apos;  is declared before &apos;{0}&apos;.
         /// </summary>
-        internal static string BadPerformProcedureThru {
+        public static string BadPerformProcedureThru {
             get {
                 return ResourceManager.GetString("BadPerformProcedureThru", resourceCulture);
             }
@@ -90,16 +90,25 @@ namespace TypeCobol.Analysis {
         /// <summary>
         ///   Looks up a localized string similar to Inside group &apos;{0}&apos; there is a branch &apos;{0}&apos; outside the group..
         /// </summary>
-        internal static string BasicBlockGroupGoesBeyondTheLimit {
+        public static string BasicBlockGroupGoesBeyondTheLimit {
             get {
                 return ResourceManager.GetString("BasicBlockGroupGoesBeyondTheLimit", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Recursive Basic Block Group with the following instruction : {0}.
+        /// </summary>
+        public static string RecursiveBasicBlockGroupInstructions {
+            get {
+                return ResourceManager.GetString("RecursiveBasicBlockGroupInstructions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A Recursive block has been encountered while analysing PERFORM instruction to &apos;{0}&apos; : {1}.
         /// </summary>
-        internal static string RecursiveBlockOnPerformProcedure {
+        public static string RecursiveBlockOnPerformProcedure {
             get {
                 return ResourceManager.GetString("RecursiveBlockOnPerformProcedure", resourceCulture);
             }
@@ -108,7 +117,7 @@ namespace TypeCobol.Analysis {
         /// <summary>
         ///   Looks up a localized string similar to Unknown Section of Paragraph target : &apos;{0}&apos;.
         /// </summary>
-        internal static string UnknownSectionOrParagraph {
+        public static string UnknownSectionOrParagraph {
             get {
                 return ResourceManager.GetString("UnknownSectionOrParagraph", resourceCulture);
             }
