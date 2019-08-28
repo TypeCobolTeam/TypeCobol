@@ -110,5 +110,28 @@ namespace TypeCobol.Analysis.Test
             CfgTestUtils.GenericDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath, true);
         }
 
+        /// <summary>
+        /// In DFA Extend mode a recursive PERFORM PROCEDURE will emit a recusion diagnostics.
+        /// </summary>
+        [TestMethod]
+        public void DetectPerformProcRecursiveException()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcRecursive0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(Builder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "CfgPrograms", "DetectPerformProcRecursiveException.dot");
+
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+
+            Assert.IsNotNull(CfgBuilder.Diagnostics != null);
+            Assert.IsTrue(CfgBuilder.Diagnostics.Count > 0);
+            Assert.IsTrue(CfgBuilder.Diagnostics[0].Message.Contains(TypeCobol.Analysis.Resource.RecursiveBasicBlockGroupInstructions.Substring(0, 
+                TypeCobol.Analysis.Resource.RecursiveBasicBlockGroupInstructions.LastIndexOf(':'))));
+
+            CfgTestUtils.GenericDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath, true);
+        }
+
     }
 }

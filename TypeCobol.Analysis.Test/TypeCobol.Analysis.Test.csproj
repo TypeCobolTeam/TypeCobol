@@ -210,6 +210,9 @@
     <None Include="DotOutput\Alter2.dot">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="DotOutput\CfgPrograms\DetectPerformProcRecursiveException.dot">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="DotOutput\CfgPrograms\HanoiPrg.dot">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
