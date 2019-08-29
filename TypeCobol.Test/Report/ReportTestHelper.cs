@@ -29,11 +29,12 @@ namespace TypeCobol.Test.Report
         /// <param name="fileName">The file name to parse</param>
         /// <param name="reportFileName">The file that contains the expected report</param>
         /// <param name="reportType">The Type of the IReport instance to be instantiated.</param>
-        public static void ParseWithNodeListenerReportCompare(string fileName, string reportFileName, System.Type reportType)
+        /// <returns>Return true if the report has been generated and compared, false otherwise</returns>
+        public static bool ParseWithNodeListenerReportCompare(string fileName, string reportFileName, System.Type reportType)
         {
             Assert.IsTrue(Tools.Reflection.IsTypeOf(reportType, typeof(IReport)));
             IReport report = null;//Variable to receive the created report instance.     
-            
+
             TypeCobol.Compiler.Parser.NodeListenerFactory factory = () =>
             {
                 object obj = System.Activator.CreateInstance(reportType, args: Path.GetFullPath(reportFileName));
@@ -73,8 +74,17 @@ namespace TypeCobol.Test.Report
                             string result = sw.ToString();
                             string expected = File.ReadAllText(output, format.Encoding);
                             TypeCobol.Test.TestUtils.compareLines(input, result, expected, PlatformUtils.GetPathForProjectFile(output));
+                            return true;
                         }
                     }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
                 }
             }
             finally
