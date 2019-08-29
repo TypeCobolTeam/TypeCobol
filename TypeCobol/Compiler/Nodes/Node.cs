@@ -403,7 +403,7 @@ namespace TypeCobol.Compiler.Nodes {
                 if (_root != null) return _root;
                 var current = this;
                 while (current.Parent != null) current = current.Parent;
-                _root = (SourceFile) current;
+                _root = current as SourceFile;
                 return _root;
             }
         }

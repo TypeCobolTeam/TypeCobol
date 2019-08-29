@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Codegen.Nodes
@@ -942,18 +943,95 @@ namespace TypeCobol.Codegen.Nodes
         public static List<ITextLine> InsertChildren(ColumnsLayout? layout, List<string> rootProcedures, List< Tuple<string,string> > rootVariableName, DataDefinition ownerDefinition, DataDefinition type, int level, int indent)
         {
             var lines = new List<ITextLine>();
+            // List of all the CopyDirectives that have been added to the lines
+            List<CopyDirective> usedCopies = new List<CopyDirective>();
             foreach (var child in type.Children)
             {
-                bool bCanGenerate = !child.IsInsideCopy();
+                bool bIsInsideCopy = child.IsInsideCopy();
+
                 //Handle Typedef whose body is inside a COPY
                 if (child.IsFlagSet(Flag.InsideTypedefFromCopy))
                 {
                     if (child.IsFlagSet(Flag.IsTypedefCopyNode))
                     {
-                        lines.AddRange(child.Lines);
+                        if (child.Lines.Sum(l => l.Text.Count(c => c == '.')) > 1)
+                        {
+                            //If there is more than 1 instruction displayed in the lines, create new line containing only the relevant text
+                            var spacing = child.Lines.First().Text.TakeWhile(char.IsWhiteSpace).Count();
+                            lines.Add(new CobolTextLine(new TextLineSnapshot(child.CodeElement.Line, new string(' ', spacing) + child.CodeElement.Text, null), ColumnsLayout.CobolReferenceFormat));
+                        }
+                        else
+                        {
+                            lines.AddRange(child.Lines);
+                        }
+
                         continue;
                     }
                 }
+
+                //If the child is coming from a copy, we want to add the clause copy to the lines
+                if (bIsInsideCopy && child.CodeElement != null)
+                {
+                    //There is already a mechanism to write the clause COPY coming from the main program in LinearNodeSourceCodeMapper. 
+                    //This is how we recover the clause copy from the dependencies.
+                    //Here we check if the typedef has been defined in another file than the one declaring the datatype.
+                    if (type.Root != null && !type.Root.Programs.Any(p => rootProcedures.Contains(p.Name)))
+                    {
+                        CopyDirective copy = child.CodeElement.FirstCopyDirective;
+                        //The first data coming from a copy is used to recover the Clause COPY, the other would be only a repetition of this one, so we skip them.
+                        //Even with the same name, two different Clause COPY are differentiated by their token lines
+                        if (usedCopies.Contains(copy) == false)
+                        {
+                            //We recreate the clause copy with its arguments.
+                            //We don't have access to the original tokens here, so we can't recreate the same format as the original sentence.
+                            StringBuilder copyInstruction = new StringBuilder();
+                            copyInstruction.Append(' ', copy.COPYToken.TokensLine.SourceText.TakeWhile(char.IsWhiteSpace).Count());
+                            copyInstruction.Append("COPY " + copy.TextName);
+                            if (copy.ReplaceOperations.Any())
+                            {
+                                copyInstruction.Append(" REPLACING");
+                            }
+                            foreach (var replaceOperation in copy.ReplaceOperations)
+                            {
+                                switch (replaceOperation)
+                                {
+                                    case SingleTokenReplaceOperation op:
+                                        copyInstruction.Append($" {op.ComparisonToken.Text} BY {op.ReplacementToken.Text}");
+                                        break;
+                                    case PartialWordReplaceOperation op:
+                                        copyInstruction.Append($" =={op.ComparisonToken.Text}== BY =={op.PartialReplacementToken.Text}==");
+                                        break;
+                                    case SingleToMultipleTokensReplaceOperation op:
+                                        copyInstruction.Append($" {op.ComparisonToken.Text} BY");
+                                        foreach (Token opReplacementToken in op.ReplacementTokens)
+                                        {
+                                            copyInstruction.Append($" {opReplacementToken.Text}");
+                                        }
+                                        break;
+                                    case MultipleTokensReplaceOperation op:
+                                        foreach (Token opFollowingComparisonTokens in op.FollowingComparisonTokens)
+                                        {
+                                            copyInstruction.Append($" {opFollowingComparisonTokens.Text}");
+                                        }
+                                        copyInstruction.Append(" BY");
+                                        foreach (Token opReplacementToken in op.ReplacementTokens)
+                                        {
+                                            copyInstruction.Append($" {opReplacementToken.Text}");
+                                        }
+                                        break;
+                                }
+                            }
+
+                            copyInstruction.Append(".");
+
+                            lines.Add(new TextLineSnapshot(-1, copyInstruction.ToString(), null));
+                            usedCopies.Add(child.CodeElement.FirstCopyDirective);
+                            continue;
+                        }
+                    }
+                   
+                } 
+
 
                 if (child is TypedDataNode) continue;
                 //Special cases BOOL / POINTER
@@ -963,7 +1041,7 @@ namespace TypeCobol.Codegen.Nodes
                     string attr_type = (string)child["type"];
                     if (attr_type != null && attr_type.ToUpper().Equals("BOOL"))
                     {
-                        if (bCanGenerate)
+                        if (!bIsInsideCopy)
                         {
                             string attr_name = (string) child["name"];
                             string margin = "";
@@ -987,7 +1065,7 @@ namespace TypeCobol.Codegen.Nodes
                         var attr_usage = child["usage"];
                         if (attr_usage != null && attr_usage.ToString().ToUpper().Equals("POINTER"))
                         {
-                            if (bCanGenerate)
+                            if (!bIsInsideCopy)
                             {
                                 string attr_name = (string) child["name"];
                                 string margin = "";
@@ -1028,7 +1106,7 @@ namespace TypeCobol.Codegen.Nodes
                 if (dataDefinitionEntry != null)
                 {
                     var texts = CreateDataDefinition(child, child.SymbolTable, layout, rootProcedures, rootVariableName, typed, dataDefinitionEntry, level, indent, isCustomTypeToo, false, isCustomTypeToo? typed.TypeDefinition: null);
-                    if (bCanGenerate)
+                    if (!bIsInsideCopy)
                         lines.AddRange(texts);
                 }
                 else
