@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Analytics;
@@ -106,6 +108,12 @@ namespace TypeCobol.Codegen
         }
 
         public virtual List<Diagnostic> Diagnostics
+        {
+            get;
+            private set;
+        }
+
+        public virtual IReadOnlyDictionary<string, TimeSpan> PerformanceReport
         {
             get;
             private set;
@@ -257,20 +265,45 @@ namespace TypeCobol.Codegen
                 throw new GenerationException("Unable to generate because of error diagnostics", compilationUnit.TextSourceInfo.Name, null, false, false);
             }
 
+            var stopwatch = Stopwatch.StartNew();
+
             // STEP 0: Initialize the global values.
             RootNode = compilationUnit.ProgramClassDocumentSnapshot.Root;
             SymTable = compilationUnit.ProgramClassDocumentSnapshot.Root.SymbolTable;
             Layout = columns;
             //Create the Initial target document.
             CreateTargetDocument(false);
+
+            var createTargetDocumentElapsed = stopwatch.Elapsed;
+            stopwatch.Restart();
+
             // STEP 1: modify tree to adapt it to destination language            
             // 1.1 Run the Qualifier action on this node
             Qualifier qualifier = new Qualifier(this, RootNode);
             qualifier.Execute();
+
+            var qualifierElapsed = stopwatch.Elapsed;
+            stopwatch.Restart();
+
             // 1.2 Perform other actions
             Actions.Perform(RootNode);
+
+            var actionsElapsed = stopwatch.Elapsed;
+            stopwatch.Restart();
+
             // STEP 2: convert tree to destination language code
             TreeToCode();
+
+            var treeToCodeElapsed = stopwatch.Elapsed;
+            stopwatch.Reset();
+
+            PerformanceReport = new Dictionary<string, TimeSpan>()
+                                {
+                                    {"CreateTargetDocument", createTargetDocumentElapsed},
+                                    {"Qualifier", qualifierElapsed},
+                                    {"Actions", actionsElapsed},
+                                    {"TreeToCode", treeToCodeElapsed}
+                                };
         }
 
         /// <summary>
