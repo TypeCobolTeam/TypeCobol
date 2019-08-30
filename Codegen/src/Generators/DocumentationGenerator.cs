@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -29,6 +30,8 @@ namespace TypeCobol.Codegen.Generators
         }
         public void Generate(CompilationUnit compilationUnit, ColumnsLayout columns = ColumnsLayout.FreeTextFormat)
         {
+            var stopwatch = Stopwatch.StartNew();
+
             Destination.Append("");
             //Add version to output file
 
@@ -36,11 +39,24 @@ namespace TypeCobol.Codegen.Generators
             var docBuilder = new DocumentationBuilder();
             sourceFile.AcceptASTVisitor(docBuilder);
 
+            var buildDocumentationTreeElapsed = stopwatch.Elapsed;
+            stopwatch.Restart();
+
             Destination.Append(SerializeToJson(docBuilder.DTOs));
             // this.Destination contains now the Json Documentation
+
+            var serializationElapsed = stopwatch.Elapsed;
+            stopwatch.Reset();
+
+            PerformanceReport = new Dictionary<string, TimeSpan>()
+                                {
+                                    {"BuildDocumentationTree", buildDocumentationTreeElapsed},
+                                    {"Serialization", serializationElapsed}
+                                };
         }
 
         public List<Diagnostic> Diagnostics { get; set; }
+        public IReadOnlyDictionary<string, TimeSpan> PerformanceReport { get; private set; }
         public string TypeCobolVersion { get; set; }
 
         public bool HasLineMapData => false;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -49,6 +50,8 @@ namespace TypeCobol.Codegen.Generators
 
         public List<Diagnostic> Diagnostics
         {get;}
+
+        public IReadOnlyDictionary<string, TimeSpan> PerformanceReport { get; private set; }
 
         /// <summary>
         /// The Target Generated Document
@@ -440,7 +443,8 @@ namespace TypeCobol.Codegen.Generators
             Compiler.Scanner.ITokensLinesIterator tokensIterator = Compiler.Preprocessor.ProcessedTokensDocument.GetProcessedTokensIterator(
                 compilationUnit.TextSourceInfo, processedTokensDocument.Lines, compilationUnit.CompilerOptions);
 
-            //var date1 = DateTime.Now;
+            var stopwatch = Stopwatch.StartNew();
+
             TypeCobol.Compiler.Scanner.Token curToken = null;
             while ((curToken = (curToken == null ? tokensIterator.NextToken() : curToken)) != null)
             {
@@ -458,13 +462,22 @@ namespace TypeCobol.Codegen.Generators
                     ReplaceAction(token as TypeCobol.Compiler.Preprocessor.ReplacedPartialCobolWord);                        
                 }
             }
+
+            var addActionsElapsed = stopwatch.Elapsed;
+            stopwatch.Restart();
+
             //Now Run Actions
             PerformActions();
             TargetDocument.Write(Destination);
 
-            //var date2 = DateTime.Now;                
-            //var date_diff = date2 - date1;
-            //System.Console.Out.WriteLine(date_diff);
+            var performActionsElapsed = stopwatch.Elapsed;
+            stopwatch.Reset();
+
+            PerformanceReport = new Dictionary<string, TimeSpan>()
+                                {
+                                    {"AddActions", addActionsElapsed},
+                                    {"PerformActions", performActionsElapsed}
+                                };
         }
 
         public void GenerateLineMapFile(Stream stream)

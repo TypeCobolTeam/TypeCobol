@@ -22,6 +22,8 @@ namespace TypeCobol.Codegen
 
         List<Diagnostic> Diagnostics { get; }
 
+        IReadOnlyDictionary<string, TimeSpan> PerformanceReport { get; }
+
         string TypeCobolVersion { get; set; }
 
         /// <summary>
