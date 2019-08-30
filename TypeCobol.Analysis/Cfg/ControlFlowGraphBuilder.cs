@@ -3224,5 +3224,19 @@ namespace TypeCobol.Analysis.Cfg
         {
 
         }
+
+        /// <summary>
+        /// Perform a Traverse recursively of all ControlFlowGraphBuilder instances
+        /// </summary>
+        /// <param name="callback">A callback function</param>
+        /// <returns>true if all Builders have been traversed, false otherwise</returns>
+        public bool TraverseAllCfgBuilders(Func<ControlFlowGraphBuilder<D>, bool> callback)
+        {
+            if (AllCfgBuilder != null)
+            {
+                return AllCfgBuilder.All(b => callback(b) && (b != this ? b.TraverseAllCfgBuilders(callback): true));
+            }
+            return true;
+        }
     }
 }

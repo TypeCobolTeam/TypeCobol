@@ -83,6 +83,29 @@ namespace TypeCobol.Analysis.Dfa
         /// <returns>The USE variable set</returns>
         public abstract HashSet<V> GetDefVariables(N node);
 
+        /// <summary>
+        /// On Use Point Delegate
+        /// </summary>
+        /// <param name="dfaBuilder">The Dfa Builder in which the Use Point is seen</param>
+        /// <param name="usePoint">The Use point</param>
+        public delegate void OnUsePoint(DataFlowGraphBuilder<N, D, V> dfaBuilder, DfaUsePoint<N, V> usePoint);
+
+        /// <summary>
+        /// On Use Point Event
+        /// </summary>
+        public event OnUsePoint  OnUsePointEvent;
+
+        /// <summary>
+        /// On Def Point Delegate
+        /// </summary>
+        /// <param name="dfaBuilder">The Dfa Builder in which the Def Point is seen</param>
+        /// <param name="defPoint">The Def Point</param>
+        public delegate void OnDefPoint(DataFlowGraphBuilder<N, D, V> dfaBuilder, DfaDefPoint<N, V> defPoint);
+
+        /// <summary>
+        /// On Def Point Event
+        /// </summary>
+        public event OnDefPoint OnDefPointEvent;
 
         /// <summary>
         /// Compute the Use List
@@ -120,6 +143,10 @@ namespace TypeCobol.Analysis.Dfa
                                     up.Variable = v;
                                     up.BlockIndex = block.Index;
                                     UseList.Add(up);
+
+                                    //Dispatch to Listeners
+                                    if (OnUsePointEvent != null)
+                                        OnUsePointEvent(this, up);
                                 }
                                 block.Data.UseCount += uses.Count;
                             }
@@ -167,6 +194,10 @@ namespace TypeCobol.Analysis.Dfa
                                     dp.Variable = v;
                                     dp.BlockIndex = block.Index;
                                     DefList.Add(dp);
+
+                                    //Dispatch to Listeners
+                                    if (OnDefPointEvent != null)
+                                        OnDefPointEvent(this, dp);
                                 }
                                 block.Data.DefCount += defs.Count;
                             }
@@ -175,6 +206,14 @@ namespace TypeCobol.Analysis.Dfa
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Compute the Use Def List
+        /// </summary>
+        public void ComputeUseDefList()
+        {
+
         }
 
         /// <summary>

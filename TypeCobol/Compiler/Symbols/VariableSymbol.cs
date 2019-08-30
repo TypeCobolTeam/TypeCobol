@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Types;
-using Type = TypeCobol.Compiler.Types.Type;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -50,6 +49,15 @@ namespace TypeCobol.Compiler.Symbols
                 System.Diagnostics.Contracts.Contract.Requires((value >= 1 && value <= 49) || (value == 77) || (value == 88) || (value == 66));
                 m_Level = value;
             }
+        }
+
+        /// <summary>
+        /// Any value associated to this Variable, more often an initial value.
+        /// </summary>
+        public object Value
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -199,6 +207,7 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         private Types.Type MyExpandedType { get; set; }
+
         public override Types.Type ExpandedType(ProgramSymbol program)
         {
             if (this.Type == null)
@@ -232,7 +241,7 @@ namespace TypeCobol.Compiler.Symbols
             bool bHasDot = false;
             if (Type != null)
             {
-                if (Type.TypeComponent?.Tag == Type.Tags.Group && !HasFlag(Flags.Renames))
+                if (Type.TypeComponent?.Tag == Types.Type.Tags.Group && !HasFlag(Flags.Renames))
                 {
                     tw.WriteLine(".");
                     this.Type.Dump(tw, indentLevel + 1);

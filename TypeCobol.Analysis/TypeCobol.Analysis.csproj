@@ -58,6 +58,7 @@
     <Compile Include="Graph\CfgDotFileGenerator.cs" />
     <Compile Include="Graph\ICfgFileGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Report\ZCallPgmReport.cs" />
     <Compile Include="Resource.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
