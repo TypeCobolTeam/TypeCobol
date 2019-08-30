@@ -18,71 +18,18 @@ namespace TypeCobol.Analysis.Test
     [TestClass]
     public class DfaBuildUseAndDefListTest
     {
-        public static TypeCobolConfiguration DefaultConfig = null;
-        public static ProgramSymbolTableBuilder Builder = null;
-        public static NodeListenerFactory BuilderNodeListenerFactory = null;
-        public static NodeListenerFactory CfgBuilderNodeListenerFactory = null;
-        public static string DefaultIntrinsicPath = null;
-
-        //A Cfg for DataFlow Analysis on Node
-        public static DefaultControlFlowGraphBuilder<DfaBasicBlockInfo<Symbol>> CfgBuilder;
-
+        public static CfgDfaTestContext ctx = null;
         [TestInitialize]
         public void TestInitialize()
         {
-            SymbolTableBuilder.Root = null;
-            //Create a default configurations for options
-            DefaultConfig = new TypeCobolConfiguration();
-            if (File.Exists(DefaultIntrinsicPath))
-            {
-                DefaultConfig.Copies.Add(DefaultIntrinsicPath);
-            }
-
-            //DefaultConfig.Dependencies.Add(Path.Combine(Directory.GetCurrentDirectory(), "resources", "dependencies"));
-            SymbolTableBuilder.Config = DefaultConfig;
-
-            //Force the creation of the Global Symbol Table
-            var global = SymbolTableBuilder.Root;
-
-            //Allocate a static Program Symbol Table Builder
-            BuilderNodeListenerFactory = () =>
-            {
-                Builder = new ProgramSymbolTableBuilder();
-                return Builder;
-            };
-            NodeDispatcher.RegisterStaticNodeListenerFactory(BuilderNodeListenerFactory);
-
-            //Alocate a static Default Control Flow Graph Builder
-            CfgBuilderNodeListenerFactory = () =>
-            {
-                CfgBuilder = new DefaultControlFlowGraphBuilder<DfaBasicBlockInfo<Symbol>>();
-                return CfgBuilder;
-            };
-            NodeDispatcher.RegisterStaticNodeListenerFactory(CfgBuilderNodeListenerFactory);
-        }
-
-        private static void RemovePrograms(ProgramSymbol prog)
-        {
-            foreach (var nestPrg in prog.Programs)
-            {
-                SymbolTableBuilder.Root.RemoveProgram(prog);
-                RemovePrograms(nestPrg);
-            }
-            SymbolTableBuilder.Root.RemoveProgram(prog);
+            ctx = new CfgDfaTestContext(CfgDfaTestContext.Mode.Dfa);
+            ctx.TestInitialize();
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
-            if (BuilderNodeListenerFactory != null)
-            {
-                NodeDispatcher.RemoveStaticNodeListenerFactory(BuilderNodeListenerFactory);
-            }
-            if (CfgBuilderNodeListenerFactory != null)
-            {
-                NodeDispatcher.RemoveStaticNodeListenerFactory(CfgBuilderNodeListenerFactory);
-            }
-            CfgBuilder = null;
+            ctx.TestCleanup();
         }
 
         [TestMethod]
@@ -91,13 +38,13 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThen0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(Builder.Programs.Count == 1);
+            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThen0.dot");
 
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+            Assert.IsTrue(ctx.CfgDfaBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgDfaBuilder.AllCfgBuilder);
 
-            TypeCobolDataFlowGraphBuilder dfaBuilder = new TypeCobolDataFlowGraphBuilder(CfgBuilder.Cfg);
+            TypeCobolDataFlowGraphBuilder dfaBuilder = new TypeCobolDataFlowGraphBuilder(ctx.CfgDfaBuilder.Cfg);
             dfaBuilder.ComputeUseList();
             Assert.AreEqual(1, dfaBuilder.UseList.Count);
             Assert.IsTrue(dfaBuilder.UseList[0].Instruction.CodeElement.Type == Compiler.CodeElements.CodeElementType.IfStatement);
@@ -113,13 +60,13 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "SearchCond0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(Builder.Programs.Count == 1);
+            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "SearchCond0.dot");
 
-            Assert.AreEqual(1, CfgBuilder.AllCfgBuilder.Count);
-            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+            Assert.AreEqual(1, ctx.CfgDfaBuilder.AllCfgBuilder.Count);
+            Assert.IsNotNull(ctx.CfgDfaBuilder.AllCfgBuilder);
 
-            TypeCobolDataFlowGraphBuilder dfaBuilder = new TypeCobolDataFlowGraphBuilder(CfgBuilder.Cfg);
+            TypeCobolDataFlowGraphBuilder dfaBuilder = new TypeCobolDataFlowGraphBuilder(ctx.CfgDfaBuilder.Cfg);
             dfaBuilder.ComputeUseList();
             Assert.AreEqual(8, dfaBuilder.UseList.Count);
             string[] useVars = { "ELEM", "IDX", "NBJ", "IDX", "NUM", "LIB", "IDX", "IDX-END"};
@@ -140,48 +87,48 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "MixPeformEvaluateIf0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(Builder.Programs.Count == 1);
+            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "MixPeformEvaluateIf0.dot");
 
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+            Assert.IsTrue(ctx.CfgDfaBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgDfaBuilder.AllCfgBuilder);
 
-            TypeCobolDataFlowGraphBuilder dfaBuilder = new TypeCobolDataFlowGraphBuilder(CfgBuilder.Cfg);
+            TypeCobolDataFlowGraphBuilder dfaBuilder = new TypeCobolDataFlowGraphBuilder(ctx.CfgDfaBuilder.Cfg);
             dfaBuilder.ComputeUseList();
-            Assert.AreEqual(0, CfgBuilder.Cfg.AllBlocks[0].Data.UseCount);
-            Assert.AreEqual(0, CfgBuilder.Cfg.AllBlocks[1].Data.UseCount);
-            Assert.AreEqual(0, CfgBuilder.Cfg.AllBlocks[2].Data.UseCount);
-            Assert.AreEqual(0, CfgBuilder.Cfg.AllBlocks[3].Data.UseCount);
-            Assert.AreEqual(0, CfgBuilder.Cfg.AllBlocks[4].Data.UseCount);
-            Assert.AreEqual(1, CfgBuilder.Cfg.AllBlocks[5].Data.UseCount);
-            Assert.AreEqual("ef", dfaBuilder.UseList[CfgBuilder.Cfg.AllBlocks[1].Data.UseListFirstIndex].Variable.Name);
+            Assert.AreEqual(0, ctx.CfgDfaBuilder.Cfg.AllBlocks[0].Data.UseCount);
+            Assert.AreEqual(0, ctx.CfgDfaBuilder.Cfg.AllBlocks[1].Data.UseCount);
+            Assert.AreEqual(0, ctx.CfgDfaBuilder.Cfg.AllBlocks[2].Data.UseCount);
+            Assert.AreEqual(0, ctx.CfgDfaBuilder.Cfg.AllBlocks[3].Data.UseCount);
+            Assert.AreEqual(0, ctx.CfgDfaBuilder.Cfg.AllBlocks[4].Data.UseCount);
+            Assert.AreEqual(1, ctx.CfgDfaBuilder.Cfg.AllBlocks[5].Data.UseCount);
+            Assert.AreEqual("ef", dfaBuilder.UseList[ctx.CfgDfaBuilder.Cfg.AllBlocks[1].Data.UseListFirstIndex].Variable.Name);
 
-            Assert.AreEqual(2, CfgBuilder.Cfg.AllBlocks[18].Data.UseCount);
-            Assert.AreEqual("fct1", dfaBuilder.UseList[CfgBuilder.Cfg.AllBlocks[18].Data.UseListFirstIndex].Variable.Name);
-            Assert.AreEqual("fct2", dfaBuilder.UseList[CfgBuilder.Cfg.AllBlocks[18].Data.UseListFirstIndex + 1].Variable.Name);
+            Assert.AreEqual(2, ctx.CfgDfaBuilder.Cfg.AllBlocks[18].Data.UseCount);
+            Assert.AreEqual("fct1", dfaBuilder.UseList[ctx.CfgDfaBuilder.Cfg.AllBlocks[18].Data.UseListFirstIndex].Variable.Name);
+            Assert.AreEqual("fct2", dfaBuilder.UseList[ctx.CfgDfaBuilder.Cfg.AllBlocks[18].Data.UseListFirstIndex + 1].Variable.Name);
 
-            Assert.AreEqual(1, CfgBuilder.Cfg.AllBlocks[22].Data.UseCount);
-            Assert.AreEqual("ef", dfaBuilder.UseList[CfgBuilder.Cfg.AllBlocks[22].Data.UseListFirstIndex].Variable.Name);
+            Assert.AreEqual(1, ctx.CfgDfaBuilder.Cfg.AllBlocks[22].Data.UseCount);
+            Assert.AreEqual("ef", dfaBuilder.UseList[ctx.CfgDfaBuilder.Cfg.AllBlocks[22].Data.UseListFirstIndex].Variable.Name);
 
-            Assert.AreEqual(4, CfgBuilder.Cfg.AllBlocks[43].Data.UseCount);
+            Assert.AreEqual(4, ctx.CfgDfaBuilder.Cfg.AllBlocks[43].Data.UseCount);
 
             dfaBuilder.ComputeDefList();
-            Assert.AreEqual(3, CfgBuilder.Cfg.AllBlocks[1].Data.DefCount);
-            Assert.AreEqual("fct1", dfaBuilder.DefList[CfgBuilder.Cfg.AllBlocks[1].Data.DefListFirstIndex].Variable.Name);
-            Assert.AreEqual("fct2", dfaBuilder.DefList[CfgBuilder.Cfg.AllBlocks[1].Data.DefListFirstIndex + 1].Variable.Name);
-            Assert.AreEqual("zres", dfaBuilder.DefList[CfgBuilder.Cfg.AllBlocks[1].Data.DefListFirstIndex + 2].Variable.Name);
+            Assert.AreEqual(3, ctx.CfgDfaBuilder.Cfg.AllBlocks[1].Data.DefCount);
+            Assert.AreEqual("fct1", dfaBuilder.DefList[ctx.CfgDfaBuilder.Cfg.AllBlocks[1].Data.DefListFirstIndex].Variable.Name);
+            Assert.AreEqual("fct2", dfaBuilder.DefList[ctx.CfgDfaBuilder.Cfg.AllBlocks[1].Data.DefListFirstIndex + 1].Variable.Name);
+            Assert.AreEqual("zres", dfaBuilder.DefList[ctx.CfgDfaBuilder.Cfg.AllBlocks[1].Data.DefListFirstIndex + 2].Variable.Name);
 
-            Assert.AreEqual(1, CfgBuilder.Cfg.AllBlocks[5].Data.DefCount);
-            Assert.AreEqual("ind", dfaBuilder.DefList[CfgBuilder.Cfg.AllBlocks[5].Data.DefListFirstIndex].Variable.Name);
+            Assert.AreEqual(1, ctx.CfgDfaBuilder.Cfg.AllBlocks[5].Data.DefCount);
+            Assert.AreEqual("ind", dfaBuilder.DefList[ctx.CfgDfaBuilder.Cfg.AllBlocks[5].Data.DefListFirstIndex].Variable.Name);
 
-            Assert.AreEqual(1, CfgBuilder.Cfg.AllBlocks[18].Data.DefCount);
-            Assert.AreEqual("zres", dfaBuilder.DefList[CfgBuilder.Cfg.AllBlocks[18].Data.DefListFirstIndex].Variable.Name);
+            Assert.AreEqual(1, ctx.CfgDfaBuilder.Cfg.AllBlocks[18].Data.DefCount);
+            Assert.AreEqual("zres", dfaBuilder.DefList[ctx.CfgDfaBuilder.Cfg.AllBlocks[18].Data.DefListFirstIndex].Variable.Name);
 
-            Assert.AreEqual(1, CfgBuilder.Cfg.AllBlocks[22].Data.DefCount);
-            Assert.AreEqual("ind", dfaBuilder.DefList[CfgBuilder.Cfg.AllBlocks[22].Data.DefListFirstIndex].Variable.Name);
+            Assert.AreEqual(1, ctx.CfgDfaBuilder.Cfg.AllBlocks[22].Data.DefCount);
+            Assert.AreEqual("ind", dfaBuilder.DefList[ctx.CfgDfaBuilder.Cfg.AllBlocks[22].Data.DefListFirstIndex].Variable.Name);
 
-            Assert.AreEqual(1, CfgBuilder.Cfg.AllBlocks[43].Data.DefCount);
-            Assert.AreEqual("fct3", dfaBuilder.DefList[CfgBuilder.Cfg.AllBlocks[43].Data.DefListFirstIndex].Variable.Name);
+            Assert.AreEqual(1, ctx.CfgDfaBuilder.Cfg.AllBlocks[43].Data.DefCount);
+            Assert.AreEqual("fct3", dfaBuilder.DefList[ctx.CfgDfaBuilder.Cfg.AllBlocks[43].Data.DefListFirstIndex].Variable.Name);
         }
     }
 }

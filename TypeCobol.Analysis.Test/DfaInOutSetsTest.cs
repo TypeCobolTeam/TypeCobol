@@ -19,76 +19,18 @@ namespace TypeCobol.Analysis.Test
     [TestClass]
     public class DfaInOutSetsTest
     {
-        public static TypeCobolConfiguration DefaultConfig = null;
-        public static ProgramSymbolTableBuilder Builder = null;
-        public static NodeListenerFactory BuilderNodeListenerFactory = null;
-        public static NodeListenerFactory CfgBuilderNodeListenerFactory = null;
-        public static string DefaultIntrinsicPath = null;
-
-        //A Cfg for DataFlow Analysis on Node
-        public static DefaultControlFlowGraphBuilder<DfaBasicBlockInfo<Symbol>> CfgBuilder;
-
+        public static CfgDfaTestContext ctx = null;
         [TestInitialize]
         public void TestInitialize()
         {
-            //Create a default configurations for options
-            DefaultConfig = new TypeCobolConfiguration();
-            if (File.Exists(DefaultIntrinsicPath))
-            {
-                DefaultConfig.Copies.Add(DefaultIntrinsicPath);
-            }
-
-            //DefaultConfig.Dependencies.Add(Path.Combine(Directory.GetCurrentDirectory(), "resources", "dependencies"));
-            SymbolTableBuilder.Config = DefaultConfig;
-
-            //Force the creation of the Global Symbol Table
-            var global = SymbolTableBuilder.Root;
-
-            //Allocate a static Program Symbol Table Builder
-            BuilderNodeListenerFactory = () =>
-            {
-                Builder = new ProgramSymbolTableBuilder();
-                return Builder;
-            };
-            NodeDispatcher.RegisterStaticNodeListenerFactory(BuilderNodeListenerFactory);
-
-            //Alocate a static Default Control Flow Graph Builder
-            CfgBuilderNodeListenerFactory = () =>
-            {
-                CfgBuilder = new DefaultControlFlowGraphBuilder<DfaBasicBlockInfo<Symbol>>();
-                return CfgBuilder;
-            };
-            NodeDispatcher.RegisterStaticNodeListenerFactory(CfgBuilderNodeListenerFactory);
-        }
-
-        private static void RemovePrograms(ProgramSymbol prog)
-        {
-            foreach (var nestPrg in prog.Programs)
-            {
-                SymbolTableBuilder.Root.RemoveProgram(prog);
-                RemovePrograms(nestPrg);
-            }
-            SymbolTableBuilder.Root.RemoveProgram(prog);
+            ctx = new CfgDfaTestContext(CfgDfaTestContext.Mode.Dfa);
+            ctx.TestInitialize();
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
-            if (BuilderNodeListenerFactory != null)
-            {
-                NodeDispatcher.RemoveStaticNodeListenerFactory(BuilderNodeListenerFactory);
-                if (Builder.Programs.Count != 0)
-                {
-                    foreach (var prog in Builder.Programs)
-                    {
-                        RemovePrograms(prog);
-                    }
-                }
-            }
-            if (CfgBuilderNodeListenerFactory != null)
-            {
-                NodeDispatcher.RegisterStaticNodeListenerFactory(CfgBuilderNodeListenerFactory);
-            }
+            ctx.TestCleanup();
         }
 
         /// <summary>
@@ -149,12 +91,12 @@ namespace TypeCobol.Analysis.Test
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(ctx.CfgDfaBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgDfaBuilder.AllCfgBuilder);
 
             //Create a Dot File Generator            
-            CfgDotFileForNodeGenerator<DfaBasicBlockInfo<Symbol>> dotGen = new CfgDotFileForNodeGenerator<DfaBasicBlockInfo<Symbol>>(CfgBuilder.Cfg, false);
+            CfgDotFileForNodeGenerator<DfaBasicBlockInfo<Symbol>> dotGen = new CfgDotFileForNodeGenerator<DfaBasicBlockInfo<Symbol>>(ctx.CfgDfaBuilder.Cfg, false);
             dotGen.FullInstruction = true;
             StringWriter writer = new StringWriter();
             dotGen.Report(writer);
@@ -163,15 +105,15 @@ namespace TypeCobol.Analysis.Test
             string result = writer.ToString();
 
             //Resolve variable I,J
-            var multiI = Builder.Programs[0].ResolveReference(new string[] { "I" }, true);
+            var multiI = ctx.Builder.Programs[0].ResolveReference(new string[] { "I" }, true);
             Assert.AreEqual(1, multiI.Count);
             Symbol I = multiI.Symbol;
 
-            var multiJ = Builder.Programs[0].ResolveReference(new string[] { "J" }, true);
+            var multiJ = ctx.Builder.Programs[0].ResolveReference(new string[] { "J" }, true);
             Assert.AreEqual(1, multiJ.Count);
             Symbol J = multiJ.Symbol;
 
-            TypeCobolDataFlowGraphBuilder dfaBuilder = new TypeCobolDataFlowGraphBuilder(CfgBuilder.Cfg);
+            TypeCobolDataFlowGraphBuilder dfaBuilder = new TypeCobolDataFlowGraphBuilder(ctx.CfgDfaBuilder.Cfg);
             dfaBuilder.ComputeInOutSet();
 
             //------------------------------------

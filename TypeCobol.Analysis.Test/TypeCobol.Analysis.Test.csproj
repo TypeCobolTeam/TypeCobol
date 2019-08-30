@@ -103,12 +103,20 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Compile Include="BasicControlFlowInstructionTest.cs" />
+    <Compile Include="CfgDfaTestContext.cs" />
     <Compile Include="DfaBuildUseAndDefListTest.cs" />
     <Compile Include="CfgTestUtils.cs" />
+    <Compile Include="DfaCallPgmReport.cs" />
     <Compile Include="DfaGenAndKillSetTest.cs" />
     <Compile Include="DfaInOutSetsTest.cs" />
     <Compile Include="DfaUseDefSetTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Report\Input\InBulkCallPgm.cbl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Report\Output\InBulkCallPgm.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="BasicCfgInstrs\ComplexGotoPara0.cbl">

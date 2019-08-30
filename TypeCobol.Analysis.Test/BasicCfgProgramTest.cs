@@ -18,80 +18,18 @@ namespace TypeCobol.Analysis.Test
     [TestClass]
     public class BasicCfgProgramTest
     {
-        public static TypeCobolConfiguration DefaultConfig = null;
-        public static ProgramSymbolTableBuilder Builder = null;
-        public static NodeListenerFactory BuilderNodeListenerFactory = null;
-        public static NodeListenerFactory CfgBuilderNodeListenerFactory = null;
-        public static string DefaultIntrinsicPath = null;        
-
-        //A Cfg for DataFlow Analysis on Node
-        public static DefaultControlFlowGraphBuilder<DfaBasicBlockInfo<Symbol>> CfgBuilder;
-
-        //DFA uses the Extend mode
-        public static ControlFlowGraphBuilder<DfaBasicBlockInfo<Symbol>>.CfgMode cfgMode = ControlFlowGraphBuilder<DfaBasicBlockInfo<Symbol>>.CfgMode.Extended;
-
+        public static CfgDfaTestContext ctx = null;
         [TestInitialize]
         public void TestInitialize()
         {
-            //Create a default configurations for options
-            DefaultConfig = new TypeCobolConfiguration();
-            if (File.Exists(DefaultIntrinsicPath))
-            {
-                DefaultConfig.Copies.Add(DefaultIntrinsicPath);
-            }
-
-            //DefaultConfig.Dependencies.Add(Path.Combine(Directory.GetCurrentDirectory(), "resources", "dependencies"));
-            SymbolTableBuilder.Config = DefaultConfig;
-
-            //Force the creation of the Global Symbol Table
-            var global = SymbolTableBuilder.Root;
-
-            //Allocate a static Program Symbol Table Builder
-            BuilderNodeListenerFactory = () =>
-            {
-                Builder = new ProgramSymbolTableBuilder();
-                return Builder;
-            };
-            NodeDispatcher.RegisterStaticNodeListenerFactory(BuilderNodeListenerFactory);
-
-            //Alocate a static Default Control Flow Graph Builder
-            CfgBuilderNodeListenerFactory = () =>
-            {
-                CfgBuilder = new DefaultControlFlowGraphBuilder<DfaBasicBlockInfo<Symbol>>();
-                CfgBuilder.Mode = cfgMode;
-                return CfgBuilder;
-            };
-            NodeDispatcher.RegisterStaticNodeListenerFactory(CfgBuilderNodeListenerFactory);
-        }
-
-        private static void RemovePrograms(ProgramSymbol prog)
-        {
-            foreach (var nestPrg in prog.Programs)
-            {
-                SymbolTableBuilder.Root.RemoveProgram(prog);
-                RemovePrograms(nestPrg);
-            }
-            SymbolTableBuilder.Root.RemoveProgram(prog);
+            ctx = new CfgDfaTestContext(CfgDfaTestContext.Mode.Dfa);
+            ctx.TestInitialize();
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
-            if (BuilderNodeListenerFactory != null)
-            {
-                NodeDispatcher.RemoveStaticNodeListenerFactory(BuilderNodeListenerFactory);
-                if (Builder.Programs.Count != 0)
-                {
-                    foreach (var prog in Builder.Programs)
-                    {
-                        RemovePrograms(prog);
-                    }
-                }
-            }
-            if (CfgBuilderNodeListenerFactory != null)
-            {
-                NodeDispatcher.RemoveStaticNodeListenerFactory(CfgBuilderNodeListenerFactory);
-            }
+            ctx.TestCleanup();
         }
 
         [TestMethod]
@@ -101,13 +39,13 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgPrograms", "HanoiPrg.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(Builder.Programs.Count == 1);
+            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "CfgPrograms", "HanoiPrg.dot");
 
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+            Assert.IsTrue(ctx.CfgDfaBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgDfaBuilder.AllCfgBuilder);
 
-            CfgTestUtils.GenericDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath, true);
+            CfgTestUtils.GenericDotCfgAndCompare(ctx.CfgDfaBuilder.Cfg, path, expectedPath, true);
         }
 
         /// <summary>
@@ -119,18 +57,18 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcRecursive0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(Builder.Programs.Count == 1);
+            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "CfgPrograms", "DetectPerformProcRecursiveException.dot");
 
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+            Assert.IsTrue(ctx.CfgDfaBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgDfaBuilder.AllCfgBuilder);
 
-            Assert.IsNotNull(CfgBuilder.Diagnostics != null);
-            Assert.IsTrue(CfgBuilder.Diagnostics.Count > 0);
-            Assert.IsTrue(CfgBuilder.Diagnostics[0].Message.Contains(TypeCobol.Analysis.Resource.RecursiveBasicBlockGroupInstructions.Substring(0, 
+            Assert.IsNotNull(ctx.CfgDfaBuilder.Diagnostics != null);
+            Assert.IsTrue(ctx.CfgDfaBuilder.Diagnostics.Count > 0);
+            Assert.IsTrue(ctx.CfgDfaBuilder.Diagnostics[0].Message.Contains(TypeCobol.Analysis.Resource.RecursiveBasicBlockGroupInstructions.Substring(0, 
                 TypeCobol.Analysis.Resource.RecursiveBasicBlockGroupInstructions.LastIndexOf(':'))));
 
-            CfgTestUtils.GenericDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath, true);
+            CfgTestUtils.GenericDotCfgAndCompare(ctx.CfgDfaBuilder.Cfg, path, expectedPath, true);
         }
 
     }
