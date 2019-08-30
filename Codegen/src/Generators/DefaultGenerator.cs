@@ -456,7 +456,7 @@ namespace TypeCobol.Codegen.Generators
                     }
                     previousBuffer = null;
                 }
-                for (int j = i; mapper.CommentedLines[j]; j++)
+                for (int j = i; j < endLine && mapper.CommentedLines[j]; j++)
                 {
                     List<int> current_nodes = mapper.LineData[j].LineNodes;
                     if (!CommentedLinesDone[j])
