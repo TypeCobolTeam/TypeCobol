@@ -23,6 +23,17 @@ namespace TypeCobol.Test.Report
         private static string ROOT_COPY = Path.Combine("Report", "Copy");
 
         /// <summary>
+        /// Return Code
+        /// </summary>
+        public enum RecturnCode
+        {
+            Success,
+            ParserDiagnoticsErrors,//Failed with diagnostics errors
+            NoReportFile,//No Report file generated.
+        };
+
+
+        /// <summary>
         /// Parse an file using a NodeListener and IReport instance and compare the resulting report.
         /// </summary>
         /// <typeparam name="TCtx"></typeparam>
@@ -30,7 +41,7 @@ namespace TypeCobol.Test.Report
         /// <param name="reportFileName">The file that contains the expected report</param>
         /// <param name="reportType">The Type of the IReport instance to be instantiated.</param>
         /// <returns>Return true if the report has been generated and compared, false otherwise</returns>
-        public static bool ParseWithNodeListenerReportCompare(string fileName, string reportFileName, System.Type reportType)
+        public static RecturnCode ParseWithNodeListenerReportCompare(string fileName, string reportFileName, System.Type reportType)
         {
             Assert.IsTrue(Tools.Reflection.IsTypeOf(reportType, typeof(IReport)));
             IReport report = null;//Variable to receive the created report instance.     
@@ -74,17 +85,17 @@ namespace TypeCobol.Test.Report
                             string result = sw.ToString();
                             string expected = File.ReadAllText(output, format.Encoding);
                             TypeCobol.Test.TestUtils.compareLines(input, result, expected, PlatformUtils.GetPathForProjectFile(output));
-                            return true;
+                            return RecturnCode.Success;
                         }
                     }
                     else
                     {
-                        return false;
+                        return RecturnCode.NoReportFile;
                     }
                 }
                 else
                 {
-                    return false;
+                    return RecturnCode.ParserDiagnoticsErrors;
                 }
             }
             finally
