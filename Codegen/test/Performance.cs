@@ -6,6 +6,8 @@ using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Codegen.Generators;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Codegen
 {
@@ -48,25 +50,52 @@ namespace TypeCobol.Codegen
         private static readonly string _DeepVariables = Path.Combine(GetCNAFTypeCobol(), "CGMV01-DeepVariables.cbl");
         private static readonly string _DeepTypes = Path.Combine(GetCNAFTypeCobol(), "CGMV01-DeepTypes.tcbl");
 
-        private static void Test(string path)
+        private static void Test(string path, bool forceFullParsing = false)
         {
-            string file = Path.GetFileName(path);
+            string fileName = Path.GetFileName(path);
 
-            // Parsing - not measured here.
-            var parser = Parser.Parse(path, DocumentFormat.RDZReferenceFormat);
+            CompilationProject compilationProject = new CompilationProject(
+                "codegen-performance-test",
+                Path.GetDirectoryName(path),
+                new[] { ".tcbl", ".cbl", ".cpy" },
+                DocumentFormat.RDZReferenceFormat,
+                new TypeCobolOptions());
+            FileCompiler fileCompiler = new FileCompiler(compilationProject, fileName, false);
+            fileCompiler.CompileOnce();
+
+            // Generator.
             StringBuilder destination = new StringBuilder();
-            IGenerator generator = new DefaultGenerator(parser.Results, destination, null, null);
-            var columnsLayout = parser.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
+            var columnsLayout = fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
+            IGenerator generator = new DefaultGenerator(fileCompiler.CompilationResultsForProgram, destination, null, null);
 
             // Codegen iterations.
             Console.WriteLine("FILE;ITERATION;STEP;TIME_TAKEN");
             Dictionary<string, TimeSpan> total = new Dictionary<string, TimeSpan>();
             for (int i = 0; i < ITERATION_COUNT; i++)
             {
-                generator.Generate(parser.Results, columnsLayout);
+                // Clear target StringBuilder and force recompile.
+                destination.Clear();
+                if (forceFullParsing)
+                {
+                    // Full Compile.
+                    fileCompiler = new FileCompiler(compilationProject, fileName, false);
+                    fileCompiler.CompileOnce();
+                }
+                else
+                {
+                    // Incremental compile.
+                    ITextLine newLine = new TextLineSnapshot(fileCompiler.CompilationResultsForProgram.CobolTextLines.Count, string.Empty, null);
+                    TextChangedEvent textChangedEvent = new TextChangedEvent();
+                    textChangedEvent.TextChanges.Add(new TextChange(TextChangeType.LineInserted, newLine.LineIndex, newLine));
+                    fileCompiler.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
+                    fileCompiler.CompileOnce();
+                }
+
+                // Generate and write stats.
+                generator.Generate(fileCompiler.CompilationResultsForProgram, columnsLayout);
                 foreach (var pair in generator.PerformanceReport)
                 {
-                    Console.WriteLine($"{file};{i+1};{pair.Key};{pair.Value.TotalMilliseconds}");
+                    Console.WriteLine($"{fileName};{i+1};{pair.Key};{pair.Value.TotalMilliseconds}");
                     if (!total.ContainsKey(pair.Key))
                     {
                         total.Add(pair.Key, TimeSpan.Zero);
