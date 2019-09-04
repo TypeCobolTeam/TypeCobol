@@ -186,7 +186,7 @@ namespace TypeCobol.LanguageServer
             }
 
             var matchingPgm =
-                _customSymbols.Programs.Keys.FirstOrDefault(
+                _customSymbols?.Programs.Keys.FirstOrDefault(
                     k => k.Equals(inputFileName, StringComparison.InvariantCultureIgnoreCase));
             if (matchingPgm != null)
             {
