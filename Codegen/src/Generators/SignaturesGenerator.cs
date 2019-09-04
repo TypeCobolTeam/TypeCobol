@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
@@ -14,7 +15,14 @@ using LocalStorageSection = TypeCobol.Compiler.Nodes.LocalStorageSection;
 using ProcedureDivision = TypeCobol.Compiler.Nodes.ProcedureDivision;
 using WorkingStorageSection = TypeCobol.Compiler.Nodes.WorkingStorageSection;
 using System.Text;
+using TypeCobol.Codegen.Actions;
+using TypeCobol.Codegen.Nodes;
+using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Tools;
+using LinkageSection = TypeCobol.Compiler.Nodes.LinkageSection;
+using String = System.String;
 
 namespace TypeCobol.Codegen.Generators
 {
@@ -24,6 +32,7 @@ namespace TypeCobol.Codegen.Generators
     public class SignaturesGenerator : IGenerator
     {
         private StringBuilder Destination { get; set; }
+        private CompilationUnit CompilationUnit { get; set; }
 
         /// <summary>
         /// Constructor
@@ -43,6 +52,7 @@ namespace TypeCobol.Codegen.Generators
         {
             var stopwatch = Stopwatch.StartNew();
 
+            this.CompilationUnit = compilationUnit;
             Destination.Append("");
             //Add version to output file
             if (!string.IsNullOrEmpty(TypeCobolVersion))
@@ -50,21 +60,19 @@ namespace TypeCobol.Codegen.Generators
 
             var sourceFile = compilationUnit.ProgramClassDocumentSnapshot.Root;
             sourceFile.AcceptASTVisitor(new ExportToDependency());
-            var lines = sourceFile.SelfAndChildrenLines;
             bool insideFormalizedComment = false;
             bool insideMultilineComment = false;
 
             var buildExportDataElapsed = stopwatch.Elapsed;
             stopwatch.Restart();
 
-            foreach (var textLine in lines)
+            foreach (var textLine in GenerateLinesForChildren(sourceFile.Children))
             {
                 string text = textLine is TextLineSnapshot ?
                     CobolTextLine.Create(textLine.Text, ColumnsLayout.CobolReferenceFormat).First().Text :
                     textLine.Text;
 
-                ITokensLine tokensLine = textLine as ITokensLine;
-                if (tokensLine != null)
+                if (textLine is ITokensLine tokensLine)
                 {
                     if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.FORMALIZED_COMMENTS_START))
                         insideFormalizedComment = true;
@@ -101,6 +109,86 @@ namespace TypeCobol.Codegen.Generators
                                 };
         }
 
+        /// <summary>
+        /// Select or create the lines for each node that can be exported
+        /// </summary>
+        /// <param name="children"></param>
+        /// <returns></returns>
+        private IEnumerable<ITextLine> GenerateLinesForChildren(IReadOnlyList<Node> children)
+        {
+            var lines = new List<ITextLine>();
+            //Contains the copy directives that have already been generated
+            List<CopyDirective> generatedCopyDirectives = new List<CopyDirective>();
+
+            foreach (var child in children)
+            {
+                if (child.IsInsideCopy() && child.CodeElement != null && this.CompilationUnit != null)
+                {
+                    //If the child comes from a copy directive
+                    CopyDirective copy = child.CodeElement.FirstCopyDirective;
+                    //Check if the line corresponding to this copy has already been generated
+                    if (generatedCopyDirectives.Contains(copy) == false)
+                    {
+                        int copyLine = copy.COPYToken.Line;
+                        // Check if the original line of the copy is stored in the CobolTextLines
+                        if (copyLine > 0 && copyLine <= this.CompilationUnit.CobolTextLines.Count)
+                        {
+                            if (copy.COPYToken != null)
+                            {
+                                //Collect all Tokens that are relative to this copy
+                                var copyTokens = CopyTokensYielder(copy);
+
+                                //Create node with the COPY Tokens
+                                LinearNodeSourceCodeMapper.LinearCopyNode copyNode =
+                                    new LinearNodeSourceCodeMapper.LinearCopyNode(new Qualifier.TokenCodeElement(copyTokens.ToList()));
+
+                                var linesContent = copyNode.CodeElement.SourceText.Split(new string[] {System.Environment.NewLine}, System.StringSplitOptions.None);
+
+                                //Indent the line according to its declaration
+                                foreach (string line in linesContent)
+                                {
+                                    //Only the line containing copy can be badly indented. 
+                                    string lineText;
+                                    if (line.IndexOf("COPY", StringComparison.OrdinalIgnoreCase) >= 0)
+                                    {
+                                        //Indent this line with the same indentation than the declaring line.
+                                        lineText = copyNode.Lines.First().Text.GetIndent() + line.Trim();
+                                    }
+                                    else
+                                    {
+                                        //Otherwise generate the other lines as is, with a little extra for the columns 1-7
+                                        lineText = new string(' ', 7) + line.TrimEnd();
+                                    }
+                                    
+                                    lines.Add(new CobolTextLine(new TextLineSnapshot(-1,  lineText, null), ColumnsLayout.CobolReferenceFormat));
+                                }
+                                generatedCopyDirectives.Add(copy);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    //All the other cases
+                    if (child is DataDescription data)
+                    {
+                        //In case the node contains a line with multiple instructions
+                        //Create new line containing only the CodeElement text
+                        var lineText = child.Lines.First().Text.GetIndent() + data.CodeElement.SourceText.Trim();
+                        lines.Add(new CobolTextLine(new TextLineSnapshot(data.CodeElement.Line, lineText, null), ColumnsLayout.CobolReferenceFormat));
+                    }
+                    else
+                    {
+                        lines.AddRange(child.Lines);
+                    }
+
+                    lines.AddRange(GenerateLinesForChildren(child.Children));
+                }
+            }
+
+            return lines;
+        }
+
         public void GenerateLineMapFile(Stream stream)
         {            
         }
@@ -110,6 +198,64 @@ namespace TypeCobol.Codegen.Generators
         public string TypeCobolVersion { get; }
 
         public bool HasLineMapData => false;
+
+        /// <summary>
+        /// Capture for a Token within a copy, its Line and if it is a '.' token
+        /// </summary>
+        /// <param name="lastLine">ref variable to store the last line</param>
+        /// <param name="periodSeparatorSeen">ref variable to store if the PeriodSeparator token has been seen.</param>
+        /// <param name="t">The current token</param>
+        /// <returns>The current token</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static Token CaptureEndCopyLine(ref int lastLine, ref bool periodSeparatorSeen, Token t)
+        {
+            lastLine = t.Line - 1;
+            periodSeparatorSeen = periodSeparatorSeen || t.TokenType == TokenType.PeriodSeparator;
+            return t;
+        }
+
+        /// <summary>
+        /// Yield all token from a CopyDirective
+        /// </summary>
+        /// <param name="copyDirective">The CopyDirective instance to yield all tokens.</param>
+        /// <returns>The Token Enumerable instance</returns>
+        private IEnumerable<Token> CopyTokensYielder(CopyDirective copyDirective)
+        {
+            if (this.CompilationUnit != null)
+            {
+                int lastLine = -1;
+                bool periodSeparatorSeen = false;
+                //Starting from the COPY Line and the COPY Token capture all to token till to encounter a PeriodSeparator.
+                var tl = this.CompilationUnit.TokensLines[copyDirective.COPYToken.Line - 1];
+                bool copyTokenSeen = false;
+                foreach (var t in tl.SourceTokens)
+                {
+                    if (t.Equals(copyDirective.COPYToken))
+                        copyTokenSeen = true;
+                    if (copyTokenSeen)
+                        yield return CaptureEndCopyLine(ref lastLine, ref periodSeparatorSeen, t);
+                    if (periodSeparatorSeen)
+                        yield break;
+                }
+
+                if (lastLine >= 0)
+                {
+                    lastLine++;
+                    int count = this.CompilationUnit.TokensLines.Count;
+                    for (int l = lastLine; l < count && !periodSeparatorSeen; l++)
+                    {
+                        var tl2 = this.CompilationUnit.TokensLines[l];
+                        foreach (var t in tl2.SourceTokens)
+                        {
+                            if (periodSeparatorSeen)
+                                yield break;
+                            else
+                                yield return CaptureEndCopyLine(ref lastLine, ref periodSeparatorSeen, t);
+                        }
+                    }
+                }
+            }
+        }
     }
 
 
@@ -207,12 +353,14 @@ namespace TypeCobol.Codegen.Generators
             }
         }
 
+
+
+
         public override bool Visit(ProcedureDivision procedureDivision)
         {
             _isInsideProcedureDivision = true;
             return true;
         }
-
 
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Tools;
 
 namespace TypeCobol.Codegen.Nodes
 {
@@ -957,8 +958,8 @@ namespace TypeCobol.Codegen.Nodes
                         if (child.Lines.Sum(l => l.Text.Count(c => c == '.')) > 1)
                         {
                             //If there is more than 1 instruction displayed in the lines, create new line containing only the relevant text
-                            var spacing = child.Lines.First().Text.TakeWhile(char.IsWhiteSpace).Count();
-                            lines.Add(new CobolTextLine(new TextLineSnapshot(child.CodeElement.Line, new string(' ', spacing) + child.CodeElement.Text, null), ColumnsLayout.CobolReferenceFormat));
+                            var lineText = child.Lines.First().Text.GetIndent() + child.CodeElement.Text;
+                            lines.Add(new CobolTextLine(new TextLineSnapshot(child.CodeElement.Line, lineText, null), ColumnsLayout.CobolReferenceFormat));
                         }
                         else
                         {
@@ -985,7 +986,8 @@ namespace TypeCobol.Codegen.Nodes
                             //We recreate the clause copy with its arguments.
                             //We don't have access to the original tokens here, so we can't recreate the same format as the original sentence.
                             StringBuilder copyInstruction = new StringBuilder();
-                            copyInstruction.Append(' ', copy.COPYToken.TokensLine.SourceText.TakeWhile(char.IsWhiteSpace).Count());
+
+                            copyInstruction.Append(copy.COPYToken.TokensLine.SourceText.GetIndent());
                             copyInstruction.Append("COPY " + copy.TextName);
                             if (copy.ReplaceOperations.Any())
                             {
