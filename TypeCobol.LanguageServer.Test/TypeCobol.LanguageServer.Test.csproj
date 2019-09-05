@@ -102,6 +102,12 @@
     <None Include="LSRTests\IncrementalThruTokenInsideCopies\output_expected\IncrementalThruTokenInsideCopies.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\OnHoverDisplayVariableDefinition\input\OnHoverDisplayVariableDefinition.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\OnHoverDisplayVariableDefinition\output_expected\OnHoverDisplayVariableDefinition.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\OnHover\input\OnHover.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

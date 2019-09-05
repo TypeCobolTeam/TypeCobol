@@ -13,6 +13,7 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.LanguageServer.Context;
 using TypeCobol.LanguageServer.SignatureHelper;
 
@@ -539,6 +540,17 @@ namespace TypeCobol.LanguageServer
                                 if (param.TypeDefinition != null)
                                     message = param.TypeDefinition.ToString();
                             }
+                        }
+                    }
+                    break;
+                default:
+                    // Use userFilterToken to find the variable under mouse cursor.
+                    if (userFilterToken != null)
+                    {
+                        var candidates = matchingNode.SymbolTable.GetVariablesExplicit(new URI(userFilterToken.SourceText)).ToList();
+                        if (candidates.Count == 1)
+                        {
+                            message = string.Join(Environment.NewLine, candidates[0].SelfAndChildrenLines.Select(l => l.Text));
                         }
                     }
                     break;
