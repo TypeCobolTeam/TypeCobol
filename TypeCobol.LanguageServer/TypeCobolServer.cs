@@ -642,6 +642,19 @@ namespace TypeCobol.LanguageServer
                                     docContext.FileCompiler, matchingCodeElement, userFilterToken, lastSignificantToken, this.SignatureCompletionContext));
                                 break;
                             }
+                        case TokenType.DISPLAY:
+                            {
+                                System.Linq.Expressions.Expression<Func<DataDefinition, bool>> predicate = dataDefinition =>
+                                    dataDefinition.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase) // keep only variables with matching name
+                                    && dataDefinition.Usage != DataUsage.ProcedurePointer // invalid usages in DISPLAY statement
+                                    && dataDefinition.Usage != DataUsage.FunctionPointer
+                                    && dataDefinition.Usage != DataUsage.ObjectReference
+                                    && dataDefinition.Usage != DataUsage.Index
+                                    && (dataDefinition.CodeElement != null && dataDefinition.CodeElement.LevelNumber.Value < 88);
+                                // Ignore level 88. Note that dataDefinition.CodeElement != null condition also filters out IndexDefinition which is invalid in the context of DISPLAY
+                                items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement, predicate));
+                                break;
+                            }
                         case TokenType.MOVE:
                             {
                                 items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
