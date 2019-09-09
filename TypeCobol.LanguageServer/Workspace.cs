@@ -533,8 +533,6 @@ namespace TypeCobol.LanguageServer
                 if(missingCopies.Count > 0)
                 {
                     MissingCopiesEvent(TypeCobolConfiguration.Dependencies?.FirstOrDefault(), new MissingCopiesEvent() { Copies = missingCopies.Select(c => c.TextName).Distinct().ToList() });
-                    var message = "COPY need to be downloaded. When it's done restart the server";
-                    LoadingIssueEvent(null, new LoadingIssueEvent() { Message = message }); //Send notification to client
                     return;//Do not report diagnostics if copies are missing
                 }
 
