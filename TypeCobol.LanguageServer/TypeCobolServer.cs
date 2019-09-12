@@ -550,7 +550,7 @@ namespace TypeCobol.LanguageServer
                         var candidates = matchingNode.SymbolTable.GetVariablesExplicit(new URI(userFilterToken.SourceText)).ToList();
                         if (candidates.Count == 1)
                         {
-                            message = string.Join(Environment.NewLine, candidates[0].SelfAndChildrenLines.Select(l => l.Text));
+                            message = candidates[0].ToString();
                         }
                     }
                     break;
