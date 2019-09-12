@@ -762,6 +762,27 @@ namespace TypeCobol.Compiler.Nodes {
         }
         public SymbolReference ObjectReferenceClass { get { if (_ComonDataDesc != null) return _ComonDataDesc.ObjectReferenceClass; else return null; } }
         #endregion
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            int currentIndent = 0;
+
+            foreach (var textLine in this.SelfAndChildrenLines)
+            {
+                // Three spaces per indent level
+                string spacing = new string(' ', 3 * currentIndent);
+
+                // Remove original spacing and replace with adjusted spacing
+                sb.Append(spacing);
+                sb.AppendLine(textLine.Text.TrimStart());
+
+                // Indent next line
+                currentIndent++;
+            }
+
+            return sb.ToString();
+        }
     }
 
     public class DataDescription: DataDefinition, Parent<DataDescription>{
