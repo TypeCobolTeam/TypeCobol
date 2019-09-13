@@ -1249,6 +1249,17 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
         }
 
+        public virtual void StartJsonGenerateStatementConditional(TypeCobol.Compiler.CodeElements.JsonGenerateStatement stmt)
+        {
+            Enter(new JsonGenerate(stmt), stmt);
+        }
+
+        public virtual void EndJsonGenerateStatementConditional(TypeCobol.Compiler.CodeElements.JsonStatementEnd end)
+        {
+            AttachEndIfExists(end);
+            Exit();
+        }
+
         public virtual void StartMultiplyStatementConditional(TypeCobol.Compiler.CodeElements.MultiplyStatement stmt)
         {
             Enter(new Multiply(stmt), stmt);
