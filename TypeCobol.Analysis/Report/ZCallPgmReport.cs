@@ -50,6 +50,58 @@ namespace TypeCobol.Analysis.Report
         private TextWriter Writer { get; set; }
 
         /// <summary>
+        /// Visitor to Collect all level 88 symbols.
+        /// </summary>
+        class Level88SymbolCollector : AbstractSymbolAndTypeVisitor<Dictionary<Symbol, Symbol>, Dictionary<Symbol, Symbol>>
+        {
+            Symbol ParentSymbol;
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="parentSymbol">The Parent symnol being collected</param>
+            public Level88SymbolCollector(Symbol parentSymbol)
+            {
+                ParentSymbol = parentSymbol;
+            }
+            public override Dictionary<Symbol, Symbol> VisitSymbol(Symbol s, Dictionary<Symbol, Symbol> symbols)
+            {
+                s.Type?.Accept(this, symbols);
+                return symbols;
+            }
+
+            public override Dictionary<Symbol, Symbol> VisitType(Compiler.Types.Type t, Dictionary<Symbol, Symbol> symbols)
+            {
+                t.TypeComponent?.Accept(this, symbols);
+                return symbols;
+            }
+
+            public override Dictionary<Symbol, Symbol> VisitVariableSymbol(VariableSymbol s, Dictionary<Symbol, Symbol> symbols)
+            {
+                if (s.Level == 88)
+                {
+                    symbols[s] = ParentSymbol;
+                    return symbols;
+                }
+                else return VisitSymbol(s, symbols);
+            }
+
+            public override Dictionary<Symbol, Symbol> VisitGroupType(Compiler.Types.GroupType t, Dictionary<Symbol, Symbol> symbols)
+            {
+                foreach (var field in t.Scope)
+                {
+                    field.Accept(this, symbols);
+                }
+                return symbols;
+            }
+        }
+
+
+        /// <summary>
+        /// Level 88 Symbol to their parent symbol map.
+        /// </summary>
+        private Dictionary<Symbol, Symbol> Level88SymbolParentSymbolMap;
+
+        /// <summary>
         /// Callback method when a Use Point is encountered
         /// </summary>
         /// <param name="dfaBuilder">The Dfa Builder</param>
@@ -70,11 +122,38 @@ namespace TypeCobol.Analysis.Report
                                 if (target != null && target.ToString().Equals(callStyle, StringComparison.OrdinalIgnoreCase))
                                 {
                                     CallUsePoints.Add(up);
+                                    if (up.Variable.Type.Tag == Compiler.Types.Type.Tags.Group)
+                                    {
+                                        //Compute the Map of Level88 variable to their parent..
+                                        if (Level88SymbolParentSymbolMap == null)
+                                        {
+                                            Level88SymbolParentSymbolMap = new Dictionary<Symbol, Symbol>();
+                                        }
+                                        Level88SymbolCollector l88c = new Level88SymbolCollector(up.Variable);
+                                        up.Variable.Accept(l88c, Level88SymbolParentSymbolMap);
+                                    }
+                                    break;
                                 }
                             }
                         }
                     }
                     break;
+            }
+        }
+
+        /// <summary>
+        /// Called when a Def¨Point is built
+        /// </summary>
+        /// <param name="dfaBuilder">The Dfa Builder</param>
+        /// <param name="dp">The Def Point</param>
+        private void OnDefPoint(DataFlowGraphBuilder<Node, DfaBasicBlockInfo<Symbol>, Symbol> dfaBuilder, DfaDefPoint<Node, Symbol> dp)
+        {
+            VariableSymbol sym = (VariableSymbol)dp.Variable;
+            Symbol parent = null;
+            if (sym.Level == 88 && sym.Value != null && Level88SymbolParentSymbolMap != null && Level88SymbolParentSymbolMap.TryGetValue(sym, out parent))
+            {//Now say that it is the parent variable which is the target of the definition.
+                dp.Variable = parent;
+                dp.UserData = sym;
             }
         }
 
@@ -99,6 +178,7 @@ namespace TypeCobol.Analysis.Report
             CallUsePoints.Clear();
             TypeCobolDataFlowGraphBuilder dfaBuilder = new TypeCobolDataFlowGraphBuilder(cfgBuilder.Cfg);
             dfaBuilder.OnUsePointEvent += OnCallUsePoint;
+            dfaBuilder.OnDefPointEvent += OnDefPoint;
             dfaBuilder.ComputeUseDefSet();
             //Report Call Use Points.            
             foreach (DfaUsePoint<Node, Symbol> up in CallUsePoints)
@@ -184,6 +264,40 @@ namespace TypeCobol.Analysis.Report
                                         break;
                                     case StatementType.MoveCorrespondingStatement:
                                         {
+                                        }
+                                        break;
+                                }
+                            }
+                            break;
+                        case CodeElementType.SetStatement:
+                            {
+                                SetStatement set = (SetStatement)def.Instruction.CodeElement;
+                                switch (set.StatementType)
+                                {
+                                    case StatementType.SetStatementForConditions://This a level 88 variable set.
+                                        {   //Use reflection to get sending value, because the class SetStatementForConditions is Internal to TypeCobol
+                                            System.Reflection.PropertyInfo info = set.GetType().GetProperty("SendingValue");
+                                            if (info != null)
+                                            {
+                                                object ovalue = info.GetValue(set);
+                                                if (ovalue != null)
+                                                { 
+                                                    BooleanValue bvalue = (BooleanValue)ovalue;
+                                                    //Only set if the SendingValue is true: It should always be the case in COBOL, but not in TypeCobol
+                                                    VariableSymbol parent = (VariableSymbol)def.Variable;
+                                                    System.Diagnostics.Debug.Assert(def.UserData != null);
+                                                    VariableSymbol sym = (VariableSymbol)def.UserData;
+                                                    if (sym.Value != null && sym.Value is TypeCobol.Compiler.CodeElements.Value[])
+                                                    {
+                                                        TypeCobol.Compiler.CodeElements.Value[] values = (TypeCobol.Compiler.CodeElements.Value[])sym.Value;
+                                                        foreach (var value in values)
+                                                        {
+                                                            path.Append(string.Format(@"{0}<-""{1}""", sym.FullDotName, "true"));
+                                                            paths.Add(new Tuple<string, string>(value.AlphanumericValue.ToString(), path.ToString()));
+                                                        }
+                                                    }                                                    
+                                                }
+                                            }
                                         }
                                         break;
                                 }

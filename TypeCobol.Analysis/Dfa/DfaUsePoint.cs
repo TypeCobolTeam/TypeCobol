@@ -39,6 +39,7 @@ namespace TypeCobol.Analysis.Dfa
             get;
             set;
         }
+
         /// <summary>
         /// Index of the Owner basic Block
         /// </summary>

@@ -1559,7 +1559,10 @@ namespace TypeCobol.Compiler.Domain
                         {
                             sym.SetFlag(parentScope.Owner.Flag & Symbol.SymbolVisibilityMask , parentScope.Owner.HasFlag(Symbol.SymbolVisibilityMask));                                
                         }
-                    }
+                        //Store Contition Values.
+                        sym.Value = ((DataConditionEntry)dataDef.CodeElement).ConditionValues;
+
+                     }
                         break;
                     case CodeElementType.DataRenamesEntry:
                     {

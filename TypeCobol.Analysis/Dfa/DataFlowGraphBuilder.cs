@@ -476,7 +476,7 @@ namespace TypeCobol.Analysis.Dfa
                                     if (vInDefs.Cardinality() > 0)
                                     {
                                         up.UseDef = vInDefs;
-                                    }                                    
+                                    }
                                 }
                             }
                         }

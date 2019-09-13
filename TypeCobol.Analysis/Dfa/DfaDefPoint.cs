@@ -55,5 +55,14 @@ namespace TypeCobol.Analysis.Dfa
             get;
             set;
         }
+
+        /// <summary>
+        /// User data
+        /// </summary>
+        public object UserData
+        {
+            get;
+            set;
+        }
     }
 }
