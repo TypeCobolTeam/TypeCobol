@@ -73,6 +73,7 @@
            call Callee::check input somedate
            .
 
+       END PROGRAM PGM1.
 
       *Callee contains public procedure
        IDENTIFICATION DIVISION.
@@ -141,7 +142,3 @@
            CONTINUE.
        END-DECLARE.
        END PROGRAM PersonService.
-
-
-       END PROGRAM PGM1.
-

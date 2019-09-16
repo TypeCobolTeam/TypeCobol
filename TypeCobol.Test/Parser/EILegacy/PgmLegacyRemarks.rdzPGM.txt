@@ -1,7 +1,7 @@
 ﻿--- Program ---
 PROGRAM: MYPGM common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
   WK-MAXI-QOCC-0001:Numeric
   WK-MAXI-QOCC-0002:Numeric

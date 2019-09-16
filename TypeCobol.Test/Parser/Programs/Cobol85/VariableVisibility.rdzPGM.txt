@@ -12,10 +12,10 @@ Line 44[18,26] <27, Error, Syntax> - Syntax error : Symbol dataMain1 is not refe
 --- Program ---
 PROGRAM: MainProgram common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
   dataMain1:Alphanumeric
---- Intrinsic:Namespace:GlobalStorage:Global
+--- Intrinsic:Namespace:Program:Global
 -- DATA --------
   dataMain2:Alphanumeric
 --- Intrinsic

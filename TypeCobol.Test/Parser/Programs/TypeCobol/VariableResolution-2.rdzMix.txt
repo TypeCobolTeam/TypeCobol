@@ -1,0 +1,68 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZFSCT0.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 Type1 typedef strict private.
+          05 Champ1 PIC X.
+          05 Champ2 PIC X.
+
+       01 TypeG typedef strict global.
+          05 Champ3 PIC X.
+          05 Champ4 type Type1.
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Nested.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 TypeG typedef strict.
+          05 Champ3 PIC X.
+          05 Champ4 type Type1.
+          05 Champ5 PIC 9.
+
+       01 var1 type TypeG.
+       01 var2 type DVZFSCT0::TypeG.
+       procedure division.
+      *KO
+Line 26[20,25] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Champ1 
+Symbols found: DVZFSCT0::Nested::var1::TypeG::Champ4::Type1::Champ1 | DVZFSCT0::Nested::var2::TypeG::Champ4::Type1::Champ1
+           DISPLAY Champ1
+      *KO
+Line 28[20,25] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Champ2 
+Symbols found: DVZFSCT0::Nested::var1::TypeG::Champ4::Type1::Champ2 | DVZFSCT0::Nested::var2::TypeG::Champ4::Type1::Champ2
+           DISPLAY Champ2
+      *KO
+Line 30[20,25] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Champ3 
+Symbols found: DVZFSCT0::Nested::var2::TypeG::Champ3 | DVZFSCT0::Nested::var1::TypeG::Champ3
+           DISPLAY Champ3
+      *KO
+Line 32[20,25] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Champ4 
+Symbols found: DVZFSCT0::Nested::var2::TypeG::Champ4 | DVZFSCT0::Nested::var1::TypeG::Champ4
+           DISPLAY Champ4
+      *OK
+           DISPLAY Champ5
+
+      *OK
+           DISPLAY var1::Champ1
+      *OK
+           DISPLAY var1::Champ2
+      *OK
+           DISPLAY var1::Champ3
+      *OK
+           DISPLAY var1::Champ4
+      *OK
+           DISPLAY var1::Champ5
+
+      *OK
+           DISPLAY var2::Champ1
+      *OK
+           DISPLAY var2::Champ2
+      *OK
+           DISPLAY var2::Champ3
+      *OK
+           DISPLAY var2::Champ4
+      *KO
+Line 56[26,31] <27, Error, Syntax> - Syntax error : Symbol var2.Champ5 is not referenced
+           DISPLAY var2::Champ5
+           .
+       END PROGRAM Nested.
+       END PROGRAM DVZFSCT0.

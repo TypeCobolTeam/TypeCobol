@@ -1,0 +1,1 @@
+-i input\ValueClauses.rdz.tcbl -o output\ValueClauses.rdz.tcbl -d output\error.txt -y input\Intrinsic.txt

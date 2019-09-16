@@ -10,7 +10,7 @@ Line 60[25,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3bis
 --- Program ---
 PROGRAM: DVZF0OS3 common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
   MyBoolean:BOOL
   var1Small:SmallInt
@@ -18,7 +18,10 @@ PROGRAM: DVZF0OS3 common:False initial:False recursive:False
   floatVar:Float
   var1:toto
   var2:DVZF0OS3bis.toto
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations
+--- Intrinsic:Namespace:Program:Global
+-- DATA --------
+  var3:toto
+--- Intrinsic:Namespace:Program
 -- TYPES -------
   SmallInt:SmallInt
   Integer:Integer
@@ -26,10 +29,6 @@ PROGRAM: DVZF0OS3 common:False initial:False recursive:False
   Real:Real
   Float:Float
   SmallChar:SmallChar
---- Intrinsic:Namespace:GlobalStorage:Global
--- DATA --------
-  var3:toto
--- TYPES -------
   toto:toto
 --- Intrinsic
 -- TYPES -------
@@ -40,12 +39,12 @@ PROGRAM: DVZF0OS3 common:False initial:False recursive:False
 --- Program ---
 PROGRAM: DVZF0OS3bis common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Declarations:Program
+--- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
   var1:DVZF0OS3.toto
   var2:DVZF0OS3bis.toto
   var3:toto
---- Intrinsic:Namespace:Global:Declarations
+--- Intrinsic:Namespace:Program
 -- TYPES -------
   toto:toto
 --- Intrinsic

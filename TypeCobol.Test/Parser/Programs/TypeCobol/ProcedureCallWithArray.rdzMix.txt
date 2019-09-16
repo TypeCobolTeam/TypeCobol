@@ -13,7 +13,7 @@
        01 date1 type Date.
 
 
-       01 _EVENT_ TYPEDEF STRICT.
+       01 _EVENT_ TYPEDEF STRICT PRIVATE.
          05 IdNbr PIC X(05).
          05 Periodicity PIC 9(03).
 
