@@ -40,6 +40,12 @@ namespace TypeCobol.Compiler.Diagnostics
                     DiagnosticUtils.AddError(typedef, message, external);
             }
 
+            if (typedef.HasExplicitVisibility && typedef.IsGlobal)
+            {
+                string message = $"GLOBAL clause cannot be specified with {typedef.Visibility.ToString().ToUpper()} access modifier";
+                DiagnosticUtils.AddError(typedef, message, context.globalClause(0));
+            }
+
 #if EUROINFO_LEGACY_TYPEDEF
             if (typedef.RestrictionLevel != RestrictionLevel.STRICT)
             {
@@ -110,6 +116,11 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     DiagnosticUtils.AddError(typeDefinition, $"TYPEDEF with explicit visibility qualifier is not allowed within a copy. Please review the '{copyName}' copy.", MessageCode.SemanticTCErrorInParser);
                 }
+            }
+
+            if (typeDefinition.IsFlagSet(Node.Flag.InsideProcedure) && typeDefinition.CodeElement.HasExplicitVisibility)
+            {
+                DiagnosticUtils.AddError(typeDefinition, "TYPEDEF with explicit visibility qualifier is not allowed within a procedure.", MessageCode.SemanticTCErrorInParser);
             }
 
             if (typeDefinition.RestrictionLevel == RestrictionLevel.STRONG)

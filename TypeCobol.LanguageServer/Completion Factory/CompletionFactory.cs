@@ -43,7 +43,7 @@ namespace TypeCobol.LanguageServer
                                                                            da.DataType ==
                                                                            Compiler.CodeElements.DataType.Numeric &&
                                                                            da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
-                                                                           SymbolTable.Scope.GlobalStorage);
+                                                                           SymbolTable.Scope.Program);
                 }
             }
 
@@ -95,7 +95,7 @@ namespace TypeCobol.LanguageServer
                                                                     da.DataType ==
                                                                     Compiler.CodeElements.DataType.Alphanumeric &&
                                                                     da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase), 
-                                                                    SymbolTable.Scope.GlobalStorage );
+                                                                    SymbolTable.Scope.Program );
                 }
             }
 
@@ -229,7 +229,7 @@ namespace TypeCobol.LanguageServer
                 var parameterToFill = procParams.ToArray()[alreadyGivenParametersCount];
                 //Get local/global variable that could correspond to the parameter
 
-                potentialVariablesForCompletion = node.SymbolTable.GetVariablesByType(parameterToFill.DataType, potentialVariablesForCompletion, SymbolTable.Scope.GlobalStorage);
+                potentialVariablesForCompletion = node.SymbolTable.GetVariablesByType(parameterToFill.DataType, potentialVariablesForCompletion, SymbolTable.Scope.Program);
 
             }
 
@@ -488,7 +488,7 @@ namespace TypeCobol.LanguageServer
                                                 f.VisualQualifiedName.ToString()
                                                     .StartsWith(userFilterText,
                                                         StringComparison.InvariantCultureIgnoreCase),
-                                            SymbolTable.Scope.Declarations);
+                                            SymbolTable.Scope.Program);
 
                                 completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForProcedures(procedures, node, functionDeclarationSignatureDictionary, false));
 
@@ -507,7 +507,7 @@ namespace TypeCobol.LanguageServer
                                             t =>
                                                 t.Name.StartsWith(userFilterText,
                                                     StringComparison.InvariantCultureIgnoreCase),
-                                                SymbolTable.Scope.GlobalStorage
+                                                SymbolTable.Scope.Program
                                             );
                                 completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForType(types, node, false));
                             }
@@ -529,7 +529,7 @@ namespace TypeCobol.LanguageServer
             if (node == null)
                 return completionItems;
 
-            var variables = node.SymbolTable.GetVariables(predicate, SymbolTable.Scope.GlobalStorage);
+            var variables = node.SymbolTable.GetVariables(predicate, SymbolTable.Scope.Program);
             completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(variables));
 
             return completionItems;
@@ -614,14 +614,14 @@ namespace TypeCobol.LanguageServer
 
                 foreach (var seekedDataType in seekedDataTypes.Distinct())
                 {
-                    potentialVariables = node.SymbolTable.GetVariablesByType(seekedDataType, potentialVariables, SymbolTable.Scope.GlobalStorage);
+                    potentialVariables = node.SymbolTable.GetVariablesByType(seekedDataType, potentialVariables, SymbolTable.Scope.Program);
                 }
 
                 potentialVariables = potentialVariables.AsQueryable().Where(variablePredicate);
             }
             else //Get all 
             {
-                potentialVariables = node.SymbolTable.GetVariables(variablePredicate,SymbolTable.Scope.GlobalStorage);
+                potentialVariables = node.SymbolTable.GetVariables(variablePredicate,SymbolTable.Scope.Program);
             }
 
             foreach (var potentialVariable in potentialVariables) //Those variables could be inside a typedef or a level, we need to check to rebuild the qualified name correctly.
@@ -706,7 +706,7 @@ namespace TypeCobol.LanguageServer
                                                 && v.CodeElement is DataDefinitionEntry
                                                 && ((v.CodeElement).LevelNumber.Value == 1 || (v.CodeElement).LevelNumber.Value == 77)
                                                 && v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
-                                                SymbolTable.Scope.GlobalStorage);
+                                                SymbolTable.Scope.Program);
             }
             else 
             {
@@ -717,7 +717,7 @@ namespace TypeCobol.LanguageServer
                          && ((v.CodeElement).LevelNumber.Value == 1 ||
                              (v.CodeElement).LevelNumber.Value == 77)
                          && v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
-                        SymbolTable.Scope.GlobalStorage);
+                        SymbolTable.Scope.Program);
             }
 
             return CompletionFactoryHelpers.CreateCompletionItemsForVariables(potentialVariable);
