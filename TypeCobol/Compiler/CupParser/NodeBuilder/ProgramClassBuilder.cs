@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
-using Analytics;
-using TypeCobol.Compiler.Parser.Generated;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
@@ -18,10 +13,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
     /// </summary>
     public class ProgramClassBuilder : IProgramClassBuilder
     {
-        /// <summary>
-        /// Program object resulting of the visit the parse tree
-        /// </summary>
-        private Program Program { get; set; }
         public SyntaxTree SyntaxTree { get; set; }
 
         private TypeDefinition _CurrentTypeDefinition
@@ -48,25 +39,31 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         public List<TypeDefinition> TypeThatNeedTypeLinking { get; } = new List<TypeDefinition>();
 
         // Programs can be nested => track current programs being analyzed
-        private Stack<Program> programsStack = null;
+        private Stack<Program> programsStack;
 
         private Program CurrentProgram
         {
-            get { return programsStack.Peek(); }
+            get { return programsStack.Count > 0 ? programsStack.Peek() : null; }
             set { programsStack.Push(value); }
         }
 
         /// <summary>Class object resulting of the visit the parse tree</summary>
         public CodeModel.Class Class { get; private set; }
 
-        private readonly SymbolTable TableOfIntrisic = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
-        private SymbolTable TableOfGlobals;
-        private SymbolTable TableOfNamespaces;
-        private SymbolTable TableOfGlobalStorage;
+        private readonly SymbolTable TableOfIntrinsics;
+        private readonly SymbolTable TableOfNamespaces;
+
+        public ProgramClassBuilder()
+        {
+            // Intrinsics and Namespaces always exist. Intrinsic table has no enclosing scope.
+            TableOfIntrinsics = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
+            TableOfNamespaces = new SymbolTable(TableOfIntrinsics, SymbolTable.Scope.Namespace);
+
+            programsStack = new Stack<Program>();
+        }
 
         public SymbolTable CustomSymbols
         {
-            private get { throw new InvalidOperationException(); }
             set
             {
                 if (value != null)
@@ -78,24 +75,24 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                     intrinsicTable.Types.Values.ToList().ForEach(d => d.ForEach(da => da.SetFlag(Node.Flag.NodeIsIntrinsic, true)));
                     intrinsicTable.Functions.Values.ToList().ForEach(d => d.ForEach(da => da.SetFlag(Node.Flag.NodeIsIntrinsic, true)));
 
-                    TableOfIntrisic.CopyAllDataEntries(intrinsicTable.DataEntries.Values);
-                    TableOfIntrisic.CopyAllTypes(intrinsicTable.Types);
-                    TableOfIntrisic.CopyAllFunctions(intrinsicTable.Functions, AccessModifier.Public);
+                    TableOfIntrinsics.CopyAllDataEntries(intrinsicTable.DataEntries.Values);
+                    TableOfIntrinsics.CopyAllTypes(intrinsicTable.Types);
+                    TableOfIntrinsics.CopyAllFunctions(intrinsicTable.Functions, AccessModifier.Public);
 
                     if (nameSpaceTable != null)
                     {
-                        TableOfNamespaces = new SymbolTable(TableOfIntrisic, SymbolTable.Scope.Namespace); //Set TableOfNamespace with program if dependencies were given. (See CLI.cs runOnce2() LoadDependencies())
                         TableOfNamespaces.CopyAllPrograms(nameSpaceTable.Programs.Values);
                     }
 
                 }
+
                 // TODO#249: use a COPY for these
                 foreach (var type in DataType.BuiltInCustomTypes)
                 {
                     var createdType = DataType.CreateBuiltIn(type);
-                    TableOfIntrisic.AddType(createdType); //Add default TypeCobol types BOOLEAN and DATE
+                    TableOfIntrinsics.AddType(createdType); //Add default TypeCobol types BOOLEAN and DATE
                     //Add type and children to DataTypeEntries dictionary in Intrinsic symbol table
-                    TableOfIntrisic.AddDataDefinitionsUnderType(createdType);
+                    TableOfIntrinsics.AddDataDefinitionsUnderType(createdType);
                 }
             }
         }
@@ -198,41 +195,33 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartCobolCompilationUnit()
         {
-            if (TableOfNamespaces == null)
-                TableOfNamespaces = new SymbolTable(TableOfIntrisic, SymbolTable.Scope.Namespace);
-
-            TableOfGlobalStorage = new SymbolTable(TableOfNamespaces, SymbolTable.Scope.GlobalStorage);
-            TableOfGlobals = new SymbolTable(TableOfGlobalStorage, SymbolTable.Scope.Global);
-            Program = null;
-
             SyntaxTree.Root.SymbolTable = TableOfNamespaces; //Set SymbolTable of SourceFile Node, Limited to NameSpace and Intrinsic scopes
         }
 
         public virtual void StartCobolProgram(ProgramIdentification programIdentification, LibraryCopyCodeElement libraryCopy)
         {
-            
-            if (Program == null)
+            if (CurrentProgram == null)
             {
                 if (SyntaxTree.Root.MainProgram == null)
                 {
-                    SyntaxTree.Root.MainProgram = new SourceProgram(TableOfGlobals, programIdentification);
-                    Program = SyntaxTree.Root.MainProgram;
+                    // Main
+                    var mainProgram = new SourceProgram(TableOfNamespaces, programIdentification);
+                    SyntaxTree.Root.MainProgram = mainProgram;
+                    CurrentProgram = mainProgram;
                 }
                 else
                 {
-                    Program = new StackedProgram(TableOfGlobals, programIdentification);                    
+                    // Stacked
+                    CurrentProgram = new StackedProgram(TableOfNamespaces, programIdentification);                    
                 }
-                
-                programsStack = new Stack<Program>();
-                CurrentProgram = Program;
-                Enter(CurrentProgram, programIdentification, CurrentProgram.SymbolTable);
             }
             else
             {
-                var enclosing = CurrentProgram;
-                CurrentProgram = new NestedProgram(enclosing, programIdentification);
-                Enter(CurrentProgram, programIdentification, CurrentProgram.SymbolTable);
+                // Nested
+                CurrentProgram = new NestedProgram(CurrentProgram, programIdentification);
             }
+
+            Enter(CurrentProgram, programIdentification, CurrentProgram.SymbolTable);
 
             if (libraryCopy != null)
             { // TCRFUN_LIBRARY_COPY
@@ -249,12 +238,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             AttachEndIfExists(end);
             Exit();
             programsStack.Pop();
-
-            if (programsStack.Count == 0) //Means that we ended a main program, reset Table and program in case of a new program declaration before EOF. 
-            {
-                TableOfGlobals = new SymbolTable(TableOfNamespaces, SymbolTable.Scope.Global);
-                Program = null;
-            }
         }
 
         public virtual void StartEnvironmentDivision(EnvironmentDivisionHeader header)
@@ -374,7 +357,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         public virtual void StartGlobalStorageSection(GlobalStorageSectionHeader header)
         {
             GlobalStorageSection gs = new GlobalStorageSection(header);
-            Enter(gs, header, SyntaxTree.CurrentNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.GlobalStorage));
+            Enter(gs, header, SyntaxTree.Root.MainProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.Program));
             _IsInsideGlobalStorageSection = true;
         }
 
@@ -517,7 +500,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             if (_CurrentTypeDefinition != null)
                 node.ParentTypeDefinition = _CurrentTypeDefinition;
             Enter(node);
-                node.SymbolTable.AddVariable(node);
+            node.SymbolTable.AddVariable(node);
         }
 
         public virtual void StartTypeDefinitionEntry(DataTypeDescriptionEntry typedef)
@@ -525,7 +508,24 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             SetCurrentNodeToTopLevelItem(typedef.LevelNumber);
 
             // TCTYPE_GLOBAL_TYPEDEF
-            var symbolTable = SyntaxTree.CurrentNode.SymbolTable.GetTableFromScope(typedef.IsGlobal ? SymbolTable.Scope.Global : SymbolTable.Scope.Declarations);
+            SymbolTable symbolTable;
+            if (typedef.IsGlobal && _ProcedureDeclaration == null)
+            {
+                // nearest global scope
+                symbolTable = CurrentNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.Global);
+            }
+            else if (typedef.HasExplicitVisibility)
+            {
+                // public or private types are stored in the nearest Program scope.
+                // In Main or Nested Program it will be Program Scope from Main and in Stacked it will be Program Scope from Stacked itself.
+                symbolTable = CurrentNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.Program);
+            }
+            else
+            {
+                // Local types are directly stored in the SymbolTable of the Node that declares them.
+                // It can be a Local scope (in Main, Nested or Stacked programs) or a Function scope (in procedures).
+                symbolTable = CurrentNode.SymbolTable;
+            }
 
             var node = new TypeDefinition(typedef);
             Enter(node, null, symbolTable);
@@ -644,10 +644,17 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             //DO NOT change this without checking all references of Library. 
             // (SymbolTable - function, type finding could be impacted) 
 
-            //Function must be added to Declarations scope
-            var declarationSymbolTable = SyntaxTree.CurrentNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
-            declarationSymbolTable.AddFunction(node);
-            Enter(node, header, new SymbolTable(declarationSymbolTable, SymbolTable.Scope.Function));
+            var enclosing = CurrentNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.Program);
+            switch (header.Visibility)
+            {
+                case AccessModifier.Local:
+                    CurrentNode.SymbolTable.AddFunction(node);
+                    break;
+                default:
+                    enclosing.AddFunction(node);
+                    break;
+            }
+            Enter(node, header, new SymbolTable(enclosing, SymbolTable.Scope.Function));
 
             var declaration = node.CodeElement;
             var funcProfile = node.Profile; //Get functionprofile to set parameters

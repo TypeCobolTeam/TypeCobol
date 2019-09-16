@@ -16,7 +16,7 @@ Line 121[5,61] <37, Warning, General> - Warning: "end-if" is missing
 --- Program ---
 PROGRAM: COLON common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
   T1-A:Alphanumeric
   T1-B1:Alphanumeric
@@ -56,7 +56,6 @@ PROGRAM: COLON common:False initial:False recursive:False
   TEST-3
   TEST-4
   TEST-5
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations
 -- TYPES -------
   MyArray:MyArray
 --- Intrinsic

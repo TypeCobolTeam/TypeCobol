@@ -24,6 +24,7 @@ Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not suppor
   "Description": "Description for Type11 ",
   "Name": "Type11",
   "Namespace": "DocForTypeDefs",
+  "Visibility": 1,
   "DocDataType": {
     "MaxOccurence": 1,
     "Picture": "X(8)"
@@ -38,6 +39,7 @@ Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not suppor
   "Name": "Type12",
   "Namespace": "DocForTypeDefs",
   "ReplacedBy": "Type42 ",
+  "Visibility": 2,
   "DocDataType": {
     "MaxOccurence": 1,
     "Picture": "X(8)"
