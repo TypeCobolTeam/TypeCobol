@@ -10,7 +10,7 @@
       * Inline Typedef with good Formalized Comments
       %<<< Description for Type11
       %>>>
-       01 Type11 TYPEDEF STRICT pic X(8).
+       01 Type11 TYPEDEF STRICT PUBLIC pic X(8).
 
       * Inline Typedef with too much informations inside Formalized Comments
       %<<< 
@@ -21,7 +21,7 @@
             - param2: This informations should be truncated
           @ replacedBy: Type42
       %>>>
-       01 Type12 TYPEDEF STRICT pic X(8).
+       01 Type12 TYPEDEF STRICT PRIVATE pic X(8).
 
 
 

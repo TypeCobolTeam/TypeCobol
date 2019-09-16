@@ -5,7 +5,7 @@
 
        WORKING-STORAGE SECTION.
 
-          01 CTGCPL-Enreg TYPEDEF STRICT.                               09220000
+          01 CTGCPL-Enreg TYPEDEF STRICT PRIVATE.                       09220000
              10 TYP                 PIC X(03).                          09230000
              10 STE                 PIC X(02).                          09240000
              10 IDTOBJ              PIC S9(9) COMP.                     09250000
@@ -13,7 +13,7 @@
              10 VALCLN              PIC X(50).                          09270000
 
       * structure d'enregistrement résultat de L1952                    09420000
-          01 CTGCPL-Enreg-resultat TYPEDEF STRICT.                      09430000
+          01 CTGCPL-Enreg-resultat TYPEDEF STRICT PRIVATE.              09430000
              10 TVR              PIC X(1).                              09440000
              10 TYP              PIC X(03).                             09450000
              10 IDTOBJ           PIC S9(9) COMP.                        09460000
@@ -21,12 +21,12 @@
              10 VALCLN           PIC X(50).
 
 
-          01 Table10-CTGCPL TYPEDEF STRICT.                             09500000
+          01 Table10-CTGCPL TYPEDEF STRICT PRIVATE.                     09500000
             05 TBL10-CTGCPL-RTA-tbl TYPE CTGCPL-Enreg                   09510000
                                OCCURS 10.
 
       * table de 10 éléments à rechercher                               09490000
-         01 Table10-CTGCPL-Resultat TYPEDEF STRICT.                     09500000
+         01 Table10-CTGCPL-Resultat TYPEDEF STRICT PRIVATE.             09500000
             05 TBL10-CTGCPL-RTA-tbl TYPE CTGCPL-Enreg-resultat          09510000
                                OCCURS 10.
 

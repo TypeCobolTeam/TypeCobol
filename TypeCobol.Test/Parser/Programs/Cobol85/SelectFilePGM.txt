@@ -1,7 +1,7 @@
 --- Program ---
 PROGRAM: SelectFile common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
   WK-CTRL-FILE-STATUS:Alphanumeric
   WK-ST-ENT010:Numeric

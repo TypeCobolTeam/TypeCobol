@@ -3,11 +3,11 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       
-      *01 Event TYPEDEF STRICT.
+      *01 Event TYPEDEF STRICT PRIVATE.
       *   05 IDT pic X(05).
       *   05 Periodicity pic 9(03).
       
-      *01 _EVENT_LIST_ TYPEDEF STRICT.
+      *01 _EVENT_LIST_ TYPEDEF STRICT PRIVATE.
       *   05 Counter pic 9(04) comp-5.
       *   05 EventTab.
       *      10 Event TYPE Event occurs 10

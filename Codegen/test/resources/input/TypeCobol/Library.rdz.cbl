@@ -17,20 +17,20 @@
        01  W-IfrPgm.
            05 C-PgmNme               PIC X(08) Value 'LIBDATE'.
 
-       01  dateJulian    TYPEDEF strict.
+       01  dateJulian    TYPEDEF strict PUBLIC.
            10 YYYY                   PIC 9(04).
            10 DDD                    PIC 9(03).
 
-       01  dateDB2       TYPEDEF strict.
+       01  dateDB2       TYPEDEF strict PUBLIC.
            10 YYYY                   PIC 9(04).
            10                        PIC X(01).
            10 MM                     PIC 9(02).
            10                        PIC X(01).
            10 DD                     PIC 9(02).
 
-       01  dateString    TYPEDEF strict  PIC 9(08).
+       01  dateString    TYPEDEF strict PUBLIC PIC 9(08).
 
-       01 culture        TYPEDEF strict.
+       01 culture        TYPEDEF strict PUBLIC.
            10 lng                    PIC X(02).
            10 cty                    PIC X(02).
 

@@ -1,0 +1,8 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MyIntrinsic
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       01 Rate          TYPEDEF STRICT public PIC S9(06)V9(08).
+
+       END PROGRAM MyIntrinsic.

@@ -36,7 +36,10 @@ cobol2002TypeClause:    TYPE dataTypeNameReference;
 cobol2002Statement:
     // Dynamic allocation statements
 	allocateStatement |
-	freeStatement;
+	freeStatement |
+	// JSON GENERATE
+	jsonGenerateStatement |
+	jsonStatementEnd;
 
 // Updated INITIALIZE statement using COBOL v6.1 specs
 initializeStatement:
@@ -55,3 +58,20 @@ allocateStatement:
 // New Cobol v6.1 FREE statement that releases dynamic storage that was previously obtained with an ALLOCATE statement.
 freeStatement:
 	FREE pointerStorageArea+;
+
+// New Cobol v6.1 JSON GENERATE statement. Allows generating JSON string from data item, similar to XML GENERATE.
+jsonGenerateStatement:
+	JSON GENERATE destination=storageArea1
+	FROM source=variable1
+	(COUNT IN? charactersCount=storageArea1)?
+	(name OF? jsonNameMapping+)? // Re-use of contextual keyword NAME defined for XML GENERATE in CobolCodeElements.
+	(SUPPRESS excludedDataItem+)?;
+
+jsonNameMapping:
+	dataItem=variable1 IS? outputName=alphanumericValue2;
+
+excludedDataItem:
+	variable1;
+
+jsonStatementEnd:
+	END_JSON;
