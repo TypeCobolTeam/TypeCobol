@@ -342,6 +342,9 @@ namespace TypeCobol.Compiler.Parser
                     case CodeElementType.InvokeStatement:
                         codeElement = new InvokeStatement();
                         break;
+                    case CodeElementType.JsonGenerateStatement:
+                        codeElement = new JsonGenerateStatement();
+                        break;
                     case CodeElementType.MergeStatement:
                         codeElement = new MergeStatement();
                         break;
@@ -482,6 +485,9 @@ namespace TypeCobol.Compiler.Parser
                         break;
                     case CodeElementType.InvokeStatementEnd:
                         codeElement = new InvokeStatementEnd();
+                        break;
+                    case CodeElementType.JsonStatementEnd:
+                        codeElement = new JsonStatementEnd();
                         break;
                     case CodeElementType.MultiplyStatementEnd:
                         codeElement = new MultiplyStatementEnd();

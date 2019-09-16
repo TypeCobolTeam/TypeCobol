@@ -1,21 +1,25 @@
-       IDENTIFICATION DIVISION.
+﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZF0OS3.
        data DIVISION.
        working-storage section.
       
-      *01 Event TYPEDEF STRICT public global.
+      *01 Event TYPEDEF STRICT PUBLIC.
       *   05 IDT pic X(05).
       *   05 Periodicity pic 9(03).
       
-      *01 EventList TYPEDEF STRICT public global.
+      *01 EventList TYPEDEF STRICT PUBLIC.
       *   05 Counter pic 9(04) comp-5.
       *   05 EventArray.
-      *      10 Event TYPE DVZF0OS3::Event occurs 10
+      *      10 Event TYPE Event occurs 10
       *                      depending on Counter
       *                      indexed by Idx.
-      
+
+       01 MyGroupVar.
+        05 LigCln-Taxes  OCCURS 10
+        INDEXED BY  Idx-nonQualified.
+
       *01 MyEventList type EventList.
-       01 MyEventList global.
+       01 MyEventList.
            02 Counter pic 9(04) comp-5.
            02 EventArray.
              03 Event occurs 10
@@ -26,6 +30,14 @@
                                      
       
        procedure division.
+
+
+      *PERFORM VARYING Idx-nonQualified FROM 1 BY 1
+      *    UNTIL Idx-nonQualified > MyEventList::Idx
+       PERFORM VARYING Idx-nonQualified FROM 1 BY 1
+           UNTIL Idx-nonQualified > bd95262aIdx
+             display "test"
+           END-PERFORM.
       
       *DECLARE PROCEDURE DisplayEventList PRIVATE
       *     INPUT EventList type EventList.
@@ -34,30 +46,38 @@
        data DIVISION.
        working-storage section.
       
-      *01 MyEventList type EventList.
-       01 MyEventList global.
+      *01 EventList  type EventList.
+       01 EventList.
            02 Counter pic 9(04) comp-5.
            02 EventArray.
              03 Event occurs 10
-                             depending on Counter OF MyEventList
-                             indexed by ad8947f9Idx.
+                             depending on Counter OF EventList
+                             indexed by f1298056Idx.
                04 IDT pic X(05).
                04 Periodicity pic 9(03).
-                                     
+                                    
+      *01 EventList2 type EventList.
+       01 EventList2.
+           02 Counter pic 9(04) comp-5.
+           02 EventArray.
+             03 Event occurs 10
+                             depending on Counter OF EventList2
+                             indexed by de4c1fd2Idx.
+               04 IDT pic X(05).
+               04 Periodicity pic 9(03).
+                                    
       
        procedure division.
-      *    call DisplayEventList input MyEventList
-           CALL 'f40b025b' USING
-                                 MyEventList
-           end-call
-                                                  
+      *    PERFORM VARYING EventList::Idx FROM 1 BY 1
+      *    UNTIL EventList::Idx > EventList2::Idx
+           PERFORM VARYING f1298056Idx FROM 1 BY 1
+           UNTIL f1298056Idx > de4c1fd2Idx
+             display "test"
+           END-PERFORM
+           GOBACK.
            .
-      
-      *DECLARE PROCEDURE DisplayEventList PRIVATE
-      *     INPUT EventList type DVZF0OS3::EventList.
        END PROGRAM Imbrique.
        END PROGRAM DVZF0OS3.
-      
       
       
        IDENTIFICATION DIVISION.
@@ -68,7 +88,7 @@
       
       
       *01 MyEventList type DVZF0OS3::EventList.
-       01 MyEventList global.
+       01 MyEventList.
            02 Counter pic 9(04) comp-5.
            02 EventArray.
              03 Event occurs 10
@@ -85,52 +105,6 @@
        END PROGRAM DVZF0OS3bis.
       *
       *DECLARE PROCEDURE DisplayEventList PRIVATE
-      *     INPUT EventList type DVZF0OS3::EventList.
-      *_________________________________________________________________
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. f40b025b.
-       data division.
-       working-storage section.
-      *DVZF0OS3.DisplayEventList - Params :
-      *		input(EventList: DVZF0OS3.EventList)
-                               
-      *01 EventList2 type EventList.
-       01 EventList2 global.
-           02 Counter pic 9(04) comp-5.
-           02 EventArray.
-             03 Event occurs 10
-                             depending on Counter OF EventList2
-                             indexed by dc466042Idx.
-               04 IDT pic X(05).
-               04 Periodicity pic 9(03).
-                                    
-       LINKAGE SECTION.
-      *DVZF0OS3.DisplayEventList - Params :
-      *		input(EventList: DVZF0OS3.EventList)
-       01 EventList.
-           02 Counter pic 9(04) comp-5.
-           02 EventArray.
-             03 Event occurs 10
-                             depending on Counter OF EventList
-                             indexed by a23b5481Idx.
-               04 IDT pic X(05).
-               04 Periodicity pic 9(03).
-       PROCEDURE DIVISION
-             USING BY REFERENCE EventList
-           .
-      *DVZF0OS3.DisplayEventList - Params :
-      *		input(EventList: DVZF0OS3.EventList)
-      *   Dans pgm Imbrique
-      *    PERFORM VARYING EventList::Idx FROM 1 BY 1
-      *    UNTIL EventList::Idx > EventList2::Idx
-           PERFORM VARYING a23b5481Idx FROM 1 BY 1
-           UNTIL a23b5481Idx > dc466042Idx
-             display "test"
-           END-PERFORM
-           GOBACK.
-       END PROGRAM f40b025b.
-      *
-      *DECLARE PROCEDURE DisplayEventList PRIVATE
       *     INPUT EventList type EventList.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
@@ -141,7 +115,7 @@
       *		input(EventList: EventList)
                                
       *01 EventList2 type EventList.
-       01 EventList2 global.
+       01 EventList2.
            02 Counter pic 9(04) comp-5.
            02 EventArray.
              03 Event occurs 10
@@ -186,7 +160,7 @@
       *		input(EventList: DVZF0OS3.EventList)
                                
       *01 EventList2 type DVZF0OS3::EventList.
-       01 EventList2 global.
+       01 EventList2.
            02 Counter pic 9(04) comp-5.
            02 EventArray.
              03 Event occurs 10

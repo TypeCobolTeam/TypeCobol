@@ -3,10 +3,10 @@
 
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01  typeOfDays TYPEDEF STRICT PUBLIC pic X(01).
+       01  typeOfDaysPublic TYPEDEF STRICT PUBLIC pic X(01).
        01  typeOfDaysPrivate TYPEDEF STRICT PRIVATE pic X(01).
        01  typeOfDaysNoModifier TYPEDEF STRICT pic X(01).
-       01  NewType TYPEDEF STRICT pic X GLOBAL.
+       01  NewGlobalType TYPEDEF STRICT pic X GLOBAL.
        PROCEDURE DIVISION.                                        
            GOBACK.
  
@@ -15,11 +15,11 @@
        PROGRAM-ID. Tester.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01  var1 Type TYPEPGM::typeOfDays.
-       01  var1 Type TYPEpgm::typeOFDAYS.
-       01  var1 Type typepgm::typeofdays.
+       01  var1 Type TYPEPGM::typeOfDaysPublic.
+       01  var1 Type TYPEpgm::typeOFDAYSPUBLIC.
+       01  var1 Type typepgm::typeofdayspublic.
       *OK Type is declared Global
-       01  var1 Type NewType.
+       01  var1 Type NewGlobalType.
 
        END PROGRAM Tester.
        END PROGRAM TYPEPGM.
@@ -29,10 +29,10 @@
        PROGRAM-ID. Stacked.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01  var1 Type TYPEPGM::typeOfDays.
-       01  var1 Type TYPEpgm::typeOFDAYS.
-       01  var1 Type typepgm::typeofdays.
+       01  var1 Type TYPEPGM::typeOfDaysPublic.
+       01  var1 Type TYPEpgm::typeOFDAYSPUBLIC.
+       01  var1 Type typepgm::typeofdayspublic.
       *KO Type is declared Global
-       01  var1 Type NewType.
+       01  var1 Type NewGlobalType.
 
        END PROGRAM Stacked.
