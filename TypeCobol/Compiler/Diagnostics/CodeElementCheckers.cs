@@ -294,9 +294,9 @@ namespace TypeCobol.Compiler.Diagnostics
         public static void OnCodeElement(AlterStatement statement, CodeElementsParser.AlterStatementContext context)
         {
 #if EUROINFO_RULES
-            DiagnosticUtils.AddError(statement, "ALTER \"should\" not be used", context);
+            DiagnosticUtils.AddError(statement, "ALTER should not be used", context);
 #else
-            DiagnosticUtils.AddError(statement,   "ALTER \"should\" not be used", context, MessageCode.Warning);
+            DiagnosticUtils.AddError(statement, "ALTER should not be used", context, MessageCode.Warning);
 #endif
         }
     }
