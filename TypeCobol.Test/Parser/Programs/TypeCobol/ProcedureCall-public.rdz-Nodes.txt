@@ -16,8 +16,8 @@ Line 106[12,48] <27, Error, Syntax> - Syntax error : Function not found 'case10'
 Line 113[12,22] <27, Error, Syntax> - Syntax error : Call to 'case12'(no arguments) is ambigous. 'case12' is defined 2 times
 Line 116[12,22] <27, Error, Syntax> - Syntax error : No function or variable found for 'case13'(no arguments)
 Line 122[12,22] <27, Error, Syntax> - Syntax error : Call to 'case15'(no arguments) is ambigous. 'case15' is defined 2 times
-Line 141[12,56] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.addDaysToDate' input(DATE, Numeric, typeOfDays) output(DATE, returnCode)
-Line 149[12,56] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.addDaysToDate' input(DATE, Numeric, absentPgm.typeOfDays) output(DATE, returnCode)
+Line 141[12,56] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.addDaysToDate' input(DATE, Numeric, typeOfDays) output(DATE, PublicProcedures.returnCode)
+Line 149[12,56] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.addDaysToDate' input(DATE, Numeric, absentPgm.typeOfDays) output(DATE, PublicProcedures.returnCode)
 Line 161[12,39] <27, Error, Syntax> - Syntax error : Function not found 'PublicProcedures.case2' input(DATE, Alphanumeric) output(BOOL)
 Line 167[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' only takes 3 parameter(s)
 Line 167[12,48] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case3' input(Alphanumeric, DATE, Alphanumeric) output(Alphanumeric, BOOL)
@@ -60,9 +60,6 @@ Line 229[17,34] <27, Error, Syntax> - Syntax error : Symbol undefinedProcedure i
           W-WrongTypeOfDays
           W-WrongTypeOfDays2
           W-RtnCode
-        ReturnCode
-          PrmCod
-          ScdCod
         case1
         case2
         case3
@@ -179,189 +176,192 @@ Line 229[17,34] <27, Error, Syntax> - Syntax error : Symbol undefinedProcedure i
           [[CallStatement]] [12,15:CALL]<CALL> --> [42,47:result]<UserDefinedWord>
 
           end
-    PublicProcedures
-      data-division
-        working-storage
-          typeOfDays
-      procedure-division
-        addDaysToDate
-          function-end
-        addDaysToDate
-          function-end
-        case1
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+    end
+  PublicProcedures
+    data-division
+      working-storage
+        typeOfDays
+        returnCode
+          PrmCod
+          ScdCod
+    procedure-division
+      addDaysToDate
+        function-end
+      addDaysToDate
+        function-end
+      case1
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case3
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case3
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case4
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case4
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case4
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case4
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case51
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case51
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case52
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case52
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case52
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case52
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case53
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case53
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case53
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case53
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case53
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case53
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case61
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case61
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case62
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case62
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case62
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case62
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case63
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case63
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case63
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case63
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case63
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case63
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case10
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case10
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case11
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case11
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case12
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case12
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case13
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case13
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case13
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case13
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case14
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case14
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case14
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case14
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case15
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case15
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-        case15
-          procedure-division
-            sentence-0
-              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+            end
+        function-end
+      case15
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
 
-              end
-          function-end
-      end
+            end
+        function-end
     end

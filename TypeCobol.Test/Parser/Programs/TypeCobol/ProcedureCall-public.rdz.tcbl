@@ -16,11 +16,11 @@
            05  W-typeOfDays          TYPE PublicProcedures::typeOfDays.
            05  W-WrongTypeOfDays     TYPE typeOfDays.
            05  W-WrongTypeOfDays2    TYPE absentPgm::typeOfDays.
-           05  W-RtnCode             TYPE returnCode.
+           05  W-RtnCode             TYPE PublicProcedures::returnCode.
 
-       01 ReturnCode TYPEDEF strict global.
-         05 PrmCod pic X(04).
-         05 ScdCod pic X(04).
+
+
+
 
        01 case1 pic X.
        01 case2 pic X.
@@ -229,25 +229,30 @@
            CALL undefinedProcedure using result
 
        .
+       END PROGRAM CallToPublicProcedure.
+
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PublicProcedures.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01  typeOfDays       TYPEDEF STRICT PUBLIC pic X(01).
+       01 typeOfDays TYPEDEF STRICT PUBLIC pic X(01).
+       01 returnCode TYPEDEF STRICT PUBLIC.
+         05 PrmCod pic X(04).
+         05 ScdCod pic X(04).
        procedure division.
 
        DECLARE PROCEDURE addDaysToDate PUBLIC
                INPUT  Dat        TYPE date
                       NbrOfDays  PIC S9(06)
                OUTPUT Result     TYPE date
-                      RtnCode    TYPE ReturnCode.
+                      RtnCode    TYPE returnCode.
        END-DECLARE.
        DECLARE PROCEDURE addDaysToDate PUBLIC
                INPUT  Dat        TYPE date
                       NbrOfDays  PIC S9(06)
                       TypeOfDays TYPE typeOfDays 
                OUTPUT Result     TYPE date
-                      RtnCode    TYPE ReturnCode.
+                      RtnCode    TYPE returnCode.
        END-DECLARE.
 
        DECLARE PROCEDURE case1 PUBLIC
@@ -415,4 +420,3 @@
        END-DECLARE.
 
        END PROGRAM PublicProcedures.
-       END PROGRAM CallToPublicProcedure.

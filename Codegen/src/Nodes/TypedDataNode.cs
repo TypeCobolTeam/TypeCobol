@@ -13,10 +13,225 @@ namespace TypeCobol.Codegen.Nodes
     using TypeCobol.Compiler.Nodes;
     using TypeCobol.Compiler.Text;
 
-
-
     internal class TypedDataNode : DataDescription, Generated
     {
+        #region Strategies for FlushConsumedTokens
+
+        /// <summary>
+        /// Base class of strategies for FlushConsumedTokens method.
+        /// By default, this strategy will output all tokens using their text representation.
+        /// </summary>
+        private abstract class TokenFlushStrategy
+        {
+            private static readonly Func<Token, string> _DefaultTokenRender = token => token.Text;
+
+            private readonly Func<Token, string> _tokenRender;
+
+            /// <summary>
+            /// Constructor.
+            /// </summary>
+            /// <param name="tokenRender">Custom token renderer to override default behavior.</param>
+            protected TokenFlushStrategy(Func<Token, string> tokenRender = null)
+            {
+                _tokenRender = tokenRender ?? _DefaultTokenRender;
+            }
+
+            /// <summary>
+            /// Indicates whether a Token should be written or not.
+            /// </summary>
+            /// <param name="token">Candidate token.</param>
+            /// <returns>True to write the token, False to discard it.</returns>
+            public virtual bool ShouldOutput(Token token)
+            {
+                return true;
+            }
+
+            /// <summary>
+            /// Returns the text representation of a Token.
+            /// </summary>
+            /// <param name="token">Token to be written.</param>
+            /// <returns>String object representing the token.</returns>
+            public virtual string GetTokenText(Token token)
+            {
+                return _tokenRender(token);
+            }
+        }
+
+        private class OutputAllTokens : TokenFlushStrategy
+        {
+            // Use default behavior of abstract class.
+        }
+
+        /// <summary>
+        /// This strategy extracts the scalar definition of a TYPEDEF if any.
+        /// </summary>
+        private class ExtractScalarTypedef : TokenFlushStrategy
+        {
+            private readonly bool _ignoreGlobal;
+            private bool _typedefSeen;
+
+            public ExtractScalarTypedef(bool ignoreGlobal)
+            {
+                _ignoreGlobal = ignoreGlobal;
+                _typedefSeen = false;
+            }
+
+            public override bool ShouldOutput(Token token)
+            {
+                // Don't output anything until we reach the TYPEDEF keyword.
+                if (!_typedefSeen)
+                {
+                    _typedefSeen = token.TokenType == TokenType.TYPEDEF;
+                    return false;
+                }
+
+                // Skip TYPEDEF-related keywords (kind : STRICT/STRONG and visibility : PUBLIC/PRIVATE).
+                // Don't output the PeriodSeparator.
+                if (token.TokenType == TokenType.STRONG || token.TokenType == TokenType.STRICT || token.TokenType == TokenType.PUBLIC || token.TokenType == TokenType.PRIVATE || token.TokenType == TokenType.PeriodSeparator)
+                {
+                    return false;
+                }
+
+                // Special case for the GLOBAL clause.
+                if (_ignoreGlobal && token.TokenType == TokenType.GLOBAL)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// This strategy only outputs the VALUE clause of a declaration.
+        /// </summary>
+        private class ExtractValue : TokenFlushStrategy
+        {
+            private bool _valueSeen;
+            private bool _stop;
+
+            public ExtractValue()
+            {
+                _valueSeen = false;
+                _stop = false;
+            }
+
+            public override bool ShouldOutput(Token token)
+            {
+                // Don't output anything until we reach the VALUE keyword.
+                if (!_valueSeen)
+                {
+                    _valueSeen = token.TokenType == TokenType.VALUE;
+                    return _valueSeen; // VALUE keyword itself is outputted.
+                }
+
+                // We already have outputted everything necessary.
+                if (_stop)
+                {
+                    return false;
+                }
+
+                // Stop on next keyword following the VALUE clause.
+                var tokenFamily = token.TokenFamily;
+                if (tokenFamily == TokenFamily.SyntaxKeyword || tokenFamily == TokenFamily.CobolV6Keyword ||
+                    tokenFamily == TokenFamily.Cobol2002Keyword || tokenFamily == TokenFamily.TypeCobolKeyword ||
+                    token.TokenType == TokenType.PeriodSeparator)
+                {
+                    _stop = true;
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// This strategy outputs everything after the picture clause (including the picture clause itself).
+        /// </summary>
+        private class ExtractStartingFromPicture : TokenFlushStrategy
+        {
+            private bool _picSeen;
+
+            public ExtractStartingFromPicture()
+            {
+                _picSeen = false;
+            }
+
+            public override bool ShouldOutput(Token token)
+            {
+                // Don't output anything until we reach the PICTURE clause.
+                if (!_picSeen)
+                {
+                    _picSeen = token.TokenType == TokenType.PIC || token.TokenType == TokenType.PICTURE;
+                    return _picSeen;
+                }
+
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// This strategy outputs everything after the level.
+        /// </summary>
+        private class ExtractAfterLevel : TokenFlushStrategy
+        {
+            private bool _levelSeen;
+
+            public ExtractAfterLevel(Func<Token, string> tokenRender)
+                : base(tokenRender)
+            {
+                _levelSeen = false;
+            }
+
+            public override bool ShouldOutput(Token token)
+            {
+                // Don't output anything until we reach the Level declaration.
+                if (!_levelSeen)
+                {
+                    _levelSeen = token.TokenType == TokenType.LevelNumber;
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// This strategy extracts the type info in a declaration. This can be VALUE clause, usage, GLOBAL clause, etc.
+        /// It doesn't output the TYPE clause for typed data/parameter.
+        /// </summary>
+        private class ExtractTypeInfo : TokenFlushStrategy
+        {
+            private bool _skipNext;
+
+            public ExtractTypeInfo(Func<Token, string> tokenRender)
+                : base(tokenRender)
+            {
+                _skipNext = true; // First token is always skipped as it is level or name.
+            }
+
+            public override bool ShouldOutput(Token token)
+            {
+                // Don't output data name (which usually follows level) and type name (which follows TYPE keyword).
+                // As type name can be qualified, we also skip what follows a :: separator.
+                if (token.TokenType == TokenType.LevelNumber || token.TokenType == TokenType.TYPE || token.TokenType == TokenType.QualifiedNameSeparator)
+                {
+                    _skipNext = true;
+                    return false; // The TYPE keyword and :: separator are skipped as well.
+                }
+
+                // Previous token analysis showed that we have to skip current token, so return false and reset.
+                if (_skipNext)
+                {
+                    _skipNext = false;
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        #endregion
 
         private DataDescription Node;
         public TypedDataNode(DataDescription node) : base(node.CodeElement) { this.Node = node; }
@@ -51,35 +266,51 @@ namespace TypeCobol.Codegen.Nodes
         }
 
         /// <summary>
-        ///  Flush Consumed tokens into a buffer
-        /// 
+        /// Writes tokens to a StringBuilder.
         /// </summary>
-        /// <param name="i">The start index in the list of consumed tokens</param>
-        /// <param name="consumedTokens">The consumed tokens list</param>
-        /// <param name="sb">The String buffer to flush into</param>
-        /// <param name="bHasPeriod">out true if a period separator has been encountered, false otherwise.</param>
-        /// <param name="tokenFilter">A Token filter that can be used to produce another text for a Token</param>
-        internal static void FlushConsumedTokens(ColumnsLayout? layout, int i, IList<Compiler.Scanner.Token> consumedTokens, StringBuilder sb, out bool bHasPeriod, Func<Compiler.Scanner.Token, string> tokenFilter = null)
+        /// <param name="layout">Target layout.</param>
+        /// <param name="consumedTokens">Source tokens.</param>
+        /// <param name="sb">StringBuilder to write to.</param>
+        /// <param name="strategy">Object to control which and how tokens are written.</param>
+        /// <param name="hasSeenGlobal">Indicates whether a GLOBAL keyword has been written.</param>
+        /// <param name="hasSeenPeriod">Indicates whether a Period separator has been written.</param>
+        private static void FlushConsumedTokens(ColumnsLayout? layout, IList<Token> consumedTokens, StringBuilder sb, TokenFlushStrategy strategy, out bool hasSeenGlobal, out  bool hasSeenPeriod)
         {
-            System.Diagnostics.Contracts.Contract.Assert(i >= -1);
-            Compiler.Scanner.Token baseToken = null;
-            if (i < consumedTokens.Count && consumedTokens.Count > 0)
-            {
-                baseToken = i == -1 ? consumedTokens[++i] : consumedTokens[i++];
-            }
-            else
-            {
-                i += 1;
-            }
-            bHasPeriod = false;
+            System.Diagnostics.Contracts.Contract.Assert(consumedTokens != null);
+            System.Diagnostics.Contracts.Contract.Assert(sb != null);
+            System.Diagnostics.Contracts.Contract.Assert(strategy != null);
+
+            hasSeenGlobal = false;
+            hasSeenPeriod = false;
+
+            // First token of the current line. Can be null only if consumedTokens is empty.
+            Token referenceTokenForCurrentLine = consumedTokens.Count > 0 ? consumedTokens[0] : null;
+
+            int i = 0;
             while (i < consumedTokens.Count)
             {
-                if ((i != consumedTokens.Count - 1) || (consumedTokens[i].TokenType != Compiler.Scanner.TokenType.PeriodSeparator))
-                    if (baseToken?.Line == consumedTokens[i].Line)
-                        sb.Append(string.Intern(" "));//Add a space but not before a Period Separator
-                if (baseToken?.Line != consumedTokens[i].Line)
+                Token token = consumedTokens[i];
+
+                // Should the token be written or not ?
+                if (!strategy.ShouldOutput(token))
                 {
-                    int nPad = consumedTokens[i].Column;
+                    i++;
+                    continue;
+                }
+
+                // Handle spacing with previous token written.
+                if (i != consumedTokens.Count - 1 || token.TokenType != TokenType.PeriodSeparator)
+                {
+                    if (referenceTokenForCurrentLine.Line == token.Line)
+                    {
+                        sb.Append(string.Intern(" "));
+                    }
+                }
+
+                // Handle new line.
+                if (referenceTokenForCurrentLine.Line != token.Line)
+                {
+                    int nPad = token.Column;
                     if (layout.HasValue)
                     {
                         if (layout.Value == ColumnsLayout.CobolReferenceFormat)
@@ -90,11 +321,16 @@ namespace TypeCobol.Codegen.Nodes
                     string pad = new string(' ', nPad);
                     sb.Append('\n');
                     sb.Append(pad);
-                    baseToken = consumedTokens[i];
+                    referenceTokenForCurrentLine = token;
                 }
-                sb.Append(tokenFilter != null ? tokenFilter(consumedTokens[i]) : consumedTokens[i].Text);
-                if (i == consumedTokens.Count - 1)
-                    bHasPeriod = consumedTokens[i].TokenType == Compiler.Scanner.TokenType.PeriodSeparator;
+
+                // Write token.
+                sb.Append(strategy.GetTokenText(token));
+
+                // Memorize special tokens GLOBAL and Period.
+                hasSeenGlobal |= token.TokenType == TokenType.GLOBAL;
+                hasSeenPeriod |= token.TokenType == TokenType.PeriodSeparator;
+
                 i++;
             }
         }
@@ -107,12 +343,8 @@ namespace TypeCobol.Codegen.Nodes
         /// <returns>The string representing the DataDefinition</returns>
         internal static string ConsumedTokenToString(ColumnsLayout? layout, DataDefinitionEntry data_def, out bool bHasPeriod)
         {
-            bHasPeriod = false;
             StringBuilder sb = new StringBuilder();
-            if (data_def.ConsumedTokens != null)
-            {
-                FlushConsumedTokens(layout, -1, data_def.ConsumedTokens, sb, out bHasPeriod);
-            }
+            FlushConsumedTokens(layout, data_def.ConsumedTokens, sb, new OutputAllTokens(), out _, out bHasPeriod);
             return sb.ToString();
         }
 
@@ -128,80 +360,19 @@ namespace TypeCobol.Codegen.Nodes
         }
 
         /// <summary>
-        /// Determines if the given list of tokens, contains any token of the specified type.
-        /// </summary>
-        /// <param name="tokens">The List of tokens.</param>
-        /// <param name="startIndex">The starting index in the token list</param>
-        /// <param name="type">The specified type.</param>
-        /// <returns>True if yes, false otherwise.</returns>
-        internal static bool ContainsToken(IList<Token> tokens, int startIndex, TokenType type)
-        {
-            if (tokens != null)
-            {
-                for (int i = startIndex; i < tokens.Count; i++)
-                    if (tokens[i].TokenType == type)
-                        return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Determines if the given list of tokens, contains any token of the specified type.
-        /// </summary>
-        /// <param name="tokens">The List of tokens.</param>
-        /// <param name="type">The specified type.</param>
-        /// <returns>True if yes, false otherwise.</returns>
-        internal static bool ContainsToken(IList<Token> tokens, TokenType type)
-        {
-            return ContainsToken(tokens, 0, type);
-        }
-
-        /// <summary>
         /// Tries to detect a TYPEDEF construction for a scalar type.
         /// </summary>
+        /// <param name="layout">Columns layout kind.</param>
+        /// <param name="dataDescriptionEntry">The data desc entry of the node</param>
         /// <param name="customtype">The TypeDef definition node</param>
         /// <param name="bHasPeriod">out true if a period separator has been encountered, false otherwise.</param>
         /// <param name="bIgnoreGlobal">true if the GLOBAL keyword must be ignored</param>
         /// <returns>The string representing the TYPEDEF type</returns>
-        internal static string ExtractAnyCobolScalarTypeDef(ColumnsLayout? layout, TypeDefinition customtype, out bool bHasPeriod, bool bIgnoreGlobal)
+        internal static string ExtractAnyCobolScalarTypeDef(ColumnsLayout? layout, DataDescriptionEntry dataDescriptionEntry, TypeDefinition customtype, out bool bHasPeriod, bool bIgnoreGlobal)
         {
-            bHasPeriod = false;
             StringBuilder sb = new StringBuilder();
-            if (customtype.CodeElement != null)
-            {
-                if (customtype.CodeElement.ConsumedTokens != null)
-                {
-                    int i = 0;
-                    //Ignore TYPEDEF Keyword
-                    while (i < customtype.CodeElement.ConsumedTokens.Count && customtype.CodeElement.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.TYPEDEF)
-                        i++;
-
-                    //Ignore any STRONG or STRICT keywords
-                    if ((i + 1) < customtype.CodeElement.ConsumedTokens.Count && (customtype.CodeElement.ConsumedTokens[i + 1].TokenType == Compiler.Scanner.TokenType.STRONG || customtype.CodeElement.ConsumedTokens[i + 1].TokenType == Compiler.Scanner.TokenType.STRICT))
-                        i++;
-
-                    //Ignore any PUBLIC or PRIVATE keywords
-                    if ((i + 1) < customtype.CodeElement.ConsumedTokens.Count && (customtype.CodeElement.ConsumedTokens[i + 1].TokenType == Compiler.Scanner.TokenType.PUBLIC || customtype.CodeElement.ConsumedTokens[i + 1].TokenType == Compiler.Scanner.TokenType.PRIVATE))
-                        i++;
-
-                    //Ignore GLOBAL Keyword
-                    if (bIgnoreGlobal)
-                    {
-                        if ((i + 1) < customtype.CodeElement.ConsumedTokens.Count &&
-                            customtype.CodeElement.ConsumedTokens[i + 1].TokenType == Compiler.Scanner.TokenType.GLOBAL)
-                            i++;
-                    }
-
-                    ++i;
-                    //If we reached the last Tokens and if it's a PeriodSeparator then don't return a text
-                    if (i < customtype.CodeElement.ConsumedTokens.Count && customtype.CodeElement.ConsumedTokens[i].TokenType == Compiler.Scanner.TokenType.PeriodSeparator)
-                    {
-                        bHasPeriod = false;
-                        return "";
-                    }
-                    FlushConsumedTokens(layout, i - 1, customtype.CodeElement.ConsumedTokens, sb, out bHasPeriod);
-                }
-            }
+            FlushConsumedTokens(layout, customtype.CodeElement.ConsumedTokens, sb, new ExtractScalarTypedef(bIgnoreGlobal), out _, out bHasPeriod);
+            FlushConsumedTokens(layout, dataDescriptionEntry.ConsumedTokens, sb, new ExtractValue(), out _, out bHasPeriod);
             return sb.ToString();
         }
 
@@ -215,27 +386,8 @@ namespace TypeCobol.Codegen.Nodes
             out bool globalSeen,
             Func<Compiler.Scanner.Token, string> tokenFilter = null)
         {
-            globalSeen = false;
-            bHasPeriod = false;
             StringBuilder sb = new StringBuilder();
-            if (dataDescEntry.ConsumedTokens != null)
-            {
-                int i = 0;
-                while (i < dataDescEntry.ConsumedTokens.Count && dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.TYPE)
-                    i++;
-                i++;//Ignore the Name of the Type.
-
-                ++i;
-
-                //Ignore qualified type name
-                while (i < dataDescEntry.ConsumedTokens.Count &&
-                       dataDescEntry.ConsumedTokens[i].TokenType == Compiler.Scanner.TokenType.QualifiedNameSeparator)
-                {                    
-                    i += 2; //skip  :: and the next type name
-                }
-                globalSeen = ContainsToken(dataDescEntry.ConsumedTokens, i - 1, TokenType.GLOBAL);
-                FlushConsumedTokens(layout, i - 1, dataDescEntry.ConsumedTokens, sb, out bHasPeriod, tokenFilter);
-            }
+            FlushConsumedTokens(layout, dataDescEntry.ConsumedTokens, sb, new ExtractTypeInfo(tokenFilter), out globalSeen, out bHasPeriod);
             return sb.ToString();
         }
 
@@ -258,25 +410,8 @@ namespace TypeCobol.Codegen.Nodes
         /// <returns>The string representing the PIC clause </returns>
         internal static string ExtractPicTokensValues(ColumnsLayout? layout, IList<Compiler.Scanner.Token> consumedTokens, out bool bHasPeriod, out bool globalSeen)
         {
-            globalSeen = false;
-            bHasPeriod = false;
-            StringBuilder sb = new StringBuilder();
-            if (consumedTokens != null)
-            {
-                int i = 0;
-                while (i < consumedTokens.Count && consumedTokens[i].TokenType != Compiler.Scanner.TokenType.PIC && consumedTokens[i].TokenType != Compiler.Scanner.TokenType.PICTURE)
-                    i++;
-                if (i < consumedTokens.Count)
-                {
-                    if (consumedTokens[i].TokenType == TokenType.GLOBAL)
-                    {
-                        globalSeen = true;
-                    }
-                    sb.Append(string.Intern(" "));
-                    sb.Append(consumedTokens[i].Text);
-                }
-                FlushConsumedTokens(layout, i, consumedTokens, sb, out bHasPeriod);
-            }
+            var sb = new StringBuilder();
+            FlushConsumedTokens(layout, consumedTokens, sb, new ExtractStartingFromPicture(), out globalSeen, out bHasPeriod);
             return sb.ToString();
         }
 
@@ -288,15 +423,8 @@ namespace TypeCobol.Codegen.Nodes
         /// <returns>The string representing all tokens after a LevelNumber </returns>
         internal static string ExtractTokensValuesAfterLevel(ColumnsLayout? layout, DataDescriptionEntry dataDescEntry, out bool bHasPeriod, Func<Compiler.Scanner.Token, string> tokenFilter = null)
         {
-            bHasPeriod = false;
             StringBuilder sb = new StringBuilder();
-            if (dataDescEntry.ConsumedTokens != null)
-            {
-                int i = 0;
-                while (i < dataDescEntry.ConsumedTokens.Count && dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.LevelNumber)
-                    i++;
-                FlushConsumedTokens(layout, i, dataDescEntry.ConsumedTokens, sb, out bHasPeriod, tokenFilter);
-            }
+            FlushConsumedTokens(layout, dataDescEntry.ConsumedTokens, sb, new ExtractAfterLevel(tokenFilter), out _, out bHasPeriod);
             return sb.ToString();
         }
 
@@ -390,6 +518,7 @@ namespace TypeCobol.Codegen.Nodes
                 }
             }
         }
+
         /// <summary>
         /// Pre Generation calculation for collection variable path access and index variable map.
         /// </summary>
@@ -623,7 +752,7 @@ namespace TypeCobol.Codegen.Nodes
                     PreGenDependingOnAndIndexed(node, table, rootProcedures, rootVariableName, ownerDefinition, data_def, out bHasDependingOn, out bHasIndexes,
                         out dependingOnAccessPath, out indexesMap);
 
-                    string text = !(bHasDependingOn || bHasIndexes) ? ExtractAnyCobolScalarTypeDef(layout, customtype, out bHasPeriod, false) : "";
+                    string text = !(bHasDependingOn || bHasIndexes) ? ExtractAnyCobolScalarTypeDef(layout, data, customtype, out bHasPeriod, false) : "";
 
                     if (text.Length != 0)
                     {
@@ -781,6 +910,7 @@ namespace TypeCobol.Codegen.Nodes
             "                      X'00' thru 'S'",
             "                      'U' thru X'FF'."
         };
+
         private static readonly string[] PointerUsageTemplate = {
             " {2}{1}  {0} Pointer.",
             " {2}{1}  redefines {0}.",
@@ -905,5 +1035,4 @@ namespace TypeCobol.Codegen.Nodes
 
         public bool IsLeaf { get { return true; } }
     }
-
 }

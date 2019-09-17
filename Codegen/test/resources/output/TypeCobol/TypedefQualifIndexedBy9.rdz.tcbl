@@ -3,11 +3,11 @@
        data DIVISION.
        working-storage section.
       
-      *01 Event TYPEDEF STRICT.
+      *01 Event TYPEDEF STRICT PRIVATE.
       *   05 IDT pic X(05).
       *   05 Periodicity pic 9(03).
       
-      *01 EventList TYPEDEF STRICT.
+      *01 EventList TYPEDEF STRICT PRIVATE.
       *   05 Counter pic 9(04) comp-5.
       *   05 EventArray.
       *      10 Event TYPE Event occurs 10
@@ -46,53 +46,49 @@
        data DIVISION.
        working-storage section.
       
-      *01 Event TYPEDEF STRICT.
-      *   05 IDT pic X(05).
-      *   05 Periodicity pic 9(03).
-      
-      *01 EventList TYPEDEF STRICT.
-      *   05 Counter pic 9(04) comp-5.
-      *   05 EventArray.
-      *      10 Event TYPE Event occurs 10
-      *                      depending on Counter
-      *                      indexed by Idx.
-      
-      *01 MyEventList type EventList.
-       01 MyEventList.
+      *01 EventList  type EventList.
+       01 EventList.
            02 Counter pic 9(04) comp-5.
            02 EventArray.
              03 Event occurs 10
-                             depending on Counter OF MyEventList
-                             indexed by ad8947f9Idx.
+                             depending on Counter OF EventList
+                             indexed by f1298056Idx.
                04 IDT pic X(05).
                04 Periodicity pic 9(03).
-                                     
+                                    
+      *01 EventList2 type EventList.
+       01 EventList2.
+           02 Counter pic 9(04) comp-5.
+           02 EventArray.
+             03 Event occurs 10
+                             depending on Counter OF EventList2
+                             indexed by de4c1fd2Idx.
+               04 IDT pic X(05).
+               04 Periodicity pic 9(03).
+                                    
       
        procedure division.
-      *    call DisplayEventList input MyEventList
-           CALL 'd1447c56' USING
-                                 MyEventList
-           end-call
-                                                  
+      *    PERFORM VARYING EventList::Idx FROM 1 BY 1
+      *    UNTIL EventList::Idx > EventList2::Idx
+           PERFORM VARYING f1298056Idx FROM 1 BY 1
+           UNTIL f1298056Idx > de4c1fd2Idx
+             display "test"
+           END-PERFORM
+           GOBACK.
            .
-      
-      *DECLARE PROCEDURE DisplayEventList PRIVATE
-      *     INPUT EventList type EventList.
        END PROGRAM Imbrique.
        END PROGRAM DVZF0OS3.
-      
-      
       
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZF0OS3bis.
        data DIVISION.
        working-storage section.
       
-      *01 Event TYPEDEF STRICT.
+      *01 Event TYPEDEF STRICT PRIVATE.
       *   05 IDT pic X(05).
       *   05 Periodicity pic 9(03).
       
-      *01 EventList TYPEDEF STRICT.
+      *01 EventList TYPEDEF STRICT PRIVATE.
       *   05 Counter pic 9(04) comp-5.
       *   05 EventArray.
       *      10 Event TYPE Event occurs 10
@@ -115,52 +111,6 @@
       *DECLARE PROCEDURE DisplayEventList PRIVATE
       *     INPUT EventList type EventList.
        END PROGRAM DVZF0OS3bis.
-      *
-      *DECLARE PROCEDURE DisplayEventList PRIVATE
-      *     INPUT EventList type EventList.
-      *_________________________________________________________________
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. d1447c56.
-       data division.
-       working-storage section.
-      *DVZF0OS3.DisplayEventList - Params :
-      *		input(EventList: EventList)
-                               
-      *01 EventList2 type EventList.
-       01 EventList2.
-           02 Counter pic 9(04) comp-5.
-           02 EventArray.
-             03 Event occurs 10
-                             depending on Counter OF EventList2
-                             indexed by dc466042Idx.
-               04 IDT pic X(05).
-               04 Periodicity pic 9(03).
-                                    
-       LINKAGE SECTION.
-      *DVZF0OS3.DisplayEventList - Params :
-      *		input(EventList: EventList)
-       01 EventList.
-           02 Counter pic 9(04) comp-5.
-           02 EventArray.
-             03 Event occurs 10
-                             depending on Counter OF EventList
-                             indexed by a23b5481Idx.
-               04 IDT pic X(05).
-               04 Periodicity pic 9(03).
-       PROCEDURE DIVISION
-             USING BY REFERENCE EventList
-           .
-      *DVZF0OS3.DisplayEventList - Params :
-      *		input(EventList: EventList)
-      *   Dans pgm Imbrique
-      *    PERFORM VARYING EventList::Idx FROM 1 BY 1
-      *    UNTIL EventList::Idx > EventList2::Idx
-           PERFORM VARYING a23b5481Idx FROM 1 BY 1
-           UNTIL a23b5481Idx > dc466042Idx
-             display "test"
-           END-PERFORM
-           GOBACK.
-       END PROGRAM d1447c56.
       *
       *DECLARE PROCEDURE DisplayEventList PRIVATE
       *     INPUT EventList type EventList.
@@ -243,7 +193,6 @@
            .
       *DVZF0OS3.DisplayEventList - Params :
       *		input(EventList: EventList)
-      * Dans Pgm superposé
       *    PERFORM VARYING EventList::Idx FROM 1 BY 1
       *    UNTIL EventList::Idx > EventList2::Idx
            PERFORM VARYING cae3b2c8Idx FROM 1 BY 1

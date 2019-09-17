@@ -37,6 +37,7 @@
     <Compile Include="Completion Factory\CompletionFactory.cs" />
     <Compile Include="Completion Factory\CompletionFactoryHelpers.cs" />
     <Compile Include="Context\DocumentContext.cs" />
+    <Compile Include="FileWatchers\CopyWatcher.cs" />
     <Compile Include="FileWatchers\DependenciesFileWatcher.cs" />
     <Compile Include="Interfaces\ILanguageServer.cs" />
     <Compile Include="JsonRPC\ErrorCodes.cs" />
@@ -60,6 +61,9 @@
     <Compile Include="TypeCobolCustomLanguageServer\Node Refresh Notification\NodeRefreshNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Node Refresh Notification\NodeRefreshParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Node Refresh Request\NodeRefreshRequest.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Refresh Outline Notification\OutlineNode.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Refresh Outline Notification\RefreshOutlineNotification.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Refresh Outline Notification\RefreshOutlineParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Signature Help Context Notification\SignatureHelpContextParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Signature Help Context Notification\SignatureHelpContextNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\SyntaxColoring\SyntaxColoringNotification.cs" />

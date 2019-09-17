@@ -1,0 +1,59 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZFSCT0.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 Type1 typedef strict private.
+          05 Champ1 PIC X.
+          05 Champ2 PIC X.
+
+       01 TypeG typedef strict global.
+          05 Champ3 PIC X.
+          05 Champ4 type Type1.
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Nested.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 TypeG typedef strict.
+          05 Champ3 PIC X.
+          05 Champ4 type Type1.
+          05 Champ5 PIC 9.
+
+       01 var1 type TypeG.
+       01 var2 type DVZFSCT0::TypeG.
+       procedure division.
+      *KO
+           DISPLAY Champ1
+      *KO
+           DISPLAY Champ2
+      *KO
+           DISPLAY Champ3
+      *KO
+           DISPLAY Champ4
+      *OK
+           DISPLAY Champ5
+
+      *OK
+           DISPLAY var1::Champ1
+      *OK
+           DISPLAY var1::Champ2
+      *OK
+           DISPLAY var1::Champ3
+      *OK
+           DISPLAY var1::Champ4
+      *OK
+           DISPLAY var1::Champ5
+
+      *OK
+           DISPLAY var2::Champ1
+      *OK
+           DISPLAY var2::Champ2
+      *OK
+           DISPLAY var2::Champ3
+      *OK
+           DISPLAY var2::Champ4
+      *KO
+           DISPLAY var2::Champ5
+           .
+       END PROGRAM Nested.
+       END PROGRAM DVZFSCT0.

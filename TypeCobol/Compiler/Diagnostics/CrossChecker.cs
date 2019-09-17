@@ -681,15 +681,19 @@ namespace TypeCobol.Compiler.Diagnostics
                     IndexAndFlagDataDefiniton(dataDefinitionPath, dataDefinitionFound, node, area, storageArea);
                 }
 
-                if (dataDefinitionFound.IsFlagSet(Node.Flag.GlobalStorageSection) || dataDefinitionPath != null && dataDefinitionPath.CurrentDataDefinition.IsFlagSet(Node.Flag.GlobalStorageSection))
+                if (!node.IsFlagSet(Node.Flag.GlobalStorageSection))
                 {
-                    if (node is DataDefinition)
+                    if (dataDefinitionFound.IsFlagSet(Node.Flag.GlobalStorageSection) || dataDefinitionPath != null && dataDefinitionPath.CurrentDataDefinition.IsFlagSet(Node.Flag.GlobalStorageSection))
                     {
-                        DiagnosticUtils.AddError(node, "A Global-Storage Section variable cannot be referenced in another Data Section", area.SymbolReference);
+                        if (node is DataDefinition)
+                        {
+                            DiagnosticUtils.AddError(node, "A Global-Storage Section variable cannot be referenced in another Data Section", area.SymbolReference);
+                        }
+                        //We must find the enclosing FunctionDeclaration or Program (if node is outside a function/procedure)
+                        node.GetEnclosingProgramOrFunctionNode().SetFlag(Node.Flag.UseGlobalStorage, true);
                     }
-                    //We must find the enclosing FunctionDeclaration or Program (if node is outside a function/procedure)
-                    node.GetEnclosingProgramOrFunctionNode().SetFlag(Node.Flag.UseGlobalStorage, true);
                 }
+                
                 //add the found DataDefinition to a dictionary depending on the storage area type
                 if (isReadStorageArea)
                 {
@@ -806,7 +810,7 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 var callStatement = node.CodeElement as CallStatement;
                 var currentCheckedParameter = callStatement?.InputParameters.FirstOrDefault(
-                    param => param.StorageAreaOrValue.StorageArea == specialRegister);
+                    param => param.StorageAreaOrValue?.StorageArea == specialRegister);
 
                 if (currentCheckedParameter != null)
                 {
