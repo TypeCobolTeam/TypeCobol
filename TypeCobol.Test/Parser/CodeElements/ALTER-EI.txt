@@ -8,4 +8,3 @@ Line 3[1,5] <27, Error, Syntax> - Syntax error : ALTER should not be used RuleSt
 [[AlterStatement]] [1,5:ALTER]<ALTER> --> [24,25:p2]<UserDefinedWord>
 
 [[AlterStatement]] [1,5:ALTER]<ALTER> --> [22,23:q2]<UserDefinedWord>
-

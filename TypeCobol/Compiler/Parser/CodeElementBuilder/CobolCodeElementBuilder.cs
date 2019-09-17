@@ -1666,7 +1666,7 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterAlterStatement(CodeElementsParser.AlterStatementContext context) {
             Context = context;
             AlterStatement alterStatement = CobolStatementsBuilder.CreateAlterStatement(context);
-            CodeElement = alterStatement;
+            CodeElement = alterStatement; 
             AlterStatementChecker.OnCodeElement(alterStatement, context);
         }
 
