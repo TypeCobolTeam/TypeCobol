@@ -396,14 +396,14 @@ namespace TypeCobol.Test.Domain
             ///---------------------------
             //Get all TYPEDEF Types
             //----------------------------
-            //Lookup the type "typeOfDays"
-            var typeOfDays = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDays" }, false);
-            Assert.IsNotNull(typeOfDays);
-            Assert.IsTrue(typeOfDays.Count == 1);
-            Assert.IsNotNull(typeOfDays.Symbol.Type);
-            Assert.IsTrue(typeOfDays.Symbol.HasFlag(Symbol.Flags.Public | Symbol.Flags.Strict));
-            Assert.IsTrue(typeOfDays.Symbol.Type.Tag == Type.Tags.Typedef);
-            Assert.IsTrue(typeOfDays.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
+            //Lookup the type "typeOfDaysPublic"
+            var typeOfDaysPublic = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysPublic" }, false);
+            Assert.IsNotNull(typeOfDaysPublic);
+            Assert.IsTrue(typeOfDaysPublic.Count == 1);
+            Assert.IsNotNull(typeOfDaysPublic.Symbol.Type);
+            Assert.IsTrue(typeOfDaysPublic.Symbol.HasFlag(Symbol.Flags.Public | Symbol.Flags.Strict));
+            Assert.IsTrue(typeOfDaysPublic.Symbol.Type.Tag == Type.Tags.Typedef);
+            Assert.IsTrue(typeOfDaysPublic.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
 
             //Lookup the type "typeOfDaysPrivate"
             var typeOfDaysPrivate = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysPrivate" }, false);
@@ -415,23 +415,23 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(typeOfDaysPrivate.Symbol.Type.Tag == Type.Tags.Typedef);
             Assert.IsTrue(typeOfDaysPrivate.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
 
-            //Lookup the type "typeOfDaysNoModifier"
-            var typeOfDaysNoModifier = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysNoModifier" }, false);
-            Assert.IsNotNull(typeOfDaysNoModifier);
-            Assert.IsTrue(typeOfDaysNoModifier.Count == 1);
-            Assert.IsNotNull(typeOfDaysNoModifier.Symbol.Type);
-            Assert.IsFalse(typeOfDaysNoModifier.Symbol.HasFlag(Symbol.Flags.Public));
-            Assert.IsTrue(typeOfDaysNoModifier.Symbol.HasFlag(Symbol.Flags.Private | Symbol.Flags.Strict));
-            Assert.IsTrue(typeOfDaysNoModifier.Symbol.Type.Tag == Type.Tags.Typedef);
-            Assert.IsTrue(typeOfDaysNoModifier.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
+            //Lookup the type "typeOfDaysLocal"
+            var typeOfDaysLocal = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysLocal" }, false);
+            Assert.IsNotNull(typeOfDaysLocal);
+            Assert.IsTrue(typeOfDaysLocal.Count == 1);
+            Assert.IsNotNull(typeOfDaysLocal.Symbol.Type);
+            Assert.IsFalse(typeOfDaysLocal.Symbol.HasFlag(Symbol.Flags.Public));
+            Assert.IsTrue(typeOfDaysLocal.Symbol.HasFlag(Symbol.Flags.Private | Symbol.Flags.Strict));
+            Assert.IsTrue(typeOfDaysLocal.Symbol.Type.Tag == Type.Tags.Typedef);
+            Assert.IsTrue(typeOfDaysLocal.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
 
             //Before expanding, all variables have a TYPEDEF Type
-            TypedefSymbol[] types = new TypedefSymbol[] { typeOfDays.Symbol, typeOfDaysPrivate.Symbol, typeOfDaysNoModifier.Symbol };
-            VariableSymbol[] vars = new VariableSymbol[4];
+            TypedefSymbol[] types = new TypedefSymbol[] { typeOfDaysPublic.Symbol, typeOfDaysPrivate.Symbol, typeOfDaysLocal.Symbol };
+            VariableSymbol[] vars = new VariableSymbol[3];
             for (int i = 1; i < 4; i++)
             {
                 var vari = nestPrgSym.ResolveReference(new string[] { "var" + i }, false);                
-                Assert.IsTrue(vari.Count == (i == 1 ? 3 : 1));
+                Assert.IsTrue(vari.Count == (i == 3 ? 1 : 3));
                 vars[i - 1] = vari.Symbol;
                 Assert.IsTrue(vari.Symbol.Type == types[i-1].Type);
             }
@@ -460,6 +460,8 @@ namespace TypeCobol.Test.Domain
 //01 var1 PIC X(1).
 //01 var1 PIC X(1).
 //01 var1 PIC X(1).
+//01 var2 PIC X(1).
+//01 var2 PIC X(1).
 //01 var2 PIC X(1).
 //01 var3 PIC X(1).
 
@@ -1763,26 +1765,25 @@ namespace TypeCobol.Test.Domain
             Assert.AreEqual(nestPrgSym.Name, "Tester");
 
             //Lookup the type "typeOfDays"
-            var typeOfDays = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDays" }, false);
-            Assert.IsNotNull(typeOfDays);
-            Assert.IsTrue(typeOfDays.Count == 1);
-            Assert.IsNotNull(typeOfDays.Symbol.Type);
-            Assert.IsTrue(typeOfDays.Symbol.HasFlag(Symbol.Flags.Public | Symbol.Flags.Strict));
-            Assert.IsTrue(typeOfDays.Symbol.Type.Tag == Type.Tags.Typedef);
-            Assert.IsTrue(typeOfDays.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
+            var typeOfDaysPublic = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysPublic" }, false);
+            Assert.IsNotNull(typeOfDaysPublic);
+            Assert.IsTrue(typeOfDaysPublic.Count == 1);
+            Assert.IsNotNull(typeOfDaysPublic.Symbol.Type);
+            Assert.IsTrue(typeOfDaysPublic.Symbol.HasFlag(Symbol.Flags.Public | Symbol.Flags.Strict));
+            Assert.IsTrue(typeOfDaysPublic.Symbol.Type.Tag == Type.Tags.Typedef);
+            Assert.IsTrue(typeOfDaysPublic.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
 
             //-------------------------------------------------
             //Get the variable var1 and its type accessibility.
             //-------------------------------------------------
             var var1 = nestPrgSym.ResolveReference(new string[] {"var1"}, false);
             Assert.IsTrue(var1.Count == 3);
-            for (int i = 0; i < 3; i++)
+            foreach (var var1Symbol in var1)
             {
-                VariableSymbol v1 = var1[i];
-                Assert.IsTrue(v1.Type == typeOfDays.Symbol.Type);
+                Assert.IsTrue(var1Symbol.Type == typeOfDaysPublic.Symbol.Type);
             }
             //Check the the type was accessible
-            Assert.IsTrue(nestPrgSym.IsTypeAccessible(typeOfDays.Symbol));
+            Assert.IsTrue(nestPrgSym.IsTypeAccessible(typeOfDaysPublic.Symbol));
 
             //Lookup the type "typeOfDaysPrivate"
             var typeOfDaysPrivate = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysPrivate" }, false);
@@ -1798,30 +1799,32 @@ namespace TypeCobol.Test.Domain
             //Get the variable var2 and its type accessibility.
             //-------------------------------------------------
             var var2 = nestPrgSym.ResolveReference(new string[] { "var2" }, false);
-            Assert.IsTrue(var2.Count == 1);
-            Assert.IsTrue(var2.Symbol.Type == typeOfDaysPrivate.Symbol.Type);
+            Assert.IsTrue(var2.Count == 3);
+            foreach (var var2Symbol in var2)
+            {
+                Assert.IsTrue(var2Symbol.Type == typeOfDaysPrivate.Symbol.Type);
+            }
             //Check the the type was accessible
-            Assert.IsFalse(nestPrgSym.IsTypeAccessible(typeOfDaysPrivate.Symbol));
+            Assert.IsTrue(nestPrgSym.IsTypeAccessible(typeOfDaysPrivate.Symbol));
 
-            //Lookup the type "typeOfDaysNoModifier"
-            var typeOfDaysNoModifier = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysNoModifier" }, false);
-            Assert.IsNotNull(typeOfDaysNoModifier);
-            Assert.IsTrue(typeOfDaysNoModifier.Count == 1);
-            Assert.IsNotNull(typeOfDaysNoModifier.Symbol.Type);
-            Assert.IsFalse(typeOfDaysNoModifier.Symbol.HasFlag(Symbol.Flags.Public));
-            Assert.IsTrue(typeOfDaysNoModifier.Symbol.HasFlag(Symbol.Flags.Private | Symbol.Flags.Strict));
-            Assert.IsTrue(typeOfDaysNoModifier.Symbol.Type.Tag == Type.Tags.Typedef);
-            Assert.IsTrue(typeOfDaysNoModifier.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
+            //Lookup the type "typeOfDaysLocal"
+            var typeOfDaysLocal = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysLocal" }, false);
+            Assert.IsNotNull(typeOfDaysLocal);
+            Assert.IsTrue(typeOfDaysLocal.Count == 1);
+            Assert.IsNotNull(typeOfDaysLocal.Symbol.Type);
+            Assert.IsFalse(typeOfDaysLocal.Symbol.HasFlag(Symbol.Flags.Public));
+            Assert.IsTrue(typeOfDaysLocal.Symbol.HasFlag(Symbol.Flags.Private | Symbol.Flags.Strict));
+            Assert.IsTrue(typeOfDaysLocal.Symbol.Type.Tag == Type.Tags.Typedef);
+            Assert.IsTrue(typeOfDaysLocal.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
 
             //-------------------------------------------------
             //Get the variable var3 and its type accessibility.
             //-------------------------------------------------
             var var3 = nestPrgSym.ResolveReference(new string[] { "var3" }, false);
             Assert.IsTrue(var3.Count == 1);
-            Assert.IsTrue(var3.Symbol.Type == typeOfDaysNoModifier.Symbol.Type);
-            //Check the the type was accessible
-            Assert.IsFalse(nestPrgSym.IsTypeAccessible(typeOfDaysNoModifier.Symbol));
-
+            Assert.IsTrue(var3.Symbol.Type == typeOfDaysLocal.Symbol.Type);
+            //Check the the type was not accessible
+            Assert.IsFalse(nestPrgSym.IsTypeAccessible(typeOfDaysLocal.Symbol));
         }
     }
 }
