@@ -1660,17 +1660,17 @@ namespace TypeCobol.Compiler.Parser
 			}
 		}
 
-		// --- ALTER ---
 
-	    public override void EnterAlterStatement(CodeElementsParser.AlterStatementContext context)
-	    {
-	        Context = context;
-	        AlterStatement alterStatement = CobolStatementsBuilder.CreateAlterStatement(context);
-	        CodeElement = alterStatement;
-	        AlterStatementChecker.OnCodeElement(alterStatement, context);
-	    }
+	    // --- ALTER ---
 
-	    // --- CALL ---
+        public override void EnterAlterStatement(CodeElementsParser.AlterStatementContext context) {
+            Context = context;
+            AlterStatement alterStatement = CobolStatementsBuilder.CreateAlterStatement(context);
+            CodeElement = alterStatement;
+            AlterStatementChecker.OnCodeElement(alterStatement, context);
+        }
+
+        // --- CALL ---
         /// <summary>
         /// Generic and default CALL statement
         /// </summary>
