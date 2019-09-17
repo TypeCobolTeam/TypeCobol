@@ -737,9 +737,6 @@ namespace TypeCobol.Codegen.Domain
         [TestMethod]
         [TestCategory("DomainCodegen")]
         [TestProperty("Time", "fast")]
-#if DOMAIN_CHECKER
-        [Ignore] //This test has detected inconsitency in TypeCobol Typedef declared in nested procedures: DVZF0OS3.Imbrique.EventList.Counter
-#endif
         public void TypedefQualifIndexedBy9()
         {
             var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;

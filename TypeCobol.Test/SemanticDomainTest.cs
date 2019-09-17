@@ -1217,9 +1217,6 @@ namespace TypeCobol.Test.Domain
         [TestMethod]
         [TestCategory("SemanticDomain")]
         [TestProperty("Object", "Visibility")]
-#if DOMAIN_CHECKER
-        [Ignore]//Because visibility are not the same using CrossChecker
-#endif
         public void VisibilityProgramProcedureVariable0()
         {
             string path = Path.Combine(GetTestLocation(), "SemanticDomain", "VisPrgProcVar0.tcbl");
@@ -1634,9 +1631,6 @@ namespace TypeCobol.Test.Domain
         [TestMethod]
         [TestCategory("SemanticDomain")]
         [TestProperty("Object", "Visibility")]
-#if DOMAIN_CHECKER
-        [Ignore]//Because visibility are not the same using CrossChecker
-#endif
         public void VisibilityProgramNestedProcedureVariable0()
         {
             string path = Path.Combine(GetTestLocation(), "SemanticDomain", "VisPrgNestedProcVar0.tcbl");

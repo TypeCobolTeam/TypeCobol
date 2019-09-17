@@ -721,7 +721,7 @@ namespace TypeCobol.Compiler.Domain
             PictureValidator pictureValidator = new PictureValidator(dataDef.Picture.Value, dataDef.SignIsSeparate);
             PictureType type = new PictureType(pictureValidator);
             //Use permissive Usage setter which allows COMP1 and COMP2
-            type.UsageEx = usage;
+            type.Usage = usage;
             return type;
         }
 

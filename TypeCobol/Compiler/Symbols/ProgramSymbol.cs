@@ -316,10 +316,14 @@ namespace TypeCobol.Compiler.Symbols
                         curProg.ResolveReference(paths, results, bRecurseEnglobingPrograms, visibilityMask == 0 ? VariableVisibilityMask : visibilityMask);
                     }
                 }
-                else if ((visibilityMask & Flags.GLOBAL_STORAGE) == 0 && IsNested)
+                else
                 {
+                    // We have to search in GLOBAL-STORAGE even if we already have found results locally.
                     var topPgm = GetTopProgram(this);
-                    topPgm.ResolveReference(paths, results, false, Flags.GLOBAL_STORAGE);
+                    if ((visibilityMask & Flags.GLOBAL_STORAGE) == 0 && this != topPgm)
+                    {
+                        topPgm.ResolveReference(paths, results, false, Flags.GLOBAL_STORAGE);
+                    }
                 }
             }
             return results;
