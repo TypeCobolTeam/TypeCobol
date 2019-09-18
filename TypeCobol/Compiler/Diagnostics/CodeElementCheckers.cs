@@ -289,6 +289,14 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
+    class StopStatementChecker
+    {
+        public static void OnCodeElement(StopStatement statement, CodeElementsParser.StopStatementContext context)
+        {
+            DiagnosticUtils.AddError(statement, "GOBACK should be used instead of STOP RUN", context, MessageCode.Warning);
+        }
+    }
+
     #endregion
 
 }

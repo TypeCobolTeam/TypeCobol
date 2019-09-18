@@ -1988,7 +1988,9 @@ namespace TypeCobol.Compiler.Parser
 
 		public override void EnterStopStatement(CodeElementsParser.StopStatementContext context) {
 			Context = context;
-			CodeElement = CobolStatementsBuilder.CreateStopStatement(context);
+		    var stopStatement = CobolStatementsBuilder.CreateStopStatement(context);
+            CodeElement = stopStatement;
+            StopStatementChecker.OnCodeElement(stopStatement, context);
 		}
 
 		// --- STRING ---

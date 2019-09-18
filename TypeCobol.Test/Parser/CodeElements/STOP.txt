@@ -1,4 +1,22 @@
 --- Diagnostics ---
+Line 1[1,4] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN RuleStack=codeElement>stopStatement,  OffendingSymbol=[1,4:STOP]<STOP>
+Line 5[1,4] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN RuleStack=codeElement>stopStatement,  OffendingSymbol=[1,4:STOP]<STOP>
+Line 6[1,4] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN RuleStack=codeElement>stopStatement,  OffendingSymbol=[1,4:STOP]<STOP>
+Line 7[1,4] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN RuleStack=codeElement>stopStatement,  OffendingSymbol=[1,4:STOP]<STOP>
+Line 8[1,4] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN RuleStack=codeElement>stopStatement,  OffendingSymbol=[1,4:STOP]<STOP>
+Line 9[1,4] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN RuleStack=codeElement>stopStatement,  OffendingSymbol=[1,4:STOP]<STOP>
+Line 10[1,4] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN RuleStack=codeElement>stopStatement,  OffendingSymbol=[1,4:STOP]<STOP>
+Line 11[1,4] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN RuleStack=codeElement>stopStatement,  OffendingSymbol=[1,4:STOP]<STOP>
+Line 12[1,4] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN RuleStack=codeElement>stopStatement,  OffendingSymbol=[1,4:STOP]<STOP>
+Line 13[1,4] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN RuleStack=codeElement>stopStatement,  OffendingSymbol=[1,4:STOP]<STOP>
+Line 14[1,4] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN RuleStack=codeElement>stopStatement,  OffendingSymbol=[1,4:STOP]<STOP>
+Line 15[1,4] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN RuleStack=codeElement>stopStatement,  OffendingSymbol=[1,4:STOP]<STOP>
+Line 16[1,4] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN RuleStack=codeElement>stopStatement,  OffendingSymbol=[1,4:STOP]<STOP>
+Line 17[1,4] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN RuleStack=codeElement>stopStatement,  OffendingSymbol=[1,4:STOP]<STOP>
+Line 18[1,4] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN RuleStack=codeElement>stopStatement,  OffendingSymbol=[1,4:STOP]<STOP>
+Line 19[1,4] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN RuleStack=codeElement>stopStatement,  OffendingSymbol=[1,4:STOP]<STOP>
+Line 20[1,4] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN RuleStack=codeElement>stopStatement,  OffendingSymbol=[1,4:STOP]<STOP>
+Line 22[1,4] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN RuleStack=codeElement>stopStatement,  OffendingSymbol=[1,4:STOP]<STOP>
 Line 22[6,8] <27, Error, Syntax> - Syntax error : extraneous input 'ALL' expecting {alphanumeric literal, numeric literal, figurative constant, keyword} RuleStack=codeElement>stopStatement,  OffendingSymbol=[6,8:ALL]<ALL>
 --- Code Elements ---
 [[StopStatement]] [1,4:STOP]<STOP> --> [6,8:RUN]<RUN>

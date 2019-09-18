@@ -1237,7 +1237,7 @@ namespace TypeCobol.Compiler.Parser
         // STOP STATEMENT //
         ////////////////////
 
-        internal CodeElement CreateStopStatement(CodeElementsParser.StopStatementContext context)
+        internal StopStatement CreateStopStatement(CodeElementsParser.StopStatementContext context)
         {
             var statement = new StopStatement();
 
