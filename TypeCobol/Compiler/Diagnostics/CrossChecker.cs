@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,7 +96,11 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Paragraph paragraph)
         {
-            SectionOrParagraphUsageChecker.CheckParagraph(paragraph);
+            IList<Paragraph> found = paragraph.SymbolTable.GetParagraph(paragraph.Name);
+            if (found.Count > 1)
+                DiagnosticUtils.AddError(paragraph, "Paragraph \'" + paragraph.Name + "\' already declared");
+            if (paragraph.Children.Count == 1 && paragraph.Children[0].Children.Count == 1 && paragraph.Children[0].Children[0].GetType() == typeof(Nodes.End))
+                DiagnosticUtils.AddError(paragraph, "Paragraph \'" + paragraph.Name + "\' is empty", MessageCode.Warning);
             return true;
         }
 
@@ -114,12 +119,17 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Section section)
         {
-            SectionOrParagraphUsageChecker.CheckSection(section);
+            IList<Section> found = section.SymbolTable.GetSection(section.Name);
+            if (found.Count > 1)
+                DiagnosticUtils.AddError(section, "Section \'" + section.Name + "\' already declared");
+            if (section.Children.Count == 1 && section.Children[0].Children.Count == 1 && section.Children[0].Children[0].GetType() == typeof(Nodes.End))
+                DiagnosticUtils.AddError(section, "Section \'" + section.Name + "\' is empty", MessageCode.Warning);
             return true;
         }
 
         public override bool Visit(Set setStatement)
         {
+
             SetStatementChecker.CheckStatement(setStatement);
             return true;
         }
@@ -663,7 +673,6 @@ namespace TypeCobol.Compiler.Diagnostics
             if (!node.QualifiedStorageAreas.ContainsKey(storageArea))
                 node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
         }
-
     }
     
     class SectionOrParagraphUsageChecker
@@ -721,21 +730,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
             return null;
-        }
-
-        protected static void Check<T>(T node, [NotNull] IList<T> found) where T : Node
-        {
-            if (found.Count > 1) DiagnosticUtils.AddError(node, "Symbol \'" + node.Name + "\' already declared");
-        }
-
-        public static void CheckSection(Section section)
-        {
-            Check(section, section.SymbolTable.GetSection(section.Name));
-        }
-
-        public static void CheckParagraph(Paragraph paragraph)
-        {
-            Check(paragraph, paragraph.SymbolTable.GetParagraph(paragraph.Name));
         }
     }
 

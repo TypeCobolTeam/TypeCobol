@@ -1,0 +1,20 @@
+--- Diagnostics ---
+Line 17[8,17] <37, Warning, General> - Warning: Paragraph 'PARA-xxxx' is empty
+Line 22[8,24] <37, Warning, General> - Warning: Section 'Section2' is empty
+
+--- Program ---
+PROGRAM: PERFTIMI common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+-- SECTIONS ----
+  Section1
+  Section2
+-- PARAGRAPHS --
+  PARA-7A
+  PARA-xxxx
+  PARA-7B
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
