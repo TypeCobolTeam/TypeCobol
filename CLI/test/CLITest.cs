@@ -52,7 +52,7 @@ namespace CLI.Test
         [TestMethod]
         public void TestGenerate_NestedProcedure()
         {
-            CLITestHelper.Test("generate_nestedProc", ReturnCode.Success);
+            CLITestHelper.Test("generate_nestedProc", ReturnCode.Warning);
         }
 
         /// <summary>

@@ -1,2 +1,3 @@
-ReturnCode=Success_
-No error in "input\CallPublicProcFromPrivateProc.rdz.tcbl".
+ReturnCode=Warning_
+1 error in "input\CallPublicProcFromPrivateProc.rdz.tcbl":
+Line 33[8,20] <37, Warning, General> - Warning: Paragraph 'INIT-LIBRARY' is empty

@@ -1,4 +1,6 @@
-﻿       IDENTIFICATION DIVISION.
+﻿      * 1 errors
+      * Line 52[12,23] <37, Warning, General> - Warning: Paragraph 'DoSomething' is empty
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. AYIMCPFD.
 
        DATA DIVISION.

@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -9,6 +10,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using System.Text.RegularExpressions;
+using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics
@@ -723,19 +725,38 @@ namespace TypeCobol.Compiler.Diagnostics
             return null;
         }
 
-        protected static void Check<T>(T node, [NotNull] IList<T> found) where T : Node
+        protected static void Check<T>(string nodeTypeName, T node, [NotNull] IList<T> found) where T : Node
         {
-            if (found.Count > 1) DiagnosticUtils.AddError(node, "Symbol \'" + node.Name + "\' already declared");
+            if (found.Count > 1)
+                DiagnosticUtils.AddError(node, nodeTypeName + " \'" + node.Name + "\' already declared");
+
+            // a section/paragraph is empty when it has no child or when its child/children is/are an {End} node
+            bool empty = true;
+            int nodesCount = node.Children.Count; 
+            // checks if all children are of type {End} : if not one then empty = false 
+            for (int i = 0; i < nodesCount; i++)
+            {
+                if  ((node.Children[i].Children.Count == 1 && node.Children[i].Children[0].GetType() == typeof(Nodes.End)) == false)
+                {
+                    empty = false;
+                    break;
+                }
+            }
+            if (empty)
+            {
+                DiagnosticUtils.AddError(node, nodeTypeName + " \'" + node.Name + "\' is empty", MessageCode.Warning);
+            }
+
         }
 
         public static void CheckSection(Section section)
         {
-            Check(section, section.SymbolTable.GetSection(section.Name));
+            Check("Section", section, section.SymbolTable.GetSection(section.Name));
         }
 
         public static void CheckParagraph(Paragraph paragraph)
         {
-            Check(paragraph, paragraph.SymbolTable.GetParagraph(paragraph.Name));
+            Check("Paragraph", paragraph, paragraph.SymbolTable.GetParagraph(paragraph.Name));
         }
     }
 

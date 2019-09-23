@@ -1,0 +1,45 @@
+--- Diagnostics ---
+Line 21[8,28] <37, Warning, General> - Warning: Section 'SectionEmpty' is empty
+Line 23[8,29] <37, Warning, General> - Warning: Section 'SectionEmpty2' is empty
+Line 28[8,14] <37, Warning, General> - Warning: Paragraph 'Parag1' is empty
+Line 31[8,14] <37, Warning, General> - Warning: Paragraph 'Parag2' is empty
+Line 40[8,14] <37, Warning, General> - Warning: Paragraph 'Parag4' is empty
+Line 43[8,14] <37, Warning, General> - Warning: Paragraph 'Parag5' is empty
+Line 49[8,14] <37, Warning, General> - Warning: Paragraph 'Parag6' is empty
+
+--- Program ---
+PROGRAM: TestingPgm common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  W-Date:DATE
+  W-Bool:BOOL
+  W-Numeric:Numeric
+  W-Alphabetic:Alphabetic
+  W-Alphanum:Alphanumeric
+  W-OutDate:DATE
+  TestLevel:Alphanumeric
+  TestLevel88:Level88
+  Level1:Alphanumeric
+  Level2:Alphanumeric
+  VarLevel2:NumericEdited
+  Level2-2:Alphanumeric
+  VarLevel2-2:NumericEdited
+  MyBool:BOOL
+-- SECTIONS ----
+  SectionEmpty
+  SectionEmpty2
+  Section1
+-- PARAGRAPHS --
+  Parag1
+  Parag2
+  Parag3
+  Parag4
+  Parag5
+  Parag6
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
