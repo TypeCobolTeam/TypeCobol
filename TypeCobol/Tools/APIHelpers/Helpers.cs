@@ -105,10 +105,10 @@ namespace TypeCobol.Tools.APIHelpers
 
         public static SymbolTable LoadDependencies([NotNull] List<string> paths, DocumentFormat format, SymbolTable intrinsicTable,
             [NotNull] List<string> inputFiles, List<string> copyFolders, EventHandler<DiagnosticsErrorEvent> diagEvent, 
-            out List<RemarksDirective.TextNameVariation> usedCopies,out List<CopyDirective> missingCopies)
+            out List<RemarksDirective.TextNameVariation> usedCopies,out IDictionary<string, IEnumerable<string>> missingCopies)
         {
             usedCopies = new List<RemarksDirective.TextNameVariation>();
-            missingCopies = new List<CopyDirective>();
+            missingCopies = new Dictionary<string, IEnumerable<string>>();
             var diagnostics = new List<Diagnostic>();
             var table = new SymbolTable(intrinsicTable, SymbolTable.Scope.Namespace); //Generate a table of NameSPace containing the dependencies programs based on the previously created intrinsic table. 
 
@@ -178,7 +178,7 @@ namespace TypeCobol.Tools.APIHelpers
 
                     if (parsingResult.MissingCopies.Count > 0)
                     {
-                        missingCopies.AddRange(parsingResult.MissingCopies);
+                        missingCopies.Add(path, parsingResult.MissingCopies.Select(mc => mc.TextName));
                         continue; //There will be diagnostics because copies are missing. Don't report diagnostic for this dependency, but load following dependencies
                     }
 

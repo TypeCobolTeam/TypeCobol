@@ -139,18 +139,21 @@ namespace TypeCobol.Server
             #endregion
 
             depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load intrinsic
-            depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, depParser.CustomSymbols, config.InputFiles, config.CopyFolders, DependencyErrorEvent, out List<RemarksDirective.TextNameVariation> usedCopies, out List<CopyDirective> missingCopies); //Load dependencies
+            depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, depParser.CustomSymbols, config.InputFiles, config.CopyFolders, DependencyErrorEvent, out List<RemarksDirective.TextNameVariation> usedCopies, out IDictionary<string, IEnumerable<string>> missingCopies); //Load dependencies
 
             if(missingCopies.Count > 0 && !string.IsNullOrEmpty(config.HaltOnMissingCopyFilePath))
             {
                 //Collect the missing copies
-                File.WriteAllLines(config.HaltOnMissingCopyFilePath, missingCopies.Select(c => c.TextName).Distinct());
+                File.WriteAllLines(config.HaltOnMissingCopyFilePath, missingCopies.SelectMany(mc => mc.Value).Distinct());
 
-                //Create extraced copies file even if copy are missing
-                CreateExtracedCopiesFile(config, usedCopies);
+                //Create extracted copies file even if copy are missing
+                CreateExtractedCopiesFile(config, usedCopies);
 
-                //If copies are missing, don't try to parse main input files.
-                throw new MissingCopyException("Some copy are missing", config.Dependencies.FirstOrDefault(), null, logged: false, needMail: false);
+                foreach (var missingCopyDependency in missingCopies.Keys)
+                {
+                    //If copies are missing, don't try to parse main input files.
+                    throw new MissingCopyException("Some copy are missing", missingCopyDependency, null, logged: false, needMail: false);
+                }
             }
             
 
@@ -235,7 +238,7 @@ namespace TypeCobol.Server
                 }
 
                 //Create extraced copies file even if copy are missing
-                CreateExtracedCopiesFile(config, parser.Results.CopyTextNamesVariations);
+                CreateExtractedCopiesFile(config, parser.Results.CopyTextNamesVariations);
 
                 if (copyAreMissing)
                     throw new MissingCopyException("Some copy are missing", inputFilePath, null, logged: false, needMail: false);
@@ -458,7 +461,7 @@ namespace TypeCobol.Server
         } 
         
 
-        private static void CreateExtracedCopiesFile(TypeCobolConfiguration config, List<RemarksDirective.TextNameVariation> copiesUsed)
+        private static void CreateExtractedCopiesFile(TypeCobolConfiguration config, List<RemarksDirective.TextNameVariation> copiesUsed)
         {
             if (config.ExecToStep >= ExecutionStep.Preprocessor && !string.IsNullOrEmpty(config.ExtractedCopiesFilePath))
             {

@@ -147,7 +147,7 @@ namespace TypeCobol.LanguageServer
         private void MissingCopiesDetected(object fileUri, MissingCopiesEvent missingCopiesEvent)
         {
             //Warning the main file could not be opened
-            //This event can be use when a dependency have not been loaded
+            //This event can be used when a dependency have not been loaded
 
             //Send missing copies to client
             var missingCopiesParam = new MissingCopiesParams();
