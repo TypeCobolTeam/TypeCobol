@@ -269,7 +269,7 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="curPrg"></param>
         /// <returns></returns>
-        static ProgramSymbol GetTopProgram(ProgramSymbol curPrg)
+        public static ProgramSymbol GetTopProgram(ProgramSymbol curPrg)
         {
             ProgramSymbol top = (ProgramSymbol)curPrg.TopParent(Symbol.Kinds.Program);
             if (top == null || top == curPrg) return curPrg;

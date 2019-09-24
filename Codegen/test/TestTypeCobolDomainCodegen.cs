@@ -18,7 +18,6 @@ namespace TypeCobol.Codegen.Domain
         public static TypeCobolConfiguration DefaultConfig = null;
         public static ProgramSymbolTableBuilder Builder = null;
         public static NodeListenerFactory BuilderNodeListenerFactory = null;
-        public static string DefaultIntrinsicPath = null;//@"C:\TypeCobol\Sources\##Latest_Release##\Intrinsic\Intrinsic.txt";
 
         [TestInitialize]
         public void TestInitialize()
@@ -26,10 +25,6 @@ namespace TypeCobol.Codegen.Domain
             SymbolTableBuilder.Root = null;
             //Create a default configurations for options
             DefaultConfig = new TypeCobolConfiguration();
-            if (File.Exists(DefaultIntrinsicPath))
-            {
-                DefaultConfig.Copies.Add(DefaultIntrinsicPath);
-            }
             DefaultConfig.Dependencies.Add(Path.Combine(Directory.GetCurrentDirectory(), "resources", "dependencies"));
             SymbolTableBuilder.Config = DefaultConfig;
 

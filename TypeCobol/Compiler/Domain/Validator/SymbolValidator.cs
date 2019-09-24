@@ -49,12 +49,7 @@ namespace TypeCobol.Compiler.Domain.Validator
         /// <returns></returns>
         public override bool VisitSymbol(Symbol s, object arg)
         {
-            if (s.Type == null)
-            {
-                Unvalidated.Add(s);
-                return false;
-            }
-            else if (!s.Type.Accept(TypValidator, arg))
+            if (s.Type == null || !s.Type.Accept(TypValidator, arg))
             {
                 Unvalidated.Add(s);
                 return false;

@@ -105,6 +105,8 @@ namespace TypeCobol.Compiler.Symbols
             }
             finally
             {
+                //Mark this program has being expanded
+                Program.SetFlag(Symbol.Flags.ProgramExpanded, true);
                 //Restore the expanding program.
                 Program = saveProgram;
                 //Restore the current Program in the TypeExpander

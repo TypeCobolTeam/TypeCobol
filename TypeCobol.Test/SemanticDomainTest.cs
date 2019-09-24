@@ -1062,6 +1062,26 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(tPointCyc1.Type.Accept(checker, null));
             Assert.IsTrue(checker.CyclicType == tPointCyc0.Type);
 
+            pointEntry = currentProgram.Types.Lookup("POINT-CYC2");
+            Assert.IsNotNull(pointEntry);
+            Assert.IsTrue(pointEntry.Count == 1);
+            var tPointCyc2 = pointEntry.Symbol;
+            Assert.IsTrue(tPointCyc2.Type != null);
+            Assert.IsTrue(tPointCyc2.Type.Tag == Type.Tags.Typedef);
+            checker = new CyclicTypeChecker();
+            Assert.IsTrue(tPointCyc2.Type.Accept(checker,null));
+            Assert.IsTrue(checker.CyclicType == tPointCyc2.Type);
+
+            pointEntry = currentProgram.Types.Lookup("POINT-CYC3");
+            Assert.IsNotNull(pointEntry);
+            Assert.IsTrue(pointEntry.Count == 1);
+            var tPointCyc3 = pointEntry.Symbol;
+            Assert.IsTrue(tPointCyc3.Type != null);
+            Assert.IsTrue(tPointCyc3.Type.Tag == Type.Tags.Typedef);
+            checker = new CyclicTypeChecker();
+            Assert.IsTrue(tPointCyc3.Type.Accept(checker, null));
+            Assert.IsTrue(checker.CyclicType == tPointCyc3.Type);
+
             //NO P1, P2, P3 and P4 symbols
             for (int i = 1; i <= 4; i++)
             {

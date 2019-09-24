@@ -447,18 +447,6 @@ namespace TypeCobol.Compiler.Diagnostics
 
 #if DOMAIN_CHECKER
         /// <summary>
-        /// Get the top program.
-        /// </summary>
-        /// <param name="curPrg"></param>
-        /// <returns></returns>
-        static ProgramSymbol GetTopProgram(ProgramSymbol curPrg)
-        {
-            ProgramSymbol top = (ProgramSymbol)curPrg.TopParent(Symbol.Kinds.Program);
-            if (top == null || top == curPrg) return curPrg;
-            return GetTopProgram(top);
-        }
-
-        /// <summary>
         /// Expand the top program.
         /// </summary>
         /// <param name="curPrg">The Current Program.</param>
@@ -470,10 +458,8 @@ namespace TypeCobol.Compiler.Diagnostics
             //{//There was errord dont expand the program.
             //    return curPrg;
             //}
-
-            const ulong expandedFlag = 0x1 << 62;//I use this flag to mark an expanded program.
-            ProgramSymbol topPrg = GetTopProgram(curPrg);
-            if (!topPrg.HasFlag((Symbol.Flags)expandedFlag))
+            ProgramSymbol topPrg = ProgramSymbol.GetTopProgram(curPrg);
+            if (!topPrg.HasFlag(Symbol.Flags.ProgramExpanded))
             {
                 SymbolExpander se = new SymbolExpander(topPrg);
                 try
@@ -483,9 +469,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 catch (Types.Type.CyclicTypeException cte)
                 {//Capture a Cyclic Type exception
                     throw cte;
-                }                
-                //Marqué ce programme come ayant été expandé
-                topPrg.SetFlag((Symbol.Flags)expandedFlag, true);
+                }
             }
             return topPrg;
         }

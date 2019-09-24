@@ -62,6 +62,7 @@ namespace TypeCobol.Compiler.Symbols
             Return = 0x01 << 23,//A Return variable.
             BuiltinType = 0x01 << 24,//This is a Builtin Type.
             InsideTypdef = 0x01 << 25,//Flag of any symbol inside a Typedef definition
+            ProgramExpanded = 0x01 << 26,//Flag for a program that have been already expanded.
 
             //Etc...
         }

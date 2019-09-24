@@ -116,11 +116,7 @@ namespace TypeCobol.Server
             //----------------------------------------------------------------------
             //Register a static SymbolTableBuilder for a Program as a Node Listener.
             //----------------------------------------------------------------------
-            Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(
-                () => {
-                    var builder = new ProgramSymbolTableBuilder();
-                    return builder;
-                });
+            Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(() => new ProgramSymbolTableBuilder());
 #endif
 
 #region Dependencies parsing
@@ -146,9 +142,6 @@ namespace TypeCobol.Server
 #endregion
 
                 depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load intrinsic
-#if DOMAIN_CHECKER
-                SymbolTableBuilder.TransfertAllProgramsToIntrinsics();
-#endif
                 depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, depParser.CustomSymbols, config.InputFiles, config.CopyFolders, DependencyErrorEvent); //Load dependencies
 
                 if (diagDetected)
