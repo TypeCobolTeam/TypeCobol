@@ -89,6 +89,29 @@ namespace TypeCobol.Test.Domain
             SymbolTableBuilder.Root = null;
         }
 
+
+        /// <summary>
+        /// This test test that the REDEFINES that uses a variable from a TYPEDEF is correctly expanded.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("SemanticDomain")]
+        [TestProperty("Object", "TypeExpander")]
+        public void ExpanderRefines()
+        {
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "ExpanderRefines.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null, ExecutionStep.SemanticCheck);
+
+            Assert.IsTrue(Builder.Programs.Count == 1);
+            var currentProgram = Builder.Programs[0];
+
+            SymbolExpander symExpander = new SymbolExpander(currentProgram);
+            currentProgram.Accept(symExpander, null);
+
+            var vars = currentProgram.ResolveReference(new string[] { "idt" }, false);
+            Assert.IsTrue(vars.Count == 1);
+        }
+
         /// <summary>
         /// This Test tests the expansion of a Type Currency inside a program.
         /// </summary>

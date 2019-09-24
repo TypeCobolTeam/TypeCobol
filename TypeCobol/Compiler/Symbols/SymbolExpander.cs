@@ -155,5 +155,10 @@ namespace TypeCobol.Compiler.Symbols
             }
             return s;
         }
+
+        public override Symbol VisitRedefinesSymbol(RedefinesSymbol s, Symbol symbol)
+        {
+            return VisitVariableSymbol(s, symbol);
+        }
     }
 }
