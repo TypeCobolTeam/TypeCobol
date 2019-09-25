@@ -14,7 +14,7 @@
 
                      
        local-STORAGE SECTION.
-      *01  dateString    TYPEDEF strict     PIC 9(08).
+      *01  dateString    TYPEDEF strict PUBLIC    PIC 9(08).
        LINKAGE SECTION.
        01 PntTab-Pnt POINTER.
 

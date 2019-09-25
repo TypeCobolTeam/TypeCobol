@@ -26,7 +26,7 @@ public class CobolCompilerDirectivesParser : TUVienna.CS_CUP.Runtime.lr_parser {
 
   /** Production table. */
   protected static readonly short[][] _production_table = 
-new short[232][] {
+new short[234][] {
 	new short[2]{0,2},
 	new short[2]{28,1},
 	new short[2]{4,1},
@@ -47,6 +47,8 @@ new short[232][] {
 	new short[2]{125,1},
 	new short[2]{125,3},
 	new short[2]{129,1},
+	new short[2]{172,1},
+	new short[2]{172,1},
 	new short[2]{172,1},
 	new short[2]{172,1},
 	new short[2]{172,1},
@@ -267,179 +269,179 @@ new short[232][] {
   /** Parse-action table. */
   protected static readonly short[][] _action_table = 
 new short[173][] {
-	new short[42]{45,-156,46,-154,47,-134,48,26,49,14,50,-178,51,-184,52,-186,54,-199,55,21,56,-203,57,-205,58,-209,59,4,60,-223,61,-225,62,-227,63,-230,107,10,108,6,-1,0},
-	new short[4]{0,-118,-1,0},
-	new short[4]{63,166,-1,0},
-	new short[6]{323,-218,385,-220,-1,0},
-	new short[4]{0,-123,-1,0},
-	new short[4]{42,-193,-1,0},
-	new short[4]{0,-130,-1,0},
+	new short[42]{45,-158,46,-156,47,-136,48,26,49,14,50,-180,51,-186,52,-188,54,-201,55,28,56,-205,57,-207,58,-211,59,4,60,-225,61,-227,62,-229,63,-232,107,10,108,6,-1,0},
+	new short[4]{62,173,-1,0},
+	new short[4]{63,165,-1,0},
+	new short[6]{323,-220,385,-222,-1,0},
 	new short[4]{0,-125,-1,0},
-	new short[4]{47,157,-1,0},
-	new short[4]{42,-192,-1,0},
-	new short[4]{56,156,-1,0},
-	new short[4]{57,155,-1,0},
-	new short[4]{58,154,-1,0},
-	new short[10]{27,-162,28,-162,29,-162,44,-162,-1,0},
-	new short[4]{0,-129,-1,0},
-	new short[4]{0,-121,-1,0},
-	new short[4]{0,-122,-1,0},
-	new short[4]{45,149,-1,0},
-	new short[4]{50,143,-1,0},
-	new short[4]{51,142,-1,0},
-	new short[6]{0,-139,44,124,-1,0},
-	new short[4]{54,137,-1,0},
-	new short[4]{429,134,-1,0},
-	new short[4]{0,-133,-1,0},
-	new short[4]{46,133,-1,0},
-	new short[6]{0,-139,44,124,-1,0},
-	new short[4]{0,-128,-1,0},
-	new short[4]{0,-120,-1,0},
-	new short[4]{52,114,-1,0},
-	new short[4]{0,-229,-1,0},
-	new short[4]{0,-119,-1,0},
-	new short[4]{0,113,-1,0},
-	new short[6]{16,-176,349,-213,-1,0},
-	new short[4]{0,-124,-1,0},
-	new short[4]{42,-196,-1,0},
-	new short[4]{62,54,-1,0},
-	new short[4]{44,-160,-1,0},
-	new short[4]{0,-131,-1,0},
+	new short[4]{42,-195,-1,0},
 	new short[4]{0,-132,-1,0},
+	new short[4]{42,-198,-1,0},
+	new short[4]{47,147,-1,0},
+	new short[4]{42,-194,-1,0},
+	new short[4]{56,146,-1,0},
+	new short[4]{57,145,-1,0},
+	new short[4]{58,144,-1,0},
+	new short[10]{27,-164,28,-164,29,-164,44,-164,-1,0},
+	new short[4]{0,-123,-1,0},
+	new short[4]{0,-124,-1,0},
+	new short[4]{45,109,-1,0},
+	new short[4]{50,103,-1,0},
+	new short[4]{51,102,-1,0},
+	new short[4]{52,95,-1,0},
+	new short[4]{46,94,-1,0},
+	new short[4]{54,90,-1,0},
+	new short[4]{0,-128,-1,0},
+	new short[4]{0,-135,-1,0},
+	new short[4]{60,89,-1,0},
+	new short[6]{0,-141,44,79,-1,0},
+	new short[4]{0,-130,-1,0},
+	new short[6]{0,-141,44,79,-1,0},
+	new short[4]{0,-122,-1,0},
+	new short[4]{0,-231,-1,0},
+	new short[4]{0,-121,-1,0},
 	new short[4]{0,-127,-1,0},
+	new short[4]{0,75,-1,0},
+	new short[6]{16,-178,349,-215,-1,0},
 	new short[4]{0,-126,-1,0},
-	new short[4]{60,45,-1,0},
+	new short[4]{429,53,-1,0},
+	new short[4]{44,-162,-1,0},
+	new short[4]{0,-133,-1,0},
+	new short[4]{0,-134,-1,0},
+	new short[4]{0,-129,-1,0},
+	new short[4]{0,-131,-1,0},
+	new short[4]{0,-120,-1,0},
 	new short[4]{61,44,-1,0},
-	new short[4]{0,-226,-1,0},
-	new short[4]{0,-224,-1,0},
-	new short[4]{44,50,-1,0},
-	new short[8]{0,-152,11,-152,44,-152,-1,0},
-	new short[8]{0,-20,11,-20,44,-20,-1,0},
-	new short[8]{0,-158,11,53,44,50,-1,0},
-	new short[8]{0,-2,11,-2,44,-2,-1,0},
-	new short[4]{0,-161,-1,0},
-	new short[8]{0,-153,11,-153,44,-153,-1,0},
-	new short[4]{0,-159,-1,0},
 	new short[4]{0,-228,-1,0},
-	new short[4]{42,56,-1,0},
-	new short[4]{53,57,-1,0},
-	new short[10]{27,67,28,64,29,65,44,61,-1,0},
-	new short[6]{3,95,89,96,-1,0},
-	new short[18]{0,-12,3,-12,11,-12,89,-12,309,-12,348,-12,389,-12,413,-12,-1,0},
-	new short[18]{0,-13,3,-13,11,-13,89,-13,309,-13,348,-13,389,-13,413,-13,-1,0},
-	new short[18]{0,-11,3,-11,11,-11,89,-11,309,-11,348,-11,389,-11,413,-11,-1,0},
-	new short[18]{0,-14,3,-14,11,-14,89,-14,309,-14,348,-14,389,-14,413,-14,-1,0},
-	new short[16]{3,-18,11,-18,89,-18,309,91,348,90,389,-18,413,-18,-1,0},
-	new short[18]{0,-4,3,-4,11,-4,89,-4,309,-4,348,-4,389,-4,413,-4,-1,0},
+	new short[4]{44,49,-1,0},
+	new short[8]{0,-154,11,-154,44,-154,-1,0},
+	new short[8]{0,-20,11,-20,44,-20,-1,0},
+	new short[8]{0,-160,11,52,44,49,-1,0},
+	new short[8]{0,-2,11,-2,44,-2,-1,0},
+	new short[4]{0,-163,-1,0},
+	new short[8]{0,-155,11,-155,44,-155,-1,0},
+	new short[4]{0,-161,-1,0},
+	new short[4]{11,-209,-1,0},
+	new short[4]{11,55,-1,0},
+	new short[4]{0,-210,-1,0},
+	new short[4]{236,73,-1,0},
+	new short[4]{349,70,-1,0},
+	new short[4]{16,65,-1,0},
+	new short[6]{11,-213,16,-178,-1,0},
+	new short[4]{236,63,-1,0},
+	new short[4]{11,62,-1,0},
+	new short[4]{0,-214,-1,0},
+	new short[4]{16,-178,-1,0},
+	new short[6]{11,-219,16,-219,-1,0},
+	new short[6]{2,67,16,-148,-1,0},
+	new short[6]{2,69,16,68,-1,0},
+	new short[6]{2,-149,16,-149,-1,0},
+	new short[16]{3,-179,4,-179,5,-179,11,-179,16,-179,89,-179,236,-179,-1,0},
+	new short[6]{2,-150,16,-150,-1,0},
+	new short[4]{11,-216,-1,0},
+	new short[4]{11,72,-1,0},
+	new short[4]{0,-217,-1,0},
+	new short[4]{16,-178,-1,0},
+	new short[6]{11,-218,16,-218,-1,0},
+	new short[4]{0,-1,-1,0},
+	new short[4]{0,-140,-1,0},
+	new short[6]{0,-143,7,-143,-1,0},
+	new short[6]{0,-142,7,86,-1,0},
+	new short[8]{0,-151,7,-151,14,-152,-1,0},
+	new short[4]{14,81,-1,0},
+	new short[6]{2,83,15,-145,-1,0},
+	new short[6]{2,85,15,84,-1,0},
+	new short[6]{2,-146,15,-146,-1,0},
+	new short[6]{0,-153,7,-153,-1,0},
+	new short[6]{2,-147,15,-147,-1,0},
+	new short[4]{44,79,-1,0},
+	new short[6]{0,-144,7,-144,-1,0},
+	new short[4]{0,-139,-1,0},
+	new short[4]{0,-226,-1,0},
+	new short[4]{34,-202,-1,0},
+	new short[4]{34,93,-1,0},
+	new short[4]{0,-203,-1,0},
+	new short[4]{0,-204,-1,0},
+	new short[4]{44,-157,-1,0},
+	new short[4]{44,97,-1,0},
+	new short[6]{11,-192,44,99,-1,0},
+	new short[6]{11,-191,44,-191,-1,0},
+	new short[4]{11,-189,-1,0},
+	new short[4]{11,-193,-1,0},
+	new short[4]{11,101,-1,0},
+	new short[4]{0,-190,-1,0},
+	new short[4]{0,-187,-1,0},
+	new short[4]{34,-182,-1,0},
+	new short[4]{34,108,-1,0},
+	new short[6]{0,-181,34,-184,-1,0},
+	new short[4]{34,107,-1,0},
+	new short[6]{0,-185,34,-185,-1,0},
+	new short[6]{0,-183,34,-183,-1,0},
+	new short[4]{44,-159,-1,0},
+	new short[10]{27,120,28,117,29,112,44,118,-1,0},
+	new short[4]{11,-165,-1,0},
 	new short[18]{0,-5,3,-5,11,-5,89,-5,309,-5,348,-5,389,-5,413,-5,-1,0},
-	new short[12]{3,-167,11,-167,89,-167,389,-168,413,70,-1,0},
+	new short[18]{0,-13,3,-13,11,-13,89,-13,309,-13,348,-13,389,-13,413,-13,-1,0},
+	new short[18]{0,-12,3,-12,11,-12,89,-12,309,-12,348,-12,389,-12,413,-12,-1,0},
+	new short[18]{0,-14,3,-14,11,-14,89,-14,309,-14,348,-14,389,-14,413,-14,-1,0},
+	new short[16]{3,-18,11,-18,89,-18,309,138,348,137,389,-18,413,-18,-1,0},
+	new short[18]{0,-4,3,-4,11,-4,89,-4,309,-4,348,-4,389,-4,413,-4,-1,0},
+	new short[18]{0,-11,3,-11,11,-11,89,-11,309,-11,348,-11,389,-11,413,-11,-1,0},
+	new short[12]{3,-169,11,-169,89,-169,389,-170,413,123,-1,0},
 	new short[18]{0,-3,3,-3,11,-3,89,-3,309,-3,348,-3,389,-3,413,-3,-1,0},
-	new short[4]{389,72,-1,0},
-	new short[8]{3,-165,11,-165,89,-165,-1,0},
-	new short[10]{3,-167,11,-167,89,-167,389,-168,-1,0},
-	new short[8]{3,-166,11,-166,89,-166,-1,0},
-	new short[6]{4,73,16,-176,-1,0},
-	new short[16]{3,-175,4,-175,5,-175,11,-175,16,-175,89,-175,236,-175,-1,0},
-	new short[16]{3,-174,4,-174,5,-174,11,-174,16,-174,89,-174,236,-174,-1,0},
-	new short[12]{3,-169,4,73,11,-169,16,-176,89,-169,-1,0},
-	new short[4]{16,82,-1,0},
-	new short[6]{5,79,236,80,-1,0},
-	new short[6]{4,73,16,-176,-1,0},
-	new short[6]{4,-171,16,-171,-1,0},
-	new short[6]{4,-170,16,-170,-1,0},
-	new short[12]{3,-172,4,-172,11,-172,16,-172,89,-172,-1,0},
-	new short[6]{2,84,16,-146,-1,0},
-	new short[6]{2,86,16,85,-1,0},
-	new short[6]{2,-147,16,-147,-1,0},
+	new short[4]{389,125,-1,0},
+	new short[8]{3,-167,11,-167,89,-167,-1,0},
+	new short[10]{3,-169,11,-169,89,-169,389,-170,-1,0},
+	new short[8]{3,-168,11,-168,89,-168,-1,0},
+	new short[6]{4,126,16,-178,-1,0},
 	new short[16]{3,-177,4,-177,5,-177,11,-177,16,-177,89,-177,236,-177,-1,0},
-	new short[6]{2,-148,16,-148,-1,0},
-	new short[6]{5,79,236,80,-1,0},
-	new short[6]{4,73,16,-176,-1,0},
-	new short[12]{3,-173,4,-173,11,-173,16,-173,89,-173,-1,0},
+	new short[16]{3,-176,4,-176,5,-176,11,-176,16,-176,89,-176,236,-176,-1,0},
+	new short[12]{3,-171,4,126,11,-171,16,-178,89,-171,-1,0},
+	new short[6]{5,131,236,132,-1,0},
+	new short[6]{4,126,16,-178,-1,0},
+	new short[6]{4,-173,16,-173,-1,0},
+	new short[6]{4,-172,16,-172,-1,0},
+	new short[12]{3,-174,4,-174,11,-174,16,-174,89,-174,-1,0},
+	new short[6]{5,131,236,132,-1,0},
+	new short[6]{4,126,16,-178,-1,0},
+	new short[12]{3,-175,4,-175,11,-175,16,-175,89,-175,-1,0},
 	new short[10]{27,-17,28,-17,29,-17,44,-17,-1,0},
 	new short[10]{27,-16,28,-16,29,-16,44,-16,-1,0},
-	new short[10]{27,67,28,64,29,65,44,61,-1,0},
+	new short[10]{27,120,28,117,29,112,44,118,-1,0},
 	new short[12]{3,-15,11,-15,89,-15,389,-15,413,-15,-1,0},
 	new short[12]{3,-19,11,-19,89,-19,389,-19,413,-19,-1,0},
-	new short[4]{11,-195,-1,0},
-	new short[4]{11,-194,-1,0},
-	new short[4]{11,-197,-1,0},
-	new short[4]{11,99,-1,0},
-	new short[4]{0,-198,-1,0},
-	new short[4]{236,111,-1,0},
-	new short[4]{349,108,-1,0},
-	new short[6]{11,-211,16,-176,-1,0},
-	new short[4]{236,106,-1,0},
-	new short[4]{11,105,-1,0},
-	new short[4]{0,-212,-1,0},
-	new short[4]{16,-176,-1,0},
-	new short[6]{11,-217,16,-217,-1,0},
-	new short[4]{11,-214,-1,0},
-	new short[4]{11,110,-1,0},
-	new short[4]{0,-215,-1,0},
-	new short[4]{16,-176,-1,0},
-	new short[6]{11,-216,16,-216,-1,0},
-	new short[4]{0,-1,-1,0},
-	new short[4]{44,116,-1,0},
-	new short[6]{11,-190,44,118,-1,0},
-	new short[6]{11,-189,44,-189,-1,0},
-	new short[4]{11,-187,-1,0},
-	new short[4]{11,-191,-1,0},
-	new short[4]{11,120,-1,0},
-	new short[4]{0,-188,-1,0},
-	new short[4]{0,-137,-1,0},
-	new short[6]{0,-141,7,-141,-1,0},
-	new short[6]{0,-140,7,131,-1,0},
-	new short[8]{0,-149,7,-149,14,-150,-1,0},
-	new short[4]{14,126,-1,0},
-	new short[6]{2,128,15,-143,-1,0},
-	new short[6]{2,130,15,129,-1,0},
-	new short[6]{2,-144,15,-144,-1,0},
-	new short[6]{0,-151,7,-151,-1,0},
-	new short[6]{2,-145,15,-145,-1,0},
-	new short[4]{44,124,-1,0},
-	new short[6]{0,-142,7,-142,-1,0},
-	new short[4]{44,-155,-1,0},
-	new short[4]{11,-207,-1,0},
-	new short[4]{11,136,-1,0},
-	new short[4]{0,-208,-1,0},
-	new short[4]{34,-200,-1,0},
-	new short[4]{34,140,-1,0},
-	new short[4]{0,-201,-1,0},
-	new short[4]{0,-202,-1,0},
-	new short[4]{0,-138,-1,0},
-	new short[4]{0,-185,-1,0},
-	new short[4]{34,-180,-1,0},
-	new short[4]{34,148,-1,0},
-	new short[6]{0,-179,34,-182,-1,0},
-	new short[4]{34,147,-1,0},
-	new short[6]{0,-183,34,-183,-1,0},
-	new short[6]{0,-181,34,-181,-1,0},
-	new short[4]{44,-157,-1,0},
-	new short[10]{27,67,28,64,29,65,44,61,-1,0},
-	new short[4]{11,-163,-1,0},
-	new short[4]{11,153,-1,0},
-	new short[4]{0,-164,-1,0},
-	new short[6]{16,-210,349,-210,-1,0},
+	new short[4]{11,143,-1,0},
+	new short[4]{0,-166,-1,0},
+	new short[6]{16,-212,349,-212,-1,0},
+	new short[4]{429,-208,-1,0},
 	new short[4]{429,-206,-1,0},
-	new short[4]{429,-204,-1,0},
-	new short[10]{27,-135,28,-135,29,-135,44,-135,-1,0},
-	new short[10]{27,67,28,64,29,65,44,61,-1,0},
-	new short[4]{0,-136,-1,0},
-	new short[4]{323,165,-1,0},
-	new short[4]{385,162,-1,0},
-	new short[4]{44,-221,-1,0},
-	new short[4]{44,164,-1,0},
-	new short[4]{0,-222,-1,0},
-	new short[4]{0,-219,-1,0},
-	new short[14]{27,-231,28,-231,29,-231,30,-231,31,-231,32,-231,-1,0},
-	new short[14]{27,67,28,64,29,65,30,169,31,170,32,172,-1,0},
-	new short[4]{0,-232,-1,0},
+	new short[10]{27,-137,28,-137,29,-137,44,-137,-1,0},
+	new short[10]{27,120,28,117,29,112,44,118,-1,0},
+	new short[4]{0,-138,-1,0},
+	new short[4]{42,151,-1,0},
+	new short[4]{53,152,-1,0},
+	new short[10]{27,120,28,117,29,112,44,118,-1,0},
+	new short[6]{3,154,89,155,-1,0},
+	new short[4]{11,-197,-1,0},
+	new short[4]{11,-196,-1,0},
+	new short[4]{11,-199,-1,0},
+	new short[4]{11,158,-1,0},
+	new short[4]{0,-200,-1,0},
+	new short[4]{323,164,-1,0},
+	new short[4]{385,161,-1,0},
+	new short[4]{44,-223,-1,0},
+	new short[4]{44,163,-1,0},
+	new short[4]{0,-224,-1,0},
+	new short[4]{0,-221,-1,0},
+	new short[14]{27,-233,28,-233,29,-233,30,-233,31,-233,32,-233,-1,0},
+	new short[14]{27,120,28,117,29,112,30,168,31,169,32,171,-1,0},
+	new short[4]{0,-234,-1,0},
 	new short[4]{0,-8,-1,0},
 	new short[4]{0,-9,-1,0},
 	new short[4]{0,-6,-1,0},
 	new short[4]{0,-7,-1,0},
-	new short[4]{0,-10,-1,0}
+	new short[4]{0,-10,-1,0},
+	new short[4]{0,-230,-1,0}
 };
 
   /** Access to parse-action table. */
@@ -448,43 +450,43 @@ new short[173][] {
   /** <code>reduce_goto</code> table. */
   protected static readonly short[][] _reduce_table = 
 new short[173][] {
-	new short[74]{132,31,133,1,134,30,135,27,142,36,144,15,145,16,152,4,154,33,155,7,158,34,159,40,160,39,162,22,163,26,164,32,165,14,167,6,168,37,169,29,170,38,171,23,175,8,178,24,179,17,185,18,188,19,189,28,193,21,195,10,196,11,198,12,205,41,206,42,207,35,208,2,-1,-1},
+	new short[74]{132,32,133,41,134,30,135,28,142,36,144,14,145,15,152,4,154,34,155,31,158,7,159,22,160,39,162,35,163,26,164,33,165,40,167,6,168,37,169,29,170,38,171,23,175,8,178,20,179,16,185,17,188,18,189,19,193,21,195,10,196,11,198,12,205,24,206,42,207,1,208,2,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[6]{202,159,203,160,-1,-1},
+	new short[6]{202,158,203,159,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{191,149,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{181,109,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{181,149,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[8]{136,140,137,121,138,122,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[8]{136,120,137,121,138,122,-1,-1},
+	new short[8]{136,87,137,76,138,77,-1,-1},
 	new short[2]{-1,-1},
+	new short[8]{136,75,137,76,138,77,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[10]{150,99,166,101,184,75,200,100,-1,-1},
+	new short[10]{150,55,166,58,184,57,200,56,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{191,54,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{180,45,-1,-1},
+	new short[4]{180,44,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
@@ -492,129 +494,129 @@ new short[173][] {
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[8]{28,46,129,45,141,47,-1,-1},
 	new short[2]{-1,-1},
-	new short[8]{28,47,129,46,141,48,-1,-1},
 	new short[2]{-1,-1},
+	new short[8]{28,46,129,50,143,49,-1,-1},
 	new short[2]{-1,-1},
-	new short[8]{28,47,129,51,143,50,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{197,53,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[14]{4,58,24,59,49,61,123,62,125,65,146,57,-1,-1},
-	new short[4]{173,96,-1,-1},
 	new short[2]{-1,-1},
+	new short[8]{150,59,184,57,199,60,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{105,91,-1,-1},
+	new short[6]{150,63,184,57,-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{139,65,-1,-1},
 	new short[2]{-1,-1},
-	new short[6]{147,68,183,67,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[6]{147,70,183,67,-1,-1},
+	new short[4]{201,70,-1,-1},
 	new short[2]{-1,-1},
-	new short[10]{148,74,149,76,150,73,184,75,-1,-1},
 	new short[2]{-1,-1},
+	new short[6]{150,73,184,57,-1,-1},
 	new short[2]{-1,-1},
-	new short[8]{149,86,150,73,184,75,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{174,77,-1,-1},
-	new short[8]{149,80,150,73,184,75,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{139,82,-1,-1},
+	new short[4]{177,79,-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{140,81,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{174,87,-1,-1},
-	new short[8]{149,88,150,73,184,75,-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{137,86,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[10]{4,58,24,59,49,92,124,93,-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{194,90,-1,-1},
+	new short[4]{161,91,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{192,97,-1,-1},
+	new short[4]{156,95,-1,-1},
+	new short[4]{157,97,-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{190,99,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[8]{150,102,184,75,199,103,-1,-1},
 	new short[2]{-1,-1},
+	new short[6]{153,104,186,103,-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{187,105,-1,-1},
 	new short[2]{-1,-1},
-	new short[6]{150,106,184,75,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{201,108,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[6]{150,111,184,75,-1,-1},
+	new short[14]{4,113,24,112,49,114,123,115,125,118,146,110,-1,-1},
+	new short[4]{182,141,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{156,114,-1,-1},
-	new short[4]{157,116,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{190,118,-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{105,138,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[6]{147,121,183,120,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{177,124,-1,-1},
+	new short[6]{147,123,183,120,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{140,126,-1,-1},
+	new short[10]{148,127,149,128,150,126,184,57,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[8]{149,133,150,126,184,57,-1,-1},
+	new short[4]{174,129,-1,-1},
+	new short[8]{149,132,150,126,184,57,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{137,131,-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{174,134,-1,-1},
+	new short[8]{149,135,150,126,184,57,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{197,134,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{194,137,-1,-1},
-	new short[4]{161,138,-1,-1},
+	new short[10]{4,113,24,112,49,139,124,140,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[6]{153,144,186,143,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{187,145,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{176,147,-1,-1},
+	new short[10]{4,113,24,112,49,114,123,148,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[14]{4,58,24,59,49,61,123,62,125,65,146,150,-1,-1},
-	new short[4]{182,151,-1,-1},
 	new short[2]{-1,-1},
+	new short[14]{4,113,24,112,49,114,123,115,125,118,146,152,-1,-1},
+	new short[4]{173,155,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{192,156,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{176,157,-1,-1},
-	new short[10]{4,58,24,59,49,61,123,158,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{204,161,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{204,162,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
+	new short[4]{209,165,-1,-1},
+	new short[8]{4,169,5,171,22,166,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{209,166,-1,-1},
-	new short[8]{4,170,5,172,22,167,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
@@ -771,7 +773,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
       switch (CUP_CobolCompilerDirectivesParser_act_num)
         {
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 231: // titleCompilerStatement ::= NT$33 TITLE NT$34 alphanumericValue2 
+          case 233: // titleCompilerStatement ::= NT$33 TITLE NT$34 alphanumericValue2 
             {
               object RESULT = null;
               // propagate RESULT from NT$33
@@ -790,7 +792,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 230: // NT$34 ::= 
+          case 232: // NT$34 ::= 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -800,7 +802,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 229: // NT$33 ::= 
+          case 231: // NT$33 ::= 
             {
               object RESULT = null;
  my_parser.Builder.StartTitleCompilerStatement(); 
@@ -809,7 +811,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 228: // skipCompilerStatement ::= skipTokens 
+          case 230: // skipCompilerStatement ::= skipTokens 
             {
               object RESULT = null;
 		Token t = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -821,7 +823,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 227: // skipTokens ::= NT$32 SKIP3 
+          case 229: // skipTokens ::= NT$32 SKIP3 
             {
               Token RESULT = null;
               // propagate RESULT from NT$32
@@ -834,7 +836,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 226: // NT$32 ::= 
+          case 228: // NT$32 ::= 
             {
               object RESULT = null;
  my_parser.Builder.StartSkipCompilerStatement(CompilerDirectiveType.SKIP3); 
@@ -844,7 +846,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 225: // skipTokens ::= NT$31 SKIP2 
+          case 227: // skipTokens ::= NT$31 SKIP2 
             {
               Token RESULT = null;
               // propagate RESULT from NT$31
@@ -857,7 +859,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 224: // NT$31 ::= 
+          case 226: // NT$31 ::= 
             {
               object RESULT = null;
  my_parser.Builder.StartSkipCompilerStatement(CompilerDirectiveType.SKIP2); 
@@ -867,7 +869,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 223: // skipTokens ::= NT$30 SKIP1 
+          case 225: // skipTokens ::= NT$30 SKIP1 
             {
               Token RESULT = null;
               // propagate RESULT from NT$30
@@ -880,7 +882,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 222: // NT$30 ::= 
+          case 224: // NT$30 ::= 
             {
               object RESULT = null;
  my_parser.Builder.StartSkipCompilerStatement(CompilerDirectiveType.SKIP1); 
@@ -890,7 +892,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 221: // serviceReloadCompilerStatement ::= SERVICE_CD NT$28 RELOAD NT$29 UserDefinedWord 
+          case 223: // serviceReloadCompilerStatement ::= SERVICE_CD NT$28 RELOAD NT$29 UserDefinedWord 
             {
               object RESULT = null;
               // propagate RESULT from NT$28
@@ -908,7 +910,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 220: // NT$29 ::= 
+          case 222: // NT$29 ::= 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token s = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
@@ -919,7 +921,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 219: // NT$28 ::= 
+          case 221: // NT$28 ::= 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token s = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -929,7 +931,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 218: // serviceLabelCompilerStatement ::= SERVICE_CD NT$27 LABEL 
+          case 220: // serviceLabelCompilerStatement ::= SERVICE_CD NT$27 LABEL 
             {
               object RESULT = null;
               // propagate RESULT from NT$27
@@ -943,7 +945,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 217: // NT$27 ::= 
+          case 219: // NT$27 ::= 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token s = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -956,7 +958,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 216: // pseudoTextReplaces ::= pseudoTextReplaces pseudoText BY pseudoText 
+          case 218: // pseudoTextReplaces ::= pseudoTextReplaces pseudoText BY pseudoText 
             {
               PairTokenListList RESULT = null;
 		PairTokenListList replaces = (PairTokenListList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value;
@@ -968,7 +970,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 215: // pseudoTextReplaces ::= pseudoText BY pseudoText 
+          case 217: // pseudoTextReplaces ::= pseudoText BY pseudoText 
             {
               PairTokenListList RESULT = null;
 		TokenList from = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
@@ -979,7 +981,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 214: // replaceCompilerStatement ::= replaceToken NT$25 OFF NT$26 PeriodSeparator 
+          case 216: // replaceCompilerStatement ::= replaceToken NT$25 OFF NT$26 PeriodSeparator 
             {
               object RESULT = null;
               // propagate RESULT from NT$25
@@ -996,7 +998,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 213: // NT$26 ::= 
+          case 215: // NT$26 ::= 
             {
               object RESULT = null;
 		Token r = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
@@ -1007,7 +1009,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 212: // NT$25 ::= 
+          case 214: // NT$25 ::= 
             {
               object RESULT = null;
 		Token r = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1017,7 +1019,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 211: // replaceCompilerStatement ::= replaceToken pseudoTextReplaces NT$24 PeriodSeparator 
+          case 213: // replaceCompilerStatement ::= replaceToken pseudoTextReplaces NT$24 PeriodSeparator 
             {
               object RESULT = null;
               // propagate RESULT from NT$24
@@ -1031,7 +1033,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 210: // NT$24 ::= 
+          case 212: // NT$24 ::= 
             {
               object RESULT = null;
 		Token r = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
@@ -1044,7 +1046,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 209: // replaceToken ::= NT$23 REPLACE 
+          case 211: // replaceToken ::= NT$23 REPLACE 
             {
               Token RESULT = null;
               // propagate RESULT from NT$23
@@ -1059,7 +1061,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 208: // NT$23 ::= 
+          case 210: // NT$23 ::= 
             {
               object RESULT = null;
  my_parser.Builder.StartReplaceCompilerStatement(CompilerDirectiveType.REPLACE); 
@@ -1068,7 +1070,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 207: // readyOrResetTraceCompilerStatement ::= readyOrReset TRACE NT$22 PeriodSeparator 
+          case 209: // readyOrResetTraceCompilerStatement ::= readyOrReset TRACE NT$22 PeriodSeparator 
             {
               object RESULT = null;
               // propagate RESULT from NT$22
@@ -1081,7 +1083,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 206: // NT$22 ::= 
+          case 208: // NT$22 ::= 
             {
               object RESULT = null;
 		Token rt = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
@@ -1091,7 +1093,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 205: // readyOrReset ::= NT$21 RESET 
+          case 207: // readyOrReset ::= NT$21 RESET 
             {
               Token RESULT = null;
               // propagate RESULT from NT$21
@@ -1104,7 +1106,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 204: // NT$21 ::= 
+          case 206: // NT$21 ::= 
             {
               object RESULT = null;
  my_parser.Builder.StartReadyOrResetTraceCompilerStatement(CompilerDirectiveType.RESET_TRACE);  
@@ -1113,7 +1115,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 203: // readyOrReset ::= NT$20 READY 
+          case 205: // readyOrReset ::= NT$20 READY 
             {
               Token RESULT = null;
               // propagate RESULT from NT$20
@@ -1126,7 +1128,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 202: // NT$20 ::= 
+          case 204: // NT$20 ::= 
             {
               object RESULT = null;
  my_parser.Builder.StartReadyOrResetTraceCompilerStatement(CompilerDirectiveType.READY_TRACE);  
@@ -1135,7 +1137,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 201: // sequenceNumber ::= IntegerLiteral 
+          case 203: // sequenceNumber ::= IntegerLiteral 
             {
               Token RESULT = null;
 		TypeCobol.Compiler.Scanner.Token il = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1145,7 +1147,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 200: // insertCompilerStatement ::= NT$18 INSERT NT$19 sequenceNumber 
+          case 202: // insertCompilerStatement ::= NT$18 INSERT NT$19 sequenceNumber 
             {
               object RESULT = null;
               // propagate RESULT from NT$18
@@ -1162,7 +1164,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 199: // NT$19 ::= 
+          case 201: // NT$19 ::= 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token tins = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1172,7 +1174,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 198: // NT$18 ::= 
+          case 200: // NT$18 ::= 
             {
               object RESULT = null;
  
@@ -1183,7 +1185,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 197: // execSqlIncludeStatement ::= execToken NT$16 ExecTranslatorName EXEC_SQL copyCompilerStatementBody end_exec NT$17 PeriodSeparator 
+          case 199: // execSqlIncludeStatement ::= execToken NT$16 ExecTranslatorName EXEC_SQL copyCompilerStatementBody end_exec NT$17 PeriodSeparator 
             {
               object RESULT = null;
               // propagate RESULT from NT$16
@@ -1199,7 +1201,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 196: // NT$17 ::= 
+          case 198: // NT$17 ::= 
             {
               object RESULT = null;
 		Token t = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-5)).value;
@@ -1209,7 +1211,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 195: // NT$16 ::= 
+          case 197: // NT$16 ::= 
             {
               object RESULT = null;
 		Token t = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1219,7 +1221,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 194: // end_exec ::= CUP_END_EXEC_PERIOD_SEPARATOR 
+          case 196: // end_exec ::= CUP_END_EXEC_PERIOD_SEPARATOR 
             {
               object RESULT = null;
 
@@ -1228,7 +1230,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 193: // end_exec ::= END_EXEC 
+          case 195: // end_exec ::= END_EXEC 
             {
               object RESULT = null;
 
@@ -1237,7 +1239,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 192: // execToken ::= EXECUTE 
+          case 194: // execToken ::= EXECUTE 
             {
               Token RESULT = null;
 		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1247,7 +1249,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 191: // execToken ::= EXEC 
+          case 193: // execToken ::= EXEC 
             {
               Token RESULT = null;
 		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1257,7 +1259,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 190: // routineName ::= UserDefinedWord 
+          case 192: // routineName ::= UserDefinedWord 
             {
               Token RESULT = null;
 		TypeCobol.Compiler.Scanner.Token w = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1267,7 +1269,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 189: // routineName ::= 
+          case 191: // routineName ::= 
             {
               Token RESULT = null;
 		 RESULT = null; 
@@ -1276,7 +1278,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 188: // languageName ::= UserDefinedWord 
+          case 190: // languageName ::= UserDefinedWord 
             {
               Token RESULT = null;
 		TypeCobol.Compiler.Scanner.Token w = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1286,7 +1288,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 187: // enterCompilerStatement ::= NT$14 ENTER languageName routineName NT$15 PeriodSeparator 
+          case 189: // enterCompilerStatement ::= NT$14 ENTER languageName routineName NT$15 PeriodSeparator 
             {
               object RESULT = null;
               // propagate RESULT from NT$14
@@ -1304,7 +1306,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 186: // NT$15 ::= 
+          case 188: // NT$15 ::= 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token e = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
@@ -1316,7 +1318,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 185: // NT$14 ::= 
+          case 187: // NT$14 ::= 
             {
               object RESULT = null;
  my_parser.Builder.StartEnterCompilerStatement(); 
@@ -1325,7 +1327,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 184: // ejectCompilerStatement ::= NT$13 EJECT 
+          case 186: // ejectCompilerStatement ::= NT$13 EJECT 
             {
               object RESULT = null;
               // propagate RESULT from NT$13
@@ -1340,7 +1342,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 183: // NT$13 ::= 
+          case 185: // NT$13 ::= 
             {
               object RESULT = null;
  
@@ -1352,7 +1354,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 182: // deleteSequenceNumberField ::= deleteSequenceNumberField NT$12 IntegerLiteral 
+          case 184: // deleteSequenceNumberField ::= deleteSequenceNumberField NT$12 IntegerLiteral 
             {
               TokenList RESULT = null;
               // propagate RESULT from NT$12
@@ -1366,7 +1368,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 181: // NT$12 ::= 
+          case 183: // NT$12 ::= 
             {
               object RESULT = null;
 		TokenList snf = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1376,7 +1378,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 180: // deleteSequenceNumberField ::= NT$11 IntegerLiteral 
+          case 182: // deleteSequenceNumberField ::= NT$11 IntegerLiteral 
             {
               TokenList RESULT = null;
               // propagate RESULT from NT$11
@@ -1389,7 +1391,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 179: // NT$11 ::= 
+          case 181: // NT$11 ::= 
             {
               object RESULT = null;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningModeIfNextNotToken(TokenType.IntegerLiteral); 
@@ -1398,7 +1400,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 178: // deleteCompilerStatement ::= NT$10 DELETE_CD deleteSequenceNumberField 
+          case 180: // deleteCompilerStatement ::= NT$10 DELETE_CD deleteSequenceNumberField 
             {
               object RESULT = null;
               // propagate RESULT from NT$10
@@ -1412,7 +1414,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 177: // NT$10 ::= 
+          case 179: // NT$10 ::= 
             {
               object RESULT = null;
  my_parser.Builder.StartDeleteCompilerStatement();  
@@ -1421,7 +1423,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 176: // pseudoText ::= NT$9 PseudoTextDelimiter anyTokens PseudoTextDelimiter 
+          case 178: // pseudoText ::= NT$9 PseudoTextDelimiter anyTokens PseudoTextDelimiter 
             {
               TokenList RESULT = null;
               // propagate RESULT from NT$9
@@ -1434,7 +1436,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 175: // NT$9 ::= 
+          case 177: // NT$9 ::= 
             {
               object RESULT = null;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterPseudoTextAnyTokenMode(); 
@@ -1443,7 +1445,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 174: // copyReplacingOperand ::= CUP_LiteralOrUserDefinedWordOReservedWordExceptCopy 
+          case 176: // copyReplacingOperand ::= CUP_LiteralOrUserDefinedWordOReservedWordExceptCopy 
             {
               TokenList RESULT = null;
 		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1453,7 +1455,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 173: // copyReplacingOperand ::= pseudoText 
+          case 175: // copyReplacingOperand ::= pseudoText 
             {
               TokenList RESULT = null;
 		TokenList tokens = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1463,7 +1465,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 172: // copyReplacingOperands ::= copyReplacingOperands copyReplacingOperand replacing_by copyReplacingOperand 
+          case 174: // copyReplacingOperands ::= copyReplacingOperands copyReplacingOperand replacing_by copyReplacingOperand 
             {
               PairTokenListList RESULT = null;
 		PairTokenListList operands = (PairTokenListList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value;
@@ -1475,7 +1477,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 171: // copyReplacingOperands ::= copyReplacingOperand replacing_by copyReplacingOperand 
+          case 173: // copyReplacingOperands ::= copyReplacingOperand replacing_by copyReplacingOperand 
             {
               PairTokenListList RESULT = null;
 		TokenList from = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
@@ -1486,7 +1488,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 170: // replacing_by ::= CUP_PSEUDO_TEXT_DELIMITER_BY 
+          case 172: // replacing_by ::= CUP_PSEUDO_TEXT_DELIMITER_BY 
             {
               object RESULT = null;
 
@@ -1495,7 +1497,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 169: // replacing_by ::= BY 
+          case 171: // replacing_by ::= BY 
             {
               object RESULT = null;
 
@@ -1504,7 +1506,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 168: // replacingCopyReplacingOperandOpts ::= NT$8 REPLACING copyReplacingOperands 
+          case 170: // replacingCopyReplacingOperandOpts ::= NT$8 REPLACING copyReplacingOperands 
             {
               PairTokenListList RESULT = null;
               // propagate RESULT from NT$8
@@ -1517,7 +1519,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 167: // NT$8 ::= 
+          case 169: // NT$8 ::= 
             {
               object RESULT = null;
  ((CobolWordsTokenizer)my_parser.getScanner()).CheckLiteralOrUserDefinedWordOReservedWordExceptCopy = true; 
@@ -1526,7 +1528,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 166: // replacingCopyReplacingOperandOpts ::= 
+          case 168: // replacingCopyReplacingOperandOpts ::= 
             {
               PairTokenListList RESULT = null;
 		 RESULT = null; 
@@ -1535,7 +1537,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 165: // copyCompilerStatementBody ::= qualifiedTextName SUPPRESS replacingCopyReplacingOperandOpts 
+          case 167: // copyCompilerStatementBody ::= qualifiedTextName SUPPRESS replacingCopyReplacingOperandOpts 
             {
               object RESULT = null;
 		TypeCobol.Compiler.CupCommon.QualifiedTextName name = (TypeCobol.Compiler.CupCommon.QualifiedTextName)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
@@ -1547,7 +1549,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 164: // copyCompilerStatementBody ::= qualifiedTextName replacingCopyReplacingOperandOpts 
+          case 166: // copyCompilerStatementBody ::= qualifiedTextName replacingCopyReplacingOperandOpts 
             {
               object RESULT = null;
 		TypeCobol.Compiler.CupCommon.QualifiedTextName name = (TypeCobol.Compiler.CupCommon.QualifiedTextName)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
@@ -1558,7 +1560,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 163: // copyCompilerStatement ::= COPY NT$6 copyCompilerStatementBody NT$7 PeriodSeparator 
+          case 165: // copyCompilerStatement ::= COPY NT$6 copyCompilerStatementBody NT$7 PeriodSeparator 
             {
               object RESULT = null;
               // propagate RESULT from NT$6
@@ -1574,7 +1576,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 162: // NT$7 ::= 
+          case 164: // NT$7 ::= 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token c = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
@@ -1584,7 +1586,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 161: // NT$6 ::= 
+          case 163: // NT$6 ::= 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token c = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1594,7 +1596,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 160: // controlCblCompilerStatement ::= asteriskControlCbl NT$5 controlCblOptions periodSeparatorOpt 
+          case 162: // controlCblCompilerStatement ::= asteriskControlCbl NT$5 controlCblOptions periodSeparatorOpt 
             {
               object RESULT = null;
               // propagate RESULT from NT$5
@@ -1607,7 +1609,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 159: // NT$5 ::= 
+          case 161: // NT$5 ::= 
             {
               object RESULT = null;
 		Token t = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1617,7 +1619,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 158: // periodSeparatorOpt ::= PeriodSeparator 
+          case 160: // periodSeparatorOpt ::= PeriodSeparator 
             {
               object RESULT = null;
 
@@ -1626,7 +1628,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 157: // periodSeparatorOpt ::= 
+          case 159: // periodSeparatorOpt ::= 
             {
               object RESULT = null;
 
@@ -1635,7 +1637,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 156: // asteriskControlCbl ::= NT$4 ASTERISK_CBL 
+          case 158: // asteriskControlCbl ::= NT$4 ASTERISK_CBL 
             {
               Token RESULT = null;
               // propagate RESULT from NT$4
@@ -1650,7 +1652,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 155: // NT$4 ::= 
+          case 157: // NT$4 ::= 
             {
               object RESULT = null;
  
@@ -1661,7 +1663,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 154: // asteriskControlCbl ::= NT$3 ASTERISK_CONTROL 
+          case 156: // asteriskControlCbl ::= NT$3 ASTERISK_CONTROL 
             {
               Token RESULT = null;
               // propagate RESULT from NT$3
@@ -1676,7 +1678,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 153: // NT$3 ::= 
+          case 155: // NT$3 ::= 
             {
               object RESULT = null;
  
@@ -1687,7 +1689,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 152: // controlCblOptions ::= controlCblOptions controlCblOption 
+          case 154: // controlCblOptions ::= controlCblOptions controlCblOption 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token o = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1697,7 +1699,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 151: // controlCblOptions ::= controlCblOption 
+          case 153: // controlCblOptions ::= controlCblOption 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token o = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1707,7 +1709,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 150: // compilerOption ::= UserDefinedWord NT$2 LeftParenthesisSeparator skipAnyTokens RightParenthesisSeparator 
+          case 152: // compilerOption ::= UserDefinedWord NT$2 LeftParenthesisSeparator skipAnyTokens RightParenthesisSeparator 
             {
               object RESULT = null;
               // propagate RESULT from NT$2
@@ -1719,7 +1721,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 149: // NT$2 ::= 
+          case 151: // NT$2 ::= 
             {
               object RESULT = null;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterAnyTokenMode(TokenType.RightParenthesisSeparator); 
@@ -1728,7 +1730,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 148: // compilerOption ::= UserDefinedWord 
+          case 150: // compilerOption ::= UserDefinedWord 
             {
               object RESULT = null;
 
@@ -1737,7 +1739,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 147: // anyTokens ::= anyTokens CUP_ANY_TOKEN 
+          case 149: // anyTokens ::= anyTokens CUP_ANY_TOKEN 
             {
               TokenList RESULT = null;
 		TokenList tokens = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
@@ -1748,7 +1750,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 146: // anyTokens ::= CUP_ANY_TOKEN 
+          case 148: // anyTokens ::= CUP_ANY_TOKEN 
             {
               TokenList RESULT = null;
 		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1758,7 +1760,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 145: // anyTokens ::= 
+          case 147: // anyTokens ::= 
             {
               TokenList RESULT = null;
 		 RESULT = new TokenList(); 
@@ -1767,7 +1769,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 144: // skipAnyTokens ::= skipAnyTokens CUP_ANY_TOKEN 
+          case 146: // skipAnyTokens ::= skipAnyTokens CUP_ANY_TOKEN 
             {
               TokenList RESULT = null;
 
@@ -1776,7 +1778,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 143: // skipAnyTokens ::= CUP_ANY_TOKEN 
+          case 145: // skipAnyTokens ::= CUP_ANY_TOKEN 
             {
               TokenList RESULT = null;
 
@@ -1785,7 +1787,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 142: // skipAnyTokens ::= 
+          case 144: // skipAnyTokens ::= 
             {
               TokenList RESULT = null;
 
@@ -1794,7 +1796,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 141: // compilerOptions ::= compilerOptions CommaSeparator compilerOption 
+          case 143: // compilerOptions ::= compilerOptions CommaSeparator compilerOption 
             {
               object RESULT = null;
 
@@ -1803,7 +1805,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 140: // compilerOptions ::= compilerOption 
+          case 142: // compilerOptions ::= compilerOption 
             {
               object RESULT = null;
 
@@ -1812,7 +1814,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 139: // optionsList ::= compilerOptions 
+          case 141: // optionsList ::= compilerOptions 
             {
               object RESULT = null;
 
@@ -1821,7 +1823,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 138: // optionsList ::= 
+          case 140: // optionsList ::= 
             {
               object RESULT = null;
 
@@ -1830,7 +1832,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 137: // cblProcessCompilerStatement ::= PROCESS optionsList 
+          case 139: // cblProcessCompilerStatement ::= PROCESS optionsList 
             {
               object RESULT = null;
 
@@ -1839,7 +1841,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 136: // cblProcessCompilerStatement ::= CBL optionsList 
+          case 138: // cblProcessCompilerStatement ::= CBL optionsList 
             {
               object RESULT = null;
 
@@ -1848,7 +1850,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 135: // basisCompilerStatement ::= NT$0 BASIS NT$1 textName 
+          case 137: // basisCompilerStatement ::= NT$0 BASIS NT$1 textName 
             {
               object RESULT = null;
               // propagate RESULT from NT$0
@@ -1865,7 +1867,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 134: // NT$1 ::= 
+          case 136: // NT$1 ::= 
             {
               object RESULT = null;
 		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
@@ -1877,7 +1879,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 133: // NT$0 ::= 
+          case 135: // NT$0 ::= 
             {
               object RESULT = null;
  		
@@ -1888,7 +1890,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 132: // compilerDirectingStatement ::= titleCompilerStatement 
+          case 134: // compilerDirectingStatement ::= titleCompilerStatement 
             {
               object RESULT = null;
 
@@ -1897,7 +1899,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 131: // compilerDirectingStatement ::= skipCompilerStatement 
+          case 133: // compilerDirectingStatement ::= skipCompilerStatement 
             {
               object RESULT = null;
 
@@ -1906,7 +1908,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 130: // compilerDirectingStatement ::= serviceReloadCompilerStatement 
+          case 132: // compilerDirectingStatement ::= serviceReloadCompilerStatement 
             {
               object RESULT = null;
 
@@ -1915,7 +1917,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 129: // compilerDirectingStatement ::= serviceLabelCompilerStatement 
+          case 131: // compilerDirectingStatement ::= serviceLabelCompilerStatement 
             {
               object RESULT = null;
 
@@ -1924,7 +1926,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 128: // compilerDirectingStatement ::= replaceCompilerStatement 
+          case 130: // compilerDirectingStatement ::= replaceCompilerStatement 
             {
               object RESULT = null;
 
@@ -1933,7 +1935,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 127: // compilerDirectingStatement ::= readyOrResetTraceCompilerStatement 
+          case 129: // compilerDirectingStatement ::= readyOrResetTraceCompilerStatement 
             {
               object RESULT = null;
 
@@ -1942,7 +1944,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 126: // compilerDirectingStatement ::= insertCompilerStatement 
+          case 128: // compilerDirectingStatement ::= insertCompilerStatement 
             {
               object RESULT = null;
 
@@ -1951,7 +1953,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 125: // compilerDirectingStatement ::= execSqlIncludeStatement 
+          case 127: // compilerDirectingStatement ::= execSqlIncludeStatement 
             {
               object RESULT = null;
 
@@ -1960,7 +1962,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 124: // compilerDirectingStatement ::= enterCompilerStatement 
+          case 126: // compilerDirectingStatement ::= enterCompilerStatement 
             {
               object RESULT = null;
 
@@ -1969,7 +1971,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 123: // compilerDirectingStatement ::= ejectCompilerStatement 
+          case 125: // compilerDirectingStatement ::= ejectCompilerStatement 
             {
               object RESULT = null;
 
@@ -1978,7 +1980,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 122: // compilerDirectingStatement ::= deleteCompilerStatement 
+          case 124: // compilerDirectingStatement ::= deleteCompilerStatement 
             {
               object RESULT = null;
 
@@ -1987,7 +1989,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 121: // compilerDirectingStatement ::= copyCompilerStatement 
+          case 123: // compilerDirectingStatement ::= copyCompilerStatement 
             {
               object RESULT = null;
 
@@ -1996,7 +1998,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 120: // compilerDirectingStatement ::= controlCblCompilerStatement 
+          case 122: // compilerDirectingStatement ::= controlCblCompilerStatement 
             {
               object RESULT = null;
 
@@ -2005,7 +2007,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 119: // compilerDirectingStatement ::= cblProcessCompilerStatement 
+          case 121: // compilerDirectingStatement ::= cblProcessCompilerStatement 
             {
               object RESULT = null;
 
@@ -2014,7 +2016,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 118: // compilerDirectingStatement ::= basisCompilerStatement 
+          case 120: // compilerDirectingStatement ::= basisCompilerStatement 
             {
               object RESULT = null;
 
@@ -2023,7 +2025,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 117: // starts ::= compilerDirectingStatement 
+          case 119: // starts ::= compilerDirectingStatement 
             {
               object RESULT = null;
 		 ((CobolWordsTokenizer)my_parser.getScanner()).LeaveStopScanningMode(); 
@@ -2032,7 +2034,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 116: // codeElementStartingKeyword ::= XML 
+          case 118: // codeElementStartingKeyword ::= XML 
             {
               object RESULT = null;
 
@@ -2041,7 +2043,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 115: // codeElementStartingKeyword ::= WRITE 
+          case 117: // codeElementStartingKeyword ::= WRITE 
             {
               object RESULT = null;
 
@@ -2050,7 +2052,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 114: // codeElementStartingKeyword ::= WORKING_STORAGE 
+          case 116: // codeElementStartingKeyword ::= WORKING_STORAGE 
             {
               object RESULT = null;
 
@@ -2059,7 +2061,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 113: // codeElementStartingKeyword ::= WHEN 
+          case 115: // codeElementStartingKeyword ::= WHEN 
             {
               object RESULT = null;
 
@@ -2068,7 +2070,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 112: // codeElementStartingKeyword ::= USE 
+          case 114: // codeElementStartingKeyword ::= USE 
             {
               object RESULT = null;
 
@@ -2077,7 +2079,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 111: // codeElementStartingKeyword ::= UNSTRING 
+          case 113: // codeElementStartingKeyword ::= UNSTRING 
             {
               object RESULT = null;
 
@@ -2086,7 +2088,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 110: // codeElementStartingKeyword ::= SUBTRACT 
+          case 112: // codeElementStartingKeyword ::= SUBTRACT 
             {
               object RESULT = null;
 
@@ -2095,7 +2097,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 109: // codeElementStartingKeyword ::= STRING 
+          case 111: // codeElementStartingKeyword ::= STRING 
             {
               object RESULT = null;
 
@@ -2104,7 +2106,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 108: // codeElementStartingKeyword ::= STOP 
+          case 110: // codeElementStartingKeyword ::= STOP 
             {
               object RESULT = null;
 
@@ -2113,7 +2115,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 107: // codeElementStartingKeyword ::= START 
+          case 109: // codeElementStartingKeyword ::= START 
             {
               object RESULT = null;
 
@@ -2122,7 +2124,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 106: // codeElementStartingKeyword ::= SPECIAL_NAMES 
+          case 108: // codeElementStartingKeyword ::= SPECIAL_NAMES 
             {
               object RESULT = null;
 
@@ -2131,7 +2133,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 105: // codeElementStartingKeyword ::= SOURCE_COMPUTER 
+          case 107: // codeElementStartingKeyword ::= SOURCE_COMPUTER 
             {
               object RESULT = null;
 
@@ -2140,7 +2142,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 104: // codeElementStartingKeyword ::= SORT 
+          case 106: // codeElementStartingKeyword ::= SORT 
             {
               object RESULT = null;
 
@@ -2149,7 +2151,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 103: // codeElementStartingKeyword ::= SET 
+          case 105: // codeElementStartingKeyword ::= SET 
             {
               object RESULT = null;
 
@@ -2158,7 +2160,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 102: // codeElementStartingKeyword ::= SERVICE 
+          case 104: // codeElementStartingKeyword ::= SERVICE 
             {
               object RESULT = null;
 
@@ -2167,7 +2169,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 101: // codeElementStartingKeyword ::= SELECT 
+          case 103: // codeElementStartingKeyword ::= SELECT 
             {
               object RESULT = null;
 
@@ -2176,7 +2178,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 100: // codeElementStartingKeyword ::= SEARCH 
+          case 102: // codeElementStartingKeyword ::= SEARCH 
             {
               object RESULT = null;
 
@@ -2185,7 +2187,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 99: // codeElementStartingKeyword ::= SD 
+          case 101: // codeElementStartingKeyword ::= SD 
             {
               object RESULT = null;
 
@@ -2194,7 +2196,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 98: // codeElementStartingKeyword ::= SAME 
+          case 100: // codeElementStartingKeyword ::= SAME 
             {
               object RESULT = null;
 
@@ -2203,7 +2205,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 97: // codeElementStartingKeyword ::= REWRITE 
+          case 99: // codeElementStartingKeyword ::= REWRITE 
             {
               object RESULT = null;
 
@@ -2212,7 +2214,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 96: // codeElementStartingKeyword ::= RETURN 
+          case 98: // codeElementStartingKeyword ::= RETURN 
             {
               object RESULT = null;
 
@@ -2221,7 +2223,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 95: // codeElementStartingKeyword ::= RERUN 
+          case 97: // codeElementStartingKeyword ::= RERUN 
             {
               object RESULT = null;
 
@@ -2230,7 +2232,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 94: // codeElementStartingKeyword ::= REPOSITORY 
+          case 96: // codeElementStartingKeyword ::= REPOSITORY 
             {
               object RESULT = null;
 
@@ -2239,7 +2241,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 93: // codeElementStartingKeyword ::= RELEASE 
+          case 95: // codeElementStartingKeyword ::= RELEASE 
             {
               object RESULT = null;
 
@@ -2248,7 +2250,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 92: // codeElementStartingKeyword ::= READ 
+          case 94: // codeElementStartingKeyword ::= READ 
             {
               object RESULT = null;
 
@@ -2257,7 +2259,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 91: // codeElementStartingKeyword ::= PROCEDURE 
+          case 93: // codeElementStartingKeyword ::= PROCEDURE 
             {
               object RESULT = null;
 
@@ -2266,7 +2268,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 90: // codeElementStartingKeyword ::= PERFORM 
+          case 92: // codeElementStartingKeyword ::= PERFORM 
             {
               object RESULT = null;
 
@@ -2275,7 +2277,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 89: // codeElementStartingKeyword ::= OPEN 
+          case 91: // codeElementStartingKeyword ::= OPEN 
             {
               object RESULT = null;
 
@@ -2284,7 +2286,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 88: // codeElementStartingKeyword ::= OBJECT_COMPUTER 
+          case 90: // codeElementStartingKeyword ::= OBJECT_COMPUTER 
             {
               object RESULT = null;
 
@@ -2293,7 +2295,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 87: // codeElementStartingKeyword ::= NEXT 
+          case 89: // codeElementStartingKeyword ::= NEXT 
             {
               object RESULT = null;
 
@@ -2302,7 +2304,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 86: // codeElementStartingKeyword ::= MULTIPLY 
+          case 88: // codeElementStartingKeyword ::= MULTIPLY 
             {
               object RESULT = null;
 
@@ -2311,7 +2313,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 85: // codeElementStartingKeyword ::= MULTIPLE 
+          case 87: // codeElementStartingKeyword ::= MULTIPLE 
             {
               object RESULT = null;
 
@@ -2320,7 +2322,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 84: // codeElementStartingKeyword ::= MOVE 
+          case 86: // codeElementStartingKeyword ::= MOVE 
             {
               object RESULT = null;
 
@@ -2329,7 +2331,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 83: // codeElementStartingKeyword ::= MERGE 
+          case 85: // codeElementStartingKeyword ::= MERGE 
             {
               object RESULT = null;
 
@@ -2338,7 +2340,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 82: // codeElementStartingKeyword ::= LOCAL_STORAGE 
+          case 84: // codeElementStartingKeyword ::= LOCAL_STORAGE 
             {
               object RESULT = null;
 
@@ -2347,7 +2349,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 81: // codeElementStartingKeyword ::= LINKAGE 
+          case 83: // codeElementStartingKeyword ::= LINKAGE 
             {
               object RESULT = null;
 
@@ -2356,7 +2358,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 80: // codeElementStartingKeyword ::= INVOKE 
+          case 82: // codeElementStartingKeyword ::= JSON 
             {
               object RESULT = null;
 
@@ -2365,7 +2367,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 79: // codeElementStartingKeyword ::= INSPECT 
+          case 81: // codeElementStartingKeyword ::= INVOKE 
             {
               object RESULT = null;
 
@@ -2374,7 +2376,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 78: // codeElementStartingKeyword ::= INPUT_OUTPUT 
+          case 80: // codeElementStartingKeyword ::= INSPECT 
             {
               object RESULT = null;
 
@@ -2383,7 +2385,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 77: // codeElementStartingKeyword ::= INITIALIZE 
+          case 79: // codeElementStartingKeyword ::= INPUT_OUTPUT 
             {
               object RESULT = null;
 
@@ -2392,7 +2394,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 76: // codeElementStartingKeyword ::= IF 
+          case 78: // codeElementStartingKeyword ::= INITIALIZE 
             {
               object RESULT = null;
 
@@ -2401,7 +2403,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 75: // codeElementStartingKeyword ::= IDENTIFICATION 
+          case 77: // codeElementStartingKeyword ::= IF 
             {
               object RESULT = null;
 
@@ -2410,7 +2412,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 74: // codeElementStartingKeyword ::= ID 
+          case 76: // codeElementStartingKeyword ::= IDENTIFICATION 
             {
               object RESULT = null;
 
@@ -2419,7 +2421,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 73: // codeElementStartingKeyword ::= I_O_CONTROL 
+          case 75: // codeElementStartingKeyword ::= ID 
             {
               object RESULT = null;
 
@@ -2428,7 +2430,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 72: // codeElementStartingKeyword ::= GOBACK 
+          case 74: // codeElementStartingKeyword ::= I_O_CONTROL 
             {
               object RESULT = null;
 
@@ -2437,7 +2439,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 71: // codeElementStartingKeyword ::= GO 
+          case 73: // codeElementStartingKeyword ::= GOBACK 
             {
               object RESULT = null;
 
@@ -2446,7 +2448,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 70: // codeElementStartingKeyword ::= FREE 
+          case 72: // codeElementStartingKeyword ::= GO 
             {
               object RESULT = null;
 
@@ -2455,7 +2457,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 69: // codeElementStartingKeyword ::= FILE_CONTROL 
+          case 71: // codeElementStartingKeyword ::= FREE 
             {
               object RESULT = null;
 
@@ -2464,7 +2466,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 68: // codeElementStartingKeyword ::= FILE 
+          case 70: // codeElementStartingKeyword ::= FILE_CONTROL 
             {
               object RESULT = null;
 
@@ -2473,7 +2475,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 67: // codeElementStartingKeyword ::= FD 
+          case 69: // codeElementStartingKeyword ::= FILE 
             {
               object RESULT = null;
 
@@ -2482,7 +2484,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 66: // codeElementStartingKeyword ::= EXIT 
+          case 68: // codeElementStartingKeyword ::= FD 
             {
               object RESULT = null;
 
@@ -2491,7 +2493,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 65: // codeElementStartingKeyword ::= EXECUTE 
+          case 67: // codeElementStartingKeyword ::= EXIT 
             {
               object RESULT = null;
 
@@ -2500,7 +2502,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 64: // codeElementStartingKeyword ::= EXEC 
+          case 66: // codeElementStartingKeyword ::= EXECUTE 
             {
               object RESULT = null;
 
@@ -2509,7 +2511,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 63: // codeElementStartingKeyword ::= EVALUATE 
+          case 65: // codeElementStartingKeyword ::= EXEC 
             {
               object RESULT = null;
 
@@ -2518,7 +2520,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 62: // codeElementStartingKeyword ::= ENVIRONMENT 
+          case 64: // codeElementStartingKeyword ::= EVALUATE 
             {
               object RESULT = null;
 
@@ -2527,7 +2529,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 61: // codeElementStartingKeyword ::= ENTRY 
+          case 63: // codeElementStartingKeyword ::= ENVIRONMENT 
             {
               object RESULT = null;
 
@@ -2536,7 +2538,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 60: // codeElementStartingKeyword ::= END_XML 
+          case 62: // codeElementStartingKeyword ::= ENTRY 
             {
               object RESULT = null;
 
@@ -2545,7 +2547,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 59: // codeElementStartingKeyword ::= END_WRITE 
+          case 61: // codeElementStartingKeyword ::= END_XML 
             {
               object RESULT = null;
 
@@ -2554,7 +2556,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 58: // codeElementStartingKeyword ::= END_UNSTRING 
+          case 60: // codeElementStartingKeyword ::= END_WRITE 
             {
               object RESULT = null;
 
@@ -2563,7 +2565,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 57: // codeElementStartingKeyword ::= END_SUBTRACT 
+          case 59: // codeElementStartingKeyword ::= END_UNSTRING 
             {
               object RESULT = null;
 
@@ -2572,7 +2574,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 56: // codeElementStartingKeyword ::= END_STRING 
+          case 58: // codeElementStartingKeyword ::= END_SUBTRACT 
             {
               object RESULT = null;
 
@@ -2581,7 +2583,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 55: // codeElementStartingKeyword ::= END_START 
+          case 57: // codeElementStartingKeyword ::= END_STRING 
             {
               object RESULT = null;
 
@@ -2590,7 +2592,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 54: // codeElementStartingKeyword ::= END_SEARCH 
+          case 56: // codeElementStartingKeyword ::= END_START 
             {
               object RESULT = null;
 
@@ -2599,7 +2601,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 53: // codeElementStartingKeyword ::= END_REWRITE 
+          case 55: // codeElementStartingKeyword ::= END_SEARCH 
             {
               object RESULT = null;
 
@@ -2608,7 +2610,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 52: // codeElementStartingKeyword ::= END_RETURN 
+          case 54: // codeElementStartingKeyword ::= END_REWRITE 
             {
               object RESULT = null;
 
@@ -2617,7 +2619,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 51: // codeElementStartingKeyword ::= END_READ 
+          case 53: // codeElementStartingKeyword ::= END_RETURN 
             {
               object RESULT = null;
 
@@ -2626,7 +2628,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 50: // codeElementStartingKeyword ::= END_PERFORM 
+          case 52: // codeElementStartingKeyword ::= END_READ 
             {
               object RESULT = null;
 
@@ -2635,7 +2637,25 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           return CUP_CobolCompilerDirectivesParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 49: // codeElementStartingKeyword ::= END_MULTIPLY 
+          case 51: // codeElementStartingKeyword ::= END_PERFORM 
+            {
+              object RESULT = null;
+
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(172/*codeElementStartingKeyword*/, RESULT);
+            }
+          return CUP_CobolCompilerDirectivesParser_result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 50: // codeElementStartingKeyword ::= END_MULTIPLY 
+            {
+              object RESULT = null;
+
+              CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(172/*codeElementStartingKeyword*/, RESULT);
+            }
+          return CUP_CobolCompilerDirectivesParser_result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 49: // codeElementStartingKeyword ::= END_JSON 
             {
               object RESULT = null;
 

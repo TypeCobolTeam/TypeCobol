@@ -47,7 +47,7 @@ Line 266[18,41] <30, Error, Semantics> - Semantic error: TYPE 'Date2' is not ref
 --- Program ---
 PROGRAM: ProcedureCall common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
   somedate:DATE
   someformat:Alphanumeric
@@ -61,15 +61,16 @@ PROGRAM: ProcedureCall common:False initial:False recursive:False
   MyToto:Toto
 -- PARAGRAPHS --
   TRAITEMENT
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations
+-- FUNCTIONS ---
+  GetPtrFn
+        in: ptrFn:?
+        in: ptrPr:?
+--- Intrinsic:Namespace:Program
 -- TYPES -------
   Toto:Toto
 -- FUNCTIONS ---
   MyProc
         in: myDate:?
-  GetPtrFn
-        in: ptrFn:?
-        in: ptrPr:?
   DuplicatedParams
         in: format:DATE
         in: format:Alphanumeric
@@ -130,6 +131,9 @@ PROGRAM: ProcedureCall common:False initial:False recursive:False
      inout: var1:DATE
   MyProc3
         in: mydate:Date2
+  check
+        in: rate1:Alphanumeric
+       out: rate2:Alphanumeric
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL

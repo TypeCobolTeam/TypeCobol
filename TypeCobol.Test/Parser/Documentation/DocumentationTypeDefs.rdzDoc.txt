@@ -43,7 +43,7 @@ DataType :
 
 Name : Type11
 Description : Description for Type11 
-Visibility : Local
+Visibility : Public
 Namespace : DocForTypeDefs
 NodeType : TypeDef
 IsDeprecated : False
@@ -67,7 +67,7 @@ DataType :
 
 Name : Type12
 Description : Description for Type12 
-Visibility : Local
+Visibility : Private
 Namespace : DocForTypeDefs
 NodeType : TypeDef
 IsDeprecated : True

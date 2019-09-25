@@ -52,7 +52,7 @@ namespace TypeCobol.Tools.APIHelpers
 
                     foreach (var program in parser.Results.ProgramClassDocumentSnapshot.Root.Programs)
                     {
-                        var symbols = program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
+                        var symbols = program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Program);
 
                         if (symbols.Types.Count == 0 && symbols.Functions.Count == 0)
                         {
@@ -166,21 +166,17 @@ namespace TypeCobol.Tools.APIHelpers
 
                     foreach (var program in parser.Results.TemporaryProgramClassDocumentSnapshot.Root.Programs)
                     {
-                        var declarationTable = program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
-                        var globalTable = program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Global);
-
                         var previousPrograms = table.GetPrograms();
                         foreach (var previousProgram in previousPrograms)
                         {
                             previousProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.Namespace).AddProgram(program);
                         }
 
-
                         //If there is no public types or functions, then call diagEvent
+                        var programTable = program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Program);
                         if (diagEvent != null
-                            && !globalTable.Types.Values.Any(tds => tds.Any(td => td.CodeElement.Visibility == AccessModifier.Public))            //No Public Types in Global table
-                            && !declarationTable.Types.Values.Any(tds => tds.Any(td => td.CodeElement.Visibility == AccessModifier.Public))       //No Public Types in Declaration table
-                            && !declarationTable.Functions.Values.Any(fds => fds.Any(fd => fd.CodeElement.Visibility == AccessModifier.Public)))  //No Public Functions in Declaration table
+                            && !programTable.Types.Values.Any(tds => tds.Any(td => td.CodeElement.Visibility == AccessModifier.Public))       //No Public Types in Program table
+                            && !programTable.Functions.Values.Any(fds => fds.Any(fd => fd.CodeElement.Visibility == AccessModifier.Public)))  //No Public Functions in Program table
                         {
                             diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = new ParserDiagnostic(string.Format("No public types or procedures/functions found in {0}", program.Name), 1, 1, 1, null, MessageCode.Warning) });
                             continue;

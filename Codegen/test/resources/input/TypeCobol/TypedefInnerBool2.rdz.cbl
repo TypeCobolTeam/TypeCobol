@@ -19,7 +19,7 @@
            .
        data division.
        local-storage section.
-       01 LoopControl typedef strict private.
+       01 LoopControl typedef strict.
          05 loop          pic S9(5) COMP-5.
          05 sta           type bool.
          05 t             pic S9(5) COMP-5.

@@ -13,12 +13,11 @@ Line 95[44,48] <27, Error, Syntax> - Syntax error : Symbol MyVar.A5var.B5Var.C5V
 --- Program ---
 PROGRAM: CircularRefCheck common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
   MyGroup:Alphanumeric
   MyVar1:myType
   MyVar2:myType
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations
 -- TYPES -------
   ThirdType:ThirdType
   myType:myType
@@ -32,12 +31,6 @@ PROGRAM: CircularRefCheck common:False initial:False recursive:False
   B3:B3
   C3:C3
   A3:A3
-  A4:A4
-  B4:B4
-  C4:C4
-  A5:A5
-  B5:B5
-  C5:C5
 -- FUNCTIONS ---
   CheckCircular
   CheckCircular2

@@ -29,7 +29,7 @@ Line 161[33,49] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'stron
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
   Equipment:Alphanumeric
   Equipment-id:Array
@@ -80,7 +80,6 @@ PROGRAM: TypeCobol common:False initial:False recursive:False
   MyVariable:Alphanumeric
   useStrongType1:strongType1
   TYPE-GRP-STRONG-REN:?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations
 -- TYPES -------
   Feature:Feature
   Vect2:Vect2

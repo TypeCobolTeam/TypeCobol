@@ -12,7 +12,7 @@ Symbols found: Doubles::GROUP-DOUBLE::VARIANT-2 | Doubles::GROUP-DOUBLE::VARIANT
 --- Program ---
 PROGRAM: Doubles common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
   I-DOUBLE:Alphanumeric
   I-DOUBLE:Alphanumeric
@@ -33,7 +33,7 @@ PROGRAM: Doubles common:False initial:False recursive:False
   ANOTHER-GROUP:Alphanumeric
 -- PARAGRAPHS --
   PROC1
---- Intrinsic:Namespace:GlobalStorage:Global
+--- Intrinsic:Namespace:Program:Global
 -- DATA --------
   GLOBO:Alphanumeric
 --- Intrinsic

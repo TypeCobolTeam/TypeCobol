@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.TypeChecker;
@@ -168,6 +169,28 @@ namespace TypeCobol.LanguageServer
                 }
             }
         }
+
+        //The root OutlineNode is stored in memory to be able to update it with new nodes
+        private OutlineNode _rootOutlineNode = null;
+        /// <summary>
+        /// Update the OutlineNodes of the root OutlineNode. Creates it if new document.
+        /// </summary>
+        /// <param name="programClassDocument"></param>
+        /// <param name="bForced"></param>
+        /// <returns></returns>
+        public RefreshOutlineParams UpdateOutline(ProgramClassDocument programClassDocument, bool bForced)
+        {
+            if(_rootOutlineNode == null)
+            {
+                _rootOutlineNode = new OutlineNode(programClassDocument.Root);
+            }
+
+            if (bForced || _rootOutlineNode.Update(programClassDocument.Root))
+                return new RefreshOutlineParams(new TextDocumentIdentifier(this.LspTextDocument.uri), _rootOutlineNode);
+            else
+                return null;
+        }
+
 
         /// <summary>
         /// Called when a token scanning has been performed.

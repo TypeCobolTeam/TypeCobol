@@ -249,6 +249,16 @@ namespace CLI.Test
             CLITestHelper.Test("cross_compilation_sources", ReturnCode.Success);
         }
 
+
+        /// <summary>
+        /// This test checks that value clauses are preserved when used on typed variables
+        /// or procedure parameters.
+        /// </summary>
+        [TestMethod]
+        public void TestValueClauses()
+        {
+            CLITestHelper.Test("value_clauses", ReturnCode.Success);
+        }
     }
 
     public class CLITestHelper {

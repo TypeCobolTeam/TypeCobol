@@ -8,15 +8,14 @@
 Line 8[8,48] <27, Error, Syntax> - Syntax error : Illegal Type Definition in Global-Storage Section
        01 ForbiddenTypedef typedef strict pic X.
 
-      *OK now, but will become KO with #1081:
-      *KO with #1081, as a typedef local is not visibile in the
-      *entire source, 
+      *KO local typedef is not visible in the entire source, 
       *using it in global-storage must be forbidden
+Line 12[8,45] <30, Error, Semantics> - Semantic error: TYPE 'LocalType' is not referenced
        01 varUsingLocalType   type LocalType.
 
-      *OK because private type is visibile in the entire source
+      *OK because private type is visible in the entire source
        01 varUsingPrivateType type PrivateType.
-      *OK because public type is visibile in the entire source
+      *OK because public type is visible in the entire source
        01 varUsingPublicType  type PublicType.
 
        WORKING-STORAGE SECTION.
@@ -25,7 +24,7 @@ Line 8[8,48] <27, Error, Syntax> - Syntax error : Illegal Type Definition in Glo
        01 PublicType   typedef strict public pic X.
       
       *KO TypeDefs in Global-Storage Section are not referenced in SymbolTable
-Line 27[8,48] <30, Error, Semantics> - Semantic error: TYPE 'ForbiddenTypedef' is not referenced
+Line 25[8,48] <30, Error, Semantics> - Semantic error: TYPE 'ForbiddenTypedef' is not referenced
        01 invalidTypedVar TYPE ForbiddenTypedef.
        
 
@@ -37,7 +36,7 @@ Line 27[8,48] <30, Error, Semantics> - Semantic error: TYPE 'ForbiddenTypedef' i
            .
        DECLARE PROCEDURE MyProc PRIVATE
       *          KO because ForbiddenTypedef is not declared correctly
-Line 38[24,51] <30, Error, Semantics> - Semantic error: TYPE 'ForbiddenTypedef' is not referenced
+Line 36[24,51] <30, Error, Semantics> - Semantic error: TYPE 'ForbiddenTypedef' is not referenced
                  input param1 type ForbiddenTypedef.
        PROCEDURE DIVISION.
       *    OK 
