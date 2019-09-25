@@ -7,6 +7,9 @@ using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Domain.Validator
 {
+    /// <summary>
+    /// Validator visitor other types.
+    /// </summary>
     public class TypeValidator : Types.Type.AbstractTypeVisitor<bool, object>
     {
         /// <summary>
@@ -26,7 +29,7 @@ namespace TypeCobol.Compiler.Domain.Validator
         /// <summary>
         /// Constructor
         /// </summary>
-        public TypeValidator() : this(new SymbolValidator())
+        public TypeValidator() : this(null)
         {
             this.SymValidator.TypValidator = this;
         }

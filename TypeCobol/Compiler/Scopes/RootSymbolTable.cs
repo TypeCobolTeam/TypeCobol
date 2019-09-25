@@ -26,7 +26,7 @@ namespace TypeCobol.Compiler.Scopes
         /// </summary>
         public RootSymbolTable() : base("<<Root>>")
         {
-            base.Kind = Kinds.Global;
+            base.Kind = Kinds.Root;
             Universe = new List<VariableSymbol>();
             BottomVariable = new VariableSymbol("<<BottomVariable>>");
             AddToUniverse(BottomVariable);

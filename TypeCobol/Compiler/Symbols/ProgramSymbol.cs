@@ -238,7 +238,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Get the type visibility mask for a Program.
         /// </summary>
-        public virtual Flags TypeVisibilityMask => IsNested ? (Flags.Global | Flags.Public) : 0;
+        public virtual Flags TypeVisibilityMask => IsNested ? (Flags.Global | Flags.Private | Flags.Public) : 0;
 
         /// <summary>
         /// Determines if a Type is accessible from this Program.
@@ -316,10 +316,14 @@ namespace TypeCobol.Compiler.Symbols
                         curProg.ResolveReference(paths, results, bRecurseEnglobingPrograms, visibilityMask == 0 ? VariableVisibilityMask : visibilityMask);
                     }
                 }
-                else if ((visibilityMask & Flags.GLOBAL_STORAGE) == 0 && IsNested)
+                else if ((visibilityMask & Flags.GLOBAL_STORAGE) == 0)
                 {
+                    // We have to search in TopProgram GLOBAL-STORAGE even if we already have found results locally.
                     var topPgm = GetTopProgram(this);
-                    topPgm.ResolveReference(paths, results, false, Flags.GLOBAL_STORAGE);
+                    if (this != topPgm)
+                    {
+                        topPgm.ResolveReference(paths, results, false, Flags.GLOBAL_STORAGE);
+                    }
                 }
             }
             return results;

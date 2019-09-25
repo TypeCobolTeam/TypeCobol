@@ -14,6 +14,7 @@ using TypeCobol.Compiler.Symbols;
 using TypeCobol.Compiler.Types;
 using Type = TypeCobol.Compiler.Types.Type;
 
+
 namespace TypeCobol.Compiler.Domain
 {
     /// <summary>
@@ -267,8 +268,15 @@ namespace TypeCobol.Compiler.Domain
             System.Diagnostics.Debug.Assert(LastExitedNode.CodeElement != null);
             System.Diagnostics.Debug.Assert(LastExitedNode.CodeElement.Type == CodeElementType.ProgramIdentification);
 
+            ProgramSymbol lastPrg = this.CurrentProgram;
             //For a stacked program the Parent is null and not for a nested program.
             this.CurrentProgram = LastExitedNode.Parent != null ? (ProgramSymbol)LastExitedNode.Parent.SemanticData : null;
+            if (this.CurrentProgram == null && lastPrg.HasFlag(Symbol.Flags.NeedTypeCompletion))
+            {
+                //Entire stacked program has been parsed ==> Resolve Types if needed.
+                TypeCobol.Compiler.Domain.Validator.SymbolTypeResolver resolver = new TypeCobol.Compiler.Domain.Validator.SymbolTypeResolver(Root);
+                lastPrg.Accept(resolver, null);
+            }
         }
 
         public override void StartDataDivision(DataDivisionHeader header)
@@ -874,20 +882,48 @@ namespace TypeCobol.Compiler.Domain
                     string.Format(TypeCobolResource.CannotRedefinedTypedefDecl, symRef.Name));
                 return null;
             }
+            //Find the declaring program of function scope.
+            DataTypeDescriptionEntry dtde = (DataTypeDescriptionEntry)dataDef.CodeElement;
+            ProgramSymbol programScope = (ProgramSymbol)CurrentScope.TopParent(Symbol.Kinds.Program);
+            switch (dtde.Visibility)
+            {
+                case AccessModifier.Public:
+                case AccessModifier.Private:
+                    //Declared in the Top Parent scope
+                    programScope = (ProgramSymbol)CurrentScope.TopParent(Symbol.Kinds.Program);
+                    break;
+                case AccessModifier.Local:                    
+                default:
+                    //Declared in the current Program or function scope.
+                    programScope = (ProgramSymbol)CurrentScope.NearestKind(Symbol.Kinds.Program, Symbol.Kinds.Function);                    
+                    break;
+            }
+            System.Diagnostics.Debug.Assert(programScope != null);
+
             //First lookup in the current scope if the typedef symbol exists.
-            var entry = this.CurrentScope.ReverseResolveType(Root, new string[] { dataDef.Name }, false);
             TypedefSymbol tdSym = null;
+            var entry = programScope.ReverseResolveType(programScope, new string[] { dataDef.Name }, false);
             if (entry != null)
             {
                 System.Diagnostics.Debug.Assert(entry.Count == 1);
                 tdSym = entry[0];
-                //System.Diagnostics.Debug.Assert(tdSym.Type == null);
+                System.Diagnostics.Debug.Assert(tdSym.Type != null);
+                System.Diagnostics.Debug.Assert(tdSym.Type.Tag == Type.Tags.Typedef);
+                if (entry.Count > 1 || ((TypedefType)tdSym.Type).TargetType != null)
+                {
+                    Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                        dtde.Column,
+                        dtde.Column,
+                        dtde.Line,
+                        string.Format(TypeCobolResource.TypeAlreadyDeclared, dataDef.Name));
+                    return null;
+                }
             }
-            //We create the type definition symbol
+            //We create the type definition symbol            
             if (tdSym == null)
             {
                 tdSym = new TypedefSymbol(dataDef.Name);
-                DataTypeDescriptionEntry dtde = (DataTypeDescriptionEntry) dataDef.CodeElement;
+                tdSym.Type = new TypedefType(tdSym);
                 if (dtde.Strict != null && dtde.Strict.Value)
                 {
                     tdSym.SetFlag(Symbol.Flags.Strict, true);
@@ -899,15 +935,17 @@ namespace TypeCobol.Compiler.Domain
                 SetSymbolAccessModifer(tdSym, dtde.Visibility);
                 //A Typedef goes in the Types scope of the Main program scope
                 //Enter it right now to allow recursive type definition to be possible here.
-                ProgramSymbol topProgram = (ProgramSymbol)CurrentScope.TopParent(Symbol.Kinds.Program);
-                System.Diagnostics.Debug.Assert(topProgram != null);
                 //The owner of the type is the top program.
-                tdSym.Owner = topProgram;
-                topProgram.Types.Enter(tdSym);
+                tdSym.Owner = programScope;
+                programScope.Types.Enter(tdSym);
             }
+
             VariableSymbol varSym = DataDefinition2Symbol(dataDef, parentScope, tdSym);
             //Ignore the variable symbol, but only take the underlying type.
-            tdSym.Type = new TypedefType(tdSym, varSym.Type);
+            System.Diagnostics.Debug.Assert(varSym.Type != null);
+            System.Diagnostics.Debug.Assert(tdSym.Type != null);
+            System.Diagnostics.Debug.Assert(tdSym.Type.Tag == Type.Tags.Typedef);
+            ((TypedefType)tdSym.Type).TargetType = varSym.Type;
             tdSym.Type.Symbol = tdSym;
             //Important if the target Type is a Group Type we must change the parent Scope to the TypedefSymbol.
             Types.Type elemType = tdSym.Type?.TypeComponent;
@@ -981,23 +1019,21 @@ namespace TypeCobol.Compiler.Domain
                     paths[i] = refs[i].Name;
                 }
             }
-
-            //Lookup the TypeDef Symbol in the current scope
-            //Scope<TypedefSymbol>.Entry tdCur = this.CurrentScope.ReverseResolveType(Global, paths, false);
-            //if (tdCur == null)
-            //{
-            //    System.Diagnostics.Debug.WriteLine("Not Existing TypeDef : " + dataDef.Name);
-            //}
-
-            var tdEntry = this.CurrentScope.ReverseResolveType(Root, paths, true);
-            System.Diagnostics.Debug.Assert(tdEntry.Count == 1);
-            TypedefSymbol tdSymbol = tdEntry[0];
-            VariableTypeSymbol varTypeSym = new VariableTypeSymbol(dataDef.Name, tdSymbol);
+            VariableTypeSymbol varTypeSym = new VariableTypeSymbol(dataDef.Name, paths);
             DecorateSymbol(dataDef, varTypeSym, parentScope);
             if (typedef == null)
                 CurrentProgram.AddToDomain(varTypeSym);
             else
                 typedef.Add(varTypeSym);
+            //If we have created a VariableTypeSymbol Symbol instance then sure the underlying Program should be completed from the Top Program.
+            //This can be an optimization to avoid pur Cobol85 program to be completed, they don't have TYPEDEF.
+            if (!CurrentProgram.HasFlag(Symbol.Flags.NeedTypeCompletion))
+            {
+                CurrentProgram.SetFlag(Symbol.Flags.NeedTypeCompletion, true);
+                ProgramSymbol toProgram = (ProgramSymbol)CurrentProgram.TopParent(Symbol.Kinds.Program);
+                if (toProgram != CurrentProgram)
+                    toProgram.SetFlag(Symbol.Flags.NeedTypeCompletion, true);
+            }
             return varTypeSym;
         }
 

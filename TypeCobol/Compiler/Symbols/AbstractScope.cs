@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Scopes;
+using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -197,6 +198,8 @@ namespace TypeCobol.Compiler.Symbols
                                 if (types != null)
                                 {
                                     TypedefSymbol tdSym = new TypedefSymbol(path[i]);
+                                    //Create an untypedef TypeDef as type.
+                                    tdSym.Type = new TypedefType(tdSym);
                                     types.Enter(tdSym);
                                     Scope<TypedefSymbol>.Entry entry = types.Lookup(path[i]);
                                     return entry;

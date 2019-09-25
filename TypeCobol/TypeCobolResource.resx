@@ -160,4 +160,7 @@
   <data name="DuplicateProgram" xml:space="preserve">
     <value>Program with identifier "{0}" is defined multiple times.</value>
   </data>
+  <data name="TypeAlreadyDeclared" xml:space="preserve">
+    <value>TYPE'{0}' has already been declared</value>
+  </data>
 </root>

@@ -26,7 +26,7 @@ namespace TypeCobol.Compiler.Domain.Validator
         /// <summary>
         /// Constructor based on a TypeValidator.
         /// </summary>
-        public SymbolValidator() : this(new TypeValidator())
+        public SymbolValidator() : this(null)
         {
             TypValidator.SymValidator = this;
         }
