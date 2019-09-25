@@ -5,13 +5,13 @@ using System.IO;
 
 namespace TypeCobol.LanguageServer
 {
-    public class DependenciesFileWatcher : IDisposable
+    public class CopyWatcher : IDisposable
     {
         private Workspace _TypeCobolWorkSpace;
         private List<FileSystemWatcher> fileWatchers = new List<FileSystemWatcher>();
         private readonly Action refreshAction;
 
-        public DependenciesFileWatcher(Workspace workspace, Action refreshAction)
+        public CopyWatcher(Workspace workspace, Action refreshAction)
         {
             _TypeCobolWorkSpace = workspace;
             this.refreshAction = refreshAction;
@@ -19,12 +19,6 @@ namespace TypeCobol.LanguageServer
 
         public void SetDirectoryWatcher(string directoryPath)
         {
-            var fileNameExt = Path.GetFileName(directoryPath);
-            if (fileNameExt != null)
-                directoryPath = directoryPath.Replace(fileNameExt, "");//Remove filename with extension at the end
-            if (!Directory.Exists(directoryPath))
-                return; //If directory does not exist do no try to watch..
-
             //Initialize File Watcher
             var watcher = new FileSystemWatcher
             {
@@ -33,11 +27,13 @@ namespace TypeCobol.LanguageServer
                     NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName |
                     NotifyFilters.DirectoryName
             };
-            watcher.Filter = "*.tcbl";
+            watcher.Filter = "*.cpy";
 
             // Add event handlers.
             watcher.Changed += OnChanged;
-            watcher.Created += OnChanged;
+            //No need to watch COPY creation
+            //If a copy is missing it'll be loaded once a parser refresh is called
+            //watcher.Created += OnChanged; 
             watcher.Deleted += OnChanged;
             watcher.Renamed += OnChanged;
 
@@ -52,7 +48,9 @@ namespace TypeCobol.LanguageServer
             var directory= new FileInfo(e.FullPath).Directory;
             if (File.Exists(directory.FullName + Path.DirectorySeparatorChar + "~.lock"))
                 return;
-        
+
+            _TypeCobolWorkSpace.CompilationProject.ClearImportedCompilationDocumentsCache();
+
             lock (_TypeCobolWorkSpace.MessagesActionsQueue)
             {
                 // Check if there isn't another refresh action from another fileWatcher in the queue

@@ -806,7 +806,7 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 var callStatement = node.CodeElement as CallStatement;
                 var currentCheckedParameter = callStatement?.InputParameters.FirstOrDefault(
-                    param => param.StorageAreaOrValue.StorageArea == specialRegister);
+                    param => param.StorageAreaOrValue?.StorageArea == specialRegister);
 
                 if (currentCheckedParameter != null)
                 {
