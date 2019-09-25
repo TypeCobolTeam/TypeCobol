@@ -86,6 +86,7 @@ namespace TypeCobol.Compiler.Domain.Validator
                 if (!ValidateScope<VariableSymbol>(s.FileData, arg)) bResult = false;
                 if (!ValidateScope<VariableSymbol>(s.GlobalStorageData, arg)) bResult = false;
                 if (!ValidateScope<VariableSymbol>(s.WorkingStorageData, arg)) bResult = false;
+                if (!ValidateScope<VariableSymbol>(s.LocalStorageData, arg)) bResult = false;
                 if (!ValidateScope<VariableSymbol>(s.LinkageStorageData, arg)) bResult = false;
 
                 //Visit Paragraph/section

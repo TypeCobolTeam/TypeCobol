@@ -544,6 +544,7 @@ namespace TypeCobol.Compiler.Domain
             //Create the Function type.
             parameters.TrimExcess();
             Types.FunctionType funType = new Types.FunctionType(parameters, retVar);
+            funSym.Type = funType;
 
             //Pop the Function declaration context
             System.Diagnostics.Debug.Assert(FunctionDeclStack.Count > 0);
