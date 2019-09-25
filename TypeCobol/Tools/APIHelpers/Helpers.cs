@@ -32,7 +32,7 @@ namespace TypeCobol.Tools.APIHelpers
             {
                 try
                 {
-                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck }, intrinsicDocumentFormat);
+                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck, CheckProgramName = false }, intrinsicDocumentFormat);
                     parser.Parse(path);
 
                     diagnostics.AddRange(parser.Results.AllDiagnostics());
@@ -141,7 +141,8 @@ namespace TypeCobol.Tools.APIHelpers
                 try
                 {
                     parser.CustomSymbols = table; //Update SymbolTable
-                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, format, copyFolders);
+                    // check program name match file name 
+                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck, CheckProgramName = true }, format, copyFolders);
                     parser.Parse(path); //Parse the dependency file
 
                     diagnostics.AddRange(parser.Results.AllDiagnostics());

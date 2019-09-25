@@ -35,7 +35,12 @@ namespace TypeCobol.Codegen {
             ParseGenerateCompare(path, skeletons, DocumentFormat.RDZReferenceFormat, typeCobolVersion, autoRemarks, copies);
         }
         public static void ParseGenerateCompare(string path, List<Skeleton> skeletons, DocumentFormat format, string typeCobolVersion, bool autoRemarks = false, IList<string> copies = null, MemoryStream lmStream = null) {
-            var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), format, autoRemarks, copies);
+#if EUROINFO_RULES
+        var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), format, autoRemarks, copies, false);
+#else
+        var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), format, autoRemarks, copies);
+#endif
+
             var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
             var writer = new StringWriter();
             // write parsing errors

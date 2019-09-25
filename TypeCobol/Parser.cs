@@ -149,11 +149,12 @@ namespace TypeCobol
 
 
 
-		public static Parser Parse(string path, DocumentFormat format, bool autoRemarks = false, IList<string> copies = null) {
+		public static Parser Parse(string path, DocumentFormat format, bool autoRemarks = false, IList<string> copies = null, bool useCheckProgramName = true) {
 			var parser = new Parser();
             var typeCobolOption = new TypeCobolOptions() { ExecToStep = ExecutionStep.Generate };
 #if EUROINFO_RULES
 		    typeCobolOption.AutoRemarksEnable = autoRemarks;
+		    typeCobolOption.UseCheckProgramName = useCheckProgramName;
 #endif
             parser.Init(path, typeCobolOption, format, copies);
 

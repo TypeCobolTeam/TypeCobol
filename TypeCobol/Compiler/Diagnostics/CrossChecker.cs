@@ -15,6 +15,12 @@ namespace TypeCobol.Compiler.Diagnostics
 {
     public class CrossCompleteChecker : AbstractAstVisitor
     {
+        public CrossCompleteChecker(string sourceName = "")
+        {
+            SourceName = sourceName;
+        }
+
+        private string SourceName { get; set; }
         private Node CurrentNode { get; set; }
 
         public override bool BeginNode(Node node)
@@ -226,7 +232,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Program program)
         {
-            ProgramChecker.OnNode(program);
+            ProgramChecker.OnNode(program, SourceName);
 
             //// Set a Warning if the FormCom parameter in unknown or if the program parameter have no description
 

@@ -87,7 +87,7 @@ namespace TypeCobol.Test.HighLevelAPI {
 
         private static IDictionary<Program, IDictionary<string, string>> ParseAndGetLTNVCopys(string rootPath, string path, bool autoRemarks = false)
         {
-            var parser = TypeCobol.Parser.Parse(rootPath + Path.DirectorySeparatorChar + path, DocumentFormat.RDZReferenceFormat, autoRemarks);
+            var parser = TypeCobol.Parser.Parse(rootPath + Path.DirectorySeparatorChar + path, DocumentFormat.RDZReferenceFormat, autoRemarks, null, false);
             var diagnostics = parser.Results.AllDiagnostics();
             //There should be no diagnostics
             Assert.IsFalse(diagnostics.Any());

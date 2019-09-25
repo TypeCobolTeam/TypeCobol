@@ -977,7 +977,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
     public class ProgramChecker
     {
-        public static void OnNode(Program node)
+        public static void OnNode(Program node, string sourceName)
         {
             node.SetFlag(Node.Flag.MissingEndProgram, !(node.Children.LastOrDefault() is End));
 
@@ -986,7 +986,15 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(node,
                     "\"END PROGRAM\" is missing.", MessageCode.Warning);
             }
-
+#if EUROINFO_RULES
+            if (node.IsMainProgram && !string.IsNullOrEmpty(sourceName))
+            {
+                if (!node.Name.Equals(sourceName, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    DiagnosticUtils.AddError(node, "The program name \"" + node.Name + "\" must match the file name \"" + sourceName + "\".", MessageCode.Warning);
+                }
+            }
+#endif
         }
     }
 
@@ -1042,7 +1050,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
         }
-
+        
 
     }
 

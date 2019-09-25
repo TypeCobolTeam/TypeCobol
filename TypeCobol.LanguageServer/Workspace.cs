@@ -125,6 +125,10 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public bool UseOutlineRefresh { get; set; }
 
+        /// <summary>
+        /// true to Check program name is matching file name.    
+        /// </summary>
+        public bool UseCheckProgramName { get; set; }
         #endregion
 
 
@@ -149,6 +153,9 @@ namespace TypeCobol.LanguageServer
             this.CompilationProject.CompilationOptions.UseEuroInformationLegacyReplacingSyntax =
                 this.CompilationProject.CompilationOptions.UseEuroInformationLegacyReplacingSyntax ||
                 UseEuroInformationLegacyReplacingSyntax;
+#if EUROINFO_RULES
+            this.CompilationProject.CompilationOptions.UseCheckProgramName = UseCheckProgramName;
+#endif
 
             // Create the refresh action that will be used by file watchers
             Action refreshAction = RefreshOpenedFiles;
@@ -422,6 +429,7 @@ namespace TypeCobol.LanguageServer
 
 #if EUROINFO_RULES
             typeCobolOptions.AutoRemarksEnable = TypeCobolConfiguration.AutoRemarks;
+            typeCobolOptions.UseCheckProgramName = UseCheckProgramName;
 #endif
 
             CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, _extensions, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.EndOfLineDelimiter, TypeCobolConfiguration.Format.FixedLineLength, TypeCobolConfiguration.Format.ColumnsLayout, typeCobolOptions);

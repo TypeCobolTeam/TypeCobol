@@ -26,13 +26,14 @@ namespace TypeCobol.Test.Utils
             Observer = new TestObserver();
         }
 
-        public void Init(string[] extensions = null, bool autoRemarks = false, bool AntlrProfiler = false)
+        public void Init(string[] extensions = null, bool autoRemarks = false, bool AntlrProfiler = false, bool useCheckProgramName = false)
         {
             DirectoryInfo localDirectory = new DirectoryInfo(Path.GetDirectoryName( Comparator?.paths?.SamplePath));
             DocumentFormat format = Comparator?.GetSampleFormat();
             TypeCobolOptions options = new TypeCobolOptions();
 #if EUROINFO_RULES
             options.AutoRemarksEnable = autoRemarks;
+            options.UseCheckProgramName = useCheckProgramName;
 #endif
             if (extensions == null) extensions = new[] { ".cbl", ".cpy" };
             //comparator.paths.sextension = extensions[0].Substring(1);
@@ -166,7 +167,7 @@ namespace TypeCobol.Test.Utils
             return _nbOfTests;
         }
 
-		public void Test(bool debug = false, bool json = false, bool autoRemarks = false) {
+		public void Test(bool debug = false, bool json = false, bool autoRemarks = false, bool useCheckProgramName = false) {
 			var errors = new StringBuilder();
 			foreach (var samplePath in samples) {
 				IList<FilesComparator> comparators = GetComparators(_sampleRoot, _resultsRoot, samplePath, debug);
@@ -178,7 +179,7 @@ namespace TypeCobol.Test.Utils
 				foreach (var comparator in comparators) {
                     Console.WriteLine(comparator.paths.Result + " checked with " + comparator.GetType().Name);
 					var unit = new TestUnit(comparator, debug);
-					unit.Init(compilerExtensions, autoRemarks);
+					unit.Init(compilerExtensions, autoRemarks, false, useCheckProgramName);
 					unit.Parse();
 				    if (unit.Observer.HasErrors)
 				    {

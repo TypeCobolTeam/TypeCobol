@@ -310,5 +310,42 @@ namespace TypeCobol.Test {
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
         }
+
+#if EUROINFO_RULES
+        [TestMethod]
+        //[Ignore]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "fast")]
+        public void CheckToBeIndividuallyExecuted()
+        {
+            var errors = new System.Collections.Generic.List<Exception>();
+            int nbOfTests = 0;
+            string[] extensions = { ".cbl", ".pgm" };
+            string[] compilerExtensions = extensions.Concat(new[] { ".cpy" }).ToArray();
+
+            string directory = PlatformUtils.GetPathForProjectFile("Parser" + Path.DirectorySeparatorChar + "ToBeIndividuallyExecuted");
+            var folderTester = new FolderTester(directory, directory, directory, extensions, compilerExtensions);
+            try
+            {
+                folderTester.Test(false, false, false, true);
+            }
+            catch (Exception ex)
+            {
+                errors.Add(ex);
+            }
+            nbOfTests += folderTester.GetTestCount();
+            Console.WriteLine();
+
+            Console.Write("Number of tests: " + nbOfTests + "\n");
+            Assert.IsTrue(nbOfTests > 0, "No tests found");
+
+            if (errors.Count > 0)
+            {
+                var str = new System.Text.StringBuilder();
+                foreach (var ex in errors) str.Append(ex.Message);
+                throw new Exception(str.ToString());
+            }
+        }
+#endif
     }
 }

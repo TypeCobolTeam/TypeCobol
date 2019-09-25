@@ -117,6 +117,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public static bool UseOutlineRefresh { get; set; }
 
+        /// <summary>
+        /// Are we supporting Check program name is matching file name.    
+        /// </summary>
+        public static bool UseCheckProgramName { get; set; } = true;
+
         public static System.Diagnostics.Process Process;
 
         /// <summary>
@@ -205,6 +210,8 @@ namespace TypeCobol.LanguageServer
                 { "dcs|disablecopysuffixing", "Deactictivate Euro Information suffixing", v => UseEuroInformationLegacyReplacingSyntax = false },
                 { "sc|syntaxcolor",  "Syntax Coloring Support.", _ => UseSyntaxColoring = true},
                 { "ol|outlineRefresh",  "Outline Support.", _ => UseOutlineRefresh = true},
+                { "dcn|disablecheckname=", "Deactivate check program name matching file name.", _ => UseCheckProgramName = false },
+
             };
 
             System.Collections.Generic.List<string> arguments;
@@ -280,7 +287,7 @@ namespace TypeCobol.LanguageServer
                 typeCobolServer.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;
                 typeCobolServer.UseSyntaxColoring = UseSyntaxColoring;
                 typeCobolServer.UseOutlineRefresh = UseOutlineRefresh;
-
+                typeCobolServer.UseCheckProgramName = UseCheckProgramName;
 
                 //Creating the thread that will read mesages and handle them 
                 var backgroundExecutionThread = new Thread(() => { MessageHandler(jsonRPCServer, typeCobolServer); }) { IsBackground = true };

@@ -97,6 +97,10 @@ namespace TypeCobol.LanguageServer.Test
                 useSyntaxColoring ? "-sc" : "",
                 useOutline ? "-ol" : "");
 
+#if EUROINFO_RULES
+            arguments += " -dcn=true";   // inhib check program name with file name
+#endif
+
             System.Diagnostics.Process process = new System.Diagnostics.Process();
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;

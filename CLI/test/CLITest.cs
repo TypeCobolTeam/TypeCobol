@@ -340,7 +340,9 @@ namespace CLI.Test
             startInfo.WorkingDirectory = workingDirectory;
             startInfo.Arguments = @"/c " + ".." + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar +
                                   "TypeCobol.CLI.exe " + arguments;
-
+#if EUROINFO_RULES
+            startInfo.Arguments += " -dcn=true";        // inhib check program name with file name
+#endif
             process.StartInfo = startInfo;
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.UseShellExecute = false;
