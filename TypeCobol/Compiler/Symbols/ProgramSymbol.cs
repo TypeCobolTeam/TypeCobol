@@ -241,27 +241,53 @@ namespace TypeCobol.Compiler.Symbols
         public virtual Flags TypeVisibilityMask => IsNested ? (Flags.Global | Flags.Private | Flags.Public) : 0;
 
         /// <summary>
-        /// Determines if a Type is accessible from this Program.
+        /// Get the function visibility mask for a Program.
         /// </summary>
-        /// <param name="typeSym">The Type To check</param>
-        /// <returns>true if the type is accessible, false otherwise</returns>
-        public virtual bool IsTypeAccessible(TypedefSymbol typeSym)
+        public virtual Flags FunctionVisibilityMask => IsNested ? (Flags.Private | Flags.Public) : 0;
+
+
+        /// <summary>
+        /// Determines if a Symbol is accessible using and accessibility mask.
+        /// </summary>
+        /// <param name="sym">The symbol to be checked</param>
+        /// <param name="mask">The accessibility mask</param>
+        /// <returns>true if the symbol is accessible, false otherwise.</returns>
+        private bool IsSymbolAccessible(Symbol sym, Flags mask)
         {
-            System.Diagnostics.Debug.Assert(typeSym != null);
-            Symbol typeSymPrg = typeSym.TopParent(Kinds.Program);
+            System.Diagnostics.Debug.Assert(sym != null);
+            Symbol typeSymPrg = sym.TopParent(Kinds.Program);
             System.Diagnostics.Debug.Assert(typeSymPrg != null);
             Symbol myTopPrg = TopParent(Kinds.Program);
             System.Diagnostics.Debug.Assert(myTopPrg != null);
-            Flags mask = TypeVisibilityMask;
 
             if (typeSymPrg == myTopPrg)
             {//Same program ==> Apply the visibility mask
-                return mask == 0 || typeSym.HasFlag(mask);
+                return mask == 0 || sym.HasFlag(mask);
             }
             else
             {//Different programs ==> only public.
-                return typeSym.HasFlag(Flags.Public);
+                return sym.HasFlag(Flags.Public);
             }
+        }
+
+        /// <summary>
+        /// Determines if a Type is accessible from this Program.
+        /// </summary>
+        /// <param name="typeSym">The Type to be checked</param>
+        /// <returns>true if the type is accessible, false otherwise</returns>
+        public virtual bool IsTypeAccessible(TypedefSymbol typeSym)
+        {
+            return IsSymbolAccessible(typeSym, TypeVisibilityMask);
+        }
+
+        /// <summary>
+        /// Determines if a Function is accessible from this Program.
+        /// </summary>
+        /// <param name="typeSym">The Function to be checked</param>
+        /// <returns>true if the type is accessible, false otherwise</returns>
+        public virtual bool IsFunctionAccessible(FunctionSymbol funSym)
+        {
+            return IsSymbolAccessible(funSym, FunctionVisibilityMask);
         }
 
         /// <summary>

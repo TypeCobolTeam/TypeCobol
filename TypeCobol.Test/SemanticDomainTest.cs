@@ -1854,5 +1854,96 @@ namespace TypeCobol.Test.Domain
             //Check the the type was not accessible
             Assert.IsFalse(nestPrgSym.IsTypeAccessible(typeOfDaysLocal.Symbol));
         }
+
+        /// <summary>
+        /// This Test tests the expansion of a Type Currency inside a program.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("SemanticDomain")]
+        [TestProperty("Object", "Visibility")]
+        public void ProcedureCallPublicPrivateVisibility()
+        {
+            string path = Path.Combine(GetTestLocation(), "Parser", "Programs", "TypeCobol", "ProcedureCall-PublicPrivate.rdz.tcbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.FreeTextFormat, /*autoRemarks*/
+                false, /*copies*/ null, ExecutionStep.SemanticCheck);
+
+            Assert.IsTrue(Builder.Programs.Count == 3);
+            var PGM1 = Builder.Programs[0];
+            var PGM2 = Builder.Programs[1];
+            var PGM3 = Builder.Programs[2];
+
+            var MyPublicProcedure = PGM1.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "MyPublicProcedure", "PGM2" });
+            Assert.IsNotNull(MyPublicProcedure);
+            Assert.AreEqual(1, MyPublicProcedure.Count);
+            Assert.AreEqual(MyPublicProcedure.Symbol.Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(MyPublicProcedure.Symbol.Owner, PGM2);
+            Assert.IsTrue(PGM1.IsFunctionAccessible(MyPublicProcedure.Symbol));
+
+            MyPublicProcedure = PGM1.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "MyPublicProcedure", "PGM3" });
+            Assert.IsNotNull(MyPublicProcedure);
+            Assert.AreEqual(1, MyPublicProcedure.Count);
+            Assert.AreEqual(MyPublicProcedure.Symbol.Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(MyPublicProcedure.Symbol.Owner, PGM3);
+            Assert.IsTrue(PGM1.IsFunctionAccessible(MyPublicProcedure.Symbol));
+
+            var Pgm1PrivateValidateDateFormat = PGM1.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "Pgm1PrivateValidateDateFormat"});
+            Assert.IsNotNull(Pgm1PrivateValidateDateFormat);
+            Assert.AreEqual(1, Pgm1PrivateValidateDateFormat.Count);
+            Assert.AreEqual(Pgm1PrivateValidateDateFormat.Symbol.Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(Pgm1PrivateValidateDateFormat.Symbol.Owner, PGM1);
+            Assert.IsTrue(PGM1.IsFunctionAccessible(Pgm1PrivateValidateDateFormat.Symbol));
+
+            Pgm1PrivateValidateDateFormat = PGM1.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "Pgm1PrivateValidateDateFormat", "PGM1" });
+            Assert.IsNotNull(Pgm1PrivateValidateDateFormat);
+            Assert.AreEqual(1, Pgm1PrivateValidateDateFormat.Count);
+            Assert.AreEqual(Pgm1PrivateValidateDateFormat.Symbol.Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(Pgm1PrivateValidateDateFormat.Symbol.Owner, PGM1);
+            Assert.IsTrue(PGM1.IsFunctionAccessible(Pgm1PrivateValidateDateFormat.Symbol));
+
+            var Pgm2PrivateValidateDateFormat = PGM1.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "Pgm2PrivateValidateDateFormat" });
+            Assert.IsNull(Pgm2PrivateValidateDateFormat);
+
+            Pgm2PrivateValidateDateFormat = PGM1.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "Pgm2PrivateValidateDateFormat", "PGM2" });
+            Assert.IsNotNull(Pgm2PrivateValidateDateFormat);
+            Assert.AreEqual(1, Pgm2PrivateValidateDateFormat.Count);
+            Assert.AreEqual(Pgm2PrivateValidateDateFormat.Symbol.Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(Pgm2PrivateValidateDateFormat.Symbol.Owner, PGM2);
+            Assert.IsFalse(PGM1.IsFunctionAccessible(Pgm2PrivateValidateDateFormat.Symbol));
+            Assert.IsTrue(PGM2.IsFunctionAccessible(Pgm2PrivateValidateDateFormat.Symbol));
+
+            var check = PGM1.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "check", "PGM1" });
+            Assert.IsNotNull(check);
+            Assert.AreEqual(1, check.Count);
+            Assert.AreEqual(check.Symbol.Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(check.Symbol.Owner, PGM1);
+            Assert.IsTrue(PGM1.IsFunctionAccessible(check.Symbol));
+
+            check = PGM1.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "check", "PGM2" });
+            Assert.IsNotNull(check);
+            Assert.AreEqual(1, check.Count);
+            Assert.AreEqual(check.Symbol.Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(check.Symbol.Owner, PGM2);
+            Assert.IsTrue(PGM1.IsFunctionAccessible(check.Symbol));
+
+            var check2 = PGM1.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "check2", "PGM2" });
+            Assert.IsNotNull(check2);
+            Assert.AreEqual(2, check2.Count);
+            Assert.AreNotEqual(check2[0], check2[1]);
+            Assert.AreEqual(check2[0].Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(check2[0].Owner, PGM2);
+            Assert.IsTrue(PGM1.IsFunctionAccessible(check2[0]));
+            Assert.AreEqual(check2[1].Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(check2[1].Owner, PGM2);
+            Assert.IsTrue(PGM1.IsFunctionAccessible(check2[1]));
+
+            Pgm2PrivateValidateDateFormat = PGM2.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "Pgm2PrivateValidateDateFormat", "PGM2" });
+            Assert.IsNotNull(Pgm2PrivateValidateDateFormat);
+            Assert.AreEqual(1, Pgm2PrivateValidateDateFormat.Count);
+            Assert.AreEqual(Pgm2PrivateValidateDateFormat.Symbol.Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(Pgm2PrivateValidateDateFormat.Symbol.Owner, PGM2);
+            Assert.IsTrue(PGM2.IsFunctionAccessible(Pgm2PrivateValidateDateFormat.Symbol));
+            Assert.IsFalse(PGM1.IsFunctionAccessible(Pgm2PrivateValidateDateFormat.Symbol));
+            Assert.IsFalse(PGM3.IsFunctionAccessible(Pgm2PrivateValidateDateFormat.Symbol));
+        }
     }
 }

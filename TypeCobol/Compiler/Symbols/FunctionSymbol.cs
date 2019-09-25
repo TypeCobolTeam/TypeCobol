@@ -109,6 +109,11 @@ namespace TypeCobol.Compiler.Symbols
         public override Flags TypeVisibilityMask => Flags.Private | Flags.Public;
 
         /// <summary>
+        /// Get the function visibility mask for a Procedure.
+        /// </summary>
+        public override Flags FunctionVisibilityMask => Flags.Private | Flags.Public;
+
+        /// <summary>
         /// Dump this symbol in the given TextWriter instance
         /// </summary>
         /// <param name="tw">TextWriter instance</param>
