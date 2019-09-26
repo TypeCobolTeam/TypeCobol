@@ -17,8 +17,8 @@ Line 106[12,48] <27, Error, Syntax> - Syntax error : Function not found 'case10'
 Line 113[12,22] <27, Error, Syntax> - Syntax error : Call to 'case12'(no arguments) is ambigous. 'case12' is defined 2 times
 Line 116[12,22] <27, Error, Syntax> - Syntax error : No function or variable found for 'case13'(no arguments)
 Line 122[12,22] <27, Error, Syntax> - Syntax error : Call to 'case15'(no arguments) is ambigous. 'case15' is defined 2 times
-Line 141[12,56] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.addDaysToDate' input(DATE, Numeric, typeOfDays) output(DATE, returnCode)
-Line 149[12,56] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.addDaysToDate' input(DATE, Numeric, absentPgm.typeOfDays) output(DATE, returnCode)
+Line 141[12,56] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.addDaysToDate' input(DATE, Numeric, typeOfDays) output(DATE, PublicProcedures.returnCode)
+Line 149[12,56] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.addDaysToDate' input(DATE, Numeric, absentPgm.typeOfDays) output(DATE, PublicProcedures.returnCode)
 Line 161[12,39] <27, Error, Syntax> - Syntax error : Function not found 'PublicProcedures.case2' input(DATE, Alphanumeric) output(BOOL)
 Line 167[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' only takes 3 parameter(s)
 Line 167[12,48] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case3' input(Alphanumeric, DATE, Alphanumeric) output(Alphanumeric, BOOL)
@@ -48,7 +48,7 @@ Line 229[17,34] <27, Error, Syntax> - Syntax error : Symbol undefinedProcedure i
 --- Program ---
 PROGRAM: CallToPublicProcedure common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
   myDate:DATE
   fakeDate:Alphanumeric
@@ -61,7 +61,7 @@ PROGRAM: CallToPublicProcedure common:False initial:False recursive:False
   W-typeOfDays:PublicProcedures.typeOfDays
   W-WrongTypeOfDays:typeOfDays
   W-WrongTypeOfDays2:absentPgm.typeOfDays
-  W-RtnCode:returnCode
+  W-RtnCode:PublicProcedures.returnCode
   case1:Alphanumeric
   case1:Alphanumeric
   case2:Alphanumeric
@@ -88,9 +88,104 @@ PROGRAM: CallToPublicProcedure common:False initial:False recursive:False
   mygroup:Alphanumeric
 -- PARAGRAPHS --
   TRAITEMENT
---- Intrinsic:Namespace:GlobalStorage:Global
+--- Intrinsic
 -- TYPES -------
-  ReturnCode:ReturnCode
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
+--- Program ---
+PROGRAM: PublicProcedures common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program
+-- TYPES -------
+  typeOfDays:typeOfDays
+  returnCode:returnCode
+-- FUNCTIONS ---
+  addDaysToDate
+        in: Dat:DATE
+        in: NbrOfDays:Numeric
+       out: Result:DATE
+       out: RtnCode:returnCode
+  addDaysToDate
+        in: Dat:DATE
+        in: NbrOfDays:Numeric
+        in: TypeOfDays:typeOfDays
+       out: Result:DATE
+       out: RtnCode:returnCode
+  case1
+        in: mydate:DATE
+        in: fakeDate:Alphanumeric
+       out: result:BOOL
+  case3
+        in: mydate:DATE
+        in: fakeDate:Alphanumeric
+       out: result:BOOL
+  case4
+        in: mydate:DATE
+       out: result:BOOL
+  case4
+        in: mydate:DATE
+        in: fakeDate:Alphanumeric
+       out: result:BOOL
+  case51
+  case52
+  case52
+        in: mydate:DATE
+        in: fakeDate:Alphanumeric
+       out: result:BOOL
+  case53
+  case53
+        in: mydate:DATE
+        in: fakeDate:Alphanumeric
+       out: result:BOOL
+  case53
+        in: mydate:DATE
+       out: result:BOOL
+  case61
+  case62
+  case62
+        in: mydate:DATE
+        in: fakeDate:Alphanumeric
+       out: result:BOOL
+  case63
+  case63
+        in: mydate:DATE
+        in: fakeDate:Alphanumeric
+       out: result:BOOL
+  case63
+        in: mydate:DATE
+       out: result:BOOL
+  case10
+  case11
+        in: mydate:DATE
+        in: fakeDate:Alphanumeric
+       out: result:BOOL
+  case12
+        in: mydate:DATE
+        in: fakeDate:Alphanumeric
+       out: result:BOOL
+  case13
+        in: mydate:DATE
+       out: result:BOOL
+  case13
+        in: mydate:DATE
+        in: fakeDate:Alphanumeric
+       out: result:BOOL
+  case14
+        in: mydate:DATE
+       out: result:BOOL
+  case14
+        in: mydate:DATE
+        in: fakeDate:Alphanumeric
+       out: result:BOOL
+  case15
+        in: mydate:DATE
+       out: result:BOOL
+  case15
+        in: mydate:DATE
+        in: fakeDate:Alphanumeric
+       out: result:BOOL
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL

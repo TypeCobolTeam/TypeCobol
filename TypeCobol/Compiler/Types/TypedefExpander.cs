@@ -77,11 +77,11 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// A Group Type is cloned with a a new Scope with new fresh field is created.
+        /// A Group Type is cloned with a new Scope with new fresh fields created for fields inside a TypeDef.
         /// </summary>
-        /// <param name="t"></param>
-        /// <param name="owner"></param>
-        /// <returns></returns>
+        /// <param name="t">The Group type to be cloned</param>
+        /// <param name="owner">The current owner</param>
+        /// <returns>The new Group type cloned</returns>
         public override Type VisitGroupType(GroupType t, Symbol owner)
         {
             GroupType newType = (GroupType) t.Clone();
@@ -96,13 +96,13 @@ namespace TypeCobol.Compiler.Types
                     newField.GlobalIndex = 0;
                 }
 
+                //Normalize the new field
+                newField.NormalizeExpandedSymbol(newType.Scope);
                 newField.Accept(SymExpander, owner);
 
 #if !DOMAIN_CHECKER
                 System.Diagnostics.Debug.Assert(newField.Type != null);
 #endif
-                //Normalize the new field
-                newField.NormalizeExpandedSymbol(newType.Scope);
                 newType.Scope.Enter(newField);
                 //Set the new owner
                 newField.Owner = owner;

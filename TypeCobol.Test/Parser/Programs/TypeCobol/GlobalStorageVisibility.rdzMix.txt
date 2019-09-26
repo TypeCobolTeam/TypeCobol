@@ -15,7 +15,7 @@
        01 xxyy PIC 9(4).
        01 var4 PIC X(12) GLOBAL.
        01 MyPoint TYPE POINT GLOBAL.
-       01 POINT Typedef STRICT.
+       01 POINT Typedef STRICT PRIVATE.
            05 XX PIC 9(4).
            05 YY PIC 9(4).
       
@@ -45,20 +45,18 @@ Symbols found: GlobalStorageTest::MyPoint::POINT::XX | GlobalStorageTest::MyPoin
       
       *KO var1 ambiguous with var1 in GS
 Line 43[16,19] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol var1 
-Symbols found: GlobalStorageTest::NestedProc::var1 | GlobalStorageTest::var1 | GlobalStorageTest::var1
+Symbols found: GlobalStorageTest::NestedProc::var1 | GlobalStorageTest::var1
           MOVE var1 TO result
       *KO var2 ambiguous with parent's GS
 Line 45[16,19] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol var2 
 Symbols found: GlobalStorageTest::NestedProc::var2 | GlobalStorageTest::var2
           MOVE var2 TO result
-      *KO var2 ambiguous with parent's GS
+      *KO var3 ambiguous with parent's GS
 Line 47[16,19] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol var3 
 Symbols found: GlobalStorageTest::NestedProc::var3 | GlobalStorageTest::var3
           MOVE var3 TO result
       
       *OK
-Line 50[16,19] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol var4 
-Symbols found: GlobalStorageTest::NestedProc::var4 | GlobalStorageTest::var4
           MOVE var4 to result
           .
       

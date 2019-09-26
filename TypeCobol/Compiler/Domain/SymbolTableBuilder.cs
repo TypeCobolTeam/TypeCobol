@@ -103,8 +103,7 @@ namespace TypeCobol.Compiler.Domain
             TransfertAllProgramsToIntrinsics();
             try
             {
-                //path, skeletons, DocumentFormat.RDZReferenceFormat, typeCobolVersion, autoRemarks, copies
-                //ParseGenerateCompare(string path, List<Skeleton> skeletons = null, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null) {
+                //There is no COPY in our intrinsic, so don't set AutoRemarks and copyFolders
                 TypeCobol.Parser parser = TypeCobol.Parser.Parse(path, DocumentFormat.RDZReferenceFormat, /*bool autoRemarks =*/ false, /*IList<string> copies =*/ null);
             }
             finally
@@ -132,9 +131,12 @@ namespace TypeCobol.Compiler.Domain
         /// </summary>
         public static void TransfertAllProgramsToIntrinsics()
         {
-            foreach (var pgm in Root.Programs)
+            if (_rootSymbolTable != null)
             {
-                TransfertIntrinsics(pgm);
+                foreach (var pgm in _rootSymbolTable.Programs)
+                {
+                    TransfertIntrinsics(pgm);
+                }
             }
         }
 

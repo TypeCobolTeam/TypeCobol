@@ -231,57 +231,15 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// Sets the usage associated to this PICTURE type.
+        /// Indicates whether the usage is compatible with this PictureType.
         /// </summary>
-        public override UsageFormat Usage
-        {
-            get
-            {
-                return base.Usage;
-            }
-            set
-            {
-                bool bNotValid = (value == UsageFormat.Comp1 ||
-                        value == UsageFormat.Comp2 ||
-                        value == UsageFormat.ObjectReference ||
-                        value == UsageFormat.Pointer ||
-                        value == UsageFormat.FunctionPointer ||
-                        value == UsageFormat.ProcedurePointer
-                    );
-                System.Diagnostics.Contracts.Contract.Requires(!bNotValid);
-                System.Diagnostics.Debug.Assert(!bNotValid);
-                if (bNotValid)
-                {
-                    throw new ArgumentException("Invalid PICTURE Usage : " + value.ToString());
-                }
-                base.Usage = value;
-            }
-        }
-
-        //Set Extended usage that allows COMP1 and COMP2 as a possible Usage for a Picture.
-        public UsageFormat UsageEx
-        {
-            get
-            {
-                return base.Usage;
-            }
-            set
-            {
-                bool bNotValid = (
-                        value == UsageFormat.ObjectReference ||
-                        value == UsageFormat.Pointer ||
-                        value == UsageFormat.FunctionPointer ||
-                        value == UsageFormat.ProcedurePointer
-                    );
-                System.Diagnostics.Contracts.Contract.Requires(!bNotValid);
-                System.Diagnostics.Debug.Assert(!bNotValid);
-                if (bNotValid)
-                {
-                    throw new ArgumentException("Invalid PICTURE Usage : " + value.ToString());
-                }
-                base.Usage = value;
-            }
-        }
+        public bool IsUsageValid =>
+            !(Usage == UsageFormat.Comp1 ||
+              Usage == UsageFormat.Comp2 ||
+              Usage == UsageFormat.ObjectReference ||
+              Usage == UsageFormat.Pointer ||
+              Usage == UsageFormat.FunctionPointer ||
+              Usage == UsageFormat.ProcedurePointer);
 
         /// <summary>
         /// Get this picture Type Length;
