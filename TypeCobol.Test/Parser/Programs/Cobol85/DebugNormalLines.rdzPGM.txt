@@ -1,0 +1,29 @@
+--- Diagnostics ---
+Line 28[12,20] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.
+
+--- Program ---
+PROGRAM: Pgm common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  xxxx:Alphanumeric
+  yyyy:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
+--- Program ---
+PROGRAM: Pgm2 common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  xxxx:Alphanumeric
+  yyyy:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
