@@ -3,10 +3,10 @@
        
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-000000 01 DateJulian    TYPEDEF STRONG.
+000000 01 DateJulian    TYPEDEF STRONG PRIVATE.
           10 YYYY PIC 9(04).
                 10 DDD  PIC 9(03).     
-       01 DateDB2 TYPEDEF STRONG.
+       01 DateDB2 TYPEDEF STRONG PRIVATE.
                 10  YYYY PIC 9(04).
                 10  filler-X PIC X.
                 10  MM PIC 9(02).

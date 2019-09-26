@@ -89,20 +89,40 @@ namespace TypeCobol.Test.Domain
             SymbolTableBuilder.Root = null;
         }
 
+
+        /// <summary>
+        /// This test test that the REDEFINES that uses a variable from a TYPEDEF is correctly expanded.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("SemanticDomain")]
+        [TestProperty("Object", "TypeExpander")]
+        public void ExpanderRefines()
+        {
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "ExpanderRefines.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null, ExecutionStep.SemanticCheck);
+
+            Assert.IsTrue(Builder.Programs.Count == 1);
+            var currentProgram = Builder.Programs[0];
+
+            SymbolExpander symExpander = new SymbolExpander(currentProgram);
+            currentProgram.Accept(symExpander, null);
+
+            var vars = currentProgram.ResolveReference(new string[] { "idt" }, false);
+            Assert.IsTrue(vars.Count == 1);
+        }
+
         /// <summary>
         /// This Test tests the expansion of a Type Currency inside a program.
         /// </summary>
         [TestMethod]
         [TestCategory("SemanticDomain")]
         [TestProperty("Object", "TypeExpander")]
-#if DOMAIN_CHECKER
-        [Ignore]//Ignore because CrossCheck performs a program expansion
-#endif
         public void CurrenyTypeExpanderCheck()
         {
             string path = Path.Combine(GetTestLocation(), "Parser", "Programs", "TypeCobol", "Type-Currency.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.FreeTextFormat, /*autoRemarks*/
-                false, /*copies*/ null);
+                false, /*copies*/ null, ExecutionStep.SemanticCheck);
 
             Assert.IsTrue(Builder.Programs.Count == 1);
             var currentProgram = Builder.Programs[0];
@@ -158,14 +178,11 @@ namespace TypeCobol.Test.Domain
         [TestMethod]
         [TestCategory("SemanticDomain")]
         [TestProperty("Object", "TypeExpander")]
-#if DOMAIN_CHECKER
-        [Ignore]//Ignore because CrossCheck performs a program expansion
-#endif
         public void DateTypeExpanderCheck()
         {
             string path = Path.Combine(GetTestLocation(), "Parser", "Programs", "TypeCobol", "Type-Date.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.FreeTextFormat, /*autoRemarks*/
-                false, /*copies*/ null);
+                false, /*copies*/ null, ExecutionStep.SemanticCheck);
 
             Assert.IsTrue(Builder.Programs.Count == 1);
             var currentProgram = Builder.Programs[0];
@@ -268,14 +285,11 @@ namespace TypeCobol.Test.Domain
         [TestMethod]
         [TestCategory("SemanticDomain")]
         [TestProperty("Object", "TypeExpander")]
-#if DOMAIN_CHECKER
-        [Ignore]//Ignore because CrossCheck performs a program expansion
-#endif
         public void AllDateTypeExpanderCheck()
         {
             string path = Path.Combine(GetTestLocation(), "Parser", "Programs", "TypeCobol", "Type-Date.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.FreeTextFormat, /*autoRemarks*/
-                false, /*copies*/ null);
+                false, /*copies*/ null, ExecutionStep.SemanticCheck);
 
             Assert.IsTrue(Builder.Programs.Count == 1);
             var currentProgram = Builder.Programs[0];
@@ -396,14 +410,14 @@ namespace TypeCobol.Test.Domain
             ///---------------------------
             //Get all TYPEDEF Types
             //----------------------------
-            //Lookup the type "typeOfDays"
-            var typeOfDays = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDays" }, false);
-            Assert.IsNotNull(typeOfDays);
-            Assert.IsTrue(typeOfDays.Count == 1);
-            Assert.IsNotNull(typeOfDays.Symbol.Type);
-            Assert.IsTrue(typeOfDays.Symbol.HasFlag(Symbol.Flags.Public | Symbol.Flags.Strict));
-            Assert.IsTrue(typeOfDays.Symbol.Type.Tag == Type.Tags.Typedef);
-            Assert.IsTrue(typeOfDays.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
+            //Lookup the type "typeOfDaysPublic"
+            var typeOfDaysPublic = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysPublic" }, false);
+            Assert.IsNotNull(typeOfDaysPublic);
+            Assert.IsTrue(typeOfDaysPublic.Count == 1);
+            Assert.IsNotNull(typeOfDaysPublic.Symbol.Type);
+            Assert.IsTrue(typeOfDaysPublic.Symbol.HasFlag(Symbol.Flags.Public | Symbol.Flags.Strict));
+            Assert.IsTrue(typeOfDaysPublic.Symbol.Type.Tag == Type.Tags.Typedef);
+            Assert.IsTrue(typeOfDaysPublic.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
 
             //Lookup the type "typeOfDaysPrivate"
             var typeOfDaysPrivate = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysPrivate" }, false);
@@ -415,23 +429,23 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(typeOfDaysPrivate.Symbol.Type.Tag == Type.Tags.Typedef);
             Assert.IsTrue(typeOfDaysPrivate.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
 
-            //Lookup the type "typeOfDaysNoModifier"
-            var typeOfDaysNoModifier = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysNoModifier" }, false);
-            Assert.IsNotNull(typeOfDaysNoModifier);
-            Assert.IsTrue(typeOfDaysNoModifier.Count == 1);
-            Assert.IsNotNull(typeOfDaysNoModifier.Symbol.Type);
-            Assert.IsFalse(typeOfDaysNoModifier.Symbol.HasFlag(Symbol.Flags.Public));
-            Assert.IsTrue(typeOfDaysNoModifier.Symbol.HasFlag(Symbol.Flags.Private | Symbol.Flags.Strict));
-            Assert.IsTrue(typeOfDaysNoModifier.Symbol.Type.Tag == Type.Tags.Typedef);
-            Assert.IsTrue(typeOfDaysNoModifier.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
+            //Lookup the type "typeOfDaysLocal"
+            var typeOfDaysLocal = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysLocal" }, false);
+            Assert.IsNotNull(typeOfDaysLocal);
+            Assert.IsTrue(typeOfDaysLocal.Count == 1);
+            Assert.IsNotNull(typeOfDaysLocal.Symbol.Type);
+            Assert.IsFalse(typeOfDaysLocal.Symbol.HasFlag(Symbol.Flags.Public));
+            Assert.IsTrue(typeOfDaysLocal.Symbol.HasFlag(Symbol.Flags.Private | Symbol.Flags.Strict));
+            Assert.IsTrue(typeOfDaysLocal.Symbol.Type.Tag == Type.Tags.Typedef);
+            Assert.IsTrue(typeOfDaysLocal.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
 
             //Before expanding, all variables have a TYPEDEF Type
-            TypedefSymbol[] types = new TypedefSymbol[] { typeOfDays.Symbol, typeOfDaysPrivate.Symbol, typeOfDaysNoModifier.Symbol };
-            VariableSymbol[] vars = new VariableSymbol[4];
+            TypedefSymbol[] types = new TypedefSymbol[] { typeOfDaysPublic.Symbol, typeOfDaysPrivate.Symbol, typeOfDaysLocal.Symbol };
+            VariableSymbol[] vars = new VariableSymbol[3];
             for (int i = 1; i < 4; i++)
             {
                 var vari = nestPrgSym.ResolveReference(new string[] { "var" + i }, false);                
-                Assert.IsTrue(vari.Count == (i == 1 ? 3 : 1));
+                Assert.IsTrue(vari.Count == (i == 3 ? 1 : 3));
                 vars[i - 1] = vari.Symbol;
                 Assert.IsTrue(vari.Symbol.Type == types[i-1].Type);
             }
@@ -460,6 +474,8 @@ namespace TypeCobol.Test.Domain
 //01 var1 PIC X(1).
 //01 var1 PIC X(1).
 //01 var1 PIC X(1).
+//01 var2 PIC X(1).
+//01 var2 PIC X(1).
 //01 var2 PIC X(1).
 //01 var3 PIC X(1).
 
@@ -1062,6 +1078,26 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(tPointCyc1.Type.Accept(checker, null));
             Assert.IsTrue(checker.CyclicType == tPointCyc0.Type);
 
+            pointEntry = currentProgram.Types.Lookup("POINT-CYC2");
+            Assert.IsNotNull(pointEntry);
+            Assert.IsTrue(pointEntry.Count == 1);
+            var tPointCyc2 = pointEntry.Symbol;
+            Assert.IsTrue(tPointCyc2.Type != null);
+            Assert.IsTrue(tPointCyc2.Type.Tag == Type.Tags.Typedef);
+            checker = new CyclicTypeChecker();
+            Assert.IsTrue(tPointCyc2.Type.Accept(checker,null));
+            Assert.IsTrue(checker.CyclicType == tPointCyc2.Type);
+
+            pointEntry = currentProgram.Types.Lookup("POINT-CYC3");
+            Assert.IsNotNull(pointEntry);
+            Assert.IsTrue(pointEntry.Count == 1);
+            var tPointCyc3 = pointEntry.Symbol;
+            Assert.IsTrue(tPointCyc3.Type != null);
+            Assert.IsTrue(tPointCyc3.Type.Tag == Type.Tags.Typedef);
+            checker = new CyclicTypeChecker();
+            Assert.IsTrue(tPointCyc3.Type.Accept(checker, null));
+            Assert.IsTrue(checker.CyclicType == tPointCyc3.Type);
+
             //NO P1, P2, P3 and P4 symbols
             for (int i = 1; i <= 4; i++)
             {
@@ -1215,9 +1251,6 @@ namespace TypeCobol.Test.Domain
         [TestMethod]
         [TestCategory("SemanticDomain")]
         [TestProperty("Object", "Visibility")]
-#if DOMAIN_CHECKER
-        [Ignore]//Because visibility are not the same using CrossChecker
-#endif
         public void VisibilityProgramProcedureVariable0()
         {
             string path = Path.Combine(GetTestLocation(), "SemanticDomain", "VisPrgProcVar0.tcbl");
@@ -1632,9 +1665,6 @@ namespace TypeCobol.Test.Domain
         [TestMethod]
         [TestCategory("SemanticDomain")]
         [TestProperty("Object", "Visibility")]
-#if DOMAIN_CHECKER
-        [Ignore]//Because visibility are not the same using CrossChecker
-#endif
         public void VisibilityProgramNestedProcedureVariable0()
         {
             string path = Path.Combine(GetTestLocation(), "SemanticDomain", "VisPrgNestedProcVar0.tcbl");
@@ -1763,26 +1793,25 @@ namespace TypeCobol.Test.Domain
             Assert.AreEqual(nestPrgSym.Name, "Tester");
 
             //Lookup the type "typeOfDays"
-            var typeOfDays = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDays" }, false);
-            Assert.IsNotNull(typeOfDays);
-            Assert.IsTrue(typeOfDays.Count == 1);
-            Assert.IsNotNull(typeOfDays.Symbol.Type);
-            Assert.IsTrue(typeOfDays.Symbol.HasFlag(Symbol.Flags.Public | Symbol.Flags.Strict));
-            Assert.IsTrue(typeOfDays.Symbol.Type.Tag == Type.Tags.Typedef);
-            Assert.IsTrue(typeOfDays.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
+            var typeOfDaysPublic = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysPublic" }, false);
+            Assert.IsNotNull(typeOfDaysPublic);
+            Assert.IsTrue(typeOfDaysPublic.Count == 1);
+            Assert.IsNotNull(typeOfDaysPublic.Symbol.Type);
+            Assert.IsTrue(typeOfDaysPublic.Symbol.HasFlag(Symbol.Flags.Public | Symbol.Flags.Strict));
+            Assert.IsTrue(typeOfDaysPublic.Symbol.Type.Tag == Type.Tags.Typedef);
+            Assert.IsTrue(typeOfDaysPublic.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
 
             //-------------------------------------------------
             //Get the variable var1 and its type accessibility.
             //-------------------------------------------------
             var var1 = nestPrgSym.ResolveReference(new string[] {"var1"}, false);
             Assert.IsTrue(var1.Count == 3);
-            for (int i = 0; i < 3; i++)
+            foreach (var var1Symbol in var1)
             {
-                VariableSymbol v1 = var1[i];
-                Assert.IsTrue(v1.Type == typeOfDays.Symbol.Type);
+                Assert.IsTrue(var1Symbol.Type == typeOfDaysPublic.Symbol.Type);
             }
             //Check the the type was accessible
-            Assert.IsTrue(nestPrgSym.IsTypeAccessible(typeOfDays.Symbol));
+            Assert.IsTrue(nestPrgSym.IsTypeAccessible(typeOfDaysPublic.Symbol));
 
             //Lookup the type "typeOfDaysPrivate"
             var typeOfDaysPrivate = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysPrivate" }, false);
@@ -1798,30 +1827,123 @@ namespace TypeCobol.Test.Domain
             //Get the variable var2 and its type accessibility.
             //-------------------------------------------------
             var var2 = nestPrgSym.ResolveReference(new string[] { "var2" }, false);
-            Assert.IsTrue(var2.Count == 1);
-            Assert.IsTrue(var2.Symbol.Type == typeOfDaysPrivate.Symbol.Type);
+            Assert.IsTrue(var2.Count == 3);
+            foreach (var var2Symbol in var2)
+            {
+                Assert.IsTrue(var2Symbol.Type == typeOfDaysPrivate.Symbol.Type);
+            }
             //Check the the type was accessible
-            Assert.IsFalse(nestPrgSym.IsTypeAccessible(typeOfDaysPrivate.Symbol));
+            Assert.IsTrue(nestPrgSym.IsTypeAccessible(typeOfDaysPrivate.Symbol));
 
-            //Lookup the type "typeOfDaysNoModifier"
-            var typeOfDaysNoModifier = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysNoModifier" }, false);
-            Assert.IsNotNull(typeOfDaysNoModifier);
-            Assert.IsTrue(typeOfDaysNoModifier.Count == 1);
-            Assert.IsNotNull(typeOfDaysNoModifier.Symbol.Type);
-            Assert.IsFalse(typeOfDaysNoModifier.Symbol.HasFlag(Symbol.Flags.Public));
-            Assert.IsTrue(typeOfDaysNoModifier.Symbol.HasFlag(Symbol.Flags.Private | Symbol.Flags.Strict));
-            Assert.IsTrue(typeOfDaysNoModifier.Symbol.Type.Tag == Type.Tags.Typedef);
-            Assert.IsTrue(typeOfDaysNoModifier.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
+            //Lookup the type "typeOfDaysLocal"
+            var typeOfDaysLocal = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysLocal" }, false);
+            Assert.IsNotNull(typeOfDaysLocal);
+            Assert.IsTrue(typeOfDaysLocal.Count == 1);
+            Assert.IsNotNull(typeOfDaysLocal.Symbol.Type);
+            Assert.IsFalse(typeOfDaysLocal.Symbol.HasFlag(Symbol.Flags.Public));
+            Assert.IsTrue(typeOfDaysLocal.Symbol.HasFlag(Symbol.Flags.Private | Symbol.Flags.Strict));
+            Assert.IsTrue(typeOfDaysLocal.Symbol.Type.Tag == Type.Tags.Typedef);
+            Assert.IsTrue(typeOfDaysLocal.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
 
             //-------------------------------------------------
             //Get the variable var3 and its type accessibility.
             //-------------------------------------------------
             var var3 = nestPrgSym.ResolveReference(new string[] { "var3" }, false);
             Assert.IsTrue(var3.Count == 1);
-            Assert.IsTrue(var3.Symbol.Type == typeOfDaysNoModifier.Symbol.Type);
-            //Check the the type was accessible
-            Assert.IsFalse(nestPrgSym.IsTypeAccessible(typeOfDaysNoModifier.Symbol));
+            Assert.IsTrue(var3.Symbol.Type == typeOfDaysLocal.Symbol.Type);
+            //Check the the type was not accessible
+            Assert.IsFalse(nestPrgSym.IsTypeAccessible(typeOfDaysLocal.Symbol));
+        }
 
+        /// <summary>
+        /// This Test tests the expansion of a Type Currency inside a program.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("SemanticDomain")]
+        [TestProperty("Object", "Visibility")]
+        public void ProcedureCallPublicPrivateVisibility()
+        {
+            string path = Path.Combine(GetTestLocation(), "Parser", "Programs", "TypeCobol", "ProcedureCall-PublicPrivate.rdz.tcbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.FreeTextFormat, /*autoRemarks*/
+                false, /*copies*/ null, ExecutionStep.SemanticCheck);
+
+            Assert.IsTrue(Builder.Programs.Count == 3);
+            var PGM1 = Builder.Programs[0];
+            var PGM2 = Builder.Programs[1];
+            var PGM3 = Builder.Programs[2];
+
+            var MyPublicProcedure = PGM1.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "MyPublicProcedure", "PGM2" });
+            Assert.IsNotNull(MyPublicProcedure);
+            Assert.AreEqual(1, MyPublicProcedure.Count);
+            Assert.AreEqual(MyPublicProcedure.Symbol.Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(MyPublicProcedure.Symbol.Owner, PGM2);
+            Assert.IsTrue(PGM1.IsFunctionAccessible(MyPublicProcedure.Symbol));
+
+            MyPublicProcedure = PGM1.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "MyPublicProcedure", "PGM3" });
+            Assert.IsNotNull(MyPublicProcedure);
+            Assert.AreEqual(1, MyPublicProcedure.Count);
+            Assert.AreEqual(MyPublicProcedure.Symbol.Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(MyPublicProcedure.Symbol.Owner, PGM3);
+            Assert.IsTrue(PGM1.IsFunctionAccessible(MyPublicProcedure.Symbol));
+
+            var Pgm1PrivateValidateDateFormat = PGM1.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "Pgm1PrivateValidateDateFormat"});
+            Assert.IsNotNull(Pgm1PrivateValidateDateFormat);
+            Assert.AreEqual(1, Pgm1PrivateValidateDateFormat.Count);
+            Assert.AreEqual(Pgm1PrivateValidateDateFormat.Symbol.Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(Pgm1PrivateValidateDateFormat.Symbol.Owner, PGM1);
+            Assert.IsTrue(PGM1.IsFunctionAccessible(Pgm1PrivateValidateDateFormat.Symbol));
+
+            Pgm1PrivateValidateDateFormat = PGM1.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "Pgm1PrivateValidateDateFormat", "PGM1" });
+            Assert.IsNotNull(Pgm1PrivateValidateDateFormat);
+            Assert.AreEqual(1, Pgm1PrivateValidateDateFormat.Count);
+            Assert.AreEqual(Pgm1PrivateValidateDateFormat.Symbol.Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(Pgm1PrivateValidateDateFormat.Symbol.Owner, PGM1);
+            Assert.IsTrue(PGM1.IsFunctionAccessible(Pgm1PrivateValidateDateFormat.Symbol));
+
+            var Pgm2PrivateValidateDateFormat = PGM1.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "Pgm2PrivateValidateDateFormat" });
+            Assert.IsNull(Pgm2PrivateValidateDateFormat);
+
+            Pgm2PrivateValidateDateFormat = PGM1.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "Pgm2PrivateValidateDateFormat", "PGM2" });
+            Assert.IsNotNull(Pgm2PrivateValidateDateFormat);
+            Assert.AreEqual(1, Pgm2PrivateValidateDateFormat.Count);
+            Assert.AreEqual(Pgm2PrivateValidateDateFormat.Symbol.Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(Pgm2PrivateValidateDateFormat.Symbol.Owner, PGM2);
+            Assert.IsFalse(PGM1.IsFunctionAccessible(Pgm2PrivateValidateDateFormat.Symbol));
+            Assert.IsTrue(PGM2.IsFunctionAccessible(Pgm2PrivateValidateDateFormat.Symbol));
+
+            var check = PGM1.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "check", "PGM1" });
+            Assert.IsNotNull(check);
+            Assert.AreEqual(1, check.Count);
+            Assert.AreEqual(check.Symbol.Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(check.Symbol.Owner, PGM1);
+            Assert.IsTrue(PGM1.IsFunctionAccessible(check.Symbol));
+
+            check = PGM1.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "check", "PGM2" });
+            Assert.IsNotNull(check);
+            Assert.AreEqual(1, check.Count);
+            Assert.AreEqual(check.Symbol.Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(check.Symbol.Owner, PGM2);
+            Assert.IsTrue(PGM1.IsFunctionAccessible(check.Symbol));
+
+            var check2 = PGM1.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "check2", "PGM2" });
+            Assert.IsNotNull(check2);
+            Assert.AreEqual(2, check2.Count);
+            Assert.AreNotEqual(check2[0], check2[1]);
+            Assert.AreEqual(check2[0].Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(check2[0].Owner, PGM2);
+            Assert.IsTrue(PGM1.IsFunctionAccessible(check2[0]));
+            Assert.AreEqual(check2[1].Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(check2[1].Owner, PGM2);
+            Assert.IsTrue(PGM1.IsFunctionAccessible(check2[1]));
+
+            Pgm2PrivateValidateDateFormat = PGM2.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "Pgm2PrivateValidateDateFormat", "PGM2" });
+            Assert.IsNotNull(Pgm2PrivateValidateDateFormat);
+            Assert.AreEqual(1, Pgm2PrivateValidateDateFormat.Count);
+            Assert.AreEqual(Pgm2PrivateValidateDateFormat.Symbol.Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(Pgm2PrivateValidateDateFormat.Symbol.Owner, PGM2);
+            Assert.IsTrue(PGM2.IsFunctionAccessible(Pgm2PrivateValidateDateFormat.Symbol));
+            Assert.IsFalse(PGM1.IsFunctionAccessible(Pgm2PrivateValidateDateFormat.Symbol));
+            Assert.IsFalse(PGM3.IsFunctionAccessible(Pgm2PrivateValidateDateFormat.Symbol));
         }
     }
 }

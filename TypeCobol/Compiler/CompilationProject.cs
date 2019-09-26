@@ -174,6 +174,14 @@ namespace TypeCobol.Compiler
         // Cache for all the compilation documents imported by COPY directives in this project
         IDictionary<string, CompilationDocument> importedCompilationDocumentsCache = new Dictionary<string, CompilationDocument>();
 
+        /// <summary>
+        /// Clear the cache of loaded COPY
+        /// </summary>
+        public void ClearImportedCompilationDocumentsCache()
+        {
+            importedCompilationDocumentsCache.Clear();
+        }
+
 
         public virtual ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, string textName, out PerfStatsForImportedDocument perfStats)
         {

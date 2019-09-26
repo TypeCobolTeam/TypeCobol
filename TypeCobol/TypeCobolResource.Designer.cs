@@ -160,6 +160,15 @@ namespace TypeCobol {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to TYPE&apos;{0}&apos; has already been declared.
+        /// </summary>
+        public static string TypeAlreadyDeclared {
+            get {
+                return ResourceManager.GetString("TypeAlreadyDeclared", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to resolve &quot;{0}&quot;.
         /// </summary>
         public static string UnableToResolveVariable {

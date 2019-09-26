@@ -127,18 +127,19 @@ namespace TypeCobol.Compiler.AntlrUtils
             // If more than 10 expected tokens, display list of token families
             else
             {
-                HashSet<TokenFamily> familySet = new HashSet<TokenFamily>();
+                HashSet<string> familyNamesSet = new HashSet<string>();
                 foreach (Interval I in intervalSet.GetIntervals())
                 {
                     for (int i = I.a; i <= I.b; i++)
                     {
                         TokenFamily tokenFamily = TokenUtils.GetTokenFamilyFromTokenType((TokenType)i);
-                        if(familySet.Add(tokenFamily))
+                        string displayName = TokenUtils.GetDisplayNameForTokenFamily(tokenFamily);
+                        if (familyNamesSet.Add(displayName))
                         {
                             if (!first)
                                 buf.Append(", ");
                             first = false;
-                            buf.Append(TokenUtils.GetDisplayNameForTokenFamily(tokenFamily));
+                            buf.Append(displayName);
                         }
                     }
                 }

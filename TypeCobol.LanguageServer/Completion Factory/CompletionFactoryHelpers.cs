@@ -77,7 +77,6 @@ namespace TypeCobol.LanguageServer
                 bool typeIsIntrinsic = type.IsFlagSet(Node.Flag.NodeIsIntrinsic);
                 if (enablePublicFlag)
                 {
-                    var declarationTable = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
                     typeIsPublic = type.CodeElement?.Visibility == AccessModifier.Public
                                    && !(type.GetProgramNode() == node.GetProgramNode()  //Ignore public if type is in the current program
                                     || typeIsIntrinsic); //Ignore public if type is in intrinsic
@@ -142,7 +141,7 @@ namespace TypeCobol.LanguageServer
                 if (enablePublicFlag)
                     procIsPublic = proc.CodeElement.Visibility == AccessModifier.Public
                                    &&
-                                   !(node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations)
+                                   !(node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Program)
                                          .Functions.Values.Any(t => t.Contains(proc))
                                      //Ignore public if proc is in the current program
                                      || proc.IsFlagSet(Node.Flag.NodeIsIntrinsic)); //Ignore public if proc is in intrinsic;

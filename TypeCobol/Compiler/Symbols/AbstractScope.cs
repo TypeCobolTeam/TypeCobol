@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Scopes;
+using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -197,6 +198,8 @@ namespace TypeCobol.Compiler.Symbols
                                 if (types != null)
                                 {
                                     TypedefSymbol tdSym = new TypedefSymbol(path[i]);
+                                    //Create an untypedef TypeDef as type.
+                                    tdSym.Type = new TypedefType(tdSym);
                                     types.Enter(tdSym);
                                     Scope<TypedefSymbol>.Entry entry = types.Lookup(path[i]);
                                     return entry;
@@ -212,6 +215,62 @@ namespace TypeCobol.Compiler.Symbols
                     default://We are looking for a Namepace
                         //TODO
                         break;                        
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Resolve a Function symbol from this current Scope.
+        /// </summary>
+        /// <param name="rootScope">The top rootScope</param>
+        /// <param name="path">Looking path à la COBOL85 --> in Reverse order</param>
+        /// <returns>The FunctionSymbol instance if found, null otherwise.</returns>
+        public virtual Scope<FunctionSymbol>.Entry ReverseResolveFunction(AbstractScope rootScope, string[] path)
+        {
+            System.Diagnostics.Debug.Assert(rootScope != null);
+            System.Diagnostics.Debug.Assert(path != null);
+            System.Diagnostics.Debug.Assert(path.Length > 0);
+
+            AbstractScope stopScope = rootScope;
+            AbstractScope currentScope = this;
+            for (int i = path.Length - 1; i >= 0 && currentScope != null; i--)
+            {
+                switch (i)
+                {
+                    case 0://We must look for a Type
+                        {
+                            AbstractScope startScope = currentScope;
+                            while (currentScope != null)
+                            {
+                                var functions = currentScope.Functions;
+                                if (functions != null)
+                                {
+                                    Scope<FunctionSymbol>.Entry entry = functions.Lookup(path[i]);
+                                    if (entry != null)
+                                    {
+                                        return entry;
+                                    }
+                                }
+                                if (currentScope.Owner != null && currentScope != stopScope && currentScope.Owner.HasScope)
+                                {
+                                    currentScope = currentScope.Owner as AbstractScope;
+                                }
+                                else
+                                {
+                                    currentScope = null;
+                                }
+                            }
+                        }
+                        break;
+                    case 1://We must look for a Program
+                        {
+                            Scope<ProgramSymbol>.Entry entry = LookupProgram(stopScope, path[i], false, out currentScope, out stopScope);
+                        }
+                        break;
+                    default://We are looking for a Namepace
+                        //TODO
+                        break;
                 }
             }
             return null;

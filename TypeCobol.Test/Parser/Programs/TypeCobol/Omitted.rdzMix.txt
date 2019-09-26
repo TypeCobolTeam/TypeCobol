@@ -8,9 +8,9 @@
        01 Date1       Type Date.
 
 
-       01 ReturnCode TYPEDEF strict pic X(04).
-       01 Account TYPEDEF strict pic X.
-       01 AccountID TYPEDEF strict pic 9.
+       01 ReturnCode TYPEDEF strict PRIVATE pic X(04).
+       01 Account TYPEDEF strict PRIVATE pic X.
+       01 AccountID TYPEDEF strict PRIVATE pic 9.
 
     
        01 AccountID Type AccountID.

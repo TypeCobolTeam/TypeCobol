@@ -188,7 +188,7 @@ namespace TypeCobol.Test.Utils
             DefaultConfig.Dependencies.Add(Path.Combine(Directory.GetCurrentDirectory(), "resources", "dependencies"));
             SymbolTableBuilder.Config = DefaultConfig;
 
-            //Force the creation of the Global Symbol Table
+            //Force the creation of the Root Symbol Table
             var global = SymbolTableBuilder.Root;
 
             //Allocate a static Program Symbol Table Builder

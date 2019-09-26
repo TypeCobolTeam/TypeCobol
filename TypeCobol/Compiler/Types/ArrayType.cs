@@ -52,7 +52,7 @@ namespace TypeCobol.Compiler.Types
         internal override void SetFlag(Flags flag, bool value)
         {
             base.SetFlag(flag, value);
-            ElementType.SetFlag(flag, value);
+            ElementType?.SetFlag(flag, value);
         }
 
         public override Type TypeComponent => ElementType;

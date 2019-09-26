@@ -447,18 +447,6 @@ namespace TypeCobol.Compiler.Diagnostics
 
 #if DOMAIN_CHECKER
         /// <summary>
-        /// Get the top program.
-        /// </summary>
-        /// <param name="curPrg"></param>
-        /// <returns></returns>
-        static ProgramSymbol GetTopProgram(ProgramSymbol curPrg)
-        {
-            ProgramSymbol top = (ProgramSymbol)curPrg.TopParent(Symbol.Kinds.Program);
-            if (top == null || top == curPrg) return curPrg;
-            return GetTopProgram(top);
-        }
-
-        /// <summary>
         /// Expand the top program.
         /// </summary>
         /// <param name="curPrg">The Current Program.</param>
@@ -470,10 +458,8 @@ namespace TypeCobol.Compiler.Diagnostics
             //{//There was errord dont expand the program.
             //    return curPrg;
             //}
-
-            const ulong expandedFlag = 0x1 << 62;//I use this flag to mark an expanded program.
-            ProgramSymbol topPrg = GetTopProgram(curPrg);
-            if (!topPrg.HasFlag((Symbol.Flags)expandedFlag))
+            ProgramSymbol topPrg = ProgramSymbol.GetTopProgram(curPrg);
+            if (!topPrg.HasFlag(Symbol.Flags.ProgramExpanded))
             {
                 SymbolExpander se = new SymbolExpander(topPrg);
                 try
@@ -483,9 +469,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 catch (Types.Type.CyclicTypeException cte)
                 {//Capture a Cyclic Type exception
                     throw cte;
-                }                
-                //Marqué ce programme come ayant été expandé
-                topPrg.SetFlag((Symbol.Flags)expandedFlag, true);
+                }
             }
             return topPrg;
         }
@@ -681,15 +665,19 @@ namespace TypeCobol.Compiler.Diagnostics
                     IndexAndFlagDataDefiniton(dataDefinitionPath, dataDefinitionFound, node, area, storageArea);
                 }
 
-                if (dataDefinitionFound.IsFlagSet(Node.Flag.GlobalStorageSection) || dataDefinitionPath != null && dataDefinitionPath.CurrentDataDefinition.IsFlagSet(Node.Flag.GlobalStorageSection))
+                if (!node.IsFlagSet(Node.Flag.GlobalStorageSection))
                 {
-                    if (node is DataDefinition)
+                    if (dataDefinitionFound.IsFlagSet(Node.Flag.GlobalStorageSection) || dataDefinitionPath != null && dataDefinitionPath.CurrentDataDefinition.IsFlagSet(Node.Flag.GlobalStorageSection))
                     {
-                        DiagnosticUtils.AddError(node, "A Global-Storage Section variable cannot be referenced in another Data Section", area.SymbolReference);
+                        if (node is DataDefinition)
+                        {
+                            DiagnosticUtils.AddError(node, "A Global-Storage Section variable cannot be referenced in another Data Section", area.SymbolReference);
+                        }
+                        //We must find the enclosing FunctionDeclaration or Program (if node is outside a function/procedure)
+                        node.GetEnclosingProgramOrFunctionNode().SetFlag(Node.Flag.UseGlobalStorage, true);
                     }
-                    //We must find the enclosing FunctionDeclaration or Program (if node is outside a function/procedure)
-                    node.GetEnclosingProgramOrFunctionNode().SetFlag(Node.Flag.UseGlobalStorage, true);
                 }
+                
                 //add the found DataDefinition to a dictionary depending on the storage area type
                 if (isReadStorageArea)
                 {
@@ -806,7 +794,7 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 var callStatement = node.CodeElement as CallStatement;
                 var currentCheckedParameter = callStatement?.InputParameters.FirstOrDefault(
-                    param => param.StorageAreaOrValue.StorageArea == specialRegister);
+                    param => param.StorageAreaOrValue?.StorageArea == specialRegister);
 
                 if (currentCheckedParameter != null)
                 {

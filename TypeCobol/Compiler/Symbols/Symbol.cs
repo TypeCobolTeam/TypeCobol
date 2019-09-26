@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Xml.Schema;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Types;
 using Type = TypeCobol.Compiler.Types.Type;
 
@@ -22,7 +23,7 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         public enum Kinds
         {
-            Global,//The Global Symbol table
+            Root,//The Root Symbol table
             Namespace,
             Program,
             Function,
@@ -64,6 +65,8 @@ namespace TypeCobol.Compiler.Symbols
             BuiltinType = 0x01 << 24,//This is a Builtin Type.
             InsideTypdef = 0x01 << 25,//Flag of any symbol inside a Typedef definition
             Declaratives = 0x01 << 26,//Flag to indicate a symbol inside Declaractives context
+            ProgramExpanded = 0x01 << 27,//Flag for a program that have been already expanded.
+            NeedTypeCompletion = 0x01 << 28,//For a program that need type Completion, a pure COBOL Program does not need type completion (No TYPEDEF).
 
             //Etc...
         }
@@ -263,6 +266,16 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
+        /// Complete the Symbol's type associated to this Symbol
+        /// </summary>
+        /// <param name="root">The root symbol table to be used to complete the type</param>
+        /// <returns>true if the type is completed, false otherwise</returns>
+        protected internal virtual bool TypeCompleter(RootSymbolTable root = null)
+        {
+            return true;
+        }
+
+        /// <summary>
         /// Set a set of flags to true or false.
         /// </summary>
         /// <param name="flag"></param>
@@ -305,7 +318,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Determines if this symbol cans be seen as Scope.
         /// </summary>
-        public bool HasScope => Kind == Kinds.Global || Kind == Kinds.Namespace || Kind == Kinds.Program ||
+        public bool HasScope => Kind == Kinds.Root || Kind == Kinds.Namespace || Kind == Kinds.Program ||
                                 Kind == Kinds.Function;
 
         public virtual object Clone()
@@ -393,6 +406,18 @@ namespace TypeCobol.Compiler.Symbols
             if (ownerTop != null)
                 top = ownerTop;
             return top;
+        }
+
+        /// <summary>
+        /// Get the nearest symbol of one of the given Kinds, including this one.
+        /// </summary>
+        /// <param name="kinds">The Kinds to look for</param>
+        /// <returns>The Nearest Symbol</returns>
+        public Symbol NearestKind(params Symbol.Kinds[] kinds)
+        {
+            System.Diagnostics.Debug.Assert(kinds != null);
+            System.Diagnostics.Debug.Assert(kinds.Length > 0);
+            return kinds.Contains(this.Kind) ? this : Owner?.NearestKind(kinds);
         }
 
         /// <summary>

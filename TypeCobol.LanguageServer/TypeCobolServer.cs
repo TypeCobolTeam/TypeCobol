@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -268,7 +268,7 @@ namespace TypeCobol.LanguageServer
         protected override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
         {
             DocumentContext docContext = new DocumentContext(parameters.textDocument);
-            if (docContext.Uri.IsFile)
+            if (docContext.Uri.IsFile && this.Workspace.OpenedDocumentContext.All(odc => odc.Key != docContext.Uri))
             {
                 //Subscribe to diagnostics event
                 this.Workspace.MissingCopiesEvent += MissingCopiesDetected;
@@ -458,6 +458,8 @@ namespace TypeCobol.LanguageServer
             if (objUri.IsFile)
             {
                 this.Workspace.CloseSourceFile(objUri);
+                this.Workspace.MissingCopiesEvent -= MissingCopiesDetected;
+                this.Workspace.DiagnosticsEvent -= DiagnosticsDetected;
 
                 // DEBUG information
                 RemoteConsole.Log("Closed source file : " + objUri.LocalPath);
@@ -915,7 +917,7 @@ namespace TypeCobol.LanguageServer
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetFunctions(
                                     f => f.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
-                                    SymbolTable.Scope.GlobalStorage
+                                    SymbolTable.Scope.Program
                                 ));
                                 break;
                             }
@@ -924,7 +926,7 @@ namespace TypeCobol.LanguageServer
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetTypes(
                                     t => t.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
-                                    SymbolTable.Scope.GlobalStorage
+                                    SymbolTable.Scope.Program
                                 ));
                                 break;
                             }
@@ -938,7 +940,7 @@ namespace TypeCobol.LanguageServer
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetVariables(
                                     v => v.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
-                                    SymbolTable.Scope.GlobalStorage));
+                                    SymbolTable.Scope.Program));
                                 break;
                             }
                         }
