@@ -9,15 +9,6 @@ namespace TypeCobol.Compiler.Domain.Validator
     public class SymbolTypeResolver : SymbolValidator
     {
         /// <summary>
-        /// The Current Program
-        /// </summary>
-        private ProgramSymbol CurrentProgram
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// The Root Symbol Table instance.
         /// </summary>
         private TypeCobol.Compiler.Scopes.RootSymbolTable Root
@@ -29,7 +20,7 @@ namespace TypeCobol.Compiler.Domain.Validator
         /// Constructor
         /// </summary>
         /// <param name="root">The Root Symbol table</param>
-        public SymbolTypeResolver(TypeCobol.Compiler.Scopes.RootSymbolTable root)
+        public SymbolTypeResolver(TypeCobol.Compiler.Scopes.RootSymbolTable root = null)
         {
             System.Diagnostics.Debug.Assert(root != null);
             Root = root;
@@ -40,27 +31,7 @@ namespace TypeCobol.Compiler.Domain.Validator
             {
                 base.Unvalidated.Add(s);
             }
-            return true;//We return true because we wont to do that for all declarations.        
-        }
-
-        /// <summary>
-        /// Specialization to keep the current program being visited.
-        /// </summary>
-        /// <param name="s"></param>
-        /// <param name="arg"></param>
-        /// <returns></returns>
-        public override bool VisitProgramSymbol(ProgramSymbol s, object arg)
-        {
-            ProgramSymbol saveCurrentProgram = CurrentProgram;
-            try
-            {                
-                this.CurrentProgram = s;
-                return base.VisitProgramSymbol(s, arg);
-            }
-            finally
-            {
-                CurrentProgram = saveCurrentProgram;
-            }
+            return true;//We return true because we want to do that for all declarations.        
         }
     }
 }
