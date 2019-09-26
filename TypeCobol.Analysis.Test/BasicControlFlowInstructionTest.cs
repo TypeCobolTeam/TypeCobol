@@ -20,6 +20,7 @@ namespace TypeCobol.Analysis.Test
         public static TypeCobolConfiguration DefaultConfig = null;
         public static ProgramSymbolTableBuilder Builder = null;
         public static NodeListenerFactory BuilderNodeListenerFactory = null;
+        public NodeListenerFactory CfgBuilderNodeListenerFactory = null;
         public static string DefaultIntrinsicPath = null;
 
         public static DefaultControlFlowGraphBuilder CfgBuilder;
@@ -49,12 +50,12 @@ namespace TypeCobol.Analysis.Test
             NodeDispatcher.RegisterStaticNodeListenerFactory(BuilderNodeListenerFactory);
 
             //Alocate a static Default Control Flow Graph Builder
-            BuilderNodeListenerFactory = () =>
+            CfgBuilderNodeListenerFactory = () =>
             {
                 CfgBuilder = new DefaultControlFlowGraphBuilder();
                 return CfgBuilder;
             };
-            NodeDispatcher.RegisterStaticNodeListenerFactory(BuilderNodeListenerFactory);
+            NodeDispatcher.RegisterStaticNodeListenerFactory(CfgBuilderNodeListenerFactory);
         }
 
         private static void RemovePrograms(ProgramSymbol prog)
@@ -80,6 +81,10 @@ namespace TypeCobol.Analysis.Test
                         RemovePrograms(prog);
                     }
                 }
+            }
+            if (CfgBuilderNodeListenerFactory != null)
+            {
+                NodeDispatcher.RemoveStaticNodeListenerFactory(CfgBuilderNodeListenerFactory);
             }
         }
 
