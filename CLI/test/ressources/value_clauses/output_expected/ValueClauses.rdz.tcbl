@@ -1,0 +1,91 @@
+﻿      *TypeCobol_Version:0.1(alpha)
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZZMFT0.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+      *01 StructureType typedef strict PRIVATE.
+      *   05 champ PIC X(1).
+
+      *01 ScalarType typedef strict PRIVATE PIC X(1).
+
+      *01 C-DatePivot   TYPE Date VALUE '20190101'.
+       01 C-DatePivot VALUE '20190101'.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+                                                   
+      *01 C-DefaultRate TYPE Rate VALUE 3.55.
+       01 C-DefaultRate PIC S9(06)V9(08) VALUE 3.55.
+                                             
+
+      *01 Structure1 VALUE 'A' TYPE StructureType.
+       01 Structure1 VALUE 'A'.
+           02 champ PIC X(1).
+                                                  
+      *01 Scalar1    VALUE 'B' TYPE ScalarType.
+       01 Scalar1 PIC X(1) VALUE 'B'.
+                                               
+       01 Inline1    VALUE 'C' PIC X(1).
+
+      *01 Structure2 TYPE StructureType VALUE 'D'.
+       01 Structure2 VALUE 'D'.
+           02 champ PIC X(1).
+                                                  
+      *01 Scalar2    TYPE ScalarType    VALUE 'E'.
+       01 Scalar2 PIC X(1) VALUE 'E'.
+                                                  
+       01 Inline2    PIC X(1)           VALUE 'F'.
+
+       PROCEDURE DIVISION.
+      *DECLARE PROCEDURE Proc PRIVATE
+      *   INPUT paramIntrinsicDate TYPE Date VALUE '20190102'
+      *         paramIntrinsicRate TYPE Rate VALUE 4.09
+      *         paramStructure     TYPE StructureType VALUE 'D'
+      *         paramScalar        TYPE ScalarType    VALUE 'E'
+      *         paramInline        PIC X(1)           VALUE 'F'.
+          .
+       END PROGRAM DVZZMFT0.
+      *
+      *DECLARE PROCEDURE Proc PRIVATE
+      *   INPUT paramIntrinsicDate TYPE Date VALUE '20190102'
+      *         paramIntrinsicRate TYPE Rate VALUE 4.09
+      *         paramStructure     TYPE StructureType VALUE 'D'
+      *         paramScalar        TYPE ScalarType    VALUE 'E'
+      *         paramInline        PIC X(1)           VALUE 'F'.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. a08ffb8d.
+       DATA DIVISION.
+       LINKAGE SECTION.
+      *DVZZMFT0.Proc - Params :
+      *		input(paramIntrinsicDate: DATE, paramIntrinsicRate: Rate, param
+      *Structure: StructureType, paramScalar: ScalarType, paramInline: p
+      *ic X(1))
+       01 paramIntrinsicDate VALUE '20190102'.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+       01 paramIntrinsicRate PIC S9(06)V9(08) VALUE 4.09.
+       01 paramStructure VALUE 'D'.
+           02 champ PIC X(1).
+       01 paramScalar PIC X(1) VALUE 'E'.
+       01 paramInline PIC X(1) VALUE 'F'.
+       PROCEDURE DIVISION
+             USING BY REFERENCE paramIntrinsicDate
+                   BY REFERENCE paramIntrinsicRate
+                   BY REFERENCE paramStructure
+                   BY REFERENCE paramScalar
+                   BY REFERENCE paramInline
+           .
+      *DVZZMFT0.Proc - Params :
+      *		input(paramIntrinsicDate: DATE, paramIntrinsicRate: Rate, param
+      *Structure: StructureType, paramScalar: ScalarType, paramInline: p
+      *ic X(1))
+          DISPLAY paramIntrinsicDate
+          DISPLAY paramIntrinsicRate
+          DISPLAY paramStructure
+          DISPLAY paramScalar
+          DISPLAY paramInline
+          .
+       END PROGRAM a08ffb8d.

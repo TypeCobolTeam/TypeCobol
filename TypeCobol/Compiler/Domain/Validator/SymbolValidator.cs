@@ -26,7 +26,7 @@ namespace TypeCobol.Compiler.Domain.Validator
         /// <summary>
         /// Constructor based on a TypeValidator.
         /// </summary>
-        public SymbolValidator() : this(new TypeValidator())
+        public SymbolValidator() : this(null)
         {
             TypValidator.SymValidator = this;
         }
@@ -49,12 +49,7 @@ namespace TypeCobol.Compiler.Domain.Validator
         /// <returns></returns>
         public override bool VisitSymbol(Symbol s, object arg)
         {
-            if (s.Type == null)
-            {
-                Unvalidated.Add(s);
-                return false;
-            }
-            else if (!s.Type.Accept(TypValidator, arg))
+            if (s.Type == null || !s.Type.Accept(TypValidator, arg))
             {
                 Unvalidated.Add(s);
                 return false;
@@ -91,6 +86,7 @@ namespace TypeCobol.Compiler.Domain.Validator
                 if (!ValidateScope<VariableSymbol>(s.FileData, arg)) bResult = false;
                 if (!ValidateScope<VariableSymbol>(s.GlobalStorageData, arg)) bResult = false;
                 if (!ValidateScope<VariableSymbol>(s.WorkingStorageData, arg)) bResult = false;
+                if (!ValidateScope<VariableSymbol>(s.LocalStorageData, arg)) bResult = false;
                 if (!ValidateScope<VariableSymbol>(s.LinkageStorageData, arg)) bResult = false;
 
                 //Visit Paragraph/section

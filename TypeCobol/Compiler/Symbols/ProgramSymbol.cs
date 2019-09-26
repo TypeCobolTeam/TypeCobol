@@ -238,30 +238,56 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Get the type visibility mask for a Program.
         /// </summary>
-        public virtual Flags TypeVisibilityMask => IsNested ? (Flags.Global | Flags.Public) : 0;
+        public virtual Flags TypeVisibilityMask => IsNested ? (Flags.Global | Flags.Private | Flags.Public) : 0;
+
+        /// <summary>
+        /// Get the function visibility mask for a Program.
+        /// </summary>
+        public virtual Flags FunctionVisibilityMask => IsNested ? (Flags.Private | Flags.Public) : 0;
+
+
+        /// <summary>
+        /// Determines if a Symbol is accessible using and accessibility mask.
+        /// </summary>
+        /// <param name="sym">The symbol to be checked</param>
+        /// <param name="mask">The accessibility mask</param>
+        /// <returns>true if the symbol is accessible, false otherwise.</returns>
+        private bool IsSymbolAccessible(Symbol sym, Flags mask)
+        {
+            System.Diagnostics.Debug.Assert(sym != null);
+            Symbol typeSymPrg = sym.TopParent(Kinds.Program);
+            System.Diagnostics.Debug.Assert(typeSymPrg != null);
+            Symbol myTopPrg = TopParent(Kinds.Program);
+            System.Diagnostics.Debug.Assert(myTopPrg != null);
+
+            if (typeSymPrg == myTopPrg)
+            {//Same program ==> Apply the visibility mask
+                return mask == 0 || sym.HasFlag(mask);
+            }
+            else
+            {//Different programs ==> only public.
+                return sym.HasFlag(Flags.Public);
+            }
+        }
 
         /// <summary>
         /// Determines if a Type is accessible from this Program.
         /// </summary>
-        /// <param name="typeSym">The Type To check</param>
+        /// <param name="typeSym">The Type to be checked</param>
         /// <returns>true if the type is accessible, false otherwise</returns>
         public virtual bool IsTypeAccessible(TypedefSymbol typeSym)
         {
-            System.Diagnostics.Debug.Assert(typeSym != null);
-            Symbol typeSymPrg = typeSym.TopParent(Kinds.Program);
-            System.Diagnostics.Debug.Assert(typeSymPrg != null);
-            Symbol myTopPrg = TopParent(Kinds.Program);
-            System.Diagnostics.Debug.Assert(myTopPrg != null);
-            Flags mask = TypeVisibilityMask;
+            return IsSymbolAccessible(typeSym, TypeVisibilityMask);
+        }
 
-            if (typeSymPrg == myTopPrg)
-            {//Same program ==> Apply the visibility mask
-                return mask == 0 || typeSym.HasFlag(mask);
-            }
-            else
-            {//Different programs ==> only public.
-                return typeSym.HasFlag(Flags.Public);
-            }
+        /// <summary>
+        /// Determines if a Function is accessible from this Program.
+        /// </summary>
+        /// <param name="typeSym">The Function to be checked</param>
+        /// <returns>true if the type is accessible, false otherwise</returns>
+        public virtual bool IsFunctionAccessible(FunctionSymbol funSym)
+        {
+            return IsSymbolAccessible(funSym, FunctionVisibilityMask);
         }
 
         /// <summary>
@@ -269,7 +295,7 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="curPrg"></param>
         /// <returns></returns>
-        static ProgramSymbol GetTopProgram(ProgramSymbol curPrg)
+        public static ProgramSymbol GetTopProgram(ProgramSymbol curPrg)
         {
             ProgramSymbol top = (ProgramSymbol)curPrg.TopParent(Symbol.Kinds.Program);
             if (top == null || top == curPrg) return curPrg;
@@ -316,10 +342,14 @@ namespace TypeCobol.Compiler.Symbols
                         curProg.ResolveReference(paths, results, bRecurseEnglobingPrograms, visibilityMask == 0 ? VariableVisibilityMask : visibilityMask);
                     }
                 }
-                else if ((visibilityMask & Flags.GLOBAL_STORAGE) == 0 && IsNested)
+                else if ((visibilityMask & Flags.GLOBAL_STORAGE) == 0)
                 {
+                    // We have to search in TopProgram GLOBAL-STORAGE even if we already have found results locally.
                     var topPgm = GetTopProgram(this);
-                    topPgm.ResolveReference(paths, results, false, Flags.GLOBAL_STORAGE);
+                    if (this != topPgm)
+                    {
+                        topPgm.ResolveReference(paths, results, false, Flags.GLOBAL_STORAGE);
+                    }
                 }
             }
             return results;

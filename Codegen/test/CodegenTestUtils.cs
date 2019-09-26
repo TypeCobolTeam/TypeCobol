@@ -31,8 +31,7 @@ namespace TypeCobol.Codegen {
         /// <param name="skeletons"></param>
         /// <param name="autoRemarks"></param>
         /// <param name="copies"></param>
-        /// <param name="baseSymTable">Any base symbol table</param>        
-        public static void ParseGenerateCompare(string path, List<Skeleton> skeletons = null, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null, Compiler.CodeModel.SymbolTable baseSymTable = null) {
+        public static void ParseGenerateCompare(string path, List<Skeleton> skeletons = null, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null) {
             ParseGenerateCompare(path, skeletons, DocumentFormat.RDZReferenceFormat, typeCobolVersion, autoRemarks, copies);
         }
         public static void ParseGenerateCompare(string path, List<Skeleton> skeletons, DocumentFormat format, string typeCobolVersion, bool autoRemarks = false, IList<string> copies = null, MemoryStream lmStream = null) {

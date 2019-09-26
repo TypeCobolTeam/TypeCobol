@@ -146,9 +146,6 @@ namespace TypeCobol.Test {
         [TestMethod]
         [TestCategory("Parsing")]
         [TestProperty("Time", "fast")]
-#if DOMAIN_CHECKER
-        [Ignore]//Ignore Program TypePicNoChild.rdz.cbl uses var2 PIC X with usage POINTER
-#endif
         public void CheckParserCobol85()
         {
 			var errors = new System.Collections.Generic.List<Exception>();

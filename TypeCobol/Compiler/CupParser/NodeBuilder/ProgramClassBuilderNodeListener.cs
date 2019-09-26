@@ -159,6 +159,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         }
 
+        public virtual void EndJsonGenerateStatementConditional(JsonStatementEnd end = null)
+        {
+
+        }
+
         public virtual void EndLinkageSection()
         {
 
@@ -625,6 +630,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         }
 
         public virtual void StartInvokeStatementConditional([NotNull] InvokeStatement stmt)
+        {
+
+        }
+
+        public virtual void StartJsonGenerateStatementConditional([NotNull] JsonGenerateStatement stmt)
         {
 
         }

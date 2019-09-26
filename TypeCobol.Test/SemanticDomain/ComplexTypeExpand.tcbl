@@ -1,5 +1,5 @@
 ﻿       IDENTIFICATION DIVISION.
-       PROGRAM-ID. ComplexTypeExapnd.
+       PROGRAM-ID. ComplexTypeExpand.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       
@@ -42,5 +42,5 @@
       
        PROCEDURE DIVISION.
          .
-       END PROGRAM ComplexTypeExapnd.
+       END PROGRAM ComplexTypeExpand.
       

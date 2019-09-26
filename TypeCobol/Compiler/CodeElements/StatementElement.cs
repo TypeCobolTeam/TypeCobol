@@ -93,6 +93,7 @@ namespace TypeCobol.Compiler.CodeElements
         InspectReplacingStatement,
         InspectTallyingStatement,
         InvokeStatement,
+        JsonGenerateStatement,
         MergeStatement,
         MoveSimpleStatement,
         MoveCorrespondingStatement,

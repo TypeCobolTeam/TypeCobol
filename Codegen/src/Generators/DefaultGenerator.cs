@@ -741,14 +741,18 @@ namespace TypeCobol.Codegen.Generators
 
             if (CompilationResults is CompilationUnit cu)
             {
-                Node environmentDiv =
-                    cu.ProgramClassDocumentSnapshot.Root.MainProgram.Children.FirstOrDefault(c => c is EnvironmentDivision);
-
+                var environmentDiv = cu.ProgramClassDocumentSnapshot.Root.MainProgram.Children.OfType<EnvironmentDivision>().SingleOrDefault();
                 if (environmentDiv != null)
                 {
-                    foreach (ITextLine environmentDivLine in environmentDiv.SelfAndChildrenLines)
+                    // header of EnvironmentDivision
+                    var lines = environmentDiv.Lines;
+                    // header and content of ConfigurationSection only.
+                    lines = lines.Concat(environmentDiv.Children.OfType<ConfigurationSection>().SelectMany(c => c.SelfAndChildrenLines));
+
+                    foreach (var line in lines)
                     {
-                        sw.WriteLine(environmentDivLine.Text); GSLineOffset += 1;
+                        sw.WriteLine(line.Text);
+                        GSLineOffset++;
                     }
                 }
             }
