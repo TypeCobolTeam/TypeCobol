@@ -9,18 +9,20 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using System.Text.RegularExpressions;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
     public class CrossCompleteChecker : AbstractAstVisitor
     {
-        public CrossCompleteChecker(string sourceName = "")
+        public CrossCompleteChecker(TypeCobolOptions compilerOptions)
         {
-            SourceName = sourceName;
+            CompilerOptions = compilerOptions;
         }
 
-        private string SourceName { get; set; }
+        private TypeCobolOptions CompilerOptions { get; }
+
         private Node CurrentNode { get; set; }
 
         public override bool BeginNode(Node node)
@@ -232,7 +234,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Program program)
         {
-            ProgramChecker.OnNode(program, SourceName);
+            ProgramChecker.OnNode(program, CompilerOptions);
 
             //// Set a Warning if the FormCom parameter in unknown or if the program parameter have no description
 

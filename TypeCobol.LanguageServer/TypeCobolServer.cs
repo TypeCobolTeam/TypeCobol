@@ -65,7 +65,7 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// true to Check program name is matching file name.    
         /// </summary>
-        public bool UseCheckProgramName { get; set; }
+        public bool CheckProgramName { get; set; }
 
         /// <summary>
         /// Timer Disabled for TypeCobol.LanguageServer.
@@ -227,7 +227,7 @@ namespace TypeCobol.LanguageServer
             this.Workspace.UseSyntaxColoring = UseSyntaxColoring;
             this.Workspace.UseAntlrProgramParsing = UseAntlrProgramParsing;
             this.Workspace.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;
-            this.Workspace.UseCheckProgramName = UseCheckProgramName;
+            this.Workspace.CheckProgramName = CheckProgramName;
             this.Workspace.TimerDisabledOption = TimerDisabledOption;
 
             // Attach event handlers.

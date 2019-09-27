@@ -115,20 +115,7 @@ namespace TypeCobol.Compiler.Parser
             TypeCobolLinker.LinkedTypedVariables(temporarySemanticDocument.TypedVariablesOutsideTypedef, 
                 temporarySemanticDocument.TypeThatNeedTypeLinking);
 
-            //Complete some information on Node and run checker that need a full AST
-#if EUROINFO_RULES
-            if (compilerOptions.CheckProgramName)
-            {
-                string shortFilename = Path.GetFileNameWithoutExtension(temporarySemanticDocument.TextSourceInfo.Name);
-                root.AcceptASTVisitor(new CrossCompleteChecker(shortFilename));
-            }
-            else
-            {
-                root.AcceptASTVisitor(new CrossCompleteChecker());
-            }
-#else
-            root.AcceptASTVisitor(new CrossCompleteChecker());
-#endif
+            root.AcceptASTVisitor(new CrossCompleteChecker(compilerOptions));
         }
 
     }

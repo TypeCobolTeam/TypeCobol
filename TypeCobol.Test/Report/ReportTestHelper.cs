@@ -68,7 +68,7 @@ namespace TypeCobol.Test.Report
                 var typeCobolOption = new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck };
 #if EUROINFO_RULES
                 typeCobolOption.AutoRemarksEnable = false;
-                typeCobolOption.UseCheckProgramName = false;
+                typeCobolOption.CheckProgramName = false;
 #endif
                 String copyFolder = Path.Combine(Directory.GetCurrentDirectory(), ROOT_COPY);
                 parser.Init(input, typeCobolOption, format, new List<string>() { copyFolder });

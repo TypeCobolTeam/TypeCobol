@@ -41,28 +41,19 @@ namespace TypeCobol.Compiler.Directives
 #if EUROINFO_RULES
         private bool _useEuroInformationLegacyReplacingSyntax = true;
         private bool _checkProgramName = true;
-        private bool _useCheckProgramName = true;
 #else
         private bool _useEuroInformationLegacyReplacingSyntax;
         private bool _checkProgramName = false;
-        private bool _useCheckProgramName = false;
 #endif
         /// <summary>
         /// Check if program name matches the file name.
         /// </summary>
         public bool CheckProgramName
         {
-            get { return _checkProgramName && UseCheckProgramName; }
+            get { return _checkProgramName; }
             set { _checkProgramName = value; }
         }
-        /// <summary>
-        /// Inhib CheckProgramName action.
-        /// </summary>
-        public bool UseCheckProgramName
-        {
-            get { return _useCheckProgramName; }
-            set { _useCheckProgramName = value; }
-        }
+
 
 
         public TypeCobolOptions(TypeCobolConfiguration config)
@@ -72,7 +63,6 @@ namespace TypeCobol.Compiler.Directives
             UseAntlrProgramParsing = config.UseAntlrProgramParsing;
             UseEuroInformationLegacyReplacingSyntax = config.UseEuroInformationLegacyReplacingSyntax;
             CheckProgramName = config.CheckProgramName;
-            UseCheckProgramName = config.UseCheckProgramName;
         }
 
         public TypeCobolOptions()

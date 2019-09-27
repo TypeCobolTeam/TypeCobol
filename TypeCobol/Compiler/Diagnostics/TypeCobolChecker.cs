@@ -1,6 +1,7 @@
 using System;
 using Antlr4.Runtime;
 using System.Collections.Generic;
+using System.IO;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
@@ -12,6 +13,7 @@ using System.Runtime.InteropServices;
 using Analytics;
 using Castle.Core.Internal;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Parser.Generated;
 
@@ -977,7 +979,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
     public class ProgramChecker
     {
-        public static void OnNode(Program node, string sourceName)
+        public static void OnNode(Program node, TypeCobolOptions compilerOptions)
         {
             node.SetFlag(Node.Flag.MissingEndProgram, !(node.Children.LastOrDefault() is End));
 
@@ -986,15 +988,15 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(node,
                     "\"END PROGRAM\" is missing.", MessageCode.Warning);
             }
-#if EUROINFO_RULES
-            if (node.IsMainProgram && !string.IsNullOrEmpty(sourceName))
+
+            if (node.IsMainProgram && compilerOptions.CheckProgramName)
             {
-                if (!node.Name.Equals(sourceName, StringComparison.InvariantCultureIgnoreCase))
+                string shortFilename = Path.GetFileNameWithoutExtension(node.CodeElement.TokenSource.SourceName);
+                if (!node.Name.Equals(shortFilename, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    DiagnosticUtils.AddError(node, "The program name \"" + node.Name + "\" must match the file name \"" + sourceName + "\".", MessageCode.Warning);
+                    DiagnosticUtils.AddError(node, "The program name \"" + node.Name + "\" must match the file name \"" + shortFilename + "\".", MessageCode.Warning);
                 }
             }
-#endif
         }
     }
 

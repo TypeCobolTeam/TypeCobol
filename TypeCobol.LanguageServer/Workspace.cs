@@ -128,7 +128,7 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// true to Check program name is matching file name.    
         /// </summary>
-        public bool UseCheckProgramName { get; set; }
+        public bool CheckProgramName { get; set; }
         #endregion
 
 
@@ -153,9 +153,8 @@ namespace TypeCobol.LanguageServer
             this.CompilationProject.CompilationOptions.UseEuroInformationLegacyReplacingSyntax =
                 this.CompilationProject.CompilationOptions.UseEuroInformationLegacyReplacingSyntax ||
                 UseEuroInformationLegacyReplacingSyntax;
-#if EUROINFO_RULES
-            this.CompilationProject.CompilationOptions.UseCheckProgramName = UseCheckProgramName;
-#endif
+
+            this.CompilationProject.CompilationOptions.CheckProgramName = CheckProgramName;
 
             // Create the refresh action that will be used by file watchers
             Action refreshAction = RefreshOpenedFiles;
@@ -429,7 +428,7 @@ namespace TypeCobol.LanguageServer
 
 #if EUROINFO_RULES
             typeCobolOptions.AutoRemarksEnable = TypeCobolConfiguration.AutoRemarks;
-            typeCobolOptions.UseCheckProgramName = UseCheckProgramName;
+            typeCobolOptions.CheckProgramName = CheckProgramName;
 #endif
 
             CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, _extensions, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.EndOfLineDelimiter, TypeCobolConfiguration.Format.FixedLineLength, TypeCobolConfiguration.Format.ColumnsLayout, typeCobolOptions);
@@ -535,7 +534,7 @@ namespace TypeCobol.LanguageServer
             try
             {
                 _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(TypeCobolConfiguration.Copies, TypeCobolConfiguration.Format, DiagnosticsErrorEvent); //Refresh Intrinsics
-                _customSymbols = Tools.APIHelpers.Helpers.LoadDependencies(TypeCobolConfiguration.Dependencies, TypeCobolConfiguration.Format, _customSymbols, TypeCobolConfiguration.InputFiles, TypeCobolConfiguration.CopyFolders, DiagnosticsErrorEvent); //Refresh Dependencies
+                _customSymbols = Tools.APIHelpers.Helpers.LoadDependencies(TypeCobolConfiguration, _customSymbols, DiagnosticsErrorEvent); //Refresh Dependencies
 
                 if (diagDetected)
                 {

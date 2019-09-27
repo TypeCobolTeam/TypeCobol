@@ -32,11 +32,9 @@ namespace TypeCobol.Tools.Options_Config
 #if EUROINFO_RULES
         public bool UseEuroInformationLegacyReplacingSyntax = true;
         public bool CheckProgramName = true;
-        public bool UseCheckProgramName = true;
 #else
         public bool UseEuroInformationLegacyReplacingSyntax = false;
         public bool CheckProgramName = false;
-        public bool UseCheckProgramName = false;
 #endif
 
         public bool IsErrorXML
@@ -179,7 +177,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "zcr|zcallreport=", "{PATH} to report of all program called by zcallpgm.", v => typeCobolConfig.ReportZCallFilePath = v },
                 { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing.", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false },
                 { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
-                { "dcn|disablecheckname=", "Deactivate check program name matching file name.", v => typeCobolConfig.UseCheckProgramName = false },
+                { "cpn|checkprogramname=", "If set to true check program name matching file name.", v => typeCobolConfig.CheckProgramName = !(string.IsNullOrEmpty(v) || v.ToLower() == "false") },
             };
             return commonOptions;
         }

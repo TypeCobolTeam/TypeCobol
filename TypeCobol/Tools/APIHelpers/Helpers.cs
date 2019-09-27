@@ -13,6 +13,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.CustomExceptions;
+using TypeCobol.Tools.Options_Config;
 using String = System.String;
 
 namespace TypeCobol.Tools.APIHelpers
@@ -73,9 +74,12 @@ namespace TypeCobol.Tools.APIHelpers
             return table;
         }
 
-        public static SymbolTable LoadDependencies([NotNull] List<string> paths, DocumentFormat format, SymbolTable intrinsicTable,
-            [NotNull] List<string> inputFiles, List<string> copyFolders, EventHandler<DiagnosticsErrorEvent> diagEvent)
+        public static SymbolTable LoadDependencies(TypeCobolConfiguration config, SymbolTable intrinsicTable, EventHandler<DiagnosticsErrorEvent> diagEvent)
         {
+            List<string> paths = config.Dependencies;
+            DocumentFormat format = config.Format;
+            List<string> inputFiles = config.InputFiles;
+            List<string> copyFolders = config.CopyFolders;
 
             var parser = new Parser(intrinsicTable);
             var diagnostics = new List<Diagnostic>();
@@ -142,7 +146,10 @@ namespace TypeCobol.Tools.APIHelpers
                 {
                     parser.CustomSymbols = table; //Update SymbolTable
                     // check program name match file name 
-                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck, CheckProgramName = true }, format, copyFolders);
+                    TypeCobolOptions typeCobolOptions = new TypeCobolOptions(config);
+                    typeCobolOptions.ExecToStep = ExecutionStep.SemanticCheck;
+                    parser.Init(path,typeCobolOptions, format, copyFolders);
+
                     parser.Parse(path); //Parse the dependency file
 
                     diagnostics.AddRange(parser.Results.AllDiagnostics());

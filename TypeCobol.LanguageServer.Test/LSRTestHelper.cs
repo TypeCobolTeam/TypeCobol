@@ -98,7 +98,7 @@ namespace TypeCobol.LanguageServer.Test
                 useOutline ? "-ol" : "");
 
 #if EUROINFO_RULES
-            arguments += " -dcn=true";   // inhib check program name with file name
+            arguments += " -cpn=false";   // inhib check program name with file name
 #endif
 
             System.Diagnostics.Process process = new System.Diagnostics.Process();
