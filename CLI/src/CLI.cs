@@ -149,11 +149,9 @@ namespace TypeCobol.Server
                 //Create extracted copies file even if copy are missing
                 CreateExtractedCopiesFile(config, usedCopies);
 
-                foreach (var missingCopyDependency in missingCopies.Keys)
-                {
-                    //If copies are missing, don't try to parse main input files.
-                    throw new MissingCopyException("Some copy are missing", missingCopyDependency, null, logged: false, needMail: false);
-                }
+                //If copies are missing, don't try to parse main input files
+                //throw  an exception for the first dependency file
+                throw new MissingCopyException("Copy are missing in dependencies", missingCopies.First().Key, null, logged: false, needMail: false);
             }
             
 
