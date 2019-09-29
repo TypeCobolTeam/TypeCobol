@@ -71,6 +71,7 @@ terminal TypeCobol.Compiler.CodeElements.IfStatement IfStatement;
 terminal TypeCobol.Compiler.CodeElements.InitializeStatement InitializeStatement;
 terminal TypeCobol.Compiler.CodeElements.InspectStatement InspectStatement;
 terminal TypeCobol.Compiler.CodeElements.InvokeStatement InvokeStatement;
+terminal TypeCobol.Compiler.CodeElements.JsonGenerateStatement JsonGenerateStatement;
 terminal TypeCobol.Compiler.CodeElements.MergeStatement MergeStatement;
 terminal TypeCobol.Compiler.CodeElements.MoveStatement MoveStatement;
 terminal TypeCobol.Compiler.CodeElements.MultiplyStatement MultiplyStatement;
@@ -118,6 +119,7 @@ terminal TypeCobol.Compiler.CodeElements.DivideStatementEnd DivideStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.EvaluateStatementEnd EvaluateStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.IfStatementEnd IfStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.InvokeStatementEnd InvokeStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.JsonStatementEnd JsonStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.MultiplyStatementEnd MultiplyStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.PerformStatementEnd PerformStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.ReadStatementEnd ReadStatementEnd;
@@ -229,6 +231,7 @@ non terminal whenEvaluateConditions;
 non terminal evaluateStatementWithBody;
 non terminal ifStatementWithBody;
 non terminal invokeStatementConditional;
+non terminal jsonGenerateStatementConditional;
 non terminal multiplyStatementConditional;
 non terminal performStatementWithBody;
 non terminal readStatementConditional;
@@ -833,6 +836,8 @@ compoundStatement ::= addStatementConditional:stmt
 		{:  :}
 	|	invokeStatementConditional:stmt
 		{:  :}
+	|	jsonGenerateStatementConditional:stmt
+		{:  :}
 	|	divideStatementConditional:stmt
 		{:  :}
 	|	multiplyStatementConditional:stmt
@@ -1013,6 +1018,17 @@ invokeStatementConditional ::=
 	|	InvokeStatement:stmt exceptionConditions:conds
 		{:  :}
 	|	InvokeStatement:stmt exceptionConditions:conds InvokeStatementEnd:end
+		{:  :}
+	;
+
+jsonGenerateStatementConditional ::=
+		JsonGenerateStatement:stmt
+		{:  :}
+	|	JsonGenerateStatement:stmt JsonStatementEnd:end
+		{:  :}
+	|	JsonGenerateStatement:stmt exceptionConditions:conds
+		{:  :}
+	|	JsonGenerateStatement:stmt exceptionConditions:conds JsonStatementEnd:end
 		{:  :}
 	;
 

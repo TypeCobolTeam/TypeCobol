@@ -8,7 +8,7 @@ Line 46[20,28] <27, Error, Syntax> - Syntax error : The Level 88 symbol 'exists'
 --- Program ---
 PROGRAM: LevelChecker common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
   MyGroup:Alphanumeric
   MyVar2:myType
@@ -22,7 +22,6 @@ PROGRAM: LevelChecker common:False initial:False recursive:False
   MyLevel1Test:Alphanumeric
   buf:Alphanumeric
   char:Alphanumeric
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations
 -- TYPES -------
   myPic:myPic
   myType:myType

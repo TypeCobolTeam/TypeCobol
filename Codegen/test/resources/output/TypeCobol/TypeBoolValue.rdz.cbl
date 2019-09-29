@@ -175,7 +175,7 @@
       *		input(startingDsa: pointer)
       *		output(errCode: ErrorCode)
                              
-      *01 LoopControl typedef strict private.
+      *01 LoopControl typedef strict.
       *  05 loop          pic S9(5) COMP-5.
       *  05 sta           type bool value true.
       *  05 t             pic S9(5) COMP-5.

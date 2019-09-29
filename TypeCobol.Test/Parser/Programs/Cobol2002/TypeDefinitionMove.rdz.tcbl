@@ -14,14 +14,12 @@
        01 realVar TYPE Real.
        01 floatVar TYPE Float. 
      
-       01 toto typedef strict public global pic X.
+       01 toto typedef strict public pic X.
        01 var1 type toto.
        01 var2 type DVZF0OS3bis::toto.
        01 var3 type toto global.
        procedure division.
-Line 22[25,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3::toto to strictly typed variable var2:DVZF0OS3bis::toto.
            move var1 to var2
-Line 23[25,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3bis::toto to strictly typed variable var1:DVZF0OS3::toto.
            move var2 to var1
            move var1 to var3
            move var3 to var1
@@ -40,11 +38,8 @@ Line 23[25,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3bis
        01 var1 type toto.
        01 var2 type DVZF0OS3bis::toto.
        procedure division.
-Line 41[25,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3::toto to strictly typed variable var2:DVZF0OS3bis::toto.
            move var1 to var2
-Line 42[25,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3bis::toto to strictly typed variable var1:DVZF0OS3::toto.
            move var2 to var1
-Line 43[25,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3::toto to strictly typed variable var2:DVZF0OS3bis::toto.
            move var3 to var2
            move var3 to var1
            move var1 to var3
@@ -61,9 +56,7 @@ Line 43[25,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3::t
        01 var2 type DVZF0OS3bis::toto.
        01 var3 type toto.
        procedure division.
-Line 59[25,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3::toto to strictly typed variable var2:DVZF0OS3bis::toto.
            move var1 to var2
-Line 60[25,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3bis::toto to strictly typed variable var1:DVZF0OS3::toto.
            move var2 to var1
            move var2 to var3
            move var3 to var2

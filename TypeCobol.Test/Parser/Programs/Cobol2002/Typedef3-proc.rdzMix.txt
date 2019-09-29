@@ -2,11 +2,11 @@
        PROGRAM-ID. MainProgram.
        data division.
        working-storage section.
-       01  UnusedTypeDef TYPEDEF STRICT.
+       01  UnusedTypeDef TYPEDEF STRICT PRIVATE.
              05 UnusedTypeDef-Var1       pic X(50).
              05 UnusedTypeDef-Var2       pic X(50).
 
-       01  T-Disp TYPEDEF STRICT.
+       01  T-Disp TYPEDEF STRICT PRIVATE.
              05 LIG-DET                  pic X(50).
              05 LIG-NB                   pic X(50).
 
@@ -14,19 +14,19 @@
 
       *Complex unused Typedef
 
-       01 UnusedTypedef1 TYPEDEF STRICT.
+       01 UnusedTypedef1 TYPEDEF STRICT PRIVATE.
            05 utd-var1         pic X.
            05 utd-var10.
               10 utd-var11     pic X.
               10 utd-var12     pic X.
               10 utd-var13     type UnusedTypedef2.
-       01 UnusedTypedef2 TYPEDEF STRICT.
+       01 UnusedTypedef2 TYPEDEF STRICT PRIVATE.
            05 utd-var2         pic X.
            05 utd-var20.
               10 utd-var21     pic X.
               10 utd-var22     pic X.
               10 utd-var23     type UnusedTypedef3.
-       01 UnusedTypedef3 TYPEDEF STRICT.
+       01 UnusedTypedef3 TYPEDEF STRICT PRIVATE.
            05 utd-var3         pic X.
            05 utd-var30.
               10 utd-var31     pic X.
@@ -35,19 +35,19 @@
 
 
       *Complex USED Typedef
-       01 Typedef1 TYPEDEF STRICT.
+       01 Typedef1 TYPEDEF STRICT PRIVATE.
            05 td-var1         pic X.
            05 td-var10.
               10 td-var11     pic X.
               10 td-var12     pic X.
               10 td-var13     type Typedef2.
-       01 Typedef2 TYPEDEF STRICT.
+       01 Typedef2 TYPEDEF STRICT PRIVATE.
            05 td-var2         pic X.
            05 td-var20.
               10 td-var21     pic X.
               10 td-var22     pic X.
               10 td-var23     type MainProgram::Typedef3.
-       01 Typedef3 TYPEDEF STRICT.
+       01 Typedef3 TYPEDEF STRICT PRIVATE.
            05 td-var3         pic X.
            05 td-var30.
               10 td-var31     pic X.
