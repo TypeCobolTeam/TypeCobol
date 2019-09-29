@@ -19,6 +19,8 @@ namespace TypeCobol.Tools.APIHelpers
 {
     public static class Helpers
     {
+        public static string[] dependenciesExtensions = { ".tcbl", ".cbl", ".cpy" };
+
         public static SymbolTable LoadIntrinsic(List<string> paths, DocumentFormat intrinsicDocumentFormat, EventHandler<DiagnosticsErrorEvent> diagEvent)
         {
             var parser = new Parser();
@@ -73,10 +75,18 @@ namespace TypeCobol.Tools.APIHelpers
             return table;
         }
 
-        private static CompilationUnit ParseDependency(string path, DocumentFormat format, SymbolTable intrinsicTable,
+        /// <summary>
+        /// Parse one dependency
+        /// </summary>
+        /// <param name="path">Path of the dependency to parse</param>
+        /// <param name="format"></param>
+        /// <param name="customSymbols">Intrinsic or Namespace SymbolTable</param>
+        /// <param name="copyFolders"></param>
+        /// <returns></returns>
+        private static CompilationUnit ParseDependency(string path, DocumentFormat format, SymbolTable customSymbols,
             List<string> copyFolders)
         {
-            var parser = new Parser(intrinsicTable);
+            var parser = new Parser(customSymbols);
 
             parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, format, copyFolders);
             parser.Parse(path); //Parse the dependency file
@@ -84,16 +94,15 @@ namespace TypeCobol.Tools.APIHelpers
             return parser.Results;
         }
 
-        public static IEnumerable<string> GetDependenciesMissingCopies([NotNull] List<string> paths, DocumentFormat format, SymbolTable intrinsicTable, List<string> copyFolders, EventHandler<DiagnosticsErrorEvent> diagEvent)
+        public static IEnumerable<string> GetDependenciesMissingCopies([NotNull] List<string> dependenciesPaths, DocumentFormat format, SymbolTable intrinsicTable, List<string> copyFolders, EventHandler<DiagnosticsErrorEvent> diagEvent)
         {
             List<CopyDirective> missingCopies = new List<CopyDirective>();
-            string[] extensions = { ".tcbl", ".cbl", ".cpy" };
 
             // For all paths given in preferences
-            foreach (var path in paths)
+            foreach (var path in dependenciesPaths)
             {
                 // For each dependency source found in path
-                foreach (string dependency in Tools.FileSystem.GetFiles(path, extensions, true))
+                foreach (string dependency in Tools.FileSystem.GetFiles(path, dependenciesExtensions, true))
                 {
                     missingCopies.AddRange(ParseDependency(dependency, format, intrinsicTable, copyFolders).MissingCopies);
                 }
@@ -105,7 +114,10 @@ namespace TypeCobol.Tools.APIHelpers
 
         public static SymbolTable LoadDependencies([NotNull] List<string> paths, DocumentFormat format, SymbolTable intrinsicTable,
             [NotNull] List<string> inputFiles, List<string> copyFolders, EventHandler<DiagnosticsErrorEvent> diagEvent, 
-            out List<RemarksDirective.TextNameVariation> usedCopies,out IDictionary<string, IEnumerable<string>> missingCopies)
+            out List<RemarksDirective.TextNameVariation> usedCopies,
+            //Key : path of the dependency
+            //Copy name not found
+            out IDictionary<string, IEnumerable<string>> missingCopies)
         {
             usedCopies = new List<RemarksDirective.TextNameVariation>();
             missingCopies = new Dictionary<string, IEnumerable<string>>();
@@ -113,10 +125,9 @@ namespace TypeCobol.Tools.APIHelpers
             var table = new SymbolTable(intrinsicTable, SymbolTable.Scope.Namespace); //Generate a table of NameSPace containing the dependencies programs based on the previously created intrinsic table. 
 
             var dependencies = new List<string>();
-            string[] extensions = { ".tcbl", ".cbl", ".cpy" };
             foreach (var path in paths)
             {
-                var dependenciesFound = Tools.FileSystem.GetFiles(path, extensions, true);
+                var dependenciesFound = Tools.FileSystem.GetFiles(path, dependenciesExtensions, true);
                 //Issue #668, warn if dependencies path are invalid
                 if (diagEvent != null && dependenciesFound.Count == 0)
                 {
@@ -165,7 +176,6 @@ namespace TypeCobol.Tools.APIHelpers
                     if (programsNames.Any(inputFileName => String.Compare(depFileName, inputFileName, StringComparison.OrdinalIgnoreCase) == 0))
                     {
                         continue;
-
                     }
                 }
 #endif
