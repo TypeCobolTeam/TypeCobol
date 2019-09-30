@@ -1,5 +1,10 @@
 --- Diagnostics ---
-Line 28[12,20] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.
+Line 13[12,20] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.
+Line 18[12,19] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.
+Line 23[12,19] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.
+Line 28[12,19] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.
+Line 34[12,18] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.
+Line 39[12,17] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.
 
 --- Program ---
 PROGRAM: Pgm common:False initial:False recursive:False

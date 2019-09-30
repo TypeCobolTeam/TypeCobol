@@ -305,20 +305,6 @@ namespace TypeCobol.Compiler.Parser
                                         .ThenBy(t => t.Column).ToList();
                                 }
 
-                                // #1181 : Detect CodeElement with a mix of Debug and "Normal" lines
-                                if (codeElementsLine.Type == CobolTextLineType.Debug && codeElementsLine.ScanState.WithDebuggingMode)
-                                {
-                                    bool isDebug = true;
-                                    for (int lineIndex = codeElement.ConsumedTokens[0].Line; lineIndex <= stopLine && lineIndex < documentLines.Count; lineIndex++)
-                                    {
-                                        isDebug = documentLines[lineIndex].Type == CobolTextLineType.Debug;
-                                        if (!isDebug) break;
-                                    }
-                                    if (!isDebug)
-                                    {
-                                        DiagnosticUtils.AddError(codeElement, "In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.");
-                                    }
-                                }
                             }
 
 
