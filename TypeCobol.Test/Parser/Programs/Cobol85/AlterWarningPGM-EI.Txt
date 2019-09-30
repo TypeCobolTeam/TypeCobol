@@ -1,5 +1,5 @@
 --- Diagnostics ---
-Line 18[12,16] <27, Error, Syntax> - Syntax error : ALTER should not be used RuleStack=codeElement>alterStatement,  OffendingSymbol=[12,16:ALTER]<ALTER>
+Line 18[12,16] <37, Warning, General> - Warning: ALTER should not be used RuleStack=codeElement>alterStatement,  OffendingSymbol=[12,16:ALTER]<ALTER>
 
 --- Program ---
 PROGRAM: PERFTIMI common:False initial:False recursive:False
