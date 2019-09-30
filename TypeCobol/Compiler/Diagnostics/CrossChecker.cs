@@ -733,9 +733,12 @@ namespace TypeCobol.Compiler.Diagnostics
             // a section/paragraph is empty when it has no child or when its child/children is/are an {End} node
             bool empty = true;
             int nodesCount = node.Children.Count; 
-            // checks if all children are of type {End} : if not one then empty = false 
+            // checks if all children are of type {End}: if not one then empty = false
+            // use case: section/paragraph with with 0, 1 or a lot of terminal "." statement
             for (int i = 0; i < nodesCount; i++)
             {
+                // a empty node contains only one statement: {End} "."
+                // a not empty node contains at least one statement different of {End}
                 if  ((node.Children[i].Children.Count == 1 && node.Children[i].Children[0].GetType() == typeof(Nodes.End)) == false)
                 {
                     empty = false;
