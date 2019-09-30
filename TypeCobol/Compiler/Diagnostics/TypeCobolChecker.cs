@@ -992,7 +992,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (node.IsMainProgram && compilerOptions.CheckProgramName)
             {
                 string shortFilename = Path.GetFileNameWithoutExtension(node.CodeElement.TokenSource.SourceName);
-                if (!node.Name.Equals(shortFilename, StringComparison.InvariantCultureIgnoreCase))
+                if (!node.Name.Equals(shortFilename, StringComparison.OrdinalIgnoreCase))
                 {
                     DiagnosticUtils.AddError(node, "The program name \"" + node.Name + "\" must match the file name \"" + shortFilename + "\".", MessageCode.Warning);
                 }
