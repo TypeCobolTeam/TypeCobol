@@ -19,6 +19,7 @@ namespace TypeCobol.Tools.Options_Config
         public string ExpandingCopyFilePath;
         public string ExtractedCopiesFilePath;
         public bool UseAntlrProgramParsing;
+        public bool CheckEndAlignment = true;
         public string ReportCopyMoveInitializeFilePath;
         public string ReportZCallFilePath;
         public List<string> CopyFolders = new List<string>();
@@ -175,6 +176,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "zcr|zcallreport=", "{PATH} to report of all program called by zcallpgm.", v => typeCobolConfig.ReportZCallFilePath = v },
                 { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing.", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false },
                 { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
+                { "cea|checkendalignment=", "Check if a End statement is aligned with the matching opening statement.", v => typeCobolConfig.CheckEndAlignment = !(string.IsNullOrEmpty(v) || v.ToLower() == "false") },
             };
             return commonOptions;
         }

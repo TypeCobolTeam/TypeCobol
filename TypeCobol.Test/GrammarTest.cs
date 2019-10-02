@@ -87,8 +87,9 @@ namespace TypeCobol.Test {
 			    {
 			        ExecToStep = ExecutionStep.CrossCheck,
 #if EUROINFO_RULES
-			        AutoRemarksEnable = autoRemarks
+			        AutoRemarksEnable = autoRemarks,
 #endif
+			        CheckEndAlignment = false       // no check end alignment for third party tests
                 };
 
                 document.Init(path, options, format, copiesFolder);
