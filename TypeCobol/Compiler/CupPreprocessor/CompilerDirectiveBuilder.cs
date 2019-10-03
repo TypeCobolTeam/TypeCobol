@@ -90,13 +90,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             var copy = (CopyDirective)CompilerDirective;
             bool isCopy = copy.COPYToken.TokenType == TokenType.COPY;
             copy.TextName = GetName(qualifiedTextName.TextName);
-            copy.TextNameSymbol = qualifiedTextName.TextName;
-            if (suppress != null)
-            {
-                Diagnostic error = new Diagnostic(MessageCode.Warning, suppress.Column, suppress.EndColumn, 
-                    suppress.Line, "\"COPY SUPPRESS\" should not be used");
-                CompilerDirective.AddDiagnostic(error);
-            }
+            copy.TextNameSymbol = qualifiedTextName.TextName;          
             {                
 #if EUROINFO_RULES
                 if (TypeCobolOptions.UseEuroInformationLegacyReplacingSyntax)
@@ -147,6 +141,12 @@ namespace TypeCobol.Compiler.CupPreprocessor
             copy.LibraryNameSymbol = qualifiedTextName.LibraryName;
 
             copy.Suppress = suppress != null;
+            if (suppress != null)
+            {
+                Diagnostic error = new Diagnostic(MessageCode.Warning, suppress.Column, suppress.EndColumn,
+                    suppress.Line, "\"COPY SUPPRESS\" should not be used");
+                CompilerDirective.AddDiagnostic(error);
+            }
 
             // REPLACING
             if (replacingOperands != null)
