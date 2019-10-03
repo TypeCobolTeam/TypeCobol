@@ -73,7 +73,7 @@ namespace TypeCobol.Test.Report
                 parser.Init(input, typeCobolOption, format, new List<string>() { copyFolder });
                 parser.Parse(input);
 
-                var allDiags = parser.Results.AllDiagnostics();
+                var allDiags = parser.Results.AllDiagnostics().Where(d => d.Info.Severity != TypeCobol.Compiler.Diagnostics.Severity.Warning).ToList();
                 if (allDiags.Count == 0)
                 {
                     if (report != null)

@@ -89,8 +89,9 @@ namespace TypeCobol.Test.HighLevelAPI {
         {
             var parser = TypeCobol.Parser.Parse(rootPath + Path.DirectorySeparatorChar + path, DocumentFormat.RDZReferenceFormat, autoRemarks);
             var diagnostics = parser.Results.AllDiagnostics();
-            //There should be no diagnostics
-            Assert.IsFalse(diagnostics.Any());
+            //There should be no diagnostics errors
+            int noWarningCount = diagnostics.Count(d => d.Info.Severity != TypeCobol.Compiler.Diagnostics.Severity.Warning);
+            Assert.AreEqual(noWarningCount, 0);
 
             return LTNVHelper.GetLTNVCopy(parser.Results.ProgramClassDocumentSnapshot.Root);
         }

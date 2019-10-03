@@ -1,5 +1,6 @@
 -- Line 1 --
-*** DIRECTIVE EXEC_SQL_INCLUDE.SUPPRESS TEXTNAME1 ([8,11:EXEC]<EXEC>[12,12: ]<SpaceSeparator>[13,15:SQL]<ExecTranslatorName>[16,16: ]<SpaceSeparator>[17,23:INCLUDE]<EXEC_SQL>[24,24: ]<SpaceSeparator>[25,33:TEXTNAME1]<UserDefinedWord>[34,34: ]<SpaceSeparator>[35,42:SUPPRESS]<SUPPRESS>[43,43: ]<SpaceSeparator>[44,51:END-EXEC]<END_EXEC>[52,52+:.]<PeriodSeparator>) ***
+*** DIRECTIVE INVALID SYNTAX -> EXEC_SQL_INCLUDE.SUPPRESS TEXTNAME1 ([8,11:EXEC]<EXEC>[12,12: ]<SpaceSeparator>[13,15:SQL]<ExecTranslatorName>[16,16: ]<SpaceSeparator>[17,23:INCLUDE]<EXEC_SQL>[24,24: ]<SpaceSeparator>[25,33:TEXTNAME1]<UserDefinedWord>[34,34: ]<SpaceSeparator>[35,42:SUPPRESS]<SUPPRESS>[43,43: ]<SpaceSeparator>[44,51:END-EXEC]<END_EXEC>[52,52+:.]<PeriodSeparator>) ***
+Line 1[35,42] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be used
 
 -- Line 2 --
 *** DIRECTIVE EXEC_SQL_INCLUDE textname2.OF(library2) <REPLACE[SingleToken] toto BY titi> <REPLACE[SingleToken] exec BY execute> ([8,14:execute]<EXECUTE>[15,15: ]<SpaceSeparator>) ***
