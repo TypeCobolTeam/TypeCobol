@@ -198,7 +198,7 @@ namespace TypeCobol.Codegen.Nodes
 
         /// <summary>
         /// This strategy extracts the type info in a declaration. This can be VALUE clause, usage, GLOBAL clause, etc.
-        /// It doesn't output the TYPE clause for typed data/parameter.
+        /// It doesn't output the TYPE clause for typed data/parameter and it also doesn't include the omittable (question mark) for parameter.
         /// </summary>
         private class ExtractTypeInfo : TokenFlushStrategy
         {
@@ -227,7 +227,8 @@ namespace TypeCobol.Codegen.Nodes
                     return false;
                 }
 
-                return true;
+                // Special case for the omittable function parameters, the Question Mark should not be outputted.
+                return token.TokenType != TokenType.QUESTION_MARK;
             }
         }
 
