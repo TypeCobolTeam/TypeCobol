@@ -871,7 +871,7 @@ namespace TypeCobol.Compiler.Diagnostics
 	                    !child.Name.Equals("INIT-LIBRARY", StringComparison.InvariantCultureIgnoreCase))
                     {
                             DiagnosticUtils.AddError(child.CodeElement == null ? procedureDivision : child,
-                                "First paragraph of a program which contains public procedure must be INIT-LIBRARY.");
+                                "First paragraph of a program which contains public procedure must be INIT-LIBRARY. Paragraph " + child.Name + " is currently not allowed.");
                     }
 
 	                firstParagraphChecked = true;
@@ -889,9 +889,11 @@ namespace TypeCobol.Compiler.Diagnostics
                         : child;
                     if (firstParagraphChecked)
                     {
+                        // this case corresponds to SECTION declarations or statements not inside a paragraph
+                        string nodeInfo = " " + node.Name + " / " + node.ID;
+                        if (nodeInfo == "  / ")  nodeInfo = "";
                         DiagnosticUtils.AddError(node,
-                            "Inside a library only function declaration or declaratives are allowed " + child.Name +
-                            " / " + child.ID);    
+                            "Inside a library only function declaration or declaratives are allowed" + nodeInfo);
                     }
                     else
                     {
