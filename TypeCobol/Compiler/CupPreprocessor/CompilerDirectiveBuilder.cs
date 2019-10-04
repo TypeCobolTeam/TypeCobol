@@ -90,7 +90,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             var copy = (CopyDirective)CompilerDirective;
             bool isCopy = copy.COPYToken.TokenType == TokenType.COPY;
             copy.TextName = GetName(qualifiedTextName.TextName);
-            copy.TextNameSymbol = qualifiedTextName.TextName;          
+            copy.TextNameSymbol = qualifiedTextName.TextName;
             {                
 #if EUROINFO_RULES
                 if (TypeCobolOptions.UseEuroInformationLegacyReplacingSyntax)
