@@ -215,7 +215,6 @@ namespace TypeCobol.Compiler.Parser
                 // If the parse tree is not empty
                 if (codeElementsParseTree.codeElement() != null && codeElementsParseTree.codeElement().Length > 0)
                 {
-                    bool checkEndAlignment = compilerOptions.CheckEndAlignment;
                     // Analyze the parse tree for each code element
                     foreach (var codeElementParseTree in codeElementsParseTree.codeElement())
                     {
@@ -332,49 +331,7 @@ namespace TypeCobol.Compiler.Parser
                                     "A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)",
                                     MessageCode.TypeCobolParserLimitation);
                             }
-
-                            // check if End statement is aligned with the matching opening statement
-                            if (checkEndAlignment && codeElement.Type.ToString().EndsWith("End"))
-                            {
-                                string endStatement = codeElement.Type.ToString();
-                                if (!endStatement.Equals("ProgramEnd", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    string statement = endStatement.Substring(0, endStatement.Length - 3);
-                                    // search code elements from more recent to the less recent codeElementsLinesChanges
-                                    var list = codeElementsLinesChanges?
-                                        .Where(cel => cel.NewLine.CodeElements != null)?
-                                        .OrderByDescending(cel => cel.LineIndex)
-                                        .Select(cel => cel.NewLine.CodeElements);
-                                    if (list != null)
-                                    {
-                                        int level = 1;
-                                        foreach (var codeElements in list)
-                                        {
-                                            for (int i = codeElements.Count - 1; i >= 0; i--)
-                                            {
-                                                string statementName = codeElements[i].Type.ToString();
-                                                if (statementName == endStatement) level++;
-                                                else if (statementName == statement)
-                                                {
-                                                    level--;
-                                                    if (level == 0)
-                                                    {
-                                                        if (codeElements[i].Column != codeElement.Column &&
-                                                            codeElements[i].Line != codeElement.Line)
-                                                        {
-                                                            DiagnosticUtils.AddError(codeElement,
-                                                                "a End statement is not aligned with the matching opening statement",
-                                                                MessageCode.Warning);
-                                                        }
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                            if (level == 0) break;
-                                        }
-                                    }
-                                }
-                            }
+                       
 
                             // Add code element to the list                    
                             codeElementsLine.AddCodeElement(codeElement);
