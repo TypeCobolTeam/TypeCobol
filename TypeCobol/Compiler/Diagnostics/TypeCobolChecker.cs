@@ -871,7 +871,7 @@ namespace TypeCobol.Compiler.Diagnostics
 	                    !child.Name.Equals("INIT-LIBRARY", StringComparison.InvariantCultureIgnoreCase))
                     {
                             DiagnosticUtils.AddError(child.CodeElement == null ? procedureDivision : child,
-                                "First paragraph of a program which contains public procedure must be INIT-LIBRARY. Paragraph " + child.Name + " is currently not allowed.");
+                                "First paragraph of a program which contains public procedure must be INIT-LIBRARY. Paragraph " + child.Name + " is not allowed at this location.");
                     }
 
 	                firstParagraphChecked = true;
