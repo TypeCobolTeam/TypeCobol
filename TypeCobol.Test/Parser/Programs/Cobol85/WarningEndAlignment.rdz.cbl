@@ -47,6 +47,30 @@
                delimited by size
                INTO chaine-c
              END-STRING
-      
            GOBACK.
+
+           
+      %<<<MyProc info
+        @Deprecated : It is deprecated
+        @Todo:
+              - todo1
+              - todo 2
+        @Params:
+          - myDate just a date
+          - bla bla < 2
+          - myBool xxxx
+          - toto toto
+          - bli xxxx
+      %>>>
+        DECLARE PROCEDURE MyProc
+           INPUT    myDate      TYPE Date
+                    bla         Pic S9(1)V9(12)
+           IN-OUT   myBool      TYPE BOOL
+           OUTPUT   toto        TYPE BOOL
+                        bli         Pic PPP999PPP.
+        PROCEDURE DIVISION.
+           CONTINUE.
+        END-DECLARE.
+
+
        END PROGRAM PgmTest.

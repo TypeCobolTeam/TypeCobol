@@ -50,5 +50,5 @@
              set ptr up by 1
              goback
              .
-         end-declare.
+       end-declare.
        END PROGRAM Pointers.

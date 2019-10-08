@@ -9,6 +9,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using System.Text.RegularExpressions;
+using Antlr4.Runtime;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 
@@ -16,19 +17,14 @@ namespace TypeCobol.Compiler.Diagnostics
 {
     public class CrossCompleteChecker : AbstractAstVisitor
     {
-        public CrossCompleteChecker(TypeCobolOptions compilerOptions = null)
+        public CrossCompleteChecker([NotNull]TypeCobolOptions compilerOptions)
         {
-            if (compilerOptions == null)
-                CompilerOptions = new TypeCobolOptions();
-            else
-                CompilerOptions = compilerOptions;
-            _checkEndAlignment = CompilerOptions.CheckEndAlignment;
+            _compilerOptions = compilerOptions;
         }
-        private TypeCobolOptions CompilerOptions { get; }
+
+        private readonly TypeCobolOptions _compilerOptions;
 
         private Node CurrentNode { get; set; }
-
-        private readonly bool _checkEndAlignment;
 
         public override bool BeginNode(Node node)
         {
@@ -398,24 +394,35 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(End end)
         {
             // Check end statement is aligned with the matching opening statement
-            if (_checkEndAlignment)
+            if (_compilerOptions.CheckEndAlignment && end.CodeElement.Type != CodeElementType.SentenceEnd)
             {
-                CodeElement codeElement = end.CodeElement;
-                CodeElement parentCodeElement = end.Parent.CodeElement;
-                if (parentCodeElement != null && codeElement.Type != CodeElementType.SentenceEnd)
+                CheckEndNode(end.Parent.CodeElement, end.CodeElement);
+            }
+            return true;
+        }
+
+        public override bool Visit(FunctionEnd functionEnd)
+        {
+            // Check end statement is aligned with the matching opening statement
+            if (_compilerOptions.CheckEndAlignment)
+            {
+                CodeElement parentCodeElement = functionEnd.Parent.CodeElement;
+                if (parentCodeElement != null)
                 {
-                    if (parentCodeElement.Line != codeElement.Line &&
-                        parentCodeElement.StartIndex != codeElement.StartIndex)
+                    if (parentCodeElement.ConsumedTokens[0]?.TokenType == TokenType.FORMALIZED_COMMENTS_START)
                     {
-                        DiagnosticUtils.AddError(codeElement,
-                            "a End statement is not aligned with the matching opening statement",
-                            MessageCode.Warning);
+                        Token openingDeclareToken = parentCodeElement.ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.DECLARE);
+                        CheckEndNode(openingDeclareToken, functionEnd.CodeElement);
+                    }
+                    else
+                    {
+                        CheckEndNode(parentCodeElement, functionEnd.CodeElement);
                     }
                 }
             }
             return true;
         }
-
+  
         /// <summary>
         /// Test if the received DataDefinition has other children than DataConditionEntry or DataRenamesEntry
         /// </summary>
@@ -722,6 +729,20 @@ namespace TypeCobol.Compiler.Diagnostics
                 node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
         }
 
+        private static void CheckEndNode(IToken openingCodeElement, CodeElement endCodeElement)
+        {
+            // Check end statement is aligned with the matching opening statement
+            if (openingCodeElement != null)
+            {
+                if (openingCodeElement.Line != endCodeElement.Line &&
+                    openingCodeElement.StartIndex != endCodeElement.StartIndex)
+                {
+                    DiagnosticUtils.AddError(endCodeElement,
+                        "a End statement is not aligned with the matching opening statement",
+                        MessageCode.Warning);
+                }
+            }
+        }
     }
 
     class SectionOrParagraphUsageChecker

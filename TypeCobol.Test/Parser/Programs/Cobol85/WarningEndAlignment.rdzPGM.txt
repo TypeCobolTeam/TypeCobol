@@ -13,6 +13,13 @@ PROGRAM: PgmTest common:False initial:False recursive:False
   MyCondition:BOOL
   chaine:Alphanumeric
   chaine-c:Alphanumeric
+-- FUNCTIONS ---
+  MyProc
+        in: myDate:DATE
+        in: bla:Numeric
+       out: toto:BOOL
+       out: bli:Numeric
+     inout: myBool:BOOL
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL
