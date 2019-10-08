@@ -36,9 +36,9 @@ namespace TypeCobol.Analysis.Report
         public List<DfaUsePoint<Node, Symbol>> CallUsePoints { get; private set; }
 
         /// <summary>
-        /// The Cfg builder for FDA Basic Block Information
+        /// The Cfg builder for DFA Basic Block Information
         /// </summary>
-        public ControlFlowGraphBuilder<DfaBasicBlockInfo<Symbol>> DfaCfgBuilder
+        public CfgDfaContext CfgDfaCtx
         {
             get;
             private set;
@@ -335,9 +335,9 @@ namespace TypeCobol.Analysis.Report
         /// </summary>
         /// <param name="dfaCfgBuilder">The Cfg builder for FDA Basic Block Information</param>
         /// <param name="filepath">The output file patah</param>
-        public ZCallPgmReport(ControlFlowGraphBuilder<DfaBasicBlockInfo<Symbol>> dfaCfgBuilder, string filepath)
+        public ZCallPgmReport(CfgDfaContext cfgDfaCtx, string filepath)
         {
-            DfaCfgBuilder = dfaCfgBuilder;
+            CfgDfaCtx = cfgDfaCtx;
             Filepath = filepath;
             CallUsePoints = new List<DfaUsePoint<Node, Symbol>>();
         }
@@ -345,7 +345,7 @@ namespace TypeCobol.Analysis.Report
         public override void Report(TextWriter writer)
         {
             this.Writer = writer;
-            DfaCfgBuilder.TraverseAllCfgBuilders(CfgBuilderCallback);            
+            CfgDfaCtx.CfgDfaBuilder.TraverseAllCfgBuilders(CfgBuilderCallback);            
         }
     }
 }
