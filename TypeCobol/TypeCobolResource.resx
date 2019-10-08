@@ -163,4 +163,7 @@
   <data name="TypeAlreadyDeclared" xml:space="preserve">
     <value>TYPE'{0}' has already been declared</value>
   </data>
+  <data name="TypedefDeclaredOutProgramOrFunction" xml:space="preserve">
+    <value>TYPE '{0}' is not declared within a Program or Procedure scope.</value>
+  </data>
 </root>

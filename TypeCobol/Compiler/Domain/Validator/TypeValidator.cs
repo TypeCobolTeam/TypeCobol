@@ -41,6 +41,7 @@ namespace TypeCobol.Compiler.Domain.Validator
         public TypeValidator(SymbolValidator symbolValidator)
         {
             this.SymValidator = symbolValidator??new SymbolValidator(this);
+            Unvalidated = new List<Types.Type>();
         }
 
         /// <summary>
