@@ -227,8 +227,8 @@ namespace TypeCobol.Codegen.Nodes
                     return false;
                 }
 
-                // Special case for the omittable function parameters, the Question Mark should not be outputted.
-                return token.TokenType != TokenType.QUESTION_MARK;
+                // Tokens that should not be outputted : QuestionMark in optional parameter declarations and PeriodSeparator at end.
+                return token.TokenType != TokenType.PeriodSeparator && token.TokenType != TokenType.QUESTION_MARK;
             }
         }
 
@@ -275,7 +275,7 @@ namespace TypeCobol.Codegen.Nodes
         /// <param name="strategy">Object to control which and how tokens are written.</param>
         /// <param name="hasSeenGlobal">Indicates whether a GLOBAL keyword has been written.</param>
         /// <param name="hasSeenPeriod">Indicates whether a Period separator has been written.</param>
-        private static void FlushConsumedTokens(ColumnsLayout? layout, IList<Token> consumedTokens, StringBuilder sb, TokenFlushStrategy strategy, out bool hasSeenGlobal, out  bool hasSeenPeriod)
+        private static void FlushConsumedTokens(ColumnsLayout? layout, IList<Token> consumedTokens, StringBuilder sb, TokenFlushStrategy strategy, out bool hasSeenGlobal, out bool hasSeenPeriod)
         {
             System.Diagnostics.Contracts.Contract.Assert(consumedTokens != null);
             System.Diagnostics.Contracts.Contract.Assert(sb != null);
@@ -316,7 +316,7 @@ namespace TypeCobol.Codegen.Nodes
                     {
                         if (layout.Value == ColumnsLayout.CobolReferenceFormat)
                         {
-                            nPad = Math.Max(0, consumedTokens[i].Column - 8);
+                            nPad = Math.Max(0, token.Column - 8);
                         }
                     }
                     string pad = new string(' ', nPad);
