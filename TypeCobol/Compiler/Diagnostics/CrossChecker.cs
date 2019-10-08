@@ -451,13 +451,14 @@ namespace TypeCobol.Compiler.Diagnostics
         /// </summary>
         /// <param name="curPrg">The Current Program.</param>
         /// <returns></returns>
-        static ProgramSymbol ExpandTopProgram(ProgramSymbol curPrg)
+        static ProgramSymbol ExpandTopProgram(ProgramSymbol curPrg, out bool bCyclicTypeException)
         {
             //if (ProgramSymbolTableBuilder.LastBuilder != null &&
             //    ProgramSymbolTableBuilder.LastBuilder.Diagnostics.Count > 0)
             //{//There was errord dont expand the program.
             //    return curPrg;
             //}
+            bCyclicTypeException = false;
             ProgramSymbol topPrg = ProgramSymbol.GetTopProgram(curPrg);
             if (!topPrg.HasFlag(Symbol.Flags.ProgramExpanded))
             {
@@ -466,9 +467,11 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     topPrg.Accept(se, topPrg);
                 }
-                catch (Types.Type.CyclicTypeException cte)
+                catch (Types.Type.CyclicTypeException /*cte*/)
                 {//Capture a Cyclic Type exception
-                    throw cte;
+                    bCyclicTypeException = true;
+                    //Reset expansion flag to alway detect Cyclic Type During this test session
+                    topPrg.SetFlag(Symbol.Flags.ProgramExpanded, false);
                 }
             }
             return topPrg;
@@ -552,6 +555,7 @@ namespace TypeCobol.Compiler.Diagnostics
 #if DOMAIN_CHECKER
             Scopes.Scope<VariableSymbol>.MultiSymbols result = null;
             List<Symbol[]> foundSymbolTypedPaths = null;
+            bool bCyclicTypeException = false;
             if (SymbolTableBuilder._rootSymbolTable != null)
             {                                
                 switch (((Symbol)node.SemanticData).Kind)
@@ -559,12 +563,15 @@ namespace TypeCobol.Compiler.Diagnostics
                     case Symbol.Kinds.Program:
                     case Symbol.Kinds.Function:
                     {
-                        ProgramSymbol prg = (ProgramSymbol) node.SemanticData;
-                        ProgramSymbol topPrg = ExpandTopProgram(prg);
-                        result = prg.ResolveReference(area.SymbolReference, true);
-                        System.Diagnostics.Debug.Assert(result != null);
-                        //Check that we found the same number of symbols
-                        System.Diagnostics.Debug.Assert(result.Count == foundCount);
+                        ProgramSymbol prg = (ProgramSymbol) node.SemanticData;                            
+                        ProgramSymbol topPrg = ExpandTopProgram(prg, out bCyclicTypeException);
+                        if (!bCyclicTypeException)
+                        {//Ignoe any expansion with a cyclic type.
+                            result = prg.ResolveReference(area.SymbolReference, true);
+                            System.Diagnostics.Debug.Assert(result != null);
+                            //Check that we found the same number of symbols
+                            System.Diagnostics.Debug.Assert(result.Count == foundCount);
+                        }
                     }
                         break;
                     case Symbol.Kinds.Variable:
@@ -590,11 +597,14 @@ namespace TypeCobol.Compiler.Diagnostics
                             FunctionSymbol fun = (FunctionSymbol)@var.TopParent(Symbol.Kinds.Function);
                             ProgramSymbol prg = (ProgramSymbol)@var.TopParent(Symbol.Kinds.Program);
                             System.Diagnostics.Debug.Assert(prg != null || fun != null);
-                            ProgramSymbol topPrg = ExpandTopProgram(prg);
-                            //Lookup itself in its program.
-                            result = (fun??prg).ResolveReference(area.SymbolReference, true);
-                            System.Diagnostics.Debug.Assert(result != null);
-                            System.Diagnostics.Debug.Assert(result.Count == foundCount);
+                            ProgramSymbol topPrg = ExpandTopProgram(prg, out bCyclicTypeException);
+                            if (!bCyclicTypeException)
+                            {//Ignore any expansion with a cyclic type.
+                                //Lookup itself in its program.
+                                result = (fun ?? prg).ResolveReference(area.SymbolReference, true);
+                                System.Diagnostics.Debug.Assert(result != null);
+                                System.Diagnostics.Debug.Assert(result.Count == foundCount);
+                            }
                         }
                         break;
                 }

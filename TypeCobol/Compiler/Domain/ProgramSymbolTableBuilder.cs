@@ -934,11 +934,23 @@ namespace TypeCobol.Compiler.Domain
                     tdSym.SetFlag(Symbol.Flags.Strong, true);
                 }
                 SetSymbolAccessModifer(tdSym, dtde.Visibility);
-                //A Typedef goes in the Types scope of the Main program scope
+                //A Typedef goes in the Types scope of their program scope
                 //Enter it right now to allow recursive type definition to be possible here.
                 //The owner of the type is the top program.
-                tdSym.Owner = programScope;
-                programScope.Types.Enter(tdSym);
+                if (parentScope.Owner.Kind == Symbol.Kinds.Program || parentScope.Owner.Kind == Symbol.Kinds.Function)
+                {
+                    tdSym.Owner = parentScope.Owner;
+                    ((ProgramSymbol)parentScope.Owner).Types.Enter(tdSym);
+                }
+                else
+                {//Declaration of a TypeDef out of a Program or a Function 
+                    Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                        dtde.Column,
+                        dtde.Column,
+                        dtde.Line,
+                        string.Format(TypeCobolResource.TypedefDeclaredOutProgramOrFunction, dataDef.Name));
+                    return null;
+                }
             }
 
             VariableSymbol varSym = DataDefinition2Symbol(dataDef, parentScope, tdSym);
