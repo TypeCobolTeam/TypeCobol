@@ -169,6 +169,15 @@ namespace TypeCobol {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to TYPE &apos;{0}&apos; is not declared within a Program or Procedure scope..
+        /// </summary>
+        public static string TypedefDeclaredOutProgramOrFunction {
+            get {
+                return ResourceManager.GetString("TypedefDeclaredOutProgramOrFunction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to resolve &quot;{0}&quot;.
         /// </summary>
         public static string UnableToResolveVariable {
