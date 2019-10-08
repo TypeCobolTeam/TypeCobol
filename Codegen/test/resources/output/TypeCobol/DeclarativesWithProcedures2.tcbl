@@ -1,3 +1,5 @@
+      * 1 errors
+      * Line 6[8,13] <37, Warning, General> - Warning: Debugging mode is active
       *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. TCOZFCPT.

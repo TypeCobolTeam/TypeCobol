@@ -372,6 +372,15 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(SourceComputer sourceComputer)
+        {
+            if (sourceComputer.Lines.Any(l => (l as CodeElementsLine)?.ScanState.WithDebuggingMode == true))
+            {
+                DiagnosticUtils.AddError(sourceComputer, "Debugging mode is active", MessageCode.Warning);
+            }
+            return true;
+        }
+
         /// <summary>
         /// Test if the received DataDefinition has other children than DataConditionEntry or DataRenamesEntry
         /// </summary>

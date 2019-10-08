@@ -1,4 +1,7 @@
-﻿--- Program ---
+﻿--- Diagnostics ---
+Line 5[8,23] <37, Warning, General> - Warning: Debugging mode is active
+
+--- Program ---
 PROGRAM: DeclarativesTest common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 -- SECTIONS ----
