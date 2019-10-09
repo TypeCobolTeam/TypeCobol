@@ -726,6 +726,18 @@ namespace TypeCobol.Compiler.Diagnostics
         protected static void Check<T>(T node, [NotNull] IList<T> found) where T : Node
         {
             if (found.Count > 1) DiagnosticUtils.AddError(node, "Symbol \'" + node.Name + "\' already declared");
+
+            // in a section/paragraph, "STOP RUN" or "GOBACK" should be the last statement
+            //
+            // search, in the children of the sentences, the first statement GoBack or Stop; then skip this node; then search if there is/are node of type not {End}
+            bool statementAfterStopRunGoBack = node.Children.FirstOrDefault(nc => nc.Children.SkipWhile(cc => !(cc is Nodes.Goback || cc is Nodes.Stop)).Skip(1).Any(cc => (cc is Nodes.End) == false)) != null;
+            // if false, search, in the sentences, the first statement GoBack or Stop; then skip this node; then search if there is/are node of type not {End}: used when section has no paragraph
+            statementAfterStopRunGoBack = statementAfterStopRunGoBack || node.Children.SkipWhile(n => !(n is Nodes.Goback || n is Nodes.Stop)).Skip(1).Any(cc => (cc is Nodes.End) == false);
+
+            if (statementAfterStopRunGoBack)
+            {
+                DiagnosticUtils.AddError(node, "In \'" + node.Name + "\' \"STOP RUN\" or \"GOBACK\" should be the last statement", MessageCode.Warning);
+            }
         }
 
         public static void CheckSection(Section section)
