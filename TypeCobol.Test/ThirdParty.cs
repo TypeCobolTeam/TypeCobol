@@ -7,9 +7,6 @@ namespace TypeCobol.Test {
 	public class ThirdParty
     {
         [TestMethod]
-#if EUROINFO_RULES
-        [Ignore]
-#endif
 		[TestCategory("Parsing")]
 		[TestProperty("Time","long")]
 		public void CNAF() {
@@ -20,9 +17,6 @@ namespace TypeCobol.Test {
         }
 
         [TestMethod]
-#if EUROINFO_RULES
-        [Ignore]
-#endif
         [TestCategory("Parsing")]
         [TestProperty("Time", "long")]
         public void NistTest()
