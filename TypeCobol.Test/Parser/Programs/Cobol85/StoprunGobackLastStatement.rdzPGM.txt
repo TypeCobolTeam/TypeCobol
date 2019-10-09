@@ -1,7 +1,7 @@
 ﻿--- Diagnostics ---
-Line 7[8,13] <37, Warning, General> - Warning: In 'INIT2' "STOP RUN" or "GOBACK" should be the last statement
-Line 16[8,21] <37, Warning, General> - Warning: In 'sect1' "STOP RUN" or "GOBACK" should be the last statement
-Line 21[8,10] <37, Warning, General> - Warning: In 'p1' "STOP RUN" or "GOBACK" should be the last statement
+Line 9[13,27] <37, Warning, General> - Warning: In 'INIT2', there should be no statement after "STOP RUN" or "GOBACK"
+Line 18[13,24] <37, Warning, General> - Warning: In 'sect1', there should be no statement after "STOP RUN" or "GOBACK"
+Line 23[13,24] <37, Warning, General> - Warning: In 'p1', there should be no statement after "STOP RUN" or "GOBACK"
 
 --- Program ---
 PROGRAM: Pgm common:False initial:False recursive:False
