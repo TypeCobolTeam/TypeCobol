@@ -85,7 +85,7 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
-        
+
 
         public override bool Visit(PerformProcedure performProcedureNode)
         {
@@ -671,12 +671,26 @@ namespace TypeCobol.Compiler.Diagnostics
         public static void CheckReferenceToParagraphOrSection(PerformProcedure perform)
         {
             var performCE = perform.CodeElement;
+            SymbolTable symbolTable = perform.SymbolTable;
             SymbolReference symbol;
-            symbol = ResolveProcedureName(perform.SymbolTable, performCE.Procedure as AmbiguousSymbolReference, perform);
+            symbol = ResolveProcedureName(symbolTable, performCE.Procedure as AmbiguousSymbolReference, perform);
             if (symbol != null) performCE.Procedure = symbol;
-            symbol = ResolveProcedureName(perform.SymbolTable, performCE.ThroughProcedure as AmbiguousSymbolReference,
+            symbol = ResolveProcedureName(symbolTable, performCE.ThroughProcedure as AmbiguousSymbolReference,
                 perform);
-            if (symbol != null) performCE.ThroughProcedure = symbol;
+            if (symbol != null)
+            {
+                // perform thru
+                performCE.ThroughProcedure = symbol;
+
+                if (symbolTable.ParagraphOrSectionNames.SkipWhile(l => l != performCE.Procedure.Name).Any(l => l == performCE.ThroughProcedure.Name) == false)
+                {
+                    string firstTypeName = (performCE.Procedure.Type == SymbolType.ParagraphName) ? "paragraph" : "section";
+                    string secondTypeName = (performCE.ThroughProcedure.Type == SymbolType.ParagraphName) ? "paragraph" : "section";
+                    DiagnosticUtils.AddError(perform,
+                        $"The second {secondTypeName} {performCE.ThroughProcedure.Name} of the \"PERFORM THRU\" statement must be defined after the first {firstTypeName} {performCE.Procedure.Name}",
+                        MessageCode.Warning);
+                }
+            }
         }
 
         /// <summary>Disambiguate between section and paragraph names</summary>

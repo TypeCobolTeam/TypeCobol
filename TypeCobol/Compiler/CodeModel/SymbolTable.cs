@@ -19,6 +19,7 @@ namespace TypeCobol.Compiler.CodeModel
         private static readonly IList<Paragraph> EmptyParagraphList = new ImmutableList<Paragraph>();
         private static readonly IList<TypeDefinition> EmptyTypeDefinitionList = new ImmutableList<TypeDefinition>();
 
+        public List<string> ParagraphOrSectionNames { get; private set; } = new List<string>();
         public Scope CurrentScope { get; }
         public SymbolTable EnclosingScope { get; }
 
@@ -712,6 +713,7 @@ namespace TypeCobol.Compiler.CodeModel
         internal void AddSection(Section section)
         {
             Add(Sections, section);
+            ParagraphOrSectionNames.Add(section.Name);
         }
 
         public IList<Section> GetSection(string name)
@@ -732,6 +734,7 @@ namespace TypeCobol.Compiler.CodeModel
         internal void AddParagraph(Paragraph paragraph)
         {
             Add(Paragraphs, paragraph);
+            ParagraphOrSectionNames.Add(paragraph.Name);
         }
 
         public IList<Paragraph> GetParagraph(string name)

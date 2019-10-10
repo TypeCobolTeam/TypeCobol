@@ -3,10 +3,19 @@ Line 1[1,30] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 14[9,21] <27, Error, Syntax> - Syntax error : Symbol procedurename is not referenced OffendingSymbol=[9,21:procedurename]<UserDefinedWord>
 Line 17[15,24] <27, Error, Syntax> - Syntax error : Symbol condition1 is not referenced OffendingSymbol=[15,24:condition1]<UserDefinedWord>
 Line 18[6,15] <27, Error, Syntax> - Syntax error : Symbol condition2 is not referenced OffendingSymbol=[6,15:condition2]<UserDefinedWord>
+Line 27[1,16] <37, Warning, General> - Warning: The second paragraph A of the "PERFORM THRU" statement must be defined after the first paragraph B
+Line 29[1,18] <37, Warning, General> - Warning: The second section S1 of the "PERFORM THRU" statement must be defined after the first section S2
+Line 30[1,17] <37, Warning, General> - Warning: The second paragraph A of the "PERFORM THRU" statement must be defined after the first section S1
 
 --- Program ---
 PROGRAM: perform-program common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
+-- SECTIONS ----
+  S1
+  S2
+-- PARAGRAPHS --
+  A
+  B
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL

@@ -20,3 +20,25 @@ PERFORM UNTIL condition1
   END-IF
 END-PERFORM
 .
+
+*  // PERFORM THRU
+* /////////////////////////////
+PERFORM A THRU B
+PERFORM B THRU A
+PERFORM S1 THRU S2
+PERFORM S2 THRU S1
+PERFORM S1 THRU A
+GOBACK.
+
+A.
+    display "A"
+    .
+B.
+    display "B"
+    .
+S1 SECTION.
+    display "S1"
+    .
+S2 SECTION.
+    display "S2"
+    .
