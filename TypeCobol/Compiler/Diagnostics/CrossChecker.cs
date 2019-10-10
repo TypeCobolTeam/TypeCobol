@@ -728,33 +728,19 @@ namespace TypeCobol.Compiler.Diagnostics
             if (found.Count > 1) DiagnosticUtils.AddError(node, "Symbol \'" + node.Name + "\' already declared");
 
             // in a section/paragraph, "STOP RUN" or "GOBACK" should be the last statement
-            // search, in the sentences, the first statement GoBack or Stop; then skip this node; then search if there is/are node of type not {End}
             // search if paragraph
-            List<Node> firstStatementsAfter = null;      // list of statements after "STOP RUN" or "GOBACK"
+            bool statementAfterFound = false;
+            string paragraphSectionName = node.Name;
             foreach (Node nd in node.Children)
             {
-                firstStatementsAfter = nd.Children.SkipWhile(cc => !(cc is Nodes.Goback || cc is Nodes.Stop)).Skip(1).ToList();
-                if (firstStatementsAfter.Any() && firstStatementsAfter.Any(cc => (cc is Nodes.End) == false))
-                {
-                    // node(s) with no {End} statement - firstStatementAfter not null
-                    break;
-                }
-                firstStatementsAfter = null;
+                statementAfterFound = CheckIfStatementAfterStopRunGoBack(paragraphSectionName, nd);
+                if (statementAfterFound) break;
             }
-            // search if section only in sentences
-            if (firstStatementsAfter == null)
+            // search if section, only in sentences
+            if (!statementAfterFound)
             {
-               firstStatementsAfter = node.Children.SkipWhile(cc => !(cc is Nodes.Goback || cc is Nodes.Stop)).Skip(1).ToList();
-               if (firstStatementsAfter.Any() && firstStatementsAfter.All(cc => cc is Nodes.End))
-               {
-                    // no node with no {End} statement - firstStatementsAfter null
-                    firstStatementsAfter = null;
-               }
+               CheckIfStatementAfterStopRunGoBack(paragraphSectionName, node);
             }            
-            if (firstStatementsAfter?.Any() == true)
-            {
-                DiagnosticUtils.AddError(firstStatementsAfter[0], "In \'" + node.Name + "\', there should be no statement after \"STOP RUN\" or \"GOBACK\"", MessageCode.Warning);
-            }
         }
 
         public static void CheckSection(Section section)
@@ -767,6 +753,19 @@ namespace TypeCobol.Compiler.Diagnostics
             Check(paragraph, paragraph.SymbolTable.GetParagraph(paragraph.Name));
         }
 
+        private static bool CheckIfStatementAfterStopRunGoBack(string paragraphSectionName, Node node)
+        {
+            // search the first statement GoBack or Stop; then skip this node; then search if there is/are node of type not {End}
+            List<Node> firstStatementsAfter = node.Children.SkipWhile(cc => !(cc is Nodes.Goback || cc is Nodes.Stop)).Skip(1).ToList();
+            if (firstStatementsAfter.Any() && (firstStatementsAfter.All(cc => cc is Nodes.End) == false))
+            {
+                DiagnosticUtils.AddError(firstStatementsAfter[0],
+                    "In \'" + paragraphSectionName + "\', there should be no statement after \"STOP RUN\" or \"GOBACK\"",
+                    MessageCode.Warning);
+                return true;
+            }
+            return false;
+        }
     }
 
     class WriteTypeConsistencyChecker
