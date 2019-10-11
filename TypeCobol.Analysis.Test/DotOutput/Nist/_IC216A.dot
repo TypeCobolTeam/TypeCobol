@@ -1,0 +1,33 @@
+digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{CALL-TEST-1. Block1|MoveStatement\l}"
+]
+Block2 [
+label = "{CALL-TEST-2. Block2|MoveStatement\l}"
+]
+Block3 [
+label = "{CALL-TEST-2. Block3|MoveStatement\l}"
+]
+Block4 [
+label = "{CALL-TEST-2. Block4|MoveStatement\l}"
+]
+Block5 [
+label = "{IC217-EXIT. Block5|ExitProgramStatement\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block2 -> Block3
+Block3 -> Block4
+Block4 -> Block5
+
+}

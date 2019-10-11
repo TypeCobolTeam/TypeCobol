@@ -30,7 +30,7 @@ namespace TypeCobol.Codegen {
         /// <param name="path"></param>
         /// <param name="skeletons"></param>
         /// <param name="autoRemarks"></param>
-        /// <param name="copies"></param>        
+        /// <param name="copies"></param>
         public static void ParseGenerateCompare(string path, List<Skeleton> skeletons = null, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null) {
             ParseGenerateCompare(path, skeletons, DocumentFormat.RDZReferenceFormat, typeCobolVersion, autoRemarks, copies);
         }

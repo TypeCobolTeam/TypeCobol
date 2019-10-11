@@ -1,0 +1,21 @@
+digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{NC303M-CONTROL. Block1|    ALTER NC303M-GOTO TO PROCEED TO NC303M-GOTO-2          NC303M-GOTO-2 TO PROCEED TO NC303M-CONTROL\l}"
+]
+Block2 [
+label = "{NC303M-CONTROL. Block2|    STOP RUN\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+
+}

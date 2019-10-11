@@ -1,0 +1,24 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MainProgram.
+       data division.
+       working-storage section.
+      
+      *Complex USED Typedef
+       01 Typedef1 TYPEDEF STRICT global.
+              10 td-var33     type SubPgm1::Typedef4.
+      
+       01 Var1 type Typedef1 global.
+      
+       procedure division.
+            move Var1::td-var4 to Var1::td-var40::td-var42.
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. SubPgm1.
+       data division.
+       working-storage section.
+       01 Typedef4 TYPEDEF STRICT PUBLIC.
+           05 td-var4         pic X.
+           05 td-var40.
+              10 td-var41     pic X.
+              10 td-var42     pic X.
+       END PROGRAM SubPgm1.
+       END PROGRAM MainProgram.
