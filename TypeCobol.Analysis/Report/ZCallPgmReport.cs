@@ -106,7 +106,7 @@ namespace TypeCobol.Analysis.Report
         /// </summary>
         /// <param name="dfaBuilder">The Dfa Builder</param>
         /// <param name="up">The use Point</param>
-        void OnCallUsePoint(DataFlowGraphBuilder<Node, DfaBasicBlockInfo<Symbol>, Symbol> dfaBuilder, DfaUsePoint<Node, Symbol> up)
+        void OnCallUsePoint(DataFlowGraphBuilder<Node, Symbol> dfaBuilder, DfaUsePoint<Node, Symbol> up)
         {
             switch (up.Instruction.CodeElement.Type)
             {
@@ -146,7 +146,7 @@ namespace TypeCobol.Analysis.Report
         /// </summary>
         /// <param name="dfaBuilder">The Dfa Builder</param>
         /// <param name="dp">The Def Point</param>
-        private void OnDefPoint(DataFlowGraphBuilder<Node, DfaBasicBlockInfo<Symbol>, Symbol> dfaBuilder, DfaDefPoint<Node, Symbol> dp)
+        private void OnDefPoint(DataFlowGraphBuilder<Node, Symbol> dfaBuilder, DfaDefPoint<Node, Symbol> dp)
         {
             VariableSymbol sym = (VariableSymbol)dp.Variable;
             Symbol parent = null;
