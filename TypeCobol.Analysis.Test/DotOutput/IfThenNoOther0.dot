@@ -1,0 +1,22 @@
+﻿digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{Block1|    IF A = 10 THEN\l      DISPLAY \"A = 10\"\l      DISPLAY \"RIGHT ?\"\l}"
+]
+Block2 [
+label = "{Block2|}"
+]
+Block0 -> Block1
+Block0 -> Block2
+Block1 -> Block2
+
+}

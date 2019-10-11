@@ -1,0 +1,56 @@
+digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{IC401M-USE. Block1|UseStatement\l}"
+]
+Block2 [
+label = "{Block2|}"
+]
+Block3 [
+label = "{IC401M-CONTROL. Block3|}"
+]
+Block4 [
+label = "{Block4|PerformProcedureStatement\l}"
+]
+subgraph cluster_1{
+color = blue;
+label = "IC401M-CANCEL";
+Block8 [
+label = "{IC401M-CANCEL. Block8|CancelStatement\l}"
+]
+Block9 [
+label = "{IC401M-BYREF. Block9|CallStatement\l}"
+]
+Block10 [
+label = "{IC401M-BYCONT. Block10|CallStatement\l}"
+]
+Block8 -> Block9
+Block9 -> Block10
+
+}
+Block4 -> Block8 [style=dashed]
+
+Block5 [
+label = "{Block5|}"
+]
+Block6 [
+label = "{IC401M-CONTROL. Block6|StopStatement\l}"
+]
+Block0 -> Block1
+Block0 -> Block2
+Block2 -> Block3
+Block3 -> Block4
+Block4 -> Block5
+Block5 -> Block6
+
+}

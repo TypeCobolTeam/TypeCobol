@@ -13,9 +13,9 @@
        PROGRAM-ID. Tester.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01  var1 Type TYPEPGM::typeOfDaysPublic.
-       01  var1 Type TYPEpgm::typeOFDAYSPUBLIC.
-       01  var1 Type typepgm::typeofdayspublic.
+       01 var1 Type TYPEPGM::typeOfDaysPublic.
+       01 var1 Type TYPEpgm::typeOFDAYSPUBLIC.
+       01 var1 Type typepgm::typeofdayspublic.
 
        01 var2 Type typepgm::typeOfDaysPrivate.
        01 var2 Type typepgm::typeOFDAYSPRIVATE.

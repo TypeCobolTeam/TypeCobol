@@ -15,6 +15,8 @@ using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Tools.Options_Config;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Report;
+using TypeCobol.Compiler.Domain;
+using TypeCobol.Analysis;
 
 namespace TypeCobol.Server
 {
@@ -111,12 +113,28 @@ namespace TypeCobol.Server
         {
             SymbolTable baseTable = null;
 
+#if DOMAIN_CHECKER
+            //----------------------------------------------------------------------
+            //Register a static SymbolTableBuilder for a Program as a Node Listener.
+            //----------------------------------------------------------------------
+            if (!config.UseDfa)
+            {//Only the Dfa mode is not activated
+                Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(() => new ProgramSymbolTableBuilder());
+            }
+#endif
+            CfgDfaContext cfgDfaContext = null;
+            if (config.UseDfa)
+            {
+                cfgDfaContext = new CfgDfaContext(CfgDfaContext.Mode.Dfa);
+                cfgDfaContext.Initialize();
+            }
+
             #region Dependencies parsing
             var depParser = new Parser();
             bool diagDetected = false;
             if (config.ExecToStep > ExecutionStep.Preprocessor)
             {
-                #region Event Diags Handler
+#region Event Diags Handler
                 EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DiagnosticsErrorEvent = delegate (object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
                 {
                     //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
@@ -131,7 +149,7 @@ namespace TypeCobol.Server
                     //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
                     Server.AddError(errorWriter, diagEvent.Path, diagEvent.Diagnostic);
                 };
-                #endregion
+#endregion
 
                 depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load intrinsic
                 depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, depParser.CustomSymbols, config.InputFiles, config.CopyFolders, DependencyErrorEvent); //Load dependencies
@@ -141,7 +159,7 @@ namespace TypeCobol.Server
             }
 
             baseTable = depParser.CustomSymbols;
-            #endregion
+#endregion
 
             var typeCobolOptions = new TypeCobolOptions(config);
 
@@ -173,7 +191,7 @@ namespace TypeCobol.Server
                     throw new ParsingException(MessageCode.ParserInit, ex.Message, inputFilePath, ex); //Make ParsingException trace back to RunOnce()
                 }
 
-                #region Copy Report Init
+#region Copy Report Init
 
                 if (config.ExecToStep >= ExecutionStep.CrossCheck)
                 {
@@ -188,15 +206,24 @@ namespace TypeCobol.Server
                     }
                     if (!string.IsNullOrEmpty(config.ReportZCallFilePath))
                     {
-                        Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(
-                            () => {
-                                var report = new Compiler.Report.ZCallPgmReport(config.ReportZCallFilePath);
-                                reports.Add(report); return report;
-                            });
-                        
+                        if (!config.UseDfa)
+                        {
+                            Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(
+                                () =>
+                                {
+                                    var report = new Compiler.Report.ZCallPgmReport(config.ReportZCallFilePath);
+                                    reports.Add(report); return report;
+                                });
+                        }
+                        else
+                        {//ZCallPgmReport using DFA
+                            TypeCobol.Analysis.Report.ZCallPgmReport report = 
+                                new TypeCobol.Analysis.Report.ZCallPgmReport(cfgDfaContext, config.ReportZCallFilePath);
+                            reports.Add(report);
+                        }
                     }
                 }
-                #endregion
+#endregion
 
                 //Parse input file
                 parser.Parse(inputFilePath);
