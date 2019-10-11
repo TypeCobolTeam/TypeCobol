@@ -1,0 +1,37 @@
+digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{CALL-TEST-001. Block1|    MOVE DN1 TO WS1\l}"
+]
+Block2 [
+label = "{CALL-TEST-001. Block2|    ADD 1 TO WS1\l}"
+]
+Block3 [
+label = "{CALL-TEST-001. Block3|    ADD 1 TO WS2\l}"
+]
+Block4 [
+label = "{CALL-TEST-001. Block4|    MOVE WS1 TO DN3\l}"
+]
+Block5 [
+label = "{CALL-TEST-001. Block5|    MOVE WS2 TO DN4\l}"
+]
+Block6 [
+label = "{CALL-EXIT-001. Block6|    EXIT PROGRAM\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block2 -> Block3
+Block3 -> Block4
+Block4 -> Block5
+Block5 -> Block6
+
+}

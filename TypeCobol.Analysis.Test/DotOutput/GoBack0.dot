@@ -1,0 +1,17 @@
+﻿digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|   COMPUTE IPC = IPC1 * IPC2\l}"
+]
+Block1 [
+label = "{Block1|   GOBACK\l}"
+]
+Block0 -> Block1
+
+}

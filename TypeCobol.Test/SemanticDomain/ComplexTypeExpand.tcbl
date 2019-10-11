@@ -1,0 +1,46 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ComplexTypeExpand.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      
+       01 PT TYPEDEF STRICT.
+           05 X PIC 9(04).
+           05 Y PIC 9(04).
+      
+       01 RECTANGLE TYPEDEF STRICT.
+          02 X1 PIC 9(4) COMP-5.
+          02 Y1 PIC 9(4) COMP-5.
+          02 X2 PIC 9(4) COMP-5.
+          02 Y2 PIC 9(4) COMP-5.
+      
+       01 rcarray TYPE RECTANGLE OCCURS 10.
+      
+       01 RECTPT TYPEDEF STRICT.
+          05 PT1 TYPE PT.
+          05 PT2 TYPE PT.
+      
+       01 rcpt TYPE RECTPT.
+      
+       01 RECTARRAY TYPEDEF STRICT.
+           05 a OCCURS 10.
+                10 rc TYPE RECTPT.
+      
+       01 grcarray.
+           05 rc TYPE PT.
+           05 xx PIC X(9).
+           05 grp.
+                10 arr TYPE RECTARRAY.
+      
+       01 Account TYPEDEF STRICT.
+           05 HolderNumber PIC 9(04) COMP-5.
+           05 Holders      pic X(30)
+                           OCCURS 99 TIMES
+                           DEPENDING ON HolderNumber
+                           INDEXED BY Idx.
+      
+       01 acc TYPE Account.
+      
+       PROCEDURE DIVISION.
+         .
+       END PROGRAM ComplexTypeExpand.
+      
