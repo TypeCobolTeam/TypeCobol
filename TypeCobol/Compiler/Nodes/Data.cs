@@ -407,50 +407,50 @@ namespace TypeCobol.Compiler.Nodes {
         /// <returns></returns>
         private long GetPhysicalLength()
         {
-            TypeCobolType.UsageFormat usage = TypeCobolType.UsageFormat.None;
+            Types.Type.UsageFormat usage = Types.Type.UsageFormat.None;
             if (Usage != null)
             {
                 switch (Usage.Value)
                 {
                     case DataUsage.Binary:
                     case DataUsage.NativeBinary:
-                        usage = TypeCobolType.UsageFormat.Binary;
+                        usage = Types.Type.UsageFormat.Binary;
                         break;
                     case DataUsage.FloatingPoint:
-                        usage = TypeCobolType.UsageFormat.Comp1;
+                        usage = Types.Type.UsageFormat.Comp1;
                         break;
                     case DataUsage.Display:
-                        usage = TypeCobolType.UsageFormat.Display;
+                        usage = Types.Type.UsageFormat.Display;
                         break;
                     case DataUsage.FunctionPointer:
-                        usage = TypeCobolType.UsageFormat.FunctionPointer;
+                        usage = Types.Type.UsageFormat.FunctionPointer;
                         break;
                     case DataUsage.Index:
-                        usage = TypeCobolType.UsageFormat.Index;
+                        usage = Types.Type.UsageFormat.Index;
                         break;
                     case DataUsage.National:
-                        usage = TypeCobolType.UsageFormat.National;
+                        usage = Types.Type.UsageFormat.National;
                         break;
                     case DataUsage.None:
-                        usage = TypeCobolType.UsageFormat.None;
+                        usage = Types.Type.UsageFormat.None;
                         break;
                     case DataUsage.ObjectReference:
-                        usage = TypeCobolType.UsageFormat.ObjectReference;
+                        usage = Types.Type.UsageFormat.ObjectReference;
                         break;
                     case DataUsage.PackedDecimal:
-                        usage = TypeCobolType.UsageFormat.PackedDecimal;
+                        usage = Types.Type.UsageFormat.PackedDecimal;
                         break;
                     case DataUsage.Pointer:
-                        usage = TypeCobolType.UsageFormat.Pointer;
+                        usage = Types.Type.UsageFormat.Pointer;
                         break;
                     case DataUsage.ProcedurePointer:
-                        usage = TypeCobolType.UsageFormat.ProcedurePointer;
+                        usage = Types.Type.UsageFormat.ProcedurePointer;
                         break;
                     case DataUsage.LongFloatingPoint:
-                        usage = TypeCobolType.UsageFormat.Comp2;
+                        usage = Types.Type.UsageFormat.Comp2;
                         break;
                     case DataUsage.DBCS:
-                        usage = TypeCobolType.UsageFormat.Display1;
+                        usage = Types.Type.UsageFormat.Display1;
                         break;
                 }
             }
@@ -459,7 +459,7 @@ namespace TypeCobol.Compiler.Nodes {
             {
                 if (Usage != null && Usage.Value != DataUsage.None)
                 {
-                    return new TypeCobolType(TypeCobolType.Tags.Usage, usage).Length;
+                    return new Types.Type(Types.Type.Tags.Usage, usage).Length;
                 }
                 return 1;
             }

@@ -149,9 +149,9 @@ namespace TypeCobol
 
 
 
-		public static Parser Parse(string path, DocumentFormat format, bool autoRemarks = false, IList<string> copies = null) {
+		public static Parser Parse(string path, DocumentFormat format, bool autoRemarks = false, IList<string> copies = null, ExecutionStep executionStep = ExecutionStep.Generate) {
 			var parser = new Parser();
-            var typeCobolOption = new TypeCobolOptions() { ExecToStep = ExecutionStep.Generate };
+            var typeCobolOption = new TypeCobolOptions() { ExecToStep = executionStep };
 #if EUROINFO_RULES
 		    typeCobolOption.AutoRemarksEnable = autoRemarks;
 #endif

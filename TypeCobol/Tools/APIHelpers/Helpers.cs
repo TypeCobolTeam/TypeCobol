@@ -11,6 +11,9 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+#if DOMAIN_CHECKER
+using TypeCobol.Compiler.Domain;
+#endif
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.CustomExceptions;
 using String = System.String;
@@ -70,6 +73,11 @@ namespace TypeCobol.Tools.APIHelpers
                     throw new CopyLoadingException(e.Message + "\n" + e.StackTrace, path, e, logged: true, needMail: true);
                 }
             }
+
+#if DOMAIN_CHECKER
+            SymbolTableBuilder.TransfertAllProgramsToIntrinsics();
+#endif
+
             return table;
         }
 

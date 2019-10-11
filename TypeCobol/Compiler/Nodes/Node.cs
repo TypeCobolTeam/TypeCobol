@@ -7,6 +7,7 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Symbols;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Tools;
 
@@ -43,6 +44,37 @@ namespace TypeCobol.Compiler.Nodes {
 
         [CanBeNull]
         protected abstract CodeElement InternalCodeElement {  get;}
+
+        /// <summary>
+        /// The Semantic data of this Code Element, usually type information.
+        /// This is a Weak reference because the data can be hold elsewhere, and it 
+        /// can be garbage collected at any moment.
+        /// </summary>
+        System.WeakReference _mySemanticData = null;
+        public virtual ISemanticData SemanticData
+        {
+            get
+            {
+                lock (this)
+                {
+                    return _mySemanticData != null ? (ISemanticData)_mySemanticData.Target : null;
+                }
+            }
+            set
+            {
+                lock (this)
+                {
+                    if (_mySemanticData == null)
+                        _mySemanticData = new System.WeakReference(value);
+                    else
+                        _mySemanticData.Target = value;
+                    if (value != null && value.SemanticKind == SemanticKinds.Symbol)
+                    {
+                        ((Symbol) value).TargetNode = this;
+                    }
+                }
+            }
+        }
 
         /// <summary>Parent node (weakly-typed)</summary>
         public Node Parent { get; private set; }

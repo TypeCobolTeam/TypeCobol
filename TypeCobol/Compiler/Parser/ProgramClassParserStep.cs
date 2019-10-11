@@ -65,9 +65,9 @@ namespace TypeCobol.Compiler.Parser
             parser.Builder = builder;
             ParserDiagnostic programClassBuilderError = null;
 
-            builder.SyntaxTree = new SyntaxTree(); //Initializie SyntaxTree for the current source file
+            builder.SyntaxTree = new SyntaxTree(); //Initialize SyntaxTree for the current source file
             builder.CustomSymbols = customSymbols;
-            builder.Dispatcher = new NodeDispatcher();
+            builder.Dispatcher = new ProgramClassBuilderNodeDispatcher();
             builder.Dispatcher.CreateListeners();
 
             // Try to parse a Cobol program or class, with cup w are also building the The Syntax Tree Node
