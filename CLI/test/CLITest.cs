@@ -97,6 +97,9 @@ namespace CLI.Test
         
 
             [TestMethod]
+#if DOMAIN_CHECKER
+            [Ignore]//Because It will detect TypeDef Circularity two times.
+#endif
         public void TestCircularTypedef_1()
         {
             CLITestHelper.Test("CircularTypedef_1", ReturnCode.ParsingDiagnostics);
@@ -255,6 +258,26 @@ namespace CLI.Test
         public void TestValueClauses()
         {
             CLITestHelper.Test("value_clauses", ReturnCode.Success);
+        }
+
+        /// <summary>
+        /// Test the reporting of modules call via ZCall Pgm like instructions.
+        /// This test is for the MOVE instruction.
+        /// </summary>
+        [TestMethod]
+        public void TestZCallPgmReportDFA_1()
+        {
+            CLITestHelper.Test("zcallpgmreportdfa_1", ReturnCode.Success);
+        }
+
+        /// <summary>
+        /// Test the reporting of modules call via ZCall Pgm like instructions.
+        /// This test is for the SET instruction on level 88 variables.
+        /// </summary>
+        [TestMethod]
+        public void TestZCallPgmReportDFA_2()
+        {
+            CLITestHelper.Test("zcallpgmreportdfa_2", ReturnCode.Success);
         }
     }
 

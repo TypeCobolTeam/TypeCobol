@@ -1,0 +1,85 @@
+digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{EXIT-TEST-001. Block1|    IF DN1 IS NOT EQUAL TO 1\l}"
+]
+Block2 [
+label = "{Block2|         GO TO EXIT-TEST-002\l}"
+]
+Block8 [
+label = "{EXIT-TEST-002. Block8|    IF DN1 IS NOT EQUAL TO 2\l}"
+]
+Block9 [
+label = "{Block9|         GO TO EXIT-TEST-003\l}"
+]
+Block15 [
+label = "{EXIT-TEST-003. Block15|    IF DN1 NOT EQUAL TO 3\l}"
+]
+Block16 [
+label = "{Block16|         GO TO EXIT-TEST-004\l}"
+]
+Block22 [
+label = "{EXIT-TEST-004. Block22|    MOVE 4 TO DN2\l}"
+]
+Block23 [
+label = "{EXIT-TEST-004. Block23|    GO TO EXIT-STATEMENT-004\l}"
+]
+Block26 [
+label = "{EXIT-STATEMENT-004. Block26|    EXIT PROGRAM\l}"
+]
+Block18 [
+label = "{Block18|}"
+]
+Block19 [
+label = "{EXIT-TEST-003. Block19|    MOVE 3 TO DN2\l}"
+]
+Block20 [
+label = "{EXIT-STATEMENT-003. Block20|    EXIT PROGRAM\l}"
+]
+Block11 [
+label = "{Block11|}"
+]
+Block12 [
+label = "{EXIT-TEST-002. Block12|    MOVE 2 TO DN2\l}"
+]
+Block13 [
+label = "{EXIT-STATEMENT-002. Block13|    EXIT PROGRAM\l}"
+]
+Block4 [
+label = "{Block4|}"
+]
+Block5 [
+label = "{EXIT-TEST-001. Block5|    MOVE 1 TO DN2\l}"
+]
+Block6 [
+label = "{EXIT-STATEMENT-001. Block6|    EXIT PROGRAM\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block1 -> Block4
+Block2 -> Block8
+Block8 -> Block9
+Block8 -> Block11
+Block9 -> Block15
+Block15 -> Block16
+Block15 -> Block18
+Block16 -> Block22
+Block22 -> Block23
+Block23 -> Block26
+Block18 -> Block19
+Block19 -> Block20
+Block11 -> Block12
+Block12 -> Block13
+Block4 -> Block5
+Block5 -> Block6
+
+}

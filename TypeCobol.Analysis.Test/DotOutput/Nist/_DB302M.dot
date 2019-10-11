@@ -1,0 +1,29 @@
+digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{BUGGING. Block1|UseStatement\l}"
+]
+Block2 [
+label = "{Block2|}"
+]
+Block3 [
+label = "{DB302M-CONTROL. Block3|DisplayStatement\l}"
+]
+Block4 [
+label = "{DB302M-CONTROL. Block4|StopStatement\l}"
+]
+Block0 -> Block1
+Block0 -> Block2
+Block2 -> Block3
+Block3 -> Block4
+
+}

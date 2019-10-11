@@ -12,6 +12,9 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugSemanticDomain|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS,DOMAIN_CHECKER</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr4.Runtime, Version=4.6.0.0, Culture=neutral, PublicKeyToken=e9931a4108ef2354, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Antlr4.Runtime.4.6.6-rc001\lib\net45\Antlr4.Runtime.dll</HintPath>
@@ -40,6 +43,10 @@
     <ProjectReference Include="..\..\Codegen\src\Codegen.csproj">
       <Project>{4034cbc5-d3dc-45e5-81f2-605579e6b876}</Project>
       <Name>Codegen</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TypeCobol.Analysis\TypeCobol.Analysis.csproj">
+      <Project>{c3250314-c22b-4eb6-9174-17d0791af7be}</Project>
+      <Name>TypeCobol.Analysis</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\TypeCobol\TypeCobol.csproj">
       <Project>{7ac7a3e5-91f2-44bf-955d-86cc61375742}</Project>

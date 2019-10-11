@@ -1,0 +1,29 @@
+digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{USNG-VERIFY-04. Block1|    MOVE 2 TO IC118-TEMP1\l}"
+]
+Block2 [
+label = "{USNG-VERIFY-04. Block2|    ADD TWO TO IC118-TEMP2\l}"
+]
+Block3 [
+label = "{USNG-DISPLAY-04. Block3|    DISPLAY \"IC118M CALLED\"\l}"
+]
+Block4 [
+label = "{IC118-EXIT. Block4|    EXIT PROGRAM\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block2 -> Block3
+Block3 -> Block4
+
+}

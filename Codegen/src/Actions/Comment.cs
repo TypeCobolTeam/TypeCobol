@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Codegen.Actions
@@ -51,7 +52,7 @@ namespace TypeCobol.Codegen.Actions
                     erasedNodes.Add(this.Node);
                     this.Node.ListChildren(erasedNodes);
                     erasedNodes.TrimExcess();
-                    ErasedNodes = erasedNodes;
+                    ErasedNodes = erasedNodes.Where(n => !(n is IndexDefinition)).ToList();
                 }
             }
 
