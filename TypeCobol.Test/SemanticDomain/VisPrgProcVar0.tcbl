@@ -1,0 +1,23 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. VisPrgProcVar0.
+       AUTHOR. MAYANJE.
+       DATA DIVISION.
+       GLOBAL-STORAGE SECTION.
+       01 Var0 PIC 9(4).
+       WORKING-STORAGE SECTION.
+       01 Var1 PIC X GLOBAL.
+       LOCAL-STORAGE SECTION.
+       01 Var2 PIC 9 GLOBAL.
+      
+       PROCEDURE DIVISION.
+       declare procedure Nested.
+       PROCEDURE DIVISION.
+           DISPLAY Var0
+           DISPLAY Var1
+           DISPLAY Var2
+           .
+       end-declare.
+           .
+      
+       END PROGRAM VisPrgProcVar0.
+      

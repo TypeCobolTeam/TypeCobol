@@ -1,0 +1,98 @@
+digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{LINK-TEST-08. Block1|AddStatement\l}"
+]
+Block2 [
+label = "{LINK-TEST-08. Block2|IfStatement\l}"
+]
+Block3 [
+label = "{Block3|GotoStatement\l}"
+]
+Block24 [
+label = "{LINK-FAIL-08. Block24|AddStatement\l}"
+]
+Block25 [
+label = "{LINK-FAIL-08. Block25|MoveStatement\l}"
+]
+Block26 [
+label = "{LINK-FAIL-08. Block26|GotoStatement\l}"
+]
+Block22 [
+label = "{LINK-EXIT-08. Block22|ExitProgramStatement\l}"
+]
+Block5 [
+label = "{Block5|}"
+]
+Block6 [
+label = "{LINK-TEST-08. Block6|IfStatement\l}"
+]
+Block7 [
+label = "{Block7|GotoStatement\l}"
+]
+Block9 [
+label = "{Block9|}"
+]
+Block10 [
+label = "{LINK-TEST-08. Block10|IfStatement\l}"
+]
+Block11 [
+label = "{Block11|GotoStatement\l}"
+]
+Block13 [
+label = "{Block13|}"
+]
+Block14 [
+label = "{LINK-TEST-08. Block14|IfStatement\l}"
+]
+Block15 [
+label = "{Block15|GotoStatement\l}"
+]
+Block17 [
+label = "{Block17|}"
+]
+Block18 [
+label = "{LINK-TEST-08. Block18|IfStatement\l}"
+]
+Block19 [
+label = "{Block19|GotoStatement\l}"
+]
+Block21 [
+label = "{Block21|}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block2 -> Block3
+Block2 -> Block5
+Block3 -> Block24
+Block24 -> Block25
+Block25 -> Block26
+Block26 -> Block22
+Block5 -> Block6
+Block6 -> Block7
+Block6 -> Block9
+Block7 -> Block24
+Block9 -> Block10
+Block10 -> Block11
+Block10 -> Block13
+Block11 -> Block24
+Block13 -> Block14
+Block14 -> Block15
+Block14 -> Block17
+Block15 -> Block24
+Block17 -> Block18
+Block18 -> Block19
+Block18 -> Block21
+Block19 -> Block24
+Block21 -> Block22
+
+}

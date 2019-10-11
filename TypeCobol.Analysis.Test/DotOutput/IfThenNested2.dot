@@ -1,0 +1,44 @@
+﻿digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|    IF A = 10 THEN\l}"
+]
+Block1 [
+label = "{Block1|      DISPLAY \"A = 10\"\l      DISPLAY \"RIGHT ?\"\l      IF B = 20 THEN\l}"
+]
+Block2 [
+label = "{Block2|         DISPLAY \"B = 20\"\l         DISPLAY \"INSIDE A\"\l         IF C = 30 THEN\l}"
+]
+Block3 [
+label = "{Block3|             DISPLAY \"C = 30\"\l             DISPLAY \"INSIDE B\"\l}"
+]
+Block4 [
+label = "{Block4|         DISPLAY \"TEST C DONE\"\l}"
+]
+Block5 [
+label = "{Block5|      DISPLAY \"TEST B DONE\"\l}"
+]
+Block6 [
+label = "{Block6|}"
+]
+Block7 [
+label = "{Block7|    DISPLAY \"TEST A DONE\"\l}"
+]
+Block0 -> Block1
+Block0 -> Block6
+Block1 -> Block2
+Block1 -> Block5
+Block2 -> Block3
+Block2 -> Block4
+Block3 -> Block4
+Block4 -> Block5
+Block5 -> Block6
+Block6 -> Block7
+
+}

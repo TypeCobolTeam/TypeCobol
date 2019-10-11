@@ -1,0 +1,65 @@
+﻿digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|    EVALUATE menu-input\l      WHEN \"0\"\l}"
+]
+Block1 [
+label = "{Block1|        DISPLAY \"OPTION 0\"\l}"
+]
+Block12 [
+label = "{Block12|}"
+]
+Block2 [
+label = "{Block2|      WHEN \"1\" THRU \"9\"\l}"
+]
+Block3 [
+label = "{Block3|        DISPLAY \"OPTION 1-9\"\l}"
+]
+Block11 [
+label = "{Block11|}"
+]
+Block4 [
+label = "{Block4|      WHEN \"R\"\l}"
+]
+Block5 [
+label = "{Block5|        DISPLAY \"OPTION R\"\l}"
+]
+Block10 [
+label = "{Block10|}"
+]
+Block6 [
+label = "{Block6|      WHEN \"X\"\l}"
+]
+Block7 [
+label = "{Block7|        DISPLAY \"OPTION X\"\l}"
+]
+Block9 [
+label = "{Block9|}"
+]
+Block8 [
+label = "{Block8|        DISPLAY \"NO OPTION\"\l}"
+]
+Block0 -> Block1
+Block0 -> Block2
+Block1 -> Block12
+Block2 -> Block3
+Block2 -> Block4
+Block3 -> Block11
+Block11 -> Block12
+Block4 -> Block5
+Block4 -> Block6
+Block5 -> Block10
+Block10 -> Block11
+Block6 -> Block7
+Block6 -> Block8
+Block7 -> Block9
+Block9 -> Block10
+Block8 -> Block9
+
+}
