@@ -145,6 +145,11 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
+        /// Determine if this Cfg is entered in its Procedure.
+        /// </summary>
+        public bool IsInProcedure => ProcedureNode != null;
+
+        /// <summary>
         /// All basic blocks that can be reached via control flow out of the given basic block.
         /// </summary>
         /// <param name="basicBlock">The basic block to get the successors</param>
