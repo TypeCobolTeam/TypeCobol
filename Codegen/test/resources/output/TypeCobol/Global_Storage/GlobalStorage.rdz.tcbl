@@ -68,7 +68,7 @@
 
                           
       *DECLARE PROCEDURE MyProc PRIVATE
-      *    INPUT    myDate      TYPE DATE.
+      *    IN-OUT    myDate      TYPE DATE.
       
        MOVE G-Date TO  G-Date.
       
@@ -131,10 +131,10 @@
        END PROGRAM GlobalStorageTest.
       *
       *DECLARE PROCEDURE MyProc PRIVATE
-      *    INPUT    myDate      TYPE DATE.
+      *    IN-OUT    myDate      TYPE DATE.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c0127659.
+       PROGRAM-ID. c155ef8b.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SOURCE-COMPUTER. IBM-370
@@ -144,7 +144,7 @@
        Data division.
        WORKING-STORAGE Section.
       *GlobalStorageTest.MyProc - Params :
-      *		input(myDate: DATE)
+      *		in-out(myDate: DATE)
                                
       *01 TestCtx TYPE Bool.
        01  TestCtx-value PIC X VALUE LOW-VALUE.
@@ -155,7 +155,7 @@
                             
        LINKAGE SECTION.
       *GlobalStorageTest.MyProc - Params :
-      *		input(myDate: DATE)
+      *		in-out(myDate: DATE)
        01 myDate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -193,7 +193,7 @@
              USING BY REFERENCE myDate
            .
       *GlobalStorageTest.MyProc - Params :
-      *		input(myDate: DATE)
+      *		in-out(myDate: DATE)
       * Get the data from the global storage section
            CALL 'b14e12b4' USING
                by reference address of TC-GlobalData
@@ -202,7 +202,7 @@
            MOVE G-Date TO myDate.
       *    MOVE G-TechCtx TO TestCtx.
            MOVE G-TechCtx-value TO TestCtx-value.
-       END PROGRAM c0127659.
+       END PROGRAM c155ef8b.
       *
       * Global Storage Section variables
       *_________________________________________________________________

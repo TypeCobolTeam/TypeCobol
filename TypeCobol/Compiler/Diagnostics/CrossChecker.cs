@@ -506,7 +506,54 @@ namespace TypeCobol.Compiler.Diagnostics
                         node.GetEnclosingProgramOrFunctionNode().SetFlag(Node.Flag.UseGlobalStorage, true);
                     }
                 }
-                
+
+                if (!isReadStorageArea && node.SymbolTable.CurrentScope == SymbolTable.Scope.Function)
+                {
+                    FunctionDeclaration functionDeclaration = node.GetParent<Nodes.FunctionDeclaration>();
+                    if (functionDeclaration != null)
+                    {
+                        // search node variable in function declaration
+                        var variables = functionDeclaration.SymbolTable.GetVariablesExplicitWithQualifiedName(
+                            area.SymbolReference != null
+                                ? area.SymbolReference.URI
+                                : new URI(area.ToString()), null);
+                        var functionVariables = variables.Select(v => v.Value).ToList();
+                        if (functionVariables.Any())
+                        {
+                            // node variable is in function declaration: check if input parameter
+                            string name = string.Empty;
+                            var qualifiedName = functionVariables.First().QualifiedName;
+                            bool inputIsModified = false;
+                            foreach (var param in functionDeclaration.Profile.InputParameters)
+                            {
+                                if (param.QualifiedName.Equals(qualifiedName))
+                                {
+                                    name = param.Name;
+                                    inputIsModified = true;
+                                }
+                                else if (param.TypeDefinition != null)
+                                {
+                                    // search in typedef
+                                    foreach (var typedef in param.TypeDefinition.Children)
+                                    {
+                                        if (typedef.QualifiedName.Equals(qualifiedName))
+                                        {
+                                            name = param.Name;
+                                            inputIsModified = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (inputIsModified) break;
+                            }
+                            if (inputIsModified)
+                            {
+                                DiagnosticUtils.AddError(node, "Input variable '" + name + "' is modified by an instruction", area.SymbolReference);
+                            }
+                        }
+                    }
+                }
+
                 //add the found DataDefinition to a dictionary depending on the storage area type
                 if (isReadStorageArea)
                 {

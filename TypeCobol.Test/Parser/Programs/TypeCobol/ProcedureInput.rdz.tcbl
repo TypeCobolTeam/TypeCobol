@@ -1,0 +1,40 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Pgm.
+       DATA DIVISION.
+       Working-Storage Section.
+       01 Person typedef strict public.
+          05 LastName  pic X(80).
+          05 FirstName pic X(80).
+       01 myPerson type Person.
+       01 myName PIC X(20) VALUE "mammouth".
+       01 myNbr  PIC 99 VALUE 20.
+       01 result TYPE bool.
+      
+       PROCEDURE DIVISION.
+      
+       DECLARE PROCEDURE IsPersonValid
+           input  pperson TYPE Person
+                  pname PIC X(20)
+           in-out pnbr PIC 99
+           output IsOk Type Bool.
+       DATA DIVISION.
+       Working-Storage Section.
+       PROCEDURE DIVISION.
+           move "ppp" TO pperson::LastName
+           move "ppp" TO LastName
+           move "ggg" to pname
+           move "hh" to PName
+           move "jj" to firstnAme OF PPErson
+           move 30 to pnbr
+           SET IsOk TO True
+           .
+       END-DECLARE.
+      
+       Traitement.
+           call IsPersonValid
+                INPUT myPerson, myName
+                IN-OUT myNbr
+                OUTPUT result
+           GOBACK.
+       END PROGRAM Pgm.
+      

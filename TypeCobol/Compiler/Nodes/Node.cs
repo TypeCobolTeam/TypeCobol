@@ -524,6 +524,15 @@ namespace TypeCobol.Compiler.Nodes {
             return children.OfType<N>().ToList();
         }
 
+        public N GetParent<N>() where N : Node
+        {
+            Node current = this;
+            while (current != null && !(current is N))
+            {
+                current = current.Parent;
+            }
+            return (current == null) ? null : current as N;
+        }
 
         private Program _programNode;
         /// <summary>

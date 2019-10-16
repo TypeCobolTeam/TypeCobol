@@ -1,0 +1,33 @@
+--- Diagnostics ---
+Line 23[35,42] <27, Error, Syntax> - Syntax error : Input variable 'pperson' is modified by an instruction OffendingSymbol=[35,42:LastName]<UserDefinedWord>
+Line 24[26,33] <27, Error, Syntax> - Syntax error : Input variable 'pperson' is modified by an instruction OffendingSymbol=[26,33:LastName]<UserDefinedWord>
+Line 25[26,30] <27, Error, Syntax> - Syntax error : Input variable 'pname' is modified by an instruction OffendingSymbol=[26,30:pname]<UserDefinedWord>
+Line 26[25,29] <27, Error, Syntax> - Syntax error : Input variable 'pname' is modified by an instruction OffendingSymbol=[25,29:PName]<UserDefinedWord>
+Line 27[25,33] <27, Error, Syntax> - Syntax error : Input variable 'pperson' is modified by an instruction OffendingSymbol=[25,33:firstnAme]<UserDefinedWord>
+
+--- Program ---
+PROGRAM: Pgm common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  myPerson:Person
+  myName:Alphanumeric
+  myNbr:Numeric
+  result:BOOL
+-- PARAGRAPHS --
+  Traitement
+-- FUNCTIONS ---
+  IsPersonValid
+        in: pperson:Person
+        in: pname:Alphanumeric
+       out: IsOk:BOOL
+     inout: pnbr:Numeric
+--- Intrinsic:Namespace:Program
+-- TYPES -------
+  Person:Person
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
