@@ -682,13 +682,21 @@ namespace TypeCobol.Compiler.Diagnostics
                 // perform thru
                 performCE.ThroughProcedure = symbol;
 
-                if (symbolTable.ParagraphOrSectionNames.SkipWhile(l => l != performCE.Procedure.Name).Any(l => l == performCE.ThroughProcedure.Name) == false)
+                if (performCE.Procedure != null)
                 {
-                    string firstTypeName = (performCE.Procedure.Type == SymbolType.ParagraphName) ? "paragraph" : "section";
-                    string secondTypeName = (performCE.ThroughProcedure.Type == SymbolType.ParagraphName) ? "paragraph" : "section";
-                    DiagnosticUtils.AddError(perform,
-                        $"The second {secondTypeName} {performCE.ThroughProcedure.Name} of the \"PERFORM THRU\" statement must be defined after the first {firstTypeName} {performCE.Procedure.Name}",
-                        MessageCode.Warning);
+                    if (symbolTable.ParagraphOrSectionNames.SkipWhile(l => l != performCE.Procedure.Name)
+                            .Any(l => l == performCE.ThroughProcedure.Name) == false)
+                    {
+                        string firstTypeName = (performCE.Procedure.Type == SymbolType.ParagraphName)
+                            ? "paragraph"
+                            : "section";
+                        string secondTypeName = (performCE.ThroughProcedure.Type == SymbolType.ParagraphName)
+                            ? "paragraph"
+                            : "section";
+                        DiagnosticUtils.AddError(perform,
+                            $"The second {secondTypeName} {performCE.ThroughProcedure.Name} of the \"PERFORM THRU\" statement must be defined after the first {firstTypeName} {performCE.Procedure.Name}",
+                            MessageCode.Warning);
+                    }
                 }
             }
         }
