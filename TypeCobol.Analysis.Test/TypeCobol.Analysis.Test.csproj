@@ -112,6 +112,12 @@
     <Compile Include="DfaInOutSetsTest.cs" />
     <Compile Include="DfaUseDefSetTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="CfgDfaBuildTests\PrgWithNoProcDiv.cbl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DotOutput\EmptyCfg.dot">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Report\Input\InBulkCallPgm.cbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

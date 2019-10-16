@@ -134,6 +134,15 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
+        /// Constructor
+        /// </summary>
+        public ControlFlowGraph()
+        {    
+            //At least empty if not Initialized
+            AllBlocks = new List<BasicBlock<N, D>>(0);
+        }
+
+        /// <summary>
         /// Intialize the construction of the Control Flow Graph.
         /// </summary>
         internal virtual void Initialize()
@@ -300,9 +309,12 @@ namespace TypeCobol.Analysis.Graph
         /// <param name="callback">CallBack function</param>
         public void DFS(BasicBlockCallback callback)
         {
-            foreach(var root in RootBlocks)
-            { 
-                DFS(root, callback);
+            if (RootBlocks != null)
+            {
+                foreach (var root in RootBlocks)
+                {
+                    DFS(root, callback);
+                }
             }
         }
 

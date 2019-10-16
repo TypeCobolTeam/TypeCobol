@@ -9,6 +9,7 @@ using TypeCobol.Compiler.Symbols;
 using System.IO;
 using TypeCobol.Analysis.Cfg;
 using TypeCobol.Analysis.Dfa;
+using TypeCobol.Analysis.Graph;
 
 namespace TypeCobol.Analysis.Test
 {
@@ -81,8 +82,40 @@ namespace TypeCobol.Analysis.Test
             Assert.IsTrue(listener.ExecSqlSeen);
             //We didn't entered in a PROCEDURE DIVISION
             Assert.IsFalse(ctx.CfgDfaBuilder.Cfg.IsInProcedure);
-			//No basic Block was created
-            Assert.IsNull(ctx.CfgDfaBuilder.Cfg.AllBlocks);
+            //No basic Block was created
+            Assert.IsNotNull(ctx.CfgDfaBuilder.Cfg.AllBlocks);
+            Assert.AreEqual(0, ctx.CfgDfaBuilder.Cfg.AllBlocks.Count);
+        }
+
+        [TestMethod]
+        [TestCategory("CfgDfaBuildTest")]
+        public void PrgWithNoProcDiv()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "CfgDfaBuildTests", "PrgWithNoProcDiv.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+
+            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+
+            Assert.IsTrue(ctx.CfgDfaBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgDfaBuilder.AllCfgBuilder);
+
+            //Try to compute predecessor edges.
+            ctx.CfgDfaBuilder.Cfg.SetupPredecessorEdges();
+
+            //Test Empty Cfg Generated.
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "EmptyCfg.dot");
+            CfgTestUtils.GenDotCfgAndCompare(ctx.CfgDfaBuilder.Cfg, path, expectedPath, true);
+
+            //Test DFA algorithms.
+            TypeCobolDataFlowGraphBuilder dfaBuilder = new TypeCobolDataFlowGraphBuilder(ctx.CfgDfaBuilder.Cfg);
+            dfaBuilder.ComputeUseList();
+            dfaBuilder.ComputeDefList();
+            dfaBuilder.ComputeGenSet();
+            dfaBuilder.ComputeKillSet();
+            dfaBuilder.ComputeInOutSet();
+            dfaBuilder.ComputeUseDefSet();
         }
     }
 }
+
