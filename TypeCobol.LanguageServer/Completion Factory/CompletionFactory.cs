@@ -238,7 +238,8 @@ namespace TypeCobol.LanguageServer
             foreach (var potentialVariable in potentialVariablesForCompletion.Where(v => v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)).Distinct())
                 SearchVariableInTypesAndLevels(node, potentialVariable, ref completionItems); //Add potential variables to completionItems*           
 
-
+            CompletionFactoryHelpers.Case textCase = CompletionFactoryHelpers.GetTextCase(codeElement.ConsumedTokens.First(t => t.TokenType == TokenType.CALL).Text);
+            Dictionary<string, string> paramWithCase = CompletionFactoryHelpers.GetParamsWithCase(textCase);
             //If signature of procedure is available
             if (procedureSignatureContext != null)
             {
@@ -246,38 +247,40 @@ namespace TypeCobol.LanguageServer
                 if (lastSignificantToken.TokenType == TokenType.INPUT
                     && alreadyGivenParametersCount == (procedureSignatureContext.Profile.InputParameters.Count - 1))
                 {
-                    if (procedureSignatureContext.Profile.InoutParameters.Count != 0) {
-                        AddIn_OutSuffixToCompletionItems(lastSignificantToken, completionItems);
+                    if (procedureSignatureContext.Profile.InoutParameters.Count != 0)
+                    {
+                        AddIn_OutSuffixToCompletionItems(lastSignificantToken, completionItems, paramWithCase);
 
                     }
                     else if (procedureSignatureContext.Profile.OutputParameters.Count != 0)
                     {
-                        AddOutputSuffixToCompletionItems(lastSignificantToken, completionItems);
+                        AddOutputSuffixToCompletionItems(lastSignificantToken, completionItems, paramWithCase);
                     }
                 }
 
                 //Add OUTPUT after IN-OUT ?
-                else if (lastSignificantToken.TokenType == TokenType.IN_OUT 
+                else if (lastSignificantToken.TokenType == TokenType.IN_OUT
                          && alreadyGivenParametersCount == (procedureSignatureContext.Profile.InoutParameters.Count - 1)
-                         && procedureSignatureContext.Profile.OutputParameters.Count != 0) {
-                    AddOutputSuffixToCompletionItems(lastSignificantToken, completionItems);
+                         && procedureSignatureContext.Profile.OutputParameters.Count != 0)
+                {
+                    AddOutputSuffixToCompletionItems(lastSignificantToken, completionItems, paramWithCase);
                 }
             }
             else
             {
                 //Add IN-OUT or OUTPUT after INPUT ?
                 //If we reach the last INPUT parameter
-                if (lastSignificantToken.TokenType == TokenType.INPUT && alreadyGivenParametersCount == maxInput -1) {
-
-
+                if (lastSignificantToken.TokenType == TokenType.INPUT && alreadyGivenParametersCount == maxInput - 1)
+                {
                     //If all procs have IN-OUT params
-                    if (allProcsHaveInOutParams) {
-                        AddIn_OutSuffixToCompletionItems(lastSignificantToken, completionItems);
+                    if (allProcsHaveInOutParams)
+                    {
+                        AddIn_OutSuffixToCompletionItems(lastSignificantToken, completionItems, paramWithCase);
                     }
                     //If no procedures have IN-OUT params and all have OUTPUT params
                     else if (noProcsHaveInOutParams && allProcsHaveOutputParams)
                     {
-                        AddOutputSuffixToCompletionItems(lastSignificantToken, completionItems);
+                        AddOutputSuffixToCompletionItems(lastSignificantToken, completionItems, paramWithCase);
                     }
                     //Otherwise we cannot choose between IN-OUT, OUTPUT and nothing, so we choose nothing and let the user add the good keyword manually.
                     //#908 will change this behavior by asking for the signature context
@@ -289,7 +292,7 @@ namespace TypeCobol.LanguageServer
                     //If all procedures have OUTPUT parameter
                     if (allProcsHaveOutputParams)
                     {
-                        AddOutputSuffixToCompletionItems(lastSignificantToken, completionItems);
+                        AddOutputSuffixToCompletionItems(lastSignificantToken, completionItems, paramWithCase);
                     }
                 }
             }
@@ -297,17 +300,19 @@ namespace TypeCobol.LanguageServer
             return completionItems;
         }
 
-        private static void AddIn_OutSuffixToCompletionItems(Token lastSignificantToken, List<CompletionItem> completionItems) {
+        private static void AddIn_OutSuffixToCompletionItems(Token lastSignificantToken, List<CompletionItem> completionItems, Dictionary<string, string> paramWithCase)
+        {
             //Use -1, because it seems LSP start counting at 1
-            var suffix = "\n" + new string(' ', lastSignificantToken.Column-1) + "IN-OUT ";
+            var suffix = "\n" + new string(' ', lastSignificantToken.Column - 1) + paramWithCase["IN-OUT"] + " ";
             completionItems.ForEach(ci => ci.insertText += suffix);
         }
-        private static void AddOutputSuffixToCompletionItems(Token lastSignificantToken, List<CompletionItem> completionItems) {
+        private static void AddOutputSuffixToCompletionItems(Token lastSignificantToken, List<CompletionItem> completionItems, Dictionary<string, string> paramWithCase)
+        {
             //Use -1, because it seems LSP start counting at 1
-            var suffix = "\n" + new string(' ', lastSignificantToken.Column-1) + "OUTPUT ";
+            var suffix = "\n" + new string(' ', lastSignificantToken.Column - 1) + paramWithCase["OUTPUT"] + " ";
             completionItems.ForEach(ci => ci.insertText += suffix);
         }
-    
+
 
         #endregion
 

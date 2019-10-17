@@ -114,6 +114,9 @@ namespace TypeCobol.LanguageServer
         {
             var completionItems = new List<CompletionItem>();
 
+            Case textCase = GetTextCase(node.CodeElement.ConsumedTokens.First(t => t.TokenType == TokenType.CALL).Text);
+            Dictionary<string, string> paramWithCase = GetParamsWithCase(textCase);
+
             foreach (var proc in procedures)
             {
                 string inputParams = null, outputParams = null, inoutParams = null;
@@ -121,21 +124,24 @@ namespace TypeCobol.LanguageServer
                 if (proc.Profile != null)
                 {
                     if (proc.Profile.InputParameters != null && proc.Profile.InputParameters.Count > 0)
-                        inputParams = string.Format("INPUT {0}",
+                        inputParams = string.Format("{0} {1}",
+                            paramWithCase["INPUT"],
                             string.Join(", ",
                                 proc.Profile.InputParameters.Select(
                                     p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
                     if (proc.Profile.InoutParameters != null && proc.Profile.InoutParameters.Count > 0)
-                        inoutParams = string.Format("IN-OUT {0}",
+                        inoutParams = string.Format("{0} {1}",
+                            paramWithCase["IN-OUT"],
                             string.Join(", ",
                                 proc.Profile.InoutParameters.Select(
                                     p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
                     if (proc.Profile.OutputParameters != null && proc.Profile.OutputParameters.Count > 0)
-                        outputParams = string.Format("OUTPUT {0}",
+                        outputParams = string.Format("{0} {1}",
+                            paramWithCase["OUTPUT"],
                             string.Join(", ",
                                 proc.Profile.OutputParameters.Select(
                                     p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
-                   
+
                 }
                 bool procIsPublic = false;
                 if (enablePublicFlag)
@@ -150,24 +156,24 @@ namespace TypeCobol.LanguageServer
                     new CompletionItem(string.Format("{0} {1} {2} {3}", procDisplayName, inputParams, inoutParams, outputParams));
                 completionItem.insertText = procIsPublic
                     ? inputParams != null
-                            ? string.Format("{0}::{1} INPUT", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head)
+                            ? string.Format("{0}::{1} {2}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head, paramWithCase["INPUT"])
                             : inoutParams != null
-                                ? string.Format("{0}::{1} IN-OUT", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head)
+                                ? string.Format("{0}::{1} {2}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head, paramWithCase["IN-OUT"])
                                 : outputParams != null
-                                    ? string.Format("{0}::{1} OUTPUT", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head)
+                                    ? string.Format("{0}::{1} {2}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head, paramWithCase["OUTPUT"])
                                     : proc.Name
                     : inputParams != null
-                        ? proc.Name + " INPUT"
+                        ? proc.Name + " " + paramWithCase["INPUT"]
                         : inoutParams != null
-                            ? proc.Name + " IN-OUT"
+                            ? proc.Name + paramWithCase["IN-OUT"]
                             : outputParams != null
-                                ? proc.Name + " OUTPUT"
+                                ? proc.Name + " " + paramWithCase["OUTPUT"]
                                 : proc.Name;
                 completionItem.kind = proc.Profile != null && proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
                 //Add specific data for eclipse completion & signatureHelper context
                 completionItem.data = new object[3];
                 var signatureInformation = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(proc);
-                ((object[]) completionItem.data)[1] = signatureInformation;
+                ((object[])completionItem.data)[1] = signatureInformation;
 
                 //Store the link between the hash and the procedure. This will help to determine the procedure parameter completion context later. 
                 functionDeclarationSignatureDictionary.Add(signatureInformation, proc);
@@ -223,6 +229,79 @@ namespace TypeCobol.LanguageServer
         {
             var display = string.Format("{0} (from {1})", index.Name, variable.Name);
             return new CompletionItem(display) {insertText = index.Name, kind = CompletionItemKind.Variable};
+        }
+
+        public static Case GetTextCase(string tokenText)
+        {
+            if (string.IsNullOrEmpty(tokenText)) return Case.Lower;
+            // check if upper case
+            bool isUpper = true;
+            foreach (char c in tokenText)
+            {
+                if (char.IsLower(c))
+                {
+                    isUpper = false;
+                    break;
+                }
+            }
+
+            if (isUpper) return Case.Upper;
+            // check if Camel case; ex. CamlSample
+            bool isCamel = false;
+            int iUpperMem = -1, count = tokenText.Length;
+            for (int i = 0; i < count; i++)
+            {
+                if (i == 0)
+                {
+                    // first letter
+                    if (char.IsLower(tokenText[i])) break;
+                    isCamel = true;
+                }
+                else
+                {
+                    if (char.IsUpper(tokenText[i]))
+                    {
+                        if (iUpperMem == (i - 1))
+                        {
+                            // 2 upper case characters one behind the other
+                            isCamel = false;
+                            break;
+                        }
+                        iUpperMem = i;
+                    }
+                }
+            }
+
+            if (isCamel && iUpperMem == count - 1) isCamel = false; // last char is upper
+            return (isCamel) ? Case.Camel : Case.Lower;
+        }
+
+        public static Dictionary<string, string> GetParamsWithCase(Case textCase)
+        {
+            if (textCase == Case.Upper) return new Dictionary<string, string>()
+            {
+                { "INPUT", "INPUT"},
+                { "OUTPUT", "OUTPUT" },
+                { "IN-OUT", "IN-OUT" }
+            };
+            if (textCase == Case.Lower) return new Dictionary<string, string>()
+            {
+                { "INPUT", "input"},
+                { "OUTPUT", "output" },
+                { "IN-OUT", "in-out" }
+            };
+            return new Dictionary<string, string>()     // camel case
+            {
+                { "INPUT", "Input"},
+                { "OUTPUT", "Output" },
+                { "IN-OUT", "In-Out" }
+            };
+        }
+        public enum Case
+        {
+            Upper,
+            Camel,
+            Lower       // default value
         }
     }
 }
