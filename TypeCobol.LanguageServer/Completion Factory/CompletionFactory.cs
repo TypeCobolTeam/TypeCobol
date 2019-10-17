@@ -303,13 +303,13 @@ namespace TypeCobol.LanguageServer
         private static void AddIn_OutSuffixToCompletionItems(Token lastSignificantToken, List<CompletionItem> completionItems, Dictionary<string, string> paramWithCase)
         {
             //Use -1, because it seems LSP start counting at 1
-            var suffix = "\n" + new string(' ', lastSignificantToken.Column - 1) + paramWithCase["IN-OUT"] + " ";
+            var suffix = "\n" + new string(' ', lastSignificantToken.Column - 1) + paramWithCase[CompletionFactoryHelpers.ParamInOut] + " ";
             completionItems.ForEach(ci => ci.insertText += suffix);
         }
         private static void AddOutputSuffixToCompletionItems(Token lastSignificantToken, List<CompletionItem> completionItems, Dictionary<string, string> paramWithCase)
         {
             //Use -1, because it seems LSP start counting at 1
-            var suffix = "\n" + new string(' ', lastSignificantToken.Column - 1) + paramWithCase["OUTPUT"] + " ";
+            var suffix = "\n" + new string(' ', lastSignificantToken.Column - 1) + paramWithCase[CompletionFactoryHelpers.ParamOutput] + " ";
             completionItems.ForEach(ci => ci.insertText += suffix);
         }
 

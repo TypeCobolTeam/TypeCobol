@@ -125,19 +125,19 @@ namespace TypeCobol.LanguageServer
                 {
                     if (proc.Profile.InputParameters != null && proc.Profile.InputParameters.Count > 0)
                         inputParams = string.Format("{0} {1}",
-                            paramWithCase["INPUT"],
+                            paramWithCase[ParamInput],
                             string.Join(", ",
                                 proc.Profile.InputParameters.Select(
                                     p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
                     if (proc.Profile.InoutParameters != null && proc.Profile.InoutParameters.Count > 0)
                         inoutParams = string.Format("{0} {1}",
-                            paramWithCase["IN-OUT"],
+                            paramWithCase[ParamInOut],
                             string.Join(", ",
                                 proc.Profile.InoutParameters.Select(
                                     p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
                     if (proc.Profile.OutputParameters != null && proc.Profile.OutputParameters.Count > 0)
                         outputParams = string.Format("{0} {1}",
-                            paramWithCase["OUTPUT"],
+                            paramWithCase[ParamOutput],
                             string.Join(", ",
                                 proc.Profile.OutputParameters.Select(
                                     p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
@@ -163,11 +163,11 @@ namespace TypeCobol.LanguageServer
                                     ? string.Format("{0}::{1} {2}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head, paramWithCase["OUTPUT"])
                                     : proc.Name
                     : inputParams != null
-                        ? proc.Name + " " + paramWithCase["INPUT"]
+                        ? proc.Name + " " + paramWithCase[ParamInput]
                         : inoutParams != null
-                            ? proc.Name + paramWithCase["IN-OUT"]
+                            ? proc.Name + paramWithCase[ParamInOut]
                             : outputParams != null
-                                ? proc.Name + " " + paramWithCase["OUTPUT"]
+                                ? proc.Name + " " + paramWithCase[ParamOutput]
                                 : proc.Name;
                 completionItem.kind = proc.Profile != null && proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
                 //Add specific data for eclipse completion & signatureHelper context
@@ -276,25 +276,29 @@ namespace TypeCobol.LanguageServer
             return (isCamel) ? Case.Camel : Case.Lower;
         }
 
+        public const string ParamInput = "INPUT";
+        public const string ParamOutput = "OUTPUT";
+        public const string ParamInOut = "IN-OUT";
+        
         public static Dictionary<string, string> GetParamsWithCase(Case textCase)
         {
             if (textCase == Case.Upper) return new Dictionary<string, string>()
             {
-                { "INPUT", "INPUT"},
-                { "OUTPUT", "OUTPUT" },
-                { "IN-OUT", "IN-OUT" }
+                { ParamInput, "INPUT"},
+                { ParamOutput, "OUTPUT" },
+                { ParamInOut, "IN-OUT" }
             };
             if (textCase == Case.Lower) return new Dictionary<string, string>()
             {
-                { "INPUT", "input"},
-                { "OUTPUT", "output" },
-                { "IN-OUT", "in-out" }
+                { ParamInput, "input"},
+                { ParamOutput, "output" },
+                { ParamInOut, "in-out" }
             };
             return new Dictionary<string, string>()     // camel case
             {
-                { "INPUT", "Input"},
-                { "OUTPUT", "Output" },
-                { "IN-OUT", "In-Out" }
+                { ParamInput, "Input"},
+                { ParamOutput, "Output" },
+                { ParamInOut, "In-Out" }
             };
         }
         public enum Case
