@@ -832,6 +832,17 @@ namespace TypeCobol.Codegen {
 	            null, new List<string>() {copies});
 	    }
 
+        /// <summary>
+        /// This test is for the issue https://github.com/TypeCobolTeam/TypeCobol/issues/1490
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void EvaluateWhenGroupInProc()
+        {
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "EvaluateWhenGroupInProc") + ".tcbl", skeletons, false, "TestTypeCobolVersion");
+        }
 
         [TestMethod]
         [TestCategory("Codegen")]
