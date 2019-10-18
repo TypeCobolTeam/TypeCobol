@@ -4,14 +4,13 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
 
-       01 Vect..This is an Error..
 
        PROCEDURE DIVISION.
        
        declare procedure dump public
-          input message pic X(80)
+          input msg pic X(80)
          .
-         PROCEDURE DIVISION.
-           CONTINUE.
+       PROCEDURE DIVISION.
+          CONTINUE.
        END-DECLARE.
        END PROGRAM MyIntrinsicFunctions.

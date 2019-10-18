@@ -400,6 +400,12 @@ namespace TypeCobol.LanguageServer.Test
         }
 
         [TestMethod]
+        public void RefreshCopiesNotif()
+        {
+            LSRTestHelper.Test("RefreshCopiesNotif", LsrTestingOptions.NoLsrTesting, true, true);
+        }
+
+        [TestMethod]
         public void LSRAutoReplaceSecurityTest()
         {
             if (CLI.Test.UnitTestHelper.CompareDirectory(null, null, "TypeCobol.LanguageServer.Test\\LSRTests"))
