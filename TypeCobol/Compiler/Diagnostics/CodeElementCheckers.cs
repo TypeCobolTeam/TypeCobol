@@ -293,7 +293,7 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         public static void OnCodeElement(AlterStatement statement, CodeElementsParser.AlterStatementContext context)
         {
-            DiagnosticUtils.AddError(statement, "ALTER should not be used", context, MessageCode.Warning);
+            DiagnosticUtils.AddErrorWithNoRuleStack(statement, "ALTER should not be used", context, MessageCode.Warning);
         }
     }
 
