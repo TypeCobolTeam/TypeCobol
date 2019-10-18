@@ -45,8 +45,9 @@ namespace TypeCobol.LanguageServer
 
 
         internal CompilationProject CompilationProject { get; private set; }
-        private TypeCobolConfiguration TypeCobolConfiguration { get; set; }
+
         private List<FileCompiler> _fileCompilerWaittingForNodePhase;
+        public TypeCobolConfiguration Configuration { get; private set; }
         public Dictionary<Uri, DocumentContext> OpenedDocumentContext { get; private set; }
         public EventHandler<DiagnosticEvent> DiagnosticsEvent { get; set; }
         public EventHandler<EventArgs> DocumentModifiedEvent { get; set; }
@@ -131,7 +132,7 @@ namespace TypeCobol.LanguageServer
         public Workspace(string rootDirectoryFullName, string workspaceName, Queue<MessageActionWrapper> messagesActionsQueue, Func<string, Uri, bool> logger)
         {
             MessagesActionsQueue = messagesActionsQueue;
-            TypeCobolConfiguration = new TypeCobolConfiguration();
+            Configuration = new TypeCobolConfiguration();
             OpenedDocumentContext = new Dictionary<Uri, DocumentContext>();
             _fileCompilerWaittingForNodePhase = new List<FileCompiler>();
             _Logger = logger;
@@ -167,7 +168,7 @@ namespace TypeCobol.LanguageServer
         public FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, LsrTestingOptions lsrOptions)
         {
             string fileName = Path.GetFileName(docContext.Uri.LocalPath);
-            ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.ColumnsLayout, sourceText);
+            ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, Configuration.Format.Encoding, Configuration.Format.ColumnsLayout, sourceText);
             FileCompiler fileCompiler = null;
 
 #if EUROINFO_RULES //Issue #583
@@ -397,42 +398,42 @@ namespace TypeCobol.LanguageServer
         /// <param name="arguments">The arguments</param>
         public void DidChangeConfigurationParams(IEnumerable<string> arguments)
         {
-            TypeCobolConfiguration = new TypeCobolConfiguration();
-            var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(TypeCobolConfiguration);
+            Configuration = new TypeCobolConfiguration();
+            var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(Configuration);
 
-            var errors = TypeCobolOptionSet.InitializeCobolOptions(TypeCobolConfiguration, arguments, options);
+            var errors = TypeCobolOptionSet.InitializeCobolOptions(Configuration, arguments, options);
 
             //Adding default copies folder
             var folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
-            TypeCobolConfiguration.CopyFolders.Add(folder + @"\DefaultCopies\");
+            Configuration.CopyFolders.Add(folder + @"\DefaultCopies\");
 
-            if (TypeCobolConfiguration.Telemetry)
+            if (Configuration.Telemetry)
                 AnalyticsWrapper.Telemetry.TelemetryVerboseLevel = TelemetryVerboseLevel.Completion; //If telemetry arg is passed enable telemetry
 
-            if (TypeCobolConfiguration.UseAntlrProgramParsing)
+            if (Configuration.UseAntlrProgramParsing)
                 UseAntlrProgramParsing = true;
 
-            if (TypeCobolConfiguration.UseEuroInformationLegacyReplacingSyntax)
+            if (Configuration.UseEuroInformationLegacyReplacingSyntax)
                 UseEuroInformationLegacyReplacingSyntax = true;
 
-            if (TypeCobolConfiguration.ExecToStep >= ExecutionStep.Generate)
-                TypeCobolConfiguration.ExecToStep = ExecutionStep.CrossCheck; //Language Server does not support Cobol Generation for now
+            if (Configuration.ExecToStep >= ExecutionStep.Generate)
+                Configuration.ExecToStep = ExecutionStep.CrossCheck; //Language Server does not support Cobol Generation for now
 
-            var typeCobolOptions = new TypeCobolOptions(TypeCobolConfiguration);
+            var typeCobolOptions = new TypeCobolOptions(Configuration);
 
 #if EUROINFO_RULES
-            typeCobolOptions.AutoRemarksEnable = TypeCobolConfiguration.AutoRemarks;
+            typeCobolOptions.AutoRemarksEnable = Configuration.AutoRemarks;
 #endif
 
-            CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, _extensions, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.EndOfLineDelimiter, TypeCobolConfiguration.Format.FixedLineLength, TypeCobolConfiguration.Format.ColumnsLayout, typeCobolOptions);
+            CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, _extensions, Configuration.Format.Encoding, Configuration.Format.EndOfLineDelimiter, Configuration.Format.FixedLineLength, Configuration.Format.ColumnsLayout, typeCobolOptions);
 
-            if (TypeCobolConfiguration.CopyFolders != null && TypeCobolConfiguration.CopyFolders.Count > 0)
+            if (Configuration.CopyFolders != null && Configuration.CopyFolders.Count > 0)
             {
-                foreach (var copyFolder in TypeCobolConfiguration.CopyFolders)
+                foreach (var copyFolder in Configuration.CopyFolders)
                 {
                     CompilationProject.SourceFileProvider.AddLocalDirectoryLibrary(copyFolder, false,
-                        new[] {".cpy"}, TypeCobolConfiguration.Format.Encoding,
-                        TypeCobolConfiguration.Format.EndOfLineDelimiter, TypeCobolConfiguration.Format.FixedLineLength);
+                        new[] {".cpy"}, Configuration.Format.Encoding,
+                        Configuration.Format.EndOfLineDelimiter, Configuration.Format.FixedLineLength);
                 }
                 
             }
@@ -445,15 +446,15 @@ namespace TypeCobol.LanguageServer
             //Dispose previous watcher before setting new ones
             _DepWatcher.Dispose();
             _CopyWatcher.Dispose();
-            foreach (var depFolder in TypeCobolConfiguration.CopyFolders)
+            foreach (var depFolder in Configuration.CopyFolders)
             {
                 _CopyWatcher.SetDirectoryWatcher(depFolder);
             }
-            foreach (var depFolder in TypeCobolConfiguration.Dependencies)
+            foreach (var depFolder in Configuration.Dependencies)
             {
                 _DepWatcher.SetDirectoryWatcher(depFolder);
             }
-            foreach (var intrinsicFolder in TypeCobolConfiguration.Copies)
+            foreach (var intrinsicFolder in Configuration.Copies)
             {
                 _DepWatcher.SetDirectoryWatcher(intrinsicFolder);
             }
@@ -526,8 +527,15 @@ namespace TypeCobol.LanguageServer
             _customSymbols = null;
             try
             {
-                _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(TypeCobolConfiguration.Copies, TypeCobolConfiguration.Format, DiagnosticsErrorEvent); //Refresh Intrinsics
-                _customSymbols = Tools.APIHelpers.Helpers.LoadDependencies(TypeCobolConfiguration.Dependencies, TypeCobolConfiguration.Format, _customSymbols, TypeCobolConfiguration.InputFiles, TypeCobolConfiguration.CopyFolders, DiagnosticsErrorEvent); //Refresh Dependencies
+                _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(Configuration.Copies, Configuration.Format, DiagnosticsErrorEvent); //Refresh Intrinsics
+                _customSymbols = Tools.APIHelpers.Helpers.LoadDependencies(Configuration.Dependencies, Configuration.Format, _customSymbols, Configuration.InputFiles, 
+                    Configuration.CopyFolders, DiagnosticsErrorEvent, out List<RemarksDirective.TextNameVariation> usedCopies, out IDictionary<string, IEnumerable<string>> missingCopies); //Refresh Dependencies
+
+                if (missingCopies.Count > 0)
+                {
+                    MissingCopiesEvent(missingCopies.First().Key, new MissingCopiesEvent() { Copies = missingCopies.SelectMany(c => c.Value).Distinct().ToList() });
+                    return;//Do not report diagnostics if copies are missing
+                }
 
                 if (diagDetected)
                 {
@@ -559,14 +567,14 @@ namespace TypeCobol.LanguageServer
                 AnalyticsWrapper.Telemetry.TrackException(typeCobolException, typeCobolException.Path);
 
                 if (typeCobolException.NeedMail)
-                    AnalyticsWrapper.Telemetry.SendMail(typeCobolException, TypeCobolConfiguration.InputFiles, TypeCobolConfiguration.CopyFolders, TypeCobolConfiguration.CommandLine);
+                    AnalyticsWrapper.Telemetry.SendMail(typeCobolException, Configuration.InputFiles, Configuration.CopyFolders, Configuration.CommandLine);
             }
             catch (Exception e)
             {
                 LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
 
                 AnalyticsWrapper.Telemetry.TrackException(e, null);
-                AnalyticsWrapper.Telemetry.SendMail(e, TypeCobolConfiguration.InputFiles, TypeCobolConfiguration.CopyFolders, TypeCobolConfiguration.CommandLine);
+                AnalyticsWrapper.Telemetry.SendMail(e, Configuration.InputFiles, Configuration.CopyFolders, Configuration.CommandLine);
             }
 
         }
@@ -597,7 +605,7 @@ namespace TypeCobol.LanguageServer
                 }
             }
             
-            DiagnosticsEvent(fileUri, new DiagnosticEvent() { Diagnostics = diags.Take(TypeCobolConfiguration.MaximumDiagnostics == 0 ? 200 : TypeCobolConfiguration.MaximumDiagnostics) });
+            DiagnosticsEvent(fileUri, new DiagnosticEvent() { Diagnostics = diags.Take(Configuration.MaximumDiagnostics == 0 ? 200 : Configuration.MaximumDiagnostics) });
 
             if (compilationUnit?.MissingCopies.Count > 0)
                 MissingCopiesEvent(fileUri, new MissingCopiesEvent() { Copies = compilationUnit.MissingCopies.Select(c => c.TextName).Distinct().ToList() });
