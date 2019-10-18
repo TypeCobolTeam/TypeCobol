@@ -32,9 +32,10 @@ namespace TypeCobol.Compiler.Parser
 	    internal static void AddErrorWithNoRuleStack(CodeElement e, string message, Antlr4.Runtime.RuleContext context, MessageCode code = MessageCode.SyntaxErrorInParser)
 	    {
 	        Token token = ParseTreeUtils.GetFirstToken(context);
-	        e.ConsumedTokens.Add(token);
-	        AddError(e, message, code);
-	    }
+            if (e.Diagnostics == null) e.Diagnostics = new List<Diagnostic>();
+	        var parserDiag = new ParserDiagnostic(message, token.StartIndex + 1, token.StopIndex + 1, token.Line, null, code);
+	        e.Diagnostics.Add(parserDiag);
+        }
 
         #region Node Diagnostic Generator
 
