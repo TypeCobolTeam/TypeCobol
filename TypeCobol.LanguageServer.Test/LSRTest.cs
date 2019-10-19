@@ -379,6 +379,13 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("GlobalStorageCompletion", LsrTestingOptions.NoLsrTesting, true);
         }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void CompletionOnPartialLibraryName()
+        {
+            LSRTestHelper.Test("CompletionOnPartialLibraryName", LsrTestingOptions.NoLsrTesting, true, true);
+        }
         #endregion
 
         [TestMethod]
