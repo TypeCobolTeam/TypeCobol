@@ -146,6 +146,9 @@ namespace TypeCobol.LanguageServer
         /// <param name="missingCopies">List of missing copies name</param>
         private void MissingCopiesDetected(object fileUri, MissingCopiesEvent missingCopiesEvent)
         {
+            //Warning the main file could not be opened
+            //This event can be used when a dependency have not been loaded
+
             //Send missing copies to client
             var missingCopiesParam = new MissingCopiesParams();
             missingCopiesParam.Copies = missingCopiesEvent.Copies;
@@ -228,6 +231,7 @@ namespace TypeCobol.LanguageServer
             this.Workspace.LoadingIssueEvent += LoadingIssueDetected;
             this.Workspace.ExceptionTriggered += ExceptionTriggered;
             this.Workspace.WarningTrigger += WarningTrigger;
+            this.Workspace.MissingCopiesEvent += MissingCopiesDetected;
 
             // Return language server capabilities
             var initializeResult = base.OnInitialize(parameters);
@@ -271,7 +275,6 @@ namespace TypeCobol.LanguageServer
             if (docContext.Uri.IsFile && this.Workspace.OpenedDocumentContext.All(odc => odc.Key != docContext.Uri))
             {
                 //Subscribe to diagnostics event
-                this.Workspace.MissingCopiesEvent += MissingCopiesDetected;
                 this.Workspace.DiagnosticsEvent += DiagnosticsDetected;
 
                 //Create a ILanguageServer instance for the document.
@@ -458,7 +461,6 @@ namespace TypeCobol.LanguageServer
             if (objUri.IsFile)
             {
                 this.Workspace.CloseSourceFile(objUri);
-                this.Workspace.MissingCopiesEvent -= MissingCopiesDetected;
                 this.Workspace.DiagnosticsEvent -= DiagnosticsDetected;
 
                 // DEBUG information
