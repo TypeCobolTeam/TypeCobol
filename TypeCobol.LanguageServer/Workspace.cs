@@ -180,15 +180,15 @@ namespace TypeCobol.LanguageServer
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    if (!line.StartsWith("       PROGRAM-ID.", StringComparison.InvariantCultureIgnoreCase)) continue;
+                    if (!line.StartsWith("       PROGRAM-ID.", StringComparison.OrdinalIgnoreCase)) continue;
                     inputFileName = line.Split('.')[1].Trim();
                     break;
                 }
             }
 
             var matchingPgm =
-                _customSymbols.Programs.Keys.FirstOrDefault(
-                    k => k.Equals(inputFileName, StringComparison.InvariantCultureIgnoreCase));
+                _customSymbols?.Programs.Keys.FirstOrDefault(
+                    k => k.Equals(inputFileName, StringComparison.OrdinalIgnoreCase));
             if (matchingPgm != null)
             {
                 arrangedCustomSymbol = new SymbolTable(_customSymbols, SymbolTable.Scope.Namespace);
