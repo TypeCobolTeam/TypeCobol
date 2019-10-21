@@ -282,20 +282,24 @@ namespace TypeCobol.Compiler.Nodes {
 
         private QualifiedName _qualifiedName;
 
-        public virtual QualifiedName QualifiedName {
-            get {
-                if (string.IsNullOrEmpty(Name)) return null;
+        public virtual QualifiedName QualifiedName
+        {
+            get
+            {
                 if (_qualifiedName != null) return _qualifiedName;
 
-                List<string> qn = new List<string>() {Name};
-                var parent = this.Parent;
-                while (parent != null)
+                List<string> qn = new List<string>();
+                var current = this;
+                while (current != null)
                 {
-                    if (!string.IsNullOrEmpty(parent.Name)) {
-                        qn.Add(parent.Name);
+                    if (!string.IsNullOrEmpty(current.Name))
+                    {
+                        qn.Add(current.Name);
                     }
-                    parent = parent.Parent;
+
+                    current = current.Parent;
                 }
+
                 qn.Reverse();
                 _qualifiedName = new URI(qn);
                 return _qualifiedName;

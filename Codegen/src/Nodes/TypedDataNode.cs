@@ -487,9 +487,11 @@ namespace TypeCobol.Codegen.Nodes
             }
 
             list_items.AddRange(pathVariables);
-            string qn = string.Join(".", list_items.ToArray());
-            AddIndexMap(rootNode, rootNode.QualifiedName.ToString(), indexes, map);
-            AddIndexMap(ownerDefinition, qn, indexes, map);
+            string qn = string.Join(".", list_items.Where(item => item != null));
+
+            // If indexes directly come from their DataDef, use the computed path (qn). If they come from a TypeDef, the path is the rootNode.QualifiedName.
+            AddIndexMap(rootNode, rootNode == ownerDefinition ? qn : rootNode.QualifiedName.ToString(), indexes, map);
+
             return map;
         }
 
@@ -512,7 +514,7 @@ namespace TypeCobol.Codegen.Nodes
                         if (sym.Name.Equals(index.Name))
                         {
                             string qualified_name = qn + '.' + index.Name;
-                            string hash_name = GeneratorHelper.ComputeIndexHashName(qualified_name, parentNode);
+                            string hash_name = index.IsFlagSet(Flag.IndexUsedWithQualifiedName) ? GeneratorHelper.ComputeIndexHashName(qualified_name, parentNode) : index.Name;
                             map[sym.NameLiteral.Token] = hash_name;
                         }
                     }
