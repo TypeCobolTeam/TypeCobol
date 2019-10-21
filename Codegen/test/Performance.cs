@@ -107,14 +107,21 @@ namespace TypeCobol.Codegen
             // Aggregated stats.
             Console.WriteLine();
             Console.WriteLine("Time per step :");
-            foreach (var stepData in total.Select((p, i) => new {Index = i + 1, Step = p.Key, Duration = p.Value.TotalMilliseconds}).OrderByDescending(a => a.Duration))
+            var totalTime = total.Values.Sum(t => t.TotalMilliseconds);
+            foreach (var stepData in total.Select((p, i) => new
+                                                            {
+                                                                Index = i + 1,
+                                                                Step = p.Key,
+                                                                Duration = p.Value.TotalMilliseconds,
+                                                                Percentage = (100 * p.Value.TotalMilliseconds) / totalTime
+                                                            }))
             {
-                Console.WriteLine($"{stepData.Step,-25}({stepData.Index}) : Total = {stepData.Duration,15} ms, Avg = {stepData.Duration / ITERATION_COUNT,15} ms");
+                Console.WriteLine($"{stepData.Index}. {stepData.Step,-30} : Total = {stepData.Duration,15:0.00} ms, Avg = {stepData.Duration / ITERATION_COUNT,15:0.00} ms | {stepData.Percentage,3:0}%");
             }
 
             // Total time.
             Console.WriteLine();
-            Console.WriteLine($"Global Codegen time : Total = {total.Values.Sum(t => t.TotalMilliseconds)} ms, Avg = {total.Values.Average(t => t.TotalMilliseconds)} ms");
+            Console.WriteLine($"Global Codegen time : Total = {totalTime:0.00} ms, Avg = {totalTime / ITERATION_COUNT:0.00} ms");
         }
 
         [TestMethod]
