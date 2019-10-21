@@ -239,7 +239,7 @@ namespace TypeCobol.LanguageServer
                 SearchVariableInTypesAndLevels(node, potentialVariable, ref completionItems); //Add potential variables to completionItems*           
 
             CompletionFactoryHelpers.Case textCase = CompletionFactoryHelpers.GetTextCase(codeElement.ConsumedTokens.First(t => t.TokenType == TokenType.CALL).Text);
-            Dictionary<string, string> paramWithCase = CompletionFactoryHelpers.GetParamsWithCase(textCase);
+            Dictionary<ParameterDescription.PassingTypes, string> paramWithCase = CompletionFactoryHelpers.GetParamsWithCase(textCase);
             //If signature of procedure is available
             if (procedureSignatureContext != null)
             {
@@ -300,16 +300,16 @@ namespace TypeCobol.LanguageServer
             return completionItems;
         }
 
-        private static void AddIn_OutSuffixToCompletionItems(Token lastSignificantToken, List<CompletionItem> completionItems, Dictionary<string, string> paramWithCase)
+        private static void AddIn_OutSuffixToCompletionItems(Token lastSignificantToken, List<CompletionItem> completionItems, Dictionary<ParameterDescription.PassingTypes, string> paramWithCase)
         {
             //Use -1, because it seems LSP start counting at 1
-            var suffix = "\n" + new string(' ', lastSignificantToken.Column - 1) + paramWithCase[CompletionFactoryHelpers.ParamInOut] + " ";
+            var suffix = "\n" + new string(' ', lastSignificantToken.Column - 1) + paramWithCase[ParameterDescription.PassingTypes.InOut] + " ";
             completionItems.ForEach(ci => ci.insertText += suffix);
         }
-        private static void AddOutputSuffixToCompletionItems(Token lastSignificantToken, List<CompletionItem> completionItems, Dictionary<string, string> paramWithCase)
+        private static void AddOutputSuffixToCompletionItems(Token lastSignificantToken, List<CompletionItem> completionItems, Dictionary<ParameterDescription.PassingTypes, string> paramWithCase)
         {
             //Use -1, because it seems LSP start counting at 1
-            var suffix = "\n" + new string(' ', lastSignificantToken.Column - 1) + paramWithCase[CompletionFactoryHelpers.ParamOutput] + " ";
+            var suffix = "\n" + new string(' ', lastSignificantToken.Column - 1) + paramWithCase[ParameterDescription.PassingTypes.Output] + " ";
             completionItems.ForEach(ci => ci.insertText += suffix);
         }
 

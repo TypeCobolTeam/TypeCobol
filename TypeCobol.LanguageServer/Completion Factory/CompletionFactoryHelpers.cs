@@ -115,7 +115,7 @@ namespace TypeCobol.LanguageServer
             var completionItems = new List<CompletionItem>();
 
             Case textCase = GetTextCase(node.CodeElement.ConsumedTokens.First(t => t.TokenType == TokenType.CALL).Text);
-            Dictionary<string, string> paramWithCase = GetParamsWithCase(textCase);
+            Dictionary<ParameterDescription.PassingTypes, string> paramWithCase = GetParamsWithCase(textCase);
 
             foreach (var proc in procedures)
             {
@@ -125,19 +125,19 @@ namespace TypeCobol.LanguageServer
                 {
                     if (proc.Profile.InputParameters != null && proc.Profile.InputParameters.Count > 0)
                         inputParams = string.Format("{0} {1}",
-                            paramWithCase[ParamInput],
+                            paramWithCase[ParameterDescription.PassingTypes.Input],
                             string.Join(", ",
                                 proc.Profile.InputParameters.Select(
                                     p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
                     if (proc.Profile.InoutParameters != null && proc.Profile.InoutParameters.Count > 0)
                         inoutParams = string.Format("{0} {1}",
-                            paramWithCase[ParamInOut],
+                            paramWithCase[ParameterDescription.PassingTypes.InOut],
                             string.Join(", ",
                                 proc.Profile.InoutParameters.Select(
                                     p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
                     if (proc.Profile.OutputParameters != null && proc.Profile.OutputParameters.Count > 0)
                         outputParams = string.Format("{0} {1}",
-                            paramWithCase[ParamOutput],
+                            paramWithCase[ParameterDescription.PassingTypes.Output],
                             string.Join(", ",
                                 proc.Profile.OutputParameters.Select(
                                     p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
@@ -156,18 +156,18 @@ namespace TypeCobol.LanguageServer
                     new CompletionItem(string.Format("{0} {1} {2} {3}", procDisplayName, inputParams, inoutParams, outputParams));
                 completionItem.insertText = procIsPublic
                     ? inputParams != null
-                            ? string.Format("{0}::{1} {2}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head, paramWithCase["INPUT"])
+                            ? string.Format("{0}::{1} {2}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head, paramWithCase[ParameterDescription.PassingTypes.Input])
                             : inoutParams != null
-                                ? string.Format("{0}::{1} {2}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head, paramWithCase["IN-OUT"])
+                                ? string.Format("{0}::{1} {2}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head, paramWithCase[ParameterDescription.PassingTypes.InOut])
                                 : outputParams != null
-                                    ? string.Format("{0}::{1} {2}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head, paramWithCase["OUTPUT"])
+                                    ? string.Format("{0}::{1} {2}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head, paramWithCase[ParameterDescription.PassingTypes.Output])
                                     : proc.Name
                     : inputParams != null
-                        ? proc.Name + " " + paramWithCase[ParamInput]
+                        ? proc.Name + " " + paramWithCase[ParameterDescription.PassingTypes.Input]
                         : inoutParams != null
-                            ? proc.Name + paramWithCase[ParamInOut]
+                            ? proc.Name + paramWithCase[ParameterDescription.PassingTypes.InOut]
                             : outputParams != null
-                                ? proc.Name + " " + paramWithCase[ParamOutput]
+                                ? proc.Name + " " + paramWithCase[ParameterDescription.PassingTypes.Output]
                                 : proc.Name;
                 completionItem.kind = proc.Profile != null && proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
                 //Add specific data for eclipse completion & signatureHelper context
@@ -255,6 +255,7 @@ namespace TypeCobol.LanguageServer
                 {
                     // first letter
                     if (char.IsLower(tokenText[i])) break;
+                    iUpperMem = 0;
                     isCamel = true;
                 }
                 else
@@ -276,36 +277,42 @@ namespace TypeCobol.LanguageServer
             return (isCamel) ? Case.Camel : Case.Lower;
         }
 
-        public const string ParamInput = "INPUT";
-        public const string ParamOutput = "OUTPUT";
-        public const string ParamInOut = "IN-OUT";
-        
-        public static Dictionary<string, string> GetParamsWithCase(Case textCase)
+        private static readonly Dictionary<ParameterDescription.PassingTypes, string> _UpperParams = new Dictionary<ParameterDescription.PassingTypes, string>()
         {
-            if (textCase == Case.Upper) return new Dictionary<string, string>()
+            { ParameterDescription.PassingTypes.Input, "INPUT"},
+            { ParameterDescription.PassingTypes.Output, "OUTPUT" },
+            { ParameterDescription.PassingTypes.InOut, "IN-OUT" }
+        };
+        private static readonly Dictionary<ParameterDescription.PassingTypes, string> _CamelParams = new Dictionary<ParameterDescription.PassingTypes, string>()
+        {
+            { ParameterDescription.PassingTypes.Input, "Input"},
+            { ParameterDescription.PassingTypes.Output, "Output" },
+            { ParameterDescription.PassingTypes.InOut, "In-Out" }
+        };
+        private static readonly Dictionary<ParameterDescription.PassingTypes, string> _LowerParams = new Dictionary<ParameterDescription.PassingTypes, string>()
+        {
+            { ParameterDescription.PassingTypes.Input, "input"},
+            { ParameterDescription.PassingTypes.Output, "output" },
+            { ParameterDescription.PassingTypes.InOut, "in-out" }
+        };
+
+        public static Dictionary<ParameterDescription.PassingTypes, string> GetParamsWithCase(Case textCase)
+        {
+            switch (textCase)
             {
-                { ParamInput, "INPUT"},
-                { ParamOutput, "OUTPUT" },
-                { ParamInOut, "IN-OUT" }
-            };
-            if (textCase == Case.Lower) return new Dictionary<string, string>()
-            {
-                { ParamInput, "input"},
-                { ParamOutput, "output" },
-                { ParamInOut, "in-out" }
-            };
-            return new Dictionary<string, string>()     // camel case
-            {
-                { ParamInput, "Input"},
-                { ParamOutput, "Output" },
-                { ParamInOut, "In-Out" }
-            };
+                case Case.Upper:
+                    return _UpperParams;
+                case Case.Camel:
+                    return _CamelParams;
+                default:
+                    return _LowerParams;
+            }
         }
         public enum Case
         {
+            Lower = 0,   // default value
             Upper,
-            Camel,
-            Lower       // default value
+            Camel
         }
     }
 }
