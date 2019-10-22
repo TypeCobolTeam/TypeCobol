@@ -377,7 +377,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (sourceComputer.CodeElement.DebuggingMode?.Value == true)
             {
                 Token token = sourceComputer.CodeElement.DebuggingMode.Token;
-                DiagnosticUtils.AddError(sourceComputer.CodeElement, "Debugging mode is active", token, null, MessageCode.Warning, false);
+                DiagnosticUtils.AddError(sourceComputer.CodeElement, "Debugging mode is active", token, null, MessageCode.Warning);
             }
             return true;
         }
