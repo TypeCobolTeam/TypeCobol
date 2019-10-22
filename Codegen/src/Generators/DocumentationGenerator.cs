@@ -57,7 +57,7 @@ namespace TypeCobol.Codegen.Generators
 
         public List<Diagnostic> Diagnostics { get; set; }
         public IReadOnlyDictionary<string, TimeSpan> PerformanceReport { get; private set; }
-        public string TypeCobolVersion { get; set; }
+        public string TypeCobolVersion { get; }
 
         public bool HasLineMapData => false;
 

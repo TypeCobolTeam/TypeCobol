@@ -258,6 +258,14 @@ namespace TypeCobol.Codegen
         /// <param name="columns">Columns layout</param>
         public virtual void Generate(CompilationUnit compilationUnit, ColumnsLayout columns = ColumnsLayout.FreeTextFormat)
         {
+            // Clear previous generation results and artifacts if any
+            this.Destination.Clear();
+            this.Actions.Clear();
+            this.Diagnostics?.Clear();
+            this.ErasedNodes.Clear();
+            this.ClonedNodes.Clear();
+            this.CompilationResults = compilationUnit;
+
             //Check if there is any error in diags
             if (compilationUnit.AllDiagnostics().Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Error))
             {
@@ -380,7 +388,7 @@ namespace TypeCobol.Codegen
         protected abstract bool Process(Node node);
         public abstract void GenerateLineMapFile(Stream stream);
 
-        public string TypeCobolVersion { get; set; }
+        public string TypeCobolVersion { get; }
         public abstract bool HasLineMapData { get; }
     }
 }

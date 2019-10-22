@@ -73,8 +73,7 @@ namespace TypeCobol.Codegen
             Dictionary<string, TimeSpan> total = new Dictionary<string, TimeSpan>();
             for (int i = 0; i < ITERATION_COUNT; i++)
             {
-                // Clear target StringBuilder and force recompile.
-                destination.Clear();
+                // Force recompile (either full or incremental).
                 if (forceFullParsing)
                 {
                     // Full Compile.

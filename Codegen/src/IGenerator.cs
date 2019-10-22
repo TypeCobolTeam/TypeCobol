@@ -24,7 +24,7 @@ namespace TypeCobol.Codegen
 
         IReadOnlyDictionary<string, TimeSpan> PerformanceReport { get; }
 
-        string TypeCobolVersion { get; set; }
+        string TypeCobolVersion { get; }
 
         /// <summary>
         /// Determine if this generator has line Map data.

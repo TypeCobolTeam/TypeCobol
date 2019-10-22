@@ -484,7 +484,7 @@ namespace TypeCobol.Codegen.Generators
         {            
         }
 
-        public string TypeCobolVersion { get; set; }
+        public string TypeCobolVersion { get; }
 
         public bool HasLineMapData => false;
     }
