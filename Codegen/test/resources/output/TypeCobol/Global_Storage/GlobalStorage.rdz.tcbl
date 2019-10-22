@@ -1,5 +1,5 @@
 ﻿      * 1 errors
-      * Line 6[8,23] <37, Warning, General> - Warning: Debugging mode is active
+      * Line 7[28,36] <37, Warning, General> - Warning: Debugging mode is active
       *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. GlobalStorageTest.

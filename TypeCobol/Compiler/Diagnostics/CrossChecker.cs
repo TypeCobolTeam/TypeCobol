@@ -374,9 +374,10 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(SourceComputer sourceComputer)
         {
-            if (sourceComputer.Lines.Any(l => (l as CodeElementsLine)?.ScanState.WithDebuggingMode == true))
+            if (sourceComputer.CodeElement.DebuggingMode?.Value == true)
             {
-                DiagnosticUtils.AddError(sourceComputer, "Debugging mode is active", MessageCode.Warning);
+                Token token = sourceComputer.CodeElement.DebuggingMode.Token;
+                DiagnosticUtils.AddError(sourceComputer.CodeElement, "Debugging mode is active", token, null, MessageCode.Warning, false);
             }
             return true;
         }

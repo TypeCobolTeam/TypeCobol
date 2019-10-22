@@ -1,5 +1,5 @@
       * 1 errors
-      * Line 5[8,23] <37, Warning, General> - Warning: Debugging mode is active
+      * Line 6[28,36] <37, Warning, General> - Warning: Debugging mode is active
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DeclarativesTest.
        ENVIRONMENT DIVISION.
