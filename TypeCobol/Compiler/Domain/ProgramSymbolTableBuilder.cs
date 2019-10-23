@@ -22,12 +22,10 @@ namespace TypeCobol.Compiler.Domain
     /// 
     /// THIS ARE COBOL Rules
     /// ---------------------
-    /// -"External" variables are the equivalent of a Fortran or assembler common section, 
-    ///     see: https://www.ibm.com/support/knowledgecenter/SS6SG3_5.1.1/com.ibm.cobol511.ent.doc/PGandLR/ref/rlfdeext.html.
     /// -"Global Program Scope" variables declared in working storage as global are visible to the entire program 
     ///     in which they are declared AND in all nested subprograms contained in that program.
-    /// -"Program Scope" variables declared in working storage are visible to the entire program in which they are declared.
-    /// -"Program Scope" variables declared in local storage are visible to the entire program in which they are declared,
+    /// -"Local Scope" variables declared in working storage are visible to the entire program in which they are declared.
+    /// -"Local Scope" variables declared in local storage are visible to the entire program in which they are declared,
     ///     but are deleted and reinitialized on every invocation.
     /// -"Nested Program Scope" Cobol does not distinguish between programs and functions/procedures, 
     /// its equivalent of a procedure or function is called a program.An infinite number of programs can be contained within a program, 

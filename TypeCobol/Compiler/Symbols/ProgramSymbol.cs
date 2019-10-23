@@ -388,7 +388,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Resolve the given Symbol paths from this scope
         /// </summary>
-        /// <param name="paths">The qualified path of the symbol reference in COBOL85 order: MUST BE IN LOWER CASES</param>
+        /// <param name="paths">The qualified path of the symbol reference in COBOL85 order</param>
         /// <param name="bRecurseEnglobingPrograms">true to recurse into enclobing variables to look for global variable, false otherwise</param>
         /// <returns>The referenced symbols if any</returns>
         public Scope<VariableSymbol>.MultiSymbols ResolveReference(string[] paths, bool bRecurseEnglobingPrograms)

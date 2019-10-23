@@ -1,5 +1,5 @@
 ﻿       IDENTIFICATION DIVISION.
-       PROGRAM-ID. VariableSeeking.
+       PROGRAM-ID. ExpanderRedefines.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       
@@ -14,4 +14,4 @@
       
            move idt to idt.
       
-       END PROGRAM VariableSeeking.
+       END PROGRAM ExpanderRedefines.

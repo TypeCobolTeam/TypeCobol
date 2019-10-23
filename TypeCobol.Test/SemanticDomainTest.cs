@@ -96,9 +96,9 @@ namespace TypeCobol.Test.Domain
         [TestMethod]
         [TestCategory("SemanticDomain")]
         [TestProperty("Object", "TypeExpander")]
-        public void ExpanderRefines()
+        public void ExpanderRedefines()
         {
-            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "ExpanderRefines.cbl");
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "ExpanderRedefines.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null, ExecutionStep.SemanticCheck);
 

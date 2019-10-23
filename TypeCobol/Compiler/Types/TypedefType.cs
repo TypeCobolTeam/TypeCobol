@@ -37,7 +37,14 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// The target type of the Typedef
+        /// The target type of the Typedef.
+        /// For instance in the examples:
+        /// 01 Type1 typedef strict private pic X.
+        /// 01 Type2 typedef strict private.
+        ///    05 Var1 pic X.
+        ///
+        /// TargetType of Type1 is a PictureType : Pic X
+        /// TargetType of Type2 is a  GroupType with one field (05 Var1 pic X)
         /// </summary>
         public Type TargetType
         {

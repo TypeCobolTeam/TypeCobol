@@ -23,14 +23,6 @@ namespace TypeCobol.Compiler.Symbols
         {
             base.Kind = Kinds.Typedef;
         }
-        /// <summary>
-        /// The Domain of this program.
-        /// </summary>
-        internal Dictionary<string, Scope<VariableSymbol>.MultiSymbols> Domain
-        {
-            get;
-            set;
-        }
 
         /// <summary>
         /// Add an element to the Domain

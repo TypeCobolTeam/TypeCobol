@@ -189,6 +189,9 @@ namespace TypeCobol.Compiler.Types
 
         /// <summary>
         /// TypeComponent for example for Array, Pointer type or TypeDef.
+        /// For an array it is the type of an element of the array.
+        /// For a pointer it is the type of the pointed element.
+        /// For a Typedef it is the type which is defined.
         /// </summary>
         public virtual Type TypeComponent => null;
 
