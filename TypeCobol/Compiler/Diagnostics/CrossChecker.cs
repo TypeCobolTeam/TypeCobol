@@ -204,6 +204,26 @@ namespace TypeCobol.Compiler.Diagnostics
             return true; 
         }
 
+        public override bool Visit(Goback goback)
+        {
+            List<Node> firstStatementsAfter = goback.Parent.Children.SkipWhile(cc => !(cc is Nodes.Goback)).Skip(1).ToList();
+            if (firstStatementsAfter.Any() && (firstStatementsAfter.All(cc => cc is Nodes.End) == false))
+            {
+                DiagnosticUtils.AddError(firstStatementsAfter[0], "There should be no statement after \"GOBACK\"", MessageCode.Warning);
+            }
+            return true;
+        }
+
+        public override bool Visit(Stop stop)
+        {
+            List<Node> firstStatementsAfter = stop.Parent.Children.SkipWhile(cc => !(cc is Nodes.Stop)).Skip(1).ToList();
+            if (firstStatementsAfter.Any() && (firstStatementsAfter.All(cc => cc is Nodes.End) == false))
+            {
+                DiagnosticUtils.AddError(firstStatementsAfter[0], "There should be no statement after \"STOP RUN\"", MessageCode.Warning);
+            }
+            return true;
+        }
+
         public override bool Visit(If ifNode)
         {
             if(ifNode?.Children != null && !(ifNode.Children.Last() is End))
@@ -726,21 +746,6 @@ namespace TypeCobol.Compiler.Diagnostics
         protected static void Check<T>(T node, [NotNull] IList<T> found) where T : Node
         {
             if (found.Count > 1) DiagnosticUtils.AddError(node, "Symbol \'" + node.Name + "\' already declared");
-
-            // in a section/paragraph, "STOP RUN" or "GOBACK" should be the last statement
-            // search if paragraph
-            bool statementAfterFound = false;
-            string paragraphSectionName = node.Name;
-            foreach (Node nd in node.Children)
-            {
-                statementAfterFound = CheckIfStatementAfterStopRunGoBack(paragraphSectionName, nd);
-                if (statementAfterFound) break;
-            }
-            // search if section, only in sentences
-            if (!statementAfterFound)
-            {
-               CheckIfStatementAfterStopRunGoBack(paragraphSectionName, node);
-            }            
         }
 
         public static void CheckSection(Section section)
@@ -751,20 +756,6 @@ namespace TypeCobol.Compiler.Diagnostics
         public static void CheckParagraph(Paragraph paragraph)
         {
             Check(paragraph, paragraph.SymbolTable.GetParagraph(paragraph.Name));
-        }
-
-        private static bool CheckIfStatementAfterStopRunGoBack(string paragraphSectionName, Node node)
-        {
-            // search the first statement GoBack or Stop; then skip this node; then search if there is/are node of type not {End}
-            List<Node> firstStatementsAfter = node.Children.SkipWhile(cc => !(cc is Nodes.Goback || cc is Nodes.Stop)).Skip(1).ToList();
-            if (firstStatementsAfter.Any() && (firstStatementsAfter.All(cc => cc is Nodes.End) == false))
-            {
-                DiagnosticUtils.AddError(firstStatementsAfter[0],
-                    "In \'" + paragraphSectionName + "\', there should be no statement after \"STOP RUN\" or \"GOBACK\"",
-                    MessageCode.Warning);
-                return true;
-            }
-            return false;
         }
     }
 

@@ -9,6 +9,8 @@
             display "Hello"
             .
        INIT3.
+            stop run
+            display "stopped"
             .
        sect SECTION.
             display "hi"
