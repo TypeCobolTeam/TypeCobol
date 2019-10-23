@@ -305,10 +305,11 @@ namespace TypeCobol.Compiler.Diagnostics
                         bool isDebugType = char.ToLower(codeElement.ConsumedTokens[i].TokensLine.IndicatorChar) == 'd';
                         isDebug |= isDebugType;
                         isNoDebug |= !isDebugType;
-                    }
-                    if (isDebug && isNoDebug)
-                    {
-                        DiagnosticUtils.AddError(codeElement, "In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.");
+                        if (isDebug && isNoDebug)
+                        {
+                            DiagnosticUtils.AddError(codeElement, "In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.");
+                            break;
+                        }
                     }
                 }
             }
