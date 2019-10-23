@@ -1,27 +1,107 @@
 {
   "name": "GoToDefinition.tlsp",
-  "session": "C:\\Users\\BALLMA\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2018_09_10_09_05_32_565\\TestSuite_2018_09_10_09_05_32_565.slsp",
-  "user": "BALLMA",
-  "date": "2018/09/10 09:05:32 570",
-  "uri": "file:///C:/Users/BALLMA/Documents/Tests/LSR/GoToDefinition.tlsp",
-  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\Users\\\\BALLMA\\\\Source\\\\Repos\\\\TypeCobol\\\\bin\\\\EI_Debug\",\"rootUri\":\"file:/C:/Users/BALLMA/Source/Repos/TypeCobol/bin/EI_Debug/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"signatureHelp\":{\"dynamicRegistration\":true},\"references\":{\"dynamicRegistration\":true},\"documentHighlight\":{\"dynamicRegistration\":true},\"documentSymbol\":{\"dynamicRegistration\":true},\"formatting\":{\"dynamicRegistration\":true},\"rangeFormatting\":{\"dynamicRegistration\":true},\"onTypeFormatting\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true},\"codeAction\":{\"dynamicRegistration\":true},\"codeLens\":{\"dynamicRegistration\":true},\"documentLink\":{\"dynamicRegistration\":true},\"rename\":{\"dynamicRegistration\":true}}},\"trace\":\"off\"}}",
-  "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
-  "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\Users\\\\BALLMA\\\\Source\\\\Repos\\\\TypeCobol\\\\bin\\\\EI_Debug\\\\TypeCobol.CLI.exe\",\"-1\",\"-s\",\"C:\\\\TypeCobol\\\\Sources\\\\##Latest_Release##\\\\skeletons.xml\",\"-e\",\"rdz\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\\",\"-y\",\"C:\\\\TypeCobol\\\\Sources\\\\##Latest_Release##\\\\Intrinsic\\\\Intrinsic.txt\",\"-t\",\"--dependencies\",\"C:\\\\TypeCobol\\\\Sources\\\\##Latest_Release##\\\\Dependencies\\\\*.tcbl\",\"--autoremarks\",\"-dcs\",\"-md\",\"30\"]}}",
-  "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX06757771808740006468.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZS0OSM.\\r\\n       data division.\\r\\n       working-storage section.\\r\\n       COPY YFOO replacing \\u003d\\u003d:toto:\\u003d\\u003d by \\u003d\\u003dtoto\\u003d\\u003d.\\r\\n\\r\\n       procedure division.\\r\\n           perform TOTO\\r\\n           goback.\\r\\n       TOTO.\\r\\n           continue.\\r\\n       END PROGRAM DVZS0OSM.\"}}}",
+  "session": "C:\\Users\\LANOYDO\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2019_10_23_13_04_34_106\\TestSuite_2019_10_23_13_04_34_106.slsp",
+  "user": "LANOYDO",
+  "date": "2019/10/23 13:04:34 106",
+  "uri": "file:///C:/Users/LANOYDO/Documents/GoToDefinition.tlsp",
+  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\Users\\\\LANOYDO\\\\source\\\\repos\\\\TypeCobol\\\\bin\\\\EI_Debug\",\"rootUri\":\"file:/C:/Users/LANOYDO/source/repos/TypeCobol/bin/EI_Debug/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"signatureHelp\":{\"dynamicRegistration\":true},\"references\":{\"dynamicRegistration\":true},\"documentHighlight\":{\"dynamicRegistration\":true},\"documentSymbol\":{\"dynamicRegistration\":true},\"formatting\":{\"dynamicRegistration\":true},\"rangeFormatting\":{\"dynamicRegistration\":true},\"onTypeFormatting\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true},\"codeAction\":{\"dynamicRegistration\":true},\"codeLens\":{\"dynamicRegistration\":true},\"documentLink\":{\"dynamicRegistration\":true},\"rename\":{\"dynamicRegistration\":true}}},\"trace\":\"off\"}}",
+  "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"experimental\":[{\"Item1\":\"version\",\"Item2\":\"v1.4.0-prerelease.16\"}],\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
+  "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\Users\\\\LANOYDO\\\\source\\\\repos\\\\TypeCobol\\\\bin\\\\EI_Debug\\\\TypeCobol.CLI.exe\",\"-1\",\"-e\",\"rdz\",\"-y\",\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\Intrinsic\\\\Intrinsic.txt\",\"-glm\",\"\\\"{6}\\\"\",\"--autoremarks\",\"--outputFormat\\u003dCobol85Mixed\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\Production\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\MISC\",\"-md\",\"200\",\"--dependencies\",\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\Dependencies\\\\*.tcbl\",\"--dependencies\",\"\\\\\\\\uf44-004\\\\TYPECOBOL-DEPENDENCIES\\\\Y530\\\\*.tcbl\"]}}",
+  "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZS0OSM.\\r\\n       data division.\\r\\n       working-storage section.\\r\\n       COPY YFOO replacing \\u003d\\u003d:toto:\\u003d\\u003d by \\u003d\\u003dtoto\\u003d\\u003d.\\r\\n       01 Group1.\\r\\n          05 VarA pic X.\\r\\n\\r\\n       procedure division.\\r\\n           perform TOTO\\r\\n           move Group1::VarA to Group1::VarA\\r\\n           move VarA to Group1::VarA\\r\\n           goback.\\r\\n       TOTO.\\r\\n           continue.\\r\\n       END PROGRAM DVZS0OSM.\"}}}",
   "messages": [
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX06757771808740006468.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/definition\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX06757771808740006468.cee\"},\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX06757771808740006468.cee\",\"position\":{\"line\":7,\"character\":22}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"method\":\"textDocument/definition\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"position\":{\"line\":9,\"character\":19}}}"
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX06757771808740006468.cee\",\"range\":{\"start\":{\"line\":9,\"character\":0}}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"result\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"range\":{\"start\":{\"line\":13,\"character\":0}}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"method\":\"textDocument/hover\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"position\":{\"line\":10,\"character\":18}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"result\":{}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"15\",\"method\":\"textDocument/definition\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"position\":{\"line\":10,\"character\":16}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"15\",\"result\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"range\":{\"start\":{\"line\":5,\"character\":0}}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"method\":\"textDocument/hover\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"position\":{\"line\":10,\"character\":25}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"result\":{}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"17\",\"method\":\"textDocument/definition\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"position\":{\"line\":10,\"character\":24}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"17\",\"result\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"range\":{\"start\":{\"line\":6,\"character\":0}}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"18\",\"method\":\"textDocument/hover\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"position\":{\"line\":10,\"character\":35}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"18\",\"result\":{}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"19\",\"method\":\"textDocument/definition\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"position\":{\"line\":10,\"character\":32}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"19\",\"result\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"range\":{\"start\":{\"line\":5,\"character\":0}}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"method\":\"textDocument/definition\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"position\":{\"line\":10,\"character\":40}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"result\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"range\":{\"start\":{\"line\":6,\"character\":0}}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"21\",\"method\":\"textDocument/hover\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"position\":{\"line\":11,\"character\":18}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"21\",\"result\":{}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"22\",\"method\":\"textDocument/hover\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"position\":{\"line\":11,\"character\":17}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"22\",\"result\":{}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"23\",\"method\":\"textDocument/definition\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"position\":{\"line\":11,\"character\":16}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"23\",\"result\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\",\"range\":{\"start\":{\"line\":6,\"character\":0}}}}"
     }
   ],
-  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/BALLMA/AppData/Local/Temp/1/tcbl/TCOZBMX06757771808740006468.cee\"}}}",
+  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/2/tcbl/DVZZDLY1941980203030507940.cee\"}}}",
   "IsValid": true
 }
