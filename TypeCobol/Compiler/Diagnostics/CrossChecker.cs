@@ -521,14 +521,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                     if (paramDesc?.PassingType == ParameterDescription.PassingTypes.Input)
                     {
-                        // check not RETURNING parameter
-                        bool? search = node.GetParent<FunctionDeclaration>()?.Profile.ReturningParameter?.QualifiedName
-                            .Equals(paramDesc.QualifiedName);
-                        if (search == null || search == false) {
-                            DiagnosticUtils.AddError(node,
-                                "Input variable '" + paramDesc.Name + "' is modified by an instruction",
-                                area.SymbolReference);
-                        }
+                        DiagnosticUtils.AddError(node, "Input variable '" + paramDesc.Name + "' is modified by an instruction", area.SymbolReference);
                     }
                 }
 
