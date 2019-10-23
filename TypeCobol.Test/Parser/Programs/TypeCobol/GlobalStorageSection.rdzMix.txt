@@ -44,13 +44,12 @@ Line 32[8,48] <30, Error, Semantics> - Semantic error: TYPE 'ForbiddenTypedef' i
        PROCEDURE DIVISION.
 
        DECLARE PROCEDURE MyProc PRIVATE
-           INPUT    myDate      TYPE DATE.
+           IN-OUT    myDate      TYPE DATE.
        Data division.
        WORKING-STORAGE Section.
        01 TestCtx TYPE Bool.
        PROCEDURE DIVISION.
       *G-Date and G-TechCtx are accesible from GlobalStorage
-Line 45[27,32] <27, Error, Syntax> - Syntax error : Input variable 'myDate' is modified by an instruction
            MOVE G-Date TO myDate.
            MOVE G-TechCtx TO TestCtx.
         END-DECLARE.
@@ -75,7 +74,7 @@ Line 58[8,30] <27, Error, Syntax> - Syntax error : GLOBAL-STORAGE SECTION is onl
       *G-Date is accessible in nested from Global Storage
        MOVE G-Date TO MyDate.
        DECLARE PROCEDURE MyProc PRIVATE
-            INPUT    myDate      TYPE DATE.
+            IN-OUT    myDate      TYPE DATE.
        Data division.
        WORKING-STORAGE Section.
        01 TestCtx TYPE Bool.
@@ -84,7 +83,6 @@ Line 58[8,30] <27, Error, Syntax> - Syntax error : GLOBAL-STORAGE SECTION is onl
        PROCEDURE DIVISION.
       *G-Date and G-TechCtx are accessible 
       * in nested procedure from Global Storage
-Line 75[23,28] <27, Error, Syntax> - Syntax error : Input variable 'myDate' is modified by an instruction
        MOVE G-Date TO myDate.
        MOVE G-TechCtx TO TestCtx.
 

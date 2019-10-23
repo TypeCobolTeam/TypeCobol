@@ -509,16 +509,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
                 if (!isReadStorageArea && node.SymbolTable.CurrentScope == SymbolTable.Scope.Function)
                 {
-                    ParameterDescription paramDesc;
-                    if (dataDefinitionPath?.CurrentDataDefinition.TypeDefinition != null)
-                    {
-                        // typedef
-                        paramDesc = dataDefinitionPath.CurrentDataDefinition as ParameterDescription;
-                    }
-                    else
-                    {
-                        paramDesc = dataDefinitionFound as ParameterDescription;
-                    }
+                    var paramDesc = (dataDefinitionPath?.CurrentDataDefinition ?? dataDefinitionFound) as ParameterDescription;
                     if (paramDesc?.PassingType == ParameterDescription.PassingTypes.Input)
                     {
                         DiagnosticUtils.AddError(node, "Input variable '" + paramDesc.Name + "' is modified by an instruction", area.SymbolReference);
