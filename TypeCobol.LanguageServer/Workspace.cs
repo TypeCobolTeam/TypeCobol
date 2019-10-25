@@ -128,7 +128,7 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// true to Check program name is matching file name.    
         /// </summary>
-        public bool CheckProgramName { get; set; }
+        public TypeCobolCheckOption CheckProgramName { get; set; }
         #endregion
 
 

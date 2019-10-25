@@ -10,6 +10,7 @@ using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.StdioHttp;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 using TypeCobol.LanguageServer.Utilities;
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.LanguageServer
 {
@@ -121,9 +122,9 @@ namespace TypeCobol.LanguageServer
         /// Are we supporting Check program name is matching file name.    
         /// </summary>
 #if EUROINFO_RULES
-        public static bool CheckProgramName { get; set; } = true;
+        public static TypeCobolCheckOption CheckProgramName { get; set; } = new TypeCobolCheckOption(DiagnosticLevels.Warning);
 #else
-        public static bool CheckProgramName { get; set; } = false;
+        public static TypeCobolCheckOption CheckProgramName { get; set; } = new TypeCobolCheckOption(DiagnosticLevels.Ignore);
 #endif
 
         public static System.Diagnostics.Process Process;
@@ -214,8 +215,7 @@ namespace TypeCobol.LanguageServer
                 { "dcs|disablecopysuffixing", "Deactictivate Euro Information suffixing", v => UseEuroInformationLegacyReplacingSyntax = false },
                 { "sc|syntaxcolor",  "Syntax Coloring Support.", _ => UseSyntaxColoring = true},
                 { "ol|outlineRefresh",  "Outline Support.", _ => UseOutlineRefresh = true},
-                { "cpn|checkprogramname=", "If set to true check program name matching file name.", v => CheckProgramName = !(string.IsNullOrEmpty(v) || v.ToLower() == "false") },
-
+                { "diag.cpn|diagnostic.checkProgramName=", "Indicate level of check program name: ignore, warning, error.", _ => CheckProgramName = new TypeCobolCheckOption(_) },
             };
 
             System.Collections.Generic.List<string> arguments;

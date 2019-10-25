@@ -14,6 +14,7 @@ using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.CodeModel;
 using Analytics;
 using TypeCobol.CustomExceptions;
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol
 {
@@ -154,7 +155,7 @@ namespace TypeCobol
             var typeCobolOption = new TypeCobolOptions() { ExecToStep = ExecutionStep.Generate };
 #if EUROINFO_RULES
 		    typeCobolOption.AutoRemarksEnable = autoRemarks;
-		    typeCobolOption.CheckProgramName = checkProgramName;
+		    typeCobolOption.CheckProgramName.DiagnosticLevel = (checkProgramName) ? DiagnosticLevels.Warning : DiagnosticLevels.Ignore;
 #endif
             parser.Init(path, typeCobolOption, format, copies);
 

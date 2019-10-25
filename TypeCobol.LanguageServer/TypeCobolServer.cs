@@ -15,6 +15,7 @@ using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.LanguageServer.Context;
 using TypeCobol.LanguageServer.SignatureHelper;
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.LanguageServer
 {
@@ -65,7 +66,7 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// true to Check program name is matching file name.    
         /// </summary>
-        public bool CheckProgramName { get; set; }
+        public TypeCobolCheckOption CheckProgramName { get; set; }
 
         /// <summary>
         /// Timer Disabled for TypeCobol.LanguageServer.

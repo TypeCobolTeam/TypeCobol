@@ -16,6 +16,7 @@ using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Parser.Generated;
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -989,12 +990,16 @@ namespace TypeCobol.Compiler.Diagnostics
                     "\"END PROGRAM\" is missing.", MessageCode.Warning);
             }
 
-            if (node.IsMainProgram && compilerOptions.CheckProgramName)
+            if (node.IsMainProgram && compilerOptions.CheckProgramName.DiagnosticLevel != DiagnosticLevels.Ignore)
             {
                 string shortFilename = Path.GetFileNameWithoutExtension(node.CodeElement.TokenSource.SourceName);
                 if (!node.Name.Equals(shortFilename, StringComparison.OrdinalIgnoreCase))
                 {
-                    DiagnosticUtils.AddError(node, "The program name \"" + node.Name + "\" must match the file name \"" + shortFilename + "\".", MessageCode.Warning);
+                    MessageCode messageCode =
+                        (compilerOptions.CheckProgramName.DiagnosticLevel == DiagnosticLevels.Warning)
+                            ? MessageCode.Warning
+                            : MessageCode.SyntaxErrorInParser;
+                    DiagnosticUtils.AddError(node, "The program name \"" + node.Name + "\" must match the file name \"" + shortFilename + "\".", messageCode);
                 }
             }
         }

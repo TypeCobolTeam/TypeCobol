@@ -10,6 +10,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Tools.Options_Config;
 using String = System.String;
 
 namespace TypeCobol.Test.Utils
@@ -34,7 +35,7 @@ namespace TypeCobol.Test.Utils
 #if EUROINFO_RULES
             options.AutoRemarksEnable = autoRemarks;    
 #endif
-            options.CheckProgramName = checkProgramName;
+            options.CheckProgramName.DiagnosticLevel = (checkProgramName) ? DiagnosticLevels.Warning : DiagnosticLevels.Ignore;
 
             if (extensions == null) extensions = new[] { ".cbl", ".cpy" };
             //comparator.paths.sextension = extensions[0].Substring(1);

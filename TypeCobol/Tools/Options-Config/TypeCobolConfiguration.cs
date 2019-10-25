@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Castle.Core.Internal;
 using Mono.Options;
 using TypeCobol.Compiler;
@@ -31,10 +32,10 @@ namespace TypeCobol.Tools.Options_Config
 
 #if EUROINFO_RULES
         public bool UseEuroInformationLegacyReplacingSyntax = true;
-        public bool CheckProgramName = true;
+        public TypeCobolCheckOption CheckProgramName = new TypeCobolCheckOption(DiagnosticLevels.Warning);
 #else
         public bool UseEuroInformationLegacyReplacingSyntax = false;
-        public bool CheckProgramName = false;
+        public TypeCobolCheckOption CheckProgramName = new TypeCobolCheckOption(DiagnosticLevels.Ignore);
 #endif
 
         public bool IsErrorXML
@@ -54,7 +55,6 @@ namespace TypeCobol.Tools.Options_Config
         public string RawExecToStep = "5";
         public string RawMaximumDiagnostics;
         public string RawOutputFormat = "0";
-
 
         public static Dictionary<ReturnCode, string> ErrorMessages = new Dictionary<ReturnCode, string>()
         {
@@ -150,6 +150,33 @@ namespace TypeCobol.Tools.Options_Config
         Cobol85Nested,
         Documentation
     }
+
+    public enum DiagnosticLevels
+    {
+        Ignore = 0,
+        Warning,
+        Error
+    }
+
+    public class TypeCobolCheckOption
+    {
+        public TypeCobolCheckOption(DiagnosticLevels diagnosticLevel)
+        {
+            DiagnosticLevel = diagnosticLevel;
+        }
+        public TypeCobolCheckOption(string configValue)
+        {
+            if (string.IsNullOrEmpty(configValue) || configValue.Length < 2) return;
+            configValue = char.ToUpper(configValue[0]) + configValue.Substring(1).ToLower();
+            if (Enum.TryParse(configValue, out DiagnosticLevels diagnosticLevel))
+            {
+                DiagnosticLevel = diagnosticLevel;
+            }
+        }
+
+        public DiagnosticLevels DiagnosticLevel { get; set; }
+    }
+
     public static class TypeCobolOptionSet
     {
         public static OptionSet GetCommonTypeCobolOptions(TypeCobolConfiguration typeCobolConfig)
@@ -177,7 +204,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "zcr|zcallreport=", "{PATH} to report of all program called by zcallpgm.", v => typeCobolConfig.ReportZCallFilePath = v },
                 { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing.", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false },
                 { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
-                { "cpn|checkprogramname=", "If set to true check program name matching file name.", v => typeCobolConfig.CheckProgramName = !(string.IsNullOrEmpty(v) || v.ToLower() == "false") },
+                { "diag.cpn|diagnostic.checkProgramName=", "Indicate level of check program name: ignore, warning, error.", v => typeCobolConfig.CheckProgramName = new TypeCobolCheckOption(v) },
             };
             return commonOptions;
         }

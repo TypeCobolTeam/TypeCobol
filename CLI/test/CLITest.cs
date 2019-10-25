@@ -341,7 +341,7 @@ namespace CLI.Test
             startInfo.Arguments = @"/c " + ".." + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar +
                                   "TypeCobol.CLI.exe " + arguments;
 #if EUROINFO_RULES
-            startInfo.Arguments += " -cpn=false";        // inhib check program name with file name
+            startInfo.Arguments += " -diag.cpn ignore";        // inhib check program name with file name
 #endif
 
             process.StartInfo = startInfo;

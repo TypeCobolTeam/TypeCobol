@@ -40,15 +40,15 @@ namespace TypeCobol.Compiler.Directives
       
 #if EUROINFO_RULES
         private bool _useEuroInformationLegacyReplacingSyntax = true;
-        private bool _checkProgramName = true;
+        private TypeCobolCheckOption _checkProgramName = new TypeCobolCheckOption(DiagnosticLevels.Warning);
 #else
         private bool _useEuroInformationLegacyReplacingSyntax;
-        private bool _checkProgramName = false;
+        private TypeCobolCheckOption _checkProgramName = new TypeCobolCheckOption(DiagnosticLevels.Ignore);
 #endif
         /// <summary>
         /// Check if program name matches the file name.
         /// </summary>
-        public bool CheckProgramName
+        public TypeCobolCheckOption CheckProgramName
         {
             get { return _checkProgramName; }
             set { _checkProgramName = value; }
