@@ -5,6 +5,7 @@ using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -28,7 +29,13 @@ namespace TypeCobol.Compiler.Parser
             var parserDiag = new ParserDiagnostic(message, data.DataName.NameLiteral.Token, rulestack, code);
             e.Diagnostics.Add(parserDiag);
         }
-
+	    internal static void AddErrorWithNoRuleStack(CodeElement e, string message, Antlr4.Runtime.RuleContext context, MessageCode code = MessageCode.SyntaxErrorInParser)
+	    {
+	        Token token = ParseTreeUtils.GetFirstToken(context);
+            if (e.Diagnostics == null) e.Diagnostics = new List<Diagnostic>();
+	        var parserDiag = new ParserDiagnostic(message, token.StartIndex + 1, token.StopIndex + 1, token.Line, null, code);
+	        e.Diagnostics.Add(parserDiag);
+        }
 
         #region Node Diagnostic Generator
 
