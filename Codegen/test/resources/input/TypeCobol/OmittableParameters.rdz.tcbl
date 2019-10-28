@@ -1,0 +1,28 @@
+﻿       identification division.
+       program-id. MyPGM.
+       data division.
+       working-storage section.
+      
+       01 GroupType TYPEDEF STRICT PRIVATE.
+           05 GroupType-DATA1      PIC X(5).
+           05 GroupType-DATA2      PIC X(5).
+      
+       procedure division.
+      
+       DECLARE PROCEDURE MyProc
+               INPUT Scalar ? PIC X(5)
+                     Structure ? TYPE GroupType.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 MyStructure TYPE GroupType.
+       PROCEDURE DIVISION.
+           DISPLAY Scalar
+           MOVE Structure TO MyStructure
+           .
+       END-DECLARE.
+      
+       p1.
+           CALL MyProc INPUT OMITTED OMITTED
+           .
+      
+       end program MyPGM.

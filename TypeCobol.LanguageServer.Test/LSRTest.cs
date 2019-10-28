@@ -379,6 +379,13 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("GlobalStorageCompletion", LsrTestingOptions.NoLsrTesting, true);
         }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void CompletionOnPartialLibraryName()
+        {
+            LSRTestHelper.Test("CompletionOnPartialLibraryName", LsrTestingOptions.NoLsrTesting, true, true);
+        }
         #endregion
 
         [TestMethod]
@@ -397,6 +404,12 @@ namespace TypeCobol.LanguageServer.Test
         public void OnHover()
         {
             LSRTestHelper.Test("OnHover", LsrTestingOptions.NoLsrTesting, true, true);
+        }
+
+        [TestMethod]
+        public void RefreshCopiesNotif()
+        {
+            LSRTestHelper.Test("RefreshCopiesNotif", LsrTestingOptions.NoLsrTesting, true, true);
         }
 
         [TestMethod]
