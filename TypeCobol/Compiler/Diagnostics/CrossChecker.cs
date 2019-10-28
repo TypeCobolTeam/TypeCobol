@@ -206,20 +206,24 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Goback goback)
         {
-            List<Node> firstStatementsAfter = goback.Parent.Children.SkipWhile(cc => !(cc is Nodes.Goback)).Skip(1).ToList();
-            if (firstStatementsAfter.Any() && (firstStatementsAfter.All(cc => cc is Nodes.End) == false))
+            int gobackIndex = goback.Parent.ChildIndex(goback);
+            int lastIndex = goback.Parent.Children.Count - 1;
+            // last child is a period separator else there is a warning
+            if (gobackIndex < (lastIndex - 1))
             {
-                DiagnosticUtils.AddError(firstStatementsAfter[0], "There should be no statement after \"GOBACK\"", MessageCode.Warning);
+                DiagnosticUtils.AddError(goback.Parent.Children[gobackIndex + 1], "There should be no statement after \"GOBACK\"", MessageCode.Warning);
             }
             return true;
         }
 
         public override bool Visit(Stop stop)
         {
-            List<Node> firstStatementsAfter = stop.Parent.Children.SkipWhile(cc => !(cc is Nodes.Stop)).Skip(1).ToList();
-            if (firstStatementsAfter.Any() && (firstStatementsAfter.All(cc => cc is Nodes.End) == false))
+            int stopIndex = stop.Parent.ChildIndex(stop);
+            int lastIndex = stop.Parent.Children.Count - 1;
+            // last child is a period separator else there is a warning
+            if (stopIndex < (lastIndex - 1))
             {
-                DiagnosticUtils.AddError(firstStatementsAfter[0], "There should be no statement after \"STOP RUN\"", MessageCode.Warning);
+                DiagnosticUtils.AddError(stop.Parent.Children[stopIndex + 1], "There should be no statement after \"STOP RUN\"", MessageCode.Warning);
             }
             return true;
         }
