@@ -37,6 +37,12 @@
                                                   
        01 Inline2    PIC X(1)           VALUE 'F'.
 
+      *01 Structure3
+      *   TYPE StructureType.
+       01 Structure3.
+           02 champ PIC X(1).
+                             
+
        PROCEDURE DIVISION.
       *DECLARE PROCEDURE Proc PRIVATE
       *   INPUT paramIntrinsicDate TYPE Date VALUE '20190102'

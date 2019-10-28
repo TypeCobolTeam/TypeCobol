@@ -7,7 +7,7 @@
       *    'zerzer zer zer zer sdfsd fzerzer zer ze rzer zer zer ze r'.
       
       *01 AccountOwner type Person.
-       01 AccountOwner. 
+       01 AccountOwner.
            02 LastName pic X(30) value
            'zerzer zer zer zer sdfsd fzerzer zer ze rzer zer zer ze r'.
                                          
