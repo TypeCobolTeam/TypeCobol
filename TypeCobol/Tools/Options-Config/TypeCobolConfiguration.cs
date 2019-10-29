@@ -5,6 +5,7 @@ using System.Linq;
 using Castle.Core.Internal;
 using Mono.Options;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.Diagnostics;
 
 namespace TypeCobol.Tools.Options_Config
 {
@@ -32,11 +33,10 @@ namespace TypeCobol.Tools.Options_Config
 
 #if EUROINFO_RULES
         public bool UseEuroInformationLegacyReplacingSyntax = true;
-        public TypeCobolCheckOption CheckProgramName = new TypeCobolCheckOption(DiagnosticLevels.Warning);
 #else
         public bool UseEuroInformationLegacyReplacingSyntax = false;
-        public TypeCobolCheckOption CheckProgramName = new TypeCobolCheckOption(DiagnosticLevels.Ignore);
 #endif
+        public TypeCobolCheckOption CheckProgramName = new TypeCobolCheckOption(Severity.Warning);
 
         public bool IsErrorXML
         {
@@ -151,16 +151,13 @@ namespace TypeCobol.Tools.Options_Config
         Documentation
     }
 
-    public enum DiagnosticLevels
-    {
-        Ignore = 0,
-        Warning,
-        Error
-    }
-
     public class TypeCobolCheckOption
     {
-        public TypeCobolCheckOption(DiagnosticLevels diagnosticLevel)
+        public TypeCobolCheckOption(bool isActive)
+        {
+            IsActive = isActive;
+        }
+        public TypeCobolCheckOption(Severity diagnosticLevel)
         {
             DiagnosticLevel = diagnosticLevel;
         }
@@ -168,13 +165,17 @@ namespace TypeCobol.Tools.Options_Config
         {
             if (string.IsNullOrEmpty(configValue) || configValue.Length < 2) return;
             configValue = char.ToUpper(configValue[0]) + configValue.Substring(1).ToLower();
-            if (Enum.TryParse(configValue, out DiagnosticLevels diagnosticLevel))
+            if (Enum.TryParse(configValue, out Severity diagnosticLevel))
             {
                 DiagnosticLevel = diagnosticLevel;
             }
+            else if (configValue == "Ignore")
+            {
+                IsActive = false;
+            }
         }
-
-        public DiagnosticLevels DiagnosticLevel { get; set; }
+        public bool IsActive { get; set; } = true;
+        public Severity DiagnosticLevel { get; set; } = Severity.Warning;
     }
 
     public static class TypeCobolOptionSet
@@ -204,7 +205,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "zcr|zcallreport=", "{PATH} to report of all program called by zcallpgm.", v => typeCobolConfig.ReportZCallFilePath = v },
                 { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing.", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false },
                 { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
-                { "diag.cpn|diagnostic.checkProgramName=", "Indicate level of check program name: ignore, warning, error.", v => typeCobolConfig.CheckProgramName = new TypeCobolCheckOption(v) },
+                { "diag.cpn|diagnostic.checkProgramName=", "Indicate level of check program name: error, warning, info, ignore.", v => typeCobolConfig.CheckProgramName = new TypeCobolCheckOption(v) },
             };
             return commonOptions;
         }

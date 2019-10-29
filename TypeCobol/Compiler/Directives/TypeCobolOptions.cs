@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Compiler.Directives
@@ -40,21 +41,13 @@ namespace TypeCobol.Compiler.Directives
       
 #if EUROINFO_RULES
         private bool _useEuroInformationLegacyReplacingSyntax = true;
-        private TypeCobolCheckOption _checkProgramName = new TypeCobolCheckOption(DiagnosticLevels.Warning);
 #else
         private bool _useEuroInformationLegacyReplacingSyntax;
-        private TypeCobolCheckOption _checkProgramName = new TypeCobolCheckOption(DiagnosticLevels.Ignore);
 #endif
         /// <summary>
         /// Check if program name matches the file name.
         /// </summary>
-        public TypeCobolCheckOption CheckProgramName
-        {
-            get { return _checkProgramName; }
-            set { _checkProgramName = value; }
-        }
-
-
+        public TypeCobolCheckOption CheckProgramName { get; set; } = new TypeCobolCheckOption(Severity.Warning);
 
         public TypeCobolOptions(TypeCobolConfiguration config)
         {

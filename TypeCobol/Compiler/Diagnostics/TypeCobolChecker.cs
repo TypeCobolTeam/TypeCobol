@@ -990,15 +990,15 @@ namespace TypeCobol.Compiler.Diagnostics
                     "\"END PROGRAM\" is missing.", MessageCode.Warning);
             }
 
-            if (node.IsMainProgram && compilerOptions.CheckProgramName.DiagnosticLevel != DiagnosticLevels.Ignore)
+            if (node.IsMainProgram && compilerOptions.CheckProgramName.IsActive)
             {
                 string shortFilename = Path.GetFileNameWithoutExtension(node.CodeElement.TokenSource.SourceName);
                 if (!node.Name.Equals(shortFilename, StringComparison.OrdinalIgnoreCase))
                 {
                     MessageCode messageCode =
-                        (compilerOptions.CheckProgramName.DiagnosticLevel == DiagnosticLevels.Warning)
+                        (compilerOptions.CheckProgramName.DiagnosticLevel == Severity.Warning)
                             ? MessageCode.Warning
-                            : MessageCode.SyntaxErrorInParser;
+                            : (compilerOptions.CheckProgramName.DiagnosticLevel == Severity.Info) ? MessageCode.Info : MessageCode.SyntaxErrorInParser;
                     DiagnosticUtils.AddError(node, "The program name \"" + node.Name + "\" must match the file name \"" + shortFilename + "\".", messageCode);
                 }
             }

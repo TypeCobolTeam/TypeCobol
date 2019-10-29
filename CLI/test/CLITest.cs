@@ -339,10 +339,7 @@ namespace CLI.Test
             startInfo.FileName = "cmd.exe";
             startInfo.WorkingDirectory = workingDirectory;
             startInfo.Arguments = @"/c " + ".." + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar +
-                                  "TypeCobol.CLI.exe " + arguments;
-#if EUROINFO_RULES
-            startInfo.Arguments += " -diag.cpn ignore";        // inhib check program name with file name
-#endif
+                                  "TypeCobol.CLI.exe " + arguments + " -diag.cpn ignore";    // inhib check program name with file name
 
             process.StartInfo = startInfo;
             process.StartInfo.RedirectStandardOutput = true;

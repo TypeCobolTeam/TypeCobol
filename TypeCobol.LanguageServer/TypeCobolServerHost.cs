@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.StdioHttp;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
@@ -119,13 +120,9 @@ namespace TypeCobol.LanguageServer
         public static bool UseOutlineRefresh { get; set; }
 
         /// <summary>
-        /// Are we supporting Check program name is matching file name.    
+        /// Check program name matching file name option.    
         /// </summary>
-#if EUROINFO_RULES
-        public static TypeCobolCheckOption CheckProgramName { get; set; } = new TypeCobolCheckOption(DiagnosticLevels.Warning);
-#else
-        public static TypeCobolCheckOption CheckProgramName { get; set; } = new TypeCobolCheckOption(DiagnosticLevels.Ignore);
-#endif
+        public static TypeCobolCheckOption CheckProgramName { get; set; } = new TypeCobolCheckOption(Severity.Warning);
 
         public static System.Diagnostics.Process Process;
 

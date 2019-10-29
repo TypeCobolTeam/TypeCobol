@@ -126,7 +126,7 @@ namespace TypeCobol.LanguageServer
         public bool UseOutlineRefresh { get; set; }
 
         /// <summary>
-        /// true to Check program name is matching file name.    
+        /// Check program name matching file name option.    
         /// </summary>
         public TypeCobolCheckOption CheckProgramName { get; set; }
         #endregion
@@ -428,9 +428,9 @@ namespace TypeCobol.LanguageServer
 
 #if EUROINFO_RULES
             typeCobolOptions.AutoRemarksEnable = TypeCobolConfiguration.AutoRemarks;
-            typeCobolOptions.CheckProgramName = CheckProgramName;
 #endif
 
+            typeCobolOptions.CheckProgramName = CheckProgramName;
             CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, _extensions, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.EndOfLineDelimiter, TypeCobolConfiguration.Format.FixedLineLength, TypeCobolConfiguration.Format.ColumnsLayout, typeCobolOptions);
 
             if (TypeCobolConfiguration.CopyFolders != null && TypeCobolConfiguration.CopyFolders.Count > 0)

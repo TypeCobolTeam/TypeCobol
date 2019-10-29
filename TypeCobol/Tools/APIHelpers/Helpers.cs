@@ -33,7 +33,7 @@ namespace TypeCobol.Tools.APIHelpers
             {
                 try
                 {
-                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck, CheckProgramName = new TypeCobolCheckOption(DiagnosticLevels.Ignore) }, intrinsicDocumentFormat);
+                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck, CheckProgramName = new TypeCobolCheckOption(false) }, intrinsicDocumentFormat);
                     parser.Parse(path);
 
                     diagnostics.AddRange(parser.Results.AllDiagnostics());

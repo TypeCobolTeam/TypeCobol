@@ -64,7 +64,7 @@ namespace TypeCobol.LanguageServer
         public bool UseEuroInformationLegacyReplacingSyntax { get; set; }
 
         /// <summary>
-        /// true to Check program name is matching file name.    
+        /// Check program name matching file name option.    
         /// </summary>
         public TypeCobolCheckOption CheckProgramName { get; set; }
 

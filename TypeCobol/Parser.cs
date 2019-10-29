@@ -155,8 +155,9 @@ namespace TypeCobol
             var typeCobolOption = new TypeCobolOptions() { ExecToStep = ExecutionStep.Generate };
 #if EUROINFO_RULES
 		    typeCobolOption.AutoRemarksEnable = autoRemarks;
-		    typeCobolOption.CheckProgramName.DiagnosticLevel = (checkProgramName) ? DiagnosticLevels.Warning : DiagnosticLevels.Ignore;
 #endif
+            if (!checkProgramName) typeCobolOption.CheckProgramName = new TypeCobolCheckOption(false);
+
             parser.Init(path, typeCobolOption, format, copies);
 
             parser.Parse(path);

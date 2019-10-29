@@ -35,7 +35,7 @@ namespace TypeCobol.Test.Utils
 #if EUROINFO_RULES
             options.AutoRemarksEnable = autoRemarks;    
 #endif
-            options.CheckProgramName.DiagnosticLevel = (checkProgramName) ? DiagnosticLevels.Warning : DiagnosticLevels.Ignore;
+            if (!checkProgramName) options.CheckProgramName = new TypeCobolCheckOption(false);
 
             if (extensions == null) extensions = new[] { ".cbl", ".cpy" };
             //comparator.paths.sextension = extensions[0].Substring(1);
