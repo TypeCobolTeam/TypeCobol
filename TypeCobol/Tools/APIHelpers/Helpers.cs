@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using JetBrains.Annotations;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.AntlrUtils;
@@ -11,15 +9,15 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.Nodes;
 using TypeCobol.CustomExceptions;
 using TypeCobol.Tools.Options_Config;
-using String = System.String;
 
 namespace TypeCobol.Tools.APIHelpers
 {
     public static class Helpers
     {
+        private static string[] _DependenciesExtensions = { ".tcbl", ".cbl", ".cpy" };
+
         public static SymbolTable LoadIntrinsic(List<string> paths, DocumentFormat intrinsicDocumentFormat, EventHandler<DiagnosticsErrorEvent> diagEvent)
         {
             var parser = new Parser();
@@ -74,18 +72,57 @@ namespace TypeCobol.Tools.APIHelpers
             return table;
         }
 
-        public static SymbolTable LoadDependencies(TypeCobolConfiguration config, SymbolTable intrinsicTable, EventHandler<DiagnosticsErrorEvent> diagEvent)
+        /// <summary>
+        /// Parse one dependency
+        /// </summary>
+        /// <param name="path">Path of the dependency to parse</param>
+        /// <param name="config">Current configuration</param>
+        /// <param name="customSymbols">Intrinsic or Namespace SymbolTable</param>
+        /// <returns></returns>
+        private static CompilationUnit ParseDependency(string path, [NotNull] TypeCobolConfiguration config, SymbolTable customSymbols)
         {
+            var options = new TypeCobolOptions(config) { ExecToStep = ExecutionStep.SemanticCheck };
+            var parser = new Parser(customSymbols);
 
-            var parser = new Parser(intrinsicTable);
+            parser.Init(path, options, config.Format, config.CopyFolders);
+            parser.Parse(path); //Parse the dependency file
+
+            return parser.Results;
+        }
+
+        public static IEnumerable<string> GetDependenciesMissingCopies([NotNull] TypeCobolConfiguration config, SymbolTable intrinsicTable, EventHandler<DiagnosticsErrorEvent> diagEvent)
+        {
+            List<CopyDirective> missingCopies = new List<CopyDirective>();
+
+            // For all paths given in preferences
+            foreach (var path in config.Dependencies)
+            {
+                // For each dependency source found in path
+                foreach (string dependency in Tools.FileSystem.GetFiles(path, _DependenciesExtensions, true))
+                {
+                    missingCopies.AddRange(ParseDependency(dependency, config, intrinsicTable).MissingCopies);
+                }
+            }
+
+            // Return a list of name of the CopyDirective
+            return missingCopies.Select(mc => mc.TextName);
+        }
+
+        public static SymbolTable LoadDependencies([NotNull] TypeCobolConfiguration config, SymbolTable intrinsicTable, EventHandler<DiagnosticsErrorEvent> diagEvent,
+            out List<RemarksDirective.TextNameVariation> usedCopies,
+            //Key : path of the dependency
+            //Copy name not found
+            out IDictionary<string, IEnumerable<string>> missingCopies)
+        {
+            usedCopies = new List<RemarksDirective.TextNameVariation>();
+            missingCopies = new Dictionary<string, IEnumerable<string>>();
             var diagnostics = new List<Diagnostic>();
             var table = new SymbolTable(intrinsicTable, SymbolTable.Scope.Namespace); //Generate a table of NameSPace containing the dependencies programs based on the previously created intrinsic table. 
 
             var dependencies = new List<string>();
-            string[] extensions = { ".tcbl", ".cbl", ".cpy" };
             foreach (var path in config.Dependencies)
             {
-                var dependenciesFound = Tools.FileSystem.GetFiles(path, extensions, true);
+                var dependenciesFound = Tools.FileSystem.GetFiles(path, _DependenciesExtensions, true);
                 //Issue #668, warn if dependencies path are invalid
                 if (diagEvent != null && dependenciesFound.Count == 0)
                 {
@@ -134,32 +171,35 @@ namespace TypeCobol.Tools.APIHelpers
                     if (programsNames.Any(inputFileName => String.Compare(depFileName, inputFileName, StringComparison.OrdinalIgnoreCase) == 0))
                     {
                         continue;
-
                     }
                 }
 #endif
                 try
                 {
-                    TypeCobolOptions options = new TypeCobolOptions(config);
-                    options.ExecToStep = ExecutionStep.SemanticCheck;
+                    CompilationUnit parsingResult = ParseDependency(path, config, table);
 
-                    parser.CustomSymbols = table; //Update SymbolTable
-                    parser.Init(path,  options, config.Format, config.CopyFolders);
-                    parser.Parse(path); //Parse the dependency file
+                    //Gather copies used
+                    usedCopies.AddRange(parsingResult.CopyTextNamesVariations);
 
-                    diagnostics.AddRange(parser.Results.AllDiagnostics());
+                    if (parsingResult.MissingCopies.Count > 0)
+                    {
+                        missingCopies.Add(path, parsingResult.MissingCopies.Select(mc => mc.TextName));
+                        continue; //There will be diagnostics because copies are missing. Don't report diagnostic for this dependency, but load following dependencies
+                    }
+
+                    diagnostics.AddRange(parsingResult.AllDiagnostics());
 
                     if (diagEvent != null && diagnostics.Count > 0)
                     {
                         diagnostics.ForEach(d => diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = d }));
                     }
 
-                    if (parser.Results.TemporaryProgramClassDocumentSnapshot.Root.Programs == null || !parser.Results.TemporaryProgramClassDocumentSnapshot.Root.Programs.Any())
+                    if (parsingResult.TemporaryProgramClassDocumentSnapshot.Root.Programs == null || !parsingResult.TemporaryProgramClassDocumentSnapshot.Root.Programs.Any())
                     {
                         throw new DepedenciesLoadingException("Your dependency file is not included into a program", path, null, logged: true, needMail: false);
                     }
 
-                    foreach (var program in parser.Results.TemporaryProgramClassDocumentSnapshot.Root.Programs)
+                    foreach (var program in parsingResult.TemporaryProgramClassDocumentSnapshot.Root.Programs)
                     {
                         var previousPrograms = table.GetPrograms();
                         foreach (var previousProgram in previousPrograms)

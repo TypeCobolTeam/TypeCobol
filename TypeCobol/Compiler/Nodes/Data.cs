@@ -961,7 +961,8 @@ namespace TypeCobol.Compiler.Nodes {
         {
             Input,
             Output,
-            InOut
+            InOut,
+            Returning
         }
     }
     // [/TYPECOBOL]

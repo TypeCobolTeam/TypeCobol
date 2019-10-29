@@ -199,7 +199,7 @@ namespace TypeCobol.Codegen.Nodes
 
         /// <summary>
         /// This strategy extracts the type info in a declaration. This can be VALUE clause, usage, GLOBAL clause, etc.
-        /// It doesn't output the TYPE clause for typed data/parameter.
+        /// It doesn't output the TYPE clause for typed data/parameter and it also doesn't include the omittable (question mark) for parameter.
         /// </summary>
         private class ExtractTypeInfo : TokenFlushStrategy
         {
@@ -228,7 +228,8 @@ namespace TypeCobol.Codegen.Nodes
                     return false;
                 }
 
-                return true;
+                // Tokens that should not be outputted : QuestionMark in optional parameter declarations and PeriodSeparator at end.
+                return token.TokenType != TokenType.PeriodSeparator && token.TokenType != TokenType.QUESTION_MARK;
             }
         }
 
@@ -275,7 +276,7 @@ namespace TypeCobol.Codegen.Nodes
         /// <param name="strategy">Object to control which and how tokens are written.</param>
         /// <param name="hasSeenGlobal">Indicates whether a GLOBAL keyword has been written.</param>
         /// <param name="hasSeenPeriod">Indicates whether a Period separator has been written.</param>
-        private static void FlushConsumedTokens(ColumnsLayout? layout, IList<Token> consumedTokens, StringBuilder sb, TokenFlushStrategy strategy, out bool hasSeenGlobal, out  bool hasSeenPeriod)
+        private static void FlushConsumedTokens(ColumnsLayout? layout, IList<Token> consumedTokens, StringBuilder sb, TokenFlushStrategy strategy, out bool hasSeenGlobal, out bool hasSeenPeriod)
         {
             System.Diagnostics.Contracts.Contract.Assert(consumedTokens != null);
             System.Diagnostics.Contracts.Contract.Assert(sb != null);
@@ -316,7 +317,7 @@ namespace TypeCobol.Codegen.Nodes
                     {
                         if (layout.Value == ColumnsLayout.CobolReferenceFormat)
                         {
-                            nPad = Math.Max(0, consumedTokens[i].Column - 8);
+                            nPad = Math.Max(0, token.Column - 8);
                         }
                     }
                     string pad = new string(' ', nPad);
@@ -487,9 +488,11 @@ namespace TypeCobol.Codegen.Nodes
             }
 
             list_items.AddRange(pathVariables);
-            string qn = string.Join(".", list_items.ToArray());
-            AddIndexMap(rootNode, rootNode.QualifiedName.ToString(), indexes, map);
-            AddIndexMap(ownerDefinition, qn, indexes, map);
+            string qn = string.Join(".", list_items.Where(item => item != null));
+
+            // If indexes directly come from their DataDef, use the computed path (qn). If they come from a TypeDef, the path is the rootNode.QualifiedName.
+            AddIndexMap(rootNode, rootNode == ownerDefinition ? qn : rootNode.QualifiedName.ToString(), indexes, map);
+
             return map;
         }
 
@@ -512,7 +515,7 @@ namespace TypeCobol.Codegen.Nodes
                         if (sym.Name.Equals(index.Name))
                         {
                             string qualified_name = qn + '.' + index.Name;
-                            string hash_name = GeneratorHelper.ComputeIndexHashName(qualified_name, parentNode);
+                            string hash_name = index.IsFlagSet(Flag.IndexUsedWithQualifiedName) ? GeneratorHelper.ComputeIndexHashName(qualified_name, parentNode) : index.Name;
                             map[sym.NameLiteral.Token] = hash_name;
                         }
                     }
