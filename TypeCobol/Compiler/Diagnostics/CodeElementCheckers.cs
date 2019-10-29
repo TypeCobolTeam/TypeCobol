@@ -69,7 +69,7 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class DataConditionChecker 
+    class DataConditionChecker
     {
         public static void OnCodeElement(DataConditionEntry data, CodeElementsParser.DataConditionEntryContext context)
         {
@@ -246,7 +246,7 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class SetStatementForAssignmentChecker 
+    class SetStatementForAssignmentChecker
     {
         public static void OnCodeElement(SetStatementForAssignment set, CodeElementsParser.SetStatementForAssignmentContext context)
         {
@@ -264,7 +264,7 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class SetStatementForIndexesChecker 
+    class SetStatementForIndexesChecker
     {
         public static void OnCodeElement(SetStatementForIndexes set, CodeElementsParser.SetStatementForIndexesContext context)
         {
@@ -289,6 +289,13 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    #endregion
+    class AlterStatementChecker
+    {
+        public static void OnCodeElement(AlterStatement statement, CodeElementsParser.AlterStatementContext context)
+        {
+            DiagnosticUtils.AddErrorWithNoRuleStack(statement, "ALTER should not be used", context, MessageCode.Warning);
+        }
+    }
 
+    #endregion
 }
