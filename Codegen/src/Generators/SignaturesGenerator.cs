@@ -19,6 +19,7 @@ using TypeCobol.Codegen.Nodes;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Tools;
 using LinkageSection = TypeCobol.Compiler.Nodes.LinkageSection;
 using String = System.String;
 
@@ -131,43 +132,42 @@ namespace TypeCobol.Codegen.Generators
                                 //Indent the line according to its declaration
                                 foreach (string line in linesContent)
                                 {
-                                    if (line.IndexOf("COPY", StringComparison.InvariantCultureIgnoreCase) >= 0)
+                                    //Only the line containing copy can be badly indented. 
+                                    string lineText;
+                                    if (line.IndexOf("COPY", StringComparison.OrdinalIgnoreCase) >= 0)
                                     {
-                                        //Only the line containing copy can be badly indented. 
                                         //Indent this line with the same indentation than the declaring line.
-                                        var spacing = copyNode.Lines.First().Text.TakeWhile(char.IsWhiteSpace).Count();
-                                        lines.Add(new CobolTextLine(new TextLineSnapshot(-1, new string(' ', spacing) + line.Trim(), null), ColumnsLayout.CobolReferenceFormat));
+                                        lineText = copyNode.Lines.First().Text.GetIndent() + line.Trim();
                                     }
                                     else
                                     {
-                                        //Just generate the other lines as is, with a little extra for the columns 1-7
-                                        lines.Add(new CobolTextLine(new TextLineSnapshot(-1, new string(' ', 7) + line.TrimEnd(), null), ColumnsLayout.CobolReferenceFormat));
+                                        //Otherwise generate the other lines as is, with a little extra for the columns 1-7
+                                        lineText = new string(' ', 7) + line.TrimEnd();
                                     }
+                                    
+                                    lines.Add(new CobolTextLine(new TextLineSnapshot(-1,  lineText, null), ColumnsLayout.CobolReferenceFormat));
                                 }
                                 generatedCopyDirectives.Add(copy);
                             }
                         }
                     }
-                        
                 }
                 else
                 {
                     //All the other cases
                     if (child is DataDescription data)
                     {
-                        //In case the node contains a line with multiple instruction
+                        //In case the node contains a line with multiple instructions
                         //Create new line containing only the CodeElement text
-                        var spacing = child.Lines.First().Text.TakeWhile(char.IsWhiteSpace).Count();
-                        lines.Add(new CobolTextLine(new TextLineSnapshot(data.CodeElement.Line, new string(' ', spacing) + data.CodeElement.SourceText.Trim(), null), ColumnsLayout.CobolReferenceFormat));
-
-                        lines.AddRange(GenerateLinesForChildren(child.Children));
+                        var lineText = child.Lines.First().Text.GetIndent() + data.CodeElement.SourceText.Trim();
+                        lines.Add(new CobolTextLine(new TextLineSnapshot(data.CodeElement.Line, lineText, null), ColumnsLayout.CobolReferenceFormat));
                     }
                     else
                     {
                         lines.AddRange(child.Lines);
-                        lines.AddRange(GenerateLinesForChildren(child.Children));
                     }
-                    
+
+                    lines.AddRange(GenerateLinesForChildren(child.Children));
                 }
             }
 
