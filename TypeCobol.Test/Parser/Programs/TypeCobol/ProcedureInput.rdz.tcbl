@@ -9,8 +9,10 @@
        01 myName PIC X(20) VALUE "mammouth".
        01 myNbr  PIC 99 VALUE 20.
        01 result TYPE bool.
+          01 myvar1 PIC X value 'X'.
       
        PROCEDURE DIVISION.
+       INIT-LIBRARY.
       
        DECLARE PROCEDURE IsPersonValid
            input  pperson TYPE Person
@@ -30,11 +32,34 @@
            .
        END-DECLARE.
       
+       declare procedure Foo input var1 pic X.
+       procedure division.
+      * Ok, 1st param is also input in Foo2
+           call Foo2 input var1
+      * Ko, 1st param is also in-out in Foo3
+           call Foo3 in-out var1
+           goback
+           .
+       end-declare.
+      
+       declare procedure Foo2 public
+           input var1 pic X.
+       procedure division.
+           goback.
+       end-declare.
+      
+       declare procedure Foo3 public
+           in-out var1 pic X.
+       procedure division.
+           goback.
+       end-declare.
+      
        Traitement.
            call IsPersonValid
                 INPUT myPerson, myName
                 IN-OUT myNbr
                 OUTPUT result
+                 call Foo input myvar1
            GOBACK.
        END PROGRAM Pgm.
       
