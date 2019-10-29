@@ -206,25 +206,13 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Goback goback)
         {
-            int gobackIndex = goback.Parent.ChildIndex(goback);
-            int lastIndex = goback.Parent.Children.Count - 1;
-            // last child is a period separator else there is a warning
-            if (gobackIndex < (lastIndex - 1))
-            {
-                DiagnosticUtils.AddError(goback.Parent.Children[gobackIndex + 1], "There should be no statement after \"GOBACK\"", MessageCode.Warning);
-            }
+            CheckLastStatement(goback, "GOBACK");
             return true;
         }
 
         public override bool Visit(Stop stop)
         {
-            int stopIndex = stop.Parent.ChildIndex(stop);
-            int lastIndex = stop.Parent.Children.Count - 1;
-            // last child is a period separator else there is a warning
-            if (stopIndex < (lastIndex - 1))
-            {
-                DiagnosticUtils.AddError(stop.Parent.Children[stopIndex + 1], "There should be no statement after \"STOP RUN\"", MessageCode.Warning);
-            }
+            CheckLastStatement(stop, "STOP RUN");
             return true;
         }
 
@@ -433,6 +421,17 @@ namespace TypeCobol.Compiler.Diagnostics
                     "An index named '" + indexDefinition.Name + "' is already defined.", MessageCode.Warning);
             }
             return true;
+        }
+
+        private static void CheckLastStatement(Node node, string nodeName)
+        {
+            int nodeIndex = node.Parent.ChildIndex(node);
+            int lastIndex = node.Parent.Children.Count - 1;
+            // last child is a period separator else there is a warning
+            if (nodeIndex < (lastIndex - 1))
+            {
+                DiagnosticUtils.AddError(node.Parent.Children[nodeIndex + 1], "There should be no statement after \"" + nodeName + "\"", MessageCode.Warning);
+            }
         }
 
         public static void CheckPicture(Node node, CommonDataDescriptionAndDataRedefines customCodeElement = null)
