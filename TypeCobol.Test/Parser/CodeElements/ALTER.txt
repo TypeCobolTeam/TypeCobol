@@ -1,4 +1,8 @@
-﻿--- Code Elements ---
+﻿--- Diagnostics ---
+Line 1[1,5] <37, Warning, General> - Warning: ALTER should not be used
+Line 2[1,5] <37, Warning, General> - Warning: ALTER should not be used
+Line 3[1,5] <37, Warning, General> - Warning: ALTER should not be used
+--- Code Elements ---
 [[AlterStatement]] [1,5:ALTER]<ALTER> --> [13,14:p2]<UserDefinedWord>
 
 [[AlterStatement]] [1,5:ALTER]<ALTER> --> [24,25:p2]<UserDefinedWord>
