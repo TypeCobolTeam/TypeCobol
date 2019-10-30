@@ -526,7 +526,10 @@
         }
     }
     public class WhenGroup: Node, StatementCondition {
-	    public WhenGroup() { }
+	    public WhenGroup()
+        {
+            SetFlag(Node.Flag.GeneratorCanIgnoreIt, true);
+        }
 
         protected override CodeElement InternalCodeElement => null;
         public override bool VisitNode(IASTVisitor astVisitor)
