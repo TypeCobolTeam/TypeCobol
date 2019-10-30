@@ -31,7 +31,6 @@ namespace TypeCobol.Compiler.Types
         public static readonly Type AlphanumericEditedType;
         public static readonly Type DBCSType;
         public static readonly Type FloatingPointType;
-        public static readonly Type OccursType;
 
         public static readonly Type BooleanType;
         public static readonly Type DateType;
@@ -99,10 +98,8 @@ namespace TypeCobol.Compiler.Types
             DBCSType.SetFlag(Symbol.Flags.BuiltinType, true);
             FloatingPointType = new Type(Type.Tags.Usage, Type.UsageFormat.FloatingPoint);
             FloatingPointType.SetFlag(Symbol.Flags.BuiltinType, true);
-            OccursType = new Type(Type.Tags.Usage, Type.UsageFormat.Occurs);
-            OccursType.SetFlag(Symbol.Flags.BuiltinType, true);
 
-            BooleanType = new Type(Type.Tags.Usage, Type.UsageFormat.Boolean);
+            BooleanType = new Type(Type.Tags.Boolean);
             BooleanType.SetFlag(Symbol.Flags.BuiltinType, true);
 
             DateType = BuiltinTypes.CreateDateType(new TypedefSymbol(string.Intern("Date")));
@@ -111,7 +108,7 @@ namespace TypeCobol.Compiler.Types
             CurrencyType = BuiltinTypes.CreateCurrencyType(new TypedefSymbol(string.Intern("Currency")));
             CurrencyType.SetFlag(Symbol.Flags.BuiltinType, true);
 
-            StringType = new Type(Type.Tags.Usage, Type.UsageFormat.String);
+            StringType = new Type(Type.Tags.String);
             StringType.SetFlag(Symbol.Flags.BuiltinType, true);
         }
 

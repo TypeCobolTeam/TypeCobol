@@ -33,7 +33,11 @@ namespace TypeCobol.Compiler.Types
             Program,
             Function,
             Typedef,
-            Renames
+            Renames,
+
+            //TypeCobol Tags
+            Boolean,
+            String,
         }
 
         /// <summary>
@@ -68,11 +72,6 @@ namespace TypeCobol.Compiler.Types
             AlphanumericEdited,
             DBCS,
             FloatingPoint,
-            Occurs,
-
-            //Special Usage for builtin Types
-            Boolean,
-            String
         }
 
         /// <summary>

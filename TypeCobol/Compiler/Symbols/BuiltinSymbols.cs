@@ -24,7 +24,6 @@ namespace TypeCobol.Compiler.Symbols
         public static TypedefSymbol AlphanumericEdited;
         public static TypedefSymbol DBCS;
         public static TypedefSymbol FloatingPoint;
-        public static TypedefSymbol Occurs;
 
         public static TypedefSymbol Boolean;
         public static TypedefSymbol Date;
@@ -52,9 +51,6 @@ namespace TypeCobol.Compiler.Symbols
             DBCS.Type = new TypedefType(DBCS, BuiltinTypes.DBCSType);
             FloatingPoint = new TypedefSymbol(string.Intern("FloatingPoint"));
             FloatingPoint.Type = new TypedefType(FloatingPoint, BuiltinTypes.FloatingPointType);
-            Occurs = new TypedefSymbol(string.Intern("Array"));
-            Occurs.Type = new TypedefType(Occurs, BuiltinTypes.OccursType);
-
 
             Boolean = new TypedefSymbol(string.Intern("Bool"));
             Boolean.Type = new TypedefType(Boolean, BuiltinTypes.BooleanType);
@@ -77,7 +73,6 @@ namespace TypeCobol.Compiler.Symbols
             types.Enter(AlphanumericEdited);
             types.Enter(DBCS);
             types.Enter(FloatingPoint);
-            types.Enter(Occurs);
 
             types.Enter(Boolean);
             types.Enter(Date);
