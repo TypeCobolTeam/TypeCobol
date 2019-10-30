@@ -88,15 +88,7 @@ namespace TypeCobol.Codegen.Generators
                         insideMultilineComment = false;
                 }
 
-                if (textLine is TextLineSnapshot)
-                {
-                    var test = CobolTextLine.Create(textLine.Text, ColumnsLayout.CobolReferenceFormat);
-                    Destination.AppendLine(test.First().Text);
-                }
-                else
-                {
-                    Destination.AppendLine(textLine.Text);
-                }
+                Destination.AppendLine(text);
             }
 
             var writeExportDataElapsed = stopwatch.Elapsed;
