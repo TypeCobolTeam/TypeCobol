@@ -775,8 +775,7 @@ namespace TypeCobol.Compiler.Nodes {
         {
             get
             {
-                if (this.CodeElement?.LevelNumber?.Value < 50 &&
-                    this.TypeDefinition == null && this.Picture == null && !this.CodeElement.ConsumedTokens.Any(ct => ct.SourceText.Equals("Type", StringComparison.OrdinalIgnoreCase)))
+                if (this.CodeElement.LevelNumber?.Value < 50 && this.Picture == null && this.CodeElement.UserDefinedDataType == null)
                 {
                     if (this.ChildrenCount > 0)
                     {
