@@ -1,0 +1,114 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM1.
+      
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      
+      *01 ArrayTypeClassic TYPEDEF STRICT.
+      *   05 array OCCURS 10 INDEXED BY I-MyType-Classic.
+      *      10 item PIC X.
+      
+      *01 ArrayTypeFiller1 TYPEDEF STRICT.
+      *   05 FILLER OCCURS 10 INDEXED BY I-MyType-Filler.
+      *      10 item-1 PIC X.
+      
+      *01 ArrayTypeFiller2 TYPEDEF STRICT.
+      *   05 FILLER OCCURS 10 INDEXED BY I-MyType-Filler.
+      *      10 item-2 PIC X.
+      
+      *01 ArrayTypeAnonymous1 TYPEDEF STRICT.
+      *   05 OCCURS 10 INDEXED BY I-MyType-Anonymous.
+      *      10 item-1 PIC X.
+      
+      *01 ArrayTypeAnonymous2 TYPEDEF STRICT.
+      *   05 OCCURS 10 INDEXED BY I-MyType-Anonymous.
+      *      10 item-2 PIC X.
+      
+      *01 ArrayTypeFiller3 TYPEDEF STRICT.
+      *   05 OCCURS 10 INDEXED BY I-UniqueName-Filler.
+      *      10 item-3 PIC X.
+      
+      *01 ArrayTypeAnonymous3 TYPEDEF STRICT.
+      *   05 OCCURS 10 INDEXED BY I-UniqueName-Anonymous.
+      *      10 item-3 PIC X.
+      
+      *01 ElementType TYPEDEF STRICT.
+      *   05 item-4 PIC X.
+      
+      *01 Table1 TYPE ArrayTypeClassic.
+       01 Table1.
+           02 array OCCURS 10 INDEXED BY ab96fe01I-MyType-Classic.
+             03 item PIC X.
+                                       
+      *01 Table2 TYPE ArrayTypeFiller1.
+       01 Table2.
+           02 FILLER OCCURS 10 INDEXED BY f169fa1aI-MyType-Filler.
+             03 item-1 PIC X.
+                                       
+      *01 Table3 TYPE ArrayTypeFiller2.
+       01 Table3.
+           02 FILLER OCCURS 10 INDEXED BY fbabf9ecI-MyType-Filler.
+             03 item-2 PIC X.
+                                       
+      *01 Table4 TYPE ArrayTypeAnonymous1.
+       01 Table4.
+           02 OCCURS 10 INDEXED BY de0b22a1I-MyType-Anonymous.
+             03 item-1 PIC X.
+                                          
+      *01 Table5 TYPE ArrayTypeAnonymous2.
+       01 Table5.
+           02 OCCURS 10 INDEXED BY f1587d00I-MyType-Anonymous.
+             03 item-2 PIC X.
+                                          
+      *01 Table6 TYPE ArrayTypeFiller3.
+       01 Table6.
+           02 OCCURS 10 INDEXED BY ba166831I-UniqueName-Filler.
+             03 item-3 PIC X.
+                                       
+      *01 Table7 TYPE ArrayTypeAnonymous3.
+       01 Table7.
+           02 OCCURS 10 INDEXED BY b571ae33I-UniqueName-Anonymous.
+             03 item-3 PIC X.
+                                          
+       01 TableWithNamedArray.
+      *   05 Items Type ElementType
+      *      OCCURS 10 INDEXED BY Idx-InNamedArray.
+          05 Items
+             OCCURS 10 INDEXED BY Idx-InNamedArray.
+           06 item-4 PIC X.
+                                                   
+       01 TableWithFillerArray.
+      *   05 FILLER Type ElementType
+      *      OCCURS 10 INDEXED BY Idx-InFillerArray.
+          05
+             OCCURS 10 INDEXED BY Idx-InFillerArray.
+           06 item-4 PIC X.
+                                                    
+       01 TableWithAnonymousArray.
+      *   05 Type ElementType
+      *      OCCURS 10 INDEXED BY Idx-InAnonymousArray.
+          05
+             OCCURS 10 INDEXED BY Idx-InAnonymousArray.
+           06 item-4 PIC X.
+                                                       
+      
+       PROCEDURE DIVISION.
+      *    SET Table1::I-MyType-Classic TO 1
+           SET ab96fe01I-MyType-Classic TO 1
+      *    SET Table2::I-MyType-Filler TO 1
+           SET f169fa1aI-MyType-Filler TO 1
+      *    SET Table3::I-MyType-Filler TO 1
+           SET fbabf9ecI-MyType-Filler TO 1
+      *    SET Table4::I-MyType-Anonymous TO 1
+           SET de0b22a1I-MyType-Anonymous TO 1
+      *    SET Table5::I-MyType-Anonymous TO 1
+           SET f1587d00I-MyType-Anonymous TO 1
+      *    SET I-UniqueName-Filler TO 1
+           SET ba166831I-UniqueName-Filler TO 1
+      *    SET I-UniqueName-Anonymous TO 1
+           SET b571ae33I-UniqueName-Anonymous TO 1
+           SET Idx-InNamedArray TO 1
+           SET Idx-InFillerArray TO 1
+           SET Idx-InAnonymousArray TO 1
+           .
+       END PROGRAM PGM1.
