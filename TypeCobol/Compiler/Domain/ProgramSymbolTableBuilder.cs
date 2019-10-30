@@ -136,13 +136,7 @@ namespace TypeCobol.Compiler.Domain
         /// <summary>
         /// The Scope of the main program
         /// </summary>
-        public override AbstractScope Scope
-        {
-            get
-            {
-                return Programs.Count != 0 ? Programs[0] : null;
-            }
-        }
+        public override AbstractScope Scope => Programs.Count != 0 ? Programs[0] : null;
 
         /// <summary>
         /// The Last FunctionDeclarationHeader encountered

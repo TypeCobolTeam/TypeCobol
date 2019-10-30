@@ -59,7 +59,11 @@ namespace TypeCobol.Compiler.Domain
         /// <summary>
         /// The Root Symbol Table.
         /// </summary>
+#if DOMAIN_CHECKER
         internal static RootSymbolTable _rootSymbolTable;
+#else
+        private static RootSymbolTable _rootSymbolTable;
+#endif
 
         /// <summary>
         /// The Root Symbol Table
@@ -150,7 +154,7 @@ namespace TypeCobol.Compiler.Domain
             if (config == null)
                 return;
             SymbolTable baseSymbols = null;
-            #region Event Diags Handler
+#region Event Diags Handler
             bool diagDetected = false;
             EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DiagnosticsErrorEvent = delegate (object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
             {
@@ -160,7 +164,7 @@ namespace TypeCobol.Compiler.Domain
             EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DependencyErrorEvent = delegate (object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
             {
             };
-            #endregion
+#endregion
 
             //Allocate a static Program Symbol Table Builder for our representation.
             ProgramSymbolTableBuilder Builder = null;
