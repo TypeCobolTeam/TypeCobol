@@ -15,6 +15,8 @@ namespace TypeCobol.Compiler.Diagnostics
 {
     public class CrossCompleteChecker : AbstractAstVisitor
     {
+        private bool DebuggingMode { get; set; }
+
         private Node CurrentNode { get; set; }
 
         public override bool BeginNode(Node node)
@@ -79,13 +81,46 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(End end)
+        {
+            // detect CodeElement with a mix of Debug and "Normal" lines in debugging mode         
+            if (DebuggingMode && end.CodeElement.Type != CodeElementType.SentenceEnd)
+            {
+                CodeElement openingCodeElement = end.Parent.CodeElement;
+                if (openingCodeElement != null)
+                {
+                    bool isDebug = char.ToLower(openingCodeElement.ConsumedTokens[0].TokensLine.IndicatorChar) == 'd';
+                    bool isNoDebug = !isDebug;
+                    bool debugNormal = false;
+                    foreach (Node child in end.Parent.Children)
+                    {
+                        if (child.CodeElement == null)
+                        {
+                            foreach (Node subChild in child.Children)
+                            {
+                                if (subChild.CodeElement != null)
+                                {
+                                    debugNormal = CheckMixDebugNormal(subChild.CodeElement, ref isDebug, ref isNoDebug);
+                                    if (debugNormal) break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            debugNormal = CheckMixDebugNormal(child.CodeElement, ref isDebug, ref isNoDebug);
+                        }
+                        if (debugNormal) break;
+                    }
+                }
+            }
+            return true;
+        }
+
         public override bool Visit(ProcedureStyleCall call)
         {
             FunctionCallChecker.OnNode(call);
             return true;
         }
-
-        
 
         public override bool Visit(PerformProcedure performProcedureNode)
         {
@@ -121,6 +156,12 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(Set setStatement)
         {
             SetStatementChecker.CheckStatement(setStatement);
+            return true;
+        }
+
+        public override bool Visit([NotNull] SourceComputer sourceComputer)
+        {
+            DebuggingMode = sourceComputer.CodeElement.DebuggingMode?.Value == true;
             return true;
         }
 
@@ -275,6 +316,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
+            DebuggingMode = false;
             return true;
         }
 
@@ -664,6 +706,23 @@ namespace TypeCobol.Compiler.Diagnostics
                 node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
         }
 
+        private bool CheckMixDebugNormal([NotNull] CodeElement codeElement, ref bool isCurrentDebug, ref bool isCurrentNoDebug)
+        {
+            // detect Debug or "Normal" line
+            // isCurrentDebug is true if a debug-character has been already detected
+            // isCurrentNoDebug is true if no-debug-character has been already detected
+            bool isDebugType = char.ToLower(codeElement.ConsumedTokens[0].TokensLine.IndicatorChar) == 'd';
+            isCurrentDebug |= isDebugType;
+            isCurrentNoDebug |= !isDebugType;
+            if (isCurrentDebug && isCurrentNoDebug)
+            {
+                DiagnosticUtils.AddError(codeElement,
+                    "In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.");
+                return true;
+            }
+
+            return false;
+        }
     }
     
     class SectionOrParagraphUsageChecker

@@ -7,6 +7,7 @@
        Working-Storage Section.
        01 xxxx pic XXXX value 'toto'.
        01 yyyy pic XXXX.
+       01 x pic 999 value 0.
        PROCEDURE DIVISION.
            MOVE xxxx TO yyyy
       *Normal then debug line
@@ -40,6 +41,25 @@
       d       yyyy
       
              '_4'
+      
+      d    if xxxx = 'toto'
+      d         display "hhh"
+            end-if
+      
+      d    if xxxx = 'toto'
+      d         display "hhh"
+      d         display "kk"
+                perform 5 times
+                   compute x = x + 5
+                end-perform
+      d    end-if
+      
+           if xxxx = 'toto'
+              display xxxx
+      D    else
+              move xxxx to yyyy
+           end-if
+      
            GOBACK.
        END PROGRAM Pgm.
       
@@ -58,4 +78,5 @@
            MOVE '1234' TO yyyy
            GOBACK.
        END PROGRAM Pgm2.
+      
       
