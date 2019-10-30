@@ -1,0 +1,30 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MainProgram.
+       data division.
+       working-storage section.
+      
+       procedure division.
+       INIT-LIBRARY.
+       DECLARE PROCEDURE InFct PUBLIC
+               INPUT     d PIC X(9)
+               .
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 GRP.
+          02 GRP2.
+             05 S PIC X(10).
+                88 cre VALUE 'CRE'.
+                88 rcm VALUE 'RCM'.
+       PROCEDURE DIVISION.
+           EVALUATE GRP::GRP2::
+             S
+          WHEN 'CRE'
+           continue
+          WHEN 'RCM'
+           continue
+          WHEN OTHER
+           continue.
+      
+         END-DECLARE
+         .
+       END PROGRAM MainProgram.
