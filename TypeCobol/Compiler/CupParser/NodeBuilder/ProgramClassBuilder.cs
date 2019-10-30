@@ -701,6 +701,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 var paramNode = new ParameterDescription(declaration.Profile.ReturningParameter);
                 paramNode.SymbolTable = CurrentNode.SymbolTable;
                 paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
+                paramNode.PassingType = ParameterDescription.PassingTypes.Returning;
                 node.Profile.ReturningParameter = paramNode;
 
                 paramNode.SetParent(CurrentNode);

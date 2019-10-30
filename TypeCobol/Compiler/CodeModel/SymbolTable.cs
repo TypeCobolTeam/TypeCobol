@@ -1080,11 +1080,20 @@ namespace TypeCobol.Compiler.CodeModel
             return GetFromTableAndEnclosing(name, st => st.Programs, MatchUsingName, Scope.Namespace);
         }
 
-        public IEnumerable<Program> GetPrograms(string filter)
+        public IEnumerable<Program> GetPrograms(string filter, bool exactMatch = false)
         {
+            Func<Program, bool> predicate;
+            if (exactMatch)
+            {
+                predicate = program => program.Name.Equals(filter, StringComparison.OrdinalIgnoreCase);
+            }
+            else
+            {
+                predicate = program => program.Name.StartsWith(filter, StringComparison.OrdinalIgnoreCase);
+            }
             return this.GetTableFromScope(Scope.Namespace)
                 .Programs.Values.SelectMany(t => t)
-                .Where(fd => fd.Name.StartsWith(filter, StringComparison.OrdinalIgnoreCase));
+                .Where(predicate);
         }
 
         public IEnumerable<Program> GetPrograms()

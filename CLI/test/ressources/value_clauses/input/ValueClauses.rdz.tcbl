@@ -19,6 +19,9 @@
        01 Scalar2    TYPE ScalarType    VALUE 'E'.
        01 Inline2    PIC X(1)           VALUE 'F'.
 
+       01 Structure3
+          TYPE StructureType.
+
        PROCEDURE DIVISION.
        DECLARE PROCEDURE Proc PRIVATE
           INPUT paramIntrinsicDate TYPE Date VALUE '20190102'
