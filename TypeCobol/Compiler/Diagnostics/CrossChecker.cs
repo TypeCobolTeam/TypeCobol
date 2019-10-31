@@ -731,15 +731,10 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(node, nodeTypeName + " \'" + node.Name + "\' already declared");
 
             // a section/paragraph is empty when it has no child or when its child/children is/are an {End} node
-            bool empty = true;
-            int nodesCount = node.Children.Count; 
-            // checks if all children are of type {End}: if not one then empty = false
-            // use case: section/paragraph with with 0, 1 or a lot of terminal "." statement
-            for (int i = 0; i < nodesCount; i++)
+            bool empty = true;  // default value
+            foreach (Node sentence in node.Children)
             {
-                // a empty node contains only one statement: {End} "."
-                // a not empty node contains at least one statement different of {End}
-                if  ((node.Children[i].Children.Count == 1 && node.Children[i].Children[0].GetType() == typeof(Nodes.End)) == false)
+                if ((sentence.Children.Count == 1 && (sentence.Children[0] is Nodes.End)) == false)
                 {
                     empty = false;
                     break;
@@ -749,7 +744,6 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 DiagnosticUtils.AddError(node, nodeTypeName + " \'" + node.Name + "\' is empty", MessageCode.Warning);
             }
-
         }
 
         public static void CheckSection(Section section)
