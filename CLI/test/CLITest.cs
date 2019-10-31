@@ -131,9 +131,9 @@ namespace CLI.Test
         /// Avoid loading intrinsic and dependencies when execToStep <= Preprocessor
         /// </summary>
         [TestMethod]
-        public void AvoidLoadingIntrinsicAndDependencies()
+        public void CheckMissingCopies()
         {
-            CLITestHelper.Test("avoidLoadingIntrinsicAndDependencies", ReturnCode.Success);
+            CLITestHelper.Test("checkMissingCopies", ReturnCode.MissingCopy);
         }
 
         /// <summary>

@@ -180,15 +180,18 @@ namespace TypeCobol.LanguageServer
         /// <returns></returns>
         public RefreshOutlineParams UpdateOutline(ProgramClassDocument programClassDocument, bool bForced)
         {
-            if(_rootOutlineNode == null)
+            if (programClassDocument != null)
             {
-                _rootOutlineNode = new OutlineNode(programClassDocument.Root);
-            }
+                if (_rootOutlineNode == null)
+                {
+                    _rootOutlineNode = new OutlineNode(programClassDocument.Root);
+                }
 
-            if (bForced || _rootOutlineNode.Update(programClassDocument.Root))
-                return new RefreshOutlineParams(new TextDocumentIdentifier(this.LspTextDocument.uri), _rootOutlineNode);
-            else
-                return null;
+                if (bForced || _rootOutlineNode.Update(programClassDocument.Root))
+                    return new RefreshOutlineParams(new TextDocumentIdentifier(this.LspTextDocument.uri),
+                        _rootOutlineNode);
+            }
+            return null;
         }
 
 
