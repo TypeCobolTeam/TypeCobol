@@ -16,13 +16,10 @@ using ProcedureDivision = TypeCobol.Compiler.Nodes.ProcedureDivision;
 using WorkingStorageSection = TypeCobol.Compiler.Nodes.WorkingStorageSection;
 using System.Text;
 using TypeCobol.Codegen.Actions;
-using TypeCobol.Codegen.Nodes;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Tools;
 using LinkageSection = TypeCobol.Compiler.Nodes.LinkageSection;
-using String = System.String;
 
 namespace TypeCobol.Codegen.Generators
 {
@@ -127,12 +124,12 @@ namespace TypeCobol.Codegen.Generators
                         {
                             if (copy.COPYToken != null)
                             {
-                                //Collect all Tokens that are relative to this copy
-                                var copyTokens = CopyTokensYielder(copy);
+                                //Collect all COPY Tokens
+                                var copyTokens = copy.ConsumedTokens.SelectedTokensOnSeveralLines.SelectMany(tokenLine => tokenLine).ToList();
 
                                 //Create node with the COPY Tokens
                                 LinearNodeSourceCodeMapper.LinearCopyNode copyNode =
-                                    new LinearNodeSourceCodeMapper.LinearCopyNode(new Qualifier.TokenCodeElement(copyTokens.ToList()));
+                                    new LinearNodeSourceCodeMapper.LinearCopyNode(new Qualifier.TokenCodeElement(copyTokens));
 
                                 var linesContent = copyNode.CodeElement.SourceText.Split(new string[] {System.Environment.NewLine}, System.StringSplitOptions.None);
 
@@ -190,64 +187,6 @@ namespace TypeCobol.Codegen.Generators
         public string TypeCobolVersion { get; }
 
         public bool HasLineMapData => false;
-
-        /// <summary>
-        /// Capture for a Token within a copy, its Line and if it is a '.' token
-        /// </summary>
-        /// <param name="lastLine">ref variable to store the last line</param>
-        /// <param name="periodSeparatorSeen">ref variable to store if the PeriodSeparator token has been seen.</param>
-        /// <param name="t">The current token</param>
-        /// <returns>The current token</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Token CaptureEndCopyLine(ref int lastLine, ref bool periodSeparatorSeen, Token t)
-        {
-            lastLine = t.Line - 1;
-            periodSeparatorSeen = periodSeparatorSeen || t.TokenType == TokenType.PeriodSeparator;
-            return t;
-        }
-
-        /// <summary>
-        /// Yield all token from a CopyDirective
-        /// </summary>
-        /// <param name="copyDirective">The CopyDirective instance to yield all tokens.</param>
-        /// <returns>The Token Enumerable instance</returns>
-        private IEnumerable<Token> CopyTokensYielder(CopyDirective copyDirective)
-        {
-            if (this.CompilationUnit != null)
-            {
-                int lastLine = -1;
-                bool periodSeparatorSeen = false;
-                //Starting from the COPY Line and the COPY Token capture all to token till to encounter a PeriodSeparator.
-                var tl = this.CompilationUnit.TokensLines[copyDirective.COPYToken.Line - 1];
-                bool copyTokenSeen = false;
-                foreach (var t in tl.SourceTokens)
-                {
-                    if (t.Equals(copyDirective.COPYToken))
-                        copyTokenSeen = true;
-                    if (copyTokenSeen)
-                        yield return CaptureEndCopyLine(ref lastLine, ref periodSeparatorSeen, t);
-                    if (periodSeparatorSeen)
-                        yield break;
-                }
-
-                if (lastLine >= 0)
-                {
-                    lastLine++;
-                    int count = this.CompilationUnit.TokensLines.Count;
-                    for (int l = lastLine; l < count && !periodSeparatorSeen; l++)
-                    {
-                        var tl2 = this.CompilationUnit.TokensLines[l];
-                        foreach (var t in tl2.SourceTokens)
-                        {
-                            if (periodSeparatorSeen)
-                                yield break;
-                            else
-                                yield return CaptureEndCopyLine(ref lastLine, ref periodSeparatorSeen, t);
-                        }
-                    }
-                }
-            }
-        }
     }
 
 
