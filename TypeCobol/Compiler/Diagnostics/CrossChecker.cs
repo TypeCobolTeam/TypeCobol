@@ -15,6 +15,8 @@ namespace TypeCobol.Compiler.Diagnostics
 {
     public class CrossCompleteChecker : AbstractAstVisitor
     {
+        private bool DebuggingMode { get; set; }
+
         private Node CurrentNode { get; set; }
 
         public override bool BeginNode(Node node)
@@ -79,13 +81,46 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(End end)
+        {
+            // detect CodeElement with a mix of Debug and "Normal" lines in debugging mode         
+            if (DebuggingMode && end.CodeElement.Type != CodeElementType.SentenceEnd)
+            {
+                CodeElement openingCodeElement = end.Parent.CodeElement;
+                if (openingCodeElement != null)
+                {
+                    bool isDebug = char.ToLower(openingCodeElement.ConsumedTokens[0].TokensLine.IndicatorChar) == 'd';
+                    bool isNoDebug = !isDebug;
+                    bool debugNormal = false;
+                    foreach (Node child in end.Parent.Children)
+                    {
+                        if (child.CodeElement == null)
+                        {
+                            foreach (Node subChild in child.Children)
+                            {
+                                if (subChild.CodeElement != null)
+                                {
+                                    debugNormal = CheckMixDebugNormal(subChild.CodeElement, ref isDebug, ref isNoDebug);
+                                    if (debugNormal) break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            debugNormal = CheckMixDebugNormal(child.CodeElement, ref isDebug, ref isNoDebug);
+                        }
+                        if (debugNormal) break;
+                    }
+                }
+            }
+            return true;
+        }
+
         public override bool Visit(ProcedureStyleCall call)
         {
             FunctionCallChecker.OnNode(call);
             return true;
         }
-
-        
 
         public override bool Visit(PerformProcedure performProcedureNode)
         {
@@ -121,6 +156,12 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(Set setStatement)
         {
             SetStatementChecker.CheckStatement(setStatement);
+            return true;
+        }
+
+        public override bool Visit([NotNull] SourceComputer sourceComputer)
+        {
+            DebuggingMode = sourceComputer.CodeElement.DebuggingMode?.Value == true;
             return true;
         }
 
@@ -275,6 +316,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
+            DebuggingMode = false;
             return true;
         }
 
@@ -542,7 +584,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
                 index.AddReferences(storageArea, node); //Add this node as a reference to the founded index
 
-                if (area.SymbolReference.IsQualifiedReference)
+                if (area.SymbolReference.IsQualifiedReference || index.IsPartOfATypeDef)
+                //Index name is qualified or belongs to a typedef
                 {
                     if (index.Name.Length > 22) //If index name is used with qualification and exceed 22 characters
                         DiagnosticUtils.AddError(index.Parent,
@@ -552,11 +595,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         //If index comes from a copy, do not support qualification
                         DiagnosticUtils.AddError(node,
                             "Index '" + index.Name + "' inside a COPY cannot be use with qualified symbol", area.SymbolReference);
-                }
 
-                if (area.SymbolReference.IsQualifiedReference || index.IsPartOfATypeDef)
-                //Index name is qualified or belongs to a typedef
-                {
                     //Mark this node for generator
                     FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, node, storageArea, dataDefinitionPath);
 
@@ -565,6 +604,11 @@ namespace TypeCobol.Compiler.Diagnostics
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, reference.Value,
                             reference.Key, dataDefinitionPath);
                     }
+
+                    //No matter which node uses this index, if at least one time a node uses the index with a qualified name, we need to flag the index parent
+                    //Also we always flag indexes declared as part of a typedef because we're already in a TypeCobol context
+                    //Flag index node for code generator to let it know that this index will need hash.
+                    index.SetFlag(Node.Flag.IndexUsedWithQualifiedName, true);
                 }
                 else if (!area.SymbolReference.IsQualifiedReference)
                 //If it's an index but not use with qualified reference 
@@ -577,27 +621,18 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                 }
 
-                //No matter which node uses this index, if at least one time a node with the index with a qualified name, we need to flag the index parent 
-                if (area.SymbolReference.IsQualifiedReference && !index.IsPartOfATypeDef)
-                //If index is used with qualified name but doesn't belongs to typedef
-                {
-                    //Flag index node for code generator to let it know that this index will need hash.
-                    index.SetFlag(Node.Flag.IndexUsedWithQualifiedName, true);
-                }
-
-                    if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
+                if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
                         DiagnosticUtils.AddError(node,
                             "Index can not be use with OF or IN qualifiers " + area, area.SymbolReference);
+            }
+            else if (dataDefinition.DataType == DataType.Boolean)
+            {
+                if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.PerformProcedure || node is Nodes.WhenSearch || node is Nodes.When ) || storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)//Ignore If/Set/Perform/WhenSearch Statement
+                { 
+                    //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
+                    FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea, dataDefinitionPath);
                 }
-                else if (dataDefinition.DataType == DataType.Boolean)
-                {
-                    if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.PerformProcedure || node is Nodes.WhenSearch || node is Nodes.When ) || storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)//Ignore If/Set/Perform/WhenSearch Statement
-                    {
-                        //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
-                        FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea,
-                            dataDefinitionPath);
-                    }
-                }
+            }
 
             var specialRegister = storageArea as StorageAreaPropertySpecialRegister;
             if (specialRegister != null
@@ -664,6 +699,23 @@ namespace TypeCobol.Compiler.Diagnostics
                 node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
         }
 
+        private bool CheckMixDebugNormal([NotNull] CodeElement codeElement, ref bool isCurrentDebug, ref bool isCurrentNoDebug)
+        {
+            // detect Debug or "Normal" line
+            // isCurrentDebug is true if a debug-character has been already detected
+            // isCurrentNoDebug is true if no-debug-character has been already detected
+            bool isDebugType = char.ToLower(codeElement.ConsumedTokens[0].TokensLine.IndicatorChar) == 'd';
+            isCurrentDebug |= isDebugType;
+            isCurrentNoDebug |= !isDebugType;
+            if (isCurrentDebug && isCurrentNoDebug)
+            {
+                DiagnosticUtils.AddError(codeElement,
+                    "In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.");
+                return true;
+            }
+
+            return false;
+        }
     }
     
     class SectionOrParagraphUsageChecker
