@@ -62,16 +62,16 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 
                 //Format the arguments in one line
                 if (fun.Profile.InputParameters.Count > 0)
-                    args.Append("in: " + string.Join(", ", fun.Profile.InputParameters.Select(p => p.Name)) + "; ");
+                    args.Append("in| " + string.Join(", ", fun.Profile.InputParameters.Select(p => p.Name + ":" + p.DataType.Name))+ ";");
 
                 if (fun.Profile.InoutParameters.Count > 0)
-                    args.Append("inout: " + string.Join(", ", fun.Profile.InoutParameters.Select(p => p.Name)) + "; ");
+                    args.Append("inout| " + string.Join(", ", fun.Profile.InoutParameters.Select(p => p.Name + ":" + p.DataType.Name)) + ";");
 
                 if (fun.Profile.OutputParameters.Count > 0)
-                    args.Append("out: " + string.Join(", ", fun.Profile.OutputParameters.Select(p => p.Name)) + "; ");
+                    args.Append("out| " + string.Join(", ", fun.Profile.OutputParameters.Select(p => p.Name + ":" + p.DataType.Name)) + ";");
 
                 if (args.Length > 0)
-                    args.Remove(args.Length - 2, 2);
+                    args.Remove(args.Length - 1, 1);
 
                 this.arguments = args.ToString();
             }
@@ -210,13 +210,13 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                         return false;
 
                     //Check if number of parameters in outline node matches the number of parameters in the document
-                    if (passingTypes.Sum(pt => pt.Split(':')[1].Split(',').Length) != fun.Profile.Parameters.Count)
+                    if (passingTypes.Sum(pt => pt.Split('|')[1].Split(',').Length) != fun.Profile.Parameters.Count)
                         return false;
 
                     //Check if each parameter from the document is described in the outline node
                     foreach (ParameterDescription parameter in fun.Profile.Parameters)
                     {
-                        if (!passingTypes.Any(pt => pt.Split(':')[1].Split(',').Any(n => n.Trim() == parameter.Name)))
+                        if (!passingTypes.Any(pt => pt.Split('|')[1].Split(',').Any(n => n.Trim() == parameter.Name + ":" + parameter.DataType.Name)))
                             return false;
                     }
 
