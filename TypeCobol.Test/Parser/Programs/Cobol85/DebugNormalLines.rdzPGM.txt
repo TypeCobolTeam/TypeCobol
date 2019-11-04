@@ -5,9 +5,6 @@ Line 24[12,19] <27, Error, Syntax> - Syntax error : In debugging mode, a stateme
 Line 29[12,19] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.
 Line 35[12,18] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.
 Line 40[12,17] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.
-Line 47[13,18] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.
-Line 52[17,31] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.
-Line 59[12,15] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.
 
 --- Program ---
 PROGRAM: Pgm common:False initial:False recursive:False

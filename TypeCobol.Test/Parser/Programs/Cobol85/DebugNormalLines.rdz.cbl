@@ -42,24 +42,6 @@
       
              '_4'
       
-      d    if xxxx = 'toto'
-      d         display "hhh"
-            end-if
-      
-      d    if xxxx = 'toto'
-      d         display "hhh"
-      d         display "kk"
-                perform 5 times
-                   compute x = x + 5
-                end-perform
-      d    end-if
-      
-           if xxxx = 'toto'
-              display xxxx
-      D    else
-              move xxxx to yyyy
-           end-if
-      
            GOBACK.
        END PROGRAM Pgm.
       
