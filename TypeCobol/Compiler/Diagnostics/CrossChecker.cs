@@ -15,8 +15,6 @@ namespace TypeCobol.Compiler.Diagnostics
 {
     public class CrossCompleteChecker : AbstractAstVisitor
     {
-        private bool DebuggingMode { get; set; }
-
         private Node CurrentNode { get; set; }
 
         public override bool BeginNode(Node node)
@@ -81,41 +79,6 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
-        public override bool Visit(End end)
-        {
-            // detect CodeElement with a mix of Debug and "Normal" lines in debugging mode         
-            if (DebuggingMode && end.CodeElement.Type != CodeElementType.SentenceEnd)
-            {
-                CodeElement openingCodeElement = end.Parent.CodeElement;
-                if (openingCodeElement != null)
-                {
-                    bool isDebug = char.ToLower(openingCodeElement.ConsumedTokens[0].TokensLine.IndicatorChar) == 'd';
-                    bool isNoDebug = !isDebug;
-                    bool debugNormal = false;
-                    foreach (Node child in end.Parent.Children)
-                    {
-                        if (child.CodeElement == null)
-                        {
-                            foreach (Node subChild in child.Children)
-                            {
-                                if (subChild.CodeElement != null)
-                                {
-                                    debugNormal = CheckMixDebugNormal(subChild.CodeElement, ref isDebug, ref isNoDebug);
-                                    if (debugNormal) break;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            debugNormal = CheckMixDebugNormal(child.CodeElement, ref isDebug, ref isNoDebug);
-                        }
-                        if (debugNormal) break;
-                    }
-                }
-            }
-            return true;
-        }
-
         public override bool Visit(ProcedureStyleCall call)
         {
             FunctionCallChecker.OnNode(call);
@@ -156,12 +119,6 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(Set setStatement)
         {
             SetStatementChecker.CheckStatement(setStatement);
-            return true;
-        }
-
-        public override bool Visit([NotNull] SourceComputer sourceComputer)
-        {
-            DebuggingMode = sourceComputer.CodeElement.DebuggingMode?.Value == true;
             return true;
         }
 
@@ -316,7 +273,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
-            DebuggingMode = false;
             return true;
         }
 
