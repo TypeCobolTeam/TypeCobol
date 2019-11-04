@@ -15,6 +15,8 @@ namespace TypeCobol.Compiler.Diagnostics
 {
     public class CrossCompleteChecker : AbstractAstVisitor
     {
+        private bool DebuggingMode { get; set; }
+
         private Node CurrentNode { get; set; }
 
         public override bool BeginNode(Node node)
@@ -59,6 +61,36 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             //This checker is only for Node after the full AST has been created
             return false;
+        }
+
+        public override bool Visit(End end)
+        {
+            // detect CodeElement with a mix of Debug and "Normal" lines in debugging mode         
+            if (DebuggingMode && end.CodeElement.Type != CodeElementType.SentenceEnd)
+            {
+                CodeElement openingCodeElement = end.Parent.CodeElement;
+                if (openingCodeElement != null)
+                {
+                    CodeElement endCodeElement = end.CodeElement;
+                    bool isStartDebug = IsCodeElementInDebug(openingCodeElement);
+                    bool isEndDebug = IsCodeElementInDebug(endCodeElement);
+                    if (isStartDebug == isEndDebug && openingCodeElement is CodeElements.IfStatement)
+                    {
+                        CodeElement elseCodeElement = end.Parent.Children.FirstOrDefault(nd => nd is Nodes.Else)?.CodeElement;
+                        if (elseCodeElement != null)
+                        {
+                            isEndDebug = IsCodeElementInDebug(elseCodeElement);
+                            endCodeElement = elseCodeElement;
+                        }
+                    }
+                    if (isStartDebug != isEndDebug)
+                    {
+                        DiagnosticUtils.AddError(endCodeElement,
+                            "In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.");
+                    }
+                }
+            }
+            return true;
         }
 
         public override bool Visit(FunctionDeclaration functionDeclaration)
@@ -121,6 +153,12 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(Set setStatement)
         {
             SetStatementChecker.CheckStatement(setStatement);
+            return true;
+        }
+
+        public override bool Visit([NotNull] SourceComputer sourceComputer)
+        {
+            DebuggingMode = sourceComputer.CodeElement.DebuggingMode?.Value == true;
             return true;
         }
 
@@ -275,6 +313,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
+            DebuggingMode = false;
             return true;
         }
 
@@ -655,6 +694,11 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (!node.QualifiedStorageAreas.ContainsKey(storageArea))
                 node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
+        }
+
+        private static bool IsCodeElementInDebug(CodeElement codeElement)
+        {
+            return char.ToLower(codeElement.ConsumedTokens[0].TokensLine.IndicatorChar) == 'd';
         }
 
     }
