@@ -724,18 +724,22 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(node, nodeTypeName + " \'" + node.Name + "\' already declared");
 
             // a section/paragraph is empty when it has no child or when its child/children is/are an {End} node
-            bool empty = true;  // default value
-            foreach (Node sentence in node.Children)
+            if (!node.Name.Equals("INIT-LIBRARY", StringComparison.InvariantCultureIgnoreCase))
             {
-                if ((sentence.Children.Count == 1 && (sentence.Children[0] is Nodes.End)) == false)
+                bool empty = true; // default value
+                foreach (Node sentence in node.Children)
                 {
-                    empty = false;
-                    break;
+                    if ((sentence.Children.Count == 1 && (sentence.Children[0] is Nodes.End)) == false)
+                    {
+                        empty = false;
+                        break;
+                    }
                 }
-            }
-            if (empty)
-            {
-                DiagnosticUtils.AddError(node, nodeTypeName + " \'" + node.Name + "\' is empty", MessageCode.Warning);
+                if (empty)
+                {
+                    DiagnosticUtils.AddError(node, nodeTypeName + " \'" + node.Name + "\' is empty",
+                        MessageCode.Warning);
+                }
             }
         }
 
