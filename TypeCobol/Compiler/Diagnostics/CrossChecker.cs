@@ -550,7 +550,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
                 index.AddReferences(storageArea, node); //Add this node as a reference to the founded index
 
-                if (area.SymbolReference.IsQualifiedReference)
+                if (area.SymbolReference.IsQualifiedReference || index.IsPartOfATypeDef)
+                //Index name is qualified or belongs to a typedef
                 {
                     if (index.Name.Length > 22) //If index name is used with qualification and exceed 22 characters
                         DiagnosticUtils.AddError(index.Parent,
@@ -560,11 +561,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         //If index comes from a copy, do not support qualification
                         DiagnosticUtils.AddError(node,
                             "Index '" + index.Name + "' inside a COPY cannot be use with qualified symbol", area.SymbolReference);
-                }
 
-                if (area.SymbolReference.IsQualifiedReference || index.IsPartOfATypeDef)
-                //Index name is qualified or belongs to a typedef
-                {
                     //Mark this node for generator
                     FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, node, storageArea, dataDefinitionPath);
 
@@ -573,6 +570,11 @@ namespace TypeCobol.Compiler.Diagnostics
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, reference.Value,
                             reference.Key, dataDefinitionPath);
                     }
+
+                    //No matter which node uses this index, if at least one time a node uses the index with a qualified name, we need to flag the index parent
+                    //Also we always flag indexes declared as part of a typedef because we're already in a TypeCobol context
+                    //Flag index node for code generator to let it know that this index will need hash.
+                    index.SetFlag(Node.Flag.IndexUsedWithQualifiedName, true);
                 }
                 else if (!area.SymbolReference.IsQualifiedReference)
                 //If it's an index but not use with qualified reference 
@@ -585,27 +587,18 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                 }
 
-                //No matter which node uses this index, if at least one time a node with the index with a qualified name, we need to flag the index parent 
-                if (area.SymbolReference.IsQualifiedReference && !index.IsPartOfATypeDef)
-                //If index is used with qualified name but doesn't belongs to typedef
-                {
-                    //Flag index node for code generator to let it know that this index will need hash.
-                    index.SetFlag(Node.Flag.IndexUsedWithQualifiedName, true);
-                }
-
-                    if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
+                if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
                         DiagnosticUtils.AddError(node,
                             "Index can not be use with OF or IN qualifiers " + area, area.SymbolReference);
+            }
+            else if (dataDefinition.DataType == DataType.Boolean)
+            {
+                if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.PerformProcedure || node is Nodes.WhenSearch || node is Nodes.When ) || storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)//Ignore If/Set/Perform/WhenSearch Statement
+                { 
+                    //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
+                    FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea, dataDefinitionPath);
                 }
-                else if (dataDefinition.DataType == DataType.Boolean)
-                {
-                    if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.PerformProcedure || node is Nodes.WhenSearch || node is Nodes.When ) || storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)//Ignore If/Set/Perform/WhenSearch Statement
-                    {
-                        //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
-                        FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea,
-                            dataDefinitionPath);
-                    }
-                }
+            }
 
             var specialRegister = storageArea as StorageAreaPropertySpecialRegister;
             if (specialRegister != null

@@ -80,7 +80,7 @@
                                                                         12350000
           01  I                            PIC 9(4) COMP-5.             12360000
       *   01  enr-lu                         TYPE CTGCPL-Enreg.
-          01 enr-lu. 
+          01 enr-lu.
            02 TYP PIC X(03).
            02 STE PIC X(02).
            02 IDTOBJ PIC S9(9) COMP.
@@ -93,7 +93,7 @@
        REPLACE ==:MAX-TBL-MCTGCPL:== BY ==500==.                        12370004
                                                                         12370005
       *  01  enr-a-chercher                 TYPE CTGCPL-Enreg.
-         01 enr-a-chercher. 
+         01 enr-a-chercher.
            02 TYP PIC X(03).
            02 STE PIC X(02).
            02 IDTOBJ PIC S9(9) COMP.
@@ -101,7 +101,7 @@
            02 VALCLN PIC X(50).
                                                                         12370006
       *  01  enr-trouve                     TYPE CTGCPL-Enreg.
-         01 enr-trouve. 
+         01 enr-trouve.
            02 TYP PIC X(03).
            02 STE PIC X(02).
            02 IDTOBJ PIC S9(9) COMP.
@@ -112,7 +112,7 @@
         01 MCTGCPL.                                                     12370009
          05 MCTGCPL-TAB occurs :MAX-TBL-MCTGCPL:.                       12370010
       *     10 champ TYPE CTGCPL-Enreg.
-            10 champ. 
+            10 champ.
            11 TYP PIC X(03).
            11 STE PIC X(02).
            11 IDTOBJ PIC S9(9) COMP.

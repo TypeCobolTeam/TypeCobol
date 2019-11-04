@@ -1,18 +1,14 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. Callee.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 CONVEAL. COPY  YCONVEA.
 
        PROCEDURE DIVISION.
-
-       DECLAR...OOOHHhh that's an error..
-         .
-         PROCEDURE DIVISION.
-           CONTINUE.
-       END-DECLARE.
-
        DECLARE PROCEDURE MySecondPublicProcedure PUBLIC
-           INPUT vect2        TYPE Vect2
+           INPUT vect2        TYPE Date
          .
-         PROCEDURE DIVISION.
+       PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
        END PROGRAM Callee.
