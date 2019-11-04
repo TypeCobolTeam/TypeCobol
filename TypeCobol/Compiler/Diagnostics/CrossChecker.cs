@@ -654,24 +654,6 @@ namespace TypeCobol.Compiler.Diagnostics
             if (!node.QualifiedStorageAreas.ContainsKey(storageArea))
                 node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
         }
-
-        private bool CheckMixDebugNormal([NotNull] CodeElement codeElement, ref bool isCurrentDebug, ref bool isCurrentNoDebug)
-        {
-            // detect Debug or "Normal" line
-            // isCurrentDebug is true if a debug-character has been already detected
-            // isCurrentNoDebug is true if no-debug-character has been already detected
-            bool isDebugType = char.ToLower(codeElement.ConsumedTokens[0].TokensLine.IndicatorChar) == 'd';
-            isCurrentDebug |= isDebugType;
-            isCurrentNoDebug |= !isDebugType;
-            if (isCurrentDebug && isCurrentNoDebug)
-            {
-                DiagnosticUtils.AddError(codeElement,
-                    "In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.");
-                return true;
-            }
-
-            return false;
-        }
     }
     
     class SectionOrParagraphUsageChecker

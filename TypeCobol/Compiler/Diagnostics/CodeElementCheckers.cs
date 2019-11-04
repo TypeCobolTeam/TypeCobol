@@ -299,9 +299,9 @@ namespace TypeCobol.Compiler.Diagnostics
 
     class CodeElementChecker
     {
-        public static void OnCodeElement(CodeElement codeElement, bool debuggingMode)
+        public static void OnCodeElement(CodeElement codeElement, bool isDebuggingModeEnabled)
         {
-            if (debuggingMode)
+            if (isDebuggingModeEnabled)
             {
                 // detect CodeElement with a mix of Debug and "Normal" lines in debugging mode
                 int consumedTokensCount = codeElement.ConsumedTokens.Count;
@@ -315,7 +315,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         isNoDebug |= !isDebugType;
                         if (isDebug && isNoDebug)
                         {
-                            DiagnosticUtils.AddError(codeElement, "In debugging mode, a statement cannot be across lines marked with debug and lines not marked debug.");
+                            DiagnosticUtils.AddError(codeElement, "In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.");
                             break;
                         }
                     }

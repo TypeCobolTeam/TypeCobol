@@ -18,7 +18,7 @@ namespace TypeCobol.Compiler.Parser
 	/// <summary>Builds a CodeElement object while visiting its parse tree.</summary>
 	internal partial class CodeElementBuilder: CodeElementsBaseListener {
 
-	    private bool DebuggingMode { get; set; }
+	    private bool IsDebuggingModeEnabled { get; set; }
         private ParserRuleContext Context;
 		/// <summary>CodeElement object resulting of the visit the parse tree</summary>
 		public CodeElement CodeElement { get; set; }
@@ -68,7 +68,7 @@ namespace TypeCobol.Compiler.Parser
                 {
                     CodeElement.Diagnostics = diagnostics;
                 }
-                CodeElementChecker.OnCodeElement(CodeElement, DebuggingMode);
+                CodeElementChecker.OnCodeElement(CodeElement, IsDebuggingModeEnabled);
             }
             // If the errors can't be attached to a CodeElement object, attach it to the parent codeElements rule context
             else if (CodeElement == null && context.Diagnostics != null)
@@ -135,7 +135,7 @@ namespace TypeCobol.Compiler.Parser
             
             Context = context;
 			CodeElement = program;
-            DebuggingMode = false;
+            IsDebuggingModeEnabled = false;
         }
 
 		public override void EnterProgramEnd(CodeElementsParser.ProgramEndContext context) {
@@ -283,7 +283,7 @@ namespace TypeCobol.Compiler.Parser
 			}
 			if(context.DEBUGGING() != null) {
 				paragraph.DebuggingMode = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.DEBUGGING()));
-                DebuggingMode = true;
+                IsDebuggingModeEnabled = true;
 			}
 
 			Context = context;
