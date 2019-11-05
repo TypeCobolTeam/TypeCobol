@@ -35,7 +35,7 @@ namespace TypeCobol.Test.Utils
 #if EUROINFO_RULES
             options.AutoRemarksEnable = autoRemarks;    
 #endif
-            if (!checkProgramName) options.CheckProgramName = new TypeCobolCheckOption(false);
+            options.CheckProgramName = new TypeCobolCheckOption(isActive: checkProgramName);
 
             if (extensions == null) extensions = new[] { ".cbl", ".cpy" };
             //comparator.paths.sextension = extensions[0].Substring(1);
@@ -193,8 +193,7 @@ namespace TypeCobol.Test.Utils
 				        if (json)
 				        {
 				            string filename = comparator.paths.Result;
-				            //string name = Path.GetFileName(filename);
-				            string extension = Path.GetExtension(filename);
+                            string extension = Path.GetExtension(filename);
 				            if (extension != null) filename = filename.Substring(0, filename.Length - extension.Length);
 				            string[] lines = {unit.ToJSON()};
 				            System.IO.File.WriteAllLines(filename + ".json", lines);

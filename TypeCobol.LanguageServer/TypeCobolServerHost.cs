@@ -212,7 +212,7 @@ namespace TypeCobol.LanguageServer
                 { "dcs|disablecopysuffixing", "Deactictivate Euro Information suffixing", v => UseEuroInformationLegacyReplacingSyntax = false },
                 { "sc|syntaxcolor",  "Syntax Coloring Support.", _ => UseSyntaxColoring = true},
                 { "ol|outlineRefresh",  "Outline Support.", _ => UseOutlineRefresh = true},
-                { "diag.cpn|diagnostic.checkProgramName=", "Indicate level of check program name: ignore, warning, error.", _ => CheckProgramName = new TypeCobolCheckOption(_) },
+                { "diag.cpn|diagnostic.checkProgramName=", "Indicate level of check program name: warning, error, info, ignore.", v => CheckProgramName = new TypeCobolCheckOption(v) },
             };
 
             System.Collections.Generic.List<string> arguments;

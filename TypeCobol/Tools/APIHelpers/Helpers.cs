@@ -182,10 +182,6 @@ namespace TypeCobol.Tools.APIHelpers
 #endif
                 try
                 {
-                    // check program name match file name 
-                    //TypeCobolOptions typeCobolOptions = new TypeCobolOptions(config);////////////////////////////////////////////
-                    //typeCobolOptions.ExecToStep = ExecutionStep.SemanticCheck;
-
                     CompilationUnit parsingResult = ParseDependency(path, format, table, copyFolders);
 
                     //Gather copies used

@@ -156,7 +156,7 @@ namespace TypeCobol
 #if EUROINFO_RULES
 		    typeCobolOption.AutoRemarksEnable = autoRemarks;
 #endif
-            if (!checkProgramName) typeCobolOption.CheckProgramName = new TypeCobolCheckOption(false);
+            typeCobolOption.CheckProgramName = new TypeCobolCheckOption(isActive: checkProgramName);
 
             parser.Init(path, typeCobolOption, format, copies);
 

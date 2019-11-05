@@ -16,7 +16,7 @@ namespace TypeCobol.Tools.Options_Config
     {
         public string CommandLine { get; set; }
         public DocumentFormat Format = DocumentFormat.RDZReferenceFormat;
-        public bool AutoRemarks;       
+        public bool AutoRemarks;
         public string HaltOnMissingCopyFilePath;
         public string ExpandingCopyFilePath;
         public string ExtractedCopiesFilePath;
@@ -36,7 +36,7 @@ namespace TypeCobol.Tools.Options_Config
 #else
         public bool UseEuroInformationLegacyReplacingSyntax = false;
 #endif
-        public TypeCobolCheckOption CheckProgramName = new TypeCobolCheckOption(Severity.Warning);
+        public TypeCobolCheckOption CheckProgramName = new TypeCobolCheckOption(Severity.Warning); // default value
 
         public bool IsErrorXML
         {
@@ -155,28 +155,46 @@ namespace TypeCobol.Tools.Options_Config
     {
         public TypeCobolCheckOption(bool isActive)
         {
-            IsActive = isActive;
+            if (!isActive)
+            {
+                DiagnosticLevel = null;
+            }
         }
+
         public TypeCobolCheckOption(Severity diagnosticLevel)
         {
             DiagnosticLevel = diagnosticLevel;
         }
+
         public TypeCobolCheckOption(string configValue)
         {
-            if (string.IsNullOrEmpty(configValue) || configValue.Length < 2) return;
-            configValue = char.ToUpper(configValue[0]) + configValue.Substring(1).ToLower();
-            if (Enum.TryParse(configValue, out Severity diagnosticLevel))
+            if (Enum.TryParse(configValue, true, out Severity diagnosticLevel))
             {
                 DiagnosticLevel = diagnosticLevel;
             }
-            else if (configValue == "Ignore")
+            else if (string.Equals(configValue, "ignore", StringComparison.OrdinalIgnoreCase))
             {
-                IsActive = false;
+                DiagnosticLevel = null; // ignore
             }
         }
-        public bool IsActive { get; set; } = true;
-        public Severity DiagnosticLevel { get; set; } = Severity.Warning;
-    }
+
+        public Severity? DiagnosticLevel { get; set; } = Severity.Warning;      // default value
+
+        public MessageCode MessageCode {
+            get
+            {
+                switch (DiagnosticLevel)
+                {
+                    case Severity.Error:
+                        return MessageCode.SyntaxErrorInParser;
+                    case Severity.Info:
+                        return MessageCode.Info;
+                    default:
+                        return MessageCode.Warning;
+                }
+            }
+        }
+}
 
     public static class TypeCobolOptionSet
     {
@@ -205,7 +223,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "zcr|zcallreport=", "{PATH} to report of all program called by zcallpgm.", v => typeCobolConfig.ReportZCallFilePath = v },
                 { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing.", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false },
                 { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
-                { "diag.cpn|diagnostic.checkProgramName=", "Indicate level of check program name: error, warning, info, ignore.", v => typeCobolConfig.CheckProgramName = new TypeCobolCheckOption(v) },
+                { "diag.cpn|diagnostic.checkProgramName=", "Indicate level of check program name: warning, error, info, ignore.", v => typeCobolConfig.CheckProgramName = new TypeCobolCheckOption(v) },
             };
             return commonOptions;
         }

@@ -125,11 +125,6 @@ namespace TypeCobol.LanguageServer
         /// Are we supporting OutlineRefresh Notifications.    
         /// </summary>
         public bool UseOutlineRefresh { get; set; }
-
-        /// <summary>
-        /// Check program name matching file name option.    
-        /// </summary>
-        public TypeCobolCheckOption CheckProgramName { get; set; }
         #endregion
 
 
@@ -155,7 +150,7 @@ namespace TypeCobol.LanguageServer
                 this.CompilationProject.CompilationOptions.UseEuroInformationLegacyReplacingSyntax ||
                 UseEuroInformationLegacyReplacingSyntax;
 
-            this.CompilationProject.CompilationOptions.CheckProgramName = CheckProgramName;
+            this.CompilationProject.CompilationOptions.CheckProgramName = Configuration.CheckProgramName;
 
             // Create the refresh action that will be used by file watchers
             Action refreshAction = RefreshOpenedFiles;
@@ -431,7 +426,6 @@ namespace TypeCobol.LanguageServer
             typeCobolOptions.AutoRemarksEnable = Configuration.AutoRemarks;
 #endif
 
-            typeCobolOptions.CheckProgramName = CheckProgramName;
             CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, _extensions, Configuration.Format.Encoding, Configuration.Format.EndOfLineDelimiter, Configuration.Format.FixedLineLength, Configuration.Format.ColumnsLayout, typeCobolOptions);
 
             if (Configuration.CopyFolders != null && Configuration.CopyFolders.Count > 0)
