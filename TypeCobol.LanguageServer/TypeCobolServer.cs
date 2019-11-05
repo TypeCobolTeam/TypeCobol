@@ -891,7 +891,8 @@ namespace TypeCobol.LanguageServer
                     var matchingToken = matchingCodeElement.ConsumedTokens.FirstOrDefault(t =>
                         t.Line == parameters.position.line + 1 &&
                         parameters.position.character >= t.StartIndex &&
-                        parameters.position.character <= t.StopIndex + 1);
+                        parameters.position.character <= t.StopIndex + 1 &&
+                        t.TokenType != TokenType.QualifiedNameSeparator);
                     if (matchingToken == null)
                         return defaultDefinition;
 
