@@ -549,10 +549,21 @@ namespace TypeCobol.LanguageServer
                     // Use userFilterToken to find the variable under mouse cursor.
                     if (userFilterToken != null)
                     {
-                        var candidates = matchingNode.SymbolTable.GetVariablesExplicit(new URI(userFilterToken.SourceText)).ToList();
-                        if (candidates.Count == 1)
+                        if (matchingNode.CodeElement != null && matchingNode.CodeElement.SymbolInformationForTokens.TryGetValue(userFilterToken, out var targetSymbolInformation))
                         {
-                            message = candidates[0].ToString();
+                            // We have SymbolInformation for the Token, so now we look for the associated StorageArea.
+                            // It is either among StorageAreaReads or StorageAreaWrites.
+                            var targetStorageArea =
+                                matchingNode.CodeElement.StorageAreaReads
+                                    .FirstOrDefault(storageArea => storageArea.SymbolReference == targetSymbolInformation) ??
+                                matchingNode.CodeElement.StorageAreaWrites
+                                    .Select(receivingStorageArea => receivingStorageArea.StorageArea)
+                                    .Where(storageArea => storageArea != null)
+                                    .FirstOrDefault(storageArea => storageArea.SymbolReference == targetSymbolInformation);
+
+                            // Trace back to the DataDefinition corresponding to the storage area.
+                            var targetDataDefinition = matchingNode.GetDataDefinitionFromStorageAreaDictionary(targetStorageArea);
+                            message = targetDataDefinition?.ToString();
                         }
                     }
                     break;
