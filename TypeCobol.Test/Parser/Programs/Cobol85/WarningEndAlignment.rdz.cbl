@@ -3,15 +3,17 @@
       
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01 MyCondition TYPE bool.
+       01 MyCondition TYPE bool value true.
        77 chaine PIC X(20) VALUE "mammouth".
        77 chaine-c PIC X(20).
       
        PROCEDURE DIVISION.
-           Set MyCondition to true
            IF MyCondition IF MyCondition THEN DISPLAY "OK" END-IF END-IF
            if MyCondition display "Ok1" end-if
-
+      
+      *test alignment with copy that contains if end-if
+           COPY CPYALIGNSTA.
+      
            if MyCondition
                display "Ok1"
       *Ok - end-if aligned with if
@@ -48,8 +50,7 @@
                INTO chaine-c
              END-STRING
            GOBACK.
-
-           
+      
       %<<<MyProc info
         @Deprecated : It is deprecated
         @Todo:
@@ -67,10 +68,13 @@
                     bla         Pic S9(1)V9(12)
            IN-OUT   myBool      TYPE BOOL
            OUTPUT   toto        TYPE BOOL
-                        bli         Pic PPP999PPP.
+                    bli         Pic PPP999PPP.
         PROCEDURE DIVISION.
            CONTINUE.
         END-DECLARE.
-
-
+      
+      *test alignment with copy that contains procedure
+       COPY CPYALIGNPROC.
+      
        END PROGRAM PgmTest.
+      

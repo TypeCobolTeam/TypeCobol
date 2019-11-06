@@ -396,7 +396,11 @@ namespace TypeCobol.Compiler.Diagnostics
             // Check end statement is aligned with the matching opening statement
             if (_compilerOptions.CheckEndAlignment && end.CodeElement.Type != CodeElementType.SentenceEnd)
             {
-                CheckEndNode(end.Parent.CodeElement, end.CodeElement);
+                CodeElement parentCodeElement = end.Parent.CodeElement;
+                if (parentCodeElement?.IsInsideCopy() == false)
+                {
+                    CheckEndNode(parentCodeElement, end.CodeElement);
+                }
             }
             return true;
         }
@@ -407,7 +411,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (_compilerOptions.CheckEndAlignment)
             {
                 CodeElement parentCodeElement = functionEnd.Parent.CodeElement;
-                if (parentCodeElement != null)
+                if (parentCodeElement?.IsInsideCopy() == false)
                 {
                     if (parentCodeElement.ConsumedTokens[0]?.TokenType == TokenType.FORMALIZED_COMMENTS_START)
                     {
@@ -732,15 +736,12 @@ namespace TypeCobol.Compiler.Diagnostics
         private static void CheckEndNode(IToken openingCodeElement, CodeElement endCodeElement)
         {
             // Check end statement is aligned with the matching opening statement
-            if (openingCodeElement != null)
+            if (openingCodeElement.Line != endCodeElement.Line &&
+                openingCodeElement.StartIndex != endCodeElement.StartIndex)
             {
-                if (openingCodeElement.Line != endCodeElement.Line &&
-                    openingCodeElement.StartIndex != endCodeElement.StartIndex)
-                {
-                    DiagnosticUtils.AddError(endCodeElement,
-                        "a End statement is not aligned with the matching opening statement",
-                        MessageCode.Warning);
-                }
+                DiagnosticUtils.AddError(endCodeElement,
+                    "a End statement is not aligned with the matching opening statement",
+                    MessageCode.Warning);
             }
         }
     }
