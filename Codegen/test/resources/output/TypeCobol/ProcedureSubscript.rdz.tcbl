@@ -50,48 +50,48 @@
       *     OUTPUT
       *              MyPicVar(1:10)
             CALL 'ff1c836e' USING
-                                 Pnt IN StringArray (StringIdx)
-                                 Lgt IN StringArray (StringIdx)
-                                 PrcTyp IN StringArray (StringIdx)
-                                 Var1 IN StringArray (StringIdx)
-                                 Var1 IN StringArray (StringIdx)(1:50)
-                    by reference MyPicVar
+                                 Pnt IN StringArray(StringIdx)
+                                 Lgt IN StringArray(StringIdx)
+                                 PrcTyp IN StringArray(StringIdx)
+                                 Var1 IN StringArray(StringIdx)
+                                 Var1 IN StringArray(StringIdx)(1:50)
+                    by reference MyPicVar(1:10)
            end-call
                                     
      
       *     CALL Foo INPUT MyArray2D_Date (1 , 2)
       *                    MyArray2D_PicX(12,2)(1:)
             CALL 'ff0c38e9' USING
-                                 MyArray2D_Date (1, 2)
-                                 MyArray2D_PicX (12, 2)(1:)
+                                 MyArray2D_Date(1, 2)
+                                 MyArray2D_PicX(12, 2)(1:)
            end-call
                                                    
       *     CALL Foo INPUT MyArray2D_Date (1, 2)
       *                    MyArray2D_PicX(12,2)(1:50)
             CALL 'ff0c38e9' USING
-                                 MyArray2D_Date (1, 2)
-                                 MyArray2D_PicX (12, 2)(1:50)
+                                 MyArray2D_Date(1, 2)
+                                 MyArray2D_PicX(12, 2)(1:50)
            end-call
                                                      
       *     CALL Foo INPUT MyArray2D_Date (1,2)
       *                    MyArray2D_PicX(12,2)
             CALL 'ff0c38e9' USING
-                                 MyArray2D_Date (1, 2)
-                                 MyArray2D_PicX (12, 2)
+                                 MyArray2D_Date(1, 2)
+                                 MyArray2D_PicX(12, 2)
            end-call
                                                
       *     CALL Foo INPUT MyArray2D_Date (1 2)
       *                    MyArray2D_PicX(12,2)(MyValue:50)
             CALL 'ff0c38e9' USING
-                                 MyArray2D_Date (1, 2)
-                                 MyArray2D_PicX (12, 2)(MyValue:50)
+                                 MyArray2D_Date(1, 2)
+                                 MyArray2D_PicX(12, 2)(MyValue:50)
            end-call
                                                            
       *     CALL Foo INPUT MyArray2D_Date (1  2)
       *                    MyArray2D_PicX(12,2)(MyValue:)
             CALL 'ff0c38e9' USING
-                                 MyArray2D_Date (1, 2)
-                                 MyArray2D_PicX (12, 2)(MyValue:)
+                                 MyArray2D_Date(1, 2)
+                                 MyArray2D_PicX(12, 2)(MyValue:)
            end-call
                                                          
            .
