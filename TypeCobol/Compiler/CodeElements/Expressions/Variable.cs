@@ -200,10 +200,10 @@ namespace TypeCobol.Compiler.CodeElements {
                 if (StorageArea != null)
                 {
                     var qualifiedName = StorageArea?.GetStorageAreaThatNeedDeclaration?.SymbolReference?.ToString(isBoolType);
-                    if (StorageArea is DataOrConditionStorageArea && ((DataOrConditionStorageArea)StorageArea).Subscripts.Count > 0)
+                    if (StorageArea is DataOrConditionStorageArea dataOrConditionStorageArea)
                     {
-                        var subscript = ((DataOrConditionStorageArea) StorageArea).ToString(true);
-                        qualifiedName = qualifiedName + " " + subscript;
+                        var subscript = dataOrConditionStorageArea.ToString(true);
+                        qualifiedName = qualifiedName + subscript;
                     }
 
                     var specialRegisterStorageArea = StorageArea as StorageAreaPropertySpecialRegister;

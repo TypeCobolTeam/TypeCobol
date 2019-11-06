@@ -476,7 +476,7 @@ namespace TypeCobol.LanguageServer
                         {
                             functionDeclarationSignatureDictionary.Clear(); //Clear to avoid key collision
                             //On CALL get possible procedures and functions in the seeked program
-                            var programs = node.SymbolTable.GetPrograms(userTokenToSeek.Text);
+                            var programs = node.SymbolTable.GetPrograms(userTokenToSeek.Text, true);
                             if (programs != null && programs.Any())
                             {
                                 var procedures =
@@ -498,7 +498,7 @@ namespace TypeCobol.LanguageServer
                         case TokenType.TYPE:
                         {
                             //On TYPE get possible public types in the seeked program
-                            var programs = node.SymbolTable.GetPrograms(userTokenToSeek.Text);
+                            var programs = node.SymbolTable.GetPrograms(userTokenToSeek.Text, true);
                             if (programs != null && programs.Any())
                             {
                                 var types =
