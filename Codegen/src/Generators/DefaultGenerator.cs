@@ -148,7 +148,7 @@ namespace TypeCobol.Codegen.Generators
             /// Constructor
             /// </summary>
             /// <param name="lineMap"></param>
-            public LineMappingCtx(Tuple<int,int>[] lineMap)
+            public LineMappingCtx(Tuple<int, int>[] lineMap)
             {
                 this.LineMapping = lineMap;
                 this.startLineMapCounter = 1;
@@ -240,7 +240,7 @@ namespace TypeCobol.Codegen.Generators
                         }
                         startLineMapCounter += interval.Item2 - interval.Item1 + 1;
                         currentGenLineOffset = targetSourceText.Size;
-                    }                                        
+                    }
                 }
             }
 
@@ -267,7 +267,7 @@ namespace TypeCobol.Codegen.Generators
                             funData.LineMapFirstIndex = Math.Min(funData.LineMapFirstIndex, l);
                         }
                     }
-                    funData.LineMapLastIndex = funData.LineMapFirstIndex;                   
+                    funData.LineMapLastIndex = funData.LineMapFirstIndex;
                     LineMapping[funData.LineMapFirstIndex] = interval;
                 }
 
@@ -290,7 +290,7 @@ namespace TypeCobol.Codegen.Generators
                 if (bNested)
                 {
                     currentGenLineOffset = mainSourceText.Size;
-                }                
+                }
             }
 
             /// <summary>
@@ -458,7 +458,7 @@ namespace TypeCobol.Codegen.Generators
                     previousBuffer = null;
                 }
                 for (int j = i; mapper.CommentedLines[j]; j++)
-                {                    
+                {
                     List<int> current_nodes = mapper.LineData[j].LineNodes;
                     if (!CommentedLinesDone[j])
                     {//Don't comment twice same lines
@@ -480,7 +480,7 @@ namespace TypeCobol.Codegen.Generators
                         }
                         CommentedLinesDone[j] = true;
                     }
-                    
+
                     line_nodes = current_nodes;
                 }
                 //--------------------------------------------------------------------------------------------------------------
@@ -490,7 +490,7 @@ namespace TypeCobol.Codegen.Generators
                 {//No Node to generate
                     continue;
                 }
-                foreach(int node_index in line_nodes)
+                foreach (int node_index in line_nodes)
                 {
                     if (node_index == -1 || mapper.Nodes[node_index].node.IsFlagSet(Node.Flag.GeneratorCanIgnoreIt))
                     {//bad Node
@@ -540,7 +540,7 @@ namespace TypeCobol.Codegen.Generators
                             string code = (node as GeneratedAndReplace).ReplaceCode;
                             GenerateIntoBufferCheckLineExceed(from, to, curSourceText, code, i + 1);
                         }
-                        else foreach (var line in NodeLines(node, generated_node, curSourceText?? targetSourceText, curSourceText == null))
+                        else foreach (var line in NodeLines(node, generated_node, curSourceText ?? targetSourceText, curSourceText == null))
                             {
                                 bool bInsertSplit = false;
                                 StringWriter sw = new StringWriter();
@@ -647,7 +647,7 @@ namespace TypeCobol.Codegen.Generators
                             {
                                 LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[functionIndex] as LinearNodeSourceCodeMapper.NodeFunctionData;
                                 FunctionDeclarationCG function = funData.node as FunctionDeclarationCG;
-                                if (funData.node.QualifiedName.Matches(functionDeclaration.QualifiedName) && 
+                                if (funData.node.QualifiedName.Matches(functionDeclaration.QualifiedName) &&
                                     function?.OriginalHash != null && function.OriginalHash == functionDeclaration.OriginalHash)
                                 {
                                     AppendBufferContent(targetSourceText, funData.FunctionDeclBuffer);
@@ -674,7 +674,7 @@ namespace TypeCobol.Codegen.Generators
                     lmCtx?.UpdateLineMap(mapper.LineData.Length, targetSourceText, previousBuffer);
                 }
                 previousBuffer = null;
-            }            
+            }
             //--------------------------------------------------------------------------------------------------------------
             //4)//Flush of Function declaration body that shouldn't be generated as nested
             foreach (int fun_index in mapper.FunctionDeclarationNodeIndices)
@@ -706,9 +706,12 @@ namespace TypeCobol.Codegen.Generators
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        private static void AdvanceToNextStateAndAdjustTokenProperties(TokensLine tempTokensLine, Token t)
+        private void AdvanceToNextStateAndAdjustTokenProperties(TokensLine tempTokensLine, Token t)
         {
-            bool bSkip =  t == null || t.TokenFamily == TokenFamily.Whitespace || t.TokenFamily == TokenFamily.Comments || (t.TokenType == TokenType.UserDefinedWord &&  t.Text.Trim().Length == 0);
+            if (t != null && base.Layout == ColumnsLayout.CobolReferenceFormat && (t.Column >= 73 || t.Column <= 6))
+                return;//Don't change the state for tokens inside unused columns if we are in cobol reference mode
+
+            bool bSkip = t == null || t.TokenFamily == TokenFamily.Whitespace || t.TokenFamily == TokenFamily.Comments || (t.TokenType == TokenType.UserDefinedWord && t.Text.Trim().Length == 0);
             if (!bSkip)
             {
                 tempTokensLine.ScanState.AdvanceToNextStateAndAdjustTokenProperties(t);
@@ -719,7 +722,7 @@ namespace TypeCobol.Codegen.Generators
                         tempTokensLine.ScanState.LastSignificantToken = null;
                         tempTokensLine.ScanState.BeforeLastSignificantToken = null;
                     }
-                }                
+                }
             }
         }
         /// <summary>
@@ -733,10 +736,10 @@ namespace TypeCobol.Codegen.Generators
         {
             StringWriter sw = new StringWriter();
 
-            sw.WriteLine( "      *"); GSLineOffset += 1;
-            sw.WriteLine( "      * Global Storage Section variables"); GSLineOffset += 1;
-            sw.WriteLine( "      *_________________________________________________________________"); GSLineOffset += 1;
-            sw.WriteLine( "       IDENTIFICATION DIVISION."); GSLineOffset += 1;
+            sw.WriteLine("      *"); GSLineOffset += 1;
+            sw.WriteLine("      * Global Storage Section variables"); GSLineOffset += 1;
+            sw.WriteLine("      *_________________________________________________________________"); GSLineOffset += 1;
+            sw.WriteLine("       IDENTIFICATION DIVISION."); GSLineOffset += 1;
             sw.WriteLine($"       PROGRAM-ID. {RootNode.MainProgram.Hash}."); GSLineOffset += 1;
 
             if (CompilationResults is CompilationUnit cu)
@@ -793,11 +796,11 @@ namespace TypeCobol.Codegen.Generators
                 }
             }
 
-            sw.WriteLine( "       LINKAGE SECTION.");
-            sw.WriteLine( "       01 GlobalPointer pointer.");
-            sw.WriteLine( "       PROCEDURE DIVISION USING BY REFERENCE GlobalPointer.");
-            sw.WriteLine( "           set GlobalPointer to address of TC-GlobalData");
-            sw.WriteLine( "           .");
+            sw.WriteLine("       LINKAGE SECTION.");
+            sw.WriteLine("       01 GlobalPointer pointer.");
+            sw.WriteLine("       PROCEDURE DIVISION USING BY REFERENCE GlobalPointer.");
+            sw.WriteLine("           set GlobalPointer to address of TC-GlobalData");
+            sw.WriteLine("           .");
             sw.WriteLine($"       END PROGRAM {RootNode.MainProgram.Hash}.");
 
             return sw.ToString();
@@ -856,7 +859,7 @@ namespace TypeCobol.Codegen.Generators
             clonedMapper.GetAfterLinearizationLastLine(clonedMapper.ClonedGlobalStorageSection, ref lastLine, ref lastNode);
 
             if (lmCtx != null)
-            {                
+            {
                 GSLmCtx = new LineMappingCtx(new Tuple<int, int>[lmCtx.LineMapping.Length]);
             }
             SourceText gsSrcText = LinearGeneration(clonedMapper, null, Input, GSLmCtx, FirstGSLine = clonedMapper.ClonedGlobalStorageSection.CodeElement.Line - 1,
@@ -877,13 +880,18 @@ namespace TypeCobol.Codegen.Generators
                         base.Layout);
 
                     int startIndex = 0;
-                    if (tempTokensLine.Type == CobolTextLineType.Debug && cel.ScanState.WithDebuggingMode && base.Layout == ColumnsLayout.CobolReferenceFormat)
+                    if (tempTokensLine.Type == CobolTextLineType.Debug && cel.ScanState.WithDebuggingMode)
                     {//Handling special debugging mode.
-                        System.Diagnostics.Debug.Assert(line.Length >= 7 && (line[6] == 'D' || line[6] == 'd'));
-                        if (line.Length >= 7 && (line[6] == 'D' || line[6] == 'd'))
+                        int minIndCol = base.Layout == ColumnsLayout.CobolReferenceFormat ? 6 : 0;
+                        int maxIndCol = base.Layout == ColumnsLayout.CobolReferenceFormat ? 7 : 2;
+                        System.Diagnostics.Debug.Assert(line.Length >= maxIndCol && (line[minIndCol] == 'D' || line[minIndCol] == 'd'));
+                        if (line.Length >= maxIndCol && (line[minIndCol] == 'D' || line[minIndCol] == 'd'))
                         {
-                            startIndex = 7;
-                            sw.Write(line.Substring(0, 7));
+                            if ((base.Layout == ColumnsLayout.CobolReferenceFormat) || (line[minIndCol + 1] == ' '))
+                            {
+                                startIndex = maxIndCol;
+                                sw.Write(line.Substring(0, maxIndCol));
+                            }
                         }
                     }
 
@@ -895,15 +903,19 @@ namespace TypeCobol.Codegen.Generators
                     while ((t = scanner.GetNextToken()) != null)
                     {
                         if (t.TokenType == TokenType.GLOBAL_STORAGE)
-                        {//Skip GLOBAL-STORAGE SECTION. tokens
+                        {//Skip and remove GLOBAL-STORAGE SECTION. tokens by generating spaces instead.
+                            sw.Write(new System.String(' ', t.Text.Length));
                             while ((t = scanner.GetNextToken()) != null && t.TokenType != TokenType.PeriodSeparator)
                             {
+                                sw.Write(new System.String(' ', t.Text.Length));
                                 AdvanceToNextStateAndAdjustTokenProperties(tempTokensLine, t);
                             }
+                            if (t != null)
+                                sw.Write(new System.String(' ', t.Text.Length));
                             AdvanceToNextStateAndAdjustTokenProperties(tempTokensLine, t);
                             continue;
                         }
-                        else if (t.TokenType == TokenType.LevelNumber)
+                        else if (t.TokenType == TokenType.LevelNumber && base.Layout == ColumnsLayout.CobolReferenceFormat && t.Column > 6 && t.Column < 73)
                         {
                             TypeCobol.Compiler.Scanner.IntegerLiteralTokenValue intValue =
                                 (TypeCobol.Compiler.Scanner.IntegerLiteralTokenValue)t.LiteralValue;
