@@ -74,7 +74,7 @@
            UNTIL f1298056Idx > de4c1fd2Idx
              display "test"
            END-PERFORM
-           GOBACK.
+           GOBACK
            .
        END PROGRAM Imbrique.
        END PROGRAM DVZF0OS3.

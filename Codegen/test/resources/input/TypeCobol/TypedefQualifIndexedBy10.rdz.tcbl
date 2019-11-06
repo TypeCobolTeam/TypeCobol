@@ -54,7 +54,7 @@
            UNTIL EventList::Idx > EventList2::Idx
              display "test"
            END-PERFORM
-           GOBACK.
+           GOBACK
            .
        END PROGRAM Imbrique.
        END PROGRAM DVZF0OS3.

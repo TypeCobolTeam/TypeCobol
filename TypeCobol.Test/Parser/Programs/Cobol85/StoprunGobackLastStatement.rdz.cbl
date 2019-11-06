@@ -1,8 +1,24 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. Pgm.
        PROCEDURE DIVISION.
+      
+           perform TOTO
+           goback
+           display "hh".
+      
+       TOTO.
+           continue.
+      
+       INIT0.
+            .
+            goback
+            .
+            display "Hello"
+            .
+            .
        INIT.
             goback
+            .
             .
        INIT2.
             goback
@@ -14,16 +30,15 @@
             .
        sect SECTION.
             display "hi"
-            .  
+            .
        sect1 SECTION.
             goback
             display "hi"
-            .   
+            .
        sect2 SECTION.
        p1.
             goback
             display "hi"
-            .   
+            .
        sect3 SECTION.
        END PROGRAM Pgm.
-       

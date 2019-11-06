@@ -1,8 +1,11 @@
 ﻿--- Diagnostics ---
-Line 9[13,27] <37, Warning, General> - Warning: There should be no statement after "GOBACK"
-Line 13[13,29] <37, Warning, General> - Warning: There should be no statement after "STOP RUN"
-Line 20[13,24] <37, Warning, General> - Warning: There should be no statement after "GOBACK"
-Line 25[13,24] <37, Warning, General> - Warning: There should be no statement after "GOBACK"
+Line 7[12,23] <37, Warning, General> - Warning: There should be no statement after "GOBACK"
+Line 16[13,27] <37, Warning, General> - Warning: There should be no statement after "GOBACK"
+Line 22[13,13] <37, Warning, General> - Warning: There should be no statement after "GOBACK"
+Line 25[13,27] <37, Warning, General> - Warning: There should be no statement after "GOBACK"
+Line 29[13,29] <37, Warning, General> - Warning: There should be no statement after "STOP RUN"
+Line 36[13,24] <37, Warning, General> - Warning: There should be no statement after "GOBACK"
+Line 41[13,24] <37, Warning, General> - Warning: There should be no statement after "GOBACK"
 
 --- Program ---
 PROGRAM: Pgm common:False initial:False recursive:False
@@ -13,6 +16,8 @@ PROGRAM: Pgm common:False initial:False recursive:False
   sect2
   sect3
 -- PARAGRAPHS --
+  TOTO
+  INIT0
   INIT
   INIT2
   INIT3

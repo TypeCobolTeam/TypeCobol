@@ -212,7 +212,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Stop stop)
         {
-            CheckLastStatement(stop, "STOP RUN");
+            if (stop.CodeElement.ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.RUN) != null)
+                CheckLastStatement(stop, "STOP RUN");
             return true;
         }
 
@@ -425,12 +426,37 @@ namespace TypeCobol.Compiler.Diagnostics
 
         private static void CheckLastStatement(Node node, string nodeName)
         {
-            int nodeIndex = node.Parent.ChildIndex(node);
-            int lastIndex = node.Parent.Children.Count - 1;
-            // last child is a period separator else there is a warning
-            if (nodeIndex < (lastIndex - 1))
+            // check if goback or stop run is the last statement 
+            Node currentSentence = node.Parent;     // a sequence of statement(s) with a dot at the end
+            Node parentNode = currentSentence.Parent;
+
+            List<Node> sentences = (currentSentence is Nodes.Section)
+                ? new List<Node>() { currentSentence }
+                : parentNode.Children.Where(n => n is Nodes.Sentence).ToList();
+
+            Node errorNode = null;
+            if (sentences.Count == 1)
             {
-                DiagnosticUtils.AddError(node.Parent.Children[nodeIndex + 1], "There should be no statement after \"" + nodeName + "\"", MessageCode.Warning);
+                // only one sentence
+                int nodeIndex = sentences[0].ChildIndex(node);
+                int lastIndex = sentences[0].Children.Count - 1;
+
+                if (nodeIndex < (lastIndex - 1))
+                    errorNode = currentSentence.Children[nodeIndex + 1];
+            }
+            else
+            {
+                // several sentences
+                int lastSentenceIndex = sentences.Count - 1;
+                int currentSentenceIndex = sentences.FindIndex(s => s.Equals(currentSentence));
+
+                if (currentSentenceIndex < lastSentenceIndex)
+                    errorNode = parentNode.Children[currentSentenceIndex + 1].Children[0];
+            }
+
+            if (errorNode != null)
+            {
+                DiagnosticUtils.AddError(errorNode, "There should be no statement after \"" + nodeName + "\"", MessageCode.Warning);
             }
         }
 
