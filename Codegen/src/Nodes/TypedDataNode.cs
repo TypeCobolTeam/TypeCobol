@@ -937,17 +937,7 @@ namespace TypeCobol.Codegen.Nodes
                 {
                     if (child.IsFlagSet(Flag.IsTypedefCopyNode))
                     {
-                        if (child.Lines.Sum(l => l.Text.Count(c => c == '.')) > 1)
-                        {
-                            //If there is more than 1 instruction displayed in the lines, create new line containing only the relevant text
-                            var lineText = child.Lines.First().Text.GetIndent() + child.CodeElement.Text;
-                            lines.Add(new CobolTextLine(new TextLineSnapshot(child.CodeElement.Line, lineText, null), ColumnsLayout.CobolReferenceFormat));
-                        }
-                        else
-                        {
-                            lines.AddRange(child.Lines);
-                        }
-
+                        lines.AddRange(child.Lines);
                         continue;
                     }
                 }
@@ -965,51 +955,28 @@ namespace TypeCobol.Codegen.Nodes
                         //Even with the same name, two different Clause COPY are differentiated by their token lines
                         if (usedCopies.Contains(copy) == false)
                         {
-                            //We recreate the clause copy with its arguments.
-                            //We don't have access to the original tokens here, so we can't recreate the same format as the original sentence.
-                            StringBuilder copyInstruction = new StringBuilder();
-
-                            copyInstruction.Append(copy.COPYToken.TokensLine.SourceText.GetIndent());
-                            copyInstruction.Append("COPY " + copy.TextName);
-                            if (copy.ReplaceOperations.Any())
+                            //We recreate the clause copy with its arguments and original formatting.
+                            StringBuilder textLine = new StringBuilder();
+                            bool firstLine = true;
+                            string copyIndent = copy.COPYToken.TokensLine.SourceText.GetIndent();
+                            foreach (var tokenLine in copy.ConsumedTokens.SelectedTokensOnSeveralLines)
                             {
-                                copyInstruction.Append(" REPLACING");
-                            }
-                            foreach (var replaceOperation in copy.ReplaceOperations)
-                            {
-                                switch (replaceOperation)
+                                if (firstLine)
                                 {
-                                    case SingleTokenReplaceOperation op:
-                                        copyInstruction.Append($" {op.ComparisonToken.Text} BY {op.ReplacementToken.Text}");
-                                        break;
-                                    case PartialWordReplaceOperation op:
-                                        copyInstruction.Append($" =={op.ComparisonToken.Text}== BY =={op.PartialReplacementToken.Text}==");
-                                        break;
-                                    case SingleToMultipleTokensReplaceOperation op:
-                                        copyInstruction.Append($" {op.ComparisonToken.Text} BY");
-                                        foreach (Token opReplacementToken in op.ReplacementTokens)
-                                        {
-                                            copyInstruction.Append($" {opReplacementToken.Text}");
-                                        }
-                                        break;
-                                    case MultipleTokensReplaceOperation op:
-                                        foreach (Token opFollowingComparisonTokens in op.FollowingComparisonTokens)
-                                        {
-                                            copyInstruction.Append($" {opFollowingComparisonTokens.Text}");
-                                        }
-                                        copyInstruction.Append(" BY");
-                                        foreach (Token opReplacementToken in op.ReplacementTokens)
-                                        {
-                                            copyInstruction.Append($" {opReplacementToken.Text}");
-                                        }
-                                        break;
+                                    textLine.Append(copyIndent);
+                                    firstLine = false;
                                 }
+
+                                foreach (var token in tokenLine)
+                                {
+                                    textLine.Append(token.Text);
+                                }
+                                
+                                lines.Add(new TextLineSnapshot(-1, textLine.ToString(), null));
+                                textLine.Clear();
                             }
 
-                            copyInstruction.Append(".");
-
-                            lines.Add(new TextLineSnapshot(-1, copyInstruction.ToString(), null));
-                            usedCopies.Add(child.CodeElement.FirstCopyDirective);
+                            usedCopies.Add(copy);
                             continue;
                         }
                     }
