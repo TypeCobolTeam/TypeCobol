@@ -18,14 +18,18 @@
        01 MyCopiesInsideTypeDef.
             COPY YCONVEA.
            02 MyVar1 PIC X.
-            COPY YPRTD20 REPLACING CHARACTERS BY i CHARACTERS BY j CHARA
-      -    CTERS BY k.
+            COPY YPRTD20 REPLACING CHARACTERS
+                BY i CHARACTERS BY j CHARACTERS BY k.
                                                                   
       *01 MyCopyInsideContainerInsideTypeDef
       *    TYPE DVZDEP1::CopyInsideContainerInsideTypeDef.
        01 MyCopyInsideContainerInsideTypeDef.
            02 CONTAINER.
-            COPY YCONVEA REPLACING ==:Foo:== BY ==Too==.
+            COPY YCONVEA REPLACING
+            ==:Foo:==
+           BY
+                ==Too
+               ==.
                                                           
       
       *01 MyTypeDefUsingCopyInsideTypeDef
@@ -34,8 +38,8 @@
            02 MyCopyInsideTypeDef.
             COPY YCONVEA.
              03 MyVar1 PIC X.
-            COPY YPRTD20 REPLACING CHARACTERS BY i CHARACTERS BY j CHARA
-      -    CTERS BY k.
+            COPY YPRTD20 REPLACING CHARACTERS
+                BY i CHARACTERS BY j CHARACTERS BY k.
                                                        
       
        01 ConventialCopy.

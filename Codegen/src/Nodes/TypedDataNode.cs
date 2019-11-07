@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Tools;
@@ -713,6 +714,36 @@ namespace TypeCobol.Codegen.Nodes
             }
         }
 
+        /// <summary>
+        /// Creates text lines corresponding to the given COPY directive.
+        /// The original indentation is preserved.
+        /// </summary>
+        /// <param name="copy">a CopyDirective instance</param>
+        /// <returns>a defered IEnumerable of ITextLine</returns>
+        private static IEnumerable<ITextLine> CopyDirectiveToTextLines([NotNull] CopyDirective copy)
+        {
+            //We recreate the clause copy with its arguments and original formatting.
+            StringBuilder textLine = new StringBuilder();
+            bool firstLine = true;
+            string copyIndent = copy.COPYToken.TokensLine.SourceText.GetIndent();
+            foreach (var tokenLine in copy.ConsumedTokens.SelectedTokensOnSeveralLines)
+            {
+                if (firstLine)
+                {
+                    textLine.Append(copyIndent);
+                    firstLine = false;
+                }
+
+                foreach (var token in tokenLine)
+                {
+                    textLine.Append(token.Text);
+                }
+
+                yield return new TextLineSnapshot(-1, textLine.ToString(), null);
+                textLine.Clear();
+            }
+        }
+
         internal static List<ITextLine> CreateDataDefinition(Node node, SymbolTable table, ColumnsLayout? layout, List<string> rootProcedures, List< Tuple<string,string> > rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null)
         {
             var data = data_def as DataDescriptionEntry;
@@ -955,17 +986,7 @@ namespace TypeCobol.Codegen.Nodes
                 {
                     if (child.IsFlagSet(Flag.IsTypedefCopyNode))
                     {
-                        if (child.Lines.Sum(l => l.Text.Count(c => c == '.')) > 1)
-                        {
-                            //If there is more than 1 instruction displayed in the lines, create new line containing only the relevant text
-                            var lineText = child.Lines.First().Text.GetIndent() + child.CodeElement.Text;
-                            lines.Add(new CobolTextLine(new TextLineSnapshot(child.CodeElement.Line, lineText, null), ColumnsLayout.CobolReferenceFormat));
-                        }
-                        else
-                        {
-                            lines.AddRange(child.Lines);
-                        }
-
+                        lines.AddRange(child.Lines);
                         continue;
                     }
                 }
@@ -976,64 +997,19 @@ namespace TypeCobol.Codegen.Nodes
                     //There is already a mechanism to write the clause COPY coming from the main program in LinearNodeSourceCodeMapper. 
                     //This is how we recover the clause copy from the dependencies.
                     //Here we check if the typedef has been defined in another file than the one declaring the datatype.
-                    if (type.Root != null && !type.Root.Programs.Any(p => rootProcedures.Contains(p.Name)))
+                    if (!type.Root.Programs.Any(p => rootProcedures.Contains(p.Name)))
                     {
                         CopyDirective copy = child.CodeElement.FirstCopyDirective;
                         //The first data coming from a copy is used to recover the Clause COPY, the other would be only a repetition of this one, so we skip them.
                         //Even with the same name, two different Clause COPY are differentiated by their token lines
                         if (usedCopies.Contains(copy) == false)
                         {
-                            //We recreate the clause copy with its arguments.
-                            //We don't have access to the original tokens here, so we can't recreate the same format as the original sentence.
-                            StringBuilder copyInstruction = new StringBuilder();
-
-                            copyInstruction.Append(copy.COPYToken.TokensLine.SourceText.GetIndent());
-                            copyInstruction.Append("COPY " + copy.TextName);
-                            if (copy.ReplaceOperations.Any())
-                            {
-                                copyInstruction.Append(" REPLACING");
-                            }
-                            foreach (var replaceOperation in copy.ReplaceOperations)
-                            {
-                                switch (replaceOperation)
-                                {
-                                    case SingleTokenReplaceOperation op:
-                                        copyInstruction.Append($" {op.ComparisonToken.Text} BY {op.ReplacementToken.Text}");
-                                        break;
-                                    case PartialWordReplaceOperation op:
-                                        copyInstruction.Append($" =={op.ComparisonToken.Text}== BY =={op.PartialReplacementToken.Text}==");
-                                        break;
-                                    case SingleToMultipleTokensReplaceOperation op:
-                                        copyInstruction.Append($" {op.ComparisonToken.Text} BY");
-                                        foreach (Token opReplacementToken in op.ReplacementTokens)
-                                        {
-                                            copyInstruction.Append($" {opReplacementToken.Text}");
-                                        }
-                                        break;
-                                    case MultipleTokensReplaceOperation op:
-                                        foreach (Token opFollowingComparisonTokens in op.FollowingComparisonTokens)
-                                        {
-                                            copyInstruction.Append($" {opFollowingComparisonTokens.Text}");
-                                        }
-                                        copyInstruction.Append(" BY");
-                                        foreach (Token opReplacementToken in op.ReplacementTokens)
-                                        {
-                                            copyInstruction.Append($" {opReplacementToken.Text}");
-                                        }
-                                        break;
-                                }
-                            }
-
-                            copyInstruction.Append(".");
-
-                            lines.Add(new TextLineSnapshot(-1, copyInstruction.ToString(), null));
-                            usedCopies.Add(child.CodeElement.FirstCopyDirective);
+                            lines.AddRange(CopyDirectiveToTextLines(copy));
+                            usedCopies.Add(copy);
                             continue;
                         }
                     }
-                   
-                } 
-
+                }
 
                 if (child is TypedDataNode) continue;
                 //Special cases BOOL / POINTER
