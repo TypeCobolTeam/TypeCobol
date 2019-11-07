@@ -11,17 +11,19 @@
        DATA DIVISION.
       
       *GLOBAL-STORAGE SECTION.
+                                                                        00002345
       *01 dbgCblVar PIC X(22).
-      D                       
       *01 G-Date            TYPE Date.
+000014                                                                  00001597
       *01 G-TechCtx         TYPE Bool.
       *01 DuplicatedVar     TYPE Bool.
       *01 purCblVar PIC X(22).
+                                                                        00001234
       *01 dbgCblVar2 PIC X(22).
-      D                        
+000018D                        
       *01 purCblGrp.
       *   48 dbgCblVar PIC X(32).
-      D                          
+000020D                          
       *   48 purCblVar PIC X(32).
       
        WORKING-STORAGE SECTION.
@@ -32,16 +34,16 @@
        LINKAGE SECTION.
 
        01 TC-GlobalData.
-
-      D02 dbgCblVar PIC X(22).
+                                                                        00002345
+000013 02 dbgCblVar PIC X(22).
       *01 G-Date            TYPE Date.
-       02 G-Date.
+000014 02 G-Date.
            03 YYYY PIC 9(4).
            03 MM PIC 9(2).
            03 DD PIC 9(2).
-
+                                                                        00001597
       *01 G-TechCtx         TYPE Bool.
-       02  G-TechCtx-value PIC X VALUE LOW-VALUE.
+000015 02  G-TechCtx-value PIC X VALUE LOW-VALUE.
            88  G-TechCtx       VALUE 'T'.
            88  G-TechCtx-false VALUE 'F'
                            X'00' thru 'S'
@@ -54,10 +56,10 @@
                            X'00' thru 'S'
                            'U' thru X'FF'.
 
-       02 purCblVar PIC X(22).
-      D02 dbgCblVar2 PIC X(22).
+       02 purCblVar PIC X(22).                                          00001234
+000018D02 dbgCblVar2 PIC X(22).
        02 purCblGrp.
-      D   49 dbgCblVar PIC X(32).
+000020D   49 dbgCblVar PIC X(32).
           49 purCblVar PIC X(32).
 
        PROCEDURE DIVISION.
@@ -71,6 +73,7 @@
       *    INPUT    myDate      TYPE DATE.
       
        MOVE G-Date TO  G-Date.
+       DISPLAY G-Date.
       
       *MOVE DuplicatedVar TO G-TechCtx.
        MOVE DuplicatedVar-value TO G-TechCtx-value.
@@ -89,16 +92,16 @@
        LINKAGE SECTION.
 
        01 TC-GlobalData.
-
-      D02 dbgCblVar PIC X(22).
+                                                                        00002345
+000013 02 dbgCblVar PIC X(22).
       *01 G-Date            TYPE Date.
-       02 G-Date.
+000014 02 G-Date.
            03 YYYY PIC 9(4).
            03 MM PIC 9(2).
            03 DD PIC 9(2).
-
+                                                                        00001597
       *01 G-TechCtx         TYPE Bool.
-       02  G-TechCtx-value PIC X VALUE LOW-VALUE.
+000015 02  G-TechCtx-value PIC X VALUE LOW-VALUE.
            88  G-TechCtx       VALUE 'T'.
            88  G-TechCtx-false VALUE 'F'
                            X'00' thru 'S'
@@ -111,10 +114,10 @@
                            X'00' thru 'S'
                            'U' thru X'FF'.
 
-       02 purCblVar PIC X(22).
-      D02 dbgCblVar2 PIC X(22).
+       02 purCblVar PIC X(22).                                          00001234
+000018D02 dbgCblVar2 PIC X(22).
        02 purCblGrp.
-      D   49 dbgCblVar PIC X(32).
+000020D   49 dbgCblVar PIC X(32).
           49 purCblVar PIC X(32).
 
        PROCEDURE DIVISION.
@@ -161,16 +164,16 @@
            02 MM PIC 9(2).
            02 DD PIC 9(2).
        01 TC-GlobalData.
-
-      D02 dbgCblVar PIC X(22).
+                                                                        00002345
+000013 02 dbgCblVar PIC X(22).
       *01 G-Date            TYPE Date.
-       02 G-Date.
+000014 02 G-Date.
            03 YYYY PIC 9(4).
            03 MM PIC 9(2).
            03 DD PIC 9(2).
-
+                                                                        00001597
       *01 G-TechCtx         TYPE Bool.
-       02  G-TechCtx-value PIC X VALUE LOW-VALUE.
+000015 02  G-TechCtx-value PIC X VALUE LOW-VALUE.
            88  G-TechCtx       VALUE 'T'.
            88  G-TechCtx-false VALUE 'F'
                            X'00' thru 'S'
@@ -183,10 +186,10 @@
                            X'00' thru 'S'
                            'U' thru X'FF'.
 
-       02 purCblVar PIC X(22).
-      D02 dbgCblVar2 PIC X(22).
+       02 purCblVar PIC X(22).                                          00001234
+000018D02 dbgCblVar2 PIC X(22).
        02 purCblGrp.
-      D   49 dbgCblVar PIC X(32).
+000020D   49 dbgCblVar PIC X(32).
           49 purCblVar PIC X(32).
 
        PROCEDURE DIVISION
@@ -218,16 +221,16 @@
        WORKING-STORAGE SECTION.
        01 PIC X(8) value ':TC:GBLS'.
        01 TC-GlobalData.
-                              
-      D02 dbgCblVar PIC X(22).
+                                                                        00002345
+000013 02 dbgCblVar PIC X(22).
       *01 G-Date            TYPE Date.
-       02 G-Date.
+000014 02 G-Date.
            03 YYYY PIC 9(4).
            03 MM PIC 9(2).
            03 DD PIC 9(2).
-                                      
+                                                                        00001597
       *01 G-TechCtx         TYPE Bool.
-       02  G-TechCtx-value PIC X VALUE LOW-VALUE.
+000015 02  G-TechCtx-value PIC X VALUE LOW-VALUE.
            88  G-TechCtx       VALUE 'T'.
            88  G-TechCtx-false VALUE 'F'
                            X'00' thru 'S'
@@ -240,10 +243,10 @@
                            X'00' thru 'S'
                            'U' thru X'FF'.
                                       
-       02 purCblVar PIC X(22).
-      D02 dbgCblVar2 PIC X(22).
+       02 purCblVar PIC X(22).                                          00001234
+000018D02 dbgCblVar2 PIC X(22).
        02 purCblGrp.
-      D   49 dbgCblVar PIC X(32).
+000020D   49 dbgCblVar PIC X(32).
           49 purCblVar PIC X(32).
 
        LINKAGE SECTION.

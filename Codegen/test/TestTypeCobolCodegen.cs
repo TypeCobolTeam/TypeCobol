@@ -876,6 +876,15 @@ namespace TypeCobol.Codegen {
         [TestMethod]
         [TestCategory("Codegen")]
         [TestProperty("Time", "fast")]
+        public void GlobalStorageWith_6_73_80()
+        {
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Global_Storage", "GlobalStorage2") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
+        }
+
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
         public void OmittableParameters()
         {
             var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;

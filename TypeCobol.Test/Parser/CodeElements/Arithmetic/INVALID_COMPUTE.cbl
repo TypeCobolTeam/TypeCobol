@@ -1,0 +1,4 @@
+﻿COMPUTE -x EQUAL a + b
+COMPUTE -x = a + b
+COMPUTE -C OF B OF A = 1
+COMPUTE A::B::-C = 1

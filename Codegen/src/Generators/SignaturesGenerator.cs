@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -46,6 +47,8 @@ namespace TypeCobol.Codegen.Generators
 
         public void Generate(CompilationUnit compilationUnit, ColumnsLayout columns = ColumnsLayout.FreeTextFormat)
         {
+            var stopwatch = Stopwatch.StartNew();
+
             this.CompilationUnit = compilationUnit;
             Destination.Append("");
             //Add version to output file
@@ -56,6 +59,9 @@ namespace TypeCobol.Codegen.Generators
             sourceFile.AcceptASTVisitor(new ExportToDependency());
             bool insideFormalizedComment = false;
             bool insideMultilineComment = false;
+
+            var buildExportDataElapsed = stopwatch.Elapsed;
+            stopwatch.Restart();
 
             foreach (var textLine in GenerateLinesForChildren(sourceFile.Children))
             {
@@ -81,6 +87,15 @@ namespace TypeCobol.Codegen.Generators
 
                 Destination.AppendLine(text);
             }
+
+            var writeExportDataElapsed = stopwatch.Elapsed;
+            stopwatch.Reset();
+
+            PerformanceReport = new Dictionary<string, TimeSpan>()
+                                {
+                                    {"BuildExportData", buildExportDataElapsed},
+                                    {"WriteExportData", writeExportDataElapsed}
+                                };
         }
 
         /// <summary>
@@ -168,7 +183,8 @@ namespace TypeCobol.Codegen.Generators
         }
 
         public List<Diagnostic> Diagnostics { get; }
-        public string TypeCobolVersion { get; set; }
+        public IReadOnlyDictionary<string, TimeSpan> PerformanceReport { get; private set; }
+        public string TypeCobolVersion { get; }
 
         public bool HasLineMapData => false;
     }
