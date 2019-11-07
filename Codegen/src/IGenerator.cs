@@ -22,7 +22,9 @@ namespace TypeCobol.Codegen
 
         List<Diagnostic> Diagnostics { get; }
 
-        string TypeCobolVersion { get; set; }
+        IReadOnlyDictionary<string, TimeSpan> PerformanceReport { get; }
+
+        string TypeCobolVersion { get; }
 
         /// <summary>
         /// Determine if this generator has line Map data.
