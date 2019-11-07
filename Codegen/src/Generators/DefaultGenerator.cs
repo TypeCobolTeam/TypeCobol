@@ -60,10 +60,9 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="destination">The Output stream for the generated code</param>
         /// <param name="skeletons">All skeletons pattern for code generation </param>
         public DefaultGenerator(TypeCobol.Compiler.CompilationDocument document, StringBuilder destination, List<Skeleton> skeletons, string typeCobolVersion)
-            : base(document, destination, skeletons, null)
+            : base(document, destination, skeletons, typeCobolVersion)
         {
-            TypeCobolVersion = typeCobolVersion;
-            int count = CompilationResults.TokensLines.Count;
+
         }
 
         public override void GenerateLineMapFile(Stream stream)
@@ -457,7 +456,7 @@ namespace TypeCobol.Codegen.Generators
                     }
                     previousBuffer = null;
                 }
-                for (int j = i; mapper.CommentedLines[j]; j++)
+                for (int j = i; j < endLine && mapper.CommentedLines[j]; j++)
                 {
                     List<int> current_nodes = mapper.LineData[j].LineNodes;
                     if (!CommentedLinesDone[j])
