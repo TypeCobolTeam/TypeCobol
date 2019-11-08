@@ -18,7 +18,7 @@ namespace TypeCobol.Compiler.Parser
 	/// <summary>Builds a CodeElement object while visiting its parse tree.</summary>
 	internal partial class CodeElementBuilder: CodeElementsBaseListener {
 
-	    private bool IsDebuggingModeEnabled { get; set; }
+        private bool IsDebuggingModeEnabled { get; set; }
         private ParserRuleContext Context;
 		/// <summary>CodeElement object resulting of the visit the parse tree</summary>
 		public CodeElement CodeElement { get; set; }
@@ -282,7 +282,7 @@ namespace TypeCobol.Compiler.Parser
 				paragraph.ComputerName = CobolWordsBuilder.CreateAlphanumericValue(context.computerName);
 			}
 			if(context.DEBUGGING() != null) {
-				paragraph.DebuggingMode = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.DEBUGGING()));
+                paragraph.DebuggingMode = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.DEBUGGING()));
                 IsDebuggingModeEnabled = true;
 			}
 
