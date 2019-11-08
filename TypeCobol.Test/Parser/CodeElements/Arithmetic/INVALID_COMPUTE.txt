@@ -1,0 +1,14 @@
+﻿--- Diagnostics ---
+Line 1[9,9] <27, Error, Syntax> - Syntax error : extraneous input '-' expecting {symbol, special register, keyword} RuleStack=codeElement>computeStatement,  OffendingSymbol=[9,9:-]<MinusOperator>
+Line 2[9,9] <27, Error, Syntax> - Syntax error : extraneous input '-' expecting {symbol, special register, keyword} RuleStack=codeElement>computeStatement,  OffendingSymbol=[9,9:-]<MinusOperator>
+Line 3[9,9] <27, Error, Syntax> - Syntax error : extraneous input '-' expecting {symbol, special register, keyword} RuleStack=codeElement>computeStatement,  OffendingSymbol=[9,9:-]<MinusOperator>
+Line 4[15,15] <27, Error, Syntax> - Syntax error : extraneous input '-' expecting user defined word RuleStack=codeElement>computeStatement>numericStorageAreaRounded>numericStorageArea>identifier>storageAreaReferenceOrConditionReference>dataItemReferenceOrConditionReference>qualifiedDataNameOrQualifiedConditionName>qualifiedDataNameOrQualifiedConditionName1>tcQualifiedDataNameOrQualifiedConditionName1,  OffendingSymbol=[15,15:-]<MinusOperator>
+--- Code Elements ---
+[[ComputeStatement]] [1,7:COMPUTE]<COMPUTE> --> [22,22:b]<UserDefinedWord>
+
+[[ComputeStatement]] [1,7:COMPUTE]<COMPUTE> --> [18,18:b]<UserDefinedWord>
+
+[[ComputeStatement]] [1,7:COMPUTE]<COMPUTE> --> [24,24:1]<IntegerLiteral>{1}
+
+[[ComputeStatement]] [1,7:COMPUTE]<COMPUTE> --> [20,20:1]<IntegerLiteral>{1}
+

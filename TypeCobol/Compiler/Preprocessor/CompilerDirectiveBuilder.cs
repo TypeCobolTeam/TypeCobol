@@ -215,6 +215,13 @@ namespace TypeCobol.Compiler.Preprocessor
 
 
             copy.Suppress = (context.SUPPRESS() != null);
+            if (copy.Suppress)
+            {
+                Token suppress = copy.COPYToken;
+                Diagnostic error = new Diagnostic(MessageCode.Warning, suppress.Column, suppress.EndColumn,
+                    suppress.Line, "\"COPY SUPPRESS\" should not be used");
+                CompilerDirective.AddDiagnostic(error);
+            }
 
             // REPLACING
             if (context.copyReplacingOperand() != null)

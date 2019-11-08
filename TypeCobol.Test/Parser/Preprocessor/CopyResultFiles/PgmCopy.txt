@@ -60,5 +60,9 @@
 [59,60:. ]<PeriodSeparator>
 
 ++ Preprocessor diagnostics ++
+-- Line 2 --
+Line 2[39,46] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be used
+-- Line 5 --
+Line 5[29,36] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be used
 -- Line 6 --
 Line 6[8,21] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: UNKNOWN
