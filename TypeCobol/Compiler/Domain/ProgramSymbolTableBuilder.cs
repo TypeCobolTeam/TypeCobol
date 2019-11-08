@@ -450,6 +450,8 @@ namespace TypeCobol.Compiler.Domain
             funDecl.SemanticData = funSym;
             //Enter the function in the current scope
             this.CurrentScope.Functions.Enter(funSym);
+            //Add it to the all scope domain
+            SymbolTableBuilder.Root.AddToDomain(funSym);
             //The its owner has the current scope.
             funSym.Owner = this.CurrentScope;
             //What about function visibility.

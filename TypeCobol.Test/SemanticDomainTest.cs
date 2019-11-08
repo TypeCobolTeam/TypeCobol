@@ -17,6 +17,7 @@ using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Symbols;
 using TypeCobol.Compiler.Types;
 using Type = TypeCobol.Compiler.Types.Type;
@@ -1968,5 +1969,115 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(vars.Count == 1);
         }
 
+        /// <summary>
+        /// This Test tests all various accessibility on type, by considering from which kind of program or procedure a type from
+        /// another program or procedure is asked for visibility access.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("SemanticDomain")]
+        [TestProperty("Object", "Visibility")]
+        public void TypeVisibility_Prg_NestedPrg_Proc_Stacked()
+        {
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "TypeVisNestedPrgAndProc.tcbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(Builder.Programs.Count == 2);
+            ProgramSymbol currentProgram = Builder.Programs[0];//TypeVisNestedPrgAndProc
+            SourceProgram mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
+            Assert.AreEqual(currentProgram, mainProgram.SemanticData);
+
+            //Get the nested program.
+            Scope<ProgramSymbol>.Entry nestedPrgEntry = SymbolTableBuilder.Root.ResolveProgram(new string[]{"Nested" });
+            Assert.IsTrue(nestedPrgEntry.Count == 1);
+            ProgramSymbol nestedProgram = nestedPrgEntry.Symbol;//Nested
+            IList<NestedProgram> nestedPrgs = mainProgram.GetChildren<NestedProgram>();
+            NestedProgram nestedPrg = nestedPrgs[0];
+            Assert.AreEqual(nestedProgram, nestedPrg.SemanticData);
+
+            //Get the Nested program of the Nested Program: Nested2
+            var nestedNestedPrgs = nestedPrg.GetChildren<NestedProgram>();
+            var nestedNestedPrg = nestedNestedPrgs[0];
+            Scope<ProgramSymbol>.Entry nested2PrgEntry = SymbolTableBuilder.Root.ResolveProgram(new string[] { "Nested2" });
+            Assert.IsTrue(nested2PrgEntry.Count == 1);
+            ProgramSymbol nested2Program = nested2PrgEntry.Symbol;//Nested2
+            IList<NestedProgram> nested2Prgs = nestedPrg.GetChildren<NestedProgram>();
+            NestedProgram nested2Prg = nested2Prgs[0];
+            Assert.AreEqual(nested2Program, nested2Prg.SemanticData);
+
+            //Get the Nested program Nested21
+            var nestedNested21Prgs = nested2Prg.GetChildren<NestedProgram>();
+            var nestedNested21Prg = nestedNested21Prgs[0];
+            Scope<ProgramSymbol>.Entry nested21PrgEntry = SymbolTableBuilder.Root.ResolveProgram(new string[] { "Nested21" });
+            Assert.IsTrue(nested21PrgEntry.Count == 1);
+            Scope<ProgramSymbol>.Entry nested21PrgEntryBis = SymbolTableBuilder.Root.ResolveProgram(new string[] { "Nested21", "Nested2" });
+            Assert.IsTrue(nested21PrgEntryBis.Count == 1);
+            Assert.AreEqual(nested21PrgEntry.Symbol, nested21PrgEntryBis.Symbol);
+            Scope<ProgramSymbol>.Entry nested21PrgEntryTer = SymbolTableBuilder.Root.ResolveProgram(new string[] { "Nested21", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(nested21PrgEntryTer.Count == 1);
+            Assert.AreEqual(nested21PrgEntry.Symbol, nested21PrgEntryTer.Symbol);
+            ProgramSymbol nested21Program = nested21PrgEntry.Symbol;//Nested21
+            IList<NestedProgram> nested21Prgs = nested2Prg.GetChildren<NestedProgram>();
+            NestedProgram nested21Prg = nested21Prgs[0];
+            Assert.AreEqual(nested21Program, nested21Prg.SemanticData);
+
+            //-----------------------------------------------
+            //Immediatly Resolve nested procedures of Nested2
+            //------------------------------------------------
+            //NestedProcLocal
+            Scope<FunctionSymbol>.Entry NestedProcLocalEntry = SymbolTableBuilder.Root.ResolveFunction(new string[] { "NestedProcLocal" });
+            Assert.IsTrue(NestedProcLocalEntry.Count == 1);
+            Scope<FunctionSymbol>.Entry NestedProcLocalEntryBis = SymbolTableBuilder.Root.ResolveFunction(new string[] { "NestedProcLocal", "Nested" });
+            Assert.IsTrue(NestedProcLocalEntryBis.Count == 1);
+            Assert.AreEqual(NestedProcLocalEntry.Symbol, NestedProcLocalEntryBis.Symbol);
+
+            //NestedProcPrivate
+            Scope<FunctionSymbol>.Entry NestedProcPrivateEntry = SymbolTableBuilder.Root.ResolveFunction(new string[] { "NestedProcPrivate" });
+            Assert.IsTrue(NestedProcPrivateEntry.Count == 1);
+
+            //NestedProcPublic
+            Scope<FunctionSymbol>.Entry NestedProcPublicEntry = SymbolTableBuilder.Root.ResolveFunction(new string[] { "NestedProcPublic" });
+            Assert.IsTrue(NestedProcPublicEntry.Count == 1);
+
+            //-------------------------------------
+            ///ResolveEventArgs TypeVisStackedPrg
+            //-------------------------------------
+            Scope<ProgramSymbol>.Entry TypeVisStackedPrgEntry = SymbolTableBuilder.Root.ResolveProgram(new string[] { "TypeVisStackedPrg" });
+            Assert.IsTrue(TypeVisStackedPrgEntry.Count == 1);
+
+            //---------------------------------------
+            //Resolve all types of the MAIN Program.
+            //---------------------------------------
+            var POINTMainGblEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] {"POINTMainGbl", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(POINTMainGblEntry.Count == 1);
+
+            var POINTMainPrivEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTMainPriv", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(POINTMainPrivEntry.Count == 1);
+
+            var POINTMainLocalEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTMainLocal", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(POINTMainLocalEntry.Count == 1);
+
+            var POINTMainPublicEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTMainPublic", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(POINTMainPublicEntry.Count == 1);
+
+            //---------------------------------------
+            //Resolve all types of the Nested Program.
+            //---------------------------------------
+            //var POINTNestedGblEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTNestedGbl", "Nested" });
+            //Assert.IsTrue(POINTNestedGblEntry.Count == 1);
+
+            //var POINTNestedPrivEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTNestedPriv", "Nested" });
+            //Assert.IsTrue(POINTNestedPrivEntry.Count == 0);//As it is private it is defined in TypeVisNestedPrgAndProc
+            //POINTNestedPrivEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTNestedPriv", "TypeVisNestedPrgAndProc" });
+            //Assert.IsTrue(POINTNestedPrivEntry.Count == 1);
+
+            //var POINTNestedLocalEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTNestedLocal", "Nested" });
+            //Assert.IsTrue(POINTNestedLocalEntry.Count == 1);
+
+            //var POINTNestedPublicEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTNestedPublic", "Nested" });
+            //Assert.IsTrue(POINTNestedPublicEntry.Count == 0);//As it is public it is defined in TypeVisNestedPrgAndProc
+            //POINTNestedPublicEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTNestedPublic", "TypeVisNestedPrgAndProc" });
+            //Assert.IsTrue(POINTNestedPublicEntry.Count == 1);
+
+        }
     }
 }

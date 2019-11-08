@@ -146,7 +146,7 @@ namespace TypeCobol.Compiler.Scopes
                 System.Diagnostics.Contracts.Contract.Ensures(Count >= 1);
                 _symbols.Remove(sym);                
                 //base.Symbol is always the first symbol of the list.
-                Symbol = _symbols[0];
+                Symbol = _symbols.Count > 0 ? _symbols[0] : null;
             }
         }
 

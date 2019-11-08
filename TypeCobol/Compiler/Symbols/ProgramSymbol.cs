@@ -255,14 +255,42 @@ namespace TypeCobol.Compiler.Symbols
         private bool IsSymbolAccessible(Symbol sym, Flags mask)
         {
             System.Diagnostics.Debug.Assert(sym != null);
-            Symbol typeSymPrg = sym.TopParent(Kinds.Program);
-            System.Diagnostics.Debug.Assert(typeSymPrg != null);
+            Symbol symTopPrg = sym.TopParent(Kinds.Program);
+            System.Diagnostics.Debug.Assert(symTopPrg != null);
             Symbol myTopPrg = TopParent(Kinds.Program);
             System.Diagnostics.Debug.Assert(myTopPrg != null);
 
-            if (typeSymPrg == myTopPrg)
+            if (symTopPrg == myTopPrg)
             {//Same program ==> Apply the visibility mask
-                return mask == 0 || sym.HasFlag(mask);
+                if (mask == 0 || sym.HasFlag(mask))
+                {
+                    var symNearestKind = sym.NearestKind(Kinds.Function, Kinds.Program);
+                    if (symNearestKind == this)
+                    {//This My Own Symbol.
+                        return true;
+                    }
+                    if (sym.HasFlag(Flags.Global))
+                    {//The Symbol is a global Symbol => only SubNested PROGRAM can See it
+                        if (this.Kind == Kinds.Function)
+                        {//I am a function, I cannot access anything else.
+                            return false;
+                        }
+                        if (symNearestKind.Kind == Kinds.Function)
+                        {//Symbol declared inside a Function, cannot be accessed out of the function.                        
+                            return false;
+                        }
+                        //Now the symbol must have been declared in sub nested program.
+                        return sym.HasParent(this);
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {//Different programs ==> only public.

@@ -238,7 +238,7 @@ namespace TypeCobol.Compiler.Symbols
             {
                 switch (i)
                 {
-                    case 0://We must look for a Type
+                    case 0://We must look for a Function
                         {
                             AbstractScope startScope = currentScope;
                             while (currentScope != null)

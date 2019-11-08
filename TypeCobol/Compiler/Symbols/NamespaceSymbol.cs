@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.Compiler.Domain;
 using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
@@ -40,6 +41,8 @@ namespace TypeCobol.Compiler.Symbols
             }
             //Set the owner
             entry.Symbol.Owner = this;
+            //Add it to the all scope domain
+            SymbolTableBuilder.Root.AddToDomain(entry.Symbol);
             return entry.Symbol;
         }
 
@@ -52,6 +55,8 @@ namespace TypeCobol.Compiler.Symbols
             if (prgSym != null)
             {
                 Programs.Remove(prgSym);
+                //Remove it from the all scope domain
+                SymbolTableBuilder.Root.RemoveFromDomain(prgSym);
                 prgSym.Owner = null;
             }
         }
