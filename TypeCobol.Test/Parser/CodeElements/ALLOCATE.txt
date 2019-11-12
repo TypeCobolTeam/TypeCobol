@@ -5,6 +5,7 @@ Line 19[1,8] <27, Error, Syntax> - Syntax error : missing CHARACTERS at 'ALLOCAT
 Line 19[13,21] <27, Error, Syntax> - Syntax error : missing CHARACTERS at 'RETURNING' RuleStack=codeElement>cobol2002Statement>allocateStatement,  OffendingSymbol=[13,21:RETURNING]<RETURNING>
 Line 21[24,26] <27, Error, Syntax> - Syntax error : no viable alternative at input 'LOC' RuleStack=codeElement>cobol2002Statement>allocateStatement,  OffendingSymbol=[24,26:LOC]<UserDefinedWord>
 Line 23[55,57] <27, Error, Syntax> - Syntax error : extraneous input 'LOC' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements} RuleStack=,  OffendingSymbol=[55,57:LOC]<UserDefinedWord>
+Line 25[15,18] <27, Error, Syntax> - Syntax error : no viable alternative at input 'TOTO' RuleStack=codeElement>cobol2002Statement>allocateStatement,  OffendingSymbol=[15,18:TOTO]<UserDefinedWord>
 --- Code Elements ---
 [[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [33,41:myPointer]<UserDefinedWord>
 
@@ -37,4 +38,6 @@ Line 23[55,57] <27, Error, Syntax> - Syntax error : extraneous input 'LOC' expec
 [[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [24,26:LOC]<UserDefinedWord>
 
 [[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [45,53:myPointer]<UserDefinedWord>
+
+[[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [20,21:24]<IntegerLiteral>{24}
 
