@@ -294,10 +294,14 @@ namespace TypeCobol.Codegen.Nodes
             {
                 tokenFamily = consumedTokens[++i].TokenFamily;
             }
-            while (tokenFamily == TokenFamily.FormalizedCommentsFamily);
+            while (tokenFamily == TokenFamily.FormalizedCommentsFamily && i < consumedTokens.Count);
 
-            // Reference token to handle line breaks, it is initialized with the first consumed token which is not part of a formalized comment.
-            Token referenceTokenForCurrentLine = consumedTokens[i];
+            /*
+             * Reference token to handle line breaks, it is initialized with the first consumed token which is not part of a formalized comment.
+             * NOTE : if we ran out of tokens while skipping the formalized comment at the beginning, we simply initialize the reference token to null
+             * and then the method ends due to the condition in the following while loop.
+             */
+            Token referenceTokenForCurrentLine = i < consumedTokens.Count ? consumedTokens[i] : null;
             while (i < consumedTokens.Count)
             {
                 Token token = consumedTokens[i];
