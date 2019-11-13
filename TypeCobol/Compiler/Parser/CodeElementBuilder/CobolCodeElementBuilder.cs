@@ -1896,6 +1896,14 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = new JsonStatementEnd();
         }
 
+        // --- JSON PARSE Statements ---
+
+        public override void EnterJsonParseStatement(CodeElementsParser.JsonParseStatementContext context)
+        {
+            Context = context;
+            CodeElement = CobolStatementsBuilder.CreateJsonParseStatement(context);
+        }
+
         // --- MERGE ---
 
         public override void EnterMergeStatement(CodeElementsParser.MergeStatementContext context) {
