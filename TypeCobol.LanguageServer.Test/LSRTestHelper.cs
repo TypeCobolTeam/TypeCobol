@@ -96,7 +96,6 @@ namespace TypeCobol.LanguageServer.Test
                 tcLogFile,
                 useSyntaxColoring ? "-sc" : "",
                 useOutline ? "-ol" : "");
-            arguments += " -diag.cpn ignore";   // inhibit check program name with file name
 
             System.Diagnostics.Process process = new System.Diagnostics.Process();
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();

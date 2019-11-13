@@ -36,7 +36,7 @@ namespace TypeCobol.Tools.Options_Config
 #else
         public bool UseEuroInformationLegacyReplacingSyntax = false;
 #endif
-        public TypeCobolCheckOption CheckProgramName = new TypeCobolCheckOption(Severity.Warning); // default value
+        public TypeCobolCheckOption CheckProgramName = new TypeCobolCheckOption("ignore"); // default value ignore
 
         public bool IsErrorXML
         {
@@ -178,7 +178,7 @@ namespace TypeCobol.Tools.Options_Config
             }
         }
 
-        public Severity? DiagnosticLevel { get; set; } = Severity.Warning;      // default value
+        public Severity? DiagnosticLevel { get; set; } = Severity.Warning;      // internal default value
 
         public MessageCode MessageCode {
             get

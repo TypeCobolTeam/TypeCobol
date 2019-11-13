@@ -231,7 +231,7 @@ namespace TypeCobol.LanguageServer
             this.Workspace.UseSyntaxColoring = UseSyntaxColoring;
             this.Workspace.UseAntlrProgramParsing = UseAntlrProgramParsing;
             this.Workspace.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;
-            this.Workspace.Configuration.CheckProgramName = CheckProgramName;
+            this.Workspace.CheckProgramName = CheckProgramName;
             this.Workspace.TimerDisabledOption = TimerDisabledOption;
 
             // Attach event handlers.

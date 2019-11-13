@@ -122,7 +122,7 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Check program name matching file name option.    
         /// </summary>
-        public static TypeCobolCheckOption CheckProgramName { get; set; } = new TypeCobolCheckOption(Severity.Warning);
+        public static TypeCobolCheckOption CheckProgramName { get; set; } = new TypeCobolCheckOption("ignore");     // default value ignore
 
         public static System.Diagnostics.Process Process;
 

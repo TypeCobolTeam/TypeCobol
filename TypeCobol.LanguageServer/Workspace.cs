@@ -125,6 +125,11 @@ namespace TypeCobol.LanguageServer
         /// Are we supporting OutlineRefresh Notifications.    
         /// </summary>
         public bool UseOutlineRefresh { get; set; }
+
+        /// <summary>
+        /// Check program name matching file name option.    
+        /// </summary>
+        public TypeCobolCheckOption CheckProgramName { get; set; }
         #endregion
 
 
@@ -150,7 +155,7 @@ namespace TypeCobol.LanguageServer
                 this.CompilationProject.CompilationOptions.UseEuroInformationLegacyReplacingSyntax ||
                 UseEuroInformationLegacyReplacingSyntax;
 
-            this.CompilationProject.CompilationOptions.CheckProgramName = Configuration.CheckProgramName;
+            this.CompilationProject.CompilationOptions.CheckProgramName = CheckProgramName;
 
             // Create the refresh action that will be used by file watchers
             Action refreshAction = RefreshOpenedFiles;
@@ -399,7 +404,8 @@ namespace TypeCobol.LanguageServer
         /// <param name="arguments">The arguments</param>
         public void DidChangeConfigurationParams(IEnumerable<string> arguments)
         {
-            Configuration = new TypeCobolConfiguration();
+            Configuration = new TypeCobolConfiguration();           // default values
+
             var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(Configuration);
 
             var errors = TypeCobolOptionSet.InitializeCobolOptions(Configuration, arguments, options);
@@ -419,6 +425,8 @@ namespace TypeCobol.LanguageServer
 
             if (Configuration.ExecToStep >= ExecutionStep.Generate)
                 Configuration.ExecToStep = ExecutionStep.CrossCheck; //Language Server does not support Cobol Generation for now
+
+            Configuration.CheckProgramName = CheckProgramName;      // set option check with eventual passed argument
 
             var typeCobolOptions = new TypeCobolOptions(Configuration);
 
