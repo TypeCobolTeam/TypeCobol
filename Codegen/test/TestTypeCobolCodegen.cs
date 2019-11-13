@@ -315,6 +315,7 @@ namespace TypeCobol.Codegen {
         {
             var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefComments") + ".rdz.tcbl", skeletons);
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "ProcedureScalarTypedef") + ".rdz.tcbl", skeletons);
         }
 
         [TestMethod]
