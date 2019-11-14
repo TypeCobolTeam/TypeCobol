@@ -806,9 +806,11 @@ namespace TypeCobol.Codegen.Generators
                                 bool bCopyCommented = node.Comment.HasValue && node.Comment.Value;
                                 if (bCopyCommented)
                                 {
-                                    for (int i = 0; i < consumedTokens.SelectedTokensOnSeveralLines.Length; i++)
+                                    int copyFirstLineIndex = consumedTokens.FirstLineIndex;
+                                    int copyLineCount = consumedTokens.SelectedTokensOnSeveralLines.Length;
+                                    for (int i = 0; i < copyLineCount; i++)
                                     {
-                                        CommentedLines[consumedTokens.FirstLineIndex + i] = true;
+                                        CommentedLines[copyFirstLineIndex + i] = true;
                                     }
                                 }
 
