@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using TypeCobol.Compiler.CodeElements;
@@ -723,23 +724,32 @@ namespace TypeCobol.Compiler.Diagnostics
             if (found.Count > 1)
                 DiagnosticUtils.AddError(node, nodeTypeName + " \'" + node.Name + "\' already declared");
 
-            // a section/paragraph is empty when it has no child or when its child/children is/are an {End} node
-            if (!node.Name.Equals("INIT-LIBRARY", StringComparison.OrdinalIgnoreCase))
+            // a section/paragraph (node) is empty when it has no child or when its child/children is/are an End node
+            bool empty = true; // default value
+            foreach (Node child in node.Children)  
             {
-                bool empty = true; // default value
-                foreach (Node sentence in node.Children)
+                if (child is Sentence || child is Paragraph)
                 {
-                    if ((sentence.Children.Count == 1 && (sentence.Children[0] is Nodes.End)) == false)
+                    // have child(ren); at least one End node
+                    if ((child.Children.Count == 1 && (child.Children[0] is Nodes.End)) == false)
                     {
+                        // not only one END node
                         empty = false;
                         break;
                     }
                 }
-                if (empty)
+                else
                 {
-                    DiagnosticUtils.AddError(node, nodeTypeName + " \'" + node.Name + "\' is empty",
-                        MessageCode.Warning);
+                    // Use or Exec node : statement
+                    Debug.Assert(child is Use || child is Exec);
+                    empty = false;
+                    break;
                 }
+            }
+            if (empty)
+            {
+                DiagnosticUtils.AddError(node, nodeTypeName + " \'" + node.Name + "\' is empty",
+                    MessageCode.Warning);
             }
         }
 

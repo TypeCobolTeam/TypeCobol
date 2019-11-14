@@ -10,6 +10,8 @@
             06 VarLevel2-2 PIC X(10).
           05 MyBool TYPE BOOL.
        PROCEDURE DIVISION.
+       INIT-LIBRARY.
+           exit.
        SectionEmpty SECTION.
       
        SectionEmpty2 SECTION.
@@ -18,6 +20,7 @@
        Section1 SECTION.
            .
        Parag1.
+           EXEC SQL OPEN something END-EXEC
            .
       
        Parag2.
