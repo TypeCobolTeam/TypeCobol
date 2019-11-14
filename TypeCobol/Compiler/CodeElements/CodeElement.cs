@@ -188,7 +188,7 @@ namespace TypeCobol.Compiler.CodeElements
                 FirstCopyDirective = null;
                 CopyDirective firstSource = null; //null = in the main source file
 
-                if (ConsumedTokens != null && ConsumedTokens.Count > 1)
+                if (ConsumedTokens != null && ConsumedTokens.Count > 0)
                 {
                     //Get CopyDirective of first ConsumedToken
                     var firstConsumedToken = ConsumedTokens[0] as ImportedToken;

@@ -396,8 +396,8 @@ namespace TypeCobol.Compiler.Diagnostics
             // Check end statement is aligned with the matching opening statement
             if (_compilerOptions.CheckEndAlignment && end.CodeElement.Type != CodeElementType.SentenceEnd)
             {
-                CodeElement parentCodeElement = end.Parent.CodeElement;
-                if (parentCodeElement?.IsInsideCopy() == false)
+                CodeElement parentCodeElement = end.Parent.CodeElement; ;
+                if (parentCodeElement?.IsInsideCopy() == false && end.IsInsideCopy() == false)
                 {
                     CheckEndNode(parentCodeElement, end.CodeElement);
                 }
@@ -411,7 +411,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (_compilerOptions.CheckEndAlignment)
             {
                 CodeElement parentCodeElement = functionEnd.Parent.CodeElement;
-                if (parentCodeElement?.IsInsideCopy() == false)
+                if (parentCodeElement?.IsInsideCopy() == false && functionEnd.IsInsideCopy() == false)
                 {
                     if (parentCodeElement.ConsumedTokens[0]?.TokenType == TokenType.FORMALIZED_COMMENTS_START)
                     {
