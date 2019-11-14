@@ -278,12 +278,15 @@ namespace TypeCobol.Compiler.Parser
 		public override void EnterSourceComputerParagraph(CodeElementsParser.SourceComputerParagraphContext context)
 		{
 			var paragraph = new SourceComputerParagraph();
-			if(context.computerName != null) {
+			if (context.computerName != null)
+			{
 				paragraph.ComputerName = CobolWordsBuilder.CreateAlphanumericValue(context.computerName);
 			}
-			if(context.DEBUGGING() != null) {
-                paragraph.DebuggingMode = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.DEBUGGING()));
-                IsDebuggingModeEnabled = true;
+
+			if (context.DEBUGGING() != null)
+			{
+				paragraph.DebuggingMode = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.DEBUGGING()));
+				IsDebuggingModeEnabled = true;
 			}
 
 			Context = context;
