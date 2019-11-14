@@ -31,9 +31,8 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="destination">The Output stream for the generated code</param>
         /// <param name="skeletons">All skeletons pattern for code generation </param>
         public DefaultGeneratorWithLineMap(TypeCobol.Compiler.CompilationDocument document, StringBuilder destination, List<Skeleton> skeletons, string typeCobolVersion)
-            : base(document, destination, skeletons, null)
+            : base(document, destination, skeletons, typeCobolVersion)
         {
-            TypeCobolVersion = typeCobolVersion;
             int count = CompilationResults.TokensLines.Count;
             LineMapping = new Tuple<int, int>[count];
         }
