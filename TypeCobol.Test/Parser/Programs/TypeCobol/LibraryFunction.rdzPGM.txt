@@ -1,6 +1,6 @@
 ﻿--- Diagnostics ---
-Line 79[8,18] <27, Error, Syntax> - Syntax error : Inside a library only function declaration or declaratives are allowed s1 / section
-Line 108[12,29] <27, Error, Syntax> - Syntax error : Inside a library only function declaration or declaratives are allowed
+Line 79[8,18] <27, Error, Syntax> - Syntax error : A program which contains public procedure cannot contain section or statement not under a paragraph.
+Line 108[12,29] <27, Error, Syntax> - Syntax error : A program which contains public procedure cannot contain section or statement not under a paragraph.
 Line 133[12,29] <27, Error, Syntax> - Syntax error : A program which contains public procedure must have INIT-LIBRARY as first paragraph.
 Line 158[9,11] <27, Error, Syntax> - Syntax error : First paragraph of a program which contains public procedure must be INIT-LIBRARY. Paragraph p1 is not allowed at this location.
 

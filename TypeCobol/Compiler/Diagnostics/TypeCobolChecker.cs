@@ -890,10 +890,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (firstParagraphChecked)
                     {
                         // this case corresponds to SECTION declarations or statements not inside a paragraph
-                        string nodeInfo = " " + node.Name + " / " + node.ID;
-                        if (nodeInfo == "  / ")  nodeInfo = "";
                         DiagnosticUtils.AddError(node,
-                            "Inside a library only function declaration or declaratives are allowed" + nodeInfo);
+							"A program which contains public procedure cannot contain section or statement not under a paragraph.");
                     }
                     else
                     {
