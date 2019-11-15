@@ -69,10 +69,22 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="LSRTests\RefreshCopiesNotif\input\RefreshCopyNotif.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\RefreshCopiesNotif\output_expected\RefreshCopyNotif.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\BeginTopLineEnterEnter\input\BeginTopLineEnterEnter.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\BeginTopLineEnterEnter\output_expected\BeginTopLineEnterEnter.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionOnPartialLibraryName\input\CompletionOnPartialLibraryName.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionOnPartialLibraryName\output_expected\CompletionOnPartialLibraryName.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\FirstLineEditCommentBeforeIdentDiv\input\FirstLineEditCommentBeforeIdentDiv.tlsp">
@@ -280,6 +292,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\ProcedureCompletionCaseInsensitive\input\ProcedureCompletionCaseInsensitive.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\ProcedureCompletionInputInoutOutput-Case\input\ProcedureCompletionInputInoutOutput-Case.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\ProcedureCompletionInputInoutOutput-Case\output_expected\ProcedureCompletionInputInoutOutput-Case.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\ProcedureCompletionInputInoutOutput-NoContext\input\ProcedureCompletionInputInoutOutput-NoContext.tlsp">

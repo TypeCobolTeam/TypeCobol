@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using TypeCobol.Compiler;
@@ -37,7 +39,10 @@ namespace TypeCobol.Codegen.Generators
    
 
 
-        public void Generate(CompilationUnit compilationUnit, ColumnsLayout columns = ColumnsLayout.FreeTextFormat) {
+        public void Generate(CompilationUnit compilationUnit, ColumnsLayout columns = ColumnsLayout.FreeTextFormat)
+        {
+            var stopwatch = Stopwatch.StartNew();
+
             Destination.Append("");
             //Add version to output file
             if (!string.IsNullOrEmpty(TypeCobolVersion))
@@ -48,6 +53,10 @@ namespace TypeCobol.Codegen.Generators
             var lines = sourceFile.SelfAndChildrenLines;
             bool insideFormalizedComment = false;
             bool insideMultilineComment = false;
+
+            var buildExportDataElapsed = stopwatch.Elapsed;
+            stopwatch.Restart();
+
             foreach (var textLine in lines)
             {
                 string text = textLine is TextLineSnapshot ?
@@ -81,6 +90,15 @@ namespace TypeCobol.Codegen.Generators
                     Destination.AppendLine(textLine.Text);
                 }
             }
+
+            var writeExportDataElapsed = stopwatch.Elapsed;
+            stopwatch.Reset();
+
+            PerformanceReport = new Dictionary<string, TimeSpan>()
+                                {
+                                    {"BuildExportData", buildExportDataElapsed},
+                                    {"WriteExportData", writeExportDataElapsed}
+                                };
         }
 
         public void GenerateLineMapFile(Stream stream)
@@ -88,7 +106,8 @@ namespace TypeCobol.Codegen.Generators
         }
 
         public List<Diagnostic> Diagnostics { get; }
-        public string TypeCobolVersion { get; set; }
+        public IReadOnlyDictionary<string, TimeSpan> PerformanceReport { get; private set; }
+        public string TypeCobolVersion { get; }
 
         public bool HasLineMapData => false;
     }

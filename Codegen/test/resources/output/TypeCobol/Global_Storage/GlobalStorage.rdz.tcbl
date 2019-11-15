@@ -218,7 +218,7 @@
        WORKING-STORAGE SECTION.
        01 PIC X(8) value ':TC:GBLS'.
        01 TC-GlobalData.
-       
+                              
       D02 dbgCblVar PIC X(22).
       *01 G-Date            TYPE Date.
        02 G-Date.

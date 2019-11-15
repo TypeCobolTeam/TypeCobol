@@ -163,7 +163,7 @@ namespace TypeCobol.Compiler.Parser
         // ALTER STATEMENT //
         /////////////////////
 
-        internal CodeElement CreateAlterStatement(CodeElementsParser.AlterStatementContext context) {
+        internal AlterStatement CreateAlterStatement(CodeElementsParser.AlterStatementContext context) {
 			var statement = new AlterStatement();
 			int alterInstructionsCount = context.procedureName().Length / 2;
 			statement.AlterGotoInstructions = new AlterGotoInstruction[alterInstructionsCount];
@@ -1237,7 +1237,7 @@ namespace TypeCobol.Compiler.Parser
         // STOP STATEMENT //
         ////////////////////
 
-        internal CodeElement CreateStopStatement(CodeElementsParser.StopStatementContext context)
+        internal StopStatement CreateStopStatement(CodeElementsParser.StopStatementContext context)
         {
             var statement = new StopStatement();
 
