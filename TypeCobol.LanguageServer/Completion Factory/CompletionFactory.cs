@@ -553,7 +553,7 @@ namespace TypeCobol.LanguageServer
             if (node == null)
                 return completionItems;
 
-            IEnumerable<DataDefinition> potentialVariables = null;
+            var potentialVariables = Enumerable.Empty<DataDefinition>();
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
             Expression<Func<DataDefinition, bool>> variablePredicate =
                 da =>
