@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Antlr4.Runtime;
+using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
@@ -292,6 +293,18 @@ namespace TypeCobol.Compiler.Diagnostics
         public static void OnCodeElement(AlterStatement statement, CodeElementsParser.AlterStatementContext context)
         {
             DiagnosticUtils.AddErrorWithNoRuleStack(statement, "ALTER should not be used", context, MessageCode.Warning);
+        }
+    }
+
+    class StopStatementChecker
+    {
+        public static void OnCodeElement(StopStatement statement, CodeElementsParser.StopStatementContext context)
+        {
+            if (statement.StopRun != null && statement.StopRun.Value)
+            {
+                DiagnosticUtils.AddError(statement, "GOBACK should be used instead of STOP RUN", ParseTreeUtils.GetFirstToken(context), 
+                    null, MessageCode.Warning);
+            }
         }
     }
 
