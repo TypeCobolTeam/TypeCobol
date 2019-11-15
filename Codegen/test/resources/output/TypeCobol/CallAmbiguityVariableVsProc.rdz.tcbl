@@ -1,0 +1,32 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MyPGM.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 PP1 PROCEDURE-POINTER.
+       01 DataGroup.
+          05 PP2 PROCEDURE-POINTER.
+      
+       PROCEDURE DIVISION.
+      *declare procedure Proc.
+       main.
+      *    CALL Proc
+           CALL 'c51eb140'
+           end-call
+                    
+      *    CALL MyPGM::Proc
+           CALL 'c51eb140'
+           end-call
+                           
+           CALL PP1
+      *    CALL DataGroup::PP2
+           CALL PP2 OF DataGroup
+           CALL PP2 OF DataGroup
+           GOBACK
+           .
+       END PROGRAM MyPGM.
+      *
+      *declare procedure Proc.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. c51eb140.
+       END PROGRAM c51eb140.

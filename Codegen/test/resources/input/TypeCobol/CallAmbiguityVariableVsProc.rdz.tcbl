@@ -1,0 +1,20 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MyPGM.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 PP1 PROCEDURE-POINTER.
+       01 DataGroup.
+          05 PP2 PROCEDURE-POINTER.
+      
+       PROCEDURE DIVISION.
+       declare procedure Proc.
+       end-declare.
+       main.
+           CALL Proc
+           CALL MyPGM::Proc
+           CALL PP1
+           CALL DataGroup::PP2
+           CALL PP2 OF DataGroup
+           GOBACK
+           .
+       END PROGRAM MyPGM.
