@@ -22,12 +22,10 @@ namespace TypeCobol.Compiler.Domain
     /// 
     /// THIS ARE COBOL Rules
     /// ---------------------
-    /// -"External" variables are the equivalent of a Fortran or assembler common section, 
-    ///     see: https://www.ibm.com/support/knowledgecenter/SS6SG3_5.1.1/com.ibm.cobol511.ent.doc/PGandLR/ref/rlfdeext.html.
     /// -"Global Program Scope" variables declared in working storage as global are visible to the entire program 
     ///     in which they are declared AND in all nested subprograms contained in that program.
-    /// -"Program Scope" variables declared in working storage are visible to the entire program in which they are declared.
-    /// -"Program Scope" variables declared in local storage are visible to the entire program in which they are declared,
+    /// -"Local Scope" variables declared in working storage are visible to the entire program in which they are declared.
+    /// -"Local Scope" variables declared in local storage are visible to the entire program in which they are declared,
     ///     but are deleted and reinitialized on every invocation.
     /// -"Nested Program Scope" Cobol does not distinguish between programs and functions/procedures, 
     /// its equivalent of a procedure or function is called a program.An infinite number of programs can be contained within a program, 
@@ -138,13 +136,7 @@ namespace TypeCobol.Compiler.Domain
         /// <summary>
         /// The Scope of the main program
         /// </summary>
-        public override AbstractScope Scope
-        {
-            get
-            {
-                return Programs.Count != 0 ? Programs[0] : null;
-            }
-        }
+        public override AbstractScope Scope => Programs.Count != 0 ? Programs[0] : null;
 
         /// <summary>
         /// The Last FunctionDeclarationHeader encountered
@@ -276,6 +268,7 @@ namespace TypeCobol.Compiler.Domain
                 //Entire stacked program has been parsed ==> Resolve Types if needed.
                 TypeCobol.Compiler.Domain.Validator.SymbolTypeResolver resolver = new TypeCobol.Compiler.Domain.Validator.SymbolTypeResolver(Root);
                 lastPrg.Accept(resolver, null);
+                lastPrg.SetFlag(Symbol.Flags.ProgramCompleted, true);
             }
         }
 
@@ -458,6 +451,8 @@ namespace TypeCobol.Compiler.Domain
             funDecl.SemanticData = funSym;
             //Enter the function in the current scope
             this.CurrentScope.Functions.Enter(funSym);
+            //Add it to the all scope domain
+            SymbolTableBuilder.Root.AddToDomain(funSym);
             //The its owner has the current scope.
             funSym.Owner = this.CurrentScope;
             //What about function visibility.
@@ -885,20 +880,8 @@ namespace TypeCobol.Compiler.Domain
             }
             //Find the declaring program of function scope.
             DataTypeDescriptionEntry dtde = (DataTypeDescriptionEntry)dataDef.CodeElement;
-            ProgramSymbol programScope = (ProgramSymbol)CurrentScope.TopParent(Symbol.Kinds.Program);
-            switch (dtde.Visibility)
-            {
-                case AccessModifier.Public:
-                case AccessModifier.Private:
-                    //Declared in the Top Parent scope
-                    programScope = (ProgramSymbol)CurrentScope.TopParent(Symbol.Kinds.Program);
-                    break;
-                case AccessModifier.Local:                    
-                default:
-                    //Declared in the current Program or function scope.
-                    programScope = (ProgramSymbol)CurrentScope.NearestKind(Symbol.Kinds.Program, Symbol.Kinds.Function);                    
-                    break;
-            }
+
+            ProgramSymbol programScope = (ProgramSymbol)CurrentScope.NearestKind(Symbol.Kinds.Program, Symbol.Kinds.Function);
             System.Diagnostics.Debug.Assert(programScope != null);
 
             //First lookup in the current scope if the typedef symbol exists.
@@ -941,6 +924,8 @@ namespace TypeCobol.Compiler.Domain
                 {
                     tdSym.Owner = parentScope.Owner;
                     ((ProgramSymbol)parentScope.Owner).Types.Enter(tdSym);
+                    //Add the type to the domain of types
+                    Root.AddToDomain(tdSym);
                 }
                 else
                 {//Declaration of a TypeDef out of a Program or a Function 
@@ -1606,7 +1591,8 @@ namespace TypeCobol.Compiler.Domain
                         sym.Level = 88;
                         if (parentScope.Owner != null)
                         {
-                            sym.SetFlag(parentScope.Owner.Flag & Symbol.SymbolVisibilityMask , parentScope.Owner.HasFlag(Symbol.SymbolVisibilityMask));                                
+                            if (parentScope.Owner.Kind != Symbol.Kinds.Program && parentScope.Owner.Kind != Symbol.Kinds.Function)
+                                sym.SetFlag(parentScope.Owner.Flag & Symbol.SymbolVisibilityMask , parentScope.Owner.HasFlag(Symbol.SymbolVisibilityMask));                                
                         }
                         //Store Contition Values.
                         sym.Value = ((DataConditionEntry)dataDef.CodeElement).ConditionValues;
@@ -1618,7 +1604,8 @@ namespace TypeCobol.Compiler.Domain
                         sym.Level = 66;
                         if (parentScope.Owner != null)
                         {
-                            sym.SetFlag(parentScope.Owner.Flag & Symbol.SymbolVisibilityMask, parentScope.Owner.HasFlag(Symbol.SymbolVisibilityMask));
+                            if (parentScope.Owner.Kind != Symbol.Kinds.Program && parentScope.Owner.Kind != Symbol.Kinds.Function)
+                                    sym.SetFlag(parentScope.Owner.Flag & Symbol.SymbolVisibilityMask, parentScope.Owner.HasFlag(Symbol.SymbolVisibilityMask));
                         }
                      }
                         break;
@@ -1637,8 +1624,9 @@ namespace TypeCobol.Compiler.Domain
                                 sym.SetFlag(Symbol.Flags.Global, true);
                             }
                         }
-                        //Propagate other visibility than global
-                        sym.SetFlag(parentScope.Owner.Flag & Symbol.SymbolVisibilityMask & ~Symbol.Flags.Global, parentScope.Owner.HasFlag(Symbol.SymbolVisibilityMask & ~Symbol.Flags.Global));
+                            //Propagate other visibility than global
+                            if (parentScope.Owner.Kind != Symbol.Kinds.Program && parentScope.Owner.Kind != Symbol.Kinds.Function)
+                                sym.SetFlag(parentScope.Owner.Flag & Symbol.SymbolVisibilityMask & ~Symbol.Flags.Global, parentScope.Owner.HasFlag(Symbol.SymbolVisibilityMask & ~Symbol.Flags.Global));
                     }
                         break;
                     default:

@@ -17,6 +17,7 @@ using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Symbols;
 using TypeCobol.Compiler.Types;
 using Type = TypeCobol.Compiler.Types.Type;
@@ -96,9 +97,9 @@ namespace TypeCobol.Test.Domain
         [TestMethod]
         [TestCategory("SemanticDomain")]
         [TestProperty("Object", "TypeExpander")]
-        public void ExpanderRefines()
+        public void ExpanderRedefines()
         {
-            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "ExpanderRefines.cbl");
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "ExpanderRedefines.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null, ExecutionStep.SemanticCheck);
 
@@ -447,7 +448,7 @@ namespace TypeCobol.Test.Domain
                 var vari = nestPrgSym.ResolveReference(new string[] { "var" + i }, false);                
                 Assert.IsTrue(vari.Count == (i == 3 ? 1 : 3));
                 vars[i - 1] = vari.Symbol;
-                Assert.IsTrue(vari.Symbol.Type == types[i-1].Type);
+                Assert.IsTrue(vari.Symbol.Type == types[i - 1].Type);
             }
 
             SymbolExpander symExpander = new SymbolExpander(currentProgram);
@@ -457,7 +458,7 @@ namespace TypeCobol.Test.Domain
             for (int i = 1; i < 4; i++)
             {
                 Assert.IsNotNull(vars[i - 1].Type);
-                Assert.IsTrue(vars[i-1].Type.Tag == Type.Tags.Picture);
+                Assert.IsTrue(vars[i - 1].Type.Tag == Type.Tags.Picture);
             }
 
 //            string expandedPrgs = @"IDENTIFICATION DIVISION.
@@ -1968,5 +1969,716 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(vars.Count == 1);
         }
 
+        /// <summary>
+        /// This Test tests all various accessibility on type, by considering from which kind of program or procedure a type from
+        /// another program or procedure is asked for visibility access.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("SemanticDomain")]
+        [TestProperty("Object", "Visibility")]
+        public void TypeVisibility_Prg_NestedPrg_Proc_Stacked()
+        {
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "TypeVisNestedPrgAndProc.tcbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(Builder.Programs.Count == 2);
+            ProgramSymbol currentProgram = Builder.Programs[0];//TypeVisNestedPrgAndProc
+            SourceProgram mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
+            Assert.AreEqual(currentProgram, mainProgram.SemanticData);
+
+            //Get the nested program.
+            Scope<ProgramSymbol>.Entry nestedPrgEntry = SymbolTableBuilder.Root.ResolveProgram(new string[]{"Nested" });
+            Assert.IsTrue(nestedPrgEntry.Count == 1);
+            ProgramSymbol nestedProgram = nestedPrgEntry.Symbol;//Nested
+            IList<NestedProgram> nestedPrgs = mainProgram.GetChildren<NestedProgram>();
+            NestedProgram nestedPrg = nestedPrgs[0];
+            Assert.AreEqual(nestedProgram, nestedPrg.SemanticData);
+
+            //Get the Nested program of the Nested Program: Nested2
+            var nestedNestedPrgs = nestedPrg.GetChildren<NestedProgram>();
+            var nestedNestedPrg = nestedNestedPrgs[0];
+            Scope<ProgramSymbol>.Entry nested2PrgEntry = SymbolTableBuilder.Root.ResolveProgram(new string[] { "Nested2" });
+            Assert.IsTrue(nested2PrgEntry.Count == 1);
+            ProgramSymbol nested2Program = nested2PrgEntry.Symbol;//Nested2
+            IList<NestedProgram> nested2Prgs = nestedPrg.GetChildren<NestedProgram>();
+            NestedProgram nested2Prg = nested2Prgs[0];
+            Assert.AreEqual(nested2Program, nested2Prg.SemanticData);
+
+            //Get the Nested program Nested21
+            var nestedNested21Prgs = nested2Prg.GetChildren<NestedProgram>();
+            var nestedNested21Prg = nestedNested21Prgs[0];
+            Scope<ProgramSymbol>.Entry nested21PrgEntry = SymbolTableBuilder.Root.ResolveProgram(new string[] { "Nested21" });
+            Assert.IsTrue(nested21PrgEntry.Count == 1);
+            Scope<ProgramSymbol>.Entry nested21PrgEntryBis = SymbolTableBuilder.Root.ResolveProgram(new string[] { "Nested21", "Nested2" });
+            Assert.IsTrue(nested21PrgEntryBis.Count == 1);
+            Assert.AreEqual(nested21PrgEntry.Symbol, nested21PrgEntryBis.Symbol);
+            Scope<ProgramSymbol>.Entry nested21PrgEntryTer = SymbolTableBuilder.Root.ResolveProgram(new string[] { "Nested21", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(nested21PrgEntryTer.Count == 1);
+            Assert.AreEqual(nested21PrgEntry.Symbol, nested21PrgEntryTer.Symbol);
+            ProgramSymbol nested21Program = nested21PrgEntry.Symbol;//Nested21
+            IList<NestedProgram> nested21Prgs = nested2Prg.GetChildren<NestedProgram>();
+            NestedProgram nested21Prg = nested21Prgs[0];
+            Assert.AreEqual(nested21Program, nested21Prg.SemanticData);
+
+            //-----------------------------------------------
+            //Immediatly Resolve nested procedures of Nested2
+            //------------------------------------------------
+            //NestedProcLocal
+            Scope<FunctionSymbol>.Entry NestedProcLocalEntry = SymbolTableBuilder.Root.ResolveFunction(new string[] { "NestedProcLocal" });
+            Assert.IsTrue(NestedProcLocalEntry.Count == 1);
+            Scope<FunctionSymbol>.Entry NestedProcLocalEntryBis = SymbolTableBuilder.Root.ResolveFunction(new string[] { "NestedProcLocal", "Nested" });
+            Assert.IsTrue(NestedProcLocalEntryBis.Count == 1);
+            Assert.AreEqual(NestedProcLocalEntry.Symbol, NestedProcLocalEntryBis.Symbol);
+
+
+            //NestedProcPrivate
+            Scope<FunctionSymbol>.Entry NestedProcPrivateEntry = SymbolTableBuilder.Root.ResolveFunction(new string[] { "NestedProcPrivate" });
+            Assert.IsTrue(NestedProcPrivateEntry.Count == 1);
+
+            //NestedProcPublic
+            Scope<FunctionSymbol>.Entry NestedProcPublicEntry = SymbolTableBuilder.Root.ResolveFunction(new string[] { "NestedProcPublic" });
+            Assert.IsTrue(NestedProcPublicEntry.Count == 1);
+
+            //-------------------------------------
+            ///Resolve TypeVisStackedPrg
+            //-------------------------------------
+            Scope<ProgramSymbol>.Entry TypeVisStackedPrgEntry = SymbolTableBuilder.Root.ResolveProgram(new string[] { "TypeVisStackedPrg" });
+            Assert.IsTrue(TypeVisStackedPrgEntry.Count == 1);
+
+            //---------------------------------------
+            //Resolve all types of the MAIN Program.
+            //---------------------------------------
+            var POINTMainGblEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] {"POINTMainGbl", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(POINTMainGblEntry.Count == 1);
+
+            var POINTMainPrivEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTMainPriv", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(POINTMainPrivEntry.Count == 1);
+
+            var POINTMainLocalEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTMainLocal", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(POINTMainLocalEntry.Count == 1);
+
+            var POINTMainPublicEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTMainPublic", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(POINTMainPublicEntry.Count == 1);
+
+            //---------------------------------------
+            //Resolve all types of the Nested Program.
+            //---------------------------------------
+            var typ = currentProgram.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "POINTNestedPriv" }, false);
+
+            var POINTNestedGblEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTNestedGbl", "Nested" });
+            Assert.IsTrue(POINTNestedGblEntry.Count == 1);
+
+            var POINTNestedPrivEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTNestedPriv", "Nested" });
+            Assert.IsTrue(POINTNestedPrivEntry.Count == 1);//As it is private it is defined in TypeVisNestedPrgAndProc
+            var POINTNestedPrivEntry2 = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTNestedPriv", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(POINTNestedPrivEntry2.Count == 1);
+            Assert.AreEqual(POINTNestedPrivEntry.Symbol, POINTNestedPrivEntry2.Symbol);
+
+            var POINTNestedLocalEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTNestedLocal", "Nested" });
+            Assert.IsTrue(POINTNestedLocalEntry.Count == 1);
+
+            var POINTNestedPublicEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTNestedPublic", "Nested" });
+            Assert.IsTrue(POINTNestedPublicEntry.Count == 1);//As it is public it is defined in TypeVisNestedPrgAndProc
+            var POINTNestedPublicEntry2 = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTNestedPublic", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(POINTNestedPublicEntry.Count == 1);
+            Assert.AreEqual(POINTNestedPublicEntry.Symbol, POINTNestedPublicEntry2.Symbol);
+
+            //-----------------------------------------
+            //Resolve all types of the Nested2 Program.
+            //-----------------------------------------
+            var typ2 = currentProgram.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "POINTNestedNestedPriv" }, false);
+
+            var POINTNestedNestedGblEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTNestedNestedGbl", "Nested2" });
+            Assert.IsTrue(POINTNestedNestedGblEntry.Count == 1);
+
+            var POINTNestedNestedPrivEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTNestedNestedPriv", "Nested2" });
+            Assert.IsTrue(POINTNestedNestedPrivEntry.Count == 1);//As it is private it is defined in TypeVisNestedPrgAndProc
+            var POINTNestedNestedPrivEntry2 = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTNestedNestedPriv", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(POINTNestedNestedPrivEntry2.Count == 1);
+            Assert.AreEqual(POINTNestedNestedPrivEntry.Symbol, POINTNestedNestedPrivEntry2.Symbol);
+
+            var POINTNestedNestedLocalEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTNestedNestedLocal", "Nested2" });
+            Assert.IsTrue(POINTNestedNestedLocalEntry.Count == 1);
+
+            var POINTNestedNestedPublicEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTNestedNestedPublic", "Nested2" });
+            Assert.IsTrue(POINTNestedNestedPublicEntry.Count == 1);//As it is public it is defined in TypeVisNestedPrgAndProc
+            var POINTNestedNestedPublicEntry2 = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTNestedNestedPublic", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(POINTNestedNestedPublicEntry.Count == 1);
+            Assert.AreEqual(POINTNestedNestedPublicEntry.Symbol, POINTNestedNestedPublicEntry2.Symbol);
+
+            //-----------------------------------------
+            //Resolve all types of the Stacked Program.
+            //-----------------------------------------
+            var typStacked = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTStackedPriv" });
+
+            var POINTStackedGblEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTStackedGbl", "TypeVisStackedPrg" });
+            Assert.IsTrue(POINTStackedGblEntry.Count == 1);
+
+            var POINTStackedPrivEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTStackedPriv", "TypeVisStackedPrg" });
+            Assert.IsTrue(POINTStackedPrivEntry.Count == 1);
+
+            var POINTStackedLocalEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTStackedLocal", "TypeVisStackedPrg" });
+            Assert.IsTrue(POINTStackedLocalEntry.Count == 1);
+
+            var POINTStackedPublicEntry = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTStackedPublic", "TypeVisStackedPrg" });
+            Assert.IsTrue(POINTStackedPublicEntry.Count == 1);
+
+            //-----------------------------------------------
+            // PERFORM Accessibility tests From Main Program
+            //-----------------------------------------------
+            // Type POINTMainGbl is only visible in the Main TypeVisNestedPrgAndProc Program
+            // and its nested programs, not in nested procedures and not in the stacked program
+            Assert.IsTrue(currentProgram.IsTypeAccessible(POINTMainGblEntry.Symbol));
+            Assert.IsTrue(nestedProgram.IsTypeAccessible(POINTMainGblEntry.Symbol));
+            Assert.IsTrue(nested2Program.IsTypeAccessible(POINTMainGblEntry.Symbol));
+            Assert.IsFalse(NestedProcLocalEntry.Symbol.IsTypeAccessible(POINTMainGblEntry.Symbol));
+            Assert.IsFalse(NestedProcPrivateEntry.Symbol.IsTypeAccessible(POINTMainGblEntry.Symbol));
+            Assert.IsFalse(NestedProcPublicEntry.Symbol.IsTypeAccessible(POINTMainGblEntry.Symbol));
+            Assert.IsFalse(TypeVisStackedPrgEntry.Symbol.IsTypeAccessible(POINTMainGblEntry.Symbol));
+
+            // Type POINTMainPriv is only visible in the Main TypeVisNestedPrgAndProc Program
+            // its nested programs, its nested procedures and not in the stacked program
+            Assert.IsTrue(currentProgram.IsTypeAccessible(POINTMainPrivEntry.Symbol));
+            Assert.IsTrue(nestedProgram.IsTypeAccessible(POINTMainPrivEntry.Symbol));
+            Assert.IsTrue(nested2Program.IsTypeAccessible(POINTMainPrivEntry.Symbol));
+            Assert.IsTrue(NestedProcLocalEntry.Symbol.IsTypeAccessible(POINTMainPrivEntry.Symbol));
+            Assert.IsTrue(NestedProcPrivateEntry.Symbol.IsTypeAccessible(POINTMainPrivEntry.Symbol));
+            Assert.IsTrue(NestedProcPublicEntry.Symbol.IsTypeAccessible(POINTMainPrivEntry.Symbol));
+            Assert.IsFalse(TypeVisStackedPrgEntry.Symbol.IsTypeAccessible(POINTMainPrivEntry.Symbol));
+
+            // Type POINTMainLocal is only visible its TypeVisNestedPrgAndProc Program
+            Assert.IsTrue(currentProgram.IsTypeAccessible(POINTMainLocalEntry.Symbol));
+            Assert.IsFalse(nestedProgram.IsTypeAccessible(POINTMainLocalEntry.Symbol));
+            Assert.IsFalse(nested2Program.IsTypeAccessible(POINTMainLocalEntry.Symbol));
+            Assert.IsFalse(NestedProcLocalEntry.Symbol.IsTypeAccessible(POINTMainLocalEntry.Symbol));
+            Assert.IsFalse(NestedProcPrivateEntry.Symbol.IsTypeAccessible(POINTMainLocalEntry.Symbol));
+            Assert.IsFalse(NestedProcPublicEntry.Symbol.IsTypeAccessible(POINTMainLocalEntry.Symbol));
+            Assert.IsFalse(TypeVisStackedPrgEntry.Symbol.IsTypeAccessible(POINTMainLocalEntry.Symbol));
+
+            // Type POINTMainPublic is visible anywhere
+            Assert.IsTrue(currentProgram.IsTypeAccessible(POINTMainPublicEntry.Symbol));
+            Assert.IsTrue(nestedProgram.IsTypeAccessible(POINTMainPublicEntry.Symbol));
+            Assert.IsTrue(nested2Program.IsTypeAccessible(POINTMainPublicEntry.Symbol));
+            Assert.IsTrue(NestedProcLocalEntry.Symbol.IsTypeAccessible(POINTMainPublicEntry.Symbol));
+            Assert.IsTrue(NestedProcPrivateEntry.Symbol.IsTypeAccessible(POINTMainPublicEntry.Symbol));
+            Assert.IsTrue(NestedProcPublicEntry.Symbol.IsTypeAccessible(POINTMainPublicEntry.Symbol));
+            Assert.IsTrue(TypeVisStackedPrgEntry.Symbol.IsTypeAccessible(POINTMainPublicEntry.Symbol));
+
+
+            //---------------------------------------------------
+            // PERFORM Accessibility tests From "Nested" Program
+            //---------------------------------------------------
+            // Type POINTNestedGbl is only visible in the Program called Nested"
+            // and its nested programs, not in its nested procedures and not in the stacked program
+            Assert.IsFalse(currentProgram.IsTypeAccessible(POINTNestedGblEntry.Symbol));
+            Assert.IsTrue(nestedProgram.IsTypeAccessible(POINTNestedGblEntry.Symbol));
+            Assert.IsTrue(nested2Program.IsTypeAccessible(POINTNestedGblEntry.Symbol));
+            Assert.IsFalse(NestedProcLocalEntry.Symbol.IsTypeAccessible(POINTNestedGblEntry.Symbol));
+            Assert.IsFalse(NestedProcPrivateEntry.Symbol.IsTypeAccessible(POINTNestedGblEntry.Symbol));
+            Assert.IsFalse(NestedProcPublicEntry.Symbol.IsTypeAccessible(POINTNestedGblEntry.Symbol));
+            Assert.IsFalse(TypeVisStackedPrgEntry.Symbol.IsTypeAccessible(POINTNestedGblEntry.Symbol));
+
+            // Type POINTNestedPriv is only visible in the Main TypeVisNestedPrgAndProc Program
+            // its nested programs, its nested procedures and not in the stacked program
+            Assert.IsTrue(currentProgram.IsTypeAccessible(POINTNestedPrivEntry.Symbol));
+            Assert.IsTrue(nestedProgram.IsTypeAccessible(POINTNestedPrivEntry.Symbol));
+            Assert.IsTrue(nested2Program.IsTypeAccessible(POINTNestedPrivEntry.Symbol));
+            Assert.IsTrue(NestedProcLocalEntry.Symbol.IsTypeAccessible(POINTNestedPrivEntry.Symbol));
+            Assert.IsTrue(NestedProcPrivateEntry.Symbol.IsTypeAccessible(POINTNestedPrivEntry.Symbol));
+            Assert.IsTrue(NestedProcPublicEntry.Symbol.IsTypeAccessible(POINTNestedPrivEntry.Symbol));
+            Assert.IsFalse(TypeVisStackedPrgEntry.Symbol.IsTypeAccessible(POINTNestedPrivEntry.Symbol));
+
+            // Type POINTNestedLocal is only visible in the "Nested" Program
+            Assert.IsFalse(currentProgram.IsTypeAccessible(POINTNestedLocalEntry.Symbol));
+            Assert.IsTrue(nestedProgram.IsTypeAccessible(POINTNestedLocalEntry.Symbol));
+            Assert.IsFalse(nested2Program.IsTypeAccessible(POINTNestedLocalEntry.Symbol));
+            Assert.IsFalse(NestedProcLocalEntry.Symbol.IsTypeAccessible(POINTNestedLocalEntry.Symbol));
+            Assert.IsFalse(NestedProcPrivateEntry.Symbol.IsTypeAccessible(POINTNestedLocalEntry.Symbol));
+            Assert.IsFalse(NestedProcPublicEntry.Symbol.IsTypeAccessible(POINTNestedLocalEntry.Symbol));
+            Assert.IsFalse(TypeVisStackedPrgEntry.Symbol.IsTypeAccessible(POINTNestedLocalEntry.Symbol));
+
+            // Type POINTNestedPublic is visible anywhere
+            Assert.IsTrue(currentProgram.IsTypeAccessible(POINTNestedPublicEntry.Symbol));
+            Assert.IsTrue(nestedProgram.IsTypeAccessible(POINTNestedPublicEntry.Symbol));
+            Assert.IsTrue(nested2Program.IsTypeAccessible(POINTNestedPublicEntry.Symbol));
+            Assert.IsTrue(NestedProcLocalEntry.Symbol.IsTypeAccessible(POINTNestedPublicEntry.Symbol));
+            Assert.IsTrue(NestedProcPrivateEntry.Symbol.IsTypeAccessible(POINTNestedPublicEntry.Symbol));
+            Assert.IsTrue(NestedProcPublicEntry.Symbol.IsTypeAccessible(POINTNestedPublicEntry.Symbol));
+            Assert.IsTrue(TypeVisStackedPrgEntry.Symbol.IsTypeAccessible(POINTNestedPublicEntry.Symbol));
+
+            //---------------------------------------------------------
+            // PERFORM Accessibility tests From "Nested2" Program
+            //---------------------------------------------------------
+            // Type POINTNestedNestedGbl is only visible in the Program called Nested2"
+            // and its nested programs, not in its nested procedures and not in the stacked program
+            Assert.IsFalse(currentProgram.IsTypeAccessible(POINTNestedNestedGblEntry.Symbol));
+            Assert.IsFalse(nestedProgram.IsTypeAccessible(POINTNestedNestedGblEntry.Symbol));
+            Assert.IsTrue(nested2Program.IsTypeAccessible(POINTNestedNestedGblEntry.Symbol));
+            Assert.IsFalse(NestedProcLocalEntry.Symbol.IsTypeAccessible(POINTNestedNestedGblEntry.Symbol));
+            Assert.IsFalse(NestedProcPrivateEntry.Symbol.IsTypeAccessible(POINTNestedNestedGblEntry.Symbol));
+            Assert.IsFalse(NestedProcPublicEntry.Symbol.IsTypeAccessible(POINTNestedNestedGblEntry.Symbol));
+            Assert.IsFalse(TypeVisStackedPrgEntry.Symbol.IsTypeAccessible(POINTNestedNestedGblEntry.Symbol));
+
+            // Type POINTNestedNestedPriv is only visible in the Main TypeVisNestedNestedPrgAndProc Program
+            // its nested programs, its nested procedures and not in the stacked program
+            Assert.IsTrue(currentProgram.IsTypeAccessible(POINTNestedNestedPrivEntry.Symbol));
+            Assert.IsTrue(nestedProgram.IsTypeAccessible(POINTNestedNestedPrivEntry.Symbol));
+            Assert.IsTrue(nested2Program.IsTypeAccessible(POINTNestedNestedPrivEntry.Symbol));
+            Assert.IsTrue(NestedProcLocalEntry.Symbol.IsTypeAccessible(POINTNestedNestedPrivEntry.Symbol));
+            Assert.IsTrue(NestedProcPrivateEntry.Symbol.IsTypeAccessible(POINTNestedNestedPrivEntry.Symbol));
+            Assert.IsTrue(NestedProcPublicEntry.Symbol.IsTypeAccessible(POINTNestedNestedPrivEntry.Symbol));
+            Assert.IsFalse(TypeVisStackedPrgEntry.Symbol.IsTypeAccessible(POINTNestedNestedPrivEntry.Symbol));
+
+            // Type POINTNestedNestedLocal is only visible in the "Nested2" Program
+            Assert.IsFalse(currentProgram.IsTypeAccessible(POINTNestedNestedLocalEntry.Symbol));
+            Assert.IsFalse(nestedProgram.IsTypeAccessible(POINTNestedNestedLocalEntry.Symbol));
+            Assert.IsTrue(nested2Program.IsTypeAccessible(POINTNestedNestedLocalEntry.Symbol));
+            Assert.IsFalse(NestedProcLocalEntry.Symbol.IsTypeAccessible(POINTNestedNestedLocalEntry.Symbol));
+            Assert.IsFalse(NestedProcPrivateEntry.Symbol.IsTypeAccessible(POINTNestedNestedLocalEntry.Symbol));
+            Assert.IsFalse(NestedProcPublicEntry.Symbol.IsTypeAccessible(POINTNestedNestedLocalEntry.Symbol));
+            Assert.IsFalse(TypeVisStackedPrgEntry.Symbol.IsTypeAccessible(POINTNestedNestedLocalEntry.Symbol));
+
+            // Type POINTNestedNestedPublic is visible anywhere
+            Assert.IsTrue(currentProgram.IsTypeAccessible(POINTNestedNestedPublicEntry.Symbol));
+            Assert.IsTrue(nestedProgram.IsTypeAccessible(POINTNestedNestedPublicEntry.Symbol));
+            Assert.IsTrue(nested2Program.IsTypeAccessible(POINTNestedNestedPublicEntry.Symbol));
+            Assert.IsTrue(NestedProcLocalEntry.Symbol.IsTypeAccessible(POINTNestedNestedPublicEntry.Symbol));
+            Assert.IsTrue(NestedProcPrivateEntry.Symbol.IsTypeAccessible(POINTNestedNestedPublicEntry.Symbol));
+            Assert.IsTrue(NestedProcPublicEntry.Symbol.IsTypeAccessible(POINTNestedNestedPublicEntry.Symbol));
+            Assert.IsTrue(TypeVisStackedPrgEntry.Symbol.IsTypeAccessible(POINTNestedNestedPublicEntry.Symbol));
+
+            //---------------------------------------------
+            // TESTING type inside Function
+            //---------------------------------------------
+            var POINTFunc = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTFunc"});
+            Assert.AreEqual(3, POINTFunc.Count);
+            var POINTFuncLocal = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTFunc", "NestedProcLocal" });
+            Assert.IsTrue(POINTFuncLocal.Count == 1);
+            var POINTFuncPrivate = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTFunc", "NestedProcPrivate" });
+            Assert.IsTrue(POINTFuncPrivate.Count == 1);
+            var POINTFuncPublic = SymbolTableBuilder.Root.ResolveQualifiedType(new string[] { "POINTFunc", "NestedProcPublic" });
+            Assert.IsTrue(POINTFuncPublic.Count == 1);
+
+            Assert.IsFalse(currentProgram.IsTypeAccessible(POINTFuncLocal.Symbol));
+            Assert.IsFalse(nestedProgram.IsTypeAccessible(POINTFuncLocal.Symbol));
+            Assert.IsFalse(nested2Program.IsTypeAccessible(POINTFuncLocal.Symbol));
+            Assert.IsTrue(NestedProcLocalEntry.Symbol.IsTypeAccessible(POINTFuncLocal.Symbol));
+            Assert.IsFalse(NestedProcPrivateEntry.Symbol.IsTypeAccessible(POINTFuncLocal.Symbol));
+            Assert.IsFalse(NestedProcPublicEntry.Symbol.IsTypeAccessible(POINTFuncLocal.Symbol));
+            Assert.IsFalse(TypeVisStackedPrgEntry.Symbol.IsTypeAccessible(POINTFuncLocal.Symbol));
+
+            Assert.IsFalse(currentProgram.IsTypeAccessible(POINTFuncPrivate.Symbol));
+            Assert.IsFalse(nestedProgram.IsTypeAccessible(POINTFuncPrivate.Symbol));
+            Assert.IsFalse(nested2Program.IsTypeAccessible(POINTFuncPrivate.Symbol));
+            Assert.IsFalse(NestedProcLocalEntry.Symbol.IsTypeAccessible(POINTFuncPrivate.Symbol));
+            Assert.IsTrue(NestedProcPrivateEntry.Symbol.IsTypeAccessible(POINTFuncPrivate.Symbol));
+            Assert.IsFalse(NestedProcPublicEntry.Symbol.IsTypeAccessible(POINTFuncPrivate.Symbol));
+            Assert.IsFalse(TypeVisStackedPrgEntry.Symbol.IsTypeAccessible(POINTFuncPrivate.Symbol));
+
+            Assert.IsFalse(currentProgram.IsTypeAccessible(POINTFuncPublic.Symbol));
+            Assert.IsFalse(nestedProgram.IsTypeAccessible(POINTFuncPublic.Symbol));
+            Assert.IsFalse(nested2Program.IsTypeAccessible(POINTFuncPublic.Symbol));
+            Assert.IsFalse(NestedProcLocalEntry.Symbol.IsTypeAccessible(POINTFuncPublic.Symbol));
+            Assert.IsFalse(NestedProcPrivateEntry.Symbol.IsTypeAccessible(POINTFuncPublic.Symbol));
+            Assert.IsTrue(NestedProcPublicEntry.Symbol.IsTypeAccessible(POINTFuncPublic.Symbol));
+            Assert.IsFalse(TypeVisStackedPrgEntry.Symbol.IsTypeAccessible(POINTFuncPublic.Symbol));
+
+            //--------------------------------------------------
+            // PERFORM Accessibility tests From Stacked Program
+            //--------------------------------------------------
+            // Type POINTStackedGbl is only visible in the Stacked TypeVisStackedPrg Program
+            // and its nested programs, not in nested procedures and not in the stacked program
+            Assert.IsFalse(currentProgram.IsTypeAccessible(POINTStackedGblEntry.Symbol));
+            Assert.IsFalse(nestedProgram.IsTypeAccessible(POINTStackedGblEntry.Symbol));
+            Assert.IsFalse(nested2Program.IsTypeAccessible(POINTStackedGblEntry.Symbol));
+            Assert.IsFalse(NestedProcLocalEntry.Symbol.IsTypeAccessible(POINTStackedGblEntry.Symbol));
+            Assert.IsFalse(NestedProcPrivateEntry.Symbol.IsTypeAccessible(POINTStackedGblEntry.Symbol));
+            Assert.IsFalse(NestedProcPublicEntry.Symbol.IsTypeAccessible(POINTStackedGblEntry.Symbol));
+            Assert.IsTrue(TypeVisStackedPrgEntry.Symbol.IsTypeAccessible(POINTStackedGblEntry.Symbol));
+
+            // Type POINTStackedPriv is only visible in the Stacked TypeVisStackedPrg Program
+            // its nested programs, its nested procedures and not in the stacked program
+            Assert.IsFalse(currentProgram.IsTypeAccessible(POINTStackedPrivEntry.Symbol));
+            Assert.IsFalse(nestedProgram.IsTypeAccessible(POINTStackedPrivEntry.Symbol));
+            Assert.IsFalse(nested2Program.IsTypeAccessible(POINTStackedPrivEntry.Symbol));
+            Assert.IsFalse(NestedProcLocalEntry.Symbol.IsTypeAccessible(POINTStackedPrivEntry.Symbol));
+            Assert.IsFalse(NestedProcPrivateEntry.Symbol.IsTypeAccessible(POINTStackedPrivEntry.Symbol));
+            Assert.IsFalse(NestedProcPublicEntry.Symbol.IsTypeAccessible(POINTStackedPrivEntry.Symbol));
+            Assert.IsTrue(TypeVisStackedPrgEntry.Symbol.IsTypeAccessible(POINTStackedPrivEntry.Symbol));
+
+            // Type POINTStackedLocal is only visible its TypeVisStackedPrg Program
+            Assert.IsFalse(currentProgram.IsTypeAccessible(POINTStackedLocalEntry.Symbol));
+            Assert.IsFalse(nestedProgram.IsTypeAccessible(POINTStackedLocalEntry.Symbol));
+            Assert.IsFalse(nested2Program.IsTypeAccessible(POINTStackedLocalEntry.Symbol));
+            Assert.IsFalse(NestedProcLocalEntry.Symbol.IsTypeAccessible(POINTStackedLocalEntry.Symbol));
+            Assert.IsFalse(NestedProcPrivateEntry.Symbol.IsTypeAccessible(POINTStackedLocalEntry.Symbol));
+            Assert.IsFalse(NestedProcPublicEntry.Symbol.IsTypeAccessible(POINTStackedLocalEntry.Symbol));
+            Assert.IsTrue(TypeVisStackedPrgEntry.Symbol.IsTypeAccessible(POINTStackedLocalEntry.Symbol));
+
+            // Type POINTStackedPublic is visible anywhere
+            Assert.IsTrue(currentProgram.IsTypeAccessible(POINTStackedPublicEntry.Symbol));
+            Assert.IsTrue(nestedProgram.IsTypeAccessible(POINTStackedPublicEntry.Symbol));
+            Assert.IsTrue(nested2Program.IsTypeAccessible(POINTStackedPublicEntry.Symbol));
+            Assert.IsTrue(NestedProcLocalEntry.Symbol.IsTypeAccessible(POINTStackedPublicEntry.Symbol));
+            Assert.IsTrue(NestedProcPrivateEntry.Symbol.IsTypeAccessible(POINTStackedPublicEntry.Symbol));
+            Assert.IsTrue(NestedProcPublicEntry.Symbol.IsTypeAccessible(POINTStackedPublicEntry.Symbol));
+            Assert.IsTrue(TypeVisStackedPrgEntry.Symbol.IsTypeAccessible(POINTStackedPublicEntry.Symbol));
+
+        }
+
+        /// <summary>
+        /// This Test tests all various accessibility on functions/Procedures, by considering from which kind of program or procedure a function from
+        /// another program or procedure is asked for visibility access.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("SemanticDomain")]
+        [TestProperty("Object", "Visibility")]
+        public void FunctionVisibility_Prg_NestedPrg_Proc_Stacked()
+        {
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "TypeVisNestedPrgAndProc.tcbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(Builder.Programs.Count == 2);
+            ProgramSymbol currentProgram = Builder.Programs[0];//TypeVisNestedPrgAndProc
+            SourceProgram mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
+            Assert.AreEqual(currentProgram, mainProgram.SemanticData);
+
+            //Get the nested program.
+            Scope<ProgramSymbol>.Entry nestedPrgEntry = SymbolTableBuilder.Root.ResolveProgram(new string[] { "Nested" });
+            Assert.IsTrue(nestedPrgEntry.Count == 1);
+            ProgramSymbol nestedProgram = nestedPrgEntry.Symbol;//Nested
+            IList<NestedProgram> nestedPrgs = mainProgram.GetChildren<NestedProgram>();
+            NestedProgram nestedPrg = nestedPrgs[0];
+            Assert.AreEqual(nestedProgram, nestedPrg.SemanticData);
+
+            //Get the Nested program of the Nested Program: Nested2
+            var nestedNestedPrgs = nestedPrg.GetChildren<NestedProgram>();
+            var nestedNestedPrg = nestedNestedPrgs[0];
+            Scope<ProgramSymbol>.Entry nested2PrgEntry = SymbolTableBuilder.Root.ResolveProgram(new string[] { "Nested2" });
+            Assert.IsTrue(nested2PrgEntry.Count == 1);
+            ProgramSymbol nested2Program = nested2PrgEntry.Symbol;//Nested2
+            IList<NestedProgram> nested2Prgs = nestedPrg.GetChildren<NestedProgram>();
+            NestedProgram nested2Prg = nested2Prgs[0];
+            Assert.AreEqual(nested2Program, nested2Prg.SemanticData);
+
+            //Get the Nested program Nested21
+            var nestedNested21Prgs = nested2Prg.GetChildren<NestedProgram>();
+            var nestedNested21Prg = nestedNested21Prgs[0];
+            Scope<ProgramSymbol>.Entry nested21PrgEntry = SymbolTableBuilder.Root.ResolveProgram(new string[] { "Nested21" });
+            Assert.IsTrue(nested21PrgEntry.Count == 1);
+            Scope<ProgramSymbol>.Entry nested21PrgEntryBis = SymbolTableBuilder.Root.ResolveProgram(new string[] { "Nested21", "Nested2" });
+            Assert.IsTrue(nested21PrgEntryBis.Count == 1);
+            Assert.AreEqual(nested21PrgEntry.Symbol, nested21PrgEntryBis.Symbol);
+            Scope<ProgramSymbol>.Entry nested21PrgEntryTer = SymbolTableBuilder.Root.ResolveProgram(new string[] { "Nested21", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(nested21PrgEntryTer.Count == 1);
+            Assert.AreEqual(nested21PrgEntry.Symbol, nested21PrgEntryTer.Symbol);
+            ProgramSymbol nested21Program = nested21PrgEntry.Symbol;//Nested21
+            IList<NestedProgram> nested21Prgs = nested2Prg.GetChildren<NestedProgram>();
+            NestedProgram nested21Prg = nested21Prgs[0];
+            Assert.AreEqual(nested21Program, nested21Prg.SemanticData);
+
+            //-----------------------------------------------
+            //Immediatly Resolve nested procedures of Nested2
+            //------------------------------------------------
+            //NestedProcLocal
+            Scope<FunctionSymbol>.Entry NestedProcLocalEntry = SymbolTableBuilder.Root.ResolveFunction(new string[] { "NestedProcLocal" });
+            Assert.IsTrue(NestedProcLocalEntry.Count == 1);
+            Scope<FunctionSymbol>.Entry NestedProcLocalEntryBis = SymbolTableBuilder.Root.ResolveFunction(new string[] { "NestedProcLocal", "Nested" });
+            Assert.IsTrue(NestedProcLocalEntryBis.Count == 1);
+            Assert.AreEqual(NestedProcLocalEntry.Symbol, NestedProcLocalEntryBis.Symbol);
+
+
+            //NestedProcPrivate
+            Scope<FunctionSymbol>.Entry NestedProcPrivateEntry = SymbolTableBuilder.Root.ResolveFunction(new string[] { "NestedProcPrivate" });
+            Assert.IsTrue(NestedProcPrivateEntry.Count == 1);
+
+            //NestedProcPublic
+            Scope<FunctionSymbol>.Entry NestedProcPublicEntry = SymbolTableBuilder.Root.ResolveFunction(new string[] { "NestedProcPublic" });
+            Assert.IsTrue(NestedProcPublicEntry.Count == 1);
+
+            //-------------------------------------
+            ///Resolve TypeVisStackedPrg
+            //-------------------------------------
+            Scope<ProgramSymbol>.Entry TypeVisStackedPrgEntry = SymbolTableBuilder.Root.ResolveProgram(new string[] { "TypeVisStackedPrg" });
+            Assert.IsTrue(TypeVisStackedPrgEntry.Count == 1);
+
+            //-------------------------------------------
+            // RESOLVE all Functions/Procedures
+            //-------------------------------------------
+            var ProcLocal = SymbolTableBuilder.Root.ResolveFunction(new string[] { "ProcLocal" , "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(ProcLocal.Count == 1);
+            var ProcPrivate = SymbolTableBuilder.Root.ResolveFunction(new string[] { "ProcPrivate", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(ProcPrivate.Count == 1);
+            var ProcPublic = SymbolTableBuilder.Root.ResolveFunction(new string[] { "ProcPublic", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(ProcPublic.Count == 1);
+
+            var NestedProcLocal = SymbolTableBuilder.Root.ResolveFunction(new string[] { "NestedProcLocal", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(NestedProcLocal.Count == 1);
+            var NestedProcPrivate = SymbolTableBuilder.Root.ResolveFunction(new string[] { "NestedProcPrivate", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(NestedProcPrivate.Count == 1);
+            var NestedProcPublic = SymbolTableBuilder.Root.ResolveFunction(new string[] { "NestedProcPublic", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(NestedProcPublic.Count == 1);
+
+            var Nested2ProcLocal = SymbolTableBuilder.Root.ResolveFunction(new string[] { "Nested2ProcLocal", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(Nested2ProcLocal.Count == 1);
+            var Nested2ProcPrivate = SymbolTableBuilder.Root.ResolveFunction(new string[] { "Nested2ProcPrivate", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(Nested2ProcPrivate.Count == 1);
+            var Nested2ProcPublic = SymbolTableBuilder.Root.ResolveFunction(new string[] { "Nested2ProcPublic", "TypeVisNestedPrgAndProc" });
+            Assert.IsTrue(Nested2ProcPublic.Count == 1);
+
+            var StackedProcLocal = SymbolTableBuilder.Root.ResolveFunction(new string[] { "StackedProcLocal", "TypeVisStackedPrg" });
+            Assert.IsTrue(StackedProcLocal.Count == 1);
+            var StackedProcPrivate = SymbolTableBuilder.Root.ResolveFunction(new string[] { "StackedProcPrivate", "TypeVisStackedPrg" });
+            Assert.IsTrue(StackedProcPrivate.Count == 1);
+            var StackedProcPublic = SymbolTableBuilder.Root.ResolveFunction(new string[] { "StackedProcPublic", "TypeVisStackedPrg" });
+            Assert.IsTrue(StackedProcPublic.Count == 1);
+
+            //--------------------------------------------------------
+            // Check Functions Call from Program and Nested Prpogram
+            //--------------------------------------------------------
+            Assert.IsTrue((currentProgram.IsFunctionAccessible(ProcLocal.Symbol)));
+            Assert.IsTrue((currentProgram.IsFunctionAccessible(ProcPrivate.Symbol)));
+            Assert.IsTrue((currentProgram.IsFunctionAccessible(ProcPublic.Symbol)));
+            Assert.IsFalse((currentProgram.IsFunctionAccessible(NestedProcLocal.Symbol)));
+            Assert.IsTrue((currentProgram.IsFunctionAccessible(NestedProcPrivate.Symbol)));
+            Assert.IsTrue((currentProgram.IsFunctionAccessible(NestedProcPublic.Symbol)));
+            Assert.IsFalse((currentProgram.IsFunctionAccessible(Nested2ProcLocal.Symbol)));
+            Assert.IsTrue((currentProgram.IsFunctionAccessible(Nested2ProcPrivate.Symbol)));
+            Assert.IsTrue((currentProgram.IsFunctionAccessible(Nested2ProcPublic.Symbol)));
+            Assert.IsFalse((currentProgram.IsFunctionAccessible(StackedProcLocal.Symbol)));
+            Assert.IsFalse((currentProgram.IsFunctionAccessible(StackedProcPrivate.Symbol)));
+            Assert.IsTrue((currentProgram.IsFunctionAccessible(StackedProcPublic.Symbol)));
+
+            Assert.IsFalse((nestedProgram.IsFunctionAccessible(ProcLocal.Symbol)));
+            Assert.IsTrue((nestedProgram.IsFunctionAccessible(ProcPrivate.Symbol)));
+            Assert.IsTrue((nestedProgram.IsFunctionAccessible(ProcPublic.Symbol)));
+            Assert.IsTrue((nestedProgram.IsFunctionAccessible(NestedProcLocal.Symbol)));
+            Assert.IsTrue((nestedProgram.IsFunctionAccessible(NestedProcPrivate.Symbol)));
+            Assert.IsTrue((nestedProgram.IsFunctionAccessible(NestedProcPublic.Symbol)));
+            Assert.IsFalse((nestedProgram.IsFunctionAccessible(Nested2ProcLocal.Symbol)));
+            Assert.IsTrue((nestedProgram.IsFunctionAccessible(Nested2ProcPrivate.Symbol)));
+            Assert.IsTrue((nestedProgram.IsFunctionAccessible(Nested2ProcPublic.Symbol)));
+            Assert.IsFalse((nestedProgram.IsFunctionAccessible(StackedProcLocal.Symbol)));
+            Assert.IsFalse((nestedProgram.IsFunctionAccessible(StackedProcPrivate.Symbol)));
+            Assert.IsTrue((nestedProgram.IsFunctionAccessible(StackedProcPublic.Symbol)));
+
+            Assert.IsFalse((nested2Program.IsFunctionAccessible(ProcLocal.Symbol)));
+            Assert.IsTrue((nested2Program.IsFunctionAccessible(ProcPrivate.Symbol)));
+            Assert.IsTrue((nested2Program.IsFunctionAccessible(ProcPublic.Symbol)));
+            Assert.IsFalse((nested2Program.IsFunctionAccessible(NestedProcLocal.Symbol)));
+            Assert.IsTrue((nested2Program.IsFunctionAccessible(NestedProcPrivate.Symbol)));
+            Assert.IsTrue((nested2Program.IsFunctionAccessible(NestedProcPublic.Symbol)));
+            Assert.IsTrue((nested2Program.IsFunctionAccessible(Nested2ProcLocal.Symbol)));
+            Assert.IsTrue((nested2Program.IsFunctionAccessible(Nested2ProcPrivate.Symbol)));
+            Assert.IsTrue((nested2Program.IsFunctionAccessible(Nested2ProcPublic.Symbol)));
+            Assert.IsFalse((nested2Program.IsFunctionAccessible(StackedProcLocal.Symbol)));
+            Assert.IsFalse((nested2Program.IsFunctionAccessible(StackedProcPrivate.Symbol)));
+            Assert.IsTrue((nested2Program.IsFunctionAccessible(StackedProcPublic.Symbol)));
+
+            Assert.IsFalse((TypeVisStackedPrgEntry.Symbol.IsFunctionAccessible(ProcLocal.Symbol)));
+            Assert.IsFalse((TypeVisStackedPrgEntry.Symbol.IsFunctionAccessible(ProcPrivate.Symbol)));
+            Assert.IsTrue((TypeVisStackedPrgEntry.Symbol.IsFunctionAccessible(ProcPublic.Symbol)));
+            Assert.IsFalse((TypeVisStackedPrgEntry.Symbol.IsFunctionAccessible(NestedProcLocal.Symbol)));
+            Assert.IsFalse((TypeVisStackedPrgEntry.Symbol.IsFunctionAccessible(NestedProcPrivate.Symbol)));
+            Assert.IsTrue((TypeVisStackedPrgEntry.Symbol.IsFunctionAccessible(NestedProcPublic.Symbol)));
+            Assert.IsFalse((TypeVisStackedPrgEntry.Symbol.IsFunctionAccessible(Nested2ProcLocal.Symbol)));
+            Assert.IsFalse((TypeVisStackedPrgEntry.Symbol.IsFunctionAccessible(Nested2ProcPrivate.Symbol)));
+            Assert.IsTrue((TypeVisStackedPrgEntry.Symbol.IsFunctionAccessible(Nested2ProcPublic.Symbol)));
+            Assert.IsTrue((TypeVisStackedPrgEntry.Symbol.IsFunctionAccessible(StackedProcLocal.Symbol)));
+            Assert.IsTrue((TypeVisStackedPrgEntry.Symbol.IsFunctionAccessible(StackedProcPrivate.Symbol)));
+            Assert.IsTrue((TypeVisStackedPrgEntry.Symbol.IsFunctionAccessible(StackedProcPublic.Symbol)));
+
+            //--------------------------------------------------------
+            // Check Functions Call from Functions
+            //--------------------------------------------------------
+            Assert.IsTrue((ProcLocal.Symbol.IsFunctionAccessible(ProcLocal.Symbol)));
+            Assert.IsTrue((ProcLocal.Symbol.IsFunctionAccessible(ProcPrivate.Symbol)));
+            Assert.IsTrue((ProcLocal.Symbol.IsFunctionAccessible(ProcPublic.Symbol)));
+            Assert.IsFalse((ProcLocal.Symbol.IsFunctionAccessible(NestedProcLocal.Symbol)));
+            Assert.IsTrue((ProcLocal.Symbol.IsFunctionAccessible(NestedProcPrivate.Symbol)));
+            Assert.IsTrue((ProcLocal.Symbol.IsFunctionAccessible(NestedProcPublic.Symbol)));
+            Assert.IsFalse((ProcLocal.Symbol.IsFunctionAccessible(Nested2ProcLocal.Symbol)));
+            Assert.IsTrue((ProcLocal.Symbol.IsFunctionAccessible(Nested2ProcPrivate.Symbol)));
+            Assert.IsTrue((ProcLocal.Symbol.IsFunctionAccessible(Nested2ProcPublic.Symbol)));
+            Assert.IsFalse((ProcLocal.Symbol.IsFunctionAccessible(StackedProcLocal.Symbol)));
+            Assert.IsFalse((ProcLocal.Symbol.IsFunctionAccessible(StackedProcPrivate.Symbol)));
+            Assert.IsTrue((ProcLocal.Symbol.IsFunctionAccessible(StackedProcPublic.Symbol)));
+
+#if ALLOW_PRIV_PUBLIC_PROC_CALL_LOCAL_PROC
+            Assert.IsTrue((ProcPrivate.Symbol.IsFunctionAccessible(ProcLocal.Symbol)));
+#else
+            Assert.IsFalse((ProcPrivate.Symbol.IsFunctionAccessible(ProcLocal.Symbol)));
+#endif
+            Assert.IsTrue((ProcPrivate.Symbol.IsFunctionAccessible(ProcPrivate.Symbol)));
+            Assert.IsTrue((ProcPrivate.Symbol.IsFunctionAccessible(ProcPublic.Symbol)));
+            Assert.IsFalse((ProcPrivate.Symbol.IsFunctionAccessible(NestedProcLocal.Symbol)));
+            Assert.IsTrue((ProcPrivate.Symbol.IsFunctionAccessible(NestedProcPrivate.Symbol)));
+            Assert.IsTrue((ProcPrivate.Symbol.IsFunctionAccessible(NestedProcPublic.Symbol)));
+            Assert.IsFalse((ProcPrivate.Symbol.IsFunctionAccessible(Nested2ProcLocal.Symbol)));
+            Assert.IsTrue((ProcPrivate.Symbol.IsFunctionAccessible(Nested2ProcPrivate.Symbol)));
+            Assert.IsTrue((ProcPrivate.Symbol.IsFunctionAccessible(Nested2ProcPublic.Symbol)));
+            Assert.IsFalse((ProcPrivate.Symbol.IsFunctionAccessible(StackedProcLocal.Symbol)));
+            Assert.IsFalse((ProcPrivate.Symbol.IsFunctionAccessible(StackedProcPrivate.Symbol)));
+            Assert.IsTrue((ProcPrivate.Symbol.IsFunctionAccessible(StackedProcPublic.Symbol)));
+
+#if ALLOW_PRIV_PUBLIC_PROC_CALL_LOCAL_PROC
+            Assert.IsTrue((ProcPublic.Symbol.IsFunctionAccessible(ProcLocal.Symbol)));
+#else
+            Assert.IsFalse((ProcPublic.Symbol.IsFunctionAccessible(ProcLocal.Symbol)));
+#endif
+            Assert.IsTrue((ProcPublic.Symbol.IsFunctionAccessible(ProcPrivate.Symbol)));
+            Assert.IsTrue((ProcPublic.Symbol.IsFunctionAccessible(ProcPublic.Symbol)));
+            Assert.IsFalse((ProcPublic.Symbol.IsFunctionAccessible(NestedProcLocal.Symbol)));
+            Assert.IsTrue((ProcPublic.Symbol.IsFunctionAccessible(NestedProcPrivate.Symbol)));
+            Assert.IsTrue((ProcPublic.Symbol.IsFunctionAccessible(NestedProcPublic.Symbol)));
+            Assert.IsFalse((ProcPublic.Symbol.IsFunctionAccessible(Nested2ProcLocal.Symbol)));
+            Assert.IsTrue((ProcPublic.Symbol.IsFunctionAccessible(Nested2ProcPrivate.Symbol)));
+            Assert.IsTrue((ProcPublic.Symbol.IsFunctionAccessible(Nested2ProcPublic.Symbol)));
+            Assert.IsFalse((ProcPublic.Symbol.IsFunctionAccessible(StackedProcLocal.Symbol)));
+            Assert.IsFalse((ProcPublic.Symbol.IsFunctionAccessible(StackedProcPrivate.Symbol)));
+            Assert.IsTrue((ProcPublic.Symbol.IsFunctionAccessible(StackedProcPublic.Symbol)));
+
+            Assert.IsFalse((NestedProcLocal.Symbol.IsFunctionAccessible(ProcLocal.Symbol)));
+            Assert.IsTrue((NestedProcLocal.Symbol.IsFunctionAccessible(ProcPrivate.Symbol)));
+            Assert.IsTrue((NestedProcLocal.Symbol.IsFunctionAccessible(ProcPublic.Symbol)));
+            Assert.IsTrue((NestedProcLocal.Symbol.IsFunctionAccessible(NestedProcLocal.Symbol)));
+            Assert.IsTrue((NestedProcLocal.Symbol.IsFunctionAccessible(NestedProcPrivate.Symbol)));
+            Assert.IsTrue((NestedProcLocal.Symbol.IsFunctionAccessible(NestedProcPublic.Symbol)));
+            Assert.IsFalse((NestedProcLocal.Symbol.IsFunctionAccessible(Nested2ProcLocal.Symbol)));
+            Assert.IsTrue((NestedProcLocal.Symbol.IsFunctionAccessible(Nested2ProcPrivate.Symbol)));
+            Assert.IsTrue((NestedProcLocal.Symbol.IsFunctionAccessible(Nested2ProcPublic.Symbol)));
+            Assert.IsFalse((NestedProcLocal.Symbol.IsFunctionAccessible(StackedProcLocal.Symbol)));
+            Assert.IsFalse((NestedProcLocal.Symbol.IsFunctionAccessible(StackedProcPrivate.Symbol)));
+            Assert.IsTrue((NestedProcLocal.Symbol.IsFunctionAccessible(StackedProcPublic.Symbol)));
+
+            Assert.IsFalse((NestedProcPrivate.Symbol.IsFunctionAccessible(ProcLocal.Symbol)));
+            Assert.IsTrue((NestedProcPrivate.Symbol.IsFunctionAccessible(ProcPrivate.Symbol)));
+            Assert.IsTrue((NestedProcPrivate.Symbol.IsFunctionAccessible(ProcPublic.Symbol)));
+#if ALLOW_PRIV_PUBLIC_PROC_CALL_LOCAL_PROC
+            Assert.IsTrue((NestedProcPrivate.Symbol.IsFunctionAccessible(NestedProcLocal.Symbol)));
+#else
+            Assert.IsFalse((NestedProcPrivate.Symbol.IsFunctionAccessible(NestedProcLocal.Symbol)));
+#endif
+            Assert.IsTrue((NestedProcPrivate.Symbol.IsFunctionAccessible(NestedProcPrivate.Symbol)));
+            Assert.IsTrue((NestedProcPrivate.Symbol.IsFunctionAccessible(NestedProcPublic.Symbol)));
+            Assert.IsFalse((NestedProcPrivate.Symbol.IsFunctionAccessible(Nested2ProcLocal.Symbol)));
+            Assert.IsTrue((NestedProcPrivate.Symbol.IsFunctionAccessible(Nested2ProcPrivate.Symbol)));
+            Assert.IsTrue((NestedProcPrivate.Symbol.IsFunctionAccessible(Nested2ProcPublic.Symbol)));
+            Assert.IsFalse((NestedProcPrivate.Symbol.IsFunctionAccessible(StackedProcLocal.Symbol)));
+            Assert.IsFalse((NestedProcPrivate.Symbol.IsFunctionAccessible(StackedProcPrivate.Symbol)));
+            Assert.IsTrue((NestedProcPrivate.Symbol.IsFunctionAccessible(StackedProcPublic.Symbol)));
+
+            Assert.IsFalse((NestedProcPublic.Symbol.IsFunctionAccessible(ProcLocal.Symbol)));
+            Assert.IsTrue((NestedProcPublic.Symbol.IsFunctionAccessible(ProcPrivate.Symbol)));
+            Assert.IsTrue((NestedProcPublic.Symbol.IsFunctionAccessible(ProcPublic.Symbol)));
+#if ALLOW_PRIV_PUBLIC_PROC_CALL_LOCAL_PROC
+            Assert.IsTrue((NestedProcPublic.Symbol.IsFunctionAccessible(NestedProcLocal.Symbol)));
+#else
+            Assert.IsFalse((NestedProcPublic.Symbol.IsFunctionAccessible(NestedProcLocal.Symbol)));
+#endif
+            Assert.IsTrue((NestedProcPublic.Symbol.IsFunctionAccessible(NestedProcPrivate.Symbol)));
+            Assert.IsTrue((NestedProcPublic.Symbol.IsFunctionAccessible(NestedProcPublic.Symbol)));
+            Assert.IsFalse((NestedProcPublic.Symbol.IsFunctionAccessible(Nested2ProcLocal.Symbol)));
+            Assert.IsTrue((NestedProcPublic.Symbol.IsFunctionAccessible(Nested2ProcPrivate.Symbol)));
+            Assert.IsTrue((NestedProcPublic.Symbol.IsFunctionAccessible(Nested2ProcPublic.Symbol)));
+            Assert.IsFalse((NestedProcPublic.Symbol.IsFunctionAccessible(StackedProcLocal.Symbol)));
+            Assert.IsFalse((NestedProcPublic.Symbol.IsFunctionAccessible(StackedProcPrivate.Symbol)));
+            Assert.IsTrue((NestedProcPublic.Symbol.IsFunctionAccessible(StackedProcPublic.Symbol)));
+
+            Assert.IsFalse((Nested2ProcLocal.Symbol.IsFunctionAccessible(ProcLocal.Symbol)));
+            Assert.IsTrue((Nested2ProcLocal.Symbol.IsFunctionAccessible(ProcPrivate.Symbol)));
+            Assert.IsTrue((Nested2ProcLocal.Symbol.IsFunctionAccessible(ProcPublic.Symbol)));
+            Assert.IsFalse((Nested2ProcLocal.Symbol.IsFunctionAccessible(NestedProcLocal.Symbol)));
+            Assert.IsTrue((Nested2ProcLocal.Symbol.IsFunctionAccessible(NestedProcPrivate.Symbol)));
+            Assert.IsTrue((Nested2ProcLocal.Symbol.IsFunctionAccessible(NestedProcPublic.Symbol)));
+            Assert.IsTrue((Nested2ProcLocal.Symbol.IsFunctionAccessible(Nested2ProcLocal.Symbol)));
+            Assert.IsTrue((Nested2ProcLocal.Symbol.IsFunctionAccessible(Nested2ProcPrivate.Symbol)));
+            Assert.IsTrue((Nested2ProcLocal.Symbol.IsFunctionAccessible(Nested2ProcPublic.Symbol)));
+            Assert.IsFalse((Nested2ProcLocal.Symbol.IsFunctionAccessible(StackedProcLocal.Symbol)));
+            Assert.IsFalse((Nested2ProcLocal.Symbol.IsFunctionAccessible(StackedProcPrivate.Symbol)));
+            Assert.IsTrue((Nested2ProcLocal.Symbol.IsFunctionAccessible(StackedProcPublic.Symbol)));
+
+            Assert.IsFalse((Nested2ProcPrivate.Symbol.IsFunctionAccessible(ProcLocal.Symbol)));
+            Assert.IsTrue((Nested2ProcPrivate.Symbol.IsFunctionAccessible(ProcPrivate.Symbol)));
+            Assert.IsTrue((Nested2ProcPrivate.Symbol.IsFunctionAccessible(ProcPublic.Symbol)));
+            Assert.IsFalse((Nested2ProcPrivate.Symbol.IsFunctionAccessible(NestedProcLocal.Symbol)));
+            Assert.IsTrue((Nested2ProcPrivate.Symbol.IsFunctionAccessible(NestedProcPrivate.Symbol)));
+            Assert.IsTrue((Nested2ProcPrivate.Symbol.IsFunctionAccessible(NestedProcPublic.Symbol)));
+#if ALLOW_PRIV_PUBLIC_PROC_CALL_LOCAL_PROC
+            Assert.IsTrue((Nested2ProcPrivate.Symbol.IsFunctionAccessible(Nested2ProcLocal.Symbol)));
+#else
+            Assert.IsFalse((Nested2ProcPrivate.Symbol.IsFunctionAccessible(Nested2ProcLocal.Symbol)));
+#endif
+            Assert.IsTrue((Nested2ProcPrivate.Symbol.IsFunctionAccessible(Nested2ProcPrivate.Symbol)));
+            Assert.IsTrue((Nested2ProcPrivate.Symbol.IsFunctionAccessible(Nested2ProcPublic.Symbol)));
+            Assert.IsFalse((Nested2ProcPrivate.Symbol.IsFunctionAccessible(StackedProcLocal.Symbol)));
+            Assert.IsFalse((Nested2ProcPrivate.Symbol.IsFunctionAccessible(StackedProcPrivate.Symbol)));
+            Assert.IsTrue((Nested2ProcPrivate.Symbol.IsFunctionAccessible(StackedProcPublic.Symbol)));
+
+            Assert.IsFalse((Nested2ProcPublic.Symbol.IsFunctionAccessible(ProcLocal.Symbol)));
+            Assert.IsTrue((Nested2ProcPublic.Symbol.IsFunctionAccessible(ProcPrivate.Symbol)));
+            Assert.IsTrue((Nested2ProcPublic.Symbol.IsFunctionAccessible(ProcPublic.Symbol)));
+            Assert.IsFalse((Nested2ProcPublic.Symbol.IsFunctionAccessible(NestedProcLocal.Symbol)));
+            Assert.IsTrue((Nested2ProcPublic.Symbol.IsFunctionAccessible(NestedProcPrivate.Symbol)));
+            Assert.IsTrue((Nested2ProcPublic.Symbol.IsFunctionAccessible(NestedProcPublic.Symbol)));
+#if ALLOW_PRIV_PUBLIC_PROC_CALL_LOCAL_PROC
+            Assert.IsTrue((Nested2ProcPublic.Symbol.IsFunctionAccessible(Nested2ProcLocal.Symbol)));
+#else
+            Assert.IsFalse((Nested2ProcPublic.Symbol.IsFunctionAccessible(Nested2ProcLocal.Symbol)));
+#endif
+            Assert.IsTrue((Nested2ProcPublic.Symbol.IsFunctionAccessible(Nested2ProcPrivate.Symbol)));
+            Assert.IsTrue((Nested2ProcPublic.Symbol.IsFunctionAccessible(Nested2ProcPublic.Symbol)));
+            Assert.IsFalse((Nested2ProcPublic.Symbol.IsFunctionAccessible(StackedProcLocal.Symbol)));
+            Assert.IsFalse((Nested2ProcPublic.Symbol.IsFunctionAccessible(StackedProcPrivate.Symbol)));
+            Assert.IsTrue((Nested2ProcPublic.Symbol.IsFunctionAccessible(StackedProcPublic.Symbol)));
+
+            Assert.IsFalse((StackedProcLocal.Symbol.IsFunctionAccessible(ProcLocal.Symbol)));
+            Assert.IsFalse((StackedProcLocal.Symbol.IsFunctionAccessible(ProcPrivate.Symbol)));
+            Assert.IsTrue((StackedProcLocal.Symbol.IsFunctionAccessible(ProcPublic.Symbol)));
+            Assert.IsFalse((StackedProcLocal.Symbol.IsFunctionAccessible(NestedProcLocal.Symbol)));
+            Assert.IsFalse((StackedProcLocal.Symbol.IsFunctionAccessible(NestedProcPrivate.Symbol)));
+            Assert.IsTrue((StackedProcLocal.Symbol.IsFunctionAccessible(NestedProcPublic.Symbol)));
+            Assert.IsFalse((StackedProcLocal.Symbol.IsFunctionAccessible(Nested2ProcLocal.Symbol)));
+            Assert.IsFalse((StackedProcLocal.Symbol.IsFunctionAccessible(Nested2ProcPrivate.Symbol)));
+            Assert.IsTrue((StackedProcLocal.Symbol.IsFunctionAccessible(Nested2ProcPublic.Symbol)));
+            Assert.IsTrue((StackedProcLocal.Symbol.IsFunctionAccessible(StackedProcLocal.Symbol)));
+            Assert.IsTrue((StackedProcLocal.Symbol.IsFunctionAccessible(StackedProcPrivate.Symbol)));
+            Assert.IsTrue((StackedProcLocal.Symbol.IsFunctionAccessible(StackedProcPublic.Symbol)));
+
+            Assert.IsFalse((StackedProcPrivate.Symbol.IsFunctionAccessible(ProcLocal.Symbol)));
+            Assert.IsFalse((StackedProcPrivate.Symbol.IsFunctionAccessible(ProcPrivate.Symbol)));
+            Assert.IsTrue((StackedProcPrivate.Symbol.IsFunctionAccessible(ProcPublic.Symbol)));
+            Assert.IsFalse((StackedProcPrivate.Symbol.IsFunctionAccessible(NestedProcLocal.Symbol)));
+            Assert.IsFalse((StackedProcPrivate.Symbol.IsFunctionAccessible(NestedProcPrivate.Symbol)));
+            Assert.IsTrue((StackedProcPrivate.Symbol.IsFunctionAccessible(NestedProcPublic.Symbol)));
+            Assert.IsFalse((StackedProcPrivate.Symbol.IsFunctionAccessible(Nested2ProcLocal.Symbol)));
+            Assert.IsFalse((StackedProcPrivate.Symbol.IsFunctionAccessible(Nested2ProcPrivate.Symbol)));
+            Assert.IsTrue((StackedProcPrivate.Symbol.IsFunctionAccessible(Nested2ProcPublic.Symbol)));
+#if ALLOW_PRIV_PUBLIC_PROC_CALL_LOCAL_PROC
+            Assert.IsTrue((StackedProcPrivate.Symbol.IsFunctionAccessible(StackedProcLocal.Symbol)));
+#else
+            Assert.IsFalse((StackedProcPrivate.Symbol.IsFunctionAccessible(StackedProcLocal.Symbol)));
+#endif
+            Assert.IsTrue((StackedProcPrivate.Symbol.IsFunctionAccessible(StackedProcPrivate.Symbol)));
+            Assert.IsTrue((StackedProcPrivate.Symbol.IsFunctionAccessible(StackedProcPublic.Symbol)));
+
+            Assert.IsFalse((StackedProcPublic.Symbol.IsFunctionAccessible(ProcLocal.Symbol)));
+            Assert.IsFalse((StackedProcPublic.Symbol.IsFunctionAccessible(ProcPrivate.Symbol)));
+            Assert.IsTrue((StackedProcPublic.Symbol.IsFunctionAccessible(ProcPublic.Symbol)));
+            Assert.IsFalse((StackedProcPublic.Symbol.IsFunctionAccessible(NestedProcLocal.Symbol)));
+            Assert.IsFalse((StackedProcPublic.Symbol.IsFunctionAccessible(NestedProcPrivate.Symbol)));
+            Assert.IsTrue((StackedProcPublic.Symbol.IsFunctionAccessible(NestedProcPublic.Symbol)));
+            Assert.IsFalse((StackedProcPublic.Symbol.IsFunctionAccessible(Nested2ProcLocal.Symbol)));
+            Assert.IsFalse((StackedProcPublic.Symbol.IsFunctionAccessible(Nested2ProcPrivate.Symbol)));
+            Assert.IsTrue((StackedProcPublic.Symbol.IsFunctionAccessible(Nested2ProcPublic.Symbol)));
+#if ALLOW_PRIV_PUBLIC_PROC_CALL_LOCAL_PROC
+            Assert.IsTrue((StackedProcPublic.Symbol.IsFunctionAccessible(StackedProcLocal.Symbol)));
+#else
+            Assert.IsFalse((StackedProcPublic.Symbol.IsFunctionAccessible(StackedProcLocal.Symbol)));
+#endif
+            Assert.IsTrue((StackedProcPublic.Symbol.IsFunctionAccessible(StackedProcPrivate.Symbol)));
+            Assert.IsTrue((StackedProcPublic.Symbol.IsFunctionAccessible(StackedProcPublic.Symbol)));
+
+        }
     }
 }

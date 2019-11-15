@@ -211,6 +211,7 @@ namespace TypeCobol.Test.Utils
                         SymbolTableBuilder.Root.RemoveProgram(prog);
                 }
                 ProgramSymbolTableBuilder.LastBuilder = null;
+                BuilderNodeListenerFactory = null;
             }
             SymbolTableBuilder.Root = null;
         }

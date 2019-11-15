@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.Compiler.Domain;
 using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
@@ -40,6 +41,8 @@ namespace TypeCobol.Compiler.Symbols
             }
             //Set the owner
             entry.Symbol.Owner = this;
+            //Add it to the all scope domain
+            SymbolTableBuilder.Root.AddToDomain(entry.Symbol);
             return entry.Symbol;
         }
 
@@ -52,6 +55,8 @@ namespace TypeCobol.Compiler.Symbols
             if (prgSym != null)
             {
                 Programs.Remove(prgSym);
+                //Remove it from the all scope domain
+                SymbolTableBuilder.Root.RemoveFromDomain(prgSym);
                 prgSym.Owner = null;
             }
         }
@@ -74,6 +79,16 @@ namespace TypeCobol.Compiler.Symbols
             protected set;
         }
 
+        public override Scope<TypedefSymbol>.Entry ResolveAccessibleType(RootSymbolTable root, string[] path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Scope<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// All namespaces declared in this namespace.
         /// </summary>
@@ -84,5 +99,10 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         public override TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitNamespaceSymbol(this, arg); }
+
+        public override Scope<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

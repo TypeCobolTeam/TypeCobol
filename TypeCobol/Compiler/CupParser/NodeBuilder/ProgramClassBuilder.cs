@@ -714,8 +714,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             }
             Enter(node, header, new SymbolTable(enclosing, SymbolTable.Scope.Function));
 
-            var declaration = (FunctionDeclarationHeader)CurrentNode.CodeElement;
-            var funcProfile = ((FunctionDeclaration)CurrentNode).Profile; //Get functionprofile to set parameters
+            var declaration = node.CodeElement;
+            var funcProfile = node.Profile; //Get functionprofile to set parameters
 
             foreach (var parameter in declaration.Profile.InputParameters) //Set Input Parameters
             {
