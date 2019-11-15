@@ -4,6 +4,7 @@ using System.IO;
 using Castle.Core.Internal;
 using Mono.Options;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.Diagnostics;
 
 namespace TypeCobol.Tools.Options_Config
 {
@@ -19,7 +20,6 @@ namespace TypeCobol.Tools.Options_Config
         public string ExpandingCopyFilePath;
         public string ExtractedCopiesFilePath;
         public bool UseAntlrProgramParsing;
-        public bool CheckEndAlignment = true;
         public string ReportCopyMoveInitializeFilePath;
         public string ReportZCallFilePath;
         public List<string> CopyFolders = new List<string>();
@@ -35,8 +35,9 @@ namespace TypeCobol.Tools.Options_Config
 #else
         public bool UseEuroInformationLegacyReplacingSyntax = false;
 #endif
+	    public TypeCobolCheckOption CheckEndAlignment = new TypeCobolCheckOption("warning"); // default value
 
-        public bool IsErrorXML
+		public bool IsErrorXML
         {
             get { return ErrorFile != null && ErrorFile.ToLower().EndsWith(".xml"); }
         }
@@ -149,7 +150,54 @@ namespace TypeCobol.Tools.Options_Config
         Cobol85Nested,
         Documentation
     }
-    public static class TypeCobolOptionSet
+
+    public class TypeCobolCheckOption
+    {
+	    public TypeCobolCheckOption(bool isActive)
+	    {
+		    if (!isActive)
+		    {
+			    DiagnosticLevel = null;
+		    }
+	    }
+
+	    public TypeCobolCheckOption(Severity diagnosticLevel)
+	    {
+		    DiagnosticLevel = diagnosticLevel;
+	    }
+
+	    public TypeCobolCheckOption(string configValue)
+	    {
+		    if (Enum.TryParse(configValue, true, out Severity diagnosticLevel))
+		    {
+			    DiagnosticLevel = diagnosticLevel;
+		    }
+		    else if (string.Equals(configValue, "ignore", StringComparison.OrdinalIgnoreCase))
+		    {
+			    DiagnosticLevel = null; // ignore
+		    }
+	    }
+
+	    public Severity? DiagnosticLevel { get; set; } = Severity.Warning;      // internal default value
+
+	    public MessageCode MessageCode
+	    {
+		    get
+		    {
+			    switch (DiagnosticLevel)
+			    {
+				    case Severity.Error:
+					    return MessageCode.SyntaxErrorInParser;
+				    case Severity.Info:
+					    return MessageCode.Info;
+				    default:
+					    return MessageCode.Warning;
+			    }
+		    }
+	    }
+    }
+
+	public static class TypeCobolOptionSet
     {
         public static OptionSet GetCommonTypeCobolOptions(TypeCobolConfiguration typeCobolConfig)
         {
@@ -176,8 +224,8 @@ namespace TypeCobol.Tools.Options_Config
                 { "zcr|zcallreport=", "{PATH} to report of all program called by zcallpgm.", v => typeCobolConfig.ReportZCallFilePath = v },
                 { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing.", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false },
                 { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
-                { "cea|checkendalignment=", "Check if a End statement is aligned with the matching opening statement.", v => typeCobolConfig.CheckEndAlignment = (v?.ToLower() != "false") },
-            };
+                { "diag.cea|diagnostic.checkEndAlignment=", "Indicate level of check end aligment: warning, error, info, ignore.", v => typeCobolConfig.CheckEndAlignment = new TypeCobolCheckOption(v) },
+			};
             return commonOptions;
         }
 

@@ -34,7 +34,7 @@ namespace TypeCobol.Test.Utils
 #if EUROINFO_RULES
             options.AutoRemarksEnable = autoRemarks;
 #endif
-            if (extensions == null) extensions = new[] { ".cbl", ".cpy" };
+	        if (extensions == null) extensions = new[] { ".cbl", ".cpy" };
             //comparator.paths.sextension = extensions[0].Substring(1);
             CompilationProject project = new CompilationProject("TEST",
                 localDirectory.FullName, extensions,

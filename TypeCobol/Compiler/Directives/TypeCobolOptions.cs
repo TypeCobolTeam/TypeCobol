@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Compiler.Directives
@@ -44,10 +45,10 @@ namespace TypeCobol.Compiler.Directives
         private bool _useEuroInformationLegacyReplacingSyntax;
 #endif
 
-        /// <summary>
-        /// Shall we use Check if a End statement is aligned with the matching opening statement.
-        /// </summary>
-        public bool CheckEndAlignment { get; set; } = true;
+		/// <summary>
+		/// Check if a End statement is aligned with the matching opening statement.
+		/// </summary>
+		public TypeCobolCheckOption CheckEndAlignment { get; set; } = new TypeCobolCheckOption(Severity.Warning);
 
         public TypeCobolOptions(TypeCobolConfiguration config)
         {

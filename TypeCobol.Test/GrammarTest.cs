@@ -11,6 +11,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Test.Utils;
 using System.Text;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Test {
 
@@ -89,7 +90,7 @@ namespace TypeCobol.Test {
 #if EUROINFO_RULES
 			        AutoRemarksEnable = autoRemarks,
 #endif
-			        CheckEndAlignment = false       // no check end alignment for third party tests
+			        CheckEndAlignment = new TypeCobolCheckOption("ignore")       // no check end alignment for third party tests
                 };
 
                 document.Init(path, options, format, copiesFolder);
