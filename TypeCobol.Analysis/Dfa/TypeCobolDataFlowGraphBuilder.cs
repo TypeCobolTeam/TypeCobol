@@ -13,7 +13,7 @@ namespace TypeCobol.Analysis.Dfa
     /// <summary>
     /// Data Flow Graph Builder for Data Flow Analysis, a TypeCobol Specialization.
     /// </summary>
-    public class TypeCobolDataFlowGraphBuilder : DataFlowGraphBuilder<Node, DfaBasicBlockInfo<Symbol>, Symbol>
+    public class TypeCobolDataFlowGraphBuilder : DataFlowGraphBuilder<Node, Symbol>
     {
         /// <summary>
         /// Vistor on StorageArea to collect them.

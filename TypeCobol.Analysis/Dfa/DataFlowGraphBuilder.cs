@@ -12,9 +12,8 @@ namespace TypeCobol.Analysis.Dfa
     /// Data Flow Graph Builder for Data Flow Analysis.
     /// </summary>
     /// <typeparam name="N">Instruction type</typeparam>
-    /// <typeparam name="D">Data info type</typeparam>
     /// <typeparam name="V">Variable generic Type</typeparam>
-    public abstract class DataFlowGraphBuilder<N, D, V>
+    public abstract class DataFlowGraphBuilder<N, V>
     {
         /// <summary>
         /// The underlying Control Flow Graph to be added with Data Flow Information. 
@@ -88,7 +87,7 @@ namespace TypeCobol.Analysis.Dfa
         /// </summary>
         /// <param name="dfaBuilder">The Dfa Builder in which the Use Point is seen</param>
         /// <param name="usePoint">The Use point</param>
-        public delegate void OnUsePoint(DataFlowGraphBuilder<N, D, V> dfaBuilder, DfaUsePoint<N, V> usePoint);
+        public delegate void OnUsePoint(DataFlowGraphBuilder<N, V> dfaBuilder, DfaUsePoint<N, V> usePoint);
 
         /// <summary>
         /// On Use Point Event
@@ -100,7 +99,7 @@ namespace TypeCobol.Analysis.Dfa
         /// </summary>
         /// <param name="dfaBuilder">The Dfa Builder in which the Def Point is seen</param>
         /// <param name="defPoint">The Def Point</param>
-        public delegate void OnDefPoint(DataFlowGraphBuilder<N, D, V> dfaBuilder, DfaDefPoint<N, V> defPoint);
+        public delegate void OnDefPoint(DataFlowGraphBuilder<N, V> dfaBuilder, DfaDefPoint<N, V> defPoint);
 
         /// <summary>
         /// On Def Point Event

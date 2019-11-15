@@ -1945,5 +1945,28 @@ namespace TypeCobol.Test.Domain
             Assert.IsFalse(PGM1.IsFunctionAccessible(Pgm2PrivateValidateDateFormat.Symbol));
             Assert.IsFalse(PGM3.IsFunctionAccessible(Pgm2PrivateValidateDateFormat.Symbol));
         }
+
+        /// <summary>
+        /// This test test that the REDEFINES that uses a variable from a TYPEDEF is correctly expanded.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("SemanticDomain")]
+        [TestProperty("Object", "TypeExpander")]
+        public void ExpanderInterProg()
+        {
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "ExpanderInterProg.tcbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null, ExecutionStep.SemanticCheck);
+
+            Assert.IsTrue(Builder.Programs.Count == 1);
+            var currentProgram = Builder.Programs[0];
+
+            SymbolExpander symExpander = new SymbolExpander(currentProgram);
+            currentProgram.Accept(symExpander, null);
+
+            var vars = currentProgram.ResolveReference(new string[] { "td-var42", "var1" }, false);
+            Assert.IsTrue(vars.Count == 1);
+        }
+
     }
 }

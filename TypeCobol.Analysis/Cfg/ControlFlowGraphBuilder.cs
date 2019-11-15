@@ -394,7 +394,11 @@ namespace TypeCobol.Analysis.Cfg
         {
             CurrentNode = node;
             if (IsStatement(node))
+            {
+                if (!this.CurrentProgramCfgBuilder.Cfg.IsInProcedure)
+                    return;//Not In Procedure DIVISION
                 this.CurrentProgramCfgBuilder.CheckStartSentence(node);
+            }
             if (node.CodeElement != null)
             {
                 switch (node.CodeElement.Type)
@@ -539,6 +543,11 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="node"></param>
         public override void Exit(Node node)
         {
+            if (IsStatement(node))
+            {
+                if (!this.CurrentProgramCfgBuilder.Cfg.IsInProcedure)
+                    return;//Not In Procedure DIVISION             
+            }
             if (node.CodeElement != null)
             {
                 switch (node.CodeElement.Type)

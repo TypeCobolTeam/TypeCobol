@@ -45,7 +45,7 @@ namespace TypeCobol.Analysis.Test
             Assert.IsTrue(ctx.CfgDfaBuilder.AllCfgBuilder.Count == 1);
             Assert.IsNotNull(ctx.CfgDfaBuilder.AllCfgBuilder);
 
-            CfgTestUtils.GenericDotCfgAndCompare(ctx.CfgDfaBuilder.Cfg, path, expectedPath, true);
+            CfgTestUtils.GenDotCfgAndCompare(ctx.CfgDfaBuilder.Cfg, path, expectedPath, true);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace TypeCobol.Analysis.Test
             Assert.IsTrue(ctx.CfgDfaBuilder.Diagnostics[0].Message.Contains(TypeCobol.Analysis.Resource.RecursiveBasicBlockGroupInstructions.Substring(0, 
                 TypeCobol.Analysis.Resource.RecursiveBasicBlockGroupInstructions.LastIndexOf(':'))));
 
-            CfgTestUtils.GenericDotCfgAndCompare(ctx.CfgDfaBuilder.Cfg, path, expectedPath, true);
+            CfgTestUtils.GenDotCfgAndCompare(ctx.CfgDfaBuilder.Cfg, path, expectedPath, true);
         }
 
     }

@@ -134,6 +134,15 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
+        /// Constructor
+        /// </summary>
+        public ControlFlowGraph()
+        {    
+            //At least empty if not Initialized
+            AllBlocks = new List<BasicBlock<N, D>>(0);
+        }
+
+        /// <summary>
         /// Intialize the construction of the Control Flow Graph.
         /// </summary>
         internal virtual void Initialize()
@@ -143,6 +152,11 @@ namespace TypeCobol.Analysis.Graph
             RootBlocks = new List<BasicBlock<N, D>>();
             SuccessorEdges = new List<BasicBlock<N, D>>();
         }
+
+        /// <summary>
+        /// Determine if this Cfg is entered in its Procedure.
+        /// </summary>
+        public bool IsInProcedure => ProcedureNode != null;
 
         /// <summary>
         /// All basic blocks that can be reached via control flow out of the given basic block.
@@ -295,9 +309,12 @@ namespace TypeCobol.Analysis.Graph
         /// <param name="callback">CallBack function</param>
         public void DFS(BasicBlockCallback callback)
         {
-            foreach(var root in RootBlocks)
-            { 
-                DFS(root, callback);
+            if (RootBlocks != null)
+            {
+                foreach (var root in RootBlocks)
+                {
+                    DFS(root, callback);
+                }
             }
         }
 

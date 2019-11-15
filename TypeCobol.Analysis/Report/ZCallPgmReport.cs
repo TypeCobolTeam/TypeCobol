@@ -14,6 +14,9 @@ using System.Text.RegularExpressions;
 
 namespace TypeCobol.Analysis.Report
 {
+    /// <summary>
+    /// ZCallPgmReport class using DFA.
+    /// </summary>
     public class ZCallPgmReport : AbstractReport
     {
         /// <summary>
@@ -36,9 +39,9 @@ namespace TypeCobol.Analysis.Report
         public List<DfaUsePoint<Node, Symbol>> CallUsePoints { get; private set; }
 
         /// <summary>
-        /// The Cfg builder for FDA Basic Block Information
+        /// The Cfg builder for DFA Basic Block Information
         /// </summary>
-        public ControlFlowGraphBuilder<DfaBasicBlockInfo<Symbol>> DfaCfgBuilder
+        public CfgDfaContext CfgDfaCtx
         {
             get;
             private set;
@@ -106,7 +109,7 @@ namespace TypeCobol.Analysis.Report
         /// </summary>
         /// <param name="dfaBuilder">The Dfa Builder</param>
         /// <param name="up">The use Point</param>
-        void OnCallUsePoint(DataFlowGraphBuilder<Node, DfaBasicBlockInfo<Symbol>, Symbol> dfaBuilder, DfaUsePoint<Node, Symbol> up)
+        void OnCallUsePoint(DataFlowGraphBuilder<Node, Symbol> dfaBuilder, DfaUsePoint<Node, Symbol> up)
         {
             switch (up.Instruction.CodeElement.Type)
             {
@@ -142,11 +145,13 @@ namespace TypeCobol.Analysis.Report
         }
 
         /// <summary>
-        /// Called when a Def¨Point is built
+        /// Called when a DefPoint is built. If the Def point is a level 88 variable of the target CALL variable
+        /// then we deceive DFA algorithm to think that the target variable of the DefPoint is the CALL variable
+        /// thus we change the target variable of the DefPoint.
         /// </summary>
         /// <param name="dfaBuilder">The Dfa Builder</param>
         /// <param name="dp">The Def Point</param>
-        private void OnDefPoint(DataFlowGraphBuilder<Node, DfaBasicBlockInfo<Symbol>, Symbol> dfaBuilder, DfaDefPoint<Node, Symbol> dp)
+        private void OnDefPoint(DataFlowGraphBuilder<Node, Symbol> dfaBuilder, DfaDefPoint<Node, Symbol> dp)
         {
             VariableSymbol sym = (VariableSymbol)dp.Variable;
             Symbol parent = null;
@@ -195,11 +200,32 @@ namespace TypeCobol.Analysis.Report
             return true;
         }
 
+        /// <summary>
+        /// Compute a List of definition paths for a UsePoint.
+        /// The Algorithm works like that:
+        /// (1) If the UsePoint has no associated UseDef set then tries to see if variable has an initial value.
+        /// (2) The UsePoint has a UseDef set.
+        /// (2.1) For each Definition Point of the UseDef set
+        /// (2.1.1) Only take in account those DefinitionPoints associated to a MOVE or a SET instruction.
+        /// (2.1.1.1.1)If the MoveStatement is a SimpleMoveStatement and the sending variable is a Literal alphabetic value
+        ///     then append a definition path with this value.
+        /// (2.1.1.1.2)If the MoveStatement is a SimpleMoveStatement and the sending variable is an Identifier.
+        ///             then (2.1.1.1.2.1) Resolve the sending identifier in the current program
+        ///             (2.1.1.1.2.2) The sending identifier variable is resolved -> look for its UsePoint instruction in the definition block
+        ///             (2.1.1.1.2.3) The UsePoint of the sending identifier is found then recurse to compute its definition paths
+        /// (2.1.1.2) a Set Statement
+        ///     (2.1.1.2.1) The Set instruction is Condition variable set
+        ///     (2.1.1.2.2) The values are the values of the level 88 variable
+        /// </summary>
+        /// <param name="dfaBuilder">The current DataFlow Builder</param>
+        /// <param name="program">The Current Program</param>
+        /// <param name="up">The Use Point instance</param>
+        /// <returns>a List of Tuple(VariablName, Definition Path)</VariablName></returns>
         private List<Tuple<string, string>> ComputeUsePointDefPaths(TypeCobolDataFlowGraphBuilder dfaBuilder, ProgramSymbol program, DfaUsePoint<Node, Symbol> up)
         {
             List<Tuple<string, string>> paths = new List<Tuple<string, string>>();
             if (up.UseDef == null || up.UseDef.Cardinality() == 0)
-            {
+            {//(1)
              //No Definitions ==> try to see if the variable has an Initial Value
                 VariableSymbol varSym = up.Variable as VariableSymbol;
                 if (varSym.Value != null && varSym.Value is TypeCobol.Compiler.CodeElements.Value)
@@ -210,16 +236,16 @@ namespace TypeCobol.Analysis.Report
                 }
             }
             else
-            {
+            {//(2)
                 int nextDef = -1;
                 while ((nextDef = up.UseDef.NextSetBit(nextDef + 1)) >= 0)
-                {
+                {//(2.1)
                     System.Text.StringBuilder path = new StringBuilder();
                     DfaDefPoint<Node, Symbol> def = dfaBuilder.DefList[nextDef];
                     switch (def.Instruction.CodeElement.Type)
-                    {//Only move statement is interresting
+                    {//(2.1.1)Only move or set statements are interresting
                         case CodeElementType.MoveStatement:
-                            {//So we can detect only if the source of the move is a literal string.
+                            {//(2.1.1.1)So we can detect only if the source of the move is a literal string or an identifier.
                                 MoveStatement move = (MoveStatement)def.Instruction.CodeElement;
                                 switch (move.StatementType)
                                 {
@@ -227,7 +253,7 @@ namespace TypeCobol.Analysis.Report
                                         {
                                             MoveSimpleStatement simpleMove = (MoveSimpleStatement)move;
                                             if (simpleMove.SendingVariable.IsLiteral && simpleMove.SendingVariable.AlphanumericValue != null)
-                                            {//A Literal alphabetic value
+                                            {//(2.1.1.1.1)A Literal alphabetic value
                                                 string name = simpleMove.SendingVariable.AlphanumericValue.Value.ToString();
                                                 path.Append(string.Format(@"{0}<-""{1}""", up.Variable.FullDotName, name));
                                                 paths.Add(new Tuple<string, string>(name, path.ToString()));
@@ -235,20 +261,21 @@ namespace TypeCobol.Analysis.Report
                                             else if (!simpleMove.SendingVariable.IsLiteral &&
                                                 simpleMove.SendingVariable.StorageArea != null &&
                                                 simpleMove.SendingVariable.StorageArea.SymbolReference != null)
-                                            {//An Identifier --> Recurse     
-                                             //Find the use point of the identifier in the DefPoint's Block.
+                                            {//(2.1.1.1.2)An Identifier --> Recurse     
+                                             //Find the use point of the sending identifier in the DefPoint's Block.
+                                             //(2.1.1.1.2.1) Resolve the identifier variable
                                                 SymbolReference symRef = simpleMove.SendingVariable.StorageArea.SymbolReference;
                                                 Compiler.Scopes.Scope<VariableSymbol>.MultiSymbols result = program.ResolveReference(symRef, true);
                                                 System.Diagnostics.Debug.Assert(result != null);
                                                 if (result.Count == 1)
-                                                {
+                                                {//(2.1.1.1.2.2) The sending identifier variable is resolved -> look for its UsePoint instruction in the definition block
                                                     Symbol sendingVariable = result.Symbol; ;
                                                     Graph.BasicBlock<Node, DfaBasicBlockInfo<Symbol>> upBlock = dfaBuilder.Cfg.AllBlocks[def.BlockIndex];
                                                     DfaBasicBlockInfo<Symbol> upBlockData = upBlock.Data;
                                                     for (int i = upBlockData.UseListFirstIndex; i < upBlockData.UseListFirstIndex + upBlockData.UseCount; i++)
                                                     {
                                                         if (dfaBuilder.UseList[i].Instruction == def.Instruction && dfaBuilder.UseList[i].Variable == sendingVariable)
-                                                        {   //Now recurse
+                                                        {   //(2.1.1.1.2.3) The UsePoint of the sending identifier is found then recurse compute its definition paths
                                                             StringBuilder newSB = new StringBuilder();
                                                             List<Tuple<string, string>> newPtahs = ComputeUsePointDefPaths(dfaBuilder, program, dfaBuilder.UseList[i]);
                                                             foreach (var item in newPtahs)
@@ -270,12 +297,13 @@ namespace TypeCobol.Analysis.Report
                             }
                             break;
                         case CodeElementType.SetStatement:
-                            {
+                            {//(2.1.1.2) a Set Statement
                                 SetStatement set = (SetStatement)def.Instruction.CodeElement;
                                 switch (set.StatementType)
                                 {
                                     case StatementType.SetStatementForConditions://This a level 88 variable set.
-                                        {   //Use reflection to get sending value, because the class SetStatementForConditions is Internal to TypeCobol
+                                        {   //(2.1.1.2.1) The Set instruction is Condition variable set
+                                            //Use reflection to get sending value, because the class SetStatementForConditions is Internal to TypeCobol
                                             System.Reflection.PropertyInfo info = set.GetType().GetProperty("SendingValue");
                                             if (info != null)
                                             {
@@ -288,7 +316,7 @@ namespace TypeCobol.Analysis.Report
                                                     System.Diagnostics.Debug.Assert(def.UserData != null);
                                                     VariableSymbol sym = (VariableSymbol)def.UserData;
                                                     if (sym.Value != null && sym.Value is TypeCobol.Compiler.CodeElements.Value[])
-                                                    {
+                                                    {//(2.1.1.2.2) The values are the values of the level 88 variable
                                                         TypeCobol.Compiler.CodeElements.Value[] values = (TypeCobol.Compiler.CodeElements.Value[])sym.Value;
                                                         foreach (var value in values)
                                                         {
@@ -333,11 +361,11 @@ namespace TypeCobol.Analysis.Report
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="dfaCfgBuilder">The Cfg builder for FDA Basic Block Information</param>
+        /// <param name="cfgDfaCtx">The Cfg/Dfa context for building DFA Basic Block Information</param>
         /// <param name="filepath">The output file patah</param>
-        public ZCallPgmReport(ControlFlowGraphBuilder<DfaBasicBlockInfo<Symbol>> dfaCfgBuilder, string filepath)
+        public ZCallPgmReport(CfgDfaContext cfgDfaCtx, string filepath)
         {
-            DfaCfgBuilder = dfaCfgBuilder;
+            CfgDfaCtx = cfgDfaCtx;
             Filepath = filepath;
             CallUsePoints = new List<DfaUsePoint<Node, Symbol>>();
         }
@@ -345,7 +373,7 @@ namespace TypeCobol.Analysis.Report
         public override void Report(TextWriter writer)
         {
             this.Writer = writer;
-            DfaCfgBuilder.TraverseAllCfgBuilders(CfgBuilderCallback);            
+            CfgDfaCtx.CfgDfaBuilder.TraverseAllCfgBuilders(CfgBuilderCallback);            
         }
     }
 }

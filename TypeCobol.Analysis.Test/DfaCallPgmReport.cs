@@ -46,7 +46,7 @@ namespace TypeCobol.Analysis.Test
             dotGen.Report(writer);
 
             //Create the report file.
-            ZCallPgmReport reporter = new ZCallPgmReport(ctx.CfgDfaBuilder, null);
+            ZCallPgmReport reporter = new ZCallPgmReport(ctx, null);
             using (System.IO.StringWriter sw = new StringWriter())
             {
                 reporter.Report(sw);
@@ -76,7 +76,7 @@ namespace TypeCobol.Analysis.Test
             dotGen.Report(writer);
 
             //Create the report file.
-            ZCallPgmReport reporter = new ZCallPgmReport(ctx.CfgDfaBuilder, null);
+            ZCallPgmReport reporter = new ZCallPgmReport(ctx, null);
             using (System.IO.StringWriter sw = new StringWriter())
             {
                 reporter.Report(sw);

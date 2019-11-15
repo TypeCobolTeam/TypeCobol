@@ -16,6 +16,7 @@ using TypeCobol.Tools.Options_Config;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Report;
 using TypeCobol.Compiler.Domain;
+using TypeCobol.Analysis;
 
 namespace TypeCobol.Server
 {
@@ -116,10 +117,19 @@ namespace TypeCobol.Server
             //----------------------------------------------------------------------
             //Register a static SymbolTableBuilder for a Program as a Node Listener.
             //----------------------------------------------------------------------
-            Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(() => new ProgramSymbolTableBuilder());
+            if (!config.UseDfa)
+            {//Only the Dfa mode is not activated
+                Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(() => new ProgramSymbolTableBuilder());
+            }
 #endif
+            CfgDfaContext cfgDfaContext = null;
+            if (config.UseDfa)
+            {
+                cfgDfaContext = new CfgDfaContext(CfgDfaContext.Mode.Dfa);
+                cfgDfaContext.Initialize();
+            }
 
-#region Dependencies parsing
+            #region Dependencies parsing
             var depParser = new Parser();
             bool diagDetected = false;
             if (config.ExecToStep > ExecutionStep.Preprocessor)
@@ -196,12 +206,21 @@ namespace TypeCobol.Server
                     }
                     if (!string.IsNullOrEmpty(config.ReportZCallFilePath))
                     {
-                        Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(
-                            () => {
-                                var report = new Compiler.Report.ZCallPgmReport(config.ReportZCallFilePath);
-                                reports.Add(report); return report;
-                            });
-                        
+                        if (!config.UseDfa)
+                        {
+                            Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(
+                                () =>
+                                {
+                                    var report = new Compiler.Report.ZCallPgmReport(config.ReportZCallFilePath);
+                                    reports.Add(report); return report;
+                                });
+                        }
+                        else
+                        {//ZCallPgmReport using DFA
+                            TypeCobol.Analysis.Report.ZCallPgmReport report = 
+                                new TypeCobol.Analysis.Report.ZCallPgmReport(cfgDfaContext, config.ReportZCallFilePath);
+                            reports.Add(report);
+                        }
                     }
                 }
 #endregion
