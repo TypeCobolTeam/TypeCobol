@@ -300,6 +300,12 @@
     <None Include="LSRTests\ProcedureCompletionCaseInsensitive\input\ProcedureCompletionCaseInsensitive.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\ProcedureCompletionInputInoutOutput-Case\input\ProcedureCompletionInputInoutOutput-Case.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\ProcedureCompletionInputInoutOutput-Case\output_expected\ProcedureCompletionInputInoutOutput-Case.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\ProcedureCompletionInputInoutOutput-NoContext\input\ProcedureCompletionInputInoutOutput-NoContext.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
