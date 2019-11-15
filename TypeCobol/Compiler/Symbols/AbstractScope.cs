@@ -87,6 +87,84 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
+        /// Resolve a Symbol.
+        /// For a single symbol's name, the algorithm tries to resolve types starting from the local scope to the Top scope.
+        /// For a qualified symbol, the algorithm tries to filter symbols whose qualified names strictly match the path.
+        /// </summary>
+        /// <param name="path">The type's path'</param>
+        /// <param name="topScope">The top scope of the research</param>
+        /// <param name="domain">The domain into which to search for</param>
+        /// <returns>The Set of resolve symbols</returns>
+        protected Scope<TS>.Entry ResolveSymbol<TS>(string[] path, AbstractScope topScope,
+            Dictionary<string, Scope<TS>.MultiSymbols> domain) where TS : Symbol
+        {
+            Scope<TS>.MultiSymbols results = new Scope<TS>.MultiSymbols();
+            if (path == null || path.Length == 0)
+                return results;
+            domain.TryGetValue(path[0], out var candidates);
+            if (candidates == null || candidates.Count == 0)
+                return results;
+            if (path.Length == 1)
+            {
+                bool bLocal = topScope != this;
+                Scope<TS>.MultiSymbols localResults = bLocal ? new Scope<TS>.MultiSymbols() : null;
+                Scope<TS>.MultiSymbols topResults = results;
+                string[] topPath = new string[] { path[0], topScope.Name };
+                string[] localPath = bLocal ? new string[] { path[0], this.Name, topScope.Name } : null;
+                foreach (var candidate in candidates)
+                {
+                    if (bLocal && candidate.IsMatchingPath(localPath))
+                    {
+                        localResults.Add(candidate);
+                    }
+                    else if (candidate.IsMatchingPath(topPath))
+                    {
+                        topResults.Add(candidate);
+                    }
+
+                }
+                if (bLocal && localResults.Count != 0)
+                    return localResults;
+                if (topResults.Count != 0)
+                    return topResults;
+                return candidates;
+            }
+            foreach (var candidate in candidates)
+            {
+                if (candidate.IsStrictlyMatchingPath(path))
+                {
+                    results.Add(candidate);
+                }
+            }
+            return results.Count == 0 ? candidates : results;
+        }
+
+        /// <summary>
+        /// Resolve all accessible types by this scope from a root symbol table
+        /// </summary>
+        /// <param name="root">The root Symbol table</param>
+        /// <param name="path">The Type's path to be resolved.'</param>
+        /// <returns>The scope all accessible type</returns>
+        public abstract Scope<TypedefSymbol>.Entry ResolveAccessibleType(RootSymbolTable root, string[] path);
+
+        /// <summary>
+        /// Resolve all types accessible from this scope by its path.
+        /// </summary>
+        /// <param name="root">The Root Symbol Table</param>
+        /// <param name="path">The type's path</param>
+        /// <returns>The set of types that match</returns>
+        public abstract Scope<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path);
+
+        /// <summary>
+        /// Resolve all scopes accessible from this scope by its path.
+        /// A Scope can be a namespace, a program or a function.
+        /// </summary>
+        /// <param name="root">The Root Symbol Table</param>
+        /// <param name="path">The function's path</param>
+        /// <returns>The set of scopes that match</returns>
+        public abstract Scope<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path);
+
+        /// <summary>
         /// Lookup a program.
         /// </summary>
         /// <param name="rootScope">The top root scope</param>

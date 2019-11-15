@@ -30,7 +30,8 @@ namespace TypeCobol.Compiler.Scopes
         {
             base.Kind = Kinds.Root;
             Universe = new List<VariableSymbol>();
-            ScopeDomain = new Dictionary<string, Scope<AbstractScope>.MultiSymbols>();
+            ScopeDomain = new Dictionary<string, Scope<AbstractScope>.MultiSymbols>(StringComparer.OrdinalIgnoreCase);
+            TypeDomain = new Dictionary<string, Scope<TypedefSymbol>.MultiSymbols>(StringComparer.OrdinalIgnoreCase);
             BottomVariable = new VariableSymbol("<<BottomVariable>>");
             AddToUniverse(BottomVariable);
         }
@@ -102,10 +103,14 @@ namespace TypeCobol.Compiler.Scopes
         internal Dictionary<string, Scope<AbstractScope>.MultiSymbols> ScopeDomain { get; private set; }
 
         /// <summary>
+        /// The Domain of all types.
+        /// </summary>
+        internal Dictionary<string, Scope<TypedefSymbol>.MultiSymbols> TypeDomain { get; private set; }
+
+        /// <summary>
         /// Add the given AbstractScope instance the domain
         /// </summary>
-        /// <param name="absScope">Abstract Scope</param>
-        /// <returns>The given VariableSymbol instance.</returns>
+        /// <param name="absScope">Abstract Scope to be added</param>
         public void AddToDomain(AbstractScope absScope)
         {
             System.Diagnostics.Debug.Assert(absScope != null);
@@ -132,6 +137,15 @@ namespace TypeCobol.Compiler.Scopes
             {
                 value.Remove(absScope);
 
+                //Remove all Types
+                var types = absScope.Types;
+                if (types != null)
+                {
+                    foreach (var t in types)
+                    {
+                        RemoveFromDomain(t);
+                    }
+                }
                 //Remove all programs
                 var programs = absScope.Programs;
                 if (programs != null)
@@ -166,6 +180,35 @@ namespace TypeCobol.Compiler.Scopes
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Add the given Type instance the domain
+        /// </summary>
+        /// <param name="type">The type to add to be added</param>
+        public void AddToDomain(TypedefSymbol type)
+        {
+            System.Diagnostics.Debug.Assert(type != null);
+            lock (TypeDomain)
+            {
+                string name = type.Name;
+                TypeDomain.TryGetValue(name, out var value);
+                if (value == null)
+                    TypeDomain[name] = new Scope<TypedefSymbol>.MultiSymbols(type);
+                else
+                    value.Add(type);
+            }
+        }
+
+        /// <summary>
+        /// Remove the given type from the domain.
+        /// </summary>
+        /// <param name="type">The type to be removed</param>
+        public void RemoveFromDomain(TypedefSymbol type)
+        {
+            string name = type.Name;
+            TypeDomain.TryGetValue(name, out var value);
+            value?.Remove(type);
         }
 
         /// <summary>
@@ -216,7 +259,7 @@ namespace TypeCobol.Compiler.Scopes
         /// Resolve a Program path
         /// </summary>
         /// <param name="path">The Program's path'</param>
-        /// <returns></returns>
+        /// <returns>The set of matching results</returns>
         public Scope<ProgramSymbol>.MultiSymbols ResolveProgram(string[] path)
         {
             return ResolveScope<ProgramSymbol>(path, Kinds.Program);
@@ -236,62 +279,32 @@ namespace TypeCobol.Compiler.Scopes
         /// Resolve a Program or a Function path
         /// </summary>
         /// <param name="path">The program's' or function's path'</param>
-        /// <returns></returns>
+        /// <returns>The set of matching results</returns>
         public Scope<ProgramSymbol>.MultiSymbols ResolveProgramOrFunction(string[] path)
         {
             return ResolveScope<ProgramSymbol>(path, Kinds.Program, Kinds.Function);
         }
 
         /// <summary>
-        /// Resolve a Type, if the type path is not qualified then the type is search into Intrinsic types
-        /// otherwise the qualification is resolved to a Program or a Function and the type name in
-        /// search into each program of function.
+        /// Resolve a Type
         /// </summary>
-        /// <param name="path">The program's' or function's path'</param>
-        /// <returns>null if the</returns>
-        public Scope<TypedefSymbol>.MultiSymbols ResolveQualifiedType(string[] path)
+        /// <param name="path">Type's path'</param>
+        /// <param name="bIncludeUndefined">True if undefined type must also be included, false otherwise</param>
+        /// <returns>The set of matching results</returns>
+        public Scope<TypedefSymbol>.MultiSymbols ResolveQualifiedType(string[] path, bool bIncludeUndefined = false)
         {
             Scope<TypedefSymbol>.MultiSymbols results = new Scope<TypedefSymbol>.MultiSymbols();
             if (path == null || path.Length == 0)
                 return results;
-            string[] name = { path[0] };
-            switch (path.Length)
+            this.TypeDomain.TryGetValue(path[0], out var candidates);
+            if (candidates != null)
             {
-                case 1: //Only look into intrinsics.
-                {
-                    var types = this.ReverseResolveType(this, name, false);
-                    if (types != null && types.Count >= 0)
-                    {
-                        foreach (var t in types)
-                        {
-                            results.Add(t);
-                        }
-                    }
+                foreach (var candidate in candidates)
+                {   //Only selected whose Type is defined.
+                    if ((bIncludeUndefined || candidate.Type != null) && candidate.IsMatchingPath(path))
+                        results.Add(candidate);
                 }
-                    break;
-                default:
-                {
-                    //First resolve the qualified scope in to Programs only program contains Type.
-                    string[] nsPath = new string[path.Length - 1];
-                    Array.Copy(path, 1, nsPath, 0, nsPath.Length);
-                    Scope<ProgramSymbol>.MultiSymbols allPrgs = ResolveProgramOrFunction(nsPath);
-                    foreach (ProgramSymbol p in allPrgs)
-                    {
-                        var types = p.ReverseResolveType(this, name, false);
-                        if (types != null && types.Count >= 0)
-                        {
-                            foreach (var t in types)
-                            {
-                                results.Add(t);
-                            }
-
-                            ;
-                        }
-                    }
-                }
-                    break;
             }
-
             return results;
         }
     }

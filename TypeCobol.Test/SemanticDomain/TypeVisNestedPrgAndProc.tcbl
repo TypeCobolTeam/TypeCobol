@@ -5,42 +5,59 @@
        WORKING-STORAGE SECTION.
       * Type Only accessible in this PROGRAM, nested PROGRAM and not
       * Nested Procedure
-       01 POINTMainGbl TYPEDEF GLOBAL.
+       01 POINTMainGbl TYPEDEF STRICT GLOBAL.
            05 XMG PIC 9999.
            05 YMG PIC 9999.
       * Type PRIVATE Only Visible in this PROGRAM, nested  PROGRAM and
       * Nested Procedure.
-       01 POINTMainPriv TYPEDEF PRIVATE.
+       01 POINTMainPriv TYPEDEF STRICT PRIVATE.
            05 XMP PIC 9999.
            05 YMP PIC 9999.
       * Type LOCAL Only Visible in this PROGRAM
-       01 POINTMainLocal TYPEDEF.
+       01 POINTMainLocal TYPEDEF STRICT.
            05 XL PIC 9999.
            05 YL PIC 9999.
       * Type Public visible anywhere
-       01 POINTMainPublic TYPEDEF PUBLIC.
+       01 POINTMainPublic TYPEDEF STRICT PUBLIC.
            05 XM PIC 9999.
            05 YM PIC 9999.
-      
+       01 foo TYPE POINTNestedNestedPriv.
        PROCEDURE DIVISION.
+      * Know only by this program.
+       declare procedure ProcLocal.
+       PROCEDURE DIVISION.
+           .
+       end-declare.
+      
+      * Know in all this program.
+       declare procedure ProcPrivate private.
+       PROCEDURE DIVISION.
+           .
+       end-declare.
+      * known by anyone
+       declare procedure ProcPublic public.
+       PROCEDURE DIVISION.
+           .
+       end-declare.
+      
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Nested.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       * Type Known in this program in all its nested program.
-       01 POINTNestedGbl TYPEDEF GLOBAL.
+       01 POINTNestedGbl TYPEDEF STRICT GLOBAL.
            05 XNG PIC 9999.
            05 YNG PIC 9999.
       * Type Known in all Main program unit
-       01 POINTNestedPriv TYPEDEF PRIVATE.
+       01 POINTNestedPriv TYPEDEF STRICT PRIVATE.
            05 XNP PIC 9999.
            05 YNP PIC 9999.
       * Type know in this Program only
-       01 POINTNestedLocal TYPEDEF.
+       01 POINTNestedLocal TYPEDEF STRICT.
            05 XNL PIC 9999.
            05 YNL PIC 9999.
       * Type know by anyone
-       01 POINTNestedPublic TYPEDEF PUBLIC.
+       01 POINTNestedPublic TYPEDEF STRICT PUBLIC.
            05 XN PIC 9999.
            05 YN PIC 9999.
        PROCEDURE DIVISION.
@@ -49,7 +66,7 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       * TypeOnly Accessible in this Procedure only
-       01 POINTFunc TYPEDEF.
+       01 POINTFunc TYPEDEF STRICT.
            05 XF PIC 9999.
            05 YF PIC 9999.
        PROCEDURE DIVISION.
@@ -60,7 +77,7 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       * TypeOnly Accessible in this Procedure only
-       01 POINTFunc TYPEDEF.
+       01 POINTFunc TYPEDEF STRICT.
            05 XF PIC 9999.
            05 YF PIC 9999.
        PROCEDURE DIVISION.
@@ -71,7 +88,7 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       * TypeOnly Accessible in this Procedure only
-       01 POINTFunc TYPEDEF.
+       01 POINTFunc TYPEDEF STRICT.
            05 XF PIC 9999.
            05 YF PIC 9999.
        PROCEDURE DIVISION.
@@ -83,19 +100,36 @@
        PROGRAM-ID. Nested2.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01 POINTNestedNestedGbl TYPEDEF GLOBAL.
+       01 POINTNestedNestedGbl TYPEDEF STRICT GLOBAL.
            05 XNNG PIC 9999.
            05 YNNG PIC 9999.
-       01 POINTNestedNestedPriv TYPEDEF PRIVATE.
+       01 POINTNestedNestedPriv TYPEDEF STRICT PRIVATE.
            05 XNNP PIC 9999.
            05 YNNP PIC 9999.
-       01 POINTNestedNestedLocal TYPEDEF.
+       01 POINTNestedNestedLocal TYPEDEF STRICT.
            05 XNNL PIC 9999.
            05 YNNL PIC 9999.
-       01 POINTNestedNested TYPEDEF PUBLIC.
+       01 POINTNestedNestedPublic TYPEDEF STRICT PUBLIC.
            05 XNN PIC 9999.
            05 YNN PIC 9999.
        PROCEDURE DIVISION.
+      * Know only by this program.
+       declare procedure Nested2ProcLocal.
+       PROCEDURE DIVISION.
+           .
+       end-declare.
+      
+      * Know in all this program.
+       declare procedure Nested2ProcPrivate private.
+       PROCEDURE DIVISION.
+           .
+       end-declare.
+      * known by anyone
+       declare procedure Nested2ProcPublic public.
+       PROCEDURE DIVISION.
+           .
+       end-declare.
+      
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Nested21.
        DATA DIVISION.
@@ -111,18 +145,34 @@
        PROGRAM-ID. TypeVisStackedPrg.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01 POINTStackedGbl TYPEDEF GLOBAL.
+       01 POINTStackedGbl TYPEDEF STRICT GLOBAL.
            05 XSG PIC 9999.
            05 YSG PIC 9999.
-       01 POINTStackedPriv TYPEDEF PRIVATE.
+       01 POINTStackedPriv TYPEDEF STRICT PRIVATE.
            05 XSP PIC 9999.
            05 YSP PIC 9999.
-       01 POINTStackedLocal TYPEDEF.
+       01 POINTStackedLocal TYPEDEF STRICT.
            05 XSL PIC 9999.
            05 YSL PIC 9999.
-       01 POINTStacked TYPEDEF PUBLIC.
+       01 POINTStackedPublic TYPEDEF STRICT PUBLIC.
            05 XS PIC 9999.
            05 YS PIC 9999.
        PROCEDURE DIVISION.
+      * Know only by this program.
+       declare procedure StackedProcLocal.
+       PROCEDURE DIVISION.
            .
+       end-declare.
+      
+      * Know in all this program.
+       declare procedure StackedProcPrivate private.
+       PROCEDURE DIVISION.
+           .
+       end-declare.
+      * known by anyone
+       declare procedure StackedProcPublic public.
+       PROCEDURE DIVISION.
+           .
+       end-declare.
+      
        END PROGRAM TypeVisStackedPrg.

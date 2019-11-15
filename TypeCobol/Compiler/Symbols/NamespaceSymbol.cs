@@ -79,6 +79,16 @@ namespace TypeCobol.Compiler.Symbols
             protected set;
         }
 
+        public override Scope<TypedefSymbol>.Entry ResolveAccessibleType(RootSymbolTable root, string[] path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Scope<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// All namespaces declared in this namespace.
         /// </summary>
@@ -89,5 +99,10 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         public override TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitNamespaceSymbol(this, arg); }
+
+        public override Scope<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -77,6 +77,12 @@ namespace TypeCobol.Compiler.Domain
                     _rootSymbolTable = new RootSymbolTable();
                     //Store Builtin Symbols.
                     BuiltinSymbols.StoreSymbols(_rootSymbolTable.Types);
+                    foreach (var t in _rootSymbolTable.Types)
+                    {   //Enter each Builtin symbol in the domain also.
+                        //And mark it as a builtin symbol.
+                        t.SetFlag(Symbol.Flags.BuiltinSymbol, true);
+                        _rootSymbolTable.AddToDomain(t);
+                    }
                     LoadBaseTable();
                 }
                 return _rootSymbolTable;

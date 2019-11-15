@@ -65,6 +65,8 @@ namespace TypeCobol.Compiler.Symbols
             InsideTypdef = 0x01 << 25,//Flag of any symbol inside a Typedef definition
             ProgramExpanded = 0x01 << 26,//Flag for a program that have been already expanded.
             NeedTypeCompletion = 0x01 << 27,//For a program that need type Completion, a pure COBOL Program does not need type completion (No TYPEDEF).
+            BuiltinSymbol = 0x01 << 28, //This is a builting symbol.
+            ProgramCompleted = 0x01 << 29, //This Top Program has been completed
 
             //Etc...
         }
@@ -365,6 +367,24 @@ namespace TypeCobol.Compiler.Symbols
             return true;
         }
 
+        /// <summary>
+        /// Determine if this symbol is matching the given path strictly
+        /// </summary>
+        /// <param name="path">The path to match</param>
+        /// <returns>true if yes, false otherwise</returns>
+        public bool IsStrictlyMatchingPath(string[] path)
+        {
+            Symbol currentSymbol = this;
+            int i = 0;
+            for (i = 0; i < path.Length; i++)
+            {
+                string name = currentSymbol.Name;
+                if (!path[i].Equals(name, StringComparison.OrdinalIgnoreCase))
+                    return false;
+                currentSymbol = currentSymbol.Owner;
+            }
+            return  i == path.Length && (currentSymbol == null || currentSymbol.Kind == Kinds.Root);
+        }
 
         /// <summary>
         /// Check if this symbol has the given symbol as parent in the parent hierarchy

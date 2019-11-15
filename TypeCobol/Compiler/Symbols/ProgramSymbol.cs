@@ -254,6 +254,8 @@ namespace TypeCobol.Compiler.Symbols
         /// <returns>true if the symbol is accessible, false otherwise.</returns>
         private bool IsSymbolAccessible(Symbol sym, Flags mask)
         {
+            if (sym.HasFlag(Flags.BuiltinSymbol))
+                return true;//Builtin symbols are always accessible.
             System.Diagnostics.Debug.Assert(sym != null);
             Symbol symTopPrg = sym.TopParent(Kinds.Program);
             System.Diagnostics.Debug.Assert(symTopPrg != null);
@@ -262,34 +264,43 @@ namespace TypeCobol.Compiler.Symbols
 
             if (symTopPrg == myTopPrg)
             {//Same program ==> Apply the visibility mask
+                System.Diagnostics.Debug.Assert(sym.Owner != null);
+                if (sym.Owner == this || sym == this)
+                {//This My Own Symbol.
+                    return true;
+                }
                 if (mask == 0 || sym.HasFlag(mask))
                 {
-                    var symNearestKind = sym.NearestKind(Kinds.Function, Kinds.Program);
-                    if (symNearestKind == this)
-                    {//This My Own Symbol.
-                        return true;
-                    }
                     if (sym.HasFlag(Flags.Global))
                     {//The Symbol is a global Symbol => only SubNested PROGRAM can See it
                         if (this.Kind == Kinds.Function)
                         {//I am a function, I cannot access anything else.
                             return false;
                         }
-                        if (symNearestKind.Kind == Kinds.Function)
+                        if (sym.Owner.Kind == Kinds.Function)
                         {//Symbol declared inside a Function, cannot be accessed out of the function.                        
                             return false;
                         }
-                        //Now the symbol must have been declared in sub nested program.
-                        return sym.HasParent(this);
+                        //Now the symbol must has been declared in an enclosing program of this one.
+                        //In other words, one parent of this program must be the parent of the symbol.
+                        return this.HasParent(sym.Owner);
                     }
                     else
-                    {
-                        return true;
+                    {   //if mask == 0 ==> Local visibility ==> (symNearestKind == this)
+                        // else ==> mask != Global && Mask == Public || Mask == Private;
+                        System.Diagnostics.Debug.Assert((mask == 0) || (mask & (Flags.Public | Flags.Private)) != 0);
+                        return sym.HasFlag(Flags.Public | Flags.Private);
                     }
                 }
                 else
                 {
+#if ALLOW_PRIV_PUBLIC_PROC_CALL_LOCAL_PROC
+                    //Special case, only functions having the same parent can be called each other, this applied
+                    // When a Private or Public Procedure call a Local Procedure with the same owner.
+                    return this.Kind == Kinds.Function && sym.Kind == Kinds.Function && this.Owner == sym.Owner;
+#else
                     return false;
+#endif
                 }
             }
             else
@@ -424,6 +435,53 @@ namespace TypeCobol.Compiler.Symbols
             System.Diagnostics.Debug.Assert(paths != null);
             Scope<VariableSymbol>.MultiSymbols results = new Scope<VariableSymbol>.MultiSymbols();
             return ResolveReference(paths, results, bRecurseEnglobingPrograms, 0);
+        }
+
+        /// <summary>
+        /// Resolve all accessible types by this scope from a root symbol table
+        /// </summary>
+        /// <param name="root">The root Symbol table</param>
+        /// <param name="path">The Type's path to be resolved.'</param>
+        /// <returns>The scope all accessible type</returns>
+        public override Scope<TypedefSymbol>.Entry ResolveAccessibleType(RootSymbolTable root, string[] path)
+        {
+            Scope<TypedefSymbol>.MultiSymbols candidates = root.ResolveQualifiedType(path, true);
+            if (candidates.Count == 0)
+                return candidates;
+            Scope<TypedefSymbol>.MultiSymbols types = new Scope<TypedefSymbol>.MultiSymbols();
+            foreach (var t in candidates)
+            {
+                if (IsTypeAccessible(t))
+                {
+                    types.Add(t);
+                }
+            }
+
+            return types;
+        }
+
+        /// <summary>
+        /// Resolve a type.
+        /// </summary>
+        /// <param name="root">The Root Symbol Table</param>
+        /// <param name="path">The type's path'</param>
+        /// <returns>The Set of resolve types</returns>
+        public override Scope<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path)
+        {
+            ProgramSymbol topPrg = (ProgramSymbol)TopParent(Kinds.Program);
+            return ResolveSymbol(path, topPrg, root.TypeDomain);
+        }
+
+        /// <summary>
+        /// Resolve a type.
+        /// </summary>
+        /// <param name="root">The Root Symbol Table</param>
+        /// <param name="path">The type's path'</param>
+        /// <returns>The Set of resolve types</returns>
+        public override Scope<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path)
+        {
+            ProgramSymbol topPrg = (ProgramSymbol)TopParent(Kinds.Program);
+            return ResolveSymbol< AbstractScope>(path, topPrg, root.ScopeDomain);
         }
 
         /// <summary>

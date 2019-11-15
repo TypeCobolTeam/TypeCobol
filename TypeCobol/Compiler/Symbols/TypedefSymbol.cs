@@ -199,6 +199,8 @@ namespace TypeCobol.Compiler.Symbols
             {
                 ctx.Path.AddLast(s);
                 ctx.TypedPath.AddLast(s);
+                //Firt complete symbol
+                s.TypeCompleter();
                 if (s.Typedef != null)
                 {
                     ctx.TypedPath.AddLast(s.Typedef);
