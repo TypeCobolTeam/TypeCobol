@@ -59,6 +59,12 @@ namespace TypeCobol.Compiler.Symbols
         {
             get
             {
+                if (Typedef == null)
+                {
+                    //Try to complete the type.
+                    if (!TypeCompleter())
+                        return base.Type;
+                }
                 if (base.Type == null && Typedef?.Type != null)
                 {
                     base.Type = Typedef.Type;
@@ -83,21 +89,29 @@ namespace TypeCobol.Compiler.Symbols
             {//Variable Type Symbol is already completed
                 return true;
             }
-
-            System.Diagnostics.Debug.Assert(TypePaths != null && TypePaths.Length > 0);
+            if (TypePaths == null || TypePaths.Length == 0)
+            {
+                return false;
+            }
             ProgramSymbol program = program = (ProgramSymbol)NearestKind(Symbol.Kinds.Program, Symbol.Kinds.Function);
+            ProgramSymbol topProgram = (ProgramSymbol)TopParent(Symbol.Kinds.Program);
+            if (!topProgram.HasFlag(Flags.ProgramCompleted))
+                return false;//This program is not completed yet, that is to say it is in construction.
             root  = root ?? (RootSymbolTable)TopParent(Symbol.Kinds.Root);
             System.Diagnostics.Debug.Assert(root != null);
             if (root == null)
                 return false;
-            Scopes.Scope<TypedefSymbol>.Entry entry = program.ReverseResolveType(root, TypePaths, TypePaths.Length > 1);
-            if (entry == null || entry.Count == 0
-                /*|| !program.IsTypeAccessible(entry[0])*/)
-            {//Don't check accessibility using visibility here we don't know because the type can be incomplete at the moment.
-             //But Semantic Analyzers should do it later, when cheking type usage.
+            Scopes.Scope<TypedefSymbol>.Entry entry = program.ResolveType(root, TypePaths);
+            if (entry == null || entry.Count != 1)
+            {//Unknown type or ambiguous types
                 return false;
             }
-            Type currentType = Type;//The type before completion can be an ArrayType or a PointerType
+            //--------------------------------------------------------------------------------------------
+            //We don't check type accessibility here. I think that the semantic analyzer should do that.
+            //This can be achieved by the following call:
+            //program.IsTypeAccessible(entry.Symbol);
+            //--------------------------------------------------------------------------------------------
+            Type currentType = base.Type;//The type before completion can be an ArrayType or a PointerType
             Typedef = entry[0];
             TypePaths = null;//GC : :-)
             if (currentType != null)
