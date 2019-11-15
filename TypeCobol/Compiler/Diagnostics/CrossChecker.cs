@@ -17,6 +17,9 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         private Node CurrentNode { get; set; }
 
+        // This is required for FunctionCallChecker.OnNode that may have to replace nodes.
+        public override bool CanModifyChildrenNode => true;
+
         public override bool BeginNode(Node node)
         {
             CurrentNode = node;

@@ -73,20 +73,18 @@ namespace TypeCobol.Compiler.Diagnostics
 
     class FunctionCallChecker
     {
-        public static void OnNode(Node node)
+        public static void OnNode([NotNull] ProcedureStyleCall node)
         {
-            var functionCaller = node as FunctionCaller;
-            if (functionCaller == null || functionCaller.FunctionCall == null ||
-                !functionCaller.FunctionCall.NeedDeclaration)
+            if (node.FunctionCall == null || !node.FunctionCall.NeedDeclaration)
                 return;
 
-            if (functionCaller.FunctionDeclaration == null)
+            if (node.FunctionDeclaration == null)
             {
-                //Get Funtion by name and profile (matches on precise parameters)
-                var parameterList = functionCaller.FunctionCall.AsProfile(node);
+                //Get Function by name and profile (matches on precise parameters)
+                var parameterList = node.FunctionCall.AsProfile(node);
                 var functionDeclarations =
-                    node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName),
-                    parameterList, functionCaller.FunctionCall.Namespace);
+                    node.SymbolTable.GetFunction(new URI(node.FunctionCall.FunctionName),
+                    parameterList, node.FunctionCall.Namespace);
 
                 string message;
                 //There is one CallSite per function call
@@ -96,8 +94,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     if (functionDeclarations.Count == 1)
                     {
-                        functionCaller.FunctionDeclaration = functionDeclarations.First();
-                        Check(node, functionCaller.FunctionCall, functionCaller.FunctionDeclaration);
+                        node.FunctionDeclaration = functionDeclarations.First();
+                        Check(node, node.FunctionCall, node.FunctionDeclaration);
                         return; //Everything seems to be ok, lets continue on the next one
                     }
 
@@ -105,20 +103,20 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (functionDeclarations.Count > 0)
                     {
                         message = string.Format("Same function '{0}' {1} declared '{2}' times",
-                            functionCaller.FunctionCall.FunctionName, parameterList.GetSignature(),
+                            node.FunctionCall.FunctionName, parameterList.GetSignature(),
                             functionDeclarations.Count);
                         DiagnosticUtils.AddError(node, message, MessageCode.ImplementationError);
                         return; //Do not continue the function/procedure is defined multiple times
                     }
 
                     var otherDeclarations =
-                        node.SymbolTable.GetFunction(((ProcedureCall) functionCaller.FunctionCall).ProcedureName.URI,
-                            null, functionCaller.FunctionCall.Namespace);
+                        node.SymbolTable.GetFunction(((ProcedureCall) node.FunctionCall).ProcedureName.URI,
+                            null, node.FunctionCall.Namespace);
 
                     if (functionDeclarations.Count == 0 && otherDeclarations.Count == 0)
                     {
                         message = string.Format("Function not found '{0}' {1}",
-                            functionCaller.FunctionCall.FunctionName,
+                            node.FunctionCall.FunctionName,
                             parameterList.GetSignature());
                         DiagnosticUtils.AddError(node, message);
                         return; //Do not continue the function/procedure does not exists
@@ -127,7 +125,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (otherDeclarations.Count > 1)
                     {
                         message = string.Format("No suitable function signature found for '{0}' {1}",
-                            functionCaller.FunctionCall.FunctionName, parameterList.GetSignature());
+                            node.FunctionCall.FunctionName, parameterList.GetSignature());
                         DiagnosticUtils.AddError(node, message);
                         return;
                     }
@@ -139,24 +137,24 @@ namespace TypeCobol.Compiler.Diagnostics
                     //call to a TypeCobol function/procedure without arguments or to a Variable
 
                     var potentialVariables =
-                        node.SymbolTable.GetVariablesExplicit(new URI(functionCaller.FunctionCall.FunctionName));
+                        node.SymbolTable.GetVariablesExplicit(new URI(node.FunctionCall.FunctionName));
 
                     var potentialVariablesCount = potentialVariables.Count();
                     if (functionDeclarations.Count == 1 && potentialVariablesCount == 0)
                     {
-                        functionCaller.FunctionDeclaration = functionDeclarations.First();
+                        node.FunctionDeclaration = functionDeclarations.First();
                         return; //Everything seems to be ok, lets continue on the next one
                     }
 
                     functionDeclarations =
-                        node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName), null,
-                            functionCaller.FunctionCall.Namespace);
+                        node.SymbolTable.GetFunction(new URI(node.FunctionCall.FunctionName), null,
+                            node.FunctionCall.Namespace);
 
                     if (potentialVariablesCount > 1)
                     {
                         //If there is more than one variable with the same name, it's ambiguous
                         message = string.Format("Call to '{0}'(no arguments) is ambigous. '{0}' is defined {1} times",
-                            functionCaller.FunctionCall.FunctionName,
+                            node.FunctionCall.FunctionName,
                             potentialVariables.Count() + functionDeclarations.Count);
                         DiagnosticUtils.AddError(node, message);
                         return;
@@ -165,7 +163,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (functionDeclarations.Count > 1 && potentialVariablesCount == 0)
                     {
                         message = string.Format("No suitable function signature found for '{0}(no arguments)'",
-                            functionCaller.FunctionCall.FunctionName);
+                            node.FunctionCall.FunctionName);
                         DiagnosticUtils.AddError(node, message);
                         return;
                     }
@@ -173,7 +171,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (functionDeclarations.Count >= 1 && potentialVariablesCount == 1)
                     {
                         message = string.Format("Warning: Risk of confusion in call of '{0}'",
-                            functionCaller.FunctionCall.FunctionName);
+                            node.FunctionCall.FunctionName);
                         DiagnosticUtils.AddError(node, message);
                         return;
                     }
@@ -181,19 +179,51 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (functionDeclarations.Count == 0 && potentialVariablesCount == 0)
                     {
                         message = string.Format("No function or variable found for '{0}'(no arguments)",
-                            functionCaller.FunctionCall.FunctionName);
+                            node.FunctionCall.FunctionName);
                         DiagnosticUtils.AddError(node, message);
                         return; //Do not continue the function/procedure does not exists
                     }
 
                     if (potentialVariablesCount == 1)
-                        return; //Stop here, it's a standard Cobol call
+                    {
+                        /*
+                         * It is not a procedure call but a standard COBOL call (without any arguments).
+                         * No further check is required but we have to replace the original Node because it is not of the correct type.
+                         * This is due to an ambiguity in the grammar, parser can't decide between a CALL to a variable and a CALL to a procedure
+                         * with no arguments. So here we have a ProcedureStyleCall node that needs to be replaced with a Call node.
+                         */
+                        var originalCodeElement = node.CodeElement;
+                        CallStatement replacementCodeElement = new CallStatement
+                                                               {
+                                                                   ConsumedTokens = originalCodeElement.ConsumedTokens,
+                                                                   ProgramOrProgramEntryOrProcedureOrFunction =
+                                                                       new SymbolReferenceVariable(
+                                                                           StorageDataType.ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointer,
+                                                                           originalCodeElement.ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction),
+                                                                   CallSites = originalCodeElement.CallSites
+                                                               };
+                        Call replacementNode = new Call(replacementCodeElement)
+                                               {
+                                                   Flags = node.Flags
+                                               };
+                        // Add any optional END-CALL statement
+                        foreach (var child in node.Children)
+                        {
+                            replacementNode.Add(child);
+                        }
+
+                        // Swap original node with replacement
+                        var parent = node.Parent;
+                        int index = parent.ChildIndex(node);
+                        parent.Remove(node);
+                        parent.Add(replacementNode, index);
+                        return;
+                    }
                 }
 
-
-                functionCaller.FunctionDeclaration = functionDeclarations[0];
+                node.FunctionDeclaration = functionDeclarations[0];
                 //If function is not ambigous and exists, lets check the parameters
-                Check(node, functionCaller.FunctionCall, functionCaller.FunctionDeclaration);
+                Check(node, node.FunctionCall, node.FunctionDeclaration);
             }
         }
 
