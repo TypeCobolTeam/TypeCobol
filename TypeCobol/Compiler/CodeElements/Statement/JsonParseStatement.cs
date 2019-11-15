@@ -162,11 +162,11 @@ namespace TypeCobol.Compiler.CodeElements
         /// Expected name in JSON.
         /// </summary>
         [CanBeNull]
-        public AlphanumericValue OutputName { get; set; }
+        public AlphanumericValue InputName { get; set; }
 
         public bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
-            return this.ContinueVisitToChildren(astVisitor, this.DataItem, this.OutputName);
+            return this.ContinueVisitToChildren(astVisitor, this.DataItem, this.InputName);
         }
     }
 }

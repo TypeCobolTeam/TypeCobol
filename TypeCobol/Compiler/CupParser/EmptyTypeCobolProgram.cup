@@ -233,6 +233,7 @@ non terminal evaluateStatementWithBody;
 non terminal ifStatementWithBody;
 non terminal invokeStatementConditional;
 non terminal jsonGenerateStatementConditional;
+non terminal jsonParseStatementConditional;
 non terminal multiplyStatementConditional;
 non terminal performStatementWithBody;
 non terminal readStatementConditional;
@@ -838,6 +839,8 @@ compoundStatement ::= addStatementConditional:stmt
 	|	invokeStatementConditional:stmt
 		{:  :}
 	|	jsonGenerateStatementConditional:stmt
+		{:  :}
+	|	jsonParseStatementConditional:stmt
 		{:  :}
 	|	divideStatementConditional:stmt
 		{:  :}
