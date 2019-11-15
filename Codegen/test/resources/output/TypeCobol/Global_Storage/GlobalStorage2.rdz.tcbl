@@ -202,7 +202,7 @@
                by reference address of TC-GlobalData
            end-call
       *G-Date and G-TechCtx are accesible from GlobalStorage
-           MOVE G-Date TO myDate.
+           DISPLAY G-Date.
       *    MOVE G-TechCtx TO TestCtx.
            MOVE G-TechCtx-value TO TestCtx-value.
        END PROGRAM c0127659.
