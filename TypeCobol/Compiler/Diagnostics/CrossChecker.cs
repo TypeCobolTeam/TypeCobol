@@ -719,7 +719,7 @@ namespace TypeCobol.Compiler.Diagnostics
             return null;
         }
 
-        protected static void Check<T>(string nodeTypeName, T node, [NotNull] IList<T> found) where T : Node
+        private static void Check<T>(string nodeTypeName, T node, [NotNull] IList<T> found) where T : Node
         {
             if (found.Count > 1)
                 DiagnosticUtils.AddError(node, nodeTypeName + " \'" + node.Name + "\' already declared");
