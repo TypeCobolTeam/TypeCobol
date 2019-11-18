@@ -292,7 +292,6 @@ namespace TypeCobol.Test {
         /// Check for Documentation generation
         /// </summary>
         [TestMethod]
-        //[Ignore]
         [TestCategory("Parsing")]
         [TestProperty("Time", "fast")]
         public void CheckDocumentation()
@@ -309,6 +308,38 @@ namespace TypeCobol.Test {
             nbOfTests += folderTester.GetTestCount();
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
+        }
+
+        [TestMethod]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "fast")]
+        public void CheckFileNameProgramName()
+        {
+            Exception error = null;
+            int nbOfTests = 0;
+            string[] extensions = { ".cbl", ".pgm" };
+            string[] compilerExtensions = extensions.Concat(new[] { ".cpy" }).ToArray();
+
+            string directory = PlatformUtils.GetPathForProjectFile("Parser" + Path.DirectorySeparatorChar + "FilenamePgmnameConsistency");
+            var folderTester = new FolderTester(directory, directory, directory, extensions, compilerExtensions);
+            try
+            {
+                folderTester.Test(checkProgramName: true);
+            }
+            catch (Exception ex)
+            {
+                error = ex;
+            }
+            nbOfTests += folderTester.GetTestCount();
+            Console.WriteLine();
+
+            Console.Write("Number of tests: " + nbOfTests + "\n");
+            Assert.IsTrue(nbOfTests > 0, "No tests found");
+
+            if (error != null)
+            {
+                throw new Exception(error.Message);
+            }
         }
     }
 }

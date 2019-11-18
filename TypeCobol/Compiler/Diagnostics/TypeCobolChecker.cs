@@ -1,6 +1,7 @@
 using System;
 using Antlr4.Runtime;
 using System.Collections.Generic;
+using System.IO;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
@@ -12,8 +13,10 @@ using System.Runtime.InteropServices;
 using Analytics;
 using Castle.Core.Internal;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Parser.Generated;
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -977,7 +980,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
     public class ProgramChecker
     {
-        public static void OnNode(Program node)
+        public static void OnNode(Program node, TypeCobolOptions compilerOptions)
         {
             node.SetFlag(Node.Flag.MissingEndProgram, !(node.Children.LastOrDefault() is End));
 
@@ -987,6 +990,17 @@ namespace TypeCobol.Compiler.Diagnostics
                     "\"END PROGRAM\" is missing.", MessageCode.Warning);
             }
 
+            if (node.IsMainProgram && compilerOptions.CheckProgramName.DiagnosticLevel.HasValue)
+            {
+                string shortFilename = Path.GetFileNameWithoutExtension(node.CodeElement.TokenSource.SourceName);
+                if (!node.Name.Equals(shortFilename, StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageCode messageCode = compilerOptions.CheckProgramName.MessageCode;
+                    DiagnosticUtils.AddError(node, 
+                        "The program name \"" + node.Name + "\" must match the file name \"" + shortFilename + "\".", 
+                        compilerOptions.CheckProgramName.MessageCode);
+                }
+            }
         }
     }
 
@@ -1042,7 +1056,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
         }
-
+        
 
     }
 

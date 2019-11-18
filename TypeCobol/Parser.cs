@@ -14,6 +14,7 @@ using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.CodeModel;
 using Analytics;
 using TypeCobol.CustomExceptions;
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol
 {
@@ -149,12 +150,14 @@ namespace TypeCobol
 
 
 
-		public static Parser Parse(string path, DocumentFormat format, bool autoRemarks = false, IList<string> copies = null) {
+		public static Parser Parse(string path, DocumentFormat format, bool autoRemarks = false, IList<string> copies = null, bool checkProgramName = true) {
 			var parser = new Parser();
             var typeCobolOption = new TypeCobolOptions() { ExecToStep = ExecutionStep.Generate };
 #if EUROINFO_RULES
 		    typeCobolOption.AutoRemarksEnable = autoRemarks;
 #endif
+            typeCobolOption.CheckProgramName = new TypeCobolCheckOption(isActive: checkProgramName);
+
             parser.Init(path, typeCobolOption, format, copies);
 
             parser.Parse(path);

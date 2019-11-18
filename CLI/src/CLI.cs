@@ -149,8 +149,6 @@ namespace TypeCobol.Server
                 //Collect the missing copies
                 File.WriteAllLines(config.HaltOnMissingCopyFilePath, missingCopies.SelectMany(mc => mc.Value).Distinct());
 
-
-
                 //If copies are missing, don't try to parse main input files
                 //throw  an exception for the first dependency file
                 throw new MissingCopyException("Copy are missing in dependencies", missingCopies.First().Key, null, logged: false, needMail: false);

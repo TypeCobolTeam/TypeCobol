@@ -15,6 +15,7 @@ using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.LanguageServer.Context;
 using TypeCobol.LanguageServer.SignatureHelper;
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.LanguageServer
 {
@@ -61,6 +62,11 @@ namespace TypeCobol.LanguageServer
         /// true to use Euro-Information replacement rules
         /// </summary>
         public bool UseEuroInformationLegacyReplacingSyntax { get; set; }
+
+        /// <summary>
+        /// Check program name matching file name option.    
+        /// </summary>
+        public TypeCobolCheckOption CheckProgramName { get; set; }
 
         /// <summary>
         /// Timer Disabled for TypeCobol.LanguageServer.
@@ -225,6 +231,7 @@ namespace TypeCobol.LanguageServer
             this.Workspace.UseSyntaxColoring = UseSyntaxColoring;
             this.Workspace.UseAntlrProgramParsing = UseAntlrProgramParsing;
             this.Workspace.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;
+            this.Workspace.CheckProgramName = CheckProgramName;
             this.Workspace.TimerDisabledOption = TimerDisabledOption;
 
             // Attach event handlers.

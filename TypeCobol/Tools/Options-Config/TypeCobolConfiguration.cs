@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Castle.Core.Internal;
 using Mono.Options;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.Diagnostics;
 
 namespace TypeCobol.Tools.Options_Config
 {
@@ -34,6 +36,7 @@ namespace TypeCobol.Tools.Options_Config
 #else
         public bool UseEuroInformationLegacyReplacingSyntax = false;
 #endif
+        public TypeCobolCheckOption CheckProgramName = new TypeCobolCheckOption("ignore"); // default value ignore
 
         public bool IsErrorXML
         {
@@ -52,7 +55,6 @@ namespace TypeCobol.Tools.Options_Config
         public string RawExecToStep = "5";
         public string RawMaximumDiagnostics;
         public string RawOutputFormat = "0";
-
 
         public static Dictionary<ReturnCode, string> ErrorMessages = new Dictionary<ReturnCode, string>()
         {
@@ -148,6 +150,52 @@ namespace TypeCobol.Tools.Options_Config
         Cobol85Nested,
         Documentation
     }
+
+    public class TypeCobolCheckOption
+    {
+        public TypeCobolCheckOption(bool isActive)
+        {
+            if (!isActive)
+            {
+                DiagnosticLevel = null;
+            }
+        }
+
+        public TypeCobolCheckOption(Severity diagnosticLevel)
+        {
+            DiagnosticLevel = diagnosticLevel;
+        }
+
+        public TypeCobolCheckOption(string configValue)
+        {
+            if (Enum.TryParse(configValue, true, out Severity diagnosticLevel))
+            {
+                DiagnosticLevel = diagnosticLevel;
+            }
+            else if (string.Equals(configValue, "ignore", StringComparison.OrdinalIgnoreCase))
+            {
+                DiagnosticLevel = null; // ignore
+            }
+        }
+
+        public Severity? DiagnosticLevel { get; set; } = Severity.Warning;      // internal default value
+
+        public MessageCode MessageCode {
+            get
+            {
+                switch (DiagnosticLevel)
+                {
+                    case Severity.Error:
+                        return MessageCode.SyntaxErrorInParser;
+                    case Severity.Info:
+                        return MessageCode.Info;
+                    default:
+                        return MessageCode.Warning;
+                }
+            }
+        }
+}
+
     public static class TypeCobolOptionSet
     {
         public static OptionSet GetCommonTypeCobolOptions(TypeCobolConfiguration typeCobolConfig)
@@ -175,6 +223,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "zcr|zcallreport=", "{PATH} to report of all program called by zcallpgm.", v => typeCobolConfig.ReportZCallFilePath = v },
                 { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing.", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false },
                 { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
+                { "diag.cpn|diagnostic.checkProgramName=", "Indicate level of check program name: warning, error, info, ignore.", v => typeCobolConfig.CheckProgramName = new TypeCobolCheckOption(v) },
             };
             return commonOptions;
         }

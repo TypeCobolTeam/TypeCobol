@@ -13,6 +13,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.CustomExceptions;
+using TypeCobol.Tools.Options_Config;
 using String = System.String;
 
 namespace TypeCobol.Tools.APIHelpers
@@ -34,7 +35,7 @@ namespace TypeCobol.Tools.APIHelpers
             {
                 try
                 {
-                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck }, intrinsicDocumentFormat);
+                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck, CheckProgramName = new TypeCobolCheckOption(false) }, intrinsicDocumentFormat);
                     parser.Parse(path);
 
                     diagnostics.AddRange(parser.Results.AllDiagnostics());

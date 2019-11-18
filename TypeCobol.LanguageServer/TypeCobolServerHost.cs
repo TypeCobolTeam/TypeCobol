@@ -6,10 +6,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.StdioHttp;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 using TypeCobol.LanguageServer.Utilities;
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.LanguageServer
 {
@@ -117,6 +119,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public static bool UseOutlineRefresh { get; set; }
 
+        /// <summary>
+        /// Check program name matching file name option.    
+        /// </summary>
+        public static TypeCobolCheckOption CheckProgramName { get; set; } = new TypeCobolCheckOption("ignore");     // default value ignore
+
         public static System.Diagnostics.Process Process;
 
         /// <summary>
@@ -205,6 +212,7 @@ namespace TypeCobol.LanguageServer
                 { "dcs|disablecopysuffixing", "Deactictivate Euro Information suffixing", v => UseEuroInformationLegacyReplacingSyntax = false },
                 { "sc|syntaxcolor",  "Syntax Coloring Support.", _ => UseSyntaxColoring = true},
                 { "ol|outlineRefresh",  "Outline Support.", _ => UseOutlineRefresh = true},
+                { "diag.cpn|diagnostic.checkProgramName=", "Indicate level of check program name: warning, error, info, ignore.", v => CheckProgramName = new TypeCobolCheckOption(v) },
             };
 
             System.Collections.Generic.List<string> arguments;
@@ -280,7 +288,7 @@ namespace TypeCobol.LanguageServer
                 typeCobolServer.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;
                 typeCobolServer.UseSyntaxColoring = UseSyntaxColoring;
                 typeCobolServer.UseOutlineRefresh = UseOutlineRefresh;
-
+                typeCobolServer.CheckProgramName = CheckProgramName;
 
                 //Creating the thread that will read mesages and handle them 
                 var backgroundExecutionThread = new Thread(() => { MessageHandler(jsonRPCServer, typeCobolServer); }) { IsBackground = true };

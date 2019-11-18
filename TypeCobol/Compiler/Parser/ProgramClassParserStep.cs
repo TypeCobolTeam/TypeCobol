@@ -3,6 +3,7 @@ using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Concurrency;
@@ -108,14 +109,13 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        public static void CrossCheckPrograms(SourceFile root, TemporarySemanticDocument temporarySemanticDocument)
+        public static void CrossCheckPrograms(SourceFile root, TemporarySemanticDocument temporarySemanticDocument, TypeCobolOptions compilerOptions)
         {
             //Create link between data definition an Types, will be stored in SymbolTable
             TypeCobolLinker.LinkedTypedVariables(temporarySemanticDocument.TypedVariablesOutsideTypedef, 
                 temporarySemanticDocument.TypeThatNeedTypeLinking);
 
-            //Complete some information on Node and run checker that need a full AST
-            root.AcceptASTVisitor(new CrossCompleteChecker());
+            root.AcceptASTVisitor(new CrossCompleteChecker(compilerOptions));
         }
 
     }

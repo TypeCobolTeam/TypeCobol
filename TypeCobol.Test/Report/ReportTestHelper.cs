@@ -10,6 +10,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Report;
 using TypeCobol.Test.Utils;
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Test.Report
 {
@@ -69,6 +70,8 @@ namespace TypeCobol.Test.Report
 #if EUROINFO_RULES
                 typeCobolOption.AutoRemarksEnable = false;
 #endif
+                typeCobolOption.CheckProgramName = new TypeCobolCheckOption(false);
+
                 String copyFolder = Path.Combine(Directory.GetCurrentDirectory(), ROOT_COPY);
                 parser.Init(input, typeCobolOption, format, new List<string>() { copyFolder });
                 parser.Parse(input);
