@@ -21,7 +21,7 @@ namespace TypeCobol.Compiler.Parser
         }
 		internal static void AddError(CodeElement e, string message, Scanner.Token token, string rulestack = null, MessageCode code = MessageCode.SyntaxErrorInParser) {
             if (e.Diagnostics == null) e.Diagnostics = new List<Diagnostic>();
-            var parserDiag = new ParserDiagnostic(message, token, rulestack, code);
+		    var parserDiag = new ParserDiagnostic(message, token, rulestack, code);
             e.Diagnostics.Add(parserDiag);
         }
 	    internal static void AddError(CodeElement e, string message, DataDefinitionEntry data, string rulestack = null, MessageCode code = MessageCode.SyntaxErrorInParser) {
