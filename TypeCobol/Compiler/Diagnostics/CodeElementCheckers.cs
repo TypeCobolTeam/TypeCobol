@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Antlr4.Runtime;
+using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
@@ -69,7 +70,7 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class DataConditionChecker 
+    class DataConditionChecker
     {
         public static void OnCodeElement(DataConditionEntry data, CodeElementsParser.DataConditionEntryContext context)
         {
@@ -246,7 +247,7 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class SetStatementForAssignmentChecker 
+    class SetStatementForAssignmentChecker
     {
         public static void OnCodeElement(SetStatementForAssignment set, CodeElementsParser.SetStatementForAssignmentContext context)
         {
@@ -264,7 +265,7 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class SetStatementForIndexesChecker 
+    class SetStatementForIndexesChecker
     {
         public static void OnCodeElement(SetStatementForIndexes set, CodeElementsParser.SetStatementForIndexesContext context)
         {
@@ -289,6 +290,25 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    #endregion
+    class AlterStatementChecker
+    {
+        public static void OnCodeElement(AlterStatement statement, CodeElementsParser.AlterStatementContext context)
+        {
+            DiagnosticUtils.AddErrorWithNoRuleStack(statement, "ALTER should not be used", context, MessageCode.Warning);
+        }
+    }
 
+    class StopStatementChecker
+    {
+        public static void OnCodeElement(StopStatement statement, CodeElementsParser.StopStatementContext context)
+        {
+            if (statement.StopRun != null && statement.StopRun.Value)
+            {
+                DiagnosticUtils.AddError(statement, "GOBACK should be used instead of STOP RUN", ParseTreeUtils.GetFirstToken(context), 
+                    null, MessageCode.Warning);
+            }
+        }
+    }
+
+    #endregion
 }

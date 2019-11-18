@@ -1660,12 +1660,15 @@ namespace TypeCobol.Compiler.Parser
 			}
 		}
 
-		// --- ALTER ---
 
-		public override void EnterAlterStatement(CodeElementsParser.AlterStatementContext context) {            
-			Context = context;
-			CodeElement = CobolStatementsBuilder.CreateAlterStatement(context);
-		}
+	    // --- ALTER ---
+
+        public override void EnterAlterStatement(CodeElementsParser.AlterStatementContext context) {
+            Context = context;
+            AlterStatement alterStatement = CobolStatementsBuilder.CreateAlterStatement(context);
+            CodeElement = alterStatement; 
+            AlterStatementChecker.OnCodeElement(alterStatement, context);
+        }
 
         // --- CALL ---
         /// <summary>
@@ -1983,12 +1986,14 @@ namespace TypeCobol.Compiler.Parser
 			Context = context;
 			CodeElement = new StartStatementEnd();
 		}
-
+    
 		// --- STOP ---
 
 		public override void EnterStopStatement(CodeElementsParser.StopStatementContext context) {
-			Context = context;
-			CodeElement = CobolStatementsBuilder.CreateStopStatement(context);
+		    Context = context;
+		    var stopStatement = CobolStatementsBuilder.CreateStopStatement(context);
+		    CodeElement = stopStatement;
+		    StopStatementChecker.OnCodeElement(stopStatement, context);
 		}
 
 		// --- STRING ---

@@ -198,7 +198,7 @@ namespace TypeCobol.Codegen.Nodes
 
         /// <summary>
         /// This strategy extracts the type info in a declaration. This can be VALUE clause, usage, GLOBAL clause, etc.
-        /// It doesn't output the TYPE clause for typed data/parameter.
+        /// It doesn't output the TYPE clause for typed data/parameter and it also doesn't include the omittable (question mark) for parameter.
         /// </summary>
         private class ExtractTypeInfo : TokenFlushStrategy
         {
@@ -227,7 +227,8 @@ namespace TypeCobol.Codegen.Nodes
                     return false;
                 }
 
-                return true;
+                // Tokens that should not be outputted : QuestionMark in optional parameter declarations and PeriodSeparator at end.
+                return token.TokenType != TokenType.PeriodSeparator && token.TokenType != TokenType.QUESTION_MARK;
             }
         }
 
@@ -274,7 +275,7 @@ namespace TypeCobol.Codegen.Nodes
         /// <param name="strategy">Object to control which and how tokens are written.</param>
         /// <param name="hasSeenGlobal">Indicates whether a GLOBAL keyword has been written.</param>
         /// <param name="hasSeenPeriod">Indicates whether a Period separator has been written.</param>
-        private static void FlushConsumedTokens(ColumnsLayout? layout, IList<Token> consumedTokens, StringBuilder sb, TokenFlushStrategy strategy, out bool hasSeenGlobal, out  bool hasSeenPeriod)
+        private static void FlushConsumedTokens(ColumnsLayout? layout, IList<Token> consumedTokens, StringBuilder sb, TokenFlushStrategy strategy, out bool hasSeenGlobal, out bool hasSeenPeriod)
         {
             System.Diagnostics.Contracts.Contract.Assert(consumedTokens != null);
             System.Diagnostics.Contracts.Contract.Assert(sb != null);
@@ -283,16 +284,30 @@ namespace TypeCobol.Codegen.Nodes
             hasSeenGlobal = false;
             hasSeenPeriod = false;
 
-            // First token of the current line. Can be null only if consumedTokens is empty.
-            Token referenceTokenForCurrentLine = consumedTokens.Count > 0 ? consumedTokens[0] : null;
+            // No need to keep going if there are no tokens...
+            if (consumedTokens.Count == 0) return;
 
-            int i = 0;
+            // Skip any formalized comment block at the beginning of the consumed tokens collection.
+            int i = -1;
+            TokenFamily tokenFamily;
+            do
+            {
+                tokenFamily = consumedTokens[++i].TokenFamily;
+            }
+            while (tokenFamily == TokenFamily.FormalizedCommentsFamily && i < consumedTokens.Count);
+
+            /*
+             * Reference token to handle line breaks, it is initialized with the first consumed token which is not part of a formalized comment.
+             * NOTE : if we ran out of tokens while skipping the formalized comment at the beginning, we simply initialize the reference token to null
+             * and then the method ends due to the condition in the following while loop.
+             */
+            Token referenceTokenForCurrentLine = i < consumedTokens.Count ? consumedTokens[i] : null;
             while (i < consumedTokens.Count)
             {
                 Token token = consumedTokens[i];
 
-                // Should the token be written or not ?
-                if (!strategy.ShouldOutput(token))
+                // Should the token be written or not ? We are also discarding comment tokens here.
+                if (token.TokenFamily == TokenFamily.Comments || token.TokenFamily == TokenFamily.MultilinesCommentsFamily || !strategy.ShouldOutput(token))
                 {
                     i++;
                     continue;
@@ -315,7 +330,7 @@ namespace TypeCobol.Codegen.Nodes
                     {
                         if (layout.Value == ColumnsLayout.CobolReferenceFormat)
                         {
-                            nPad = Math.Max(0, consumedTokens[i].Column - 8);
+                            nPad = Math.Max(0, token.Column - 8);
                         }
                     }
                     string pad = new string(' ', nPad);
@@ -486,9 +501,11 @@ namespace TypeCobol.Codegen.Nodes
             }
 
             list_items.AddRange(pathVariables);
-            string qn = string.Join(".", list_items.ToArray());
-            AddIndexMap(rootNode, rootNode.QualifiedName.ToString(), indexes, map);
-            AddIndexMap(ownerDefinition, qn, indexes, map);
+            string qn = string.Join(".", list_items.Where(item => item != null));
+
+            // If indexes directly come from their DataDef, use the computed path (qn). If they come from a TypeDef, the path is the rootNode.QualifiedName.
+            AddIndexMap(rootNode, rootNode == ownerDefinition ? qn : rootNode.QualifiedName.ToString(), indexes, map);
+
             return map;
         }
 
@@ -511,7 +528,7 @@ namespace TypeCobol.Codegen.Nodes
                         if (sym.Name.Equals(index.Name))
                         {
                             string qualified_name = qn + '.' + index.Name;
-                            string hash_name = GeneratorHelper.ComputeIndexHashName(qualified_name, parentNode);
+                            string hash_name = index.IsFlagSet(Flag.IndexUsedWithQualifiedName) ? GeneratorHelper.ComputeIndexHashName(qualified_name, parentNode) : index.Name;
                             map[sym.NameLiteral.Token] = hash_name;
                         }
                     }
