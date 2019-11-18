@@ -60,7 +60,7 @@
        WORKING-STORAGE SECTION.
        01 PIC X(8) value ':TC:GBLS'.
        01 TC-GlobalData.
-       
+                               
        02 GlobalVar   PIC X.
 
        LINKAGE SECTION.
