@@ -287,16 +287,30 @@ namespace TypeCobol.Codegen.Nodes
             hasSeenGlobal = false;
             hasSeenPeriod = false;
 
-            // First token of the current line. Can be null only if consumedTokens is empty.
-            Token referenceTokenForCurrentLine = consumedTokens.Count > 0 ? consumedTokens[0] : null;
+            // No need to keep going if there are no tokens...
+            if (consumedTokens.Count == 0) return;
 
-            int i = 0;
+            // Skip any formalized comment block at the beginning of the consumed tokens collection.
+            int i = -1;
+            TokenFamily tokenFamily;
+            do
+            {
+                tokenFamily = consumedTokens[++i].TokenFamily;
+            }
+            while (tokenFamily == TokenFamily.FormalizedCommentsFamily && i < consumedTokens.Count);
+
+            /*
+             * Reference token to handle line breaks, it is initialized with the first consumed token which is not part of a formalized comment.
+             * NOTE : if we ran out of tokens while skipping the formalized comment at the beginning, we simply initialize the reference token to null
+             * and then the method ends due to the condition in the following while loop.
+             */
+            Token referenceTokenForCurrentLine = i < consumedTokens.Count ? consumedTokens[i] : null;
             while (i < consumedTokens.Count)
             {
                 Token token = consumedTokens[i];
 
-                // Should the token be written or not ?
-                if (!strategy.ShouldOutput(token))
+                // Should the token be written or not ? We are also discarding comment tokens here.
+                if (token.TokenFamily == TokenFamily.Comments || token.TokenFamily == TokenFamily.MultilinesCommentsFamily || !strategy.ShouldOutput(token))
                 {
                     i++;
                     continue;
