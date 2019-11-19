@@ -1,3 +1,5 @@
+      * 1 errors
+      * Line 23[8,18] <37, Warning, General> - Warning: Paragraph 'TRAITEMENT' is empty
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Functions.
 

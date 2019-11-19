@@ -1,6 +1,8 @@
 ﻿using JetBrains.Annotations;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using TypeCobol.Compiler.CodeElements;
@@ -9,6 +11,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using System.Text.RegularExpressions;
+using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics
@@ -370,6 +373,16 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(SourceComputer sourceComputer)
+        {
+            if (sourceComputer.CodeElement.DebuggingMode?.Value == true)
+            {
+                Token token = sourceComputer.CodeElement.DebuggingMode.Token;
+                DiagnosticUtils.AddError(sourceComputer.CodeElement, "Debugging mode is active", token, null, MessageCode.Warning);
+            }
+            return true;
+        }
+
         /// <summary>
         /// Test if the received DataDefinition has other children than DataConditionEntry or DataRenamesEntry
         /// </summary>
@@ -713,19 +726,48 @@ namespace TypeCobol.Compiler.Diagnostics
             return null;
         }
 
-        protected static void Check<T>(T node, [NotNull] IList<T> found) where T : Node
+        private static void Check<T>(string nodeTypeName, T node, [NotNull] IList<T> found) where T : Node
         {
-            if (found.Count > 1) DiagnosticUtils.AddError(node, "Symbol \'" + node.Name + "\' already declared");
+            if (found.Count > 1)
+                DiagnosticUtils.AddError(node, nodeTypeName + " \'" + node.Name + "\' already declared");
+
+            // a section/paragraph (node) is empty when it has no child or when its child/children is/are an End node
+            bool empty = true; // default value
+            foreach (Node child in node.Children)  
+            {
+                if (child is Sentence || child is Paragraph)
+                {
+                    // have child(ren); at least one End node
+                    if ((child.Children.Count == 1 && (child.Children[0] is Nodes.End)) == false)
+                    {
+                        // not only one END node
+                        empty = false;
+                        break;
+                    }
+                }
+                else
+                {
+                    // Use or Exec node : statement
+                    Debug.Assert(child is Use || child is Exec);
+                    empty = false;
+                    break;
+                }
+            }
+            if (empty)
+            {
+                DiagnosticUtils.AddError(node, nodeTypeName + " \'" + node.Name + "\' is empty",
+                    MessageCode.Warning);
+            }
         }
 
         public static void CheckSection(Section section)
         {
-            Check(section, section.SymbolTable.GetSection(section.Name));
+            Check("Section", section, section.SymbolTable.GetSection(section.Name));
         }
 
         public static void CheckParagraph(Paragraph paragraph)
         {
-            Check(paragraph, paragraph.SymbolTable.GetParagraph(paragraph.Name));
+            Check("Paragraph", paragraph, paragraph.SymbolTable.GetParagraph(paragraph.Name));
         }
     }
 

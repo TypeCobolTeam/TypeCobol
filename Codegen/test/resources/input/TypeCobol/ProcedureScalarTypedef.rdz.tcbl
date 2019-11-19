@@ -1,0 +1,22 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MyPgm.
+       data division.
+       working-storage section.
+      %<<<
+       Formalized comments should not affect how typed variables or
+       parameters are generated. See original issue #1538.
+      %>>>
+       01  MyAmount1      TYPEDEF STRICT   PUBLIC PIC S9(05)V9(05).
+       01  MyAmount2      TYPEDEF STRICT   PUBLIC PIC S9(05)V9(05).
+      
+       01 Var1 type MyAmount1.
+       01 Var2 type MyAmount2.
+       PROCEDURE DIVISION.
+       DECLARE PROCEDURE Foo private
+               INPUT     Param1      type MyAmount1
+                         Param2      type MyAmount2
+               .
+       procedure DIVISION.
+           .
+       END-DECLARE.
+       END PROGRAM MyPgm.
