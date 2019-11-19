@@ -42,6 +42,7 @@
            .
                           
        INIT-LIBRARY.
+          EXIT.
       *DECLARE PROCEDURE InFct PUBLIC
       *        INPUT     d PIC X(9)
       *        .

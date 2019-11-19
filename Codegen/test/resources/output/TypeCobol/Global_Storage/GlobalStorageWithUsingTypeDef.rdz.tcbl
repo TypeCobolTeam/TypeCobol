@@ -165,7 +165,7 @@
        WORKING-STORAGE SECTION.
        01 PIC X(8) value ':TC:GBLS'.
        01 TC-GlobalData.
-       
+                              
       *01 SetSharedDataIsDone   type BOOL.
        02  SetSharedDataIsDone-value PIC X VALUE LOW-VALUE.
            88  SetSharedDataIsDone       VALUE 'T'.
