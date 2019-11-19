@@ -1,4 +1,5 @@
 --- Diagnostics ---
+Line 5[38,46] <37, Warning, General> - Warning: Debugging mode is active OffendingSymbol=[38,46:DEBUGGING]<DEBUGGING>
 Line 14[12,20] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
 Line 19[12,19] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
 Line 24[12,19] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
