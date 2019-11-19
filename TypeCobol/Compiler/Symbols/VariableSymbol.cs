@@ -78,7 +78,7 @@ namespace TypeCobol.Compiler.Symbols
         /// Exemple:
         ///     77 TOTAL-DAY  pic 9(6)V99.
         /// </summary>
-        public bool IsIsolate
+        public bool IsIndependent
         {
             get
             {

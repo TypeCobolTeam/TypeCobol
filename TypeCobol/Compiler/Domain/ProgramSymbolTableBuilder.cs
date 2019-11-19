@@ -64,7 +64,9 @@ namespace TypeCobol.Compiler.Domain
         }
 #endif
         /// <summary>
-        /// The List of Stacked Program symbol built as a Scope
+        /// The List of Stacked Program symbol built as a Scope.
+        /// The first main program will be the first element of the list, 
+        /// followed by remaining stacked programs.
         /// </summary>
         public List<ProgramSymbol> Programs
         {
