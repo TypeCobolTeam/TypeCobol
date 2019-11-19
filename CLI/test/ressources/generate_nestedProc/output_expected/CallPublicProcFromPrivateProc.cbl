@@ -67,7 +67,8 @@
       *  .
 
        INIT-LIBRARY.
-       
+           EXIT.
+
        TRAITEMENT.
       *OK  call check of PGM1
       *    call check input mydate1
