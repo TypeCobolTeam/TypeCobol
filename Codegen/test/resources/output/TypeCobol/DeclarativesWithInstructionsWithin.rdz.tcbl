@@ -1,3 +1,5 @@
+      * 1 errors
+      * Line 7[38,46] <37, Warning, General> - Warning: Debugging mode is active
       *TypeCobol_Version:TestTypeCobolVersion
       *Declaratives and no paragraph under procedure division
       *Debug is active
