@@ -343,6 +343,14 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("ProcedureCompletionInputInoutOutput", LsrTestingOptions.NoLsrTesting, true);
         }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void ProcedureCompletionInputInoutOutput_Case()
+        {
+            LSRTestHelper.Test("ProcedureCompletionInputInoutOutput-Case", LsrTestingOptions.NoLsrTesting, true);
+        }
+
         [TestMethod]
         [TestCategory("Completion")]
         public void ProcedureCompletionInputInoutOutput_NoContext()

@@ -1994,12 +1994,14 @@ namespace TypeCobol.Compiler.Parser
 			Context = context;
 			CodeElement = new StartStatementEnd();
 		}
-
+    
 		// --- STOP ---
 
 		public override void EnterStopStatement(CodeElementsParser.StopStatementContext context) {
-			Context = context;
-			CodeElement = CobolStatementsBuilder.CreateStopStatement(context);
+		    Context = context;
+		    var stopStatement = CobolStatementsBuilder.CreateStopStatement(context);
+		    CodeElement = stopStatement;
+		    StopStatementChecker.OnCodeElement(stopStatement, context);
 		}
 
 		// --- STRING ---
