@@ -25,7 +25,7 @@
       *      10 item-2 PIC X.
       
       *01 ArrayTypeFiller3 TYPEDEF STRICT.
-      *   05 OCCURS 10 INDEXED BY I-UniqueName-Filler.
+      *   05 FILLER OCCURS 10 INDEXED BY I-UniqueName-Filler.
       *      10 item-3 PIC X.
       
       *01 ArrayTypeAnonymous3 TYPEDEF STRICT.
@@ -62,7 +62,7 @@
                                           
       *01 Table6 TYPE ArrayTypeFiller3.
        01 Table6.
-           02 OCCURS 10 INDEXED BY ba166831I-UniqueName-Filler.
+           02 FILLER OCCURS 10 INDEXED BY ba166831I-UniqueName-Filler.
              03 item-3 PIC X.
                                        
       *01 Table7 TYPE ArrayTypeAnonymous3.
@@ -80,7 +80,7 @@
        01 TableWithFillerArray.
       *   05 FILLER Type ElementType
       *      OCCURS 10 INDEXED BY Idx-InFillerArray.
-          05
+          05 FILLER
              OCCURS 10 INDEXED BY Idx-InFillerArray.
            06 item-4 PIC X.
                                                     
