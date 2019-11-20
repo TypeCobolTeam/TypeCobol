@@ -11,7 +11,7 @@ namespace TypeCobol.Tools.Options_Config
     /// <summary>
     /// TypeCobolConfiguration class holds all the argument information like input files, output files, error file etc.
     /// </summary>
-    public class TypeCobolConfiguration
+    public class TypeCobolConfiguration : ITypeCobolCheckOptions
     {
         public string CommandLine { get; set; }
         public DocumentFormat Format = DocumentFormat.RDZReferenceFormat;
@@ -35,9 +35,9 @@ namespace TypeCobol.Tools.Options_Config
 #else
         public bool UseEuroInformationLegacyReplacingSyntax = false;
 #endif
-	    public TypeCobolCheckOption CheckEndAlignment = new TypeCobolCheckOption("warning"); // default value
+        public TypeCobolCheckOption CheckEndAlignment { get; set; }
 
-		public bool IsErrorXML
+        public bool IsErrorXML
         {
             get { return ErrorFile != null && ErrorFile.ToLower().EndsWith(".xml"); }
         }
@@ -88,6 +88,12 @@ namespace TypeCobol.Tools.Options_Config
             { ReturnCode.ExtractusedCopyError,   "Extractused copy path given is unreachable." },
             
         };
+
+        public TypeCobolConfiguration()
+        {
+            // default values for checks
+            TypeCobolCheckOptionsInitializer.SetDefaultValues(this);
+        }
     }
 
     /// <summary>
@@ -153,51 +159,61 @@ namespace TypeCobol.Tools.Options_Config
 
     public class TypeCobolCheckOption
     {
-	    public TypeCobolCheckOption(bool isActive)
+        public static TypeCobolCheckOption Parse(string argument)
 	    {
-		    if (!isActive)
+		    if (Enum.TryParse(argument, true, out Severity diagnosticLevel))
 		    {
-			    DiagnosticLevel = null;
+			    return new TypeCobolCheckOption(diagnosticLevel);
 		    }
-	    }
 
-	    public TypeCobolCheckOption(Severity diagnosticLevel)
-	    {
-		    DiagnosticLevel = diagnosticLevel;
-	    }
-
-	    public TypeCobolCheckOption(string configValue)
-	    {
-		    if (Enum.TryParse(configValue, true, out Severity diagnosticLevel))
+            if (string.Equals(argument, "ignore", StringComparison.OrdinalIgnoreCase))
 		    {
-			    DiagnosticLevel = diagnosticLevel;
+			    return new TypeCobolCheckOption(null);
 		    }
-		    else if (string.Equals(configValue, "ignore", StringComparison.OrdinalIgnoreCase))
-		    {
-			    DiagnosticLevel = null; // ignore
-		    }
-	    }
 
-	    public Severity? DiagnosticLevel { get; set; } = Severity.Warning;      // internal default value
+            throw new ArgumentException();
+        }
 
-	    public MessageCode MessageCode
-	    {
-		    get
-		    {
-			    switch (DiagnosticLevel)
-			    {
-				    case Severity.Error:
-					    return MessageCode.SyntaxErrorInParser;
-				    case Severity.Info:
-					    return MessageCode.Info;
-				    default:
-					    return MessageCode.Warning;
-			    }
-		    }
-	    }
+        private readonly Severity? _diagnosticLevel;
+
+        public TypeCobolCheckOption(Severity? diagnosticLevel)
+        {
+            _diagnosticLevel = diagnosticLevel;
+        }
+
+        public bool IsActive => _diagnosticLevel.HasValue;
+
+        public MessageCode GetMessageCode()
+        {
+            switch (_diagnosticLevel)
+            {
+                case Severity.Error:
+                    return MessageCode.SyntaxErrorInParser;
+                case Severity.Info:
+                    return MessageCode.Info;
+                case Severity.Warning:
+                    return MessageCode.Warning;
+                default:
+                    // invalid Severity or not set
+                    throw new InvalidOperationException("The considered check is not active!");
+            }
+        }
     }
 
-	public static class TypeCobolOptionSet
+    public interface ITypeCobolCheckOptions
+    {
+        TypeCobolCheckOption CheckEndAlignment { get; set; }
+    }
+
+    public static class TypeCobolCheckOptionsInitializer
+    {
+        public static void SetDefaultValues(ITypeCobolCheckOptions checkOptions)
+        {
+            checkOptions.CheckEndAlignment = new TypeCobolCheckOption(Severity.Warning);
+        }
+    }
+
+    public static class TypeCobolOptionSet
     {
         public static OptionSet GetCommonTypeCobolOptions(TypeCobolConfiguration typeCobolConfig)
         {
@@ -224,7 +240,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "zcr|zcallreport=", "{PATH} to report of all program called by zcallpgm.", v => typeCobolConfig.ReportZCallFilePath = v },
                 { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing.", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false },
                 { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
-                { "diag.cea|diagnostic.checkEndAlignment=", "Indicate level of check end aligment: warning, error, info, ignore.", v => typeCobolConfig.CheckEndAlignment = new TypeCobolCheckOption(v) },
+                { "diag.cea|diagnostic.checkEndAlignment=", "Indicate level of check end aligment: warning, error, info, ignore.", v => typeCobolConfig.CheckEndAlignment = TypeCobolCheckOption.Parse(v) },
 			};
             return commonOptions;
         }

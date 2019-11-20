@@ -11,7 +11,7 @@ namespace TypeCobol.Compiler.Directives
     /// <summary>
     /// TypeCobol compiler options (superset of the IBM Enterprise Cobol compiler options)
     /// </summary>
-    public class TypeCobolOptions : IBMCompilerOptions
+    public class TypeCobolOptions : IBMCompilerOptions, ITypeCobolCheckOptions
     {
         // insert options specific to TypeCobol here ...
 #if EUROINFO_RULES
@@ -45,10 +45,10 @@ namespace TypeCobol.Compiler.Directives
         private bool _useEuroInformationLegacyReplacingSyntax;
 #endif
 
-		/// <summary>
-		/// Check if a End statement is aligned with the matching opening statement.
-		/// </summary>
-		public TypeCobolCheckOption CheckEndAlignment { get; set; } = new TypeCobolCheckOption(Severity.Warning);
+        /// <summary>
+        /// Check if a End statement is aligned with the matching opening statement.
+        /// </summary>
+        public TypeCobolCheckOption CheckEndAlignment { get; set; }
 
         public TypeCobolOptions(TypeCobolConfiguration config)
         {
@@ -61,9 +61,9 @@ namespace TypeCobol.Compiler.Directives
 
         public TypeCobolOptions()
         {
-                
+            // default values for checks
+            TypeCobolCheckOptionsInitializer.SetDefaultValues(this);
         }
-
 
         /// <summary>
         /// Clone the compiler options to enable specific parameters for each file

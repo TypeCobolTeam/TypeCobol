@@ -394,7 +394,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(End end)
         {
             // Check end statement is aligned with the matching opening statement
-            if (_compilerOptions.CheckEndAlignment.DiagnosticLevel.HasValue && end.CodeElement.Type != CodeElementType.SentenceEnd)
+            if (_compilerOptions.CheckEndAlignment.IsActive && end.CodeElement.Type != CodeElementType.SentenceEnd)
             {
                 CodeElement parentCodeElement = end.Parent.CodeElement; ;
                 if (parentCodeElement?.IsInsideCopy() == false && end.IsInsideCopy() == false)
@@ -408,7 +408,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(FunctionEnd functionEnd)
         {
             // Check end statement is aligned with the matching opening statement
-            if (_compilerOptions.CheckEndAlignment.DiagnosticLevel.HasValue)
+            if (_compilerOptions.CheckEndAlignment.IsActive)
             {
                 CodeElement parentCodeElement = functionEnd.Parent.CodeElement;
                 if (parentCodeElement?.IsInsideCopy() == false && functionEnd.IsInsideCopy() == false)
@@ -721,15 +721,15 @@ namespace TypeCobol.Compiler.Diagnostics
                 node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
         }
 
-        private void CheckEndNode(IToken openingCodeElement, CodeElement endCodeElement)
+        private void CheckEndNode(IToken openingToken, CodeElement endCodeElement)
         {
             // Check end statement is aligned with the matching opening statement
-            if (openingCodeElement.Line != endCodeElement.Line &&
-                openingCodeElement.StartIndex != endCodeElement.StartIndex)
+            if (openingToken.Line != endCodeElement.Line &&
+                openingToken.StartIndex != endCodeElement.StartIndex)
             {
                 DiagnosticUtils.AddError(endCodeElement,
                     "a End statement is not aligned with the matching opening statement", 
-                    _compilerOptions.CheckEndAlignment.MessageCode);
+                    _compilerOptions.CheckEndAlignment.GetMessageCode());
             }
         }
     }
