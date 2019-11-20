@@ -13,7 +13,7 @@
       
        PROCEDURE DIVISION.
        INIT-LIBRARY.
-      
+           exit.
        DECLARE PROCEDURE IsPersonValid
            input  pperson TYPE Person
                   pname PIC X(20)
