@@ -25,7 +25,7 @@
              10 item-2 PIC X.
       
        01 ArrayTypeFiller3 TYPEDEF STRICT.
-          05 OCCURS 10 INDEXED BY I-UniqueName-Filler.
+          05 FILLER OCCURS 10 INDEXED BY I-UniqueName-Filler.
              10 item-3 PIC X.
       
        01 ArrayTypeAnonymous3 TYPEDEF STRICT.
