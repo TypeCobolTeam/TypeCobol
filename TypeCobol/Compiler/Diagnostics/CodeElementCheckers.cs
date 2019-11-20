@@ -23,8 +23,6 @@ namespace TypeCobol.Compiler.Diagnostics
             var global = GetContext(data, context?.globalClause());
             if (data.DataName == null)
             {
-                if (!data.IsFiller)
-                    DiagnosticUtils.AddError(data, "Data name or FILLER expected", context?.dataNameDefinition());
                 if (data.IsExternal)
                     DiagnosticUtils.AddError(data,
                         "Data name must be specified for any entry containing the EXTERNAL clause", external);

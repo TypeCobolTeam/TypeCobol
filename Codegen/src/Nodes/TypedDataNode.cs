@@ -682,27 +682,31 @@ namespace TypeCobol.Codegen.Nodes
         }
 
         /// <summary>
-        /// Append in the given StringBuilder the name and any global attribute of the the given DataDefition object.
+        /// Append in the given StringBuilder the name and any global attribute of the the given DataDefinition object.
         /// </summary>
         /// <param name="buffer">The String Buffer</param>
         /// <param name="dataDef">The Data Definition object</param>
-        /// <param name="globalSeen">Global token hass been already seen</param>
+        /// <param name="globalSeen">Global token has been seen already</param>
         internal static void AppendNameAndGlobalDataDef(StringBuilder buffer, DataDefinitionEntry dataDef, bool globalSeen)
         {
+            // Write data name if any.
             if (dataDef.Name != null)
             {
                 buffer.Append(' ').Append(dataDef.Name);
-                if (!globalSeen)
+            }
+
+            if (dataDef is CommonDataDescriptionAndDataRedefines dataDesc)
+            {
+                // Write FILLER keyword if any. FILLER is mutually exclusive with name so no need to check that data name is null again.
+                if (dataDesc.Filler != null)
                 {
-                    if (dataDef is CommonDataDescriptionAndDataRedefines)
-                    {
-                        CommonDataDescriptionAndDataRedefines cdadr = dataDef as CommonDataDescriptionAndDataRedefines;
-                        if (cdadr.IsGlobal)
-                        {
-                            Token gtoken = GetToken(dataDef.ConsumedTokens, TokenType.GLOBAL);
-                            buffer.Append(' ').Append(gtoken.Text);
-                        }
-                    }
+                    buffer.Append(' ').Append(dataDesc.Filler.Token.Text);
+                }
+
+                // Write GLOBAL modifier if not already seen and originally present.
+                if (!globalSeen && dataDesc.IsGlobal)
+                {
+                    buffer.Append(' ').Append(dataDesc.Global.Token.Text);
                 }
             }
         }
