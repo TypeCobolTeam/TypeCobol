@@ -284,16 +284,30 @@ namespace TypeCobol.Codegen.Nodes
             hasSeenGlobal = false;
             hasSeenPeriod = false;
 
-            // First token of the current line. Can be null only if consumedTokens is empty.
-            Token referenceTokenForCurrentLine = consumedTokens.Count > 0 ? consumedTokens[0] : null;
+            // No need to keep going if there are no tokens...
+            if (consumedTokens.Count == 0) return;
 
-            int i = 0;
+            // Skip any formalized comment block at the beginning of the consumed tokens collection.
+            int i = -1;
+            TokenFamily tokenFamily;
+            do
+            {
+                tokenFamily = consumedTokens[++i].TokenFamily;
+            }
+            while (tokenFamily == TokenFamily.FormalizedCommentsFamily && i < consumedTokens.Count);
+
+            /*
+             * Reference token to handle line breaks, it is initialized with the first consumed token which is not part of a formalized comment.
+             * NOTE : if we ran out of tokens while skipping the formalized comment at the beginning, we simply initialize the reference token to null
+             * and then the method ends due to the condition in the following while loop.
+             */
+            Token referenceTokenForCurrentLine = i < consumedTokens.Count ? consumedTokens[i] : null;
             while (i < consumedTokens.Count)
             {
                 Token token = consumedTokens[i];
 
-                // Should the token be written or not ?
-                if (!strategy.ShouldOutput(token))
+                // Should the token be written or not ? We are also discarding comment tokens here.
+                if (token.TokenFamily == TokenFamily.Comments || token.TokenFamily == TokenFamily.MultilinesCommentsFamily || !strategy.ShouldOutput(token))
                 {
                     i++;
                     continue;
@@ -668,27 +682,31 @@ namespace TypeCobol.Codegen.Nodes
         }
 
         /// <summary>
-        /// Append in the given StringBuilder the name and any global attribute of the the given DataDefition object.
+        /// Append in the given StringBuilder the name and any global attribute of the the given DataDefinition object.
         /// </summary>
         /// <param name="buffer">The String Buffer</param>
         /// <param name="dataDef">The Data Definition object</param>
-        /// <param name="globalSeen">Global token hass been already seen</param>
+        /// <param name="globalSeen">Global token has been seen already</param>
         internal static void AppendNameAndGlobalDataDef(StringBuilder buffer, DataDefinitionEntry dataDef, bool globalSeen)
         {
+            // Write data name if any.
             if (dataDef.Name != null)
             {
                 buffer.Append(' ').Append(dataDef.Name);
-                if (!globalSeen)
+            }
+
+            if (dataDef is CommonDataDescriptionAndDataRedefines dataDesc)
+            {
+                // Write FILLER keyword if any. FILLER is mutually exclusive with name so no need to check that data name is null again.
+                if (dataDesc.Filler != null)
                 {
-                    if (dataDef is CommonDataDescriptionAndDataRedefines)
-                    {
-                        CommonDataDescriptionAndDataRedefines cdadr = dataDef as CommonDataDescriptionAndDataRedefines;
-                        if (cdadr.IsGlobal)
-                        {
-                            Token gtoken = GetToken(dataDef.ConsumedTokens, TokenType.GLOBAL);
-                            buffer.Append(' ').Append(gtoken.Text);
-                        }
-                    }
+                    buffer.Append(' ').Append(dataDesc.Filler.Token.Text);
+                }
+
+                // Write GLOBAL modifier if not already seen and originally present.
+                if (!globalSeen && dataDesc.IsGlobal)
+                {
+                    buffer.Append(' ').Append(dataDesc.Global.Token.Text);
                 }
             }
         }
