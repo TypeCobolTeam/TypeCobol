@@ -9,7 +9,7 @@ namespace TypeCobol.Compiler.Source
     /// A Gap Source Text, with the concept of https://en.wikipedia.org/wiki/Gap_buffer:
     /// that allows efficient insertion and deletion operations clustered near the same location
     /// </summary>
-    public class GapSourceText : SourceText
+    public class GapSourceText : SourceText, IEquatable<GapSourceText>
     {
         int size;                               // size of allocated memory
         int length;                             // length of text
@@ -543,35 +543,38 @@ namespace TypeCobol.Compiler.Source
         /// </summary>
         /// <param name="text">The source text to be checked for equality</param>
         /// <returns>true if both the given source text is equals to this one, false otherwise</returns>
-        public override bool Equals(object text)                                         
+        public override bool Equals(object text)
         {
-            if (!(text is GapSourceText))
-	            return false;
-            GapSourceText t= (GapSourceText) text; 
+            return this.Equals(text as GapSourceText);
+        }
 
-            if (length != t.length) 
-	            return false;
+        public bool Equals(GapSourceText gapSourceText)
+        {
+            if (gapSourceText == null) return false;
+            if (Object.ReferenceEquals(this, gapSourceText)) return true;
+
+            if (length != gapSourceText.length) return false;
 
             MoveGap(length);
-            t.MoveGap(t.length);
-            return CompareArrays(body, t.body, length);
+            gapSourceText.MoveGap(gapSourceText.length);
+            return CompareArrays(body, gapSourceText.body, length);
         }
 
         /// <summary>
         /// Compute a Hash code value
         /// </summary>
         /// <returns>The hash code value</returns>
-        //public override int GetHashCode()                                         
-        //{
-        //    int hash;
-        //    int i;
+        public override int GetHashCode()                                         
+        {
+            int hash;
+            int i;
 
-        //    for (hash= 0, i = 0; i < part1len; i++)
-        //        hash= (hash << 1) ^ body[i];
-        //    for (i = part1len + gaplen; i < size; i++)
-        //        hash= (hash << 1) ^ body[i];
-        //    return hash;
-        //}
+            for (hash= 0, i = 0; i < part1len; i++)
+                hash= (hash << 1) ^ body[i];
+            for (i = part1len + gaplen; i < size; i++)
+                hash= (hash << 1) ^ body[i];
+            return hash;
+        }
 
         /// <summary>
         /// Write the content of this SourceText into a TextWriter

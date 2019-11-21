@@ -8,7 +8,7 @@ namespace TypeCobol.Compiler.Source
     /// <summary>
     /// A Source Text which is represented as a String of characters
     /// </summary>
-    public class StringSourceText : SourceText
+    public class StringSourceText : SourceText, IEquatable<StringSourceText>
     {
         private const int DEFAULT_SIZE = 16;
         int next;           //Next free slot
@@ -372,27 +372,32 @@ namespace TypeCobol.Compiler.Source
         /// <returns>true if both the given source text is equals to this one, false otherwise</returns>
         public override bool Equals(object obj)
         {
-            if (!(obj is StringSourceText))
-                return false;
-            StringSourceText t = (StringSourceText)obj;
-            if (next != t.next)
-                return false;
-            return CompareArrays(content, t.content, next);
+            return Equals(obj as StringSourceText);
+        }
+
+        public bool Equals(StringSourceText stringSourceText)
+        {
+            if (stringSourceText == null) return false;
+            if (Object.ReferenceEquals(this, stringSourceText)) return true;
+
+            if (next != stringSourceText.next) return false;
+            return CompareArrays(content, stringSourceText.content, next);
         }
 
         /// <summary>
-        /// Compute a Hash code value
+        /// Return the Hash code value
         /// </summary>
         /// <returns>The hash code value</returns>
-        //public override int GetHashCode ()
-        //{
-        //    int hash;
-        //    int i;
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+            //    int hash;
+            //    int i;
 
-        //    for (hash = 0, i = 0; i < Size; i++)
-        //        hash= (hash << 1) ^ content[i];
-        //    return hash;
-        //}
+            //    for (hash = 0, i = 0; i < Size; i++)
+            //        hash= (hash << 1) ^ content[i];
+            //    return hash;
+        }
 
         /// <summary>
         /// Expand the content buffer to a new size

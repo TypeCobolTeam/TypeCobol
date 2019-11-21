@@ -818,7 +818,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
     // [COBOL 2002]
-    public class TypeDefinition: DataDefinition, Parent<DataDescription>, IDocumentable
+    public class TypeDefinition: DataDefinition, Parent<DataDescription>, IDocumentable, IEquatable<TypeDefinition>
     {
         public TypeDefinition([NotNull] DataTypeDescriptionEntry entry) : base(entry)
         {
@@ -850,18 +850,15 @@ namespace TypeCobol.Compiler.Nodes {
 
         public override bool Equals(object obj)
         {
-            if ((obj as TypeDefinition) != null)
+            if (obj is TypeDefinition)
             {
-                var compareTypeDef = (TypeDefinition) obj;
-                return compareTypeDef.DataType == this.DataType &&
-                       //compareTypeDef.PrimitiveDataType == this.PrimitiveDataType &&
-                       compareTypeDef.QualifiedName.ToString() == this.QualifiedName.ToString();
+                return Equals(obj as TypeDefinition);
             }
 
             var generatedDataType = (obj as GeneratedDefinition);
-            if (generatedDataType  != null && 
+            if (generatedDataType  != null &&
                 !(generatedDataType.DataType == DataType.Alphabetic ||
-                  generatedDataType .DataType == DataType.Alphanumeric)) //Remove these two check on Alpha.. to allow move "fezf" TO alphatypedVar
+                  generatedDataType.DataType == DataType.Alphanumeric)) //Remove these two check on Alpha.. to allow move "fezf" TO alphatypedVar
             {
                 if (this.PrimitiveDataType != null)
                     return this.PrimitiveDataType == generatedDataType.DataType;
@@ -869,6 +866,19 @@ namespace TypeCobol.Compiler.Nodes {
                     return this.DataType == generatedDataType.DataType;
             }
             return false;
+        }
+
+        public bool Equals(TypeDefinition compareTypeDef)
+        {
+            if (compareTypeDef == null) return false;
+            if (System.Object.ReferenceEquals(this, compareTypeDef)) return true;
+
+            return compareTypeDef.DataType == this.DataType &&
+                   compareTypeDef.QualifiedName.ToString() == this.QualifiedName.ToString();
+        }
+        public override int GetHashCode()
+        {
+            return ToString().GetHashCode();
         }
 
         public override string ToString()
@@ -975,6 +985,7 @@ namespace TypeCobol.Compiler.Nodes {
     {
         private string _Name;
         private DataType _DataType;
+        private readonly int _hashCode;
 
         public static GeneratedDefinition NumericGeneratedDefinition =       new GeneratedDefinition("Numeric", DataType.Numeric);
         public static GeneratedDefinition AlphanumericGeneratedDefinition =  new GeneratedDefinition("Alphanumeric", DataType.Alphanumeric);
@@ -990,6 +1001,7 @@ namespace TypeCobol.Compiler.Nodes {
         {
             _Name = name;
             _DataType = dataType;
+            _hashCode = (dataType?.GetHashCode() ?? 0) * 11 + name.GetHashCode();
         }
 
         public override string Name
@@ -1009,6 +1021,11 @@ namespace TypeCobol.Compiler.Nodes {
             if((obj as DataDefinition) != null)
                 return ((DataDefinition) obj).DataType == _DataType;
             return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return _hashCode;
         }
     }
 

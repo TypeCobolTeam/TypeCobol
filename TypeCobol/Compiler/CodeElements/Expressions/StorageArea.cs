@@ -14,7 +14,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// Represents a storage area in memory where the program can read or write data.
     /// Most often represented by the "identifier" rule in the Cobol grammar.
     /// </summary>
-    public abstract class StorageArea : IVisitable
+    public abstract class StorageArea : IVisitable, IEquatable<StorageArea>
     {
         protected StorageArea(StorageAreaKind kind)
         {
@@ -70,6 +70,21 @@ namespace TypeCobol.Compiler.CodeElements
         public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return astVisitor.Visit(this) && this.ContinueVisitToChildren(astVisitor, SymbolReference,ReferenceModifier);
         }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as StorageArea);
+        }
+
+        public bool Equals(StorageArea storageArea)
+        {
+            return System.Object.ReferenceEquals(this, storageArea);
+        }
+
+        public override int GetHashCode()
+        {
+            return ToString().GetHashCode();
+        }
     }
 
     /// <summary>
@@ -110,17 +125,17 @@ namespace TypeCobol.Compiler.CodeElements
 	/// defined special registers (see list in a comment just below).
 	/// </summary>
 	public class DataOrConditionStorageArea: StorageArea {
-		public DataOrConditionStorageArea(SymbolReference symbolReference)
+        public DataOrConditionStorageArea(SymbolReference symbolReference)
 				: base(StorageAreaKind.DataOrCondition) {
 			SymbolReference = symbolReference;
 			Subscripts = new List<SubscriptExpression>();
-		}
+        }
 
 		public DataOrConditionStorageArea(SymbolReference subscriptedSymbolReference, SubscriptExpression[] subscripts)
 				: base(StorageAreaKind.DataOrCondition) {
 			SymbolReference = subscriptedSymbolReference;
 			Subscripts = new List<SubscriptExpression>(subscripts);
-		}
+        }
 
         [NotNull]
 		public List<SubscriptExpression> Subscripts { get; private set; }
@@ -189,7 +204,7 @@ namespace TypeCobol.Compiler.CodeElements
 
 	        return expressionToAppend;
 	    }
-	}
+    }
 
     /// <summary>
     /// Implicitely defined special registers :
@@ -258,14 +273,14 @@ namespace TypeCobol.Compiler.CodeElements
 
 	/// <summary>Storage area for an index</summary>
 	public class IndexStorageArea : StorageArea {
-		public IndexStorageArea(SymbolReference indexNameReference): base(StorageAreaKind.Index) {
+        public IndexStorageArea(SymbolReference indexNameReference): base(StorageAreaKind.Index) {
 			SymbolReference = indexNameReference;
-		}
+        }
 
 	    public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
 	        return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
 	    }
-	}
+    }
     
     /* Special registers holding properties of other storage areas or symbols
 
@@ -282,7 +297,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// a property describing another storage area
     /// </summary>
 	public class StorageAreaPropertySpecialRegister: StorageArea {
-		public StorageAreaPropertySpecialRegister(Token specialRegisterName, StorageArea storageAreaReference)
+        public StorageAreaPropertySpecialRegister(Token specialRegisterName, StorageArea storageAreaReference)
 				: base(StorageAreaKind.StorageAreaPropertySpecialRegister) {
 			SpecialRegisterName = specialRegisterName;
 			OtherStorageAreaReference = storageAreaReference;
@@ -325,14 +340,14 @@ namespace TypeCobol.Compiler.CodeElements
 			if (str.Length > 0) return str.ToString();
 			return base.ToString();
 		}
-	}
+    }
 
 	/// <summary>
 	/// Specific storage area allocated by the compiler to hold
 	/// a property describing another storage area
 	/// </summary>
 	public class FilePropertySpecialRegister : StorageArea {
-		public FilePropertySpecialRegister(Token specialRegisterName, [NotNull] SymbolReference fileNameReference)
+        public FilePropertySpecialRegister(Token specialRegisterName, [NotNull] SymbolReference fileNameReference)
 				: base(StorageAreaKind.FilePropertySpecialRegister) {
 			SpecialRegisterName = specialRegisterName;
 			FileNameReference = fileNameReference;

@@ -10,20 +10,24 @@ namespace TypeCobol.Compiler.Scanner
     /// COBOL word, a literal, a PICTURE character-string, or a comment-entry. 
     /// A separator is a string of contiguous characters used to delimit character strings.
     /// </summary>
-    public class Token : Antlr4.Runtime.IToken, IVisitable
+    public class Token : Antlr4.Runtime.IToken, IVisitable, IEquatable<Token>
     {
         private ITokensLine tokensLine;
         private int startIndex;
         private int stopIndex;
 
-		/// <summary>Empty constructor for mock.</summary>
+        /// <summary>Empty constructor for mock.</summary>
 		public Token() { }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is Token))
-                return false;
-            var tokenCompare = (Token) obj;
+            return Equals(obj as Token);
+        }
+
+        public bool Equals(Token tokenCompare)
+        {
+            if (tokenCompare == null) return false;
+            if (Object.ReferenceEquals(this, tokenCompare)) return true;
 
             return this.Type == tokenCompare.Type
                    && this.Channel == tokenCompare.Channel
@@ -39,6 +43,14 @@ namespace TypeCobol.Compiler.Scanner
                    && this.LiteralValue == tokenCompare.LiteralValue
                    && this.TokenType == tokenCompare.TokenType
                    && this.Text == tokenCompare.Text;
+        }
+
+        public override int GetHashCode()
+        {
+            string tokenCompoundLabel =
+                $"{Type}{Channel}{Column}{EndColumn}{ExpectedClosingDelimiter}{Length}{Line}{StartIndex}" +
+                $"{StopIndex}{TokenIndex}{HasClosingDelimiter}{LiteralValue}{TokenType}{Text}";
+            return tokenCompoundLabel.GetHashCode();
         }
 
         /// <summary>

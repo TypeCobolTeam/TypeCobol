@@ -10,8 +10,10 @@ namespace TypeCobol.Compiler.Diagnostics
     /// <summary>
     /// Detailed error message for the end user, with the location of the problem dected in the source text
     /// </summary>
-    public class Diagnostic
+    public class Diagnostic : IEquatable<Diagnostic>
     {
+        private readonly int _hashCode;
+
         public Diagnostic(MessageCode messageCode, int columnStart, int columnEnd, int lineNumber, params object[] messageArgs)
         {
             Info = DiagnosticMessage.GetFromCode[(int)messageCode];
@@ -26,6 +28,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 CatchedException = messageArgs.FirstOrDefault(x => x is Exception) as Exception;
                 MessageArgs = messageArgs;
             }
+            _hashCode = $"{Line}{ColumnStart}{ColumnEnd}{Message}{Info.Code}{Info.Severity}".GetHashCode();
         }
 
         public DiagnosticMessage Info { get; set; }
@@ -49,18 +52,26 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Equals(object obj)
         {
-            Diagnostic diag = obj as Diagnostic;
-            if (diag == null)
-                return false;
+            return Equals(obj as Diagnostic);
+        }
 
-            return diag.Line == this.Line &&
-                   diag.ColumnStart == this.ColumnStart &&
-                   diag.ColumnEnd == this.ColumnEnd &&
-                   diag.Message == this.Message &&
-                   (diag.Info != null && this.Info != null) &&
-                   diag.Info.Code == this.Info.Code &&
-                   diag.Info.Severity == this.Info.Severity;
+        public bool Equals(Diagnostic diagnostic)
+        { 
+            if (Object.ReferenceEquals(this, diagnostic)) return true;
+            if (diagnostic == null) return false;
 
+            return diagnostic.Line == this.Line &&
+                   diagnostic.ColumnStart == this.ColumnStart &&
+                   diagnostic.ColumnEnd == this.ColumnEnd &&
+                   diagnostic.Message == this.Message &&
+                   (diagnostic.Info != null && this.Info != null) &&
+                   diagnostic.Info.Code == this.Info.Code &&
+                   diagnostic.Info.Severity == this.Info.Severity;
+        }
+
+        public override int GetHashCode()
+        {
+            return _hashCode;
         }
     }
 }

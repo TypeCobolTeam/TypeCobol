@@ -1,3 +1,4 @@
+using System;
 using Antlr4.Runtime;
 using System.Collections.Generic;
 using System.Text;
@@ -13,13 +14,16 @@ namespace TypeCobol.Compiler.CodeElements
     /// Common properties shared between all code elements.
     /// A CodeElement produced during the first parsing phase is also a token consumed by the second parsing phase. 
     /// </summary>
-    public abstract partial class CodeElement: IToken, IVisitable
+    public abstract partial class CodeElement: IToken, IVisitable, IEquatable<CodeElement>
     {
+        private readonly CodeElementType _type;
+
         protected CodeElement(CodeElementType type)
         {
             Type = type;
             ConsumedTokens = new List<Token>();
             SymbolInformationForTokens = new Dictionary<Token, SymbolInformation>();
+            _type = type;
         }
 
         /// <summary>
@@ -157,9 +161,13 @@ namespace TypeCobol.Compiler.CodeElements
 
         public override bool Equals(object obj)
         {
-            var codeElement = obj as CodeElement;
-            if (codeElement == null)
-                return false;
+            return Equals(obj as CodeElement);
+        }
+
+        public bool Equals(CodeElement codeElement)
+        {
+            if (codeElement == null) return false;
+            if (Object.ReferenceEquals(this, codeElement)) return true;
 
             return this.Line == codeElement.Line &&
                    this.Type == codeElement.Type &&
@@ -167,6 +175,11 @@ namespace TypeCobol.Compiler.CodeElements
                    this.StartIndex == codeElement.StartIndex &&
                    this.StopIndex == codeElement.StopIndex &&
                    this.Text == codeElement.Text;
+        }
+
+        public override int GetHashCode()
+        {
+            return _type.GetHashCode() * 11 + ConsumedTokens.GetHashCode();
         }
 
         private bool? _isInsideCopy = null; 
