@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using Analytics;
 using TypeCobol.Compiler;
@@ -13,7 +14,6 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.LanguageServer.Context;
 using TypeCobol.LanguageServer.SignatureHelper;
 
@@ -563,7 +563,7 @@ namespace TypeCobol.LanguageServer
 
                             // Trace back to the DataDefinition corresponding to the storage area.
                             var targetDataDefinition = matchingNode.GetDataDefinitionFromStorageAreaDictionary(targetStorageArea);
-                            message = targetDataDefinition?.ToString();
+                            message = ToolTipHelper.GetToolTipText(targetDataDefinition);
                         }
                     }
                     break;
@@ -658,7 +658,7 @@ namespace TypeCobol.LanguageServer
                         case TokenType.DISPLAY:
                             {
                                 System.Linq.Expressions.Expression<Func<DataDefinition, bool>> predicate = dataDefinition =>
-                                    dataDefinition.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase) // keep only variables with matching name
+                                    dataDefinition.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase) // keep only variables with matching name
                                     && dataDefinition.Usage != DataUsage.ProcedurePointer // invalid usages in DISPLAY statement
                                     && dataDefinition.Usage != DataUsage.FunctionPointer
                                     && dataDefinition.Usage != DataUsage.ObjectReference
@@ -672,7 +672,7 @@ namespace TypeCobol.LanguageServer
                             {
                                 items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
                                     da =>
-                                        da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase) &&
+                                        da.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase) &&
                                         ((da.CodeElement != null &&
                                           da.CodeElement.LevelNumber.Value < 88)
                                          || (da.CodeElement == null && da is IndexDefinition))));
@@ -688,7 +688,7 @@ namespace TypeCobol.LanguageServer
                         case TokenType.INTO:
                             {
                                 items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
-                                    v => v.Name.StartsWith(userFilterText, StringComparison.CurrentCultureIgnoreCase)
+                                    v => v.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase)
                                          && (v.CodeElement != null &&
                                              v.DataType == DataType.Alphabetic
                                              || v.DataType == DataType.Alphanumeric
@@ -699,7 +699,7 @@ namespace TypeCobol.LanguageServer
                         case TokenType.SET:
                             {
                                 items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
-                                    v => v.Name.StartsWith(userFilterText, StringComparison.CurrentCultureIgnoreCase)
+                                    v => v.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase)
                                          &&
                                          ((v.CodeElement != null &&
                                            v.CodeElement.LevelNumber.Value == 88)
@@ -734,7 +734,7 @@ namespace TypeCobol.LanguageServer
                         userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text; //Convert token to text
 
                         items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler,
-                           wrappedCodeElements.First(), da => da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)));
+                           wrappedCodeElements.First(), da => da.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase)));
                     }
                     else
                     {
@@ -948,14 +948,14 @@ namespace TypeCobol.LanguageServer
                                 potentialDefinitionNodes.AddRange(
                                     matchingNode.SymbolTable.GetParagraphs(
                                         p => p.Name.Equals(matchingToken.Text,
-                                            StringComparison.InvariantCultureIgnoreCase)));
+                                            StringComparison.OrdinalIgnoreCase)));
                                 break;
                             }
 
                             case TokenType.CALL:
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetFunctions(
-                                    f => f.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
+                                    f => f.Name.Equals(matchingToken.Text, StringComparison.OrdinalIgnoreCase),
                                     SymbolTable.Scope.Program
                                 ));
                                 break;
@@ -964,7 +964,7 @@ namespace TypeCobol.LanguageServer
                             case TokenType.TYPE:
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetTypes(
-                                    t => t.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
+                                    t => t.Name.Equals(matchingToken.Text, StringComparison.OrdinalIgnoreCase),
                                     SymbolTable.Scope.Program
                                 ));
                                 break;
@@ -978,7 +978,7 @@ namespace TypeCobol.LanguageServer
                             default:
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetVariables(
-                                    v => v.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
+                                    v => v.Name.Equals(matchingToken.Text, StringComparison.OrdinalIgnoreCase),
                                     SymbolTable.Scope.Program));
                                 break;
                             }
@@ -1019,5 +1019,61 @@ namespace TypeCobol.LanguageServer
         }
 
         public List<Token> ArrangedConsumedTokens { get; set; }
+    }
+
+    internal static class ToolTipHelper
+    {
+        /// <summary>
+        /// Gives self and children text lines of a node, each text line is associated
+        /// with its depth.
+        /// </summary>
+        /// <param name="node">Node to explore.</param>
+        /// <param name="level">Starting level, default is 0.</param>
+        /// <returns>IEnumerable of Tuple, Item1 is depth, Item2 is ITextLine.</returns>
+        private static IEnumerable<Tuple<int, ITextLine>> GetLinesWithLevel(Node node, int level = 0)
+        {
+            if (node == null) yield break;
+
+            // Lines of current level in node
+            if (node.CodeElement?.ConsumedTokens != null)
+            {
+                var lines = new List<ITextLine>();
+                foreach (var token in node.CodeElement.ConsumedTokens)
+                {
+                    var line = token.TokensLine;
+                    if (!lines.Contains(line))
+                    {
+                        lines.Add(line);
+                        yield return new Tuple<int, ITextLine>(level, line);
+                    }
+                }
+            }
+
+            // Lines of children (recursive call)
+            foreach (var child in node.Children)
+            {
+                foreach (var tuple in GetLinesWithLevel(child, level + 1))
+                {
+                    yield return tuple;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Builds tooltip text for a Node.
+        /// </summary>
+        /// <param name="node">Node to render as text.</param>
+        /// <returns>A textual representation of the given node.</returns>
+        public static string GetToolTipText(Node node)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var tuple in GetLinesWithLevel(node))
+            {
+                // Replace original indent with custom indent (3 spaces per level).
+                sb.Append(' ', 3 * tuple.Item1);
+                sb.AppendLine(tuple.Item2.Text.TrimStart());
+            }
+            return sb.ToString();
+        }
     }
 }
