@@ -1123,8 +1123,8 @@ namespace TypeCobol.Compiler.Parser
 	    {
             if (context.levelNumber != null)
                 entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber);
-            if (context.FILLER() != null) entry.Filler = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.FILLER()));
-            else entry.Filler = new SyntaxProperty<bool>(entry.DataName == null, null);
+            if (context.FILLER() != null)
+                entry.Filler = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.FILLER()));
 
             if (context.pictureClause() != null && context.pictureClause().Length > 0)
             {
