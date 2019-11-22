@@ -751,59 +751,6 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
-        /// Capture for a Token within a copy, its Line and if it is a '.' token
-        /// </summary>
-        /// <param name="lastLine">ref variable to store the last line</param>
-        /// <param name="periodSeparatorSeen">ref variable to store if the PeriodSeparator token has been seen.</param>
-        /// <param name="t">The current token</param>
-        /// <returns>The current token</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Token CaptureEndCopyLine(ref int lastLine, ref bool periodSeparatorSeen, Token t)
-        {
-            lastLine = t.Line - 1;
-            periodSeparatorSeen = periodSeparatorSeen || t.TokenType == TokenType.PeriodSeparator;
-            return t;
-        }
-
-        /// <summary>
-        /// Yield all token from a CopyDirective
-        /// </summary>
-        /// <param name="copyDirective">The CopyDirective instance to yield all tokens.</param>
-        /// <returns>The Token Enumerable instance</returns>
-        private IEnumerable<Token> CopyTokensYielder(TypeCobol.Compiler.Directives.CopyDirective copyDirective)
-        {
-            int lastLine = -1;
-            bool periodSeparatorSeen = false;
-            //Starting from the COPY Line and the COPY Token capture all to token till to encounter a PeriodSeparator.
-            var tl = Generator.CompilationResults.TokensLines[copyDirective.COPYToken.Line - 1];
-            bool copyTokenSeen = false;
-            foreach (var t in tl.SourceTokens)
-            {
-                if (t == copyDirective.COPYToken)
-                    copyTokenSeen = true;
-                if (copyTokenSeen)
-                    yield return CaptureEndCopyLine(ref lastLine, ref periodSeparatorSeen, t);
-            }
-
-            if (lastLine >= 0 && !periodSeparatorSeen)
-            {
-                lastLine++;
-                int count = Generator.CompilationResults.TokensLines.Count;
-                for (int l = lastLine ; l < count && !periodSeparatorSeen; l++)
-                {
-                    var tl2 = Generator.CompilationResults.TokensLines[l];
-                    foreach (var t in tl2.SourceTokens)
-                    {
-                        if (periodSeparatorSeen)
-                            yield break;
-                        else
-                            yield return CaptureEndCopyLine(ref lastLine, ref periodSeparatorSeen, t);
-                    }
-                }                
-            }
-        }
-
-        /// <summary>
         /// The Linearization Phase.
         /// <param name="node">The node to linearize</param>
         /// <param name="functionBody">true if the node belongs to a function body, false otherwise</param>
@@ -852,40 +799,23 @@ namespace TypeCobol.Codegen.Generators
                             if (copyToken != null && !MappedCopyTokens.ContainsKey((copyToken)))
                             {//We got one ==>
                                 //Collect all COPY Tokens
-                                bool bEnd = false;
-                                bool bCopySeen = false;
-                                //A Copy of a Commented node must have is lines commented also.
+                                var consumedTokens = node.CodeElement.FirstCopyDirective.ConsumedTokens;
+                                var copyTokens = consumedTokens.SelectedTokensOnSeveralLines.SelectMany(tokenLine => tokenLine).ToList();
+
+                                //A Copy of a Commented node must have its lines commented also.
                                 bool bCopyCommented = node.Comment.HasValue && node.Comment.Value;
-                                int lastLine = -1;
-                                var copyTokens = CopyTokensYielder(node.CodeElement.FirstCopyDirective).Where(t =>
+                                if (bCopyCommented)
                                 {
-                                    if (t == copyToken)
+                                    int copyFirstLineIndex = consumedTokens.FirstLineIndex;
+                                    int copyLineCount = consumedTokens.SelectedTokensOnSeveralLines.Length;
+                                    for (int i = 0; i < copyLineCount; i++)
                                     {
-                                        bCopySeen = true;
+                                        CommentedLines[copyFirstLineIndex + i] = true;
                                     }
-                                    bool bResult = bCopySeen && !bEnd;
-                                    if (t.TokenType == TokenType.PeriodSeparator)
-                                    {
-                                        bEnd = true;
-                                    }
+                                }
 
-                                    if (bCopyCommented)
-                                    {
-                                        int nextLine = t.Line - 1;
-                                        if (lastLine >= 0)
-                                        {//We must take in account gap between lines because for instance a BY token in a
-                                            //REPLACE is not captured.
-                                            for (int i = lastLine + 1; i < nextLine; i++)
-                                                CommentedLines[i] = true;
-                                        }                                        
-                                        CommentedLines[nextLine] = true;
-                                        lastLine = nextLine;
-                                    }
-
-                                    return bResult;
-                                });
                                 //Create node with the COPY Tokens
-                                LinearCopyNode copyNode = new LinearCopyNode(new Qualifier.TokenCodeElement(copyTokens.ToList()));
+                                LinearCopyNode copyNode = new LinearCopyNode(new Qualifier.TokenCodeElement(copyTokens));
                                 //Just add it has children to the current node.
                                 node.Add(copyNode);                                    
                                 if (bCopyCommented)

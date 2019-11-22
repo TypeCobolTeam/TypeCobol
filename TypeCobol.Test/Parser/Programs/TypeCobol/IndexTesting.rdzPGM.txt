@@ -23,7 +23,6 @@ PROGRAM: IndexTesting common:False initial:False recursive:False
   MyIdx3azeazeazeazeazeazeazeaz:Numeric
   Tab3:Array
   MyVar:Alphanumeric
-  MyVar:Alphanumeric
   MyGroup:Alphanumeric
   MyIdx:Numeric
   MyTab:Array
