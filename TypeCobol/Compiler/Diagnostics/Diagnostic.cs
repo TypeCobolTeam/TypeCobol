@@ -28,7 +28,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 CatchedException = messageArgs.FirstOrDefault(x => x is Exception) as Exception;
                 MessageArgs = messageArgs;
             }
-            _hashCode = $"{Line}{ColumnStart}{ColumnEnd}{Message}{Info.Code}{Info.Severity}".GetHashCode();
+
+            _hashCode = (Info==null) ? $"{Line}{ColumnStart}{ColumnEnd}{Message}".GetHashCode() : $"{Line}{ColumnStart}{ColumnEnd}{Message}{Info.Code}{Info.Severity}".GetHashCode();
         }
 
         public DiagnosticMessage Info { get; set; }
