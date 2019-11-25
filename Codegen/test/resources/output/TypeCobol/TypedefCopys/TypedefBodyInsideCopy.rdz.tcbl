@@ -64,7 +64,7 @@
       *         ==Too
       *        ==
       *   .
-      *  02 n comp-5.
+      *  02 n PIC 9(5) comp-5.
 
       *01 Type9 typedef strict.
       *  02 v PIC X(9).
@@ -161,7 +161,7 @@
                 ==Too
                ==
           .
-           02 n comp-5.
+           02 n PIC 9(5) comp-5.
                           
 
       *01 var9 type Type9.

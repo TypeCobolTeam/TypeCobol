@@ -19,7 +19,7 @@
 
        01 Var1.
            05 Tab3 occurs 99 indexed by MyIdx3azeazeazeazeazeazeazeaz.
-       01 MyVar. COPY YCONVEA.
+       COPY YCONVEA.
 
        01 Var2.
            05 Dup1 occurs 99 indexed by MyIdxsdfsdfzezerzerzerzerzerz.
