@@ -617,6 +617,20 @@ namespace TypeCobol.LanguageServer
                         seekedDataTypes.Add(foundedVars.First().DataType);
                 }
 
+                // add compatible datatype for seeked typed variables
+                foreach (var seekedDataType in seekedDataTypes.FindAll(dt => dt.CobolLanguageLevel > CobolLanguageLevel.Cobol85).Distinct())
+                {
+                    if (seekedDataType == DataType.Date)
+                    {
+                        seekedDataTypes.Add(DataType.Alphanumeric);
+                        seekedDataTypes.Add(DataType.AlphanumericEdited);
+                    }
+                    else if (seekedDataType == DataType.Currency)
+                    {
+                        seekedDataTypes.Add(DataType.Alphanumeric);
+                    }
+                }
+
                 foreach (var seekedDataType in seekedDataTypes.Distinct())
                 {
                     potentialVariables = node.SymbolTable.GetVariablesByType(seekedDataType, potentialVariables, SymbolTable.Scope.Program);
