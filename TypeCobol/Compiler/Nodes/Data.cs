@@ -202,13 +202,13 @@ namespace TypeCobol.Compiler.Nodes {
     ///   IndexDefinition               -> DataDefinitionEntry
     ///   GeneratedDefinition           -> DataDefinitionEntry
     ///                                         CommonDataDescriptionAndDataRedefines
-    ///   DataDescription               ->          DataDescriptionEntry
+    ///   DataDescription 01-49 & 77    ->          DataDescriptionEntry
     ///      ParameterDescription       ->          ParameterDescriptionEntry
     ///      TypedDataNode              ->          DataDescriptionEntry
     ///   TypeDefinition                ->          DataTypeDescriptionEntry
     ///   DataRedefines                 ->          DataRedefinesEntry
-    ///   DataCondition                 ->      DataConditionEntry
-    ///   DataRenames                   ->      DataRenamesEntry
+    ///   DataCondition   88            ->      DataConditionEntry
+    ///   DataRenames     66            ->      DataRenamesEntry
     ///     
     /// 
     /// Implementation note:
