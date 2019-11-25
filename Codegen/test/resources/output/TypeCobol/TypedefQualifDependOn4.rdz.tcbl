@@ -6,13 +6,13 @@
       *01 MyType TYPEDEF STRICT.
       *  02 Var2.
       *    05 Counter pic 9.
-      *    05 Tab3 occurs 99 depending on Counter of Var2.
+      *    05 Tab3 PIC X occurs 99 depending on Counter of Var2.
       
       *01 Var2 type MyType.
        01 Var2.
            02 Var2.
              03 Counter pic 9.
-             03 Tab3 occurs 99 depending on Counter of Var2.
+             03 Tab3 PIC X occurs 99 depending on Counter of Var2.
                            
       
        procedure division.

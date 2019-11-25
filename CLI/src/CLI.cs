@@ -139,7 +139,9 @@ namespace TypeCobol.Server
             #endregion
 
             depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load intrinsic
-            depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, depParser.CustomSymbols, config.InputFiles, config.CopyFolders, DependencyErrorEvent, out List<RemarksDirective.TextNameVariation> usedCopies, out IDictionary<string, IEnumerable<string>> missingCopies); //Load dependencies
+            depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config, depParser.CustomSymbols, DependencyErrorEvent,
+                out List<RemarksDirective.TextNameVariation> usedCopies,
+                out IDictionary<string, IEnumerable<string>> missingCopies); //Load dependencies
 
             //Create extracted copies file even if copy are missing
             CreateExtractedCopiesFile(config, usedCopies);
@@ -148,8 +150,6 @@ namespace TypeCobol.Server
             {
                 //Collect the missing copies
                 File.WriteAllLines(config.HaltOnMissingCopyFilePath, missingCopies.SelectMany(mc => mc.Value).Distinct());
-
-
 
                 //If copies are missing, don't try to parse main input files
                 //throw  an exception for the first dependency file
@@ -165,10 +165,6 @@ namespace TypeCobol.Server
             #endregion
 
             var typeCobolOptions = new TypeCobolOptions(config);
-
-#if EUROINFO_RULES
-            typeCobolOptions.AutoRemarksEnable = config.AutoRemarks;
-#endif
 
             ReturnCode returnCode = ReturnCode.Success;
             List<Parser> parsers = new List<Parser>();
@@ -237,7 +233,7 @@ namespace TypeCobol.Server
                     File.WriteAllLines(config.HaltOnMissingCopyFilePath, parser.MissingCopys);
                 }
 
-                //Create extraced copies file even if copy are missing
+                //Create extracted copies file even if copy are missing
                 CreateExtractedCopiesFile(config, parser.Results.CopyTextNamesVariations);
 
                 if (copyAreMissing)
