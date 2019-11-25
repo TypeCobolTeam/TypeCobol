@@ -27,19 +27,19 @@
       *    set Idx to 1.
            set d004576fIdx to 1.
       *DECLARE PROCEDURE DisplayEventList PRIVATE
-      *    INPUT EventList type _EVENT_LIST_.
+      *    IN-OUT EventList type _EVENT_LIST_.
       
        END PROGRAM TYPDEFQU.
       *
       *DECLARE PROCEDURE DisplayEventList PRIVATE
-      *    INPUT EventList type _EVENT_LIST_.
+      *    IN-OUT EventList type _EVENT_LIST_.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. bd8b7be7.
+       PROGRAM-ID. ab78f17e.
        DATA DIVISION.
        LINKAGE SECTION.
       *TYPDEFQU.DisplayEventList - Params :
-      *		input(EventList: _EVENT_LIST_)
+      *		in-out(EventList: _EVENT_LIST_)
        01 EventList.
            02 Counter pic 9(04) comp-5.
            02 EventTab.
@@ -52,7 +52,7 @@
              USING BY REFERENCE EventList
            .
       *TYPDEFQU.DisplayEventList - Params :
-      *		input(EventList: _EVENT_LIST_)
+      *		in-out(EventList: _EVENT_LIST_)
       
       *    PERFORM VARYING Idx FROM 1 BY 1
       *    UNTIL Idx > EventList::Counter
@@ -61,4 +61,4 @@
               display "test"
            END-PERFORM.
            GOBACK.
-       END PROGRAM bd8b7be7.
+       END PROGRAM ab78f17e.
