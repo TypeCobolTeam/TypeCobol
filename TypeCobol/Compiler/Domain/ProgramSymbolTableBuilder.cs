@@ -1612,7 +1612,7 @@ namespace TypeCobol.Compiler.Domain
                     case CodeElementType.DataRedefinesEntry:
                     {
                         CommonDataDescriptionAndDataRedefines dataDescEntry =
-                            (CommonDataDescriptionAndDataRedefines)dataDef.CodeElement;
+                            (CommonDataDescriptionAndDataRedefines)dataDef.CodeElement;                            
                         sym.Level = (int)dataDescEntry.LevelNumber.Value;
                         if (dataDescEntry.IsGlobal || parentScope.Owner.HasFlag(Symbol.Flags.Global))
                         {//No Global inside GLOBAL-STORAGE.
@@ -1625,7 +1625,24 @@ namespace TypeCobol.Compiler.Domain
                             //Propagate other visibility than global
                             if (parentScope.Owner.Kind != Symbol.Kinds.Program && parentScope.Owner.Kind != Symbol.Kinds.Function)
                                 sym.SetFlag(parentScope.Owner.Flag & Symbol.SymbolVisibilityMask & ~Symbol.Flags.Global, parentScope.Owner.HasFlag(Symbol.SymbolVisibilityMask & ~Symbol.Flags.Global));
-                    }
+                            //Other interresting flags that apply to a symbol.
+                            if (dataDescEntry.IsBlankWhenZero != null && dataDescEntry.IsBlankWhenZero.Value)
+                                sym.SetFlag(Symbol.Flags.BlankWhenZero, true);
+                            if (dataDescEntry.IsJustified != null && dataDescEntry.IsJustified.Value)
+                                sym.SetFlag(Symbol.Flags.Justified, true);
+                            if (dataDescEntry.IsGroupUsageNational != null && dataDescEntry.IsGroupUsageNational.Value)
+                                sym.SetFlag(Symbol.Flags.GroupUsageNational, true);
+                            if (dataDescEntry.SignIsSeparate != null && dataDescEntry.SignIsSeparate.Value)
+                                sym.SetFlag(Symbol.Flags.Sign, true);
+                            if (dataDescEntry.IsSynchronized != null && dataDescEntry.IsSynchronized.Value)
+                                sym.SetFlag(Symbol.Flags.Sync, true);
+                            if (dataDef.CodeElement.Type == CodeElementType.DataDescriptionEntry)
+                            {
+                                DataDescriptionEntry dataDesc = (DataDescriptionEntry)dataDef.CodeElement;
+                                if (dataDesc.IsExternal)
+                                    sym.SetFlag(Symbol.Flags.External, true);
+                            }
+                        }
                         break;
                     default:
                         System.Diagnostics.Debug.Assert(dataDef.CodeElement.Type == CodeElementType.DataDescriptionEntry ||

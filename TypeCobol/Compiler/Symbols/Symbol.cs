@@ -41,32 +41,50 @@ namespace TypeCobol.Compiler.Symbols
             Private = 0x01 << 1,
             External = 0x01 << 2,
             Global = 0x01 << 3, //Symbol explicitly marked as global
-            FILE_SECTION = 0x01 << 4,
-            GLOBAL_STORAGE = 0x01 << 5,
-            WORKING_STORAGE = 0x01 << 6,
-            LOCAL_STORAGE = 0x01 << 7,
-            LINKAGE = 0x01 << 8,
-            Input = 0x01 << 9,
-            Output = 0x01 << 10,
-            Inout = 0x01 << 11,
-            ByReference = 0x01 << 12,
-            ByContent = 0x01 << 13,
-            ByValue = 0x01 << 14,
-            Strong = 0x01 << 15,
-            Strict = 0x01 << 16,
-            Weak = 0x01 << 17,
-            Conditions = 0x01 << 18,
-            Renames = 0x01 << 19,
-            Redefines = 0x01 << 20,
-            HasATypedefType = 0x01 << 21,//The symbol has a type that comes from a TypeDef.
-            Parameter = 0x01 << 22,//This a parameter variable.
-            Return = 0x01 << 23,//A Return variable.
-            BuiltinType = 0x01 << 24,//This is a Builtin Type.
-            InsideTypdef = 0x01 << 25,//Flag of any symbol inside a Typedef definition
-            ProgramExpanded = 0x01 << 26,//Flag for a program that have been already expanded.
-            NeedTypeCompletion = 0x01 << 27,//For a program that need type Completion, a pure COBOL Program does not need type completion (No TYPEDEF).
-            BuiltinSymbol = 0x01 << 28, //This is a builting symbol.
-            ProgramCompleted = 0x01 << 29, //This Top Program has been completed
+            Volatile = 0x01 << 4, //Symbol explicitly marked as volatile
+            FILE_SECTION = 0x01 << 5,
+            GLOBAL_STORAGE = 0x01 << 6,
+            WORKING_STORAGE = 0x01 << 7,
+            LOCAL_STORAGE = 0x01 << 8,
+            LINKAGE = 0x01 << 9,
+            Input = 0x01 << 10,
+            Output = 0x01 << 11,
+            Inout = 0x01 << 12,
+            ByReference = 0x01 << 13,
+            ByContent = 0x01 << 14,
+            ByValue = 0x01 << 15,
+            Strong = 0x01 << 16,
+            Strict = 0x01 << 17,
+            Weak = 0x01 << 18,
+
+            //Some new Symbols Modifiers-----------------------
+            Based = 0x01 << 19,
+            AnyLength = 0x01 << 20,
+            GroupUsageBit = 0x01 << 21,
+            GroupUsageNational = 0x01 << 22,
+            //-------------------------------------------------
+
+            //Symbols Modifiers that have Type Equality impact
+            //along with PICTURE and and USAGE.
+            BlankWhenZero = 0x01 << 23,
+            DynamicLength = 0x01 << 24,
+            Justified = 0x01 << 25,
+            Sign = 0x01 << 26,
+            Sync = 0x01 << 27,
+            //-------------------------------------------------
+
+            Conditions = 0x01 << 28,
+            Renames = 0x01 << 29,
+            Redefines = 0x01 << 30,
+            HasATypedefType = 0x01L << 31,//The symbol has a type that comes from a TypeDef.
+            Parameter = 0x01L << 32,//This a parameter variable.
+            Return = 0x01L << 33,//A Return variable.
+            BuiltinType = 0x01L << 34,//This is a Builtin Type.
+            InsideTypdef = 0x01L << 35,//Flag of any symbol inside a Typedef definition
+            ProgramExpanded = 0x01L << 36,//Flag for a program that have been already expanded.
+            NeedTypeCompletion = 0x01L << 37,//For a program that need type Completion, a pure COBOL Program does not need type completion (No TYPEDEF).
+            BuiltinSymbol = 0x01L << 38, //This is a builting symbol.
+            ProgramCompleted = 0x01L << 39, //This Top Program has been completed
 
             //Etc...
         }
