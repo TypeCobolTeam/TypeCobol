@@ -1,0 +1,2 @@
+﻿    05 DATA1 PIC X.
+    05 DATA2 PIC X.

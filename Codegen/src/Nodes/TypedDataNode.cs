@@ -1,5 +1,8 @@
 ﻿using System.Linq;
+using JetBrains.Annotations;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Tools;
 
 namespace TypeCobol.Codegen.Nodes
 {
@@ -711,6 +714,36 @@ namespace TypeCobol.Codegen.Nodes
             }
         }
 
+        /// <summary>
+        /// Creates text lines corresponding to the given COPY directive.
+        /// The original indentation is preserved.
+        /// </summary>
+        /// <param name="copy">a CopyDirective instance</param>
+        /// <returns>a defered IEnumerable of ITextLine</returns>
+        private static IEnumerable<ITextLine> CopyDirectiveToTextLines([NotNull] CopyDirective copy)
+        {
+            //We recreate the clause copy with its arguments and original formatting.
+            StringBuilder textLine = new StringBuilder();
+            bool firstLine = true;
+            string copyIndent = copy.COPYToken.TokensLine.SourceText.GetIndent();
+            foreach (var tokenLine in copy.ConsumedTokens.SelectedTokensOnSeveralLines)
+            {
+                if (firstLine)
+                {
+                    textLine.Append(copyIndent);
+                    firstLine = false;
+                }
+
+                foreach (var token in tokenLine)
+                {
+                    textLine.Append(token.Text);
+                }
+
+                yield return new TextLineSnapshot(-1, textLine.ToString(), null);
+                textLine.Clear();
+            }
+        }
+
         internal static List<ITextLine> CreateDataDefinition(Node node, SymbolTable table, ColumnsLayout? layout, List<string> rootProcedures, List< Tuple<string,string> > rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null)
         {
             var data = data_def as DataDescriptionEntry;
@@ -942,9 +975,12 @@ namespace TypeCobol.Codegen.Nodes
         public static List<ITextLine> InsertChildren(ColumnsLayout? layout, List<string> rootProcedures, List< Tuple<string,string> > rootVariableName, DataDefinition ownerDefinition, DataDefinition type, int level, int indent)
         {
             var lines = new List<ITextLine>();
+            // List of all the CopyDirectives that have been added to the lines
+            List<CopyDirective> usedCopies = new List<CopyDirective>();
             foreach (var child in type.Children)
             {
-                bool bCanGenerate = !child.IsInsideCopy();
+                bool bIsInsideCopy = child.IsInsideCopy();
+
                 //Handle Typedef whose body is inside a COPY
                 if (child.IsFlagSet(Flag.InsideTypedefFromCopy))
                 {
@@ -952,6 +988,26 @@ namespace TypeCobol.Codegen.Nodes
                     {
                         lines.AddRange(child.Lines);
                         continue;
+                    }
+                }
+
+                //If the child is coming from a copy, we want to add the clause copy to the lines
+                if (bIsInsideCopy && child.CodeElement != null)
+                {
+                    //There is already a mechanism to write the clause COPY coming from the main program in LinearNodeSourceCodeMapper. 
+                    //This is how we recover the clause copy from the dependencies.
+                    //Here we check if the typedef has been defined in another file than the one declaring the datatype.
+                    if (!type.Root.Programs.Any(p => rootProcedures.Contains(p.Name)))
+                    {
+                        CopyDirective copy = child.CodeElement.FirstCopyDirective;
+                        //The first data coming from a copy is used to recover the Clause COPY, the other would be only a repetition of this one, so we skip them.
+                        //Even with the same name, two different Clause COPY are differentiated by their token lines
+                        if (usedCopies.Contains(copy) == false)
+                        {
+                            lines.AddRange(CopyDirectiveToTextLines(copy));
+                            usedCopies.Add(copy);
+                            continue;
+                        }
                     }
                 }
 
@@ -963,7 +1019,7 @@ namespace TypeCobol.Codegen.Nodes
                     string attr_type = (string)child["type"];
                     if (attr_type != null && attr_type.ToUpper().Equals("BOOL"))
                     {
-                        if (bCanGenerate)
+                        if (!bIsInsideCopy)
                         {
                             string attr_name = (string) child["name"];
                             string margin = "";
@@ -987,7 +1043,7 @@ namespace TypeCobol.Codegen.Nodes
                         var attr_usage = child["usage"];
                         if (attr_usage != null && attr_usage.ToString().ToUpper().Equals("POINTER"))
                         {
-                            if (bCanGenerate)
+                            if (!bIsInsideCopy)
                             {
                                 string attr_name = (string) child["name"];
                                 string margin = "";
@@ -1028,7 +1084,7 @@ namespace TypeCobol.Codegen.Nodes
                 if (dataDefinitionEntry != null)
                 {
                     var texts = CreateDataDefinition(child, child.SymbolTable, layout, rootProcedures, rootVariableName, typed, dataDefinitionEntry, level, indent, isCustomTypeToo, false, isCustomTypeToo? typed.TypeDefinition: null);
-                    if (bCanGenerate)
+                    if (!bIsInsideCopy)
                         lines.AddRange(texts);
                 }
                 else
