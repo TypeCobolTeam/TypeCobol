@@ -342,6 +342,7 @@ namespace TypeCobol.Compiler.Diagnostics
                             "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot have USAGE.", dataDefinitionEntry);
                     }
                 }
+
             }
 
 
@@ -369,6 +370,20 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             DataDefinitionChecker.OnNode(dataDefinition);
+
+            return true;
+        }
+
+        public override bool Visit(DataDescription dataDescription)
+        {
+            DataDescriptionEntry dataDescriptionEntry = dataDescription.CodeElement;
+
+            var levelNumber = dataDescriptionEntry.LevelNumber;
+            //Check if the DataDescription is an empty group
+            if (levelNumber != null && dataDescription.IsDataDescriptionGroup && dataDescription.ChildrenCount == 0)
+            {
+                DiagnosticUtils.AddError(dataDescription, "A group item cannot be empty.", dataDescriptionEntry);
+            }
 
             return true;
         }
