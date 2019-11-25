@@ -29,7 +29,7 @@
            END-PERFORM.
       
        DECLARE PROCEDURE DisplayEventList PRIVATE
-            INPUT EventList type EventList.
+            IN-OUT EventList type EventList.
        data division.
        working-storage section.
        01 EventList2 type EventList.
@@ -80,7 +80,7 @@
        procedure division.
       
        DECLARE PROCEDURE DisplayEventList PRIVATE
-            INPUT EventList type EventList.
+            IN-OUT EventList type EventList.
        data division.
        working-storage section.
        01 EventList2 type EventList.

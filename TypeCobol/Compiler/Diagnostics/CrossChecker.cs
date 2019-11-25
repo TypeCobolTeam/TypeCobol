@@ -534,7 +534,16 @@ namespace TypeCobol.Compiler.Diagnostics
                         node.GetEnclosingProgramOrFunctionNode().SetFlag(Node.Flag.UseGlobalStorage, true);
                     }
                 }
-                
+
+                if (!isReadStorageArea && node.SymbolTable.CurrentScope == SymbolTable.Scope.Function)
+                {
+                    var paramDesc = (dataDefinitionPath?.CurrentDataDefinition ?? dataDefinitionFound) as ParameterDescription;
+                    if (paramDesc?.PassingType == ParameterDescription.PassingTypes.Input)
+                    {
+                        DiagnosticUtils.AddError(node, "Input variable '" + paramDesc.Name + "' is modified by an instruction", area.SymbolReference);
+                    }
+                }
+
                 //add the found DataDefinition to a dictionary depending on the storage area type
                 if (isReadStorageArea)
                 {

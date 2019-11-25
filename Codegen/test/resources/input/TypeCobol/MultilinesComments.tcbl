@@ -38,7 +38,7 @@
       %<<
            Multiline 8
       %>>
-           CALL FUN INPUT typedVar::var1.
+           CALL FUN IN-OUT typedVar::var1.
            CONTINUE.
       %<<
            Multiline 9
@@ -48,7 +48,7 @@
       %<<
            Multiline 10
       %>>
-               INPUT y PIC 9(03).
+               IN-OUT y PIC 9(03).
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01 funVar1       PIC 9(5).

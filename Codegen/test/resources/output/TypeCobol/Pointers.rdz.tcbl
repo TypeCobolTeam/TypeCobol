@@ -77,23 +77,23 @@
 
       * Procedure
       *declare procedure PointerProcedure PRIVATE
-      *  input ptr pointer.
+      *  in-out ptr pointer.
        END PROGRAM Pointers.
       *
       *declare procedure PointerProcedure PRIVATE
-      *  input ptr pointer.
+      *  in-out ptr pointer.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e0410090.
+       PROGRAM-ID. cbb07024.
   
          data division.
            working-storage section.
       *Pointers.PointerProcedure - Params :
-      *		input(ptr: pointer)
+      *		in-out(ptr: pointer)
                                  
        LINKAGE SECTION.
       *Pointers.PointerProcedure - Params :
-      *		input(ptr: pointer)
+      *		in-out(ptr: pointer)
        01 ptr pointer.
        01 redefines ptr.
            02 ptrdbef1f3d pic S9(05) comp-5.
@@ -101,10 +101,10 @@
              USING BY REFERENCE ptr
            .
       *Pointers.PointerProcedure - Params :
-      *		input(ptr: pointer)
+      *		in-out(ptr: pointer)
       *      set ptr up by 1
              ADD 1 to ptrdbef1f3d
                             
              goback
              .
-       END PROGRAM e0410090.
+       END PROGRAM cbb07024.
