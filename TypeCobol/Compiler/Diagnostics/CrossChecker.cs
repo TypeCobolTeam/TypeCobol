@@ -771,8 +771,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
                 else
                 {
-                    // Use or Exec node : statement
-                    Debug.Assert(child is Use || child is Exec);
+                    // a statement exists
                     empty = false;
                     break;
                 }
