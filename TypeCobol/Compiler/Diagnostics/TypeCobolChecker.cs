@@ -871,8 +871,7 @@ namespace TypeCobol.Compiler.Diagnostics
 	                    !child.Name.Equals("INIT-LIBRARY", StringComparison.InvariantCultureIgnoreCase))
                     {
                             DiagnosticUtils.AddError(child.CodeElement == null ? procedureDivision : child,
-                                "First paragraph of a program which contains public procedure must be INIT-LIBRARY. Move paragraph " +
-                                child.Name + " lower in the source.");
+                                "First paragraph of a program which contains public procedure must be INIT-LIBRARY. Paragraph " + child.Name + " is not allowed at this location.");
                     }
 
 	                firstParagraphChecked = true;
@@ -883,14 +882,23 @@ namespace TypeCobol.Compiler.Diagnostics
                 //TCRFUN_ONLY_PARAGRAPH_AND_PUBLIC_FUNC_IN_LIBRARY
                 if (!(child is FunctionDeclaration || child is Declaratives))
                 {
-                        DiagnosticUtils.AddError(child.CodeElement == null
-                                ? (child is Sentence
+                    Node node = child.CodeElement == null
+                        ? (child is Sentence
                             ? (child.Children.FirstOrDefault(c => c.CodeElement != null) ?? procedureDivision)
-                                    : procedureDivision)
-                                : child,
-                            "Inside a library only function declaration or declaratives are allowed " + child.Name +
-                            " / " + child.ID);
+                            : procedureDivision)
+                        : child;
+                    if (firstParagraphChecked)
+                    {
+                        // this case corresponds to SECTION declarations or statements not inside a paragraph
+                        DiagnosticUtils.AddError(node,
+							"A program which contains public procedure cannot contain section or statement not under a paragraph.");
                     }
+                    else
+                    {
+                        DiagnosticUtils.AddError(node,
+                            "A program which contains public procedure must have INIT-LIBRARY as first paragraph.");
+                    }
+                }
             }
 
 		    var pdiv = procedureDivision.CodeElement;
