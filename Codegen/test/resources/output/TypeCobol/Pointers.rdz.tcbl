@@ -89,11 +89,11 @@
          data division.
            working-storage section.
       *Pointers.PointerProcedure - Params :
-      *		in-out(ptr: pointer)
+      *     in-out(ptr: pointer)
                                  
        LINKAGE SECTION.
       *Pointers.PointerProcedure - Params :
-      *		in-out(ptr: pointer)
+      *     in-out(ptr: pointer)
        01 ptr pointer.
        01 redefines ptr.
            02 ptrdbef1f3d pic S9(05) comp-5.
@@ -101,7 +101,7 @@
              USING BY REFERENCE ptr
            .
       *Pointers.PointerProcedure - Params :
-      *		in-out(ptr: pointer)
+      *     in-out(ptr: pointer)
       *      set ptr up by 1
              ADD 1 to ptrdbef1f3d
                             

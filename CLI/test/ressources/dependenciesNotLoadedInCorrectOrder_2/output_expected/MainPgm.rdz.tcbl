@@ -183,8 +183,8 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *TCOSMPL2.GetTecMsg - Params :
-      *		input(capt: DVZTEST2.Span)
-      *		in-out(msg: DVZTEST2.Span)
+      *     input(capt: DVZTEST2.Span)
+      *     in-out(msg: DVZTEST2.Span)
        01 capt.
           02  ptr Pointer.
           02  redefines ptr.
@@ -206,8 +206,8 @@
                    BY REFERENCE msg
            .
       *TCOSMPL2.GetTecMsg - Params :
-      *		input(capt: DVZTEST2.Span)
-      *		in-out(msg: DVZTEST2.Span)
+      *     input(capt: DVZTEST2.Span)
+      *     in-out(msg: DVZTEST2.Span)
            continue
            .
        END PROGRAM ea2e07d4.

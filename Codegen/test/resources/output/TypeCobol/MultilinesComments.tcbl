@@ -83,7 +83,7 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *MultilinesCommentsCodeGen.FUN - Params :
-      *		in-out(y: pic 9(03))
+      *     in-out(y: pic 9(03))
                                
        01 funVar1       PIC 9(5).
       *<<
@@ -91,13 +91,13 @@
       *>>
        LINKAGE SECTION.
       *MultilinesCommentsCodeGen.FUN - Params :
-      *		in-out(y: pic 9(03))
+      *     in-out(y: pic 9(03))
        01 y PIC 9(03).
        PROCEDURE DIVISION
              USING BY REFERENCE y
            .
       *MultilinesCommentsCodeGen.FUN - Params :
-      *		in-out(y: pic 9(03))
+      *     in-out(y: pic 9(03))
       *<<
       *    Multiline 12
       *>>

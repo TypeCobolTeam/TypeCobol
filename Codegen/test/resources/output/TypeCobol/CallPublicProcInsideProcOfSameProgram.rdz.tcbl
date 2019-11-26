@@ -82,11 +82,11 @@
        data division.
        working-storage section.
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
                                
        linkage section.
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
                        
        01 mydate.
            02 YYYY PIC 9(4).
@@ -96,7 +96,7 @@
              USING BY REFERENCE mydate
            .
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
       *    Call GetPersonById input mydate
            CALL 'efe09ace' USING
                                  mydate
@@ -113,7 +113,7 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.GetPersonById - Params :
-      *		input(personId: DATE)
+      *     input(personId: DATE)
        01 personId.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -122,6 +122,6 @@
              USING BY REFERENCE personId
            .
       *PGM1.GetPersonById - Params :
-      *		input(personId: DATE)
+      *     input(personId: DATE)
            CONTINUE.
        END PROGRAM efe09ace.

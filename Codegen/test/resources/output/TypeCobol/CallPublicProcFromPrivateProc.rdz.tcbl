@@ -87,7 +87,7 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.GetPersonById - Params :
-      *		input(personId: DATE)
+      *     input(personId: DATE)
        01 personId.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -96,7 +96,7 @@
              USING BY REFERENCE personId
            .
       *PGM1.GetPersonById - Params :
-      *		input(personId: DATE)
+      *     input(personId: DATE)
            CONTINUE.
        END PROGRAM cd991005.
       *
@@ -109,7 +109,7 @@
        data division.
        working-storage section.
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
                                
        01 TC-PersonSe pic X(08) value 'PERSONSE'.
 
@@ -120,7 +120,7 @@
                             'U' thru X'FF'.
        linkage section.
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
                        
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.
@@ -145,7 +145,7 @@
              USING BY REFERENCE mydate
            .
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
            PERFORM TC-INITIALIZATIONS
       *    Call PersonService::GetPersonById input mydate
            
