@@ -325,6 +325,34 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
+        private List<DataType> _compatiblePrimitiveDataTypes;
+        public List<DataType> CompatiblePrimitiveDataTypes
+        {
+            get
+            {
+                if (_compatiblePrimitiveDataTypes != null) return _compatiblePrimitiveDataTypes;
+                _compatiblePrimitiveDataTypes = new List<DataType>();
+                if (PrimitiveDataType == null)
+                {
+                    if (DataType == DataType.Date)
+                    {
+                        _compatiblePrimitiveDataTypes.Add(DataType.Alphanumeric);
+                        _compatiblePrimitiveDataTypes.Add(DataType.AlphanumericEdited);
+                    }
+                    else if (DataType == DataType.Currency)
+                    {
+                        _compatiblePrimitiveDataTypes.Add(DataType.Alphanumeric);
+                    }
+                }
+                else
+                {
+                    _compatiblePrimitiveDataTypes.Add(PrimitiveDataType);
+                }
+
+                return _compatiblePrimitiveDataTypes;
+            }
+        }
+
         private PictureValidator _pictureValidator;
         public PictureValidator PictureValidator
         {
