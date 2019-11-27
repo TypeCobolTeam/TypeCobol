@@ -81,6 +81,12 @@
     <None Include="LSRTests\BeginTopLineEnterEnter\output_expected\BeginTopLineEnterEnter.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\CompletionAfterBetweenColons\input\CompletionAfterBetweenColons.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionAfterBetweenColons\output_expected\CompletionAfterBetweenColons.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\CompletionOnPartialLibraryName\input\CompletionOnPartialLibraryName.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
