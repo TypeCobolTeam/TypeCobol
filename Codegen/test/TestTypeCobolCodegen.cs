@@ -901,6 +901,15 @@ namespace TypeCobol.Codegen {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "OmittableParameters") + ".rdz.tcbl", skeletons);
         }
 
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void WrongGenCodeIndexLevel88()
+        {
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "1366_WrongGenCodeIndexLevel88") + ".rdz.tcbl", skeletons);
+        }
+
 #if EUROINFO_RULES
         [TestMethod]
         [TestCategory("Codegen")]
