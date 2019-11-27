@@ -9,7 +9,7 @@ namespace TypeCobol.Compiler.Source
     /// A Gap Source Text, with the concept of https://en.wikipedia.org/wiki/Gap_buffer:
     /// that allows efficient insertion and deletion operations clustered near the same location
     /// </summary>
-    public class GapSourceText : SourceText, IEquatable<GapSourceText>
+    public class GapSourceText : SourceText
     {
         int size;                               // size of allocated memory
         int length;                             // length of text
@@ -536,44 +536,6 @@ namespace TypeCobol.Compiler.Source
             { 
                 return length; 
             }
-        }
-
-        /// <summary>
-        /// Check if the given source text is equals to this one.
-        /// </summary>
-        /// <param name="text">The source text to be checked for equality</param>
-        /// <returns>true if both the given source text is equals to this one, false otherwise</returns>
-        public override bool Equals(object text)
-        {
-            return this.Equals(text as GapSourceText);
-        }
-
-        public bool Equals(GapSourceText gapSourceText)
-        {
-            if (gapSourceText == null) return false;
-            if (Object.ReferenceEquals(this, gapSourceText)) return true;
-
-            if (length != gapSourceText.length) return false;
-
-            MoveGap(length);
-            gapSourceText.MoveGap(gapSourceText.length);
-            return CompareArrays(body, gapSourceText.body, length);
-        }
-
-        /// <summary>
-        /// Compute a Hash code value
-        /// </summary>
-        /// <returns>The hash code value</returns>
-        public override int GetHashCode()                                         
-        {
-            int hash;
-            int i;
-
-            for (hash= 0, i = 0; i < part1len; i++)
-                hash= (hash << 1) ^ body[i];
-            for (i = part1len + gaplen; i < size; i++)
-                hash= (hash << 1) ^ body[i];
-            return hash;
         }
 
         /// <summary>

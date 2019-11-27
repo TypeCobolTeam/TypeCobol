@@ -10,10 +10,8 @@ namespace TypeCobol.Compiler.Diagnostics
     /// <summary>
     /// Detailed error message for the end user, with the location of the problem dected in the source text
     /// </summary>
-    public class Diagnostic : IEquatable<Diagnostic>
+    public class Diagnostic
     {
-        private readonly int _hashCode;
-
         public Diagnostic(MessageCode messageCode, int columnStart, int columnEnd, int lineNumber, params object[] messageArgs)
         {
             Info = DiagnosticMessage.GetFromCode[(int)messageCode];
@@ -28,8 +26,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 CatchedException = messageArgs.FirstOrDefault(x => x is Exception) as Exception;
                 MessageArgs = messageArgs;
             }
-
-            _hashCode = (Info==null) ? $"{Line}{ColumnStart}{ColumnEnd}{Message}".GetHashCode() : $"{Line}{ColumnStart}{ColumnEnd}{Message}{Info.Code}{Info.Severity}".GetHashCode();
         }
 
         public DiagnosticMessage Info { get; set; }
@@ -49,30 +45,6 @@ namespace TypeCobol.Compiler.Diagnostics
         public override string ToString()
         {
             return string.Format("Line {0}[{1},{2}] <{3}, {4}, {5}> - {6}", Line, ColumnStart, ColumnEnd, Info.Code, Info.Severity, Info.Category, Message);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as Diagnostic);
-        }
-
-        public bool Equals(Diagnostic diagnostic)
-        { 
-            if (Object.ReferenceEquals(this, diagnostic)) return true;
-            if (diagnostic == null) return false;
-
-            return diagnostic.Line == this.Line &&
-                   diagnostic.ColumnStart == this.ColumnStart &&
-                   diagnostic.ColumnEnd == this.ColumnEnd &&
-                   diagnostic.Message == this.Message &&
-                   (diagnostic.Info != null && this.Info != null) &&
-                   diagnostic.Info.Code == this.Info.Code &&
-                   diagnostic.Info.Severity == this.Info.Severity;
-        }
-
-        public override int GetHashCode()
-        {
-            return _hashCode;
         }
     }
 }

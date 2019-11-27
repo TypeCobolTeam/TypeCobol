@@ -26,8 +26,8 @@ namespace TypeCobol.Compiler.Scanner
 
         public bool Equals(Token tokenCompare)
         {
-            if (tokenCompare == null) return false;
             if (Object.ReferenceEquals(this, tokenCompare)) return true;
+            if (tokenCompare == null) return false;
 
             return this.Type == tokenCompare.Type
                    && this.Channel == tokenCompare.Channel
@@ -47,10 +47,11 @@ namespace TypeCobol.Compiler.Scanner
 
         public override int GetHashCode()
         {
-            string tokenCompoundLabel =
-                $"{Type}{Channel}{Column}{EndColumn}{ExpectedClosingDelimiter}{Length}{Line}{StartIndex}" +
-                $"{StopIndex}{TokenIndex}{HasClosingDelimiter}{LiteralValue}{TokenType}{Text}";
-            return tokenCompoundLabel.GetHashCode();
+            return
+                (Type.GetHashCode() + Column.GetHashCode() + EndColumn.GetHashCode()) * 1000 +
+                (Length.GetHashCode() + Line.GetHashCode()) * 100 +
+                (StartIndex.GetHashCode() + StopIndex.GetHashCode() + TokenIndex.GetHashCode()) * 10 +
+                Text.GetHashCode();
         }
 
         /// <summary>

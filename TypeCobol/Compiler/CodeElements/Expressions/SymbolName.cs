@@ -23,7 +23,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Properties of a symbol Token in the Cobol grammar
     /// </summary>
-    public abstract class SymbolInformation : IVisitable
+    public abstract class SymbolInformation : IVisitable, IEquatable<SymbolInformation>
     {
         protected SymbolInformation(SyntaxValue<string> nameLiteral, SymbolRole role, SymbolType type)
         {
@@ -48,7 +48,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// Type of the symbol
         /// </summary>
-        public SymbolType Type { get; private set; }
+        public SymbolType Type { get; }
 
         public virtual bool IsOrCanBeOfType(SymbolType symbolType)
         {
@@ -69,19 +69,20 @@ namespace TypeCobol.Compiler.CodeElements
 
         public override bool Equals(object obj)
         {
-            SymbolInformation otherSymbol = obj as SymbolInformation;
-            if (otherSymbol == null)
-            {
-                return false;
-            }
-            else
-            {
-                return Name.Equals(otherSymbol.Name, StringComparison.OrdinalIgnoreCase) &&
-                       Type == otherSymbol.Type;
-            }
+            return Equals(obj as SymbolInformation);
         }
 
-		public override int GetHashCode() { return Type.GetHashCode() * 11 + Name.GetHashCode(); }
+        public bool Equals(SymbolInformation symbolInformation)
+        {
+            if (Object.ReferenceEquals(this, symbolInformation)) return true;
+            if (symbolInformation == null) return false;
+
+            return Name.Equals(symbolInformation.Name, StringComparison.OrdinalIgnoreCase) &&
+                   Type == symbolInformation.Type;
+        }
+
+        public override int GetHashCode() { return Type.GetHashCode() * 11 + Name.GetHashCode(); }
+
         public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return astVisitor.Visit(this)
                 && this.ContinueVisitToChildren(astVisitor, NameLiteral);
@@ -119,14 +120,11 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class SymbolReference : SymbolInformation, IEquatable<SymbolReference>
     {
-        private readonly int _hashCode;
-
         public SymbolReference(SyntaxValue<string> nameLiteral, SymbolType type) :
             base(nameLiteral, SymbolRole.SymbolReference, type)
         {
             IsAmbiguous = false;
             IsQualifiedReference = false;
-            _hashCode = nameLiteral.GetHashCode() + type.GetHashCode();
         }
 
 		public SymbolReference(SymbolDefinition symbol)
@@ -176,13 +174,24 @@ namespace TypeCobol.Compiler.CodeElements
 
         public bool Equals(SymbolReference symbolReferenceCompare)
         {
-            return Object.ReferenceEquals(this, symbolReferenceCompare);
+            if (symbolReferenceCompare == null) return false;
+            if (Object.ReferenceEquals(this, symbolReferenceCompare)) return true;
+
+            return NameLiteral == symbolReferenceCompare.NameLiteral &&
+                   Role == symbolReferenceCompare.Role &&
+                   Type == symbolReferenceCompare.Type;
         }
 
         public override int GetHashCode()
         {
-            return _hashCode;
+            return NameLiteral.GetHashCode() + Role.GetHashCode() + Type.GetHashCode();
+            return ComputeHashCode();
         }
+        private int ComputeHashCode()
+        {
+            return NameLiteral.GetHashCode() + Role.GetHashCode() + Type.GetHashCode();
+        }
+
     }
 
     /// <summary>

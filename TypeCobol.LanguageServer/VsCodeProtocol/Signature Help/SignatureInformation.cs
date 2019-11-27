@@ -3,6 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,24 +14,24 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     /// can have a label, like a function-name, a doc-comment, and
     /// a set of parameters.
     /// </summary>
-    public class SignatureInformation
+    public class SignatureInformation : IEquatable<SignatureInformation>
     {
         /// <summary>
         /// The label of this signature. Will be shown in
         /// the UI.
         /// </summary>
-        public string label { get; set; }
+        public string label { get; }
 
         /// <summary>
         /// The human-readable doc-comment of this signature. Will be shown
         /// in the UI but can be omitted.
         /// </summary>
-        public string documentation { get; set; }
+        public string documentation { get; }
 
         /// <summary>
         /// The parameters of this signature.
         /// </summary>
-        public ParameterInformation[] parameters { get; set; }
+        public ParameterInformation[] parameters { get; }
 
         public SignatureInformation(string label, string documentation, params ParameterInformation[] parameters)
         {
@@ -41,14 +42,22 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
 
         public override bool Equals(object obj)
         {
-            if (!(obj is SignatureInformation))
-                return false;
+            return Equals(obj as SignatureInformation);
+        }
 
-            var givenSignature = (SignatureInformation) obj;
+        public bool Equals(SignatureInformation signatureInformation)
+        {
+            if (Object.ReferenceEquals(this, signatureInformation)) return true;
+            if (signatureInformation == null) return false;
 
-            return givenSignature.label == this.label
-                   && givenSignature.documentation == this.documentation
-                   && CompareLists(this.parameters.ToList(), givenSignature.parameters.ToList());
+            return signatureInformation.label == this.label
+                   && signatureInformation.documentation == this.documentation
+                   && CompareLists(this.parameters.ToList(), signatureInformation.parameters.ToList());
+        }
+
+        public override int GetHashCode()
+        {
+            return label.GetHashCode() + (documentation?.GetHashCode() ?? 10) + (parameters?.GetHashCode() ?? 100);
         }
 
         private static bool CompareLists(List<ParameterInformation> list1, List<ParameterInformation> list2)

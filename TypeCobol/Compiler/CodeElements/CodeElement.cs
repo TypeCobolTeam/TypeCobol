@@ -16,20 +16,18 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public abstract partial class CodeElement: IToken, IVisitable, IEquatable<CodeElement>
     {
-        private readonly CodeElementType _type;
-
         protected CodeElement(CodeElementType type)
         {
             Type = type;
             ConsumedTokens = new List<Token>();
             SymbolInformationForTokens = new Dictionary<Token, SymbolInformation>();
-            _type = type;
         }
+
 
         /// <summary>
         /// The Cobol syntax can be decomposed in 116 elementary code elements
         /// </summary>
-        public CodeElementType Type { get; private set; }
+        public CodeElementType Type { get; }
 
         private IList<Token> _consumedTokens;
         /// <summary>
@@ -166,20 +164,15 @@ namespace TypeCobol.Compiler.CodeElements
 
         public bool Equals(CodeElement codeElement)
         {
-            if (codeElement == null) return false;
             if (Object.ReferenceEquals(this, codeElement)) return true;
+            if (codeElement == null) return false;
 
-            return this.Line == codeElement.Line &&
-                   this.Type == codeElement.Type &&
-                   this.Column == codeElement.Column &&
-                   this.StartIndex == codeElement.StartIndex &&
-                   this.StopIndex == codeElement.StopIndex &&
-                   this.Text == codeElement.Text;
+            return Type == codeElement.Type && ConsumedTokens.Equals(codeElement.ConsumedTokens);
         }
 
         public override int GetHashCode()
         {
-            return _type.GetHashCode() * 11 + ConsumedTokens.GetHashCode();
+            return Type.GetHashCode() * 11 + ConsumedTokens.GetHashCode();
         }
 
         private bool? _isInsideCopy = null; 

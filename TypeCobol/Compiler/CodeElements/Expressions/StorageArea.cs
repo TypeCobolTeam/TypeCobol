@@ -14,7 +14,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// Represents a storage area in memory where the program can read or write data.
     /// Most often represented by the "identifier" rule in the Cobol grammar.
     /// </summary>
-    public abstract class StorageArea : IVisitable, IEquatable<StorageArea>
+    public abstract class StorageArea : IVisitable
     {
         protected StorageArea(StorageAreaKind kind)
         {
@@ -69,21 +69,6 @@ namespace TypeCobol.Compiler.CodeElements
 
         public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return astVisitor.Visit(this) && this.ContinueVisitToChildren(astVisitor, SymbolReference,ReferenceModifier);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as StorageArea);
-        }
-
-        public bool Equals(StorageArea storageArea)
-        {
-            return System.Object.ReferenceEquals(this, storageArea);
-        }
-
-        public override int GetHashCode()
-        {
-            return ToString().GetHashCode();
         }
     }
 
