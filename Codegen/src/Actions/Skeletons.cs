@@ -547,17 +547,16 @@ namespace TypeCobol.Codegen.Actions
         var item = "";
         if (@Model.needCompute)
         {
-        foreach (var receiver in @Model.displayableReceivers)
-        {
-        item += "COMPUTE " + receiver + " = " + receiver + (@Model.incrementDirection == "Down" ? " - " : " + ") + @Model.sender.ToString() + ".\n";
-        }
+         foreach (var receiver in @Model.displayableReceivers)
+         {
+           item += "COMPUTE " + receiver + " = " + receiver + (@Model.incrementDirection == "Down" ? " - " : " + ") + @Model.sender.ToString() + ".\n";
+         }
         }
         else
         {
-        item += (@Model.incrementDirection == "Up" ? "ADD " : "SUBTRACT ") + @Model.sender.ToString();
-        item += (@Model.incrementDirection == "Up" ? " to " : " from ") ;
-        foreach (var receiver in @Model.displayableReceivers)
-        item += receiver + ", ";
+         item = @Model.incrementDirection == "Down" ? "SUBTRACT " + @Model.sender.ToString() + " from " : "ADD " + @Model.sender.ToString() + " to ";
+         foreach (var receiver in @Model.displayableReceivers)
+           item += receiver + ", ";
         }
         item = item.Remove(item.Length - 2);
         @SelfResult.Append(@"
