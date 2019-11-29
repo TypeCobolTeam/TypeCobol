@@ -101,8 +101,8 @@ namespace TypeCobol.Compiler.Symbols
             Scope<TS>.MultiSymbols results = new Scope<TS>.MultiSymbols();
             if (path == null || path.Length == 0)
                 return results;
-            domain.TryGetValue(path[0], out var candidates);
-            if (candidates == null || candidates.Count == 0)
+            bool bExits = domain.TryGetValue(path[0], out var candidates);
+            if (!bExits || candidates == null || candidates.Count == 0)
                 return results;
             if (path.Length == 1)
             {

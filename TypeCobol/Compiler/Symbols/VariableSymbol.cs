@@ -183,7 +183,7 @@ namespace TypeCobol.Compiler.Symbols
                 return null;
             }
 
-            return ((VariableSymbol) Owner).Level == level ? Owner : Owner.LookupParentLevelSymbol(level, true);
+            return Owner.LookupParentLevelSymbol(level, true);
         }
 
         /// <summary>

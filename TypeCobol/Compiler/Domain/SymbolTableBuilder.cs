@@ -66,32 +66,49 @@ namespace TypeCobol.Compiler.Domain
 #endif
 
         /// <summary>
+        /// Lock variable on the Rootymboltable access
+        /// </summary>
+        private static object rootLock = new object();
+
+        /// <summary>
         /// The Root Symbol Table
         /// </summary>
         public static RootSymbolTable Root
         {
             get
             {
-                if (_rootSymbolTable == null)
+                lock (rootLock)
                 {
-                    _rootSymbolTable = new RootSymbolTable();
-                    //Store Builtin Symbols.
-                    BuiltinSymbols.StoreSymbols(_rootSymbolTable.Types);
-                    foreach (var t in _rootSymbolTable.Types)
-                    {   //Enter each Builtin symbol in the domain also.
-                        //And mark it as a builtin symbol.
-                        t.SetFlag(Symbol.Flags.BuiltinSymbol, true);
-                        _rootSymbolTable.AddToDomain(t);
+                    if (_rootSymbolTable == null)
+                    {
+                        _rootSymbolTable = new RootSymbolTable();
+                        //Store Builtin Symbols.
+                        BuiltinSymbols.StoreSymbols(_rootSymbolTable.Types);
+                        foreach (var t in _rootSymbolTable.Types)
+                        {
+                            //Enter each Builtin symbol in the domain also.
+                            //And mark it as a builtin symbol.
+                            t.SetFlag(Symbol.Flags.BuiltinSymbol, true);
+                            _rootSymbolTable.AddToDomain(t);
+                        }
+
+                        LoadBaseTable();
                     }
-                    LoadBaseTable();
+
+                    return _rootSymbolTable;
                 }
-                return _rootSymbolTable;
             }
-            set { _rootSymbolTable = value; }
+            set
+            {
+                lock (rootLock)
+                {
+                    _rootSymbolTable = value;
+                }
+            }
         }
 
         /// <summary>
-        /// Load intrinsic symbol in the global table.
+        /// Load intrinsic symbol in the root table.
         /// </summary>
         /// <param name="path"></param>
         public static void LoadIntrinsics(string path)
@@ -109,7 +126,7 @@ namespace TypeCobol.Compiler.Domain
                 return Builder;
             };
             Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(BuilderNodeListenerFactory);
-            //Put all Types from programs into the Global Namespace.
+            //Put all Types from programs into the Root Namespace.
             TransfertAllProgramsToIntrinsics();
             try
             {
@@ -151,7 +168,7 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Load Standard TypeCobol Symbol tables.
+        /// Load TypeCobol Intrinsics and dependencies into the root Symbol Table.
         /// </summary>
         /// <param name="config">The TypeCobol configuration</param>
         public static void LoadBaseTable(TypeCobolConfiguration config = null)
@@ -186,7 +203,7 @@ namespace TypeCobol.Compiler.Domain
                 baseSymbols =
                     Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format,
                         DiagnosticsErrorEvent); //Load intrinsic
-                //Put all Intrinsic Types from programs into the Global Namespace.
+                //Put all Intrinsic Types from programs into the Root Namespace.
                 TransfertAllProgramsToIntrinsics();
 
                 baseSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, baseSymbols,

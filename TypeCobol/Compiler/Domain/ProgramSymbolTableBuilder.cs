@@ -198,7 +198,7 @@ namespace TypeCobol.Compiler.Domain
                 System.Diagnostics.Debug.Assert(CurrentNode.Parent.CodeElement != null);
                 System.Diagnostics.Debug.Assert(CurrentNode.Parent.CodeElement.Type == CodeElementType.ProgramIdentification);
                 //This is a litte bit tricky but with TypeCobol Nested Programs belong the to the Main Program namespace
-                //So the Now the Main Parent namespace in the Global Namespace, so add it in it.
+                //So the Now the Main Parent namespace in the Root Namespace, so add it in it.
                 //So first lookup if one exists already.
                 bool bAddNested = true;
                 var prgEntry = Root.Programs.Lookup(programIdentification.ProgramName.Name);
@@ -347,7 +347,7 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Resolve in the current program linkage section, the given paramaeter.
+        /// Resolve in the current program linkage section, the given parameter.
         /// </summary>
         /// <param name="p">The parameter to resolve.</param>
         /// <returns>The resolved variable if any, null otherwise</returns>
@@ -384,6 +384,9 @@ namespace TypeCobol.Compiler.Domain
                         break;
                     case ParameterPassingDirection.InOut:
                         pvar.Symbol.SetFlag(Symbol.Flags.Inout, true);
+                        break;
+                    case ParameterPassingDirection.Returning:
+                        pvar.Symbol.SetFlag(Symbol.Flags.Returning, true);
                         break;
                 }
             }
@@ -470,7 +473,7 @@ namespace TypeCobol.Compiler.Domain
         /// These DataConditions must created as child of the current declaration
         /// </summary>
         /// <param name="parameter">The paramter to be handled</param>
-        private VariableSymbol FunctionParameder2Symbol(ParameterDescription parameter, Scope<VariableSymbol> parentScope)
+        private VariableSymbol FunctionParameter2Symbol(ParameterDescription parameter, Scope<VariableSymbol> parentScope)
         {
             ParameterDescriptionEntry desc = (ParameterDescriptionEntry) parameter.CodeElement;
             List<DataCondition> toBeRemoved = null;
@@ -504,7 +507,7 @@ namespace TypeCobol.Compiler.Domain
         public override void EndFunctionDeclaration(FunctionDeclarationEnd end)
         {            
             System.Diagnostics.Debug.Assert(this.CurrentScope != null && this.CurrentScope is FunctionSymbol && CurrentScope == CurrentProgram);
-            FunctionDeclaration funDecl = (FunctionDeclaration)LastFunctionDeclaration;
+            FunctionDeclaration funDecl = LastFunctionDeclaration;
             FunctionSymbol funSym = (FunctionSymbol)CurrentProgram;
 
             //Collect Function parameters.
@@ -513,19 +516,19 @@ namespace TypeCobol.Compiler.Domain
             //Input
             foreach (ParameterDescription input in funcProfile.InputParameters)
             {
-                VariableSymbol p = FunctionParameder2Symbol(input, funSym.LinkageStorageData);
+                VariableSymbol p = FunctionParameter2Symbol(input, funSym.LinkageStorageData);
                 p.SetFlag(Symbol.Flags.Parameter | Symbol.Flags.Input | Symbol.Flags.LINKAGE, true);
                 parameters.Add(p);
             }
             foreach (ParameterDescription inout in funcProfile.InoutParameters)
             {
-                VariableSymbol p = FunctionParameder2Symbol(inout, funSym.LinkageStorageData);
+                VariableSymbol p = FunctionParameter2Symbol(inout, funSym.LinkageStorageData);
                 p.SetFlag(Symbol.Flags.Parameter | Symbol.Flags.Inout | Symbol.Flags.LINKAGE, true);
                 parameters.Add(p);
             }
             foreach (ParameterDescription output in funcProfile.OutputParameters)
             {
-                VariableSymbol p = FunctionParameder2Symbol(output, funSym.LinkageStorageData);
+                VariableSymbol p = FunctionParameter2Symbol(output, funSym.LinkageStorageData);
                 p.SetFlag(Symbol.Flags.Parameter | Symbol.Flags.Output | Symbol.Flags.LINKAGE, true);
                 parameters.Add(p);
             }
@@ -534,8 +537,8 @@ namespace TypeCobol.Compiler.Domain
             if (funcProfile.ReturningParameter != null)
             {
                 ParameterDescription ret = funcProfile.ReturningParameter;
-                retVar = FunctionParameder2Symbol(ret, funSym.LinkageStorageData);
-                retVar.SetFlag(Symbol.Flags.Return | Symbol.Flags.LINKAGE, true);
+                retVar = FunctionParameter2Symbol(ret, funSym.LinkageStorageData);
+                retVar.SetFlag(Symbol.Flags.Returning | Symbol.Flags.LINKAGE, true);
             }
 
             //Create the Function type.
@@ -825,7 +828,7 @@ namespace TypeCobol.Compiler.Domain
                 {
                     DataDefinition df = (DataDefinition)child;
                     VariableSymbol df_sym = DataDefinition2Symbol(df, recType.Scope, typedef);
-                    //df_sym == null this may be an Index Definition or a bad symbol.
+                    //if df_sym == null this may be a bad symbol.
                     if (df_sym != null)
                     {
                         recType.Scope.Enter(df_sym);
@@ -878,6 +881,7 @@ namespace TypeCobol.Compiler.Domain
                     symRef.NameLiteral.Token.EndColumn,
                     symRef.NameLiteral.Token.Line,
                     string.Format(TypeCobolResource.CannotRedefinedTypedefDecl, symRef.Name));
+                Diagnostics.Add(d);
                 return null;
             }
             //Find the declaring program of function scope.
@@ -902,6 +906,7 @@ namespace TypeCobol.Compiler.Domain
                         dtde.Column,
                         dtde.Line,
                         string.Format(TypeCobolResource.TypeAlreadyDeclared, dataDef.Name));
+                    Diagnostics.Add(d);
                     return null;
                 }
             }
@@ -936,6 +941,7 @@ namespace TypeCobol.Compiler.Domain
                         dtde.Column,
                         dtde.Line,
                         string.Format(TypeCobolResource.TypedefDeclaredOutProgramOrFunction, dataDef.Name));
+                    Diagnostics.Add(d);
                     return null;
                 }
             }
@@ -980,6 +986,7 @@ namespace TypeCobol.Compiler.Domain
                     symRef.NameLiteral.Token.EndColumn,
                     symRef.NameLiteral.Token.Line,
                     string.Format(TypeCobolResource.CannotRedefinesAVariableWhoseTypeDefed, symRef.Name));
+                Diagnostics.Add(d);
                 return null;
             }
 
@@ -991,34 +998,7 @@ namespace TypeCobol.Compiler.Domain
             //We need also a valid CurrentScope to lookup Typedef if one exit, or to create an unresolved Typedef declaration.
             System.Diagnostics.Debug.Assert(CurrentScope != null);
 
-            string[] paths = null;
-            IList<SymbolReference> refs = null;
-            if (datSymRef == null)
-            {
-                paths = new string[] { dataType.Name };
-            }
-            else if (datSymRef.IsTypeCobolQualifiedReference)
-            {
-                TypeCobolQualifiedSymbolReference tc_qualifiedSymbolReference = datSymRef as TypeCobolQualifiedSymbolReference;
-                refs = tc_qualifiedSymbolReference.AsList();
-            }
-            else if (datSymRef.IsQualifiedReference)
-            {//Path in reverse order DVZF0OS3::EventList --> {EventList, DVZF0OS3}
-                QualifiedSymbolReference qualifiedSymbolReference = datSymRef as QualifiedSymbolReference;
-                refs = qualifiedSymbolReference.AsList();
-            }
-            else
-            {
-                refs = new List<SymbolReference>() { datSymRef };
-            }
-            if (paths == null)
-            {
-                paths = new string[refs.Count];
-                for (int i = 0; i < refs.Count; i++)
-                {
-                    paths[i] = refs[i].Name;
-                }
-            }
+            string[] paths = paths = datSymRef == null ? new string[] { dataType.Name } : AbstractScope.SymbolReferenceToPath(datSymRef);
             VariableTypeSymbol varTypeSym = new VariableTypeSymbol(dataDef.Name, paths);
             DecorateSymbol(dataDef, varTypeSym, parentScope);
             if (typedef == null)
@@ -1139,7 +1119,7 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Create a Vraibale Symbol thar represents an Index.
+        /// Create a Variable Symbol that represents an Index.
         /// </summary>
         /// <param name="dataDef"></param>
         /// <param name="parentScope">The parent scope</param>

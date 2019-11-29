@@ -82,7 +82,7 @@ namespace TypeCobol.Compiler.Scopes
         {
             System.Diagnostics.Debug.Assert(varSym != null);
             System.Diagnostics.Debug.Assert(varSym.GlobalIndex == 0);
-            lock (Universe)
+            //lock (Universe)
             {
                 varSym.GlobalIndex = NextVariableSymbolIndex();
                 Universe.Add(varSym);
@@ -93,7 +93,7 @@ namespace TypeCobol.Compiler.Scopes
 
         /// <summary>
         /// All Ordered Symbol that can be reached from this Root Symbol Table.
-        /// This is in fact the entire domain of variable within this Global Symbol Table.
+        /// This is in fact the entire domain of variable within this Root Symbol Table.
         /// </summary>
         public IList<VariableSymbol> Universe { get; internal set; }
 
@@ -114,11 +114,10 @@ namespace TypeCobol.Compiler.Scopes
         public void AddToDomain(AbstractScope absScope)
         {
             System.Diagnostics.Debug.Assert(absScope != null);
-            lock (ScopeDomain)
+            //lock (ScopeDomain)
             {
                 string name = absScope.Name;
-                ScopeDomain.TryGetValue(name, out var value);
-                if (value == null)
+                if (!ScopeDomain.TryGetValue(name, out var value))
                     ScopeDomain[name] = new Scope<AbstractScope>.MultiSymbols(absScope);
                 else
                     value.Add(absScope);
@@ -132,8 +131,7 @@ namespace TypeCobol.Compiler.Scopes
         public void RemoveFromDomain(AbstractScope absScope)
         {
             string name = absScope.Name;
-            ScopeDomain.TryGetValue(name, out var value);
-            if (value != null)
+            if (ScopeDomain.TryGetValue(name, out var value))
             {
                 value.Remove(absScope);
 
@@ -189,11 +187,10 @@ namespace TypeCobol.Compiler.Scopes
         public void AddToDomain(TypedefSymbol type)
         {
             System.Diagnostics.Debug.Assert(type != null);
-            lock (TypeDomain)
+            //lock (TypeDomain)
             {
                 string name = type.Name;
-                TypeDomain.TryGetValue(name, out var value);
-                if (value == null)
+                if (!TypeDomain.TryGetValue(name, out var value))
                     TypeDomain[name] = new Scope<TypedefSymbol>.MultiSymbols(type);
                 else
                     value.Add(type);
@@ -207,8 +204,10 @@ namespace TypeCobol.Compiler.Scopes
         public void RemoveFromDomain(TypedefSymbol type)
         {
             string name = type.Name;
-            TypeDomain.TryGetValue(name, out var value);
-            value?.Remove(type);
+            if (TypeDomain.TryGetValue(name, out var value))
+            {
+                value?.Remove(type);
+            }
         }
 
         /// <summary>
@@ -231,8 +230,7 @@ namespace TypeCobol.Compiler.Scopes
                 return results;
 
             string name = path[0];
-            this.ScopeDomain.TryGetValue(name, out var candidates);
-            if (candidates != null)
+            if (this.ScopeDomain.TryGetValue(name, out var candidates))
             {
                 kinds = kinds == null || kinds.Length == 0 ? AllScopeKinds : kinds;
                 foreach (var candidate in candidates)
@@ -296,8 +294,7 @@ namespace TypeCobol.Compiler.Scopes
             Scope<TypedefSymbol>.MultiSymbols results = new Scope<TypedefSymbol>.MultiSymbols();
             if (path == null || path.Length == 0)
                 return results;
-            this.TypeDomain.TryGetValue(path[0], out var candidates);
-            if (candidates != null)
+            if (this.TypeDomain.TryGetValue(path[0], out var candidates))
             {
                 foreach (var candidate in candidates)
                 {   //Only selected whose Type is defined.

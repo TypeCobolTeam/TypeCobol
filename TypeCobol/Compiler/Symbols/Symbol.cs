@@ -14,7 +14,7 @@ using Type = TypeCobol.Compiler.Types.Type;
 namespace TypeCobol.Compiler.Symbols
 {
     /// <summary>
-    /// Base classe of a Cobol Symbol
+    /// Base class of a Cobol Symbol
     /// </summary>
     public abstract class Symbol : ISemanticData, ICloneable
     {
@@ -78,7 +78,7 @@ namespace TypeCobol.Compiler.Symbols
             Redefines = 0x01 << 30,
             HasATypedefType = 0x01L << 31,//The symbol has a type that comes from a TypeDef.
             Parameter = 0x01L << 32,//This a parameter variable.
-            Return = 0x01L << 33,//A Return variable.
+            Returning = 0x01L << 33,//A Return variable.
             BuiltinType = 0x01L << 34,//This is a Builtin Type.
             InsideTypdef = 0x01L << 35,//Flag of any symbol inside a Typedef definition
             ProgramExpanded = 0x01L << 36,//Flag for a program that have been already expanded.
@@ -142,29 +142,13 @@ namespace TypeCobol.Compiler.Symbols
             internal set;
         }
 
-        private System.WeakReference _myTargetNode = null;
         /// <summary>
         /// The target AST node if any
         /// </summary>
         public Node TargetNode
         {
-            get
-            {
-                lock (this)
-                {
-                    return (Node)_myTargetNode?.Target;
-                }
-            }
-            internal set
-            {
-                lock (this)
-                {
-                    if (_myTargetNode == null)
-                        _myTargetNode = new System.WeakReference(value);
-                    else
-                        _myTargetNode.Target = value;
-                }
-            }
+            get;
+            internal set;
         }
 
         /// <summary>

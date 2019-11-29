@@ -122,6 +122,7 @@ namespace TypeCobol.Compiler.Scopes
             /// <param name="symbol">The symbol to be added</param>
             public void Add(T symbol)
             {
+                System.Diagnostics.Debug.Assert((symbol != null));
                 if (Count == 0)
                 {
                     base.Symbol = symbol;
@@ -142,8 +143,6 @@ namespace TypeCobol.Compiler.Scopes
             /// <param name="sym"></param>
             internal void Remove(T sym)
             {
-                //After removing a multi must at least contains one element.
-                System.Diagnostics.Contracts.Contract.Ensures(Count >= 1);
                 _symbols.Remove(sym);                
                 //base.Symbol is always the first symbol of the list.
                 Symbol = _symbols.Count > 0 ? _symbols[0] : null;
@@ -248,8 +247,7 @@ namespace TypeCobol.Compiler.Scopes
             Entry entry = null;
             if (_symbols != null)
             {
-                _symbols.TryGetValue(name, out entry);
-                if (entry != null)
+                if (_symbols.TryGetValue(name, out entry))
                 {
                     if (entry.Count == 1)
                     {

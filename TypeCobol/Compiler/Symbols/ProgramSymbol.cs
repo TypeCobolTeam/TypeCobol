@@ -32,7 +32,7 @@ namespace TypeCobol.Compiler.Symbols
             Paragraphs = new Scope<ParagraphSymbol>(this);
             Functions = new Scope<FunctionSymbol>(this);
             Programs = new Scope<ProgramSymbol>(this);
-            VariableTypeSymbols = new LinkedList<VariableSymbol>();
+            VariableTypeSymbols = new LinkedList<VariableTypeSymbol>();
             Domain = new Dictionary<string, Scope<VariableSymbol>.MultiSymbols>(StringComparer.OrdinalIgnoreCase);
         }
 
@@ -138,7 +138,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// All variable that uses a Type that comes from a TypeDef
         /// </summary>
-        public LinkedList<VariableSymbol> VariableTypeSymbols
+        public LinkedList<VariableTypeSymbol> VariableTypeSymbols
         {
             get;
             private set;
@@ -187,8 +187,7 @@ namespace TypeCobol.Compiler.Symbols
                 //First add it in the Global Domain.
                 SymbolTableBuilder.Root.AddToUniverse(varSym);
                 string name = varSym.Name;
-                Domain.TryGetValue(name, out var value);
-                if (value == null)
+                if (!Domain.TryGetValue(name, out var value))
                 {
                     Domain[name] = new Scope<VariableSymbol>.MultiSymbols(varSym);
                 }
@@ -199,7 +198,8 @@ namespace TypeCobol.Compiler.Symbols
                 //Remember a variable that maybe expanded.
                 if (varSym.HasFlag(Flags.HasATypedefType))
                 {
-                    VariableTypeSymbols.AddLast(varSym);
+                    System.Diagnostics.Debug.Assert((varSym is VariableTypeSymbol));
+                    VariableTypeSymbols.AddLast((VariableTypeSymbol)varSym);
                 }
             }
             return varSym;
@@ -353,8 +353,7 @@ namespace TypeCobol.Compiler.Symbols
             if (paths == null || paths.Length == 0)
                 return results;
             string name = paths[0];
-            this.Domain.TryGetValue(name, out var candidates);
-            if (candidates != null)
+            if (this.Domain.TryGetValue(name, out var candidates))
             {
                 foreach (var candidate in candidates)
                 {

@@ -49,7 +49,7 @@ namespace TypeCobol.Compiler.Symbols
                 return base.HasParent(parent);
             if (Indexed == parent)
                 return true;
-            if (Indexed == null || parent == null)
+            if (parent == null)
                 return false;
             return Indexed.HasParent(parent);
         }
