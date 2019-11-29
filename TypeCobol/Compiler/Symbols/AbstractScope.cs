@@ -199,7 +199,7 @@ namespace TypeCobol.Compiler.Symbols
                     if (entry != null)
                     {
                         System.Diagnostics.Debug.Assert(entry.Count == 1);
-                        currentScope = entry[0] as AbstractScope;
+                        currentScope = entry[0];
                         stopScope = currentScope;
                         break;
                     }
@@ -221,7 +221,7 @@ namespace TypeCobol.Compiler.Symbols
                     ProgramSymbol pgmSym = new ProgramSymbol(progName);
                     programs.Enter(pgmSym);
                     entry = programs.Lookup(progName);
-                    currentScope = entry[0] as AbstractScope;
+                    currentScope = entry[0];
                     stopScope = currentScope;
                 }
             }

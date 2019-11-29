@@ -1466,7 +1466,7 @@ namespace TypeCobol.Compiler.Domain
                 {
                     //An index definition symbol
                     IndexDefinition indexDef = (IndexDefinition) child;
-                    var indexSym = CreateIndexSymbol((DataDefinition)indexDef, parentScope, typedef);
+                    var indexSym = CreateIndexSymbol(indexDef, parentScope, typedef);
                     //Attach the Indexed
                     indexSym.Owner = indexedSym.Owner;
                     indexSym.Indexed = indexedSym;
@@ -1700,7 +1700,7 @@ namespace TypeCobol.Compiler.Domain
                 ValidateRenames();
                 StoreDataDivisionSymbol(dataDefSym);
                 //Handle indexes belonging to this Data Definition
-                HandleIndexes((DataDefinition) level1Node, dataDefSym, scope, null);
+                HandleIndexes(level1Node, dataDefSym, scope, null);
             }
         }
     }
