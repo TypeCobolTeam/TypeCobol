@@ -9,6 +9,9 @@ using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
 {
+    /// <summary>
+    /// Don't confuse with Scope class
+    /// </summary>
     public abstract class AbstractScope : Symbol, IScope
     {
         /// <summary>
