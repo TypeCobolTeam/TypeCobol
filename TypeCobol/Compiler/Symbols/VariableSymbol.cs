@@ -37,7 +37,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Level of this variable.
         /// A number beetwen (01 and 49 for groups and their elements),
-        /// 77 for isolate variables , 88 for condition, 66 for RENAMES.
+        /// 77 for independent variables , 88 for condition, 66 for RENAMES.
         /// </summary>
         public int Level
         {

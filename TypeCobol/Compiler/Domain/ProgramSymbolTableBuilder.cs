@@ -20,7 +20,7 @@ namespace TypeCobol.Compiler.Domain
     /// <summary>
     /// A Symbol table builder for a program.
     /// 
-    /// THIS ARE COBOL Rules
+    /// THESE ARE COBOL Rules
     /// ---------------------
     /// -"Global Program Scope" variables declared in working storage as global are visible to the entire program 
     ///     in which they are declared AND in all nested subprograms contained in that program.
@@ -32,7 +32,7 @@ namespace TypeCobol.Compiler.Domain
     /// and the variables of each are visible only within the scope of that individual program.
     /// You could think of this as function/procedure scope.
     /// 
-    /// TypeCobol Rules cane be read at: https://github.com/TypeCobolTeam/TypeCobol/issues/1081
+    /// TypeCobol Rules can be read at: https://github.com/TypeCobolTeam/TypeCobol/issues/1081
     /// --------------------------------
     /// </summary>
     public class ProgramSymbolTableBuilder : SymbolTableBuilder
@@ -683,7 +683,7 @@ namespace TypeCobol.Compiler.Domain
         /// <summary>
         /// Create the Usage type corresponding to a DataDefinition.
         /// </summary>
-        /// <param name="dataDef">The DataDefinition to create t he usage type.</param>
+        /// <param name="dataDef">The DataDefinition to create the usage type.</param>
         /// <returns>The usage type</returns>
         internal static Type CreateUsageType(DataDefinition dataDef)
         {
