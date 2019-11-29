@@ -77,16 +77,16 @@ namespace TypeCobol.Compiler.Scopes
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        /// <summary>
-        /// One Symbol constructor.
-        /// </summary>
-        /// <param name="symbol"></param>
-        public Entry(T symbol)
+			/// <summary>
+			/// One Symbol constructor.
+			/// </summary>
+			/// <param name="symbol"></param>
+            public Entry(T symbol)
             {
                 System.Diagnostics.Debug.Assert(symbol != null);
                 Symbol = symbol;
             }
-        protected Entry()
+            protected Entry()
             {
 
             }
