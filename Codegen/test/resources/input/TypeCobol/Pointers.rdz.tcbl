@@ -42,7 +42,7 @@
 
       * Procedure
        declare procedure PointerProcedure PRIVATE
-         input ptr pointer.
+         in-out ptr pointer.
   
          data division.
          working-storage section.
