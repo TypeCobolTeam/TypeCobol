@@ -97,8 +97,6 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
-
-
         public override bool Visit(PerformProcedure performProcedureNode)
         {
             SectionOrParagraphUsageChecker.CheckReferenceToParagraphOrSection(performProcedureNode);
@@ -596,7 +594,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         node.GetEnclosingProgramOrFunctionNode().SetFlag(Node.Flag.UseGlobalStorage, true);
                     }
                 }
-
+                
                 //add the found DataDefinition to a dictionary depending on the storage area type
                 if (isReadStorageArea)
                 {
@@ -749,17 +747,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
         }
 
-        private void CheckEndNode(IToken openingToken, CodeElement endCodeElement)
-        {
-            // Check end statement is aligned with the matching opening statement
-            if (openingToken.Line != endCodeElement.Line &&
-                openingToken.StartIndex != endCodeElement.StartIndex)
-            {
-                DiagnosticUtils.AddError(endCodeElement,
-                    "a End statement is not aligned with the matching opening statement", 
-                    _compilerOptions.CheckEndAlignment.GetMessageCode());
-            }
-        }
     }
 
     class SectionOrParagraphUsageChecker

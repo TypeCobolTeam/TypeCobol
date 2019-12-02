@@ -36,7 +36,7 @@
        PROCEDURE DIVISION.
 
        DECLARE PROCEDURE MyProc PRIVATE
-           INPUT    myDate      TYPE DATE.
+           IN-OUT    myDate      TYPE DATE.
        Data division.
        WORKING-STORAGE Section.
        01 TestCtx TYPE Bool.
@@ -63,7 +63,7 @@
       *G-Date is accessible in nested from Global Storage
        MOVE G-Date TO MyDate.
        DECLARE PROCEDURE MyProc PRIVATE
-            INPUT    myDate      TYPE DATE.
+            IN-OUT    myDate      TYPE DATE.
        Data division.
        WORKING-STORAGE Section.
        01 TestCtx TYPE Bool.

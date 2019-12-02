@@ -17,7 +17,7 @@
        PROCEDURE DIVISION.
            set Idx to 1.
        DECLARE PROCEDURE DisplayEventList PRIVATE
-           INPUT EventList type _EVENT_LIST_.
+           IN-OUT EventList type _EVENT_LIST_.
       
        PROCEDURE DIVISION.
            PERFORM VARYING Idx FROM 1 BY 1
