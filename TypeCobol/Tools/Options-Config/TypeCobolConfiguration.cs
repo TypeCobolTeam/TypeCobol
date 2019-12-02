@@ -160,16 +160,16 @@ namespace TypeCobol.Tools.Options_Config
     public class TypeCobolCheckOption
     {
         public static TypeCobolCheckOption Parse(string argument)
-	    {
-		    if (Enum.TryParse(argument, true, out Severity diagnosticLevel))
-		    {
-			    return new TypeCobolCheckOption(diagnosticLevel);
-		    }
+        {
+            if (Enum.TryParse(argument, true, out Severity diagnosticLevel))
+            {
+                return new TypeCobolCheckOption(diagnosticLevel);
+            }
 
             if (string.Equals(argument, "ignore", StringComparison.OrdinalIgnoreCase))
-		    {
-			    return new TypeCobolCheckOption(null);
-		    }
+            {
+                return new TypeCobolCheckOption(null);
+            }
 
             throw new ArgumentException();
         }
