@@ -202,13 +202,13 @@ namespace TypeCobol.Compiler.Nodes {
     ///   IndexDefinition               -> DataDefinitionEntry
     ///   GeneratedDefinition           -> DataDefinitionEntry
     ///                                         CommonDataDescriptionAndDataRedefines
-    ///   DataDescription 01-49 & 77    ->          DataDescriptionEntry
+    ///   DataDescription               ->          DataDescriptionEntry
     ///      ParameterDescription       ->          ParameterDescriptionEntry
     ///      TypedDataNode              ->          DataDescriptionEntry
     ///   TypeDefinition                ->          DataTypeDescriptionEntry
     ///   DataRedefines                 ->          DataRedefinesEntry
-    ///   DataCondition   88            ->      DataConditionEntry
-    ///   DataRenames     66            ->      DataRenamesEntry
+    ///   DataCondition                 ->      DataConditionEntry
+    ///   DataRenames                   ->      DataRenamesEntry
     ///     
     /// 
     /// Implementation note:
@@ -770,31 +770,6 @@ namespace TypeCobol.Compiler.Nodes {
 
         [NotNull]
         public new DataDescriptionEntry CodeElement => (DataDescriptionEntry) base.CodeElement;
-
-        public bool IsDataDescriptionGroup
-        {
-            get
-            {
-                if (this.CodeElement.LevelNumber?.Value < 50 && this.Picture == null && this.CodeElement.UserDefinedDataType == null)
-                {
-                    if (this.ChildrenCount > 0)
-                    {
-                        return true;
-                    }
-                    else if (!this.Usage.HasValue || this.Usage.Value != DataUsage.Pointer &&
-                             this.Usage.Value != DataUsage.FunctionPointer &&
-                             this.Usage.Value != DataUsage.ProcedurePointer &&
-                             this.Usage.Value != DataUsage.ObjectReference &&
-                             this.Usage.Value != DataUsage.FloatingPoint &&
-                             this.Usage.Value != DataUsage.LongFloatingPoint &&
-                             this.Usage.Value != DataUsage.Index)
-                    {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        }
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {

@@ -58,7 +58,7 @@ WORKING-STORAGE SECTION.
 01 MyVar TYPE MyArray.
 
 01 MyLevel.
-    05 MyArray PIC X occurs 30000
+    05 MyArray occurs 30000
     DEPENDING ON MyVar::MyValue.
 
 PROCEDURE DIVISION.

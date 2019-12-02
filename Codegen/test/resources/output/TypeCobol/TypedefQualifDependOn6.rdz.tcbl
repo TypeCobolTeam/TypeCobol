@@ -13,10 +13,9 @@
       *         10 ThirdGroup.
       *            15 varGroup pic 9(10).
       
-      *         10 tutu PIC X occurs 1 depending on MyGroup::vargroup.
-      *         10 titi PIC X occurs 1 depending on
-      *    ThirdGroup::vargroup.
-      *         10 toto PIC X occurs 1 depending on myVar.
+      *         10 tutu occurs 1 depending on MyGroup::vargroup.
+      *         10 titi occurs 1 depending on ThirdGroup::vargroup.
+      *         10 toto occurs 1 depending on myVar.
       
       *01 secondType TYPEDEF STRICT.
       *     05 MyGroup.
@@ -34,13 +33,12 @@
                  09 vargroup PIC 9(10).
              07 ThirdGroup.
                08 varGroup pic 9(10).
-             07 tutu PIC X occurs 1 depending on vargroup OF MyGroup OF
-           typedGroupvar OF secondGroup OF MyVar1 OF Vars3 OF Vars.
-             07 titi PIC X occurs 1 depending on
-           vargroup OF ThirdGroup OF secondGroup OF MyVar1 OF Vars3 OF V
+             07 tutu occurs 1 depending on vargroup OF MyGroup OF typedG
+      -    roupvar OF secondGroup OF MyVar1 OF Vars3 OF Vars.
+             07 titi occurs 1 depending on vargroup OF ThirdGroup OF sec
+      -    ondGroup OF MyVar1 OF Vars3 OF Vars.
+             07 toto occurs 1 depending on myVar OF MyVar1 OF Vars3 OF V
       -    ars.
-             07 toto PIC X occurs 1 depending on myVar OF MyVar1 OF Vars
-      -    3 OF Vars.
                                  
        01 Vars2.
       *    05 MyVar1 TYPE myType.
@@ -53,12 +51,11 @@
                  09 vargroup PIC 9(10).
              07 ThirdGroup.
                08 varGroup pic 9(10).
-             07 tutu PIC X occurs 1 depending on vargroup OF MyGroup OF
-           typedGroupvar OF secondGroup OF MyVar1 OF Vars2.
-             07 titi PIC X occurs 1 depending on
-           vargroup OF ThirdGroup OF secondGroup OF MyVar1 OF Vars2.
-             07 toto PIC X occurs 1 depending on myVar OF MyVar1 OF Vars
-      -    2.
+             07 tutu occurs 1 depending on vargroup OF MyGroup OF typedG
+      -    roupvar OF secondGroup OF MyVar1 OF Vars2.
+             07 titi occurs 1 depending on vargroup OF ThirdGroup OF sec
+      -    ondGroup OF MyVar1 OF Vars2.
+             07 toto occurs 1 depending on myVar OF MyVar1 OF Vars2.
                                  
       *01 MyVar2 TYPE myType.
        01 MyVar2.
@@ -70,14 +67,13 @@
                  05 vargroup PIC 9(10).
              03 ThirdGroup.
                04 varGroup pic 9(10).
-             03 tutu PIC X occurs 1 depending on vargroup OF MyGroup OF
-           typedGroupvar OF secondGroup OF MyVar2.
-             03 titi PIC X occurs 1 depending on
-           vargroup OF ThirdGroup OF secondGroup OF MyVar2.
-             03 toto PIC X occurs 1 depending on myVar OF MyVar2.
+             03 tutu occurs 1 depending on vargroup OF MyGroup OF typedG
+      -    roupvar OF secondGroup OF MyVar2.
+             03 titi occurs 1 depending on vargroup OF ThirdGroup OF sec
+      -    ondGroup OF MyVar2.
+             03 toto occurs 1 depending on myVar OF MyVar2.
                              
       
        PROCEDURE DIVISION.
            .
        END PROGRAM DVZF0OS3.
-      

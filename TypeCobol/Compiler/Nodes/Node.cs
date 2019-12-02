@@ -528,6 +528,7 @@ namespace TypeCobol.Compiler.Nodes {
             return children.OfType<N>().ToList();
         }
 
+
         private Program _programNode;
         /// <summary>
         /// Get the Program Node corresponding to a Child

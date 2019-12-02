@@ -266,14 +266,14 @@ namespace TypeCobol.LanguageServer
                     if (!_timerDisabled) //If TimerDisabled is false, create a timer to automatically launch Node phase
                     {
                         lock (_fileCompilerWaittingForNodePhase)
-                        {
-                            if (!_fileCompilerWaittingForNodePhase.Contains(fileCompilerToUpdate))
-                                _fileCompilerWaittingForNodePhase.Add(fileCompilerToUpdate); //Store that this fileCompiler will soon need a Node Phase
-                        }
+                    {
+                        if (!_fileCompilerWaittingForNodePhase.Contains(fileCompilerToUpdate))
+                            _fileCompilerWaittingForNodePhase.Add(fileCompilerToUpdate); //Store that this fileCompiler will soon need a Node Phase
+                    }
 
-                        _semanticUpdaterTimer = new System.Timers.Timer(750);
-                        _semanticUpdaterTimer.Elapsed += (sender, e) => TimerEvent(sender, e, fileCompilerToUpdate);
-                        _semanticUpdaterTimer.Start();
+                    _semanticUpdaterTimer = new System.Timers.Timer(750);
+                    _semanticUpdaterTimer.Elapsed += (sender, e) => TimerEvent(sender, e, fileCompilerToUpdate);
+                    _semanticUpdaterTimer.Start();
                     }
                 }
             }
@@ -421,6 +421,10 @@ namespace TypeCobol.LanguageServer
 
             var typeCobolOptions = new TypeCobolOptions(Configuration);
 
+#if EUROINFO_RULES
+            typeCobolOptions.AutoRemarksEnable = Configuration.AutoRemarks;
+#endif
+
             CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, _extensions, Configuration.Format.Encoding, Configuration.Format.EndOfLineDelimiter, Configuration.Format.FixedLineLength, Configuration.Format.ColumnsLayout, typeCobolOptions);
 
             if (Configuration.CopyFolders != null && Configuration.CopyFolders.Count > 0)
@@ -524,7 +528,8 @@ namespace TypeCobol.LanguageServer
             try
             {
                 _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(Configuration.Copies, Configuration.Format, DiagnosticsErrorEvent); //Refresh Intrinsics
-                _customSymbols = Tools.APIHelpers.Helpers.LoadDependencies(Configuration, _customSymbols, DiagnosticsErrorEvent, out List<RemarksDirective.TextNameVariation> usedCopies, out IDictionary<string, IEnumerable<string>> missingCopies); //Refresh Dependencies
+                _customSymbols = Tools.APIHelpers.Helpers.LoadDependencies(Configuration.Dependencies, Configuration.Format, _customSymbols, Configuration.InputFiles, 
+                    Configuration.CopyFolders, DiagnosticsErrorEvent, out List<RemarksDirective.TextNameVariation> usedCopies, out IDictionary<string, IEnumerable<string>> missingCopies); //Refresh Dependencies
 
                 if (missingCopies.Count > 0)
                 {

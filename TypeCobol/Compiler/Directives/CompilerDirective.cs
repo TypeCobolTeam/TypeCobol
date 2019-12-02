@@ -83,12 +83,6 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public IList<Diagnostic> Diagnostics { get; private set; }
 
-        /// <summary>
-        /// Consumed tokens of the COPY. This property is set by the PreprocessorStep
-        /// after creating the new CompilerDirective instance.
-        /// </summary>
-        public MultilineTokensGroupSelection ConsumedTokens { get; internal set; }
-
         public void AddDiagnostic(Diagnostic diagnostic)
         {
             if (Diagnostics == null) Diagnostics = new List<Diagnostic>();

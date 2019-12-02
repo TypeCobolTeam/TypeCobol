@@ -15,23 +15,20 @@
        01 MyGroup.
           05 MyCounter pic 999 comp-5.
       *Ok MyCounter is unique in the source
-          05 MyTab     PIC X occurs 99 depending on MyCounter.
+          05 MyTab     occurs 99 depending on MyCounter.
 
 
 
        01 MyGroup5.
           05 MyCounter5 pic 999 comp-5.
       *Ok use operator OF
-          05 MyTab5     PIC X occurs 99 depending on MyCounter5 of 
-          MyGroup5. 
+          05 MyTab5     occurs 99 depending on MyCounter5 of MyGroup5. 
       *Ok use operator IN
-          05 MyTab51     PIC X occurs 99 depending on MyCounter5 IN 
-          MyGroup5.
+          05 MyTab51     occurs 99 depending on MyCounter5 IN MyGroup5.
       *OK use operator ::
-          05 MyTab52    PIC X occurs 99 depending on MyGroup::MyCounter.
+          05 MyTab52    occurs 99 depending on MyGroup::MyCounter.
       *OK use operator :: with typedef
-          05 MyTab53    PIC X occurs 99 depending on 
-          MyTypedVar::TypeCounter.
+          05 MyTab53    occurs 99 depending on MyTypedVar::TypeCounter.
 
        01 CounterType TYPEDEF STRICT.
             05 Counter pic 999 comp-5.

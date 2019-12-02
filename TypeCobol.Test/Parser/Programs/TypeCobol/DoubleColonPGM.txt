@@ -49,7 +49,7 @@ PROGRAM: COLON common:False initial:False recursive:False
   T4-A2:Alphanumeric
   MyVar:MyArray
   MyLevel:Alphanumeric
-  MyArray:Alphanumeric
+  MyArray:Array
 -- PARAGRAPHS --
   TEST-1
   TEST-2

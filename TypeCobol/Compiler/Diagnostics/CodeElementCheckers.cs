@@ -296,33 +296,6 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class CodeElementChecker
-    {
-        public static void OnCodeElement(CodeElement codeElement, bool isDebuggingModeEnabled)
-        {
-            if (isDebuggingModeEnabled)
-            {
-                // detect CodeElement with a mix of Debug and "Normal" lines in debugging mode
-                int consumedTokensCount = codeElement.ConsumedTokens.Count;
-                if (consumedTokensCount > 1)
-                {
-                    bool isDebug = false, isNoDebug = false;
-                    for (int i = 0; i < consumedTokensCount; i++)
-                    {
-                        bool isDebugType = char.ToLower(codeElement.ConsumedTokens[i].TokensLine.IndicatorChar) == 'd';
-                        isDebug |= isDebugType;
-                        isNoDebug |= !isDebugType;
-                        if (isDebug && isNoDebug)
-                        {
-                            DiagnosticUtils.AddError(codeElement, "In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.");
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     class StopStatementChecker
     {
         public static void OnCodeElement(StopStatement statement, CodeElementsParser.StopStatementContext context)

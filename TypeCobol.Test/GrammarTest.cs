@@ -90,6 +90,7 @@ namespace TypeCobol.Test {
 #if EUROINFO_RULES
 			        AutoRemarksEnable = autoRemarks,
 #endif
+			        CheckEndAlignment = TypeCobolCheckOption.Parse("ignore")       // no check end alignment for third party tests
                 };
 
                 document.Init(path, options, format, copiesFolder);

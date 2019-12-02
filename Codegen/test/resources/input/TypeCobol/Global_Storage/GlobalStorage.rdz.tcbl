@@ -27,7 +27,7 @@
            88 TestLevel VALUE "Test".
        PROCEDURE DIVISION.
        DECLARE PROCEDURE MyProc PRIVATE
-           IN-OUT    myDate      TYPE DATE.
+           INPUT    myDate      TYPE DATE.
        Data division.
        WORKING-STORAGE Section.
        01 TestCtx TYPE Bool.

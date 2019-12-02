@@ -22,7 +22,7 @@
             05 TimeDB2 PIC X(10).
 
        01 TechnicalContext TYPEDEF STRICT PUBLIC.
-            05 SystemTime PIC X(10).
+            05 SystemTime.
 
        01  CDNBEXTR-SharedData  TYPEDEF STRICT PRIVATE.
 

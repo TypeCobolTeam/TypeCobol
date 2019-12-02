@@ -36,12 +36,12 @@
        01 MyType3 type MyType3.
        01 Mydate  type Date.
 
-      %<<< My program
+      %<<< My program 
           @ Description  description
           @deprecated
           @    replacedBy  MyFonction2
           @ need  some needs
-          @ todo
+          @ todo 
               - make my second type my first type
               - get another type
           @Params:

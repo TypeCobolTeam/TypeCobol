@@ -170,9 +170,6 @@ namespace TypeCobol.Compiler.Preprocessor
 
                 if (compilerDirective != null)
                 {
-                    // 5. a Set consumed tokens of the compiler directive
-                    compilerDirective.ConsumedTokens = tokensSelection;
-
                     // 6. Replace all matched tokens by :
                     // - a CompilerDirectiveToken on the first line
                     ProcessedTokensLine firstProcessedTokensLine = documentLines[tokensSelection.FirstLineIndex];
@@ -486,9 +483,6 @@ namespace TypeCobol.Compiler.Preprocessor
 
                 if (compilerDirective != null)
                 {
-                    // 5. a Set consumed tokens of the compiler directive
-                    compilerDirective.ConsumedTokens = tokensSelection;
-
                     // 6. Replace all matched tokens by :
                     // - a CompilerDirectiveToken on the first line
                     ProcessedTokensLine firstProcessedTokensLine = documentLines[tokensSelection.FirstLineIndex];

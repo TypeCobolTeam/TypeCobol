@@ -117,7 +117,7 @@
                                
        01 yoto pic X.
        REPLACE ==:MyPrefix:== by ==MyPrefix2==.
-       01 MyCopy. COPY MyDataCopy.
+       COPY MyDataCopy.
        LINKAGE SECTION.
       *FunDeclare.UseACopy - Params :
       *		input(x: pic X)

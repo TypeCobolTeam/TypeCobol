@@ -5,8 +5,8 @@
        01 Table-OthElm.
            05 OthElm.
                 10 ElmTaxes.
-                    15 MaxElmTax PIC X occurs 10.
-                    15 ElmTaxNbr PIC X occurs 10 indexed by Idx-0thE1n.
+                    15 MaxElmTax occurs 10.
+                    15 ElmTaxNbr occurs 10 indexed by Idx-0thE1n.
       *---------------------------------------------------
        PROCEDURE DIVISION.
 

@@ -37,7 +37,7 @@
             05 TimeDB2 PIC X(10).
 
       *01 TechnicalContext TYPEDEF STRICT PUBLIC.
-      *     05 SystemTime PIC X(10).
+      *     05 SystemTime.
 
       *01  CDNBEXTR-SharedData  TYPEDEF STRICT PRIVATE.
 
@@ -54,7 +54,7 @@
       *01  SharedData  TYPE CDNBEXTR-SharedData.
        01 SharedData.
            02 TechnicalContext.
-             03 SystemTime PIC X(10).
+             03 SystemTime.
            02 SystemDateDB2 PIC X(10).
            02 C-Application PIC X(08) VALUE "FCDN".
            02 C-Secteur PIC X(08) VALUE "TITRES".

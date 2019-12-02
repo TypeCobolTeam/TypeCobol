@@ -46,7 +46,7 @@
        working-storage section.
        01 yoto pic X.
        REPLACE ==:MyPrefix:== by ==MyPrefix2==.
-       01 MyCopy. COPY MyDataCopy.
+       COPY MyDataCopy.
        procedure division.
            display "Hello"
            COPY MyProcedureCopy.

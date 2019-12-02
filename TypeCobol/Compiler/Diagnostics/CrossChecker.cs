@@ -97,6 +97,8 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+
+
         public override bool Visit(PerformProcedure performProcedureNode)
         {
             SectionOrParagraphUsageChecker.CheckReferenceToParagraphOrSection(performProcedureNode);
@@ -360,7 +362,6 @@ namespace TypeCobol.Compiler.Diagnostics
                             dataDefinitionEntry);
                     }
                 }
-
             }
 
 
@@ -426,20 +427,6 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                 }
             }
-            return true;
-        }
-
-        public override bool Visit(DataDescription dataDescription)
-        {
-            DataDescriptionEntry dataDescriptionEntry = dataDescription.CodeElement;
-
-            var levelNumber = dataDescriptionEntry.LevelNumber;
-            //Check if the DataDescription is an empty group
-            if (levelNumber != null && dataDescription.IsDataDescriptionGroup && dataDescription.ChildrenCount == 0)
-            {
-                DiagnosticUtils.AddError(dataDescription, "A group item cannot be empty.", dataDescriptionEntry);
-            }
-
             return true;
         }
 
@@ -594,7 +581,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         node.GetEnclosingProgramOrFunctionNode().SetFlag(Node.Flag.UseGlobalStorage, true);
                     }
                 }
-                
+
                 //add the found DataDefinition to a dictionary depending on the storage area type
                 if (isReadStorageArea)
                 {
@@ -754,7 +741,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 openingToken.StartIndex != endCodeElement.StartIndex)
             {
                 DiagnosticUtils.AddError(endCodeElement,
-                    "a End statement is not aligned with the matching opening statement",
+                    "a End statement is not aligned with the matching opening statement", 
                     _compilerOptions.CheckEndAlignment.GetMessageCode());
             }
         }
