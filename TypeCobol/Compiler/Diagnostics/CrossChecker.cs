@@ -581,20 +581,26 @@ namespace TypeCobol.Compiler.Diagnostics
 
                 if (!node.IsFlagSet(Node.Flag.GlobalStorageSection))
                 {
-                    if (dataDefinitionFound.IsFlagSet(Node.Flag.GlobalStorageSection) || dataDefinitionPath != null &&
-                        dataDefinitionPath.CurrentDataDefinition.IsFlagSet(Node.Flag.GlobalStorageSection))
+                    if (dataDefinitionFound.IsFlagSet(Node.Flag.GlobalStorageSection) || dataDefinitionPath != null && dataDefinitionPath.CurrentDataDefinition.IsFlagSet(Node.Flag.GlobalStorageSection))
                     {
                         if (node is DataDefinition)
                         {
-                            DiagnosticUtils.AddError(node,
-                                "A Global-Storage Section variable cannot be referenced in another Data Section",
-                                area.SymbolReference);
+                            DiagnosticUtils.AddError(node, "A Global-Storage Section variable cannot be referenced in another Data Section", area.SymbolReference);
                         }
                         //We must find the enclosing FunctionDeclaration or Program (if node is outside a function/procedure)
                         node.GetEnclosingProgramOrFunctionNode().SetFlag(Node.Flag.UseGlobalStorage, true);
                     }
                 }
-                
+
+                if (!isReadStorageArea && node.SymbolTable.CurrentScope == SymbolTable.Scope.Function)
+                {
+                    var paramDesc = (dataDefinitionPath?.CurrentDataDefinition ?? dataDefinitionFound) as ParameterDescription;
+                    if (paramDesc?.PassingType == ParameterDescription.PassingTypes.Input)
+                    {
+                        DiagnosticUtils.AddError(node, "Input variable '" + paramDesc.Name + "' is modified by an instruction", area.SymbolReference);
+                    }
+                }
+
                 //add the found DataDefinition to a dictionary depending on the storage area type
                 if (isReadStorageArea)
                 {
