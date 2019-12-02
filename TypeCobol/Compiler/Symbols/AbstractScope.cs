@@ -364,12 +364,7 @@ namespace TypeCobol.Compiler.Symbols
             string[] paths = null;
             IList<SymbolReference> refs = null;
 
-            if (datSymRef.IsTypeCobolQualifiedReference)
-            {
-                TypeCobolQualifiedSymbolReference tc_qualifiedSymbolReference = datSymRef as TypeCobolQualifiedSymbolReference;
-                refs = tc_qualifiedSymbolReference.AsList();
-            }
-            else if (datSymRef.IsQualifiedReference)
+            if (datSymRef.IsQualifiedReference)
             {//Path in reverse order DVZF0OS3::EventList --> {EventList, DVZF0OS3}
                 QualifiedSymbolReference qualifiedSymbolReference = datSymRef as QualifiedSymbolReference;
                 refs = qualifiedSymbolReference.AsList();

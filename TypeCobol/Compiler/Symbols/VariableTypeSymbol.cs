@@ -93,7 +93,7 @@ namespace TypeCobol.Compiler.Symbols
             {
                 return false;
             }
-            ProgramSymbol program = program = (ProgramSymbol)NearestKind(Symbol.Kinds.Program, Symbol.Kinds.Function);
+            ProgramSymbol program = (ProgramSymbol)NearestKind(Symbol.Kinds.Program, Symbol.Kinds.Function);
             ProgramSymbol topProgram = (ProgramSymbol)TopParent(Symbol.Kinds.Program);
             if (!topProgram.HasFlag(Flags.ProgramCompleted))
                 return false;//This program is not completed yet, that is to say it is in construction.

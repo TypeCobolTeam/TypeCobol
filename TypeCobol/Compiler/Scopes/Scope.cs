@@ -51,7 +51,7 @@ namespace TypeCobol.Compiler.Scopes
             /// </summary>
             /// <param name="sym">The symbol to check</param>
             /// <returns>true if yes, false otherwise</returns>
-            public virtual bool Exists(T sym)
+            public bool Exists(T sym)
             {
                 foreach (var t in this)
                 {

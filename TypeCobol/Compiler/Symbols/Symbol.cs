@@ -80,7 +80,7 @@ namespace TypeCobol.Compiler.Symbols
             Parameter = 0x01L << 32,//This a parameter variable.
             Returning = 0x01L << 33,//A Return variable.
             BuiltinType = 0x01L << 34,//This is a Builtin Type.
-            InsideTypdef = 0x01L << 35,//Flag of any symbol inside a Typedef definition
+            InsideTypedef = 0x01L << 35,//Flag of any symbol inside a Typedef definition
             ProgramExpanded = 0x01L << 36,//Flag for a program that have been already expanded.
             NeedTypeCompletion = 0x01L << 37,//For a program that need type Completion, a pure COBOL Program does not need type completion (No TYPEDEF).
             BuiltinSymbol = 0x01L << 38, //This is a builting symbol.
@@ -97,7 +97,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// The Visibility mask that a symbol can take.
         /// </summary>
-        public const Flags SymbolVisibilityMask = Flags.Public | Flags.Private | Flags.External | Flags.Global;
+        public const Flags SymbolVisibilityMask = Flags.Public | Flags.Private | Flags.Global;
 
         /// <summary>
         /// Empty constructor

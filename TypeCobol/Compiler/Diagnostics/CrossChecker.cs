@@ -582,7 +582,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         //Typedef, or Inside a Program or a Function.
                         //But any way we have found it.
                         VariableSymbol @var = (VariableSymbol)node.SemanticData;
-                        if (@var.HasFlag(Symbol.Flags.InsideTypdef))
+                        if (@var.HasFlag(Symbol.Flags.InsideTypedef))
                         {
                             System.Diagnostics.Debug.Assert(@var.TopParent(Symbol.Kinds.Typedef) != null);
                             //We looking inside a TYPEDEF.

@@ -191,7 +191,7 @@ namespace TypeCobol.Compiler.Types
             TypedefType dateType = new TypedefType(symbol, recType);            
             symbol.Type = dateType;
             //IMPORTANT Mark all symbol has belonging to a TYPEDEF, in order that the expander works.
-            symbol.SetFlag(Symbol.Flags.InsideTypdef, true, true);
+            symbol.SetFlag(Symbol.Flags.InsideTypedef, true, true);
             return dateType;
         }
 
@@ -206,7 +206,7 @@ namespace TypeCobol.Compiler.Types
             TypedefType currencyType = new TypedefType(symbol, CY_pic);
             symbol.Type = currencyType;
             //IMPORTANT Mark all symbol has belonging to a TYPEDEF, in order that the expander works.
-            symbol.SetFlag(Symbol.Flags.InsideTypdef, true, true);
+            symbol.SetFlag(Symbol.Flags.InsideTypedef, true, true);
             return currencyType;
         }
     }

@@ -254,9 +254,9 @@ namespace TypeCobol.Compiler.Symbols
         /// <returns>true if the symbol is accessible, false otherwise.</returns>
         private bool IsSymbolAccessible(Symbol sym, Flags mask)
         {
+            System.Diagnostics.Debug.Assert(sym != null);
             if (sym.HasFlag(Flags.BuiltinSymbol))
                 return true;//Builtin symbols are always accessible.
-            System.Diagnostics.Debug.Assert(sym != null);
             Symbol symTopPrg = sym.TopParent(Kinds.Program);
             System.Diagnostics.Debug.Assert(symTopPrg != null);
             Symbol myTopPrg = TopParent(Kinds.Program);

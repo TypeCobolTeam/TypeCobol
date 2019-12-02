@@ -692,6 +692,35 @@ namespace TypeCobol.Compiler.Domain
             Type type = BuiltinTypes.BuiltinUsageType(usage);
             return type;
         }
+
+        /// <summary>
+        /// This method handles the case if a symbol is a redefines symbol if so it creates a RedefinesSymbol instance
+        /// otherwise it creates a VariableSymbol instance.
+        /// The symbol will be put in the the domain of the current program if the typedef instance is null, otherwise it will
+        /// be put in the typedef instance.
+        /// </summary>
+        /// <param name="type">The type of the Symbol to be created</param>
+        /// <param name="dataDef">The DataDefintion instance from which the Symbol is created</param>
+        /// <param name="parentScope">The current Parent Scope.</param>
+        /// <param name="typedef">The TypedefSymbol instance if the symbol to be created is a field of a Typedef symbol, null otherwise</param>
+        /// <returns>The Symbol created</returns>
+        private VariableSymbol CreateAndAddRedefinesOrVariableSymbol(Type type, DataDefinition dataDef, Scope<VariableSymbol> parentScope, TypedefSymbol typedef)
+        {
+            VariableSymbol sym = IsRedefinedDataDefinition(dataDef)
+                ? CreateRedefinesSymbol(dataDef, parentScope)
+                : new VariableSymbol(dataDef.Name);
+            if (sym != null)
+            {
+                sym.Type = type;
+                DecorateSymbol(dataDef, sym, parentScope);
+                if (typedef == null)
+                    CurrentProgram.AddToDomain(sym);
+                else
+                    typedef.Add(sym);
+            }
+            return sym;
+        }
+
         /// <summary>
         /// Create a Symbol instance for a variable of a single usage type.
         /// </summary>
@@ -703,19 +732,7 @@ namespace TypeCobol.Compiler.Domain
         {
             System.Diagnostics.Debug.Assert(IsSingleUsageDefinition(dataDef));
             Type type = CreateUsageType(dataDef);
-            VariableSymbol sym = IsRedefinedDataDefinition(dataDef)
-                ? CreateRedefinesSymbol(dataDef, parentScope)
-                : new VariableSymbol(dataDef.Name);
-            if (sym != null)
-            {                
-                sym.Type = type;
-                DecorateSymbol(dataDef, sym, parentScope);
-                if (typedef == null)
-                    CurrentProgram.AddToDomain(sym);
-                else
-                    typedef.Add(sym);
-            }
-            return sym;
+            return CreateAndAddRedefinesOrVariableSymbol(type, dataDef, parentScope, typedef);
         }
 
         /// <summary>
@@ -745,19 +762,7 @@ namespace TypeCobol.Compiler.Domain
         {
             System.Diagnostics.Debug.Assert(IsSinglePictureDefinition(dataDef));
             Type type = CreatePictureType(dataDef);
-            VariableSymbol sym = IsRedefinedDataDefinition(dataDef)
-                ? CreateRedefinesSymbol(dataDef, parentScope)
-                : new VariableSymbol(dataDef.Name);
-            if (sym != null)
-            {                
-                sym.Type = type;
-                DecorateSymbol(dataDef, sym, parentScope);
-                if (typedef == null)
-                    CurrentProgram.AddToDomain(sym);
-                else
-                    typedef.Add(sym);
-            }
-            return sym;
+            return CreateAndAddRedefinesOrVariableSymbol(type, dataDef, parentScope, typedef);
         }
 
         /// <summary>
@@ -770,19 +775,7 @@ namespace TypeCobol.Compiler.Domain
         internal VariableSymbol CreateSymbolWithoutType(DataDefinition dataDef, Scope<VariableSymbol> parentScope, TypedefSymbol typedef)
         {
             Type type = BuiltinTypes.BuiltinUsageType(Type.UsageFormat.None);
-            VariableSymbol sym = IsRedefinedDataDefinition(dataDef)
-                ? CreateRedefinesSymbol(dataDef, parentScope)
-                : new VariableSymbol(dataDef.Name);
-            if (sym != null)
-            {
-                sym.Type = type;
-                DecorateSymbol(dataDef, sym, parentScope);
-                if (typedef == null)
-                    CurrentProgram.AddToDomain(sym);
-                else
-                    typedef.Add(sym);
-            }
-            return sym;
+            return CreateAndAddRedefinesOrVariableSymbol(type, dataDef, parentScope, typedef);
         }
 
         /// <summary>
@@ -961,7 +954,7 @@ namespace TypeCobol.Compiler.Domain
                 recType.Scope.ChangeOwner(tdSym);
             }
             //Mark all symbol has belonging to a TYPEDEF
-            tdSym.SetFlag(Symbol.Flags.InsideTypdef, true, true);
+            tdSym.SetFlag(Symbol.Flags.InsideTypedef, true, true);
             //We do not enter typedef in the domain but we propagate any decoration.
             DecorateSymbol(dataDef, tdSym, parentScope);
             return tdSym;
