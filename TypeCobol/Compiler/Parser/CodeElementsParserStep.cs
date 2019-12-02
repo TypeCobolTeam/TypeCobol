@@ -304,6 +304,7 @@ namespace TypeCobol.Compiler.Parser
                                     codeElement.ConsumedTokens = codeElement.ConsumedTokens.OrderBy(t => t.Line)
                                         .ThenBy(t => t.Column).ToList();
                                 }
+
                             }
 
 
