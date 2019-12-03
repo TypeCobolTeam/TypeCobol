@@ -88,8 +88,6 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
-        
-
         public override bool Visit(PerformProcedure performProcedureNode)
         {
             SectionOrParagraphUsageChecker.CheckReferenceToParagraphOrSection(performProcedureNode);
@@ -693,7 +691,6 @@ namespace TypeCobol.Compiler.Diagnostics
             if (!node.QualifiedStorageAreas.ContainsKey(storageArea))
                 node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
         }
-
     }
     
     class SectionOrParagraphUsageChecker
