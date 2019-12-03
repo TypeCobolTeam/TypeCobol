@@ -33,7 +33,7 @@
        01 TestCtx TYPE Bool.
        PROCEDURE DIVISION.
       *G-Date and G-TechCtx are accesible from GlobalStorage
-           MOVE G-Date TO myDate.
+           DISPLAY G-Date.
            MOVE G-TechCtx TO TestCtx.
         END-DECLARE.
       

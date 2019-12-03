@@ -43,7 +43,7 @@
 
       * Increment with variable
       *SET pointer1 DOWN BY pointer0::increment.
-       ADD -increment OF pointer0 to pointer1fe930f3e
+       SUBTRACT increment OF pointer0 from pointer1fe930f3e
                                                .
 
       * Usage of qualified Name
@@ -57,8 +57,8 @@
 
       * Multiple Increment 
       *SET pointer0::pntr,pointer0::backupPointer, pointer1 DOWN BY 12.
-       ADD -12 to pntrc20a8a84 OF pointer0, backupPointera4fc7f95 OF poi
-      -    nter0, pointer1fe930f3e                                                       
+       SUBTRACT 12 from pntrc20a8a84 OF pointer0, backupPointera4fc7f95 
+           OF pointer0, pointer1fe930f3e                                                 
                                                                       .
 
       * Arithmetic expression 
@@ -77,23 +77,23 @@
 
       * Procedure
       *declare procedure PointerProcedure PRIVATE
-      *  input ptr pointer.
+      *  in-out ptr pointer.
        END PROGRAM Pointers.
       *
       *declare procedure PointerProcedure PRIVATE
-      *  input ptr pointer.
+      *  in-out ptr pointer.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e0410090.
+       PROGRAM-ID. cbb07024.
   
          data division.
            working-storage section.
       *Pointers.PointerProcedure - Params :
-      *		input(ptr: pointer)
+      *		in-out(ptr: pointer)
                                  
        LINKAGE SECTION.
       *Pointers.PointerProcedure - Params :
-      *		input(ptr: pointer)
+      *		in-out(ptr: pointer)
        01 ptr pointer.
        01 redefines ptr.
            02 ptrdbef1f3d pic S9(05) comp-5.
@@ -101,10 +101,10 @@
              USING BY REFERENCE ptr
            .
       *Pointers.PointerProcedure - Params :
-      *		input(ptr: pointer)
+      *		in-out(ptr: pointer)
       *      set ptr up by 1
              ADD 1 to ptrdbef1f3d
                             
              goback
              .
-       END PROGRAM e0410090.
+       END PROGRAM cbb07024.
