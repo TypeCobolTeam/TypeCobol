@@ -194,9 +194,8 @@ namespace TypeCobol.LanguageServer
         protected DocumentContext GetDocumentContextFromStringUri(string uri, bool acceptNodeRefresh = true)
         {
             Uri objUri = new Uri(uri);
-            if (objUri.IsFile)
+            if (objUri.IsFile && this.Workspace.TryGetOpenedDocumentContext(objUri, out var context))
             {
-                var context = this.Workspace.OpenedDocumentContext[objUri];
                 // Get compilation info for the current file
                 if (acceptNodeRefresh)
                     this.Workspace.RefreshSyntaxTree(context.FileCompiler); //Do a Node Refresh
@@ -272,7 +271,7 @@ namespace TypeCobol.LanguageServer
         protected override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
         {
             DocumentContext docContext = new DocumentContext(parameters.textDocument);
-            if (docContext.Uri.IsFile && this.Workspace.OpenedDocumentContext.All(odc => odc.Key != docContext.Uri))
+            if (docContext.Uri.IsFile && !this.Workspace.TryGetOpenedDocumentContext(docContext.Uri, out _))
             {
                 //Subscribe to diagnostics event
                 this.Workspace.DiagnosticsEvent += DiagnosticsDetected;
@@ -862,11 +861,9 @@ namespace TypeCobol.LanguageServer
                 LogType.Completion); //Send event to analytics
             var defaultDefinition = new Definition(parameters.uri, new Range());
             Uri objUri = new Uri(parameters.uri);
-            if (objUri.IsFile)
+            if (objUri.IsFile && this.Workspace.TryGetOpenedDocumentContext(objUri, out var docContext))
             {
-                var docContext = this.Workspace.OpenedDocumentContext[objUri];
                 System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
-
 
                 if (docContext.FileCompiler.CompilationResultsForProgram != null &&
                     docContext.FileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot != null)
