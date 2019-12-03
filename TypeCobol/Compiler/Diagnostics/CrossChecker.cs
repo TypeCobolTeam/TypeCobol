@@ -377,7 +377,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (commonDataDataDefinitionCodeElement?.IsBlankWhenZero?.Value == true)
                 {
                     DiagnosticUtils.AddError(dataDefinition,
-                        "Group itm " + dataDefinition.Name + " cannot have \"Blank when zero\" clause",
+                        "Group item " + dataDefinition.Name + " cannot have \"Blank when zero\" clause",
                         dataDefinitionEntry);
                 }
 

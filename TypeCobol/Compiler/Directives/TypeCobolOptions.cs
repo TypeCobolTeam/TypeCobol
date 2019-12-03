@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Diagnostics;
-using TypeCobol.Tools.Options_Config;
+﻿using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Compiler.Directives
 {

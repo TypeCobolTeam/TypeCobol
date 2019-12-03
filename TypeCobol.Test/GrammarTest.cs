@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TypeCobol.Test.Compiler.Parser;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
@@ -10,8 +9,6 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Test.Utils;
 using System.Text;
-using TypeCobol.Compiler.Parser;
-using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Test {
 
