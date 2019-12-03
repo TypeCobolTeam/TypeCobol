@@ -86,9 +86,10 @@ namespace TypeCobol.LanguageServer
             List<CodeElement> ignoredCodeElements = new List<CodeElement>();
             int lineIndex = position.line;
             // Find the token located below the mouse pointer
-            if (fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines.Count != 0)
+            int linesCount = fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines.Count;
+            if (linesCount != 0 && lineIndex < linesCount)
             {
-                while (codeElements.Count == 0)
+                while (codeElements.Count == 0 && lineIndex >= 0)
                 {
                     var codeElementsLine =
                         fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines[lineIndex];
