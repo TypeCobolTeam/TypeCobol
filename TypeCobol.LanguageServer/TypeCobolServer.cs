@@ -1037,14 +1037,14 @@ namespace TypeCobol.LanguageServer
             // Lines of current level in node
             if (node.CodeElement?.ConsumedTokens != null)
             {
-                var lines = new List<ITextLine>();
+                ITokensLine lastReturnedLine = null;
                 foreach (var token in node.CodeElement.ConsumedTokens)
                 {
                     var line = token.TokensLine;
-                    if (!lines.Contains(line))
+                    if (line != lastReturnedLine)
                     {
-                        lines.Add(line);
                         yield return new Tuple<int, ITextLine>(level, line);
+                        lastReturnedLine = line;
                     }
                 }
             }
