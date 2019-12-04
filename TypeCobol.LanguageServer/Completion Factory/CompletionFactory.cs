@@ -413,9 +413,10 @@ namespace TypeCobol.LanguageServer
                                 ((firstSignificantToken != null && ((t.StartIndex >= firstSignificantToken.EndColumn && t.Line == firstSignificantToken.Line) || t.Line > firstSignificantToken.Line)) 
                                 || firstSignificantToken == null) 
                                 && ((t.EndColumn <= position.character && t.Line == position.line + 1) || t.Line < position.line + 1))
-                        .Select(t => t.Text);
-                qualifiedName.Reverse();
-                var possibleVariables = node.SymbolTable.GetVariablesExplicit(new URI(qualifiedName));
+                        .Select(t => t.Text)
+                        .ToArray();
+
+               var possibleVariables = qualifiedName.Length > 0 ? node.SymbolTable.GetVariablesExplicit(new URI(qualifiedName)) : null;
 
                 if (possibleVariables != null && possibleVariables.Any()) 
                 {

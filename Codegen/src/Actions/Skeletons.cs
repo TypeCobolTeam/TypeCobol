@@ -544,21 +544,21 @@ namespace TypeCobol.Codegen.Actions
                                                                                 SkeleTonPOINTER_INCREMENTModel @Model = new SkeleTonPOINTER_INCREMENTModel(@Self);
                                                                                 StringBuilder @SelfResult = new StringBuilder();
                                                                                 @SelfResult.Append(@"");
-          var item = "";
-          if (@Model.needCompute)
-          {
-            foreach (var receiver in @Model.displayableReceivers)
-            {
-              item += "COMPUTE " + receiver + " = " + receiver + (@Model.incrementDirection == "Down" ? " - " : " + ") + @Model.sender.ToString() + ".\n";
-            }
-          }
-          else
-          {
-            item += "ADD " + (@Model.incrementDirection == "Down" ? "-" : "") + @Model.sender.ToString() + " to ";
-            foreach (var receiver in @Model.displayableReceivers)
-              item += receiver + ", ";
-          }
-          item = item.Remove(item.Length - 2);
+        var item = "";
+        if (@Model.needCompute)
+        {
+         foreach (var receiver in @Model.displayableReceivers)
+         {
+           item += "COMPUTE " + receiver + " = " + receiver + (@Model.incrementDirection == "Down" ? " - " : " + ") + @Model.sender.ToString() + ".\n";
+         }
+        }
+        else
+        {
+         item = @Model.incrementDirection == "Down" ? "SUBTRACT " + @Model.sender.ToString() + " from " : "ADD " + @Model.sender.ToString() + " to ";
+         foreach (var receiver in @Model.displayableReceivers)
+           item += receiver + ", ";
+        }
+        item = item.Remove(item.Length - 2);
         @SelfResult.Append(@"
 ");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@item}");@SelfResult.Append(@"");
                                                                                 TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, "POINTER.INCREMENT", @SelfResult.ToString(), "replace", null, "NODE", null, false);
