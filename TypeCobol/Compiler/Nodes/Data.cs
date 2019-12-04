@@ -326,7 +326,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         private List<DataType> _compatiblePrimitiveDataTypes;
-        public List<DataType> CompatiblePrimitiveDataTypes
+        public virtual List<DataType> CompatiblePrimitiveDataTypes
         {
             get
             {
