@@ -37,7 +37,7 @@ namespace TypeCobol.Server
             }
             debugLine += "\n";
             //Use user-defined log path if -log option used, otherwise use default location for log file
-            File.AppendAllText(config.LogFile ?? TypeCobolConfiguration.LogFileName, debugLine);
+            File.AppendAllText(config.LogFile ?? TypeCobolConfiguration.DefaultLogFileName, debugLine);
             Console.WriteLine(debugLine);
             TextWriter textWriter = config.ErrorFile == null ?  Console.Error : File.CreateText(config.ErrorFile);
             AbstractErrorWriter errorWriter = config.IsErrorXML ? (AbstractErrorWriter) new XMLWriter(textWriter) : new ConsoleWriter(textWriter);
@@ -96,7 +96,7 @@ namespace TypeCobol.Server
             stopWatch.Stop();
             debugLine = "                         parsed in " + stopWatch.Elapsed + " ms\n";
             //Use user-defined log path if -log option used, otherwise use default location for log file
-            File.AppendAllText(config.LogFile ?? TypeCobolConfiguration.LogFileName, debugLine);
+            File.AppendAllText(config.LogFile ?? TypeCobolConfiguration.DefaultLogFileName, debugLine);
             Console.WriteLine(debugLine);
 
             AnalyticsWrapper.Telemetry.TrackMetricsEvent(EventType.Duration, LogType.Genration, "ExecutionTime", stopWatch.Elapsed.Milliseconds); 
