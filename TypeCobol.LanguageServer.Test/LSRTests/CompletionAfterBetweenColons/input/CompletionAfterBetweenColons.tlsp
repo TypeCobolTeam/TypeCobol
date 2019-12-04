@@ -1,0 +1,131 @@
+{
+  "name": "CompletionAfterBetweenColons.tlsp",
+  "session": "C:\\Users\\MILLETFL\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2019_11_27_11_40_10_525\\TestSuite_2019_11_27_11_40_10_525.slsp",
+  "user": "MILLETFL",
+  "date": "2019/11/27 11:40:10 540",
+  "uri": "file:///C:/Users/MILLETFL/Downloads/LSRtemp/CompletionAfterBetweenColons.tlsp",
+  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\",\"rootUri\":\"file:/C:/TypeCobol/Sources/Fast/%23%23Latest_Release%23%23/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"signatureHelp\":{\"dynamicRegistration\":true},\"references\":{\"dynamicRegistration\":true},\"documentHighlight\":{\"dynamicRegistration\":true},\"documentSymbol\":{\"dynamicRegistration\":true},\"formatting\":{\"dynamicRegistration\":true},\"rangeFormatting\":{\"dynamicRegistration\":true},\"onTypeFormatting\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true},\"codeAction\":{\"dynamicRegistration\":true},\"codeLens\":{\"dynamicRegistration\":true},\"documentLink\":{\"dynamicRegistration\":true},\"rename\":{\"dynamicRegistration\":true}}},\"trace\":\"off\"}}",
+  "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"experimental\":[{\"Item1\":\"version\",\"Item2\":\"0.1(alpha)\"}],\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
+  "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\TypeCobol.CLI.exe\",\"-1\",\"-e\",\"rdz\",\"-y\",\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\Intrinsic\\\\Intrinsic.txt\",\"-glm\",\"\\\"{6}\\\"\",\"--autoremarks\",\"--outputFormat\\u003dCobol85Mixed\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\Production\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\MISC\",\"-md\",\"200\",\"--dependencies\",\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\Dependencies\\\\*.tcbl\",\"--dependencies\",\"\\\\\\\\uf44-004\\\\TYPECOBOL-DEPENDENCIES\\\\Y530\\\\*.tcbl\",\"--dependencies\",\"C:\\\\Users\\\\MILLETFL\\\\Documents\\\\Work\\\\Y530\\\\sandbox\\\\Dependencies\\\\*.tcbl\"]}}",
+  "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. MyPGM.\\r\\n       DATA DIVISION.\\r\\n       WORKING-STORAGE SECTION.\\r\\n       01 Group1.\\r\\n         05 Var1 pic X(10).\\r\\n       01 Var2 pic 9.\\r\\n       01 Var3 pic X(10).\\r\\n\\r\\n       01 Var4 type Date.\\r\\n\\r\\n       01 Group2.\\r\\n          05 Item1.\\r\\n             10 Var5 PIC X.\\r\\n\\r\\n       procedure division.\\r\\n      *    MOVE Var1:\\r\\n      *    MOVE Group1::Var1(1:) TO Var3\\r\\n      *    MOVE Group2::::Var5\\r\\n           .\\r\\n       END PROGRAM MyPGM.\"}}}",
+  "messages": [
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. MyPGM.\\r\\n       DATA DIVISION.\\r\\n       WORKING-STORAGE SECTION.\\r\\n       01 Group1.\\r\\n         05 Var1 pic X(10).\\r\\n       01 Var2 pic 9.\\r\\n       01 Var3 pic X(10).\\r\\n\\r\\n       01 Var4 type Date.\\r\\n\\r\\n       01 Group2.\\r\\n          05 Item1.\\r\\n             10 Var5 PIC X.\\r\\n\\r\\n       procedure division.\\r\\n      *    MOVE Var1:\\r\\n      *    MOVE Group1::Var1(1:) TO Var3\\r\\n      *    MOVE Group2::::Var5\\r\\n           .\\r\\n       END PROGRAM MyPGM.\"}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":16,\"character\":6},\"end\":{\"line\":16,\"character\":7}},\"rangeLength\":1,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":17,\"character\":21},\"end\":{\"line\":17,\"character\":21}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input ':' expecting TO\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\",\"position\":{\"line\":16,\"character\":21}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":16,\"character\":6},\"end\":{\"line\":16,\"character\":7}},\"rangeLength\":1,\"text\":\"*\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":6},\"end\":{\"line\":17,\"character\":7}},\"rangeLength\":1,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\",\"position\":{\"line\":17,\"character\":31}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":6},\"end\":{\"line\":17,\"character\":7}},\"rangeLength\":1,\"text\":\"*\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":18,\"character\":6},\"end\":{\"line\":18,\"character\":7}},\"rangeLength\":1,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":20,\"character\":12},\"end\":{\"line\":20,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting TO\"},{\"range\":{\"start\":{\"line\":19,\"character\":25},\"end\":{\"line\":19,\"character\":26}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input '::' expecting user defined word\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\",\"position\":{\"line\":18,\"character\":24}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"}}}"
+    }
+  ],
+  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/2/tcbl/DVZZMFT24107591944719116636.cee\"}}}",
+  "IsValid": true
+}
