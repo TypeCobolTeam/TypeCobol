@@ -1,0 +1,49 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. RB1LEQU1.
+       procedure division.
+      *Issue #1552: Picture was mistakenly split across multiple lines
+      *declare procedure Foo2
+      *          input  EquipementObject PIC X(3)
+      *                 EquipementMainReference
+      *                                  PIC S9(4)
+      *                 EquipementSecondaryReference
+      *                                  PIC S9(4)
+      *                 EquipementOccurrence
+      *                                  PIC S9(4).
+       end program RB1LEQU1.
+      *
+      *declare procedure Foo2
+      *          input  EquipementObject PIC X(3)
+      *                 EquipementMainReference
+      *                                  PIC S9(4)
+      *                 EquipementSecondaryReference
+      *                                  PIC S9(4)
+      *                 EquipementOccurrence
+      *                                  PIC S9(4).
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ce3384b8.
+       DATA DIVISION.
+       LINKAGE SECTION.
+      *RB1LEQU1.Foo2 - Params :
+      *		input(EquipementObject: pic X(3), EquipementMainReference: pic
+      *S9(4), EquipementSecondaryReference: pic S9(4), EquipementOccurre
+      *nce: pic S9(4))
+       01 EquipementObject PIC X(3).
+       01 EquipementMainReference
+                                         PIC S9(4).
+       01 EquipementSecondaryReference
+                                         PIC S9(4).
+       01 EquipementOccurrence
+                                         PIC S9(4).
+       PROCEDURE DIVISION
+             USING BY REFERENCE EquipementObject
+                   BY REFERENCE EquipementMainReference
+                   BY REFERENCE EquipementSecondaryReference
+                   BY REFERENCE EquipementOccurrence
+           .
+      *RB1LEQU1.Foo2 - Params :
+      *		input(EquipementObject: pic X(3), EquipementMainReference: pic
+      *S9(4), EquipementSecondaryReference: pic S9(4), EquipementOccurre
+      *nce: pic S9(4))
+       END PROGRAM ce3384b8.
