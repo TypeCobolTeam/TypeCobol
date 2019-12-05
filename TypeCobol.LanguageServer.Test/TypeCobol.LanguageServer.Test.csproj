@@ -69,6 +69,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="LSRTests\CompletionOutputParamEmptyType\input\CompletionOutputParamEmptyType.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionOutputParamEmptyType\output_expected\CompletionOutputParamEmptyType.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\RefreshCopiesNotif\input\RefreshCopyNotif.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
