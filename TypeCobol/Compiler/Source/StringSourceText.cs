@@ -8,7 +8,7 @@ namespace TypeCobol.Compiler.Source
     /// <summary>
     /// A Source Text which is represented as a String of characters
     /// </summary>
-    public class StringSourceText : SourceText, IEquatable<StringSourceText>
+    public class StringSourceText : SourceText
     {
         private const int DEFAULT_SIZE = 16;
         int next;           //Next free slot
@@ -363,40 +363,6 @@ namespace TypeCobol.Compiler.Source
             {
                 return next;
             }
-        }
-
-        /// <summary>
-        /// Check if the given source text is equals to this one.
-        /// </summary>
-        /// <param name="text">The source text to be checked for equality</param>
-        /// <returns>true if both the given source text is equals to this one, false otherwise</returns>
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as StringSourceText);
-        }
-
-        public bool Equals(StringSourceText stringSourceText)
-        {
-            if (stringSourceText == null) return false;
-            if (Object.ReferenceEquals(this, stringSourceText)) return true;
-
-            if (next != stringSourceText.next) return false;
-            return CompareArrays(content, stringSourceText.content, next);
-        }
-
-        /// <summary>
-        /// Return the Hash code value
-        /// </summary>
-        /// <returns>The hash code value</returns>
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-            //    int hash;
-            //    int i;
-
-            //    for (hash = 0, i = 0; i < Size; i++)
-            //        hash= (hash << 1) ^ content[i];
-            //    return hash;
         }
 
         /// <summary>

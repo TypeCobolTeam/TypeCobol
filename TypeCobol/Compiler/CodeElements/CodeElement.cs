@@ -167,12 +167,28 @@ namespace TypeCobol.Compiler.CodeElements
             if (Object.ReferenceEquals(this, codeElement)) return true;
             if (codeElement == null) return false;
 
-            return Type == codeElement.Type && ConsumedTokens.Equals(codeElement.ConsumedTokens);
+            if (ConsumedTokens == null && codeElement.ConsumedTokens == null)
+            {
+                return Type == codeElement.Type;
+            }
+            if (ConsumedTokens != null && codeElement.ConsumedTokens != null)
+            {
+                if (ConsumedTokens.Count > 0 && codeElement.ConsumedTokens.Count > 0)
+                {
+                    return Type == codeElement.Type && Object.ReferenceEquals(ConsumedTokens[0], codeElement.ConsumedTokens[0]);
+                }
+                else
+                {
+                    return Type == codeElement.Type && Object.ReferenceEquals(ConsumedTokens, codeElement.ConsumedTokens);
+                }
+            }
+            return false;
         }
 
         public override int GetHashCode()
         {
-            return Type.GetHashCode() * 11 + ConsumedTokens.GetHashCode();
+            if (ConsumedTokens == null) return Type.GetHashCode() * 11;
+            return Type.GetHashCode() * 11 + (ConsumedTokens.Count > 0 ? ConsumedTokens[0].GetHashCode() : ConsumedTokens.GetHashCode());
         }
 
         private bool? _isInsideCopy = null; 
