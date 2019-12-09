@@ -116,30 +116,35 @@ namespace TypeCobol.Compiler.Text
         public static ICollection<ITextLine> CreateCobolLines(ColumnsLayout layout, int index, char indicator, string indent, string text, int pmax, int pmin, bool bConvertFirstLine)
         {
             var result = new List<ITextLine>();
-            int max = pmax;
-            int min = pmax;
-            int nLine = (text.Length / max) + ((text.Length % max) != 0 ? 1 : 0);
-            if (nLine == 1)
+            foreach (var part in text.Split(new[] { Environment.NewLine, "\n", "\r" }, StringSplitOptions.None))
             {
-                result.Add(new TextLineSnapshot(index, bConvertFirstLine ? Convert(layout, text, indicator, indent, pmax) : text, null));
-                return result;
-            }
-            if (indicator == ' ')
-            {
-                max = pmax;
-                min = pmin;
-                indicator = '-';
-            }
+                int max = pmax;
+                int min = pmax;
+                int nLine = (part.Length / max) + ((part.Length % max) != 0 ? 1 : 0);
+                if (nLine == 1)
+                {
+                    result.Add(new TextLineSnapshot(index, bConvertFirstLine ? Convert(layout, part, indicator, indent, pmax) : part, null));
+                }
+                else
+                {
+                    if (indicator == ' ')
+                    {
+                        max = pmax;
+                        min = pmin;
+                        indicator = '-';
+                    }
 
-            IList<Tuple<string, bool>> lines = Split(text, max, min);
+                    IList<Tuple<string, bool>> lines = Split(part, max, min);
 
-            for (int i = 0; i < lines.Count; i++)
-            {
-                if (index > -1) index++;
-                result.Add(new TextLineSnapshot(index,(i == 0 && !bConvertFirstLine) ? lines[i].Item1 : Convert(layout, lines[i].Item1,
-                    indicator != '-'
-                    ? indicator
-                    : ((lines[i].Item2 && i != 0) ? indicator : (i == 0 ? NoIndicator : NoOneIndicator)), indent, pmax), null));
+                    for (int i = 0; i < lines.Count; i++)
+                    {
+                        if (index > -1) index++;
+                        result.Add(new TextLineSnapshot(index, (i == 0 && !bConvertFirstLine) ? lines[i].Item1 : Convert(layout, lines[i].Item1,
+                            indicator != '-'
+                                ? indicator
+                                : ((lines[i].Item2 && i != 0) ? indicator : (i == 0 ? NoIndicator : NoOneIndicator)), indent, pmax), null));
+                    }
+                }
             }
             return result;
         }

@@ -120,31 +120,33 @@ namespace TypeCobol.Compiler.CodeElements {
 
         public static IEnumerable<TextLineSnapshot> GetSignatureForComment([NotNull] this Nodes.ParametersProfileNode parameterList)
         {
+            //Procedure arguments nature
+            const string INPUT    = "input";
+            const string INOUT    = "in-out";
+            const string OUTPUT   = "output";
+            const string RETURNS  = "returns";
+
             var signature = new List<TextLineSnapshot>();
 
             string paramsDescription;
             
             if (parameterList.InputParameters.Count > 0)
             {
-                paramsDescription = string.Format("*\t\tinput({0})",
-                    GetParameterDescriptions(parameterList.InputParameters));
+                paramsDescription = $"*     {INPUT}({GetParameterDescriptions(parameterList.InputParameters)})";
                 signature.Add(new TextLineSnapshot(-1, paramsDescription, null));
             }
             if (parameterList.InoutParameters.Count > 0)
             {
-                paramsDescription = string.Format("*\t\tin-out({0})",
-                    GetParameterDescriptions(parameterList.InoutParameters));
+                paramsDescription = $"*     {INOUT}({GetParameterDescriptions(parameterList.InoutParameters)})";
                 signature.Add(new TextLineSnapshot(-1, paramsDescription, null));
             }
             if (parameterList.OutputParameters.Count > 0)
             {
-                paramsDescription = string.Format("*\t\toutput({0})",
-                    GetParameterDescriptions(parameterList.OutputParameters));
+                paramsDescription = $"*     {OUTPUT}({GetParameterDescriptions(parameterList.OutputParameters)})";
                 signature.Add(new TextLineSnapshot(-1, paramsDescription, null));
             }
             if (parameterList.ReturningParameter != null) {
-                paramsDescription = string.Format("*\t\treturns({0})",
-                    GetParameterDetails(parameterList.ReturningParameter));
+                paramsDescription = $"*     {RETURNS}({GetParameterDetails(parameterList.ReturningParameter)})";
                 signature.Add(new TextLineSnapshot(-1, paramsDescription, null));
             }
             return signature;

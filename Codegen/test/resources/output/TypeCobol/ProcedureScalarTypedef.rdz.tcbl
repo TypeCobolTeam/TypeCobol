@@ -32,7 +32,7 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *MyPgm.Foo - Params :
-      *		input(Param1: MyAmount1, Param2: MyAmount2)
+      *     input(Param1: MyAmount1, Param2: MyAmount2)
        01 Param1 PIC S9(05)V9(05).
        01 Param2 PIC S9(05)V9(05).
        PROCEDURE DIVISION
@@ -40,6 +40,6 @@
                    BY REFERENCE Param2
            .
       *MyPgm.Foo - Params :
-      *		input(Param1: MyAmount1, Param2: MyAmount2)
+      *     input(Param1: MyAmount1, Param2: MyAmount2)
            .
        END PROGRAM f812db2d.

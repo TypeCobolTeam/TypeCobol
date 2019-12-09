@@ -26,9 +26,9 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *RB1LEQU1.Foo2 - Params :
-      *		input(EquipementObject: pic X(3), EquipementMainReference: pic
-      *S9(4), EquipementSecondaryReference: pic S9(4), EquipementOccurre
-      *nce: pic S9(4))
+      *     input(EquipementObject: pic X(3), EquipementMainReference: p
+      *ic S9(4), EquipementSecondaryReference: pic S9(4), EquipementOccu
+      *rrence: pic S9(4))
        01 EquipementObject PIC X(3).
        01 EquipementMainReference
                                          PIC S9(4).
@@ -43,7 +43,7 @@
                    BY REFERENCE EquipementOccurrence
            .
       *RB1LEQU1.Foo2 - Params :
-      *		input(EquipementObject: pic X(3), EquipementMainReference: pic
-      *S9(4), EquipementSecondaryReference: pic S9(4), EquipementOccurre
-      *nce: pic S9(4))
+      *     input(EquipementObject: pic X(3), EquipementMainReference: p
+      *ic S9(4), EquipementSecondaryReference: pic S9(4), EquipementOccu
+      *rrence: pic S9(4))
        END PROGRAM ce3384b8.

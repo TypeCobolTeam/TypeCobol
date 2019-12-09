@@ -129,9 +129,9 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *DocCodeGen.MyProc - Params :
-      *		input(myDate: DATE, bla: pic S9(1)V9(12))
-      *		in-out(myBool: BOOL)
-      *		output(toto: BOOL, bli: pic PPP999PPP)
+      *     input(myDate: DATE, bla: pic S9(1)V9(12))
+      *     in-out(myBool: BOOL)
+      *     output(toto: BOOL, bli: pic PPP999PPP)
        01 myDate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -156,8 +156,8 @@
                    BY REFERENCE bli
            .
       *DocCodeGen.MyProc - Params :
-      *		input(myDate: DATE, bla: pic S9(1)V9(12))
-      *		in-out(myBool: BOOL)
-      *		output(toto: BOOL, bli: pic PPP999PPP)
+      *     input(myDate: DATE, bla: pic S9(1)V9(12))
+      *     in-out(myBool: BOOL)
+      *     output(toto: BOOL, bli: pic PPP999PPP)
            CONTINUE.
        END PROGRAM fd48569e.
