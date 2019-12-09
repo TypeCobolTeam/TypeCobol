@@ -10,6 +10,7 @@ using TypeCobol.Compiler.Types;
 namespace TypeCobol.Compiler.Symbols
 {
     /// <summary>
+    /// Represents any symbol that contain other symbols (i.e. ProgramSymbol or NamespaceSymbol)
     /// Don't confuse with Scope class
     /// </summary>
     public abstract class AbstractScope : Symbol, IScope
