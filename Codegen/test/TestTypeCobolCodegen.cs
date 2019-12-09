@@ -904,6 +904,15 @@ namespace TypeCobol.Codegen {
         [TestMethod]
         [TestCategory("Codegen")]
         [TestProperty("Time", "fast")]
+        public void PreserveLineBreaksAndIndents()
+        {
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "PreserveLineBreaksAndIndents") + ".rdz.tcbl", skeletons);
+        }
+
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
         public void WrongGenCodeIndexLevel88()
         {
             var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;

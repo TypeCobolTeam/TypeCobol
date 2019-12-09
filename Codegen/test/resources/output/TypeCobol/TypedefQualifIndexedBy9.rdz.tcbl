@@ -120,7 +120,7 @@
        data division.
        working-storage section.
       *DVZF0OS3.DisplayEventList - Params :
-      *		in-out(EventList: EventList)
+      *     in-out(EventList: EventList)
                                
       *01 EventList2 type EventList.
        01 EventList2.
@@ -134,7 +134,7 @@
                                     
        LINKAGE SECTION.
       *DVZF0OS3.DisplayEventList - Params :
-      *		in-out(EventList: EventList)
+      *     in-out(EventList: EventList)
        01 EventList.
            02 Counter pic 9(04) comp-5.
            02 EventArray.
@@ -147,7 +147,7 @@
              USING BY REFERENCE EventList
            .
       *DVZF0OS3.DisplayEventList - Params :
-      *		in-out(EventList: EventList)
+      *     in-out(EventList: EventList)
       *    PERFORM VARYING EventList::Idx FROM 1 BY 1
       *    UNTIL EventList::Idx > EventList2::Idx
            PERFORM VARYING bc4d8f27Idx FROM 1 BY 1
@@ -165,7 +165,7 @@
        data division.
        working-storage section.
       *DVZF0OS3.DisplayEventList - Params :
-      *		in-out(EventList: EventList)
+      *     in-out(EventList: EventList)
                                
       *01 EventList2 type EventList.
        01 EventList2.
@@ -179,7 +179,7 @@
                                     
        LINKAGE SECTION.
       *DVZF0OS3.DisplayEventList - Params :
-      *		in-out(EventList: EventList)
+      *     in-out(EventList: EventList)
        01 EventList.
            02 Counter pic 9(04) comp-5.
            02 EventArray.
@@ -192,7 +192,7 @@
              USING BY REFERENCE EventList
            .
       *DVZF0OS3.DisplayEventList - Params :
-      *		in-out(EventList: EventList)
+      *     in-out(EventList: EventList)
       *    PERFORM VARYING EventList::Idx FROM 1 BY 1
       *    UNTIL EventList::Idx > EventList2::Idx
            PERFORM VARYING cae3b2c8Idx FROM 1 BY 1
