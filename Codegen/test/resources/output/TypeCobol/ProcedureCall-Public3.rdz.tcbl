@@ -327,7 +327,7 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -336,7 +336,7 @@
              USING BY REFERENCE mydate
            .
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
            CONTINUE.
        END PROGRAM a0508f35.
       *
@@ -352,8 +352,8 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.Pgm1PrivateValidateDateFormat - Params :
-      *		input(mydate: DATE, format: pic X(08))
-      *		output(okay: BOOL, actual-format: pic X(08))
+      *     input(mydate: DATE, format: pic X(08))
+      *     output(okay: BOOL, actual-format: pic X(08))
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -372,8 +372,8 @@
                    BY REFERENCE actual-format
            .
       *PGM1.Pgm1PrivateValidateDateFormat - Params :
-      *		input(mydate: DATE, format: pic X(08))
-      *		output(okay: BOOL, actual-format: pic X(08))
+      *     input(mydate: DATE, format: pic X(08))
+      *     output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
        END PROGRAM fde394fb.
       *
@@ -386,7 +386,7 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -395,7 +395,7 @@
              USING BY REFERENCE mydate
            .
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
            CONTINUE.
        END PROGRAM ca0ab46c.
       *
@@ -408,7 +408,7 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.check2 - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -417,7 +417,7 @@
              USING BY REFERENCE mydate
            .
       *PGM1.check2 - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
            CONTINUE.
        END PROGRAM d0a59141.
       *
@@ -431,7 +431,7 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.check2 - Params :
-      *		input(mydate: DATE, myDate2: DATE)
+      *     input(mydate: DATE, myDate2: DATE)
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -445,7 +445,7 @@
                    BY REFERENCE myDate2
            .
       *PGM1.check2 - Params :
-      *		input(mydate: DATE, myDate2: DATE)
+      *     input(mydate: DATE, myDate2: DATE)
            CONTINUE.
        END PROGRAM e5b741a8.
       *
@@ -461,8 +461,8 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.MyPublicProcedure - Params :
-      *		input(mydate: DATE, format: pic X(08))
-      *		output(okay: BOOL, actual-format: pic X(08))
+      *     input(mydate: DATE, format: pic X(08))
+      *     output(okay: BOOL, actual-format: pic X(08))
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -481,7 +481,7 @@
                    BY REFERENCE actual-format
            .
       *PGM1.MyPublicProcedure - Params :
-      *		input(mydate: DATE, format: pic X(08))
-      *		output(okay: BOOL, actual-format: pic X(08))
+      *     input(mydate: DATE, format: pic X(08))
+      *     output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
        END PROGRAM ebb060ea.
