@@ -53,7 +53,7 @@ namespace TypeCobol.Compiler.Symbols
 
         /// <summary>
         /// The Type of a variable whose type comes from a TYPEDEF can be set later when
-        /// rhe TYPEDEF symbol is resolved. 
+        /// The TYPEDEF symbol is resolved. 
         /// </summary>
         public override Types.Type Type
         {
