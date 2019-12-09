@@ -61,8 +61,8 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *Codegen.GetValue - Params :
-      *		input(ikey: MyKey, ikey2: MyKey2)
-      *		returns(result: pic 9(32))
+      *     input(ikey: MyKey, ikey2: MyKey2)
+      *     returns(result: pic 9(32))
        01 ikey PIC X(04).
        01 ikey2.
            02 partA pic X(04).
@@ -75,8 +75,8 @@
                    BY REFERENCE result
            .
       *Codegen.GetValue - Params :
-      *		input(ikey: MyKey, ikey2: MyKey2)
-      *		returns(result: pic 9(32))
+      *     input(ikey: MyKey, ikey2: MyKey2)
+      *     returns(result: pic 9(32))
 000170                                                                  000170
 000180     display "test codegen"
 000180     CONTINUE.                                                    000180

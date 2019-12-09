@@ -14,7 +14,7 @@
        DATA DIVISION.
        linkage section.
       *DVZF0OSM.toto - Params :
-      *		input(IsOk: BOOL)
+      *     input(IsOk: BOOL)
                        
       *01 tzer type Date.
        01 tzer.
@@ -34,6 +34,6 @@
              USING BY REFERENCE IsOk-value
            .
       *DVZF0OSM.toto - Params :
-      *		input(IsOk: BOOL)
+      *     input(IsOk: BOOL)
            .
        END PROGRAM da82b615.
