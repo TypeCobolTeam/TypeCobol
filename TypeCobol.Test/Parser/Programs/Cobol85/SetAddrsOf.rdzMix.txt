@@ -23,16 +23,13 @@
        SET LENGTH OF W-mydate2 to ADDRESS OF W-mydate.
 
       * Create error because it's in working-storage
-Line 26[23,31] <27, Error, Syntax> - Syntax error : Cannot write into ADDRESS(W-mydate2), W-myDate2
- is declared out of LINKAGE SECTION.
+Line 26[23,31] <27, Error, Syntax> - Syntax error : Cannot write into ADDRESS(W-mydate2), W-myDate2 is declared out of LINKAGE SECTION.
        SET ADDRESS OF W-mydate2 to ADDRESS OF W-mydate.
       * Create error because it's in working-storage
-Line 28[23,30] <27, Error, Syntax> - Syntax error : Cannot write into ADDRESS(W-myDate), W-myDate
- is declared out of LINKAGE SECTION.
+Line 28[23,30] <27, Error, Syntax> - Syntax error : Cannot write into ADDRESS(W-myDate), W-myDate is declared out of LINKAGE SECTION.
        SET ADDRESS OF W-myDate TO ADDRESS OF W-PicVar
       * Create error because it's in working-storage
-Line 30[23,30] <27, Error, Syntax> - Syntax error : Cannot write into ADDRESS(W-PicVar), W-PicVar
- is declared out of LINKAGE SECTION.
+Line 30[23,30] <27, Error, Syntax> - Syntax error : Cannot write into ADDRESS(W-PicVar), W-PicVar is declared out of LINKAGE SECTION.
        SET ADDRESS OF W-PicVar TO ADDRESS OF W-mydate.
 
 
