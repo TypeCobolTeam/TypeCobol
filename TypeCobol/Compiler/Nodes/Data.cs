@@ -314,42 +314,21 @@ namespace TypeCobol.Compiler.Nodes {
             get
             {
                 if (_primitiveDataType != null) return _primitiveDataType;
-                if (this.Picture != null) //Get DataType based on Picture clause
-                    _primitiveDataType = DataType.Create(this.Picture.Value);
-                else if (this.Usage.HasValue) //Get DataType based on Usage clause
-                    _primitiveDataType = DataType.Create(this.Usage.Value);
+
+                if (DataType == DataType.Date || DataType == DataType.Currency)
+                {
+                    // special case for built-ins Date and Currency, we accept
+                    _primitiveDataType = DataType.Alphanumeric;
+                }
                 else
-                    return null;
+                {
+                    if (this.Picture != null) //Get DataType based on Picture clause
+                        _primitiveDataType = DataType.Create(this.Picture.Value);
+                    else if (this.Usage.HasValue) //Get DataType based on Usage clause
+                        _primitiveDataType = DataType.Create(this.Usage.Value);
+                }
 
                 return _primitiveDataType;
-            }
-        }
-
-        private List<DataType> _compatiblePrimitiveDataTypes;
-        public virtual List<DataType> CompatiblePrimitiveDataTypes
-        {
-            get
-            {
-                if (_compatiblePrimitiveDataTypes != null) return _compatiblePrimitiveDataTypes;
-                _compatiblePrimitiveDataTypes = new List<DataType>();
-                if (PrimitiveDataType == null)
-                {
-                    if (DataType == DataType.Date)
-                    {
-                        _compatiblePrimitiveDataTypes.Add(DataType.Alphanumeric);
-                        _compatiblePrimitiveDataTypes.Add(DataType.AlphanumericEdited);
-                    }
-                    else if (DataType == DataType.Currency)
-                    {
-                        _compatiblePrimitiveDataTypes.Add(DataType.Alphanumeric);
-                    }
-                }
-                else
-                {
-                    _compatiblePrimitiveDataTypes.Add(PrimitiveDataType);
-                }
-
-                return _compatiblePrimitiveDataTypes;
             }
         }
 

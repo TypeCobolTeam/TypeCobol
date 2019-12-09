@@ -609,15 +609,15 @@ namespace TypeCobol.LanguageServer
             {
                 if (seekedDataTypes.Count == 0) //If a Datatype hasn't be found yet. 
                 {
-                    var foundedVars =
-                        node.SymbolTable.GetVariablesExplicit(
-                            new URI(qualifiedNameTokens.Select(t => t.Text)));
+                    var foundedVar = node.SymbolTable.GetVariablesExplicit(new URI(qualifiedNameTokens.Select(t => t.Text))).FirstOrDefault();
 
-                    if (foundedVars != null && foundedVars.Any())
+                    if (foundedVar != null)
                     {
-                        DataDefinition df = foundedVars.First();
-                        seekedDataTypes.Add(df.DataType);
-                        if (df.TypeDefinition != null) seekedDataTypes.AddRange(df.TypeDefinition.CompatiblePrimitiveDataTypes);
+                        seekedDataTypes.Add(foundedVar.DataType);
+                        if (foundedVar.TypeDefinition?.PrimitiveDataType != null)
+                        {
+                            seekedDataTypes.Add(foundedVar.TypeDefinition.PrimitiveDataType);
+                        }
                     }
                 }
 
