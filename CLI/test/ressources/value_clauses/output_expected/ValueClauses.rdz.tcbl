@@ -65,9 +65,9 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *DVZZMFT0.Proc - Params :
-      *		input(paramIntrinsicDate: DATE, paramIntrinsicRate: Rate, param
-      *Structure: StructureType, paramScalar: ScalarType, paramInline: p
-      *ic X(1))
+      *     input(paramIntrinsicDate: DATE, paramIntrinsicRate: Rate, pa
+      *ramStructure: StructureType, paramScalar: ScalarType, paramInline
+      *: pic X(1))
        01 paramIntrinsicDate VALUE '20190102'.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -85,9 +85,9 @@
                    BY REFERENCE paramInline
            .
       *DVZZMFT0.Proc - Params :
-      *		input(paramIntrinsicDate: DATE, paramIntrinsicRate: Rate, param
-      *Structure: StructureType, paramScalar: ScalarType, paramInline: p
-      *ic X(1))
+      *     input(paramIntrinsicDate: DATE, paramIntrinsicRate: Rate, pa
+      *ramStructure: StructureType, paramScalar: ScalarType, paramInline
+      *: pic X(1))
           DISPLAY paramIntrinsicDate
           DISPLAY paramIntrinsicRate
           DISPLAY paramStructure
