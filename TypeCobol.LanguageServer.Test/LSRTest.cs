@@ -261,6 +261,13 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         [TestCategory("Completion")]
+        public void CompletionAfterBetweenColons()
+        {
+            LSRTestHelper.Test("CompletionAfterBetweenColons", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
         public void ProcedureCompletion()
         {
             LSRTestHelper.Test("ProcedureCompletion", LsrTestingOptions.NoLsrTesting, true, false, false, null, null, "CustomDependencies");
@@ -412,6 +419,13 @@ namespace TypeCobol.LanguageServer.Test
         public void OnHover()
         {
             LSRTestHelper.Test("OnHover", LsrTestingOptions.NoLsrTesting, true, true);
+        }
+
+        [TestMethod]
+        public void OnHoverDisplayVariableDefinition()
+        {
+            LSRTestHelper.Test("OnHoverDisplayVariableDefinition", LsrTestingOptions.NoLsrTesting, true, true);
+            LSRTestHelper.Test("OnHoverDisplayVariableDefinitionFromCopy", LsrTestingOptions.NoLsrTesting, true, false, false, "CopyFolder");
         }
 
         [TestMethod]

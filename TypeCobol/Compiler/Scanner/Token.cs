@@ -29,29 +29,18 @@ namespace TypeCobol.Compiler.Scanner
             if (Object.ReferenceEquals(this, tokenCompare)) return true;
             if (tokenCompare == null) return false;
 
-            return this.Type == tokenCompare.Type
-                   && this.Channel == tokenCompare.Channel
-                   && this.Column == tokenCompare.Column
-                   && this.EndColumn == tokenCompare.EndColumn
-                   && this.ExpectedClosingDelimiter == tokenCompare.ExpectedClosingDelimiter
-                   && this.Length == tokenCompare.Length
-                   && this.Line == tokenCompare.Line
-                   && this.StartIndex == tokenCompare.StartIndex
-                   && this.StopIndex == tokenCompare.StopIndex
-                   && this.TokenIndex == tokenCompare.TokenIndex
-                   && this.HasClosingDelimiter == tokenCompare.HasClosingDelimiter
-                   && this.LiteralValue == tokenCompare.LiteralValue
-                   && this.TokenType == tokenCompare.TokenType
-                   && this.Text == tokenCompare.Text;
+            return tokenCompare.Type == this.Type &&
+                   tokenCompare.StartIndex == this.StartIndex &&
+                   tokenCompare.StopIndex == this.StopIndex &&
+                   tokenCompare.TokensLine == this.TokensLine;
         }
 
         public override int GetHashCode()
         {
-            return
-                (Type.GetHashCode() + Column.GetHashCode() + EndColumn.GetHashCode()) * 1000 +
-                (Length.GetHashCode() + Line.GetHashCode()) * 100 +
-                (StartIndex.GetHashCode() + StopIndex.GetHashCode() + TokenIndex.GetHashCode()) * 10 +
-                Text.GetHashCode();
+            return this.Type ^
+                   this.StartIndex ^
+                   this.StopIndex ^
+                   this.TokensLine.GetHashCode();
         }
 
         /// <summary>

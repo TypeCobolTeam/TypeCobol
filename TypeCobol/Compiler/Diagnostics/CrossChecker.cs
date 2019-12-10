@@ -88,8 +88,6 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
-        
-
         public override bool Visit(PerformProcedure performProcedureNode)
         {
             SectionOrParagraphUsageChecker.CheckReferenceToParagraphOrSection(performProcedureNode);
@@ -344,6 +342,7 @@ namespace TypeCobol.Compiler.Diagnostics
                             "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot have USAGE.", dataDefinitionEntry);
                     }
                 }
+
             }
 
 
@@ -371,6 +370,20 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             DataDefinitionChecker.OnNode(dataDefinition);
+
+            return true;
+        }
+
+        public override bool Visit(DataDescription dataDescription)
+        {
+            DataDescriptionEntry dataDescriptionEntry = dataDescription.CodeElement;
+
+            var levelNumber = dataDescriptionEntry.LevelNumber;
+            //Check if the DataDescription is an empty group
+            if (levelNumber != null && dataDescription.IsDataDescriptionGroup && dataDescription.ChildrenCount == 0)
+            {
+                DiagnosticUtils.AddError(dataDescription, "A group item cannot be empty.", dataDescriptionEntry);
+            }
 
             return true;
         }
@@ -519,7 +532,16 @@ namespace TypeCobol.Compiler.Diagnostics
                         node.GetEnclosingProgramOrFunctionNode().SetFlag(Node.Flag.UseGlobalStorage, true);
                     }
                 }
-                
+
+                if (!isReadStorageArea && node.SymbolTable.CurrentScope == SymbolTable.Scope.Function)
+                {
+                    var paramDesc = (dataDefinitionPath?.CurrentDataDefinition ?? dataDefinitionFound) as ParameterDescription;
+                    if (paramDesc?.PassingType == ParameterDescription.PassingTypes.Input)
+                    {
+                        DiagnosticUtils.AddError(node, "Input variable '" + paramDesc.Name + "' is modified by an instruction", area.SymbolReference);
+                    }
+                }
+
                 //add the found DataDefinition to a dictionary depending on the storage area type
                 if (isReadStorageArea)
                 {
@@ -615,7 +637,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 //This variable has to be in Linkage Section
                 if (!variabletoCheck.IsFlagSet(Node.Flag.LinkageSectionNode))
                     DiagnosticUtils.AddError(node,
-                        "Cannot write into " + storageArea + ", " + variabletoCheck +
+                        "Cannot write into " + storageArea + ", " + variabletoCheck.Name +
                         " is declared out of LINKAGE SECTION.", area.SymbolReference);
             }
 
@@ -669,7 +691,6 @@ namespace TypeCobol.Compiler.Diagnostics
             if (!node.QualifiedStorageAreas.ContainsKey(storageArea))
                 node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
         }
-
     }
     
     class SectionOrParagraphUsageChecker
@@ -750,8 +771,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
                 else
                 {
-                    // Use or Exec node : statement
-                    Debug.Assert(child is Use || child is Exec);
+                    // a statement exists
                     empty = false;
                     break;
                 }
