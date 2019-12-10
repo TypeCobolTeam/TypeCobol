@@ -615,10 +615,9 @@ namespace TypeCobol.LanguageServer
                     if (foundedVar != null)
                     {
                         seekedDataTypes.Add(foundedVar.DataType);
-                        if (foundedVar.TypeDefinition?.PrimitiveDataType != null)
-                        {
-                            seekedDataTypes.Add(foundedVar.TypeDefinition.PrimitiveDataType);
-                        }
+
+                        // Add PrimitiveDataType to extend the search to compatible types, if null default to Alphanumeric
+                        seekedDataTypes.Add(foundedVar.PrimitiveDataType ?? DataType.Alphanumeric);
                     }
                 }
 
