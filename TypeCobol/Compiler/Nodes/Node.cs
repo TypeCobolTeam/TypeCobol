@@ -821,6 +821,7 @@ namespace TypeCobol.Compiler.Nodes {
         /// <returns>Correpsonding DataDefinition</returns>
         public DataDefinition GetDataDefinitionFromStorageAreaDictionary(StorageArea searchedStorageArea, bool? isReadDataDefiniton=null)
         {
+            if (searchedStorageArea == null) return null;
             DataDefinition searchedElem = null;
             if (isReadDataDefiniton == null)
             {
