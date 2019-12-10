@@ -429,6 +429,13 @@ namespace TypeCobol.LanguageServer.Test
         }
 
         [TestMethod]
+        public void OnHoverDisplayVariableDefinition()
+        {
+            LSRTestHelper.Test("OnHoverDisplayVariableDefinition", LsrTestingOptions.NoLsrTesting, true, true);
+            LSRTestHelper.Test("OnHoverDisplayVariableDefinitionFromCopy", LsrTestingOptions.NoLsrTesting, true, false, false, "CopyFolder");
+        }
+
+        [TestMethod]
         public void RefreshCopiesNotif()
         {
             LSRTestHelper.Test("RefreshCopiesNotif", LsrTestingOptions.NoLsrTesting, true, true);

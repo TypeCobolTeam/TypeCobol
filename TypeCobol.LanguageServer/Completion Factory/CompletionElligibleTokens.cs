@@ -30,6 +30,7 @@ namespace TypeCobol.LanguageServer
             new Tuple<TokenType, bool>(TokenType.SET, false),
             new Tuple<TokenType, bool>(TokenType.OF, false),
             new Tuple<TokenType, bool>(TokenType.INTO, false),
+            new Tuple<TokenType, bool>(TokenType.DISPLAY, false),
         };
 
         /// <summary>
