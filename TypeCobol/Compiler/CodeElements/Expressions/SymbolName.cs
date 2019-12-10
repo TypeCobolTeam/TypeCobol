@@ -177,21 +177,15 @@ namespace TypeCobol.Compiler.CodeElements
             if (symbolReferenceCompare == null) return false;
             if (Object.ReferenceEquals(this, symbolReferenceCompare)) return true;
 
-            return NameLiteral == symbolReferenceCompare.NameLiteral &&
-                   Role == symbolReferenceCompare.Role &&
-                   Type == symbolReferenceCompare.Type;
+            return Type == symbolReferenceCompare.Type &&
+                   NameLiteral == symbolReferenceCompare.NameLiteral &&
+                   Role == symbolReferenceCompare.Role;
         }
 
         public override int GetHashCode()
         {
-            return NameLiteral.GetHashCode() + Role.GetHashCode() + Type.GetHashCode();
-            return ComputeHashCode();
+            return (Type.GetHashCode() * 11) + NameLiteral.GetHashCode() + Role.GetHashCode();
         }
-        private int ComputeHashCode()
-        {
-            return NameLiteral.GetHashCode() + Role.GetHashCode() + Type.GetHashCode();
-        }
-
     }
 
     /// <summary>
