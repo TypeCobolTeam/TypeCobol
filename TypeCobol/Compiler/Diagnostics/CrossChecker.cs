@@ -88,8 +88,6 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
-        
-
         public override bool Visit(PerformProcedure performProcedureNode)
         {
             SectionOrParagraphUsageChecker.CheckReferenceToParagraphOrSection(performProcedureNode);
@@ -639,7 +637,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 //This variable has to be in Linkage Section
                 if (!variabletoCheck.IsFlagSet(Node.Flag.LinkageSectionNode))
                     DiagnosticUtils.AddError(node,
-                        "Cannot write into " + storageArea + ", " + variabletoCheck +
+                        "Cannot write into " + storageArea + ", " + variabletoCheck.Name +
                         " is declared out of LINKAGE SECTION.", area.SymbolReference);
             }
 
@@ -693,7 +691,6 @@ namespace TypeCobol.Compiler.Diagnostics
             if (!node.QualifiedStorageAreas.ContainsKey(storageArea))
                 node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
         }
-
     }
     
     class SectionOrParagraphUsageChecker
