@@ -4,6 +4,7 @@ Line 32[17,22] <37, Warning, General> - Warning: a End statement is not aligned 
 Line 40[16,27] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
 Line 45[14,24] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
 Line 51[14,23] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+Line 96[10,21] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
 
 --- Program ---
 PROGRAM: PgmTest common:False initial:False recursive:False
@@ -15,6 +16,12 @@ PROGRAM: PgmTest common:False initial:False recursive:False
   chaine-c:Alphanumeric
 -- FUNCTIONS ---
   MyProc
+        in: myDate:DATE
+        in: bla:Numeric
+       out: toto:BOOL
+       out: bli:Numeric
+     inout: myBool:BOOL
+  MyProc2
         in: myDate:DATE
         in: bla:Numeric
        out: toto:BOOL
