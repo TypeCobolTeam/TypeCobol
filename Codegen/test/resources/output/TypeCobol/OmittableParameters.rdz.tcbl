@@ -33,7 +33,7 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *MyPGM.MyProc - Params :
-      *		input(Scalar: pic X(5), Structure: GroupType)
+      *     input(Scalar: pic X(5), Structure: GroupType)
                                
       *01 MyStructure TYPE GroupType.
        01 MyStructure.
@@ -42,7 +42,7 @@
                                      
        LINKAGE SECTION.
       *MyPGM.MyProc - Params :
-      *		input(Scalar: pic X(5), Structure: GroupType)
+      *     input(Scalar: pic X(5), Structure: GroupType)
        01 Scalar PIC X(5).
        01 Structure.
            02 GroupType-DATA1 PIC X(5).
@@ -52,7 +52,7 @@
                    BY REFERENCE Structure
            .
       *MyPGM.MyProc - Params :
-      *		input(Scalar: pic X(5), Structure: GroupType)
+      *     input(Scalar: pic X(5), Structure: GroupType)
            DISPLAY Scalar
            MOVE Structure TO MyStructure
            .
