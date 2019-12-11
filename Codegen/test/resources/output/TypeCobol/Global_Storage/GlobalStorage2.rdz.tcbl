@@ -149,7 +149,7 @@
        Data division.
        WORKING-STORAGE Section.
       *GlobalStorageTest.MyProc - Params :
-      *		input(myDate: DATE)
+      *     input(myDate: DATE)
                                
       *01 TestCtx TYPE Bool.
        01  TestCtx-value PIC X VALUE LOW-VALUE.
@@ -160,7 +160,7 @@
                             
        LINKAGE SECTION.
       *GlobalStorageTest.MyProc - Params :
-      *		input(myDate: DATE)
+      *     input(myDate: DATE)
        01 myDate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -198,7 +198,7 @@
              USING BY REFERENCE myDate
            .
       *GlobalStorageTest.MyProc - Params :
-      *		input(myDate: DATE)
+      *     input(myDate: DATE)
       * Get the data from the global storage section
            CALL 'b14e12b4' USING
                by reference address of TC-GlobalData

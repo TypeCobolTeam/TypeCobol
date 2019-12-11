@@ -39,7 +39,7 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *TYPDEFQU.DisplayEventList - Params :
-      *		in-out(EventList: _EVENT_LIST_)
+      *     in-out(EventList: _EVENT_LIST_)
        01 EventList.
            02 Counter pic 9(04) comp-5.
            02 EventTab.
@@ -52,7 +52,7 @@
              USING BY REFERENCE EventList
            .
       *TYPDEFQU.DisplayEventList - Params :
-      *		in-out(EventList: _EVENT_LIST_)
+      *     in-out(EventList: _EVENT_LIST_)
       
       *    PERFORM VARYING Idx FROM 1 BY 1
       *    UNTIL Idx > EventList::Counter
