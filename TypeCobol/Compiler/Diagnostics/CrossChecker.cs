@@ -411,15 +411,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 CodeElement parentCodeElement = functionEnd.Parent.CodeElement;
                 if (parentCodeElement?.IsInsideCopy() == false && functionEnd.IsInsideCopy() == false)
                 {
-                    if (parentCodeElement.ConsumedTokens[0]?.TokenType == TokenType.FORMALIZED_COMMENTS_START)
-                    {
-                        Token openingDeclareToken = parentCodeElement.ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.DECLARE);
-                        CheckEndNode(openingDeclareToken, functionEnd.CodeElement);
-                    }
-                    else
-                    {
-                        CheckEndNode(parentCodeElement, functionEnd.CodeElement);
-                    }
+                    Token openingDeclareToken = parentCodeElement.ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.DECLARE);
+                    CheckEndNode(openingDeclareToken, functionEnd.CodeElement);
                 }
             }
             return true;

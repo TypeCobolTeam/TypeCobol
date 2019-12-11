@@ -332,7 +332,6 @@ namespace TypeCobol.Compiler.Parser
                                     "A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)",
                                     MessageCode.TypeCobolParserLimitation);
                             }
-                       
 
                             // Add code element to the list                    
                             codeElementsLine.AddCodeElement(codeElement);
