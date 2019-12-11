@@ -52,7 +52,7 @@ Line 32[8,48] <30, Error, Semantics> - Semantic error: TYPE 'ForbiddenTypedef' i
       *G-Date and G-TechCtx are accesible from GlobalStorage
            MOVE G-Date TO myDate.
            MOVE G-TechCtx TO TestCtx.
-        END-DECLARE.
+       END-DECLARE.
 
        MOVE G-Date TO G-Date.
 Line 50[13,25] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DuplicatedVar 

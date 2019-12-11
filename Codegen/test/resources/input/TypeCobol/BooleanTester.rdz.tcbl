@@ -21,7 +21,7 @@
        PROCEDURE DIVISION.
        DECLARE PROCEDURE MyProc PRIVATE
            INPUT    NumericInput PIC S9(9) COMP-5.
-        END-DECLARE.
+       END-DECLARE.
 
 
        CALL MyProc INPUT ADDRESS OF MyBool.

@@ -35,7 +35,7 @@
       *G-Date and G-TechCtx are accesible from GlobalStorage
            DISPLAY G-Date.
            MOVE G-TechCtx TO TestCtx.
-        END-DECLARE.
+       END-DECLARE.
       
        MOVE G-Date TO  G-Date.
        DISPLAY G-Date.
