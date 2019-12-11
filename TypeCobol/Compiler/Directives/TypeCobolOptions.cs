@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Tools.Options_Config;
+﻿using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Compiler.Directives
 {
     /// <summary>
     /// TypeCobol compiler options (superset of the IBM Enterprise Cobol compiler options)
     /// </summary>
-    public class TypeCobolOptions : IBMCompilerOptions
+    public class TypeCobolOptions : IBMCompilerOptions, ITypeCobolCheckOptions
     {
         // insert options specific to TypeCobol here ...
 #if EUROINFO_RULES
@@ -58,9 +53,9 @@ namespace TypeCobol.Compiler.Directives
 
         public TypeCobolOptions()
         {
-                
+            // default values for checks
+            TypeCobolCheckOptionsInitializer.SetDefaultValues(this);
         }
-
 
         /// <summary>
         /// Clone the compiler options to enable specific parameters for each file
