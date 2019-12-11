@@ -105,11 +105,11 @@
        data division.
        working-storage section.
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
                                
        LINKAGE SECTION.
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
                        
        01 ERIM04-LOT-SOC          PIC X(5).
        01 LOT-SOC                 PIC X(5).
@@ -121,7 +121,7 @@
              USING BY REFERENCE mydate
            .
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
            EXEC SQL
              SELECT LOT_SOC              
              INTO :LOT-SOC             
@@ -141,13 +141,13 @@
        data division.
        working-storage section.
       *PGM1.check - Params :
-      *		input(mydate: DATE)
-      *		output(r1: pic X(5))
+      *     input(mydate: DATE)
+      *     output(r1: pic X(5))
                                
        LINKAGE SECTION.
       *PGM1.check - Params :
-      *		input(mydate: DATE)
-      *		output(r1: pic X(5))
+      *     input(mydate: DATE)
+      *     output(r1: pic X(5))
                        
        01 ERIM04-LOT-SOC          PIC X(5).
        01 LOT-SOC                 PIC X(5).
@@ -161,8 +161,8 @@
                    BY REFERENCE r1
            .
       *PGM1.check - Params :
-      *		input(mydate: DATE)
-      *		output(r1: pic X(5))
+      *     input(mydate: DATE)
+      *     output(r1: pic X(5))
            DISPLAY "P1"
            EXEC SQL
              SELECT LOT_SOC              
@@ -182,7 +182,7 @@
        data division.
        working-storage section.
       *PGM1.checkName - Params :
-      *		input(myname: pic X(15))
+      *     input(myname: pic X(15))
                                
       *01 var1 type Date.
        01 var1.
@@ -192,14 +192,14 @@
                          
        linkage section.
       *PGM1.checkName - Params :
-      *		input(myname: pic X(15))
+      *     input(myname: pic X(15))
                        
        01 myname PIC X(15).
        PROCEDURE DIVISION
              USING BY REFERENCE myname
            .
       *PGM1.checkName - Params :
-      *		input(myname: pic X(15))
+      *     input(myname: pic X(15))
       *    Call check input var1
            CALL 'a0508f35' USING
                                  var1

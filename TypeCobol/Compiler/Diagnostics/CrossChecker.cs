@@ -694,7 +694,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 //This variable has to be in Linkage Section
                 if (!variabletoCheck.IsFlagSet(Node.Flag.LinkageSectionNode))
                     DiagnosticUtils.AddError(node,
-                        "Cannot write into " + storageArea + ", " + variabletoCheck +
+                        "Cannot write into " + storageArea + ", " + variabletoCheck.Name +
                         " is declared out of LINKAGE SECTION.", area.SymbolReference);
             }
 

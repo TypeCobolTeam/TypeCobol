@@ -42,13 +42,13 @@ namespace TypeCobol.LanguageServer
         private CopyWatcher _CopyWatcher;
         private System.Timers.Timer _semanticUpdaterTimer;
         private bool _timerDisabled;
-
+        private readonly Dictionary<Uri, DocumentContext> _openedDocuments;
+        private readonly object _lockForOpenedDocuments = new object();
 
         internal CompilationProject CompilationProject { get; private set; }
 
         private List<FileCompiler> _fileCompilerWaittingForNodePhase;
         public TypeCobolConfiguration Configuration { get; private set; }
-        public Dictionary<Uri, DocumentContext> OpenedDocumentContext { get; private set; }
         public EventHandler<DiagnosticEvent> DiagnosticsEvent { get; set; }
         public EventHandler<EventArgs> DocumentModifiedEvent { get; set; }
         public EventHandler<MissingCopiesEvent> MissingCopiesEvent { get; set; }
@@ -126,6 +126,20 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public bool UseOutlineRefresh { get; set; }
 
+        /// <summary>
+        /// Indicates whether this workspace has opened documents or not.
+        /// </summary>
+        public bool IsEmpty
+        {
+            get
+            {
+                lock (_lockForOpenedDocuments)
+                {
+                    return _openedDocuments.Count == 0;
+                }
+            }
+        }
+
         #endregion
 
 
@@ -133,7 +147,7 @@ namespace TypeCobol.LanguageServer
         {
             MessagesActionsQueue = messagesActionsQueue;
             Configuration = new TypeCobolConfiguration();
-            OpenedDocumentContext = new Dictionary<Uri, DocumentContext>();
+            _openedDocuments = new Dictionary<Uri, DocumentContext>();
             _fileCompilerWaittingForNodePhase = new List<FileCompiler>();
             _Logger = logger;
 
@@ -208,12 +222,12 @@ namespace TypeCobol.LanguageServer
 
             fileCompiler.CompilationResultsForProgram.UpdateTokensLines();
 
-            lock (OpenedDocumentContext)
+            lock (_lockForOpenedDocuments)
             {
-                if (OpenedDocumentContext.ContainsKey(docContext.Uri))
+                if (_openedDocuments.ContainsKey(docContext.Uri))
                     CloseSourceFile(docContext.Uri); //Close and remove the previous opened file.
 
-                OpenedDocumentContext.Add(docContext.Uri, docContext);
+                _openedDocuments.Add(docContext.Uri, docContext);
                 fileCompiler.CompilationResultsForProgram.ProgramClassChanged += ProgramClassChanged;
             }
 
@@ -227,13 +241,20 @@ namespace TypeCobol.LanguageServer
             return fileCompiler;
         }
 
+        public bool TryGetOpenedDocumentContext(Uri fileUri, out DocumentContext openedDocumentContext)
+        {
+            lock (_lockForOpenedDocuments)
+            {
+                return _openedDocuments.TryGetValue(fileUri, out openedDocumentContext);
+            }
+        }
+
         /// <summary>
         /// Update the text contents of the file
         /// </summary>
         public void UpdateSourceFile(Uri fileUri, TextChangedEvent textChangedEvent)
         {
-            DocumentContext contextToUpdate = null;
-            if (OpenedDocumentContext.TryGetValue(fileUri, out contextToUpdate))
+            if (TryGetOpenedDocumentContext(fileUri, out var contextToUpdate))
             {
                 FileCompiler fileCompilerToUpdate = contextToUpdate.FileCompiler;
                 _semanticUpdaterTimer?.Stop();
@@ -375,13 +396,13 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public void CloseSourceFile(Uri fileUri)
         {
-            lock (OpenedDocumentContext)
+            lock (_lockForOpenedDocuments)
             {
-                if (OpenedDocumentContext.ContainsKey(fileUri))
+                if (_openedDocuments.ContainsKey(fileUri))
                 {
-                    var contextToClose = OpenedDocumentContext[fileUri];
+                    var contextToClose = _openedDocuments[fileUri];
                     FileCompiler fileCompilerToClose = contextToClose.FileCompiler;
-                    OpenedDocumentContext.Remove(fileUri);
+                    _openedDocuments.Remove(fileUri);
                     fileCompilerToClose.CompilationResultsForProgram.ProgramClassChanged -= ProgramClassChanged;
                 }
             }            
@@ -434,7 +455,7 @@ namespace TypeCobol.LanguageServer
                 
             }
 
-            if (OpenedDocumentContext.Count > 0)
+            if (!IsEmpty)
                 RefreshOpenedFiles();
             else
                 RefreshCustomSymbols();
@@ -458,22 +479,25 @@ namespace TypeCobol.LanguageServer
 
         public void UpdateMissingCopies(Uri fileUri, List<string> RemainingMissingCopies)
         {
-            if (!OpenedDocumentContext.Any())
-                return;
-            var context = OpenedDocumentContext[fileUri];
-            FileCompiler fileCompiler = context.FileCompiler;
-            if (fileCompiler == null)
+            if (IsEmpty)
                 return;
 
-            if (RemainingMissingCopies == null || RemainingMissingCopies.Count == 0)
+            if (TryGetOpenedDocumentContext(fileUri, out var context))
             {
-                fileCompiler.CompilationResultsForProgram.MissingCopies.RemoveAll(c => true);
-                return;
-            }
+                FileCompiler fileCompiler = context.FileCompiler;
+                if (fileCompiler == null)
+                    return;
 
-            fileCompiler.CompilationResultsForProgram.MissingCopies =
-                fileCompiler.CompilationResultsForProgram.MissingCopies.Where(
-                    c => RemainingMissingCopies.Any(rc => rc == c.TextName)).ToList();
+                if (RemainingMissingCopies == null || RemainingMissingCopies.Count == 0)
+                {
+                    fileCompiler.CompilationResultsForProgram.MissingCopies.RemoveAll(c => true);
+                    return;
+                }
+
+                fileCompiler.CompilationResultsForProgram.MissingCopies =
+                    fileCompiler.CompilationResultsForProgram.MissingCopies.Where(
+                        c => RemainingMissingCopies.Any(rc => rc == c.TextName)).ToList();
+            }
         }
 
         /// <summary>
@@ -483,9 +507,9 @@ namespace TypeCobol.LanguageServer
         {
             RefreshCustomSymbols();
 
-            lock(OpenedDocumentContext)
+            lock (_lockForOpenedDocuments)
             {
-                var tempOpeneContexts = new Dictionary<Uri, DocumentContext >(OpenedDocumentContext);
+                var tempOpeneContexts = new Dictionary<Uri, DocumentContext >(_openedDocuments);
                 foreach (var contextEntry in tempOpeneContexts)
                 {
                     Uri uri = contextEntry.Key;
@@ -582,13 +606,21 @@ namespace TypeCobol.LanguageServer
         private void ProgramClassChanged(object cUnit, ProgramClassEvent programEvent)
         {
             var compilationUnit = cUnit as CompilationUnit;
-            var fileUri = OpenedDocumentContext.Keys.FirstOrDefault(k =>
-                compilationUnit != null && k.LocalPath.Contains(compilationUnit.TextSourceInfo.Name));
 
-            IEnumerable<Diagnostic> diags = new List<Diagnostic>();
+            // Search for corresponding opened document.
+            Uri fileUri;
+            lock (_lockForOpenedDocuments)
+            {
+                fileUri = _openedDocuments.Keys.FirstOrDefault(k =>
+                    compilationUnit != null && k.LocalPath.Contains(compilationUnit.TextSourceInfo.Name));
+            }
+
+            // No document found
+            if (fileUri == null)  return;
 
             // Need to handle the groups instead of the diagnostics, so the order of appearance will be the same within the groups
-            // This is meant to avoid the modification of the LSR tests 
+            // This is meant to avoid the modification of the LSR tests
+            IEnumerable<Diagnostic> diags = new List<Diagnostic>();
             var severityGroups = compilationUnit?.AllDiagnostics().GroupBy(d => d.Info.Severity);
 
             if (severityGroups != null)
