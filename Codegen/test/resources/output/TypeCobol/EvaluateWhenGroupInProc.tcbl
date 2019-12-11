@@ -58,7 +58,7 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *MainProgram.InFct - Params :
-      *		input(d: pic X(9))
+      *     input(d: pic X(9))
                                
        01 GRP.
           02 GRP2.
@@ -67,13 +67,13 @@
                 88 rcm VALUE 'RCM'.
        LINKAGE SECTION.
       *MainProgram.InFct - Params :
-      *		input(d: pic X(9))
+      *     input(d: pic X(9))
        01 d PIC X(9).
        PROCEDURE DIVISION
              USING BY REFERENCE d
            .
       *MainProgram.InFct - Params :
-      *		input(d: pic X(9))
+      *     input(d: pic X(9))
       *    EVALUATE GRP::GRP2::
       *      S
            EVALUATE S OF GRP2 OF 

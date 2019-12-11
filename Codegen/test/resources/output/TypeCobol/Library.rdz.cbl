@@ -136,7 +136,7 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *DVZZDATE.currentDate  - No Params
-      *		returns(Result: DATE)
+      *     returns(Result: DATE)
        01 Result.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -145,7 +145,7 @@
              USING BY REFERENCE Result
            .
       *DVZZDATE.currentDate  - No Params
-      *		returns(Result: DATE)
+      *     returns(Result: DATE)
            ACCEPT Result FROM DATE YYYYMMDD
            .
        END PROGRAM db42865c.
@@ -161,7 +161,7 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *DVZZDATE.currentDateDB2  - No Params
-      *		returns(Result: dateDB2)
+      *     returns(Result: dateDB2)
                                
       *01  W-Dat       TYPE date.
        01 W-Dat.
@@ -172,7 +172,7 @@
 
        LINKAGE SECTION.
       *DVZZDATE.currentDateDB2  - No Params
-      *		returns(Result: dateDB2)
+      *     returns(Result: dateDB2)
        01 Result.
            02 YYYY PIC 9(04).
            02 PIC X(01).
@@ -183,7 +183,7 @@
              USING BY REFERENCE Result
            .
       *DVZZDATE.currentDateDB2  - No Params
-      *		returns(Result: dateDB2)
+      *     returns(Result: dateDB2)
 
            ACCEPT W-Dat             FROM DATE YYYYMMDD
       *    move W-Dat :: YYYY       to Result :: YYYY
@@ -210,7 +210,7 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *DVZZDATE.currentDateJulian  - No Params
-      *		returns(Result: dateJulian)
+      *     returns(Result: dateJulian)
                                
       *01  W-Dat       TYPE date.
        01 W-Dat.
@@ -221,7 +221,7 @@
 
        LINKAGE SECTION.
       *DVZZDATE.currentDateJulian  - No Params
-      *		returns(Result: dateJulian)
+      *     returns(Result: dateJulian)
        01 Result.
            02 YYYY PIC 9(04).
            02 DDD PIC 9(03).
@@ -229,7 +229,7 @@
              USING BY REFERENCE Result
            .
       *DVZZDATE.currentDateJulian  - No Params
-      *		returns(Result: dateJulian)
+      *     returns(Result: dateJulian)
 
            ACCEPT W-Dat             FROM DATE YYYYMMDD
       *    move unsafe W-Dat to Result
@@ -254,9 +254,9 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *DVZZDATE.currentDateFreeFormat - Params :
-      *		input(dateType: pic X(01), direction: pic X(01), separator: pic
-      * X(01), culture: culture, returnCode: pic 9(04))
-      *		returns(Result: pic X(40))
+      *     input(dateType: pic X(01), direction: pic X(01), separator:
+      *pic X(01), culture: culture, returnCode: pic 9(04))
+      *     returns(Result: pic X(40))
                                
       *01  W-Dat       TYPE date.
        01 W-Dat.
@@ -267,9 +267,9 @@
 
        LINKAGE SECTION.
       *DVZZDATE.currentDateFreeFormat - Params :
-      *		input(dateType: pic X(01), direction: pic X(01), separator: pic
-      * X(01), culture: culture, returnCode: pic 9(04))
-      *		returns(Result: pic X(40))
+      *     input(dateType: pic X(01), direction: pic X(01), separator:
+      *pic X(01), culture: culture, returnCode: pic 9(04))
+      *     returns(Result: pic X(40))
        01 dateType PIC X(01).
        01 direction PIC X(01).
        01 separator PIC X(01).
@@ -287,9 +287,9 @@
                    BY REFERENCE Result
            .
       *DVZZDATE.currentDateFreeFormat - Params :
-      *		input(dateType: pic X(01), direction: pic X(01), separator: pic
-      * X(01), culture: culture, returnCode: pic 9(04))
-      *		returns(Result: pic X(40))
+      *     input(dateType: pic X(01), direction: pic X(01), separator:
+      *pic X(01), culture: culture, returnCode: pic 9(04))
+      *     returns(Result: pic X(40))
 
            continue
            .
@@ -306,13 +306,13 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *DVZZDATE.currentDateString  - No Params
-      *		returns(Result: dateString)
+      *     returns(Result: dateString)
        01 Result PIC 9(08).
        PROCEDURE DIVISION
              USING BY REFERENCE Result
            .
       *DVZZDATE.currentDateString  - No Params
-      *		returns(Result: dateString)
+      *     returns(Result: dateString)
            ACCEPT Result FROM DATE YYYYMMDD
            .
        END PROGRAM b8721d20.
