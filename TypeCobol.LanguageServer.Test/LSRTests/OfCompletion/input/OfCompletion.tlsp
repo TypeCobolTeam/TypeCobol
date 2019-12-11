@@ -127,7 +127,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"DateVar (DATE) (DateVar)\",\"kind\":6,\"insertText\":\"DateVar\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"DateVar (DATE) (DateVar)\",\"kind\":6,\"insertText\":\"DateVar\"},{\"label\":\"MyGroup (Alphanumeric) (MyGroup)\",\"kind\":6,\"insertText\":\"MyGroup\"}]}"
     },
     {
       "category": 0,

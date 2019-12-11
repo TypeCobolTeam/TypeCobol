@@ -610,12 +610,15 @@ namespace TypeCobol.LanguageServer
             {
                 if (seekedDataTypes.Count == 0) //If a Datatype hasn't be found yet. 
                 {
-                    var foundedVars =
-                        node.SymbolTable.GetVariablesExplicit(
-                            new URI(qualifiedNameTokens.Select(t => t.Text)));
+                    var foundedVar = node.SymbolTable.GetVariablesExplicit(new URI(qualifiedNameTokens.Select(t => t.Text))).FirstOrDefault();
 
-                    if (foundedVars != null && foundedVars.Any())
-                        seekedDataTypes.Add(foundedVars.First().DataType);
+                    if (foundedVar != null)
+                    {
+                        seekedDataTypes.Add(foundedVar.DataType);
+
+                        // Add PrimitiveDataType to extend the search to compatible types, if null default to Alphanumeric
+                        seekedDataTypes.Add(foundedVar.PrimitiveDataType ?? DataType.Alphanumeric);
+                    }
                 }
 
                 foreach (var seekedDataType in seekedDataTypes.Distinct())
