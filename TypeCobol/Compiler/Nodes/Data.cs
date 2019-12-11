@@ -899,7 +899,14 @@ namespace TypeCobol.Compiler.Nodes {
         }
         public override int GetHashCode()
         {
-            return DataType.GetHashCode() + QualifiedName.ToString().GetHashCode();
+            unchecked
+            {
+                var hashCode = 13;
+                hashCode = (hashCode * 397) ^ DataType.GetHashCode();
+                hashCode = (hashCode * 397) ^ QualifiedName.ToString().GetHashCode();
+
+                return hashCode;
+            }
         }
 
         public override string ToString()

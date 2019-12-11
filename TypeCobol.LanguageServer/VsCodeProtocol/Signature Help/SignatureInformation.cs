@@ -48,7 +48,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         public bool Equals(SignatureInformation signatureInformation)
         {
             if (Object.ReferenceEquals(this, signatureInformation)) return true;
-            if (signatureInformation == null) return false;
+            if (Object.ReferenceEquals(null, signatureInformation)) return false;
 
             return signatureInformation.label == this.label
                    && signatureInformation.documentation == this.documentation
@@ -57,7 +57,17 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
 
         public override int GetHashCode()
         {
-            return label.GetHashCode() + (documentation?.GetHashCode() ?? 10) + (parameters?.GetHashCode() ?? 100);
+            unchecked
+            {
+                var hashCode = 13;
+                hashCode = (hashCode * 397) ^ label.GetHashCode();
+                var docHashCode = documentation?.GetHashCode() ?? 10;
+                hashCode = (hashCode * 397) ^ docHashCode;
+                var paramHashCode = parameters?.GetHashCode() ?? 100;
+                hashCode = (hashCode * 397) ^ paramHashCode;
+
+                return hashCode;
+            }
         }
 
         private static bool CompareLists(List<ParameterInformation> list1, List<ParameterInformation> list2)

@@ -75,13 +75,23 @@ namespace TypeCobol.Compiler.CodeElements
         public bool Equals(SymbolInformation symbolInformation)
         {
             if (Object.ReferenceEquals(this, symbolInformation)) return true;
-            if (symbolInformation == null) return false;
+            if (Object.ReferenceEquals(null, symbolInformation)) return false;
 
             return Name.Equals(symbolInformation.Name, StringComparison.OrdinalIgnoreCase) &&
                    Type == symbolInformation.Type;
         }
 
-        public override int GetHashCode() { return Type.GetHashCode() * 11 + Name.GetHashCode(); }
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = 13;
+                hashCode = (hashCode * 397) ^ Type.GetHashCode();
+                hashCode = (hashCode * 397) ^ Name.GetHashCode();
+
+                return hashCode;
+            }
+        }
 
         public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return astVisitor.Visit(this)
@@ -174,8 +184,8 @@ namespace TypeCobol.Compiler.CodeElements
 
         public bool Equals(SymbolReference symbolReferenceCompare)
         {
-            if (symbolReferenceCompare == null) return false;
             if (Object.ReferenceEquals(this, symbolReferenceCompare)) return true;
+            if (Object.ReferenceEquals(null, symbolReferenceCompare)) return false;
 
             return Type == symbolReferenceCompare.Type &&
                    NameLiteral == symbolReferenceCompare.NameLiteral &&
@@ -184,7 +194,15 @@ namespace TypeCobol.Compiler.CodeElements
 
         public override int GetHashCode()
         {
-            return (Type.GetHashCode() * 11) + NameLiteral.GetHashCode() + Role.GetHashCode();
+            unchecked
+            {
+                var hashCode = 13;
+                hashCode = (hashCode * 397) ^ Type.GetHashCode();
+                hashCode = (hashCode * 397) ^ NameLiteral.GetHashCode();
+                hashCode = (hashCode * 397) ^ Role.GetHashCode();
+
+                return hashCode;
+            }
         }
     }
 

@@ -27,7 +27,7 @@ namespace TypeCobol.Compiler.Scanner
         public bool Equals(Token tokenCompare)
         {
             if (Object.ReferenceEquals(this, tokenCompare)) return true;
-            if (tokenCompare == null) return false;
+            if (Object.ReferenceEquals(null, tokenCompare)) return false;
 
             return tokenCompare.Type == this.Type &&
                    tokenCompare.StartIndex == this.StartIndex &&
@@ -37,10 +37,16 @@ namespace TypeCobol.Compiler.Scanner
 
         public override int GetHashCode()
         {
-            return this.Type ^
-                   this.StartIndex ^
-                   this.StopIndex ^
-                   this.TokensLine.GetHashCode();
+            unchecked
+            {
+                var hashCode = 13;
+                hashCode = (hashCode * 397) ^ this.Type.GetHashCode();
+                hashCode = (hashCode * 397) ^ this.StartIndex.GetHashCode();
+                hashCode = (hashCode * 397) ^ this.StopIndex.GetHashCode();
+                hashCode = (hashCode * 397) ^ this.TokensLine.GetHashCode();
+
+                return hashCode;
+            }
         }
 
         /// <summary>

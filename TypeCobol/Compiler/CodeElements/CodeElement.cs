@@ -165,7 +165,7 @@ namespace TypeCobol.Compiler.CodeElements
         public bool Equals(CodeElement codeElement)
         {
             if (Object.ReferenceEquals(this, codeElement)) return true;
-            if (codeElement == null) return false;
+            if (Object.ReferenceEquals(null, codeElement)) return false;
 
             if (ConsumedTokens == null && codeElement.ConsumedTokens == null)
             {
@@ -187,8 +187,20 @@ namespace TypeCobol.Compiler.CodeElements
 
         public override int GetHashCode()
         {
-            if (ConsumedTokens == null) return Type.GetHashCode() * 11;
-            return Type.GetHashCode() * 11 + (ConsumedTokens.Count > 0 ? ConsumedTokens[0].GetHashCode() : ConsumedTokens.GetHashCode());
+            unchecked
+            {
+                var hashCode = 13;
+                hashCode = (hashCode * 397) ^ Type.GetHashCode();
+                if (ConsumedTokens != null)
+                {
+                    var consumedTokensHashCode = ConsumedTokens.Count > 0
+                        ? ConsumedTokens[0].GetHashCode()
+                        : ConsumedTokens.GetHashCode();
+                    hashCode = (hashCode * 397) ^ consumedTokensHashCode;
+                }
+
+                return hashCode;
+            }
         }
 
         private bool? _isInsideCopy = null; 
