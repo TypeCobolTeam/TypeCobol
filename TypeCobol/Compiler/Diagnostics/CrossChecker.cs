@@ -1,8 +1,6 @@
 ﻿using JetBrains.Annotations;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
@@ -391,6 +389,35 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(End end)
+        {
+            // Check end statement is aligned with the matching opening statement
+            if (_compilerOptions.CheckEndAlignment.IsActive && end.CodeElement.Type != CodeElementType.SentenceEnd)
+            {
+                CodeElement parentCodeElement = end.Parent.CodeElement; ;
+                if (parentCodeElement?.IsInsideCopy() == false && end.IsInsideCopy() == false)
+                {
+                    CheckEndNode(parentCodeElement, end.CodeElement);
+                }
+            }
+            return true;
+        }
+
+        public override bool Visit(FunctionEnd functionEnd)
+        {
+            // Check end statement is aligned with the matching opening statement
+            if (_compilerOptions.CheckEndAlignment.IsActive)
+            {
+                CodeElement parentCodeElement = functionEnd.Parent.CodeElement;
+                if (parentCodeElement?.IsInsideCopy() == false && functionEnd.IsInsideCopy() == false)
+                {
+                    Token openingDeclareToken = parentCodeElement.ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.DECLARE);
+                    CheckEndNode(openingDeclareToken, functionEnd.CodeElement);
+                }
+            }
+            return true;
+        }
+
         public override bool Visit(DataDescription dataDescription)
         {
             DataDescriptionEntry dataDescriptionEntry = dataDescription.CodeElement;
@@ -714,15 +741,28 @@ namespace TypeCobol.Compiler.Diagnostics
             if (!node.QualifiedStorageAreas.ContainsKey(storageArea))
                 node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
         }
+
+        private void CheckEndNode(IToken openingToken, CodeElement endCodeElement)
+        {
+            // Check end statement is aligned with the matching opening statement
+            if (openingToken.Line != endCodeElement.Line &&
+                openingToken.StartIndex != endCodeElement.StartIndex)
+            {
+                DiagnosticUtils.AddError(endCodeElement,
+                    "a End statement is not aligned with the matching opening statement",
+                    _compilerOptions.CheckEndAlignment.GetMessageCode());
+            }
+        }
     }
-    
+
     class SectionOrParagraphUsageChecker
     {
         public static void CheckReferenceToParagraphOrSection(PerformProcedure perform)
         {
             var performCE = perform.CodeElement;
             SymbolReference symbol;
-            symbol = ResolveProcedureName(perform.SymbolTable, performCE.Procedure as AmbiguousSymbolReference, perform);
+            symbol = ResolveProcedureName(perform.SymbolTable, performCE.Procedure as AmbiguousSymbolReference,
+                perform);
             if (symbol != null) performCE.Procedure = symbol;
             symbol = ResolveProcedureName(perform.SymbolTable, performCE.ThroughProcedure as AmbiguousSymbolReference,
                 perform);

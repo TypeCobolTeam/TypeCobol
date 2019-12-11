@@ -39,6 +39,11 @@ namespace TypeCobol.Compiler.Directives
         private bool _useEuroInformationLegacyReplacingSyntax;
 #endif
 
+        /// <summary>
+        /// Check if a End statement is aligned with the matching opening statement.
+        /// </summary>
+        public TypeCobolCheckOption CheckEndAlignment { get; set; }
+
         public TypeCobolOptions(TypeCobolConfiguration config)
         {
             HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null;
@@ -49,6 +54,7 @@ namespace TypeCobol.Compiler.Directives
 #if EUROINFO_RULES
             AutoRemarksEnable = config.AutoRemarks;
 #endif
+            CheckEndAlignment = config.CheckEndAlignment;
         }
 
         public TypeCobolOptions()

@@ -26,6 +26,6 @@
           WHEN OTHER
            continue.
       
-         END-DECLARE
+       END-DECLARE
          .
        END PROGRAM MainProgram.
