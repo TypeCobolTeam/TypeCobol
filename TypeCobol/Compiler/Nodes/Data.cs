@@ -895,7 +895,11 @@ namespace TypeCobol.Compiler.Nodes {
 
         public bool Equals(TypeDefinition compareTypeDef)
         {
-            return Object.ReferenceEquals(this, compareTypeDef);
+            if (Object.ReferenceEquals(this, compareTypeDef)) return true;
+            if (Object.ReferenceEquals(null, compareTypeDef)) return false;
+
+            return compareTypeDef.DataType == this.DataType &&
+                   compareTypeDef.QualifiedName.ToString() == this.QualifiedName.ToString();
         }
         public override int GetHashCode()
         {
