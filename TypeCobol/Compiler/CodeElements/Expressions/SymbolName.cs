@@ -23,7 +23,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Properties of a symbol Token in the Cobol grammar
     /// </summary>
-    public abstract class SymbolInformation : IVisitable
+    public abstract class SymbolInformation : IVisitable, IEquatable<SymbolInformation>
     {
         protected SymbolInformation(SyntaxValue<string> nameLiteral, SymbolRole role, SymbolType type)
         {
@@ -48,7 +48,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// Type of the symbol
         /// </summary>
-        public SymbolType Type { get; private set; }
+        public SymbolType Type { get; }
 
         public virtual bool IsOrCanBeOfType(SymbolType symbolType)
         {
@@ -69,19 +69,30 @@ namespace TypeCobol.Compiler.CodeElements
 
         public override bool Equals(object obj)
         {
-            SymbolInformation otherSymbol = obj as SymbolInformation;
-            if (otherSymbol == null)
+            return Equals(obj as SymbolInformation);
+        }
+
+        public bool Equals(SymbolInformation symbolInformation)
+        {
+            if (Object.ReferenceEquals(this, symbolInformation)) return true;
+            if (Object.ReferenceEquals(null, symbolInformation)) return false;
+
+            return Name.Equals(symbolInformation.Name, StringComparison.OrdinalIgnoreCase) &&
+                   Type == symbolInformation.Type;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
             {
-                return false;
-            }
-            else
-            {
-                return Name.Equals(otherSymbol.Name, StringComparison.OrdinalIgnoreCase) &&
-                       Type == otherSymbol.Type;
+                var hashCode = 13;
+                hashCode = (hashCode * 397) ^ Type.GetHashCode();
+                hashCode = (hashCode * 397) ^ Name.GetHashCode();
+
+                return hashCode;
             }
         }
 
-		public override int GetHashCode() { return Type.GetHashCode() * 11 + Name.GetHashCode(); }
         public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return astVisitor.Visit(this)
                 && this.ContinueVisitToChildren(astVisitor, NameLiteral);
