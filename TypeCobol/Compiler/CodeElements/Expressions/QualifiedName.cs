@@ -19,7 +19,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
 
 
-    public abstract class AbstractQualifiedName : QualifiedName
+    public abstract class AbstractQualifiedName : QualifiedName, IEquatable<AbstractQualifiedName>
     {
         public virtual bool IsExplicit { get { return false; } }
         public virtual char Separator
@@ -85,26 +85,28 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
         public override bool Equals(System.Object other)
         {
-            if (other == null) return false;
-            return Equals(other as QualifiedName);
+            return Equals(other as AbstractQualifiedName);
         }
-        public virtual bool Equals(QualifiedName other)
+        public virtual bool Equals(AbstractQualifiedName abstractQualifiedName)
         {
-            if (other == null) return false;
-            //			if (other.IsExplicit != IsExplicit) return false;
-            if (other.Count != Count) return false;
+            if (Object.ReferenceEquals(this, abstractQualifiedName)) return true;
+            if (Object.ReferenceEquals(null, abstractQualifiedName)) return false;
+
+            if (abstractQualifiedName.Count != Count) return false;
             for (int c = 0; c < Count; c++)
-                if (!other[c].Equals(this[c])) return false;
+                if (!abstractQualifiedName[c].Equals(this[c])) return false;
             return true;
         }
         public override int GetHashCode()
         {
-            int hash = 13;
-            //			hash = hash*7 + IsExplicit.GetHashCode();
-            hash = hash * 7 + Count.GetHashCode();
-            foreach (string part in this)
-                hash = hash * 7 + part.GetHashCode();
-            return hash;
+            unchecked
+            {
+                int hash = 13;
+                hash = (hash * 397) ^ Count;
+                foreach (string part in this)
+                    hash = (hash * 397) + part.GetHashCode();
+                return hash;
+            }
         }
 
         public bool Matches(string uri)
