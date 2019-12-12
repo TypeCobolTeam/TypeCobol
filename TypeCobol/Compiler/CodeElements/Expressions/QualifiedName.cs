@@ -104,7 +104,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
                 int hash = 13;
                 hash = (hash * 397) ^ Count;
                 foreach (string part in this)
-                    hash = (hash * 397) + part.GetHashCode();
+                    hash = (hash * 397) ^ part.GetHashCode();
                 return hash;
             }
         }

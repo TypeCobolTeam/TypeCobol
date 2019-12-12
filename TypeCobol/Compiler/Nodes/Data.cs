@@ -843,7 +843,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
     // [COBOL 2002]
-    public class TypeDefinition: DataDefinition, Parent<DataDescription>, IDocumentable
+    public class TypeDefinition: DataDefinition, Parent<DataDescription>, IDocumentable, IEquatable<TypeDefinition>
     {
         public TypeDefinition([NotNull] DataTypeDescriptionEntry entry) : base(entry)
         {
@@ -875,18 +875,15 @@ namespace TypeCobol.Compiler.Nodes {
 
         public override bool Equals(object obj)
         {
-            if ((obj as TypeDefinition) != null)
+            if (obj is TypeDefinition)
             {
-                var compareTypeDef = (TypeDefinition) obj;
-                return compareTypeDef.DataType == this.DataType &&
-                       //compareTypeDef.PrimitiveDataType == this.PrimitiveDataType &&
-                       compareTypeDef.QualifiedName.ToString() == this.QualifiedName.ToString();
+                return Equals(obj as TypeDefinition);
             }
 
             var generatedDataType = (obj as GeneratedDefinition);
-            if (generatedDataType  != null && 
+            if (generatedDataType != null &&
                 !(generatedDataType.DataType == DataType.Alphabetic ||
-                  generatedDataType .DataType == DataType.Alphanumeric)) //Remove these two check on Alpha.. to allow move "fezf" TO alphatypedVar
+                  generatedDataType.DataType == DataType.Alphanumeric)) //Remove these two check on Alpha.. to allow move "fezf" TO alphatypedVar
             {
                 if (this.PrimitiveDataType != null)
                     return this.PrimitiveDataType == generatedDataType.DataType;
@@ -894,6 +891,22 @@ namespace TypeCobol.Compiler.Nodes {
                     return this.DataType == generatedDataType.DataType;
             }
             return false;
+        }
+
+        public bool Equals(TypeDefinition compareTypeDef)
+        {
+            return Object.ReferenceEquals(this, compareTypeDef);
+        }
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = 13;
+                hashCode = (hashCode * 397) ^ DataType.GetHashCode();
+                hashCode = (hashCode * 397) ^ QualifiedName.ToString().GetHashCode();
+
+                return hashCode;
+            }
         }
 
         public override string ToString()
@@ -996,10 +1009,10 @@ namespace TypeCobol.Compiler.Nodes {
     /// Allow to generate DataDefinition which can take any desired form/type. 
     /// Give access to GeneratedDefinition of Numeric/Alphanumeric/Boolean/... DataType
     /// </summary>
-    public class GeneratedDefinition : DataDefinition
+    public class GeneratedDefinition : DataDefinition, IEquatable<GeneratedDefinition>
     {
         private string _Name;
-        private DataType _DataType;
+        private readonly DataType _DataType;
 
         public static GeneratedDefinition NumericGeneratedDefinition =       new GeneratedDefinition("Numeric", DataType.Numeric);
         public static GeneratedDefinition AlphanumericGeneratedDefinition =  new GeneratedDefinition("Alphanumeric", DataType.Alphanumeric);
@@ -1027,13 +1040,27 @@ namespace TypeCobol.Compiler.Nodes {
             get { return _DataType; }
         }
 
-
         public override bool Equals(object obj)
         {
-            //In this case we can only compare the DataType
-            if((obj as DataDefinition) != null)
-                return ((DataDefinition) obj).DataType == _DataType;
-            return false;
+            return Equals(obj as GeneratedDefinition);
+        }
+
+        public bool Equals(GeneratedDefinition generatedDefinition)
+        {
+            if (Object.ReferenceEquals(this, generatedDefinition)) return true;
+            if (Object.ReferenceEquals(null, generatedDefinition)) return false;
+            return generatedDefinition.DataType == _DataType;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = 13;
+                hashCode = (hashCode * 397) ^ _DataType.GetHashCode();
+
+                return hashCode;
+            }
         }
     }
 

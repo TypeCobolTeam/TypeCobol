@@ -169,15 +169,20 @@ namespace TypeCobol.Compiler.CodeElements
 
             if (ConsumedTokens != null && codeElement.ConsumedTokens != null)
             {
+                if (ConsumedTokens.Count != codeElement.ConsumedTokens.Count)
+                {
+                    return false;
+                }
+
                 if (ConsumedTokens.Count > 0 && codeElement.ConsumedTokens.Count > 0)
                 {
                     return Type == codeElement.Type && ConsumedTokens[0].Equals(codeElement.ConsumedTokens[0]);
                 }
-                else
-                {
-                    return Type == codeElement.Type && Object.ReferenceEquals(ConsumedTokens, codeElement.ConsumedTokens);
-                }
+
+                // ConsumedTokens collections are both empty
+                Debug.Fail("CodeElement.Equals: cannot compare 2 CodeElements having both no Consumed Tokens.");
             }
+
             return false;
         }
 
