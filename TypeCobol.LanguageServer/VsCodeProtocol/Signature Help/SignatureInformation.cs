@@ -67,7 +67,8 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
                 {
                     foreach (var param in parameters)
                     {
-                        hashCode = (hashCode * 397) ^ param.GetHashCode();
+                        hashCode = (hashCode * 397) ^ param.label.GetHashCode();
+                        hashCode = (hashCode * 397) ^ (param.documentation?.GetHashCode() ?? 0);
                     }
                 }
 
