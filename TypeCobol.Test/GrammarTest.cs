@@ -73,32 +73,10 @@ namespace TypeCobol.Test {
 	        }
 	        DefaultConfig.Dependencies.Add(Path.Combine(Directory.GetCurrentDirectory(), "resources", "dependencies"));
 	        SymbolTableBuilder.Config = DefaultConfig;
-
-	        //Force the creation of the Root Symbol Table
-	        var global = SymbolTableBuilder.Root;
-
-	        //Allocate a static Program Symbol Table Builder
-	        BuilderNodeListenerFactory = () =>
-	        {
-	            Builder = new ProgramSymbolTableBuilder();
-	            ProgramSymbolTableBuilder.LastBuilder = Builder;
-	            return Builder;
-	        };
-	        TypeCobol.Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(BuilderNodeListenerFactory);
 	    }
 	    public static void TestCleanup()
 	    {
-	        if (BuilderNodeListenerFactory != null)
-	        {
-	            TypeCobol.Compiler.Parser.NodeDispatcher.RemoveStaticNodeListenerFactory(BuilderNodeListenerFactory);
-	            if (Builder.Programs.Count != 0)
-	            {
-	                foreach (var prog in Builder.Programs)
-	                    SymbolTableBuilder.Root.RemoveProgram(prog);
-	            }
-	            ProgramSymbolTableBuilder.LastBuilder = null;
-	        }
-            SymbolTableBuilder.Root = null;
+            ProgramSymbolTableBuilder.LastBuilder.RemovePrograms();
         }
 
 #endif

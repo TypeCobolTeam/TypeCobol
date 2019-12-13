@@ -112,13 +112,6 @@ namespace TypeCobol.Server
         {
             SymbolTable baseTable = null;
 
-#if DOMAIN_CHECKER
-            //----------------------------------------------------------------------
-            //Register a static SymbolTableBuilder for a Program as a Node Listener.
-            //----------------------------------------------------------------------
-            Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(() => new ProgramSymbolTableBuilder());
-#endif
-
 #region Dependencies parsing
             var depParser = new Parser();
             bool diagDetected = false;
@@ -141,8 +134,7 @@ namespace TypeCobol.Server
                 };
 #endregion
 
-                depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load intrinsic
-                depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, depParser.CustomSymbols, config.InputFiles, config.CopyFolders, DependencyErrorEvent); //Load dependencies
+                depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsicAndDependencies(config, DiagnosticsErrorEvent, DependencyErrorEvent); //Load intrinsic and dependencies
 
                 if (diagDetected)
                     throw new CopyLoadingException("Diagnostics detected while parsing Intrinsic file", null, null, logged: false, needMail: false);

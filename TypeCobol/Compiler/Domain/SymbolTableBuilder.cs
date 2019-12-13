@@ -71,6 +71,19 @@ namespace TypeCobol.Compiler.Domain
         private static object rootLock = new object();
 
         /// <summary>
+        /// Check if this Symbol table Builder has a Root Symbol Table.
+        /// </summary>
+        public static bool HasRoot
+        {
+            get
+            {
+                lock (rootLock)
+                {
+                    return _rootSymbolTable != null;
+                }
+            }
+        }
+        /// <summary>
         /// The Root Symbol Table
         /// </summary>
         public static RootSymbolTable Root

@@ -52,6 +52,7 @@ namespace TypeCobol.Tools.Options_Config
         public string RawExecToStep = "5";
         public string RawMaximumDiagnostics;
         public string RawOutputFormat = "0";
+        public bool UseSemanticDomain = true;
 
 
         public static Dictionary<ReturnCode, string> ErrorMessages = new Dictionary<ReturnCode, string>()
@@ -175,6 +176,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "zcr|zcallreport=", "{PATH} to report of all program called by zcallpgm.", v => typeCobolConfig.ReportZCallFilePath = v },
                 { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing.", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false },
                 { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
+                { "nsd|nosemanticdomain", "No Semantic Domain.", v => typeCobolConfig.UseSemanticDomain = false},
             };
             return commonOptions;
         }

@@ -38,6 +38,8 @@ namespace TypeCobol.Compiler.Directives
             set { _useEuroInformationLegacyReplacingSyntax = value; }
         }
 
+        public bool UseSemanticDomain { get; set; }
+
 #if EUROINFO_RULES
         private bool _useEuroInformationLegacyReplacingSyntax = true;
 #else
@@ -50,13 +52,13 @@ namespace TypeCobol.Compiler.Directives
             ExecToStep = config.ExecToStep;
             UseAntlrProgramParsing = config.UseAntlrProgramParsing;
             UseEuroInformationLegacyReplacingSyntax = config.UseEuroInformationLegacyReplacingSyntax;
+            UseSemanticDomain = config.UseSemanticDomain;
         }
 
         public TypeCobolOptions()
         {
-                
+            UseSemanticDomain = true;
         }
-
 
         /// <summary>
         /// Clone the compiler options to enable specific parameters for each file

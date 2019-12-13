@@ -19,6 +19,7 @@ using TypeCobol.Compiler.CupParser.NodeBuilder;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using TypeCobolProgramParser = TypeCobol.Compiler.CupParser.TypeCobolProgramParser;
+using TypeCobol.Compiler.Domain;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -48,7 +49,7 @@ namespace TypeCobol.Compiler.Parser
                 }
             }
         }
-        public static void CupParseProgramOrClass(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> codeElementsLines, TypeCobolOptions compilerOptions, SymbolTable customSymbols, PerfStatsForParserInvocation perfStatsForParserInvocation, out SourceFile root, out List<Diagnostic> diagnostics, 
+        public static ProgramSymbolTableBuilder CupParseProgramOrClass(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> codeElementsLines, TypeCobolOptions compilerOptions, SymbolTable customSymbols, PerfStatsForParserInvocation perfStatsForParserInvocation, out SourceFile root, out List<Diagnostic> diagnostics, 
             out Dictionary<CodeElement, Node> nodeCodeElementLinkers,
             out List<DataDefinition> typedVariablesOutsideTypedef,
             out List<TypeDefinition> typeThatNeedTypeLinking)
@@ -65,12 +66,22 @@ namespace TypeCobol.Compiler.Parser
             parser.Builder = builder;
             ParserDiagnostic programClassBuilderError = null;
 
+            NodeListenerFactory prgSymTblBuilderListener = null;
+            ProgramSymbolTableBuilder prgSymTblBuilder = null;
+            if (compilerOptions.UseSemanticDomain)
+            {
+                //----------------------------------------------------------------------
+                //Register a static SymbolTableBuilder for a Program as a Node Listener.
+                //----------------------------------------------------------------------
+                prgSymTblBuilderListener = () => (ProgramSymbolTableBuilder.LastBuilder = prgSymTblBuilder = new ProgramSymbolTableBuilder());
+                Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(prgSymTblBuilderListener);
+            }
             builder.SyntaxTree = new SyntaxTree(); //Initialize SyntaxTree for the current source file
             builder.CustomSymbols = customSymbols;
             builder.Dispatcher = new ProgramClassBuilderNodeDispatcher();
             builder.Dispatcher.CreateListeners();
 
-            // Try to parse a Cobol program or class, with cup w are also building the The Syntax Tree Node
+            // Try to parse a Cobol program or class, with cup we are also building the The Syntax Tree Node
             perfStatsForParserInvocation.OnStartParsing();
             try
             {
@@ -82,6 +93,11 @@ namespace TypeCobol.Compiler.Parser
                 programClassBuilderError = new ParserDiagnostic(ex.ToString(), null, null, code, ex);
             }
             perfStatsForParserInvocation.OnStopParsing(0, 0);
+
+            if (compilerOptions.UseSemanticDomain)
+            {
+                Compiler.Parser.NodeDispatcher.RemoveStaticNodeListenerFactory(prgSymTblBuilderListener);
+            }
 
 #if DEBUG_ANTRL_CUP_TIME
             var t2 = DateTime.UtcNow;
@@ -106,6 +122,8 @@ namespace TypeCobol.Compiler.Parser
             {
                 diagnostics.Add(programClassBuilderError);
             }
+
+            return prgSymTblBuilder;
         }
 
         public static void CrossCheckPrograms(SourceFile root, TemporarySemanticDocument temporarySemanticDocument)

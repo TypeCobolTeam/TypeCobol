@@ -526,8 +526,7 @@ namespace TypeCobol.LanguageServer
             _customSymbols = null;
             try
             {
-                _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(TypeCobolConfiguration.Copies, TypeCobolConfiguration.Format, DiagnosticsErrorEvent); //Refresh Intrinsics
-                _customSymbols = Tools.APIHelpers.Helpers.LoadDependencies(TypeCobolConfiguration.Dependencies, TypeCobolConfiguration.Format, _customSymbols, TypeCobolConfiguration.InputFiles, TypeCobolConfiguration.CopyFolders, DiagnosticsErrorEvent); //Refresh Dependencies
+                _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsicAndDependencies(TypeCobolConfiguration, DiagnosticsErrorEvent, DiagnosticsErrorEvent); //Refresh Intrinsics and Dependencies
 
                 if (diagDetected)
                 {

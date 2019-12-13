@@ -58,6 +58,10 @@ namespace TypeCobol.Compiler.Scopes
 
         public override String TypedName => "";
 
+        /// <summary>
+        /// Program add event.
+        /// </summary>
+        public event EventHandler<SymbolEventArgs> ProgramAdded;
 
         /// <summary>
         /// The Count of Variable Symbol created
@@ -121,6 +125,8 @@ namespace TypeCobol.Compiler.Scopes
                     ScopeDomain[name] = new Scope<AbstractScope>.MultiSymbols(absScope);
                 else
                     value.Add(absScope);
+                if (ProgramAdded != null && absScope.Kind == Kinds.Program)
+                    ProgramAdded(this, new SymbolEventArgs(absScope));
             }
         }
 

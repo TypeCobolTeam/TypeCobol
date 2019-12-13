@@ -16,6 +16,7 @@ using TypeCobol.Compiler.Domain;
 #endif
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.CustomExceptions;
+using TypeCobol.Tools.Options_Config;
 using String = System.String;
 
 namespace TypeCobol.Tools.APIHelpers
@@ -199,6 +200,22 @@ namespace TypeCobol.Tools.APIHelpers
 
 
             return table;
+        }
+
+        /// <summary>
+        /// Load both Intrinsic symbols and Dependencies files.
+        /// </summary>
+        /// <param name="config"></param>
+        /// <param name="DiagnosticsErrorEvent"></param>
+        /// <param name="DependencyErrorEvent"></param>
+        /// <returns></returns>
+        public static SymbolTable LoadIntrinsicAndDependencies(TypeCobolConfiguration config, EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DiagnosticsErrorEvent, EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DependencyErrorEvent)
+        {
+            //Clear the Root Symbol Table
+            SymbolTableBuilder.Root = null;
+            SymbolTable customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load intrinsic
+            customSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, customSymbols, config.InputFiles, config.CopyFolders, DependencyErrorEvent); //Load dependencies
+            return customSymbols;
         }
     }
 

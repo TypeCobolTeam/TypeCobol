@@ -53,16 +53,15 @@ namespace TypeCobol.Compiler.Domain
         /// </summary>
         public IList<Diagnostic> Diagnostics { get; private set; }
 
-#if DOMAIN_CHECKER
         /// <summary>
-        /// The Last Builder created if any.
+        /// The Last Builder created if any, most often it is used by tests.
         /// </summary>
         public static ProgramSymbolTableBuilder LastBuilder
         {
             get;
             set;
         }
-#endif
+
         /// <summary>
         /// The List of Stacked Program symbol built as a Scope.
         /// The first main program will be the first element of the list, 
@@ -149,6 +148,20 @@ namespace TypeCobol.Compiler.Domain
             set;
         }
 
+        /// <summary>
+        /// Remove all program build by this Program Symbol table Builder.
+        /// </summary>
+        public void RemovePrograms()
+        {
+            if (SymbolTableBuilder.HasRoot)
+            {
+                foreach (var prog in ProgramSymbolTableBuilder.LastBuilder.Programs)
+                {
+                    SymbolTableBuilder.Root.RemoveProgram(prog);
+                }
+            }
+        }
+
         public override void OnNode(Node node, Program program)
         {
         }
@@ -197,42 +210,20 @@ namespace TypeCobol.Compiler.Domain
                 System.Diagnostics.Debug.Assert(CurrentNode.Parent != null);
                 System.Diagnostics.Debug.Assert(CurrentNode.Parent.CodeElement != null);
                 System.Diagnostics.Debug.Assert(CurrentNode.Parent.CodeElement.Type == CodeElementType.ProgramIdentification);
-                //This is a litte bit tricky but with TypeCobol Nested Programs belong the to the Main Program namespace
-                //So the Now the Main Parent namespace in the Root Namespace, so add it in it.
-                //So first lookup if one exists already.
-                bool bAddNested = true;
-                var prgEntry = Root.Programs.Lookup(programIdentification.ProgramName.Name);
-                if (prgEntry != null)
-                {//The program exitst, we must ensure that it is not a duplicated.                    
-                    if (prgEntry.Count == 1)
-                    {
-                        if (prgEntry.Symbol.Type == null)
-                        {   //No type == >not defined
-                            //Enter it in our namespace.
-                            var nestedProgram = prgEntry.Symbol;
-                            //Reenter the program as nested here and change the parent.
-                            this.CurrentProgram.Programs.Enter(nestedProgram);
-                            nestedProgram.Owner = this.CurrentProgram;
-                            this.CurrentProgram = nestedProgram;
-                            bAddNested = false;
-                        }
-                        else
-                        {//Duplicate symbol.  
-                            bDuplicate = true;
-                        }
-                    }
-                    else
-                    {//Duplicate symbol.
-                        bDuplicate = true;
-                    }
-                }
-                if (bAddNested)
-                {//Enter a new program.
-                    var nestedProgram = Root.EnterProgram(programIdentification.ProgramName.Name);
+                var prgEntry = this.CurrentProgram.Programs.Lookup(programIdentification.ProgramName.Name);
+                if (prgEntry == null)
+                {
+                    ProgramSymbol nestedProgram = new ProgramSymbol(programIdentification.ProgramName.Name);
                     //Reenter the program as nested here and change the parent.
                     this.CurrentProgram.Programs.Enter(nestedProgram);
                     nestedProgram.Owner = this.CurrentProgram;
                     this.CurrentProgram = nestedProgram;
+                    //Add it to the all scope domain
+                    SymbolTableBuilder.Root.AddToDomain(nestedProgram);
+                }
+                else
+                {
+                    bDuplicate = true;
                 }
             }
 
@@ -258,9 +249,11 @@ namespace TypeCobol.Compiler.Domain
 
         public override void EndCobolProgram(TypeCobol.Compiler.CodeElements.ProgramEnd end)
         {
-            System.Diagnostics.Debug.Assert(LastExitedNode != null);
-            System.Diagnostics.Debug.Assert(LastExitedNode.CodeElement != null);
-            System.Diagnostics.Debug.Assert(LastExitedNode.CodeElement.Type == CodeElementType.ProgramIdentification);
+            //------------------------------------------------------------------------------------------------------------
+            //System.Diagnostics.Debug.Assert(LastExitedNode != null);
+            //System.Diagnostics.Debug.Assert(LastExitedNode.CodeElement != null);
+            //System.Diagnostics.Debug.Assert(LastExitedNode.CodeElement.Type == CodeElementType.ProgramIdentification);
+            //------------------------------------------------------------------------------------------------------------
 
             ProgramSymbol lastPrg = this.CurrentProgram;
             //For a stacked program the Parent is null and not for a nested program.

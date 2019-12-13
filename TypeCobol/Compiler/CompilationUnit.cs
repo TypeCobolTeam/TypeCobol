@@ -5,6 +5,7 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Domain;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Preprocessor;
@@ -17,10 +18,15 @@ namespace TypeCobol.Compiler
     /// </summary>
     public class CompilationUnit : CompilationDocument
     {
+        public ProgramSymbolTableBuilder PrgSymbolTblBuilder
+        {
+            get;
+            private set;
+        }
         /// <summary>
         /// Initializes a new compilation document from a list of text lines.
         /// This method does not scan the inserted text lines to produce tokens.
-        /// You must explicitely call UpdateTokensLines() to start an initial scan of the document.
+        /// You must explicitly call UpdateTokensLines() to start an initial scan of the document.
         /// </summary>
         public CompilationUnit(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider, List<RemarksDirective.TextNameVariation> copyTextNameVariations) :
             base(textSourceInfo, initialTextLines, compilerOptions, processedTokensDocumentProvider, copyTextNameVariations)
@@ -224,8 +230,9 @@ namespace TypeCobol.Compiler
                     List<DataDefinition> typedVariablesOutsideTypedef = new List<DataDefinition>();
                     List<TypeDefinition> typeThatNeedTypeLinking = new List<TypeDefinition>();
 
+                    PrgSymbolTblBuilder?.RemovePrograms();
                     //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
-                    ProgramClassParserStep.CupParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, perfStatsForParserInvocation, out root, out newDiagnostics, out nodeCodeElementLinkers,
+                    PrgSymbolTblBuilder = ProgramClassParserStep.CupParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, perfStatsForParserInvocation, out root, out newDiagnostics, out nodeCodeElementLinkers,
                         out typedVariablesOutsideTypedef,
                         out typeThatNeedTypeLinking);
 

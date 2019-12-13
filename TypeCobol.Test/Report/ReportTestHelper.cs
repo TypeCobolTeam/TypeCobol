@@ -71,7 +71,15 @@ namespace TypeCobol.Test.Report
 #endif
                 String copyFolder = Path.Combine(Directory.GetCurrentDirectory(), ROOT_COPY);
                 parser.Init(input, typeCobolOption, format, new List<string>() { copyFolder });
-                parser.Parse(input);
+                try
+                {
+                    TestUnit.TestInitialize();
+                    parser.Parse(input);
+                }
+                finally
+                {
+                    TestUnit.TestCleanup();
+                }
 
                 var allDiags = parser.Results.AllDiagnostics();
                 if (allDiags.Count == 0)

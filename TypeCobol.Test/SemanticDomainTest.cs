@@ -33,8 +33,6 @@ namespace TypeCobol.Test.Domain
         }
 
         public static TypeCobolConfiguration DefaultConfig = null;
-        public static ProgramSymbolTableBuilder Builder = null;
-        public static NodeListenerFactory BuilderNodeListenerFactory = null;
         public static string DefaultIntrinsicPath = null;
 
         [TestInitialize]
@@ -50,44 +48,12 @@ namespace TypeCobol.Test.Domain
 
             DefaultConfig.Dependencies.Add(Path.Combine(GetTestLocation(), "resources", "dependencies"));
             SymbolTableBuilder.Config = DefaultConfig;
-
-            //Force the creation of the Global Symbol Table
-            var global = SymbolTableBuilder.Root;
-
-            //Allocate a static Program Symbol Table Builder
-            BuilderNodeListenerFactory = () =>
-            {
-                Builder = new ProgramSymbolTableBuilder();
-                return Builder;
-            };
-            NodeDispatcher.RegisterStaticNodeListenerFactory(BuilderNodeListenerFactory);
-        }
-
-        private static void RemovePrograms(ProgramSymbol prog)
-        {
-            foreach (var nestPrg in prog.Programs)
-            {
-                SymbolTableBuilder.Root.RemoveProgram(prog);
-                RemovePrograms(nestPrg);
-            }
-            SymbolTableBuilder.Root.RemoveProgram(prog);            
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
-            if (BuilderNodeListenerFactory != null)
-            {
-                NodeDispatcher.RemoveStaticNodeListenerFactory(BuilderNodeListenerFactory);
-                if (Builder.Programs.Count != 0)
-                {
-                    foreach (var prog in Builder.Programs)
-                    {
-                        RemovePrograms(prog);
-                    }
-                }
-            }
-            SymbolTableBuilder.Root = null;
+            ProgramSymbolTableBuilder.LastBuilder.RemovePrograms();
         }
 
 
@@ -103,8 +69,8 @@ namespace TypeCobol.Test.Domain
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null, ExecutionStep.SemanticCheck);
 
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
 
             SymbolExpander symExpander = new SymbolExpander(currentProgram);
             currentProgram.Accept(symExpander, null);
@@ -125,8 +91,8 @@ namespace TypeCobol.Test.Domain
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.FreeTextFormat, /*autoRemarks*/
                 false, /*copies*/ null, ExecutionStep.SemanticCheck);
 
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
 
             //Get oldCurrency symbol
             var oldCurrency = currentProgram.ResolveReference(new string[] { "oldCurrency" }, false);
@@ -185,8 +151,8 @@ namespace TypeCobol.Test.Domain
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.FreeTextFormat, /*autoRemarks*/
                 false, /*copies*/ null, ExecutionStep.SemanticCheck);
 
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
 
             //Get olddate symbol
             var olddate = currentProgram.ResolveReference(new string[] { "olddate" }, false);
@@ -250,8 +216,8 @@ namespace TypeCobol.Test.Domain
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.FreeTextFormat, /*autoRemarks*/
                 false, /*copies*/ null, executionStep:ExecutionStep.SemanticCheck);
 
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
 
             Assert.IsTrue(currentProgram.Programs.Count == 1);
             var nestedPrg = currentProgram.Programs[0];
@@ -292,8 +258,8 @@ namespace TypeCobol.Test.Domain
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.FreeTextFormat, /*autoRemarks*/
                 false, /*copies*/ null, ExecutionStep.SemanticCheck);
 
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
 
             //Before expansion there are no YYYY, MM, DD variables in the program
             var yyyy = currentProgram.ResolveReference(new string[] { "yyyy" }, false);
@@ -346,8 +312,8 @@ namespace TypeCobol.Test.Domain
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.FreeTextFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
 
             //Before expansion there are no check-false variables in the program
             var check_false = currentProgram.ResolveReference(new string[] { "check-false" }, false);
@@ -391,8 +357,8 @@ namespace TypeCobol.Test.Domain
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
             
             var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
 
@@ -501,8 +467,8 @@ namespace TypeCobol.Test.Domain
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
 
             //-------------------------
             //Expand rcarray variable.
@@ -708,9 +674,9 @@ namespace TypeCobol.Test.Domain
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
-            Assert.IsTrue(Builder.Programs.Count == 1);
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
 
-            var currentProgram = Builder.Programs[0];
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
             //-------------------------
             //Expand rcarray variable.
             //-------------------------
@@ -897,10 +863,10 @@ namespace TypeCobol.Test.Domain
             string path = Path.Combine(GetTestLocation(), "SemanticDomain", "ErrRedefinesImmPrec.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(Builder.Diagnostics.Count == 1);
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Diagnostics.Count == 1);
             Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser, 0, 0, 0,
                 string.Format(TypeCobolResource.ErrRedefineWasNotImmediatlyPrec, "RX", 5));
-            Assert.AreEqual<string>(Builder.Diagnostics[0].Message, d.Message);
+            Assert.AreEqual<string>(ProgramSymbolTableBuilder.LastBuilder.Diagnostics[0].Message, d.Message);
         }
 
         [TestMethod]
@@ -913,18 +879,18 @@ namespace TypeCobol.Test.Domain
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
 
             //Get MyVar1 symbol
             var myvar1 = currentProgram.ResolveReference(new string[] {"myvar1"}, false);
             Assert.IsTrue(myvar1.Count == 1);
 
             //Check Errors : Cannot REDEFINES access MyVar1.
-            Assert.IsTrue(Builder.Diagnostics.Count == 1);
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Diagnostics.Count == 1);
             Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser, 0, 0, 0,
                 string.Format(TypeCobolResource.ErrRedefineWasNotImmediatlyPrec, myvar1.Symbol.Name, 1));
-            Assert.AreEqual<string>(Builder.Diagnostics[0].Message, d.Message);
+            Assert.AreEqual<string>(ProgramSymbolTableBuilder.LastBuilder.Diagnostics[0].Message, d.Message);
 
             //Get MyVar2 symbol with PIC X(9)
             var myvar2s = currentProgram.ResolveReference(new string[] { "myvar2" }, false);
@@ -980,10 +946,10 @@ namespace TypeCobol.Test.Domain
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
-            Assert.IsTrue(Builder.Diagnostics.Count == 0);
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Diagnostics.Count == 0);
             //Locate Redefines
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
             var vars = currentProgram.ResolveReference(new string[] {"yy"}, false);
             Assert.IsTrue(vars.Count == 1);
             string yy = vars[0].ToString();
@@ -1002,15 +968,15 @@ namespace TypeCobol.Test.Domain
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];            
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];            
 
-            Assert.IsTrue(Builder.Diagnostics.Count == 1);
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Diagnostics.Count == 1);
             Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
                 0, 0, 0,
                 string.Format(TypeCobolResource.CannotRenamesLevel, 1));
 
-            Assert.AreEqual<string>(Builder.Diagnostics[0].Message, d.Message);
+            Assert.AreEqual<string>(ProgramSymbolTableBuilder.LastBuilder.Diagnostics[0].Message, d.Message);
         }
         /// <summary>
         /// This test test that when renames objects are not found a diagnostics is emitted.
@@ -1026,17 +992,17 @@ namespace TypeCobol.Test.Domain
 
 
             //Locate Redefines
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
             var vars = currentProgram.ResolveReference(new string[] { "yy" }, false);
             Assert.IsTrue(vars.Count == 1);
 
-            Assert.IsTrue(Builder.Diagnostics.Count == 2);
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Diagnostics.Count == 2);
             Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser, 0, 0, 0,
                 string.Format(TypeCobolResource.RenamesObjectNotFound, "MPOINT.RX"));
 
-            Assert.AreEqual<string>(Builder.Diagnostics[0].Message, d.Message);
-            Assert.AreEqual<string>(Builder.Diagnostics[1].Message, d.Message);
+            Assert.AreEqual<string>(ProgramSymbolTableBuilder.LastBuilder.Diagnostics[0].Message, d.Message);
+            Assert.AreEqual<string>(ProgramSymbolTableBuilder.LastBuilder.Diagnostics[1].Message, d.Message);
         }
 
         [TestMethod]
@@ -1048,8 +1014,8 @@ namespace TypeCobol.Test.Domain
             string path = Path.Combine(GetTestLocation(), "SemanticDomain", "TypedefCyclic0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
             var pointEntry = currentProgram.Types.Lookup("POINT");
             Assert.IsNotNull(pointEntry);
             Assert.IsTrue(pointEntry.Count == 1);
@@ -1172,8 +1138,8 @@ namespace TypeCobol.Test.Domain
             string path = Path.Combine(GetTestLocation(), "SemanticDomain", "VisPrgVar0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
             var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
             //Get the Procedure Division Node.
             var procDivs = mainProgram.GetChildren<ProcedureDivision>();
@@ -1211,8 +1177,8 @@ namespace TypeCobol.Test.Domain
             string path = Path.Combine(GetTestLocation(), "SemanticDomain", "VisPrgGblVar0.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
             var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
             //Get the Procedure Division Node.
             var procDivs = mainProgram.GetChildren<ProcedureDivision>();
@@ -1257,8 +1223,8 @@ namespace TypeCobol.Test.Domain
             string path = Path.Combine(GetTestLocation(), "SemanticDomain", "VisPrgProcVar0.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
             var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
             //Get the Procedure Division Node.
             var procDivs = mainProgram.GetChildren<ProcedureDivision>();
@@ -1356,8 +1322,8 @@ namespace TypeCobol.Test.Domain
             string path = Path.Combine(GetTestLocation(), "SemanticDomain", "VisNestedPrgVar0.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
             var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
 
             //Get the nested program.
@@ -1501,8 +1467,8 @@ namespace TypeCobol.Test.Domain
             string path = Path.Combine(GetTestLocation(), "SemanticDomain", "VisNestedPrgVar0.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
             var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
 
             //Get the nested program.
@@ -1671,8 +1637,8 @@ namespace TypeCobol.Test.Domain
             string path = Path.Combine(GetTestLocation(), "SemanticDomain", "VisPrgNestedProcVar0.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
             var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
 
             //Get the nested program.
@@ -1776,8 +1742,8 @@ namespace TypeCobol.Test.Domain
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
 
             var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;            
 
@@ -1868,10 +1834,10 @@ namespace TypeCobol.Test.Domain
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.FreeTextFormat, /*autoRemarks*/
                 false, /*copies*/ null, ExecutionStep.SemanticCheck);
 
-            Assert.IsTrue(Builder.Programs.Count == 3);
-            var PGM1 = Builder.Programs[0];
-            var PGM2 = Builder.Programs[1];
-            var PGM3 = Builder.Programs[2];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 3);
+            var PGM1 = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
+            var PGM2 = ProgramSymbolTableBuilder.LastBuilder.Programs[1];
+            var PGM3 = ProgramSymbolTableBuilder.LastBuilder.Programs[2];
 
             var MyPublicProcedure = PGM1.ReverseResolveFunction(SymbolTableBuilder.Root, new string[] { "MyPublicProcedure", "PGM2" });
             Assert.IsNotNull(MyPublicProcedure);
@@ -1959,8 +1925,8 @@ namespace TypeCobol.Test.Domain
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null, ExecutionStep.SemanticCheck);
 
-            Assert.IsTrue(Builder.Programs.Count == 1);
-            var currentProgram = Builder.Programs[0];
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 1);
+            var currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];
 
             SymbolExpander symExpander = new SymbolExpander(currentProgram);
             currentProgram.Accept(symExpander, null);
@@ -1981,8 +1947,8 @@ namespace TypeCobol.Test.Domain
             string path = Path.Combine(GetTestLocation(), "SemanticDomain", "TypeVisNestedPrgAndProc.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(Builder.Programs.Count == 2);
-            ProgramSymbol currentProgram = Builder.Programs[0];//TypeVisNestedPrgAndProc
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 2);
+            ProgramSymbol currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];//TypeVisNestedPrgAndProc
             SourceProgram mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
             Assert.AreEqual(currentProgram, mainProgram.SemanticData);
 
@@ -2338,8 +2304,8 @@ namespace TypeCobol.Test.Domain
             string path = Path.Combine(GetTestLocation(), "SemanticDomain", "TypeVisNestedPrgAndProc.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(Builder.Programs.Count == 2);
-            ProgramSymbol currentProgram = Builder.Programs[0];//TypeVisNestedPrgAndProc
+            Assert.IsTrue(ProgramSymbolTableBuilder.LastBuilder.Programs.Count == 2);
+            ProgramSymbol currentProgram = ProgramSymbolTableBuilder.LastBuilder.Programs[0];//TypeVisNestedPrgAndProc
             SourceProgram mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
             Assert.AreEqual(currentProgram, mainProgram.SemanticData);
 
