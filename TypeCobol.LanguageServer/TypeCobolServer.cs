@@ -554,9 +554,9 @@ namespace TypeCobol.LanguageServer
                             // We have SymbolInformation for the Token, so now we look for the associated StorageArea.
                             // It is either among StorageAreaReads or StorageAreaWrites.
                             var targetStorageArea =
-                                matchingNode.CodeElement.StorageAreaReads
+                                matchingNode.CodeElement.StorageAreaReads?
                                     .FirstOrDefault(storageArea => storageArea.SymbolReference == targetSymbolInformation) ??
-                                matchingNode.CodeElement.StorageAreaWrites
+                                matchingNode.CodeElement.StorageAreaWrites?
                                     .Select(receivingStorageArea => receivingStorageArea.StorageArea)
                                     .Where(storageArea => storageArea != null)
                                     .FirstOrDefault(storageArea => storageArea.SymbolReference == targetSymbolInformation);
@@ -1064,6 +1064,7 @@ namespace TypeCobol.LanguageServer
         /// <returns>A textual representation of the given node.</returns>
         public static string GetToolTipText(Node node)
         {
+            if (node == null) return string.Empty;
             StringBuilder sb = new StringBuilder();
             foreach (var tuple in GetLinesWithLevel(node))
             {

@@ -819,8 +819,9 @@ namespace TypeCobol.Compiler.Nodes {
         /// false if storage area needs to be searched in StorageAreaWritesDataDefinition.
         /// If parameter is not present, the search is done in both dictionaries</param>
         /// <returns>Correpsonding DataDefinition</returns>
-        public DataDefinition GetDataDefinitionFromStorageAreaDictionary(StorageArea searchedStorageArea, bool? isReadDataDefiniton=null)
+        public DataDefinition GetDataDefinitionFromStorageAreaDictionary([CanBeNull]StorageArea searchedStorageArea, bool? isReadDataDefiniton=null)
         {
+            if (searchedStorageArea == null) return null;
             DataDefinition searchedElem = null;
             if (isReadDataDefiniton == null)
             {
@@ -846,8 +847,9 @@ namespace TypeCobol.Compiler.Nodes {
             return searchedElem;
         }
         
-        public DataDefinition GetDataDefinitionForQualifiedName(QualifiedName qualifiedName, bool? isReadDictionary=null)
+        public DataDefinition GetDataDefinitionForQualifiedName([CanBeNull]QualifiedName qualifiedName, bool? isReadDictionary=null)
         {
+            if (qualifiedName == null) return null;
             DataDefinition searchedElem = null;
             if (isReadDictionary.HasValue)
             {
@@ -870,7 +872,7 @@ namespace TypeCobol.Compiler.Nodes {
         /// <summary>
         /// Clone the children of this node by creating a new list of Nodes.
         /// </summary>
-        /// <param name="node"></param>
+        /// <param name="parent"></param>
         private void CloneChildren(Node parent)
         {
             var oldChildren = parent.children;
