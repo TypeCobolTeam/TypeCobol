@@ -32,15 +32,6 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Any Base Cobol Symbol table.
-        /// </summary>
-        public static SymbolTable BaseTable
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Path of the Intrinsic file
         /// </summary>
         public static string IntrinsicPath
@@ -221,7 +212,6 @@ namespace TypeCobol.Compiler.Domain
 
                 baseSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, baseSymbols,
                     config.InputFiles, config.CopyFolders, DependencyErrorEvent); //Load dependencies
-                BaseTable = baseSymbols;
             }
             finally
             {
