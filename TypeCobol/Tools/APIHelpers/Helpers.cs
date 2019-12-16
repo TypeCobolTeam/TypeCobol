@@ -11,6 +11,7 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Domain;
 #if DOMAIN_CHECKER
 using TypeCobol.Compiler.Domain;
 #endif
