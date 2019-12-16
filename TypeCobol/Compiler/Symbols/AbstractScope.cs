@@ -381,6 +381,12 @@ namespace TypeCobol.Compiler.Symbols
             }
 
             return paths;
-        }        
+        }
+        /// <summary>
+        /// Free any domain associated to this scope?
+        /// </summary>
+        internal virtual void FreeDomain()
+        {
+        }
     }
 }

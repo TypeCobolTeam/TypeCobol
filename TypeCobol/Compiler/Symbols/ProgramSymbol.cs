@@ -206,6 +206,24 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
+        /// Free the domain associated to this program.
+        /// </summary>
+        internal override void FreeDomain()
+        {
+            lock (Domain)
+            {                
+                foreach (var entry in Domain)
+                {
+                    var entries = entry.Value;
+                    foreach(var varSym in entries)
+                    {
+                        SymbolTableBuilder.Root.RemoveFromUniverse(varSym);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Add the element to this Program's domain.
         /// </summary>
         /// <param name="element"></param>

@@ -21,7 +21,11 @@ namespace TypeCobol.Compiler.Scopes
         /// <summary>
         /// The count of all variable created in this RootSymbolTable
         /// </summary>
-        private uint _variableSymbolCounter = 0;
+        private int _variableSymbolCounter = 0;
+        /// <summary>
+        /// A pool of free global index
+        /// </summary>
+        private Stack<int> GlobalIndexPool = new Stack<int>();
 
         /// <summary>
         /// Empty Constructor.
@@ -66,14 +70,18 @@ namespace TypeCobol.Compiler.Scopes
         /// <summary>
         /// The Count of Variable Symbol created
         /// </summary>
-        public uint VariableSymbolCount => _variableSymbolCounter;
+        public int VariableSymbolCount => _variableSymbolCounter;
 
         /// <summary>
         /// Get the Next VariableSymbol Context.
         /// </summary>
         /// <returns></returns>
-        private uint NextVariableSymbolIndex()
+        private int NextVariableSymbolIndex()
         {
+            if (GlobalIndexPool.Count > 0)
+            {
+                return GlobalIndexPool.Pop();
+            }
             return _variableSymbolCounter++;
         }
 
@@ -82,17 +90,36 @@ namespace TypeCobol.Compiler.Scopes
         /// </summary>
         /// <param name="varSym">The Variable Symbol to be added</param>
         /// <returns>The given VariableSymbol instance.</returns>
-        public VariableSymbol AddToUniverse(VariableSymbol varSym)
+        internal VariableSymbol AddToUniverse(VariableSymbol varSym)
         {
             System.Diagnostics.Debug.Assert(varSym != null);
             System.Diagnostics.Debug.Assert(varSym.GlobalIndex == 0);
-            //lock (Universe)
+            lock (Universe)
             {
                 varSym.GlobalIndex = NextVariableSymbolIndex();
                 Universe.Add(varSym);
             }
 
             return varSym;
+        }
+
+        /// <summary>
+        /// Remove from the universe the given variable symbol.
+        /// </summary>
+        /// <param name="varSym">The variable symbol to be removed</param>
+        internal void RemoveFromUniverse(VariableSymbol varSym)
+        {
+            System.Diagnostics.Debug.Assert(varSym != null);
+            System.Diagnostics.Debug.Assert(varSym.GlobalIndex != 0);
+            if (varSym.GlobalIndex != 0)
+            {
+                lock (Universe)
+                {
+                    ((IList < VariableSymbol >)Universe)[varSym.GlobalIndex] = null;
+                    GlobalIndexPool.Push(varSym.GlobalIndex);
+                    varSym.GlobalIndex = 0;
+                }
+            }
         }
 
         /// <summary>
@@ -137,6 +164,7 @@ namespace TypeCobol.Compiler.Scopes
         public void RemoveFromDomain(AbstractScope absScope)
         {
             string name = absScope.Name;
+            absScope.FreeDomain();
             if (ScopeDomain.TryGetValue(name, out var value))
             {
                 value.Remove(absScope);
@@ -193,7 +221,7 @@ namespace TypeCobol.Compiler.Scopes
         public void AddToDomain(TypedefSymbol type)
         {
             System.Diagnostics.Debug.Assert(type != null);
-            //lock (TypeDomain)
+            lock (TypeDomain)
             {
                 string name = type.Name;
                 if (!TypeDomain.TryGetValue(name, out var value))
@@ -209,10 +237,13 @@ namespace TypeCobol.Compiler.Scopes
         /// <param name="type">The type to be removed</param>
         public void RemoveFromDomain(TypedefSymbol type)
         {
-            string name = type.Name;
-            if (TypeDomain.TryGetValue(name, out var value))
+            lock (TypeDomain)
             {
-                value?.Remove(type);
+                string name = type.Name;
+                if (TypeDomain.TryGetValue(name, out var value))
+                {
+                    value?.Remove(type);
+                }
             }
         }
 

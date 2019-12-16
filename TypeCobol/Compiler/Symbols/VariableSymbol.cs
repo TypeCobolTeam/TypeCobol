@@ -27,7 +27,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// The Global index associated to this variable.
         /// </summary>
-        public uint GlobalIndex
+        public int GlobalIndex
         {
             get;
             internal set;
