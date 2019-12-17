@@ -9,6 +9,10 @@ using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
 {
+    /// <summary>
+    /// Represents any symbol that contain other symbols (i.e. ProgramSymbol or NamespaceSymbol)
+    /// Don't confuse with Scope class
+    /// </summary>
     public abstract class AbstractScope : Symbol, IScope
     {
         /// <summary>
@@ -199,7 +203,7 @@ namespace TypeCobol.Compiler.Symbols
                     if (entry != null)
                     {
                         System.Diagnostics.Debug.Assert(entry.Count == 1);
-                        currentScope = entry[0] as AbstractScope;
+                        currentScope = entry[0];
                         stopScope = currentScope;
                         break;
                     }
@@ -221,7 +225,7 @@ namespace TypeCobol.Compiler.Symbols
                     ProgramSymbol pgmSym = new ProgramSymbol(progName);
                     programs.Enter(pgmSym);
                     entry = programs.Lookup(progName);
-                    currentScope = entry[0] as AbstractScope;
+                    currentScope = entry[0];
                     stopScope = currentScope;
                 }
             }
