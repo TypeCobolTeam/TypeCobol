@@ -759,6 +759,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 var paramNode = new ParameterDescription(declaration.Profile.ReturningParameter);
                 paramNode.SymbolTable = CurrentNode.SymbolTable;
                 paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
+                paramNode.PassingType = ParameterDescription.PassingTypes.Returning;
                 node.Profile.ReturningParameter = paramNode;
 
                 paramNode.SetParent(CurrentNode);
@@ -1306,13 +1307,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                     condition.SelectionObjects = new EvaluateSelectionObject[1];
                     condition.SelectionObjects[0] = new EvaluateSelectionObject();
                     condition.SelectionObjects[0].BooleanComparisonVariable = new BooleanValueOrExpression(whensearch.Condition);
-
-                    var conditionNameConditionOrSwitchStatusCondition = whensearch.Condition as ConditionNameConditionOrSwitchStatusCondition;
-                    if (conditionNameConditionOrSwitchStatusCondition != null)
-                        condition.StorageAreaReads = new List<StorageArea>
-                        {
-                            conditionNameConditionOrSwitchStatusCondition.ConditionReference
-                        };
                 }
                 else
                 {
