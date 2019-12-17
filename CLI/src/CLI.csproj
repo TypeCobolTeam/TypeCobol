@@ -13,7 +13,7 @@
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugSemanticDomain|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS,DOMAIN_CHECKER</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;DOMAIN_CHECKER</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr4.Runtime, Version=4.6.0.0, Culture=neutral, PublicKeyToken=e9931a4108ef2354, processorArchitecture=MSIL">
