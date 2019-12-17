@@ -335,12 +335,12 @@ namespace TypeCobol.Compiler.Scanner
                             offsetForLiteralContinuation = 1;
 
                             // If an alphanumeric literal that is to be continued on the next line has as its last character a quotation mark in column 72, 
-                            // the continuation line must start with two consecutive quotation marks.
+                            // the continuation line is forbidden.
                             if (lastTokenOfConcatenatedLineSoFar.HasClosingDelimiter)
                             {
                                 if ((startOfContinuationIndex + 1) > lastIndex || line[startOfContinuationIndex + 1] != lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter)
                                 {
-                                    continuationLine.AddDiagnostic(MessageCode.InvalidFirstTwoCharsForContinuationLine, startOfContinuationIndex, startOfContinuationIndex + 1, lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter);
+                                    continuationLine.AddDiagnostic(MessageCode.InvalidContinuationLine, startOfContinuationIndex, startOfContinuationIndex + 1, lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter);
                                     // Use the first quotation mark to avoid a complete mess while scanning the rest of the line
                                     offsetForLiteralContinuation = 0;
                                 }

@@ -29,7 +29,7 @@ namespace TypeCobol.Compiler.Diagnostics
         InvalidNumberOfCharsInHexaAlphaLiteral = 19,
         InvalidNumberOfCharsInHexaNationalLiteral = 20,
         InvalidFirstCharForContinuationLine = 21,
-        InvalidFirstTwoCharsForContinuationLine = 22,
+        InvalidContinuationLine = 22,
         AreaAOfContinuationLineMustBeBlank = 23,
         HyphenIndicatorNotPermittedInCommenEntries = 24,
         InvalidCblProcessCompilerDirective = 25,
