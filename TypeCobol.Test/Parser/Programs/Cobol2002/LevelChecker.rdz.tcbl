@@ -44,6 +44,6 @@
        DECLARE PROCEDURE MyProc
          INPUT exists TYPE BOOL
                 88 exists-Ok value 'O'.
-        END-DECLARE.
+       END-DECLARE.
 
        END PROGRAM LevelChecker.
