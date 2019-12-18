@@ -253,13 +253,13 @@ namespace TypeCobol.Compiler.Diagnostics
                     var actual = call.Arguments[c].StorageAreaOrValue;
                     if (actual.IsLiteral) continue; //TODO
 
-                    var callArgName = actual.StorageArea.ToString();
                     var found = node.GetDataDefinitionFromStorageAreaDictionary(actual.StorageArea);
-                   if (found == null)
+                    if (found == null)
                     {
                         continue;
                     }
 
+                    var callArgName = actual.StorageArea.ToString();
                     var actualDataDefinition = found;
 
                     var actualSpecialRegister = actual.StorageArea as StorageAreaPropertySpecialRegister;

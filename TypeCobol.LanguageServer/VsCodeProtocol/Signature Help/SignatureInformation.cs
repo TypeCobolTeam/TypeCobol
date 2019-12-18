@@ -61,10 +61,16 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             {
                 var hashCode = 13;
                 hashCode = (hashCode * 397) ^ label.GetHashCode();
-                var docHashCode = documentation?.GetHashCode() ?? 10;
+                var docHashCode = documentation?.GetHashCode() ?? 0;
                 hashCode = (hashCode * 397) ^ docHashCode;
-                var paramHashCode = parameters?.GetHashCode() ?? 100;
-                hashCode = (hashCode * 397) ^ paramHashCode;
+                if (parameters != null)
+                {
+                    foreach (var param in parameters)
+                    {
+                        hashCode = (hashCode * 397) ^ param.label.GetHashCode();
+                        hashCode = (hashCode * 397) ^ (param.documentation?.GetHashCode() ?? 0);
+                    }
+                }
 
                 return hashCode;
             }

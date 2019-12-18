@@ -41,8 +41,8 @@ namespace TypeCobol.Compiler.Scanner
             {
                 var hashCode = 13;
                 hashCode = (hashCode * 397) ^ this.Type.GetHashCode();
-                hashCode = (hashCode * 397) ^ this.StartIndex.GetHashCode();
-                hashCode = (hashCode * 397) ^ this.StopIndex.GetHashCode();
+                hashCode = (hashCode * 397) ^ this.StartIndex;
+                hashCode = (hashCode * 397) ^ this.StopIndex;
                 hashCode = (hashCode * 397) ^ this.TokensLine.GetHashCode();
 
                 return hashCode;

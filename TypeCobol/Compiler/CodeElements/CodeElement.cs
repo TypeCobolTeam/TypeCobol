@@ -1,6 +1,8 @@
 using System;
 using Antlr4.Runtime;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Diagnostics;
@@ -167,21 +169,22 @@ namespace TypeCobol.Compiler.CodeElements
             if (Object.ReferenceEquals(this, codeElement)) return true;
             if (Object.ReferenceEquals(null, codeElement)) return false;
 
-            if (ConsumedTokens == null && codeElement.ConsumedTokens == null)
-            {
-                return Type == codeElement.Type;
-            }
             if (ConsumedTokens != null && codeElement.ConsumedTokens != null)
             {
+                if (ConsumedTokens.Count != codeElement.ConsumedTokens.Count)
+                {
+                    return false;
+                }
+
                 if (ConsumedTokens.Count > 0 && codeElement.ConsumedTokens.Count > 0)
                 {
-                    return Type == codeElement.Type && Object.ReferenceEquals(ConsumedTokens[0], codeElement.ConsumedTokens[0]);
+                    return Type == codeElement.Type && ConsumedTokens[0].Equals(codeElement.ConsumedTokens[0]);
                 }
-                else
-                {
-                    return Type == codeElement.Type && Object.ReferenceEquals(ConsumedTokens, codeElement.ConsumedTokens);
-                }
+
+                // ConsumedTokens collections are both empty
+                Debug.Fail("CodeElement.Equals: cannot compare 2 CodeElements having both no Consumed Tokens.");
             }
+
             return false;
         }
 
@@ -222,7 +225,7 @@ namespace TypeCobol.Compiler.CodeElements
                 FirstCopyDirective = null;
                 CopyDirective firstSource = null; //null = in the main source file
 
-                if (ConsumedTokens != null && ConsumedTokens.Count > 1)
+                if (ConsumedTokens != null && ConsumedTokens.Count > 0)
                 {
                     //Get CopyDirective of first ConsumedToken
                     var firstConsumedToken = ConsumedTokens[0] as ImportedToken;

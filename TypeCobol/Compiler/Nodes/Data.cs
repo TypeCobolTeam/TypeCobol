@@ -881,7 +881,7 @@ namespace TypeCobol.Compiler.Nodes {
             }
 
             var generatedDataType = (obj as GeneratedDefinition);
-            if (generatedDataType  != null &&
+            if (generatedDataType != null &&
                 !(generatedDataType.DataType == DataType.Alphabetic ||
                   generatedDataType.DataType == DataType.Alphanumeric)) //Remove these two check on Alpha.. to allow move "fezf" TO alphatypedVar
             {
@@ -895,7 +895,11 @@ namespace TypeCobol.Compiler.Nodes {
 
         public bool Equals(TypeDefinition compareTypeDef)
         {
-            return Object.ReferenceEquals(this, compareTypeDef);
+            if (Object.ReferenceEquals(this, compareTypeDef)) return true;
+            if (Object.ReferenceEquals(null, compareTypeDef)) return false;
+
+            return compareTypeDef.DataType == this.DataType &&
+                   compareTypeDef.QualifiedName.ToString() == this.QualifiedName.ToString();
         }
         public override int GetHashCode()
         {
@@ -1009,11 +1013,10 @@ namespace TypeCobol.Compiler.Nodes {
     /// Allow to generate DataDefinition which can take any desired form/type. 
     /// Give access to GeneratedDefinition of Numeric/Alphanumeric/Boolean/... DataType
     /// </summary>
-    public class GeneratedDefinition : DataDefinition
+    public class GeneratedDefinition : DataDefinition, IEquatable<GeneratedDefinition>
     {
         private string _Name;
-        private DataType _DataType;
-        private readonly int _hashCode;
+        private readonly DataType _DataType;
 
         public static GeneratedDefinition NumericGeneratedDefinition =       new GeneratedDefinition("Numeric", DataType.Numeric);
         public static GeneratedDefinition AlphanumericGeneratedDefinition =  new GeneratedDefinition("Alphanumeric", DataType.Alphanumeric);
@@ -1029,7 +1032,6 @@ namespace TypeCobol.Compiler.Nodes {
         {
             _Name = name;
             _DataType = dataType;
-            _hashCode = (dataType?.GetHashCode() ?? 0) * 11 + name.GetHashCode();
         }
 
         public override string Name
@@ -1042,18 +1044,27 @@ namespace TypeCobol.Compiler.Nodes {
             get { return _DataType; }
         }
 
-
         public override bool Equals(object obj)
         {
-            //In this case we can only compare the DataType
-            if((obj as DataDefinition) != null)
-                return ((DataDefinition) obj).DataType == _DataType;
-            return false;
+            return Equals(obj as GeneratedDefinition);
+        }
+
+        public bool Equals(GeneratedDefinition generatedDefinition)
+        {
+            if (Object.ReferenceEquals(this, generatedDefinition)) return true;
+            if (Object.ReferenceEquals(null, generatedDefinition)) return false;
+            return generatedDefinition.DataType == _DataType;
         }
 
         public override int GetHashCode()
         {
-            return _hashCode;
+            unchecked
+            {
+                var hashCode = 13;
+                hashCode = (hashCode * 397) ^ _DataType.GetHashCode();
+
+                return hashCode;
+            }
         }
     }
 
