@@ -128,7 +128,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Reference to a previously defined symbol in the Cobol syntax
     /// </summary>
-    public class SymbolReference : SymbolInformation, IEquatable<SymbolReference>
+    public class SymbolReference : SymbolInformation
     {
         public SymbolReference(SyntaxValue<string> nameLiteral, SymbolType type) :
             base(nameLiteral, SymbolRole.SymbolReference, type)
@@ -175,34 +175,6 @@ namespace TypeCobol.Compiler.CodeElements
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return this.Equals(obj as SymbolReference);
-        }
-
-        public bool Equals(SymbolReference symbolReferenceCompare)
-        {
-            if (Object.ReferenceEquals(this, symbolReferenceCompare)) return true;
-            if (Object.ReferenceEquals(null, symbolReferenceCompare)) return false;
-
-            return Type == symbolReferenceCompare.Type &&
-                   NameLiteral == symbolReferenceCompare.NameLiteral &&
-                   Role == symbolReferenceCompare.Role;
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                var hashCode = 13;
-                hashCode = (hashCode * 397) ^ Type.GetHashCode();
-                hashCode = (hashCode * 397) ^ NameLiteral.GetHashCode();
-                hashCode = (hashCode * 397) ^ Role.GetHashCode();
-
-                return hashCode;
-            }
         }
     }
 

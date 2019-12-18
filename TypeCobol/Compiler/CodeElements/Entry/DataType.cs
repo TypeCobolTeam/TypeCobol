@@ -9,8 +9,9 @@ using String = System.String;
 
 namespace TypeCobol.Compiler.CodeElements
 {
-	public class DataType : ICobolLanguageLevel, IVisitable {
-		public string Name { get; private set; }
+	public class DataType : ICobolLanguageLevel, IVisitable, IEquatable<DataType>
+    {
+		public string Name { get; }
         public RestrictionLevel RestrictionLevel { get; internal set; }
 		public CobolLanguageLevel CobolLanguageLevel  { get; private set; }
 
@@ -23,18 +24,34 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public override string ToString() { return Name; }
 
-		public override int GetHashCode() { return Name.GetHashCode(); }
 	    public bool AcceptASTVisitor(IASTVisitor astVisitor) {
 	        return astVisitor.Visit(this);
 	    }
 
 	    public override bool Equals(object obj) {
-			var other = obj as DataType;
-			if (other == null) return false;
-			return other == this;
-		}
+            return Equals(obj as DataType);
+        }
 
-		public static bool operator ==(DataType x, DataType y)
+        public bool Equals(DataType dataType)
+        {
+            if (Object.ReferenceEquals(this, dataType)) return true;
+            if (Object.ReferenceEquals(null, dataType)) return false;
+
+            return Name.Equals(dataType.Name, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = 13;
+                hashCode = (hashCode * 397) ^ Name.GetHashCode();
+
+                return hashCode;
+            }
+        }
+
+        public static bool operator ==(DataType x, DataType y)
         {
             //Data instance for Cobol85 are unique so we can compare reference
             if (Object.ReferenceEquals(x, y)) return true;

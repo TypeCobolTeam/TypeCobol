@@ -8,7 +8,7 @@ using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.Nodes
 {
-    public class ParametersProfileNode : GenericNode<ParametersProfile>, ParameterList
+    public class ParametersProfileNode : GenericNode<ParametersProfile>, ParameterList, IEquatable<ParametersProfileNode>
     {
         public IList<ParameterDescription> InputParameters { get; set; }
         public IList<ParameterDescription> InoutParameters { get; set; }
@@ -44,19 +44,22 @@ namespace TypeCobol.Compiler.Nodes
 
         public override bool Equals(object other)
         {
-            if (other == null || GetType() != other.GetType()) return false;
-            var o = other as ParametersProfileNode;
-            if (o == null) return false;
+            return Equals(other as ParametersProfileNode);
+        }
+
+        public bool Equals(ParametersProfileNode paramsProfileNode)
+        {
+            if (System.Object.ReferenceEquals(this, paramsProfileNode)) return true;
+            if (System.Object.ReferenceEquals(null, paramsProfileNode)) return false;
+
             // instead of doing foreach(var mode in Tools.Reflection.GetValues<Passing.Mode>()) ...,
             // only iterate over input+output+inout parameters: returning parameter does not have
             // any impact in conflict between function profiles resolution
-            bool okay = true;
-            okay = AreEqual(InputParameters, o.InputParameters);
+            bool okay = AreEqual(InputParameters, paramsProfileNode.InputParameters);
             if (!okay) return false;
-            okay = AreEqual(InoutParameters, o.InoutParameters);
+            okay = AreEqual(InoutParameters, paramsProfileNode.InoutParameters);
             if (!okay) return false;
-            okay = AreEqual(OutputParameters, o.OutputParameters);
-            return okay;
+            return AreEqual(OutputParameters, paramsProfileNode.OutputParameters);
         }
 
         private static bool AreEqual(IList<ParameterDescription> mine, IList<ParameterDescription> hers)
@@ -72,9 +75,13 @@ namespace TypeCobol.Compiler.Nodes
 
         public override int GetHashCode()
         {
-            int hash = 17;
-            foreach (var p in Parameters) hash = hash * 23 + p.GetHashCode();
-            return hash;
+            unchecked
+            {
+                var hashCode = 17;
+                foreach (var p in Parameters) hashCode = (hashCode * 397) ^ p.GetHashCode();
+
+                return hashCode;
+            }
         }
 
         public override bool VisitNode(IASTVisitor astVisitor)
