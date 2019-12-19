@@ -11,6 +11,7 @@ using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Domain;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
 using TypeCobol.CustomExceptions;
@@ -19,6 +20,7 @@ using TypeCobol.LanguageServer.Interfaces;
 using TypeCobol.Tools.Options_Config;
 using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.LanguageServices.Editor;
+using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.LanguageServer
 {
@@ -35,6 +37,7 @@ namespace TypeCobol.LanguageServer
     {
 
         private SymbolTable _customSymbols;
+        private RootSymbolTable _customRootSymbols;
         private string _rootDirectoryFullName;
         private string _workspaceName;
         private string[] _extensions = { ".cbl", ".cpy" };
@@ -169,6 +172,7 @@ namespace TypeCobol.LanguageServer
             string fileName = Path.GetFileName(docContext.Uri.LocalPath);
             ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.ColumnsLayout, sourceText);
             FileCompiler fileCompiler = null;
+            CompilationProject.RootSymbolTable = _customRootSymbols;
 
 #if EUROINFO_RULES //Issue #583
             SymbolTable arrangedCustomSymbol = null;
@@ -424,7 +428,8 @@ namespace TypeCobol.LanguageServer
             typeCobolOptions.AutoRemarksEnable = TypeCobolConfiguration.AutoRemarks;
 #endif
 
-            CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, _extensions, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.EndOfLineDelimiter, TypeCobolConfiguration.Format.FixedLineLength, TypeCobolConfiguration.Format.ColumnsLayout, typeCobolOptions);
+            CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, _extensions, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.EndOfLineDelimiter, TypeCobolConfiguration.Format.FixedLineLength, TypeCobolConfiguration.Format.ColumnsLayout, typeCobolOptions, 
+                _customRootSymbols);
 
             if (TypeCobolConfiguration.CopyFolders != null && TypeCobolConfiguration.CopyFolders.Count > 0)
             {
@@ -526,7 +531,9 @@ namespace TypeCobol.LanguageServer
             _customSymbols = null;
             try
             {
-                _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsicAndDependencies(TypeCobolConfiguration, DiagnosticsErrorEvent, DiagnosticsErrorEvent); //Refresh Intrinsics and Dependencies
+                Tuple < SymbolTable, RootSymbolTable > customSymbolTables = Tools.APIHelpers.Helpers.LoadIntrinsicAndDependencies(TypeCobolConfiguration, DiagnosticsErrorEvent, DiagnosticsErrorEvent); //Refresh Intrinsics and Dependencies
+                _customSymbols = customSymbolTables.Item1;
+                _customRootSymbols = customSymbolTables.Item2;
 
                 if (diagDetected)
                 {

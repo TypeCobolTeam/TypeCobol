@@ -30,14 +30,46 @@ namespace TypeCobol.Compiler.Scopes
         /// <summary>
         /// Empty Constructor.
         /// </summary>
-        public RootSymbolTable() : base("<<Root>>")
+        public RootSymbolTable() : base(string.Intern("<<Root>>"))
+        {
+            Init();
+            BottomVariable = new VariableSymbol("<<BottomVariable>>");
+            AddToUniverse(BottomVariable);
+            //Load Builtin symbol in it
+            SymbolTableBuilder.AddBuiltinSymbol(this);
+        }
+
+        /// <summary>
+        /// Copy Constructor
+        /// </summary>
+        /// <param name="from">RootSymbolTable instance from which to copy</param>
+        public RootSymbolTable(RootSymbolTable from) : base(string.Intern("<<Root>>"), from)
+        {
+            Init();
+            if (from != null)
+            {
+                this.BottomVariable = from.BottomVariable;
+                this.GlobalIndexPool = new Stack<int>(from.GlobalIndexPool);
+                this._variableSymbolCounter = from._variableSymbolCounter;
+                ((List<VariableSymbol>) Universe).AddRange(from.Universe);
+                foreach (var e in from.ScopeDomain)
+                {
+                    ScopeDomain[e.Key] = new Scope<AbstractScope>.MultiSymbols(e.Value);
+                }
+
+                foreach (var e in from.TypeDomain)
+                {
+                    TypeDomain[e.Key] = new Scope<TypedefSymbol>.MultiSymbols(e.Value);
+                }
+            }
+        }
+
+        private void Init()
         {
             base.Kind = Kinds.Root;
             Universe = new List<VariableSymbol>();
             ScopeDomain = new Dictionary<string, Scope<AbstractScope>.MultiSymbols>(StringComparer.OrdinalIgnoreCase);
             TypeDomain = new Dictionary<string, Scope<TypedefSymbol>.MultiSymbols>(StringComparer.OrdinalIgnoreCase);
-            BottomVariable = new VariableSymbol("<<BottomVariable>>");
-            AddToUniverse(BottomVariable);
         }
 
         /// <summary>
@@ -142,7 +174,7 @@ namespace TypeCobol.Compiler.Scopes
         /// Add the given AbstractScope instance the domain
         /// </summary>
         /// <param name="absScope">Abstract Scope to be added</param>
-        public void AddToDomain(AbstractScope absScope)
+        public override void AddToDomain(AbstractScope absScope)
         {
             System.Diagnostics.Debug.Assert(absScope != null);
             //lock (ScopeDomain)
@@ -161,7 +193,7 @@ namespace TypeCobol.Compiler.Scopes
         /// Remove the given scope from the domain.
         /// </summary>
         /// <param name="absScope">The Scope to be removed</param>
-        public void RemoveFromDomain(AbstractScope absScope)
+        public override void RemoveFromDomain(AbstractScope absScope)
         {
             string name = absScope.Name;
             absScope.FreeDomain();
@@ -218,7 +250,7 @@ namespace TypeCobol.Compiler.Scopes
         /// Add the given Type instance the domain
         /// </summary>
         /// <param name="type">The type to add to be added</param>
-        public void AddToDomain(TypedefSymbol type)
+        public override void AddToDomain(TypedefSymbol type)
         {
             System.Diagnostics.Debug.Assert(type != null);
             lock (TypeDomain)
@@ -235,7 +267,7 @@ namespace TypeCobol.Compiler.Scopes
         /// Remove the given type from the domain.
         /// </summary>
         /// <param name="type">The type to be removed</param>
-        public void RemoveFromDomain(TypedefSymbol type)
+        public override void RemoveFromDomain(TypedefSymbol type)
         {
             lock (TypeDomain)
             {

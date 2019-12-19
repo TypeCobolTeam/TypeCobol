@@ -17,26 +17,6 @@ namespace TypeCobol.Codegen {
 
 	[TestClass]
 	public class TestTypeCobolCodegen {
-#if DOMAIN_CHECKER
-        public static TypeCobolConfiguration DefaultConfig = null;
-
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            SymbolTableBuilder.Root = null;
-            //Create a default configurations for options
-            DefaultConfig = new TypeCobolConfiguration();
-            DefaultConfig.Dependencies.Add(Path.Combine(Directory.GetCurrentDirectory(), "resources", "dependencies"));
-            SymbolTableBuilder.Config = DefaultConfig;
-        }
-
-        [TestCleanup]
-        public void TestCleanup()
-        {
-            ProgramSymbolTableBuilder.LastBuilder.RemovePrograms();
-        }
-#endif
-
         public static bool UseSkeleton = false;
 
 		[TestMethod]

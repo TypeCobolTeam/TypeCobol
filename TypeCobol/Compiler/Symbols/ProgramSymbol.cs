@@ -185,7 +185,8 @@ namespace TypeCobol.Compiler.Symbols
             lock (Domain)
             {
                 //First add it in the Global Domain.
-                SymbolTableBuilder.Root.AddToUniverse(varSym);
+                Symbol root = TopParent(Kinds.Root);
+                ((RootSymbolTable) root)?.AddToUniverse(varSym);
                 string name = varSym.Name;
                 if (!Domain.TryGetValue(name, out var value))
                 {
@@ -210,14 +211,18 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         internal override void FreeDomain()
         {
-            lock (Domain)
-            {                
-                foreach (var entry in Domain)
+            RootSymbolTable root = (RootSymbolTable)TopParent(Kinds.Root);
+            if (root != null)
+            {
+                lock (Domain)
                 {
-                    var entries = entry.Value;
-                    foreach(var varSym in entries)
+                    foreach (var entry in Domain)
                     {
-                        SymbolTableBuilder.Root.RemoveFromUniverse(varSym);
+                        var entries = entry.Value;
+                        foreach (var varSym in entries)
+                        {
+                            root.RemoveFromUniverse(varSym);
+                        }
                     }
                 }
             }

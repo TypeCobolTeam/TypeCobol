@@ -13,6 +13,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.CodeModel;
 using Analytics;
+using TypeCobol.Compiler.Scopes;
 using TypeCobol.CustomExceptions;
 
 namespace TypeCobol
@@ -25,8 +26,10 @@ namespace TypeCobol
         protected FileCompiler Compiler = null;
 		/// <summary>Optional custom symbol table to use for name and type resolution.</summary>
 		public SymbolTable CustomSymbols = null;
+        /// <summary>Optional custom root symbol table to use for name and type resolution.</summary>
+        public RootSymbolTable CustomRootSymbols = null;
 
-		public string[] Extensions = { ".cbl", ".cpy" };
+        public string[] Extensions = { ".cbl", ".cpy" };
 		public string[] CopyExtensions = { ".cpy" };
 
 		public Parser() {
@@ -34,26 +37,32 @@ namespace TypeCobol
 			Compilers = new Dictionary<string,FileCompiler>();
 		}
 
-        public Parser(SymbolTable custmSymbols) :this()
+        public Parser(SymbolTable customSymbols) :this()
         {
-            CustomSymbols = custmSymbols;
+            CustomSymbols = customSymbols;
         }
 
-		private static DocumentFormat GetFormat(string filename) {
+        public Parser(SymbolTable customSymbols, RootSymbolTable customRootSymbols) : this()
+        {
+            CustomSymbols = customSymbols;
+            CustomRootSymbols = customRootSymbols;
+        }
+
+        private static DocumentFormat GetFormat(string filename) {
 			return DocumentFormat.FreeUTF8Format;//TODO autodetect
 		}
 
-		public void Init([NotNull] string path, TypeCobolOptions options, DocumentFormat format = null, IList<string> copies = null) {
+		public FileCompiler Init([NotNull] string path, TypeCobolOptions options, DocumentFormat format = null, IList<string> copies = null) {
 			FileCompiler compiler;
-			if (Compilers.TryGetValue(path, out compiler)) return;
+			if (Compilers.TryGetValue(path, out compiler)) return compiler;
 			string filename = Path.GetFileName(path);
 			var root = new DirectoryInfo(Directory.GetParent(path).FullName);
 			if (format == null) format = GetFormat(path);
             
             CompilationProject project = new CompilationProject(path, root.FullName, Extensions,
-				format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
-			//Add copy folder into sourceFileProvider
-			SourceFileProvider sourceFileProvider = project.SourceFileProvider;
+				format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options, this.CustomRootSymbols);
+            //Add copy folder into sourceFileProvider
+            SourceFileProvider sourceFileProvider = project.SourceFileProvider;
 			copies = copies ?? new List<string>();
 			foreach (var folder in copies) {
 				sourceFileProvider.AddLocalDirectoryLibrary(folder, false, CopyExtensions, format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength);
@@ -62,7 +71,8 @@ namespace TypeCobol
             
 			Compilers.Add(path, compiler);
 			Inits.Add(path, false);
-		}
+            return compiler;
+        }
 
 
 		public void Parse(string path, TextChangedEvent e=null)

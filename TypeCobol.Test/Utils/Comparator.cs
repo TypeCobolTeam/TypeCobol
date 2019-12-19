@@ -30,20 +30,6 @@ namespace TypeCobol.Test.Utils
             Observer = new TestObserver();
         }
 
-        public static void TestInitialize()
-        {
-            SymbolTableBuilder.Root = null;
-        }
-        public static void TestCleanup()
-        {
-            if (ProgramSymbolTableBuilder.LastBuilder != null)
-            {
-                ProgramSymbolTableBuilder.LastBuilder.RemovePrograms();
-            }
-
-            SymbolTableBuilder.Root = null;
-        }
-
         public void Init(string[] extensions = null, bool autoRemarks = false, bool AntlrProfiler = false)
         {
             DirectoryInfo localDirectory = new DirectoryInfo(Path.GetDirectoryName( Comparator?.paths?.SamplePath));
@@ -70,16 +56,11 @@ namespace TypeCobol.Test.Utils
 		public void Parse() {
             try
             {
-                TestUnit.TestInitialize();
                 Compiler.CompileOnce();
             }
             catch (Exception e)
             {
                 Observer.OnError(e);
-            }
-            finally
-            {
-                TestUnit.TestCleanup();
             }
 		}
 
@@ -208,15 +189,7 @@ namespace TypeCobol.Test.Utils
                     Console.WriteLine(comparator.paths.Result + " checked with " + comparator.GetType().Name);
 					var unit = new TestUnit(comparator, debug);
 					unit.Init(compilerExtensions, autoRemarks);
-                    try
-				    {
-                        TestUnit.TestInitialize(); 
-                        unit.Parse();
-                    }
-				    finally
-				    {
-                        TestUnit.TestCleanup();
-				    }
+                    unit.Parse();
                     if (unit.Observer.HasErrors)
 				    {
 				        Console.WriteLine(" /!\\ EXCEPTION\n" + unit.Observer.DumpErrors());

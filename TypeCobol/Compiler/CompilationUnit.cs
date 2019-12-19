@@ -232,7 +232,7 @@ namespace TypeCobol.Compiler
 
                     PrgSymbolTblBuilder?.RemovePrograms();
                     //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
-                    PrgSymbolTblBuilder = ProgramClassParserStep.CupParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, perfStatsForParserInvocation, out root, out newDiagnostics, out nodeCodeElementLinkers,
+                    PrgSymbolTblBuilder = ProgramClassParserStep.CupParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, this.RootSymbolTable, perfStatsForParserInvocation, out root, out newDiagnostics, out nodeCodeElementLinkers,
                         out typedVariablesOutsideTypedef,
                         out typeThatNeedTypeLinking);
 

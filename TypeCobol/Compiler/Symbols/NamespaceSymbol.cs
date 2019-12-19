@@ -27,6 +27,27 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="from"></param>
+        public NamespaceSymbol(String name, NamespaceSymbol from) : this(name)
+        {
+            foreach (var t in from.Types)
+            {
+                Types.Enter(t);
+            }
+            foreach (var p in from.Programs)
+            {
+                Programs.Enter(p);
+            }
+            foreach (var n in from.Namespaces)
+            {
+                Namespaces.Enter(n);
+            }
+        }
+
+        /// <summary>
         /// Enter a Program in this namespace
         /// </summary>
         /// <param name="name">Program's name</param>
@@ -42,7 +63,8 @@ namespace TypeCobol.Compiler.Symbols
             //Set the owner
             entry.Symbol.Owner = this;
             //Add it to the all scope domain
-            SymbolTableBuilder.Root.AddToDomain(entry.Symbol);
+            Symbol root = TopParent(Kinds.Root);
+            ((RootSymbolTable)root)?.AddToDomain(entry.Symbol);
             return entry.Symbol;
         }
 
@@ -56,7 +78,8 @@ namespace TypeCobol.Compiler.Symbols
             {
                 Programs.Remove(prgSym);
                 //Remove it from the all scope domain
-                SymbolTableBuilder.Root.RemoveFromDomain(prgSym);
+                Symbol root = TopParent(Kinds.Root);
+                ((RootSymbolTable)root)?.RemoveFromDomain(prgSym);
                 prgSym.Owner = null;
             }
         }

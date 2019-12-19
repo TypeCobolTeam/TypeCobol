@@ -90,6 +90,16 @@ namespace TypeCobol.Compiler.Scopes
             {
 
             }
+
+            /// <summary>
+            /// Copy constructor
+            /// </summary>
+            /// <param name="from"></param>
+            protected Entry(Entry from)
+            {
+                Symbol = from.Symbol;
+            }
+
         }
 
         /// <summary>
@@ -115,6 +125,16 @@ namespace TypeCobol.Compiler.Scopes
             {
                 _symbols.Add(symbol);
             }
+
+            /// <summary>
+            /// Copy constructor.
+            /// </summary>
+            /// <param name="from"></param>
+            public MultiSymbols(MultiSymbols from) : base(from)
+            {
+                _symbols.AddRange(from._symbols);
+            }
+
 
             /// <summary>
             /// Add a symbol

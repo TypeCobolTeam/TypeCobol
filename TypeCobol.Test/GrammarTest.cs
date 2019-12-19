@@ -56,31 +56,6 @@ namespace TypeCobol.Test {
 	            
 	    }
 
-#if DOMAIN_CHECKER
-	    public static TypeCobolConfiguration DefaultConfig = null;
-	    public static ProgramSymbolTableBuilder Builder = null;
-	    public static NodeListenerFactory BuilderNodeListenerFactory = null;
-	    public static string DefaultIntrinsicPath = null;//@"C:\TypeCobol\Sources\##Latest_Release##\Intrinsic\Intrinsic.txt";
-
-	    public static void TestInitialize()
-	    {
-	        SymbolTableBuilder.Root = null;
-	        //Create a default configurations for options
-	        DefaultConfig = new TypeCobolConfiguration();
-	        if (File.Exists(DefaultIntrinsicPath))
-	        {
-	            DefaultConfig.Copies.Add(DefaultIntrinsicPath);
-	        }
-	        DefaultConfig.Dependencies.Add(Path.Combine(Directory.GetCurrentDirectory(), "resources", "dependencies"));
-	        SymbolTableBuilder.Config = DefaultConfig;
-	    }
-	    public static void TestCleanup()
-	    {
-            ProgramSymbolTableBuilder.LastBuilder.RemovePrograms();
-        }
-
-#endif
-
         public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex, string[] include, string[] exclude, string[] copiesFolder, string skelPath, int stopAfterAsManyErrors, bool autoRemarks, string expectedResultFile, bool ignoreWarningDiag) { 
 			string[] files = Directory.GetFiles(rootFolder, regex, SearchOption.AllDirectories);
 			bool codegen = true;
@@ -122,22 +97,8 @@ namespace TypeCobol.Test {
 #endif
                 };
 
-#if DOMAIN_CHECKER
-                try
-                {
-			        TestInitialize();
-                    document.Init(path, options, format, copiesFolder);
-                    document.Parse(path);
-                }
-                finally
-                {
-                    TestCleanup();
-
-                }
-#else
 			    document.Init(path, options, format, copiesFolder);
 			    document.Parse(path);
-#endif
 
                 watch.Stop();
 				//TestJSONSerializer.DumpAsJSON(unit.CodeElementsDocumentSnapshot.CodeElements, filename);

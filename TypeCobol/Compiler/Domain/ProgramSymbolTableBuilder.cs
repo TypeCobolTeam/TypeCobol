@@ -54,15 +54,6 @@ namespace TypeCobol.Compiler.Domain
         public IList<Diagnostic> Diagnostics { get; private set; }
 
         /// <summary>
-        /// The Last Builder created if any, most often it is used by tests.
-        /// </summary>
-        public static ProgramSymbolTableBuilder LastBuilder
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// The List of Stacked Program symbol built as a Scope.
         /// The first main program will be the first element of the list, 
         /// followed by remaining stacked programs.
@@ -127,9 +118,20 @@ namespace TypeCobol.Compiler.Domain
             set;
         }
 
-
-        public ProgramSymbolTableBuilder()
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public ProgramSymbolTableBuilder() : this(new RootSymbolTable())
         {
+        }
+
+        /// <summary>
+        /// RootSymbolTable instance constructor.
+        /// </summary>
+        /// <param name="root">The RootSymbolTable to be used</param>
+        public ProgramSymbolTableBuilder(RootSymbolTable root)
+        {
+            this.MyRoot = root;
             Programs = new List<ProgramSymbol>();
             Diagnostics = new List<Diagnostic>();
         }
@@ -148,17 +150,20 @@ namespace TypeCobol.Compiler.Domain
             set;
         }
 
+        private RootSymbolTable MyRoot
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Remove all program build by this Program Symbol table Builder.
         /// </summary>
         public void RemovePrograms()
         {
-            if (SymbolTableBuilder.HasRoot)
+            foreach (var prog in Programs)
             {
-                foreach (var prog in ProgramSymbolTableBuilder.LastBuilder.Programs)
-                {
-                    SymbolTableBuilder.Root.RemoveProgram(prog);
-                }
+                this.MyRoot.RemoveProgram(prog);
             }
         }
 
@@ -196,12 +201,12 @@ namespace TypeCobol.Compiler.Domain
             bool bDuplicate = false;
             if (this.CurrentProgram == null)
             {//This is the main program or a stacked program with no parent.
-                var prg = Root.Programs.Lookup(programIdentification.ProgramName.Name);
+                var prg = this.MyRoot.Programs.Lookup(programIdentification.ProgramName.Name);
                 if (prg != null)
                 {//Duplicate Program
                     bDuplicate = true;
                 }
-                this.CurrentProgram = Root.EnterProgram(programIdentification.ProgramName.Name);
+                this.CurrentProgram = this.MyRoot.EnterProgram(programIdentification.ProgramName.Name);
                 //Add the new Stacked program.
                 Programs.Add(CurrentProgram);
             }
@@ -219,7 +224,7 @@ namespace TypeCobol.Compiler.Domain
                     nestedProgram.Owner = this.CurrentProgram;
                     this.CurrentProgram = nestedProgram;
                     //Add it to the all scope domain
-                    SymbolTableBuilder.Root.AddToDomain(nestedProgram);
+                    this.MyRoot.AddToDomain(nestedProgram);
                 }
                 else
                 {
@@ -261,7 +266,7 @@ namespace TypeCobol.Compiler.Domain
             if (this.CurrentProgram == null && lastPrg.HasFlag(Symbol.Flags.NeedTypeCompletion))
             {
                 //Entire stacked program has been parsed ==> Resolve Types if needed.
-                TypeCobol.Compiler.Domain.Validator.SymbolTypeResolver resolver = new TypeCobol.Compiler.Domain.Validator.SymbolTypeResolver(Root);
+                TypeCobol.Compiler.Domain.Validator.SymbolTypeResolver resolver = new TypeCobol.Compiler.Domain.Validator.SymbolTypeResolver(MyRoot);
                 lastPrg.Accept(resolver, null);
                 lastPrg.SetFlag(Symbol.Flags.ProgramCompleted, true);
             }
@@ -450,7 +455,7 @@ namespace TypeCobol.Compiler.Domain
             //Enter the function in the current scope
             this.CurrentScope.Functions.Enter(funSym);
             //Add it to the all scope domain
-            SymbolTableBuilder.Root.AddToDomain(funSym);
+            this.MyRoot.AddToDomain(funSym);
             //The its owner has the current scope.
             funSym.Owner = this.CurrentScope;
             //What about function visibility.
@@ -918,7 +923,7 @@ namespace TypeCobol.Compiler.Domain
                     tdSym.Owner = parentScope.Owner;
                     ((ProgramSymbol)parentScope.Owner).Types.Enter(tdSym);
                     //Add the type to the domain of types
-                    Root.AddToDomain(tdSym);
+                    this.MyRoot.AddToDomain(tdSym);
                 }
                 else
                 {//Declaration of a TypeDef out of a Program or a Function 
