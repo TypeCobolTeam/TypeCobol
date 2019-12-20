@@ -108,14 +108,14 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        public static void CrossCheckPrograms(SourceFile root, TemporarySemanticDocument temporarySemanticDocument)
+        public static void CrossCheckPrograms(SourceFile root, TemporarySemanticDocument temporarySemanticDocument, TypeCobolOptions compilerOptions)
         {
             //Create link between data definition an Types, will be stored in SymbolTable
             TypeCobolLinker.LinkedTypedVariables(temporarySemanticDocument.TypedVariablesOutsideTypedef, 
                 temporarySemanticDocument.TypeThatNeedTypeLinking);
 
             //Complete some information on Node and run checker that need a full AST
-            root.AcceptASTVisitor(new CrossCompleteChecker());
+            root.AcceptASTVisitor(new CrossCompleteChecker(compilerOptions));
         }
 
     }

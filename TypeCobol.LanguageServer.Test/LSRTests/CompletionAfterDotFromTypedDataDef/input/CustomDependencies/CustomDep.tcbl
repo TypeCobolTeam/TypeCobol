@@ -1,0 +1,12 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. CustomDep.
+      
+       DATA DIVISION.
+       working-storage section.
+      
+       01 MyTypeDef TYPEDEF STRICT PUBLIC.
+            05 DATA1 PIC X(20).
+      
+       PROCEDURE DIVISION.
+      
+       END PROGRAM CustomDep.

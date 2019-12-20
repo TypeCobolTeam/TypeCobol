@@ -69,6 +69,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="LSRTests\CompletionAfterDotFromTypedDataDef\input\CompletionAfterDotFromTypedDataDef.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionAfterDotFromTypedDataDef\input\CustomDependencies\CustomDep.tcbl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionAfterDotFromTypedDataDef\output_expected\CompletionAfterDotFromTypedDataDef.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\RefreshCopiesNotif\input\RefreshCopyNotif.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -79,6 +88,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\BeginTopLineEnterEnter\output_expected\BeginTopLineEnterEnter.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionAfterBetweenColons\input\CompletionAfterBetweenColons.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionAfterBetweenColons\output_expected\CompletionAfterBetweenColons.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\CompletionOnPartialLibraryName\input\CompletionOnPartialLibraryName.tlsp">
@@ -112,6 +127,21 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\IncrementalThruTokenInsideCopies\output_expected\IncrementalThruTokenInsideCopies.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\OnHoverDisplayVariableDefinition\input\OnHoverDisplayVariableDefinition.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\OnHoverDisplayVariableDefinition\output_expected\OnHoverDisplayVariableDefinition.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\OnHoverDisplayVariableDefinitionFromCopy\input\CopyFolder\TESTCPY.cpy">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\OnHoverDisplayVariableDefinitionFromCopy\input\OnHoverDisplayVariableDefinitionFromCopy.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\OnHoverDisplayVariableDefinitionFromCopy\output_expected\OnHoverDisplayVariableDefinitionFromCopy.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\OnHover\input\OnHover.tlsp">

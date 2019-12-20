@@ -413,9 +413,10 @@ namespace TypeCobol.LanguageServer
                                 ((firstSignificantToken != null && ((t.StartIndex >= firstSignificantToken.EndColumn && t.Line == firstSignificantToken.Line) || t.Line > firstSignificantToken.Line)) 
                                 || firstSignificantToken == null) 
                                 && ((t.EndColumn <= position.character && t.Line == position.line + 1) || t.Line < position.line + 1))
-                        .Select(t => t.Text);
-                qualifiedName.Reverse();
-                var possibleVariables = node.SymbolTable.GetVariablesExplicit(new URI(qualifiedName));
+                        .Select(t => t.Text)
+                        .ToArray();
+
+               var possibleVariables = qualifiedName.Length > 0 ? node.SymbolTable.GetVariablesExplicit(new URI(qualifiedName)) : null;
 
                 if (possibleVariables != null && possibleVariables.Any()) 
                 {
@@ -609,12 +610,15 @@ namespace TypeCobol.LanguageServer
             {
                 if (seekedDataTypes.Count == 0) //If a Datatype hasn't be found yet. 
                 {
-                    var foundedVars =
-                        node.SymbolTable.GetVariablesExplicit(
-                            new URI(qualifiedNameTokens.Select(t => t.Text)));
+                    var foundedVar = node.SymbolTable.GetVariablesExplicit(new URI(qualifiedNameTokens.Select(t => t.Text))).FirstOrDefault();
 
-                    if (foundedVars != null && foundedVars.Any())
-                        seekedDataTypes.Add(foundedVars.First().DataType);
+                    if (foundedVar != null)
+                    {
+                        seekedDataTypes.Add(foundedVar.DataType);
+
+                        // Add PrimitiveDataType to extend the search to compatible types, if null default to Alphanumeric
+                        seekedDataTypes.Add(foundedVar.PrimitiveDataType ?? DataType.Alphanumeric);
+                    }
                 }
 
                 foreach (var seekedDataType in seekedDataTypes.Distinct())
@@ -674,7 +678,7 @@ namespace TypeCobol.LanguageServer
             {
                 case TokenType.ADDRESS:
                 {
-                    var contextToken = tokensUntilCursor.Skip(2).FirstOrDefault(); //Try to get the token that may define the completion context
+                    var contextToken = tokensUntilCursor?.Skip(2).FirstOrDefault(); //Try to get the token that may define the completion context
                     completionItems = GetCompletionForAddressOf(node, contextToken, userFilterText);
                     break;
                 }
@@ -693,7 +697,6 @@ namespace TypeCobol.LanguageServer
         /// This method will modify the completionItems ref parameter.
         /// CompletionItems will be filtered on variables declared in LINKAGE SECTION and with LevelNumber equal to 01 or 77. 
         /// </summary>
-        /// <param name="completionItems">Ref to a list of completion items</param>
         /// <param name="node">Node found on cursor position</param>
         /// <param name="contextToken">ContextToken to select if it's a SET or something else</param>
         /// <param name="userFilterText">Variable Name Filter</param>

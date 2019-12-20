@@ -107,7 +107,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"MyDataGlobal (DATE) (MyDataGlobal)\",\"kind\":6,\"insertText\":\"MyDataGlobal\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"MyDataGlobal (DATE) (MyDataGlobal)\",\"kind\":6,\"insertText\":\"MyDataGlobal\"},{\"label\":\"GlobalGroup (Alphanumeric) (GlobalGroup)\",\"kind\":6,\"insertText\":\"GlobalGroup\"},{\"label\":\"globalChildren2 (Alphanumeric) (GlobalGroup::globalChildren2)\",\"kind\":6,\"insertText\":\"GlobalGroup::globalChildren2\"}]}"
     },
     {
       "category": 0,
