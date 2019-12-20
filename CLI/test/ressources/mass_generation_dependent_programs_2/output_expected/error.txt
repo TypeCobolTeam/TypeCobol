@@ -1,0 +1,7 @@
+﻿ReturnCode=ParsingDiagnostics_
+1 error in "input\DVZZPGM1.tcbl":
+Line 7[33,36] <27, Error, Syntax> - Syntax error : Symbol str-message.var1 is not referenced
+2 errors in "input\DVZZPGM2.tcbl":
+Line 7[11,12] <27, Error, Syntax> - Syntax error : mismatched input '05' expecting {separator, statement starting keyword, keyword}
+Line 6[8,27] <30, Error, Semantics> - Semantic error: TYPEDEF 'Type1' has no description.
+No error in "input\DVZZPGM3.tcbl".
