@@ -23,7 +23,7 @@ namespace TypeCobol.Tools.CommandLine
 
             string sourcePath = projectRootPath + @"TypeCobol.Test\Samples\EI Cobol samples\EI-Production";
             string[] programExtensions = { ".PGM" };
-            string[] copyExtensions = { ".CPY" };
+            string[] copyExtensions = { ".CPY", ".COPY" };
 
             DocumentFormat docFormat = new DocumentFormat(Encoding.GetEncoding("iso8859-1"), EndOfLineDelimiter.CrLfCharacters, 80, ColumnsLayout.CobolReferenceFormat);
 

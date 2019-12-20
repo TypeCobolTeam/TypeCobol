@@ -26,8 +26,8 @@ namespace TypeCobol
 		/// <summary>Optional custom symbol table to use for name and type resolution.</summary>
 		public SymbolTable CustomSymbols = null;
 
-		public string[] Extensions = { ".cbl", ".cpy" };
-		public string[] CopyExtensions = { ".cpy" };
+		public string[] Extensions = { ".cbl", ".cpy", ".copy" };
+		public string[] CopyExtensions = { ".cpy", ".copy" };
 
 		public Parser() {
 			Inits = new Dictionary<string,bool>();
