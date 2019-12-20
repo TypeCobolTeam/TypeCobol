@@ -109,7 +109,7 @@ namespace CLI.Test
             var testFolderName = "empty_dependency_folder";
             Directory.CreateDirectory("ressources" + Path.DirectorySeparatorChar + testFolderName + Path.DirectorySeparatorChar +  "emptyFolder");
 
-            CLITestHelper.ReadConsoleWarnings(testFolderName, ReturnCode.Success);
+            CLITestHelper.ReadConsoleWarnings(testFolderName, ReturnCode.Warning);
         }
 
 

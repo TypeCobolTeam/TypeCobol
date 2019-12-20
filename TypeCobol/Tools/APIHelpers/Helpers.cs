@@ -34,6 +34,7 @@ namespace TypeCobol.Tools.APIHelpers
                     parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck }, intrinsicDocumentFormat);
                     parser.Parse(path);
 
+                    diagnostics.Clear();
                     diagnostics.AddRange(parser.Results.AllDiagnostics());
 
                     if (diagEvent != null && diagnostics.Count > 0)
@@ -178,20 +179,22 @@ namespace TypeCobol.Tools.APIHelpers
                 {
                     CompilationUnit parsingResult = ParseDependency(path, config, table);
 
+                    //Report diagnostics
+                    diagnostics.Clear();
+                    diagnostics.AddRange(parsingResult.AllDiagnostics());
+                    if (diagEvent != null && diagnostics.Count > 0)
+                    {
+                        diagnostics.ForEach(d => diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = d }));
+                    }
+
                     //Gather copies used
                     usedCopies.AddRange(parsingResult.CopyTextNamesVariations);
 
+                    //Collect missing copies
                     if (parsingResult.MissingCopies.Count > 0)
                     {
                         missingCopies.Add(path, parsingResult.MissingCopies.Select(mc => mc.TextName));
                         continue; //There will be diagnostics because copies are missing. Don't report diagnostic for this dependency, but load following dependencies
-                    }
-
-                    diagnostics.AddRange(parsingResult.AllDiagnostics());
-
-                    if (diagEvent != null && diagnostics.Count > 0)
-                    {
-                        diagnostics.ForEach(d => diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = d }));
                     }
 
                     if (parsingResult.TemporaryProgramClassDocumentSnapshot.Root.Programs == null || !parsingResult.TemporaryProgramClassDocumentSnapshot.Root.Programs.Any())
