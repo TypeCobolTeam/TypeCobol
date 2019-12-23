@@ -166,6 +166,11 @@ namespace TypeCobol.Compiler.Scanner
             Token nextToken = null;
             while((nextToken = scanner.GetNextToken()) != null)
             {
+                if (nextToken.TokenType == TokenType.AlphanumericLiteral && (!nextToken.HasOpeningDelimiter || !nextToken.HasClosingDelimiter))
+                {
+                    tokensLine.AddDiagnostic(MessageCode.SyntaxErrorInParser,
+                        tokensLine.Indicator.StartIndex, tokensLine.Indicator.EndIndex, "Literal is not well delimited.");
+                }
                 tokensLine.AddToken(nextToken);
             }    
         }
