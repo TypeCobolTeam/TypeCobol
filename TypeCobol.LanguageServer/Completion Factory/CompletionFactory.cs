@@ -424,10 +424,14 @@ namespace TypeCobol.LanguageServer
                     foreach (var variable in possibleVariables)
                     {
                         var children = new List<Node>();
-                        //if it's a typed variable, we have to search for children in the type
-                        var typeChildren = GetTypeChildren(node.SymbolTable, variable);
-                        if (typeChildren != null)
-                            children.AddRange(typeChildren.Where(t => t.Name != null || t.Children.Where(u => u.Name != null) != null));
+                        if (variable.Children?.All(c => c is IndexDefinition) ?? true)
+                        {
+                            // no child  or all children are of type IndexDefinition
+                            var typeChildren = GetTypeChildren(node.SymbolTable, variable);
+                            // if it's a typed variable, we have to search for children in the type
+                            if (typeChildren != null)
+                                children.AddRange(typeChildren.Where(t => t.Name != null || t.Children.Where(u => u.Name != null) != null));
+                        }
 
                         if (variable.Children != null && variable.Children.Count > 0) //It's a variable with levels inside
                             children.AddRange(variable.Children);
