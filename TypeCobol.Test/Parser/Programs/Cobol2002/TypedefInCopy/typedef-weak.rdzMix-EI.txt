@@ -2,8 +2,8 @@
        PROGRAM-ID. MainProgram.
        data division.
        working-storage section.
-Line 5[25,31] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
-Line 5[25,31] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 5[25,31] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed in definition of type TypedefWeak1.
+Line 5[25,31] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed in definition of type TypedefWeak2.
 Line 5[8,39] <30, Error, Semantics> - Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a copy. Please review the 'TypedefWeak' copy.
          COPY TypedefWeak.
          01 var1 type TypedefWeak1.
