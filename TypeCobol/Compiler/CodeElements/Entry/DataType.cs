@@ -37,6 +37,9 @@ namespace TypeCobol.Compiler.CodeElements
             if (Object.ReferenceEquals(this, dataType)) return true;
             if (Object.ReferenceEquals(null, dataType)) return false;
 
+            //Data instance for Cobol85 are unique so their references have been compared
+            if (CobolLanguageLevel == CobolLanguageLevel.Cobol85 || dataType.CobolLanguageLevel == CobolLanguageLevel.Cobol85) return false;
+
             return Name.Equals(dataType.Name, StringComparison.OrdinalIgnoreCase);
         }
 
@@ -67,7 +70,7 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 
-		public static DataType CreateCustom(string name, RestrictionLevel restrictionLevel = RestrictionLevel.STRONG, CobolLanguageLevel cobolLanguageLevel = CobolLanguageLevel.Cobol2002) {
+        public static DataType CreateCustom(string name, RestrictionLevel restrictionLevel = RestrictionLevel.STRONG, CobolLanguageLevel cobolLanguageLevel = CobolLanguageLevel.Cobol2002) {
 			foreach(var builtin in BuiltInCustomTypes)
 				if (builtin.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))
 					return builtin;

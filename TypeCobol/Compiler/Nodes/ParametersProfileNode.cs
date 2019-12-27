@@ -8,7 +8,7 @@ using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.Nodes
 {
-    public class ParametersProfileNode : GenericNode<ParametersProfile>, ParameterList, IEquatable<ParametersProfileNode>
+    public class ParametersProfileNode : GenericNode<ParametersProfile>, ParameterList
     {
         public IList<ParameterDescription> InputParameters { get; set; }
         public IList<ParameterDescription> InoutParameters { get; set; }
@@ -39,50 +39,6 @@ namespace TypeCobol.Compiler.Nodes
 	    public bool IsFunction { get { return InoutParameters.Count < 1 && OutputParameters.Count < 1; } }
         /// <summary>TCRFUN_NO_RETURNING_FOR_PROCEDURES</summary>
         public bool IsProcedure { get { return ReturningParameter == null; } }
-
-
-
-        public override bool Equals(object other)
-        {
-            return Equals(other as ParametersProfileNode);
-        }
-
-        public bool Equals(ParametersProfileNode paramsProfileNode)
-        {
-            if (System.Object.ReferenceEquals(this, paramsProfileNode)) return true;
-            if (System.Object.ReferenceEquals(null, paramsProfileNode)) return false;
-
-            // instead of doing foreach(var mode in Tools.Reflection.GetValues<Passing.Mode>()) ...,
-            // only iterate over input+output+inout parameters: returning parameter does not have
-            // any impact in conflict between function profiles resolution
-            bool okay = AreEqual(InputParameters, paramsProfileNode.InputParameters);
-            if (!okay) return false;
-            okay = AreEqual(InoutParameters, paramsProfileNode.InoutParameters);
-            if (!okay) return false;
-            return AreEqual(OutputParameters, paramsProfileNode.OutputParameters);
-        }
-
-        private static bool AreEqual(IList<ParameterDescription> mine, IList<ParameterDescription> hers)
-        {
-            if (mine.Count != hers.Count) return false;
-            for (int c = 0; c < mine.Count; c++)
-            {
-                if (!mine[c].Equals(hers[c])) return false;
-                if (!mine[c].Equals(hers[c])) return false;
-            }
-            return true;
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                var hashCode = 17;
-                foreach (var p in Parameters) hashCode = (hashCode * 397) ^ p.GetHashCode();
-
-                return hashCode;
-            }
-        }
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {

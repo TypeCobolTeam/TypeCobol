@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.Scanner
         private int stopIndex;
 
         /// <summary>Empty constructor for mock.</summary>
-		public Token() { }
+        public Token() { }
 
         public override bool Equals(object obj)
         {

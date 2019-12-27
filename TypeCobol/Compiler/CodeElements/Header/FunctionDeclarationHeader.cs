@@ -233,7 +233,7 @@ namespace TypeCobol.Compiler.CodeElements {
 	    /// <summary>TCRFUN_NO_RETURNING_FOR_PROCEDURES</summary>
 	    public bool IsProcedure { get { return ReturningParameter == null; } }
 
-	    public override bool Equals(object other)
+        public override bool Equals(object other)
         {
             return Equals(other as ParametersProfile);
         }
@@ -253,16 +253,17 @@ namespace TypeCobol.Compiler.CodeElements {
             return AreEqual(OutputParameters, paramsProfile.OutputParameters);
         }
 
-        private static bool AreEqual(IList<ParameterDescriptionEntry> mine, IList<ParameterDescriptionEntry> hers) {
-		    if (mine.Count != hers.Count) return false;
-		    for (int c = 0; c < mine.Count; c++) {
-			    if (!mine[c].Equals(hers[c])) return false;
-			    if (!mine[c].Equals(hers[c])) return false;
-		    }
-		    return true;
-	    }
+        private static bool AreEqual(IList<ParameterDescriptionEntry> mine, IList<ParameterDescriptionEntry> hers)
+        {
+            if (mine.Count != hers.Count) return false;
+            for (int c = 0; c < mine.Count; c++) {
+	            if (!mine[c].Equals(hers[c])) return false;
+	            if (!mine[c].Equals(hers[c])) return false;
+            } 
+            return true;
+        }
 
-	    public override int GetHashCode() {
+        public override int GetHashCode() {
             unchecked
             {
                 var hashCode = 17;
@@ -277,26 +278,26 @@ namespace TypeCobol.Compiler.CodeElements {
                    && this.ContinueVisitToChildren(astVisitor, InputParameters,
                                                                InoutParameters,
                                                                OutputParameters) 
-                       && this.ContinueVisitToChildren(astVisitor, ReturningParameter);
+                   && this.ContinueVisitToChildren(astVisitor, ReturningParameter);
         }
 
         public override string ToString()
         {
-		    var str = new System.Text.StringBuilder();
-		    str.Append('(');
-		    foreach (var p in InputParameters) str.Append(p.Name).Append(p.IsOmittable ? " ?" : "").Append(':').Append(p.DataType).Append(", ");
-		    if (InputParameters.Count > 0) str.Length -= 2;
-		    str.Append("):(");
-		    foreach (var p in OutputParameters) str.Append(p.Name).Append(p.IsOmittable ? " ?" : "").Append(':').Append(p.DataType).Append(", ");
-		    if (OutputParameters.Count > 0) str.Length -= 2;
-		    str.Append("):(");
-		    foreach (var p in InoutParameters) str.Append(p.Name).Append(p.IsOmittable ? " ?" : "").Append(':').Append(p.DataType).Append(", ");
-		    if (InoutParameters.Count > 0) str.Length -= 2;
-		    str.Append("):(");
-		    if (ReturningParameter != null) str.Append(ReturningParameter.Name).Append(':').Append(ReturningParameter.DataType);
-		    str.Append(')');
-		    return str.ToString();
-	    }
+            var str = new System.Text.StringBuilder();
+            str.Append('(');
+            foreach (var p in InputParameters) str.Append(p.Name).Append(p.IsOmittable ? " ?" : "").Append(':').Append(p.DataType).Append(", ");
+            if (InputParameters.Count > 0) str.Length -= 2;
+            str.Append("):(");
+            foreach (var p in OutputParameters) str.Append(p.Name).Append(p.IsOmittable ? " ?" : "").Append(':').Append(p.DataType).Append(", ");
+            if (OutputParameters.Count > 0) str.Length -= 2;
+            str.Append("):(");
+            foreach (var p in InoutParameters) str.Append(p.Name).Append(p.IsOmittable ? " ?" : "").Append(':').Append(p.DataType).Append(", ");
+            if (InoutParameters.Count > 0) str.Length -= 2;
+            str.Append("):(");
+            if (ReturningParameter != null) str.Append(ReturningParameter.Name).Append(':').Append(ReturningParameter.DataType);
+            str.Append(')');
+            return str.ToString();
+        }
 
 
 
