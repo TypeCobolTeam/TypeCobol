@@ -11,20 +11,24 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Domain;
 #if DOMAIN_CHECKER
 using TypeCobol.Compiler.Domain;
 #endif
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Scopes;
 using TypeCobol.CustomExceptions;
+using TypeCobol.Tools.Options_Config;
 using String = System.String;
 
 namespace TypeCobol.Tools.APIHelpers
 {
     public static class Helpers
     {
-        public static SymbolTable LoadIntrinsic(List<string> paths, DocumentFormat intrinsicDocumentFormat, EventHandler<DiagnosticsErrorEvent> diagEvent)
+        public static Tuple<SymbolTable, RootSymbolTable> LoadIntrinsic(List<string> paths, DocumentFormat intrinsicDocumentFormat, EventHandler<DiagnosticsErrorEvent> diagEvent)
         {
             var parser = new Parser();
+            parser.CustomRootSymbols = new RootSymbolTable();
             var diagnostics = new List<Diagnostic>();
             var table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
             var instrincicFiles = new List<string>();
@@ -35,7 +39,7 @@ namespace TypeCobol.Tools.APIHelpers
             {
                 try
                 {
-                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck }, intrinsicDocumentFormat);
+                    FileCompiler compiler = parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck }, intrinsicDocumentFormat);
                     parser.Parse(path);
 
                     diagnostics.AddRange(parser.Results.AllDiagnostics());
@@ -74,18 +78,14 @@ namespace TypeCobol.Tools.APIHelpers
                 }
             }
 
-#if DOMAIN_CHECKER
-            SymbolTableBuilder.TransfertAllProgramsToIntrinsics();
-#endif
-
-            return table;
+            return new Tuple<SymbolTable, RootSymbolTable>(table, parser.CustomRootSymbols);
         }
 
-        public static SymbolTable LoadDependencies([NotNull] List<string> paths, DocumentFormat format, SymbolTable intrinsicTable,
+        public static Tuple<SymbolTable, RootSymbolTable> LoadDependencies([NotNull] List<string> paths, DocumentFormat format, SymbolTable intrinsicTable, RootSymbolTable rootSymbolTable,
             [NotNull] List<string> inputFiles, List<string> copyFolders, EventHandler<DiagnosticsErrorEvent> diagEvent)
         {
 
-            var parser = new Parser(intrinsicTable);
+            var parser = new Parser(intrinsicTable, rootSymbolTable);
             var diagnostics = new List<Diagnostic>();
             var table = new SymbolTable(intrinsicTable, SymbolTable.Scope.Namespace); //Generate a table of NameSPace containing the dependencies programs based on the previously created intrinsic table. 
 
@@ -146,10 +146,11 @@ namespace TypeCobol.Tools.APIHelpers
                     }
                 }
 #endif
+                FileCompiler compiler = null;
                 try
                 {
                     parser.CustomSymbols = table; //Update SymbolTable
-                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, format, copyFolders);
+                    compiler = parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, format, copyFolders);
                     parser.Parse(path); //Parse the dependency file
 
                     diagnostics.AddRange(parser.Results.AllDiagnostics());
@@ -196,9 +197,21 @@ namespace TypeCobol.Tools.APIHelpers
 
             //Reset symbolTable of all dependencies 
 
+            return new Tuple<SymbolTable, RootSymbolTable>(table, rootSymbolTable);
+        }
 
-
-            return table;
+        /// <summary>
+        /// Load both Intrinsic symbols and Dependencies files.
+        /// </summary>
+        /// <param name="config"></param>
+        /// <param name="DiagnosticsErrorEvent"></param>
+        /// <param name="DependencyErrorEvent"></param>
+        /// <returns></returns>
+        public static Tuple<SymbolTable, RootSymbolTable> LoadIntrinsicAndDependencies(TypeCobolConfiguration config, EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DiagnosticsErrorEvent, EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DependencyErrorEvent)
+        {
+            Tuple<SymbolTable, RootSymbolTable> customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load intrinsic
+            customSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, customSymbols.Item1, customSymbols.Item2, config.InputFiles, config.CopyFolders, DependencyErrorEvent); //Load dependencies
+            return customSymbols;
         }
     }
 

@@ -54,8 +54,14 @@ namespace TypeCobol.Test.Utils
         }
 
 		public void Parse() {
-			try { Compiler.CompileOnce(); }
-			catch(Exception e) { Observer.OnError(e); }
+            try
+            {
+                Compiler.CompileOnce();
+            }
+            catch (Exception e)
+            {
+                Observer.OnError(e);
+            }
 		}
 
 		public string ToJSON() {
@@ -170,54 +176,6 @@ namespace TypeCobol.Test.Utils
             return _nbOfTests;
         }
 
-#if DOMAIN_CHECKER
-        public static TypeCobolConfiguration DefaultConfig = null;
-        public static ProgramSymbolTableBuilder Builder = null;
-        public static NodeListenerFactory BuilderNodeListenerFactory = null;
-        public static string DefaultIntrinsicPath = null;//@"C:\TypeCobol\Sources\##Latest_Release##\Intrinsic\Intrinsic.txt";
-
-        public void TestInitialize()
-        {
-            SymbolTableBuilder.Root = null;
-            //Create a default configurations for options
-            DefaultConfig = new TypeCobolConfiguration();
-            if (File.Exists(DefaultIntrinsicPath))
-            {
-                DefaultConfig.Copies.Add(DefaultIntrinsicPath);
-            }
-            DefaultConfig.Dependencies.Add(Path.Combine(Directory.GetCurrentDirectory(), "resources", "dependencies"));
-            SymbolTableBuilder.Config = DefaultConfig;
-
-            //Force the creation of the Root Symbol Table
-            var global = SymbolTableBuilder.Root;
-
-            //Allocate a static Program Symbol Table Builder
-            BuilderNodeListenerFactory = () =>
-            {
-                Builder = new ProgramSymbolTableBuilder();
-                ProgramSymbolTableBuilder.LastBuilder = Builder;
-                return Builder;
-            };
-            TypeCobol.Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(BuilderNodeListenerFactory);
-        }
-        public void TestCleanup()
-        {
-            if (BuilderNodeListenerFactory != null)
-            {
-                TypeCobol.Compiler.Parser.NodeDispatcher.RemoveStaticNodeListenerFactory(BuilderNodeListenerFactory);
-                if (Builder.Programs.Count != 0)
-                {
-                    foreach (var prog in Builder.Programs)
-                        SymbolTableBuilder.Root.RemoveProgram(prog);
-                }
-                ProgramSymbolTableBuilder.LastBuilder = null;
-                BuilderNodeListenerFactory = null;
-            }
-            SymbolTableBuilder.Root = null;
-        }
-
-#endif
-
         public void Test(bool debug = false, bool json = false, bool autoRemarks = false) {
 			var errors = new StringBuilder();
 			foreach (var samplePath in samples) {
@@ -231,19 +189,7 @@ namespace TypeCobol.Test.Utils
                     Console.WriteLine(comparator.paths.Result + " checked with " + comparator.GetType().Name);
 					var unit = new TestUnit(comparator, debug);
 					unit.Init(compilerExtensions, autoRemarks);
-#if DOMAIN_CHECKER
-				    try
-				    {
-				        TestInitialize();
-                        unit.Parse();
-                    }
-				    finally
-				    {
-				        TestCleanup();
-				    }
-#else
-    unit.Parse();
-#endif
+                    unit.Parse();
                     if (unit.Observer.HasErrors)
 				    {
 				        Console.WriteLine(" /!\\ EXCEPTION\n" + unit.Observer.DumpErrors());

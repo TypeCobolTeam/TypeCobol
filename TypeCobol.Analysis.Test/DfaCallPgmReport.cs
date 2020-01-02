@@ -35,7 +35,7 @@ namespace TypeCobol.Analysis.Test
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             Assert.IsTrue(ctx.CfgDfaBuilder.AllCfgBuilder.Count == 1);
             Assert.IsNotNull(ctx.CfgDfaBuilder.AllCfgBuilder);
 
@@ -65,7 +65,7 @@ namespace TypeCobol.Analysis.Test
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             Assert.IsTrue(ctx.CfgDfaBuilder.AllCfgBuilder.Count == 1);
             Assert.IsNotNull(ctx.CfgDfaBuilder.AllCfgBuilder);
 

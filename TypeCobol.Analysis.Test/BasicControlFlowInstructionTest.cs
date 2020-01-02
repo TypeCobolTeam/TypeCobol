@@ -42,7 +42,7 @@ namespace TypeCobol.Analysis.Test
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
             //Here we have the main program, followed by stacked programs.
-            Assert.IsTrue(ctx.Builder.Programs.Count == 3);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
             //var currentProgram = Builder.Programs[0];
             //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
             Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
@@ -70,7 +70,7 @@ namespace TypeCobol.Analysis.Test
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
             //Here we have the main program, followed by stacked programs.
-            Assert.IsTrue(ctx.Builder.Programs.Count == 3);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
             //var currentProgram = Builder.Programs[0];
             //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
             Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
@@ -155,7 +155,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThen0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThen0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -169,7 +169,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenAfter0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenAfter0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -184,7 +184,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenElse0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElse0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -199,7 +199,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenNextSentence0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenNextSentence0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -214,7 +214,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenElseNextSentence1.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElseNextSentence1.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -229,7 +229,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenElseNextSentence2.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElseNextSentence2.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -244,7 +244,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenElseNextSentence0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElseNextSentence0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -259,7 +259,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenNested0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenNested0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -274,7 +274,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenNested1.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenNested1.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -289,7 +289,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenNested2.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenNested2.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -304,7 +304,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenElseNested0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElseNested0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -319,7 +319,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenElseNested1.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElseNested1.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -334,7 +334,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenElseCascade0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElseCascade0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -350,7 +350,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "SimpleGotoPara0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "SimpleGotoPara0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -365,7 +365,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "ComplexGotoPara0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "ComplexGotoPara0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -380,7 +380,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "Evaluate0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Evaluate0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -395,7 +395,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "EvaluateNoOther0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "EvaluateNoOther0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -410,7 +410,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "EvaluateMultiWhen0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "EvaluateMultiWhen0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -425,7 +425,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "Alter0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Alter0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -440,7 +440,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "Alter1.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Alter1.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -458,7 +458,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "Alter2.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Alter2.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -473,7 +473,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "GoBack0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "GoBack0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -488,7 +488,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "GoBack1.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "GoBack1.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -503,7 +503,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "Perform0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Perform0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -518,7 +518,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformUntil0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformUntil0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -533,7 +533,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformUntil1.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformUntil1.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -548,7 +548,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformTime0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformTime0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -563,7 +563,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformVarying0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformVarying0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -578,7 +578,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcedure0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcedure0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -593,7 +593,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcedure1.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcedure1.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -608,7 +608,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformNested0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformNested0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -623,7 +623,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "Search0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Search0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -638,7 +638,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "SearchNextSentence0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "SearchNextSentence0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -653,7 +653,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "SearchCond0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "SearchCond0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -668,7 +668,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "Declaratives0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Declaratives0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -683,7 +683,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "Declaratives1.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Declaratives1.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -698,7 +698,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformThru0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformThru0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -713,7 +713,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformThru1.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformThru1.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -728,7 +728,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "MixPeformEvaluateIf0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "MixPeformEvaluateIf0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -743,7 +743,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcRecursive0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcRecursive0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -760,7 +760,7 @@ namespace TypeCobol.Analysis.Test
                 false, /*copies*/ null);
 
             //Here we have the main program, followed by stacked programs.
-            Assert.IsTrue(ctx.Builder.Programs.Count == 3);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
             //var currentProgram = Builder.Programs[0];
             //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
             Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
@@ -789,7 +789,7 @@ namespace TypeCobol.Analysis.Test
                 false, /*copies*/ null);
 
             //Here we have the main program, followed by stacked programs.
-            Assert.IsTrue(ctx.Builder.Programs.Count == 3);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
             //var currentProgram = Builder.Programs[0];
             //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
             Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
@@ -818,7 +818,7 @@ namespace TypeCobol.Analysis.Test
                 false, /*copies*/ null);
 
             //Here we have the main program, followed by stacked programs.
-            Assert.IsTrue(ctx.Builder.Programs.Count == 3);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
             //var currentProgram = Builder.Programs[0];
             //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
             Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
@@ -848,7 +848,7 @@ namespace TypeCobol.Analysis.Test
                 false, /*copies*/ null);
 
             //Here we have the main program, followed by stacked programs.
-            Assert.IsTrue(ctx.Builder.Programs.Count == 3);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
             //var currentProgram = Builder.Programs[0];
             //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
             Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
@@ -878,7 +878,7 @@ namespace TypeCobol.Analysis.Test
                 false, /*copies*/ null);
 
             //Here we have the main program, followed by stacked programs.
-            Assert.IsTrue(ctx.Builder.Programs.Count == 3);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
             //var currentProgram = Builder.Programs[0];
             //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
             Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
@@ -907,7 +907,7 @@ namespace TypeCobol.Analysis.Test
                 false, /*copies*/ null);
 
             //Here we have the main program, followed by stacked programs.
-            Assert.IsTrue(ctx.Builder.Programs.Count == 3);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
             //var currentProgram = Builder.Programs[0];
             //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
             Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
@@ -937,7 +937,7 @@ namespace TypeCobol.Analysis.Test
                 false, /*copies*/ null);
 
             //Here we have the main program, followed by stacked programs.
-            Assert.IsTrue(ctx.Builder.Programs.Count == 3);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
             //var currentProgram = Builder.Programs[0];
             //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
             Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
@@ -1031,7 +1031,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(solDir.FullName, "TypeCobol.Test", samples, "CGM110.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "CGM110.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -1058,7 +1058,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(solDir.FullName, "TypeCobol.Test", samples, "IX105A.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IX105A.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -1085,7 +1085,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(solDir.FullName, "TypeCobol.Test", samples, "SG102A.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "SG102A.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -1180,7 +1180,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenElseCascade0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "InverseCfg", "IfThenElseCascadeInverse.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
@@ -1197,7 +1197,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcedure0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "InverseCfg", "PerformProcedureInverse0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);

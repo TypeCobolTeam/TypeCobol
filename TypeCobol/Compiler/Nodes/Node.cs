@@ -50,24 +50,15 @@ namespace TypeCobol.Compiler.Nodes {
         /// This is a Weak reference because the data can be hold elsewhere, and it 
         /// can be garbage collected at any moment.
         /// </summary>
-        System.WeakReference _mySemanticData = null;
+        ISemanticData _mySemanticData = null;
         public virtual ISemanticData SemanticData
         {
-            get
-            {
-                lock (this)
-                {
-                    return _mySemanticData != null ? (ISemanticData)_mySemanticData.Target : null;
-                }
-            }
+            get => _mySemanticData;
             set
             {
                 lock (this)
                 {
-                    if (_mySemanticData == null)
-                        _mySemanticData = new System.WeakReference(value);
-                    else
-                        _mySemanticData.Target = value;
+                    _mySemanticData = value;
                     if (value != null && value.SemanticKind == SemanticKinds.Symbol)
                     {
                         ((Symbol) value).TargetNode = this;

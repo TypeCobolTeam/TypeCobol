@@ -21,19 +21,55 @@ namespace TypeCobol.Compiler.Scopes
         /// <summary>
         /// The count of all variable created in this RootSymbolTable
         /// </summary>
-        private uint _variableSymbolCounter = 0;
+        private int _variableSymbolCounter = 0;
+        /// <summary>
+        /// A pool of free global index
+        /// </summary>
+        private Stack<int> GlobalIndexPool = new Stack<int>();
 
         /// <summary>
         /// Empty Constructor.
         /// </summary>
-        public RootSymbolTable() : base("<<Root>>")
+        public RootSymbolTable() : base(string.Intern("<<Root>>"))
+        {
+            Init();
+            BottomVariable = new VariableSymbol("<<BottomVariable>>");
+            AddToUniverse(BottomVariable);
+            //Load Builtin symbol in it
+            SymbolTableBuilder.AddBuiltinSymbol(this);
+        }
+
+        /// <summary>
+        /// Copy Constructor
+        /// </summary>
+        /// <param name="from">RootSymbolTable instance from which to copy</param>
+        public RootSymbolTable(RootSymbolTable from) : base(string.Intern("<<Root>>"), from)
+        {
+            Init();
+            if (from != null)
+            {
+                this.BottomVariable = from.BottomVariable;
+                this.GlobalIndexPool = new Stack<int>(from.GlobalIndexPool);
+                this._variableSymbolCounter = from._variableSymbolCounter;
+                ((List<VariableSymbol>) Universe).AddRange(from.Universe);
+                foreach (var e in from.ScopeDomain)
+                {
+                    ScopeDomain[e.Key] = new Scope<AbstractScope>.MultiSymbols(e.Value);
+                }
+
+                foreach (var e in from.TypeDomain)
+                {
+                    TypeDomain[e.Key] = new Scope<TypedefSymbol>.MultiSymbols(e.Value);
+                }
+            }
+        }
+
+        private void Init()
         {
             base.Kind = Kinds.Root;
             Universe = new List<VariableSymbol>();
             ScopeDomain = new Dictionary<string, Scope<AbstractScope>.MultiSymbols>(StringComparer.OrdinalIgnoreCase);
             TypeDomain = new Dictionary<string, Scope<TypedefSymbol>.MultiSymbols>(StringComparer.OrdinalIgnoreCase);
-            BottomVariable = new VariableSymbol("<<BottomVariable>>");
-            AddToUniverse(BottomVariable);
         }
 
         /// <summary>
@@ -58,18 +94,26 @@ namespace TypeCobol.Compiler.Scopes
 
         public override String TypedName => "";
 
+        /// <summary>
+        /// Program add event.
+        /// </summary>
+        public event EventHandler<SymbolEventArgs> ProgramAdded;
 
         /// <summary>
         /// The Count of Variable Symbol created
         /// </summary>
-        public uint VariableSymbolCount => _variableSymbolCounter;
+        public int VariableSymbolCount => _variableSymbolCounter;
 
         /// <summary>
         /// Get the Next VariableSymbol Context.
         /// </summary>
         /// <returns></returns>
-        private uint NextVariableSymbolIndex()
+        private int NextVariableSymbolIndex()
         {
+            if (GlobalIndexPool.Count > 0)
+            {
+                return GlobalIndexPool.Pop();
+            }
             return _variableSymbolCounter++;
         }
 
@@ -78,7 +122,7 @@ namespace TypeCobol.Compiler.Scopes
         /// </summary>
         /// <param name="varSym">The Variable Symbol to be added</param>
         /// <returns>The given VariableSymbol instance.</returns>
-        public VariableSymbol AddToUniverse(VariableSymbol varSym)
+        internal VariableSymbol AddToUniverse(VariableSymbol varSym)
         {
             System.Diagnostics.Debug.Assert(varSym != null);
             System.Diagnostics.Debug.Assert(varSym.GlobalIndex == 0);
@@ -92,8 +136,27 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
+        /// Remove from the universe the given variable symbol.
+        /// </summary>
+        /// <param name="varSym">The variable symbol to be removed</param>
+        internal void RemoveFromUniverse(VariableSymbol varSym)
+        {
+            System.Diagnostics.Debug.Assert(varSym != null);
+            System.Diagnostics.Debug.Assert(varSym.GlobalIndex != 0);
+            if (varSym.GlobalIndex != 0)
+            {
+                lock (Universe)
+                {
+                    ((IList < VariableSymbol >)Universe)[varSym.GlobalIndex] = null;
+                    GlobalIndexPool.Push(varSym.GlobalIndex);
+                    varSym.GlobalIndex = 0;
+                }
+            }
+        }
+
+        /// <summary>
         /// All Ordered Symbol that can be reached from this Root Symbol Table.
-        /// This is in fact the entire domain of variable within this Global Symbol Table.
+        /// This is in fact the entire domain of variable within this Root Symbol Table.
         /// </summary>
         public IList<VariableSymbol> Universe { get; internal set; }
 
@@ -111,17 +174,18 @@ namespace TypeCobol.Compiler.Scopes
         /// Add the given AbstractScope instance the domain
         /// </summary>
         /// <param name="absScope">Abstract Scope to be added</param>
-        public void AddToDomain(AbstractScope absScope)
+        public override void AddToDomain(AbstractScope absScope)
         {
             System.Diagnostics.Debug.Assert(absScope != null);
-            lock (ScopeDomain)
+            //lock (ScopeDomain)
             {
                 string name = absScope.Name;
-                ScopeDomain.TryGetValue(name, out var value);
-                if (value == null)
+                if (!ScopeDomain.TryGetValue(name, out var value))
                     ScopeDomain[name] = new Scope<AbstractScope>.MultiSymbols(absScope);
                 else
                     value.Add(absScope);
+                if (ProgramAdded != null && absScope.Kind == Kinds.Program)
+                    ProgramAdded(this, new SymbolEventArgs(absScope));
             }
         }
 
@@ -129,11 +193,11 @@ namespace TypeCobol.Compiler.Scopes
         /// Remove the given scope from the domain.
         /// </summary>
         /// <param name="absScope">The Scope to be removed</param>
-        public void RemoveFromDomain(AbstractScope absScope)
+        public override void RemoveFromDomain(AbstractScope absScope)
         {
             string name = absScope.Name;
-            ScopeDomain.TryGetValue(name, out var value);
-            if (value != null)
+            absScope.FreeDomain();
+            if (ScopeDomain.TryGetValue(name, out var value))
             {
                 value.Remove(absScope);
 
@@ -186,14 +250,13 @@ namespace TypeCobol.Compiler.Scopes
         /// Add the given Type instance the domain
         /// </summary>
         /// <param name="type">The type to add to be added</param>
-        public void AddToDomain(TypedefSymbol type)
+        public override void AddToDomain(TypedefSymbol type)
         {
             System.Diagnostics.Debug.Assert(type != null);
             lock (TypeDomain)
             {
                 string name = type.Name;
-                TypeDomain.TryGetValue(name, out var value);
-                if (value == null)
+                if (!TypeDomain.TryGetValue(name, out var value))
                     TypeDomain[name] = new Scope<TypedefSymbol>.MultiSymbols(type);
                 else
                     value.Add(type);
@@ -204,11 +267,16 @@ namespace TypeCobol.Compiler.Scopes
         /// Remove the given type from the domain.
         /// </summary>
         /// <param name="type">The type to be removed</param>
-        public void RemoveFromDomain(TypedefSymbol type)
+        public override void RemoveFromDomain(TypedefSymbol type)
         {
-            string name = type.Name;
-            TypeDomain.TryGetValue(name, out var value);
-            value?.Remove(type);
+            lock (TypeDomain)
+            {
+                string name = type.Name;
+                if (TypeDomain.TryGetValue(name, out var value))
+                {
+                    value?.Remove(type);
+                }
+            }
         }
 
         /// <summary>
@@ -231,8 +299,7 @@ namespace TypeCobol.Compiler.Scopes
                 return results;
 
             string name = path[0];
-            this.ScopeDomain.TryGetValue(name, out var candidates);
-            if (candidates != null)
+            if (this.ScopeDomain.TryGetValue(name, out var candidates))
             {
                 kinds = kinds == null || kinds.Length == 0 ? AllScopeKinds : kinds;
                 foreach (var candidate in candidates)
@@ -296,8 +363,7 @@ namespace TypeCobol.Compiler.Scopes
             Scope<TypedefSymbol>.MultiSymbols results = new Scope<TypedefSymbol>.MultiSymbols();
             if (path == null || path.Length == 0)
                 return results;
-            this.TypeDomain.TryGetValue(path[0], out var candidates);
-            if (candidates != null)
+            if (this.TypeDomain.TryGetValue(path[0], out var candidates))
             {
                 foreach (var candidate in candidates)
                 {   //Only selected whose Type is defined.

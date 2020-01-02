@@ -20,7 +20,7 @@ namespace TypeCobol.Compiler.Domain
     /// <summary>
     /// A Symbol table builder for a program.
     /// 
-    /// THIS ARE COBOL Rules
+    /// THESE ARE COBOL Rules
     /// ---------------------
     /// -"Global Program Scope" variables declared in working storage as global are visible to the entire program 
     ///     in which they are declared AND in all nested subprograms contained in that program.
@@ -32,7 +32,7 @@ namespace TypeCobol.Compiler.Domain
     /// and the variables of each are visible only within the scope of that individual program.
     /// You could think of this as function/procedure scope.
     /// 
-    /// TypeCobol Rules cane be read at: https://github.com/TypeCobolTeam/TypeCobol/issues/1081
+    /// TypeCobol Rules can be read at: https://github.com/TypeCobolTeam/TypeCobol/issues/1081
     /// --------------------------------
     /// </summary>
     public class ProgramSymbolTableBuilder : SymbolTableBuilder
@@ -53,18 +53,10 @@ namespace TypeCobol.Compiler.Domain
         /// </summary>
         public IList<Diagnostic> Diagnostics { get; private set; }
 
-#if DOMAIN_CHECKER
         /// <summary>
-        /// The Last Builder created if any.
-        /// </summary>
-        public static ProgramSymbolTableBuilder LastBuilder
-        {
-            get;
-            set;
-        }
-#endif
-        /// <summary>
-        /// The List of Stacked Program symbol built as a Scope
+        /// The List of Stacked Program symbol built as a Scope.
+        /// The first main program will be the first element of the list, 
+        /// followed by remaining stacked programs.
         /// </summary>
         public List<ProgramSymbol> Programs
         {
@@ -126,9 +118,20 @@ namespace TypeCobol.Compiler.Domain
             set;
         }
 
-
-        public ProgramSymbolTableBuilder()
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public ProgramSymbolTableBuilder() : this(new RootSymbolTable())
         {
+        }
+
+        /// <summary>
+        /// RootSymbolTable instance constructor.
+        /// </summary>
+        /// <param name="root">The RootSymbolTable to be used</param>
+        public ProgramSymbolTableBuilder(RootSymbolTable root)
+        {
+            this.MyRoot = root;
             Programs = new List<ProgramSymbol>();
             Diagnostics = new List<Diagnostic>();
         }
@@ -145,6 +148,23 @@ namespace TypeCobol.Compiler.Domain
         {
             get;
             set;
+        }
+
+        private RootSymbolTable MyRoot
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Remove all program build by this Program Symbol table Builder.
+        /// </summary>
+        public void RemovePrograms()
+        {
+            foreach (var prog in Programs)
+            {
+                this.MyRoot.RemoveProgram(prog);
+            }
         }
 
         public override void OnNode(Node node, Program program)
@@ -181,12 +201,12 @@ namespace TypeCobol.Compiler.Domain
             bool bDuplicate = false;
             if (this.CurrentProgram == null)
             {//This is the main program or a stacked program with no parent.
-                var prg = Root.Programs.Lookup(programIdentification.ProgramName.Name);
+                var prg = this.MyRoot.Programs.Lookup(programIdentification.ProgramName.Name);
                 if (prg != null)
                 {//Duplicate Program
                     bDuplicate = true;
                 }
-                this.CurrentProgram = Root.EnterProgram(programIdentification.ProgramName.Name);
+                this.CurrentProgram = this.MyRoot.EnterProgram(programIdentification.ProgramName.Name);
                 //Add the new Stacked program.
                 Programs.Add(CurrentProgram);
             }
@@ -195,42 +215,20 @@ namespace TypeCobol.Compiler.Domain
                 System.Diagnostics.Debug.Assert(CurrentNode.Parent != null);
                 System.Diagnostics.Debug.Assert(CurrentNode.Parent.CodeElement != null);
                 System.Diagnostics.Debug.Assert(CurrentNode.Parent.CodeElement.Type == CodeElementType.ProgramIdentification);
-                //This is a litte bit tricky but with TypeCobol Nested Programs belong the to the Main Program namespace
-                //So the Now the Main Parent namespace in the Global Namespace, so add it in it.
-                //So first lookup if one exists already.
-                bool bAddNested = true;
-                var prgEntry = Root.Programs.Lookup(programIdentification.ProgramName.Name);
-                if (prgEntry != null)
-                {//The program exitst, we must ensure that it is not a duplicated.                    
-                    if (prgEntry.Count == 1)
-                    {
-                        if (prgEntry.Symbol.Type == null)
-                        {   //No type == >not defined
-                            //Enter it in our namespace.
-                            var nestedProgram = prgEntry.Symbol;
-                            //Reenter the program as nested here and change the parent.
-                            this.CurrentProgram.Programs.Enter(nestedProgram);
-                            nestedProgram.Owner = this.CurrentProgram;
-                            this.CurrentProgram = nestedProgram;
-                            bAddNested = false;
-                        }
-                        else
-                        {//Duplicate symbol.  
-                            bDuplicate = true;
-                        }
-                    }
-                    else
-                    {//Duplicate symbol.
-                        bDuplicate = true;
-                    }
-                }
-                if (bAddNested)
-                {//Enter a new program.
-                    var nestedProgram = Root.EnterProgram(programIdentification.ProgramName.Name);
+                var prgEntry = this.CurrentProgram.Programs.Lookup(programIdentification.ProgramName.Name);
+                if (prgEntry == null)
+                {
+                    ProgramSymbol nestedProgram = new ProgramSymbol(programIdentification.ProgramName.Name);
                     //Reenter the program as nested here and change the parent.
                     this.CurrentProgram.Programs.Enter(nestedProgram);
                     nestedProgram.Owner = this.CurrentProgram;
                     this.CurrentProgram = nestedProgram;
+                    //Add it to the all scope domain
+                    this.MyRoot.AddToDomain(nestedProgram);
+                }
+                else
+                {
+                    bDuplicate = true;
                 }
             }
 
@@ -256,9 +254,11 @@ namespace TypeCobol.Compiler.Domain
 
         public override void EndCobolProgram(TypeCobol.Compiler.CodeElements.ProgramEnd end)
         {
-            System.Diagnostics.Debug.Assert(LastExitedNode != null);
-            System.Diagnostics.Debug.Assert(LastExitedNode.CodeElement != null);
-            System.Diagnostics.Debug.Assert(LastExitedNode.CodeElement.Type == CodeElementType.ProgramIdentification);
+            //------------------------------------------------------------------------------------------------------------
+            //System.Diagnostics.Debug.Assert(LastExitedNode != null);
+            //System.Diagnostics.Debug.Assert(LastExitedNode.CodeElement != null);
+            //System.Diagnostics.Debug.Assert(LastExitedNode.CodeElement.Type == CodeElementType.ProgramIdentification);
+            //------------------------------------------------------------------------------------------------------------
 
             ProgramSymbol lastPrg = this.CurrentProgram;
             //For a stacked program the Parent is null and not for a nested program.
@@ -266,7 +266,7 @@ namespace TypeCobol.Compiler.Domain
             if (this.CurrentProgram == null && lastPrg.HasFlag(Symbol.Flags.NeedTypeCompletion))
             {
                 //Entire stacked program has been parsed ==> Resolve Types if needed.
-                TypeCobol.Compiler.Domain.Validator.SymbolTypeResolver resolver = new TypeCobol.Compiler.Domain.Validator.SymbolTypeResolver(Root);
+                TypeCobol.Compiler.Domain.Validator.SymbolTypeResolver resolver = new TypeCobol.Compiler.Domain.Validator.SymbolTypeResolver(MyRoot);
                 lastPrg.Accept(resolver, null);
                 lastPrg.SetFlag(Symbol.Flags.ProgramCompleted, true);
             }
@@ -345,7 +345,7 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Resolve in the current program linkage section, the given paramaeter.
+        /// Resolve in the current program linkage section, the given parameter.
         /// </summary>
         /// <param name="p">The parameter to resolve.</param>
         /// <returns>The resolved variable if any, null otherwise</returns>
@@ -382,6 +382,9 @@ namespace TypeCobol.Compiler.Domain
                         break;
                     case ParameterPassingDirection.InOut:
                         pvar.Symbol.SetFlag(Symbol.Flags.Inout, true);
+                        break;
+                    case ParameterPassingDirection.Returning:
+                        pvar.Symbol.SetFlag(Symbol.Flags.Returning, true);
                         break;
                 }
             }
@@ -452,7 +455,7 @@ namespace TypeCobol.Compiler.Domain
             //Enter the function in the current scope
             this.CurrentScope.Functions.Enter(funSym);
             //Add it to the all scope domain
-            SymbolTableBuilder.Root.AddToDomain(funSym);
+            this.MyRoot.AddToDomain(funSym);
             //The its owner has the current scope.
             funSym.Owner = this.CurrentScope;
             //What about function visibility.
@@ -468,7 +471,7 @@ namespace TypeCobol.Compiler.Domain
         /// These DataConditions must created as child of the current declaration
         /// </summary>
         /// <param name="parameter">The paramter to be handled</param>
-        private VariableSymbol FunctionParameder2Symbol(ParameterDescription parameter, Scope<VariableSymbol> parentScope)
+        private VariableSymbol FunctionParameter2Symbol(ParameterDescription parameter, Scope<VariableSymbol> parentScope)
         {
             ParameterDescriptionEntry desc = (ParameterDescriptionEntry) parameter.CodeElement;
             List<DataCondition> toBeRemoved = null;
@@ -502,7 +505,7 @@ namespace TypeCobol.Compiler.Domain
         public override void EndFunctionDeclaration(FunctionDeclarationEnd end)
         {            
             System.Diagnostics.Debug.Assert(this.CurrentScope != null && this.CurrentScope is FunctionSymbol && CurrentScope == CurrentProgram);
-            FunctionDeclaration funDecl = (FunctionDeclaration)LastFunctionDeclaration;
+            FunctionDeclaration funDecl = LastFunctionDeclaration;
             FunctionSymbol funSym = (FunctionSymbol)CurrentProgram;
 
             //Collect Function parameters.
@@ -511,19 +514,19 @@ namespace TypeCobol.Compiler.Domain
             //Input
             foreach (ParameterDescription input in funcProfile.InputParameters)
             {
-                VariableSymbol p = FunctionParameder2Symbol(input, funSym.LinkageStorageData);
+                VariableSymbol p = FunctionParameter2Symbol(input, funSym.LinkageStorageData);
                 p.SetFlag(Symbol.Flags.Parameter | Symbol.Flags.Input | Symbol.Flags.LINKAGE, true);
                 parameters.Add(p);
             }
             foreach (ParameterDescription inout in funcProfile.InoutParameters)
             {
-                VariableSymbol p = FunctionParameder2Symbol(inout, funSym.LinkageStorageData);
+                VariableSymbol p = FunctionParameter2Symbol(inout, funSym.LinkageStorageData);
                 p.SetFlag(Symbol.Flags.Parameter | Symbol.Flags.Inout | Symbol.Flags.LINKAGE, true);
                 parameters.Add(p);
             }
             foreach (ParameterDescription output in funcProfile.OutputParameters)
             {
-                VariableSymbol p = FunctionParameder2Symbol(output, funSym.LinkageStorageData);
+                VariableSymbol p = FunctionParameter2Symbol(output, funSym.LinkageStorageData);
                 p.SetFlag(Symbol.Flags.Parameter | Symbol.Flags.Output | Symbol.Flags.LINKAGE, true);
                 parameters.Add(p);
             }
@@ -532,8 +535,8 @@ namespace TypeCobol.Compiler.Domain
             if (funcProfile.ReturningParameter != null)
             {
                 ParameterDescription ret = funcProfile.ReturningParameter;
-                retVar = FunctionParameder2Symbol(ret, funSym.LinkageStorageData);
-                retVar.SetFlag(Symbol.Flags.Return | Symbol.Flags.LINKAGE, true);
+                retVar = FunctionParameter2Symbol(ret, funSym.LinkageStorageData);
+                retVar.SetFlag(Symbol.Flags.Returning | Symbol.Flags.LINKAGE, true);
             }
 
             //Create the Function type.
@@ -678,7 +681,7 @@ namespace TypeCobol.Compiler.Domain
         /// <summary>
         /// Create the Usage type corresponding to a DataDefinition.
         /// </summary>
-        /// <param name="dataDef">The DataDefinition to create t he usage type.</param>
+        /// <param name="dataDef">The DataDefinition to create the usage type.</param>
         /// <returns>The usage type</returns>
         internal static Type CreateUsageType(DataDefinition dataDef)
         {
@@ -687,6 +690,35 @@ namespace TypeCobol.Compiler.Domain
             Type type = BuiltinTypes.BuiltinUsageType(usage);
             return type;
         }
+
+        /// <summary>
+        /// This method handles the case if a symbol is a redefines symbol if so it creates a RedefinesSymbol instance
+        /// otherwise it creates a VariableSymbol instance.
+        /// The symbol will be put in the the domain of the current program if the typedef instance is null, otherwise it will
+        /// be put in the typedef instance.
+        /// </summary>
+        /// <param name="type">The type of the Symbol to be created</param>
+        /// <param name="dataDef">The DataDefintion instance from which the Symbol is created</param>
+        /// <param name="parentScope">The current Parent Scope.</param>
+        /// <param name="typedef">The TypedefSymbol instance if the symbol to be created is a field of a Typedef symbol, null otherwise</param>
+        /// <returns>The Symbol created</returns>
+        private VariableSymbol CreateAndAddRedefinesOrVariableSymbol(Type type, DataDefinition dataDef, Scope<VariableSymbol> parentScope, TypedefSymbol typedef)
+        {
+            VariableSymbol sym = IsRedefinedDataDefinition(dataDef)
+                ? CreateRedefinesSymbol(dataDef, parentScope)
+                : new VariableSymbol(dataDef.Name);
+            if (sym != null)
+            {
+                sym.Type = type;
+                DecorateSymbol(dataDef, sym, parentScope);
+                if (typedef == null)
+                    CurrentProgram.AddToDomain(sym);
+                else
+                    typedef.Add(sym);
+            }
+            return sym;
+        }
+
         /// <summary>
         /// Create a Symbol instance for a variable of a single usage type.
         /// </summary>
@@ -698,19 +730,7 @@ namespace TypeCobol.Compiler.Domain
         {
             System.Diagnostics.Debug.Assert(IsSingleUsageDefinition(dataDef));
             Type type = CreateUsageType(dataDef);
-            VariableSymbol sym = IsRedefinedDataDefinition(dataDef)
-                ? CreateRedefinesSymbol(dataDef, parentScope)
-                : new VariableSymbol(dataDef.Name);
-            if (sym != null)
-            {                
-                sym.Type = type;
-                DecorateSymbol(dataDef, sym, parentScope);
-                if (typedef == null)
-                    CurrentProgram.AddToDomain(sym);
-                else
-                    typedef.Add(sym);
-            }
-            return sym;
+            return CreateAndAddRedefinesOrVariableSymbol(type, dataDef, parentScope, typedef);
         }
 
         /// <summary>
@@ -740,19 +760,7 @@ namespace TypeCobol.Compiler.Domain
         {
             System.Diagnostics.Debug.Assert(IsSinglePictureDefinition(dataDef));
             Type type = CreatePictureType(dataDef);
-            VariableSymbol sym = IsRedefinedDataDefinition(dataDef)
-                ? CreateRedefinesSymbol(dataDef, parentScope)
-                : new VariableSymbol(dataDef.Name);
-            if (sym != null)
-            {                
-                sym.Type = type;
-                DecorateSymbol(dataDef, sym, parentScope);
-                if (typedef == null)
-                    CurrentProgram.AddToDomain(sym);
-                else
-                    typedef.Add(sym);
-            }
-            return sym;
+            return CreateAndAddRedefinesOrVariableSymbol(type, dataDef, parentScope, typedef);
         }
 
         /// <summary>
@@ -765,19 +773,7 @@ namespace TypeCobol.Compiler.Domain
         internal VariableSymbol CreateSymbolWithoutType(DataDefinition dataDef, Scope<VariableSymbol> parentScope, TypedefSymbol typedef)
         {
             Type type = BuiltinTypes.BuiltinUsageType(Type.UsageFormat.None);
-            VariableSymbol sym = IsRedefinedDataDefinition(dataDef)
-                ? CreateRedefinesSymbol(dataDef, parentScope)
-                : new VariableSymbol(dataDef.Name);
-            if (sym != null)
-            {
-                sym.Type = type;
-                DecorateSymbol(dataDef, sym, parentScope);
-                if (typedef == null)
-                    CurrentProgram.AddToDomain(sym);
-                else
-                    typedef.Add(sym);
-            }
-            return sym;
+            return CreateAndAddRedefinesOrVariableSymbol(type, dataDef, parentScope, typedef);
         }
 
         /// <summary>
@@ -823,7 +819,7 @@ namespace TypeCobol.Compiler.Domain
                 {
                     DataDefinition df = (DataDefinition)child;
                     VariableSymbol df_sym = DataDefinition2Symbol(df, recType.Scope, typedef);
-                    //df_sym == null this may be an Index Definition or a bad symbol.
+                    //if df_sym == null this may be a bad symbol.
                     if (df_sym != null)
                     {
                         recType.Scope.Enter(df_sym);
@@ -876,6 +872,7 @@ namespace TypeCobol.Compiler.Domain
                     symRef.NameLiteral.Token.EndColumn,
                     symRef.NameLiteral.Token.Line,
                     string.Format(TypeCobolResource.CannotRedefinedTypedefDecl, symRef.Name));
+                Diagnostics.Add(d);
                 return null;
             }
             //Find the declaring program of function scope.
@@ -900,6 +897,7 @@ namespace TypeCobol.Compiler.Domain
                         dtde.Column,
                         dtde.Line,
                         string.Format(TypeCobolResource.TypeAlreadyDeclared, dataDef.Name));
+                    Diagnostics.Add(d);
                     return null;
                 }
             }
@@ -925,7 +923,7 @@ namespace TypeCobol.Compiler.Domain
                     tdSym.Owner = parentScope.Owner;
                     ((ProgramSymbol)parentScope.Owner).Types.Enter(tdSym);
                     //Add the type to the domain of types
-                    Root.AddToDomain(tdSym);
+                    this.MyRoot.AddToDomain(tdSym);
                 }
                 else
                 {//Declaration of a TypeDef out of a Program or a Function 
@@ -934,6 +932,7 @@ namespace TypeCobol.Compiler.Domain
                         dtde.Column,
                         dtde.Line,
                         string.Format(TypeCobolResource.TypedefDeclaredOutProgramOrFunction, dataDef.Name));
+                    Diagnostics.Add(d);
                     return null;
                 }
             }
@@ -953,7 +952,7 @@ namespace TypeCobol.Compiler.Domain
                 recType.Scope.ChangeOwner(tdSym);
             }
             //Mark all symbol has belonging to a TYPEDEF
-            tdSym.SetFlag(Symbol.Flags.InsideTypdef, true, true);
+            tdSym.SetFlag(Symbol.Flags.InsideTypedef, true, true);
             //We do not enter typedef in the domain but we propagate any decoration.
             DecorateSymbol(dataDef, tdSym, parentScope);
             return tdSym;
@@ -978,6 +977,7 @@ namespace TypeCobol.Compiler.Domain
                     symRef.NameLiteral.Token.EndColumn,
                     symRef.NameLiteral.Token.Line,
                     string.Format(TypeCobolResource.CannotRedefinesAVariableWhoseTypeDefed, symRef.Name));
+                Diagnostics.Add(d);
                 return null;
             }
 
@@ -989,34 +989,7 @@ namespace TypeCobol.Compiler.Domain
             //We need also a valid CurrentScope to lookup Typedef if one exit, or to create an unresolved Typedef declaration.
             System.Diagnostics.Debug.Assert(CurrentScope != null);
 
-            string[] paths = null;
-            IList<SymbolReference> refs = null;
-            if (datSymRef == null)
-            {
-                paths = new string[] { dataType.Name };
-            }
-            else if (datSymRef.IsTypeCobolQualifiedReference)
-            {
-                TypeCobolQualifiedSymbolReference tc_qualifiedSymbolReference = datSymRef as TypeCobolQualifiedSymbolReference;
-                refs = tc_qualifiedSymbolReference.AsList();
-            }
-            else if (datSymRef.IsQualifiedReference)
-            {//Path in reverse order DVZF0OS3::EventList --> {EventList, DVZF0OS3}
-                QualifiedSymbolReference qualifiedSymbolReference = datSymRef as QualifiedSymbolReference;
-                refs = qualifiedSymbolReference.AsList();
-            }
-            else
-            {
-                refs = new List<SymbolReference>() { datSymRef };
-            }
-            if (paths == null)
-            {
-                paths = new string[refs.Count];
-                for (int i = 0; i < refs.Count; i++)
-                {
-                    paths[i] = refs[i].Name;
-                }
-            }
+            string[] paths = paths = datSymRef == null ? new string[] { dataType.Name } : AbstractScope.SymbolReferenceToPath(datSymRef);
             VariableTypeSymbol varTypeSym = new VariableTypeSymbol(dataDef.Name, paths);
             DecorateSymbol(dataDef, varTypeSym, parentScope);
             if (typedef == null)
@@ -1137,7 +1110,7 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Create a Vraibale Symbol thar represents an Index.
+        /// Create a Variable Symbol that represents an Index.
         /// </summary>
         /// <param name="dataDef"></param>
         /// <param name="parentScope">The parent scope</param>
@@ -1491,7 +1464,7 @@ namespace TypeCobol.Compiler.Domain
                 {
                     //An index definition symbol
                     IndexDefinition indexDef = (IndexDefinition) child;
-                    var indexSym = CreateIndexSymbol((DataDefinition)indexDef, parentScope, typedef);
+                    var indexSym = CreateIndexSymbol(indexDef, parentScope, typedef);
                     //Attach the Indexed
                     indexSym.Owner = indexedSym.Owner;
                     indexSym.Indexed = indexedSym;
@@ -1627,7 +1600,24 @@ namespace TypeCobol.Compiler.Domain
                             //Propagate other visibility than global
                             if (parentScope.Owner.Kind != Symbol.Kinds.Program && parentScope.Owner.Kind != Symbol.Kinds.Function)
                                 sym.SetFlag(parentScope.Owner.Flag & Symbol.SymbolVisibilityMask & ~Symbol.Flags.Global, parentScope.Owner.HasFlag(Symbol.SymbolVisibilityMask & ~Symbol.Flags.Global));
-                    }
+                            //Other interresting flags that apply to a symbol.
+                            if (dataDescEntry.IsBlankWhenZero != null && dataDescEntry.IsBlankWhenZero.Value)
+                                sym.SetFlag(Symbol.Flags.BlankWhenZero, true);
+                            if (dataDescEntry.IsJustified != null && dataDescEntry.IsJustified.Value)
+                                sym.SetFlag(Symbol.Flags.Justified, true);
+                            if (dataDescEntry.IsGroupUsageNational != null && dataDescEntry.IsGroupUsageNational.Value)
+                                sym.SetFlag(Symbol.Flags.GroupUsageNational, true);
+                            if (dataDescEntry.SignIsSeparate != null && dataDescEntry.SignIsSeparate.Value)
+                                sym.SetFlag(Symbol.Flags.Sign, true);
+                            if (dataDescEntry.IsSynchronized != null && dataDescEntry.IsSynchronized.Value)
+                                sym.SetFlag(Symbol.Flags.Sync, true);
+                            if (dataDef.CodeElement.Type == CodeElementType.DataDescriptionEntry)
+                            {
+                                DataDescriptionEntry dataDesc = (DataDescriptionEntry)dataDef.CodeElement;
+                                if (dataDesc.IsExternal)
+                                    sym.SetFlag(Symbol.Flags.External, true);
+                            }
+                        }
                         break;
                     default:
                         System.Diagnostics.Debug.Assert(dataDef.CodeElement.Type == CodeElementType.DataDescriptionEntry ||
@@ -1712,7 +1702,7 @@ namespace TypeCobol.Compiler.Domain
                 ValidateRenames();
                 StoreDataDivisionSymbol(dataDefSym);
                 //Handle indexes belonging to this Data Definition
-                HandleIndexes((DataDefinition) level1Node, dataDefSym, scope, null);
+                HandleIndexes(level1Node, dataDefSym, scope, null);
             }
         }
     }

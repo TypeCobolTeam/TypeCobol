@@ -17,10 +17,10 @@
     </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugSemanticDomain|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS,DOMAIN_CHECKER</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;DOMAIN_CHECKER</DefineConstants>
   </PropertyGroup>
   <!-- ITEM Group for .NET 4.5 Dependencies -->
   <ItemGroup Condition=" '$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugSemanticDomain' Or '$(Configuration)'=='Release' Or '$(Configuration)'=='EI_Debug' Or '$(Configuration)'=='EI_Release'">
@@ -127,7 +127,6 @@
     <None Include="Compiler\CupParser\EmptyTypeCobolProgram.cup" />
     <None Include="Compiler\CupParser\TypeCobolProgram.cup" />
     <None Include="Compiler\CupPreprocessor\CobolCompilerDirectives.cup" />
-    <None Include="Compiler\Domain\Domain.cd" />
     <None Include="Documentation\Architecture\Initial requirements.docx" />
     <None Include="Documentation\Architecture\TypeCobolStats_14_04_2015.xlsx" />
     <None Include="Documentation\Reference\DB2 11 for zOs - Application Programming and SQL Guide.pdf" />

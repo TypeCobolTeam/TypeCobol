@@ -26,7 +26,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// The Global index associated to this variable.
         /// </summary>
-        public uint GlobalIndex
+        public int GlobalIndex
         {
             get;
             internal set;
@@ -36,7 +36,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Level of this variable.
         /// A number beetwen (01 and 49 for groups and their elements),
-        /// 77 for isolate variables , 88 for condition, 66 for RENAMES.
+        /// 77 for independent variables , 88 for condition, 66 for RENAMES.
         /// </summary>
         public int Level
         {
@@ -86,7 +86,7 @@ namespace TypeCobol.Compiler.Symbols
         /// Exemple:
         ///     77 TOTAL-DAY  pic 9(6)V99.
         /// </summary>
-        public bool IsIsolate
+        public bool IsIndependent
         {
             get
             {
@@ -191,7 +191,7 @@ namespace TypeCobol.Compiler.Symbols
                 return null;
             }
 
-            return ((VariableSymbol) Owner).Level == level ? Owner : Owner.LookupParentLevelSymbol(level, true);
+            return Owner.LookupParentLevelSymbol(level, true);
         }
 
         /// <summary>

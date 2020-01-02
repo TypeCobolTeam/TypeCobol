@@ -39,7 +39,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgPrograms", "HanoiPrg.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "CfgPrograms", "HanoiPrg.dot");
 
             Assert.IsTrue(ctx.CfgDfaBuilder.AllCfgBuilder.Count == 1);
@@ -57,7 +57,7 @@ namespace TypeCobol.Analysis.Test
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcRecursive0.cbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "CfgPrograms", "DetectPerformProcRecursiveException.dot");
 
             Assert.IsTrue(ctx.CfgDfaBuilder.AllCfgBuilder.Count == 1);

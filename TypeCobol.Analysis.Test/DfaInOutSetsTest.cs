@@ -91,7 +91,7 @@ namespace TypeCobol.Analysis.Test
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
 
-            Assert.IsTrue(ctx.Builder.Programs.Count == 1);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             Assert.IsTrue(ctx.CfgDfaBuilder.AllCfgBuilder.Count == 1);
             Assert.IsNotNull(ctx.CfgDfaBuilder.AllCfgBuilder);
 
@@ -105,11 +105,11 @@ namespace TypeCobol.Analysis.Test
             string result = writer.ToString();
 
             //Resolve variable I,J
-            var multiI = ctx.Builder.Programs[0].ResolveReference(new string[] { "I" }, true);
+            var multiI = document.Results.PrgSymbolTblBuilder.Programs[0].ResolveReference(new string[] { "I" }, true);
             Assert.AreEqual(1, multiI.Count);
             Symbol I = multiI.Symbol;
 
-            var multiJ = ctx.Builder.Programs[0].ResolveReference(new string[] { "J" }, true);
+            var multiJ = document.Results.PrgSymbolTblBuilder.Programs[0].ResolveReference(new string[] { "J" }, true);
             Assert.AreEqual(1, multiJ.Count);
             Symbol J = multiJ.Symbol;
 

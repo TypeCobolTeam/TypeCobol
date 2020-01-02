@@ -28,7 +28,6 @@ namespace TypeCobol.Compiler.Types
         public GroupType(Symbol owner) : base(Tags.Group)
         {
             _scope = new Scope<VariableSymbol>(owner);
-            _scope.Owner = owner;
         }
 
         /// <summary>

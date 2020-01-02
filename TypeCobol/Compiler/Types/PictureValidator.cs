@@ -1321,6 +1321,38 @@ namespace TypeCobol.Compiler.Types
             }
 
             /// <summary>
+            /// Is a sequence only formed with national characters that is to say only N.
+            /// </summary>
+            /// <returns>true if yes, false otherwise</returns>
+            public bool IsNationalSequence()
+            {
+                if (this.Sequence == null)
+                    return false;
+                if (this.Sequence.Count == 0)
+                    return false;
+                return this.Sequence.TrueForAll(c => c.ch == SC.N);
+            }
+
+            /// <summary>
+            /// Is a sequence only formed with national edited characters, that is to say with
+            /// symbols N, B, 0 or /, with at least one N and one other symbol in the picture chracter_string.
+            /// </summary>
+            /// <returns>true if yes, false otherwise</returns>
+            public bool IsNationalEditedSequence()
+            {
+                if (this.Sequence == null)
+                    return false;
+                if (this.Sequence.Count == 0)
+                    return false;
+                bool hasN = false;
+                bool bAll = this.Sequence.TrueForAll(c => (hasN |= c.ch == SC.N) ||
+                                c.ch == SC.B ||
+                                c.ch == SC.ZERO ||
+                                c.ch == SC.SLASH);
+                return hasN && bAll;
+            }
+
+            /// <summary>
             /// All validation messages if any.
             /// </summary>
             public List<String> ValidationMesssage

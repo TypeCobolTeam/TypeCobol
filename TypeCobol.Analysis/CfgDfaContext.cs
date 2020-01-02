@@ -26,8 +26,6 @@ namespace TypeCobol.Analysis
             get;
             private set;
         }
-        public ProgramSymbolTableBuilder Builder = null;
-        public NodeListenerFactory BuilderNodeListenerFactory = null;
         public NodeListenerFactory CfgBuilderNodeListenerFactory = null;
         //A Cfg for Control Flow Analysis on Node
         public DefaultControlFlowGraphBuilder<object> CfgBuilder;
@@ -68,22 +66,6 @@ namespace TypeCobol.Analysis
         /// <param name="config">The TypeCobol Configuration to be used</param>
         public void Initialize(TypeCobolConfiguration config = null)
         {
-            //Create a default configurations for options
-            DefaultConfig = config ?? new TypeCobolConfiguration();
-            //DefaultConfig.Dependencies.Add(Path.Combine(Directory.GetCurrentDirectory(), "resources", "dependencies"));
-            SymbolTableBuilder.Config = DefaultConfig;
-
-            //Force the creation of the Global Symbol Table
-            var global = SymbolTableBuilder.Root;
-
-            //Allocate a static Program Symbol Table Builder
-            BuilderNodeListenerFactory = () =>
-            {
-                Builder = new ProgramSymbolTableBuilder();
-                return Builder;
-            };
-            NodeDispatcher.RegisterStaticNodeListenerFactory(BuilderNodeListenerFactory);
-
             //Alocate a static Default Control Flow Graph Builder
             switch (_Mode)
             {
@@ -110,35 +92,10 @@ namespace TypeCobol.Analysis
         }
 
         /// <summary>
-        /// Remove all programs.
-        /// </summary>
-        /// <param name="prog">The main program to be removed</param>
-        private static void RemovePrograms(ProgramSymbol prog)
-        {
-            foreach (var nestPrg in prog.Programs)
-            {
-                SymbolTableBuilder.Root.RemoveProgram(prog);
-                RemovePrograms(nestPrg);
-            }
-            SymbolTableBuilder.Root.RemoveProgram(prog);
-        }
-
-        /// <summary>
         /// Cleanup the context
         /// </summary>
         public void Cleanup()
         {
-            if (BuilderNodeListenerFactory != null)
-            {
-                NodeDispatcher.RemoveStaticNodeListenerFactory(BuilderNodeListenerFactory);
-                if (Builder.Programs.Count != 0)
-                {
-                    foreach (var prog in Builder.Programs)
-                    {
-                        RemovePrograms(prog);
-                    }
-                }
-            }
             if (CfgBuilderNodeListenerFactory != null)
             {
                 NodeDispatcher.RemoveStaticNodeListenerFactory(CfgBuilderNodeListenerFactory);
