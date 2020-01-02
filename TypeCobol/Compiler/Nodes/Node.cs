@@ -717,6 +717,19 @@ namespace TypeCobol.Compiler.Nodes {
             return str.ToString();
         }
 
+        public override bool Equals(object obj)
+        {
+            return Object.ReferenceEquals(this, obj as Node);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (13 * 397) ^ base.GetHashCode();
+            }
+        }
+
         /// <summary>
         /// Don't override this method, implement VisitNode on child
         /// </summary>
