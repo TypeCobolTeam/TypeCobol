@@ -16,7 +16,7 @@ namespace TypeCobol.Compiler.Types
     {
         private readonly Symbols.LevelRenumber _symbolLevelRenumber;
 
-        public TypeLevelRenumber() : this(new Symbols.LevelRenumber())
+        public TypeLevelRenumber() : this(null)
         {            
         }
 

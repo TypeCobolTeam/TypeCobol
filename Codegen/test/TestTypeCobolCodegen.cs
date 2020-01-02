@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using TypeCobol.Codegen.Config;
@@ -6,6 +7,7 @@ using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler; // DocumentFormat
 using TypeCobol.Compiler.Domain;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Symbols;
 using TypeCobol.Tools; // CodeElementDiagnostics
 using TypeCobol.Tools.Options_Config;
 
@@ -15,49 +17,6 @@ namespace TypeCobol.Codegen {
 
 	[TestClass]
 	public class TestTypeCobolCodegen {
-#if DOMAIN_CHECKER
-        public static TypeCobolConfiguration DefaultConfig = null;
-        public static ProgramSymbolTableBuilder Builder = null;
-        public static NodeListenerFactory BuilderNodeListenerFactory = null;
-
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            SymbolTableBuilder.Root = null;
-            //Create a default configurations for options
-            DefaultConfig = new TypeCobolConfiguration();
-            DefaultConfig.Dependencies.Add(Path.Combine(Directory.GetCurrentDirectory(), "resources", "dependencies"));
-            SymbolTableBuilder.Config = DefaultConfig;
-
-            //Force the creation of the Global Symbol Table
-            var global = SymbolTableBuilder.Root;
-
-            //Allocate a static Program Symbol Table Builder
-            BuilderNodeListenerFactory = () =>
-            {
-                Builder = new ProgramSymbolTableBuilder();
-                return Builder;
-            };
-            Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(BuilderNodeListenerFactory);
-        }
-
-
-        [TestCleanup]
-        public void TestCleanup()
-        {
-            if (BuilderNodeListenerFactory != null)
-            {
-                Compiler.Parser.NodeDispatcher.RemoveStaticNodeListenerFactory(BuilderNodeListenerFactory);
-                if (Builder.Programs.Count != 0)
-                {
-                    foreach (var prog in Builder.Programs)
-                        SymbolTableBuilder.Root.RemoveProgram(prog);
-                }
-            }
-            SymbolTableBuilder.Root = null;
-        }
-#endif
-
         public static bool UseSkeleton = false;
 
 		[TestMethod]

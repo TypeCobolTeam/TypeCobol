@@ -32,7 +32,7 @@ namespace TypeCobol.Compiler.Symbols
             Paragraphs = new Scope<ParagraphSymbol>(this);
             Functions = new Scope<FunctionSymbol>(this);
             Programs = new Scope<ProgramSymbol>(this);
-            VariableTypeSymbols = new LinkedList<VariableSymbol>();
+            VariableTypeSymbols = new LinkedList<VariableTypeSymbol>();
             Domain = new Dictionary<string, Scope<VariableSymbol>.MultiSymbols>(StringComparer.OrdinalIgnoreCase);
         }
 
@@ -138,7 +138,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// All variable that uses a Type that comes from a TypeDef
         /// </summary>
-        public LinkedList<VariableSymbol> VariableTypeSymbols
+        public LinkedList<VariableTypeSymbol> VariableTypeSymbols
         {
             get;
             private set;
@@ -185,10 +185,10 @@ namespace TypeCobol.Compiler.Symbols
             lock (Domain)
             {
                 //First add it in the Global Domain.
-                SymbolTableBuilder.Root.AddToUniverse(varSym);
+                Symbol root = TopParent(Kinds.Root);
+                ((RootSymbolTable) root)?.AddToUniverse(varSym);
                 string name = varSym.Name;
-                Domain.TryGetValue(name, out var value);
-                if (value == null)
+                if (!Domain.TryGetValue(name, out var value))
                 {
                     Domain[name] = new Scope<VariableSymbol>.MultiSymbols(varSym);
                 }
@@ -199,10 +199,33 @@ namespace TypeCobol.Compiler.Symbols
                 //Remember a variable that maybe expanded.
                 if (varSym.HasFlag(Flags.HasATypedefType))
                 {
-                    VariableTypeSymbols.AddLast(varSym);
+                    System.Diagnostics.Debug.Assert((varSym is VariableTypeSymbol));
+                    VariableTypeSymbols.AddLast((VariableTypeSymbol)varSym);
                 }
             }
             return varSym;
+        }
+
+        /// <summary>
+        /// Free the domain associated to this program.
+        /// </summary>
+        internal override void FreeDomain()
+        {
+            RootSymbolTable root = (RootSymbolTable)TopParent(Kinds.Root);
+            if (root != null)
+            {
+                lock (Domain)
+                {
+                    foreach (var entry in Domain)
+                    {
+                        var entries = entry.Value;
+                        foreach (var varSym in entries)
+                        {
+                            root.RemoveFromUniverse(varSym);
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -254,9 +277,9 @@ namespace TypeCobol.Compiler.Symbols
         /// <returns>true if the symbol is accessible, false otherwise.</returns>
         private bool IsSymbolAccessible(Symbol sym, Flags mask)
         {
+            System.Diagnostics.Debug.Assert(sym != null);
             if (sym.HasFlag(Flags.BuiltinSymbol))
                 return true;//Builtin symbols are always accessible.
-            System.Diagnostics.Debug.Assert(sym != null);
             Symbol symTopPrg = sym.TopParent(Kinds.Program);
             System.Diagnostics.Debug.Assert(symTopPrg != null);
             Symbol myTopPrg = TopParent(Kinds.Program);
@@ -353,8 +376,7 @@ namespace TypeCobol.Compiler.Symbols
             if (paths == null || paths.Length == 0)
                 return results;
             string name = paths[0];
-            this.Domain.TryGetValue(name, out var candidates);
-            if (candidates != null)
+            if (this.Domain.TryGetValue(name, out var candidates))
             {
                 foreach (var candidate in candidates)
                 {

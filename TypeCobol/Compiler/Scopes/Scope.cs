@@ -51,7 +51,7 @@ namespace TypeCobol.Compiler.Scopes
             /// </summary>
             /// <param name="sym">The symbol to check</param>
             /// <returns>true if yes, false otherwise</returns>
-            public virtual bool Exists(T sym)
+            public bool Exists(T sym)
             {
                 foreach (var t in this)
                 {
@@ -77,19 +77,29 @@ namespace TypeCobol.Compiler.Scopes
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        /// <summary>
-        /// One Symbol constructor.
-        /// </summary>
-        /// <param name="symbol"></param>
-        public Entry(T symbol)
+            /// <summary>
+            /// One Symbol constructor.
+            /// </summary>
+            /// <param name="symbol"></param>
+            public Entry(T symbol)
             {
                 System.Diagnostics.Debug.Assert(symbol != null);
                 Symbol = symbol;
             }
-        protected Entry()
+            protected Entry()
             {
 
             }
+
+            /// <summary>
+            /// Copy constructor
+            /// </summary>
+            /// <param name="from"></param>
+            protected Entry(Entry from)
+            {
+                Symbol = from.Symbol;
+            }
+
         }
 
         /// <summary>
@@ -117,11 +127,22 @@ namespace TypeCobol.Compiler.Scopes
             }
 
             /// <summary>
+            /// Copy constructor.
+            /// </summary>
+            /// <param name="from"></param>
+            public MultiSymbols(MultiSymbols from) : base(from)
+            {
+                _symbols.AddRange(from._symbols);
+            }
+
+
+            /// <summary>
             /// Add a symbol
             /// </summary>
             /// <param name="symbol">The symbol to be added</param>
             public void Add(T symbol)
             {
+                System.Diagnostics.Debug.Assert((symbol != null));
                 if (Count == 0)
                 {
                     base.Symbol = symbol;
@@ -142,8 +163,6 @@ namespace TypeCobol.Compiler.Scopes
             /// <param name="sym"></param>
             internal void Remove(T sym)
             {
-                //After removing a multi must at least contains one element.
-                System.Diagnostics.Contracts.Contract.Ensures(Count >= 1);
                 _symbols.Remove(sym);                
                 //base.Symbol is always the first symbol of the list.
                 Symbol = _symbols.Count > 0 ? _symbols[0] : null;
@@ -248,8 +267,7 @@ namespace TypeCobol.Compiler.Scopes
             Entry entry = null;
             if (_symbols != null)
             {
-                _symbols.TryGetValue(name, out entry);
-                if (entry != null)
+                if (_symbols.TryGetValue(name, out entry))
                 {
                     if (entry.Count == 1)
                     {

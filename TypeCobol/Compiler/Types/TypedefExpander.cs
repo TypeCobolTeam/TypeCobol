@@ -89,7 +89,7 @@ namespace TypeCobol.Compiler.Types
             foreach (var field in t.Scope)
             {
                 //Clone only variables that are inside a TYPEDEF
-                bool isInTypedef = field.HasFlag(Symbol.Flags.InsideTypdef);
+                bool isInTypedef = field.HasFlag(Symbol.Flags.InsideTypedef);
                 VariableSymbol newField =  isInTypedef ? (VariableSymbol)field.Clone() : field;
                 if (isInTypedef)
                 {

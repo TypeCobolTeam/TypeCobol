@@ -12,6 +12,7 @@ using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.AntlrUtils;
+using TypeCobol.Compiler.Scopes;
 using TypeCobol.LanguageServices.Editor;
 
 namespace TypeCobol.Compiler
@@ -33,6 +34,9 @@ namespace TypeCobol.Compiler
 
         /// <summary>Optional custom symbol table to use for name and type resolution.</summary>
         public CodeModel.SymbolTable CustomSymbols = null;
+
+        /// <summary>The Root Symbol table to be used.</summary>
+        public RootSymbolTable RootSymbolTable = null;
 
         /// <summary>
         /// The build system implements an efficient way to retrieve ProcessedTokensDocuments

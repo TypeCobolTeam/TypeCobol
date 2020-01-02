@@ -524,18 +524,14 @@ namespace TypeCobol.Compiler.Diagnostics
             if (storageArea == null || !storageArea.NeedDeclaration)
                 return null;
 #if DOMAIN_CHECKER
-            //Do we have a Root Symbol Table build
-            if (SymbolTableBuilder._rootSymbolTable != null)
-            {
-                //Check that a semantic data has been associated to this node.
-                System.Diagnostics.Debug.Assert(node.SemanticData != null);
-                System.Diagnostics.Debug.Assert(node.SemanticData.SemanticKind == SemanticKinds.Symbol);
-                //The semantic data is a ProgramSymbol or a FunctionSymbol
-                System.Diagnostics.Debug.Assert(((Symbol)node.SemanticData).Kind == Symbol.Kinds.Program || 
-                                                ((Symbol)node.SemanticData).Kind == Symbol.Kinds.Function || 
-                                                ((Symbol)node.SemanticData).Kind == Symbol.Kinds.Variable ||
-                                                ((Symbol)node.SemanticData).Kind == Symbol.Kinds.Index);
-            }
+            //Check that a semantic data has been associated to this node.
+            System.Diagnostics.Debug.Assert(node.SemanticData != null);
+            System.Diagnostics.Debug.Assert(node.SemanticData.SemanticKind == SemanticKinds.Symbol);
+            //The semantic data is a ProgramSymbol or a FunctionSymbol
+            System.Diagnostics.Debug.Assert(((Symbol)node.SemanticData).Kind == Symbol.Kinds.Program || 
+                                            ((Symbol)node.SemanticData).Kind == Symbol.Kinds.Function || 
+                                            ((Symbol)node.SemanticData).Kind == Symbol.Kinds.Variable ||
+                                            ((Symbol)node.SemanticData).Kind == Symbol.Kinds.Index);
 #endif
 
             var area = storageArea.GetStorageAreaThatNeedDeclaration;
@@ -556,7 +552,6 @@ namespace TypeCobol.Compiler.Diagnostics
             Scopes.Scope<VariableSymbol>.MultiSymbols result = null;
             List<Symbol[]> foundSymbolTypedPaths = null;
             bool bCyclicTypeException = false;
-            if (SymbolTableBuilder._rootSymbolTable != null)
             {                                
                 switch (((Symbol)node.SemanticData).Kind)
                 {
@@ -582,7 +577,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         //Typedef, or Inside a Program or a Function.
                         //But any way we have found it.
                         VariableSymbol @var = (VariableSymbol)node.SemanticData;
-                        if (@var.HasFlag(Symbol.Flags.InsideTypdef))
+                        if (@var.HasFlag(Symbol.Flags.InsideTypedef))
                         {
                             System.Diagnostics.Debug.Assert(@var.TopParent(Symbol.Kinds.Typedef) != null);
                             //We looking inside a TYPEDEF.

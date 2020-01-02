@@ -16,6 +16,7 @@ using TypeCobol.Tools.Options_Config;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Report;
 using TypeCobol.Compiler.Domain;
+using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Server
 {
@@ -111,13 +112,7 @@ namespace TypeCobol.Server
         private static ReturnCode runOnce2(TypeCobolConfiguration config, AbstractErrorWriter errorWriter)
         {
             SymbolTable baseTable = null;
-
-#if DOMAIN_CHECKER
-            //----------------------------------------------------------------------
-            //Register a static SymbolTableBuilder for a Program as a Node Listener.
-            //----------------------------------------------------------------------
-            Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(() => new ProgramSymbolTableBuilder());
-#endif
+            RootSymbolTable baseRootSymbolTable = null;
 
 #region Dependencies parsing
             var depParser = new Parser();
@@ -139,17 +134,19 @@ namespace TypeCobol.Server
                     //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
                     Server.AddError(errorWriter, diagEvent.Path, diagEvent.Diagnostic);
                 };
-#endregion
+                #endregion
 
-                depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load intrinsic
-                depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, depParser.CustomSymbols, config.InputFiles, config.CopyFolders, DependencyErrorEvent); //Load dependencies
+                Tuple<SymbolTable, RootSymbolTable> customSymbolTables = Tools.APIHelpers.Helpers.LoadIntrinsicAndDependencies(config, DiagnosticsErrorEvent, DependencyErrorEvent); //Load intrinsic and dependencies
+                depParser.CustomSymbols = customSymbolTables.Item1;
+                depParser.CustomRootSymbols = customSymbolTables.Item2;
 
                 if (diagDetected)
                     throw new CopyLoadingException("Diagnostics detected while parsing Intrinsic file", null, null, logged: false, needMail: false);
             }
 
             baseTable = depParser.CustomSymbols;
-#endregion
+            baseRootSymbolTable = depParser.CustomRootSymbols;
+            #endregion
 
             var typeCobolOptions = new TypeCobolOptions(config);
 
@@ -167,6 +164,7 @@ namespace TypeCobol.Server
             {
                 var parser = new Parser();
                 parser.CustomSymbols = baseTable;
+                parser.CustomRootSymbols = baseRootSymbolTable;
                 parsers.Add(parser);
 
                 if (config.ExecToStep > ExecutionStep.SemanticCheck) //If inferior to semantic, use the execstep given by the user.

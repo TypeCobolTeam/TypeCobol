@@ -9,6 +9,10 @@ using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
 {
+    /// <summary>
+    /// Represents any symbol that contain other symbols (i.e. ProgramSymbol or NamespaceSymbol)
+    /// Don't confuse with Scope class
+    /// </summary>
     public abstract class AbstractScope : Symbol, IScope
     {
         /// <summary>
@@ -101,8 +105,8 @@ namespace TypeCobol.Compiler.Symbols
             Scope<TS>.MultiSymbols results = new Scope<TS>.MultiSymbols();
             if (path == null || path.Length == 0)
                 return results;
-            domain.TryGetValue(path[0], out var candidates);
-            if (candidates == null || candidates.Count == 0)
+            bool bExits = domain.TryGetValue(path[0], out var candidates);
+            if (!bExits || candidates == null || candidates.Count == 0)
                 return results;
             if (path.Length == 1)
             {
@@ -199,7 +203,7 @@ namespace TypeCobol.Compiler.Symbols
                     if (entry != null)
                     {
                         System.Diagnostics.Debug.Assert(entry.Count == 1);
-                        currentScope = entry[0] as AbstractScope;
+                        currentScope = entry[0];
                         stopScope = currentScope;
                         break;
                     }
@@ -221,7 +225,7 @@ namespace TypeCobol.Compiler.Symbols
                     ProgramSymbol pgmSym = new ProgramSymbol(progName);
                     programs.Enter(pgmSym);
                     entry = programs.Lookup(progName);
-                    currentScope = entry[0] as AbstractScope;
+                    currentScope = entry[0];
                     stopScope = currentScope;
                 }
             }
@@ -364,12 +368,7 @@ namespace TypeCobol.Compiler.Symbols
             string[] paths = null;
             IList<SymbolReference> refs = null;
 
-            if (datSymRef.IsTypeCobolQualifiedReference)
-            {
-                TypeCobolQualifiedSymbolReference tc_qualifiedSymbolReference = datSymRef as TypeCobolQualifiedSymbolReference;
-                refs = tc_qualifiedSymbolReference.AsList();
-            }
-            else if (datSymRef.IsQualifiedReference)
+            if (datSymRef.IsQualifiedReference)
             {//Path in reverse order DVZF0OS3::EventList --> {EventList, DVZF0OS3}
                 QualifiedSymbolReference qualifiedSymbolReference = datSymRef as QualifiedSymbolReference;
                 refs = qualifiedSymbolReference.AsList();
@@ -386,6 +385,21 @@ namespace TypeCobol.Compiler.Symbols
             }
 
             return paths;
-        }        
+        }
+        /// <summary>
+        /// Free any domain associated to this scope?
+        /// </summary>
+        internal virtual void FreeDomain()
+        {
+        }
+
+        public virtual void AddToDomain(AbstractScope absScope)
+        { }
+        public virtual void RemoveFromDomain(AbstractScope absScope)
+        { }
+        public virtual void AddToDomain(TypedefSymbol type)
+        { }
+        public virtual void RemoveFromDomain(TypedefSymbol type)
+        { }
     }
 }
