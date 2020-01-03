@@ -1,5 +1,8 @@
 ﻿using System.Linq;
+using JetBrains.Annotations;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Tools;
 
 namespace TypeCobol.Codegen.Nodes
 {
@@ -198,7 +201,7 @@ namespace TypeCobol.Codegen.Nodes
 
         /// <summary>
         /// This strategy extracts the type info in a declaration. This can be VALUE clause, usage, GLOBAL clause, etc.
-        /// It doesn't output the TYPE clause for typed data/parameter.
+        /// It doesn't output the TYPE clause for typed data/parameter and it also doesn't include the omittable (question mark) for parameter.
         /// </summary>
         private class ExtractTypeInfo : TokenFlushStrategy
         {
@@ -227,7 +230,8 @@ namespace TypeCobol.Codegen.Nodes
                     return false;
                 }
 
-                return true;
+                // Tokens that should not be outputted : QuestionMark in optional parameter declarations and PeriodSeparator at end.
+                return token.TokenType != TokenType.PeriodSeparator && token.TokenType != TokenType.QUESTION_MARK;
             }
         }
 
@@ -274,7 +278,7 @@ namespace TypeCobol.Codegen.Nodes
         /// <param name="strategy">Object to control which and how tokens are written.</param>
         /// <param name="hasSeenGlobal">Indicates whether a GLOBAL keyword has been written.</param>
         /// <param name="hasSeenPeriod">Indicates whether a Period separator has been written.</param>
-        private static void FlushConsumedTokens(ColumnsLayout? layout, IList<Token> consumedTokens, StringBuilder sb, TokenFlushStrategy strategy, out bool hasSeenGlobal, out  bool hasSeenPeriod)
+        private static void FlushConsumedTokens(ColumnsLayout? layout, IList<Token> consumedTokens, StringBuilder sb, TokenFlushStrategy strategy, out bool hasSeenGlobal, out bool hasSeenPeriod)
         {
             System.Diagnostics.Contracts.Contract.Assert(consumedTokens != null);
             System.Diagnostics.Contracts.Contract.Assert(sb != null);
@@ -283,16 +287,30 @@ namespace TypeCobol.Codegen.Nodes
             hasSeenGlobal = false;
             hasSeenPeriod = false;
 
-            // First token of the current line. Can be null only if consumedTokens is empty.
-            Token referenceTokenForCurrentLine = consumedTokens.Count > 0 ? consumedTokens[0] : null;
+            // No need to keep going if there are no tokens...
+            if (consumedTokens.Count == 0) return;
 
-            int i = 0;
+            // Skip any formalized comment block at the beginning of the consumed tokens collection.
+            int i = -1;
+            TokenFamily tokenFamily;
+            do
+            {
+                tokenFamily = consumedTokens[++i].TokenFamily;
+            }
+            while (tokenFamily == TokenFamily.FormalizedCommentsFamily && i < consumedTokens.Count);
+
+            /*
+             * Reference token to handle line breaks, it is initialized with the first consumed token which is not part of a formalized comment.
+             * NOTE : if we ran out of tokens while skipping the formalized comment at the beginning, we simply initialize the reference token to null
+             * and then the method ends due to the condition in the following while loop.
+             */
+            Token referenceTokenForCurrentLine = i < consumedTokens.Count ? consumedTokens[i] : null;
             while (i < consumedTokens.Count)
             {
                 Token token = consumedTokens[i];
 
-                // Should the token be written or not ?
-                if (!strategy.ShouldOutput(token))
+                // Should the token be written or not ? We are also discarding comment tokens here.
+                if (token.TokenFamily == TokenFamily.Comments || token.TokenFamily == TokenFamily.MultilinesCommentsFamily || !strategy.ShouldOutput(token))
                 {
                     i++;
                     continue;
@@ -315,7 +333,7 @@ namespace TypeCobol.Codegen.Nodes
                     {
                         if (layout.Value == ColumnsLayout.CobolReferenceFormat)
                         {
-                            nPad = Math.Max(0, consumedTokens[i].Column - 8);
+                            nPad = Math.Max(0, token.Column - 8);
                         }
                     }
                     string pad = new string(' ', nPad);
@@ -486,9 +504,11 @@ namespace TypeCobol.Codegen.Nodes
             }
 
             list_items.AddRange(pathVariables);
-            string qn = string.Join(".", list_items.ToArray());
-            AddIndexMap(rootNode, rootNode.QualifiedName.ToString(), indexes, map);
-            AddIndexMap(ownerDefinition, qn, indexes, map);
+            string qn = string.Join(".", list_items.Where(item => item != null));
+
+            // If indexes directly come from their DataDef, use the computed path (qn). If they come from a TypeDef, the path is the rootNode.QualifiedName.
+            AddIndexMap(rootNode, rootNode == ownerDefinition ? qn : rootNode.QualifiedName.ToString(), indexes, map);
+
             return map;
         }
 
@@ -511,7 +531,7 @@ namespace TypeCobol.Codegen.Nodes
                         if (sym.Name.Equals(index.Name))
                         {
                             string qualified_name = qn + '.' + index.Name;
-                            string hash_name = GeneratorHelper.ComputeIndexHashName(qualified_name, parentNode);
+                            string hash_name = index.IsFlagSet(Flag.IndexUsedWithQualifiedName) ? GeneratorHelper.ComputeIndexHashName(qualified_name, parentNode) : index.Name;
                             map[sym.NameLiteral.Token] = hash_name;
                         }
                     }
@@ -665,28 +685,62 @@ namespace TypeCobol.Codegen.Nodes
         }
 
         /// <summary>
-        /// Append in the given StringBuilder the name and any global attribute of the the given DataDefition object.
+        /// Append in the given StringBuilder the name and any global attribute of the the given DataDefinition object.
         /// </summary>
         /// <param name="buffer">The String Buffer</param>
         /// <param name="dataDef">The Data Definition object</param>
-        /// <param name="globalSeen">Global token hass been already seen</param>
+        /// <param name="globalSeen">Global token has been seen already</param>
         internal static void AppendNameAndGlobalDataDef(StringBuilder buffer, DataDefinitionEntry dataDef, bool globalSeen)
         {
+            // Write data name if any.
             if (dataDef.Name != null)
             {
                 buffer.Append(' ').Append(dataDef.Name);
-                if (!globalSeen)
+            }
+
+            if (dataDef is CommonDataDescriptionAndDataRedefines dataDesc)
+            {
+                // Write FILLER keyword if any. FILLER is mutually exclusive with name so no need to check that data name is null again.
+                if (dataDesc.Filler != null)
                 {
-                    if (dataDef is CommonDataDescriptionAndDataRedefines)
-                    {
-                        CommonDataDescriptionAndDataRedefines cdadr = dataDef as CommonDataDescriptionAndDataRedefines;
-                        if (cdadr.IsGlobal)
-                        {
-                            Token gtoken = GetToken(dataDef.ConsumedTokens, TokenType.GLOBAL);
-                            buffer.Append(' ').Append(gtoken.Text);
-                        }
-                    }
+                    buffer.Append(' ').Append(dataDesc.Filler.Token.Text);
                 }
+
+                // Write GLOBAL modifier if not already seen and originally present.
+                if (!globalSeen && dataDesc.IsGlobal)
+                {
+                    buffer.Append(' ').Append(dataDesc.Global.Token.Text);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Creates text lines corresponding to the given COPY directive.
+        /// The original indentation is preserved.
+        /// </summary>
+        /// <param name="copy">a CopyDirective instance</param>
+        /// <returns>a defered IEnumerable of ITextLine</returns>
+        private static IEnumerable<ITextLine> CopyDirectiveToTextLines([NotNull] CopyDirective copy)
+        {
+            //We recreate the clause copy with its arguments and original formatting.
+            StringBuilder textLine = new StringBuilder();
+            bool firstLine = true;
+            string copyIndent = copy.COPYToken.TokensLine.SourceText.GetIndent();
+            foreach (var tokenLine in copy.ConsumedTokens.SelectedTokensOnSeveralLines)
+            {
+                if (firstLine)
+                {
+                    textLine.Append(copyIndent);
+                    firstLine = false;
+                }
+
+                foreach (var token in tokenLine)
+                {
+                    textLine.Append(token.Text);
+                }
+
+                yield return new TextLineSnapshot(-1, textLine.ToString(), null);
+                textLine.Clear();
             }
         }
 
@@ -921,9 +975,12 @@ namespace TypeCobol.Codegen.Nodes
         public static List<ITextLine> InsertChildren(ColumnsLayout? layout, List<string> rootProcedures, List< Tuple<string,string> > rootVariableName, DataDefinition ownerDefinition, DataDefinition type, int level, int indent)
         {
             var lines = new List<ITextLine>();
+            // List of all the CopyDirectives that have been added to the lines
+            List<CopyDirective> usedCopies = new List<CopyDirective>();
             foreach (var child in type.Children)
             {
-                bool bCanGenerate = !child.IsInsideCopy();
+                bool bIsInsideCopy = child.IsInsideCopy();
+
                 //Handle Typedef whose body is inside a COPY
                 if (child.IsFlagSet(Flag.InsideTypedefFromCopy))
                 {
@@ -931,6 +988,26 @@ namespace TypeCobol.Codegen.Nodes
                     {
                         lines.AddRange(child.Lines);
                         continue;
+                    }
+                }
+
+                //If the child is coming from a copy, we want to add the clause copy to the lines
+                if (bIsInsideCopy && child.CodeElement != null)
+                {
+                    //There is already a mechanism to write the clause COPY coming from the main program in LinearNodeSourceCodeMapper. 
+                    //This is how we recover the clause copy from the dependencies.
+                    //Here we check if the typedef has been defined in another file than the one declaring the datatype.
+                    if (!type.Root.Programs.Any(p => rootProcedures.Contains(p.Name)))
+                    {
+                        CopyDirective copy = child.CodeElement.FirstCopyDirective;
+                        //The first data coming from a copy is used to recover the Clause COPY, the other would be only a repetition of this one, so we skip them.
+                        //Even with the same name, two different Clause COPY are differentiated by their token lines
+                        if (usedCopies.Contains(copy) == false)
+                        {
+                            lines.AddRange(CopyDirectiveToTextLines(copy));
+                            usedCopies.Add(copy);
+                            continue;
+                        }
                     }
                 }
 
@@ -942,7 +1019,7 @@ namespace TypeCobol.Codegen.Nodes
                     string attr_type = (string)child["type"];
                     if (attr_type != null && attr_type.ToUpper().Equals("BOOL"))
                     {
-                        if (bCanGenerate)
+                        if (!bIsInsideCopy)
                         {
                             string attr_name = (string) child["name"];
                             string margin = "";
@@ -966,7 +1043,7 @@ namespace TypeCobol.Codegen.Nodes
                         var attr_usage = child["usage"];
                         if (attr_usage != null && attr_usage.ToString().ToUpper().Equals("POINTER"))
                         {
-                            if (bCanGenerate)
+                            if (!bIsInsideCopy)
                             {
                                 string attr_name = (string) child["name"];
                                 string margin = "";
@@ -1007,7 +1084,7 @@ namespace TypeCobol.Codegen.Nodes
                 if (dataDefinitionEntry != null)
                 {
                     var texts = CreateDataDefinition(child, child.SymbolTable, layout, rootProcedures, rootVariableName, typed, dataDefinitionEntry, level, indent, isCustomTypeToo, false, isCustomTypeToo? typed.TypeDefinition: null);
-                    if (bCanGenerate)
+                    if (!bIsInsideCopy)
                         lines.AddRange(texts);
                 }
                 else

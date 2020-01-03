@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
@@ -10,6 +9,8 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using System.Text.RegularExpressions;
 using TypeCobol.Compiler.Domain;
+using Antlr4.Runtime;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Symbols;
 
@@ -17,6 +18,13 @@ namespace TypeCobol.Compiler.Diagnostics
 {
     public class CrossCompleteChecker : AbstractAstVisitor
     {
+        public CrossCompleteChecker([NotNull]TypeCobolOptions compilerOptions)
+        {
+            _compilerOptions = compilerOptions;
+        }
+
+        private readonly TypeCobolOptions _compilerOptions;
+
         private Node CurrentNode { get; set; }
 
         public override bool BeginNode(Node node)
@@ -29,14 +37,14 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 foreach (var storageAreaRead in codeElement.StorageAreaReads)
                 {
-                    CheckVariable(node, storageAreaRead,true);
+                    CheckVariable(node, storageAreaRead, true);
                 }
             }
             if (codeElement?.StorageAreaWrites != null)
             {
                 foreach (var storageAreaWrite in codeElement.StorageAreaWrites)
                 {
-                    CheckVariable(node, storageAreaWrite.StorageArea,false);
+                    CheckVariable(node, storageAreaWrite.StorageArea, false);
                 }
             }
             //Build node StorageAreaWritesDataDefinition and StorageAreaReadsDataDefinition dictionaries
@@ -87,8 +95,6 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
-        
-
         public override bool Visit(PerformProcedure performProcedureNode)
         {
             SectionOrParagraphUsageChecker.CheckReferenceToParagraphOrSection(performProcedureNode);
@@ -138,7 +144,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 //For MoveCorrespondingStatement check children compatibility
                 fromVariable = move.GetDataDefinitionFromStorageAreaDictionary(moveCorresponding.FromGroupItem, true);
                 toVariable = move.GetDataDefinitionFromStorageAreaDictionary(moveCorresponding.ToGroupItem, false);
-                
+
 
                 if (fromVariable == null || toVariable == null)
                 {
@@ -200,15 +206,15 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Evaluate evaluate)
         {
-            if(evaluate.GetChildren<WhenOther>().Count == 0)
+            if (evaluate.GetChildren<WhenOther>().Count == 0)
                 DiagnosticUtils.AddError(evaluate,
                     "\"when other\" is missing", MessageCode.Warning);
-            return true; 
+            return true;
         }
 
         public override bool Visit(If ifNode)
         {
-            if(ifNode?.Children != null && !(ifNode.Children.Last() is End))
+            if (ifNode?.Children != null && !(ifNode.Children.Last() is End))
             {
                 DiagnosticUtils.AddError(ifNode,
                     "\"end-if\" is missing", MessageCode.Warning);
@@ -232,21 +238,24 @@ namespace TypeCobol.Compiler.Diagnostics
 
             //// Set a Warning if the FormCom parameter in unknown or if the program parameter have no description
 
-            ProcedureDivisionHeader procedureDivision = program.Children.FirstOrDefault(c => c is ProcedureDivision)?.CodeElement as ProcedureDivisionHeader;
+            ProcedureDivisionHeader procedureDivision =
+                program.Children.FirstOrDefault(c => c is ProcedureDivision)?.CodeElement as ProcedureDivisionHeader;
             var formCom = procedureDivision?.FormalizedCommentDocumentation;
 
-            if (formCom != null && procedureDivision.UsingParameters!= null)
+            if (formCom != null && procedureDivision.UsingParameters != null)
             {
                 CheckMultipleFormComParam(procedureDivision);
                 // Get the parameters inside the Formalized Comment that are not inside the program parameters
                 var formComParamOrphan = formCom.Parameters.Keys.Except(
-                    procedureDivision.UsingParameters.Select(p => p.StorageArea.SymbolReference?.Name)) ?? Enumerable.Empty<string>();
+                                             procedureDivision.UsingParameters.Select(p =>
+                                                 p.StorageArea.SymbolReference?.Name)) ?? Enumerable.Empty<string>();
 
                 // For each of them, place a warning on the orphan parameter definition (UserDefinedWord Token inside the FormCom)
                 foreach (var orphan in formComParamOrphan)
                 {
                     var tokens =
-                        procedureDivision.ConsumedTokens.Where(t => t.TokenType == TokenType.UserDefinedWord && t.Text == orphan);
+                        procedureDivision.ConsumedTokens.Where(t =>
+                            t.TokenType == TokenType.UserDefinedWord && t.Text == orphan);
                     foreach (var token in tokens)
                     {
                         DiagnosticUtils.AddError(procedureDivision,
@@ -255,7 +264,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                 }
 
-                
+
                 // Get the parameters inside the program parameters that are not inside the Formalized Comment
                 var sameParameters = procedureDivision.UsingParameters.Where(p =>
                     formCom.Parameters.Keys.Contains(p.StorageArea.SymbolReference?.Name));
@@ -271,7 +280,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     foreach (var token in tokens)
                     {
                         DiagnosticUtils.AddError(procedureDivision,
-                            "Parameter does not have any description inside the formalized comments: " + param.StorageArea.SymbolReference?.Name,
+                            "Parameter does not have any description inside the formalized comments: " +
+                            param.StorageArea.SymbolReference?.Name,
                             token, code: MessageCode.Warning);
                     }
                 }
@@ -291,15 +301,16 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             TypedDeclarationChecker.OnNode(dataDefinition);
 
-            var commonDataDataDefinitionCodeElement = dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines;
-            if (commonDataDataDefinitionCodeElement!=null)
+            var commonDataDataDefinitionCodeElement =
+                dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines;
+            if (commonDataDataDefinitionCodeElement != null)
             {
                 CheckPicture(dataDefinition);
             }
 
 
             DataDefinitionEntry dataDefinitionEntry = dataDefinition.CodeElement;
-            
+
             if (dataDefinitionEntry == null) return true;
 
             var levelNumber = dataDefinitionEntry.LevelNumber;
@@ -314,7 +325,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (levelNumberValue == 88 && dataDefinitionParent.DataType == DataType.Boolean)
                     {
                         DiagnosticUtils.AddError(dataDefinition,
-                            "The Level 88 symbol '" + dataDefinition.Name + "' cannot be declared under a BOOL typed symbol");
+                            "The Level 88 symbol '" + dataDefinition.Name +
+                            "' cannot be declared under a BOOL typed symbol");
                     }
                 }
                 else
@@ -324,7 +336,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (!(levelNumberValue == 01 || levelNumberValue == 77))
                     {
                         DiagnosticUtils.AddError(dataDefinition,
-                            "The variable '" + dataDefinition.Name + "' can only be of level 01 or 77", dataDefinitionEntry);
+                            "The variable '" + dataDefinition.Name + "' can only be of level 01 or 77",
+                            dataDefinitionEntry);
                     }
                 }
 
@@ -334,15 +347,18 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (dataDefinition.ChildrenCount != 0)
                     {
                         DiagnosticUtils.AddError(dataDefinition,
-                            "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot be group item.", dataDefinitionEntry);
+                            "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot be group item.",
+                            dataDefinitionEntry);
                     }
 
                     if (dataDefinition.Usage != null)
                     {
                         DiagnosticUtils.AddError(dataDefinition,
-                            "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot have USAGE.", dataDefinitionEntry);
+                            "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot have USAGE.",
+                            dataDefinitionEntry);
                     }
                 }
+
             }
 
 
@@ -363,7 +379,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (commonDataDataDefinitionCodeElement?.IsBlankWhenZero?.Value == true)
                 {
                     DiagnosticUtils.AddError(dataDefinition,
-                        "Group itm " + dataDefinition.Name + " cannot have \"Blank when zero\" clause", dataDefinitionEntry);
+                        "Group item " + dataDefinition.Name + " cannot have \"Blank when zero\" clause",
+                        dataDefinitionEntry);
                 }
 
                 return true;
@@ -371,6 +388,59 @@ namespace TypeCobol.Compiler.Diagnostics
 
             DataDefinitionChecker.OnNode(dataDefinition);
 
+            return true;
+        }
+
+        public override bool Visit(End end)
+        {
+            // Check end statement is aligned with the matching opening statement
+            if (_compilerOptions.CheckEndAlignment.IsActive && end.CodeElement.Type != CodeElementType.SentenceEnd)
+            {
+                CodeElement parentCodeElement = end.Parent.CodeElement; ;
+                if (parentCodeElement?.IsInsideCopy() == false && end.IsInsideCopy() == false)
+                {
+                    CheckEndNode(parentCodeElement, end.CodeElement);
+                }
+            }
+            return true;
+        }
+
+        public override bool Visit(FunctionEnd functionEnd)
+        {
+            // Check end statement is aligned with the matching opening statement
+            if (_compilerOptions.CheckEndAlignment.IsActive)
+            {
+                CodeElement parentCodeElement = functionEnd.Parent.CodeElement;
+                if (parentCodeElement?.IsInsideCopy() == false && functionEnd.IsInsideCopy() == false)
+                {
+                    Token openingDeclareToken = parentCodeElement.ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.DECLARE);
+                    CheckEndNode(openingDeclareToken, functionEnd.CodeElement);
+                }
+            }
+            return true;
+        }
+
+        public override bool Visit(DataDescription dataDescription)
+        {
+            DataDescriptionEntry dataDescriptionEntry = dataDescription.CodeElement;
+
+            var levelNumber = dataDescriptionEntry.LevelNumber;
+            //Check if the DataDescription is an empty group
+            if (levelNumber != null && dataDescription.IsDataDescriptionGroup && dataDescription.ChildrenCount == 0)
+            {
+                DiagnosticUtils.AddError(dataDescription, "A group item cannot be empty.", dataDescriptionEntry);
+            }
+
+            return true;
+        }
+
+        public override bool Visit(SourceComputer sourceComputer)
+        {
+            if (sourceComputer.CodeElement.DebuggingMode?.Value == true)
+            {
+                Token token = sourceComputer.CodeElement.DebuggingMode.Token;
+                DiagnosticUtils.AddError(sourceComputer.CodeElement, "Debugging mode is active", token, null, MessageCode.Warning);
+            }
             return true;
         }
 
@@ -390,8 +460,8 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 var lastChild = ((DataDefinition) dataDefinition.Children[dataDefinition.ChildrenCount - 1]);
 
-                return lastChild.CodeElement != null 
-                       && lastChild.CodeElement.Type != CodeElementType.DataConditionEntry 
+                return lastChild.CodeElement != null
+                       && lastChild.CodeElement.Type != CodeElementType.DataConditionEntry
                        && lastChild.CodeElement.Type != CodeElementType.DataRenamesEntry;
             }
 
@@ -425,8 +495,10 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(node, "missing '(' or ')'");
             }
             // if the first '(' is after first ')' OR last '(' is after last ')'
-            else if (codeElement.Picture.Value.IndexOf("(", StringComparison.Ordinal) > codeElement.Picture.Value.IndexOf(")", StringComparison.Ordinal) ||
-                     codeElement.Picture.Value.LastIndexOf("(", StringComparison.Ordinal) > codeElement.Picture.Value.LastIndexOf(")", StringComparison.Ordinal))
+            else if (codeElement.Picture.Value.IndexOf("(", StringComparison.Ordinal) >
+                     codeElement.Picture.Value.IndexOf(")", StringComparison.Ordinal) ||
+                     codeElement.Picture.Value.LastIndexOf("(", StringComparison.Ordinal) >
+                     codeElement.Picture.Value.LastIndexOf(")", StringComparison.Ordinal))
                 DiagnosticUtils.AddError(node, "missing '(' or ')'");
             else
             {
@@ -622,7 +694,9 @@ namespace TypeCobol.Compiler.Diagnostics
                     //errorMessage += Environment.NewLine + "\t" + symbol.Key.Replace(".", "::");
                     // Inline version
                     //                                        if qualified name list is not null, create a string          otherwise is the qualified name of the DataDefinition
-                    errorMessage += (isFirst ? "" : " | ") + (symbol.Key != null ? symbol.Key.ToString().Replace(".", "::") : symbol.Value.QualifiedName.ToString().Replace(".", "::"));
+                    errorMessage += (isFirst ? "" : " | ") + (symbol.Key != null
+                                        ? symbol.Key.ToString().Replace(".", "::")
+                                        : symbol.Value.QualifiedName.ToString().Replace(".", "::"));
                     isFirst = false;
                 }
                 DiagnosticUtils.AddError(node, errorMessage, area.SymbolReference);
@@ -681,7 +755,16 @@ namespace TypeCobol.Compiler.Diagnostics
                         node.GetEnclosingProgramOrFunctionNode().SetFlag(Node.Flag.UseGlobalStorage, true);
                     }
                 }
-                
+
+                if (!isReadStorageArea && node.SymbolTable.CurrentScope == SymbolTable.Scope.Function)
+                {
+                    var paramDesc = (dataDefinitionPath?.CurrentDataDefinition ?? dataDefinitionFound) as ParameterDescription;
+                    if (paramDesc?.PassingType == ParameterDescription.PassingTypes.Input)
+                    {
+                        DiagnosticUtils.AddError(node, "Input variable '" + paramDesc.Name + "' is modified by an instruction", area.SymbolReference);
+                    }
+                }
+
                 //add the found DataDefinition to a dictionary depending on the storage area type
                 if (isReadStorageArea)
                 {
@@ -690,7 +773,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     {
                         node.StorageAreaReadsDataDefinition = new Dictionary<StorageArea, DataDefinition>();
                     }
-                    node.StorageAreaReadsDataDefinition.Add(storageArea,dataDefinitionFound);
+                    node.StorageAreaReadsDataDefinition.Add(storageArea, dataDefinitionFound);
                 }
                 else
                 {
@@ -699,7 +782,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     {
                         node.StorageAreaWritesDataDefinition = new Dictionary<StorageArea, DataDefinition>();
                     }
-                    node.StorageAreaWritesDataDefinition.Add(storageArea,dataDefinitionFound);
+                    node.StorageAreaWritesDataDefinition.Add(storageArea, dataDefinitionFound);
                 }
 
                 return dataDefinitionFound;
@@ -708,7 +791,8 @@ namespace TypeCobol.Compiler.Diagnostics
             return null;
         }
 
-        private static void IndexAndFlagDataDefiniton(DataDefinitionPath dataDefinitionPath, DataDefinition dataDefinition,
+        private static void IndexAndFlagDataDefiniton(DataDefinitionPath dataDefinitionPath,
+            DataDefinition dataDefinition,
             Node node, StorageArea area, StorageArea storageArea)
         {
             if (dataDefinition.IsIndex)
@@ -721,7 +805,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
                 index.AddReferences(storageArea, node); //Add this node as a reference to the founded index
 
-                if (area.SymbolReference.IsQualifiedReference)
+                if (area.SymbolReference.IsQualifiedReference || index.IsPartOfATypeDef)
+                //Index name is qualified or belongs to a typedef
                 {
                     if (index.Name.Length > 22) //If index name is used with qualification and exceed 22 characters
                         DiagnosticUtils.AddError(index.Parent,
@@ -731,22 +816,24 @@ namespace TypeCobol.Compiler.Diagnostics
                         //If index comes from a copy, do not support qualification
                         DiagnosticUtils.AddError(node,
                             "Index '" + index.Name + "' inside a COPY cannot be use with qualified symbol", area.SymbolReference);
-                }
 
-                if (area.SymbolReference.IsQualifiedReference || index.IsPartOfATypeDef)
-                //Index name is qualified or belongs to a typedef
-                {
                     //Mark this node for generator
-                    FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, node, storageArea, dataDefinitionPath);
+                    FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, node, storageArea,
+                        dataDefinitionPath);
 
                     foreach (var reference in index.GetReferences())
                     {
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, reference.Value,
                             reference.Key, dataDefinitionPath);
                     }
+
+                    //No matter which node uses this index, if at least one time a node uses the index with a qualified name, we need to flag the index parent
+                    //Also we always flag indexes declared as part of a typedef because we're already in a TypeCobol context
+                    //Flag index node for code generator to let it know that this index will need hash.
+                    index.SetFlag(Node.Flag.IndexUsedWithQualifiedName, true);
                 }
                 else if (!area.SymbolReference.IsQualifiedReference)
-                //If it's an index but not use with qualified reference 
+                    //If it's an index but not use with qualified reference 
                 {
                     //If the index has already been flaged UsedWithQualifiedName, we need to flag the current node
                     if (index.IsFlagSet(Node.Flag.IndexUsedWithQualifiedName))
@@ -756,27 +843,18 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                 }
 
-                //No matter which node uses this index, if at least one time a node with the index with a qualified name, we need to flag the index parent 
-                if (area.SymbolReference.IsQualifiedReference && !index.IsPartOfATypeDef)
-                //If index is used with qualified name but doesn't belongs to typedef
-                {
-                    //Flag index node for code generator to let it know that this index will need hash.
-                    index.SetFlag(Node.Flag.IndexUsedWithQualifiedName, true);
-                }
-
-                    if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
+                if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
                         DiagnosticUtils.AddError(node,
                             "Index can not be use with OF or IN qualifiers " + area, area.SymbolReference);
+            }
+            else if (dataDefinition.DataType == DataType.Boolean)
+            {
+                if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.PerformProcedure || node is Nodes.WhenSearch || node is Nodes.When ) || storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)//Ignore If/Set/Perform/WhenSearch Statement
+                { 
+                    //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
+                    FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea, dataDefinitionPath);
                 }
-                else if (dataDefinition.DataType == DataType.Boolean)
-                {
-                    if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.PerformProcedure || node is Nodes.WhenSearch || node is Nodes.When ) || storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)//Ignore If/Set/Perform/WhenSearch Statement
-                    {
-                        //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
-                        FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea,
-                            dataDefinitionPath);
-                    }
-                }
+            }
 
             var specialRegister = storageArea as StorageAreaPropertySpecialRegister;
             if (specialRegister != null
@@ -788,7 +866,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 //This variable has to be in Linkage Section
                 if (!variabletoCheck.IsFlagSet(Node.Flag.LinkageSectionNode))
                     DiagnosticUtils.AddError(node,
-                        "Cannot write into " + storageArea + ", " + variabletoCheck +
+                        "Cannot write into " + storageArea + ", " + variabletoCheck.Name +
                         " is declared out of LINKAGE SECTION.", area.SymbolReference);
             }
 
@@ -820,7 +898,7 @@ namespace TypeCobol.Compiler.Diagnostics
             var tokenGroups = codeElement.ConsumedTokens.GroupBy(t => t.TokenType);
             foreach (var tokenGroup in tokenGroups)
             {
-                if ((int)tokenGroup.Key >= 513 && (int)tokenGroup.Key <= 520 && tokenGroup.Count() > 1)
+                if ((int) tokenGroup.Key >= 513 && (int) tokenGroup.Key <= 520 && tokenGroup.Count() > 1)
                 {
                     foreach (var token in tokenGroup)
                     {
@@ -843,15 +921,27 @@ namespace TypeCobol.Compiler.Diagnostics
                 node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
         }
 
+        private void CheckEndNode(IToken openingToken, CodeElement endCodeElement)
+        {
+            // Check end statement is aligned with the matching opening statement
+            if (openingToken.Line != endCodeElement.Line &&
+                openingToken.StartIndex != endCodeElement.StartIndex)
+            {
+                DiagnosticUtils.AddError(endCodeElement,
+                    "a End statement is not aligned with the matching opening statement",
+                    _compilerOptions.CheckEndAlignment.GetMessageCode());
+            }
+        }
     }
-    
+
     class SectionOrParagraphUsageChecker
     {
         public static void CheckReferenceToParagraphOrSection(PerformProcedure perform)
         {
             var performCE = perform.CodeElement;
             SymbolReference symbol;
-            symbol = ResolveProcedureName(perform.SymbolTable, performCE.Procedure as AmbiguousSymbolReference, perform);
+            symbol = ResolveProcedureName(perform.SymbolTable, performCE.Procedure as AmbiguousSymbolReference,
+                perform);
             if (symbol != null) performCE.Procedure = symbol;
             symbol = ResolveProcedureName(perform.SymbolTable, performCE.ThroughProcedure as AmbiguousSymbolReference,
                 perform);
@@ -902,19 +992,47 @@ namespace TypeCobol.Compiler.Diagnostics
             return null;
         }
 
-        protected static void Check<T>(T node, [NotNull] IList<T> found) where T : Node
+        private static void Check<T>(string nodeTypeName, T node, [NotNull] IList<T> found) where T : Node
         {
-            if (found.Count > 1) DiagnosticUtils.AddError(node, "Symbol \'" + node.Name + "\' already declared");
+            if (found.Count > 1)
+                DiagnosticUtils.AddError(node, nodeTypeName + " \'" + node.Name + "\' already declared");
+
+            // a section/paragraph (node) is empty when it has no child or when its child/children is/are an End node
+            bool empty = true; // default value
+            foreach (Node child in node.Children)  
+            {
+                if (child is Sentence || child is Paragraph)
+                {
+                    // have child(ren); at least one End node
+                    if ((child.Children.Count == 1 && (child.Children[0] is Nodes.End)) == false)
+                    {
+                        // not only one END node
+                        empty = false;
+                        break;
+                    }
+                }
+                else
+                {
+                    // a statement exists
+                    empty = false;
+                    break;
+                }
+            }
+            if (empty)
+            {
+                DiagnosticUtils.AddError(node, nodeTypeName + " \'" + node.Name + "\' is empty",
+                    MessageCode.Warning);
+            }
         }
 
         public static void CheckSection(Section section)
         {
-            Check(section, section.SymbolTable.GetSection(section.Name));
+            Check("Section", section, section.SymbolTable.GetSection(section.Name));
         }
 
         public static void CheckParagraph(Paragraph paragraph)
         {
-            Check(paragraph, paragraph.SymbolTable.GetParagraph(paragraph.Name));
+            Check("Paragraph", paragraph, paragraph.SymbolTable.GetParagraph(paragraph.Name));
         }
     }
 
@@ -949,27 +1067,28 @@ namespace TypeCobol.Compiler.Diagnostics
 
 
             if (wsymbol != null)
-                receivingTypeDefinition = wsymbol.TypeDefinition ?? GetDataDefinitionType(node, wsymbol,false);
+                receivingTypeDefinition = wsymbol.TypeDefinition ?? GetDataDefinitionType(node, wsymbol, false);
 
             var sname = sent as QualifiedName;
             if (sname != null)
             {
                 var ssymbol = node.GetDataDefinitionForQualifiedName(sname);
                 if (ssymbol == null) return; // sending symbol name unresolved
-                sendingTypeDefinition = ssymbol.TypeDefinition ?? GetDataDefinitionType(node, ssymbol,true);
+                sendingTypeDefinition = ssymbol.TypeDefinition ?? GetDataDefinitionType(node, ssymbol, true);
             }
             else if (sent is StorageArea)
             {
-                DataDefinition rsymbol=null;
+                DataDefinition rsymbol = null;
                 //var rsymbol = CrossCompleteChecker.CheckVariable(node, (StorageArea) sent,true);    
                 if (node.StorageAreaReadsDataDefinition != null)
                 {
-                    node.StorageAreaReadsDataDefinition.TryGetValue((StorageArea)sent, out searchExistingDataDefinition);
+                    node.StorageAreaReadsDataDefinition.TryGetValue((StorageArea) sent,
+                        out searchExistingDataDefinition);
                     rsymbol = searchExistingDataDefinition;
                 }
 
                 if (rsymbol != null)
-                    sendingTypeDefinition = rsymbol.TypeDefinition ?? GetDataDefinitionType(node, rsymbol,true);
+                    sendingTypeDefinition = rsymbol.TypeDefinition ?? GetDataDefinitionType(node, rsymbol, true);
             }
             else
             {
@@ -980,7 +1099,9 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             //TypeDefinition Comparison
-            if (receivingTypeDefinition != null && !(receivingTypeDefinition.Equals(sendingTypeDefinition) || (wname is StorageAreaPropertySpecialRegister && sent is StorageAreaPropertySpecialRegister)))
+            if (receivingTypeDefinition != null && !(receivingTypeDefinition.Equals(sendingTypeDefinition) ||
+                                                     (wname is StorageAreaPropertySpecialRegister &&
+                                                      sent is StorageAreaPropertySpecialRegister)))
             {
                 var isUnsafe = ((VariableWriter) node).IsUnsafe;
                 if (receivingTypeDefinition.DataType.RestrictionLevel > RestrictionLevel.WEAK)
@@ -992,7 +1113,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
                         if (sendingTypeDefinition != null &&
                             sendingTypeDefinition.DataType.Name == receivingTypeDefinition.DataType.Name)
-                        //In case type names are equals
+                            //In case type names are equals
                         {
                             sendingName = sendingTypeDefinition.VisualQualifiedName.ToString().Replace(".", "::");
                             receivingName = receivingTypeDefinition.VisualQualifiedName.ToString().Replace(".", "::");
@@ -1003,7 +1124,8 @@ namespace TypeCobol.Compiler.Diagnostics
                                 ? "strongly"
                                 : "strictly", wname, receivingName);
 
-                        DiagnosticUtils.AddError(node, message, wname.SymbolReference, code: MessageCode.SemanticTCErrorInParser);
+                        DiagnosticUtils.AddError(node, message, wname.SymbolReference,
+                            code: MessageCode.SemanticTCErrorInParser);
                     }
                 }
                 else
@@ -1017,7 +1139,7 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-       
+
 
         //TODO move this method to DataDefinition
         /// <summary>
@@ -1046,7 +1168,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 else if (data.CodeElement is DataRedefinesEntry)
                 {
                     var redefines = (DataRedefinesEntry) data.CodeElement;
-                    var searchedDataDefinition = node.GetDataDefinitionForQualifiedName(redefines.RedefinesDataName.URI, isReadDictionary);
+                    var searchedDataDefinition =
+                        node.GetDataDefinitionForQualifiedName(redefines.RedefinesDataName.URI, isReadDictionary);
                     if (searchedDataDefinition is DataDescription)
                     {
                         entry = (DataDescriptionEntry) searchedDataDefinition.CodeElement;
@@ -1068,7 +1191,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
                 if (entry.UserDefinedDataType == null)
                     return new GeneratedDefinition(entry.DataType.Name, entry.DataType);
-            } else
+            }
+            else
             {
                 return null;
             }
@@ -1091,18 +1215,20 @@ namespace TypeCobol.Compiler.Diagnostics
         private static DataDescriptionEntry GetDataDescriptionEntry(Node node,
             DataRedefinesEntry dataRedefinesEntry, bool isReadDictionary)
         {
-            var searchedDataDefinition = node.GetDataDefinitionForQualifiedName(dataRedefinesEntry.RedefinesDataName.URI, isReadDictionary);
+            var searchedDataDefinition =
+                node.GetDataDefinitionForQualifiedName(dataRedefinesEntry.RedefinesDataName.URI, isReadDictionary);
             if (searchedDataDefinition == null)
             {
                 return null;
             }
             if (searchedDataDefinition is DataDescription)
             {
-                return (DataDescriptionEntry)searchedDataDefinition.CodeElement;
+                return (DataDescriptionEntry) searchedDataDefinition.CodeElement;
             }
             if (searchedDataDefinition is DataRedefines)
             {
-                return GetDataDescriptionEntry(node, (DataRedefinesEntry)searchedDataDefinition.CodeElement, isReadDictionary);
+                return GetDataDescriptionEntry(node, (DataRedefinesEntry) searchedDataDefinition.CodeElement,
+                    isReadDictionary);
             }
             throw new NotImplementedException(searchedDataDefinition.Name);
         }

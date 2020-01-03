@@ -27,7 +27,7 @@
            88 TestLevel VALUE "Test".
        PROCEDURE DIVISION.
        DECLARE PROCEDURE MyProc PRIVATE
-           INPUT    myDate      TYPE DATE.
+           IN-OUT    myDate      TYPE DATE.
        Data division.
        WORKING-STORAGE Section.
        01 TestCtx TYPE Bool.
@@ -35,7 +35,7 @@
       *G-Date and G-TechCtx are accesible from GlobalStorage
            MOVE G-Date TO myDate.
            MOVE G-TechCtx TO TestCtx.
-        END-DECLARE.
+       END-DECLARE.
       
        MOVE G-Date TO  G-Date.
       

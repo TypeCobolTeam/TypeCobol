@@ -26,10 +26,10 @@
        PERFORM VARYING Idx-nonQualified FROM 1 BY 1
            UNTIL Idx-nonQualified > MyEventList::Idx
              display "test"
-           END-PERFORM.
+       END-PERFORM.
       
        DECLARE PROCEDURE DisplayEventList PRIVATE
-            INPUT EventList type EventList.
+            IN-OUT EventList type EventList.
        data division.
        working-storage section.
        01 EventList2 type EventList.
@@ -72,7 +72,7 @@
        procedure division.
       
        DECLARE PROCEDURE DisplayEventList PRIVATE
-            INPUT EventList type DVZF0OS3::EventList.
+            IN-OUT EventList type DVZF0OS3::EventList.
        data division.
        working-storage section.
        01 EventList2 type DVZF0OS3::EventList.

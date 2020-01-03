@@ -1,3 +1,5 @@
+      * 1 errors
+      * Line 23[8,18] <37, Warning, General> - Warning: Paragraph 'TRAITEMENT' is empty
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Functions.
 
@@ -41,8 +43,8 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *Functions.POW - Params :
-      *		input(x: pic 9(05), y: pic 9(03))
-      *		returns(result: pic 9(08))
+      *     input(x: pic 9(05), y: pic 9(03))
+      *     returns(result: pic 9(08))
        01 x PIC 9(05).
        01 y PIC 9(03).
        01 result PIC 9(08).
@@ -52,7 +54,7 @@
                    BY REFERENCE result
            .
       *Functions.POW - Params :
-      *		input(x: pic 9(05), y: pic 9(03))
-      *		returns(result: pic 9(08))
+      *     input(x: pic 9(05), y: pic 9(03))
+      *     returns(result: pic 9(08))
            CONTINUE.
        END PROGRAM c40368dd.
