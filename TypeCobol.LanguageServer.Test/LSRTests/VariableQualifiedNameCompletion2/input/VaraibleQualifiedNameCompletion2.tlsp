@@ -256,7 +256,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"result\":[{\"label\":\"W-SecondDate (DATE) (W-SecondDate)\",\"kind\":6,\"insertText\":\"W-SecondDate\"},{\"label\":\"Varia (DATE) (TestType::Varia)\",\"kind\":6,\"insertText\":\"TestType::Varia\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"result\":[{\"label\":\"W-SecondDate (DATE) (W-SecondDate)\",\"kind\":6,\"insertText\":\"W-SecondDate\"},{\"label\":\"Varia (DATE) (TestType::Varia)\",\"kind\":6,\"insertText\":\"TestType::Varia\"},{\"label\":\"W-Alphanum (Alphanumeric) (W-Alphanum)\",\"kind\":6,\"insertText\":\"W-Alphanum\"},{\"label\":\"MyGroup (Alphanumeric) (MyGroup)\",\"kind\":6,\"insertText\":\"MyGroup\"},{\"label\":\"MyDatePointer (Alphanumeric) (MyDatePointer)\",\"kind\":6,\"insertText\":\"MyDatePointer\"},{\"label\":\"TestLevel (Alphanumeric) (TestType::TestLevel)\",\"kind\":6,\"insertText\":\"TestType::TestLevel\"}]}"
     },
     {
       "category": 0,

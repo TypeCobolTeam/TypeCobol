@@ -45,3 +45,4 @@ Category;Code;Severity;MessageTemplate;Document;PageNumber;ReferenceText
 5;44;1;Invalid use of '%'. Should be used with "%<< ... (linebreak) %>>" for MultiLine Comment or "%<<< ... (linebreak) %>>>" for Formalized Comment;0;0;Page
 5;45;1;Diagnostic during Control Flow Graph building: {0};0;0;Page
 5;46;1;Diagnostic during Data Flow Analysis: {0};0;0;Page
+7;37;2;Info: {0};0;0;

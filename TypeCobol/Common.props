@@ -40,7 +40,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-	<CodeAnalysisRuleSet>TypeCobol.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRuleSet>$(SolutionDir)\TypeCobol\TypeCobol.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugSemanticDomain|AnyCPU' ">
@@ -61,7 +61,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-	<CodeAnalysisRuleSet>TypeCobol.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRuleSet>$(SolutionDir)\TypeCobol\TypeCobol.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'EI_Release|AnyCPU' ">
@@ -72,7 +72,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
- 	<CodeAnalysisRuleSet>TypeCobol.ruleset</CodeAnalysisRuleSet>
+ 	<CodeAnalysisRuleSet>$(SolutionDir)\TypeCobol\TypeCobol.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'EI_Debug|AnyCPU' ">
@@ -83,7 +83,7 @@
     <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS,EUROINFO_RULES, EUROINFO_LEGACY_TYPEDEF, NET45</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-	<CodeAnalysisRuleSet>TypeCobol.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRuleSet>$(SolutionDir)\TypeCobol\TypeCobol.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EI_Debug_Net40|AnyCPU'">
@@ -95,7 +95,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
-	<CodeAnalysisRuleSet>TypeCobol.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRuleSet>$(SolutionDir)\TypeCobol\TypeCobol.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EI_Release_Net40|AnyCPU'">
@@ -107,7 +107,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
-	<CodeAnalysisRuleSet>TypeCobol.ruleset</CodeAnalysisRuleSet>
+	<CodeAnalysisRuleSet>$(SolutionDir)\TypeCobol\TypeCobol.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis> 
  </PropertyGroup>
 

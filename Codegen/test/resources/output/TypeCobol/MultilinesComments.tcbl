@@ -50,11 +50,11 @@
       *<<
       *    Multiline 8
       *>>
-      *    CALL FUN INPUT typedVar::var1.
-           CALL 'bee79d5e' USING
-                                 var1 IN typedVar
+      *    CALL FUN IN-OUT typedVar::var1.
+           CALL 'a0708059' USING
+                    by reference var1 IN typedVar
            end-call
-                                        .
+                                         .
            CONTINUE.
       *<<
       *    Multiline 9
@@ -64,7 +64,7 @@
       *<<
       *    Multiline 10
       *>>
-      *        INPUT y PIC 9(03).
+      *        IN-OUT y PIC 9(03).
       
       
       *<<
@@ -76,14 +76,14 @@
       *<<
       *    Multiline 10
       *>>
-      *        INPUT y PIC 9(03).
+      *        IN-OUT y PIC 9(03).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. bee79d5e.
+       PROGRAM-ID. a0708059.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *MultilinesCommentsCodeGen.FUN - Params :
-      *		input(y: pic 9(03))
+      *     in-out(y: pic 9(03))
                                
        01 funVar1       PIC 9(5).
       *<<
@@ -91,13 +91,13 @@
       *>>
        LINKAGE SECTION.
       *MultilinesCommentsCodeGen.FUN - Params :
-      *		input(y: pic 9(03))
+      *     in-out(y: pic 9(03))
        01 y PIC 9(03).
        PROCEDURE DIVISION
              USING BY REFERENCE y
            .
       *MultilinesCommentsCodeGen.FUN - Params :
-      *		input(y: pic 9(03))
+      *     in-out(y: pic 9(03))
       *<<
       *    Multiline 12
       *>>
@@ -109,4 +109,4 @@
       *<<
       *    Multiline 14
       *>>
-       END PROGRAM bee79d5e.
+       END PROGRAM a0708059.

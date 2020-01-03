@@ -238,7 +238,8 @@ namespace TypeCobol.LanguageServer
             foreach (var potentialVariable in potentialVariablesForCompletion.Where(v => v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)).Distinct())
                 SearchVariableInTypesAndLevels(node, potentialVariable, ref completionItems); //Add potential variables to completionItems*           
 
-
+            CompletionFactoryHelpers.Case textCase = CompletionFactoryHelpers.GetTextCase(codeElement.ConsumedTokens.First(t => t.TokenType == TokenType.CALL).Text);
+            Dictionary<ParameterDescription.PassingTypes, string> paramWithCase = CompletionFactoryHelpers.GetParamsWithCase(textCase);
             //If signature of procedure is available
             if (procedureSignatureContext != null)
             {
@@ -246,38 +247,40 @@ namespace TypeCobol.LanguageServer
                 if (lastSignificantToken.TokenType == TokenType.INPUT
                     && alreadyGivenParametersCount == (procedureSignatureContext.Profile.InputParameters.Count - 1))
                 {
-                    if (procedureSignatureContext.Profile.InoutParameters.Count != 0) {
-                        AddIn_OutSuffixToCompletionItems(lastSignificantToken, completionItems);
+                    if (procedureSignatureContext.Profile.InoutParameters.Count != 0)
+                    {
+                        AddIn_OutSuffixToCompletionItems(lastSignificantToken, completionItems, paramWithCase);
 
                     }
                     else if (procedureSignatureContext.Profile.OutputParameters.Count != 0)
                     {
-                        AddOutputSuffixToCompletionItems(lastSignificantToken, completionItems);
+                        AddOutputSuffixToCompletionItems(lastSignificantToken, completionItems, paramWithCase);
                     }
                 }
 
                 //Add OUTPUT after IN-OUT ?
-                else if (lastSignificantToken.TokenType == TokenType.IN_OUT 
+                else if (lastSignificantToken.TokenType == TokenType.IN_OUT
                          && alreadyGivenParametersCount == (procedureSignatureContext.Profile.InoutParameters.Count - 1)
-                         && procedureSignatureContext.Profile.OutputParameters.Count != 0) {
-                    AddOutputSuffixToCompletionItems(lastSignificantToken, completionItems);
+                         && procedureSignatureContext.Profile.OutputParameters.Count != 0)
+                {
+                    AddOutputSuffixToCompletionItems(lastSignificantToken, completionItems, paramWithCase);
                 }
             }
             else
             {
                 //Add IN-OUT or OUTPUT after INPUT ?
                 //If we reach the last INPUT parameter
-                if (lastSignificantToken.TokenType == TokenType.INPUT && alreadyGivenParametersCount == maxInput -1) {
-
-
+                if (lastSignificantToken.TokenType == TokenType.INPUT && alreadyGivenParametersCount == maxInput - 1)
+                {
                     //If all procs have IN-OUT params
-                    if (allProcsHaveInOutParams) {
-                        AddIn_OutSuffixToCompletionItems(lastSignificantToken, completionItems);
+                    if (allProcsHaveInOutParams)
+                    {
+                        AddIn_OutSuffixToCompletionItems(lastSignificantToken, completionItems, paramWithCase);
                     }
                     //If no procedures have IN-OUT params and all have OUTPUT params
                     else if (noProcsHaveInOutParams && allProcsHaveOutputParams)
                     {
-                        AddOutputSuffixToCompletionItems(lastSignificantToken, completionItems);
+                        AddOutputSuffixToCompletionItems(lastSignificantToken, completionItems, paramWithCase);
                     }
                     //Otherwise we cannot choose between IN-OUT, OUTPUT and nothing, so we choose nothing and let the user add the good keyword manually.
                     //#908 will change this behavior by asking for the signature context
@@ -289,7 +292,7 @@ namespace TypeCobol.LanguageServer
                     //If all procedures have OUTPUT parameter
                     if (allProcsHaveOutputParams)
                     {
-                        AddOutputSuffixToCompletionItems(lastSignificantToken, completionItems);
+                        AddOutputSuffixToCompletionItems(lastSignificantToken, completionItems, paramWithCase);
                     }
                 }
             }
@@ -297,17 +300,19 @@ namespace TypeCobol.LanguageServer
             return completionItems;
         }
 
-        private static void AddIn_OutSuffixToCompletionItems(Token lastSignificantToken, List<CompletionItem> completionItems) {
+        private static void AddIn_OutSuffixToCompletionItems(Token lastSignificantToken, List<CompletionItem> completionItems, Dictionary<ParameterDescription.PassingTypes, string> paramWithCase)
+        {
             //Use -1, because it seems LSP start counting at 1
-            var suffix = "\n" + new string(' ', lastSignificantToken.Column-1) + "IN-OUT ";
+            var suffix = "\n" + new string(' ', lastSignificantToken.Column - 1) + paramWithCase[ParameterDescription.PassingTypes.InOut] + " ";
             completionItems.ForEach(ci => ci.insertText += suffix);
         }
-        private static void AddOutputSuffixToCompletionItems(Token lastSignificantToken, List<CompletionItem> completionItems) {
+        private static void AddOutputSuffixToCompletionItems(Token lastSignificantToken, List<CompletionItem> completionItems, Dictionary<ParameterDescription.PassingTypes, string> paramWithCase)
+        {
             //Use -1, because it seems LSP start counting at 1
-            var suffix = "\n" + new string(' ', lastSignificantToken.Column-1) + "OUTPUT ";
+            var suffix = "\n" + new string(' ', lastSignificantToken.Column - 1) + paramWithCase[ParameterDescription.PassingTypes.Output] + " ";
             completionItems.ForEach(ci => ci.insertText += suffix);
         }
-    
+
 
         #endregion
 
@@ -408,9 +413,10 @@ namespace TypeCobol.LanguageServer
                                 ((firstSignificantToken != null && ((t.StartIndex >= firstSignificantToken.EndColumn && t.Line == firstSignificantToken.Line) || t.Line > firstSignificantToken.Line)) 
                                 || firstSignificantToken == null) 
                                 && ((t.EndColumn <= position.character && t.Line == position.line + 1) || t.Line < position.line + 1))
-                        .Select(t => t.Text);
-                qualifiedName.Reverse();
-                var possibleVariables = node.SymbolTable.GetVariablesExplicit(new URI(qualifiedName));
+                        .Select(t => t.Text)
+                        .ToArray();
+
+               var possibleVariables = qualifiedName.Length > 0 ? node.SymbolTable.GetVariablesExplicit(new URI(qualifiedName)) : null;
 
                 if (possibleVariables != null && possibleVariables.Any()) 
                 {
@@ -476,7 +482,7 @@ namespace TypeCobol.LanguageServer
                         {
                             functionDeclarationSignatureDictionary.Clear(); //Clear to avoid key collision
                             //On CALL get possible procedures and functions in the seeked program
-                            var programs = node.SymbolTable.GetPrograms(userTokenToSeek.Text);
+                            var programs = node.SymbolTable.GetPrograms(userTokenToSeek.Text, true);
                             if (programs != null && programs.Any())
                             {
                                 var procedures =
@@ -498,7 +504,7 @@ namespace TypeCobol.LanguageServer
                         case TokenType.TYPE:
                         {
                             //On TYPE get possible public types in the seeked program
-                            var programs = node.SymbolTable.GetPrograms(userTokenToSeek.Text);
+                            var programs = node.SymbolTable.GetPrograms(userTokenToSeek.Text, true);
                             if (programs != null && programs.Any())
                             {
                                 var types =
@@ -548,7 +554,7 @@ namespace TypeCobol.LanguageServer
             if (node == null)
                 return completionItems;
 
-            IEnumerable<DataDefinition> potentialVariables = null;
+            var potentialVariables = Enumerable.Empty<DataDefinition>();
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
             Expression<Func<DataDefinition, bool>> variablePredicate =
                 da =>
@@ -604,12 +610,15 @@ namespace TypeCobol.LanguageServer
             {
                 if (seekedDataTypes.Count == 0) //If a Datatype hasn't be found yet. 
                 {
-                    var foundedVars =
-                        node.SymbolTable.GetVariablesExplicit(
-                            new URI(qualifiedNameTokens.Select(t => t.Text)));
+                    var foundedVar = node.SymbolTable.GetVariablesExplicit(new URI(qualifiedNameTokens.Select(t => t.Text))).FirstOrDefault();
 
-                    if (foundedVars != null && foundedVars.Any())
-                        seekedDataTypes.Add(foundedVars.First().DataType);
+                    if (foundedVar != null)
+                    {
+                        seekedDataTypes.Add(foundedVar.DataType);
+
+                        // Add PrimitiveDataType to extend the search to compatible types, if null default to Alphanumeric
+                        seekedDataTypes.Add(foundedVar.PrimitiveDataType ?? DataType.Alphanumeric);
+                    }
                 }
 
                 foreach (var seekedDataType in seekedDataTypes.Distinct())
@@ -669,7 +678,7 @@ namespace TypeCobol.LanguageServer
             {
                 case TokenType.ADDRESS:
                 {
-                    var contextToken = tokensUntilCursor.Skip(2).FirstOrDefault(); //Try to get the token that may define the completion context
+                    var contextToken = tokensUntilCursor?.Skip(2).FirstOrDefault(); //Try to get the token that may define the completion context
                     completionItems = GetCompletionForAddressOf(node, contextToken, userFilterText);
                     break;
                 }
@@ -688,7 +697,6 @@ namespace TypeCobol.LanguageServer
         /// This method will modify the completionItems ref parameter.
         /// CompletionItems will be filtered on variables declared in LINKAGE SECTION and with LevelNumber equal to 01 or 77. 
         /// </summary>
-        /// <param name="completionItems">Ref to a list of completion items</param>
         /// <param name="node">Node found on cursor position</param>
         /// <param name="contextToken">ContextToken to select if it's a SET or something else</param>
         /// <param name="userFilterText">Variable Name Filter</param>

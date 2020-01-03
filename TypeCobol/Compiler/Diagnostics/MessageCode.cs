@@ -54,5 +54,6 @@ namespace TypeCobol.Compiler.Diagnostics
         MultiFormalizedCommentIndicatorMisused = 44,
         ControlFlowGraphDiagnostic = 45,
         DataFlowAnalysisDiagnostic = 46,
-    }
+        Info = 47
+	}
 }

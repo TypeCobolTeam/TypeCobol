@@ -35,7 +35,7 @@ Block8 [
 label = "{DEPT-HEAD-EXIT. Block8|EXIT\l}"
 ]
 Block9 [
-label = "{EMPL-FOOT-USE. Block9|EMPL-FOOT-USE SECTION. USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
+label = "{EMPL-FOOT-USE. Block9|                       USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
 ]
 Block10 [
 label = "{EMPL-FOOT-PROC. Block10|MOVE NUM TO NBJ\l}"
@@ -47,7 +47,7 @@ Block12 [
 label = "{EMPL-FOOT-EXIT. Block12|EXIT\l}"
 ]
 Block13 [
-label = "{DEPT-FOOT-USE. Block13|DEPT-FOOT-USE SECTION. USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
+label = "{DEPT-FOOT-USE. Block13|                       USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
 ]
 Block14 [
 label = "{DEPT-FOOT-PROC. Block14|MOVE NUM TO NBJ\l}"
@@ -59,7 +59,7 @@ Block16 [
 label = "{DEPT-FOOT-EXIT. Block16|EXIT\l}"
 ]
 Block17 [
-label = "{COMP-FOOT-USE. Block17|COMP-FOOT-USE SECTION. USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
+label = "{COMP-FOOT-USE. Block17|                       USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
 ]
 Block18 [
 label = "{COMP-FOOT-PROC. Block18|}"

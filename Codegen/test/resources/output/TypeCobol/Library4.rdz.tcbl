@@ -56,13 +56,13 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *DVZZDATE.currentDateString  - No Params
-      *		returns(Result: pic 9(08))
+      *     returns(Result: pic 9(08))
        01 Result PIC 9(08).
        PROCEDURE DIVISION
              USING BY REFERENCE Result
            .
       *DVZZDATE.currentDateString  - No Params
-      *		returns(Result: pic 9(08))
+      *     returns(Result: pic 9(08))
            display "toto"
            .
        END PROGRAM b173dd7b.

@@ -16,9 +16,9 @@
       *01 myDate TYPE DateDB2.
        01 myDate.
            02 YYYY PIC 9(04).
-           02 PIC X value '-'.
+           02 filler PIC X value '-'.
            02 MM PIC 9(02).
-           02 PIC X value '-'.
+           02 filler PIC X value '-'.
            02 DD PIC 9(02).
                               
 
@@ -27,9 +27,9 @@
       *    03 varB type DateDB2.
            03 varB.
            04 YYYY PIC 9(04).
-           04 PIC X value '-'.
+           04 filler PIC X value '-'.
            04 MM PIC 9(02).
-           04 PIC X value '-'.
+           04 filler PIC X value '-'.
            04 DD PIC 9(02).
                                 
 
@@ -37,7 +37,7 @@
             05 TimeDB2 PIC X(10).
 
       *01 TechnicalContext TYPEDEF STRICT PUBLIC.
-      *     05 SystemTime.
+      *     05 SystemTime PIC X(10).
 
       *01  CDNBEXTR-SharedData  TYPEDEF STRICT PRIVATE.
 
@@ -54,7 +54,7 @@
       *01  SharedData  TYPE CDNBEXTR-SharedData.
        01 SharedData.
            02 TechnicalContext.
-             03 SystemTime.
+             03 SystemTime PIC X(10).
            02 SystemDateDB2 PIC X(10).
            02 C-Application PIC X(08) VALUE "FCDN".
            02 C-Secteur PIC X(08) VALUE "TITRES".

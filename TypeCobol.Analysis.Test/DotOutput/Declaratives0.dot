@@ -16,7 +16,7 @@ Block2 [
 label = "{AFFICHAGE-PARAGRAPHE. Block2|       display DEBUG-NAME\l}"
 ]
 Block3 [
-label = "{X. Block3|X.  EXIT\l}"
+label = "{X. Block3|    EXIT\l}"
 ]
 Block4 [
 label = "{Block4|}"

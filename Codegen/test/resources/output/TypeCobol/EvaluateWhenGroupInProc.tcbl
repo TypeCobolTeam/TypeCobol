@@ -1,0 +1,87 @@
+﻿      *TypeCobol_Version:TestTypeCobolVersion
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MainProgram.
+       data division.
+       working-storage section.
+       01  TC-MainProg-FctList-Loaded PIC X(02).
+           88 TC-MainProg-FctList-IsLoaded      VALUE 'OK'.
+       01 TC-MainProg-PntTab.
+           05 TC-MainProg-PntNbr         PIC S9(04) COMP VALUE 1.
+      *To call program af117577
+      *Which is generated code for MainProgram.InFct
+      *Declared in source file EvaluateWhenGroupInProc.tcbl
+           05 TC-MainProg-af117577-Idt   PIC X(08) VALUE 'af117577'.
+           05 TC-MainProg-af117577 PROCEDURE-POINTER.
+
+       LINKAGE SECTION.
+       01 PntTab-Pnt POINTER.
+
+      
+       procedure division USING PntTab-Pnt.
+                          
+      *
+      *    IF CallIsCopy
+      *      PERFORM Copy-Process-Mode
+      *    ELSE
+           PERFORM FctList-Process-Mode
+           perform INIT-LIBRARY
+      *    END-IF
+
+           GOBACK.
+
+        FctList-Process-Mode.
+            IF NOT TC-MainProg-FctList-IsLoaded
+              SET TC-MainProg-af117577   TO ENTRY 'af117577'
+
+              SET TC-MainProg-FctList-IsLoaded TO TRUE
+            END-IF
+               .
+
+            set PntTab-Pnt TO ADDRESS OF TC-MainProg-PntTab
+
+           .
+                          
+       INIT-LIBRARY.
+          EXIT.
+      *DECLARE PROCEDURE InFct PUBLIC
+      *        INPUT     d PIC X(9)
+      *        .
+      
+       END PROGRAM MainProgram.
+      *
+      *DECLARE PROCEDURE InFct PUBLIC
+      *        INPUT     d PIC X(9)
+      *        .
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. af117577.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *MainProgram.InFct - Params :
+      *     input(d: pic X(9))
+                               
+       01 GRP.
+          02 GRP2.
+             05 S PIC X(10).
+                88 cre VALUE 'CRE'.
+                88 rcm VALUE 'RCM'.
+       LINKAGE SECTION.
+      *MainProgram.InFct - Params :
+      *     input(d: pic X(9))
+       01 d PIC X(9).
+       PROCEDURE DIVISION
+             USING BY REFERENCE d
+           .
+      *MainProgram.InFct - Params :
+      *     input(d: pic X(9))
+      *    EVALUATE GRP::GRP2::
+      *      S
+           EVALUATE S OF GRP2 OF 
+             GRP
+          WHEN 'CRE'
+           continue
+          WHEN 'RCM'
+           continue
+          WHEN OTHER
+           continue.
+       END PROGRAM af117577.

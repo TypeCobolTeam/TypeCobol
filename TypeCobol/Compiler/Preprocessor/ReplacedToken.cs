@@ -117,11 +117,11 @@ namespace TypeCobol.Compiler.Preprocessor
         }
     }
 
-    public class ImportedToken : Token
+    public class ImportedToken : Token, IEquatable<ImportedToken>
     {
 
-        public Token OriginalToken{ get; private set; }
-        public CopyDirective CopyDirective { get; private set; }
+        public Token OriginalToken{ get; }
+        public CopyDirective CopyDirective { get; }
 
 
         public ImportedToken(Token originalToken, CopyDirective copyDirective)
@@ -141,6 +141,31 @@ namespace TypeCobol.Compiler.Preprocessor
             get
             {
                 return OriginalToken.Text;
+            }
+        }
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as ImportedToken);
+        }
+
+        public bool Equals(ImportedToken tokenCompare)
+        {
+            if (Object.ReferenceEquals(this, tokenCompare)) return true;
+            if (Object.ReferenceEquals(null, tokenCompare)) return false;
+
+            return tokenCompare.OriginalToken.Equals(this.OriginalToken) &&
+                   tokenCompare.CopyDirective.Equals(this.CopyDirective);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = 13;
+                hashCode = (hashCode * 397) ^ this.OriginalToken.GetHashCode();
+                hashCode = (hashCode * 397) ^ this.CopyDirective.GetHashCode();
+
+                return hashCode;
             }
         }
     }

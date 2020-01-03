@@ -7,7 +7,7 @@ edge [
 arrowtail = "empty"
 ]
 Block0 [
-label = "{START|    DISPLAY \"n : \" NO ADVANCING\l    DISPLAY \"n : \" NO ADVANCING ACCEPT n\l}"
+label = "{START|    DISPLAY \"n : \" NO ADVANCING\l                                ACCEPT n\l}"
 ]
 Block1 [
 label = "{Block1|    PERFORM VARYING counter FROM 1 BY 2 UNTIL counter \> n\l}"

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,12 +21,16 @@ namespace TypeCobol.Test.HighLevelAPI {
         [TestCategory("Parsing")]
         [TestProperty("Time", "fast")]
         public void TestGetLTNVCopy() {
+#if !EUROINFO_RULES
+            return;
+#endif
+
             var errors = new List<Exception>();
 
             var rootPath = Root + Path.DirectorySeparatorChar + "LTNV";
 
 
-            ParseAndTestGetLTNVCopys(rootPath, "FO200001.rdz.cbl", false, errors, new List<string> {"FO200001"},
+            ParseAndTestGetLTNVCopys(rootPath, "FO200001.rdz.cbl", true, errors, new List<string> {"FO200001"},
                 new Dictionary<string, string>()
                 {
                     {"YFO2FAW", "YFO2FAL"},
@@ -34,7 +39,7 @@ namespace TypeCobol.Test.HighLevelAPI {
                     {"YFO2S1L", "FO2S01"}
                 });
 
-            ParseAndTestGetLTNVCopys(rootPath, "FOOABCDE.rdz.cbl", false, errors, new List<string> { "FOOABCDE" },
+            ParseAndTestGetLTNVCopys(rootPath, "FOOABCDE.rdz.cbl", true, errors, new List<string> { "FOOABCDE" },
                 new Dictionary<string, string>()
                 {
                     { "YFOOFAW", "FOOFAW" },
@@ -89,8 +94,9 @@ namespace TypeCobol.Test.HighLevelAPI {
         {
             var parser = TypeCobol.Parser.Parse(rootPath + Path.DirectorySeparatorChar + path, DocumentFormat.RDZReferenceFormat, autoRemarks);
             var diagnostics = parser.Results.AllDiagnostics();
-            //There should be no diagnostics
-            Assert.IsFalse(diagnostics.Any());
+            // There should be no diagnostics errors
+            // warning diagnostics are not considered : for example, test with warning with COPY SUPPRESS is always running
+            Assert.IsFalse(diagnostics.Any(d => d.Info.Severity != TypeCobol.Compiler.Diagnostics.Severity.Warning));
 
             return LTNVHelper.GetLTNVCopy(parser.Results.ProgramClassDocumentSnapshot.Root);
         }

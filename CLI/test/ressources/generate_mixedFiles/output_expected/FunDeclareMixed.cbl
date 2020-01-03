@@ -50,13 +50,13 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *FunDeclare.ReturnsZero  - No Params
-      *		returns(result: pic 9(04))
+      *     returns(result: pic 9(04))
        01 result PIC 9(04).
        PROCEDURE DIVISION
              USING BY REFERENCE result
            .
       *FunDeclare.ReturnsZero  - No Params
-      *		returns(result: pic 9(04))
+      *     returns(result: pic 9(04))
            MOVE 0 TO result.
            .
        END PROGRAM e61a1c43.
@@ -69,13 +69,13 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *FunDeclare.DoesNothing - Params :
-      *		input(x: pic 9(04))
+      *     input(x: pic 9(04))
        01 x PIC 9(04).
        PROCEDURE DIVISION
              USING BY REFERENCE x
            .
       *FunDeclare.DoesNothing - Params :
-      *		input(x: pic 9(04))
+      *     input(x: pic 9(04))
            DISPLAY 'I DO NOTHING WITH ' x
            .
        END PROGRAM cd51a7fd.
@@ -90,8 +90,8 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *FunDeclare.StrangelyReturnsItsInput - Params :
-      *		input(x: pic 9(04))
-      *		returns(result: pic 9(04))
+      *     input(x: pic 9(04))
+      *     returns(result: pic 9(04))
                        
        01 x PIC 9(04).
        01 result PIC 9(04).
@@ -100,8 +100,8 @@
                    BY REFERENCE result
            .
       *FunDeclare.StrangelyReturnsItsInput - Params :
-      *		input(x: pic 9(04))
-      *		returns(result: pic 9(04))
+      *     input(x: pic 9(04))
+      *     returns(result: pic 9(04))
            IF x = 0
              MOVE 0 TO result
            ELSE
@@ -117,18 +117,18 @@
        data division.
        working-storage section.
       *FunDeclare.UseACopy - Params :
-      *		input(x: pic X)
+      *     input(x: pic X)
                                
        01 yoto pic X.
        LINKAGE SECTION.
       *FunDeclare.UseACopy - Params :
-      *		input(x: pic X)
+      *     input(x: pic X)
        01 x pic X.
        PROCEDURE DIVISION
              USING BY REFERENCE x
            .
       *FunDeclare.UseACopy - Params :
-      *		input(x: pic X)
+      *     input(x: pic X)
            display "Hello"
            .
        END PROGRAM e7b552c0.

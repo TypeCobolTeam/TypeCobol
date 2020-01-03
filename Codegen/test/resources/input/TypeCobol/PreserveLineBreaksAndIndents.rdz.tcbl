@@ -1,0 +1,15 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. RB1LEQU1.
+       procedure division.
+      *Issue #1552: Picture was mistakenly split across multiple lines
+       declare procedure Foo2
+                 input  EquipementObject PIC X(3)
+                        EquipementMainReference
+                                         PIC S9(4)
+                        EquipementSecondaryReference
+                                         PIC S9(4)
+                        EquipementOccurrence
+                                         PIC S9(4).
+       procedure division.
+       end-declare.
+       end program RB1LEQU1.
