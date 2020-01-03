@@ -67,7 +67,8 @@
       *  .
 
        INIT-LIBRARY.
-       
+           EXIT.
+
        TRAITEMENT.
       *OK  call check of PGM1
       *    call check input mydate1
@@ -105,13 +106,13 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.GetPersonByName - Params :
-      *		input(name: pic x(15))
+      *     input(name: pic x(15))
        01 name pic x(15).
        PROCEDURE DIVISION
              USING BY REFERENCE name
            .
       *PGM1.GetPersonByName - Params :
-      *		input(name: pic x(15))
+      *     input(name: pic x(15))
            CONTINUE.
        END PROGRAM f6b6da00.
        END PROGRAM PersonService.
@@ -127,7 +128,7 @@
        data division.
        working-storage section.
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
                                
        01 TC-PersonSe pic X(08) value 'PERSONSE'.
 
@@ -138,7 +139,7 @@
                             'U' thru X'FF'.
        linkage section.
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
                        
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.
@@ -163,7 +164,7 @@
              USING BY REFERENCE mydate
            .
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
            PERFORM TC-INITIALIZATIONS
       *    Call PersonService::GetPersonById input mydate
            
@@ -214,18 +215,18 @@
        data division.
        working-storage section.
       *PGM1.checkName - Params :
-      *		input(myname: pic X(15))
+      *     input(myname: pic X(15))
                                
        linkage section.
       *PGM1.checkName - Params :
-      *		input(myname: pic X(15))
+      *     input(myname: pic X(15))
                        
        01 myname PIC X(15).
        PROCEDURE DIVISION
              USING BY REFERENCE myname
            .
       *PGM1.checkName - Params :
-      *		input(myname: pic X(15))
+      *     input(myname: pic X(15))
            CONTINUE.
        END PROGRAM a02a7aa5.
       *
@@ -237,7 +238,7 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.GetPersonById - Params :
-      *		input(personId: DATE)
+      *     input(personId: DATE)
        01 personId.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -246,7 +247,7 @@
              USING BY REFERENCE personId
            .
       *PGM1.GetPersonById - Params :
-      *		input(personId: DATE)
+      *     input(personId: DATE)
            CONTINUE.
        END PROGRAM cd991005.
        END PROGRAM PGM1.

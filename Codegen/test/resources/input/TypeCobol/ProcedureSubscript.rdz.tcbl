@@ -30,7 +30,7 @@
                     arg4      pic X(50)
                     arg5      pic X(50)
            OUTPUT   FinalLength     PIC X(10).
-        END-DECLARE.
+       END-DECLARE.
       
             CALL CompressString
             INPUT    StringArray::Pnt (StringIdx)

@@ -1,3 +1,5 @@
+      * 1 errors
+      * Line 6[28,36] <37, Warning, General> - Warning: Debugging mode is active
       *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZF0OSM.
@@ -17,7 +19,7 @@
       *  05 Tax TYPE TaxElm
       *    OCCURS 200 TIMES INDEXED BY Idx-TaxElm.
          05 Tax
-           OCCURS 200 TIMES INDEXED BY b3c45d20Idx-TaxElm.
+           OCCURS 200 TIMES INDEXED BY Idx-TaxElm.
            06 TaxTyp PIC X(03).
                                                   
        01  TC-DVZF0OSM-FctList-Loaded PIC X(02).

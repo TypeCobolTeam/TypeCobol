@@ -1,9 +1,19 @@
 --- Diagnostics ---
 Line 1[1,33] <37, Warning, General> - Warning: "END PROGRAM" is missing.
+Line 6[1,14] <37, Warning, General> - Warning: Paragraph 'procedurename' is empty
+Line 13[1,8] <37, Warning, General> - Warning: Paragraph 'SKIP-02' is empty
+Line 15[1,8] <37, Warning, General> - Warning: Paragraph 'SKIP-03' is empty
+Line 18[1,8] <37, Warning, General> - Warning: Paragraph 'SKIP-04' is empty
+Line 44[1,8] <37, Warning, General> - Warning: Paragraph 'EJECT02' is empty
+Line 46[1,8] <37, Warning, General> - Warning: Paragraph 'EJECT03' is empty
+Line 49[1,8] <37, Warning, General> - Warning: Paragraph 'EJECT04' is empty
 Line 73[3,11] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: x
+Line 75[1,7] <37, Warning, General> - Warning: Paragraph 'COPY02' is empty
 Line 76[3,11] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: x
+Line 77[1,7] <37, Warning, General> - Warning: Paragraph 'COPY03' is empty
 Line 78[3,11] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: x
 Line 79[3,11] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: x
+Line 80[1,7] <37, Warning, General> - Warning: Paragraph 'COPY04' is empty
 Line 81[3,11] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: x
 Line 82[3,11] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: x
 Line 85[3,11] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: x
@@ -11,6 +21,9 @@ Line 88[3,11] <28, Error, Directives> - Failed to load COPY : Cobol source file 
 Line 92[3,11] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: x
 Line 96[3,11] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: x
 Line 100[3,9] <27, Error, Syntax> - Syntax error : mismatched input 'PERFORM' expecting  expecting {EOF, '.', END-EXEC, IN, OF, REPLACING, SUPPRESS}
+Line 106[1,8] <37, Warning, General> - Warning: Paragraph 'BASIS02' is empty
+Line 108[1,8] <37, Warning, General> - Warning: Paragraph 'BASIS03' is empty
+Line 111[1,8] <37, Warning, General> - Warning: Paragraph 'BASIS04' is empty
 
 --- Program ---
 PROGRAM: compiler-directing common:False initial:False recursive:False

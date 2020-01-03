@@ -1,0 +1,59 @@
+﻿       identification division.
+       program-id. MyPGM.
+       data division.
+       working-storage section.
+      
+      *01 GroupType TYPEDEF STRICT PRIVATE.
+      *    05 GroupType-DATA1      PIC X(5).
+      *    05 GroupType-DATA2      PIC X(5).
+      
+       procedure division.
+      
+      *DECLARE PROCEDURE MyProc
+      *        INPUT Scalar ? PIC X(5)
+      *              Structure ? TYPE GroupType.
+      
+       p1.
+      *    CALL MyProc INPUT OMITTED OMITTED
+           CALL 'ceae7f96' USING
+                                 omitted
+                                 omitted
+           end-call
+                                            
+           .
+      
+       end program MyPGM.
+      *
+      *DECLARE PROCEDURE MyProc
+      *        INPUT Scalar ? PIC X(5)
+      *              Structure ? TYPE GroupType.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ceae7f96.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *MyPGM.MyProc - Params :
+      *     input(Scalar: pic X(5), Structure: GroupType)
+                               
+      *01 MyStructure TYPE GroupType.
+       01 MyStructure.
+           02 GroupType-DATA1 PIC X(5).
+           02 GroupType-DATA2 PIC X(5).
+                                     
+       LINKAGE SECTION.
+      *MyPGM.MyProc - Params :
+      *     input(Scalar: pic X(5), Structure: GroupType)
+       01 Scalar PIC X(5).
+       01 Structure.
+           02 GroupType-DATA1 PIC X(5).
+           02 GroupType-DATA2 PIC X(5).
+       PROCEDURE DIVISION
+             USING BY REFERENCE Scalar
+                   BY REFERENCE Structure
+           .
+      *MyPGM.MyProc - Params :
+      *     input(Scalar: pic X(5), Structure: GroupType)
+           DISPLAY Scalar
+           MOVE Structure TO MyStructure
+           .
+       END PROGRAM ceae7f96.

@@ -1,0 +1,16 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MyIntrinsicFunctions.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+
+       PROCEDURE DIVISION.
+       
+       declare procedure dump public
+          input msg pic X(80)
+         .
+       PROCEDURE DIVISION.
+          CONTINUE.
+       END-DECLARE.
+       END PROGRAM MyIntrinsicFunctions.

@@ -1,0 +1,259 @@
+﻿      * 1 errors
+      * Line 7[28,36] <37, Warning, General> - Warning: Debugging mode is active
+      *TypeCobol_Version:TestTypeCobolVersion
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. GlobalStorageTest.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+      
+       SOURCE-COMPUTER. IBM-370
+                      WITH DEBUGGING MODE
+                      .
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+       DATA DIVISION.
+      
+      *GLOBAL-STORAGE SECTION.
+                                                                        00002345
+      *01 dbgCblVar PIC X(22).
+      *01 G-Date            TYPE Date.
+000014                                                                  00001597
+      *01 G-TechCtx         TYPE Bool.
+      *01 DuplicatedVar     TYPE Bool.
+      *01 purCblVar PIC X(22).
+                                                                        00001234
+      *01 dbgCblVar2 PIC X(22).
+000018D                        
+      *01 purCblGrp.
+      *   48 dbgCblVar PIC X(32).
+000020D                          
+      *   48 purCblVar PIC X(32).
+      
+       WORKING-STORAGE SECTION.
+      * 01 MyType TYPEDEF STRICT PIC X.
+      
+       01 MyGroup PIC X(10).
+           88 TestLevel VALUE "Test".
+       LINKAGE SECTION.
+
+       01 TC-GlobalData.
+                                                                        00002345
+000013 02 dbgCblVar PIC X(22).
+      *01 G-Date            TYPE Date.
+000014 02 G-Date.
+           03 YYYY PIC 9(4).
+           03 MM PIC 9(2).
+           03 DD PIC 9(2).
+                                                                        00001597
+      *01 G-TechCtx         TYPE Bool.
+000015 02  G-TechCtx-value PIC X VALUE LOW-VALUE.
+           88  G-TechCtx       VALUE 'T'.
+           88  G-TechCtx-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+
+      *01 DuplicatedVar     TYPE Bool.
+       02  DuplicatedVar-value PIC X VALUE LOW-VALUE.
+           88  DuplicatedVar       VALUE 'T'.
+           88  DuplicatedVar-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+
+       02 purCblVar PIC X(22).                                          00001234
+000018D02 dbgCblVar2 PIC X(22).
+       02 purCblGrp.
+000020D   49 dbgCblVar PIC X(32).
+          49 purCblVar PIC X(32).
+
+       PROCEDURE DIVISION.
+      * Get the data from the global storage section
+           CALL 'b14e12b4' USING
+               by reference address of TC-GlobalData
+           end-call
+
+                          
+      *DECLARE PROCEDURE MyProc PRIVATE
+      *    INPUT    myDate      TYPE DATE.
+      
+       MOVE G-Date TO  G-Date.
+       DISPLAY G-Date.
+      
+      *MOVE DuplicatedVar TO G-TechCtx.
+       MOVE DuplicatedVar-value TO G-TechCtx-value.
+      
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Nested.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *01 TestCtx TYPE Bool.
+       01  TestCtx-value PIC X VALUE LOW-VALUE.
+           88  TestCtx       VALUE 'T'.
+           88  TestCtx-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                            
+       LINKAGE SECTION.
+
+       01 TC-GlobalData.
+                                                                        00002345
+000013 02 dbgCblVar PIC X(22).
+      *01 G-Date            TYPE Date.
+000014 02 G-Date.
+           03 YYYY PIC 9(4).
+           03 MM PIC 9(2).
+           03 DD PIC 9(2).
+                                                                        00001597
+      *01 G-TechCtx         TYPE Bool.
+000015 02  G-TechCtx-value PIC X VALUE LOW-VALUE.
+           88  G-TechCtx       VALUE 'T'.
+           88  G-TechCtx-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+
+      *01 DuplicatedVar     TYPE Bool.
+       02  DuplicatedVar-value PIC X VALUE LOW-VALUE.
+           88  DuplicatedVar       VALUE 'T'.
+           88  DuplicatedVar-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+
+       02 purCblVar PIC X(22).                                          00001234
+000018D02 dbgCblVar2 PIC X(22).
+       02 purCblGrp.
+000020D   49 dbgCblVar PIC X(32).
+          49 purCblVar PIC X(32).
+
+       PROCEDURE DIVISION.
+      * Get the data from the global storage section
+           CALL 'b14e12b4' USING
+               by reference address of TC-GlobalData
+           end-call
+
+                          
+      *G-Date and G-TechCtx are accesible from GlobalStorage
+      *    MOVE G-TechCtx TO TestCtx.
+           MOVE G-TechCtx-value TO TestCtx-value.
+       END PROGRAM Nested.
+       END PROGRAM GlobalStorageTest.
+      *
+      *DECLARE PROCEDURE MyProc PRIVATE
+      *    INPUT    myDate      TYPE DATE.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. c0127659.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+                      WITH DEBUGGING MODE
+                      .
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+       Data division.
+       WORKING-STORAGE Section.
+      *GlobalStorageTest.MyProc - Params :
+      *     input(myDate: DATE)
+                               
+      *01 TestCtx TYPE Bool.
+       01  TestCtx-value PIC X VALUE LOW-VALUE.
+           88  TestCtx       VALUE 'T'.
+           88  TestCtx-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                            
+       LINKAGE SECTION.
+      *GlobalStorageTest.MyProc - Params :
+      *     input(myDate: DATE)
+       01 myDate.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+       01 TC-GlobalData.
+                                                                        00002345
+000013 02 dbgCblVar PIC X(22).
+      *01 G-Date            TYPE Date.
+000014 02 G-Date.
+           03 YYYY PIC 9(4).
+           03 MM PIC 9(2).
+           03 DD PIC 9(2).
+                                                                        00001597
+      *01 G-TechCtx         TYPE Bool.
+000015 02  G-TechCtx-value PIC X VALUE LOW-VALUE.
+           88  G-TechCtx       VALUE 'T'.
+           88  G-TechCtx-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+
+      *01 DuplicatedVar     TYPE Bool.
+       02  DuplicatedVar-value PIC X VALUE LOW-VALUE.
+           88  DuplicatedVar       VALUE 'T'.
+           88  DuplicatedVar-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+
+       02 purCblVar PIC X(22).                                          00001234
+000018D02 dbgCblVar2 PIC X(22).
+       02 purCblGrp.
+000020D   49 dbgCblVar PIC X(32).
+          49 purCblVar PIC X(32).
+
+       PROCEDURE DIVISION
+             USING BY REFERENCE myDate
+           .
+      *GlobalStorageTest.MyProc - Params :
+      *     input(myDate: DATE)
+      * Get the data from the global storage section
+           CALL 'b14e12b4' USING
+               by reference address of TC-GlobalData
+           end-call
+      *G-Date and G-TechCtx are accesible from GlobalStorage
+           DISPLAY G-Date.
+      *    MOVE G-TechCtx TO TestCtx.
+           MOVE G-TechCtx-value TO TestCtx-value.
+       END PROGRAM c0127659.
+      *
+      * Global Storage Section variables
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. b14e12b4.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+                      WITH DEBUGGING MODE
+                      .
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 PIC X(8) value ':TC:GBLS'.
+       01 TC-GlobalData.
+                                                                        00002345
+000013 02 dbgCblVar PIC X(22).
+      *01 G-Date            TYPE Date.
+000014 02 G-Date.
+           03 YYYY PIC 9(4).
+           03 MM PIC 9(2).
+           03 DD PIC 9(2).
+                                                                        00001597
+      *01 G-TechCtx         TYPE Bool.
+000015 02  G-TechCtx-value PIC X VALUE LOW-VALUE.
+           88  G-TechCtx       VALUE 'T'.
+           88  G-TechCtx-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                                      
+      *01 DuplicatedVar     TYPE Bool.
+       02  DuplicatedVar-value PIC X VALUE LOW-VALUE.
+           88  DuplicatedVar       VALUE 'T'.
+           88  DuplicatedVar-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                                      
+       02 purCblVar PIC X(22).                                          00001234
+000018D02 dbgCblVar2 PIC X(22).
+       02 purCblGrp.
+000020D   49 dbgCblVar PIC X(32).
+          49 purCblVar PIC X(32).
+
+       LINKAGE SECTION.
+       01 GlobalPointer pointer.
+       PROCEDURE DIVISION USING BY REFERENCE GlobalPointer.
+           set GlobalPointer to address of TC-GlobalData
+           .
+       END PROGRAM b14e12b4.

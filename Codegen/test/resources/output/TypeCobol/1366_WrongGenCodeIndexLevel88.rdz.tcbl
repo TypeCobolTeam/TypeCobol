@@ -1,0 +1,54 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ISSUE1366.
+       data division.
+       working-storage section.
+      *01 MyTableType typedef strict.
+      *   05 TableSize         PIC 9(2) comp-5.
+      *   05 TableContent.
+      *      10 TableRow OCCURS 100
+      *                  ASCENDING KEY IS key-field
+      *                  INDEXED BY Idx.
+      *         15 key-field   PIC X(4).
+      *         15 value-field PIC X(1).
+      *            88 KindA   VALUE 'A'.
+      *            88 KindB   VALUE 'B'.
+      *            88 KindC   VALUE 'C'.
+      *01 MyTable type MyTableType.
+       01 MyTable.
+           02 TableSize PIC 9(2) comp-5.
+           02 TableContent.
+             03 TableRow OCCURS 100
+                         ASCENDING KEY IS key-field
+                         INDEXED BY c7dd294dIdx.
+               04 key-field PIC X(4).
+               04 value-field PIC X(1).
+                  88 KindA VALUE 'A'.
+                  88 KindB VALUE 'B'.
+                  88 KindC VALUE 'C'.
+                                   
+       procedure division.
+       A.
+      *    SEARCH MyTable::TableRow
+           SEARCH TableRow OF MyTable
+           AT END CONTINUE
+      *    WHEN MyTable::key-field(Idx) = 'TEST'
+           WHEN key-field OF MyTable(c7dd294dIdx) = 'TEST'
+              PERFORM B
+           END-SEARCH
+           .
+      
+       B.
+           EVALUATE True
+      *    WHEN MyTable::KindA(Idx)
+           WHEN KindA OF MyTable(c7dd294dIdx)
+              DISPLAY 'Kind is A'
+      *    WHEN MyTable::KindB(Idx)
+           WHEN KindB OF MyTable(c7dd294dIdx)
+              DISPLAY 'Kind is B'
+           WHEN OTHER
+              CONTINUE
+           END-EVALUATE
+           .
+      
+       END PROGRAM ISSUE1366.
+      

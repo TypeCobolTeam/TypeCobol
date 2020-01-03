@@ -35,7 +35,7 @@ namespace TypeCobol.Codegen.Nodes {
     /// <summary>
     /// If imported public function are call with EXTERNA POINTER or Not.
     /// </summary>
-    public static bool IsNotByExternalPointer
+    public new static bool IsNotByExternalPointer
     {
         get;
         set;

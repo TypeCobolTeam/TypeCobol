@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Tools.Options_Config;
+﻿using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Compiler.Directives
 {
     /// <summary>
     /// TypeCobol compiler options (superset of the IBM Enterprise Cobol compiler options)
     /// </summary>
-    public class TypeCobolOptions : IBMCompilerOptions
+    public class TypeCobolOptions : IBMCompilerOptions, ITypeCobolCheckOptions
     {
         // insert options specific to TypeCobol here ...
 #if EUROINFO_RULES
@@ -46,6 +41,11 @@ namespace TypeCobol.Compiler.Directives
         private bool _useEuroInformationLegacyReplacingSyntax;
 #endif
 
+        /// <summary>
+        /// Check if a End statement is aligned with the matching opening statement.
+        /// </summary>
+        public TypeCobolCheckOption CheckEndAlignment { get; set; }
+
         public TypeCobolOptions(TypeCobolConfiguration config)
         {
             HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null;
@@ -53,11 +53,18 @@ namespace TypeCobol.Compiler.Directives
             UseAntlrProgramParsing = config.UseAntlrProgramParsing;
             UseEuroInformationLegacyReplacingSyntax = config.UseEuroInformationLegacyReplacingSyntax;
             UseSemanticDomain = config.UseSemanticDomain;
+
+#if EUROINFO_RULES
+            AutoRemarksEnable = config.AutoRemarks;
+#endif
+            CheckEndAlignment = config.CheckEndAlignment;
         }
 
         public TypeCobolOptions()
         {
             UseSemanticDomain = true;
+            // default values for checks
+            TypeCobolCheckOptionsInitializer.SetDefaultValues(this);
         }
 
         /// <summary>

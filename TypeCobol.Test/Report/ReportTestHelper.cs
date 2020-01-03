@@ -73,8 +73,8 @@ namespace TypeCobol.Test.Report
                 parser.Init(input, typeCobolOption, format, new List<string>() { copyFolder });
                 parser.Parse(input);
 
-                var allDiags = parser.Results.AllDiagnostics();
-                if (allDiags.Count == 0)
+                // warning diagnostics are not considered : for example, test with warning with COPY SUPPRESS is always running
+                if (parser.Results.AllDiagnostics().All(d => d.Info.Severity == TypeCobol.Compiler.Diagnostics.Severity.Warning))
                 {
                     if (report != null)
                     {
@@ -95,7 +95,7 @@ namespace TypeCobol.Test.Report
                 }
                 else
                 {
-                    return ReturnCode.ParserDiagnosticsErrors;
+                   return ReturnCode.ParserDiagnosticsErrors;
                 }
             }
             finally

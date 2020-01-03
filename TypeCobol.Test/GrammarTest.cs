@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TypeCobol.Test.Compiler.Parser;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
@@ -93,7 +92,7 @@ namespace TypeCobol.Test {
 			    {
 			        ExecToStep = ExecutionStep.CrossCheck,
 #if EUROINFO_RULES
-			        AutoRemarksEnable = autoRemarks
+			        AutoRemarksEnable = autoRemarks,
 #endif
                 };
 

@@ -42,7 +42,7 @@
 
       * Procedure
        declare procedure PointerProcedure PRIVATE
-         input ptr pointer.
+         in-out ptr pointer.
   
          data division.
          working-storage section.
@@ -50,5 +50,5 @@
              set ptr up by 1
              goback
              .
-         end-declare.
+       end-declare.
        END PROGRAM Pointers.
