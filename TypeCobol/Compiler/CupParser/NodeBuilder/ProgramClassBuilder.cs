@@ -223,7 +223,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 else
                 {
                     // Stacked
-                    CurrentProgram = new StackedProgram(TableOfNamespaces, programIdentification);                    
+                    CurrentProgram = new StackedProgram(TableOfNamespaces, programIdentification);
                 }
             }
             else
@@ -760,7 +760,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 paramNode.SymbolTable = CurrentNode.SymbolTable;
                 paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
                 paramNode.PassingType = ParameterDescription.PassingTypes.Returning;
-                node.Profile.ReturningParameter = paramNode;
+                funcProfile.ReturningParameter = paramNode;
+
                 paramNode.SetParent(CurrentNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
                 CheckIfItsTyped(paramNode, paramNode.CodeElement);
@@ -968,12 +969,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             Enter(new Allocate(stmt), stmt);
             Exit();
+            Dispatcher.OnAllocateStatement(stmt);
         }
 
         public virtual void OnFreeStatement(FreeStatement stmt)
         {
             Enter(new Free(stmt), stmt);
             Exit();
+            Dispatcher.OnFreeStatement(stmt);
         }
 
         public virtual void OnGobackStatement(GobackStatement stmt)
@@ -1383,12 +1386,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         public virtual void StartJsonGenerateStatementConditional(TypeCobol.Compiler.CodeElements.JsonGenerateStatement stmt)
         {
             Enter(new JsonGenerate(stmt), stmt);
+            Dispatcher.StartJsonGenerateStatementConditional(stmt);
         }
 
         public virtual void EndJsonGenerateStatementConditional(TypeCobol.Compiler.CodeElements.JsonStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndJsonGenerateStatementConditional(end);
         }
 
         public virtual void StartMultiplyStatementConditional(TypeCobol.Compiler.CodeElements.MultiplyStatement stmt)
@@ -1571,6 +1576,5 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.EndXmlParseStatementConditional(end);
         }
-
     }
 }
