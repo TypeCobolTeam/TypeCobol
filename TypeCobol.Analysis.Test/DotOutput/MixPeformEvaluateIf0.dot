@@ -42,13 +42,13 @@ Block7 [
 label = "{Block7|      evaluate opt\l      when \"+\"\l}"
 ]
 Block8 [
-label = "{Block8|      when \"+\" if ind(08) = ef\l}"
+label = "{Block8|               if ind(08) = ef\l}"
 ]
 Block9 [
 label = "{Block9|                  compute zres = (fct1 + ((fct1 * fct2) / 100))\l}"
 ]
 Block10 [
-label = "{Block10|                  on size error\l                  on size error move ef to ind(31)\l}"
+label = "{Block10|                  on size error\l                                move ef to ind(31)\l}"
 ]
 Block11 [
 label = "{Block11|}"
@@ -79,7 +79,7 @@ Block12 [
 label = "{Block12|               else\l                  compute zres = (fct1 + fct2)\l}"
 ]
 Block13 [
-label = "{Block13|                  on size error\l                  on size error move ef to ind(31)\l}"
+label = "{Block13|                  on size error\l                                move ef to ind(31)\l}"
 ]
 Block14 [
 label = "{Block14|}"
@@ -88,13 +88,13 @@ Block16 [
 label = "{Block16|      when \"-\"\l}"
 ]
 Block17 [
-label = "{Block17|      when \"-\" if ind(08) = ef\l}"
+label = "{Block17|               if ind(08) = ef\l}"
 ]
 Block18 [
 label = "{Block18|                  compute zres = (fct1 - ((fct1 * fct2) / 100))\l}"
 ]
 Block19 [
-label = "{Block19|                  on size error\l                  on size error move ef to ind(31)\l}"
+label = "{Block19|                  on size error\l                                move ef to ind(31)\l}"
 ]
 Block20 [
 label = "{Block20|}"
@@ -109,7 +109,7 @@ Block21 [
 label = "{Block21|               else\l                  compute zres = (fct1 - fct2)\l}"
 ]
 Block22 [
-label = "{Block22|                  on size error\l                  on size error move ef to ind(31)\l}"
+label = "{Block22|                  on size error\l                                move ef to ind(31)\l}"
 ]
 Block23 [
 label = "{Block23|}"
@@ -118,7 +118,7 @@ Block25 [
 label = "{Block25|      when \"*\"\l}"
 ]
 Block26 [
-label = "{Block26|      when \"*\" if ind(08) = ef\l}"
+label = "{Block26|               if ind(08) = ef\l}"
 ]
 Block27 [
 label = "{Block27|                  move ef to ind(30)\l}"
@@ -133,7 +133,7 @@ Block28 [
 label = "{Block28|               else\l                  compute zres = (fct1 * fct2)\l}"
 ]
 Block29 [
-label = "{Block29|                  on size error\l                  on size error move ef to ind(31)\l}"
+label = "{Block29|                  on size error\l                                move ef to ind(31)\l}"
 ]
 Block30 [
 label = "{Block30|}"
@@ -142,7 +142,7 @@ Block32 [
 label = "{Block32|      when \"/\"\l}"
 ]
 Block33 [
-label = "{Block33|      when \"/\" if ind(08) = ef\l}"
+label = "{Block33|               if ind(08) = ef\l}"
 ]
 Block34 [
 label = "{Block34|                  move ef to ind(30)\l}"
@@ -157,7 +157,7 @@ Block35 [
 label = "{Block35|               else\l                  compute zres = (fct1 / fct2)\l}"
 ]
 Block36 [
-label = "{Block36|                  on size error\l                  on size error move ef to ind(31)\l}"
+label = "{Block36|                  on size error\l                                move ef to ind(31)\l}"
 ]
 Block37 [
 label = "{Block37|}"
@@ -166,7 +166,7 @@ Block39 [
 label = "{Block39|      when \"P\"\l}"
 ]
 Block40 [
-label = "{Block40|      when \"P\" if ind(08) = ef\l}"
+label = "{Block40|               if ind(08) = ef\l}"
 ]
 Block41 [
 label = "{Block41|                  move ef to ind(30)\l}"
@@ -187,7 +187,7 @@ Block44 [
 label = "{Block44|                      compute zres = (zres * fct1)\l}"
 ]
 Block45 [
-label = "{Block45|                      on size error\l                      on size error move ef to ind(31)\l}"
+label = "{Block45|                      on size error\l                                    move ef to ind(31)\l}"
 ]
 Block46 [
 label = "{Block46|}"
@@ -199,7 +199,7 @@ Block56 [
 label = "{Block56|}"
 ]
 Block57 [
-label = "{Block57|    close VUE\l    close VUE stop run\l}"
+label = "{Block57|    close VUE\l              stop run\l}"
 ]
 Block0 -> Block1
 Block1 -> Block2

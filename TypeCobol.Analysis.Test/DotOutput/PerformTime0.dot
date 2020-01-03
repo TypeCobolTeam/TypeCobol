@@ -7,7 +7,7 @@ edge [
 arrowtail = "empty"
 ]
 Block0 [
-label = "{START|    DISPLAY \"Enter : \" NO ADVANCING\l    DISPLAY \"Enter : \" NO ADVANCING ACCEPT phrase\l    DISPLAY \"Repeat : \" NO ADVANCING\l    DISPLAY \"Repeat : \" NO ADVANCING ACCEPT c\l}"
+label = "{START|    DISPLAY \"Enter : \" NO ADVANCING\l                                    ACCEPT phrase\l    DISPLAY \"Repeat : \" NO ADVANCING\l                                     ACCEPT c\l}"
 ]
 Block1 [
 label = "{Block1|    PERFORM c TIMES\l}"

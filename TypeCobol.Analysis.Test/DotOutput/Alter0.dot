@@ -17,7 +17,7 @@ Block2 [
 label = "{Block2|    PERFORM\l}"
 ]
 Block3 [
-label = "{Block3|    PERFORM  DISPLAY 'IN A-PARA'\l}"
+label = "{Block3|             DISPLAY 'IN A-PARA'\l}"
 ]
 Block4 [
 label = "{Block4|}"
@@ -53,7 +53,7 @@ Block8 [
 label = "{A-PARA. Block8|    ALTER B-PARA TO PROCEED TO E-PARA\l}"
 ]
 Block9 [
-label = "{B-PARA. Block9|B-PARA. GO TO B-PARA\l}"
+label = "{B-PARA. Block9|        GO TO B-PARA\l}"
 ]
 Block16 [
 label = "{E-PARA. Block16|    DISPLAY 'IN E-PARA'\l}"
