@@ -21,7 +21,6 @@ namespace TypeCobol.Tools.APIHelpers
         public static SymbolTable LoadIntrinsic(List<string> paths, DocumentFormat intrinsicDocumentFormat, EventHandler<DiagnosticsErrorEvent> diagEvent)
         {
             var parser = new Parser();
-            var diagnostics = new List<Diagnostic>();
             var table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
             var instrincicFiles = new List<string>();
 
@@ -34,12 +33,13 @@ namespace TypeCobol.Tools.APIHelpers
                     parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck }, intrinsicDocumentFormat);
                     parser.Parse(path);
 
-                    diagnostics.Clear();
-                    diagnostics.AddRange(parser.Results.AllDiagnostics());
-
+                    var diagnostics = parser.Results.AllDiagnostics();
                     if (diagEvent != null && diagnostics.Count > 0)
                     {
-                        diagnostics.ForEach(d => diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = d }));
+                        foreach (var diagnostic in diagnostics)
+                        {
+                            diagEvent(null, new DiagnosticsErrorEvent() {Path = path, Diagnostic = diagnostic});
+                        }
                     }
 
                     if (parser.Results.ProgramClassDocumentSnapshot.Root.Programs == null || parser.Results.ProgramClassDocumentSnapshot.Root.Programs.Count() == 0)
@@ -117,7 +117,6 @@ namespace TypeCobol.Tools.APIHelpers
         {
             usedCopies = new List<RemarksDirective.TextNameVariation>();
             missingCopies = new Dictionary<string, IEnumerable<string>>();
-            var diagnostics = new List<Diagnostic>();
             var table = new SymbolTable(intrinsicTable, SymbolTable.Scope.Namespace); //Generate a table of NameSPace containing the dependencies programs based on the previously created intrinsic table. 
 
             var dependencies = new List<string>();
@@ -180,11 +179,13 @@ namespace TypeCobol.Tools.APIHelpers
                     CompilationUnit parsingResult = ParseDependency(path, config, table);
 
                     //Report diagnostics
-                    diagnostics.Clear();
-                    diagnostics.AddRange(parsingResult.AllDiagnostics());
+                    var diagnostics = parsingResult.AllDiagnostics();
                     if (diagEvent != null && diagnostics.Count > 0)
                     {
-                        diagnostics.ForEach(d => diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = d }));
+                        foreach (var diagnostic in diagnostics)
+                        {
+                            diagEvent(null, new DiagnosticsErrorEvent() {Path = path, Diagnostic = diagnostic});
+                        }
                     }
 
                     //Gather copies used
