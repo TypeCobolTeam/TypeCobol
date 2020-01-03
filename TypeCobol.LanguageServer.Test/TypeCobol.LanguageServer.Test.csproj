@@ -69,6 +69,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="LSRTests\CompletionAfterWhen\input\CompletionAfterWhen.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionAfterWhen\output_expected\CompletionAfterWhen.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\CompletionAfterDotFromTypedDataDef\input\CompletionAfterDotFromTypedDataDef.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
