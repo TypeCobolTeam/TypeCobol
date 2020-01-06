@@ -14,7 +14,7 @@ namespace TypeCobol.Compiler.Symbols
     /// <summary>
     /// Reprsents a Program Symbol
     /// </summary>
-    public class ProgramSymbol : AbstractScope, IDomain<VariableSymbol>
+    public class ProgramSymbol : AbstractScope
     {
         /// <summary>
         /// Named constructor.
@@ -33,7 +33,7 @@ namespace TypeCobol.Compiler.Symbols
             Functions = new Scope<FunctionSymbol>(this);
             Programs = new Scope<ProgramSymbol>(this);
             VariableTypeSymbols = new LinkedList<VariableTypeSymbol>();
-            Domain = new Dictionary<string, Scope<VariableSymbol>.MultiSymbols>(StringComparer.OrdinalIgnoreCase);
+            Domain = new Domain<VariableSymbol>();
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// The Domain of this program.
         /// </summary>
-        internal Dictionary<string, Scope<VariableSymbol>.MultiSymbols> Domain
+        internal Domain<VariableSymbol> Domain
         {
             get;
             set;
@@ -187,15 +187,8 @@ namespace TypeCobol.Compiler.Symbols
                 //First add it in the Global Domain.
                 Symbol root = TopParent(Kinds.Root);
                 ((RootSymbolTable) root)?.AddToUniverse(varSym);
-                string name = varSym.Name;
-                if (!Domain.TryGetValue(name, out var value))
-                {
-                    Domain[name] = new Scope<VariableSymbol>.MultiSymbols(varSym);
-                }
-                else
-                {
-                    value.Add(varSym);
-                }
+                Domain.Add(varSym);
+
                 //Remember a variable that maybe expanded.
                 if (varSym.HasFlag(Flags.HasATypedefType))
                 {
@@ -214,16 +207,9 @@ namespace TypeCobol.Compiler.Symbols
             RootSymbolTable root = (RootSymbolTable)TopParent(Kinds.Root);
             if (root != null)
             {
-                lock (Domain)
+                foreach (var varSym in Domain)
                 {
-                    foreach (var entry in Domain)
-                    {
-                        var entries = entry.Value;
-                        foreach (var varSym in entries)
-                        {
-                            root.RemoveFromUniverse(varSym);
-                        }
-                    }
+                    root.RemoveFromUniverse(varSym);
                 }
             }
         }

@@ -12,7 +12,7 @@ namespace TypeCobol.Compiler.Symbols
     /// <summary>
     /// A Typedef Symbol
     /// </summary>
-    public class TypedefSymbol : VariableSymbol, IDomain<VariableSymbol>
+    public class TypedefSymbol : VariableSymbol
     {
         /// <summary>
         /// Named constructor.

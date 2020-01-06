@@ -32,7 +32,10 @@ namespace TypeCobol.Compiler.Scopes
         /// </summary>
         public RootSymbolTable() : base(string.Intern("<<Root>>"))
         {
-            Init();
+            base.Kind = Kinds.Root;
+            Universe = new List<VariableSymbol>();
+            ScopeDomain = new Domain<AbstractScope>();
+            TypeDomain = new Domain<TypedefSymbol>();
             BottomVariable = new VariableSymbol("<<BottomVariable>>");
             AddToUniverse(BottomVariable);
             //Load Builtin symbol in it
@@ -45,31 +48,16 @@ namespace TypeCobol.Compiler.Scopes
         /// <param name="from">RootSymbolTable instance from which to copy</param>
         public RootSymbolTable(RootSymbolTable from) : base(string.Intern("<<Root>>"), from)
         {
-            Init();
+            base.Kind = Kinds.Root;
             if (from != null)
             {
                 this.BottomVariable = from.BottomVariable;
                 this.GlobalIndexPool = new Stack<int>(from.GlobalIndexPool);
                 this._variableSymbolCounter = from._variableSymbolCounter;
-                ((List<VariableSymbol>) Universe).AddRange(from.Universe);
-                foreach (var e in from.ScopeDomain)
-                {
-                    ScopeDomain[e.Key] = new Scope<AbstractScope>.MultiSymbols(e.Value);
-                }
-
-                foreach (var e in from.TypeDomain)
-                {
-                    TypeDomain[e.Key] = new Scope<TypedefSymbol>.MultiSymbols(e.Value);
-                }
+                Universe = new List<VariableSymbol>(from.Universe);
+                ScopeDomain = new Domain<AbstractScope>(from.ScopeDomain);
+                TypeDomain = new Domain<TypedefSymbol>(from.TypeDomain);
             }
-        }
-
-        private void Init()
-        {
-            base.Kind = Kinds.Root;
-            Universe = new List<VariableSymbol>();
-            ScopeDomain = new Dictionary<string, Scope<AbstractScope>.MultiSymbols>(StringComparer.OrdinalIgnoreCase);
-            TypeDomain = new Dictionary<string, Scope<TypedefSymbol>.MultiSymbols>(StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -163,12 +151,12 @@ namespace TypeCobol.Compiler.Scopes
         /// <summary>
         /// The Domain of all namespaces, programs and functions.
         /// </summary>
-        internal Dictionary<string, Scope<AbstractScope>.MultiSymbols> ScopeDomain { get; private set; }
+        internal Domain<AbstractScope> ScopeDomain { get; private set; }
 
         /// <summary>
         /// The Domain of all types.
         /// </summary>
-        internal Dictionary<string, Scope<TypedefSymbol>.MultiSymbols> TypeDomain { get; private set; }
+        internal Domain<TypedefSymbol> TypeDomain { get; private set; }
 
         /// <summary>
         /// Add the given AbstractScope instance the domain
@@ -177,16 +165,9 @@ namespace TypeCobol.Compiler.Scopes
         public override void AddToDomain(AbstractScope absScope)
         {
             System.Diagnostics.Debug.Assert(absScope != null);
-            //lock (ScopeDomain)
-            {
-                string name = absScope.Name;
-                if (!ScopeDomain.TryGetValue(name, out var value))
-                    ScopeDomain[name] = new Scope<AbstractScope>.MultiSymbols(absScope);
-                else
-                    value.Add(absScope);
-                if (ProgramAdded != null && absScope.Kind == Kinds.Program)
-                    ProgramAdded(this, new SymbolEventArgs(absScope));
-            }
+            ScopeDomain.Add(absScope);
+            if (ProgramAdded != null && absScope.Kind == Kinds.Program)
+                ProgramAdded(this, new SymbolEventArgs(absScope));
         }
 
         /// <summary>
@@ -195,52 +176,50 @@ namespace TypeCobol.Compiler.Scopes
         /// <param name="absScope">The Scope to be removed</param>
         public override void RemoveFromDomain(AbstractScope absScope)
         {
-            string name = absScope.Name;
+            ScopeDomain.Remove(absScope);
+
             absScope.FreeDomain();
-            if (ScopeDomain.TryGetValue(name, out var value))
+
+            //Remove all Types
+            var types = absScope.Types;
+            if (types != null)
             {
-                value.Remove(absScope);
-
-                //Remove all Types
-                var types = absScope.Types;
-                if (types != null)
+                foreach (var t in types)
                 {
-                    foreach (var t in types)
-                    {
-                        RemoveFromDomain(t);
-                    }
+                    RemoveFromDomain(t);
                 }
-                //Remove all programs
-                var programs = absScope.Programs;
-                if (programs != null)
-                {
-                    foreach (var p in programs)
-                    {
-                        RemoveFromDomain(p);
-                    }
-                }
+            }
 
-                //Remove all functions
-                var functions = absScope.Functions;
-                if (functions != null)
+            //Remove all programs
+            var programs = absScope.Programs;
+            if (programs != null)
+            {
+                foreach (var p in programs)
                 {
-                    foreach (var p in functions)
-                    {
-                        RemoveFromDomain(p);
-                    }
+                    RemoveFromDomain(p);
                 }
+            }
 
-                //Special case Namespace
-                if (absScope.Kind == Kinds.Namespace)
+            //Remove all functions
+            var functions = absScope.Functions;
+            if (functions != null)
+            {
+                foreach (var p in functions)
                 {
-                    NamespaceSymbol ns = (NamespaceSymbol) absScope;
-                    var nss = ns.Namespaces;
-                    if (nss != null)
+                    RemoveFromDomain(p);
+                }
+            }
+
+            //Special case Namespace
+            if (absScope.Kind == Kinds.Namespace)
+            {
+                NamespaceSymbol ns = (NamespaceSymbol)absScope;
+                var nss = ns.Namespaces;
+                if (nss != null)
+                {
+                    foreach (var n in nss)
                     {
-                        foreach (var n in nss)
-                        {
-                            RemoveFromDomain(n);
-                        }
+                        RemoveFromDomain(n);
                     }
                 }
             }
@@ -253,14 +232,7 @@ namespace TypeCobol.Compiler.Scopes
         public override void AddToDomain(TypedefSymbol type)
         {
             System.Diagnostics.Debug.Assert(type != null);
-            lock (TypeDomain)
-            {
-                string name = type.Name;
-                if (!TypeDomain.TryGetValue(name, out var value))
-                    TypeDomain[name] = new Scope<TypedefSymbol>.MultiSymbols(type);
-                else
-                    value.Add(type);
-            }
+            TypeDomain.Add(type);
         }
 
         /// <summary>
@@ -269,14 +241,7 @@ namespace TypeCobol.Compiler.Scopes
         /// <param name="type">The type to be removed</param>
         public override void RemoveFromDomain(TypedefSymbol type)
         {
-            lock (TypeDomain)
-            {
-                string name = type.Name;
-                if (TypeDomain.TryGetValue(name, out var value))
-                {
-                    value?.Remove(type);
-                }
-            }
+            TypeDomain.Remove(type);
         }
 
         /// <summary>
@@ -363,14 +328,18 @@ namespace TypeCobol.Compiler.Scopes
             Scope<TypedefSymbol>.MultiSymbols results = new Scope<TypedefSymbol>.MultiSymbols();
             if (path == null || path.Length == 0)
                 return results;
-            if (this.TypeDomain.TryGetValue(path[0], out var candidates))
+
+            string name = path[0];
+            if (this.TypeDomain.TryGetValue(name, out var candidates))
             {
                 foreach (var candidate in candidates)
-                {   //Only selected whose Type is defined.
+                {
+                    //Only selected whose Type is defined.
                     if ((bIncludeUndefined || candidate.Type != null) && candidate.IsMatchingPath(path))
                         results.Add(candidate);
                 }
             }
+
             return results;
         }
     }

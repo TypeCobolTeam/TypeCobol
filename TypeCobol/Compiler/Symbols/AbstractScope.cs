@@ -99,14 +99,14 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="topScope">The top scope of the research</param>
         /// <param name="domain">The domain into which to search for</param>
         /// <returns>The Set of resolve symbols</returns>
-        protected Scope<TS>.Entry ResolveSymbol<TS>(string[] path, AbstractScope topScope,
-            Dictionary<string, Scope<TS>.MultiSymbols> domain) where TS : Symbol
+        protected Scope<TS>.Entry ResolveSymbol<TS>(string[] path, AbstractScope topScope, Domain<TS> domain)
+            where TS : Symbol
         {
             Scope<TS>.MultiSymbols results = new Scope<TS>.MultiSymbols();
             if (path == null || path.Length == 0)
                 return results;
             bool bExits = domain.TryGetValue(path[0], out var candidates);
-            if (!bExits || candidates == null || candidates.Count == 0)
+            if (!bExits)
                 return results;
             if (path.Length == 1)
             {
@@ -131,8 +131,16 @@ namespace TypeCobol.Compiler.Symbols
                     return localResults;
                 if (topResults.Count != 0)
                     return topResults;
-                return candidates;
+
+                var candidateResults = new Scope<TS>.MultiSymbols();
+                foreach (var candidate in candidates)
+                {
+                    candidateResults.Add(candidate);
+                }
+
+                return candidateResults;
             }
+
             foreach (var candidate in candidates)
             {
                 if (candidate.IsStrictlyMatchingPath(path))
@@ -140,7 +148,19 @@ namespace TypeCobol.Compiler.Symbols
                     results.Add(candidate);
                 }
             }
-            return results.Count == 0 ? candidates : results;
+
+            if (results.Count == 0)
+            {
+                var candidateResults = new Scope<TS>.MultiSymbols();
+                foreach (var candidate in candidates)
+                {
+                    candidateResults.Add(candidate);
+                }
+
+                return candidateResults;
+            }
+
+            return results;
         }
 
         /// <summary>
