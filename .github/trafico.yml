@@ -14,7 +14,7 @@ labels:
     description: "Pull Request is not reviewed yet"
     ignore: false
   approved: 
-    name: "✅ Approved"
+    name: "✅ Approved - PR 1613"
     color: "#0E8A16"
     description: "Pull Request has been approved and can be merged"
     ignore: true
