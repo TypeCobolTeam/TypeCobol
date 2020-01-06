@@ -1,0 +1,20 @@
+﻿       IDENTIFICATION division.
+       PROGRAM-ID. MyPGM.
+       data division.
+       working-storage section.
+       01 var PIC X(10).
+       01 var2 PIC X(10).
+
+       procedure division.
+      *OK
+           MOVE 'ff' to var2.
+      *OK
+           MOVE var to var2.
+      *OK
+           MOVE ALL 'ff' to var2.
+      *KO Syntax error
+Line 16[21,23] <27, Error, Syntax> - Syntax error : mismatched input 'var' expecting {alphanumeric literal, figurative constant, keyword}
+           MOVE ALL var to var2.
+           display var2
+           goback.
+       end program MyPGM.
