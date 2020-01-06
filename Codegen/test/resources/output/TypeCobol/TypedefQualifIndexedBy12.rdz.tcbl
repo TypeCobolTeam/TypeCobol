@@ -54,7 +54,7 @@
                         = LnkErId OF OthElm OF Table-OthElm
                                 (Idx-perform1)
                         PERFORM DoSomething
-                END-SEARCH
+        END-SEARCH
       *  SET Table-OthElm::OthElm::ElmTaxes::Idx-OthElmTax
       *                     TO Table-OthElm::OthElm::ElmTaxes::
       *                     ElmTaxNbr(Idx-OthElm)

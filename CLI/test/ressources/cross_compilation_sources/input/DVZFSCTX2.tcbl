@@ -10,7 +10,7 @@
        declare procedure GetIdentification PUBLIC
            input TechCtx      type BOOL
                   RC          type DATE.
-        end-declare.
+       end-declare.
        declare procedure DisplayDebug public
            output TechCtx type BOOL.
        data division.
