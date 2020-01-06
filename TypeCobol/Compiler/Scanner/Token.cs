@@ -10,7 +10,7 @@ namespace TypeCobol.Compiler.Scanner
     /// COBOL word, a literal, a PICTURE character-string, or a comment-entry. 
     /// A separator is a string of contiguous characters used to delimit character strings.
     /// </summary>
-    public class Token : Antlr4.Runtime.IToken, IVisitable
+    public class Token : Antlr4.Runtime.IToken, IVisitable, IEquatable<Token>
     {
         private ITokensLine tokensLine;
         private int startIndex;
@@ -21,24 +21,32 @@ namespace TypeCobol.Compiler.Scanner
 
         public override bool Equals(object obj)
         {
-            if (!(obj is Token))
-                return false;
-            var tokenCompare = (Token) obj;
+            return Equals(obj as Token);
+        }
 
-            return this.Type == tokenCompare.Type
-                   && this.Channel == tokenCompare.Channel
-                   && this.Column == tokenCompare.Column
-                   && this.EndColumn == tokenCompare.EndColumn
-                   && this.ExpectedClosingDelimiter == tokenCompare.ExpectedClosingDelimiter
-                   && this.Length == tokenCompare.Length
-                   && this.Line == tokenCompare.Line
-                   && this.StartIndex == tokenCompare.StartIndex
-                   && this.StopIndex == tokenCompare.StopIndex
-                   && this.TokenIndex == tokenCompare.TokenIndex
-                   && this.HasClosingDelimiter == tokenCompare.HasClosingDelimiter
-                   && this.LiteralValue == tokenCompare.LiteralValue
-                   && this.TokenType == tokenCompare.TokenType
-                   && this.Text == tokenCompare.Text;
+        public bool Equals(Token tokenCompare)
+        {
+            if (Object.ReferenceEquals(this, tokenCompare)) return true;
+            if (Object.ReferenceEquals(null, tokenCompare)) return false;
+
+            return tokenCompare.Type == this.Type &&
+                   tokenCompare.StartIndex == this.StartIndex &&
+                   tokenCompare.StopIndex == this.StopIndex &&
+                   tokenCompare.TokensLine == this.TokensLine;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = 13;
+                hashCode = (hashCode * 397) ^ this.Type.GetHashCode();
+                hashCode = (hashCode * 397) ^ this.StartIndex;
+                hashCode = (hashCode * 397) ^ this.StopIndex;
+                hashCode = (hashCode * 397) ^ this.TokensLine.GetHashCode();
+
+                return hashCode;
+            }
         }
 
         /// <summary>

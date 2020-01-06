@@ -10,7 +10,7 @@ namespace TypeCobol.Compiler.Scanner
     /// <summary>
     /// Internal Scanner state propagated from one line to the other when compiling a complete source file
     /// </summary>
-    public class MultilineScanState
+    public class MultilineScanState : IEquatable<MultilineScanState>
     {
         /// <summary>
         /// Last keyword or symbol token encountered in the text file
@@ -482,32 +482,32 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public override bool Equals(object obj)
         {
-            MultilineScanState otherScanState = obj as MultilineScanState;
-            if (otherScanState == null)
-            {
-                return false;
-            }
-            else
-            {
-                return InsideDataDivision == otherScanState.InsideDataDivision &&
-                       InsideProcedureDivision == otherScanState.InsideProcedureDivision &&
-                       InsidePseudoText == otherScanState.InsidePseudoText &&
-                       InsideSymbolicCharacterDefinitions == otherScanState.InsideSymbolicCharacterDefinitions &&
-                       InsideFormalizedComment == otherScanState.InsideFormalizedComment &&
-                       InsideParamsField == otherScanState.InsideParamsField &&
-                       InsideMultilineComments == otherScanState.InsideMultilineComments &&
+            return Equals(obj as MultilineScanState);
+        }
+
+        public bool Equals(MultilineScanState otherScanState)
+        {
+            if (Object.ReferenceEquals(this, otherScanState)) return true;
+            if (Object.ReferenceEquals(null, otherScanState)) return false;
+
+            return InsideDataDivision == otherScanState.InsideDataDivision &&
+                   InsideProcedureDivision == otherScanState.InsideProcedureDivision &&
+                   InsidePseudoText == otherScanState.InsidePseudoText &&
+                   InsideSymbolicCharacterDefinitions == otherScanState.InsideSymbolicCharacterDefinitions &&
+                   InsideFormalizedComment == otherScanState.InsideFormalizedComment &&
+                   InsideParamsField == otherScanState.InsideParamsField &&
+                   InsideMultilineComments == otherScanState.InsideMultilineComments &&
 
 #if EUROINFO_RULES
-                InsideRemarksDirective == otherScanState.InsideRemarksDirective &&
-                    //((CopyTextNamesVariations == null && otherScanState.CopyTextNamesVariations == null) ||
-                    // (CopyTextNamesVariations != null && otherScanState.CopyTextNamesVariations != null && CopyTextNamesVariations.Count == otherScanState.CopyTextNamesVariations.Count)) &&
+                   InsideRemarksDirective == otherScanState.InsideRemarksDirective &&
+                   //((CopyTextNamesVariations == null && otherScanState.CopyTextNamesVariations == null) ||
+                   // (CopyTextNamesVariations != null && otherScanState.CopyTextNamesVariations != null && CopyTextNamesVariations.Count == otherScanState.CopyTextNamesVariations.Count)) &&
 #endif
-                    DecimalPointIsComma == otherScanState.DecimalPointIsComma &&
-                    WithDebuggingMode == otherScanState.WithDebuggingMode &&
-                    EncodingForAlphanumericLiterals == otherScanState.EncodingForAlphanumericLiterals &&
-                    ((SymbolicCharacters == null && otherScanState.SymbolicCharacters == null) ||
-                     (SymbolicCharacters != null && otherScanState.SymbolicCharacters != null && SymbolicCharacters.Count == otherScanState.SymbolicCharacters.Count));
-            }
+                   DecimalPointIsComma == otherScanState.DecimalPointIsComma &&
+                   WithDebuggingMode == otherScanState.WithDebuggingMode &&
+                   EncodingForAlphanumericLiterals == otherScanState.EncodingForAlphanumericLiterals &&
+                   ((SymbolicCharacters == null && otherScanState.SymbolicCharacters == null) ||
+                    (SymbolicCharacters != null && otherScanState.SymbolicCharacters != null && SymbolicCharacters.Count == otherScanState.SymbolicCharacters.Count));
         }
 
         /// <summary>

@@ -3,6 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,7 +14,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     /// can have a label, like a function-name, a doc-comment, and
     /// a set of parameters.
     /// </summary>
-    public class SignatureInformation
+    public class SignatureInformation : IEquatable<SignatureInformation>
     {
         /// <summary>
         /// The label of this signature. Will be shown in
@@ -41,14 +42,38 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
 
         public override bool Equals(object obj)
         {
-            if (!(obj is SignatureInformation))
-                return false;
+            return Equals(obj as SignatureInformation);
+        }
 
-            var givenSignature = (SignatureInformation) obj;
+        public bool Equals(SignatureInformation signatureInformation)
+        {
+            if (Object.ReferenceEquals(this, signatureInformation)) return true;
+            if (Object.ReferenceEquals(null, signatureInformation)) return false;
 
-            return givenSignature.label == this.label
-                   && givenSignature.documentation == this.documentation
-                   && CompareLists(this.parameters.ToList(), givenSignature.parameters.ToList());
+            return signatureInformation.label == this.label
+                   && signatureInformation.documentation == this.documentation
+                   && CompareLists(this.parameters.ToList(), signatureInformation.parameters.ToList());
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = 13;
+                hashCode = (hashCode * 397) ^ label.GetHashCode();
+                var docHashCode = documentation?.GetHashCode() ?? 0;
+                hashCode = (hashCode * 397) ^ docHashCode;
+                if (parameters != null)
+                {
+                    foreach (var param in parameters)
+                    {
+                        hashCode = (hashCode * 397) ^ param.label.GetHashCode();
+                        hashCode = (hashCode * 397) ^ (param.documentation?.GetHashCode() ?? 0);
+                    }
+                }
+
+                return hashCode;
+            }
         }
 
         private static bool CompareLists(List<ParameterInformation> list1, List<ParameterInformation> list2)

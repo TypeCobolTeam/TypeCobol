@@ -51,7 +51,7 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *MyPgm.check - Params :
-      *		output(mydate: BOOL)
+      *     output(mydate: BOOL)
        01 mydate-value PIC X     VALUE LOW-VALUE.
            88 mydate       VALUE 'T'.
            88 mydate-false VALUE 'F'
@@ -61,6 +61,6 @@
              USING BY REFERENCE mydate-value
            .
       *MyPgm.check - Params :
-      *		output(mydate: BOOL)
+      *     output(mydate: BOOL)
            CONTINUE.
        END PROGRAM ea379882.

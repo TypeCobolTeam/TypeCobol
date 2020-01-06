@@ -127,7 +127,7 @@
                     OUTPUT     flag     realformat  
 
          .
-         END-DECLARE.
+       END-DECLARE.
        DECLARE PROCEDURE MyPublicProcedure PUBLIC
            INPUT mydate        TYPE Date
                  format        PIC X(08)
@@ -158,7 +158,7 @@
                     OUTPUT     flag     realformat  
 
          .
-         END-DECLARE.
+       END-DECLARE.
        DECLARE PROCEDURE MyPublicProcedure PUBLIC
            INPUT mydate        TYPE Date
                  format        PIC X(08)

@@ -4,13 +4,14 @@ using System.IO;
 using Castle.Core.Internal;
 using Mono.Options;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.Diagnostics;
 
 namespace TypeCobol.Tools.Options_Config
 {
     /// <summary>
     /// TypeCobolConfiguration class holds all the argument information like input files, output files, error file etc.
     /// </summary>
-    public class TypeCobolConfiguration
+    public class TypeCobolConfiguration : ITypeCobolCheckOptions
     {
         public string CommandLine { get; set; }
         public DocumentFormat Format = DocumentFormat.RDZReferenceFormat;
@@ -38,6 +39,7 @@ namespace TypeCobol.Tools.Options_Config
 #else
         public bool UseEuroInformationLegacyReplacingSyntax = false;
 #endif
+        public TypeCobolCheckOption CheckEndAlignment { get; set; }
 
         public bool IsErrorXML
         {
@@ -91,6 +93,12 @@ namespace TypeCobol.Tools.Options_Config
             { ReturnCode.LogFileError,           "Log file path is unreachable." },
 
         };
+
+        public TypeCobolConfiguration()
+        {
+            // default values for checks
+            TypeCobolCheckOptionsInitializer.SetDefaultValues(this);
+        }
     }
 
     /// <summary>
@@ -154,6 +162,63 @@ namespace TypeCobol.Tools.Options_Config
         Cobol85Nested,
         Documentation
     }
+
+    public class TypeCobolCheckOption
+    {
+        public static TypeCobolCheckOption Parse(string argument)
+        {
+            if (Enum.TryParse(argument, true, out Severity diagnosticLevel))
+            {
+                return new TypeCobolCheckOption(diagnosticLevel);
+            }
+
+            if (string.Equals(argument, "ignore", StringComparison.OrdinalIgnoreCase))
+            {
+                return new TypeCobolCheckOption(null);
+            }
+
+            throw new ArgumentException();
+        }
+
+        private readonly Severity? _diagnosticLevel;
+
+        public TypeCobolCheckOption(Severity? diagnosticLevel)
+        {
+            _diagnosticLevel = diagnosticLevel;
+        }
+
+        public bool IsActive => _diagnosticLevel.HasValue;
+
+        public MessageCode GetMessageCode()
+        {
+            switch (_diagnosticLevel)
+            {
+                case Severity.Error:
+                    return MessageCode.SyntaxErrorInParser;
+                case Severity.Info:
+                    return MessageCode.Info;
+                case Severity.Warning:
+                    return MessageCode.Warning;
+                default:
+                    // invalid Severity or not set
+                    throw new InvalidOperationException("The considered check is not active!");
+            }
+        }
+    }
+
+    public interface ITypeCobolCheckOptions
+    {
+        TypeCobolCheckOption CheckEndAlignment { get; set; }
+    }
+
+    public static class TypeCobolCheckOptionsInitializer
+    {
+        public static void SetDefaultValues(ITypeCobolCheckOptions checkOptions)
+        {
+            checkOptions.CheckEndAlignment = new TypeCobolCheckOption(Severity.Warning);
+        }
+    }
+
     public static class TypeCobolOptionSet
     {
         public static OptionSet GetCommonTypeCobolOptions(TypeCobolConfiguration typeCobolConfig)
@@ -181,6 +246,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "zcr|zcallreport=", "{PATH} to report of all program called by zcallpgm.", v => typeCobolConfig.ReportZCallFilePath = v },
                 { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing.", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false },
                 { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
+                { "diag.cea|diagnostic.checkEndAlignment=", "Indicate level of check end aligment: warning, error, info, ignore.", v => typeCobolConfig.CheckEndAlignment = TypeCobolCheckOption.Parse(v) },
                 { "log|logfilepath=", "{PATH} to TypeCobol.CLI.log log file", v => typeCobolConfig.LogFile = Path.Combine(v, TypeCobolConfiguration.DefaultLogFileName)},
             };
             return commonOptions;
