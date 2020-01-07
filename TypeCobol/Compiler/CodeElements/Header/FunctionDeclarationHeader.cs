@@ -257,8 +257,7 @@ namespace TypeCobol.Compiler.CodeElements {
         {
             if (mine.Count != hers.Count) return false;
             for (int c = 0; c < mine.Count; c++) {
-	            if (!mine[c].Equals(hers[c])) return false;
-	            if (!mine[c].Equals(hers[c])) return false;
+                if (!mine[c].Equals(hers[c])) return false;
             } 
             return true;
         }

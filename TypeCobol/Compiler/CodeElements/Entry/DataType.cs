@@ -13,7 +13,7 @@ namespace TypeCobol.Compiler.CodeElements
     {
 		public string Name { get; }
         public RestrictionLevel RestrictionLevel { get; internal set; }
-		public CobolLanguageLevel CobolLanguageLevel  { get; private set; }
+		public CobolLanguageLevel CobolLanguageLevel  { get; }
 
 		public DataType([NotNull] string name, RestrictionLevel restrictionLevel = RestrictionLevel.WEAK, CobolLanguageLevel cobolLanguageLevel = CobolLanguageLevel.Cobol85) {
 			Name = name;
@@ -29,18 +29,25 @@ namespace TypeCobol.Compiler.CodeElements
 	    }
 
 	    public override bool Equals(object obj) {
-            return Equals(obj as DataType);
+            return Equals(this, obj as DataType);
         }
 
         public bool Equals(DataType dataType)
         {
-            if (Object.ReferenceEquals(this, dataType)) return true;
-            if (Object.ReferenceEquals(null, dataType)) return false;
+            return Equals(this, dataType);
+        }
 
-            //Data instance for Cobol85 are unique so their references have been compared
-            if (CobolLanguageLevel == CobolLanguageLevel.Cobol85 || dataType.CobolLanguageLevel == CobolLanguageLevel.Cobol85) return false;
-
-            return Name.Equals(dataType.Name, StringComparison.OrdinalIgnoreCase);
+        private static bool Equals([CanBeNull]DataType x, [CanBeNull]DataType y)
+        {
+            if (Object.ReferenceEquals(x, y)) return true;
+            if (Object.ReferenceEquals(x, null)) return false;
+            if (Object.ReferenceEquals(null, y)) return false;
+            
+            bool isEqual = string.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
+            if (!isEqual) return false;
+            isEqual = x.RestrictionLevel.Equals(y.RestrictionLevel);
+            if (!isEqual) return false;
+            return x.CobolLanguageLevel.Equals(y.CobolLanguageLevel);
         }
 
         public override int GetHashCode()
@@ -49,6 +56,8 @@ namespace TypeCobol.Compiler.CodeElements
             {
                 var hashCode = 13;
                 hashCode = (hashCode * 397) ^ Name.GetHashCode();
+                hashCode = (hashCode * 397) ^ RestrictionLevel.GetHashCode();
+                hashCode = (hashCode * 397) ^ CobolLanguageLevel.GetHashCode();
 
                 return hashCode;
             }
@@ -56,17 +65,11 @@ namespace TypeCobol.Compiler.CodeElements
 
         public static bool operator ==(DataType x, DataType y)
         {
-            //Data instance for Cobol85 are unique so we can compare reference
-            if (Object.ReferenceEquals(x, y)) return true;
-            if (x?.CobolLanguageLevel == CobolLanguageLevel.Cobol85 ||
-                y?.CobolLanguageLevel == CobolLanguageLevel.Cobol85) return false;
-
-            if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null)) return false;
-            return x.Name.Equals(y.Name, StringComparison.OrdinalIgnoreCase);
+            return Equals(x, y);
         }
 		public static bool operator !=(DataType x, DataType y) {
-			return !(x == y);
-		}
+            return !Equals(x, y);
+        }
 
 
 

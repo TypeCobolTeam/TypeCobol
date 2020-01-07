@@ -8,7 +8,7 @@ using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.Nodes
 {
-    public class ParametersProfileNode : GenericNode<ParametersProfile>, ParameterList
+    public class ParametersProfileNode : GenericNode<ParametersProfile>, ParameterList, IEquatable<ParametersProfileNode>
     {
         public IList<ParameterDescription> InputParameters { get; set; }
         public IList<ParameterDescription> InoutParameters { get; set; }
@@ -63,7 +63,23 @@ namespace TypeCobol.Compiler.Nodes
             return str.ToString();
         }
 
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as ParametersProfileNode);
+        }
 
+        public bool Equals(ParametersProfileNode parametersProfileNode)
+        {
+            if (Object.ReferenceEquals(this, parametersProfileNode)) return true;
+            if (Object.ReferenceEquals(null, parametersProfileNode)) return false;
+
+            return base.CodeElement.Equals(parametersProfileNode.CodeElement);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.CodeElement.GetHashCode();
+        }
 
         IList<DataType> _icache = null;
         IList<DataType> ParameterList.InputParameters
