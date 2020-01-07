@@ -19,11 +19,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DefineConstants>TRACE;DEBUG</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugSemanticDomain|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;DOMAIN_CHECKER</DefineConstants>
-  </PropertyGroup>
   <!-- ITEM Group for .NET 4.5 Dependencies -->
-  <ItemGroup Condition=" '$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugSemanticDomain' Or '$(Configuration)'=='Release' Or '$(Configuration)'=='EI_Debug' Or '$(Configuration)'=='EI_Release'">
+  <ItemGroup Condition=" '$(Configuration)'=='Debug' Or '$(Configuration)'=='Release' Or '$(Configuration)'=='EI_Debug' Or '$(Configuration)'=='EI_Release'">
     <Reference Include="Castle.Core, Version=4.1.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.Core.4.1.1\lib\net45\Castle.Core.dll</HintPath>
       <Private>True</Private>
