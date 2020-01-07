@@ -39,7 +39,9 @@ cobol2002Statement:
 	freeStatement |
 	// JSON GENERATE
 	jsonGenerateStatement |
-	jsonStatementEnd;
+	jsonStatementEnd |
+	// JSON PARSE
+	jsonParseStatement;
 
 // Updated INITIALIZE statement using COBOL v6.1 specs
 initializeStatement:
@@ -77,3 +79,14 @@ excludedDataItem:
 
 jsonStatementEnd:
 	END_JSON;
+
+// New Cobol v6.2 JSON PARSE statement. Converts JSON text to COBOL data formats.
+jsonParseStatement:
+	JSON parse source=storageArea1 // Re-use of contextual keyword PARSE defined for XML PARSE in CobolCodeElements.
+	INTO destination=variable1
+	(WITH? DETAIL)? 
+	(name OF? jsonParseNameMapping+)? // Re-use of contextual keyword NAME defined for XML GENERATE in CobolCodeElements.
+	(SUPPRESS excludedDataItem+)?;
+
+jsonParseNameMapping:
+	dataItem=variable1 IS? (OMITTED|inputName=alphanumericValue2);
