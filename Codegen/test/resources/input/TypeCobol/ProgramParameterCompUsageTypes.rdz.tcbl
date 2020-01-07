@@ -23,7 +23,7 @@
            OUTPUT    FinalLength   PIC 9(09) COMP.
         PROCEDURE DIVISION.
            DISPLAY "TOTO".
-        END-DECLARE.
+       END-DECLARE.
 
            call CompressString INPUT 0 0 0 0 0 0 OUTPUT FLength.
 

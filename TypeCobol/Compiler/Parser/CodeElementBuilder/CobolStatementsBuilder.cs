@@ -155,6 +155,7 @@ namespace TypeCobol.Compiler.Parser
                        AllocatedSize = CobolExpressionsBuilder.CreateArithmeticExpression(context.arithmeticExpression()),
                        AllocatedArea = CobolExpressionsBuilder.CreateStorageArea(context.storageArea2()),
                        Initialized = context.KeywordINITIALIZED != null ? new SyntaxProperty<bool>(true, (Token)context.KeywordINITIALIZED) : null,
+                       LocValue = CobolExpressionsBuilder.CreateIntegerVariable(context.integerVariable1()),
                        ReturningPointer = CobolExpressionsBuilder.CreateStorageArea(context.pointerStorageArea())
                    };
         }

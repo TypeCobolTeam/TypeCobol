@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<RuleSet Name="TypeCobol code analysis" Description="Code analysis rules for TypeCobol." ToolsVersion="14.0">
+<RuleSet Name="TypeCobol code analysis" Description="Code analysis rules for TypeCobol." ToolsVersion="15.0">
+  <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
+    <Rule Id="CA1046" Action="Warning" />
+    <Rule Id="CA2218" Action="Warning" />
+  </Rules>
   <Rules AnalyzerId="Microsoft.CodeAnalysis.CSharp" RuleNamespace="Microsoft.CodeAnalysis.CSharp">
     <Rule Id="CS0108" Action="Error" />
     <Rule Id="CS0109" Action="Error" />

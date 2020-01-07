@@ -191,7 +191,7 @@
            move td-var32 of Var1 
              to td-var32 of td-var23 of td-var20 of Var1
         .
-        end-declare.
+       end-declare.
 
        IDENTIFICATION DIVISION.
        PROGRAM-ID. SubPgm1.
