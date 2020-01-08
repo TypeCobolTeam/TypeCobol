@@ -16,7 +16,7 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <!-- ITEM Group for .NET 4.5 Dependencies -->
-  <ItemGroup Condition=" '$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugSemanticDomain' Or '$(Configuration)'=='Release' Or '$(Configuration)'=='EI_Debug' Or '$(Configuration)'=='EI_Release'">
+  <ItemGroup Condition=" '$(Configuration)'=='Debug' Or '$(Configuration)'=='Release' Or '$(Configuration)'=='EI_Debug' Or '$(Configuration)'=='EI_Release'">
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.DirectoryServices" />

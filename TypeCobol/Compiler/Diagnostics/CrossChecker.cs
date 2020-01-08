@@ -37,22 +37,22 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 foreach (var storageAreaRead in codeElement.StorageAreaReads)
                 {
-                    CheckVariable(node, storageAreaRead, true);
+                    CheckVariable(node, storageAreaRead, true, _compilerOptions);
                 }
             }
             if (codeElement?.StorageAreaWrites != null)
             {
                 foreach (var storageAreaWrite in codeElement.StorageAreaWrites)
                 {
-                    CheckVariable(node, storageAreaWrite.StorageArea, false);
+                    CheckVariable(node, storageAreaWrite.StorageArea, false, _compilerOptions);
                 }
             }
             //Build node StorageAreaWritesDataDefinition and StorageAreaReadsDataDefinition dictionaries
             //for Corresponding instruction from StorageAreaGroupsCorrespondingImpact
             if (codeElement?.StorageAreaGroupsCorrespondingImpact != null)
             {
-                CheckVariable(node, codeElement.StorageAreaGroupsCorrespondingImpact.SendingGroupItem, true);
-                CheckVariable(node, codeElement.StorageAreaGroupsCorrespondingImpact.ReceivingGroupItem, false);
+                CheckVariable(node, codeElement.StorageAreaGroupsCorrespondingImpact.SendingGroupItem, true, _compilerOptions);
+                CheckVariable(node, codeElement.StorageAreaGroupsCorrespondingImpact.ReceivingGroupItem, false, _compilerOptions);
             }
 
             return true;
@@ -591,19 +591,22 @@ namespace TypeCobol.Compiler.Diagnostics
             return sb.ToString();
         }
 #endif
-        public static DataDefinition CheckVariable(Node node, StorageArea storageArea, bool isReadStorageArea)
+        public static DataDefinition CheckVariable(Node node, StorageArea storageArea, bool isReadStorageArea, TypeCobolOptions compilerOptions)
         {
             if (storageArea == null || !storageArea.NeedDeclaration)
                 return null;
 #if DOMAIN_CHECKER
-            //Check that a semantic data has been associated to this node.
-            System.Diagnostics.Debug.Assert(node.SemanticData != null);
-            System.Diagnostics.Debug.Assert(node.SemanticData.SemanticKind == SemanticKinds.Symbol);
-            //The semantic data is a ProgramSymbol or a FunctionSymbol
-            System.Diagnostics.Debug.Assert(((Symbol)node.SemanticData).Kind == Symbol.Kinds.Program || 
-                                            ((Symbol)node.SemanticData).Kind == Symbol.Kinds.Function || 
-                                            ((Symbol)node.SemanticData).Kind == Symbol.Kinds.Variable ||
-                                            ((Symbol)node.SemanticData).Kind == Symbol.Kinds.Index);
+            if (compilerOptions.UseSemanticDomain)
+            {
+                //Check that a semantic data has been associated to this node.
+                System.Diagnostics.Debug.Assert(node.SemanticData != null);
+                System.Diagnostics.Debug.Assert(node.SemanticData.SemanticKind == SemanticKinds.Symbol);
+                //The semantic data is a ProgramSymbol or a FunctionSymbol
+                System.Diagnostics.Debug.Assert(((Symbol) node.SemanticData).Kind == Symbol.Kinds.Program ||
+                                                ((Symbol) node.SemanticData).Kind == Symbol.Kinds.Function ||
+                                                ((Symbol) node.SemanticData).Kind == Symbol.Kinds.Variable ||
+                                                ((Symbol) node.SemanticData).Kind == Symbol.Kinds.Index);
+            }
 #endif
 
             var area = storageArea.GetStorageAreaThatNeedDeclaration;
@@ -621,59 +624,62 @@ namespace TypeCobol.Compiler.Diagnostics
 
             var foundCount = found.Count();
 #if DOMAIN_CHECKER
-            Scopes.Domain<VariableSymbol>.Entry result = null;
-            List<Symbol[]> foundSymbolTypedPaths = null;
-            bool bCyclicTypeException = false;
-            {                                
-                switch (((Symbol)node.SemanticData).Kind)
-                {
-                    case Symbol.Kinds.Program:
-                    case Symbol.Kinds.Function:
+            if (compilerOptions.UseSemanticDomain)
+            {
+                Scopes.Domain<VariableSymbol>.Entry result = null;
+                List<Symbol[]> foundSymbolTypedPaths = null;
+                bool bCyclicTypeException = false;
+                {                                
+                    switch (((Symbol)node.SemanticData).Kind)
                     {
-                        ProgramSymbol prg = (ProgramSymbol) node.SemanticData;                            
-                        ProgramSymbol topPrg = ExpandTopProgram(prg, out bCyclicTypeException);
-                        if (!bCyclicTypeException)
-                        {//Ignoe any expansion with a cyclic type.
-                            result = prg.ResolveReference(area.SymbolReference, true);
-                            System.Diagnostics.Debug.Assert(result != null);
-                            //Check that we found the same number of symbols
-                            System.Diagnostics.Debug.Assert(result.Count == foundCount);
-                        }
-                    }
-                        break;
-                    case Symbol.Kinds.Variable:
-                    case Symbol.Kinds.Index:
-                        //Humm....
-                        //This Storage area's SemanticData is a Variable.
-                        //Thus this situation can only appears if the variable is inside a
-                        //Typedef, or Inside a Program or a Function.
-                        //But any way we have found it.
-                        VariableSymbol @var = (VariableSymbol)node.SemanticData;
-                        if (@var.HasFlag(Symbol.Flags.InsideTypedef))
+                        case Symbol.Kinds.Program:
+                        case Symbol.Kinds.Function:
                         {
-                            System.Diagnostics.Debug.Assert(@var.TopParent(Symbol.Kinds.Typedef) != null);
-                            //We looking inside a TYPEDEF.
-                            TypedefSymbol tdSym = (TypedefSymbol)@var.TopParent(Symbol.Kinds.Typedef);
-                            foundSymbolTypedPaths = new List<Symbol[]>();
-                            result = tdSym.Get(AbstractScope.SymbolReferenceToPath(area.SymbolReference), null, foundSymbolTypedPaths);
-                            System.Diagnostics.Debug.Assert(result != null);
-                            System.Diagnostics.Debug.Assert(result.Count == foundCount);
-                        }
-                        else
-                        {
-                            FunctionSymbol fun = (FunctionSymbol)@var.TopParent(Symbol.Kinds.Function);
-                            ProgramSymbol prg = (ProgramSymbol)@var.TopParent(Symbol.Kinds.Program);
-                            System.Diagnostics.Debug.Assert(prg != null || fun != null);
+                            ProgramSymbol prg = (ProgramSymbol) node.SemanticData;                            
                             ProgramSymbol topPrg = ExpandTopProgram(prg, out bCyclicTypeException);
                             if (!bCyclicTypeException)
-                            {//Ignore any expansion with a cyclic type.
-                                //Lookup itself in its program.
-                                result = (fun ?? prg).ResolveReference(area.SymbolReference, true);
+                            {//Ignoe any expansion with a cyclic type.
+                                result = prg.ResolveReference(area.SymbolReference, true);
                                 System.Diagnostics.Debug.Assert(result != null);
+                                //Check that we found the same number of symbols
                                 System.Diagnostics.Debug.Assert(result.Count == foundCount);
                             }
                         }
-                        break;
+                            break;
+                        case Symbol.Kinds.Variable:
+                        case Symbol.Kinds.Index:
+                            //Humm....
+                            //This Storage area's SemanticData is a Variable.
+                            //Thus this situation can only appears if the variable is inside a
+                            //Typedef, or Inside a Program or a Function.
+                            //But any way we have found it.
+                            VariableSymbol @var = (VariableSymbol)node.SemanticData;
+                            if (@var.HasFlag(Symbol.Flags.InsideTypedef))
+                            {
+                                System.Diagnostics.Debug.Assert(@var.TopParent(Symbol.Kinds.Typedef) != null);
+                                //We looking inside a TYPEDEF.
+                                TypedefSymbol tdSym = (TypedefSymbol)@var.TopParent(Symbol.Kinds.Typedef);
+                                foundSymbolTypedPaths = new List<Symbol[]>();
+                                result = tdSym.Get(AbstractScope.SymbolReferenceToPath(area.SymbolReference), null, foundSymbolTypedPaths);
+                                System.Diagnostics.Debug.Assert(result != null);
+                                System.Diagnostics.Debug.Assert(result.Count == foundCount);
+                            }
+                            else
+                            {
+                                FunctionSymbol fun = (FunctionSymbol)@var.TopParent(Symbol.Kinds.Function);
+                                ProgramSymbol prg = (ProgramSymbol)@var.TopParent(Symbol.Kinds.Program);
+                                System.Diagnostics.Debug.Assert(prg != null || fun != null);
+                                ProgramSymbol topPrg = ExpandTopProgram(prg, out bCyclicTypeException);
+                                if (!bCyclicTypeException)
+                                {//Ignore any expansion with a cyclic type.
+                                    //Lookup itself in its program.
+                                    result = (fun ?? prg).ResolveReference(area.SymbolReference, true);
+                                    System.Diagnostics.Debug.Assert(result != null);
+                                    System.Diagnostics.Debug.Assert(result.Count == foundCount);
+                                }
+                            }
+                            break;
+                    }
                 }
             }
 #endif
@@ -705,37 +711,40 @@ namespace TypeCobol.Compiler.Diagnostics
             else if (foundCount == 1)
             {
                 var dataDefinitionFound = found.First();
-                DataDefinitionPath dataDefinitionPath = foundQualified.First().Key;                
+                DataDefinitionPath dataDefinitionPath = foundQualified.First().Key;
 #if DOMAIN_CHECKER
-                if (result != null && result.Symbol != null)
+                if (compilerOptions.UseSemanticDomain)
                 {
-                    System.Diagnostics.Debug.Assert(result.Symbol.TargetNode == null || result.Symbol.TargetNode == foundQualified.First().Value);
-                    if (dataDefinitionPath != null)
+                    if (result != null && result.Symbol != null)
                     {
-                        string completeQualifiedName = dataDefinitionPath.ToString().Replace("::", ".");
-                        if (result.Symbol.TargetNode == null)
+                        System.Diagnostics.Debug.Assert(result.Symbol.TargetNode == null || result.Symbol.TargetNode == foundQualified.First().Value);
+                        if (dataDefinitionPath != null)
                         {
-                            //Special CASE DATE we don't capture the Target Node wich is created dynamically by TypeCobol.
-                            System.Diagnostics.Debug.Assert(
-                                (dataDefinitionFound.Name == "YYYY" || dataDefinitionFound.Name == "DD" ||
-                                 dataDefinitionFound.Name == "MM") &&
-                                result.Symbol.Owner != null && result.Symbol.Owner.HasFlag(Symbol.Flags.HasATypedefType)
-                                && result.Symbol.Owner is VariableTypeSymbol &&
-                                ((VariableTypeSymbol)result.Symbol.Owner).Typedef == BuiltinSymbols.Date);
-                            //But ensure that the parent Node is the same
-                            //System.Diagnostics.Debug.Assert(dataDefinitionFound.Parent == result.Symbol.Owner.TargetNode);
-                        }
-                        else
-                            System.Diagnostics.Debug.Assert(dataDefinitionFound == result.Symbol.TargetNode);
+                            string completeQualifiedName = dataDefinitionPath.ToString().Replace("::", ".");
+                            if (result.Symbol.TargetNode == null)
+                            {
+                                //Special CASE DATE we don't capture the Target Node wich is created dynamically by TypeCobol.
+                                System.Diagnostics.Debug.Assert(
+                                    (dataDefinitionFound.Name == "YYYY" || dataDefinitionFound.Name == "DD" ||
+                                     dataDefinitionFound.Name == "MM") &&
+                                    result.Symbol.Owner != null && result.Symbol.Owner.HasFlag(Symbol.Flags.HasATypedefType)
+                                    && result.Symbol.Owner is VariableTypeSymbol &&
+                                    ((VariableTypeSymbol)result.Symbol.Owner).Typedef == BuiltinSymbols.Date);
+                                //But ensure that the parent Node is the same
+                                //System.Diagnostics.Debug.Assert(dataDefinitionFound.Parent == result.Symbol.Owner.TargetNode);
+                            }
+                            else
+                                System.Diagnostics.Debug.Assert(dataDefinitionFound == result.Symbol.TargetNode);
 
-                        //Check that the qualified name of the variable found is the same.
-                        //I cannot do that because: Actually TypeCobol Path variable includes TYPEDEF.NAMES,
-                        //New Domain doesn't include TYPEDEF.NAMES in paths. ==> cannot compare qualified path names.
-                        string qname = foundSymbolTypedPaths != null
-                            ? NormalizePathNames(foundSymbolTypedPaths[0])
-                            : result.Symbol.FullTypedDotName;
-                        System.Diagnostics.Debug.Assert(NormalizePathNames(completeQualifiedName).ToLower()
-                            .Equals(qname.ToLower()));
+                            //Check that the qualified name of the variable found is the same.
+                            //I cannot do that because: Actually TypeCobol Path variable includes TYPEDEF.NAMES,
+                            //New Domain doesn't include TYPEDEF.NAMES in paths. ==> cannot compare qualified path names.
+                            string qname = foundSymbolTypedPaths != null
+                                ? NormalizePathNames(foundSymbolTypedPaths[0])
+                                : result.Symbol.FullTypedDotName;
+                            System.Diagnostics.Debug.Assert(NormalizePathNames(completeQualifiedName).ToLower()
+                                .Equals(qname.ToLower()));
+                        }
                     }
                 }
 #endif
@@ -799,8 +808,11 @@ namespace TypeCobol.Compiler.Diagnostics
             if (dataDefinition.IsIndex)
             {
 #if DOMAIN_CHECKER
-                //Ensure that domain SemanticData is also in index symbol
-                System.Diagnostics.Debug.Assert(((Symbol)dataDefinition.SemanticData).Kind == Symbol.Kinds.Index);
+                if (compilerOptions.UseSemanticDomain)
+                {
+                    //Ensure that domain SemanticData is also in index symbol
+                    System.Diagnostics.Debug.Assert(((Symbol)dataDefinition.SemanticData).Kind == Symbol.Kinds.Index);
+                }
 #endif
                 var index = dataDefinition;
 
