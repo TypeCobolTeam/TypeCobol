@@ -271,6 +271,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 }
         }
 
+        public void EndJsonParseStatementConditional(JsonStatementEnd end = null)
+        {
+            if (_builderListeners != null) foreach (var l in _builderListeners)
+            {
+                l.EndJsonParseStatementConditional(end);
+            }
+        }
+
         public void EndLinkageSection()
         {
             if (_builderListeners != null) foreach (var l in _builderListeners)
@@ -1029,6 +1037,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 {
                     l.StartJsonGenerateStatementConditional(stmt);
                 }
+        }
+
+        public void StartJsonParseStatementConditional([NotNull] JsonParseStatement stmt)
+        {
+            if (_builderListeners != null) foreach (var l in _builderListeners)
+            {
+                l.StartJsonParseStatementConditional(stmt);
+            }
         }
 
         public void StartLinkageSection([NotNull] LinkageSectionHeader header)
