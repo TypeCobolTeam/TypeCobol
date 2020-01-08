@@ -151,7 +151,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <returns>The ProgramSymbol</returns>
         public ProgramSymbol EnterProgram(String name)
         {
-            Scope<ProgramSymbol>.Entry entry = Programs.Lookup(name);
+            Domain<ProgramSymbol>.Entry entry = Programs.Lookup(name);
             if (entry == null)
             {
                 ProgramSymbol prgSym = new ProgramSymbol(name);
@@ -169,7 +169,7 @@ namespace TypeCobol.Compiler.Symbols
         {
             if (prgSym != null)
             {
-                Programs.Remove(prgSym);
+                Programs.Delete(prgSym);
                 prgSym.Owner = null;
             }
         }
@@ -229,7 +229,7 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="path">The Symbol's path to get the Scope, the path is in reverse order à la COBOL.</param>
         /// <returns>The Multi Symbol set of all symbol corresponding to the given path.</returns>
-        public Scope<VariableSymbol>.MultiSymbols Get(string[] path)
+        public Domain<VariableSymbol>.Entry Get(string[] path)
         {
             return ResolveReference(path, true);
         }
@@ -357,9 +357,9 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="bRecurseEnglobingPrograms">true to recurse into englobing variables to look for global variable, false otherwise</param>
         /// <param name="visibilityMask">Visibility Mask</param>
         /// <returns>The referenced symbols if any</returns>
-        public Scope<VariableSymbol>.MultiSymbols ResolveReference(string[] paths, Scope<VariableSymbol>.MultiSymbols results, bool bRecurseEnglobingPrograms, Symbol.Flags visibilityMask)
+        public Domain<VariableSymbol>.Entry ResolveReference(string[] paths, Domain<VariableSymbol>.Entry results, bool bRecurseEnglobingPrograms, Symbol.Flags visibilityMask)
         {
-            if (paths == null || paths.Length == 0)
+            if (paths == null || paths.Length == 0 || paths[0] == null)
                 return results;
             string name = paths[0];
             if (this.Domain.TryGetValue(name, out var candidates))
@@ -405,31 +405,12 @@ namespace TypeCobol.Compiler.Symbols
         /// Resolve the given SymbolReference from this scope
         /// </summary>
         /// <param name="symRef">The Symbol Reference to be resolved</param>
-        /// <param name="results">The All discovered candidate symbol accumulator</param>
-        /// <param name="bRecurseEnglobingPrograms">true to recurse into englobing variables to look for global variable, false otherwise</param>
-        /// <param name="visibilityMask">Visibility Mask</param>
-        /// <returns>The referenced symbols if any</returns>
-        public Scope<VariableSymbol>.MultiSymbols ResolveReference(SymbolReference symRef, Scope<VariableSymbol>.MultiSymbols results, bool bRecurseEnglobingPrograms, Symbol.Flags visibilityMask = 0)
-        {
-            System.Diagnostics.Debug.Assert(symRef != null);
-            System.Diagnostics.Debug.Assert(results != null);
-
-            string[] paths = SymbolReferenceToPath(symRef);
-
-            return ResolveReference(paths, results, bRecurseEnglobingPrograms, visibilityMask);
-        }
-
-        /// <summary>
-        /// Resolve the given SymbolReference from this scope
-        /// </summary>
-        /// <param name="symRef">The Symbol Reference to be resolved</param>
         /// <param name="bRecurseEnglobingPrograms">true to recurse into englobing variables to look for global variable, false otherwise</param>
         /// <returns>The referenced symbols if any</returns>
-        public Scope<VariableSymbol>.MultiSymbols ResolveReference(SymbolReference symRef, bool bRecurseEnglobingPrograms)
+        public Domain<VariableSymbol>.Entry ResolveReference(SymbolReference symRef, bool bRecurseEnglobingPrograms)
         {
             System.Diagnostics.Debug.Assert(symRef != null);
-            Scope<VariableSymbol>.MultiSymbols results = new Scope<VariableSymbol>.MultiSymbols();
-            return ResolveReference(symRef, results, bRecurseEnglobingPrograms, 0);
+            return ResolveReference(SymbolReferenceToPath(symRef), bRecurseEnglobingPrograms);
         }
 
         /// <summary>
@@ -438,11 +419,12 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="paths">The qualified path of the symbol reference in COBOL85 order</param>
         /// <param name="bRecurseEnglobingPrograms">true to recurse into enclobing variables to look for global variable, false otherwise</param>
         /// <returns>The referenced symbols if any</returns>
-        public Scope<VariableSymbol>.MultiSymbols ResolveReference(string[] paths, bool bRecurseEnglobingPrograms)
+        public Domain<VariableSymbol>.Entry ResolveReference(string[] paths, bool bRecurseEnglobingPrograms)
         {
-            System.Diagnostics.Debug.Assert(paths != null);
-            Scope<VariableSymbol>.MultiSymbols results = new Scope<VariableSymbol>.MultiSymbols();
-            return ResolveReference(paths, results, bRecurseEnglobingPrograms, 0);
+            if (paths == null || paths.Length == 0 || paths[0] == null)
+                return null;
+
+            return ResolveReference(paths, new Domain<VariableSymbol>.Entry(paths[0]), bRecurseEnglobingPrograms, 0);
         }
 
         /// <summary>
@@ -451,12 +433,12 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="root">The root Symbol table</param>
         /// <param name="path">The Type's path to be resolved.'</param>
         /// <returns>The scope all accessible type</returns>
-        public override Scope<TypedefSymbol>.Entry ResolveAccessibleType(RootSymbolTable root, string[] path)
+        public override Domain<TypedefSymbol>.Entry ResolveAccessibleType(RootSymbolTable root, string[] path)
         {
-            Scope<TypedefSymbol>.MultiSymbols candidates = root.ResolveQualifiedType(path, true);
-            if (candidates.Count == 0)
+            Domain<TypedefSymbol>.Entry candidates = root.ResolveQualifiedType(path, true);
+            if (candidates == null || candidates.Count == 0)
                 return candidates;
-            Scope<TypedefSymbol>.MultiSymbols types = new Scope<TypedefSymbol>.MultiSymbols();
+            Domain<TypedefSymbol>.Entry types = new Domain<TypedefSymbol>.Entry(path[0]);
             foreach (var t in candidates)
             {
                 if (IsTypeAccessible(t))
@@ -474,7 +456,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="root">The Root Symbol Table</param>
         /// <param name="path">The type's path'</param>
         /// <returns>The Set of resolve types</returns>
-        public override Scope<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path)
+        public override Domain<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path)
         {
             ProgramSymbol topPrg = (ProgramSymbol)TopParent(Kinds.Program);
             return ResolveSymbol(path, topPrg, root.TypeDomain);
@@ -486,7 +468,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="root">The Root Symbol Table</param>
         /// <param name="path">The type's path'</param>
         /// <returns>The Set of resolve types</returns>
-        public override Scope<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path)
+        public override Domain<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path)
         {
             ProgramSymbol topPrg = (ProgramSymbol)TopParent(Kinds.Program);
             return ResolveSymbol< AbstractScope>(path, topPrg, root.ScopeDomain);
@@ -501,7 +483,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="indentLevel">indentation level</param>
         private void DumpSection(string name, Scope<VariableSymbol> section, TextWriter tw, int indentLevel)
         {
-            if (section.Count > 0)
+            if (section.Any())
             {
                 string s = new string(' ', 2 * indentLevel);
                 tw.Write(s);

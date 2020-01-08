@@ -9,43 +9,59 @@ namespace TypeCobol.Compiler.Scopes
     /// <summary>
     /// A domain is a set of symbols.
     /// </summary>
-    /// <typeparam name="TSymbol"></typeparam>
+    /// <typeparam name="TSymbol">Type of symbols stored in this domain.</typeparam>
     public class Domain<TSymbol> : IEnumerable<TSymbol>
         where TSymbol : Symbol
     {
         /// <summary>
-        /// Represents an entry in the domain. Regroups all symbols associated with a name.
+        /// Represents an entry in a domain. Regroups some symbols which have the same name.
         /// </summary>
-        public interface IEntry : IEnumerable<TSymbol>
+        public class Entry : IEnumerable<TSymbol>
         {
-            /// <summary>
-            /// Indicates whether this entry is unique or multiple.
-            /// </summary>
-            bool IsUnique { get; }
+            /*
+             * Basic optimization, an entry is initially using a single field to store its main symbol.
+             * As soon as a second symbol is added to it, we switch to a List implementation.
+             */
 
-            /// <summary>
-            /// Main Symbol associated to this entry.
-            /// </summary>
-            [NotNull] TSymbol Symbol { get; }
-        }
-
-        /// <summary>
-        /// Implements IEntry with an optimization : an entry is created as unique
-        /// and we switch to a List implementation only if a second symbol is added.
-        /// </summary>
-        private class Entry : IEntry
-        {
-            private readonly TSymbol _primarySymbol;
+            public string Name { get; }
+            private TSymbol _symbol;
             private List<TSymbol> _symbols;
 
-            public Entry(TSymbol symbol)
+            /// <summary>
+            /// Creates an empty Entry bound to a specific symbol name.
+            /// </summary>
+            /// <param name="name">Expected name of all symbols in this entry.</param>
+            public Entry([NotNull] string name)
             {
-                _primarySymbol = symbol;
+                System.Diagnostics.Debug.Assert(name != null);
+                Name = name;
+                _symbol = null;
+                _symbols = null;
             }
 
-            public bool IsUnique => _symbols == null || _symbols.Count == 1;
+            /// <summary>
+            /// Creates a unique Entry.
+            /// </summary>
+            /// <param name="symbol">Symbol associated to this entry.</param>
+            public Entry([NotNull] TSymbol symbol)
+            {
+                System.Diagnostics.Debug.Assert(symbol != null);
+                System.Diagnostics.Debug.Assert(symbol.Name != null);
+                Name = symbol.Name;
+                _symbol = symbol;
+                _symbols = null;
+            }
 
-            public TSymbol Symbol => _symbols != null ? _symbols[0] : _primarySymbol;
+            /// <summary>
+            /// Total count of symbols in this entry.
+            /// </summary>
+            public int Count => _symbols != null ? _symbols.Count : (_symbol != null ? 1 : 0);
+
+            /// <summary>
+            /// Convenience property to retrieve the first symbol of this entry.
+            /// Returns null if this entry is empty.
+            /// </summary>
+            public TSymbol Symbol => _symbols != null ? (_symbols.Count > 0 ? _symbols[0] : null) : _symbol;
 
             public IEnumerator<TSymbol> GetEnumerator()
             {
@@ -56,9 +72,9 @@ namespace TypeCobol.Compiler.Scopes
                         yield return symbol;
                     }
                 }
-                else
+                else if (_symbol != null)
                 {
-                    yield return _primarySymbol;
+                    yield return _symbol;
                 }
             }
 
@@ -68,38 +84,67 @@ namespace TypeCobol.Compiler.Scopes
             }
 
             /// <summary>
-            /// Adds a symbol to this entry.
+            /// Adds a symbol to the entry.
             /// </summary>
             /// <param name="symbol">Symbol to add.</param>
             public void Add([NotNull] TSymbol symbol)
             {
                 System.Diagnostics.Debug.Assert(symbol != null);
-                if (_symbols == null)
+                if (!Name.Equals(symbol.Name, StringComparison.OrdinalIgnoreCase))
                 {
-                    _symbols = new List<TSymbol>() {_primarySymbol};
+                    return;
                 }
 
-                _symbols.Add(symbol);
+                if (_symbols != null)
+                {
+                    //We already have a List implementation, add to it
+                    _symbols.Add(symbol);
+                }
+                else
+                {
+                    if (_symbol == null)
+                    {
+                        //This is an empty entry, replace the main symbol with the new one
+                        _symbol = symbol;
+                    }
+                    else
+                    {
+                        //Switch to List implementation to store the second symbol, original main symbol stays at first position
+                        _symbols = new List<TSymbol>()
+                                   {
+                                       _symbol,
+                                       symbol
+                                   };
+                        _symbol = null;
+                    }
+                }
             }
 
             /// <summary>
-            /// Removes a Symbol from this entry.
+            /// Removes a symbol from this entry.
             /// </summary>
             /// <param name="symbol">Symbol to remove.</param>
-            /// <returns>
-            /// True if the entry is not valid anymore (i.e. empty), False otherwise.
-            /// Caller must delete the entry if this method returns True.
-            /// </returns>
-            public bool Remove([NotNull] TSymbol symbol)
+            public void Remove([NotNull] TSymbol symbol)
             {
                 System.Diagnostics.Debug.Assert(symbol != null);
-                if (_symbols == null)
+                if (!Name.Equals(symbol.Name, StringComparison.OrdinalIgnoreCase))
                 {
-                    return _primarySymbol == symbol;
+                    return;
                 }
 
-                _symbols.Remove(symbol);
-                return _symbols.Count == 0;
+                if (_symbols != null)
+                {
+                    //We already have a List implementation, remove from it
+                    _symbols.Remove(symbol);
+                }
+                else
+                {
+                    if (_symbol == symbol)
+                    {
+                        //Entry is unique, remove the main symbol if it corresponds (otherwise it means that the entry does not contain the supplied symbol)
+                        _symbol = null;
+                    }
+                }
             }
         }
 
@@ -140,26 +185,23 @@ namespace TypeCobol.Compiler.Scopes
         /// Searches an entry in this domain according to a name.
         /// </summary>
         /// <param name="name">Name of searched Symbol.</param>
-        /// <param name="entry">Result of the search.</param>
+        /// <param name="entry">Result of the search. If an entry has been found in this domain it is not empty.</param>
         /// <returns>True if an entry has been found, False otherwise.</returns>
-        public bool TryGetValue([NotNull] string name, out IEntry entry)
+        public bool TryGetValue([NotNull] string name, out Entry entry)
         {
             System.Diagnostics.Debug.Assert(name != null);
-            if (_symbols.TryGetValue(name, out var editableEntry))
-            {
-                entry = editableEntry;
-                return true;
-            }
-
-            entry = null;
-            return false;
+            return _symbols.TryGetValue(name, out entry);
         }
 
         /// <summary>
-        /// Adds a Symbol to this domain.
+        /// Adds a Symbol to this domain and returns the corresponding entry.
         /// </summary>
         /// <param name="symbol">Symbol to add.</param>
-        public void Add([NotNull] TSymbol symbol)
+        /// <returns>
+        /// The entry associated with the symbol, it can be either a new entry or an existing
+        /// one depending whether the symbol's name already exists in the domain or not.
+        /// </returns>
+        public Entry Add([NotNull] TSymbol symbol)
         {
             System.Diagnostics.Debug.Assert(symbol != null);
             string key = symbol.Name;
@@ -171,10 +213,12 @@ namespace TypeCobol.Compiler.Scopes
             else
             {
                 //create a new entry for this symbol.
-                _symbols.Add(key, new Entry(symbol));
+                entry = new Entry(symbol);
+                _symbols.Add(key, entry);
             }
 
             _symbolsInOrder.Add(symbol);
+            return entry;
         }
 
         /// <summary>
@@ -187,7 +231,8 @@ namespace TypeCobol.Compiler.Scopes
             string key = symbol.Name;
             if (_symbols.TryGetValue(key, out var entry))
             {
-                if (entry.Remove(symbol))
+                entry.Remove(symbol);
+                if (entry.Count == 0)
                 {
                     //Entry is no longer valid, remove it from the dictionary.
                     _symbols.Remove(key);

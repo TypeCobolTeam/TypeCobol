@@ -621,7 +621,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
             var foundCount = found.Count();
 #if DOMAIN_CHECKER
-            Scopes.Scope<VariableSymbol>.MultiSymbols result = null;
+            Scopes.Domain<VariableSymbol>.Entry result = null;
             List<Symbol[]> foundSymbolTypedPaths = null;
             bool bCyclicTypeException = false;
             {                                
@@ -656,6 +656,7 @@ namespace TypeCobol.Compiler.Diagnostics
                             TypedefSymbol tdSym = (TypedefSymbol)@var.TopParent(Symbol.Kinds.Typedef);
                             foundSymbolTypedPaths = new List<Symbol[]>();
                             result = tdSym.Get(AbstractScope.SymbolReferenceToPath(area.SymbolReference), null, foundSymbolTypedPaths);
+                            System.Diagnostics.Debug.Assert(result != null);
                             System.Diagnostics.Debug.Assert(result.Count == foundCount);
                         }
                         else

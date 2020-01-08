@@ -194,13 +194,13 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
 
-            Assert.IsTrue(currentProgram.Programs.Count == 1);
-            var nestedPrg = currentProgram.Programs[0];
+            Assert.IsTrue(currentProgram.Programs.Count() == 1);
+            var nestedPrg = currentProgram.Programs.Single();
 
             SymbolExpander symExpander = new SymbolExpander(currentProgram);
             currentProgram.Accept(symExpander, null);
 
-            TypeCobol.Compiler.Scopes.Scope<VariableSymbol>.MultiSymbols result;
+            TypeCobol.Compiler.Scopes.Domain<VariableSymbol>.Entry result;
 
             // Main pgm
             result = currentProgram.ResolveReference(new[] { "var1" }, true);
@@ -585,8 +585,8 @@ namespace TypeCobol.Test.Domain
 
             Assert.AreNotSame(pt1_x.Symbol, pt2_x.Symbol);
             Assert.AreNotSame(pt1_y.Symbol, pt2_y.Symbol);
-            Assert.IsTrue((pt1_x.Symbol == x[0] && pt2_x.Symbol == x[1])|| (pt1_x.Symbol == x[1] && pt2_x.Symbol == x[0]) );
-            Assert.IsTrue((pt1_y.Symbol == y[0] && pt2_y.Symbol == y[1]) || (pt1_y.Symbol == y[1] && pt2_y.Symbol == y[0]));
+            Assert.IsTrue((pt1_x.Symbol == x.ElementAt(0) && pt2_x.Symbol == x.ElementAt(1)) || (pt1_x.Symbol == x.ElementAt(1) && pt2_x.Symbol == x.ElementAt(0)));
+            Assert.IsTrue((pt1_y.Symbol == y.ElementAt(0) && pt2_y.Symbol == y.ElementAt(1)) || (pt1_y.Symbol == y.ElementAt(1) && pt2_y.Symbol == y.ElementAt(0)));
 
             //-------------------------
             //Expand grcarray variable.
@@ -624,14 +624,14 @@ namespace TypeCobol.Test.Domain
             //There are now two rc variables both of type Record .
             var rc_after = currentProgram.ResolveReference(new string[] { "rc" }, false);
             Assert.IsTrue(rc_after.Count == 2);
-            Assert.IsNotNull(rc_after[0].Type);
-            Assert.IsNotNull(rc_after[0].Type.Tag == Type.Tags.Group);
-            Assert.IsNotNull(rc_after[1].Type);
-            Assert.IsNotNull(rc_after[1].Type.Tag == Type.Tags.Group);
-            Assert.IsTrue(rc_after[0] != rc_after[1]);
+            Assert.IsNotNull(rc_after.ElementAt(0).Type);
+            Assert.IsNotNull(rc_after.ElementAt(0).Type.Tag == Type.Tags.Group);
+            Assert.IsNotNull(rc_after.ElementAt(1).Type);
+            Assert.IsNotNull(rc_after.ElementAt(1).Type.Tag == Type.Tags.Group);
+            Assert.IsTrue(rc_after.ElementAt(0) != rc_after.ElementAt(1));
             var rc_arr = currentProgram.ResolveReference(new string[] { "rc", "arr" }, false);
             Assert.IsTrue(rc_arr.Count == 1);
-            Assert.IsTrue(rc_arr.Symbol == rc_after[0] || rc_arr.Symbol == rc_after[1]);
+            Assert.IsTrue(rc_arr.Symbol == rc_after.ElementAt(0) || rc_arr.Symbol == rc_after.ElementAt(1));
 
             string prgDump = currentProgram.ToString();
 
@@ -699,12 +699,12 @@ namespace TypeCobol.Test.Domain
             //They are all of level 05.
             var x = currentProgram.ResolveReference(new string[] { "x" }, false);
             Assert.IsTrue(x.Count == 2);
-            Assert.IsTrue(x[0].Level == 5);
-            Assert.IsTrue(x[1].Level == 5);
+            Assert.IsTrue(x.ElementAt(0).Level == 5);
+            Assert.IsTrue(x.ElementAt(1).Level == 5);
             var y = currentProgram.ResolveReference(new string[] { "y" }, false);
             Assert.IsTrue(y.Count == 2);
-            Assert.IsTrue(y[0].Level == 5);
-            Assert.IsTrue(y[1].Level == 5);
+            Assert.IsTrue(y.ElementAt(0).Level == 5);
+            Assert.IsTrue(y.ElementAt(1).Level == 5);
             var pt1 = currentProgram.ResolveReference(new string[] { "pt1" }, false);
             Assert.IsTrue(pt1.Count == 1);
             Assert.IsTrue(pt1.Symbol.Level == 5);
@@ -716,10 +716,10 @@ namespace TypeCobol.Test.Domain
 
             //After Level renumber, all x and y are of level 3, pt1 and pt2 of level 2
             Assert.IsTrue(rcpt.Symbol.Level == 1);
-            Assert.IsTrue(x[0].Level == 3);
-            Assert.IsTrue(x[1].Level == 3);
-            Assert.IsTrue(y[0].Level == 3);
-            Assert.IsTrue(y[1].Level == 3);
+            Assert.IsTrue(x.ElementAt(0).Level == 3);
+            Assert.IsTrue(x.ElementAt(1).Level == 3);
+            Assert.IsTrue(y.ElementAt(0).Level == 3);
+            Assert.IsTrue(y.ElementAt(1).Level == 3);
             Assert.IsTrue(pt1.Symbol.Level == 2);
             Assert.IsTrue(pt2.Symbol.Level == 2);
             //-------------------------
@@ -750,9 +750,9 @@ namespace TypeCobol.Test.Domain
             //                    05 Y PIC 9(4).
             x = currentProgram.ResolveReference(new string[] { "x", "grcarray" }, false);
             Assert.IsTrue(x.Count == 3);
-            Assert.IsTrue(x[0].Level == 5);
-            Assert.IsTrue(x[1].Level == 5);
-            Assert.IsTrue(x[2].Level == 5);
+            Assert.IsTrue(x.ElementAt(0).Level == 5);
+            Assert.IsTrue(x.ElementAt(1).Level == 5);
+            Assert.IsTrue(x.ElementAt(2).Level == 5);
 
             var x_pt1_a = currentProgram.ResolveReference(new string[] { "x", "pt1", "a" }, false);
             Assert.IsTrue(x_pt1_a.Count == 1);
@@ -769,9 +769,9 @@ namespace TypeCobol.Test.Domain
 
             y = currentProgram.ResolveReference(new string[] { "y", "grcarray" }, false);
             Assert.IsTrue(y.Count == 3);
-            Assert.IsTrue(y[0].Level == 5);
-            Assert.IsTrue(y[1].Level == 5);
-            Assert.IsTrue(y[2].Level == 5);
+            Assert.IsTrue(y.ElementAt(0).Level == 5);
+            Assert.IsTrue(y.ElementAt(1).Level == 5);
+            Assert.IsTrue(y.ElementAt(2).Level == 5);
 
             var a = currentProgram.ResolveReference(new string[] { "a" }, false);
             Assert.IsTrue(a.Count == 1);
@@ -805,15 +805,17 @@ namespace TypeCobol.Test.Domain
             //                06 PT2.
             //                    07 X PIC 9(4).
             //                    07 Y PIC 9(4).
+            var x_array = x.ToArray();
+            var y_array = y.ToArray();
             for (int i = 0; i < 3; i++)
             {
-                if (x[i].Owner != a_pt1.Symbol && x[i].Owner != a_pt2.Symbol)
+                if (x_array[i].Owner != a_pt1.Symbol && x_array[i].Owner != a_pt2.Symbol)
                 {
-                    Assert.IsTrue(x[i].Level == 3);
+                    Assert.IsTrue(x_array[i].Level == 3);
                 }
-                if (y[i].Owner != a_pt1.Symbol && y[i].Owner != a_pt2.Symbol)
+                if (y_array[i].Owner != a_pt1.Symbol && y_array[i].Owner != a_pt2.Symbol)
                 {
-                    Assert.IsTrue(y[i].Level == 3);
+                    Assert.IsTrue(y_array[i].Level == 3);
                 }
             }
 
@@ -869,8 +871,8 @@ namespace TypeCobol.Test.Domain
 
             //Get MyVar2 symbol with PIC X(9)
             var myvar2s = currentProgram.ResolveReference(new string[] { "myvar2" }, false);
-            Assert.IsTrue(myvar2s.Count == 3);            
-            Assert.IsTrue(myvar2s[0] != myvar2s[1] && myvar2s[0] != myvar2s[2] && myvar2s[1] != myvar2s[2]);
+            Assert.IsTrue(myvar2s.Count == 3);
+            Assert.IsTrue(myvar2s.Distinct().Count() == 3);
             //Get the MyVar2 with PIC X(9).
             var myvar2 = myvar2s.FirstOrDefault(s => s.Type.Tag == Type.Tags.Picture && ((PictureType) s.Type).Length == 9);
             Assert.IsNotNull(myvar2);
@@ -927,7 +929,7 @@ namespace TypeCobol.Test.Domain
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
             var vars = currentProgram.ResolveReference(new string[] {"yy"}, false);
             Assert.IsTrue(vars.Count == 1);
-            string yy = vars[0].ToString();
+            string yy = vars.Single().ToString();
             Assert.AreEqual(yy, "66 YY RENAMES RX THRU RY." +Environment.NewLine);
         }
 
@@ -1096,8 +1098,10 @@ namespace TypeCobol.Test.Domain
             var xx_refs = currentProgram.ResolveReference(new string[] {"xx"}, false);
             //One of the XX has type is P9::XX
             Assert.IsTrue(xx_refs.Count == 2);
-            Assert.IsTrue((xx_refs[0].Type == tPointCyc1.Type && xx_refs[1].Type == tPoint.Type) ||
-                          (xx_refs[1].Type == tPointCyc1.Type && xx_refs[0].Type == tPoint.Type)
+            var first = xx_refs.ElementAt(0);
+            var second = xx_refs.ElementAt(1);
+            Assert.IsTrue((first.Type == tPointCyc1.Type && second.Type == tPoint.Type) ||
+                          (second.Type == tPointCyc1.Type && first.Type == tPoint.Type)
             );
 
         }
@@ -1870,13 +1874,13 @@ namespace TypeCobol.Test.Domain
             var check2 = PGM1.ReverseResolveFunction(document.Results.RootSymbolTable, new string[] { "check2", "PGM2" });
             Assert.IsNotNull(check2);
             Assert.AreEqual(2, check2.Count);
-            Assert.AreNotEqual(check2[0], check2[1]);
-            Assert.AreEqual(check2[0].Kind, Symbol.Kinds.Function);
-            Assert.AreEqual(check2[0].Owner, PGM2);
-            Assert.IsTrue(PGM1.IsFunctionAccessible(check2[0]));
-            Assert.AreEqual(check2[1].Kind, Symbol.Kinds.Function);
-            Assert.AreEqual(check2[1].Owner, PGM2);
-            Assert.IsTrue(PGM1.IsFunctionAccessible(check2[1]));
+            Assert.AreNotEqual(check2.ElementAt(0), check2.ElementAt(1));
+            Assert.AreEqual(check2.ElementAt(0).Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(check2.ElementAt(0).Owner, PGM2);
+            Assert.IsTrue(PGM1.IsFunctionAccessible(check2.ElementAt(0)));
+            Assert.AreEqual(check2.ElementAt(1).Kind, Symbol.Kinds.Function);
+            Assert.AreEqual(check2.ElementAt(1).Owner, PGM2);
+            Assert.IsTrue(PGM1.IsFunctionAccessible(check2.ElementAt(1)));
 
             Pgm2PrivateValidateDateFormat = PGM2.ReverseResolveFunction(document.Results.RootSymbolTable, new string[] { "Pgm2PrivateValidateDateFormat", "PGM2" });
             Assert.IsNotNull(Pgm2PrivateValidateDateFormat);
@@ -1928,7 +1932,7 @@ namespace TypeCobol.Test.Domain
             Assert.AreEqual(currentProgram, mainProgram.SemanticData);
 
             //Get the nested program.
-            Scope<ProgramSymbol>.Entry nestedPrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[]{"Nested" });
+            Domain<ProgramSymbol>.Entry nestedPrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[]{"Nested" });
             Assert.IsTrue(nestedPrgEntry.Count == 1);
             ProgramSymbol nestedProgram = nestedPrgEntry.Symbol;//Nested
             IList<NestedProgram> nestedPrgs = mainProgram.GetChildren<NestedProgram>();
@@ -1938,7 +1942,7 @@ namespace TypeCobol.Test.Domain
             //Get the Nested program of the Nested Program: Nested2
             var nestedNestedPrgs = nestedPrg.GetChildren<NestedProgram>();
             var nestedNestedPrg = nestedNestedPrgs[0];
-            Scope<ProgramSymbol>.Entry nested2PrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested2" });
+            Domain<ProgramSymbol>.Entry nested2PrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested2" });
             Assert.IsTrue(nested2PrgEntry.Count == 1);
             ProgramSymbol nested2Program = nested2PrgEntry.Symbol;//Nested2
             IList<NestedProgram> nested2Prgs = nestedPrg.GetChildren<NestedProgram>();
@@ -1948,12 +1952,12 @@ namespace TypeCobol.Test.Domain
             //Get the Nested program Nested21
             var nestedNested21Prgs = nested2Prg.GetChildren<NestedProgram>();
             var nestedNested21Prg = nestedNested21Prgs[0];
-            Scope<ProgramSymbol>.Entry nested21PrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21" });
+            Domain<ProgramSymbol>.Entry nested21PrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21" });
             Assert.IsTrue(nested21PrgEntry.Count == 1);
-            Scope<ProgramSymbol>.Entry nested21PrgEntryBis = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21", "Nested2" });
+            Domain<ProgramSymbol>.Entry nested21PrgEntryBis = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21", "Nested2" });
             Assert.IsTrue(nested21PrgEntryBis.Count == 1);
             Assert.AreEqual(nested21PrgEntry.Symbol, nested21PrgEntryBis.Symbol);
-            Scope<ProgramSymbol>.Entry nested21PrgEntryTer = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21", "TypeVisNestedPrgAndProc" });
+            Domain<ProgramSymbol>.Entry nested21PrgEntryTer = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(nested21PrgEntryTer.Count == 1);
             Assert.AreEqual(nested21PrgEntry.Symbol, nested21PrgEntryTer.Symbol);
             ProgramSymbol nested21Program = nested21PrgEntry.Symbol;//Nested21
@@ -1965,25 +1969,25 @@ namespace TypeCobol.Test.Domain
             //Immediatly Resolve nested procedures of Nested2
             //------------------------------------------------
             //NestedProcLocal
-            Scope<FunctionSymbol>.Entry NestedProcLocalEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcLocal" });
+            Domain<FunctionSymbol>.Entry NestedProcLocalEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcLocal" });
             Assert.IsTrue(NestedProcLocalEntry.Count == 1);
-            Scope<FunctionSymbol>.Entry NestedProcLocalEntryBis = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcLocal", "Nested" });
+            Domain<FunctionSymbol>.Entry NestedProcLocalEntryBis = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcLocal", "Nested" });
             Assert.IsTrue(NestedProcLocalEntryBis.Count == 1);
             Assert.AreEqual(NestedProcLocalEntry.Symbol, NestedProcLocalEntryBis.Symbol);
 
 
             //NestedProcPrivate
-            Scope<FunctionSymbol>.Entry NestedProcPrivateEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcPrivate" });
+            Domain<FunctionSymbol>.Entry NestedProcPrivateEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcPrivate" });
             Assert.IsTrue(NestedProcPrivateEntry.Count == 1);
 
             //NestedProcPublic
-            Scope<FunctionSymbol>.Entry NestedProcPublicEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcPublic" });
+            Domain<FunctionSymbol>.Entry NestedProcPublicEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcPublic" });
             Assert.IsTrue(NestedProcPublicEntry.Count == 1);
 
             //-------------------------------------
             ///Resolve TypeVisStackedPrg
             //-------------------------------------
-            Scope<ProgramSymbol>.Entry TypeVisStackedPrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "TypeVisStackedPrg" });
+            Domain<ProgramSymbol>.Entry TypeVisStackedPrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "TypeVisStackedPrg" });
             Assert.IsTrue(TypeVisStackedPrgEntry.Count == 1);
 
             //---------------------------------------
@@ -2285,7 +2289,7 @@ namespace TypeCobol.Test.Domain
             Assert.AreEqual(currentProgram, mainProgram.SemanticData);
 
             //Get the nested program.
-            Scope<ProgramSymbol>.Entry nestedPrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested" });
+            Domain<ProgramSymbol>.Entry nestedPrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested" });
             Assert.IsTrue(nestedPrgEntry.Count == 1);
             ProgramSymbol nestedProgram = nestedPrgEntry.Symbol;//Nested
             IList<NestedProgram> nestedPrgs = mainProgram.GetChildren<NestedProgram>();
@@ -2295,7 +2299,7 @@ namespace TypeCobol.Test.Domain
             //Get the Nested program of the Nested Program: Nested2
             var nestedNestedPrgs = nestedPrg.GetChildren<NestedProgram>();
             var nestedNestedPrg = nestedNestedPrgs[0];
-            Scope<ProgramSymbol>.Entry nested2PrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested2" });
+            Domain<ProgramSymbol>.Entry nested2PrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested2" });
             Assert.IsTrue(nested2PrgEntry.Count == 1);
             ProgramSymbol nested2Program = nested2PrgEntry.Symbol;//Nested2
             IList<NestedProgram> nested2Prgs = nestedPrg.GetChildren<NestedProgram>();
@@ -2305,12 +2309,12 @@ namespace TypeCobol.Test.Domain
             //Get the Nested program Nested21
             var nestedNested21Prgs = nested2Prg.GetChildren<NestedProgram>();
             var nestedNested21Prg = nestedNested21Prgs[0];
-            Scope<ProgramSymbol>.Entry nested21PrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21" });
+            Domain<ProgramSymbol>.Entry nested21PrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21" });
             Assert.IsTrue(nested21PrgEntry.Count == 1);
-            Scope<ProgramSymbol>.Entry nested21PrgEntryBis = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21", "Nested2" });
+            Domain<ProgramSymbol>.Entry nested21PrgEntryBis = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21", "Nested2" });
             Assert.IsTrue(nested21PrgEntryBis.Count == 1);
             Assert.AreEqual(nested21PrgEntry.Symbol, nested21PrgEntryBis.Symbol);
-            Scope<ProgramSymbol>.Entry nested21PrgEntryTer = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21", "TypeVisNestedPrgAndProc" });
+            Domain<ProgramSymbol>.Entry nested21PrgEntryTer = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(nested21PrgEntryTer.Count == 1);
             Assert.AreEqual(nested21PrgEntry.Symbol, nested21PrgEntryTer.Symbol);
             ProgramSymbol nested21Program = nested21PrgEntry.Symbol;//Nested21
@@ -2322,25 +2326,25 @@ namespace TypeCobol.Test.Domain
             //Immediatly Resolve nested procedures of Nested2
             //------------------------------------------------
             //NestedProcLocal
-            Scope<FunctionSymbol>.Entry NestedProcLocalEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcLocal" });
+            Domain<FunctionSymbol>.Entry NestedProcLocalEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcLocal" });
             Assert.IsTrue(NestedProcLocalEntry.Count == 1);
-            Scope<FunctionSymbol>.Entry NestedProcLocalEntryBis = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcLocal", "Nested" });
+            Domain<FunctionSymbol>.Entry NestedProcLocalEntryBis = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcLocal", "Nested" });
             Assert.IsTrue(NestedProcLocalEntryBis.Count == 1);
             Assert.AreEqual(NestedProcLocalEntry.Symbol, NestedProcLocalEntryBis.Symbol);
 
 
             //NestedProcPrivate
-            Scope<FunctionSymbol>.Entry NestedProcPrivateEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcPrivate" });
+            Domain<FunctionSymbol>.Entry NestedProcPrivateEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcPrivate" });
             Assert.IsTrue(NestedProcPrivateEntry.Count == 1);
 
             //NestedProcPublic
-            Scope<FunctionSymbol>.Entry NestedProcPublicEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcPublic" });
+            Domain<FunctionSymbol>.Entry NestedProcPublicEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcPublic" });
             Assert.IsTrue(NestedProcPublicEntry.Count == 1);
 
             //-------------------------------------
             ///Resolve TypeVisStackedPrg
             //-------------------------------------
-            Scope<ProgramSymbol>.Entry TypeVisStackedPrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "TypeVisStackedPrg" });
+            Domain<ProgramSymbol>.Entry TypeVisStackedPrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "TypeVisStackedPrg" });
             Assert.IsTrue(TypeVisStackedPrgEntry.Count == 1);
 
             //-------------------------------------------

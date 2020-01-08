@@ -68,15 +68,7 @@ namespace TypeCobol.Compiler.Symbols
         public FunctionType FunctionType
         {
             get => (FunctionType)base.Type;
-            set
-            {
-                //Enter Parameters in the Scope.
-                foreach (var param in value.Parameters)
-                {
-                    LinkageStorageData.EnterIfNotExist(param);
-                }
-                base.Type = value;                
-            }
+            set => base.Type = value;
         }
 
         /// <summary>

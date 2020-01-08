@@ -54,7 +54,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <returns>The ProgramSymbol</returns>
         public ProgramSymbol EnterProgram(String name)
         {
-            Scope<ProgramSymbol>.Entry entry = Programs.Lookup(name);
+            Domain<ProgramSymbol>.Entry entry = Programs.Lookup(name);
             if (entry == null) 
             {
                 ProgramSymbol prgSym = new ProgramSymbol(name);
@@ -76,7 +76,7 @@ namespace TypeCobol.Compiler.Symbols
         {
             if (prgSym != null)
             {
-                Programs.Remove(prgSym);
+                Programs.Delete(prgSym);
                 //Remove it from the all scope domain
                 Symbol root = TopParent(Kinds.Root);
                 ((RootSymbolTable)root)?.RemoveFromDomain(prgSym);
@@ -102,12 +102,12 @@ namespace TypeCobol.Compiler.Symbols
             protected set;
         }
 
-        public override Scope<TypedefSymbol>.Entry ResolveAccessibleType(RootSymbolTable root, string[] path)
+        public override Domain<TypedefSymbol>.Entry ResolveAccessibleType(RootSymbolTable root, string[] path)
         {
             throw new NotImplementedException();
         }
 
-        public override Scope<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path)
+        public override Domain<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path)
         {
             throw new NotImplementedException();
         }
@@ -123,7 +123,7 @@ namespace TypeCobol.Compiler.Symbols
 
         public override TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitNamespaceSymbol(this, arg); }
 
-        public override Scope<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path)
+        public override Domain<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path)
         {
             throw new NotImplementedException();
         }
