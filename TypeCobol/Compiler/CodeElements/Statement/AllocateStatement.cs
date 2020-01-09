@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.CodeElements
+﻿using JetBrains.Annotations;
+
+namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
     /// The ALLOCATE statement obtains dynamic storage.
@@ -45,6 +47,20 @@
         /// <remarks>Property value is null when INITIALIZED keyword is absent.</remarks>
         /// </summary>
         public SyntaxProperty<bool> Initialized { get; set; }
+
+
+        /// <summary>
+        /// Must be an unsigned integer with either the value of 24 or 31.
+        /// The LOC phrase controls how ALLOCATE acquires storage:
+        /// - LOC 24 causes ALLOCATE to acquire storage from below the 16 MB line,
+        ///   regardless of the setting of the DATA compiler option.
+        /// - LOC 31 causes ALLOCATE to attempt to acquire storage from above the 16 MB
+        ///    line, regardless of the setting of the DATA compiler option.
+        /// - Note: It is still possible that storage is acquired below the 16 MB line with LOC
+        /// 31 if storage above the 16 MB line is exhausted.
+        /// </summary>
+        [CanBeNull]
+        public IntegerVariable LocValue { get; set; }
 
         /// <summary>
         /// Must be defined as USAGE IS POINTER.
