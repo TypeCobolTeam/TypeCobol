@@ -29,6 +29,10 @@ namespace TypeCobol.Tools.Options_Config
         public ExecutionStep ExecToStep = ExecutionStep.Generate; //Default value is Generate
         public string ErrorFile = null;
         public string skeletonPath = "";
+        public string LogFile = null;
+
+        //Log file name
+        public const string DefaultLogFileName = "TypeCobol.CLI.log";
 
 #if EUROINFO_RULES
         public bool UseEuroInformationLegacyReplacingSyntax = true;
@@ -86,7 +90,8 @@ namespace TypeCobol.Tools.Options_Config
             { ReturnCode.OutputFormatError,      "Unexpected parameter given for Output format option. Accepted parameters are Cobol85/0(default), PublicSignature/1." },
             { ReturnCode.ExpandingCopyError,     "Expanding copy path given is unreachable." },
             { ReturnCode.ExtractusedCopyError,   "Extractused copy path given is unreachable." },
-            
+            { ReturnCode.LogFileError,           "Log file path is unreachable." },
+
         };
 
         public TypeCobolConfiguration()
@@ -143,6 +148,7 @@ namespace TypeCobol.Tools.Options_Config
         OutputFormatError = 1031,       // Unexpected user input for outputFormat option
         ExpandingCopyError = 1032,      // Expanding copy path given is unreachable.
         ExtractusedCopyError = 1033,    // Extractused copy path given is unreachable.
+        LogFileError = 1034,            // Wrong log path given
 
         MultipleErrors = 9999
 
@@ -241,7 +247,8 @@ namespace TypeCobol.Tools.Options_Config
                 { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing.", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false },
                 { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
                 { "diag.cea|diagnostic.checkEndAlignment=", "Indicate level of check end aligment: warning, error, info, ignore.", v => typeCobolConfig.CheckEndAlignment = TypeCobolCheckOption.Parse(v) },
-			};
+                { "log|logfilepath=", "{PATH} to TypeCobol.CLI.log log file", v => typeCobolConfig.LogFile = Path.Combine(v, TypeCobolConfiguration.DefaultLogFileName)},
+            };
             return commonOptions;
         }
 
@@ -360,6 +367,10 @@ namespace TypeCobol.Tools.Options_Config
             //HaltOnMissingCopyFilePathError
             if (!CanCreateFile(config.ExtractedCopiesFilePath) && !config.ExtractedCopiesFilePath.IsNullOrEmpty())
                 errorStack.Add(ReturnCode.ExtractusedCopyError, TypeCobolConfiguration.ErrorMessages[ReturnCode.ExtractusedCopyError]);
+
+            //LogFilePathError
+            if (!CanCreateFile(config.LogFile) && !config.LogFile.IsNullOrEmpty())
+                errorStack.Add(ReturnCode.LogFileError, TypeCobolConfiguration.ErrorMessages[ReturnCode.LogFileError]);
 
             return errorStack;
         }
