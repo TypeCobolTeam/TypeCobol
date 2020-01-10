@@ -1,18 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TypeCobol.Test.Compiler.Parser;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
-using TypeCobol.Codegen.Config;
 using TypeCobol.Compiler.Diagnostics;
-using TypeCobol.Compiler.Directives;
-using TypeCobol.Test.Utils;
-using System.Text;
-using TypeCobol.Compiler.Parser;
-using TypeCobol.Tools.Options_Config;
-using TypeCobol.Compiler.Domain;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
@@ -20,7 +10,6 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Symbols;
 using TypeCobol.Compiler.Types;
-using Type = TypeCobol.Compiler.Types.Type;
 
 namespace TypeCobol.Test.Domain
 {
@@ -47,8 +36,8 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
 
-            SymbolExpander symExpander = new SymbolExpander(currentProgram);
-            currentProgram.Accept(symExpander, null);
+            ProgramExpander expander = new ProgramExpander();
+            expander.Expand(currentProgram);
 
             var vars = currentProgram.ResolveReference(new string[] { "idt" }, false);
             Assert.IsTrue(vars.Count == 1);
@@ -60,7 +49,7 @@ namespace TypeCobol.Test.Domain
         [TestMethod]
         [TestCategory("SemanticDomain")]
         [TestProperty("Object", "TypeExpander")]
-        public void CurrenyTypeExpanderCheck()
+        public void CurrencyTypeExpanderCheck()
         {
             string path = Path.Combine(GetTestLocation(), "Parser", "Programs", "TypeCobol", "Type-Currency.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.FreeTextFormat, /*autoRemarks*/
@@ -73,9 +62,7 @@ namespace TypeCobol.Test.Domain
             var oldCurrency = currentProgram.ResolveReference(new string[] { "oldCurrency" }, false);
             Assert.IsTrue(oldCurrency.Count == 1);
             Assert.IsNotNull(oldCurrency.Symbol.Type);
-            TypedefExpander tdExpander = new TypedefExpander(currentProgram);
-            Type te_oldCurrency = oldCurrency.Symbol.Type.Accept(tdExpander, oldCurrency.Symbol);
-            Assert.AreEqual(te_oldCurrency, oldCurrency.Symbol.Type);
+            var oldCurrencyOriginalType = oldCurrency.Symbol.Type;
 
             //Get myCurrency1 symbol
             var myCurrency1 = currentProgram.ResolveReference(new string[] { "myCurrency1" }, false);
@@ -98,9 +85,11 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(myCurrency3.Symbol.Type.Tag == Type.Tags.Typedef);
             Assert.IsTrue(myCurrency3.Symbol.Type == BuiltinTypes.CurrencyType);
 
-            SymbolExpander symExpander = new SymbolExpander(currentProgram);
-            currentProgram.Accept(symExpander, null);
+            ProgramExpander expander = new ProgramExpander();
+            expander.Expand(currentProgram);
             //After expansion
+            Assert.AreEqual(oldCurrencyOriginalType, oldCurrency.Symbol.Type);
+
             Assert.IsNotNull(myCurrency1.Symbol.Type);
             Assert.IsTrue(myCurrency1.Symbol.Type.Tag == Type.Tags.Picture);
             Assert.IsTrue(myCurrency1.Symbol.Type == BuiltinTypes.CurrencyType.TypeComponent);
@@ -133,9 +122,7 @@ namespace TypeCobol.Test.Domain
             var olddate = currentProgram.ResolveReference(new string[] { "olddate" }, false);
             Assert.IsTrue(olddate.Count == 1);
             Assert.IsNotNull(olddate.Symbol.Type);
-            TypedefExpander tdExpander = new TypedefExpander(currentProgram);
-            Type te_olddate = olddate.Symbol.Type.Accept(tdExpander, olddate.Symbol);
-            Assert.AreEqual(te_olddate, olddate.Symbol.Type);
+            var olddateOriginalType = olddate.Symbol.Type;
 
             //Get today symbol
             var today = currentProgram.ResolveReference(new string[] { "today" }, false);
@@ -152,19 +139,20 @@ namespace TypeCobol.Test.Domain
             var dd = currentProgram.ResolveReference(new string[] { "dd" }, false);
             Assert.IsTrue(dd.Count == 0);
 
-            SymbolExpander symExpander = new SymbolExpander(currentProgram, tdExpander);
-            today.Symbol.Accept(symExpander, null);
+            ProgramExpander expander = new ProgramExpander();
+            expander.Expand(currentProgram);
+            Assert.AreEqual(olddateOriginalType, olddate.Symbol.Type);
             Type te_today = today.Symbol.Type;
             Assert.IsNotNull(te_today);
             Assert.IsTrue(te_today.Tag == Type.Tags.Group);
 
             //After expansion there are YYYY, MM, DD variables in the program
             yyyy = currentProgram.ResolveReference(new string[] { "yyyy" }, false);
-            Assert.IsTrue(yyyy.Count == 1);
+            Assert.IsTrue(yyyy.Count == 3);
             mm = currentProgram.ResolveReference(new string[] { "mm" }, false);
-            Assert.IsTrue(mm.Count == 1);
+            Assert.IsTrue(mm.Count == 3);
             dd = currentProgram.ResolveReference(new string[] { "dd" }, false);
-            Assert.IsTrue(dd.Count == 1);
+            Assert.IsTrue(dd.Count == 3);
 //            string @dump_today_type = @"  02 YYYY PIC 9(4).
 //  02 MM PIC 9(2).
 //  02 DD PIC 9(2).
@@ -197,8 +185,8 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(currentProgram.Programs.Count() == 1);
             var nestedPrg = currentProgram.Programs.Single();
 
-            SymbolExpander symExpander = new SymbolExpander(currentProgram);
-            currentProgram.Accept(symExpander, null);
+            ProgramExpander expander = new ProgramExpander();
+            expander.Expand(currentProgram);
 
             TypeCobol.Compiler.Scopes.Domain<VariableSymbol>.Entry result;
 
@@ -244,8 +232,8 @@ namespace TypeCobol.Test.Domain
             var dd = currentProgram.ResolveReference(new string[] { "dd" }, false);
             Assert.IsTrue(dd.Count == 0);
 
-            SymbolExpander symExpander = new SymbolExpander(currentProgram);
-            currentProgram.Accept(symExpander, null);
+            ProgramExpander expander = new ProgramExpander();
+            expander.Expand(currentProgram);
 
             //After expansion there are now YYYY, MM, DD variables in the program
             yyyy = currentProgram.ResolveReference(new string[] { "yyyy" }, false);
@@ -296,8 +284,8 @@ namespace TypeCobol.Test.Domain
             var managed_false = currentProgram.ResolveReference(new string[] { "managed-false" }, false);
             Assert.IsTrue(check_false.Count == 0);
 
-            SymbolExpander symExpander = new SymbolExpander(currentProgram);
-            currentProgram.Accept(symExpander, null);
+            ProgramExpander expander = new ProgramExpander();
+            expander.Expand(currentProgram);
 
             //After expansion there are no check-false variables in the program
             check_false = currentProgram.ResolveReference(new string[] { "check-false" }, false);
@@ -392,8 +380,8 @@ namespace TypeCobol.Test.Domain
                 Assert.IsTrue(vari.Symbol.Type == types[i - 1].Type);
             }
 
-            SymbolExpander symExpander = new SymbolExpander(currentProgram);
-            currentProgram.Accept(symExpander, null);
+            ProgramExpander expander = new ProgramExpander();
+            expander.Expand(currentProgram);
 
             //After expanding all variables have a PICTURE type.
             for (int i = 1; i < 4; i++)
@@ -446,7 +434,7 @@ namespace TypeCobol.Test.Domain
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
 
             //-------------------------
-            //Expand rcarray variable.
+            // rcarray variable.
             //-------------------------
             var rcarray = currentProgram.ResolveReference(new string[] { "rcarray" }, false);
             Assert.IsTrue(rcarray.Count == 1);
@@ -472,10 +460,57 @@ namespace TypeCobol.Test.Domain
             var Y2 = currentProgram.ResolveReference(new string[] { "Y2" }, false);
             Assert.IsTrue(Y2.Count == 0);
 
-            SymbolExpander symExpander = new SymbolExpander(currentProgram);
+            //-------------------------
+            // rcpt variable.
+            //-------------------------
+            var rcpt = currentProgram.ResolveReference(new string[] { "rcpt" }, false);
+            Assert.IsTrue(rcpt.Count == 1);
+            Assert.IsNotNull(rcpt.Symbol.Type);
+            Assert.IsTrue(rcpt.Symbol.Type.Tag == Type.Tags.Typedef);
+
+            //Before expanding there were no x, y, pt1, pt2 variables in the program.
+            var x = currentProgram.ResolveReference(new string[] { "x" }, false);
+            Assert.IsTrue(x.Count == 0);
+            var y = currentProgram.ResolveReference(new string[] { "y" }, false);
+            Assert.IsTrue(y.Count == 0);
+            var pt1 = currentProgram.ResolveReference(new string[] { "pt1" }, false);
+            Assert.IsTrue(pt1.Count == 0);
+            var pt2 = currentProgram.ResolveReference(new string[] { "pt2" }, false);
+            Assert.IsTrue(pt2.Count == 0);
+
+            //-------------------------
+            // grcarray variable.
+            //-------------------------
+            var grcarray = currentProgram.ResolveReference(new string[] { "grcarray" }, false);
+            Assert.IsTrue(grcarray.Count == 1);
+            Assert.IsNotNull(grcarray.Symbol.Type);
+            Assert.IsTrue(grcarray.Symbol.Type.Tag == Type.Tags.Group);
+
+            //Before expansion
+            //____________________
+            //There is one rc variable of type PT in the program .
+            var rc = currentProgram.ResolveReference(new string[] { "rc" }, false);
+            Assert.IsTrue(rc.Count == 1);
+            Assert.IsNotNull(rc.Symbol.Type);
+            Assert.IsTrue(rc.Symbol.Type.Tag == Type.Tags.Typedef);
+            var pt = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "pt" }, false);
+            Assert.IsTrue(pt.Count == 1);
+            Assert.IsTrue(rc.Symbol.Type == pt.Symbol.Type);
+
+            //There is one arr variable of type RECTARRAY in the program .
+            var arr = currentProgram.ResolveReference(new string[] { "arr" }, false);
+            Assert.IsTrue(arr.Count == 1);
+            Assert.IsNotNull(arr.Symbol.Type);
+            Assert.IsTrue(arr.Symbol.Type.Tag == Type.Tags.Typedef);
+            var rectarray = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "rectarray" }, false);
+            Assert.IsTrue(rectarray.Count == 1);
+            Assert.IsTrue(arr.Symbol.Type == rectarray.Symbol.Type);
+
+            //Perform expansion
+            ProgramExpander expander = new ProgramExpander();
+            expander.Expand(currentProgram);
 
             //Now rcarray is an array of Record.
-            rcarray.Symbol.Accept(symExpander, null);
             Assert.IsNotNull(rcarray.Symbol.Type);
             Assert.IsTrue(rcarray.Symbol.Type.Tag == Type.Tags.Array);
             Assert.IsTrue(rcarray.Symbol.Type.TypeComponent.Tag == Type.Tags.Group);
@@ -537,90 +572,51 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(rcArraY_y2.Count == 1);
             Assert.IsTrue(rcArraY_y2.Symbol == y2.Symbol);
 
-            //-------------------------
-            //Expand rcpt variable.
-            //-------------------------
-            var rcpt = currentProgram.ResolveReference(new string[] { "rcpt" }, false);
-            Assert.IsTrue(rcpt.Count == 1);
-            Assert.IsNotNull(rcpt.Symbol.Type);
-            Assert.IsTrue(rcpt.Symbol.Type.Tag == Type.Tags.Typedef);
-
-            //Before expanding there were no x, y, pt1, pt2 variables in the program.
-            var x = currentProgram.ResolveReference(new string[] { "x" }, false);
-            Assert.IsTrue(x.Count == 0);
-            var y = currentProgram.ResolveReference(new string[] { "y" }, false);
-            Assert.IsTrue(y.Count == 0);
-            var pt1 = currentProgram.ResolveReference(new string[] { "pt1" }, false);
-            Assert.IsTrue(pt1.Count == 0);
-            var pt2 = currentProgram.ResolveReference(new string[] { "pt2" }, false);
-            Assert.IsTrue(pt2.Count == 0);
-
-            //No rcpt is of type Record
-            rcpt.Symbol.Accept(symExpander, currentProgram);
+            //Now rcpt is of type Record
             Assert.IsNotNull(rcpt.Symbol.Type);
             Assert.IsTrue(rcpt.Symbol.Type.Tag == Type.Tags.Group);
 
             //After expanding there are now x, y, pt1, pt2 variables in the program.
             x = currentProgram.ResolveReference(new string[] { "x" }, false);
-            Assert.IsTrue(x.Count == 2);
+            Assert.IsTrue(x.Count == 5);
             y = currentProgram.ResolveReference(new string[] { "y" }, false);
-            Assert.IsTrue(y.Count == 2);
+            Assert.IsTrue(y.Count == 5);
             pt1 = currentProgram.ResolveReference(new string[] { "pt1" }, false);
-            Assert.IsTrue(pt1.Count == 1);
-            Assert.IsNotNull(pt1.Symbol.Type);
-            Assert.IsNotNull(pt1.Symbol.Type.Tag == Type.Tags.Group);
+            Assert.IsTrue(pt1.Count == 2);
+            Assert.IsNotNull(pt1.ElementAt(0).Type);
+            Assert.IsNotNull(pt1.ElementAt(0).Type.Tag == Type.Tags.Group);
+            Assert.IsNotNull(pt1.ElementAt(1).Type);
+            Assert.IsNotNull(pt1.ElementAt(1).Type.Tag == Type.Tags.Group);
             pt2 = currentProgram.ResolveReference(new string[] { "pt2" }, false);
-            Assert.IsTrue(pt2.Count == 1);
-            Assert.IsNotNull(pt2.Symbol.Type);
-            Assert.IsNotNull(pt2.Symbol.Type.Tag == Type.Tags.Group);
+            Assert.IsTrue(pt2.Count == 2);
+            Assert.IsNotNull(pt2.ElementAt(0).Type);
+            Assert.IsNotNull(pt2.ElementAt(0).Type.Tag == Type.Tags.Group);
+            Assert.IsNotNull(pt2.ElementAt(1).Type);
+            Assert.IsNotNull(pt2.ElementAt(1).Type.Tag == Type.Tags.Group);
 
             var pt1_x = currentProgram.ResolveReference(new string[] { "x", "pt1" }, false);
-            Assert.IsTrue(pt1_x.Count == 1);            
+            Assert.IsTrue(pt1_x.Count == 2);
             var pt1_y = currentProgram.ResolveReference(new string[] { "y", "pt1" }, false);
-            Assert.IsTrue(pt1_y.Count == 1);
+            Assert.IsTrue(pt1_y.Count == 2);
             var pt2_x = currentProgram.ResolveReference(new string[] { "x", "pt2" }, false);
-            Assert.IsTrue(pt2_x.Count == 1);
+            Assert.IsTrue(pt2_x.Count == 2);
             var pt2_y = currentProgram.ResolveReference(new string[] { "y", "pt2" }, false);
-            Assert.IsTrue(pt2_y.Count == 1);
+            Assert.IsTrue(pt2_y.Count == 2);
 
-            Assert.AreNotSame(pt1_x.Symbol, pt2_x.Symbol);
-            Assert.AreNotSame(pt1_y.Symbol, pt2_y.Symbol);
-            Assert.IsTrue((pt1_x.Symbol == x.ElementAt(0) && pt2_x.Symbol == x.ElementAt(1)) || (pt1_x.Symbol == x.ElementAt(1) && pt2_x.Symbol == x.ElementAt(0)));
-            Assert.IsTrue((pt1_y.Symbol == y.ElementAt(0) && pt2_y.Symbol == y.ElementAt(1)) || (pt1_y.Symbol == y.ElementAt(1) && pt2_y.Symbol == y.ElementAt(0)));
+            var rcpt_pt1_x = currentProgram.ResolveReference(new string[] { "x", "pt1", "rcpt" }, false);
+            Assert.IsTrue(rcpt_pt1_x.Count == 1);
+            var rcpt_pt1_y = currentProgram.ResolveReference(new string[] { "y", "pt1", "rcpt" }, false);
+            Assert.IsTrue(rcpt_pt1_y.Count == 1);
+            var rcpt_pt2_x = currentProgram.ResolveReference(new string[] { "x", "pt2", "rcpt" }, false);
+            Assert.IsTrue(rcpt_pt2_x.Count == 1);
+            var rcpt_pt2_y = currentProgram.ResolveReference(new string[] { "y", "pt2", "rcpt" }, false);
+            Assert.IsTrue(rcpt_pt2_y.Count == 1);
 
-            //-------------------------
-            //Expand grcarray variable.
-            //-------------------------
-            var grcarray = currentProgram.ResolveReference(new string[] { "grcarray" }, false);
-            Assert.IsTrue(grcarray.Count == 1);
-            Assert.IsNotNull(grcarray.Symbol.Type);
-            Assert.IsTrue(grcarray.Symbol.Type.Tag == Type.Tags.Group);
+            Assert.AreNotSame(rcpt_pt1_x.Symbol, rcpt_pt2_x.Symbol);
+            Assert.AreNotSame(rcpt_pt1_y.Symbol, rcpt_pt2_y.Symbol);
+            Assert.IsTrue((rcpt_pt1_x.Symbol == x.ElementAt(0) && rcpt_pt2_x.Symbol == x.ElementAt(1)) || (rcpt_pt1_x.Symbol == x.ElementAt(1) && rcpt_pt2_x.Symbol == x.ElementAt(0)));
+            Assert.IsTrue((rcpt_pt1_y.Symbol == y.ElementAt(0) && rcpt_pt2_y.Symbol == y.ElementAt(1)) || (rcpt_pt1_y.Symbol == y.ElementAt(1) && rcpt_pt2_y.Symbol == y.ElementAt(0)));
 
-            //Before expansion
-            //____________________
-            //There is one rc variable of type PT in the program .
-            var rc = currentProgram.ResolveReference(new string[] { "rc" }, false);
-            Assert.IsTrue(rc.Count == 1);
-            Assert.IsNotNull(rc.Symbol.Type);
-            Assert.IsTrue(rc.Symbol.Type.Tag == Type.Tags.Typedef);
-            var pt = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] {"pt"}, false);
-            Assert.IsTrue(pt.Count == 1);
-            Assert.IsTrue(rc.Symbol.Type == pt.Symbol.Type);
-
-            //There is one arr variable of type RECTARRAY in the program .
-            var arr = currentProgram.ResolveReference(new string[] { "arr" }, false);
-            Assert.IsTrue(arr.Count == 1);
-            Assert.IsNotNull(arr.Symbol.Type);
-            Assert.IsTrue(arr.Symbol.Type.Tag == Type.Tags.Typedef);
-            var rectarray = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "rectarray" }, false);
-            Assert.IsTrue(rectarray.Count == 1);
-            Assert.IsTrue(arr.Symbol.Type == rectarray.Symbol.Type);
-
-            //Now expansion
-            grcarray.Symbol.Accept(symExpander, null);
-
-            //After expansion
-            //____________________
             //There are now two rc variables both of type Record .
             var rc_after = currentProgram.ResolveReference(new string[] { "rc" }, false);
             Assert.IsTrue(rc_after.Count == 2);
@@ -634,7 +630,6 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(rc_arr.Symbol == rc_after.ElementAt(0) || rc_arr.Symbol == rc_after.ElementAt(1));
 
             string prgDump = currentProgram.ToString();
-
         }
 
         /// <summary>
@@ -652,18 +647,97 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
 
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
+
             //-------------------------
-            //Expand rcarray variable.
+            // typedefs.
+            //-------------------------
+            var pt = currentProgram.Types.Lookup("pt");
+            Assert.IsTrue(pt.Count == 1);
+            Assert.IsTrue(pt.Symbol.Type.Tag == Type.Tags.Typedef);
+            Assert.IsTrue(pt.Symbol.Type.TypeComponent.Tag == Type.Tags.Group);
+            GroupType ptTypeContent = (GroupType) pt.Symbol.Type.TypeComponent;
+            foreach (var field in ptTypeContent.Fields)
+            {
+                Assert.IsTrue(field.Level == 5);
+            }
+
+            var rectangle = currentProgram.Types.Lookup("rectangle");
+            Assert.IsTrue(rectangle.Count == 1);
+            Assert.IsTrue(rectangle.Symbol.Type.Tag == Type.Tags.Typedef);
+            Assert.IsTrue(rectangle.Symbol.Type.TypeComponent.Tag == Type.Tags.Group);
+            GroupType rectangleTypeContent = (GroupType) rectangle.Symbol.Type.TypeComponent;
+            foreach (var field in rectangleTypeContent.Fields)
+            {
+                Assert.IsTrue(field.Level == 2);
+            }
+
+            var rectpt = currentProgram.Types.Lookup("rectpt");
+            Assert.IsTrue(rectpt.Count == 1);
+            Assert.IsTrue(rectpt.Symbol.Type.Tag == Type.Tags.Typedef);
+            Assert.IsTrue(rectpt.Symbol.Type.TypeComponent.Tag == Type.Tags.Group);
+            GroupType rectptTypeContent = (GroupType) rectpt.Symbol.Type.TypeComponent;
+            foreach (var field in rectptTypeContent.Fields)
+            {
+                Assert.IsTrue(field.Level == 5);
+                Assert.IsTrue(field.Type == pt.Symbol.Type);
+            }
+
+            var rectarray = currentProgram.Types.Lookup("rectarray");
+            Assert.IsTrue(rectarray.Count == 1);
+            Assert.IsTrue(rectarray.Symbol.Type.Tag == Type.Tags.Typedef);
+            Assert.IsTrue(rectarray.Symbol.Type.TypeComponent.Tag == Type.Tags.Group);
+            GroupType rectarrayTypeContent = (GroupType) rectarray.Symbol.Type.TypeComponent;
+            var aField = rectarrayTypeContent.Fields.Single();
+            Assert.IsTrue(aField.Level == 5);
+            Assert.IsTrue(aField.Type.Tag == Type.Tags.Array);
+            Assert.IsTrue(aField.Type.TypeComponent.Tag == Type.Tags.Group);
+            var rcField = ((GroupType) aField.Type.TypeComponent).Fields.Single();
+            Assert.IsTrue(rcField.Level == 10);
+            Assert.IsTrue(rcField.Type == rectpt.Symbol.Type);
+
+            //-------------------------
+            // rcarray variable.
             //-------------------------
             var rcarray = currentProgram.ResolveReference(new string[] { "rcarray" }, false);
             Assert.IsTrue(rcarray.Count == 1);
             Assert.IsNotNull(rcarray.Symbol.Type);
             Assert.IsTrue(rcarray.Symbol.Type.Tag == Type.Tags.Array);
-            Assert.IsTrue(rcarray.Symbol.Type.TypeComponent.Tag == Type.Tags.Typedef);
+            Assert.IsTrue(rcarray.Symbol.Type.TypeComponent == rectangle.Symbol.Type);
 
-            SymbolExpander symExpander = new SymbolExpander(currentProgram);
-            rcarray.Symbol.Accept(symExpander, null);
+            //-------------------------
+            // rcpt variable.
+            //-------------------------
+            var rcpt = currentProgram.ResolveReference(new string[] { "rcpt" }, false);
+            Assert.IsTrue(rcpt.Count == 1);
+            Assert.IsNotNull(rcpt.Symbol.Type);
+            Assert.IsTrue(rcpt.Symbol.Type == rectpt.Symbol.Type);
+
+            //-------------------------
+            // grcarray variable.
+            //-------------------------
+            var grcarray = currentProgram.ResolveReference(new string[] { "grcarray" }, false);
+            Assert.IsTrue(grcarray.Count == 1);
+            Assert.IsNotNull(grcarray.Symbol.Type);
+            Assert.IsTrue(grcarray.Symbol.Type.Tag == Type.Tags.Group);
+            GroupType grcarrayContent = (GroupType) grcarray.Symbol.Type;
+            var rcField2 = grcarrayContent.Fields.ElementAt(0);
+            Assert.IsTrue(rcField2.Level == 5);
+            Assert.IsTrue(rcField2.Type == pt.Symbol.Type);
+            var xxField = grcarrayContent.Fields.ElementAt(1);
+            Assert.IsTrue(xxField.Level == 5);
+            var grpField = grcarrayContent.Fields.ElementAt(2);
+            Assert.IsTrue(grpField.Level == 5);
+            Assert.IsTrue(grpField.Type.Tag == Type.Tags.Group);
+            var arrField = ((GroupType) grpField.Type).Fields.Single();
+            Assert.IsTrue(arrField.Level == 10);
+            Assert.IsTrue(arrField.Type == rectarray.Symbol.Type);
+
+            //Perform expansion
+            ProgramExpander expander = new ProgramExpander();
+            expander.Expand(currentProgram);
+
             //After expanding there are X1, Y1, X2, Y2 variables in the program, will all 02 Level
+            //After renumber from 1, X1, Y1, X2, Y2 level has not changed because their levels were already 2
             var x1 = currentProgram.ResolveReference(new string[] { "x1" }, false);
             Assert.IsTrue(x1.Count == 1);
             Assert.IsTrue(x1.Symbol.Level == 2);
@@ -676,159 +750,104 @@ namespace TypeCobol.Test.Domain
             var y2 = currentProgram.ResolveReference(new string[] { "y2" }, false);
             Assert.IsTrue(y2.Count == 1);
             Assert.IsTrue(y2.Symbol.Level == 2);
-
             Assert.IsTrue(rcarray.Symbol.Level == 1);
-            LevelRenumber levRenum = new LevelRenumber();
-            rcarray.Symbol.Accept(levRenum, 1);
-            //After renumber from 1, X1, Y1, X2, Y2 level has not changed because their levels were already 2
-            Assert.IsTrue(x1.Symbol.Level == 2);
-            Assert.IsTrue(y1.Symbol.Level == 2);
-            Assert.IsTrue(x2.Symbol.Level == 2);
-            Assert.IsTrue(y2.Symbol.Level == 2);
 
-            //-------------------------
-            //Expand rcpt variable.
-            //-------------------------
-            var rcpt = currentProgram.ResolveReference(new string[] { "rcpt" }, false);
-            Assert.IsTrue(rcpt.Count == 1);
-            Assert.IsNotNull(rcpt.Symbol.Type);
-            Assert.IsTrue(rcpt.Symbol.Type.Tag == Type.Tags.Typedef);
-
-            rcpt.Symbol.Accept(symExpander, null);
-            //After expanding there were x, y, pt1, pt2 variables in the program
-            //They are all of level 05.
+            //After expanding there are x, y, pt1, pt2 variables in the program
             var x = currentProgram.ResolveReference(new string[] { "x" }, false);
-            Assert.IsTrue(x.Count == 2);
-            Assert.IsTrue(x.ElementAt(0).Level == 5);
-            Assert.IsTrue(x.ElementAt(1).Level == 5);
+            Assert.IsTrue(x.Count == 5);
             var y = currentProgram.ResolveReference(new string[] { "y" }, false);
-            Assert.IsTrue(y.Count == 2);
-            Assert.IsTrue(y.ElementAt(0).Level == 5);
-            Assert.IsTrue(y.ElementAt(1).Level == 5);
+            Assert.IsTrue(y.Count == 5);
             var pt1 = currentProgram.ResolveReference(new string[] { "pt1" }, false);
-            Assert.IsTrue(pt1.Count == 1);
-            Assert.IsTrue(pt1.Symbol.Level == 5);
+            Assert.IsTrue(pt1.Count == 2);
             var pt2 = currentProgram.ResolveReference(new string[] { "pt2" }, false);
-            Assert.IsTrue(pt2.Count == 1);
-            Assert.IsTrue(pt2.Symbol.Level == 5);
+            Assert.IsTrue(pt2.Count == 2);
 
-            rcpt.Symbol.Accept(levRenum, 1);
-
-            //After Level renumber, all x and y are of level 3, pt1 and pt2 of level 2
+            //Check levels in expanded rcpt
+            var rcpt_x = currentProgram.ResolveReference(new string[] { "x", "rcpt" }, false);
+            Assert.IsTrue(rcpt_x.Count == 2);
+            Assert.IsTrue(rcpt_x.All(v => v.Level == 3));
+            var rcpt_y = currentProgram.ResolveReference(new string[] { "x", "rcpt" }, false);
+            Assert.IsTrue(rcpt_y.Count == 2);
+            Assert.IsTrue(rcpt_y.All(v => v.Level == 3));
+            var rcpt_p1 = currentProgram.ResolveReference(new string[] { "pt1", "rcpt" }, false);
+            Assert.IsTrue(rcpt_p1.Count == 1);
+            Assert.IsTrue(rcpt_p1.Symbol.Level == 2);
+            var rcpt_p2 = currentProgram.ResolveReference(new string[] { "pt2", "rcpt" }, false);
+            Assert.IsTrue(rcpt_p2.Count == 1);
+            Assert.IsTrue(rcpt_p2.Symbol.Level == 2);
             Assert.IsTrue(rcpt.Symbol.Level == 1);
-            Assert.IsTrue(x.ElementAt(0).Level == 3);
-            Assert.IsTrue(x.ElementAt(1).Level == 3);
-            Assert.IsTrue(y.ElementAt(0).Level == 3);
-            Assert.IsTrue(y.ElementAt(1).Level == 3);
-            Assert.IsTrue(pt1.Symbol.Level == 2);
-            Assert.IsTrue(pt2.Symbol.Level == 2);
-            //-------------------------
-            //Expand grcarray variable.
-            //-------------------------
-            var grcarray = currentProgram.ResolveReference(new string[] { "grcarray" }, false);
-            Assert.IsTrue(grcarray.Count == 1);
-            Assert.IsNotNull(grcarray.Symbol.Type);
-            Assert.IsTrue(grcarray.Symbol.Type.Tag == Type.Tags.Group);
 
-            grcarray.Symbol.Accept(symExpander, null);
-            //After the expansion the situation is like this
+            //Now check the expanded grcarray
             string grcarrayDump0 = grcarray.ToString();
-            //        01 grcarray.
-            //05 rc.
-            //    05 X PIC 9(4).
-            //    05 Y PIC 9(4).
-            //05 xx PIC X(9).
-            //05 grp.
-            //    10 arr.
-            //        05 a.
-            //                          10 rc.
-            //                05 PT1.
-            //                    05 X PIC 9(4).
-            //                    05 Y PIC 9(4).
-            //                05 PT2.
-            //                    05 X PIC 9(4).
-            //                    05 Y PIC 9(4).
+            //01 grcarray.
+            //   02 rc.
+            //      03 X PIC 9(4).
+            //      03 Y PIC 9(4).
+            //   02 xx PIC X(9).
+            //   02 grp.
+            //      03 arr.
+            //         04 a.
+            //            05 rc.
+            //               06 PT1.
+            //                  07 X PIC 9(4).
+            //                  07 Y PIC 9(4).
+            //               06 PT2.
+            //                  07 X PIC 9(4).
+            //                  07 Y PIC 9(4).
             x = currentProgram.ResolveReference(new string[] { "x", "grcarray" }, false);
             Assert.IsTrue(x.Count == 3);
-            Assert.IsTrue(x.ElementAt(0).Level == 5);
-            Assert.IsTrue(x.ElementAt(1).Level == 5);
-            Assert.IsTrue(x.ElementAt(2).Level == 5);
-
-            var x_pt1_a = currentProgram.ResolveReference(new string[] { "x", "pt1", "a" }, false);
-            Assert.IsTrue(x_pt1_a.Count == 1);
-            Assert.IsTrue(x_pt1_a.Symbol.Level == 5);
-            var y_pt1_a = currentProgram.ResolveReference(new string[] { "y", "pt1", "a" }, false);
-            Assert.IsTrue(y_pt1_a.Count == 1);
-            Assert.IsTrue(y_pt1_a.Symbol.Level == 5);
-            var x_pt2_a = currentProgram.ResolveReference(new string[] { "x", "pt2", "a" }, false);
-            Assert.IsTrue(x_pt2_a.Count == 1);
-            Assert.IsTrue(x_pt2_a.Symbol.Level == 5);
-            var y_pt2_a = currentProgram.ResolveReference(new string[] { "y", "pt2", "a" }, false);
-            Assert.IsTrue(y_pt2_a.Count == 1);
-            Assert.IsTrue(y_pt2_a.Symbol.Level == 5);
-
             y = currentProgram.ResolveReference(new string[] { "y", "grcarray" }, false);
             Assert.IsTrue(y.Count == 3);
-            Assert.IsTrue(y.ElementAt(0).Level == 5);
-            Assert.IsTrue(y.ElementAt(1).Level == 5);
-            Assert.IsTrue(y.ElementAt(2).Level == 5);
+            pt1 = currentProgram.ResolveReference(new string[] { "pt1", "grcarray" }, false);
+            Assert.IsTrue(pt1.Count == 1);
+            Assert.IsTrue(pt1.Symbol.Level == 6);
+            pt2 = currentProgram.ResolveReference(new string[] { "pt2", "grcarray" }, false);
+            Assert.IsTrue(pt2.Count == 1);
+            Assert.IsTrue(pt2.Symbol.Level == 6);
+
+            var rc = currentProgram.ResolveReference(new string[] { "rc" }, false);
+            Assert.IsTrue(rc.Count == 2);
 
             var a = currentProgram.ResolveReference(new string[] { "a" }, false);
             Assert.IsTrue(a.Count == 1);
-            Assert.IsTrue(a.Symbol.Level == 5);
-            var a_rc = currentProgram.ResolveReference(new string[] { "rc", "a" }, false);
-            Assert.IsTrue(a_rc.Count == 1);
-            Assert.IsTrue(a_rc.Symbol.Level == 10);
-
-            var a_pt1 = currentProgram.ResolveReference(new string[] { "pt1", "a" }, false);
-            Assert.IsTrue(a_pt1.Count == 1);
-            Assert.IsTrue(a_pt1.Symbol.Level == 5);
-            var a_pt2 = currentProgram.ResolveReference(new string[] { "pt2", "a" }, false);
-            Assert.IsTrue(a_pt2.Count == 1);
-            Assert.IsTrue(a_pt2.Symbol.Level == 5);
-
-            grcarray.Symbol.Accept(levRenum, 1);
-            //After Level renumber the situation is like that.
-            string grcarrayDump1 = grcarray.Symbol.ToString();
-            //        01 grcarray.
-            //02 rc.
-            //    03 X PIC 9(4).
-            //    03 Y PIC 9(4).
-            //02 xx PIC X(9).
-            //02 grp.
-            //    03 arr.
-            //        04 a.
-            //                          05 rc.
-            //                06 PT1.
-            //                    07 X PIC 9(4).
-            //                    07 Y PIC 9(4).
-            //                06 PT2.
-            //                    07 X PIC 9(4).
-            //                    07 Y PIC 9(4).
-            var x_array = x.ToArray();
-            var y_array = y.ToArray();
-            for (int i = 0; i < 3; i++)
-            {
-                if (x_array[i].Owner != a_pt1.Symbol && x_array[i].Owner != a_pt2.Symbol)
-                {
-                    Assert.IsTrue(x_array[i].Level == 3);
-                }
-                if (y_array[i].Owner != a_pt1.Symbol && y_array[i].Owner != a_pt2.Symbol)
-                {
-                    Assert.IsTrue(y_array[i].Level == 3);
-                }
-            }
-
-            Assert.IsTrue(x_pt1_a.Symbol.Level == 7);
-            Assert.IsTrue(y_pt1_a.Symbol.Level == 7);
-            Assert.IsTrue(x_pt2_a.Symbol.Level == 7);
-            Assert.IsTrue(y_pt2_a.Symbol.Level == 7);
-
-            a = currentProgram.ResolveReference(new string[] { "a" }, false);
             Assert.IsTrue(a.Symbol.Level == 4);
-            Assert.IsTrue(a_rc.Symbol.Level == 5);
-            Assert.IsTrue(a_pt1.Symbol.Level == 6);
-            Assert.IsTrue(a_pt2.Symbol.Level == 6);
+
+            var arr = currentProgram.ResolveReference(new string[] { "arr" }, false);
+            Assert.IsTrue(arr.Count == 1);
+            Assert.IsTrue(arr.Symbol.Level == 3);
+
+            var grp = currentProgram.ResolveReference(new string[] { "grp" }, false);
+            Assert.IsTrue(grp.Count == 1);
+            Assert.IsTrue(grp.Symbol.Level == 2);
+
+            var xx = currentProgram.ResolveReference(new string[] { "xx" }, false);
+            Assert.IsTrue(xx.Count == 1);
+            Assert.IsTrue(xx.Symbol.Level == 2);
+
+            var x_pt1_a = currentProgram.ResolveReference(new string[] { "x", "pt1", "a" }, false);
+            Assert.IsTrue(x_pt1_a.Count == 1);
+            Assert.IsTrue(x_pt1_a.Symbol.Level == 7);
+            var x_pt2_a = currentProgram.ResolveReference(new string[] { "x", "pt2", "a" }, false);
+            Assert.IsTrue(x_pt2_a.Count == 1);
+            Assert.IsTrue(x_pt2_a.Symbol.Level == 7);
+            var y_pt1_a = currentProgram.ResolveReference(new string[] { "y", "pt1", "a" }, false);
+            Assert.IsTrue(y_pt1_a.Count == 1);
+            Assert.IsTrue(y_pt1_a.Symbol.Level == 7);
+            var y_pt2_a = currentProgram.ResolveReference(new string[] { "y", "pt2", "a" }, false);
+            Assert.IsTrue(y_pt2_a.Count == 1);
+            Assert.IsTrue(y_pt2_a.Symbol.Level == 7);
+            Assert.IsTrue(x.ElementAt(0).Level == 3);
+            Assert.IsTrue(x.ElementAt(1) == x_pt1_a.Symbol);
+            Assert.IsTrue(x.ElementAt(2) == x_pt2_a.Symbol);
+            Assert.IsTrue(y.ElementAt(0).Level == 3);
+            Assert.IsTrue(y.ElementAt(1) == y_pt1_a.Symbol);
+            Assert.IsTrue(y.ElementAt(2) == y_pt2_a.Symbol);
+
+            var rc_a = currentProgram.ResolveReference(new string[] { "rc", "a" }, false);
+            Assert.IsTrue(rc_a.Count == 1);
+            Assert.IsTrue(rc_a.Symbol.Level == 5);
+            Assert.IsTrue(rc.ElementAt(0).Level == 2);
+            Assert.IsTrue(rc.ElementAt(1) == rc_a.Symbol);
         }
 
         [TestMethod]
@@ -930,7 +949,7 @@ namespace TypeCobol.Test.Domain
             var vars = currentProgram.ResolveReference(new string[] {"yy"}, false);
             Assert.IsTrue(vars.Count == 1);
             string yy = vars.Single().ToString();
-            Assert.AreEqual(yy, "66 YY RENAMES RX THRU RY." +Environment.NewLine);
+            Assert.AreEqual(yy, "66 YY RENAMES RX THRU RY." + System.Environment.NewLine);
         }
 
         /// <summary>
@@ -1907,8 +1926,8 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
 
-            SymbolExpander symExpander = new SymbolExpander(currentProgram);
-            currentProgram.Accept(symExpander, null);
+            ProgramExpander expander = new ProgramExpander();
+            expander.Expand(currentProgram);
 
             var vars = currentProgram.ResolveReference(new string[] { "td-var42", "var1" }, false);
             Assert.IsTrue(vars.Count == 1);
