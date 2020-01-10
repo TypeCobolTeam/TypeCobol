@@ -271,8 +271,9 @@ namespace TypeCobol.Compiler.Scanner
 
             // All the following lines are continuation lines
             // => build a character string representing the complete continuation text along the way
-            for (int i = 1; i < continuationLinesGroup.Count; i++)
+            for (int i = 1, lastContinuationLinesIndex = continuationLinesGroup.Count - 1; i <= lastContinuationLinesIndex; i++)
             {
+                bool isLastLine = i == lastContinuationLinesIndex;
                 TokensLine continuationLine = continuationLinesGroup[i];
                 int startIndex = continuationLine.Source.StartIndex;
                 int lastIndex = continuationLine.Source.EndIndex;
@@ -334,6 +335,68 @@ namespace TypeCobol.Compiler.Scanner
                     // Check if the last token so far is an alphanumeric or national literal
                     if (lastTokenOfConcatenatedLineSoFar.TokenFamily == TokenFamily.AlphanumericLiteral)
                     {
+                        if (!lastTokenOfConcatenatedLineSoFar.HasClosingDelimiter)
+                        {
+                            // check delimiters
+                            char startDelimiter = line[startOfContinuationIndex];
+                            bool isBadStartDelimiter = startDelimiter != lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter;
+                            char endDelimiter = '\'';
+                            bool isBadEndDelimiter = false;
+                            if (isLastLine)
+                            {
+                                // check closing delimiter of the last continuation line
+                                string lastLine = continuationLine.SourceText.TrimEnd();
+                                int pos = lastLine.LastIndexOf(startDelimiter);
+                                if (pos > lastLine.IndexOf(startDelimiter))
+                                {
+                                    // delimiter is also present near the end
+                                    lastLine = lastLine.Substring(0, pos + 1);
+                                }
+                                else
+                                {
+                                    // . is present at the end
+                                    pos = lastLine.Length - 1;
+                                    if (lastLine[pos] == '.')
+                                    {
+                                        lastLine = lastLine.Substring(0, pos).TrimEnd();
+                                    }
+                                }
+
+                                endDelimiter = lastLine[lastLine.Length - 1];
+                                isBadEndDelimiter = endDelimiter != lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter;
+                            }
+
+                            if (isBadStartDelimiter || isBadEndDelimiter)
+                            {
+                                if (startDelimiter != '\'' && startDelimiter != '"')
+                                {
+                                    // no valid starting delimiter
+                                    continuationLine.AddDiagnostic(MessageCode.SyntaxErrorInParser,
+                                        startOfContinuationIndex, startOfContinuationIndex + 1, 
+                                        "Starting delimiter of the continuation line is missing.");
+                                    offsetForLiteralContinuation = 0;
+                                }
+                                else if (endDelimiter != '\'' && endDelimiter != '"')
+                                {
+                                    // no valid closing delimiter
+                                    continuationLine.AddDiagnostic(MessageCode.SyntaxErrorInParser,
+                                        startOfContinuationIndex, startOfContinuationIndex + 1,
+                                        "Closing delimiter of the continuation line is missing.");
+                                    offsetForLiteralContinuation = 0;
+
+                                }
+                                else
+                                {
+                                    // different delimiters
+                                    continuationLine.AddDiagnostic(MessageCode.InvalidDelimiterForContinuationLine,
+                                        startOfContinuationIndex, startOfContinuationIndex + 1,
+                                        lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter);
+                                    // Use the first quotation mark to avoid a complete mess while scanning the rest of the line
+                                    offsetForLiteralContinuation = 0;
+                                }
+                            }
+                        }
+
                         //// The continuation of the literal begins with the character immediately following the quotation mark.
                         if (line[startOfContinuationIndex] == lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter)
                         {
