@@ -266,9 +266,8 @@ namespace TypeCobol.Compiler.Domain
             if (this.CurrentProgram == null && lastPrg.HasFlag(Symbol.Flags.NeedTypeCompletion))
             {
                 //Entire stacked program has been parsed ==> Resolve Types if needed.
-                TypeCobol.Compiler.Domain.Validator.SymbolTypeResolver resolver = new TypeCobol.Compiler.Domain.Validator.SymbolTypeResolver(MyRoot);
-                lastPrg.Accept(resolver, null);
-                lastPrg.SetFlag(Symbol.Flags.ProgramCompleted, true);
+                TypeCobol.Compiler.Domain.Validator.TypeResolver resolver = new TypeCobol.Compiler.Domain.Validator.TypeResolver(MyRoot);
+                resolver.ResolveTypes(lastPrg, out _, out _);
             }
         }
 
