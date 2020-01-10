@@ -1,0 +1,10 @@
+﻿       IDENTIFICATION division.
+       PROGRAM-ID. MyPGM8.
+       procedure division.
+Line 4[6,6] <1, Error, TextFormat> - Invalid indicator character '[6,6]' : use space for source lines, * or / for comment lines, D or d for debugging lines, - for continuation lines
+	  * KO
+                display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Line 6[18,19] <27, Error, Syntax> - Syntax error : Starting delimiter of the continuation line is missing.
+      -           er zer "
+           .
+       END PROGRAM MyPGM8.

@@ -2,71 +2,22 @@
        PROGRAM-ID. Pgm.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01 var1 pic x(30) value "hi".
+       01 var1 pic x(100) value "hi".
        PROCEDURE DIVISION.
            display "max-ok_max-ok_max-ok_max-ok_max-ok_max-ok_max-ok_ma"
-Line 8[6,6] <27, Error, Syntax> - Syntax error : Literal is not well delimited.
+
+Line 9[6,6] <27, Error, Syntax> - Syntax error : Literal is not well delimited.
            display "3333333333333333333333333333222222222222222222222222
+
            move var1 to var1
-Line 10[6,6] <27, Error, Syntax> - Syntax error : Literal is not well delimited.
+
+Line 13[6,6] <27, Error, Syntax> - Syntax error : Literal is not well delimited.
            display "endxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx1234
-Line 11[6,6] <27, Error, Syntax> - Syntax error : Literal is not well delimited.
+Line 14[6,6] <27, Error, Syntax> - Syntax error : Literal is not well delimited.
            display "3333333333333333333333333333222222222222222222222222
-Line 12[6,6] <27, Error, Syntax> - Syntax error : Literal is not well delimited.
+
+Line 16[6,6] <27, Error, Syntax> - Syntax error : Literal is not well delimited.
            move "gggggggggggggggggggggggggggggggggggggggggggggssssssssss
                     to var1
-      
-      
-      *    OK
-           display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-      -            " er zer "
-           display 'endxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx1234xxxxxxx
-      -            ' gggg '
-           display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-      -            ' vvvv
-      -            ' er zer '
-           move "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-      -         " er zer " to var1
-      
-      
-      *    KO
-           display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-Line 30[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal (continuation of the alphanumeric literal on the previous line)
-      -            ' er zer '
-           display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-Line 32[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal (continuation of the alphanumeric literal on the previous line)
-      -            " er zer '
-           display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-Line 34[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal (continuation of the alphanumeric literal on the previous line)
-      -            ' er zer "
-      
-           display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-Line 37[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal (continuation of the alphanumeric literal on the previous line)
-      -            " er zer "
-           display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-Line 39[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal (continuation of the alphanumeric literal on the previous line)
-      -            ' er zer "
-           display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-Line 41[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal (continuation of the alphanumeric literal on the previous line)
-      -            " er zer '
-      
-           display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-Line 44[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal (continuation of the alphanumeric literal on the previous line)
-      -            ' er zer
-      -            " er zer "
-           display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-      -            ' er zer
-Line 48[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal (continuation of the alphanumeric literal on the previous line)
-      -            " er zer '
-      
-      
-      *    KO
-           display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-Line 53[21,22] <27, Error, Syntax> - Syntax error : Starting delimiter of the continuation line is missing.
-      -              er zer "
-           display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-Line 55[20,21] <27, Error, Syntax> - Syntax error : Closing delimiter of the continuation line is missing.
-      -             " er zer
-      
            GOBACK.
        END PROGRAM Pgm.

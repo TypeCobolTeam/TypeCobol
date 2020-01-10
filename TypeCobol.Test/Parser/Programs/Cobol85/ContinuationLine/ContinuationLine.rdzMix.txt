@@ -1,0 +1,72 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OSM.
+       data division.
+       working-storage section.
+       01 syntax-ok PIC X(200) VALUE "This text is way too long to fit o
+      -                        "n a single line !".
+       01 var1 pic x(100) value "hi".
+       PROCEDURE DIVISION.
+             move 'CHAMPS 082 A 085 INTERDITS EN OUVERTURE'
+Line 10[19,21] <27, Error, Syntax> - Syntax error : Symbol foo is not referenced
+      -        to foo
+      
+
+      *    OK
+           display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+      -            " er zer "
+           display 'endxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx1234xxxxxxx
+      -            ' gggg '
+           display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+      -            ' vvvv
+      -            ' er zer '
+           move "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+      -         " er zer " to var1
+           move "Crazy NIST ""Syntax" to var1
+           move "                                           Crazy NIST "
+      -         ""Syntax" to var1      
+
+      
+      *    KO
+           display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Line 30[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal
+      -            ' er zer '
+           display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Line 32[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal
+      -            " er zer '
+           display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Line 34[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal
+      -            ' er zer "
+      
+           display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Line 37[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal
+      -            " er zer "
+           display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Line 39[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal
+      -            ' er zer "
+           display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Line 41[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal
+      -            " er zer '
+      
+           display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Line 44[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal
+      -            ' er zer
+      -            " er zer "
+           display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Line 47[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal
+      -            " er zer 
+      -            ' er zer
+Line 49[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal
+      -            " er zer '
+      
+      
+      *    KO
+           display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Line 54[21,22] <27, Error, Syntax> - Syntax error : Starting delimiter of the continuation line is missing.
+      -              er zer "
+           display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Line 56[20,21] <27, Error, Syntax> - Syntax error : Closing delimiter of the continuation line is missing.
+      -             " er zer
+
+           goback
+           .
+       END PROGRAM DVZF0OSM.
