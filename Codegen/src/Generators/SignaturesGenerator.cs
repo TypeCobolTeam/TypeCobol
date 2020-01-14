@@ -163,7 +163,8 @@ namespace TypeCobol.Codegen.Generators
                     {
                         //In case the node contains a line with multiple instructions
                         //Create new line containing only the CodeElement text
-                        var lineText = child.Lines.First().Text.GetIndent() + data.CodeElement.SourceText.Trim();
+                        string indent = child.Lines.First().Text.GetIndent();
+                        var lineText = indent + data.CodeElement.SourceText.Trim().Replace(Environment.NewLine, Environment.NewLine + indent);
                         lines.Add(new CobolTextLine(new TextLineSnapshot(data.CodeElement.Line, lineText, null), ColumnsLayout.CobolReferenceFormat));
                     }
                     else

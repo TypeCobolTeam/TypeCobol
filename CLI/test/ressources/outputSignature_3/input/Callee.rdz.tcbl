@@ -1,0 +1,17 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Callee.
+       data division.
+       working-storage section.
+       01 VString typedef strict public.
+      %<<
+       Declaration of type
+      %>>
+         05 len   pic S9(4) comp-5.
+         05 buf.
+           07  occurs 32760
+                  depending on len.
+              10 char    pic X.
+       PROCEDURE DIVISION
+           .
+       END PROGRAM Callee.
+      
