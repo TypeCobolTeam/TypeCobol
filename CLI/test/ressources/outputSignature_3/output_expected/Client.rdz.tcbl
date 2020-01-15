@@ -1,8 +1,11 @@
       *TypeCobol_Version:0.1(alpha)
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. Callee.
+       PROGRAM-ID. Library.
        data division.
        working-storage section.                                               
+      *<<<
+      *  Type VString
+      *>>>
        01 VString typedef strict public.
          05 len   pic S9(4) comp-5.
          05 buf.
@@ -11,4 +14,4 @@
               10 char    pic X.
        PROCEDURE DIVISION
            .
-       END PROGRAM Callee.
+       END PROGRAM Library.

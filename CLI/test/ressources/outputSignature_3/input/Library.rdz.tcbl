@@ -1,7 +1,10 @@
 ﻿       IDENTIFICATION DIVISION.
-       PROGRAM-ID. Callee.
+       PROGRAM-ID. Library.
        data division.
        working-storage section.
+      %<<<
+         Type VString
+      %>>>
        01 VString typedef strict public.
       %<<
        Declaration of type
@@ -13,5 +16,5 @@
               10 char    pic X.
        PROCEDURE DIVISION
            .
-       END PROGRAM Callee.
+       END PROGRAM Library.
       
