@@ -55,13 +55,13 @@ namespace TypeCobol.Compiler.Scopes
             /// <summary>
             /// Total count of symbols in this entry.
             /// </summary>
-            public int Count => _symbols != null ? _symbols.Count : (_symbol != null ? 1 : 0);
+            public int Count => _symbols?.Count ?? (_symbol != null ? 1 : 0);
 
             /// <summary>
             /// Convenience property to retrieve the first symbol of this entry.
             /// Returns null if this entry is empty.
             /// </summary>
-            public TSymbol Symbol => _symbols != null ? (_symbols.Count > 0 ? _symbols[0] : null) : _symbol;
+            public TSymbol Symbol => _symbols?.Count > 0 ? _symbols[0] : _symbol;
 
             public IEnumerator<TSymbol> GetEnumerator()
             {

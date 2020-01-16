@@ -53,11 +53,6 @@ namespace TypeCobol.Compiler.Domain.Validator
 
             public override bool VisitProgramSymbol(ProgramSymbol program, RootSymbolTable context)
             {
-                if (program.HasFlag(Symbol.Flags.ProgramCompleted))
-                {
-                    return true;
-                }
-
                 //Check all Types
                 bool result = ValidateScope(program.Types, context);
 
@@ -78,7 +73,6 @@ namespace TypeCobol.Compiler.Domain.Validator
                 //Check each procedure
                 if (!ValidateScope(program.Functions, context)) result = false;
 
-                program.SetFlag(Symbol.Flags.ProgramCompleted, result);
                 return result;
             }
 

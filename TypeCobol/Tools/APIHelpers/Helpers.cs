@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler;
@@ -9,15 +8,9 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.Domain;
-#if DOMAIN_CHECKER
-using TypeCobol.Compiler.Domain;
-#endif
-using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.CustomExceptions;
 using TypeCobol.Tools.Options_Config;
-using String = System.String;
 
 namespace TypeCobol.Tools.APIHelpers
 {

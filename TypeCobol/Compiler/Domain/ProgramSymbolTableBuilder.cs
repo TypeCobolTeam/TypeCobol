@@ -268,6 +268,7 @@ namespace TypeCobol.Compiler.Domain
                 //Entire stacked program has been parsed ==> Resolve Types if needed.
                 TypeCobol.Compiler.Domain.Validator.TypeResolver resolver = new TypeCobol.Compiler.Domain.Validator.TypeResolver(MyRoot);
                 resolver.ResolveTypes(lastPrg, out _, out _);
+                lastPrg.SetFlag(Symbol.Flags.ProgramCompleted, true);
             }
         }
 
