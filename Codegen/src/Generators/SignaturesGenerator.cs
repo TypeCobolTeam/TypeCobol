@@ -58,31 +58,32 @@ namespace TypeCobol.Codegen.Generators
             var sourceFile = compilationUnit.ProgramClassDocumentSnapshot.Root;
             sourceFile.AcceptASTVisitor(new ExportToDependency());
             bool insideMultilineComment = false;
-            bool insideMultilineCommentNew = false;
 
             var buildExportDataElapsed = stopwatch.Elapsed;
             stopwatch.Restart();
 
             foreach (var textLine in GenerateLinesForChildren(sourceFile.Children))
             {
-                string text = textLine is TextLineSnapshot ?
-                    CobolTextLine.Create(textLine.Text, ColumnsLayout.CobolReferenceFormat).First().Text :
-                    textLine.Text;
-
-                bool insideComment = false;
+                bool shouldWriteLine = true;
                 if (textLine is ITokensLine tokensLine)
                 {
                     if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.CommentLine))
-                        insideComment = true;
+                        shouldWriteLine = false;
 
                     if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.MULTILINES_COMMENTS_START))
-                        insideMultilineComment = insideMultilineCommentNew = true;
+                    {
+                        shouldWriteLine = false;
+                        insideMultilineComment = true;
+                    }
 
                     if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.MULTILINES_COMMENTS_STOP))
-                        insideMultilineCommentNew = false;  // deferred effect; insideMultilineComment is still true
+                    {
+                        shouldWriteLine = false;
+                        insideMultilineComment = false;
+                    }
                 }
 
-                if (!insideComment && !insideMultilineComment)
+                if (shouldWriteLine && !insideMultilineComment)
                 {
                     if (textLine is TextLineSnapshot)
                     {
@@ -94,7 +95,6 @@ namespace TypeCobol.Codegen.Generators
                         Destination.AppendLine(textLine.Text);
                     }
                 }
-                insideMultilineComment = insideMultilineCommentNew;
             }
 
             var writeExportDataElapsed = stopwatch.Elapsed;
