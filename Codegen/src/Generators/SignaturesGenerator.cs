@@ -57,8 +57,8 @@ namespace TypeCobol.Codegen.Generators
 
             var sourceFile = compilationUnit.ProgramClassDocumentSnapshot.Root;
             sourceFile.AcceptASTVisitor(new ExportToDependency());
-            bool insideFormalizedComment = false;
             bool insideMultilineComment = false;
+            bool insideMultilineCommentNew = false;
 
             var buildExportDataElapsed = stopwatch.Elapsed;
             stopwatch.Restart();
@@ -69,23 +69,32 @@ namespace TypeCobol.Codegen.Generators
                     CobolTextLine.Create(textLine.Text, ColumnsLayout.CobolReferenceFormat).First().Text :
                     textLine.Text;
 
+                bool insideComment = false;
                 if (textLine is ITokensLine tokensLine)
                 {
-                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.FORMALIZED_COMMENTS_START))
-                        insideFormalizedComment = true;
+                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.CommentLine))
+                        insideComment = true;
+
                     if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.MULTILINES_COMMENTS_START))
-                        insideMultilineComment = true;
+                        insideMultilineComment = insideMultilineCommentNew = true;
 
-                    if (insideFormalizedComment || insideMultilineComment)
-                        text = text.Substring(0, 6) + '*' + text.Substring(7, text.Length - 7);
-
-                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.FORMALIZED_COMMENTS_STOP))
-                        insideFormalizedComment = false;
                     if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.MULTILINES_COMMENTS_STOP))
-                        insideMultilineComment = false;
+                        insideMultilineCommentNew = false;  // deferred effect; insideMultilineComment is still true
                 }
 
-                Destination.AppendLine(text);
+                if (!insideComment && !insideMultilineComment)
+                {
+                    if (textLine is TextLineSnapshot)
+                    {
+                        var test = CobolTextLine.Create(textLine.Text, ColumnsLayout.CobolReferenceFormat);
+                        Destination.AppendLine(test.First().Text);
+                    }
+                    else
+                    {
+                        Destination.AppendLine(textLine.Text);
+                    }
+                }
+                insideMultilineComment = insideMultilineCommentNew;
             }
 
             var writeExportDataElapsed = stopwatch.Elapsed;
