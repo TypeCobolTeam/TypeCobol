@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Types;
+﻿using TypeCobol.Compiler.Types;
+using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Compiler.Symbols
 {
     /// <summary>
     /// Base classe of a Cobol Symbol
     /// </summary>
-    public abstract class TypeCobolSymbol : ISemanticData
+    public abstract class Symbol : ISemanticData
     {
         /// <summary>
         /// Enumeration on the kind of symbols
@@ -50,14 +45,14 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Empty constructor
         /// </summary>
-        protected TypeCobolSymbol()
+        protected Symbol()
         {
         }
 
         /// <summary>
         /// Named constructor
         /// </summary>
-        protected TypeCobolSymbol(String name, Kinds kind)
+        protected Symbol(string name, Kinds kind)
         {
             this.Name = name;
             Kind = kind;
@@ -84,7 +79,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Symbol's name
         /// </summary>
-        public String Name
+        public string Name
         {
             get;
             internal set;
@@ -93,13 +88,13 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Type changed event.
         /// </summary>
-        public event EventHandler TypeChanged;
+        public event System.EventHandler TypeChanged;
 
-        TypeCobolType m_Type;
+        Type m_Type;
         /// <summary>
         /// Symbol's type
         /// </summary>
-        public virtual TypeCobolType Type
+        public virtual Type Type
         {
             get
             {
@@ -118,7 +113,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// The Owner of this Symbol
         /// </summary>
-        public TypeCobolSymbol Owner
+        public Symbol Owner
         {
             get;
             set;
