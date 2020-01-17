@@ -102,7 +102,7 @@ namespace TypeCobol.LanguageServer
                         {
                             //Ignore all the EndOfFile token 
                             var tempCodeElements = codeElementsLine.CodeElements.Where(c => c.ConsumedTokens.Any(t => t.TokenType != TokenType.EndOfFile));
-
+                            var toList = tempCodeElements.ToList();
                             foreach (var tempCodeElement in tempCodeElements.Reverse())
                             {
                                 if (!tempCodeElement.ConsumedTokens.Any(t => /*CompletionElligibleTokens.IsCompletionElligibleToken(t) &&*/

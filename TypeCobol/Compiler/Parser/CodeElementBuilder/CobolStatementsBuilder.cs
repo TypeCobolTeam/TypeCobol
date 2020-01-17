@@ -1396,6 +1396,12 @@ namespace TypeCobol.Compiler.Parser
         // WHEN EVALUATE CONDITION //
         /////////////////////////////
 
+        internal CodeElement CreateWhenDummy(CodeElementsParser.WhenDummyContext context)
+        {
+            var statement = new WhenDummy();
+            return statement;
+        }
+
         internal CodeElement CreateWhenCondition(CodeElementsParser.WhenConditionContext context) {
 			var statement = new WhenCondition();
 			statement.SelectionObjects = BuildObjectArrayFromParserRules(context.comparisonRHSExpression(), ctx => CreateEvaluateSelectionObject(ctx));

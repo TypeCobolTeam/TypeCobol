@@ -101,10 +101,11 @@ codeElement:
 	// -- Procedure division Statements --
 
 	// --- Decision statements ---
-	evaluateStatement |
+	evaluateStatement |	
+		whenDummy |
 		whenSearchCondition |
 		whenCondition |
-		whenOtherCondition |
+		whenOtherCondition |        
 	evaluateStatementEnd |
 	ifStatement |
 		// ... statements ...
@@ -4364,6 +4365,8 @@ comparisonLHSExpression:
 whenCondition:
 	WHEN LeftParenthesisSeparator? comparisonRHSExpression RightParenthesisSeparator?
   ( ALSO LeftParenthesisSeparator? comparisonRHSExpression RightParenthesisSeparator? )*;
+
+whenDummy : WHEN;
 
 comparisonRHSExpression: 
 	ANY | booleanValueOrExpression | NOT? (variableOrExpression2 | alphanumericExpressionsRange);

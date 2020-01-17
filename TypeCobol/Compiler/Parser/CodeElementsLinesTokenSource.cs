@@ -453,6 +453,9 @@ namespace TypeCobol.Compiler.Parser
                     case CodeElementType.ElseCondition:
                         codeElement = new ElseCondition();
                         break;
+                    case CodeElementType.WhenDummy:
+                        codeElement = new WhenCondition();
+                        break;
                     case CodeElementType.WhenCondition:
                         codeElement = new WhenCondition();
                         break;

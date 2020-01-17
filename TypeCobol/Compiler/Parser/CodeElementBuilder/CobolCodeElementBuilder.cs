@@ -2117,7 +2117,13 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = new NotAtEndOfPageCondition();
 		}
 
-		public override void EnterWhenCondition(CodeElementsParser.WhenConditionContext context) {
+        public override void EnterWhenDummy(CodeElementsParser.WhenDummyContext context)
+        {
+            Context = context;
+            CodeElement = CobolStatementsBuilder.CreateWhenDummy(context);
+        }
+
+        public override void EnterWhenCondition(CodeElementsParser.WhenConditionContext context) {
 			Context = context;
 			CodeElement = CobolStatementsBuilder.CreateWhenCondition(context);
 		}

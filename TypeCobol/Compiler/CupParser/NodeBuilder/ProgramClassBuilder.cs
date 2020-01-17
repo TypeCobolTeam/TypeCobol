@@ -1170,7 +1170,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             foreach(var cond in conditions)
             {
                 TypeCobol.Compiler.CodeElements.WhenCondition condition = null;
-                if (cond is TypeCobol.Compiler.CodeElements.WhenSearchCondition)
+                if (cond.Type == CodeElementType.WhenSearchCondition)
                 {
                     TypeCobol.Compiler.CodeElements.WhenSearchCondition whensearch =
                         cond as TypeCobol.Compiler.CodeElements.WhenSearchCondition;
@@ -1180,6 +1180,10 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                     condition.SelectionObjects = new EvaluateSelectionObject[1];
                     condition.SelectionObjects[0] = new EvaluateSelectionObject();
                     condition.SelectionObjects[0].BooleanComparisonVariable = new BooleanValueOrExpression(whensearch.Condition);
+                }
+                else if (cond.Type == CodeElementType.WhenDummy)
+                {
+                    condition = cond as TypeCobol.Compiler.CodeElements.WhenCondition;
                 }
                 else
                 {
@@ -1292,6 +1296,10 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Enter(new WhenSearch(condition), condition);
         }
 
+        public virtual void StartDummyWhenSearchConditionClause([NotNull] TypeCobol.Compiler.CodeElements.WhenDummy condition)
+        {
+            Enter(new When(condition), condition);
+        }
         public virtual void EndWhenSearchConditionClause()
         {
             Exit(); // WHEN
