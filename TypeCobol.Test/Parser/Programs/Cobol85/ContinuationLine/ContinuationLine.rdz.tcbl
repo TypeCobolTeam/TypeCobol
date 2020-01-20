@@ -11,10 +11,13 @@
       
 
       *    OK
-           display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+           display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1234xxxxxxx
       -            " er zer "
            display 'endxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx1234xxxxxxx
       -            ' gggg '
+           display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+      -            " vvvv
+      -            " er zer "
            display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
       -            ' vvvv
       -            ' er zer '

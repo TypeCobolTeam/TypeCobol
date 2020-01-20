@@ -1,7 +1,7 @@
 ﻿       IDENTIFICATION division.
        PROGRAM-ID. MyPGM8.
        procedure division.
-	  * KO
+      * KO
                 display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
       -           er zer "
            .
