@@ -1,5 +1,5 @@
-using System;
 using Antlr4.Runtime;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -23,7 +23,6 @@ namespace TypeCobol.Compiler.CodeElements
             ConsumedTokens = new List<Token>();
             SymbolInformationForTokens = new Dictionary<Token, SymbolInformation>();
         }
-
 
         /// <summary>
         /// The Cobol syntax can be decomposed in 116 elementary code elements
