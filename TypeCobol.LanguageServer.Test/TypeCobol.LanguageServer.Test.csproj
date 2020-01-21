@@ -78,6 +78,18 @@
     <None Include="LSRTests\CompletionAfterDotFromTypedDataDef\output_expected\CompletionAfterDotFromTypedDataDef.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\CompletionOutputParamEmptyType\input\CompletionOutputParamEmptyType.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionOutputParamEmptyType\output_expected\CompletionOutputParamEmptyType.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\ProcedureCompletionNoParam\input\ProcedureCompletionNoParam.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\ProcedureCompletionNoParam\output_expected\ProcedureCompletionNoParam.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\RefreshCopiesNotif\input\RefreshCopyNotif.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
