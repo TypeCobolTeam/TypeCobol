@@ -3,11 +3,11 @@
        data DIVISION.
        working-storage section.
       
-       01 Event TYPEDEF STRICT.
+       01 Event TYPEDEF STRICT PRIVATE.
           05 IDT pic X(05).
           05 Periodicity pic 9(03).
       
-       01 EventList TYPEDEF STRICT.
+       01 EventList TYPEDEF STRICT PRIVATE.
           05 Counter pic 9(04) comp-5.
           05 EventArray.
              10 Event TYPE Event occurs 10
@@ -26,10 +26,10 @@
        PERFORM VARYING Idx-nonQualified FROM 1 BY 1
            UNTIL Idx-nonQualified > MyEventList::Idx
              display "test"
-           END-PERFORM.
+       END-PERFORM.
       
        DECLARE PROCEDURE DisplayEventList PRIVATE
-            INPUT EventList type EventList.
+            IN-OUT EventList type EventList.
        data division.
        working-storage section.
        01 EventList2 type EventList.
@@ -46,52 +46,29 @@
        data DIVISION.
        working-storage section.
       
-       01 Event TYPEDEF STRICT.
-          05 IDT pic X(05).
-          05 Periodicity pic 9(03).
-      
-       01 EventList TYPEDEF STRICT.
-          05 Counter pic 9(04) comp-5.
-          05 EventArray.
-             10 Event TYPE Event occurs 10
-                             depending on Counter
-                             indexed by Idx.
-      
-       01 MyEventList type EventList.
+       01 EventList  type EventList.
+       01 EventList2 type EventList.
       
        procedure division.
-           call DisplayEventList input MyEventList
-           .
-      
-       DECLARE PROCEDURE DisplayEventList PRIVATE
-            INPUT EventList type EventList.
-       data division.
-       working-storage section.
-       01 EventList2 type EventList.
-       PROCEDURE DIVISION.
-      *   Dans pgm Imbrique
            PERFORM VARYING EventList::Idx FROM 1 BY 1
            UNTIL EventList::Idx > EventList2::Idx
              display "test"
            END-PERFORM
            GOBACK.
-       end-declare
            .
        END PROGRAM Imbrique.
        END PROGRAM DVZF0OS3.
-      
-      
       
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZF0OS3bis.
        data DIVISION.
        working-storage section.
       
-       01 Event TYPEDEF STRICT.
+       01 Event TYPEDEF STRICT PRIVATE.
           05 IDT pic X(05).
           05 Periodicity pic 9(03).
       
-       01 EventList TYPEDEF STRICT.
+       01 EventList TYPEDEF STRICT PRIVATE.
           05 Counter pic 9(04) comp-5.
           05 EventArray.
              10 Event TYPE Event occurs 10
@@ -103,12 +80,11 @@
        procedure division.
       
        DECLARE PROCEDURE DisplayEventList PRIVATE
-            INPUT EventList type EventList.
+            IN-OUT EventList type EventList.
        data division.
        working-storage section.
        01 EventList2 type EventList.
        PROCEDURE DIVISION.
-      * Dans Pgm superposé
            PERFORM VARYING EventList::Idx FROM 1 BY 1
            UNTIL EventList::Idx > EventList2::Idx
              display "test"

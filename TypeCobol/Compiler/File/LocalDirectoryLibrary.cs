@@ -45,7 +45,7 @@ namespace TypeCobol.Compiler.File
             rootDirectory = new DirectoryInfo(rootPath);
             if(!rootDirectory.Exists)
             {
-                throw new ArgumentException(String.Format("Root path for local directory libray is invalid : {0}", rootPath));
+                throw new ArgumentException($"Local copy library {rootPath} does not exist on disk.");
             }
             this.includeSubdirectories = includeSubdirectories;
             if (fileExtensions != null) {

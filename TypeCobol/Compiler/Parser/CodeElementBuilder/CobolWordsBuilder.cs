@@ -184,6 +184,7 @@ namespace TypeCobol.Compiler.Parser
                 if (valueNode == null)
                 {
                     valueNode = context.allFigurativeConstant().notNullTerminatedAlphanumericOrNationalLiteralToken();
+                    if (valueNode == null && optionalALLToken != null) return null;
                 }
                 Token valueToken = ParseTreeUtils.GetFirstToken(valueNode);
                 return new RepeatedCharacterValue(optionalALLToken, valueToken);
@@ -932,10 +933,6 @@ namespace TypeCobol.Compiler.Parser
             var c = context.cobolQualifiedDataNameOrQualifiedConditionName1();
             if (c != null) return CreateQualifiedDataNameOrQualifiedConditionName1(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(), c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
             var tc = context.tcQualifiedDataNameOrQualifiedConditionName1();
-
-            if (tc.children.Any(x => x.Payload is Token && ((Token)x.Payload).TokenType != TokenType.UserDefinedWord && ((Token)x.Payload).TokenType != TokenType.QualifiedNameSeparator))
-                return null; //If not UserDefiedWord or QualifiedSeprator it's a mistake. 
-
             var tail = tc.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference();
             Array.Reverse(tail);
             return CreateQualifiedDataNameOrQualifiedConditionName1(tc.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(), tail, false);

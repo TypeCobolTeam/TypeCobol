@@ -261,6 +261,20 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         [TestCategory("Completion")]
+        public void CompletionAfterBetweenColons()
+        {
+            LSRTestHelper.Test("CompletionAfterBetweenColons", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void CompletionAfterDotFromTypedDataDef()
+        {
+            LSRTestHelper.Test("CompletionAfterDotFromTypedDataDef", LsrTestingOptions.NoLsrTesting, true, false, false, null, null, "CustomDependencies");
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
         public void ProcedureCompletion()
         {
             LSRTestHelper.Test("ProcedureCompletion", LsrTestingOptions.NoLsrTesting, true, false, false, null, null, "CustomDependencies");
@@ -343,6 +357,14 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("ProcedureCompletionInputInoutOutput", LsrTestingOptions.NoLsrTesting, true);
         }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void ProcedureCompletionInputInoutOutput_Case()
+        {
+            LSRTestHelper.Test("ProcedureCompletionInputInoutOutput-Case", LsrTestingOptions.NoLsrTesting, true);
+        }
+
         [TestMethod]
         [TestCategory("Completion")]
         public void ProcedureCompletionInputInoutOutput_NoContext()
@@ -379,6 +401,20 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("GlobalStorageCompletion", LsrTestingOptions.NoLsrTesting, true);
         }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void CompletionOnPartialLibraryName()
+        {
+            LSRTestHelper.Test("CompletionOnPartialLibraryName", LsrTestingOptions.NoLsrTesting, true, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void CompletionOutputParamEmptyType()
+        {
+            LSRTestHelper.Test("CompletionOutputParamEmptyType", LsrTestingOptions.NoLsrTesting, true);
+        }
         #endregion
 
         [TestMethod]
@@ -397,6 +433,19 @@ namespace TypeCobol.LanguageServer.Test
         public void OnHover()
         {
             LSRTestHelper.Test("OnHover", LsrTestingOptions.NoLsrTesting, true, true);
+        }
+
+        [TestMethod]
+        public void OnHoverDisplayVariableDefinition()
+        {
+            LSRTestHelper.Test("OnHoverDisplayVariableDefinition", LsrTestingOptions.NoLsrTesting, true, true);
+            LSRTestHelper.Test("OnHoverDisplayVariableDefinitionFromCopy", LsrTestingOptions.NoLsrTesting, true, false, false, "CopyFolder");
+        }
+
+        [TestMethod]
+        public void RefreshCopiesNotif()
+        {
+            LSRTestHelper.Test("RefreshCopiesNotif", LsrTestingOptions.NoLsrTesting, true, true);
         }
 
         [TestMethod]

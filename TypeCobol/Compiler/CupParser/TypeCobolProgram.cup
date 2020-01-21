@@ -165,6 +165,8 @@ terminal TypeCobol.Compiler.CodeElements.IfStatement IfStatement;
 terminal TypeCobol.Compiler.CodeElements.InitializeStatement InitializeStatement;
 terminal TypeCobol.Compiler.CodeElements.InspectStatement InspectStatement;
 terminal TypeCobol.Compiler.CodeElements.InvokeStatement InvokeStatement;
+terminal TypeCobol.Compiler.CodeElements.JsonGenerateStatement JsonGenerateStatement;
+terminal TypeCobol.Compiler.CodeElements.JsonParseStatement JsonParseStatement;
 terminal TypeCobol.Compiler.CodeElements.MergeStatement MergeStatement;
 terminal TypeCobol.Compiler.CodeElements.MoveStatement MoveStatement;
 terminal TypeCobol.Compiler.CodeElements.MultiplyStatement MultiplyStatement;
@@ -212,6 +214,7 @@ terminal TypeCobol.Compiler.CodeElements.DivideStatementEnd DivideStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.EvaluateStatementEnd EvaluateStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.IfStatementEnd IfStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.InvokeStatementEnd InvokeStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.JsonStatementEnd JsonStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.MultiplyStatementEnd MultiplyStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.PerformStatementEnd PerformStatementEnd;
 terminal TypeCobol.Compiler.CodeElements.ReadStatementEnd ReadStatementEnd;
@@ -326,6 +329,8 @@ non terminal TypeCobol.Compiler.CupParser.NodeBuilder.CodeElementList whenEvalua
 non terminal evaluateStatementWithBody;
 non terminal ifStatementWithBody;
 non terminal invokeStatementConditional;
+non terminal jsonGenerateStatementConditional;
+non terminal jsonParseStatementConditional;
 non terminal multiplyStatementConditional;
 non terminal performStatementWithBody;
 non terminal readStatementConditional;
@@ -357,6 +362,8 @@ non terminal deleteStatement;
 non terminal divideStatement;
 non terminal evaluateStatement;
 non terminal invokeStatement;
+non terminal jsonGenerateStatement;
+non terminal jsonParseStatement;
 non terminal multiplyStatement;
 non terminal performStatement;
 non terminal readStatement;
@@ -1049,6 +1056,10 @@ compoundStatement ::= addStatementConditional
 		{:  :}
 	|	invokeStatementConditional
 		{:  :}
+	|	jsonGenerateStatementConditional
+		{:  :}
+	|	jsonParseStatementConditional
+		{:  :}
 	|	divideStatementConditional
 		{:  :}
 	|	multiplyStatementConditional
@@ -1289,6 +1300,36 @@ invokeStatementConditional ::=
 
 invokeStatement ::= InvokeStatement:stmt
 	{: my_parser.Builder.StartInvokeStatementConditional(stmt); :}
+	;
+
+jsonGenerateStatementConditional ::=
+		jsonGenerateStatement
+		{: my_parser.Builder.EndJsonGenerateStatementConditional(); :}
+	|	jsonGenerateStatement JsonStatementEnd:end
+		{: my_parser.Builder.EndJsonGenerateStatementConditional(end); :}
+	|	jsonGenerateStatement exceptionConditions
+		{: my_parser.Builder.EndJsonGenerateStatementConditional(); :}
+	|	jsonGenerateStatement exceptionConditions JsonStatementEnd:end
+		{: my_parser.Builder.EndJsonGenerateStatementConditional(end); :}
+	;
+
+jsonGenerateStatement ::= JsonGenerateStatement:stmt
+	{: my_parser.Builder.StartJsonGenerateStatementConditional(stmt); :}
+	;
+
+jsonParseStatementConditional ::=
+		jsonParseStatement
+		{: my_parser.Builder.EndJsonParseStatementConditional(); :}
+	|	jsonParseStatement JsonStatementEnd:end
+		{: my_parser.Builder.EndJsonParseStatementConditional(end); :}
+	|	jsonParseStatement exceptionConditions
+		{: my_parser.Builder.EndJsonParseStatementConditional(); :}
+	|	jsonParseStatement exceptionConditions JsonStatementEnd:end
+		{: my_parser.Builder.EndJsonParseStatementConditional(end); :}
+	;
+
+jsonParseStatement ::= JsonParseStatement:stmt
+	{: my_parser.Builder.StartJsonParseStatementConditional(stmt); :}
 	;
 
 multiplyStatementConditional ::=

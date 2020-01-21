@@ -27,6 +27,6 @@
         LINKAGE SECTION.
         PROCEDURE DIVISION.
         .
-        END-DECLARE.
+       END-DECLARE.
 
        END PROGRAM DeclarativesTest.

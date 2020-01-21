@@ -10,7 +10,6 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
-using String = System.String;
 
 namespace TypeCobol.Test.Utils
 {

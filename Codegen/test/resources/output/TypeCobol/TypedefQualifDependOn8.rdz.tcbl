@@ -3,7 +3,7 @@
        data DIVISION.
        working-storage section.
       
-      *01 EventList TYPEDEF STRICT.
+      *01 EventList TYPEDEF STRICT PRIVATE.
       *   05 Counter pic 9(04) comp-5.
       *   05 EventArray.
       *      10 Event pic X occurs 10
@@ -39,7 +39,7 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *DVZF0OS3.DisplayEventList - Params :
-      *		input(EventList: EventList)
+      *     input(EventList: EventList)
        01 EventList.
            02 Counter pic 9(04) comp-5.
            02 EventArray.
@@ -49,6 +49,6 @@
              USING BY REFERENCE EventList
            .
       *DVZF0OS3.DisplayEventList - Params :
-      *		input(EventList: EventList)
+      *     input(EventList: EventList)
            GOBACK.
        END PROGRAM c715cbcc.

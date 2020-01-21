@@ -18,7 +18,8 @@ namespace TypeCobol.Compiler.Parser
 	/// <summary>Builds a CodeElement object while visiting its parse tree.</summary>
 	internal partial class CodeElementBuilder: CodeElementsBaseListener {
 
-		private ParserRuleContext Context;
+        private bool IsDebuggingModeEnabled { get; set; }
+        private ParserRuleContext Context;
 		/// <summary>CodeElement object resulting of the visit the parse tree</summary>
 		public CodeElement CodeElement { get; set; }
 		private CobolWordsBuilder CobolWordsBuilder { get; set; }
@@ -67,6 +68,7 @@ namespace TypeCobol.Compiler.Parser
                 {
                     CodeElement.Diagnostics = diagnostics;
                 }
+                CodeElementChecker.OnCodeElement(CodeElement, IsDebuggingModeEnabled);
             }
             // If the errors can't be attached to a CodeElement object, attach it to the parent codeElements rule context
             else if (CodeElement == null && context.Diagnostics != null)
@@ -133,7 +135,8 @@ namespace TypeCobol.Compiler.Parser
             
             Context = context;
 			CodeElement = program;
-		}
+            IsDebuggingModeEnabled = false;
+        }
 
 		public override void EnterProgramEnd(CodeElementsParser.ProgramEndContext context) {
 			var programEnd = new ProgramEnd();
@@ -275,11 +278,15 @@ namespace TypeCobol.Compiler.Parser
 		public override void EnterSourceComputerParagraph(CodeElementsParser.SourceComputerParagraphContext context)
 		{
 			var paragraph = new SourceComputerParagraph();
-			if(context.computerName != null) {
+			if (context.computerName != null)
+			{
 				paragraph.ComputerName = CobolWordsBuilder.CreateAlphanumericValue(context.computerName);
 			}
-			if(context.DEBUGGING() != null) {
+
+			if (context.DEBUGGING() != null)
+			{
 				paragraph.DebuggingMode = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.DEBUGGING()));
+				IsDebuggingModeEnabled = true;
 			}
 
 			Context = context;
@@ -1123,8 +1130,8 @@ namespace TypeCobol.Compiler.Parser
 	    {
             if (context.levelNumber != null)
                 entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber);
-            if (context.FILLER() != null) entry.Filler = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.FILLER()));
-            else entry.Filler = new SyntaxProperty<bool>(entry.DataName == null, null);
+            if (context.FILLER() != null)
+                entry.Filler = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.FILLER()));
 
             if (context.pictureClause() != null && context.pictureClause().Length > 0)
             {
@@ -1660,12 +1667,15 @@ namespace TypeCobol.Compiler.Parser
 			}
 		}
 
-		// --- ALTER ---
 
-		public override void EnterAlterStatement(CodeElementsParser.AlterStatementContext context) {            
-			Context = context;
-			CodeElement = CobolStatementsBuilder.CreateAlterStatement(context);
-		}
+	    // --- ALTER ---
+
+        public override void EnterAlterStatement(CodeElementsParser.AlterStatementContext context) {
+            Context = context;
+            AlterStatement alterStatement = CobolStatementsBuilder.CreateAlterStatement(context);
+            CodeElement = alterStatement; 
+            AlterStatementChecker.OnCodeElement(alterStatement, context);
+        }
 
         // --- CALL ---
         /// <summary>
@@ -1879,9 +1889,31 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = CobolStatementsBuilder.CreateInvokeStatement(context);
 		}
 
-		// --- MERGE ---
+        // --- JSON Statements ---
 
-		public override void EnterMergeStatement(CodeElementsParser.MergeStatementContext context) {
+        public override void EnterJsonGenerateStatement(CodeElementsParser.JsonGenerateStatementContext context)
+        {
+            Context = context;
+            CodeElement = CobolStatementsBuilder.CreateJsonGenerateStatement(context);
+        }
+
+        public override void EnterJsonStatementEnd(CodeElementsParser.JsonStatementEndContext context)
+        {
+            Context = context;
+            CodeElement = new JsonStatementEnd();
+        }
+
+        // --- JSON PARSE Statements ---
+
+        public override void EnterJsonParseStatement(CodeElementsParser.JsonParseStatementContext context)
+        {
+            Context = context;
+            CodeElement = CobolStatementsBuilder.CreateJsonParseStatement(context);
+        }
+
+        // --- MERGE ---
+
+        public override void EnterMergeStatement(CodeElementsParser.MergeStatementContext context) {
 			Context = context;
 			var mergeStatement = CobolStatementsBuilder.CreateMergeStatement(context);
 		    CodeElement = mergeStatement;
@@ -1969,12 +2001,14 @@ namespace TypeCobol.Compiler.Parser
 			Context = context;
 			CodeElement = new StartStatementEnd();
 		}
-
+    
 		// --- STOP ---
 
 		public override void EnterStopStatement(CodeElementsParser.StopStatementContext context) {
-			Context = context;
-			CodeElement = CobolStatementsBuilder.CreateStopStatement(context);
+		    Context = context;
+		    var stopStatement = CobolStatementsBuilder.CreateStopStatement(context);
+		    CodeElement = stopStatement;
+		    StopStatementChecker.OnCodeElement(stopStatement, context);
 		}
 
 		// --- STRING ---

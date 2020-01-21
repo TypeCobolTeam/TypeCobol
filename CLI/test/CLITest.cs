@@ -131,14 +131,14 @@ namespace CLI.Test
         /// Avoid loading intrinsic and dependencies when execToStep <= Preprocessor
         /// </summary>
         [TestMethod]
-        public void AvoidLoadingIntrinsicAndDependencies()
+        public void CheckMissingCopies()
         {
-            CLITestHelper.Test("avoidLoadingIntrinsicAndDependencies", ReturnCode.Success);
+            CLITestHelper.Test("checkMissingCopies", ReturnCode.MissingCopy);
         }
 
         /// <summary>
         /// This test should return MissingCopy.
-        /// It test if in case of missing copy and with the proper arguments extracted copies file and missing copie file ar present and well formed.
+        /// It tests if in case of missing copy and with the proper arguments extracted copies file and missing copies file are present and well formed.
         /// </summary>
         [TestMethod]
         public void TestExtractCopies()
@@ -147,6 +147,20 @@ namespace CLI.Test
             CLITestHelper.Test("extractUsedCopies_EI", ReturnCode.MissingCopy);
 #else
             CLITestHelper.Test("extractUsedCopies", ReturnCode.MissingCopy);
+#endif
+
+        }
+
+        /// <summary>
+        /// Test the generation of clause copies when they come from a dependency file
+        /// </summary>
+        [TestMethod]
+        public void TestCopyInsideTypeDefInsideDependency()
+        {
+#if EUROINFO_RULES
+            CLITestHelper.Test("CopyInsideTypeDefInsideDependency_EI", ReturnCode.Success);
+#else
+            CLITestHelper.Test("CopyInsideTypeDefInsideDependency", ReturnCode.Success);
 #endif
 
         }
@@ -183,6 +197,7 @@ namespace CLI.Test
         public void TestOutputFormat()
         {
             CLITestHelper.Test("outputSignature_1", ReturnCode.Warning);
+            CLITestHelper.Test("outputSignature_2", ReturnCode.Success);
         }
 
 
@@ -246,6 +261,16 @@ namespace CLI.Test
             CLITestHelper.Test("cross_compilation_sources", ReturnCode.Success);
         }
 
+
+        /// <summary>
+        /// This test checks that value clauses are preserved when used on typed variables
+        /// or procedure parameters.
+        /// </summary>
+        [TestMethod]
+        public void TestValueClauses()
+        {
+            CLITestHelper.Test("value_clauses", ReturnCode.Success);
+        }
     }
 
     public class CLITestHelper {

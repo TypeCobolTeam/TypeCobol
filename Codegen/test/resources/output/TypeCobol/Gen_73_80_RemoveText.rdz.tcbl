@@ -6,7 +6,7 @@
 
        WORKING-STORAGE SECTION.
 
-      *   01 CTGCPL-Enreg TYPEDEF STRICT.
+      *   01 CTGCPL-Enreg TYPEDEF STRICT PRIVATE.
                                                                         09220000
       *      10 TYP                 PIC X(03).
                                                                         09230000
@@ -20,7 +20,7 @@
                                                                         09270000
 
       * structure d'enregistrement résultat de L1952                    09420000
-      *   01 CTGCPL-Enreg-resultat TYPEDEF STRICT.
+      *   01 CTGCPL-Enreg-resultat TYPEDEF STRICT PRIVATE.
                                                                         09430000
       *      10 TVR              PIC X(1).
                                                                         09440000
@@ -33,13 +33,13 @@
       *      10 VALCLN           PIC X(50).
 
 
-      *   01 Table10-CTGCPL TYPEDEF STRICT.
+      *   01 Table10-CTGCPL TYPEDEF STRICT PRIVATE.
                                                                         09500000
       *     05 TBL10-CTGCPL-RTA-tbl TYPE CTGCPL-Enreg
       *                        OCCURS 10.
 
       * table de 10 éléments à rechercher                               09490000
-      *  01 Table10-CTGCPL-Resultat TYPEDEF STRICT.
+      *  01 Table10-CTGCPL-Resultat TYPEDEF STRICT PRIVATE.
                                                                         09500000
       *     05 TBL10-CTGCPL-RTA-tbl TYPE CTGCPL-Enreg-resultat
       *                        OCCURS 10.
@@ -74,13 +74,13 @@
        DATA DIVISION.                                                   12340000
        WORKING-STORAGE SECTION. 
       *MOVECORR.rechercheListeElements - Params :
-      *		input(liste-a-chercher: Table10-CTGCPL, nombre-elements: pic S9
-      *(2) COMP-5, site-ims: pic X(2))
-      *		output(trouve: BOOL, lis-trouvee: Table10-CTGCPL-Resultat)
+      *     input(liste-a-chercher: Table10-CTGCPL, nombre-elements: pic
+      * S9(2) COMP-5, site-ims: pic X(2))
+      *     output(trouve: BOOL, lis-trouvee: Table10-CTGCPL-Resultat)
                                                                         12350000
           01  I                            PIC 9(4) COMP-5.             12360000
       *   01  enr-lu                         TYPE CTGCPL-Enreg.
-          01 enr-lu. 
+          01 enr-lu.
            02 TYP PIC X(03).
            02 STE PIC X(02).
            02 IDTOBJ PIC S9(9) COMP.
@@ -93,7 +93,7 @@
        REPLACE ==:MAX-TBL-MCTGCPL:== BY ==500==.                        12370004
                                                                         12370005
       *  01  enr-a-chercher                 TYPE CTGCPL-Enreg.
-         01 enr-a-chercher. 
+         01 enr-a-chercher.
            02 TYP PIC X(03).
            02 STE PIC X(02).
            02 IDTOBJ PIC S9(9) COMP.
@@ -101,7 +101,7 @@
            02 VALCLN PIC X(50).
                                                                         12370006
       *  01  enr-trouve                     TYPE CTGCPL-Enreg.
-         01 enr-trouve. 
+         01 enr-trouve.
            02 TYP PIC X(03).
            02 STE PIC X(02).
            02 IDTOBJ PIC S9(9) COMP.
@@ -112,7 +112,7 @@
         01 MCTGCPL.                                                     12370009
          05 MCTGCPL-TAB occurs :MAX-TBL-MCTGCPL:.                       12370010
       *     10 champ TYPE CTGCPL-Enreg.
-            10 champ. 
+            10 champ.
            11 TYP PIC X(03).
            11 STE PIC X(02).
            11 IDTOBJ PIC S9(9) COMP.
@@ -122,9 +122,9 @@
                                                                         12380000
        LINKAGE SECTION.
       *MOVECORR.rechercheListeElements - Params :
-      *		input(liste-a-chercher: Table10-CTGCPL, nombre-elements: pic S9
-      *(2) COMP-5, site-ims: pic X(2))
-      *		output(trouve: BOOL, lis-trouvee: Table10-CTGCPL-Resultat)
+      *     input(liste-a-chercher: Table10-CTGCPL, nombre-elements: pic
+      * S9(2) COMP-5, site-ims: pic X(2))
+      *     output(trouve: BOOL, lis-trouvee: Table10-CTGCPL-Resultat)
        01 liste-a-chercher.
            02 TBL10-CTGCPL-RTA-tbl
                                OCCURS 10.
@@ -156,9 +156,9 @@
                    BY REFERENCE lis-trouvee
            .
       *MOVECORR.rechercheListeElements - Params :
-      *		input(liste-a-chercher: Table10-CTGCPL, nombre-elements: pic S9
-      *(2) COMP-5, site-ims: pic X(2))
-      *		output(trouve: BOOL, lis-trouvee: Table10-CTGCPL-Resultat)
+      *     input(liste-a-chercher: Table10-CTGCPL, nombre-elements: pic
+      * S9(2) COMP-5, site-ims: pic X(2))
+      *     output(trouve: BOOL, lis-trouvee: Table10-CTGCPL-Resultat)
 
       * recherche de l'element dans la table
       *    PERFORM VARYING L-I FROM 1 BY 1

@@ -1,0 +1,45 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MyPgm.
+       data division.
+       working-storage section.
+      *<<<
+      *Formalized comments should not affect how typed variables or
+      *parameters are generated. See original issue #1538.
+      *>>>
+      *01  MyAmount1      TYPEDEF STRICT   PUBLIC PIC S9(05)V9(05).
+      *01  MyAmount2      TYPEDEF STRICT   PUBLIC PIC S9(05)V9(05).
+      
+      *01 Var1 type MyAmount1.
+       01 Var1 PIC S9(05)V9(05).
+                              
+      *01 Var2 type MyAmount2.
+       01 Var2 PIC S9(05)V9(05).
+                              
+       PROCEDURE DIVISION.
+      *DECLARE PROCEDURE Foo private
+      *        INPUT     Param1      type MyAmount1
+      *                  Param2      type MyAmount2
+      *        .
+       END PROGRAM MyPgm.
+      *
+      *DECLARE PROCEDURE Foo private
+      *        INPUT     Param1      type MyAmount1
+      *                  Param2      type MyAmount2
+      *        .
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. f812db2d.
+       DATA DIVISION.
+       LINKAGE SECTION.
+      *MyPgm.Foo - Params :
+      *     input(Param1: MyAmount1, Param2: MyAmount2)
+       01 Param1 PIC S9(05)V9(05).
+       01 Param2 PIC S9(05)V9(05).
+       PROCEDURE DIVISION
+             USING BY REFERENCE Param1
+                   BY REFERENCE Param2
+           .
+      *MyPgm.Foo - Params :
+      *     input(Param1: MyAmount1, Param2: MyAmount2)
+           .
+       END PROGRAM f812db2d.

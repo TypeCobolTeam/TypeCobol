@@ -219,7 +219,7 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM2.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -228,6 +228,6 @@
              USING BY REFERENCE mydate
            .
       *PGM2.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
            CONTINUE.
        END PROGRAM c2c7ee3a.

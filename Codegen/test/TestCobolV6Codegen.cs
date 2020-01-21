@@ -30,5 +30,21 @@ namespace TypeCobol.Codegen
         {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("CobolV6", "OccursUnbounded") + ".rdz.cbl");
         }
-    }
+
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void TestJsonGenerate()
+        {
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("CobolV6", "JsonGenerate") + ".rdz.cbl");
+        }
+
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void TestJsonParse()
+        {
+	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("CobolV6", "JsonParse") + ".rdz.cbl");
+        }
+	}
 }

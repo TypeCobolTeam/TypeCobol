@@ -622,6 +622,25 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// <param name="end">The Optional END-INVOKE Statement code element</param>
         void EndInvokeStatementConditional(TypeCobol.Compiler.CodeElements.InvokeStatementEnd end = null);
         /// <summary>
+        /// Start a Conditional JSON GENERATE Statement
+        /// </summary>
+        /// <param name="stmt">The JSON GENERATE statement code element</param>
+        void StartJsonGenerateStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.JsonGenerateStatement stmt);
+        /// <summary>
+        /// End a Conditional JSON GENERATE Statement
+        /// </summary>
+        /// <param name="end">The optional END-JSON code element</param>
+        void EndJsonGenerateStatementConditional(TypeCobol.Compiler.CodeElements.JsonStatementEnd end = null);
+        /// Start a Conditional JSON PARSE Statement
+        /// </summary>
+        /// <param name="stmt">The JSON PARSE statement code element</param>
+        void StartJsonParseStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.JsonParseStatement stmt);
+        /// <summary>
+        /// End a Conditional JSON PARSE Statement
+        /// </summary>
+        /// <param name="end">The optional END-JSON code element</param>
+        void EndJsonParseStatementConditional(TypeCobol.Compiler.CodeElements.JsonStatementEnd end = null);
+        /// <summary>
         /// Start a Conditional MULTIPLY Statemenent 
         /// </summary>
         /// <param name="stmt">The Conditional MULTIPLY Statement code element</param>

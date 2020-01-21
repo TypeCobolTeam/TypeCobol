@@ -1,3 +1,5 @@
+      * 1 errors
+      * Line 78[8,18] <37, Warning, General> - Warning: Paragraph 'TRAITEMENT' is empty
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
 
@@ -134,7 +136,7 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.GetPersonById - Params :
-      *		input(personId: DATE)
+      *     input(personId: DATE)
                        
        01 ERIM04-LOT-SOC                 PIC X(5).
        01 LOT-SOC                 PIC X(5).
@@ -146,7 +148,7 @@
              USING BY REFERENCE personId
            .
       *PGM1.GetPersonById - Params :
-      *		input(personId: DATE)
+      *     input(personId: DATE)
            EXEC SQL
              SELECT
                LOT_SOC              
@@ -175,11 +177,11 @@
        data division.
        working-storage section.
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
                                
        LINKAGE SECTION.
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
                        
        01 ERIM04-LOT-SOC                 PIC X(5).
        01 LOT-SOC                 PIC X(5).
@@ -191,7 +193,7 @@
              USING BY REFERENCE mydate
            .
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
            EXEC SQL
              SELECT
                LOT_SOC              
@@ -218,13 +220,13 @@
        data division.
        working-storage section.
       *PGM1.check - Params :
-      *		input(mydate: DATE)
-      *		output(r1: pic X(5))
+      *     input(mydate: DATE)
+      *     output(r1: pic X(5))
                                
        LINKAGE SECTION.
       *PGM1.check - Params :
-      *		input(mydate: DATE)
-      *		output(r1: pic X(5))
+      *     input(mydate: DATE)
+      *     output(r1: pic X(5))
                        
        01 ERIM04-LOT-SOC                 PIC X(5).
        01 LOT-SOC                 PIC X(5).
@@ -238,8 +240,8 @@
                    BY REFERENCE r1
            .
       *PGM1.check - Params :
-      *		input(mydate: DATE)
-      *		output(r1: pic X(5))
+      *     input(mydate: DATE)
+      *     output(r1: pic X(5))
            DISPLAY "P1"
            EXEC SQL
              SELECT
@@ -266,7 +268,7 @@
        data division.
        working-storage section.
       *PGM1.checkName - Params :
-      *		input(myname: pic X(15))
+      *     input(myname: pic X(15))
                                
        01 TC-PersonSe pic X(08) value 'PERSONSE'.
 
@@ -277,7 +279,7 @@
                             'U' thru X'FF'.
        linkage section.
       *PGM1.checkName - Params :
-      *		input(myname: pic X(15))
+      *     input(myname: pic X(15))
                        
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.
@@ -299,7 +301,7 @@
              USING BY REFERENCE myname
            .
       *PGM1.checkName - Params :
-      *		input(myname: pic X(15))
+      *     input(myname: pic X(15))
            PERFORM TC-INITIALIZATIONS
       *    Call PersonService::GetPersonByName input myname
            
@@ -349,13 +351,13 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.GetPersonByName - Params :
-      *		input(name: pic x(15))
+      *     input(name: pic x(15))
        01 name pic x(15).
        PROCEDURE DIVISION
              USING BY REFERENCE name
            .
       *PGM1.GetPersonByName - Params :
-      *		input(name: pic x(15))
+      *     input(name: pic x(15))
            CONTINUE.
        END PROGRAM f6b6da00.
        END PROGRAM PGM1.

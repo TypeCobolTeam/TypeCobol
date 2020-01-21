@@ -8,7 +8,7 @@
        data division.
        working-storage section.
        
-000000    01 CONVEAL. COPY  YCONVEAL.   
+000000 COPY  YCONVEAL.   
 
 000000 PROCEDURE DIVISION.
            MOVE "" TO CONVEA-TESTVEA-TEST. 

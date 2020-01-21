@@ -4,13 +4,14 @@ using System.IO;
 using Castle.Core.Internal;
 using Mono.Options;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.Diagnostics;
 
 namespace TypeCobol.Tools.Options_Config
 {
     /// <summary>
     /// TypeCobolConfiguration class holds all the argument information like input files, output files, error file etc.
     /// </summary>
-    public class TypeCobolConfiguration
+    public class TypeCobolConfiguration : ITypeCobolCheckOptions
     {
         public string CommandLine { get; set; }
         public DocumentFormat Format = DocumentFormat.RDZReferenceFormat;
@@ -28,12 +29,17 @@ namespace TypeCobol.Tools.Options_Config
         public ExecutionStep ExecToStep = ExecutionStep.Generate; //Default value is Generate
         public string ErrorFile = null;
         public string skeletonPath = "";
+        public string LogFile = null;
+
+        //Log file name
+        public const string DefaultLogFileName = "TypeCobol.CLI.log";
 
 #if EUROINFO_RULES
         public bool UseEuroInformationLegacyReplacingSyntax = true;
 #else
         public bool UseEuroInformationLegacyReplacingSyntax = false;
 #endif
+        public TypeCobolCheckOption CheckEndAlignment { get; set; }
 
         public bool IsErrorXML
         {
@@ -84,8 +90,15 @@ namespace TypeCobol.Tools.Options_Config
             { ReturnCode.OutputFormatError,      "Unexpected parameter given for Output format option. Accepted parameters are Cobol85/0(default), PublicSignature/1." },
             { ReturnCode.ExpandingCopyError,     "Expanding copy path given is unreachable." },
             { ReturnCode.ExtractusedCopyError,   "Extractused copy path given is unreachable." },
-            
+            { ReturnCode.LogFileError,           "Log file path is unreachable." },
+
         };
+
+        public TypeCobolConfiguration()
+        {
+            // default values for checks
+            TypeCobolCheckOptionsInitializer.SetDefaultValues(this);
+        }
     }
 
     /// <summary>
@@ -135,6 +148,7 @@ namespace TypeCobol.Tools.Options_Config
         OutputFormatError = 1031,       // Unexpected user input for outputFormat option
         ExpandingCopyError = 1032,      // Expanding copy path given is unreachable.
         ExtractusedCopyError = 1033,    // Extractused copy path given is unreachable.
+        LogFileError = 1034,            // Wrong log path given
 
         MultipleErrors = 9999
 
@@ -148,6 +162,63 @@ namespace TypeCobol.Tools.Options_Config
         Cobol85Nested,
         Documentation
     }
+
+    public class TypeCobolCheckOption
+    {
+        public static TypeCobolCheckOption Parse(string argument)
+        {
+            if (Enum.TryParse(argument, true, out Severity diagnosticLevel))
+            {
+                return new TypeCobolCheckOption(diagnosticLevel);
+            }
+
+            if (string.Equals(argument, "ignore", StringComparison.OrdinalIgnoreCase))
+            {
+                return new TypeCobolCheckOption(null);
+            }
+
+            throw new ArgumentException();
+        }
+
+        private readonly Severity? _diagnosticLevel;
+
+        public TypeCobolCheckOption(Severity? diagnosticLevel)
+        {
+            _diagnosticLevel = diagnosticLevel;
+        }
+
+        public bool IsActive => _diagnosticLevel.HasValue;
+
+        public MessageCode GetMessageCode()
+        {
+            switch (_diagnosticLevel)
+            {
+                case Severity.Error:
+                    return MessageCode.SyntaxErrorInParser;
+                case Severity.Info:
+                    return MessageCode.Info;
+                case Severity.Warning:
+                    return MessageCode.Warning;
+                default:
+                    // invalid Severity or not set
+                    throw new InvalidOperationException("The considered check is not active!");
+            }
+        }
+    }
+
+    public interface ITypeCobolCheckOptions
+    {
+        TypeCobolCheckOption CheckEndAlignment { get; set; }
+    }
+
+    public static class TypeCobolCheckOptionsInitializer
+    {
+        public static void SetDefaultValues(ITypeCobolCheckOptions checkOptions)
+        {
+            checkOptions.CheckEndAlignment = new TypeCobolCheckOption(Severity.Warning);
+        }
+    }
+
     public static class TypeCobolOptionSet
     {
         public static OptionSet GetCommonTypeCobolOptions(TypeCobolConfiguration typeCobolConfig)
@@ -175,6 +246,8 @@ namespace TypeCobol.Tools.Options_Config
                 { "zcr|zcallreport=", "{PATH} to report of all program called by zcallpgm.", v => typeCobolConfig.ReportZCallFilePath = v },
                 { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing.", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false },
                 { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
+                { "diag.cea|diagnostic.checkEndAlignment=", "Indicate level of check end aligment: warning, error, info, ignore.", v => typeCobolConfig.CheckEndAlignment = TypeCobolCheckOption.Parse(v) },
+                { "log|logfilepath=", "{PATH} to TypeCobol.CLI.log log file", v => typeCobolConfig.LogFile = Path.Combine(v, TypeCobolConfiguration.DefaultLogFileName)},
             };
             return commonOptions;
         }
@@ -294,6 +367,10 @@ namespace TypeCobol.Tools.Options_Config
             //HaltOnMissingCopyFilePathError
             if (!CanCreateFile(config.ExtractedCopiesFilePath) && !config.ExtractedCopiesFilePath.IsNullOrEmpty())
                 errorStack.Add(ReturnCode.ExtractusedCopyError, TypeCobolConfiguration.ErrorMessages[ReturnCode.ExtractusedCopyError]);
+
+            //LogFilePathError
+            if (!CanCreateFile(config.LogFile) && !config.LogFile.IsNullOrEmpty())
+                errorStack.Add(ReturnCode.LogFileError, TypeCobolConfiguration.ErrorMessages[ReturnCode.LogFileError]);
 
             return errorStack;
         }
