@@ -169,7 +169,7 @@ namespace TypeCobol.Compiler.Scanner
                 if (nextToken.TokenType == TokenType.AlphanumericLiteral && (!nextToken.HasOpeningDelimiter || !nextToken.HasClosingDelimiter))
                 {
                     tokensLine.AddDiagnostic(MessageCode.SyntaxErrorInParser,
-                        tokensLine.Indicator.StartIndex, tokensLine.Indicator.EndIndex, "Literal is not well delimited.");
+                        tokensLine.Indicator.StartIndex, tokensLine.Indicator.EndIndex, "Literal is not correctly delimited.");
                 }
                 tokensLine.AddToken(nextToken);
             }    
@@ -338,9 +338,11 @@ namespace TypeCobol.Compiler.Scanner
                         if (!lastTokenOfConcatenatedLineSoFar.HasClosingDelimiter)
                         {
                             // check delimiters
+                            const char APOSTROPHE = '\'';
+                            const char QUOTATION = '"';
                             char startDelimiter = line[startOfContinuationIndex];
                             bool isBadStartDelimiter = startDelimiter != lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter;
-                            char endDelimiter = '\'';
+                            char endDelimiter = APOSTROPHE;
                             bool isBadEndDelimiter = false;
                             if (isLastLine)
                             {
@@ -368,7 +370,7 @@ namespace TypeCobol.Compiler.Scanner
 
                             if (isBadStartDelimiter || isBadEndDelimiter)
                             {
-                                if (startDelimiter != '\'' && startDelimiter != '"')
+                                if (startDelimiter != APOSTROPHE && startDelimiter != QUOTATION)
                                 {
                                     // no valid starting delimiter
                                     continuationLine.AddDiagnostic(MessageCode.SyntaxErrorInParser,
@@ -376,7 +378,7 @@ namespace TypeCobol.Compiler.Scanner
                                         "Starting delimiter of the continuation line is missing.");
                                     offsetForLiteralContinuation = 0;
                                 }
-                                else if (endDelimiter != '\'' && endDelimiter != '"')
+                                else if (endDelimiter != APOSTROPHE && endDelimiter != QUOTATION)
                                 {
                                     // no valid closing delimiter
                                     continuationLine.AddDiagnostic(MessageCode.SyntaxErrorInParser,

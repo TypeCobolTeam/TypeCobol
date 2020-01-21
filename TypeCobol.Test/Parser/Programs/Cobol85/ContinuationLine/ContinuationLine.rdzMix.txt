@@ -31,34 +31,34 @@ Line 10[19,21] <27, Error, Syntax> - Syntax error : Symbol foo is not referenced
       
       *    KO
            display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-Line 33[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal
+Line 33[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different from the initial delimiter of the alphanumeric literal
       -            ' er zer '
            display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-Line 35[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal
+Line 35[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different from the initial delimiter of the alphanumeric literal
       -            " er zer '
            display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-Line 37[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal
+Line 37[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different from the initial delimiter of the alphanumeric literal
       -            ' er zer "
       
            display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-Line 40[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal
+Line 40[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different from the initial delimiter of the alphanumeric literal
       -            " er zer "
            display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-Line 42[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal
+Line 42[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different from the initial delimiter of the alphanumeric literal
       -            ' er zer "
            display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-Line 44[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal
+Line 44[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different from the initial delimiter of the alphanumeric literal
       -            " er zer '
       
            display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-Line 47[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal
+Line 47[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different from the initial delimiter of the alphanumeric literal
       -            ' er zer
       -            " er zer "
            display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-Line 50[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal
+Line 50[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different from the initial delimiter of the alphanumeric literal
       -            " er zer 
       -            ' er zer
-Line 52[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different of the initial delimiter of the alphanumeric literal
+Line 52[19,20] <21, Error, Tokens> - The delimiter character of this continuation line is different from the initial delimiter of the alphanumeric literal
       -            " er zer '
       
       
