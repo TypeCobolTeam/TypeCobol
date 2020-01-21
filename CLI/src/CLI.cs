@@ -38,18 +38,14 @@ namespace TypeCobol.Server
                 debugLine += Path.GetFileName(config.InputFiles[0]);
             }
             debugLine += "\n";
-            File.AppendAllText("TypeCobol.CLI.log", debugLine);
+            //Use user-defined log path if -log option used, otherwise use default location for log file
+            File.AppendAllText(config.LogFile ?? TypeCobolConfiguration.DefaultLogFileName, debugLine);
             Console.WriteLine(debugLine);
-
-            TextWriter textWriter;
-            if (config.ErrorFile == null) textWriter = Console.Error;
-            else textWriter = File.CreateText(config.ErrorFile);
-            AbstractErrorWriter errorWriter;
-            if (config.IsErrorXML) errorWriter = new XMLWriter(textWriter);
-            else errorWriter = new ConsoleWriter(textWriter);
+            TextWriter textWriter = config.ErrorFile == null ?  Console.Error : File.CreateText(config.ErrorFile);
+            AbstractErrorWriter errorWriter = config.IsErrorXML ? (AbstractErrorWriter) new XMLWriter(textWriter) : new ConsoleWriter(textWriter);
             errorWriter.Outputs = config.OutputFiles;
 
-            //Call the runOnce2() Methode and manage all the different kinds of exception. 
+            //Call the runOnce2() method and manage all the different kinds of exception. 
 
             ReturnCode returnCode;
             try
@@ -101,7 +97,8 @@ namespace TypeCobol.Server
 
             stopWatch.Stop();
             debugLine = "                         parsed in " + stopWatch.Elapsed + " ms\n";
-            File.AppendAllText("TypeCobol.CLI.log", debugLine);
+            //Use user-defined log path if -log option used, otherwise use default location for log file
+            File.AppendAllText(config.LogFile ?? TypeCobolConfiguration.DefaultLogFileName, debugLine);
             Console.WriteLine(debugLine);
 
             AnalyticsWrapper.Telemetry.TrackMetricsEvent(EventType.Duration, LogType.Genration, "ExecutionTime", stopWatch.Elapsed.Milliseconds); 
