@@ -38,7 +38,6 @@ namespace TypeCobol.LanguageServer
         private SymbolTable _customSymbols;
         private string _rootDirectoryFullName;
         private string _workspaceName;
-        //private string[] _extensions = { ".cbl", ".cpy", ".copy" };
         private DependenciesFileWatcher _DepWatcher;
         private CopyWatcher _CopyWatcher;
         private System.Timers.Timer _semanticUpdaterTimer;
