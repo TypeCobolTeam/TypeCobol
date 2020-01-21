@@ -123,6 +123,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] InspectStatement inspectStatement);
         bool Visit([NotNull] InvokeStatement invokeStatement);
         bool Visit([NotNull] JsonGenerateStatement jsonGenerateStatement);
+        bool Visit([NotNull] JsonParseStatement jsonParseStatement);
         bool Visit([NotNull] MergeStatement mergeStatement);
         bool Visit([NotNull] MoveStatement moveStatement);
         bool Visit([NotNull] MoveSimpleStatement moveStatement);
@@ -284,6 +285,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] Inspect inspect);
         bool Visit([NotNull] Invoke invoke);
         bool Visit([NotNull] JsonGenerate jsonGenerate);
+        bool Visit([NotNull] JsonParse jsonParse);
         bool Visit([NotNull] Merge merge);
         bool Visit([NotNull] Move move);
         bool Visit([NotNull] Release release);
@@ -527,6 +529,11 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(JsonGenerateStatement jsonGenerateStatement) {
+            return true;
+        }
+
+        public virtual bool Visit(JsonParseStatement jsonParseStatement)
+        {
             return true;
         }
 
@@ -1108,6 +1115,11 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(JsonGenerate jsonGenerate) {
+            return true;
+        }
+
+        public virtual bool Visit(JsonParse jsonParse)
+        {
             return true;
         }
 

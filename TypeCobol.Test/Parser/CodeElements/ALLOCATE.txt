@@ -1,16 +1,23 @@
 ﻿--- Diagnostics ---
-Line 12[1,8] <27, Error, Syntax> - Syntax error : extraneous input 'ALLOCATE' expecting {separator, arithmetic operator, numeric literal, symbol, special register, figurative constant, keyword} RuleStack=codeElement>cobol2002Statement>allocateStatement,  OffendingSymbol=[1,8:ALLOCATE]<ALLOCATE>
-Line 12[10,20] <27, Error, Syntax> - Syntax error : no viable alternative at input 'INITIALIZED' RuleStack=codeElement>cobol2002Statement>allocateStatement,  OffendingSymbol=[10,20:INITIALIZED]<UserDefinedWord>
-Line 16[1,8] <27, Error, Syntax> - Syntax error : missing CHARACTERS at 'ALLOCATE' RuleStack=codeElement>cobol2002Statement>allocateStatement,  OffendingSymbol=[1,8:ALLOCATE]<ALLOCATE>
-Line 16[13,21] <27, Error, Syntax> - Syntax error : missing CHARACTERS at 'RETURNING' RuleStack=codeElement>cobol2002Statement>allocateStatement,  OffendingSymbol=[13,21:RETURNING]<RETURNING>
+Line 15[1,8] <27, Error, Syntax> - Syntax error : extraneous input 'ALLOCATE' expecting {separator, arithmetic operator, numeric literal, symbol, special register, figurative constant, keyword} RuleStack=codeElement>cobol2002Statement>allocateStatement,  OffendingSymbol=[1,8:ALLOCATE]<ALLOCATE>
+Line 15[10,20] <27, Error, Syntax> - Syntax error : no viable alternative at input 'INITIALIZED' RuleStack=codeElement>cobol2002Statement>allocateStatement,  OffendingSymbol=[10,20:INITIALIZED]<UserDefinedWord>
+Line 19[1,8] <27, Error, Syntax> - Syntax error : missing CHARACTERS at 'ALLOCATE' RuleStack=codeElement>cobol2002Statement>allocateStatement,  OffendingSymbol=[1,8:ALLOCATE]<ALLOCATE>
+Line 19[13,21] <27, Error, Syntax> - Syntax error : missing CHARACTERS at 'RETURNING' RuleStack=codeElement>cobol2002Statement>allocateStatement,  OffendingSymbol=[13,21:RETURNING]<RETURNING>
+Line 21[24,26] <27, Error, Syntax> - Syntax error : no viable alternative at input 'LOC' RuleStack=codeElement>cobol2002Statement>allocateStatement,  OffendingSymbol=[24,26:LOC]<UserDefinedWord>
+Line 23[55,57] <27, Error, Syntax> - Syntax error : extraneous input 'LOC' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements} RuleStack=,  OffendingSymbol=[55,57:LOC]<UserDefinedWord>
+Line 25[15,18] <27, Error, Syntax> - Syntax error : no viable alternative at input 'TOTO' RuleStack=codeElement>cobol2002Statement>allocateStatement,  OffendingSymbol=[15,18:TOTO]<UserDefinedWord>
 --- Code Elements ---
 [[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [33,41:myPointer]<UserDefinedWord>
 
 [[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [45,53:myPointer]<UserDefinedWord>
 
+[[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [52,60:myPointer]<UserDefinedWord>
+
 [[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [43,51:myPointer]<UserDefinedWord>
 
 [[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [57,65:myPointer]<UserDefinedWord>
+
+[[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [66,74:myPointer]<UserDefinedWord>
 
 [[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [10,13:var1]<UserDefinedWord>
 
@@ -20,9 +27,17 @@ Line 16[13,21] <27, Error, Syntax> - Syntax error : missing CHARACTERS at 'RETUR
 
 [[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [37,45:myPointer]<UserDefinedWord>
 
+[[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [19,20:31]<IntegerLiteral>{31}
+
 [[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [10,20:INITIALIZED]<UserDefinedWord>
 
 [[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [2,1:<missing CHARACTERS>]<CHARACTERS>
 
 [[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [23,31:myPointer]<UserDefinedWord>
+
+[[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [24,26:LOC]<UserDefinedWord>
+
+[[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [45,53:myPointer]<UserDefinedWord>
+
+[[AllocateStatement]] [1,8:ALLOCATE]<ALLOCATE> --> [20,21:24]<IntegerLiteral>{24}
 
