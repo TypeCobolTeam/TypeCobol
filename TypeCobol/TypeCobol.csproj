@@ -123,6 +123,8 @@
     <None Include="Documentation\Reference\DB2 11 for zOs - Application Programming and SQL Guide.pdf" />
     <None Include="Documentation\Reference\IBM Enterprise Cobol 5.1 for zOS - Language Reference.pdf" />
     <None Include="Documentation\Reference\IBM Enterprise Cobol 5.1 for zOS - Programming Guide.pdf" />
+    <None Include="Documentation\Reference\IBM Enterprise Cobol 6.1 for zOS - Language Reference.pdf" />
+    <None Include="Documentation\Reference\IBM Enterprise Cobol 6.2 for zOS - Language Reference.pdf" />
     <None Include="Documentation\Studies\Antlr 4 parsing algorithm.pdf" />
     <None Include="Documentation\Studies\CobolLexer.tokens.xlsx" />
     <None Include="Documentation\Studies\Code elements starting tokens.xlsx" />
