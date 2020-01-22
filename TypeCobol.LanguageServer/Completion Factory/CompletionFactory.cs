@@ -587,11 +587,14 @@ namespace TypeCobol.LanguageServer
                     }
                 }
 
-                if (sendingVar?.RepeatedCharacterValue?.Token != null &&
-                    (sendingVar.RepeatedCharacterValue.Token.TokenType == TokenType.SPACE
-                     || sendingVar.RepeatedCharacterValue.Token.TokenType == TokenType.SPACES))
+                var tokenType = sendingVar?.RepeatedCharacterValue?.Token?.TokenType;
+                if (tokenType != null)
                 {
-                    seekedDataTypes.Add(DataType.Alphabetic);
+                    if (tokenType == TokenType.SPACE || tokenType == TokenType.SPACES || tokenType == TokenType.QUOTE || tokenType == TokenType.QUOTES)
+                    {
+                        seekedDataTypes.Add(DataType.Alphanumeric);
+                        seekedDataTypes.Add(DataType.Alphabetic);
+                    }
                 }
             }
 
@@ -678,7 +681,7 @@ namespace TypeCobol.LanguageServer
             {
                 case TokenType.ADDRESS:
                 {
-                    var contextToken = tokensUntilCursor?.Skip(2).FirstOrDefault(); //Try to get the token that may define the completion context
+                    var contextToken = tokensUntilCursor.Skip(2).FirstOrDefault(); //Try to get the token that may define the completion context
                     completionItems = GetCompletionForAddressOf(node, contextToken, userFilterText);
                     break;
                 }

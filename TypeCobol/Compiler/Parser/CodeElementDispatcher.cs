@@ -1,15 +1,11 @@
-﻿using Antlr4.Runtime;
-using System.Collections.Generic;
-using System.Reflection;
-using TypeCobol.Compiler.CodeElements;
+﻿using System.Collections.Generic;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.Tools;
 
 namespace TypeCobol.Compiler.Parser
 {
     /// <summary>
-    /// An delegate for Factories used to create Node Listener
+    /// A delegate for Factories used to create Node Listener
     /// </summary>
     public delegate NodeListener NodeListenerFactory();
 
@@ -28,57 +24,80 @@ namespace TypeCobol.Compiler.Parser
         void OnNode(Node node, Program program);
     }
 
-    public class NodeDispatcher : NodeListener {
+    public class NodeDispatcher : NodeListener
+    {
         /// <summary>
-        /// List of Static NodeListener Factory
+        /// List of Static NodeListener Factories
         /// </summary>
-        private static List<NodeListenerFactory> StaticNodeListenerFactory = null;
+        private static List<NodeListenerFactory> _NodeListenerFactories;
+
+        /// <summary>
+        /// Private lock object to protect collection of factories against concurrency
+        /// </summary>
+        private static readonly object _NodeListenerFactoriesLockObject = new object();
+
         /// <summary>
         /// Add Static NodeListenerFactory instance
         /// </summary>
-        /// <param name="listener">The instance to be added</param>
-        public static void RegisterStaticNodeListenerFactory(NodeListenerFactory listener)
+        /// <param name="listenerFactory">The instance to be added</param>
+        public static void RegisterStaticNodeListenerFactory(NodeListenerFactory listenerFactory)
         {
-            lock (typeof(NodeDispatcher))
+            if (listenerFactory == null) return;
+
+            lock (_NodeListenerFactoriesLockObject)
             {
-                if (StaticNodeListenerFactory == null && listener != null)
+                if (_NodeListenerFactories == null)
                 {
-                    StaticNodeListenerFactory = new List<NodeListenerFactory>();
+                    _NodeListenerFactories = new List<NodeListenerFactory>();
                 }
-                StaticNodeListenerFactory.Add(listener);
+                _NodeListenerFactories.Add(listenerFactory);
             }
         }
+
         /// <summary>
         /// Remove Static NodeListenerFactory instance
         /// </summary>
-        /// <param name="listener">The instance to be removed</param>
-        public static void RemoveStaticNodeListenerFactory(NodeListenerFactory listener)
+        /// <param name="listenerFactory">The instance to be removed</param>
+        public static void RemoveStaticNodeListenerFactory(NodeListenerFactory listenerFactory)
         {
-            lock (typeof(NodeDispatcher))
+            if (listenerFactory == null) return;
+
+            lock (_NodeListenerFactoriesLockObject)
             {
-                if (StaticNodeListenerFactory != null && listener != null)
+                if (_NodeListenerFactories != null)
                 {
-                    StaticNodeListenerFactory.Remove(listener);
+                    _NodeListenerFactories.Remove(listenerFactory);
                 }
             }
         }
-        
 
-        /// <summary>Notifies listeners about the creation of a new CodeElement.</summary>
+        /// <summary>
+        /// Notifies listeners about the creation of a new CodeElement.
+        /// </summary>
         public void OnNode(Node node, Program program)
         {
+            System.Diagnostics.Debug.Assert(_listeners != null);
             foreach (var listener in _listeners)
             {
                 listener.OnNode(node, program);
             }
         }
 
-        private IList<NodeListener> _listeners = null;
+        private IList<NodeListener> _listeners;
+
+        /// <summary>
+        /// Add a listener
+        /// </summary>
+        /// <param name="listener">The listener to be added</param>
+        protected virtual void AddListener(NodeListener listener)
+        {
+            System.Diagnostics.Debug.Assert(_listeners != null);
+            _listeners.Add(listener);
+        }
 
         /// <summary>
         /// Adds to listeners one instance of each type implementing CodeElementListener interface
         /// and defined in namespace TypeCobol.Compiler.Diagnostics.
-        /// TODO: the list of namespace where CodeElementListeners are searched for should not be hard-coded
         /// </summary>
         internal void CreateListeners()
         {
@@ -87,21 +106,24 @@ namespace TypeCobol.Compiler.Parser
             {
                 return;
             }
+
             _listeners = new List<NodeListener>();
-            //Return if no StaticNodeListenerFactory exist
-            if (StaticNodeListenerFactory == null)
+
+            //Return if no _NodeListenerFactories exist
+            if (_NodeListenerFactories == null)
             {
                 return;
             }
-            lock (typeof(NodeDispatcher))
+
+            lock (_NodeListenerFactoriesLockObject)
             {
-                foreach (NodeListenerFactory factory in StaticNodeListenerFactory)
+                foreach (NodeListenerFactory factory in _NodeListenerFactories)
                 {
                     //Allocate listeners from static factories.
                     NodeListener listener = factory();
                     if (listener != null)
                     {
-                        _listeners.Add(listener);
+                        AddListener(listener);
                     }
                 }
             }
