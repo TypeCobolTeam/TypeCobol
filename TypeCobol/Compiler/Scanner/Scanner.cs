@@ -338,11 +338,11 @@ namespace TypeCobol.Compiler.Scanner
                         if (!lastTokenOfConcatenatedLineSoFar.HasClosingDelimiter)
                         {
                             // check delimiters
-                            const char APOSTROPHE = '\'';
-                            const char QUOTATION = '"';
+                            const char QUOTE = '\'';
+                            const char DOUBLE_QUOTE = '"';
                             char startDelimiter = line[startOfContinuationIndex];
                             bool isBadStartDelimiter = startDelimiter != lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter;
-                            char endDelimiter = APOSTROPHE;
+                            char endDelimiter = QUOTE;  // default value
                             bool isBadEndDelimiter = false;
                             if (isLastLine)
                             {
@@ -370,7 +370,7 @@ namespace TypeCobol.Compiler.Scanner
 
                             if (isBadStartDelimiter || isBadEndDelimiter)
                             {
-                                if (startDelimiter != APOSTROPHE && startDelimiter != QUOTATION)
+                                if (startDelimiter != QUOTE && startDelimiter != DOUBLE_QUOTE)
                                 {
                                     // no valid starting delimiter
                                     continuationLine.AddDiagnostic(MessageCode.SyntaxErrorInParser,
@@ -378,7 +378,7 @@ namespace TypeCobol.Compiler.Scanner
                                         "Starting delimiter of the continuation line is missing.");
                                     offsetForLiteralContinuation = 0;
                                 }
-                                else if (endDelimiter != APOSTROPHE && endDelimiter != QUOTATION)
+                                else if (endDelimiter != QUOTE && endDelimiter != DOUBLE_QUOTE)
                                 {
                                     // no valid closing delimiter
                                     continuationLine.AddDiagnostic(MessageCode.SyntaxErrorInParser,
@@ -389,7 +389,7 @@ namespace TypeCobol.Compiler.Scanner
                                 }
                                 else
                                 {
-                                    // different delimiters
+                                    // different delimiters between start and end delimiters
                                     continuationLine.AddDiagnostic(MessageCode.InvalidDelimiterForContinuationLine,
                                         startOfContinuationIndex, startOfContinuationIndex + 1,
                                         lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter);
