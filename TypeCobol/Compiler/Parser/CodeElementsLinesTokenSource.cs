@@ -345,6 +345,9 @@ namespace TypeCobol.Compiler.Parser
                     case CodeElementType.JsonGenerateStatement:
                         codeElement = new JsonGenerateStatement();
                         break;
+                    case CodeElementType.JsonParseStatement:
+                        codeElement = new JsonParseStatement();
+                        break;
                     case CodeElementType.MergeStatement:
                         codeElement = new MergeStatement();
                         break;
