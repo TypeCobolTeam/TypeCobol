@@ -266,25 +266,25 @@ namespace TypeCobol.Test {
                 && compileResult.ProcessedTokensDocumentSnapshot != null 
                 && compileResult.CodeElementsDocumentSnapshot != null 
                 && compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
-                throw new Exception("Scanner Step failled");
+                throw new Exception("Scanner Step failed");
 
             compileResult = ParserUtils.ParseCobolFile(fileName, null, folder, ExecutionStep.Preprocessor);
             if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.Preprocessor 
                 && compileResult.ProcessedTokensDocumentSnapshot == null 
                 && compileResult.CodeElementsDocumentSnapshot != null 
                 && compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
-                throw new Exception("Preprocessor Step failled");
+                throw new Exception("Preprocessor Step failed");
 
             compileResult = ParserUtils.ParseCobolFile(fileName, null, folder, ExecutionStep.SyntaxCheck);
             if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.SyntaxCheck 
                 && compileResult.CodeElementsDocumentSnapshot == null 
                 && compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
-                throw new Exception("SyntaxCheck Step failled");
+                throw new Exception("SyntaxCheck Step failed");
 
             compileResult = ParserUtils.ParseCobolFile(fileName, null, folder, ExecutionStep.SemanticCheck);
             if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.SemanticCheck 
                 && !compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
-                throw new Exception("SemanticCheck Step failled");
+                throw new Exception("SemanticCheck Step failed");
         }
 
 
