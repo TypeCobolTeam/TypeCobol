@@ -428,7 +428,7 @@ namespace TypeCobol.LanguageServer
                         //if it's a typed variable, propose 1st children of the type
                         if (variable.TypeDefinition != null)
                         {
-                            children.AddRange(variable.TypeDefinition.Children.Where(t => t.Name != null || t.Children.Where(u => u.Name != null) != null));
+                            children.AddRange(variable.TypeDefinition.Children);
                         }
 
                         //It's a variable with levels inside
