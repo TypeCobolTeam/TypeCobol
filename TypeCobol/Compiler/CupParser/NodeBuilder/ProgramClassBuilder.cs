@@ -1184,6 +1184,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 else if (cond.Type == CodeElementType.WhenDummy)
                 {
                     condition = cond as TypeCobol.Compiler.CodeElements.WhenCondition;
+                    DiagnosticUtils.AddError(cond, "Missing condition in \"when\" clause");
                 }
                 else
                 {
@@ -1299,6 +1300,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         public virtual void StartDummyWhenSearchConditionClause([NotNull] TypeCobol.Compiler.CodeElements.WhenDummy condition)
         {
             Enter(new When(condition), condition);
+            DiagnosticUtils.AddError(condition, "Missing condition in \"when\" clause");
         }
         public virtual void EndWhenSearchConditionClause()
         {

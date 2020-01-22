@@ -89,7 +89,6 @@ namespace TypeCobol.LanguageServer
             int linesCount = fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines.Count;
             if (linesCount != 0 && lineIndex < linesCount)
             {
-                bool isFirstLine = true;
                 while (codeElements.Count == 0 && lineIndex >= 0)
                 {
                     var codeElementsLine =
@@ -102,8 +101,7 @@ namespace TypeCobol.LanguageServer
                         {
                             //Ignore all the EndOfFile token 
                             var tempCodeElements = codeElementsLine.CodeElements.Where(c => c.ConsumedTokens.Any(t => t.TokenType != TokenType.EndOfFile));
-                            var toList = tempCodeElements.ToList();
-                            foreach (var tempCodeElement in tempCodeElements.Reverse())
+                              foreach (var tempCodeElement in tempCodeElements.Reverse())
                             {
                                 if (!tempCodeElement.ConsumedTokens.Any(t => /*CompletionElligibleTokens.IsCompletionElligibleToken(t) &&*/
                                         ((t.Line == position.line + 1 && t.StopIndex + 1 <= position.character) || t.Line < position.line + 1)))
@@ -115,47 +113,6 @@ namespace TypeCobol.LanguageServer
                             if (tempCodeElements.Any(c => c.ConsumedTokens.Any(t => t.TokenType == TokenType.PeriodSeparator && !(t is Compiler.AntlrUtils.MissingToken))))
                                 break;
                         }
-                        else if (isFirstLine)
-                        {
-                            // search, in first line, a token without codeElement, near the position
-                            var tempTokens = codeElementsLine.SourceTokens?.Where(t => t.TokenType != TokenType.EndOfFile &&
-                                                                                  t.TokenType != TokenType.SpaceSeparator &&
-                                                                                  t.TokenType != TokenType.PeriodSeparator &&
-                                                                                  !(t is Compiler.AntlrUtils.MissingToken));
-                            if (tempTokens != null)
-                            {
-                                Token whenToken = tempTokens.Reverse().FirstOrDefault(t => ((t.Line == position.line + 1 &&
-                                           t.StopIndex + 1 <= position.character) || t.Line < position.line + 1) && t.TokenType == TokenType.WHEN);
-                                if (whenToken != null)
-                                {
-                                    // token WHEN is present; so search the codeElement EVALUATE (method CodeElementFinder returns codeElements)
-                                    CodeElement evaluateCodeElement = null;
-                                    for (int i = lineIndex - 1; i >= 0; i--)
-                                    {
-                                        var lineCodeElements = fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.PreviousStepSnapshot
-                                                .Lines[i].CodeElements;
-                                        if (lineCodeElements != null && !(lineCodeElements[0] is SentenceEnd))
-                                        {
-                                            var tempCodeElements = lineCodeElements.Where(c => c.ConsumedTokens.Any(t => t.TokenType == TokenType.EVALUATE));
-                                            if (tempCodeElements.Any())
-                                            {
-                                                evaluateCodeElement = tempCodeElements.LastOrDefault();
-                                                break;
-                                            }
-                                        }
-                                    }
-
-                                    if (evaluateCodeElement != null)
-                                    {
-                                        ignoredCodeElements.Add(evaluateCodeElement);
-                                        // ignoredCodeElements will contain only one CodeElement at the end of the examination of lines
-                                        // method CodeElementFinder will return only the codeElement EVALUATE
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        isFirstLine = false;
                     }
 
                     lineIndex--; //decrease lineIndex to get the previous line of TypeCobol Tree.
