@@ -19,6 +19,14 @@
            02 MyData.
            COPY TESTCPY.
                               
+
+      *01 MyType3 typedef strict public.
+      *    05  MyData value "COPY". COPY TESTCPY.
+      *01 myVar3 type MyType3.
+       01 myVar3.
+           02 MyData value "COPY".
+           COPY TESTCPY.
+                              
 	   
        PROCEDURE DIVISION.
            GOBACK.

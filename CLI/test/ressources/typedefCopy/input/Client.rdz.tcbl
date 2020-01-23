@@ -10,6 +10,10 @@
        01 MyType2 typedef strict public.
            05  MyData. COPY TESTCPY.  
        01 myVar2 type MyType2.
+
+       01 MyType3 typedef strict public.
+           05  MyData value "COPY". COPY TESTCPY.  
+       01 myVar3 type MyType3.
 	   
        PROCEDURE DIVISION.
            GOBACK.
