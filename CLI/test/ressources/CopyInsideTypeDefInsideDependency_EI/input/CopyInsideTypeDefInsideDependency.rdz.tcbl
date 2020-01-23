@@ -35,6 +35,14 @@
             MOVE 'X' TO
                 MyCopyInsideContainerInsideTypeDef::CONTAINER::CONVEA
             .
+
+       declare procedure MyProc
+            input myType1 type DVZDEP1::Type1.
+       PROCEDURE DIVISION.
+           DISPLAY myType1
+           .
+       end-declare.
+
        END PROGRAM PGM1.
       
        IDENTIFICATION DIVISION.

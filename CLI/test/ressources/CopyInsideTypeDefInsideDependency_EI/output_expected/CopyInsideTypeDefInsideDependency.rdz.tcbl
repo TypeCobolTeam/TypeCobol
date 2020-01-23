@@ -70,6 +70,10 @@
                 CONVEA OF CONTAINER OF 
                                       MyCopyInsideContainerInsideTypeDef
             .
+
+      *declare procedure MyProc
+      *     input myType1 type DVZDEP1::Type1.
+
        END PROGRAM PGM1.
       
        IDENTIFICATION DIVISION.
@@ -100,3 +104,28 @@
        PROCEDURE DIVISION.
             .
        END PROGRAM PGMSTK1.
+      *
+      *declare procedure MyProc
+      *     input myType1 type DVZDEP1::Type1.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. cd31ff38.
+       DATA DIVISION.
+       LINKAGE SECTION.
+      *PGM1.MyProc - Params :
+      *     input(myType1: DVZDEP1.Type1)
+       01 myType1.
+           02 Body.
+          COPY YCONVEA.
+           02 Part1.
+          COPY YPRTD20.
+           02 Part2.
+          COPY YCONVEA.
+       PROCEDURE DIVISION
+             USING BY REFERENCE myType1
+           .
+      *PGM1.MyProc - Params :
+      *     input(myType1: DVZDEP1.Type1)
+           DISPLAY myType1
+           .
+       END PROGRAM cd31ff38.

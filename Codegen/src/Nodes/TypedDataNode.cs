@@ -972,11 +972,15 @@ namespace TypeCobol.Codegen.Nodes
 
         };
 
-        public static List<ITextLine> InsertChildren(ColumnsLayout? layout, List<string> rootProcedures, List< Tuple<string,string> > rootVariableName, DataDefinition ownerDefinition, DataDefinition type, int level, int indent)
+        public static List<ITextLine> InsertChildren(ColumnsLayout? layout, List<string> rootProcedures, List<Tuple<string, string>> rootVariableName, DataDefinition ownerDefinition, DataDefinition type, int level, int indent)
+        {
+            return InsertChildren(layout, rootProcedures, rootVariableName, ownerDefinition, type, level, indent, null);
+        }
+
+        private static List<ITextLine> InsertChildren(ColumnsLayout? layout, List<string> rootProcedures, List< Tuple<string,string> > rootVariableName, DataDefinition ownerDefinition, DataDefinition type, int level, int indent, CopyDirective usedCopy)
         {
             var lines = new List<ITextLine>();
             // List of all the CopyDirectives that have been added to the lines
-            List<CopyDirective> usedCopies = new List<CopyDirective>();
             foreach (var child in type.Children)
             {
                 bool bIsInsideCopy = child.IsInsideCopy();
@@ -1002,10 +1006,10 @@ namespace TypeCobol.Codegen.Nodes
                         CopyDirective copy = child.CodeElement.FirstCopyDirective;
                         //The first data coming from a copy is used to recover the Clause COPY, the other would be only a repetition of this one, so we skip them.
                         //Even with the same name, two different Clause COPY are differentiated by their token lines
-                        if (usedCopies.Contains(copy) == false)
+                        if (usedCopy == null || usedCopy.Equals(copy) == false)
                         {
                             lines.AddRange(CopyDirectiveToTextLines(copy));
-                            usedCopies.Add(copy);
+                            usedCopy = copy;
                             continue;
                         }
                     }
@@ -1097,13 +1101,13 @@ namespace TypeCobol.Codegen.Nodes
                     newRootVariableName.Add(new Tuple<string, string>(typed.Name, typed.TypeDefinition.Name));
                     newRootVariableName.AddRange(rootVariableName);
                     var texts = InsertChildren(layout, rootProcedures, newRootVariableName, typed, typed.TypeDefinition,
-                        level + 1, indent + 1);
+                        level + 1, indent + 1, usedCopy);
                     lines.AddRange(texts);
                 }
                 else
                 {
                     var texts = InsertChildren(layout, rootProcedures, rootVariableName, typed, typed, level + 1,
-                        indent + 1);
+                        indent + 1, usedCopy);
                     lines.AddRange(texts);
                 }
             }
