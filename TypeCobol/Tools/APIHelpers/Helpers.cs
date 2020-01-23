@@ -18,13 +18,17 @@ namespace TypeCobol.Tools.APIHelpers
     {
         private static string[] _DependenciesExtensions = { ".tcbl", ".cbl", ".cpy" };
 
+        //Default extensions used for parsing
+        public static string[] DEFAULT_EXTENSIONS = { ".cbl", ".cpy", ".copy"};
+        public static string[] DEFAULT_COPY_EXTENSIONS = {".cpy", ".copy"};
+
         public static SymbolTable LoadIntrinsic(List<string> paths, DocumentFormat intrinsicDocumentFormat, EventHandler<DiagnosticsErrorEvent> diagEvent)
         {
             var parser = new Parser();
             var table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
             var instrincicFiles = new List<string>();
 
-            foreach (string path in paths) instrincicFiles.AddRange(FileSystem.GetFiles(path, parser.Extensions, false));
+            foreach (string path in paths) instrincicFiles.AddRange(FileSystem.GetFiles(path, DEFAULT_EXTENSIONS, false));
 
             foreach (string path in instrincicFiles)
             {

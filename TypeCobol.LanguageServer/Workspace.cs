@@ -19,6 +19,7 @@ using TypeCobol.LanguageServer.Interfaces;
 using TypeCobol.Tools.Options_Config;
 using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.LanguageServices.Editor;
+using TypeCobol.Tools.APIHelpers;
 
 namespace TypeCobol.LanguageServer
 {
@@ -37,7 +38,6 @@ namespace TypeCobol.LanguageServer
         private SymbolTable _customSymbols;
         private string _rootDirectoryFullName;
         private string _workspaceName;
-        private string[] _extensions = { ".cbl", ".cpy" };
         private DependenciesFileWatcher _DepWatcher;
         private CopyWatcher _CopyWatcher;
         private System.Timers.Timer _semanticUpdaterTimer;
@@ -155,7 +155,7 @@ namespace TypeCobol.LanguageServer
             this._workspaceName = workspaceName;
 
             this.CompilationProject = new CompilationProject(
-                _workspaceName, _rootDirectoryFullName, _extensions,
+                _workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS,
                 Encoding.GetEncoding("iso-8859-1"), EndOfLineDelimiter.CrLfCharacters, 80, ColumnsLayout.CobolReferenceFormat,
                 new TypeCobolOptions()); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
             this.CompilationProject.CompilationOptions.UseAntlrProgramParsing =
@@ -442,7 +442,7 @@ namespace TypeCobol.LanguageServer
 
             var typeCobolOptions = new TypeCobolOptions(Configuration);
 
-            CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, _extensions, Configuration.Format.Encoding, Configuration.Format.EndOfLineDelimiter, Configuration.Format.FixedLineLength, Configuration.Format.ColumnsLayout, typeCobolOptions);
+            CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format.Encoding, Configuration.Format.EndOfLineDelimiter, Configuration.Format.FixedLineLength, Configuration.Format.ColumnsLayout, typeCobolOptions);
 
             if (Configuration.CopyFolders != null && Configuration.CopyFolders.Count > 0)
             {
