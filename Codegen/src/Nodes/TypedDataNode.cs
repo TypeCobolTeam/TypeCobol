@@ -986,7 +986,23 @@ namespace TypeCobol.Codegen.Nodes
                 {
                     if (child.IsFlagSet(Flag.IsTypedefCopyNode))
                     {
-                        lines.AddRange(child.Lines);
+                        var linesContent = child.CodeElement.SourceText.Split(new string[] { System.Environment.NewLine }, System.StringSplitOptions.None);                        //Indent the line according to its declaration
+                        foreach (string line in linesContent)
+                        {
+                            //Only the line containing copy can be badly indented. 
+                            string lineText;
+                            if (line.IndexOf("COPY", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                //Indent this line with the same indentation than the declaring line.
+                                lineText = child.Lines.First().Text.GetIndent() + line.Trim();
+                            }
+                            else
+                            {
+                                //Otherwise generate the other lines as is, with a little extra for the columns 1-7
+                                lineText = new string(' ', 7) + line.TrimEnd();
+                            }
+                            lines.Add(new CobolTextLine(new TextLineSnapshot(-1, lineText, null), ColumnsLayout.CobolReferenceFormat));
+                        }
                         continue;
                     }
                 }

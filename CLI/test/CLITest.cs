@@ -190,6 +190,16 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// Test Various Return Code that can be returned by the CLI
+        /// (with CLI arguments well formed, for bad argument test see TestArgumentsErrors())
+        /// </summary>
+        [TestMethod]
+        public void TestTypeDefCopy()
+        {
+            CLITestHelper.Test("typedefCopy", ReturnCode.Success);//0
+        }
+
+        /// <summary>
         /// Try parsing with PublicSignature as output format.
         /// Should return success.
         /// </summary>
