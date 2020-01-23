@@ -1,0 +1,164 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MainProgram.
+       data division.
+       global-storage section.
+       01 dataMainGlobalStorage pic X.
+       working-storage section.
+       01 dataMainLocal  pic X.
+       01 dataMainGlobal pic X global.
+      
+       procedure division.
+      *In Main all dataMain* variables are visible
+      *Variables declared in Nested or Procs are not visible
+      *OK
+           move dataMainGlobalStorage to dataMainLocal
+           display dataMainGlobal
+      *KO
+Line 17[17,28] <27, Error, Syntax> - Syntax error : Symbol dataProcMain is not referenced
+Line 17[33,47] <27, Error, Syntax> - Syntax error : Symbol dataNestedLocal is not referenced
+           move dataProcMain to dataNestedLocal
+Line 18[17,32] <27, Error, Syntax> - Syntax error : Symbol dataNestedGlobal is not referenced
+Line 18[37,50] <27, Error, Syntax> - Syntax error : Symbol dataProcNested is not referenced
+           move dataNestedGlobal to dataProcNested
+Line 19[17,34] <27, Error, Syntax> - Syntax error : Symbol dataSubNestedLocal is not referenced
+Line 19[39,57] <27, Error, Syntax> - Syntax error : Symbol dataSubNestedGlobal is not referenced
+           move dataSubNestedLocal to dataSubNestedGlobal
+Line 20[20,36] <27, Error, Syntax> - Syntax error : Symbol dataProcSubNested is not referenced
+           display dataProcSubNested
+           .
+      
+       declare procedure procInMain private
+               input paramMain pic X.
+       data division.
+       working-storage section.
+       01 dataProcMain pic X.
+       procedure division.
+      *Procedure has access to GlobalStorage and its local variables
+      *OK
+           move paramMain to dataProcMain
+           display dataMainGlobalStorage
+      *
+Line 34[17,29] <27, Error, Syntax> - Syntax error : Symbol dataMainLocal is not referenced
+Line 34[34,47] <27, Error, Syntax> - Syntax error : Symbol dataMainGlobal is not referenced
+           move dataMainLocal to dataMainGlobal
+Line 35[17,31] <27, Error, Syntax> - Syntax error : Symbol dataNestedLocal is not referenced
+Line 35[36,51] <27, Error, Syntax> - Syntax error : Symbol dataNestedGlobal is not referenced
+           move dataNestedLocal to dataNestedGlobal
+Line 36[17,30] <27, Error, Syntax> - Syntax error : Symbol dataProcNested is not referenced
+Line 36[35,52] <27, Error, Syntax> - Syntax error : Symbol dataSubNestedLocal is not referenced
+           move dataProcNested to dataSubNestedLocal
+Line 37[17,35] <27, Error, Syntax> - Syntax error : Symbol dataSubNestedGlobal is not referenced
+Line 37[40,56] <27, Error, Syntax> - Syntax error : Symbol dataProcSubNested is not referenced
+           move dataSubNestedGlobal to dataProcSubNested
+           .
+       end-declare.
+      
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Nested.
+       data division.
+       working-storage section.
+       01 dataNestedLocal  pic X.
+       01 dataNestedGlobal pic X global.
+      
+       PROCEDURE DIVISION.
+      *Nested pgm has access to :
+      * - its own local and global variables
+      * - global variables from parent
+      * - variables in global-storage
+      *OK
+           move dataNestedLocal to dataNestedGlobal
+           move dataMainGlobal to dataMainGlobalStorage
+      *KO
+Line 57[17,29] <27, Error, Syntax> - Syntax error : Symbol dataMainLocal is not referenced
+Line 57[34,45] <27, Error, Syntax> - Syntax error : Symbol dataProcMain is not referenced
+           move dataMainLocal to dataProcMain
+Line 58[17,30] <27, Error, Syntax> - Syntax error : Symbol dataProcNested is not referenced
+Line 58[35,52] <27, Error, Syntax> - Syntax error : Symbol dataSubNestedLocal is not referenced
+           move dataProcNested to dataSubNestedLocal
+Line 59[17,35] <27, Error, Syntax> - Syntax error : Symbol dataSubNestedGlobal is not referenced
+Line 59[40,56] <27, Error, Syntax> - Syntax error : Symbol dataProcSubNested is not referenced
+           move dataSubNestedGlobal to dataProcSubNested
+           .
+      
+       declare procedure procInNested private
+               input paramNested pic X.
+       data division.
+       working-storage section.
+       01 dataProcNested pic X.
+       procedure division.
+      *Same as procInMain (own local + GS)
+      *OK
+           move paramNested to dataProcNested
+           display dataMainGlobalStorage
+      *KO
+Line 73[17,29] <27, Error, Syntax> - Syntax error : Symbol dataMainLocal is not referenced
+Line 73[34,47] <27, Error, Syntax> - Syntax error : Symbol dataMainGlobal is not referenced
+           move dataMainLocal to dataMainGlobal
+Line 74[17,28] <27, Error, Syntax> - Syntax error : Symbol dataProcMain is not referenced
+Line 74[33,47] <27, Error, Syntax> - Syntax error : Symbol dataNestedLocal is not referenced
+           move dataProcMain to dataNestedLocal
+Line 75[17,32] <27, Error, Syntax> - Syntax error : Symbol dataNestedGlobal is not referenced
+Line 75[37,54] <27, Error, Syntax> - Syntax error : Symbol dataSubNestedLocal is not referenced
+           move dataNestedGlobal to dataSubNestedLocal
+Line 76[17,35] <27, Error, Syntax> - Syntax error : Symbol dataSubNestedGlobal is not referenced
+Line 76[40,56] <27, Error, Syntax> - Syntax error : Symbol dataProcSubNested is not referenced
+           move dataSubNestedGlobal to dataProcSubNested
+           .
+       end-declare.
+      
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. SubNested.
+       data division.
+       working-storage section.
+       01 dataSubNestedLocal  pic X.
+       01 dataSubNestedGlobal pic X global.
+      
+       PROCEDURE DIVISION.
+      *SubNested has access to
+      * - its own local and global variables
+      * - global variables from both Nested and Main
+      * - variables from GlobalStorage
+      *OK
+           move dataSubNestedLocal to dataSubNestedGlobal
+           move dataNestedGlobal to dataMainGlobal
+           display dataMainGlobalStorage
+      *KO
+Line 97[17,29] <27, Error, Syntax> - Syntax error : Symbol dataMainLocal is not referenced
+Line 97[34,45] <27, Error, Syntax> - Syntax error : Symbol dataProcMain is not referenced
+           move dataMainLocal to dataProcMain
+Line 98[17,31] <27, Error, Syntax> - Syntax error : Symbol dataNestedLocal is not referenced
+Line 98[36,49] <27, Error, Syntax> - Syntax error : Symbol dataProcNested is not referenced
+           move dataNestedLocal to dataProcNested
+Line 99[20,36] <27, Error, Syntax> - Syntax error : Symbol dataProcSubNested is not referenced
+           display dataProcSubNested
+           .
+      
+       declare procedure procInSubNested private
+               input paramSubNested pic X.
+       data division.
+       working-storage section.
+       01 dataProcSubNested pic X.
+       procedure division.
+      *Same as procInMain (own local + GS)
+      *OK
+           move paramSubNested to dataProcSubNested
+           display dataMainGlobalStorage
+      *KO
+Line 113[17,29] <27, Error, Syntax> - Syntax error : Symbol dataMainLocal is not referenced
+Line 113[34,47] <27, Error, Syntax> - Syntax error : Symbol dataMainGlobal is not referenced
+           move dataMainLocal to dataMainGlobal
+Line 114[17,28] <27, Error, Syntax> - Syntax error : Symbol dataProcMain is not referenced
+Line 114[33,47] <27, Error, Syntax> - Syntax error : Symbol dataNestedLocal is not referenced
+           move dataProcMain to dataNestedLocal
+Line 115[17,32] <27, Error, Syntax> - Syntax error : Symbol dataNestedGlobal is not referenced
+Line 115[37,50] <27, Error, Syntax> - Syntax error : Symbol dataProcNested is not referenced
+           move dataNestedGlobal to dataProcNested
+Line 116[17,34] <27, Error, Syntax> - Syntax error : Symbol dataSubNestedLocal is not referenced
+Line 116[39,57] <27, Error, Syntax> - Syntax error : Symbol dataSubNestedGlobal is not referenced
+           move dataSubNestedLocal to dataSubNestedGlobal
+           .
+       end-declare.
+      
+       END PROGRAM Nested2.
+       END PROGRAM Nested.
+       END PROGRAM MainProgram.

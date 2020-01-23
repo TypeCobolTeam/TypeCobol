@@ -217,6 +217,7 @@
             .
 
 
+       END PROGRAM PGM1.
 
       *Callee contains public procedure
        IDENTIFICATION DIVISION.
@@ -316,118 +317,6 @@
       *          actual-format PIC X(08).
       *  .
        END PROGRAM Callee.
-
-       END PROGRAM PGM1.
-
-      *
-      *declare procedure check public
-      *   input mydate        TYPE Date
-      *  .
-      *_________________________________________________________________
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. ca0ab46c.
-       DATA DIVISION.
-       LINKAGE SECTION.
-      *PGM1.check - Params :
-      *		input(mydate: DATE)
-       01 mydate.
-           02 YYYY PIC 9(4).
-           02 MM PIC 9(2).
-           02 DD PIC 9(2).
-       PROCEDURE DIVISION
-             USING BY REFERENCE mydate
-           .
-      *PGM1.check - Params :
-      *		input(mydate: DATE)
-           CONTINUE.
-       END PROGRAM ca0ab46c.
-      *
-      *declare procedure check2 public
-      *   input mydate        TYPE Date
-      *  .
-      *_________________________________________________________________
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. d0a59141.
-       DATA DIVISION.
-       LINKAGE SECTION.
-      *PGM1.check2 - Params :
-      *		input(mydate: DATE)
-       01 mydate.
-           02 YYYY PIC 9(4).
-           02 MM PIC 9(2).
-           02 DD PIC 9(2).
-       PROCEDURE DIVISION
-             USING BY REFERENCE mydate
-           .
-      *PGM1.check2 - Params :
-      *		input(mydate: DATE)
-           CONTINUE.
-       END PROGRAM d0a59141.
-      *
-      *declare procedure check2 public
-      *   input mydate        TYPE Date
-      *         myDate2       type date
-      *  .
-      *_________________________________________________________________
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. e5b741a8.
-       DATA DIVISION.
-       LINKAGE SECTION.
-      *PGM1.check2 - Params :
-      *		input(mydate: DATE, myDate2: DATE)
-       01 mydate.
-           02 YYYY PIC 9(4).
-           02 MM PIC 9(2).
-           02 DD PIC 9(2).
-       01 myDate2.
-           02 YYYY PIC 9(4).
-           02 MM PIC 9(2).
-           02 DD PIC 9(2).
-       PROCEDURE DIVISION
-             USING BY REFERENCE mydate
-                   BY REFERENCE myDate2
-           .
-      *PGM1.check2 - Params :
-      *		input(mydate: DATE, myDate2: DATE)
-           CONTINUE.
-       END PROGRAM e5b741a8.
-      *
-      *DECLARE PROCEDURE MyPublicProcedure PUBLIC
-      *    INPUT mydate        TYPE Date
-      *          format        PIC X(08)
-      *   OUTPUT okay          TYPE Bool
-      *          actual-format PIC X(08).
-      *  .
-      *_________________________________________________________________
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. ebb060ea.
-       DATA DIVISION.
-       LINKAGE SECTION.
-      *PGM1.MyPublicProcedure - Params :
-      *		input(mydate: DATE, format: pic X(08))
-      *		output(okay: BOOL, actual-format: pic X(08))
-       01 mydate.
-           02 YYYY PIC 9(4).
-           02 MM PIC 9(2).
-           02 DD PIC 9(2).
-       01 format PIC X(08).
-       01 okay-value PIC X     VALUE LOW-VALUE.
-           88 okay       VALUE 'T'.
-           88 okay-false VALUE 'F'
-                             X'00' thru 'S'
-                             'U' thru X'FF'.
-       01 actual-format PIC X(08).
-       PROCEDURE DIVISION
-             USING BY REFERENCE mydate
-                   BY REFERENCE format
-                   BY REFERENCE okay-value
-                   BY REFERENCE actual-format
-           .
-      *PGM1.MyPublicProcedure - Params :
-      *		input(mydate: DATE, format: pic X(08))
-      *		output(okay: BOOL, actual-format: pic X(08))
-           CONTINUE.
-       END PROGRAM ebb060ea.
       *
       *declare procedure check private
       *   input mydate        TYPE Date
@@ -438,7 +327,7 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -447,7 +336,7 @@
              USING BY REFERENCE mydate
            .
       *PGM1.check - Params :
-      *		input(mydate: DATE)
+      *     input(mydate: DATE)
            CONTINUE.
        END PROGRAM a0508f35.
       *
@@ -463,8 +352,8 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.Pgm1PrivateValidateDateFormat - Params :
-      *		input(mydate: DATE, format: pic X(08))
-      *		output(okay: BOOL, actual-format: pic X(08))
+      *     input(mydate: DATE, format: pic X(08))
+      *     output(okay: BOOL, actual-format: pic X(08))
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -483,7 +372,116 @@
                    BY REFERENCE actual-format
            .
       *PGM1.Pgm1PrivateValidateDateFormat - Params :
-      *		input(mydate: DATE, format: pic X(08))
-      *		output(okay: BOOL, actual-format: pic X(08))
+      *     input(mydate: DATE, format: pic X(08))
+      *     output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
        END PROGRAM fde394fb.
+      *
+      *declare procedure check public
+      *   input mydate        TYPE Date
+      *  .
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ca0ab46c.
+       DATA DIVISION.
+       LINKAGE SECTION.
+      *PGM1.check - Params :
+      *     input(mydate: DATE)
+       01 mydate.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+       PROCEDURE DIVISION
+             USING BY REFERENCE mydate
+           .
+      *PGM1.check - Params :
+      *     input(mydate: DATE)
+           CONTINUE.
+       END PROGRAM ca0ab46c.
+      *
+      *declare procedure check2 public
+      *   input mydate        TYPE Date
+      *  .
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. d0a59141.
+       DATA DIVISION.
+       LINKAGE SECTION.
+      *PGM1.check2 - Params :
+      *     input(mydate: DATE)
+       01 mydate.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+       PROCEDURE DIVISION
+             USING BY REFERENCE mydate
+           .
+      *PGM1.check2 - Params :
+      *     input(mydate: DATE)
+           CONTINUE.
+       END PROGRAM d0a59141.
+      *
+      *declare procedure check2 public
+      *   input mydate        TYPE Date
+      *         myDate2       type date
+      *  .
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. e5b741a8.
+       DATA DIVISION.
+       LINKAGE SECTION.
+      *PGM1.check2 - Params :
+      *     input(mydate: DATE, myDate2: DATE)
+       01 mydate.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+       01 myDate2.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+       PROCEDURE DIVISION
+             USING BY REFERENCE mydate
+                   BY REFERENCE myDate2
+           .
+      *PGM1.check2 - Params :
+      *     input(mydate: DATE, myDate2: DATE)
+           CONTINUE.
+       END PROGRAM e5b741a8.
+      *
+      *DECLARE PROCEDURE MyPublicProcedure PUBLIC
+      *    INPUT mydate        TYPE Date
+      *          format        PIC X(08)
+      *   OUTPUT okay          TYPE Bool
+      *          actual-format PIC X(08).
+      *  .
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ebb060ea.
+       DATA DIVISION.
+       LINKAGE SECTION.
+      *PGM1.MyPublicProcedure - Params :
+      *     input(mydate: DATE, format: pic X(08))
+      *     output(okay: BOOL, actual-format: pic X(08))
+       01 mydate.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+       01 format PIC X(08).
+       01 okay-value PIC X     VALUE LOW-VALUE.
+           88 okay       VALUE 'T'.
+           88 okay-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
+       01 actual-format PIC X(08).
+       PROCEDURE DIVISION
+             USING BY REFERENCE mydate
+                   BY REFERENCE format
+                   BY REFERENCE okay-value
+                   BY REFERENCE actual-format
+           .
+      *PGM1.MyPublicProcedure - Params :
+      *     input(mydate: DATE, format: pic X(08))
+      *     output(okay: BOOL, actual-format: pic X(08))
+           CONTINUE.
+       END PROGRAM ebb060ea.

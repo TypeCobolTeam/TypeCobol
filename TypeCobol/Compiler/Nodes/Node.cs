@@ -282,20 +282,24 @@ namespace TypeCobol.Compiler.Nodes {
 
         private QualifiedName _qualifiedName;
 
-        public virtual QualifiedName QualifiedName {
-            get {
-                if (string.IsNullOrEmpty(Name)) return null;
+        public virtual QualifiedName QualifiedName
+        {
+            get
+            {
                 if (_qualifiedName != null) return _qualifiedName;
 
-                List<string> qn = new List<string>() {Name};
-                var parent = this.Parent;
-                while (parent != null)
+                List<string> qn = new List<string>();
+                var current = this;
+                while (current != null)
                 {
-                    if (!string.IsNullOrEmpty(parent.Name)) {
-                        qn.Add(parent.Name);
+                    if (!string.IsNullOrEmpty(current.Name))
+                    {
+                        qn.Add(current.Name);
                     }
-                    parent = parent.Parent;
+
+                    current = current.Parent;
                 }
+
                 qn.Reverse();
                 _qualifiedName = new URI(qn);
                 return _qualifiedName;
@@ -523,7 +527,6 @@ namespace TypeCobol.Compiler.Nodes {
         public IList<N> GetChildren<N>() where N : Node {
             return children.OfType<N>().ToList();
         }
-
 
         private Program _programNode;
         /// <summary>
@@ -816,8 +819,9 @@ namespace TypeCobol.Compiler.Nodes {
         /// false if storage area needs to be searched in StorageAreaWritesDataDefinition.
         /// If parameter is not present, the search is done in both dictionaries</param>
         /// <returns>Correpsonding DataDefinition</returns>
-        public DataDefinition GetDataDefinitionFromStorageAreaDictionary(StorageArea searchedStorageArea, bool? isReadDataDefiniton=null)
+        public DataDefinition GetDataDefinitionFromStorageAreaDictionary([CanBeNull]StorageArea searchedStorageArea, bool? isReadDataDefiniton=null)
         {
+            if (searchedStorageArea == null) return null;
             DataDefinition searchedElem = null;
             if (isReadDataDefiniton == null)
             {
@@ -843,8 +847,9 @@ namespace TypeCobol.Compiler.Nodes {
             return searchedElem;
         }
         
-        public DataDefinition GetDataDefinitionForQualifiedName(QualifiedName qualifiedName, bool? isReadDictionary=null)
+        public DataDefinition GetDataDefinitionForQualifiedName([CanBeNull]QualifiedName qualifiedName, bool? isReadDictionary=null)
         {
+            if (qualifiedName == null) return null;
             DataDefinition searchedElem = null;
             if (isReadDictionary.HasValue)
             {
@@ -867,7 +872,7 @@ namespace TypeCobol.Compiler.Nodes {
         /// <summary>
         /// Clone the children of this node by creating a new list of Nodes.
         /// </summary>
-        /// <param name="node"></param>
+        /// <param name="parent"></param>
         private void CloneChildren(Node parent)
         {
             var oldChildren = parent.children;

@@ -14,7 +14,7 @@
 
                      
        local-STORAGE SECTION.
-      *01  dateString    TYPEDEF strict     PIC 9(08).
+      *01  dateString    TYPEDEF strict PUBLIC    PIC 9(08).
        LINKAGE SECTION.
        01 PntTab-Pnt POINTER.
 
@@ -57,13 +57,13 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *DVZZDATE.currentDateString  - No Params
-      *		returns(Result: dateString)
+      *     returns(Result: dateString)
        01 Result PIC 9(08).
        PROCEDURE DIVISION
              USING BY REFERENCE Result
            .
       *DVZZDATE.currentDateString  - No Params
-      *		returns(Result: dateString)
+      *     returns(Result: dateString)
            display "toto"
            .
        END PROGRAM b8721d20.

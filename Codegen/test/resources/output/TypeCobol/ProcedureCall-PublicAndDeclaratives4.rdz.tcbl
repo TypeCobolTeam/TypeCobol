@@ -1,3 +1,5 @@
+      * 1 errors
+      * Line 7[38,46] <37, Warning, General> - Warning: Debugging mode is active
       *Declaratives and no paragraph under procedure division
       *Debug is active
        IDENTIFICATION DIVISION.

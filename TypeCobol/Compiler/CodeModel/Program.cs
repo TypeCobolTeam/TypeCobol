@@ -156,7 +156,12 @@ namespace TypeCobol.Compiler.CodeModel
 
 		public SourceProgram(SymbolTable EnclosingScope, ProgramIdentification codeElement) : base(codeElement)
 		{
-			SymbolTable = new SymbolTable(new SymbolTable(EnclosingScope, SymbolTable.Scope.Declarations), SymbolTable.Scope.Program);
+            // Main and Stacked programs are always bound to Namespace Scope.
+            System.Diagnostics.Debug.Assert(EnclosingScope != null && EnclosingScope.CurrentScope == SymbolTable.Scope.Namespace);
+
+            var programSymbolTable = new SymbolTable(EnclosingScope, SymbolTable.Scope.Program);
+            var globalSymbolTable = new SymbolTable(programSymbolTable, SymbolTable.Scope.Global);
+			SymbolTable = new SymbolTable(globalSymbolTable, SymbolTable.Scope.Local);
         }
 
         // -- ENVIRONMENT DIVISION --
@@ -209,15 +214,16 @@ namespace TypeCobol.Compiler.CodeModel
     /// Nested programs are not supported for programs compiled with the THREAD option
     /// </summary>
 	public class NestedProgram: Program {
-		public NestedProgram(Program containingProgram, ProgramIdentification codeElement) : base(codeElement) {
+		public NestedProgram(Program containingProgram, ProgramIdentification codeElement)
+            : base(codeElement)
+        {
 			ContainingProgram = containingProgram;
             SymbolTable globalTable = containingProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.Global); //Get Parent Global Table
             var globalNestedSymbolTable = new SymbolTable(globalTable, SymbolTable.Scope.Global); //Create a new Global symbol table for this nested program and his childrens programs
             //It allows to goes down with global variable and ensure that nested global variables and types are not accessible to parent program. 
 
-            SymbolTable = new SymbolTable(globalNestedSymbolTable, SymbolTable.Scope.Declarations);
-            SymbolTable = new SymbolTable(SymbolTable, SymbolTable.Scope.Program);
-		}
+            SymbolTable = new SymbolTable(globalNestedSymbolTable, SymbolTable.Scope.Local);
+        }
 
         public override bool IsNested => true;
         public override bool IsMainProgram => false;

@@ -33,6 +33,7 @@ codeElementStartingKeyword ::=
 |END_EXEC
 |END_IF
 |END_INVOKE
+|END_JSON
 |END_MULTIPLY
 |END_PERFORM
 |END_READ
@@ -65,6 +66,7 @@ codeElementStartingKeyword ::=
 |INPUT_OUTPUT
 |INSPECT
 |INVOKE
+|JSON
 |LINKAGE
 |LOCAL_STORAGE
 |MERGE

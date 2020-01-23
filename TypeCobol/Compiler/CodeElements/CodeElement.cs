@@ -1,5 +1,7 @@
 using Antlr4.Runtime;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Diagnostics;
@@ -13,7 +15,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// Common properties shared between all code elements.
     /// A CodeElement produced during the first parsing phase is also a token consumed by the second parsing phase. 
     /// </summary>
-    public abstract partial class CodeElement: IToken, IVisitable
+    public abstract partial class CodeElement: IToken, IVisitable, IEquatable<CodeElement>
     {
         protected CodeElement(CodeElementType type)
         {
@@ -25,7 +27,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// The Cobol syntax can be decomposed in 116 elementary code elements
         /// </summary>
-        public CodeElementType Type { get; private set; }
+        public CodeElementType Type { get; }
 
         private IList<Token> _consumedTokens;
         /// <summary>
@@ -157,16 +159,49 @@ namespace TypeCobol.Compiler.CodeElements
 
         public override bool Equals(object obj)
         {
-            var codeElement = obj as CodeElement;
-            if (codeElement == null)
-                return false;
+            return Equals(obj as CodeElement);
+        }
 
-            return this.Line == codeElement.Line &&
-                   this.Type == codeElement.Type &&
-                   this.Column == codeElement.Column &&
-                   this.StartIndex == codeElement.StartIndex &&
-                   this.StopIndex == codeElement.StopIndex &&
-                   this.Text == codeElement.Text;
+        public bool Equals(CodeElement codeElement)
+        {
+            if (Object.ReferenceEquals(this, codeElement)) return true;
+            if (Object.ReferenceEquals(null, codeElement)) return false;
+
+            if (ConsumedTokens != null && codeElement.ConsumedTokens != null)
+            {
+                if (ConsumedTokens.Count != codeElement.ConsumedTokens.Count)
+                {
+                    return false;
+                }
+
+                if (ConsumedTokens.Count > 0 && codeElement.ConsumedTokens.Count > 0)
+                {
+                    return Type == codeElement.Type && ConsumedTokens[0].Equals(codeElement.ConsumedTokens[0]);
+                }
+
+                // ConsumedTokens collections are both empty
+                Debug.Fail("CodeElement.Equals: cannot compare 2 CodeElements having both no Consumed Tokens.");
+            }
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = 13;
+                hashCode = (hashCode * 397) ^ Type.GetHashCode();
+                if (ConsumedTokens != null)
+                {
+                    var consumedTokensHashCode = ConsumedTokens.Count > 0
+                        ? ConsumedTokens[0].GetHashCode()
+                        : ConsumedTokens.GetHashCode();
+                    hashCode = (hashCode * 397) ^ consumedTokensHashCode;
+                }
+
+                return hashCode;
+            }
         }
 
         private bool? _isInsideCopy = null; 
@@ -188,7 +223,7 @@ namespace TypeCobol.Compiler.CodeElements
                 FirstCopyDirective = null;
                 CopyDirective firstSource = null; //null = in the main source file
 
-                if (ConsumedTokens != null && ConsumedTokens.Count > 1)
+                if (ConsumedTokens != null && ConsumedTokens.Count > 0)
                 {
                     //Get CopyDirective of first ConsumedToken
                     var firstConsumedToken = ConsumedTokens[0] as ImportedToken;
@@ -267,7 +302,7 @@ namespace TypeCobol.Compiler.CodeElements
 
 		private string GetIndent(ITokensLine line, int firstTokenStartIndex) {
 			var lineStartIndex = line.SequenceNumberText.Length + 1;// +1 for line.IndicatorChar
-			return line.SourceText.Substring(0, firstTokenStartIndex-lineStartIndex);
+            return new string(' ',  firstTokenStartIndex-lineStartIndex);
 		}
 
         // --- Antlr4.Runtime.IToken implementation ---

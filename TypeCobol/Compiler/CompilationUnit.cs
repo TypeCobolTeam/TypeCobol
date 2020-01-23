@@ -173,7 +173,7 @@ namespace TypeCobol.Compiler
                     SourceFile root = temporarySnapshot.Root;
                     List<Diagnostic> diagnostics = new List<Diagnostic>();
                     Dictionary<CodeElement, Node> nodeCodeElementLinkers = temporarySnapshot.NodeCodeElementLinkers ?? new Dictionary<CodeElement, Node>();
-                    ProgramClassParserStep.CrossCheckPrograms(root, temporarySnapshot);
+                    ProgramClassParserStep.CrossCheckPrograms(root, temporarySnapshot, this.CompilerOptions);
               
                     // Capture the result of the parse in a new snapshot
                     ProgramClassDocumentSnapshot = new ProgramClassDocument(

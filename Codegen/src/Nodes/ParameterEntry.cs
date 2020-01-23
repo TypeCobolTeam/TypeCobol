@@ -47,17 +47,22 @@ internal class ParameterEntry: GenericNode<ParameterDescriptionEntry>, Generated
 					str.Append("01 ").Append(name);
 					AlphanumericValue picture = null;
                     //Type exists from Cobol 2002
-				    string typedef = null;
+				    string typeDesc = null;
 					if (this.CodeElement.DataType.CobolLanguageLevel >= TypeCobol.Compiler.CobolLanguageLevel.Cobol2002) {
 					    var type = this.Description?.TypeDefinition;
 					    if (type != null)
 					    {
 							customtype = type;
-						    typedef = TypedDataNode.ExtractAnyCobolScalarTypeDef(Layout, customtype, out bHasPeriod, true);
-						    if (typedef.Length != 0)
+						    typeDesc = TypedDataNode.ExtractAnyCobolScalarTypeDef(Layout, Description.CodeElement, customtype, out bHasPeriod, true);
+						    if (typeDesc.Length != 0)
 						    {
-						        str.Append(typedef);
+						        str.Append(typeDesc);
 						    }
+                            else
+                            {
+                                typeDesc = TypedDataNode.ExtractTokensValuesAfterTypeName(Layout, Description.CodeElement, out bHasPeriod, out _);
+                                str.Append(typeDesc);
+                            }
 						}
 					} else picture = this.CodeElement.Picture;
 
@@ -107,7 +112,7 @@ internal class ParameterEntry: GenericNode<ParameterDescriptionEntry>, Generated
 					    str.Append('.');
 					_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
                         
-					// TCRFUN_CODEGEN_PARAMETERS_IN_LINKAGE_SECTION
+					// TCRFUN-CODEGEN-PARAMETERS-IN-LINKAGE-SECTION
 					foreach(var child in this.GetChildren<DataCondition>()) {
 						str.Clear();
 						var entry = child.CodeElement;

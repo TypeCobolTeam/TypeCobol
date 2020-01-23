@@ -3,7 +3,7 @@
        data DIVISION.
        working-storage section.
       
-       01 EventList TYPEDEF STRICT.
+       01 EventList TYPEDEF STRICT PRIVATE.
           05 Counter pic 9(04) comp-5.
           05 EventArray.
              10 Event pic X occurs 10

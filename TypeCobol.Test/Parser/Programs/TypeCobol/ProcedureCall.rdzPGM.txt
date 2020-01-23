@@ -1,6 +1,7 @@
 --- Diagnostics ---
 Line 15[12,15] <27, Error, Syntax> - Syntax error : Given value is not correct : (00ABC100) expected numerical value only OffendingSymbol=[12,15:varD]<UserDefinedWord>
 Line 27[37,39] <27, Error, Syntax> - Syntax error : mismatched input 'PIC' expecting {user defined word, CURRENCY, DATE} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter>cobol2002TypeClause,  OffendingSymbol=[37,39:PIC]<PIC>
+Line 27[21,26] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[21,26:myDate]<UserDefinedWord>
 Line 36[21,26] <27, Error, Syntax> - Syntax error : Parameter with name 'format' declared multiple times OffendingSymbol=[21,26:format]<UserDefinedWord>
 Line 37[21,26] <27, Error, Syntax> - Syntax error : Parameter with name 'format' declared multiple times OffendingSymbol=[21,26:format]<UserDefinedWord>
 Line 38[21,24] <27, Error, Syntax> - Syntax error : Parameter with name 'var1' declared multiple times OffendingSymbol=[21,24:var1]<UserDefinedWord>
@@ -47,7 +48,7 @@ Line 266[18,41] <30, Error, Semantics> - Semantic error: TYPE 'Date2' is not ref
 --- Program ---
 PROGRAM: ProcedureCall common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
   somedate:DATE
   someformat:Alphanumeric
@@ -61,15 +62,16 @@ PROGRAM: ProcedureCall common:False initial:False recursive:False
   MyToto:Toto
 -- PARAGRAPHS --
   TRAITEMENT
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations
+-- FUNCTIONS ---
+  GetPtrFn
+        in: ptrFn:?
+        in: ptrPr:?
+--- Intrinsic:Namespace:Program
 -- TYPES -------
   Toto:Toto
 -- FUNCTIONS ---
   MyProc
         in: myDate:?
-  GetPtrFn
-        in: ptrFn:?
-        in: ptrPr:?
   DuplicatedParams
         in: format:DATE
         in: format:Alphanumeric
@@ -130,6 +132,9 @@ PROGRAM: ProcedureCall common:False initial:False recursive:False
      inout: var1:DATE
   MyProc3
         in: mydate:Date2
+  check
+        in: rate1:Alphanumeric
+       out: rate2:Alphanumeric
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL

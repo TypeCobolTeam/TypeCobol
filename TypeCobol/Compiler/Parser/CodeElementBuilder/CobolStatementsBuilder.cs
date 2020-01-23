@@ -163,7 +163,7 @@ namespace TypeCobol.Compiler.Parser
         // ALTER STATEMENT //
         /////////////////////
 
-        internal CodeElement CreateAlterStatement(CodeElementsParser.AlterStatementContext context) {
+        internal AlterStatement CreateAlterStatement(CodeElementsParser.AlterStatementContext context) {
 			var statement = new AlterStatement();
 			int alterInstructionsCount = context.procedureName().Length / 2;
 			statement.AlterGotoInstructions = new AlterGotoInstruction[alterInstructionsCount];
@@ -715,11 +715,36 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 
-		/////////////////////
-		// MERGE STATEMENT //
-		/////////////////////
+        /////////////////////////////
+        // JSON GENERATE STATEMENT //
+        /////////////////////////////
 
-		internal MergeStatement CreateMergeStatement(CodeElementsParser.MergeStatementContext context) {
+        internal JsonGenerateStatement CreateJsonGenerateStatement(CodeElementsParser.JsonGenerateStatementContext context)
+        {
+            return new JsonGenerateStatement
+                   {
+                       Destination = CobolExpressionsBuilder.CreateStorageArea(context.destination),
+                       Source = CobolExpressionsBuilder.CreateVariable(context.source),
+                       CharactersCount = CobolExpressionsBuilder.CreateStorageArea(context.charactersCount),
+                       NameMappings = context.jsonNameMapping().Select(CreateJsonNameMapping).ToArray(),
+                       ExcludedDataItems = context.excludedDataItem().Select(c => CobolExpressionsBuilder.CreateVariable(c.variable1())).ToArray()
+                   };
+        }
+
+        private JsonNameMapping CreateJsonNameMapping(CodeElementsParser.JsonNameMappingContext context)
+        {
+            return new JsonNameMapping
+                   {
+                       DataItem = CobolExpressionsBuilder.CreateVariable(context.dataItem),
+                       OutputName = CobolWordsBuilder.CreateAlphanumericValue(context.outputName)
+                   };
+        }
+
+        /////////////////////
+        // MERGE STATEMENT //
+        /////////////////////
+
+        internal MergeStatement CreateMergeStatement(CodeElementsParser.MergeStatementContext context) {
 			var statement = new MergeStatement();
 			statement.FileName = CobolWordsBuilder.CreateFileNameReference(context.fileNameReference());
 			statement.SortingKeys = CreateSortingKeys(context.onAscendingDescendingKey());
@@ -1212,7 +1237,7 @@ namespace TypeCobol.Compiler.Parser
         // STOP STATEMENT //
         ////////////////////
 
-        internal CodeElement CreateStopStatement(CodeElementsParser.StopStatementContext context)
+        internal StopStatement CreateStopStatement(CodeElementsParser.StopStatementContext context)
         {
             var statement = new StopStatement();
 

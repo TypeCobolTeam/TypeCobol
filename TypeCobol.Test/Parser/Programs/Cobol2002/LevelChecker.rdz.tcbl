@@ -19,7 +19,7 @@
 
       *OK level of this variable is ok
        45 MyVar2 TYPE myType.
-      *KO level of this varaible is to high
+      *KO level of this variable is to high
        48 MyVar1 TYPE myType.
       *OK type does not contains children
        77 MYVar3 TYPE myPic.
@@ -44,6 +44,6 @@
        DECLARE PROCEDURE MyProc
          INPUT exists TYPE BOOL
                 88 exists-Ok value 'O'.
-        END-DECLARE.
+       END-DECLARE.
 
        END PROGRAM LevelChecker.

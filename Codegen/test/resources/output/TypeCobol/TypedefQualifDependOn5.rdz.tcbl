@@ -10,11 +10,11 @@
       *     05 secondGroup.
       *         10 typedGroupvar TYPE secondType.
       
-      *         10 tutu occurs 1 depending on
+      *         10 tutu PIC X occurs 1 depending on
       *     MyGroup::vargroup.
-      *         10 titi occurs 1 depending on
+      *         10 titi PIC X occurs 1 depending on
       *     vargroup.
-      *         10 toto occurs 1 depending on myVar.
+      *         10 toto PIC X occurs 1 depending on myVar.
       
       *01 secondType TYPEDEF STRICT.
       *     05 MyGroup.
@@ -27,13 +27,13 @@
              03 typedGroupvar.
                04 MyGroup.
                  05 vargroup PIC 9(10).
-             03 tutu occurs 1 depending on
+             03 tutu PIC X occurs 1 depending on
             vargroup OF MyGroup OF typedGroupvar OF secondGroup OF MyVar
       -    1.
-             03 titi occurs 1 depending on
+             03 titi PIC X occurs 1 depending on
             vargroup OF MyGroup OF typedGroupvar OF secondGroup OF MyVar
       -    1.
-             03 toto occurs 1 depending on myVar OF MyVar1.
+             03 toto PIC X occurs 1 depending on myVar OF MyVar1.
                              
       *01 MyVar2 TYPE myType.
        01 MyVar2.
@@ -42,13 +42,13 @@
              03 typedGroupvar.
                04 MyGroup.
                  05 vargroup PIC 9(10).
-             03 tutu occurs 1 depending on
+             03 tutu PIC X occurs 1 depending on
             vargroup OF MyGroup OF typedGroupvar OF secondGroup OF MyVar
       -    2.
-             03 titi occurs 1 depending on
+             03 titi PIC X occurs 1 depending on
             vargroup OF MyGroup OF typedGroupvar OF secondGroup OF MyVar
       -    2.
-             03 toto occurs 1 depending on myVar OF MyVar2.
+             03 toto PIC X occurs 1 depending on myVar OF MyVar2.
                              
       
        PROCEDURE DIVISION.

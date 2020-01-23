@@ -85,6 +85,7 @@
       *OK 
           call PGM2::check2 input somedate
         .
+       END PROGRAM PGM1.
 
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM2.
@@ -126,7 +127,7 @@
                     OUTPUT     flag     realformat  
 
          .
-         END-DECLARE.
+       END-DECLARE.
        DECLARE PROCEDURE MyPublicProcedure PUBLIC
            INPUT mydate        TYPE Date
                  format        PIC X(08)
@@ -157,7 +158,7 @@
                     OUTPUT     flag     realformat  
 
          .
-         END-DECLARE.
+       END-DECLARE.
        DECLARE PROCEDURE MyPublicProcedure PUBLIC
            INPUT mydate        TYPE Date
                  format        PIC X(08)
@@ -168,6 +169,3 @@
            CONTINUE.
        END-DECLARE.
        END PROGRAM PGM3.
-
-       END PROGRAM PGM1.
-

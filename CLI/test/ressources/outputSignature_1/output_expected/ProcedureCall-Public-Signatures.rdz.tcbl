@@ -1,9 +1,5 @@
       *TypeCobol_Version:0.1(alpha)
        IDENTIFICATION DIVISION.
-      %<<
-        Multiline comment
-        should be commented
-      %>>
        PROGRAM-ID. Callee.
        DATA DIVISION.
        working-storage section.                                               
@@ -16,12 +12,12 @@
           05 Var2 pic X.
        01  MyType5 TYPEDEF STRICT PUBLIC.
           05 Var5 pic X.
-      %<<< My program 
+      %<<< My program
           @ Description  description
           @deprecated
           @    replacedBy  MyFonction2
           @ need  some needs
-          @ todo 
+          @ todo
               - make my second type my first type
               - get another type
           @Params:
@@ -54,10 +50,6 @@
        END-DECLARE.
        DECLARE PROCEDURE MyPublicProcedure PUBLIC
            INPUT mydate        TYPE Date
-      %<<
-              Multiline comment
-              should be commented
-      %>>
                  format        PIC X(08)
           OUTPUT okay          TYPE Bool
                  actual-format PIC X(08).

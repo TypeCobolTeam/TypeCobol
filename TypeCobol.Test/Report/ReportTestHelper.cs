@@ -23,17 +23,29 @@ namespace TypeCobol.Test.Report
         private static string ROOT_COPY = Path.Combine("Report", "Copy");
 
         /// <summary>
+        /// Return Code
+        /// </summary>
+        public enum ReturnCode
+        {
+            Success,
+            ParserDiagnosticsErrors,//Failed with diagnostics errors
+            NoReportFile,//No Report file generated.
+        };
+
+
+        /// <summary>
         /// Parse an file using a NodeListener and IReport instance and compare the resulting report.
         /// </summary>
         /// <typeparam name="TCtx"></typeparam>
         /// <param name="fileName">The file name to parse</param>
         /// <param name="reportFileName">The file that contains the expected report</param>
         /// <param name="reportType">The Type of the IReport instance to be instantiated.</param>
-        public static void ParseWithNodeListenerReportCompare(string fileName, string reportFileName, System.Type reportType)
+        /// <returns>Return true if the report has been generated and compared, false otherwise</returns>
+        public static ReturnCode ParseWithNodeListenerReportCompare(string fileName, string reportFileName, System.Type reportType)
         {
             Assert.IsTrue(Tools.Reflection.IsTypeOf(reportType, typeof(IReport)));
             IReport report = null;//Variable to receive the created report instance.     
-            
+
             TypeCobol.Compiler.Parser.NodeListenerFactory factory = () =>
             {
                 object obj = System.Activator.CreateInstance(reportType, args: Path.GetFullPath(reportFileName));
@@ -61,8 +73,8 @@ namespace TypeCobol.Test.Report
                 parser.Init(input, typeCobolOption, format, new List<string>() { copyFolder });
                 parser.Parse(input);
 
-                var allDiags = parser.Results.AllDiagnostics();
-                if (allDiags.Count == 0)
+                // warning diagnostics are not considered : for example, test with warning with COPY SUPPRESS is always running
+                if (parser.Results.AllDiagnostics().All(d => d.Info.Severity == TypeCobol.Compiler.Diagnostics.Severity.Warning))
                 {
                     if (report != null)
                     {
@@ -73,8 +85,17 @@ namespace TypeCobol.Test.Report
                             string result = sw.ToString();
                             string expected = File.ReadAllText(output, format.Encoding);
                             TypeCobol.Test.TestUtils.compareLines(input, result, expected, PlatformUtils.GetPathForProjectFile(output));
+                            return ReturnCode.Success;
                         }
                     }
+                    else
+                    {
+                        return ReturnCode.NoReportFile;
+                    }
+                }
+                else
+                {
+                   return ReturnCode.ParserDiagnosticsErrors;
                 }
             }
             finally

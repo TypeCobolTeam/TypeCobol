@@ -202,13 +202,13 @@ namespace TypeCobol.Compiler.Nodes {
     ///   IndexDefinition               -> DataDefinitionEntry
     ///   GeneratedDefinition           -> DataDefinitionEntry
     ///                                         CommonDataDescriptionAndDataRedefines
-    ///   DataDescription               ->          DataDescriptionEntry
+    ///   DataDescription 01-49 & 77    ->          DataDescriptionEntry
     ///      ParameterDescription       ->          ParameterDescriptionEntry
     ///      TypedDataNode              ->          DataDescriptionEntry
     ///   TypeDefinition                ->          DataTypeDescriptionEntry
     ///   DataRedefines                 ->          DataRedefinesEntry
-    ///   DataCondition                 ->      DataConditionEntry
-    ///   DataRenames                   ->      DataRenamesEntry
+    ///   DataCondition   88            ->      DataConditionEntry
+    ///   DataRenames     66            ->      DataRenamesEntry
     ///     
     /// 
     /// Implementation note:
@@ -771,6 +771,31 @@ namespace TypeCobol.Compiler.Nodes {
         [NotNull]
         public new DataDescriptionEntry CodeElement => (DataDescriptionEntry) base.CodeElement;
 
+        public bool IsDataDescriptionGroup
+        {
+            get
+            {
+                if (this.CodeElement.LevelNumber?.Value < 50 && this.Picture == null && this.CodeElement.UserDefinedDataType == null)
+                {
+                    if (this.ChildrenCount > 0)
+                    {
+                        return true;
+                    }
+                    else if (!this.Usage.HasValue || this.Usage.Value != DataUsage.Pointer &&
+                             this.Usage.Value != DataUsage.FunctionPointer &&
+                             this.Usage.Value != DataUsage.ProcedurePointer &&
+                             this.Usage.Value != DataUsage.ObjectReference &&
+                             this.Usage.Value != DataUsage.FloatingPoint &&
+                             this.Usage.Value != DataUsage.LongFloatingPoint &&
+                             this.Usage.Value != DataUsage.Index)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
@@ -818,7 +843,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
     // [COBOL 2002]
-    public class TypeDefinition: DataDefinition, Parent<DataDescription>, IDocumentable
+    public class TypeDefinition: DataDefinition, Parent<DataDescription>, IDocumentable, IEquatable<TypeDefinition>
     {
         public TypeDefinition([NotNull] DataTypeDescriptionEntry entry) : base(entry)
         {
@@ -850,18 +875,15 @@ namespace TypeCobol.Compiler.Nodes {
 
         public override bool Equals(object obj)
         {
-            if ((obj as TypeDefinition) != null)
+            if (obj is TypeDefinition)
             {
-                var compareTypeDef = (TypeDefinition) obj;
-                return compareTypeDef.DataType == this.DataType &&
-                       //compareTypeDef.PrimitiveDataType == this.PrimitiveDataType &&
-                       compareTypeDef.QualifiedName.ToString() == this.QualifiedName.ToString();
+                return Equals(obj as TypeDefinition);
             }
 
             var generatedDataType = (obj as GeneratedDefinition);
-            if (generatedDataType  != null && 
+            if (generatedDataType != null &&
                 !(generatedDataType.DataType == DataType.Alphabetic ||
-                  generatedDataType .DataType == DataType.Alphanumeric)) //Remove these two check on Alpha.. to allow move "fezf" TO alphatypedVar
+                  generatedDataType.DataType == DataType.Alphanumeric)) //Remove these two check on Alpha.. to allow move "fezf" TO alphatypedVar
             {
                 if (this.PrimitiveDataType != null)
                     return this.PrimitiveDataType == generatedDataType.DataType;
@@ -869,6 +891,26 @@ namespace TypeCobol.Compiler.Nodes {
                     return this.DataType == generatedDataType.DataType;
             }
             return false;
+        }
+
+        public bool Equals(TypeDefinition compareTypeDef)
+        {
+            if (Object.ReferenceEquals(this, compareTypeDef)) return true;
+            if (Object.ReferenceEquals(null, compareTypeDef)) return false;
+
+            return compareTypeDef.DataType == this.DataType &&
+                   compareTypeDef.QualifiedName.ToString() == this.QualifiedName.ToString();
+        }
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = 13;
+                hashCode = (hashCode * 397) ^ DataType.GetHashCode();
+                hashCode = (hashCode * 397) ^ QualifiedName.ToString().GetHashCode();
+
+                return hashCode;
+            }
         }
 
         public override string ToString()
@@ -935,7 +977,8 @@ namespace TypeCobol.Compiler.Nodes {
         {
             Input,
             Output,
-            InOut
+            InOut,
+            Returning
         }
     }
     // [/TYPECOBOL]
@@ -970,10 +1013,10 @@ namespace TypeCobol.Compiler.Nodes {
     /// Allow to generate DataDefinition which can take any desired form/type. 
     /// Give access to GeneratedDefinition of Numeric/Alphanumeric/Boolean/... DataType
     /// </summary>
-    public class GeneratedDefinition : DataDefinition
+    public class GeneratedDefinition : DataDefinition, IEquatable<GeneratedDefinition>
     {
         private string _Name;
-        private DataType _DataType;
+        private readonly DataType _DataType;
 
         public static GeneratedDefinition NumericGeneratedDefinition =       new GeneratedDefinition("Numeric", DataType.Numeric);
         public static GeneratedDefinition AlphanumericGeneratedDefinition =  new GeneratedDefinition("Alphanumeric", DataType.Alphanumeric);
@@ -1001,13 +1044,27 @@ namespace TypeCobol.Compiler.Nodes {
             get { return _DataType; }
         }
 
-
         public override bool Equals(object obj)
         {
-            //In this case we can only compare the DataType
-            if((obj as DataDefinition) != null)
-                return ((DataDefinition) obj).DataType == _DataType;
-            return false;
+            return Equals(obj as GeneratedDefinition);
+        }
+
+        public bool Equals(GeneratedDefinition generatedDefinition)
+        {
+            if (Object.ReferenceEquals(this, generatedDefinition)) return true;
+            if (Object.ReferenceEquals(null, generatedDefinition)) return false;
+            return generatedDefinition.DataType == _DataType;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = 13;
+                hashCode = (hashCode * 397) ^ _DataType.GetHashCode();
+
+                return hashCode;
+            }
         }
     }
 

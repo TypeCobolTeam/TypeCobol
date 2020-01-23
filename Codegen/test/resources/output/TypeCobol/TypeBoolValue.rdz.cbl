@@ -172,10 +172,10 @@
        data division.
        local-storage section.
       *TestDefBool.LoopTraceback - Params :
-      *		input(startingDsa: pointer)
-      *		output(errCode: ErrorCode)
+      *     input(startingDsa: pointer)
+      *     output(errCode: ErrorCode)
                              
-      *01 LoopControl typedef strict private.
+      *01 LoopControl typedef strict.
       *  05 loop          pic S9(5) COMP-5.
       *  05 sta           type bool value true.
       *  05 t             pic S9(5) COMP-5.
@@ -205,8 +205,8 @@
                                       
        linkage section.
       *TestDefBool.LoopTraceback - Params :
-      *		input(startingDsa: pointer)
-      *		output(errCode: ErrorCode)
+      *     input(startingDsa: pointer)
+      *     output(errCode: ErrorCode)
                        
             
        01 startingDsa pointer.
@@ -217,8 +217,8 @@
                    BY REFERENCE errCode
            .
       *TestDefBool.LoopTraceback - Params :
-      *		input(startingDsa: pointer)
-      *		output(errCode: ErrorCode)
+      *     input(startingDsa: pointer)
+      *     output(errCode: ErrorCode)
            goback
            .
        END PROGRAM ae4b6d10.

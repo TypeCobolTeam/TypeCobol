@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Antlr4.Runtime;
+using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
@@ -22,8 +23,6 @@ namespace TypeCobol.Compiler.Diagnostics
             var global = GetContext(data, context?.globalClause());
             if (data.DataName == null)
             {
-                if (!data.IsFiller)
-                    DiagnosticUtils.AddError(data, "Data name or FILLER expected", context?.dataNameDefinition());
                 if (data.IsExternal)
                     DiagnosticUtils.AddError(data,
                         "Data name must be specified for any entry containing the EXTERNAL clause", external);
@@ -69,7 +68,7 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class DataConditionChecker 
+    class DataConditionChecker
     {
         public static void OnCodeElement(DataConditionEntry data, CodeElementsParser.DataConditionEntryContext context)
         {
@@ -246,7 +245,7 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class SetStatementForAssignmentChecker 
+    class SetStatementForAssignmentChecker
     {
         public static void OnCodeElement(SetStatementForAssignment set, CodeElementsParser.SetStatementForAssignmentContext context)
         {
@@ -264,7 +263,7 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class SetStatementForIndexesChecker 
+    class SetStatementForIndexesChecker
     {
         public static void OnCodeElement(SetStatementForIndexes set, CodeElementsParser.SetStatementForIndexesContext context)
         {
@@ -289,6 +288,52 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    #endregion
+    class AlterStatementChecker
+    {
+        public static void OnCodeElement(AlterStatement statement, CodeElementsParser.AlterStatementContext context)
+        {
+            DiagnosticUtils.AddErrorWithNoRuleStack(statement, "ALTER should not be used", context, MessageCode.Warning);
+        }
+    }
 
+    class CodeElementChecker
+    {
+        public static void OnCodeElement(CodeElement codeElement, bool isDebuggingModeEnabled)
+        {
+            if (isDebuggingModeEnabled)
+            {
+                // detect CodeElement with a mix of Debug and "Normal" lines in debugging mode
+                int consumedTokensCount = codeElement.ConsumedTokens.Count;
+                if (consumedTokensCount > 1)
+                {
+                    bool isDebug = false, isNoDebug = false;
+                    for (int i = 0; i < consumedTokensCount; i++)
+                    {
+                        bool isDebugType = char.ToLower(codeElement.ConsumedTokens[i].TokensLine.IndicatorChar) == 'd';
+                        isDebug |= isDebugType;
+                        isNoDebug |= !isDebugType;
+                        if (isDebug && isNoDebug)
+                        {
+                            DiagnosticUtils.AddError(codeElement, "In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.");
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    class StopStatementChecker
+    {
+        public static void OnCodeElement(StopStatement statement, CodeElementsParser.StopStatementContext context)
+        {
+            if (statement.StopRun != null && statement.StopRun.Value)
+            {
+                DiagnosticUtils.AddError(statement, "GOBACK should be used instead of STOP RUN", ParseTreeUtils.GetFirstToken(context), 
+                    null, MessageCode.Warning);
+            }
+        }
+    }
+
+    #endregion
 }

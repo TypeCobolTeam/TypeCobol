@@ -1,50 +1,66 @@
 --- Diagnostics ---
-Line 10[18,29] <27, Error, Syntax> - Syntax error : Symbol dataNested21 is not referenced OffendingSymbol=[18,29:dataNested21]<UserDefinedWord>
-Line 10[34,45] <27, Error, Syntax> - Syntax error : Symbol dataNested22 is not referenced OffendingSymbol=[34,45:dataNested22]<UserDefinedWord>
-Line 12[18,28] <27, Error, Syntax> - Syntax error : Symbol dataNested1 is not referenced OffendingSymbol=[18,28:dataNested1]<UserDefinedWord>
-Line 12[33,43] <27, Error, Syntax> - Syntax error : Symbol dataNested2 is not referenced OffendingSymbol=[33,43:dataNested2]<UserDefinedWord>
-Line 25[18,32] <27, Error, Syntax> - Syntax error : Symbol dataNestedProc1 is not referenced OffendingSymbol=[18,32:dataNestedProc1]<UserDefinedWord>
-Line 25[37,48] <27, Error, Syntax> - Syntax error : Symbol paramNested1 is not referenced OffendingSymbol=[37,48:paramNested1]<UserDefinedWord>
-Line 28[18,33] <27, Error, Syntax> - Syntax error : Symbol dataNestedProc21 is not referenced OffendingSymbol=[18,33:dataNestedProc21]<UserDefinedWord>
-Line 28[38,50] <27, Error, Syntax> - Syntax error : Symbol paramNested21 is not referenced OffendingSymbol=[38,50:paramNested21]<UserDefinedWord>
-Line 30[18,29] <27, Error, Syntax> - Syntax error : Symbol dataNested21 is not referenced OffendingSymbol=[18,29:dataNested21]<UserDefinedWord>
-Line 30[34,45] <27, Error, Syntax> - Syntax error : Symbol dataNested22 is not referenced OffendingSymbol=[34,45:dataNested22]<UserDefinedWord>
-Line 32[18,28] <27, Error, Syntax> - Syntax error : Symbol dataNested1 is not referenced OffendingSymbol=[18,28:dataNested1]<UserDefinedWord>
-Line 32[33,43] <27, Error, Syntax> - Syntax error : Symbol dataNested2 is not referenced OffendingSymbol=[33,43:dataNested2]<UserDefinedWord>
-Line 35[18,26] <27, Error, Syntax> - Syntax error : Symbol dataMain1 is not referenced OffendingSymbol=[18,26:dataMain1]<UserDefinedWord>
-Line 48[18,29] <27, Error, Syntax> - Syntax error : Symbol dataNested21 is not referenced OffendingSymbol=[18,29:dataNested21]<UserDefinedWord>
-Line 48[34,45] <27, Error, Syntax> - Syntax error : Symbol dataNested22 is not referenced OffendingSymbol=[34,45:dataNested22]<UserDefinedWord>
-Line 52[18,26] <27, Error, Syntax> - Syntax error : Symbol dataMain1 is not referenced OffendingSymbol=[18,26:dataMain1]<UserDefinedWord>
-Line 62[18,26] <27, Error, Syntax> - Syntax error : Symbol dataProc1 is not referenced OffendingSymbol=[18,26:dataProc1]<UserDefinedWord>
-Line 62[31,40] <27, Error, Syntax> - Syntax error : Symbol paramMain1 is not referenced OffendingSymbol=[31,40:paramMain1]<UserDefinedWord>
-Line 67[18,33] <27, Error, Syntax> - Syntax error : Symbol dataNestedProc21 is not referenced OffendingSymbol=[18,33:dataNestedProc21]<UserDefinedWord>
-Line 67[38,50] <27, Error, Syntax> - Syntax error : Symbol paramNested21 is not referenced OffendingSymbol=[38,50:paramNested21]<UserDefinedWord>
-Line 69[18,29] <27, Error, Syntax> - Syntax error : Symbol dataNested21 is not referenced OffendingSymbol=[18,29:dataNested21]<UserDefinedWord>
-Line 69[34,45] <27, Error, Syntax> - Syntax error : Symbol dataNested22 is not referenced OffendingSymbol=[34,45:dataNested22]<UserDefinedWord>
-Line 72[18,28] <27, Error, Syntax> - Syntax error : Symbol dataNested1 is not referenced OffendingSymbol=[18,28:dataNested1]<UserDefinedWord>
-Line 75[18,26] <27, Error, Syntax> - Syntax error : Symbol dataMain1 is not referenced OffendingSymbol=[18,26:dataMain1]<UserDefinedWord>
-Line 89[18,28] <27, Error, Syntax> - Syntax error : Symbol dataNested1 is not referenced OffendingSymbol=[18,28:dataNested1]<UserDefinedWord>
-Line 91[18,26] <27, Error, Syntax> - Syntax error : Symbol dataMain1 is not referenced OffendingSymbol=[18,26:dataMain1]<UserDefinedWord>
-Line 100[18,26] <27, Error, Syntax> - Syntax error : Symbol dataProc1 is not referenced OffendingSymbol=[18,26:dataProc1]<UserDefinedWord>
-Line 100[31,40] <27, Error, Syntax> - Syntax error : Symbol paramMain1 is not referenced OffendingSymbol=[31,40:paramMain1]<UserDefinedWord>
-Line 102[18,32] <27, Error, Syntax> - Syntax error : Symbol dataNestedProc1 is not referenced OffendingSymbol=[18,32:dataNestedProc1]<UserDefinedWord>
-Line 102[37,48] <27, Error, Syntax> - Syntax error : Symbol paramNested1 is not referenced OffendingSymbol=[37,48:paramNested1]<UserDefinedWord>
-Line 107[18,29] <27, Error, Syntax> - Syntax error : Symbol dataNested21 is not referenced OffendingSymbol=[18,29:dataNested21]<UserDefinedWord>
-Line 109[18,28] <27, Error, Syntax> - Syntax error : Symbol dataNested1 is not referenced OffendingSymbol=[18,28:dataNested1]<UserDefinedWord>
-Line 111[18,26] <27, Error, Syntax> - Syntax error : Symbol dataMain1 is not referenced OffendingSymbol=[18,26:dataMain1]<UserDefinedWord>
+Line 17[17,28] <27, Error, Syntax> - Syntax error : Symbol dataProcMain is not referenced OffendingSymbol=[17,28:dataProcMain]<UserDefinedWord>
+Line 17[33,47] <27, Error, Syntax> - Syntax error : Symbol dataNestedLocal is not referenced OffendingSymbol=[33,47:dataNestedLocal]<UserDefinedWord>
+Line 18[17,32] <27, Error, Syntax> - Syntax error : Symbol dataNestedGlobal is not referenced OffendingSymbol=[17,32:dataNestedGlobal]<UserDefinedWord>
+Line 18[37,50] <27, Error, Syntax> - Syntax error : Symbol dataProcNested is not referenced OffendingSymbol=[37,50:dataProcNested]<UserDefinedWord>
+Line 19[17,34] <27, Error, Syntax> - Syntax error : Symbol dataSubNestedLocal is not referenced OffendingSymbol=[17,34:dataSubNestedLocal]<UserDefinedWord>
+Line 19[39,57] <27, Error, Syntax> - Syntax error : Symbol dataSubNestedGlobal is not referenced OffendingSymbol=[39,57:dataSubNestedGlobal]<UserDefinedWord>
+Line 20[20,36] <27, Error, Syntax> - Syntax error : Symbol dataProcSubNested is not referenced OffendingSymbol=[20,36:dataProcSubNested]<UserDefinedWord>
+Line 34[17,29] <27, Error, Syntax> - Syntax error : Symbol dataMainLocal is not referenced OffendingSymbol=[17,29:dataMainLocal]<UserDefinedWord>
+Line 34[34,47] <27, Error, Syntax> - Syntax error : Symbol dataMainGlobal is not referenced OffendingSymbol=[34,47:dataMainGlobal]<UserDefinedWord>
+Line 35[17,31] <27, Error, Syntax> - Syntax error : Symbol dataNestedLocal is not referenced OffendingSymbol=[17,31:dataNestedLocal]<UserDefinedWord>
+Line 35[36,51] <27, Error, Syntax> - Syntax error : Symbol dataNestedGlobal is not referenced OffendingSymbol=[36,51:dataNestedGlobal]<UserDefinedWord>
+Line 36[17,30] <27, Error, Syntax> - Syntax error : Symbol dataProcNested is not referenced OffendingSymbol=[17,30:dataProcNested]<UserDefinedWord>
+Line 36[35,52] <27, Error, Syntax> - Syntax error : Symbol dataSubNestedLocal is not referenced OffendingSymbol=[35,52:dataSubNestedLocal]<UserDefinedWord>
+Line 37[17,35] <27, Error, Syntax> - Syntax error : Symbol dataSubNestedGlobal is not referenced OffendingSymbol=[17,35:dataSubNestedGlobal]<UserDefinedWord>
+Line 37[40,56] <27, Error, Syntax> - Syntax error : Symbol dataProcSubNested is not referenced OffendingSymbol=[40,56:dataProcSubNested]<UserDefinedWord>
+Line 57[17,29] <27, Error, Syntax> - Syntax error : Symbol dataMainLocal is not referenced OffendingSymbol=[17,29:dataMainLocal]<UserDefinedWord>
+Line 57[34,45] <27, Error, Syntax> - Syntax error : Symbol dataProcMain is not referenced OffendingSymbol=[34,45:dataProcMain]<UserDefinedWord>
+Line 58[17,30] <27, Error, Syntax> - Syntax error : Symbol dataProcNested is not referenced OffendingSymbol=[17,30:dataProcNested]<UserDefinedWord>
+Line 58[35,52] <27, Error, Syntax> - Syntax error : Symbol dataSubNestedLocal is not referenced OffendingSymbol=[35,52:dataSubNestedLocal]<UserDefinedWord>
+Line 59[17,35] <27, Error, Syntax> - Syntax error : Symbol dataSubNestedGlobal is not referenced OffendingSymbol=[17,35:dataSubNestedGlobal]<UserDefinedWord>
+Line 59[40,56] <27, Error, Syntax> - Syntax error : Symbol dataProcSubNested is not referenced OffendingSymbol=[40,56:dataProcSubNested]<UserDefinedWord>
+Line 73[17,29] <27, Error, Syntax> - Syntax error : Symbol dataMainLocal is not referenced OffendingSymbol=[17,29:dataMainLocal]<UserDefinedWord>
+Line 73[34,47] <27, Error, Syntax> - Syntax error : Symbol dataMainGlobal is not referenced OffendingSymbol=[34,47:dataMainGlobal]<UserDefinedWord>
+Line 74[17,28] <27, Error, Syntax> - Syntax error : Symbol dataProcMain is not referenced OffendingSymbol=[17,28:dataProcMain]<UserDefinedWord>
+Line 74[33,47] <27, Error, Syntax> - Syntax error : Symbol dataNestedLocal is not referenced OffendingSymbol=[33,47:dataNestedLocal]<UserDefinedWord>
+Line 75[17,32] <27, Error, Syntax> - Syntax error : Symbol dataNestedGlobal is not referenced OffendingSymbol=[17,32:dataNestedGlobal]<UserDefinedWord>
+Line 75[37,54] <27, Error, Syntax> - Syntax error : Symbol dataSubNestedLocal is not referenced OffendingSymbol=[37,54:dataSubNestedLocal]<UserDefinedWord>
+Line 76[17,35] <27, Error, Syntax> - Syntax error : Symbol dataSubNestedGlobal is not referenced OffendingSymbol=[17,35:dataSubNestedGlobal]<UserDefinedWord>
+Line 76[40,56] <27, Error, Syntax> - Syntax error : Symbol dataProcSubNested is not referenced OffendingSymbol=[40,56:dataProcSubNested]<UserDefinedWord>
+Line 97[17,29] <27, Error, Syntax> - Syntax error : Symbol dataMainLocal is not referenced OffendingSymbol=[17,29:dataMainLocal]<UserDefinedWord>
+Line 97[34,45] <27, Error, Syntax> - Syntax error : Symbol dataProcMain is not referenced OffendingSymbol=[34,45:dataProcMain]<UserDefinedWord>
+Line 98[17,31] <27, Error, Syntax> - Syntax error : Symbol dataNestedLocal is not referenced OffendingSymbol=[17,31:dataNestedLocal]<UserDefinedWord>
+Line 98[36,49] <27, Error, Syntax> - Syntax error : Symbol dataProcNested is not referenced OffendingSymbol=[36,49:dataProcNested]<UserDefinedWord>
+Line 99[20,36] <27, Error, Syntax> - Syntax error : Symbol dataProcSubNested is not referenced OffendingSymbol=[20,36:dataProcSubNested]<UserDefinedWord>
+Line 113[17,29] <27, Error, Syntax> - Syntax error : Symbol dataMainLocal is not referenced OffendingSymbol=[17,29:dataMainLocal]<UserDefinedWord>
+Line 113[34,47] <27, Error, Syntax> - Syntax error : Symbol dataMainGlobal is not referenced OffendingSymbol=[34,47:dataMainGlobal]<UserDefinedWord>
+Line 114[17,28] <27, Error, Syntax> - Syntax error : Symbol dataProcMain is not referenced OffendingSymbol=[17,28:dataProcMain]<UserDefinedWord>
+Line 114[33,47] <27, Error, Syntax> - Syntax error : Symbol dataNestedLocal is not referenced OffendingSymbol=[33,47:dataNestedLocal]<UserDefinedWord>
+Line 115[17,32] <27, Error, Syntax> - Syntax error : Symbol dataNestedGlobal is not referenced OffendingSymbol=[17,32:dataNestedGlobal]<UserDefinedWord>
+Line 115[37,50] <27, Error, Syntax> - Syntax error : Symbol dataProcNested is not referenced OffendingSymbol=[37,50:dataProcNested]<UserDefinedWord>
+Line 116[17,34] <27, Error, Syntax> - Syntax error : Symbol dataSubNestedLocal is not referenced OffendingSymbol=[17,34:dataSubNestedLocal]<UserDefinedWord>
+Line 116[39,57] <27, Error, Syntax> - Syntax error : Symbol dataSubNestedGlobal is not referenced OffendingSymbol=[39,57:dataSubNestedGlobal]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: MainProgram common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
-  dataMain1:Alphanumeric
+  dataMainLocal:Alphanumeric
+--- Intrinsic:Namespace:Program:Global
+-- DATA --------
+  dataMainGlobal:Alphanumeric
+--- Intrinsic:Namespace:Program
+-- DATA --------
+  dataMainGlobalStorage:Alphanumeric
 -- FUNCTIONS ---
-  checkMain
-        in: paramMain1:Alphanumeric
---- Intrinsic:Namespace:GlobalStorage:Global
--- DATA --------
-  dataMain2:Alphanumeric
+  procInMain
+        in: paramMain:Alphanumeric
+  procInNested
+        in: paramNested:Alphanumeric
+  procInSubNested
+        in: paramSubNested:Alphanumeric
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL

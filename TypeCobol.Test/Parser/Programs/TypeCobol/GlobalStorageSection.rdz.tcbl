@@ -36,15 +36,18 @@
        PROCEDURE DIVISION.
 
        DECLARE PROCEDURE MyProc PRIVATE
-           INPUT    myDate      TYPE DATE.
+           IN-OUT    myDate      TYPE DATE.
        Data division.
+      *Global Storage Section cannot 
+      * be defined inside procedure
+       GLOBAL-STORAGE Section.
        WORKING-STORAGE Section.
        01 TestCtx TYPE Bool.
        PROCEDURE DIVISION.
       *G-Date and G-TechCtx are accesible from GlobalStorage
            MOVE G-Date TO myDate.
            MOVE G-TechCtx TO TestCtx.
-        END-DECLARE.
+       END-DECLARE.
 
        MOVE G-Date TO G-Date.
        MOVE DuplicatedVar TO G-TechCtx.
@@ -54,7 +57,7 @@
 
        DATA DIVISION.
       *Global Storage Section cannot 
-      * be define inside nested program
+      * be defined inside nested program
        GLOBAL-STORAGE SECTION.
        WORKING-STORAGE SECTION.
        01 MyDate TYPE Date.
@@ -63,7 +66,7 @@
       *G-Date is accessible in nested from Global Storage
        MOVE G-Date TO MyDate.
        DECLARE PROCEDURE MyProc PRIVATE
-            INPUT    myDate      TYPE DATE.
+            IN-OUT    myDate      TYPE DATE.
        Data division.
        WORKING-STORAGE Section.
        01 TestCtx TYPE Bool.
@@ -78,7 +81,6 @@
       *KO Rule GLOBALSS_ALWAYS_RESOLVE
 	  *DefInGlobalStorageAndNested is defined twice
            move DefInGlobalStorageAndNested
-      *KO but it's a bug, it will become OK when #1360 is fixed
              to DefInMainAsGlobalAndNested
            .
        END-DECLARE.
@@ -93,7 +95,7 @@
 
        DATA DIVISION.
       *Global Storage Section cannot 
-      * be define inside stacked program
+      * be defined inside stacked program
        GLOBAL-STORAGE SECTION.
 
        WORKING-STORAGE SECTION.

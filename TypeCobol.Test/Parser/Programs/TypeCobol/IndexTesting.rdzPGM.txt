@@ -12,7 +12,7 @@ Line 72[8,49] <27, Error, Syntax> - Syntax error : Increment only support intege
 --- Program ---
 PROGRAM: IndexTesting common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
   MyGIdx:Alphanumeric
   Counter:Numeric
@@ -22,7 +22,6 @@ PROGRAM: IndexTesting common:False initial:False recursive:False
   Var1:Alphanumeric
   MyIdx3azeazeazeazeazeazeazeaz:Numeric
   Tab3:Array
-  MyVar:Alphanumeric
   MyVar:Alphanumeric
   MyGroup:Alphanumeric
   MyIdx:Numeric
@@ -39,7 +38,6 @@ PROGRAM: IndexTesting common:False initial:False recursive:False
   strVar:Alphanumeric
   ThisIndexNameIsClearlyToLong:Numeric
   ToLingIndx:Alphanumeric
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations
 -- TYPES -------
   MyIdxType:MyIdxType
   Account:Account

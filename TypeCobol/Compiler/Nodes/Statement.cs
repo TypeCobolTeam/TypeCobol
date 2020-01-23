@@ -211,6 +211,20 @@
         }
     }
 
+    public class JsonGenerate : GenericNode<JsonGenerateStatement>, Statement
+    {
+        public JsonGenerate(JsonGenerateStatement statement)
+            : base(statement)
+        {
+
+        }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
+    }
+
     public class Merge: GenericNode<MergeStatement>, Statement {
 	    public Merge(MergeStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -512,7 +526,10 @@
         }
     }
     public class WhenGroup: Node, StatementCondition {
-	    public WhenGroup() { }
+	    public WhenGroup()
+        {
+            SetFlag(Node.Flag.GeneratorCanIgnoreIt, true);
+        }
 
         protected override CodeElement InternalCodeElement => null;
         public override bool VisitNode(IASTVisitor astVisitor)
