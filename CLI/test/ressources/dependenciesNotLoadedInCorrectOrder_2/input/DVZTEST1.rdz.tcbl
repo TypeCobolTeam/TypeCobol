@@ -8,7 +8,7 @@
                10 span      type DVZTEST2::Span.
         
        01 NamedSpanArray typedef strict public.
-           05 namedSpan type DVZTEST1::NamedSpan
+           05 namedSpan type DVZTEST1::NamedSpan.
        PROCEDURE DIVISION.
        declare procedure GetTecMsg public
            input capt     type DVZTEST2::Span
