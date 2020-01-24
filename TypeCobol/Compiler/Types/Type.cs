@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Symbols;
 
 namespace TypeCobol.Compiler.Types
@@ -11,7 +7,7 @@ namespace TypeCobol.Compiler.Types
     /// <summary>
     /// A Cobol Type
     /// </summary>
-    public class TypeCobolType : ISemanticData
+    public class Type : ISemanticData
     {
         /// <summary>
         /// Type tags
@@ -77,7 +73,7 @@ namespace TypeCobol.Compiler.Types
         /// </summary>
         /// <param name="tag">TypeCobol type</param>
         /// <param name="usage">Usage format</param>
-        internal TypeCobolType(Tags tag, UsageFormat usage = UsageFormat.None)
+        internal Type(Tags tag, UsageFormat usage = UsageFormat.None)
         {
             this.Tag = tag;
             this.Usage = usage;
@@ -101,7 +97,7 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// The Symbol associated to this type if any: This for a Program or a Function or a TYPEDEF
         /// </summary>
-        public TypeCobolSymbol Symbol
+        public Symbol Symbol
         {
             get;
             set;
