@@ -29,12 +29,17 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public override bool Equals(object obj) {
-            return Equals(this, obj as DataType);
+            return Equals(obj as DataType);
         }
 
         public bool Equals(DataType dataType)
         {
-            return Equals(this, dataType);
+            if (Object.ReferenceEquals(this, dataType)) return true;
+            if (Object.ReferenceEquals(null, dataType)) return false;
+
+            return string.Equals(Name, dataType.Name, StringComparison.OrdinalIgnoreCase)
+                   && RestrictionLevel.Equals(dataType.RestrictionLevel)
+                   && CobolLanguageLevel.Equals(dataType.CobolLanguageLevel);
         }
 
         private static bool Equals([CanBeNull]DataType x, [CanBeNull]DataType y)
