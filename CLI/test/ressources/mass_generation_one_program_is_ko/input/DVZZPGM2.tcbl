@@ -1,0 +1,11 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZZPGM2.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 var1 PIC 9 VALUE '2'.
+      
+       procedure division.
+           display someVarThatIsNotDefined
+           goback
+           .
+       END PROGRAM DVZZPGM2.
