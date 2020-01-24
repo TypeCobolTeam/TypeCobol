@@ -42,17 +42,6 @@ namespace TypeCobol.Compiler.CodeElements
                    && CobolLanguageLevel.Equals(dataType.CobolLanguageLevel);
         }
 
-        private static bool Equals([CanBeNull]DataType x, [CanBeNull]DataType y)
-        {
-            if (Object.ReferenceEquals(x, y)) return true;
-            if (Object.ReferenceEquals(x, null)) return false;
-            if (Object.ReferenceEquals(null, y)) return false;
-
-            return string.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase)
-                   && x.RestrictionLevel.Equals(y.RestrictionLevel)
-                   && x.CobolLanguageLevel.Equals(y.CobolLanguageLevel);
-        }
-
         public override int GetHashCode()
         {
             unchecked
@@ -66,15 +55,14 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
-        public static bool operator ==(DataType x, DataType y) 
+        public static bool operator ==(DataType x, DataType y)
         {
-            return Equals(x, y);
+            return x?.Equals(y) ?? object.ReferenceEquals(y, null);
         }
-        public static bool operator !=(DataType x, DataType y) {
-            return !Equals(x, y);
+        public static bool operator !=(DataType x, DataType y)
+        {
+            return !(x == y);
         }
-
-
 
         public static DataType CreateCustom(string name, RestrictionLevel restrictionLevel = RestrictionLevel.STRONG, CobolLanguageLevel cobolLanguageLevel = CobolLanguageLevel.Cobol2002) {
             foreach(var builtin in BuiltInCustomTypes)
