@@ -38,6 +38,9 @@
        DECLARE PROCEDURE MyProc PRIVATE
            IN-OUT    myDate      TYPE DATE.
        Data division.
+      *Global Storage Section cannot 
+      * be defined inside procedure
+       GLOBAL-STORAGE Section.
        WORKING-STORAGE Section.
        01 TestCtx TYPE Bool.
        PROCEDURE DIVISION.
@@ -54,7 +57,7 @@
 
        DATA DIVISION.
       *Global Storage Section cannot 
-      * be define inside nested program
+      * be defined inside nested program
        GLOBAL-STORAGE SECTION.
        WORKING-STORAGE SECTION.
        01 MyDate TYPE Date.
@@ -92,7 +95,7 @@
 
        DATA DIVISION.
       *Global Storage Section cannot 
-      * be define inside stacked program
+      * be defined inside stacked program
        GLOBAL-STORAGE SECTION.
 
        WORKING-STORAGE SECTION.
