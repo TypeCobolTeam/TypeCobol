@@ -190,6 +190,7 @@ namespace CLI.Test
         {
             CLITestHelper.Test("outputSignature_1", ReturnCode.Warning);
             CLITestHelper.Test("outputSignature_2", ReturnCode.Success);
+            CLITestHelper.Test("outputSignature_3", ReturnCode.Success);
         }
 
 
