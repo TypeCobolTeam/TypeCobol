@@ -10,6 +10,7 @@ using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Nodes;
 using Analytics;
 using Castle.Core.Internal;
+using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics
@@ -27,29 +28,33 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public static void CheckTypedef(DataTypeDescriptionEntry typedef, CodeElementsParser.DataDescriptionEntryContext context)
         {
+            var firstToken = ParseTreeUtils.GetFirstToken(context.cobol2002TypedefClause());
+            var copyDirective = (firstToken as ImportedToken)?.CopyDirective;
+            string copyErrorMessage = copyDirective == null ? "" : $" in '{copyDirective.TextName}' copy";
+
             if (typedef.LevelNumber?.Value != 1)
             {
-                string message = "TYPEDEF clause can only be specified for level 01 entries";
+                string message = "TYPEDEF clause can only be specified for level 01 entries" + copyErrorMessage;
                 DiagnosticUtils.AddError(typedef, message, context.cobol2002TypedefClause());
             }
 
             if (typedef.IsExternal)
             {
-                string message = "EXTERNAL clause cannot be specified with TYPEDEF clause";
+                string message = "EXTERNAL clause cannot be specified with TYPEDEF clause" + copyErrorMessage;
                 foreach (var external in context.externalClause())
                     DiagnosticUtils.AddError(typedef, message, external);
             }
 
             if (typedef.HasExplicitVisibility && typedef.IsGlobal)
             {
-                string message = $"GLOBAL clause cannot be specified with {typedef.Visibility.ToString().ToUpper()} access modifier";
+                string message = $"GLOBAL clause cannot be specified with {typedef.Visibility.ToString().ToUpper()} access modifier" + copyErrorMessage;
                 DiagnosticUtils.AddError(typedef, message, context.globalClause(0));
             }
 
 #if EUROINFO_LEGACY_TYPEDEF
             if (typedef.RestrictionLevel != RestrictionLevel.STRICT)
             {
-                string message = $"Custom EI rule : Only TYPEDEF STRICT is allowed in definition of type {typedef.DataName.Name}.";
+                string message = $"Custom EI rule : Only TYPEDEF STRICT is allowed in definition of type {typedef.DataName.Name}{copyErrorMessage}.";
                 DiagnosticUtils.AddError(typedef, message, context.cobol2002TypedefClause());
                 return;
             }
@@ -59,7 +64,7 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 if (typedef.IsSynchronized != null && typedef.IsSynchronized.Value == true)
                 {
-                    DiagnosticUtils.AddError(typedef, "SYNC clause cannot be used with a STRICT type definition", context.cobol2002TypedefClause());
+                    DiagnosticUtils.AddError(typedef, "SYNC clause cannot be used with a STRICT type definition" + copyErrorMessage, context.cobol2002TypedefClause());
                 }
             }
 
@@ -67,14 +72,14 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 if (typedef.InitialValue != null)
                 {
-                    string message = "STRONG TYPEDEF cannot contain VALUE clause:";
+                    string message = $"STRONG TYPEDEF{copyErrorMessage} cannot contain VALUE clause:";
                     foreach (var valeuClause in context.valueClause())
                         DiagnosticUtils.AddError(typedef, message, valeuClause);
                 }
 
                 if (typedef.Picture != null)
                 {
-                    string message = "Elementary TYPEDEF cannot be STRONG";
+                    string message = $"Elementary TYPEDEF{copyErrorMessage} cannot be STRONG";
                     string rulestack = RuleStackBuilder.GetRuleStack(context.cobol2002TypedefClause());
                     DiagnosticUtils.AddError(typedef, message,
                         ParseTreeUtils.GetFirstToken(context.cobol2002TypedefClause().STRONG()), rulestack);
