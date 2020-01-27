@@ -2,14 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Schema;
-using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Types;
-using Type = TypeCobol.Compiler.Types.Type;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -231,11 +226,11 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         public event EventHandler TypeChanged;
 
-        Type m_Type;
+        Types.Type m_Type;
         /// <summary>
         /// Symbol's type
         /// </summary>
-        public virtual Type Type
+        public virtual Types.Type Type
         {
             get => m_Type;
             set
@@ -253,7 +248,7 @@ namespace TypeCobol.Compiler.Symbols
         /// The Expanded Type is the Cobol85 Type in fact.
         /// <param name="program">The program in which the expanded Type is Computed.</param>
         /// </summary>
-        public virtual Type ExpandedType(ProgramSymbol program)
+        public virtual Types.Type ExpandedType(ProgramSymbol program)
         {
             return this.Type;
         }
