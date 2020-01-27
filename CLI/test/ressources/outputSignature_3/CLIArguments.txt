@@ -1,0 +1,1 @@
+﻿-i input\Library.rdz.tcbl -o output\Client.rdz.tcbl -d output\error.txt -e rdz -f PublicSignatures
