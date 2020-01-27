@@ -1,1 +1,6 @@
 ReturnCode=MissingCopy_
+2 errors in "input\MissingCopy.rdz.tcbl":
+Line 8[23,37] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: YPRTD20
+Line 11[8,41] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: YTTMCOI
+1 error in "input\Callee.rdz.tcbl":
+Line 5[20,33] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: YCONVEA
