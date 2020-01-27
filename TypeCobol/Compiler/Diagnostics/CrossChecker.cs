@@ -624,10 +624,10 @@ namespace TypeCobol.Compiler.Diagnostics
 
             var foundCount = found.Count();
 #if DOMAIN_CHECKER
+            Scopes.Scope<VariableSymbol>.MultiSymbols result = null;
+            List<Symbol[]> foundSymbolTypedPaths = null;
             if (compilerOptions.UseSemanticDomain)
             {
-                Scopes.Scope<VariableSymbol>.MultiSymbols result = null;
-                List<Symbol[]> foundSymbolTypedPaths = null;
                 bool bCyclicTypeException = false;
                 {                                
                     switch (((Symbol)node.SemanticData).Kind)
@@ -749,7 +749,7 @@ namespace TypeCobol.Compiler.Diagnostics
 #endif
                 if (foundQualified.Count == 1)
                 {
-                    IndexAndFlagDataDefiniton(dataDefinitionPath, dataDefinitionFound, node, area, storageArea);
+                    IndexAndFlagDataDefiniton(dataDefinitionPath, dataDefinitionFound, node, area, storageArea, compilerOptions);
                 }
 
                 if (!node.IsFlagSet(Node.Flag.GlobalStorageSection))
@@ -802,7 +802,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
         private static void IndexAndFlagDataDefiniton(DataDefinitionPath dataDefinitionPath,
             DataDefinition dataDefinition,
-            Node node, StorageArea area, StorageArea storageArea)
+            Node node, StorageArea area, StorageArea storageArea, TypeCobolOptions compilerOptions)
         {
             if (dataDefinition.IsIndex)
             {

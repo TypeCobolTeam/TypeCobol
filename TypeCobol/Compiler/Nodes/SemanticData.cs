@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TypeCobol.Compiler.CodeElements
+﻿namespace TypeCobol.Compiler.Nodes
 {
     /// <summary>
-    /// Enumeration on the kind of semantic data holded by the SemantidData property if nont null.
+    /// Enumeration on the kind of semantic data hold by the SemanticData property if not null.
     /// </summary>
     public enum SemanticKinds
     {
@@ -21,9 +15,8 @@ namespace TypeCobol.Compiler.CodeElements
     public interface ISemanticData
     {
         /// <summary>
-        /// Get The Kind of Semantid data
+        /// Get The Kind of Semantic data
         /// </summary>
         SemanticKinds SemanticKind { get; }
     }
 }
-
