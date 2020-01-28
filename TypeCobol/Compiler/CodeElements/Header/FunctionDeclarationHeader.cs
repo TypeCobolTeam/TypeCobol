@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Text;
@@ -203,7 +204,7 @@ namespace TypeCobol.Compiler.CodeElements {
         }
     }
 
-    public class ParametersProfile: CodeElement, ParameterList, IVisitable
+    public class ParametersProfile: CodeElement, ParameterList, IVisitable, IEquatable<ParametersProfile>
     {
 	    public IList<ParameterDescriptionEntry> InputParameters { get; set; }
 	    public IList<ParameterDescriptionEntry> InoutParameters { get; set; }
@@ -232,62 +233,70 @@ namespace TypeCobol.Compiler.CodeElements {
 	    /// <summary>TCRFUN_NO_RETURNING_FOR_PROCEDURES</summary>
 	    public bool IsProcedure { get { return ReturningParameter == null; } }
 
-	    public override bool Equals(object other) {
-		    if (other == null || GetType() != other.GetType()) return false;
-		    var o = other as ParametersProfile;
-		    if (o == null) return false;
-		    // instead of doing foreach(var mode in Tools.Reflection.GetValues<Passing.Mode>()) ...,
-		    // only iterate over input+output+inout parameters: returning parameter does not have
-		    // any impact in conflict between function profiles resolution
-		    bool okay = true;
-		    okay = AreEqual(InputParameters, o.InputParameters);
-		    if (!okay) return false;
-		    okay = AreEqual(InoutParameters, o.InoutParameters);
-		    if (!okay) return false;
-		    okay = AreEqual(OutputParameters, o.OutputParameters);
-		    return okay;
-	    }
+        public override bool Equals(object other)
+        {
+            return Equals(other as ParametersProfile);
+        }
 
-	    private static bool AreEqual(IList<ParameterDescriptionEntry> mine, IList<ParameterDescriptionEntry> hers) {
-		    if (mine.Count != hers.Count) return false;
-		    for (int c = 0; c < mine.Count; c++) {
-			    if (!mine[c].Equals(hers[c])) return false;
-			    if (!mine[c].Equals(hers[c])) return false;
-		    }
-		    return true;
-	    }
+        public bool Equals(ParametersProfile paramsProfile)
+        {
+            if (System.Object.ReferenceEquals(this, paramsProfile)) return true;
+            if (System.Object.ReferenceEquals(null, paramsProfile)) return false;
 
-	    public override int GetHashCode() {
-		    int hash = 17;
-		    foreach (var p in Parameters) hash = hash * 23 + p.GetHashCode();
-		    return hash;
-	    }
+            // instead of doing foreach(var mode in Tools.Reflection.GetValues<Passing.Mode>()) ...,
+            // only iterate over input+output+inout parameters: returning parameter does not have
+            // any impact in conflict between function profiles resolution
+            bool okay = AreEqual(InputParameters, paramsProfile.InputParameters);
+            if (!okay) return false;
+            okay = AreEqual(InoutParameters, paramsProfile.InoutParameters);
+            if (!okay) return false;
+            return AreEqual(OutputParameters, paramsProfile.OutputParameters);
+        }
+
+        private static bool AreEqual(IList<ParameterDescriptionEntry> mine, IList<ParameterDescriptionEntry> hers)
+        {
+            if (mine.Count != hers.Count) return false;
+            for (int c = 0; c < mine.Count; c++) {
+                if (!mine[c].Equals(hers[c])) return false;
+            } 
+            return true;
+        }
+
+        public override int GetHashCode() {
+            unchecked
+            {
+                var hashCode = 17;
+                foreach (var p in Parameters) hashCode = (hashCode * 397) ^ p.GetHashCode();
+
+                return hashCode;
+            }
+        }
 
         public new bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor, InputParameters,
                                                                InoutParameters,
                                                                OutputParameters) 
-                       && this.ContinueVisitToChildren(astVisitor, ReturningParameter);
+                   && this.ContinueVisitToChildren(astVisitor, ReturningParameter);
         }
 
         public override string ToString()
         {
-		    var str = new System.Text.StringBuilder();
-		    str.Append('(');
-		    foreach (var p in InputParameters) str.Append(p.Name).Append(p.IsOmittable ? " ?" : "").Append(':').Append(p.DataType).Append(", ");
-		    if (InputParameters.Count > 0) str.Length -= 2;
-		    str.Append("):(");
-		    foreach (var p in OutputParameters) str.Append(p.Name).Append(p.IsOmittable ? " ?" : "").Append(':').Append(p.DataType).Append(", ");
-		    if (OutputParameters.Count > 0) str.Length -= 2;
-		    str.Append("):(");
-		    foreach (var p in InoutParameters) str.Append(p.Name).Append(p.IsOmittable ? " ?" : "").Append(':').Append(p.DataType).Append(", ");
-		    if (InoutParameters.Count > 0) str.Length -= 2;
-		    str.Append("):(");
-		    if (ReturningParameter != null) str.Append(ReturningParameter.Name).Append(':').Append(ReturningParameter.DataType);
-		    str.Append(')');
-		    return str.ToString();
-	    }
+            var str = new System.Text.StringBuilder();
+            str.Append('(');
+            foreach (var p in InputParameters) str.Append(p.Name).Append(p.IsOmittable ? " ?" : "").Append(':').Append(p.DataType).Append(", ");
+            if (InputParameters.Count > 0) str.Length -= 2;
+            str.Append("):(");
+            foreach (var p in OutputParameters) str.Append(p.Name).Append(p.IsOmittable ? " ?" : "").Append(':').Append(p.DataType).Append(", ");
+            if (OutputParameters.Count > 0) str.Length -= 2;
+            str.Append("):(");
+            foreach (var p in InoutParameters) str.Append(p.Name).Append(p.IsOmittable ? " ?" : "").Append(':').Append(p.DataType).Append(", ");
+            if (InoutParameters.Count > 0) str.Length -= 2;
+            str.Append("):(");
+            if (ReturningParameter != null) str.Append(ReturningParameter.Name).Append(':').Append(ReturningParameter.DataType);
+            str.Append(')');
+            return str.ToString();
+        }
 
 
 
