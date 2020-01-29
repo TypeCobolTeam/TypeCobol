@@ -4,10 +4,10 @@
        WORKING-STORAGE SECTION.
        01 Group1.
            05 item-1 PIC X
-      *KO value start in col 11
+      *OK
            VALUE 'A'.
            05 item-2 PIC X
-      *OK
+      *KO value start in col 11
           VALUE '2'.
       
        PROCEDURE DIVISION.
