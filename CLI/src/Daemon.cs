@@ -14,6 +14,7 @@ namespace TypeCobol.Server {
     class Server {
         static int Main(string[] argv)
         {
+
             bool help = false;
             bool version = false;
 
