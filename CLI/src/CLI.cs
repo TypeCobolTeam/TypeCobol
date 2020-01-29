@@ -273,7 +273,9 @@ namespace TypeCobol.Server
                     foreach (var previousProgram in previousPrograms)
                     {
                         var namespaceSymbolTable = previousProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.Namespace);
-                        if (!namespaceSymbolTable.Programs.ContainsKey(program.Name)) namespaceSymbolTable.AddProgram(program);
+                        var foundPrograms = namespaceSymbolTable.Programs.FirstOrDefault(dp => dp.Key ==  program.Name).Value;
+                        if (foundPrograms == null || !foundPrograms.Any(p => p.Equals(program)))
+                            namespaceSymbolTable.AddProgram(program);
                     }
 
                     rootTable.AddProgram(program); //Add program to Namespace symbol table

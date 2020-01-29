@@ -61,7 +61,7 @@ namespace CLI.Test
         [TestMethod]
         public void TestGenerate_StackedProcedure()
         {
-            CLITestHelper.Test("generate_stackedProc", ReturnCode.Success);
+            CLITestHelper.Test("generate_stackedProc", ReturnCode.ParsingDiagnostics);
         }
 
         /// <summary>

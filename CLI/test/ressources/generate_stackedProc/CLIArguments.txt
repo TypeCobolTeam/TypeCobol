@@ -1,1 +1,1 @@
-﻿-i input\CallPublicProcInStackedPgm.rdz.tcbl -o output\CallPublicProcInStackedPgm.cbl -d output\error.txt -e rdz -f Cobol85Mixed
+﻿-1 -i input\Pgm1.tcbl -o output\Pgm1.cbl -i input\Pgm2.tcbl -o output\Pgm2.cbl -d output\error.xml -e rdz
