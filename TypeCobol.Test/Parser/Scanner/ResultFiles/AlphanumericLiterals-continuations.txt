@@ -39,6 +39,7 @@ Line 0[5,6] <22, Error, Tokens> - Because the alphanumeric literal on the previo
 [2,5:    ]<SpaceSeparator>
 =>continuation:[6,15:"toto  and titi4"]<AlphanumericLiteral>(",Y,Y){toto  and titi4}
 [16,16+:.]<PeriodSeparator>
+Line 0[5,6] <27, Error, Syntax> - Syntax error : Starting delimiter of the continuation line is missing.
 
 -- Line 11 --
 =>continued:[1,7:"toto  'and titi5"]<AlphanumericLiteral>(",Y,Y){toto  'and titi5}
@@ -47,6 +48,7 @@ Line 0[5,6] <22, Error, Tokens> - Because the alphanumeric literal on the previo
 [2,5:    ]<SpaceSeparator>
 =>continuation:[6,16:"toto  'and titi5"]<AlphanumericLiteral>(",Y,Y){toto  'and titi5}
 [17,17+:.]<PeriodSeparator>
+Line 0[5,6] <21, Error, Tokens> - The delimiter character of this continuation line is different from the initial delimiter of the alphanumeric literal
 
 -- Line 13 --
 =>continued:[1,8:"toto  ""and titi6"]<AlphanumericLiteral>(",Y,Y){toto  "and titi6}
@@ -114,6 +116,7 @@ Line 0[5,6] <22, Error, Tokens> - Because the alphanumeric literal on the previo
 [2,5:    ]<SpaceSeparator>
 =>continuation:[6,18:'toto  "and titi11d']<AlphanumericLiteral>(',Y,Y){toto  "and titi11d}
 [19,19: ]<SpaceSeparator>
+Line 0[5,6] <21, Error, Tokens> - The delimiter character of this continuation line is different from the initial delimiter of the alphanumeric literal
 
 -- Line 30 --
 [1,1: ]<SpaceSeparator>
