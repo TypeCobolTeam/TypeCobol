@@ -190,13 +190,13 @@ namespace CLI.Test
         }
 
         /// <summary>
-        /// Test Various Return Code that can be returned by the CLI
-        /// (with CLI arguments well formed, for bad argument test see TestArgumentsErrors())
+        /// Try parsing with copy is inside a typedef.
+        /// Should return success.
         /// </summary>
         [TestMethod]
         public void TestTypeDefCopy()
         {
-            CLITestHelper.Test("typedefCopy", ReturnCode.Success);//0
+            CLITestHelper.Test("typedefCopy", ReturnCode.Success);
         }
 
         /// <summary>

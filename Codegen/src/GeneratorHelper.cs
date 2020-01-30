@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Text;
+using TypeCobol.Tools;
 
 namespace TypeCobol.Codegen
 {
@@ -98,6 +100,36 @@ namespace TypeCobol.Codegen
 #endif
             return hashName;
         }
+
+        /// <summary>
+        /// Return the list of indented lines of copy node declaration
+        /// </summary>
+        /// <param name="copyNode">Node copy</param>
+        /// <returns>The list of ITextLines.</returns>
+        public static List<ITextLine> GetCopyLines(Node copyNode)
+        {
+            List<ITextLine> lines = new List<ITextLine>();
+            var linesContent = copyNode.CodeElement.SourceText.Split(new string[] { System.Environment.NewLine }, System.StringSplitOptions.None);                        //Indent the line according to its declaration
+            foreach (string line in linesContent)
+            {
+                //Only the line containing copy can be badly indented. 
+                string lineText;
+                if (line.IndexOf("COPY", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    //Indent this line with the same indentation than the declaring line.
+                    lineText = copyNode.Lines.First().Text.GetIndent() + line.Trim();
+                }
+                else
+                {
+                    //Otherwise generate the other lines as is, with a little extra for the columns 1-7
+                    lineText = new string(' ', 7) + line.TrimEnd();
+                }
+                lines.Add(new CobolTextLine(new TextLineSnapshot(-1, lineText, null), ColumnsLayout.CobolReferenceFormat));
+            }
+
+            return lines;
+        }
+
 
     }
 }
