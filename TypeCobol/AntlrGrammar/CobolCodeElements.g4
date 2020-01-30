@@ -307,7 +307,7 @@ cobol2002Statement: UNSAFE;
 programIdentification:
 	(IDENTIFICATION | ID) DIVISION PeriodSeparator 
 	PROGRAM_ID PeriodSeparator? programNameDefinition
-	(IS? (RECURSIVE | INITIAL | (COMMON INITIAL?) | (INITIAL COMMON?)) PROGRAM?)? PeriodSeparator
+	(IS? (RECURSIVE | INITIAL | (COMMON INITIAL?) | (INITIAL COMMON?)) PROGRAM?)? PeriodSeparator?
 	authoringProperties;
                        
 // p83 : The end of a COBOL source program is indicated by the END PROGRAM marker.

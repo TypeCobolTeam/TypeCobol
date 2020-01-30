@@ -3,8 +3,10 @@ using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
@@ -210,6 +212,33 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartCobolProgram(ProgramIdentification programIdentification, LibraryCopyCodeElement libraryCopy)
         {
+            // check if a dot follows PROGRAM-ID
+            var tokens = programIdentification.ConsumedTokens.SkipWhile(t => t.TokenType != TokenType.PROGRAM_ID);
+            Token nextProgramIdToken = tokens.Skip(1).FirstOrDefault();
+            if (nextProgramIdToken != null && nextProgramIdToken.TokenType != TokenType.PeriodSeparator)
+            {
+                DiagnosticUtils.AddError(programIdentification, "Dot expected after PROGRAM-ID", nextProgramIdToken, null, MessageCode.Warning);
+            }
+
+            // check if a dot follows PROGRAM-ID declaration
+            Token nextIdentEntry = tokens.FirstOrDefault(t => t.TokenType == TokenType.AUTHOR || t.TokenType == TokenType.INSTALLATION || t.TokenType == TokenType.DATE_WRITTEN
+                                                              || t.TokenType == TokenType.DATE_COMPILED || t.TokenType == TokenType.SECURITY);
+            Token lastProgramIdToken = null;
+            if (nextIdentEntry == null)
+            {
+                lastProgramIdToken = tokens.Last();
+            }
+            else
+            {
+                var list = tokens.ToList();
+                int index = list.FindIndex(t => t.Equals(nextIdentEntry));
+                lastProgramIdToken = list[index - 1];
+            }
+            if (lastProgramIdToken.TokenType != TokenType.PeriodSeparator)
+            {
+                DiagnosticUtils.AddError(programIdentification, "Dot is missing at the end of PROGRAM-ID declaration", lastProgramIdToken, null, MessageCode.Warning);
+            }
+
             if (CurrentProgram == null)
             {
                 if (SyntaxTree.Root.MainProgram == null)
