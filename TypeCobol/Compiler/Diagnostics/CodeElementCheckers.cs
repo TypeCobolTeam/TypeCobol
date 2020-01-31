@@ -47,18 +47,18 @@ namespace TypeCobol.Compiler.Diagnostics
                         context?.dataNameDefinition());
                 }
 
-                //Check VALUE clause starts in Area B
                 //Retrieve VALUE token through context
                 var valueToken =
                     (Token)context?.children.OfType<CodeElementsParser.ValueClauseContext>().SingleOrDefault()?.Start;
 
                 if (valueToken != null)
                 {
-                    //Check starting position of VALUE keyword
-                    if (DocumentFormat.GetTextAreaTypeInCobolReferenceFormat(valueToken) != TextAreaType.AreaB)
+                    //In Cobol reference format check that VALUE clause starts in Area B
+                    if (((CodeElementsLine)valueToken.TokensLine).ColumnsLayout == ColumnsLayout.CobolReferenceFormat &&
+                          DocumentFormat.GetTextAreaTypeInCobolReferenceFormat(valueToken) != TextAreaType.AreaB) {
                         DiagnosticUtils.AddError(data, "VALUE clause must start in area B", valueToken);
+                    }
                 }
-                
             }
         }
 
