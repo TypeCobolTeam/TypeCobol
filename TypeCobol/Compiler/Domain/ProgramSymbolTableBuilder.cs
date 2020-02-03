@@ -949,7 +949,7 @@ namespace TypeCobol.Compiler.Domain
             if (elemType != null && elemType.Tag == Type.Tags.Group)
             {
                 GroupType recType = (GroupType)elemType;
-                recType.Scope.ChangeOwner(tdSym);
+                recType.Scope.Owner = tdSym;
             }
             //Mark all symbol has belonging to a TYPEDEF
             tdSym.SetFlag(Symbol.Flags.InsideTypedef, true, true);
@@ -1250,7 +1250,7 @@ namespace TypeCobol.Compiler.Domain
 
             //Full Validate the rename.
             GroupType containerType = (GroupType)lastSymbol.Type;
-            RenamesValidator validator = new RenamesValidator(containerType, fromSymbol, toSymbol);
+            RenamesValidator validator = new RenamesValidator(renamesSymbol, containerType, fromSymbol, toSymbol);
             lastSymbol.Accept(validator, null);
             if (!validator.IsValid)
             {
@@ -1310,8 +1310,6 @@ namespace TypeCobol.Compiler.Domain
                     RenamesType type = ValidateRenamesSymbol(rename);
                     if (type != null)
                     {
-                        //It's important to set the Owner of the scope here
-                        type.Scope.ChangeOwner(rename.Symbol);
                         rename.Symbol.Type = type;
                     }
                 }
