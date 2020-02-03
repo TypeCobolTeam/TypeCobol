@@ -61,7 +61,7 @@ namespace TypeCobol.Compiler.Symbols
         internal override void NormalizeExpandedSymbol(Scope<VariableSymbol> scope)
         {
             base.NormalizeExpandedSymbol(scope);
-            Scope<VariableSymbol>.Entry entry = scope.Lookup(Indexed.Name);
+            Domain<VariableSymbol>.Entry entry = scope.Lookup(Indexed.Name);
             System.Diagnostics.Debug.Assert(entry != null);
             System.Diagnostics.Debug.Assert(entry.Count == 1);
             Indexed = entry.Symbol;            

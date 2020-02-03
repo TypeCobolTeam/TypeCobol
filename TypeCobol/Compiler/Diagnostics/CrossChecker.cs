@@ -37,22 +37,22 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 foreach (var storageAreaRead in codeElement.StorageAreaReads)
                 {
-                    CheckVariable(node, storageAreaRead, true, _compilerOptions);
+                    CheckVariable(node, storageAreaRead, true);
                 }
             }
             if (codeElement?.StorageAreaWrites != null)
             {
                 foreach (var storageAreaWrite in codeElement.StorageAreaWrites)
                 {
-                    CheckVariable(node, storageAreaWrite.StorageArea, false, _compilerOptions);
+                    CheckVariable(node, storageAreaWrite.StorageArea, false);
                 }
             }
             //Build node StorageAreaWritesDataDefinition and StorageAreaReadsDataDefinition dictionaries
             //for Corresponding instruction from StorageAreaGroupsCorrespondingImpact
             if (codeElement?.StorageAreaGroupsCorrespondingImpact != null)
             {
-                CheckVariable(node, codeElement.StorageAreaGroupsCorrespondingImpact.SendingGroupItem, true, _compilerOptions);
-                CheckVariable(node, codeElement.StorageAreaGroupsCorrespondingImpact.ReceivingGroupItem, false, _compilerOptions);
+                CheckVariable(node, codeElement.StorageAreaGroupsCorrespondingImpact.SendingGroupItem, true);
+                CheckVariable(node, codeElement.StorageAreaGroupsCorrespondingImpact.ReceivingGroupItem, false);
             }
 
             return true;
@@ -521,28 +521,26 @@ namespace TypeCobol.Compiler.Diagnostics
         /// <summary>
         /// Expand the top program.
         /// </summary>
-        /// <param name="curPrg">The Current Program.</param>
-        /// <returns></returns>
-        static ProgramSymbol ExpandTopProgram(ProgramSymbol curPrg, out bool bCyclicTypeException)
+        /// <param name="curPrg">Current program</param>
+        /// <param name="cyclicTypeException">Indicates whether a CyclicTypeException has been thrown during expansion</param>
+        /// <param name="levelExceedException">Indicates whether a LevelExceed Exception has been thrown during expansion</param>
+        /// <returns>Expanded top program</returns>
+        static ProgramSymbol ExpandTopProgram(ProgramSymbol curPrg, out Exception exception)
         {
-            //if (ProgramSymbolTableBuilder.LastBuilder != null &&
-            //    ProgramSymbolTableBuilder.LastBuilder.Diagnostics.Count > 0)
-            //{//There was errord dont expand the program.
-            //    return curPrg;
-            //}
-            bCyclicTypeException = false;
+            exception = null;
             ProgramSymbol topPrg = ProgramSymbol.GetTopProgram(curPrg);
             if (!topPrg.HasFlag(Symbol.Flags.ProgramExpanded))
             {
-                SymbolExpander se = new SymbolExpander(topPrg);
                 try
                 {
-                    topPrg.Accept(se, topPrg);
+                    ProgramExpander expander = new ProgramExpander();
+                    expander.Expand(topPrg);
                 }
-                catch (Types.Type.CyclicTypeException /*cte*/)
-                {//Capture a Cyclic Type exception
-                    bCyclicTypeException = true;
-                    //Reset expansion flag to alway detect Cyclic Type During this test session
+                catch (Exception e) when(e is Types.Type.CyclicTypeException || e is Symbol.LevelExceed)
+                {
+                    //Capture a Cyclic Type exception or Level Exceed exception
+                    exception = e;
+                    //Reset expansion flag to always detect exceptions during this test session
                     topPrg.SetFlag(Symbol.Flags.ProgramExpanded, false);
                 }
             }
@@ -591,12 +589,12 @@ namespace TypeCobol.Compiler.Diagnostics
             return sb.ToString();
         }
 #endif
-        public static DataDefinition CheckVariable(Node node, StorageArea storageArea, bool isReadStorageArea, TypeCobolOptions compilerOptions)
+        private DataDefinition CheckVariable(Node node, StorageArea storageArea, bool isReadStorageArea)
         {
             if (storageArea == null || !storageArea.NeedDeclaration)
                 return null;
 #if DOMAIN_CHECKER
-            if (compilerOptions.UseSemanticDomain)
+            if (_compilerOptions.UseSemanticDomain)
             {
                 //Check that a semantic data has been associated to this node.
                 System.Diagnostics.Debug.Assert(node.SemanticData != null);
@@ -624,65 +622,66 @@ namespace TypeCobol.Compiler.Diagnostics
 
             var foundCount = found.Count();
 #if DOMAIN_CHECKER
-            Scopes.Scope<VariableSymbol>.MultiSymbols result = null;
+            Scopes.Domain<VariableSymbol>.Entry result = null;
             List<Symbol[]> foundSymbolTypedPaths = null;
-            if (compilerOptions.UseSemanticDomain)
+            if (_compilerOptions.UseSemanticDomain)
             {
-                bool bCyclicTypeException = false;
-                {                                
-                    switch (((Symbol)node.SemanticData).Kind)
+                switch (((Symbol) node.SemanticData).Kind)
+                {
+                    case Symbol.Kinds.Program:
+                    case Symbol.Kinds.Function:
                     {
-                        case Symbol.Kinds.Program:
-                        case Symbol.Kinds.Function:
+                        ProgramSymbol prg = (ProgramSymbol) node.SemanticData;
+                        ProgramSymbol topPrg = ExpandTopProgram(prg, out var exception);
+                        if (exception == null)
                         {
-                            ProgramSymbol prg = (ProgramSymbol) node.SemanticData;                            
-                            ProgramSymbol topPrg = ExpandTopProgram(prg, out bCyclicTypeException);
-                            if (!bCyclicTypeException)
-                            {//Ignoe any expansion with a cyclic type.
-                                result = prg.ResolveReference(area.SymbolReference, true);
+                            //Ignore any failed expansion.
+                            result = prg.ResolveReference(area.SymbolReference, true);
+                            System.Diagnostics.Debug.Assert(result != null);
+                            //Check that we found the same number of symbols
+                            System.Diagnostics.Debug.Assert(result.Count == foundCount);
+                        }
+                    }
+                        break;
+                    case Symbol.Kinds.Variable:
+                    case Symbol.Kinds.Index:
+                        //Humm....
+                        //This Storage area's SemanticData is a Variable.
+                        //Thus this situation can only appears if the variable is inside a
+                        //Typedef, or Inside a Program or a Function.
+                        //But any way we have found it.
+                        VariableSymbol @var = (VariableSymbol) node.SemanticData;
+                        if (@var.HasFlag(Symbol.Flags.InsideTypedef))
+                        {
+                            System.Diagnostics.Debug.Assert(@var.TopParent(Symbol.Kinds.Typedef) != null);
+                            //We looking inside a TYPEDEF.
+                            TypedefSymbol tdSym = (TypedefSymbol) @var.TopParent(Symbol.Kinds.Typedef);
+                            foundSymbolTypedPaths = new List<Symbol[]>();
+                            result = tdSym.Get(AbstractScope.SymbolReferenceToPath(area.SymbolReference), null,
+                                foundSymbolTypedPaths);
+                            System.Diagnostics.Debug.Assert(result != null);
+                            System.Diagnostics.Debug.Assert(result.Count == foundCount);
+                        }
+                        else
+                        {
+                            FunctionSymbol fun = (FunctionSymbol) @var.TopParent(Symbol.Kinds.Function);
+                            ProgramSymbol prg = (ProgramSymbol) @var.TopParent(Symbol.Kinds.Program);
+                            System.Diagnostics.Debug.Assert(prg != null || fun != null);
+                            ProgramSymbol topPrg = ExpandTopProgram(prg, out var exception);
+                            if (exception == null)
+                            {
+                                //Ignore any failed expansion.
+                                //Lookup itself in its program.
+                                result = (fun ?? prg).ResolveReference(area.SymbolReference, true);
                                 System.Diagnostics.Debug.Assert(result != null);
-                                //Check that we found the same number of symbols
                                 System.Diagnostics.Debug.Assert(result.Count == foundCount);
                             }
                         }
-                            break;
-                        case Symbol.Kinds.Variable:
-                        case Symbol.Kinds.Index:
-                            //Humm....
-                            //This Storage area's SemanticData is a Variable.
-                            //Thus this situation can only appears if the variable is inside a
-                            //Typedef, or Inside a Program or a Function.
-                            //But any way we have found it.
-                            VariableSymbol @var = (VariableSymbol)node.SemanticData;
-                            if (@var.HasFlag(Symbol.Flags.InsideTypedef))
-                            {
-                                System.Diagnostics.Debug.Assert(@var.TopParent(Symbol.Kinds.Typedef) != null);
-                                //We looking inside a TYPEDEF.
-                                TypedefSymbol tdSym = (TypedefSymbol)@var.TopParent(Symbol.Kinds.Typedef);
-                                foundSymbolTypedPaths = new List<Symbol[]>();
-                                result = tdSym.Get(AbstractScope.SymbolReferenceToPath(area.SymbolReference), null, foundSymbolTypedPaths);
-                                System.Diagnostics.Debug.Assert(result.Count == foundCount);
-                            }
-                            else
-                            {
-                                FunctionSymbol fun = (FunctionSymbol)@var.TopParent(Symbol.Kinds.Function);
-                                ProgramSymbol prg = (ProgramSymbol)@var.TopParent(Symbol.Kinds.Program);
-                                System.Diagnostics.Debug.Assert(prg != null || fun != null);
-                                ProgramSymbol topPrg = ExpandTopProgram(prg, out bCyclicTypeException);
-                                if (!bCyclicTypeException)
-                                {//Ignore any expansion with a cyclic type.
-                                    //Lookup itself in its program.
-                                    result = (fun ?? prg).ResolveReference(area.SymbolReference, true);
-                                    System.Diagnostics.Debug.Assert(result != null);
-                                    System.Diagnostics.Debug.Assert(result.Count == foundCount);
-                                }
-                            }
-                            break;
-                    }
+
+                        break;
                 }
             }
 #endif
-
 
             if (foundCount == 0)
             {
@@ -712,7 +711,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 var dataDefinitionFound = found.First();
                 DataDefinitionPath dataDefinitionPath = foundQualified.First().Key;
 #if DOMAIN_CHECKER
-                if (compilerOptions.UseSemanticDomain)
+                if (_compilerOptions.UseSemanticDomain)
                 {
                     if (result != null && result.Symbol != null)
                     {
@@ -749,7 +748,7 @@ namespace TypeCobol.Compiler.Diagnostics
 #endif
                 if (foundQualified.Count == 1)
                 {
-                    IndexAndFlagDataDefiniton(dataDefinitionPath, dataDefinitionFound, node, area, storageArea, compilerOptions);
+                    IndexAndFlagDataDefiniton(dataDefinitionPath, dataDefinitionFound, node, area, storageArea);
                 }
 
                 if (!node.IsFlagSet(Node.Flag.GlobalStorageSection))
@@ -800,14 +799,14 @@ namespace TypeCobol.Compiler.Diagnostics
             return null;
         }
 
-        private static void IndexAndFlagDataDefiniton(DataDefinitionPath dataDefinitionPath,
+        private void IndexAndFlagDataDefiniton(DataDefinitionPath dataDefinitionPath,
             DataDefinition dataDefinition,
-            Node node, StorageArea area, StorageArea storageArea, TypeCobolOptions compilerOptions)
+            Node node, StorageArea area, StorageArea storageArea)
         {
             if (dataDefinition.IsIndex)
             {
 #if DOMAIN_CHECKER
-                if (compilerOptions.UseSemanticDomain)
+                if (_compilerOptions.UseSemanticDomain)
                 {
                     //Ensure that domain SemanticData is also in index symbol
                     System.Diagnostics.Debug.Assert(((Symbol)dataDefinition.SemanticData).Kind == Symbol.Kinds.Index);

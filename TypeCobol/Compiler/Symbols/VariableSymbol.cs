@@ -198,25 +198,6 @@ namespace TypeCobol.Compiler.Symbols
             this.Flag |= scope.Owner.Flag & (Symbol.SectionMask | Flags.Global);
         }
 
-        private Types.Type MyExpandedType { get; set; }
-        public override Types.Type ExpandedType(ProgramSymbol program)
-        {
-            if (this.Type == null)
-                return null;
-            if (MyExpandedType != null)
-                return MyExpandedType;
-            if (this.Type.MayExpand)
-            {
-                TypedefExpander expander = new TypedefExpander(program);
-                MyExpandedType = this.Type.Accept(expander, this);
-                return MyExpandedType;
-            }
-            else
-            {
-                return MyExpandedType = this.Type;
-            }
-        }
-
         /// <summary>
         /// Dump this symbol in the given TextWriter instance
         /// </summary>

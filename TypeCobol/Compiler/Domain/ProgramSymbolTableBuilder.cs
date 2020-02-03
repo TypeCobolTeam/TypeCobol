@@ -266,8 +266,8 @@ namespace TypeCobol.Compiler.Domain
             if (this.CurrentProgram == null && lastPrg.HasFlag(Symbol.Flags.NeedTypeCompletion))
             {
                 //Entire stacked program has been parsed ==> Resolve Types if needed.
-                TypeCobol.Compiler.Domain.Validator.SymbolTypeResolver resolver = new TypeCobol.Compiler.Domain.Validator.SymbolTypeResolver(MyRoot);
-                lastPrg.Accept(resolver, null);
+                TypeCobol.Compiler.Domain.Validator.TypeResolver resolver = new TypeCobol.Compiler.Domain.Validator.TypeResolver(MyRoot);
+                resolver.ResolveTypes(lastPrg, out _, out _);
                 lastPrg.SetFlag(Symbol.Flags.ProgramCompleted, true);
             }
         }
@@ -887,7 +887,7 @@ namespace TypeCobol.Compiler.Domain
             if (entry != null)
             {
                 System.Diagnostics.Debug.Assert(entry.Count == 1);
-                tdSym = entry[0];
+                tdSym = entry.Symbol;
                 System.Diagnostics.Debug.Assert(tdSym.Type != null);
                 System.Diagnostics.Debug.Assert(tdSym.Type.Tag == Type.Tags.Typedef);
                 if (entry.Count > 1 || ((TypedefType)tdSym.Type).TargetType != null)
@@ -1064,15 +1064,19 @@ namespace TypeCobol.Compiler.Domain
                 return null;
             }
             //Find the Symbol which is the last in the parent scope which is not a redefines also.
+            VariableSymbol matchingSymbol = null;
             List<VariableSymbol> previousRedefines = new List<VariableSymbol>();
-            int matchingIndex = 0;
-            for (matchingIndex = parentScope.Count - 1; matchingIndex >= 0; matchingIndex--)
-            {//Ignore all previous redefines
-                if (!parentScope[matchingIndex].HasFlag(Symbol.Flags.Redefines))
+            foreach (var variableSymbol in parentScope.Reverse())
+            {
+                matchingSymbol = variableSymbol;
+                if (!variableSymbol.HasFlag(Symbol.Flags.Redefines))
+                {
+                    //Ignore all previous redefines
                     break;
-                previousRedefines.Add(parentScope[matchingIndex]);
+                }
+                previousRedefines.Add(variableSymbol);
             }
-            VariableSymbol matchingSymbol = matchingIndex >= 0 ? parentScope[matchingIndex] : null;
+
             VariableSymbol redefined = matchingSymbol != null ? entry.FirstOrDefault(s => s == matchingSymbol) : null;
             if (entry.Count > 1 && redefined == null)
             {
@@ -1135,8 +1139,8 @@ namespace TypeCobol.Compiler.Domain
         /// <returns>The Renamed variable resolved if any, null otherwise</returns>
         private VariableSymbol ResolveRenamedVariable(SymbolReference renamed, Scope<VariableSymbol> parentScope)
         {
-            Scope<VariableSymbol>.MultiSymbols candidateRenamed = CurrentProgram.ResolveReference(renamed, true);
-            if (candidateRenamed.Count == 0)
+            Domain<VariableSymbol>.Entry candidateRenamed = CurrentProgram.ResolveReference(renamed, true);
+            if (candidateRenamed == null || candidateRenamed.Count == 0)
             {
                 Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
                     renamed.NameLiteral.Token.Column,
@@ -1307,7 +1311,7 @@ namespace TypeCobol.Compiler.Domain
                     if (type != null)
                     {
                         //It's important to set the Owner of the scope here
-                        type.Scope.Owner = rename.Symbol;
+                        type.Scope.ChangeOwner(rename.Symbol);
                         rename.Symbol.Type = type;
                     }
                 }
