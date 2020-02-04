@@ -9,6 +9,12 @@
        declare procedure GetTechnicalContext public
            input myname1 pic X.
        end-declare.
+
+       declare procedure Proc1 public
+           input t pic x.
+       procedure division.
+           .
+       end-declare.
        END PROGRAM PGM2.
       
        IDENTIFICATION DIVISION.

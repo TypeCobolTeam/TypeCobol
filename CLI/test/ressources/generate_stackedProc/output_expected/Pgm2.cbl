@@ -7,12 +7,17 @@
            88 TC-PGM2-FctList-IsLoaded      VALUE 'OK'.
 
        01 TC-PGM2-PntTab.
-           05 TC-PGM2-PntNbr         PIC S9(04) COMP VALUE 1.
+           05 TC-PGM2-PntNbr         PIC S9(04) COMP VALUE 2.
       *To call program b49bb8ce
       *Which is generated code for PGM2.GetTechnicalContext
       *Declared in source file Pgm2.tcbl
            05 TC-PGM2-b49bb8ce-Idt   PIC X(08) VALUE 'b49bb8ce'.
            05 TC-PGM2-b49bb8ce PROCEDURE-POINTER.
+      *To call program a4ee502d
+      *Which is generated code for PGM2.Proc1
+      *Declared in source file Pgm2.tcbl
+           05 TC-PGM2-a4ee502d-Idt   PIC X(08) VALUE 'a4ee502d'.
+           05 TC-PGM2-a4ee502d PROCEDURE-POINTER.
 
        LINKAGE SECTION.
        01 PntTab-Pnt POINTER.
@@ -33,6 +38,7 @@
         FctList-Process-Mode.
             IF NOT TC-PGM2-FctList-IsLoaded
               SET TC-PGM2-b49bb8ce   TO ENTRY 'b49bb8ce'
+              SET TC-PGM2-a4ee502d   TO ENTRY 'a4ee502d'
               SET TC-PGM2-FctList-IsLoaded TO TRUE
             END-IF
                .
@@ -49,9 +55,16 @@
                CALL "b49bb8ce" USING TC-A1
                GOBACK.
 
+           ENTRY 'a4ee502d' USING TC-A1
+               CALL "a4ee502d" USING TC-A1
+               GOBACK.
+
 
       *declare procedure GetTechnicalContext public
       *    input myname1 pic X.
+
+      *declare procedure Proc1 public
+      *    input t pic x.
       *
       *declare procedure GetTechnicalContext public
       *    input myname1 pic X.
@@ -59,6 +72,24 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. b49bb8ce IS COMMON.
        END PROGRAM b49bb8ce.
+      *
+      *declare procedure Proc1 public
+      *    input t pic x.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. a4ee502d IS COMMON.
+       DATA DIVISION.
+       LINKAGE SECTION.
+      *PGM2.Proc1 - Params :
+      *     input(t: pic x)
+       01 t pic x.
+       PROCEDURE DIVISION
+             USING BY REFERENCE t
+           .
+      *PGM2.Proc1 - Params :
+      *     input(t: pic x)
+           .
+       END PROGRAM a4ee502d.
        END PROGRAM PGM2.
       
        IDENTIFICATION DIVISION.

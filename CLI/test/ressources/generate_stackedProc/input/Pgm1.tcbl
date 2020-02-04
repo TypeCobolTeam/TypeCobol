@@ -4,6 +4,9 @@
        WORKING-STORAGE SECTION.
        01 tt pic x.
        PROCEDURE DIVISION.
+       INIT-LIBRARY.
+           continue.
+
       *OK: local nested
           Call NESTED::Foo input tt
       *OK: Foo is common STACKED.Pgm1 and STACKED.Pgm2
@@ -19,8 +22,20 @@
       *KO: Foo is declared in Pgm2 stacked
       *   STACKED2.Pgm2 is not considered inside Pgm1
           Call STACKED2::Foo input tt
+
+      *OK: GetTechnicalContext declared in Pgm2 main (Pgm2)
+          Call Pgm2::GetTechnicalContext input tt
+      *KO: Proc1 declared in Pgm2 main (Pgm2 and Pgm2Same)
+          Call Pgm2::Proc1 input tt
+
           goback.
       
+       declare procedure Proc1 public
+           input t pic x.
+       procedure division.
+           .
+       end-declare.
+
        IDENTIFICATION DIVISION.
        PROGRAM-ID. NESTED.
        PROCEDURE DIVISION.
