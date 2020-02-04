@@ -6,16 +6,19 @@
        PROCEDURE DIVISION.
       *OK: local nested
           Call NESTED::Foo input tt
-      *KO: Foo is common STACKED.Pgm1 and STACKED.Pgm2
+      *OK: Foo is common STACKED.Pgm1 and STACKED.Pgm2
+      *   STACKED.Pgm1 is considered inside Pgm1
           call STACKED::Foo input tt
       *OK: FooPgm1 declared only in Pgm1
           call STACKED::FooPgm1 input tt
-      *GetTechnicalContext declared in Pgm2 main
+      *OK: GetTechnicalContext declared in Pgm2 main
           Call Pgm2::GetTechnicalContext input tt
-      *Foo is common
-          Call STACKED::Foo input tt
-      *FooPgm2 is declared in Pgm2 stacked
+      *KO: FooPgm2 is declared in Pgm2 stacked
+      *   STACKED.Pgm2 is not considered inside Pgm1
           Call STACKED::FooPgm2 input tt
+      *KO: Foo is declared in Pgm2 stacked
+      *   STACKED2.Pgm2 is not considered inside Pgm1
+          Call STACKED2::Foo input tt
           goback.
       
        IDENTIFICATION DIVISION.

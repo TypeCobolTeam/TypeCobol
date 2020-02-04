@@ -1,0 +1,5 @@
+ReturnCode=ParsingDiagnostics_
+2 errors in "input\Pgm1.tcbl":
+Line 18[11,40] <27, Error, Syntax> - Syntax error : Function not found 'STACKED.FooPgm2' input(Alphanumeric)
+Line 21[11,37] <27, Error, Syntax> - Syntax error : Function not found 'STACKED2.Foo' input(Alphanumeric)
+No error in "input\Pgm2.tcbl".

@@ -267,15 +267,13 @@ namespace TypeCobol.Server
         {
             if (_configuration.ExecToStep >= ExecutionStep.SemanticCheck)
             {
-                foreach (var program in programs)
+                foreach (var program in programs.Where(p => !p.IsStacked))
                 {
+                    // a stacked program should not be referenced from another source file
                     var previousPrograms = rootTable.GetPrograms();
                     foreach (var previousProgram in previousPrograms)
                     {
-                        var namespaceSymbolTable = previousProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.Namespace);
-                        var foundPrograms = namespaceSymbolTable.Programs.FirstOrDefault(dp => dp.Key ==  program.Name).Value;
-                        if (foundPrograms == null || !foundPrograms.Any(p => p.Equals(program)))
-                            namespaceSymbolTable.AddProgram(program);
+                        previousProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.Namespace).AddProgram(program);
                     }
 
                     rootTable.AddProgram(program); //Add program to Namespace symbol table
