@@ -459,7 +459,7 @@ namespace TypeCobol.Compiler.Symbols
         public override Domain<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path)
         {
             ProgramSymbol topPrg = (ProgramSymbol)TopParent(Kinds.Program);
-            return ResolveSymbol(path, topPrg, root.TypeDomain);
+            return ResolveSymbol<TypedefSymbol>(path, topPrg, root.LookupType);
         }
 
         /// <summary>
@@ -471,7 +471,7 @@ namespace TypeCobol.Compiler.Symbols
         public override Domain<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path)
         {
             ProgramSymbol topPrg = (ProgramSymbol)TopParent(Kinds.Program);
-            return ResolveSymbol< AbstractScope>(path, topPrg, root.ScopeDomain);
+            return ResolveSymbol<AbstractScope>(path, topPrg, root.LookupScope);
         }
 
         /// <summary>

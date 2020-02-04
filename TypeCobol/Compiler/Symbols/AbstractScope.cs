@@ -97,9 +97,9 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="path">The type's path'</param>
         /// <param name="topScope">The top scope of the research</param>
-        /// <param name="domain">The domain into which to search for</param>
+        /// <param name="lookupSymbol">Delegate to lookup symbol inside a RootSymbolTable</param>
         /// <returns>The Set of resolve symbols</returns>
-        protected Domain<TS>.Entry ResolveSymbol<TS>(string[] path, AbstractScope topScope, Domain<TS> domain)
+        protected Domain<TS>.Entry ResolveSymbol<TS>(string[] path, AbstractScope topScope, Func<string, Domain<TS>.Entry> lookupSymbol)
             where TS : Symbol
         {
             if (path == null || path.Length == 0 || path[0] == null)
@@ -107,9 +107,10 @@ namespace TypeCobol.Compiler.Symbols
 
             string name = path[0];
             Domain<TS>.Entry results = new Domain<TS>.Entry(name);
-            bool bExits = domain.TryGetValue(name, out var candidates);
-            if (!bExits)
+            var candidates = lookupSymbol(name);
+            if (candidates.Count == 0)
                 return results;
+
             if (path.Length == 1)
             {
                 bool bLocal = topScope != this;
