@@ -190,7 +190,7 @@ namespace CLI.Test
         }
 
         /// <summary>
-        /// Try parsing with copy is inside a typedef.
+        /// Try parsing with copy inside a typedef.
         /// Should return success.
         /// </summary>
         [TestMethod]

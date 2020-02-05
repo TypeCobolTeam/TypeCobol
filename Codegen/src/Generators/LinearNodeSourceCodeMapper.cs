@@ -4,17 +4,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
-using Antlr4.Runtime.Misc;
 using TypeCobol.Codegen.Actions;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Source;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Tools;
 
 
 namespace TypeCobol.Codegen.Generators
@@ -262,6 +260,30 @@ namespace TypeCobol.Codegen.Generators
         {
             public LinearCopyNode(CodeElement CodeElement) : base(CodeElement)
             {
+            }
+
+            /// <summary>
+            /// Return the indented lines of copy node declaration
+            /// </summary>
+            public IEnumerable<ITextLine> GetCopyLines()
+            {
+                var linesContent = this.CodeElement.SourceText.Split(new string[] { System.Environment.NewLine }, System.StringSplitOptions.None);                        //Indent the line according to its declaration
+                foreach (string line in linesContent)
+                {
+                    //Only the line containing copy can be badly indented. 
+                    string lineText;
+                    if (line.IndexOf("COPY", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        //Indent this line with the same indentation than the declaring line.
+                        lineText = this.Lines.First().Text.GetIndent() + line.Trim();
+                    }
+                    else
+                    {
+                        //Otherwise generate the other lines as is, with a little extra for the columns 1-7
+                        lineText = new string(' ', 7) + line.TrimEnd();
+                    }
+                    yield return new CobolTextLine(new TextLineSnapshot(-1, lineText, null), ColumnsLayout.CobolReferenceFormat);
+                }
             }
         }
 
