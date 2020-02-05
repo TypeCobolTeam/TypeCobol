@@ -26,6 +26,9 @@
           05  Part1. COPY YPRTD20.
           05  Part2. COPY YCONVEA.
 
+       01 Type2 TYPEDEF STRICT PUBLIC.
+          COPY SUPCPY.
+
        PROCEDURE DIVISION.
       
        END PROGRAM DVZDEP1.
