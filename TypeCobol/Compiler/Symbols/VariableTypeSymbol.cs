@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.CodeElements;
+﻿using System.IO;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Types;
-using Type = TypeCobol.Compiler.Types.Type;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -27,13 +20,14 @@ namespace TypeCobol.Compiler.Symbols
             System.Diagnostics.Debug.Assert(tdSym != null);
             SetFlag(Flags.HasATypedefType, true);
             Typedef = tdSym;
+            TypePaths = null;
         }
 
         /// <summary>
         /// Constructor with an unresolved Type's path
         /// </summary>
         /// <param name="name">Variable's name</param>
-        /// <param name="path">The unresolved type's path</param>
+        /// <param name="paths">The unresolved type's path</param>
         public VariableTypeSymbol(string name, string[] paths) : base(name)
         {
             System.Diagnostics.Debug.Assert(paths != null);
@@ -43,7 +37,7 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// If the undrlying type is not resolved then this the path of the type to resolved.
+        /// If the underlying type is not resolved then this the path of the type to resolved.
         /// </summary>
         internal string[] TypePaths
         {

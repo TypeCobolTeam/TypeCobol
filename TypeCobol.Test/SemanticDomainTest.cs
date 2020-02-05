@@ -927,7 +927,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(filter.Count == 1);
             Assert.IsTrue(filter.Symbol.HasFlag(Symbol.Flags.Redefines));
             Assert.AreEqual(((RedefinesSymbol)filter.Symbol).Redefined, VarGroupBis.Symbol);
-            Assert.AreEqual(((RedefinesSymbol)filter.Symbol).ToppestRedefined, VarGroup.Symbol);
+            Assert.AreEqual(((RedefinesSymbol)filter.Symbol).TopRedefined, VarGroup.Symbol);
         }
 
         /// <summary>

@@ -522,8 +522,7 @@ namespace TypeCobol.Compiler.Diagnostics
         /// Expand the top program.
         /// </summary>
         /// <param name="curPrg">Current program</param>
-        /// <param name="cyclicTypeException">Indicates whether a CyclicTypeException has been thrown during expansion</param>
-        /// <param name="levelExceedException">Indicates whether a LevelExceed Exception has been thrown during expansion</param>
+        /// <param name="exception">If an exception is thrown during expansion, this variable will be set with the corresponding Exception instance.</param>
         /// <returns>Expanded top program</returns>
         static ProgramSymbol ExpandTopProgram(ProgramSymbol curPrg, out Exception exception)
         {
@@ -536,7 +535,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     ProgramExpander expander = new ProgramExpander();
                     expander.Expand(topPrg);
                 }
-                catch (Exception e) when(e is Types.Type.CyclicTypeException || e is Symbol.LevelExceed)
+                catch (Exception e) when(e is Types.Type.CyclicTypeException || e is Symbol.LevelExceeded)
                 {
                     //Capture a Cyclic Type exception or Level Exceed exception
                     exception = e;

@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Domain;
 using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
@@ -18,7 +13,7 @@ namespace TypeCobol.Compiler.Symbols
         /// Named constructor.
         /// </summary>
         /// <param name="name"></param>
-        public NamespaceSymbol(String name)
+        public NamespaceSymbol(string name)
             : base(name, Kinds.Namespace)
         {
             Types = new Scope<TypedefSymbol>(this);
@@ -31,7 +26,7 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="name"></param>
         /// <param name="from"></param>
-        public NamespaceSymbol(String name, NamespaceSymbol from) : this(name)
+        public NamespaceSymbol(string name, NamespaceSymbol from) : this(name)
         {
             foreach (var t in from.Types)
             {
@@ -52,7 +47,7 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="name">Program's name</param>
         /// <returns>The ProgramSymbol</returns>
-        public ProgramSymbol EnterProgram(String name)
+        public ProgramSymbol EnterProgram(string name)
         {
             Domain<ProgramSymbol>.Entry entry = Programs.Lookup(name);
             if (entry == null) 

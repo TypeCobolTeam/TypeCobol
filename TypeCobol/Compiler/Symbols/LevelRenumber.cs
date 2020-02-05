@@ -29,7 +29,7 @@ namespace TypeCobol.Compiler.Symbols
                 return variableSymbol.Type?.Accept(this, currentLevel) ?? currentLevel;
             }
 
-            throw new Symbol.LevelExceed(variableSymbol);
+            throw new Symbol.LevelExceeded(variableSymbol);
         }
 
         public override int VisitVariableTypeSymbol(VariableTypeSymbol variableTypeSymbol, int currentLevel)

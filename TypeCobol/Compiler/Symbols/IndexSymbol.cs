@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Types;
 
@@ -18,7 +14,7 @@ namespace TypeCobol.Compiler.Symbols
         /// Named constructor
         /// </summary>
         /// <param name="name">The Index name</param>
-        public IndexSymbol(String name)
+        public IndexSymbol(string name)
             : base(name)
         {
             Kind = Kinds.Index;
@@ -31,7 +27,7 @@ namespace TypeCobol.Compiler.Symbols
         public VariableSymbol Indexed { get; set; }        
 
         public override string IndexedName => Indexed != null && Indexed.Name .Length != 0 ? Indexed.Name + "::" + Name : Name;
-        public override string IndexedOFName => Indexed != null && Indexed.Name.Length != 0 ? Name +  " OF " + Indexed.Name  : Name;
+        public override string IndexedOfName => Indexed != null && Indexed.Name.Length != 0 ? Name +  " OF " + Indexed.Name  : Name;
         public override string IndexedDotName => Indexed != null && Indexed.Name.Length != 0 ? Indexed.Name + '.' + Name : Name;
 
         public override Symbol LookupParentOfName(string name)

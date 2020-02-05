@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Types;
@@ -16,16 +13,9 @@ namespace TypeCobol.Compiler.Symbols
     public abstract class AbstractScope : Symbol, IScope
     {
         /// <summary>
-        /// Empty constructor
-        /// </summary>
-        protected AbstractScope()
-        {
-        }
-
-        /// <summary>
         /// Named constructor
         /// </summary>
-        protected AbstractScope(String name, Kinds kind)
+        protected AbstractScope(string name, Kinds kind)
             : base(name, kind)
         {
         }

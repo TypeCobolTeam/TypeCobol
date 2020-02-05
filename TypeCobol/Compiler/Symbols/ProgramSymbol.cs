@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Domain;
 using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
 {
     /// <summary>
-    /// Reprsents a Program Symbol
+    /// Represents a Program Symbol
     /// </summary>
     public class ProgramSymbol : AbstractScope
     {
@@ -20,7 +15,7 @@ namespace TypeCobol.Compiler.Symbols
         /// Named constructor.
         /// </summary>
         /// <param name="name"></param>
-        public ProgramSymbol(String name) : base(name, Kinds.Program)
+        public ProgramSymbol(string name) : base(name, Kinds.Program)
         {
             Types = new Scope<TypedefSymbol>(this);
             FileData = new Scope<VariableSymbol>(this);
@@ -149,7 +144,7 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="name">Program's name</param>
         /// <returns>The ProgramSymbol</returns>
-        public ProgramSymbol EnterProgram(String name)
+        public ProgramSymbol EnterProgram(string name)
         {
             Domain<ProgramSymbol>.Entry entry = Programs.Lookup(name);
             if (entry == null)
@@ -385,7 +380,7 @@ namespace TypeCobol.Compiler.Symbols
                     if (curProg.Owner != null && curProg.Owner.Kind == Kinds.Program)
                     {
                         curProg = (ProgramSymbol)curProg.Owner;
-                        curProg.ResolveReference(paths, results, bRecurseEnglobingPrograms, visibilityMask == 0 ? VariableVisibilityMask : visibilityMask);
+                        curProg.ResolveReference(paths, results, true, visibilityMask == 0 ? VariableVisibilityMask : visibilityMask);
                     }
                 }
                 else if ((visibilityMask & Flags.GLOBAL_STORAGE) == 0)
