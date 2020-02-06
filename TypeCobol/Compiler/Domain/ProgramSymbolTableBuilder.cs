@@ -44,8 +44,7 @@ namespace TypeCobol.Compiler.Domain
             Global,
             Working,
             Local,
-            Linkage,
-
+            Linkage
         };
 
         /// <summary>
@@ -67,10 +66,10 @@ namespace TypeCobol.Compiler.Domain
         /// <summary>
         /// The Current Program symbol being built as a Scope
         /// </summary>
-        public ProgramSymbol CurrentProgram
+        private ProgramSymbol CurrentProgram
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
@@ -119,13 +118,6 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Constructor
-        /// </summary>
-        public ProgramSymbolTableBuilder() : this(new RootSymbolTable())
-        {
-        }
-
-        /// <summary>
         /// RootSymbolTable instance constructor.
         /// </summary>
         /// <param name="root">The RootSymbolTable to be used</param>
@@ -135,11 +127,6 @@ namespace TypeCobol.Compiler.Domain
             Programs = new List<ProgramSymbol>();
             Diagnostics = new List<Diagnostic>();
         }
-
-        /// <summary>
-        /// The Scope of the main program
-        /// </summary>
-        public override AbstractScope Scope => Programs.Count != 0 ? Programs[0] : null;
 
         /// <summary>
         /// The Last FunctionDeclarationHeader encountered
@@ -169,6 +156,7 @@ namespace TypeCobol.Compiler.Domain
 
         public override void OnNode(Node node, Program program)
         {
+            
         }
 
         /// <summary>
@@ -187,11 +175,6 @@ namespace TypeCobol.Compiler.Domain
             System.Diagnostics.Debug.Assert(CurrentNode == node);
             CurrentNode = node.Parent;
             LastExitedNode = node;
-        }
-
-        public override void StartCobolCompilationUnit()
-        {
-
         }
 
         public override void StartCobolProgram(ProgramIdentification programIdentification, LibraryCopyCodeElement libraryCopy)
@@ -262,7 +245,7 @@ namespace TypeCobol.Compiler.Domain
 
             ProgramSymbol lastPrg = this.CurrentProgram;
             //For a stacked program the Parent is null and not for a nested program.
-            this.CurrentProgram = LastExitedNode.Parent != null ? (ProgramSymbol)LastExitedNode.Parent.SemanticData : null;
+            this.CurrentProgram = (ProgramSymbol) LastExitedNode.Parent?.SemanticData;
             if (this.CurrentProgram == null && lastPrg.HasFlag(Symbol.Flags.NeedTypeCompletion))
             {
                 //Entire stacked program has been parsed ==> Resolve Types if needed.
@@ -270,6 +253,11 @@ namespace TypeCobol.Compiler.Domain
                 resolver.ResolveTypes(lastPrg, out _, out _);
                 lastPrg.SetFlag(Symbol.Flags.ProgramCompleted, true);
             }
+        }
+
+        public override void EndCobolCompilationUnit()
+        {
+            //TODO UpdateTypeLinks ?
         }
 
         public override void StartDataDivision(DataDivisionHeader header)
@@ -301,7 +289,6 @@ namespace TypeCobol.Compiler.Domain
             CurrentDataDivisionSection = DataDivisionSection.None;
             LastDataDefinitionSymbol = null;
         }
-
 
         public override void StartWorkingStorageSection(WorkingStorageSectionHeader header)
         {
@@ -437,8 +424,7 @@ namespace TypeCobol.Compiler.Domain
         /// <summary>
         /// The Function declaration context Stack.
         /// </summary>
-        private Stack<FunctionDeclaration> FunctionDeclStack = new Stack<FunctionDeclaration>();
-
+        private readonly Stack<FunctionDeclaration> _functionDeclStack = new Stack<FunctionDeclaration>();
 
         /// <summary>
         /// Start a Function Declaration
@@ -448,7 +434,7 @@ namespace TypeCobol.Compiler.Domain
         {
             System.Diagnostics.Debug.Assert(CurrentNode != null && CurrentNode.CodeElement == header);            
             FunctionDeclaration funDecl = (FunctionDeclaration) CurrentNode;
-            FunctionDeclStack.Push(funDecl);
+            _functionDeclStack.Push(funDecl);
             //Create a function symbol
             FunctionSymbol funSym = new FunctionSymbol(header.FunctionName.Name);
             funDecl.SemanticData = funSym;
@@ -501,7 +487,6 @@ namespace TypeCobol.Compiler.Domain
             return p;
         }
 
-
         public override void EndFunctionDeclaration(FunctionDeclarationEnd end)
         {            
             System.Diagnostics.Debug.Assert(this.CurrentScope != null && this.CurrentScope is FunctionSymbol && CurrentScope == CurrentProgram);
@@ -545,8 +530,8 @@ namespace TypeCobol.Compiler.Domain
             funSym.Type = funType;
 
             //Pop the Function declaration context
-            System.Diagnostics.Debug.Assert(FunctionDeclStack.Count > 0);
-            FunctionDeclStack.Pop();
+            System.Diagnostics.Debug.Assert(_functionDeclStack.Count > 0);
+            _functionDeclStack.Pop();
             //Also Pop Scopes
             System.Diagnostics.Debug.Assert(funSym.Owner is ProgramSymbol);
             CurrentScope = (AbstractScope)funSym.Owner;
@@ -1203,7 +1188,7 @@ namespace TypeCobol.Compiler.Domain
         /// <summary>
         /// The List of Renames to validate.
         /// </summary>
-        private List<RenamesContext> _renamesToValidate = new List<RenamesContext>();
+        private readonly List<RenamesContext> _renamesToValidate = new List<RenamesContext>();
 
         /// <summary>
         /// Validate a RENAMES Symbol.

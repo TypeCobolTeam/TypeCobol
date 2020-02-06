@@ -209,6 +209,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Dispatcher.StartCobolCompilationUnit();
         }
 
+        public virtual void EndCobolCompilationUnit()
+        {
+            Dispatcher.EndCobolCompilationUnit();
+        }
+
         public virtual void StartCobolProgram(ProgramIdentification programIdentification, LibraryCopyCodeElement libraryCopy)
         {
             if (CurrentProgram == null)

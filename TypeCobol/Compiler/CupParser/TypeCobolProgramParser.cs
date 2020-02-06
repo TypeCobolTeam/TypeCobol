@@ -5547,7 +5547,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 5: // compilationUnit ::= 
             {
               object RESULT = null;
-		 my_parser.Builder.StartCobolCompilationUnit(); 
+		 my_parser.Builder.StartCobolCompilationUnit(); my_parser.Builder.EndCobolCompilationUnit(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(3/*compilationUnit*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
@@ -5559,7 +5559,7 @@ public class CUP_TypeCobolProgramParser_actions {
               // propagate RESULT from NT$0
               if ( (CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value != null )
                 RESULT = (object) ( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value;
-
+		 my_parser.Builder.EndCobolCompilationUnit(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(3/*compilationUnit*/, RESULT);
             }
           return CUP_TypeCobolProgramParser_result;
