@@ -57,12 +57,19 @@ namespace TypeCobol.Compiler.AntlrUtils
     public class ParserDiagnostic : Diagnostic
     {
 		public ParserDiagnostic(string message, IToken offendingSymbol, string ruleStack, MessageCode code = MessageCode.SyntaxErrorInParser, Exception exception = null) :
-			base(code, offendingSymbol == null ? -1 : offendingSymbol.Column, offendingSymbol == null ? -1 : (offendingSymbol.StopIndex < 0 ? -1 : (offendingSymbol.StopIndex+1)), offendingSymbol == null ? -1 : offendingSymbol.Line, message, exception)
+			base(code, offendingSymbol == null ? -1 : offendingSymbol.Column, offendingSymbol == null ? -1 : (offendingSymbol.StopIndex < 0 ? -1 : (offendingSymbol.StopIndex+1)), offendingSymbol == null ? -1 : offendingSymbol.Line, message, exception, offendingSymbol)
 		{
 			OffendingSymbol = offendingSymbol;
 			this.ruleStack = ruleStack;
-            var copyToken = (OffendingSymbol as ImportedToken)?.CopyDirective?.COPYToken;
-            if (copyToken != null) Line = copyToken.Line;
+            var copyDirective = (OffendingSymbol as ImportedToken)?.CopyDirective;
+            if (copyDirective != null)
+            {
+                Line = copyDirective.COPYToken.Line;
+                bool endsWithDot = Message.EndsWith(".");
+                if (endsWithDot) Message = Message.Substring(0, Message.Length - 1);
+                Message += $", in copy '{copyDirective.TextName}'";
+                if (endsWithDot) Message += ".";
+            }
         }
 
         public ParserDiagnostic(string message, int start, int stop, int line, string ruleStack, MessageCode code = MessageCode.SyntaxErrorInParser, Exception exception = null)
