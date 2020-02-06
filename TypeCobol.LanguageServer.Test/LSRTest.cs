@@ -418,6 +418,13 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         [TestCategory("Completion")]
+        public void CompletionOnPartialTypeName()
+        {
+            LSRTestHelper.Test("CompletionOnPartialTypeName", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
         public void CompletionOutputParamEmptyType()
         {
             LSRTestHelper.Test("CompletionOutputParamEmptyType", LsrTestingOptions.NoLsrTesting, true);
