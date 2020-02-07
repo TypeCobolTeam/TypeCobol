@@ -2,8 +2,8 @@
 Line 1[1,22] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 4[6,6] <27, Error, Syntax> - Syntax error : Symbol a is not referenced OffendingSymbol=[6,6:a]<UserDefinedWord>
 Line 4[11,11] <27, Error, Syntax> - Syntax error : Symbol b is not referenced OffendingSymbol=[11,11:b]<UserDefinedWord>
-Line 5[6,6] <27, Error, Syntax> - Syntax error : Symbol c is not referenced, in copy 'CPYProc' OffendingSymbol=[6,6:c]<UserDefinedWord> in COPY CPYProc
-Line 5[11,11] <27, Error, Syntax> - Syntax error : Symbol d is not referenced, in copy 'CPYProc' OffendingSymbol=[11,11:d]<UserDefinedWord> in COPY CPYProc
+Line 5[6,6] <27, Error, Syntax> - Error in copy 'CPYProc' : Syntax error : Symbol c is not referenced OffendingSymbol=[6,6:c]<UserDefinedWord> in COPY CPYProc
+Line 5[11,11] <27, Error, Syntax> - Error in copy 'CPYProc' : Syntax error : Symbol d is not referenced OffendingSymbol=[11,11:d]<UserDefinedWord> in COPY CPYProc
 
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False

@@ -65,10 +65,7 @@ namespace TypeCobol.Compiler.AntlrUtils
             if (copyDirective != null)
             {
                 Line = copyDirective.COPYToken.Line;
-                bool endsWithDot = Message.EndsWith(".");
-                if (endsWithDot) Message = Message.Substring(0, Message.Length - 1);
-                Message += $", in copy '{copyDirective.TextName}'";
-                if (endsWithDot) Message += ".";
+                Message = $"Error in copy '{copyDirective.TextName}' : {Message}";
             }
         }
 
