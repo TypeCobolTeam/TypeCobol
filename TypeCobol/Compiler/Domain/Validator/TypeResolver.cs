@@ -106,10 +106,12 @@ namespace TypeCobol.Compiler.Domain.Validator
 
             public override bool VisitVariableTypeSymbol(VariableTypeSymbol typedVariable, RootSymbolTable context)
             {
+                /* TypeCompletion not required anymore
                 if (!typedVariable.TypeCompleter(context))
                 {
                     UnvalidatedSymbols.Add(typedVariable);
                 }
+                */
                 return true; //We return true because we want to do that for all declarations.        
             }
 

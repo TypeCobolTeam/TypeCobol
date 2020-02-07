@@ -27,7 +27,6 @@ namespace TypeCobol.Compiler.Symbols
             Paragraphs = new Scope<ParagraphSymbol>(this);
             Functions = new Scope<FunctionSymbol>(this);
             Programs = new Scope<ProgramSymbol>(this);
-            VariableTypeSymbols = new LinkedList<VariableTypeSymbol>();
             Domain = new Domain<VariableSymbol>();
         }
 
@@ -131,15 +130,6 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// All variable that uses a Type that comes from a TypeDef
-        /// </summary>
-        public LinkedList<VariableTypeSymbol> VariableTypeSymbols
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
         /// Enter a Program in this namespace
         /// </summary>
         /// <param name="name">Program's name</param>
@@ -183,13 +173,6 @@ namespace TypeCobol.Compiler.Symbols
                 Symbol root = TopParent(Kinds.Root);
                 ((RootSymbolTable) root)?.AddToUniverse(varSym);
                 Domain.Add(varSym);
-
-                //Remember a variable that maybe expanded.
-                if (varSym.HasFlag(Flags.HasATypedefType))
-                {
-                    System.Diagnostics.Debug.Assert((varSym is VariableTypeSymbol));
-                    VariableTypeSymbols.AddLast((VariableTypeSymbol)varSym);
-                }
             }
             return varSym;
         }

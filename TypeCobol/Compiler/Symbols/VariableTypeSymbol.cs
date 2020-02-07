@@ -10,18 +10,7 @@ namespace TypeCobol.Compiler.Symbols
     /// </summary>
     public class VariableTypeSymbol : VariableSymbol
     {
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="name">Variable's name</param>
-        /// <param name="tdSym">The associated TypeDef symbol</param>
-        public VariableTypeSymbol(string name, TypedefSymbol tdSym) : base(name)
-        {
-            System.Diagnostics.Debug.Assert(tdSym != null);
-            SetFlag(Flags.HasATypedefType, true);
-            Typedef = tdSym;
-            TypePaths = null;
-        }
+        private TypedefSymbol _typedef;
 
         /// <summary>
         /// Constructor with an unresolved Type's path
@@ -31,23 +20,48 @@ namespace TypeCobol.Compiler.Symbols
         public VariableTypeSymbol(string name, string[] paths) : base(name)
         {
             System.Diagnostics.Debug.Assert(paths != null);
+            System.Diagnostics.Debug.Assert(paths.Length != 0);
             SetFlag(Flags.HasATypedefType, true);
-            Typedef = null;
             TypePaths = paths;
+            _typedef = null;
         }
 
         /// <summary>
         /// If the underlying type is not resolved then this the path of the type to resolved.
         /// </summary>
-        internal string[] TypePaths
+        public string[] TypePaths { get; }
+
+        /// <summary>
+        /// The Typedef symbol
+        /// </summary>
+        public TypedefSymbol Typedef
         {
-            get;
-            set;
+            get => _typedef;
+            internal set
+            {
+                System.Diagnostics.Debug.Assert(value != null);
+                _typedef = value;
+                var currentType = base.Type;
+                if (currentType != null)
+                {
+                    switch (currentType.Tag)
+                    {
+                        case Type.Tags.Array:
+                            ArrayType arrayType = (ArrayType) currentType;
+                            arrayType.ElementType = value.Type;
+                            break;
+                        case Type.Tags.Pointer:
+                            PointerType pointerType = (PointerType) currentType;
+                            pointerType.ElementType = value.Type;
+                            break;
+                    }
+                }
+            }
         }
 
         /// <summary>
-        /// The Type of a variable whose type comes from a TYPEDEF can be set later when
-        /// The TYPEDEF symbol is resolved. 
+        /// The Type of a variable whose type comes from a typedef is only accessible after the typedef has been resolved.
+        /// It is then replaced by a new Type instance during program expansion.
         /// </summary>
         public override Types.Type Type
         {
@@ -55,26 +69,19 @@ namespace TypeCobol.Compiler.Symbols
             {
                 if (Typedef == null)
                 {
-                    //Try to complete the type.
-                    if (!TypeCompleter())
-                        return base.Type;
+                    //Type linking not done yet
+                    return null;
                 }
-                if (base.Type == null && Typedef?.Type != null)
+
+                if (base.Type == null)
                 {
-                    base.Type = Typedef.Type;
+                    //Type expansion not done yet 
+                    return Typedef.Type;
                 }
+
                 return base.Type;
             }
             set => base.Type = value;
-        }
-
-        /// <summary>
-        /// The Typedef symbol
-        /// </summary>
-        public TypedefSymbol Typedef
-        {
-            get;
-            internal set;
         }
 
         protected internal override bool TypeCompleter(RootSymbolTable root = null)
@@ -107,7 +114,7 @@ namespace TypeCobol.Compiler.Symbols
             //--------------------------------------------------------------------------------------------
             Type currentType = base.Type;//The type before completion can be an ArrayType or a PointerType
             Typedef = entry.Symbol;
-            TypePaths = null;//GC : :-)
+            //TypePaths = null;//GC : :-)
             if (currentType != null)
             {
                 switch (currentType.Tag)

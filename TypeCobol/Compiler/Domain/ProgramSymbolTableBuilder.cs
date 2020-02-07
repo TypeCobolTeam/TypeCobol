@@ -257,7 +257,7 @@ namespace TypeCobol.Compiler.Domain
 
         public override void EndCobolCompilationUnit()
         {
-            //TODO UpdateTypeLinks ?
+            MyRoot.UpdateTypeLinks();
         }
 
         public override void StartDataDivision(DataDivisionHeader header)
@@ -974,13 +974,14 @@ namespace TypeCobol.Compiler.Domain
             //We need also a valid CurrentScope to lookup Typedef if one exit, or to create an unresolved Typedef declaration.
             System.Diagnostics.Debug.Assert(CurrentScope != null);
 
-            string[] paths = paths = datSymRef == null ? new string[] { dataType.Name } : AbstractScope.SymbolReferenceToPath(datSymRef);
+            string[] paths = datSymRef == null ? new string[] { dataType.Name } : AbstractScope.SymbolReferenceToPath(datSymRef);
             VariableTypeSymbol varTypeSym = new VariableTypeSymbol(dataDef.Name, paths);
             DecorateSymbol(dataDef, varTypeSym, parentScope);
             if (typedef == null)
                 CurrentProgram.AddToDomain(varTypeSym);
             else
                 typedef.Add(varTypeSym);
+            MyRoot.RegisterForTypeLinking(varTypeSym);
             //If we have created a VariableTypeSymbol Symbol instance then sure the underlying Program should be completed from the Top Program.
             //This can be an optimization to avoid pur Cobol85 program to be completed, they don't have TYPEDEF.
             if (!CurrentProgram.HasFlag(Symbol.Flags.NeedTypeCompletion))
