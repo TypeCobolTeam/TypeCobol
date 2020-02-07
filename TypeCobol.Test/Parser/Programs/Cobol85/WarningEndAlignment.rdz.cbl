@@ -97,6 +97,20 @@
 
       *test alignment with copy that contains procedure
        COPY CPYALIGNPROC.
+
+      *check if not exception with procedure with empty IF END-IF
+       DECLARE PROCEDURE MyProc3.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 testVar type BOOL.
+       PROCEDURE DIVISION.
+             IF testVar
       
+             ELSE
+      
+             END-IF
+             .
+       END-DECLARE.
+
        END PROGRAM PgmTest.
       
