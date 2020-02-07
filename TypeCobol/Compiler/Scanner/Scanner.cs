@@ -1550,7 +1550,7 @@ namespace TypeCobol.Compiler.Scanner
                                 var lastSignificantToken = tokensLine.ScanState.LastSignificantToken;
                                 var beforeLastSignificantToken = tokensLine.ScanState.BeforeLastSignificantToken;
 
-                                bool currentTokenIsAtBeginningOfNewLine = token.Line == lastSignificantToken.Line + 1;
+                                bool currentTokenIsAtBeginningOfNewLine = token.Line > lastSignificantToken.Line;
                                 bool currentTokenIsBeforeAreaB = token.Column < 12;
 
                                 //Either a continuation line or we are still on the same line --> not a LevelNumber
