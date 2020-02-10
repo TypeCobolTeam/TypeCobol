@@ -861,7 +861,7 @@ namespace TypeCobol.Compiler.Domain
 
             //First lookup in the current scope if the typedef symbol exists.
             TypedefSymbol tdSym = null;
-            var entry = programScope.ReverseResolveType(programScope, new string[] { dataDef.Name }, false);
+            var entry = programScope.ReverseResolveType(programScope, new string[] { dataDef.Name });
             if (entry != null)
             {
                 System.Diagnostics.Debug.Assert(entry.Count == 1);

@@ -335,10 +335,11 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="bRecurseEnglobingPrograms">true to recurse into englobing variables to look for global variable, false otherwise</param>
         /// <param name="visibilityMask">Visibility Mask</param>
         /// <returns>The referenced symbols if any</returns>
-        public Domain<VariableSymbol>.Entry ResolveReference(string[] paths, Domain<VariableSymbol>.Entry results, bool bRecurseEnglobingPrograms, Symbol.Flags visibilityMask)
+        private void ResolveReference(string[] paths, Domain<VariableSymbol>.Entry results, bool bRecurseEnglobingPrograms, Symbol.Flags visibilityMask)
         {
             if (paths == null || paths.Length == 0 || paths[0] == null)
-                return results;
+                return;
+
             string name = paths[0];
             if (this.Domain.TryGetValue(name, out var candidates))
             {
@@ -376,7 +377,6 @@ namespace TypeCobol.Compiler.Symbols
                     }
                 }
             }
-            return results;
         }
 
         /// <summary>
@@ -402,7 +402,9 @@ namespace TypeCobol.Compiler.Symbols
             if (paths == null || paths.Length == 0 || paths[0] == null)
                 return null;
 
-            return ResolveReference(paths, new Domain<VariableSymbol>.Entry(paths[0]), bRecurseEnglobingPrograms, 0);
+            var results = new Domain<VariableSymbol>.Entry(paths[0]);
+            ResolveReference(paths, results, bRecurseEnglobingPrograms, 0);
+            return results;
         }
 
         /// <summary>

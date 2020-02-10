@@ -341,7 +341,7 @@ namespace TypeCobol.Test.Domain
             //Get all TYPEDEF Types
             //----------------------------
             //Lookup the type "typeOfDaysPublic"
-            var typeOfDaysPublic = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPublic" }, false);
+            var typeOfDaysPublic = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPublic" });
             Assert.IsNotNull(typeOfDaysPublic);
             Assert.IsTrue(typeOfDaysPublic.Count == 1);
             Assert.IsNotNull(typeOfDaysPublic.Symbol.Type);
@@ -350,7 +350,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(typeOfDaysPublic.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
 
             //Lookup the type "typeOfDaysPrivate"
-            var typeOfDaysPrivate = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPrivate" }, false);
+            var typeOfDaysPrivate = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPrivate" });
             Assert.IsNotNull(typeOfDaysPrivate);
             Assert.IsTrue(typeOfDaysPrivate.Count == 1);
             Assert.IsNotNull(typeOfDaysPrivate.Symbol.Type);
@@ -360,7 +360,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(typeOfDaysPrivate.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
 
             //Lookup the type "typeOfDaysLocal"
-            var typeOfDaysLocal = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysLocal" }, false);
+            var typeOfDaysLocal = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysLocal" });
             Assert.IsNotNull(typeOfDaysLocal);
             Assert.IsTrue(typeOfDaysLocal.Count == 1);
             Assert.IsNotNull(typeOfDaysLocal.Symbol.Type);
@@ -493,7 +493,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(rc.Count == 1);
             Assert.IsNotNull(rc.Symbol.Type);
             Assert.IsTrue(rc.Symbol.Type.Tag == Type.Tags.Typedef);
-            var pt = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "pt" }, false);
+            var pt = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "pt" });
             Assert.IsTrue(pt.Count == 1);
             Assert.IsTrue(rc.Symbol.Type == pt.Symbol.Type);
 
@@ -502,7 +502,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(arr.Count == 1);
             Assert.IsNotNull(arr.Symbol.Type);
             Assert.IsTrue(arr.Symbol.Type.Tag == Type.Tags.Typedef);
-            var rectarray = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "rectarray" }, false);
+            var rectarray = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "rectarray" });
             Assert.IsTrue(rectarray.Count == 1);
             Assert.IsTrue(arr.Symbol.Type == rectarray.Symbol.Type);
 
@@ -1780,7 +1780,7 @@ namespace TypeCobol.Test.Domain
             Assert.AreEqual(nestPrgSym.Name, "Tester");
 
             //Lookup the type "typeOfDays"
-            var typeOfDaysPublic = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPublic" }, false);
+            var typeOfDaysPublic = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPublic" });
             Assert.IsNotNull(typeOfDaysPublic);
             Assert.IsTrue(typeOfDaysPublic.Count == 1);
             Assert.IsNotNull(typeOfDaysPublic.Symbol.Type);
@@ -1801,7 +1801,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(nestPrgSym.IsTypeAccessible(typeOfDaysPublic.Symbol));
 
             //Lookup the type "typeOfDaysPrivate"
-            var typeOfDaysPrivate = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPrivate" }, false);
+            var typeOfDaysPrivate = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPrivate" });
             Assert.IsNotNull(typeOfDaysPrivate);
             Assert.IsTrue(typeOfDaysPrivate.Count == 1);
             Assert.IsNotNull(typeOfDaysPrivate.Symbol.Type);
@@ -1823,7 +1823,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(nestPrgSym.IsTypeAccessible(typeOfDaysPrivate.Symbol));
 
             //Lookup the type "typeOfDaysLocal"
-            var typeOfDaysLocal = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysLocal" }, false);
+            var typeOfDaysLocal = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysLocal" });
             Assert.IsNotNull(typeOfDaysLocal);
             Assert.IsTrue(typeOfDaysLocal.Count == 1);
             Assert.IsNotNull(typeOfDaysLocal.Symbol.Type);
@@ -2049,7 +2049,7 @@ namespace TypeCobol.Test.Domain
             //---------------------------------------
             //Resolve all types of the Nested Program.
             //---------------------------------------
-            var typ = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "POINTNestedPriv" }, false);
+            var typ = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "POINTNestedPriv" });
 
             var POINTNestedGblEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedGbl", "Nested" });
             Assert.IsTrue(POINTNestedGblEntry.Count == 1);
@@ -2072,7 +2072,7 @@ namespace TypeCobol.Test.Domain
             //-----------------------------------------
             //Resolve all types of the Nested2 Program.
             //-----------------------------------------
-            var typ2 = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "POINTNestedNestedPriv" }, false);
+            var typ2 = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "POINTNestedNestedPriv" });
 
             var POINTNestedNestedGblEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedNestedGbl", "Nested2" });
             Assert.IsTrue(POINTNestedNestedGblEntry.Count == 1);
