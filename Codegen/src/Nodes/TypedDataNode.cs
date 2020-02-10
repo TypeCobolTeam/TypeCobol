@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using JetBrains.Annotations;
-using TypeCobol.Codegen.Generators;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Tools;
@@ -987,7 +986,7 @@ namespace TypeCobol.Codegen.Nodes
                 {
                     if (child.IsFlagSet(Flag.IsTypedefCopyNode))
                     {
-                        lines.AddRange((child as LinearNodeSourceCodeMapper.LinearCopyNode).Lines);
+                        lines.AddRange(child.Lines);
                         continue;
                     }
                 }
