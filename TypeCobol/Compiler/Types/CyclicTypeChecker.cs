@@ -1,77 +1,63 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Symbols;
+﻿using System.Collections.Generic;
 
 namespace TypeCobol.Compiler.Types
 {
     /// <summary>
     /// Cyclic Type Checker. Determine if for instance a type contains a TYPEDEF type
     /// which is cyclic.
+    /// An exception of type <exception cref="Type.CyclicTypeException">CyclicTypeException</exception> is thrown
+    /// by this visitor if a cyclic definition is found
     /// </summary>
-    public class CyclicTypeChecker : Type.AbstractTypeVisitor<bool, object>
+    public class CyclicTypeChecker : Type.AbstractTypeVisitor<object, object>
     {
-        /// <summary>
-        /// For checking Cyclic Typedef.
-        /// </summary>
-        /// 
-        private readonly HashSet<TypedefType> _cyclicCheck = new HashSet<TypedefType>();
+        private readonly Stack<TypedefType> _typedefStack;
 
-        /// <summary>
-        /// The type which is cyclic if any.
-        /// </summary>
-        public Type CyclicType
+        public CyclicTypeChecker()
         {
-            get;
-            private set;
+            _typedefStack = new Stack<TypedefType>();
         }
 
-        /// <summary>
-        /// Any last variable with a cyclic type.
-        /// </summary>
-        public VariableSymbol LastSymbol
+        public override object VisitType(Type type, object _)
         {
-            get;
-            set;
+            //Continue visit through TypeComponent if any.
+            type.TypeComponent?.Accept(this, null);
+            return null;
         }
 
-        public override bool VisitType(Type t, object s)
+        public override object VisitGroupType(GroupType groupType, object _)
         {
-            return false;
-        }
-
-        public override bool VisitArrayType(ArrayType t, object _) => t.MayExpand && t.ElementType.Accept(this, _);
-        public override bool VisitPointerType(PointerType t, object _) => t.MayExpand && t.ElementType.Accept(this, _);
-        public override bool VisitGroupType(GroupType t, object _)
-        {
-            foreach (var field in t.Scope)
+            //Continue visit through fields
+            foreach (var field in groupType.Fields)
             {
-                if (field.Type != null && field.Type.Accept(this, _))
-                {
-                    LastSymbol = field;
-                    return true;
-                }
+                field.Type?.Accept(this, null);
             }
-            return false;
+
+            return null;
         }
-        public override bool VisitTypedefType(TypedefType t, object _)
+
+        public override object VisitTypedefType(TypedefType typedefType, object _)
         {
+            bool pop = false;
             try
             {
-                if (_cyclicCheck.Contains(t))
+                if (_typedefStack.Contains(typedefType))
                 {
-                    this.CyclicType = t;
-                    return true;
+                    throw new Type.CyclicTypeException(typedefType);
                 }
-                _cyclicCheck.Add(t);
-                return t.TargetType?.Accept(this, _) ?? false;
+
+                _typedefStack.Push(typedefType);
+                pop = true;
+                typedefType.TargetType.Accept(this, null);
             }
             finally
             {
-                _cyclicCheck.Remove(t);
+                if (pop)
+                {
+                    _typedefStack.Pop();
+                }
             }
+
+            return null;
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -233,16 +232,6 @@ namespace TypeCobol.Compiler.Symbols
                     TypeChanged?.Invoke(this, null);
                 }
             }
-        }
-
-        /// <summary>
-        /// Complete the Symbol's type associated to this Symbol
-        /// </summary>
-        /// <param name="root">The root symbol table to be used to complete the type</param>
-        /// <returns>true if the type is completed, false otherwise</returns>
-        protected internal virtual bool TypeCompleter(RootSymbolTable root = null)
-        {
-            return true;
         }
 
         /// <summary>

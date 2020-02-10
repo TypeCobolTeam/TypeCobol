@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
@@ -84,60 +83,6 @@ namespace TypeCobol.Compiler.Symbols
             set => base.Type = value;
         }
 
-        protected internal override bool TypeCompleter(RootSymbolTable root = null)
-        {
-            if (Typedef != null)
-            {//Variable Type Symbol is already completed
-                return true;
-            }
-            if (TypePaths == null || TypePaths.Length == 0)
-            {
-                return false;
-            }
-            ProgramSymbol program = (ProgramSymbol)NearestKind(Symbol.Kinds.Program, Symbol.Kinds.Function);
-            ProgramSymbol topProgram = (ProgramSymbol)TopParent(Symbol.Kinds.Program);
-            if (!topProgram.HasFlag(Flags.ProgramCompleted))
-                return false;//This program is not completed yet, that is to say it is in construction.
-            root  = root ?? (RootSymbolTable)TopParent(Symbol.Kinds.Root);
-            System.Diagnostics.Debug.Assert(root != null);
-            if (root == null)
-                return false;
-            Domain<TypedefSymbol>.Entry entry = program.ResolveType(root, TypePaths);
-            if (entry == null || entry.Count != 1)
-            {//Unknown type or ambiguous types
-                return false;
-            }
-            //--------------------------------------------------------------------------------------------
-            //We don't check type accessibility here. I think that the semantic analyzer should do that.
-            //This can be achieved by the following call:
-            //program.IsTypeAccessible(entry.Symbol);
-            //--------------------------------------------------------------------------------------------
-            Type currentType = base.Type;//The type before completion can be an ArrayType or a PointerType
-            Typedef = entry.Symbol;
-            //TypePaths = null;//GC : :-)
-            if (currentType != null)
-            {
-                switch (currentType.Tag)
-                {
-                    case Types.Type.Tags.Array:
-                        {
-                            ArrayType at = (ArrayType)currentType;
-                            at.ElementType = Typedef?.Type;
-                        }
-                        break;
-                    case Types.Type.Tags.Pointer:
-                        {
-                            PointerType at = (PointerType)currentType;
-                            at.ElementType = Typedef?.Type;
-                        }
-                        break;
-                }
-            }
-            return true;
-        }
-
-
-        //public override string TypedName => Typedef != null && Typedef.Type != null && !Typedef.Type.HasFlag(Flags.BuiltinType) ? (Name + Typedef.Name) : Name;
         public override string TypedName => Typedef != null ? (Name + '.' + Typedef.Name) : Name;
 
         /// <summary>

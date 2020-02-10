@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Types;
 
@@ -134,12 +133,12 @@ namespace TypeCobol.Compiler.Symbols
         private class TypeExpander : Type.AbstractTypeVisitor<Type, Symbol>
         {
             private readonly ProgramExpander _parentExpander;
-            private readonly HashSet<TypedefType> _cyclicTypedefCheckSet;
+            private readonly CyclicTypeChecker _cyclicTypeChecker;
 
             public TypeExpander(ProgramExpander parentExpander)
             {
                 _parentExpander = parentExpander;
-                _cyclicTypedefCheckSet = new HashSet<TypedefType>();
+                _cyclicTypeChecker = new CyclicTypeChecker();
             }
 
             public override Type VisitType(Type type, Symbol owner)
@@ -222,21 +221,11 @@ namespace TypeCobol.Compiler.Symbols
             /// <returns>The expanded type.</returns>
             public override Type VisitTypedefType(TypedefType typedef, Symbol owner)
             {
-                try
-                {
-                    if (_cyclicTypedefCheckSet.Contains(typedef))
-                        throw new Type.CyclicTypeException(typedef);
+                //Check first for cyclic definition.
+                typedef.Accept(_cyclicTypeChecker, null);
 
-                    _cyclicTypedefCheckSet.Add(typedef);
-
-                    //Take the representing type.
-                    Type typeComponent = typedef.TypeComponent;
-                    return (typeComponent == null || !typeComponent.MayExpand) ? typeComponent : typeComponent.Accept(this, owner);
-                }
-                finally
-                {
-                    _cyclicTypedefCheckSet.Remove(typedef);
-                }
+                //Continue expansion through the TargetType.
+                return typedef.TargetType.Accept(this, owner);
             }
         }
 

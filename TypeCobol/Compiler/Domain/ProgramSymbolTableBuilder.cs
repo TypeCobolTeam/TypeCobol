@@ -243,20 +243,13 @@ namespace TypeCobol.Compiler.Domain
             //System.Diagnostics.Debug.Assert(LastExitedNode.CodeElement.Type == CodeElementType.ProgramIdentification);
             //------------------------------------------------------------------------------------------------------------
 
-            ProgramSymbol lastPrg = this.CurrentProgram;
             //For a stacked program the Parent is null and not for a nested program.
             this.CurrentProgram = (ProgramSymbol) LastExitedNode.Parent?.SemanticData;
-            if (this.CurrentProgram == null && lastPrg.HasFlag(Symbol.Flags.NeedTypeCompletion))
-            {
-                //Entire stacked program has been parsed ==> Resolve Types if needed.
-                TypeCobol.Compiler.Domain.Validator.TypeResolver resolver = new TypeCobol.Compiler.Domain.Validator.TypeResolver(MyRoot);
-                resolver.ResolveTypes(lastPrg, out _, out _);
-                lastPrg.SetFlag(Symbol.Flags.ProgramCompleted, true);
-            }
         }
 
         public override void EndCobolCompilationUnit()
         {
+            //Entire compilation unit has been parsed, perform type-linking with up-to-date symbols.
             MyRoot.UpdateTypeLinks();
         }
 
