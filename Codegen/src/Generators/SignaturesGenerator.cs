@@ -131,7 +131,7 @@ namespace TypeCobol.Codegen.Generators
                                 LinearNodeSourceCodeMapper.LinearCopyNode copyNode =
                                     new LinearNodeSourceCodeMapper.LinearCopyNode(new Qualifier.TokenCodeElement(copyTokens));
 
-                                lines.AddRange(copyNode.GetCopyLines());
+                                lines.AddRange(copyNode.Lines);
                                 generatedCopyDirectives.Add(copy);
                             }
                         }

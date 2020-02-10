@@ -987,7 +987,7 @@ namespace TypeCobol.Codegen.Nodes
                 {
                     if (child.IsFlagSet(Flag.IsTypedefCopyNode))
                     {
-                        lines.AddRange((child as LinearNodeSourceCodeMapper.LinearCopyNode).GetCopyLines());
+                        lines.AddRange((child as LinearNodeSourceCodeMapper.LinearCopyNode).Lines);
                         continue;
                     }
                 }
