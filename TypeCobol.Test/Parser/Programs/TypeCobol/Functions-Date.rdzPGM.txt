@@ -1,9 +1,9 @@
 --- Diagnostics ---
 Line 1[8,33] <37, Warning, General> - Warning: "END PROGRAM" is missing.
-Line 136[9,36] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions".
-Line 142[9,36] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions".
-Line 154[9,36] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions".
-Line 160[8,35] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions".
+Line 136[9,15] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions". OffendingSymbol=[9,15:DECLARE]<DECLARE>
+Line 142[9,15] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions". OffendingSymbol=[9,15:DECLARE]<DECLARE>
+Line 154[9,15] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions". OffendingSymbol=[9,15:DECLARE]<DECLARE>
+Line 165[8,14] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions". OffendingSymbol=[8,14:DECLARE]<DECLARE>
 
 --- Program ---
 PROGRAM: DateFunctions common:False initial:False recursive:False

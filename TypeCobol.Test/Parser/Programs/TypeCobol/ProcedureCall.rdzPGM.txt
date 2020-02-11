@@ -7,9 +7,9 @@ Line 37[21,26] <27, Error, Syntax> - Syntax error : Parameter with name 'format'
 Line 38[21,24] <27, Error, Syntax> - Syntax error : Parameter with name 'var1' declared multiple times OffendingSymbol=[21,24:var1]<UserDefinedWord>
 Line 39[21,24] <27, Error, Syntax> - Syntax error : Parameter with name 'var1' declared multiple times OffendingSymbol=[21,24:var1]<UserDefinedWord>
 Line 41[21,26] <27, Error, Syntax> - Syntax error : Parameter with name 'format' declared multiple times OffendingSymbol=[21,26:format]<UserDefinedWord>
-Line 111[8,55] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall".
-Line 115[8,55] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall".
-Line 119[8,70] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall".
+Line 111[8,14] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall". OffendingSymbol=[8,14:declare]<DECLARE>
+Line 115[8,14] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall". OffendingSymbol=[8,14:declare]<DECLARE>
+Line 119[8,14] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall". OffendingSymbol=[8,14:declare]<DECLARE>
 Line 127[8,8] <27, Error, Syntax> - Syntax error : Empty CALL is not authorized
 Line 137[8,43] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'GetPtrFn'  output(Alphanumeric, Alphanumeric)
 Line 142[8,43] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'GetPtrFn'  in-out(Alphanumeric, Alphanumeric)

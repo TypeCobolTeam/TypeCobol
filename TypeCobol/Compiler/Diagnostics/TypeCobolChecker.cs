@@ -631,9 +631,12 @@ namespace TypeCobol.Compiler.Diagnostics
             var headerNameURI = new URI(header.Name);
             var functions = functionDeclaration.SymbolTable.GetFunction(headerNameURI, functionDeclaration.Profile);
             if (functions.Count > 1)
-                DiagnosticUtils.AddError(functionDeclaration,
+            {
+                Token declareToken = header.ConsumedTokens.First(t => t.TokenType == TokenType.DECLARE);
+                DiagnosticUtils.AddError(header,
                     "A function \"" + headerNameURI.Head + "\" with the same profile already exists in namespace \"" +
-                    headerNameURI.Tail + "\".");
+                    headerNameURI.Tail + "\".", declareToken);
+            }
 
 
             //// Set a Warning if the formalized comment parameter is unknown or if the function parameter have no description
@@ -728,9 +731,9 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 foreach (var condition in parameter.DataConditions)
                 {
-                    if (condition.LevelNumber?.Value != 88)
+                    if (condition.LevelNumber?.Value != 88 && condition.Name != null)
                         DiagnosticUtils.AddError(node,
-                            "Condition parameter \"" + condition.Name + "\" must be level 88.", condition);
+                                "Condition parameter \"" + condition.Name + "\" must be level 88.", condition);
                     if (condition.LevelNumber?.Value == 88 && parameter.DataType == DataType.Boolean)
                         DiagnosticUtils.AddError(node,
                             "The Level 88 symbol '" + parameter.Name +
