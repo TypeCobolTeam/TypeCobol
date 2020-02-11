@@ -12,7 +12,6 @@ using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.CodeModel;
-using Analytics;
 using TypeCobol.CustomExceptions;
 using TypeCobol.Tools.APIHelpers;
 

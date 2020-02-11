@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Analytics;
 using Antlr4.Runtime.Atn;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;

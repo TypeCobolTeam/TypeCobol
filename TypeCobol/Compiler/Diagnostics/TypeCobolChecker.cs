@@ -9,7 +9,6 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Analytics;
 using Castle.Core.Internal;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Scanner;

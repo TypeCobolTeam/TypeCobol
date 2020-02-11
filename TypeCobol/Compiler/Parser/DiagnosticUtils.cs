@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Analytics;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;

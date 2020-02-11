@@ -22,9 +22,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(TC_AntlrGeneratedFiles)\CodeElementsBaseListener.cs">
@@ -155,10 +152,6 @@
     <EmbeddedResource Include="LanguageServices\CodeAnalysis\Statistics\LanguageModel.Program.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Analytics\Analytics.csproj">
-      <Project>{07445710-6b27-443e-9fe8-54b1476bc629}</Project>
-      <Name>Analytics</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CSCupRuntime\CSCupRuntime.csproj">
       <Project>{8cc6ccc3-7ed4-4dc8-a636-733856301aac}</Project>
       <Name>CSCupRuntime</Name>
