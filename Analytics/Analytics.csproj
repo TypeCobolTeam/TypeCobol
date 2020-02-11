@@ -15,17 +15,7 @@
     <DoNotCopyLocalIfInGac>true</DoNotCopyLocalIfInGac>
     <TargetFrameworkProfile />
   </PropertyGroup>
-  <!-- ITEM Group for .NET 4.5 Dependencies -->
-  <ItemGroup Condition=" '$(Configuration)'=='Debug' Or '$(Configuration)'=='Release' Or '$(Configuration)'=='EI_Debug' Or '$(Configuration)'=='EI_Release'">
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.DirectoryServices" />
-    <Reference Include="System.DirectoryServices.AccountManagement" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-  </ItemGroup>
-  <!-- ITEM Group for .NET 4.0 Dependencies -->
-  <ItemGroup Condition=" '$(Configuration)'=='EI_Debug_Net40' Or '$(Configuration)'=='EI_Release_Net40'">
+  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.DirectoryServices" />
