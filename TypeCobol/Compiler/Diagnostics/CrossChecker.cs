@@ -538,7 +538,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (foundCount == 0)
             {
                 if (node.SymbolTable.GetFunction(area).Count < 1)
-                    DiagnosticUtils.AddError(node, "Symbol " + area + " is not referenced", area.SymbolReference);
+                    DiagnosticUtils.AddError(node, "Symbol " + area + " is not referenced", area.SymbolReference, MessageCode.SemanticTCErrorInParser);
             }
             else if (foundCount > 1)
             {
@@ -788,7 +788,7 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 if (sname == null)
                 {
-                    DiagnosticUtils.AddError(node, "Symbol " + symbol.Name + " is not referenced", symbol);
+                    DiagnosticUtils.AddError(node, "Symbol " + symbol.Name + " is not referenced", symbol, MessageCode.SemanticTCErrorInParser);
                 }
                 else
                 {

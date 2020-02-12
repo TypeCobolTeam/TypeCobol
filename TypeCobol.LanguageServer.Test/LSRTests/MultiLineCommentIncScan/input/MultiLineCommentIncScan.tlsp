@@ -62,43 +62,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52032788062027908163.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":33,\"character\":6},\"end\":{\"line\":33,\"character\":6}},\"severity\":1,\"code\":\"44\",\"source\":\"Page\",\"message\":\"Invalid use of '%'. Should be used with \\\"%<< ... (linebreak) %>>\\\" for MultiLine Comment or \\\"%<<< ... (linebreak) %>>>\\\" for Formalized Comment\"},{\"range\":{\"start\":{\"line\":31,\"character\":55},\"end\":{\"line\":31,\"character\":60}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Symbol MyData is not referenced\"},{\"range\":{\"start\":{\"line\":31,\"character\":21},\"end\":{\"line\":31,\"character\":60}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function not found 'TCOZDATE.CurrentDate'  output(?)\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52032788062027908163.cee\"},\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52032788062027908163.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":29,\"character\":6},\"end\":{\"line\":29,\"character\":6}},\"rangeLength\":0,\"text\":\"%\"}]}}"
-    },
-    {
-      "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52032788062027908163.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":30,\"character\":6},\"end\":{\"line\":30,\"character\":6}},\"severity\":1,\"code\":\"44\",\"source\":\"Page\",\"message\":\"Invalid use of '%'. Should be used with \\\"%<< ... (linebreak) %>>\\\" for MultiLine Comment or \\\"%<<< ... (linebreak) %>>>\\\" for Formalized Comment\"},{\"range\":{\"start\":{\"line\":33,\"character\":6},\"end\":{\"line\":33,\"character\":6}},\"severity\":1,\"code\":\"44\",\"source\":\"Page\",\"message\":\"Invalid use of '%'. Should be used with \\\"%<< ... (linebreak) %>>\\\" for MultiLine Comment or \\\"%<<< ... (linebreak) %>>>\\\" for Formalized Comment\"},{\"range\":{\"start\":{\"line\":31,\"character\":55},\"end\":{\"line\":31,\"character\":60}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Symbol MyData is not referenced\"},{\"range\":{\"start\":{\"line\":31,\"character\":21},\"end\":{\"line\":31,\"character\":60}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function not found 'TCOZDATE.CurrentDate'  output(?)\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52032788062027908163.cee\"},\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52032788062027908163.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":29,\"character\":7},\"end\":{\"line\":29,\"character\":7}},\"rangeLength\":0,\"text\":\"\\u003c\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52032788062027908163.cee\"},\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52032788062027908163.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":29,\"character\":8},\"end\":{\"line\":29,\"character\":8}},\"rangeLength\":0,\"text\":\"\\u003c\"}]}}"
-    },
-    {
-      "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52032788062027908163.cee\",\"diagnostics\":[]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52032788062027908163.cee\"},\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52032788062027908163.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":29,\"character\":9},\"end\":{\"line\":29,\"character\":9}},\"rangeLength\":0,\"text\":\"\\u003c\"}]}}"
-    },
-    {
-      "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52032788062027908163.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":33,\"character\":8},\"end\":{\"line\":33,\"character\":8}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '%<<< ... >'\"},{\"range\":{\"start\":{\"line\":23,\"character\":12},\"end\":{\"line\":23,\"character\":43}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input 'DECLAREPROCEDUREMyProcpublic.' expecting {DeclarativesHeader, SectionHeader, ParagraphHeader, SentenceEnd, AcceptStatement, AddStatement, AllocateStatement, AlterStatement, CallStatement, CancelStatement, CloseStatement, ComputeStatement, ContinueStatement, DeleteStatement, DisplayStatement, DivideStatement, EntryStatement, EvaluateStatement, ExecStatement, ExitMethodStatement, ExitProgramStatement, ExitStatement, FreeStatement, GobackStatement, GotoStatement, IfStatement, InitializeStatement, InspectStatement, InvokeStatement, JsonGenerateStatement, JsonParseStatement, MergeStatement, MoveStatement, MultiplyStatement, OpenStatement, PerformProcedureStatement, PerformStatement, ReadStatement, ReleaseStatement, ReturnStatement, RewriteStatement, SearchStatement, SetStatement, SortStatement, StartStatement, StopStatement, StringStatement, SubtractStatement, UnstringStatement, WriteStatement, XmlGenerateStatement, XmlParseStatement, FunctionDeclarationEnd, ProcedureStyleCall}\"},{\"range\":{\"start\":{\"line\":4,\"character\":8},\"end\":{\"line\":4,\"character\":28}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"END PROGRAM\\\" is missing.\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52032788062027908163.cee\"},\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52032788062027908163.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":29,\"character\":9},\"end\":{\"line\":29,\"character\":10}},\"rangeLength\":1,\"text\":\"\"}]}}"
-    },
-    {
-      "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52032788062027908163.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52032788062027908163.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":33,\"character\":6},\"end\":{\"line\":33,\"character\":6}},\"severity\":1,\"code\":\"44\",\"source\":\"Page\",\"message\":\"Invalid use of '%'. Should be used with \\\"%<< ... (linebreak) %>>\\\" for MultiLine Comment or \\\"%<<< ... (linebreak) %>>>\\\" for Formalized Comment\"},{\"range\":{\"start\":{\"line\":31,\"character\":55},\"end\":{\"line\":31,\"character\":60}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: Symbol MyData is not referenced\"},{\"range\":{\"start\":{\"line\":31,\"character\":21},\"end\":{\"line\":31,\"character\":60}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function not found 'TCOZDATE.CurrentDate'  output(?)\"}]}}"
     }
   ],
   "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM52032788062027908163.cee\"}}}",

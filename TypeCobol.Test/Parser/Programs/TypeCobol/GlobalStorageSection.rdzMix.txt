@@ -119,7 +119,7 @@ Line 99[8,30] <27, Error, Syntax> - Syntax error : GLOBAL-STORAGE SECTION is onl
 
        PROCEDURE DIVISION.
       *G-Date is not accessible in StackedProgram
-Line 106[13,18] <27, Error, Syntax> - Syntax error : Symbol G-Date is not referenced
+Line 106[13,18] <30, Error, Semantics> - Semantic error: Symbol G-Date is not referenced
        MOVE G-Date TO MyDate.
 
        END PROGRAM StackedProg.

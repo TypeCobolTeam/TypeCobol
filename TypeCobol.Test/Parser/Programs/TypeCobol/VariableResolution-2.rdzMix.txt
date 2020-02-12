@@ -61,7 +61,7 @@ Symbols found: DVZFSCT0::Nested::var2::TypeG::Champ4 | DVZFSCT0::Nested::var1::T
       *OK
            DISPLAY var2::Champ4
       *KO
-Line 56[26,31] <27, Error, Syntax> - Syntax error : Symbol var2.Champ5 is not referenced
+Line 56[26,31] <30, Error, Semantics> - Semantic error: Symbol var2.Champ5 is not referenced
            DISPLAY var2::Champ5
            .
        END PROGRAM Nested.
