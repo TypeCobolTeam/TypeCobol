@@ -45,15 +45,10 @@
        01 TC-A2 PIC X.
 
 
-       PROCEDURE DIVISiON USING PntTab-Pnt.
+       PROCEDURE DIVISiON USING TC-FunctionCode
                           
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
+       perform INIT-LIBRARY
            PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
 
            GOBACK.
 
@@ -304,13 +299,8 @@
       *     input(myname: pic X(15))
            PERFORM TC-INITIALIZATIONS
       *    Call PersonService::GetPersonByName input myname
-           
-           IF ADDRESS OF TC-PersonSe-f6b6da00-Item = NULL
-             OR TC-PersonSe-f6b6da00-Idt not = 'f6b6da00'
-               PERFORM TC-LOAD-POINTERS-PersonSe
-           END-IF
-      *    Equivalent to call f6b6da00 in module PersonService
-           CALL TC-PersonSe-f6b6da00 USING
+           CALL 'zcallpgm' using TC-PersonSe
+                    PersonSe-Fct-f6b6da00-GetPerso
                                  myname
            end-call
                                                            

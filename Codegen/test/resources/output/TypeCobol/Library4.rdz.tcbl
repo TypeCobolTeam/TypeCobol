@@ -3,44 +3,31 @@
        DATA DIVISION.
                                                              
        WORKING-STORAGE SECTION.
-       01  TC-DVZZDATE-FctList-Loaded PIC X(02).
-           88 TC-DVZZDATE-FctList-IsLoaded      VALUE 'OK'.
-       01 TC-DVZZDATE-PntTab.
-           05 TC-DVZZDATE-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program b173dd7b
-      *Which is generated code for DVZZDATE.currentDateString
-      *Declared in source file Library4.rdz.tcbl
-           05 TC-DVZZDATE-b173dd7b-Idt   PIC X(08) VALUE 'b173dd7b'.
-           05 TC-DVZZDATE-b173dd7b PROCEDURE-POINTER.
 
        
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program b173dd7b
+      * Which is generated code for DVZZDATE.currentDateString
+           88 Fct-b173dd7b-currentDateString
+              value 'Fct=b173dd7b-currentDateString'.
 
 
       *=================================================================
-       PROCEDURE DIVISION USING PntTab-Pnt.
-                           
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
-           PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
+       PROCEDURE DIVISION USING TC-FunctionCode
+                           .
 
+           PERFORM INIT-LIBRARY
+           PERFORM FctList-Process-Mode
            GOBACK.
 
-        FctList-Process-Mode.
-            IF NOT TC-DVZZDATE-FctList-IsLoaded
-              SET TC-DVZZDATE-b173dd7b   TO ENTRY 'b173dd7b'
-
-              SET TC-DVZZDATE-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-DVZZDATE-PntTab
-
+       FctList-Process-Mode.
+           evaluate true
+               when Fct-b173dd7b-currentDateString
+                  call 'b173dd7b'
+               when other
+                  TODO
+           end-evaluate
            .
                                              
       *DECLARE FUNCTION currentDateString PUBLIC

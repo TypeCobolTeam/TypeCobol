@@ -3,42 +3,30 @@
        DATA DIVISION.
                                                          
        WORKING-STORAGE SECTION.
-       01  TC-PGM1-FctList-Loaded PIC X(02).
-           88 TC-PGM1-FctList-IsLoaded      VALUE 'OK'.
-       01 TC-PGM1-PntTab.
-           05 TC-PGM1-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program f1c0385c
-      *Which is generated code for PGM1.StartCheckpoint
-      *Declared in source file LineExceed5.rdz.cbl
-           05 TC-PGM1-f1c0385c-Idt   PIC X(08) VALUE 'f1c0385c'.
-           05 TC-PGM1-f1c0385c PROCEDURE-POINTER.
 
        
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program f1c0385c
+      * Which is generated code for PGM1.StartCheckpoint
+           88 Fct-f1c0385c-StartCheckpoint
+              value 'Fct=f1c0385c-StartCheckpoint'.
 
-       PROCEDURE DIVISION USING PntTab-Pnt.
-                           
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
+       01 arg1 pic X.
+       PROCEDURE DIVISION USING TC-FunctionCode
+                           arg1.
+
+           PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
-
            GOBACK.
 
-        FctList-Process-Mode.
-            IF NOT TC-PGM1-FctList-IsLoaded
-              SET TC-PGM1-f1c0385c   TO ENTRY 'f1c0385c'
-
-              SET TC-PGM1-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-PGM1-PntTab
-
+       FctList-Process-Mode.
+           evaluate true
+               when Fct-f1c0385c-StartCheckpoint
+                  call 'f1c0385c' using arg1
+               when other
+                  TODO
+           end-evaluate
            .
                                 
       *-----------------------------------------------------------------
@@ -51,42 +39,30 @@
        DATA DIVISION.
                                                          
        WORKING-STORAGE SECTION.
-       01  TC-PGM2-FctList-Loaded PIC X(02).
-           88 TC-PGM2-FctList-IsLoaded      VALUE 'OK'.
-       01 TC-PGM2-PntTab.
-           05 TC-PGM2-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program f73481e6
-      *Which is generated code for PGM2.CheckContract
-      *Declared in source file LineExceed5.rdz.cbl
-           05 TC-PGM2-f73481e6-Idt   PIC X(08) VALUE 'f73481e6'.
-           05 TC-PGM2-f73481e6 PROCEDURE-POINTER.
 
        
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program f73481e6
+      * Which is generated code for PGM2.CheckContract
+           88 Fct-f73481e6-CheckContract
+              value 'Fct=f73481e6-CheckContract'.
 
-       PROCEDURE DIVISION USING PntTab-Pnt.
-                           
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
+       01 arg1 pic X.
+       PROCEDURE DIVISION USING TC-FunctionCode
+                           arg1.
+
+           PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
-
            GOBACK.
 
-        FctList-Process-Mode.
-            IF NOT TC-PGM2-FctList-IsLoaded
-              SET TC-PGM2-f73481e6   TO ENTRY 'f73481e6'
-
-              SET TC-PGM2-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-PGM2-PntTab
-
+       FctList-Process-Mode.
+           evaluate true
+               when Fct-f73481e6-CheckContract
+                  call 'f73481e6' using arg1
+               when other
+                  TODO
+           end-evaluate
            .
                                 
       *-----------------------------------------------------------------
@@ -149,13 +125,8 @@
       *     input(param1: pic X)
            PERFORM TC-INITIALIZATIONS
       *    call PGM1::StartCheckpoint input param1
-           
-           IF ADDRESS OF TC-PGM1-f1c0385c-Item = NULL
-             OR TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
-               PERFORM TC-LOAD-POINTERS-PGM1
-           END-IF
-      *    Equivalent to call f1c0385c in module PGM1
-           CALL TC-PGM1-f1c0385c USING
+           CALL 'zcallpgm' using TC-PGM1
+                    PGM1-Fct-f1c0385c-StartCheckpo
                                  param1
            end-call
                                                   
@@ -226,13 +197,8 @@
       *PGM1.testos  - No Params
            PERFORM TC-INITIALIZATIONS
       *                        call PGM1::StartCheckpoint input param1
-                               
-           IF ADDRESS OF TC-PGM1-f1c0385c-Item = NULL
-             OR TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
-               PERFORM TC-LOAD-POINTERS-PGM1
-           END-IF
-      *    Equivalent to call f1c0385c in module PGM1
-           CALL TC-PGM1-f1c0385c USING
+                               CALL 'zcallpgm' using TC-PGM1
+                    PGM1-Fct-f1c0385c-StartCheckpo
                                  param1
            end-call
                                                                       

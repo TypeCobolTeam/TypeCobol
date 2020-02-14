@@ -33,15 +33,10 @@
        01 TC-A2 PIC X.
 
 
-       PROCEDURE DIVISiON USING PntTab-Pnt.
+       PROCEDURE DIVISiON USING TC-FunctionCode
                           
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
+       perform INIT-LIBRARY
            PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
 
            GOBACK.
 

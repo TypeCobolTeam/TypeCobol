@@ -22,23 +22,18 @@
            OCCURS 200 TIMES INDEXED BY Idx-TaxElm.
            06 TaxTyp PIC X(03).
                                                   
-       01  TC-DVZF0OSM-FctList-Loaded PIC X(02).
-           88 TC-DVZF0OSM-FctList-IsLoaded      VALUE 'OK'.
-       01 TC-DVZF0OSM-PntTab.
-           05 TC-DVZF0OSM-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program d6385c17
-      *Which is generated code for DVZF0OSM.Titi
-      *Declared in source file DeclarativesWithProcedures.tcbl
-           05 TC-DVZF0OSM-d6385c17-Idt   PIC X(08) VALUE 'd6385c17'.
-           05 TC-DVZF0OSM-d6385c17 PROCEDURE-POINTER.
 
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program d6385c17
+      * Which is generated code for DVZF0OSM.Titi
+           88 Fct-d6385c17-Titi
+              value 'Fct=d6385c17-Titi'.
 
 
 
       *---------------------------------------------------
-       PROCEDURE DIVISION USING PntTab-Pnt.
+       PROCEDURE DIVISION USING TC-FunctionCode
                           
       DDECLARATIVES.
       DDECLARATION SECTION.
@@ -50,27 +45,19 @@
       DEND DECLARATIVES.
 	  
       *declare procedure Titi PUBLIC.
-       
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
-           PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
+       .
 
+           PERFORM INIT-LIBRARY
+           PERFORM FctList-Process-Mode
            GOBACK.
 
-        FctList-Process-Mode.
-            IF NOT TC-DVZF0OSM-FctList-IsLoaded
-              SET TC-DVZF0OSM-d6385c17   TO ENTRY 'd6385c17'
-
-              SET TC-DVZF0OSM-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-DVZF0OSM-PntTab
-
+       FctList-Process-Mode.
+           evaluate true
+               when Fct-d6385c17-Titi
+                  call 'd6385c17'
+               when other
+                  TODO
+           end-evaluate
            .
                                      
 

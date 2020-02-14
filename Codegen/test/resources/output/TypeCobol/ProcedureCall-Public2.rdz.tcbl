@@ -6,13 +6,14 @@
        SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
        DATA DIVISION.
        Working-STORAGE SECTION.
-       01 TC-Callee pic X(08) value 'CALLEE'.
-       01 TC-Call          PIC X VALUE 'T'.
-           88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'
-                            X'00' thru 'S'
-                            'U' thru X'FF'.
-
+       01 TypeCobol-Generated.
+           05 TC-Callee pic X(08) value 'CALLEE'.
+           05 Callee-Fct-ebb060ea-MyPublicPr pic X(30)
+                value 'Fct=ebb060ea-MyPublicProcedure'.
+           05 Callee-Fct-ca0ab46c-check pic X(30)
+                value 'Fct=ca0ab46c-check'.
+           05 Callee-Fct-d0a59141-check2 pic X(30)
+                value 'Fct=d0a59141-check2'.
                                
 
       *01  somedate     TYPE Date.
@@ -30,41 +31,8 @@
                            'U' thru X'FF'.
                                   
        01  realformat   PIC X(08).
-       LINKAGE SECTION.
-      *Common to all librairies used by the program.
-       01 TC-Library-PntTab.
-          05 TC-Library-PntNbr          PIC S9(04) COMP.
-          05 TC-Library-Item OCCURS 1000
-                               DEPENDING ON TC-Library-PntNbr
-                               INDEXED   BY TC-Library-Idx.
-              10 TC-Library-Item-Idt      PIC X(08).
-              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
-
-      *To call program ebb060ea in module Callee
-      *Which is generated code for Callee.MyPublicProcedure
-      *Declared in source file ProcedureCall-Public2.rdz.tcbl
-       01 TC-Callee-ebb060ea-Item.
-          05 TC-Callee-ebb060ea-Idt PIC X(08).
-          05 TC-Callee-ebb060ea PROCEDURE-POINTER.
-      *To call program ca0ab46c in module Callee
-      *Which is generated code for Callee.check
-      *Declared in source file ProcedureCall-Public2.rdz.tcbl
-       01 TC-Callee-ca0ab46c-Item.
-          05 TC-Callee-ca0ab46c-Idt PIC X(08).
-          05 TC-Callee-ca0ab46c PROCEDURE-POINTER.
-      *To call program d0a59141 in module Callee
-      *Which is generated code for Callee.check2
-      *Declared in source file ProcedureCall-Public2.rdz.tcbl
-       01 TC-Callee-d0a59141-Item.
-          05 TC-Callee-d0a59141-Idt PIC X(08).
-          05 TC-Callee-d0a59141 PROCEDURE-POINTER.
-
 
        PROCEDURE DIVISION.
-      *
-           PERFORM TC-INITIALIZATIONS
-
-                          
 
       *declare procedure check private
       *   input mydate        TYPE Date
@@ -84,13 +52,8 @@
       *    CALL Callee::MyPublicProcedure
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           
-           IF ADDRESS OF TC-Callee-ebb060ea-Item = NULL
-             OR TC-Callee-ebb060ea-Idt not = 'ebb060ea'
-               PERFORM TC-LOAD-POINTERS-Callee
-           END-IF
-      *    Equivalent to call ebb060ea in module Callee
-           CALL TC-Callee-ebb060ea USING
+           CALL 'zcallpgm' using TC-Callee
+                    Callee-Fct-ebb060ea-MyPublicPr
                                  somedate
                                  someformat
                     by reference flag-value
@@ -101,13 +64,8 @@
       *    CALL CALLEE::MyPublicProcedure
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           
-           IF ADDRESS OF TC-Callee-ebb060ea-Item = NULL
-             OR TC-Callee-ebb060ea-Idt not = 'ebb060ea'
-               PERFORM TC-LOAD-POINTERS-Callee
-           END-IF
-      *    Equivalent to call ebb060ea in module Callee
-           CALL TC-Callee-ebb060ea USING
+           CALL 'zcallpgm' using TC-Callee
+                    Callee-Fct-ebb060ea-MyPublicPr
                                  somedate
                                  someformat
                     by reference flag-value
@@ -155,68 +113,19 @@
                                          
       *OK 
       *   call Callee::check input somedate
-          
-           IF ADDRESS OF TC-Callee-ca0ab46c-Item = NULL
-             OR TC-Callee-ca0ab46c-Idt not = 'ca0ab46c'
-               PERFORM TC-LOAD-POINTERS-Callee
-           END-IF
-      *    Equivalent to call ca0ab46c in module Callee
-           CALL TC-Callee-ca0ab46c USING
+          CALL 'zcallpgm' using TC-Callee
+                    Callee-Fct-ca0ab46c-check
                                  somedate
            end-call
                                            
       *OK 
       *   call Callee::check2 input somedate
-          
-           IF ADDRESS OF TC-Callee-d0a59141-Item = NULL
-             OR TC-Callee-d0a59141-Idt not = 'd0a59141'
-               PERFORM TC-LOAD-POINTERS-Callee
-           END-IF
-      *    Equivalent to call d0a59141 in module Callee
-           CALL TC-Callee-d0a59141 USING
+          CALL 'zcallpgm' using TC-Callee
+                    Callee-Fct-d0a59141-check2
                                  somedate
            end-call
                                             
         .
-      *=================================================================
-       TC-INITIALIZATIONS.
-      *=================================================================
-            IF TC-FirstCall
-                 SET TC-NthCall TO TRUE
-                 SET ADDRESS OF TC-Callee-ebb060ea-Item  TO NULL
-                 SET ADDRESS OF TC-Callee-ca0ab46c-Item  TO NULL
-                 SET ADDRESS OF TC-Callee-d0a59141-Item  TO NULL
-            END-IF
-            .
-      *=================================================================
-        TC-LOAD-POINTERS-Callee.
-      *=================================================================
-            CALL 'ZCALLPGM' USING TC-Callee
-            ADDRESS OF TC-Library-PntTab
-            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
-            UNTIL TC-Library-Idx > TC-Library-PntNbr
-                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'ebb060ea'
-                     SET ADDRESS OF
-                     TC-Callee-ebb060ea-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN 'ca0ab46c'
-                     SET ADDRESS OF
-                     TC-Callee-ca0ab46c-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN 'd0a59141'
-                     SET ADDRESS OF
-                     TC-Callee-d0a59141-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN OTHER
-                     CONTINUE
-                END-EVALUATE
-            END-PERFORM
-            .
-
 
        END PROGRAM PGM1.
 
@@ -242,60 +151,58 @@
                            'U' thru X'FF'.
                                   
        01  realformat   PIC X(08).
-       01  TC-Callee-FctList-Loaded PIC X(02).
-           88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
-       01 TC-Callee-PntTab.
-           05 TC-Callee-PntNbr         PIC S9(04) COMP VALUE 4.
-      *To call program ca0ab46c
-      *Which is generated code for Callee.check
-      *Declared in source file ProcedureCall-Public2.rdz.tcbl
-           05 TC-Callee-ca0ab46c-Idt   PIC X(08) VALUE 'ca0ab46c'.
-           05 TC-Callee-ca0ab46c PROCEDURE-POINTER.
-      *To call program d0a59141
-      *Which is generated code for Callee.check2
-      *Declared in source file ProcedureCall-Public2.rdz.tcbl
-           05 TC-Callee-d0a59141-Idt   PIC X(08) VALUE 'd0a59141'.
-           05 TC-Callee-d0a59141 PROCEDURE-POINTER.
-      *To call program e5b741a8
-      *Which is generated code for Callee.check2
-      *Declared in source file ProcedureCall-Public2.rdz.tcbl
-           05 TC-Callee-e5b741a8-Idt   PIC X(08) VALUE 'e5b741a8'.
-           05 TC-Callee-e5b741a8 PROCEDURE-POINTER.
-      *To call program ebb060ea
-      *Which is generated code for Callee.MyPublicProcedure
-      *Declared in source file ProcedureCall-Public2.rdz.tcbl
-           05 TC-Callee-ebb060ea-Idt   PIC X(08) VALUE 'ebb060ea'.
-           05 TC-Callee-ebb060ea PROCEDURE-POINTER.
 
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program ca0ab46c
+      * Which is generated code for Callee.check
+           88 Fct-ca0ab46c-check
+              value 'Fct=ca0ab46c-check'.
+      * Function which call program d0a59141
+      * Which is generated code for Callee.check2
+           88 Fct-d0a59141-check2
+              value 'Fct=d0a59141-check2'.
+      * Function which call program e5b741a8
+      * Which is generated code for Callee.check2
+           88 Fct-e5b741a8-check2
+              value 'Fct=e5b741a8-check2'.
+      * Function which call program ebb060ea
+      * Which is generated code for Callee.MyPublicProcedure
+           88 Fct-ebb060ea-MyPublicProcedure
+              value 'Fct=ebb060ea-MyPublicProcedure'.
 
+       01 arg1 pic X.
+       01 arg2 pic X.
+       01 arg3 pic X.
+       01 arg4 pic X.
 
-       PROCEDURE DIVISION USING PntTab-Pnt.
-                          
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
+       PROCEDURE DIVISION USING TC-FunctionCode
+                          arg1
+                          arg2
+                          arg3
+                          arg4.
+
+           PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
-
            GOBACK.
 
-        FctList-Process-Mode.
-            IF NOT TC-Callee-FctList-IsLoaded
-              SET TC-Callee-ca0ab46c   TO ENTRY 'ca0ab46c'
-              SET TC-Callee-d0a59141   TO ENTRY 'd0a59141'
-              SET TC-Callee-e5b741a8   TO ENTRY 'e5b741a8'
-              SET TC-Callee-ebb060ea   TO ENTRY 'ebb060ea'
-
-              SET TC-Callee-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-Callee-PntTab
-
+       FctList-Process-Mode.
+           evaluate true
+               when Fct-ca0ab46c-check
+                  call 'ca0ab46c' using arg1
+               when Fct-d0a59141-check2
+                  call 'd0a59141' using arg1
+               when Fct-e5b741a8-check2
+                  call 'e5b741a8' using arg1
+                                        arg2
+               when Fct-ebb060ea-MyPublicProcedure
+                  call 'ebb060ea' using arg1
+                                        arg2
+                                        arg3
+                                        arg4
+               when other
+                  TODO
+           end-evaluate
            .
                           
        

@@ -62,7 +62,8 @@ namespace TypeCobol.Compiler.Nodes {
 		    attributes["copyname"] = new LibraryCopyAttribute();
 		    attributes["programname8"] = new ProgramName8Attribute();
             attributes["imports"] = new ProgramImportsAttribute();
-	    }
+            attributes["maxargscount"] = new MaxArgsCountAttribute();
+        }
 	    private static ContainerAttribute DEFAULT = new ContainerAttribute();
     }
 
@@ -795,4 +796,30 @@ internal class LibraryCopyAttribute: Attribute {
             return null;
         }
     }
+
+
+    public class MaxArgsCountAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var program = o as IProcCaller;
+            if (program != null)
+            {
+                int maxArgCount = 0;
+                Definitions definitions = (Definitions) new DefinitionsAttribute().GetValue(o, table);
+                foreach (var f in definitions.functions.Public)
+                {
+                    if (f is FunctionDeclaration)
+                    {
+                        int count = (f as FunctionDeclaration).Profile.Parameters.Count;
+                        if (count > maxArgCount) maxArgCount = count;
+                    }
+                }
+
+                return maxArgCount;
+            }
+            return null;
+        }
+    }
+
 }

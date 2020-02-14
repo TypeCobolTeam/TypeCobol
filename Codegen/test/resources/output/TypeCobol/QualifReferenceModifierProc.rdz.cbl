@@ -2,15 +2,6 @@
        PROGRAM-ID. DVZZOSM7.
        DATA DIVISION .
        WORKING-STORAGE SECTION.
-       01  TC-DVZZOSM7-FctList-Loaded PIC X(02).
-           88 TC-DVZZOSM7-FctList-IsLoaded      VALUE 'OK'.
-       01 TC-DVZZOSM7-PntTab.
-           05 TC-DVZZOSM7-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program a711ebb5
-      *Which is generated code for DVZZOSM7.StartCheckpoint
-      *Declared in source file QualifReferenceModifierProc.rdz.cbl
-           05 TC-DVZZOSM7-a711ebb5-Idt   PIC X(08) VALUE 'a711ebb5'.
-           05 TC-DVZZOSM7-a711ebb5 PROCEDURE-POINTER.
 
                       
        local-STORAGE SECTION.
@@ -21,32 +12,28 @@
            05 Site pic X.
               88 SiteTest value 'A'.
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program a711ebb5
+      * Which is generated code for DVZZOSM7.StartCheckpoint
+           88 Fct-a711ebb5-StartCheckpoint
+              value 'Fct=a711ebb5-StartCheckpoint'.
 
       
       
-       PROCEDURE DIVISION USING PntTab-Pnt.
-                          
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
+       PROCEDURE DIVISION USING TC-FunctionCode
+                          .
+
+           PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
-
            GOBACK.
 
-        FctList-Process-Mode.
-            IF NOT TC-DVZZOSM7-FctList-IsLoaded
-              SET TC-DVZZOSM7-a711ebb5   TO ENTRY 'a711ebb5'
-
-              SET TC-DVZZOSM7-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-DVZZOSM7-PntTab
-
+       FctList-Process-Mode.
+           evaluate true
+               when Fct-a711ebb5-StartCheckpoint
+                  call 'a711ebb5'
+               when other
+                  TODO
+           end-evaluate
            .
                           
       

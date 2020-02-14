@@ -34,7 +34,7 @@ namespace TypeCobol.Compiler.Nodes {
                 var lines = new List<TypeCobol.Compiler.Text.ITextLine>();
                 if (CodeElement == null || CodeElement.ConsumedTokens == null) return lines;
                 bool bPeriodSeen = false;
-                string use = " USING PntTab-Pnt.";
+                string use = " USING TC-FunctionCode";      // " USING PntTab-Pnt.";
                 string sep = "";
                 StringBuilder sb = new StringBuilder();
                 bool insideFormalizedComment = false;

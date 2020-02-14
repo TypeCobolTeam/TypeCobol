@@ -3,13 +3,10 @@
        program-id. TCOSMPL2.
        data division.
        working-storage section.
-       01 TC-DVZTEST1 pic X(08) value 'DVZTEST1'.
-       01 TC-Call          PIC X VALUE 'T'.
-           88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'
-                            X'00' thru 'S'
-                            'U' thru X'FF'.
-
+       01 TypeCobol-Generated.
+           05 TC-DVZTEST1 pic X(08) value 'DVZTEST1'.
+           05 DVZTEST1-Fct-a93b0351-GetTecMs pic X(30)
+                value 'Fct=a93b0351-GetTecMsg'.
                                
       *01 type1 typedef strict private.
       *05 blabla pic X.
@@ -54,75 +51,41 @@
               88 isEndPack value -1 -2.
               88 isOverflow value -2.
                                  
-       01  TC-TCOSMPL2-FctList-Loaded PIC X(02).
-           88 TC-TCOSMPL2-FctList-IsLoaded      VALUE 'OK'.
-       01 TC-TCOSMPL2-PntTab.
-           05 TC-TCOSMPL2-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program ea2e07d4
-      *Which is generated code for TCOSMPL2.GetTecMsg
-      *Declared in source file MainPgm.rdz.tcbl
-           05 TC-TCOSMPL2-ea2e07d4-Idt   PIC X(08) VALUE 'ea2e07d4'.
-           05 TC-TCOSMPL2-ea2e07d4 PROCEDURE-POINTER.
 
        LINKAGE SECTION.
-      *Common to all librairies used by the program.
-       01 TC-Library-PntTab.
-          05 TC-Library-PntNbr          PIC S9(04) COMP.
-          05 TC-Library-Item OCCURS 1000
-                               DEPENDING ON TC-Library-PntNbr
-                               INDEXED   BY TC-Library-Idx.
-              10 TC-Library-Item-Idt      PIC X(08).
-              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program ea2e07d4
+      * Which is generated code for TCOSMPL2.GetTecMsg
+           88 Fct-ea2e07d4-GetTecMsg
+              value 'Fct=ea2e07d4-GetTecMsg'.
 
-      *To call program a93b0351 in module DVZTEST1
-      *Which is generated code for DVZTEST1.GetTecMsg
-      *Declared in source file DVZTEST1.rdz.tcbl
-       01 TC-DVZTEST1-a93b0351-Item.
-          05 TC-DVZTEST1-a93b0351-Idt PIC X(08).
-          05 TC-DVZTEST1-a93b0351 PROCEDURE-POINTER.
-
-       01 PntTab-Pnt POINTER.
-
+       01 arg1 pic X.
+       01 arg2 pic X.
       
-       procedure division USING PntTab-Pnt.
-                          
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
-           PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
+       procedure division USING TC-FunctionCode
+                          arg1
+                          arg2.
 
+           PERFORM INIT-LIBRARY
+           PERFORM FctList-Process-Mode
            GOBACK.
 
-        FctList-Process-Mode.
-            IF NOT TC-TCOSMPL2-FctList-IsLoaded
-              SET TC-TCOSMPL2-ea2e07d4   TO ENTRY 'ea2e07d4'
-
-              SET TC-TCOSMPL2-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-TCOSMPL2-PntTab
-
+       FctList-Process-Mode.
+           evaluate true
+               when Fct-ea2e07d4-GetTecMsg
+                  call 'ea2e07d4' using arg1
+                                        arg2
+               when other
+                  TODO
+           end-evaluate
            .
                           
        INIT-LIBRARY.
-      *
-           PERFORM TC-INITIALIZATIONS
-
-                    
       
       *    call DVZTEST1::GetTecMsg INPUT t1
       *    in-out s1
-           
-           IF ADDRESS OF TC-DVZTEST1-a93b0351-Item = NULL
-             OR TC-DVZTEST1-a93b0351-Idt not = 'a93b0351'
-               PERFORM TC-LOAD-POINTERS-DVZTEST1
-           END-IF
-      *    Equivalent to call a93b0351 in module DVZTEST1
-           CALL TC-DVZTEST1-a93b0351 USING
+           CALL 'zcallpgm' using TC-DVZTEST1
+                    DVZTEST1-Fct-a93b0351-GetTecMs
                                  t1
                     by reference s1
            end-call
@@ -138,33 +101,6 @@
       
       
            goback.
-      *=================================================================
-       TC-INITIALIZATIONS.
-      *=================================================================
-            IF TC-FirstCall
-                 SET TC-NthCall TO TRUE
-                 SET ADDRESS OF TC-DVZTEST1-a93b0351-Item  TO NULL
-            END-IF
-            .
-      *=================================================================
-        TC-LOAD-POINTERS-DVZTEST1.
-      *=================================================================
-            CALL 'ZCALLPGM' USING TC-DVZTEST1
-            ADDRESS OF TC-Library-PntTab
-            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
-            UNTIL TC-Library-Idx > TC-Library-PntNbr
-                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'a93b0351'
-                     SET ADDRESS OF
-                     TC-DVZTEST1-a93b0351-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN OTHER
-                     CONTINUE
-                END-EVALUATE
-            END-PERFORM
-            .
-
       *----------------------------------------------------------------
       *declare procedure GetTecMsg public
       *    input capt     type DVZTEST2::Span

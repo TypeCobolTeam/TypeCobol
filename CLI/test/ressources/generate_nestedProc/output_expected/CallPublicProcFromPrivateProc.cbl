@@ -33,15 +33,10 @@
        01 TC-A1 PIC X.
 
 
-       PROCEDURE DIVISiON USING PntTab-Pnt.
+       PROCEDURE DIVISiON USING TC-FunctionCode
                           
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
+       perform INIT-LIBRARY
            PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
 
            GOBACK.
 
@@ -167,13 +162,8 @@
       *     input(mydate: DATE)
            PERFORM TC-INITIALIZATIONS
       *    Call PersonService::GetPersonById input mydate
-           
-           IF ADDRESS OF TC-PersonSe-cd991005-Item = NULL
-             OR TC-PersonSe-cd991005-Idt not = 'cd991005'
-               PERFORM TC-LOAD-POINTERS-PersonSe
-           END-IF
-      *    Equivalent to call cd991005 in module PersonService
-           CALL TC-PersonSe-cd991005 USING
+           CALL 'zcallpgm' using TC-PersonSe
+                    PersonSe-Fct-cd991005-GetPerso
                                  mydate
            end-call
                                                          

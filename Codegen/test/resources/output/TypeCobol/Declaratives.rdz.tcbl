@@ -11,21 +11,16 @@
       
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01  TC-Declarat-FctList-Loaded PIC X(02).
-           88 TC-Declarat-FctList-IsLoaded      VALUE 'OK'.
-       01 TC-Declarat-PntTab.
-           05 TC-Declarat-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program da2f236e
-      *Which is generated code for DeclarativesTest.MyProc
-      *Declared in source file Declaratives.rdz.tcbl
-           05 TC-Declarat-da2f236e-Idt   PIC X(08) VALUE 'da2f236e'.
-           05 TC-Declarat-da2f236e PROCEDURE-POINTER.
 
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program da2f236e
+      * Which is generated code for DeclarativesTest.MyProc
+           88 Fct-da2f236e-MyProc
+              value 'Fct=da2f236e-MyProc'.
 
       
-       PROCEDURE DIVISION USING PntTab-Pnt.
+       PROCEDURE DIVISION USING TC-FunctionCode
                           
       
       DDECLARATIVES.
@@ -36,27 +31,19 @@
       D    .
       DX.  EXIT.
       DEND DECLARATIVES.
+       .
 
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
+           PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
-
            GOBACK.
 
-        FctList-Process-Mode.
-            IF NOT TC-Declarat-FctList-IsLoaded
-              SET TC-Declarat-da2f236e   TO ENTRY 'da2f236e'
-
-              SET TC-Declarat-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-Declarat-PntTab
-
+       FctList-Process-Mode.
+           evaluate true
+               when Fct-da2f236e-MyProc
+                  call 'da2f236e'
+               when other
+                  TODO
+           end-evaluate
            .
       
       *DECLARE PROCEDURE MyProc public.

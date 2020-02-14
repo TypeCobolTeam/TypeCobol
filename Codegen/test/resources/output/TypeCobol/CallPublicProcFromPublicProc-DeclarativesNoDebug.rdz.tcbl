@@ -3,43 +3,29 @@
        DATA DIVISION.
                                                          
        WORKING-STORAGE SECTION.
-       01  TC-PGM1-FctList-Loaded PIC X(02).
-           88 TC-PGM1-FctList-IsLoaded      VALUE 'OK'.
-       01 TC-PGM1-PntTab.
-           05 TC-PGM1-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program e3685b69
-      *Which is generated code for PGM1.StartCheckpoint
-      *Declared in source file CallPublicProcFromPublicProc-Declaratives
-      *NoDebug.rdz.tcbl
-           05 TC-PGM1-e3685b69-Idt   PIC X(08) VALUE 'e3685b69'.
-           05 TC-PGM1-e3685b69 PROCEDURE-POINTER.
 
        
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program e3685b69
+      * Which is generated code for PGM1.StartCheckpoint
+           88 Fct-e3685b69-StartCheckpoint
+              value 'Fct=e3685b69-StartCheckpoint'.
 
-       PROCEDURE DIVISION USING PntTab-Pnt.
-                           
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
+       PROCEDURE DIVISION USING TC-FunctionCode
+                           .
+
+           PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
-
            GOBACK.
 
-        FctList-Process-Mode.
-            IF NOT TC-PGM1-FctList-IsLoaded
-              SET TC-PGM1-e3685b69   TO ENTRY 'e3685b69'
-
-              SET TC-PGM1-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-PGM1-PntTab
-
+       FctList-Process-Mode.
+           evaluate true
+               when Fct-e3685b69-StartCheckpoint
+                  call 'e3685b69'
+               when other
+                  TODO
+           end-evaluate
            .
                                
       DDECLARATIVES.
@@ -59,43 +45,29 @@
        DATA DIVISION.
                                                           
        WORKING-STORAGE SECTION.
-       01  TC-MyPGM-FctList-Loaded PIC X(02).
-           88 TC-MyPGM-FctList-IsLoaded      VALUE 'OK'.
-       01 TC-MyPGM-PntTab.
-           05 TC-MyPGM-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program bfc74757
-      *Which is generated code for MyPGM.testos
-      *Declared in source file CallPublicProcFromPublicProc-Declaratives
-      *NoDebug.rdz.tcbl
-           05 TC-MyPGM-bfc74757-Idt   PIC X(08) VALUE 'bfc74757'.
-           05 TC-MyPGM-bfc74757 PROCEDURE-POINTER.
 
        
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program bfc74757
+      * Which is generated code for MyPGM.testos
+           88 Fct-bfc74757-testos
+              value 'Fct=bfc74757-testos'.
 
-       PROCEDURE DIVISION USING PntTab-Pnt.
-                           
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
+       PROCEDURE DIVISION USING TC-FunctionCode
+                           .
+
+           PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
-
            GOBACK.
 
-        FctList-Process-Mode.
-            IF NOT TC-MyPGM-FctList-IsLoaded
-              SET TC-MyPGM-bfc74757   TO ENTRY 'bfc74757'
-
-              SET TC-MyPGM-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-MyPGM-PntTab
-
+       FctList-Process-Mode.
+           evaluate true
+               when Fct-bfc74757-testos
+                  call 'bfc74757'
+               when other
+                  TODO
+           end-evaluate
            .
                                 
       DDECLARATIVES.
@@ -159,13 +131,8 @@
       D    USE FOR DEBUGGING ON ALL PROCEDURES.
       DEND DECLARATIVES.
       *    call PGM1::StartCheckpoint
-           
-           IF ADDRESS OF TC-PGM1-e3685b69-Item = NULL
-             OR TC-PGM1-e3685b69-Idt not = 'e3685b69'
-               PERFORM TC-LOAD-POINTERS-PGM1
-           END-IF
-      *    Equivalent to call e3685b69 in module PGM1
-           CALL TC-PGM1-e3685b69
+           CALL 'zcallpgm' using TC-PGM1
+                    PGM1-Fct-e3685b69-StartCheckpo
            end-call
                                      
            .
