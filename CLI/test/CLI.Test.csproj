@@ -35,21 +35,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Codegen\src\Codegen.csproj">
-      <Project>{4034cbc5-d3dc-45e5-81f2-605579e6b876}</Project>
-      <Name>Codegen</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\TypeCobol.Test\TypeCobol.Test.csproj">
-      <Project>{323cc743-ed21-4a15-ad3f-3b7c937f6332}</Project>
-      <Name>TypeCobol.Test</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\TypeCobol\TypeCobol.csproj">
       <Project>{7ac7a3e5-91f2-44bf-955d-86cc61375742}</Project>
       <Name>TypeCobol</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\src\CLI.csproj">
-      <Project>{5bef9d4c-b1fb-455d-a2ea-b4db5108ecfd}</Project>
-      <Name>CLI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
