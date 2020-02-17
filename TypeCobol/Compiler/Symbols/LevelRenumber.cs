@@ -43,17 +43,7 @@ namespace TypeCobol.Compiler.Symbols
 
         public override int VisitType(Types.Type type, int currentLevel)
         {
-            return currentLevel;
-        }
-
-        public override int VisitArrayType(ArrayType arrayType, int currentLevel)
-        {
-            return arrayType.ElementType?.Accept(this, currentLevel) ?? currentLevel;
-        }
-
-        public override int VisitPointerType(PointerType pointerType, int currentLevel)
-        {
-            return pointerType.ElementType?.Accept(this, currentLevel) ?? currentLevel;
+            return type.TypeComponent?.Accept(this, currentLevel) ?? currentLevel;
         }
 
         public override int VisitGroupType(GroupType groupType, int currentLevel)
@@ -64,11 +54,6 @@ namespace TypeCobol.Compiler.Symbols
                 maxLevel = Math.Max(maxLevel, field.Accept(this, currentLevel + 1));
             }
             return maxLevel;
-        }
-
-        public override int VisitTypedefType(TypedefType typedefType, int currentLevel)
-        {
-            return typedefType.TypeComponent?.Accept(this, currentLevel) ?? currentLevel;
         }
 
         #endregion

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.Types
 {
@@ -37,27 +38,39 @@ namespace TypeCobol.Compiler.Types
 
         public override object VisitTypedefType(TypedefType typedefType, object _)
         {
-            bool pop = false;
-            try
+            if (_typedefStack.Contains(typedefType))
             {
-                if (_typedefStack.Contains(typedefType))
-                {
-                    throw new Type.CyclicTypeException(typedefType);
-                }
+                _typedefStack.Clear();
+                throw new Type.CyclicTypeException(typedefType);
+            }
 
-                _typedefStack.Push(typedefType);
-                pop = true;
-                typedefType.TargetType.Accept(this, null);
-            }
-            finally
-            {
-                if (pop)
-                {
-                    _typedefStack.Pop();
-                }
-            }
+            _typedefStack.Push(typedefType);
+            typedefType.TargetType.Accept(this, null);
+            _typedefStack.Pop();
 
             return null;
+        }
+
+        /// <summary>
+        /// Tests if the given Type is cyclic.
+        /// </summary>
+        /// <param name="type">Type to test</param>
+        /// <param name="cyclicType">Type on which the cycle has been detected</param>
+        /// <returns>True if the type is cyclic, False otherwise</returns>
+        public bool IsCyclic([NotNull] Type type, out Type cyclicType)
+        {
+            System.Diagnostics.Debug.Assert(type != null);
+            try
+            {
+                type.Accept(this, null);
+                cyclicType = null;
+                return false;
+            }
+            catch (Type.CyclicTypeException cyclicTypeException)
+            {
+                cyclicType = cyclicTypeException.TargetType;
+                return true;
+            }
         }
     }
 }

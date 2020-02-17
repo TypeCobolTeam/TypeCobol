@@ -1001,35 +1001,6 @@ namespace TypeCobol.Test.Domain
             Assert.AreEqual<string>(document.Results.PrgSymbolTblBuilder.Diagnostics[1].Message, d.Message);
         }
 
-        /// <summary>
-        /// Go through a Type object to check if its definition is cyclic
-        /// </summary>
-        private class MyCyclicTypeChecker
-        {
-            private readonly CyclicTypeChecker _cyclicTypeChecker;
-
-            public MyCyclicTypeChecker()
-            {
-                _cyclicTypeChecker = new CyclicTypeChecker();
-            }
-
-            public Type CyclicType { get; private set; }
-
-            public bool Check(Type type)
-            {
-                try
-                {
-                    type.Accept(_cyclicTypeChecker, null);
-                    return false;
-                }
-                catch (Type.CyclicTypeException cyclicTypeException)
-                {
-                    CyclicType = cyclicTypeException.TargetType;
-                    return true;
-                }
-            }
-        }
-
         [TestMethod]
         [TestCategory("SemanticDomain")]
         [TestProperty("Object", "Typedef")]
@@ -1047,8 +1018,8 @@ namespace TypeCobol.Test.Domain
             var tPoint = pointEntry.Symbol;
             Assert.IsTrue(tPoint.Type != null);
             Assert.IsTrue(tPoint.Type.Tag == Type.Tags.Typedef);
-            MyCyclicTypeChecker checker = new MyCyclicTypeChecker();
-            Assert.IsFalse(checker.Check(tPoint.Type));
+            CyclicTypeChecker checker = new CyclicTypeChecker();
+            Assert.IsFalse(checker.IsCyclic(tPoint.Type, out _));
 
             pointEntry = currentProgram.Types.Lookup("POINT-CYC0");
             Assert.IsNotNull(pointEntry);
@@ -1056,8 +1027,8 @@ namespace TypeCobol.Test.Domain
             var tPointCyc0 = pointEntry.Symbol;
             Assert.IsTrue(tPointCyc0.Type != null);
             Assert.IsTrue(tPointCyc0.Type.Tag == Type.Tags.Typedef);
-            Assert.IsTrue(checker.Check(tPointCyc0.Type));
-            Assert.IsTrue(checker.CyclicType == tPointCyc0.Type);
+            Assert.IsTrue(checker.IsCyclic(tPointCyc0.Type, out var cyclicType));
+            Assert.IsTrue(cyclicType == tPointCyc0.Type);
 
             pointEntry = currentProgram.Types.Lookup("POINT-CYC1");
             Assert.IsNotNull(pointEntry);
@@ -1065,8 +1036,8 @@ namespace TypeCobol.Test.Domain
             var tPointCyc1 = pointEntry.Symbol;
             Assert.IsTrue(tPointCyc1.Type != null);
             Assert.IsTrue(tPointCyc1.Type.Tag == Type.Tags.Typedef);
-            Assert.IsTrue(checker.Check(tPointCyc1.Type));
-            Assert.IsTrue(checker.CyclicType == tPointCyc0.Type);
+            Assert.IsTrue(checker.IsCyclic(tPointCyc1.Type, out cyclicType));
+            Assert.IsTrue(cyclicType == tPointCyc0.Type);
 
             pointEntry = currentProgram.Types.Lookup("POINT-CYC2");
             Assert.IsNotNull(pointEntry);
@@ -1074,8 +1045,8 @@ namespace TypeCobol.Test.Domain
             var tPointCyc2 = pointEntry.Symbol;
             Assert.IsTrue(tPointCyc2.Type != null);
             Assert.IsTrue(tPointCyc2.Type.Tag == Type.Tags.Typedef);
-            Assert.IsTrue(checker.Check(tPointCyc2.Type));
-            Assert.IsTrue(checker.CyclicType == tPointCyc2.Type);
+            Assert.IsTrue(checker.IsCyclic(tPointCyc2.Type, out cyclicType));
+            Assert.IsTrue(cyclicType == tPointCyc2.Type);
 
             pointEntry = currentProgram.Types.Lookup("POINT-CYC3");
             Assert.IsNotNull(pointEntry);
@@ -1083,8 +1054,8 @@ namespace TypeCobol.Test.Domain
             var tPointCyc3 = pointEntry.Symbol;
             Assert.IsTrue(tPointCyc3.Type != null);
             Assert.IsTrue(tPointCyc3.Type.Tag == Type.Tags.Typedef);
-            Assert.IsTrue(checker.Check(tPointCyc3.Type));
-            Assert.IsTrue(checker.CyclicType == tPointCyc3.Type);
+            Assert.IsTrue(checker.IsCyclic(tPointCyc3.Type, out cyclicType));
+            Assert.IsTrue(cyclicType == tPointCyc3.Type);
 
             //NO P1, P2, P3 and P4 symbols
             for (int i = 1; i <= 4; i++)
@@ -1115,8 +1086,8 @@ namespace TypeCobol.Test.Domain
             var p7 = refs.Symbol;
             Assert.IsTrue(p7.Type.Tag == Type.Tags.Array);
             Assert.IsTrue(p7.Type.TypeComponent == tPointCyc0.Type);
-            Assert.IsTrue(checker.Check(p7.Type));
-            Assert.IsTrue(checker.CyclicType == tPointCyc0.Type);
+            Assert.IsTrue(checker.IsCyclic(p7.Type, out cyclicType));
+            Assert.IsTrue(cyclicType == tPointCyc0.Type);
 
             //Just Check that P8 if of type Array of POINT-CYC1 which we know leads cyclic.
             refs = currentProgram.ResolveReference(new string[] {"p8"}, false);
@@ -1125,8 +1096,8 @@ namespace TypeCobol.Test.Domain
             var p8 = refs.Symbol;
             Assert.IsTrue(p8.Type.Tag == Type.Tags.Array);
             Assert.IsTrue(p8.Type.TypeComponent == tPointCyc1.Type);
-            Assert.IsTrue(checker.Check(p8.Type));
-            Assert.IsTrue(checker.CyclicType == tPointCyc0.Type);
+            Assert.IsTrue(checker.IsCyclic(p8.Type, out cyclicType));
+            Assert.IsTrue(cyclicType == tPointCyc0.Type);
 
             //Just Check that P9 is a RECORD with a field XX of a cyclic type.
             refs = currentProgram.ResolveReference(new string[] {"p9"}, false);
@@ -1134,8 +1105,8 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(refs.Count == 1);
             var p9 = refs.Symbol;
             Assert.IsTrue(p9.Type.Tag == Type.Tags.Group);
-            Assert.IsTrue(checker.Check(p9.Type));
-            Assert.IsTrue(checker.CyclicType == tPointCyc0.Type);
+            Assert.IsTrue(checker.IsCyclic(p9.Type, out cyclicType));
+            Assert.IsTrue(cyclicType == tPointCyc0.Type);
             var xx_refs = currentProgram.ResolveReference(new string[] {"xx"}, false);
             //One of the XX has type is P9::XX
             Assert.IsTrue(xx_refs.Count == 2);
