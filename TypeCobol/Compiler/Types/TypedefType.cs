@@ -65,7 +65,7 @@ namespace TypeCobol.Compiler.Types
         /// T Typedef S-> S Typedef R -> R PIC X(10).
         /// give the type of PIX X(10)
         /// </summary>
-        public override Type TypeComponent => TargetType?.TypeComponent ?? TargetType;
+        public override Type TypeComponent => TargetType;
 
         /// <summary>
         /// Typedef may always expand.

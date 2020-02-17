@@ -70,7 +70,6 @@ namespace TypeCobol.Compiler.Types
             get;
             set;
         }
-        public override Type TypeComponent => this;
 
         /// <summary>
         /// A Record may always expand to another records because it is related to a new Symbol owner.
