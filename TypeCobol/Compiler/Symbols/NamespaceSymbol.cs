@@ -97,14 +97,28 @@ namespace TypeCobol.Compiler.Symbols
             protected set;
         }
 
-        public override Domain<TypedefSymbol>.Entry ResolveAccessibleType(RootSymbolTable root, string[] path)
+        private Domain<TSymbol>.Entry ResolveSymbol<TSymbol>(string[] path, Func<string, Domain<TSymbol>.Entry> lookupSymbol)
+            where TSymbol : Symbol
         {
-            throw new NotImplementedException();
+            if (path == null || path.Length == 0 || path[0] == null)
+                return null;
+
+            var name = path[0];
+            var results = new Domain<TSymbol>.Entry(name);
+            foreach (var candidate in lookupSymbol(name))
+            {
+                if (candidate.IsMatchingPath(path))
+                {
+                    results.Add(candidate);
+                }
+            }
+
+            return results;
         }
 
         public override Domain<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path)
         {
-            throw new NotImplementedException();
+            return ResolveSymbol<TypedefSymbol>(path, root.LookupType);
         }
 
         /// <summary>
@@ -120,7 +134,7 @@ namespace TypeCobol.Compiler.Symbols
 
         public override Domain<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path)
         {
-            throw new NotImplementedException();
+            return ResolveSymbol<AbstractScope>(path, root.LookupScope);
         }
     }
 }

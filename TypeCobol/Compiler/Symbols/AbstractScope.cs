@@ -136,14 +136,6 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// Resolve all accessible types by this scope from a root symbol table
-        /// </summary>
-        /// <param name="root">The root Symbol table</param>
-        /// <param name="path">The Type's path to be resolved.'</param>
-        /// <returns>The scope all accessible type</returns>
-        public abstract Domain<TypedefSymbol>.Entry ResolveAccessibleType(RootSymbolTable root, string[] path);
-
-        /// <summary>
         /// Resolve all types accessible from this scope by its path.
         /// </summary>
         /// <param name="root">The Root Symbol Table</param>

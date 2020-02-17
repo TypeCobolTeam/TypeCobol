@@ -2034,16 +2034,16 @@ namespace TypeCobol.Test.Domain
             //---------------------------------------
             //Resolve all types of the MAIN Program.
             //---------------------------------------
-            var POINTMainGblEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] {"POINTMainGbl", "TypeVisNestedPrgAndProc" });
+            var POINTMainGblEntry = document.Results.RootSymbolTable.ResolveType(new string[] {"POINTMainGbl", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(POINTMainGblEntry.Count == 1);
 
-            var POINTMainPrivEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTMainPriv", "TypeVisNestedPrgAndProc" });
+            var POINTMainPrivEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTMainPriv", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(POINTMainPrivEntry.Count == 1);
 
-            var POINTMainLocalEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTMainLocal", "TypeVisNestedPrgAndProc" });
+            var POINTMainLocalEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTMainLocal", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(POINTMainLocalEntry.Count == 1);
 
-            var POINTMainPublicEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTMainPublic", "TypeVisNestedPrgAndProc" });
+            var POINTMainPublicEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTMainPublic", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(POINTMainPublicEntry.Count == 1);
 
             //---------------------------------------
@@ -2051,21 +2051,21 @@ namespace TypeCobol.Test.Domain
             //---------------------------------------
             var typ = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "POINTNestedPriv" });
 
-            var POINTNestedGblEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedGbl", "Nested" });
+            var POINTNestedGblEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedGbl", "Nested" });
             Assert.IsTrue(POINTNestedGblEntry.Count == 1);
 
-            var POINTNestedPrivEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedPriv", "Nested" });
+            var POINTNestedPrivEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedPriv", "Nested" });
             Assert.IsTrue(POINTNestedPrivEntry.Count == 1);//As it is private it is defined in TypeVisNestedPrgAndProc
-            var POINTNestedPrivEntry2 = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedPriv", "TypeVisNestedPrgAndProc" });
+            var POINTNestedPrivEntry2 = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedPriv", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(POINTNestedPrivEntry2.Count == 1);
             Assert.AreEqual(POINTNestedPrivEntry.Symbol, POINTNestedPrivEntry2.Symbol);
 
-            var POINTNestedLocalEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedLocal", "Nested" });
+            var POINTNestedLocalEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedLocal", "Nested" });
             Assert.IsTrue(POINTNestedLocalEntry.Count == 1);
 
-            var POINTNestedPublicEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedPublic", "Nested" });
+            var POINTNestedPublicEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedPublic", "Nested" });
             Assert.IsTrue(POINTNestedPublicEntry.Count == 1);//As it is public it is defined in TypeVisNestedPrgAndProc
-            var POINTNestedPublicEntry2 = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedPublic", "TypeVisNestedPrgAndProc" });
+            var POINTNestedPublicEntry2 = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedPublic", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(POINTNestedPublicEntry.Count == 1);
             Assert.AreEqual(POINTNestedPublicEntry.Symbol, POINTNestedPublicEntry2.Symbol);
 
@@ -2074,39 +2074,39 @@ namespace TypeCobol.Test.Domain
             //-----------------------------------------
             var typ2 = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "POINTNestedNestedPriv" });
 
-            var POINTNestedNestedGblEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedNestedGbl", "Nested2" });
+            var POINTNestedNestedGblEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedNestedGbl", "Nested2" });
             Assert.IsTrue(POINTNestedNestedGblEntry.Count == 1);
 
-            var POINTNestedNestedPrivEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedNestedPriv", "Nested2" });
+            var POINTNestedNestedPrivEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedNestedPriv", "Nested2" });
             Assert.IsTrue(POINTNestedNestedPrivEntry.Count == 1);//As it is private it is defined in TypeVisNestedPrgAndProc
-            var POINTNestedNestedPrivEntry2 = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedNestedPriv", "TypeVisNestedPrgAndProc" });
+            var POINTNestedNestedPrivEntry2 = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedNestedPriv", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(POINTNestedNestedPrivEntry2.Count == 1);
             Assert.AreEqual(POINTNestedNestedPrivEntry.Symbol, POINTNestedNestedPrivEntry2.Symbol);
 
-            var POINTNestedNestedLocalEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedNestedLocal", "Nested2" });
+            var POINTNestedNestedLocalEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedNestedLocal", "Nested2" });
             Assert.IsTrue(POINTNestedNestedLocalEntry.Count == 1);
 
-            var POINTNestedNestedPublicEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedNestedPublic", "Nested2" });
+            var POINTNestedNestedPublicEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedNestedPublic", "Nested2" });
             Assert.IsTrue(POINTNestedNestedPublicEntry.Count == 1);//As it is public it is defined in TypeVisNestedPrgAndProc
-            var POINTNestedNestedPublicEntry2 = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedNestedPublic", "TypeVisNestedPrgAndProc" });
+            var POINTNestedNestedPublicEntry2 = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedNestedPublic", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(POINTNestedNestedPublicEntry.Count == 1);
             Assert.AreEqual(POINTNestedNestedPublicEntry.Symbol, POINTNestedNestedPublicEntry2.Symbol);
 
             //-----------------------------------------
             //Resolve all types of the Stacked Program.
             //-----------------------------------------
-            var typStacked = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTStackedPriv" });
+            var typStacked = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTStackedPriv" });
 
-            var POINTStackedGblEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTStackedGbl", "TypeVisStackedPrg" });
+            var POINTStackedGblEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTStackedGbl", "TypeVisStackedPrg" });
             Assert.IsTrue(POINTStackedGblEntry.Count == 1);
 
-            var POINTStackedPrivEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTStackedPriv", "TypeVisStackedPrg" });
+            var POINTStackedPrivEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTStackedPriv", "TypeVisStackedPrg" });
             Assert.IsTrue(POINTStackedPrivEntry.Count == 1);
 
-            var POINTStackedLocalEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTStackedLocal", "TypeVisStackedPrg" });
+            var POINTStackedLocalEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTStackedLocal", "TypeVisStackedPrg" });
             Assert.IsTrue(POINTStackedLocalEntry.Count == 1);
 
-            var POINTStackedPublicEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTStackedPublic", "TypeVisStackedPrg" });
+            var POINTStackedPublicEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTStackedPublic", "TypeVisStackedPrg" });
             Assert.IsTrue(POINTStackedPublicEntry.Count == 1);
 
             //-----------------------------------------------
@@ -2236,13 +2236,13 @@ namespace TypeCobol.Test.Domain
             //---------------------------------------------
             // TESTING type inside Function
             //---------------------------------------------
-            var POINTFunc = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTFunc"});
+            var POINTFunc = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTFunc"});
             Assert.AreEqual(3, POINTFunc.Count);
-            var POINTFuncLocal = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTFunc", "NestedProcLocal" });
+            var POINTFuncLocal = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTFunc", "NestedProcLocal" });
             Assert.IsTrue(POINTFuncLocal.Count == 1);
-            var POINTFuncPrivate = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTFunc", "NestedProcPrivate" });
+            var POINTFuncPrivate = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTFunc", "NestedProcPrivate" });
             Assert.IsTrue(POINTFuncPrivate.Count == 1);
-            var POINTFuncPublic = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTFunc", "NestedProcPublic" });
+            var POINTFuncPublic = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTFunc", "NestedProcPublic" });
             Assert.IsTrue(POINTFuncPublic.Count == 1);
 
             Assert.IsFalse(currentProgram.IsTypeAccessible(POINTFuncLocal.Symbol));

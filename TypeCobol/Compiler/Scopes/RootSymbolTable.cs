@@ -299,16 +299,15 @@ namespace TypeCobol.Compiler.Scopes
         private Domain<TScope>.Entry ResolveScope<TScope>(string[] path, params Symbol.Kinds[] kinds)
             where TScope : AbstractScope
         {
-            if (path == null || path.Length == 0 || path[0] == null)
+            var candidates = ResolveScope(this, path);
+            if (candidates == null)
                 return null;
 
-            string name = path[0];
-            Domain<TScope>.Entry results = new Domain<TScope>.Entry(name);
-            var candidates = LookupScope(name);
+            Domain<TScope>.Entry results = new Domain<TScope>.Entry(candidates.Name);
             kinds = kinds == null || kinds.Length == 0 ? _AllScopeKinds : kinds;
             foreach (var candidate in candidates)
             {
-                if (kinds.Contains(candidate.Kind) && candidate.IsMatchingPath(path))
+                if (kinds.Contains(candidate.Kind))
                     results.Add((TScope)candidate);
             }
 
@@ -359,24 +358,10 @@ namespace TypeCobol.Compiler.Scopes
         /// Resolve a Type
         /// </summary>
         /// <param name="path">Type's path'</param>
-        /// <param name="bIncludeUndefined">True if undefined type must also be included, false otherwise</param>
         /// <returns>The set of matching results</returns>
-        public Domain<TypedefSymbol>.Entry ResolveQualifiedType(string[] path, bool bIncludeUndefined = false)
+        public Domain<TypedefSymbol>.Entry ResolveType(string[] path)
         {
-            if (path == null || path.Length == 0 || path[0] == null)
-                return null;
-
-            string name = path[0];
-            var results = new Domain<TypedefSymbol>.Entry(name);
-            var candidates = LookupType(name);
-            foreach (var candidate in candidates)
-            {
-                //Only selected whose Type is defined.
-                if ((bIncludeUndefined || candidate.Type != null) && candidate.IsMatchingPath(path))
-                    results.Add(candidate);
-            }
-
-            return results;
+            return ResolveType(this, path);
         }
 
         public void RegisterForTypeLinking(VariableTypeSymbol variableTypeSymbol)

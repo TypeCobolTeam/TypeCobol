@@ -408,29 +408,6 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// Resolve all accessible types by this scope from a root symbol table
-        /// </summary>
-        /// <param name="root">The root Symbol table</param>
-        /// <param name="path">The Type's path to be resolved.'</param>
-        /// <returns>The scope all accessible type</returns>
-        public override Domain<TypedefSymbol>.Entry ResolveAccessibleType(RootSymbolTable root, string[] path)
-        {
-            Domain<TypedefSymbol>.Entry candidates = root.ResolveQualifiedType(path, true);
-            if (candidates == null || candidates.Count == 0)
-                return candidates;
-            Domain<TypedefSymbol>.Entry types = new Domain<TypedefSymbol>.Entry(path[0]);
-            foreach (var t in candidates)
-            {
-                if (IsTypeAccessible(t))
-                {
-                    types.Add(t);
-                }
-            }
-
-            return types;
-        }
-
-        /// <summary>
         /// Resolve a type.
         /// </summary>
         /// <param name="root">The Root Symbol Table</param>
