@@ -247,12 +247,6 @@ namespace TypeCobol.Compiler.Domain
             this.CurrentProgram = (ProgramSymbol) LastExitedNode.Parent?.SemanticData;
         }
 
-        public override void EndCobolCompilationUnit()
-        {
-            //Entire compilation unit has been parsed, perform type-linking with up-to-date symbols.
-            MyRoot.UpdateTypeLinks();
-        }
-
         public override void StartDataDivision(DataDivisionHeader header)
         {
             CurrentDataDivisionSection = DataDivisionSection.None;
@@ -974,7 +968,7 @@ namespace TypeCobol.Compiler.Domain
                 CurrentProgram.AddToDomain(varTypeSym);
             else
                 typedef.Add(varTypeSym);
-            MyRoot.RegisterForTypeLinking(varTypeSym);
+            
             //If we have created a VariableTypeSymbol Symbol instance then sure the underlying Program should be completed from the Top Program.
             //This can be an optimization to avoid pur Cobol85 program to be completed, they don't have TYPEDEF.
             if (!CurrentProgram.HasFlag(Symbol.Flags.NeedTypeCompletion))

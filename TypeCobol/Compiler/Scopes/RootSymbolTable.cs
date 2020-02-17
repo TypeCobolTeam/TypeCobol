@@ -48,8 +48,6 @@ namespace TypeCobol.Compiler.Scopes
         /// </summary>
         private Domain<TypedefSymbol> TypeDomain { get; }
 
-        private readonly List<VariableTypeSymbol> _variablesThatNeedTypeLinking;
-
         /// <summary>
         /// Empty Constructor.
         /// </summary>
@@ -64,7 +62,6 @@ namespace TypeCobol.Compiler.Scopes
             Universe = new List<VariableSymbol>();
             ScopeDomain = new Domain<AbstractScope>();
             TypeDomain = new Domain<TypedefSymbol>();
-            _variablesThatNeedTypeLinking = new List<VariableTypeSymbol>();
 
             //Register BottomVariable
             AddToUniverse(BottomVariable);
@@ -362,33 +359,6 @@ namespace TypeCobol.Compiler.Scopes
         public Domain<TypedefSymbol>.Entry ResolveType(string[] path)
         {
             return ResolveType(this, path);
-        }
-
-        public void RegisterForTypeLinking(VariableTypeSymbol variableTypeSymbol)
-        {
-            _variablesThatNeedTypeLinking.Add(variableTypeSymbol);
-        }
-
-        public void UpdateTypeLinks()
-        {
-            var variablesThatNeedTypeLinking = _variablesThatNeedTypeLinking.ToArray();
-            foreach (var variableThatNeedTypeLinking in variablesThatNeedTypeLinking)
-            {
-                ProgramSymbol program = (ProgramSymbol) variableThatNeedTypeLinking.NearestKind(Symbol.Kinds.Program, Symbol.Kinds.Function);
-                Domain<TypedefSymbol>.Entry entry = program.ResolveType(this, variableThatNeedTypeLinking.TypePaths);
-                if (entry != null && entry.Count == 1)
-                {
-                    //Successfully resolved Typedef symbol
-                    variableThatNeedTypeLinking.Typedef = entry.Symbol;
-                    _variablesThatNeedTypeLinking.Remove(variableThatNeedTypeLinking);
-
-                    //--------------------------------------------------------------------------------------------
-                    //We don't check type accessibility here. I think that the semantic analyzer should do that.
-                    //This can be achieved by the following call:
-                    //program.IsTypeAccessible(entry.Symbol);
-                    //--------------------------------------------------------------------------------------------
-                }
-            }
         }
     }
 }

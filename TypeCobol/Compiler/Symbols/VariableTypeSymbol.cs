@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
@@ -16,7 +17,8 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="name">Variable's name</param>
         /// <param name="paths">The unresolved type's path</param>
-        public VariableTypeSymbol(string name, string[] paths) : base(name)
+        public VariableTypeSymbol(string name, string[] paths)
+            : base(name)
         {
             System.Diagnostics.Debug.Assert(paths != null);
             System.Diagnostics.Debug.Assert(paths.Length != 0);
@@ -31,30 +33,62 @@ namespace TypeCobol.Compiler.Symbols
         public string[] TypePaths { get; }
 
         /// <summary>
-        /// The Typedef symbol
+        /// Tries to resolve TypedefSymbol of this variable according to its TypePaths.
         /// </summary>
-        public TypedefSymbol Typedef
+        private void LinkTypedef()
         {
-            get => _typedef;
-            internal set
+            var declaringProgram = (ProgramSymbol) NearestKind(Kinds.Program, Kinds.Function);
+            if (declaringProgram == null)
             {
-                System.Diagnostics.Debug.Assert(value != null);
-                _typedef = value;
+                //variable has no owner yet
+                return;
+            }
+
+            var root = (RootSymbolTable) TopParent(Kinds.Root);
+            System.Diagnostics.Debug.Assert(root != null);
+
+            var entry = declaringProgram.ResolveType(root, TypePaths);
+            if (entry != null && entry.Count == 1)
+            {
+                //Successfully resolved Typedef symbol
+                _typedef = entry.Symbol;
+
+                //Update ElementType in case of Pointer or Array
                 var currentType = base.Type;
                 if (currentType != null)
                 {
                     switch (currentType.Tag)
                     {
                         case Type.Tags.Array:
-                            ArrayType arrayType = (ArrayType) currentType;
-                            arrayType.ElementType = value.Type;
+                            ArrayType arrayType = (ArrayType)currentType;
+                            arrayType.ElementType = _typedef.Type;
                             break;
                         case Type.Tags.Pointer:
-                            PointerType pointerType = (PointerType) currentType;
-                            pointerType.ElementType = value.Type;
+                            PointerType pointerType = (PointerType)currentType;
+                            pointerType.ElementType = _typedef.Type;
                             break;
                     }
                 }
+
+                //--------------------------------------------------------------------------------------------
+                //We don't check type accessibility here. I think that the semantic analyzer should do that.
+                //This can be achieved by the following call:
+                //program.IsTypeAccessible(entry.Symbol);
+                //--------------------------------------------------------------------------------------------
+            }
+        }
+
+        /// <summary>
+        /// The Typedef symbol
+        /// </summary>
+        public TypedefSymbol Typedef
+        {
+            get
+            {
+                //Perform lazy typedef resolution
+                if (_typedef == null) LinkTypedef();
+
+                return _typedef;
             }
         }
 
@@ -80,7 +114,6 @@ namespace TypeCobol.Compiler.Symbols
 
                 return base.Type;
             }
-            set => base.Type = value;
         }
 
         public override string TypedName => Typedef != null ? (Name + '.' + Typedef.Name) : Name;
