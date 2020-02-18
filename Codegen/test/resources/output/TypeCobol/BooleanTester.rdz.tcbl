@@ -1,4 +1,4 @@
-﻿      * 1 errors
+      * 1 errors
       * Line 42[9,21] <37, Warning, General> - Warning: "when other" is missing
        IDENTIFICATION DIVISION.
        PROGRAM-ID. BooleanTester.
@@ -126,3 +126,5 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. a278a8a5.
        END PROGRAM a278a8a5.
+
+

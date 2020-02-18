@@ -78,3 +78,5 @@
       *     output(FinalLength: pic 9(09) COMP)
            DISPLAY "TOTO".
        END PROGRAM a9d5681c.
+
+

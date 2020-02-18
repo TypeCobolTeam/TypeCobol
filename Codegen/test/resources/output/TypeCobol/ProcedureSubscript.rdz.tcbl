@@ -1,4 +1,4 @@
-﻿      *TypeCobol_Version:TestTypeCobolVersion
+      *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Subscript.
       
@@ -105,6 +105,8 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. ff0c38e9.
        END PROGRAM ff0c38e9.
+
+
       *
       *DECLARE PROCEDURE CompressString PRIVATE
       *    INPUT    arg1      POINTER
@@ -117,3 +119,5 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. ff1c836e.
        END PROGRAM ff1c836e.
+
+

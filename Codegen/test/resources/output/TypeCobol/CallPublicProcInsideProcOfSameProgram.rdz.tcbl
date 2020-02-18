@@ -22,17 +22,16 @@
 
        PROCEDURE DIVISION USING TC-FunctionCode
                           arg1.
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
 
        FctList-Process-Mode.
            evaluate true
-               when Fct-efe09ace-GetPersonById
-                  call 'efe09ace' using arg1
-               when other
-                  TODO
+              when Fct-efe09ace-GetPersonById
+                 call 'efe09ace' using arg1
+              when other
+                 TODO
            end-evaluate
            .
                           
@@ -91,6 +90,8 @@
                                           
            .
        END PROGRAM a0508f35.
+
+
       *
       *declare procedure GetPersonById public
       *   input  personId  type date.
@@ -112,3 +113,5 @@
       *     input(personId: DATE)
            CONTINUE.
        END PROGRAM efe09ace.
+
+

@@ -63,17 +63,16 @@
       
        PROCEDURE DIVISION USING TC-FunctionCode
                           .
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
 
        FctList-Process-Mode.
            evaluate true
-               when Fct-dc31cc72-ReadEconomicData
-                  call 'dc31cc72'
-               when other
-                  TODO
+              when Fct-dc31cc72-ReadEconomicData
+                 call 'dc31cc72'
+              when other
+                 TODO
            end-evaluate
            .
                           
@@ -139,6 +138,8 @@
                move "foo" to ProgramName OF SharedData
            .
        END PROGRAM dc31cc72.
+
+
       *
       * Global Storage Section variables
       *_________________________________________________________________

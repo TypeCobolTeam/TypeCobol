@@ -70,29 +70,28 @@
                           arg3
                           arg4
                           arg5.
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
 
        FctList-Process-Mode.
            evaluate true
-               when Fct-db42865c-currentDate
-                  call 'db42865c'
-               when Fct-fa5ee5e9-currentDateDB2
-                  call 'fa5ee5e9'
-               when Fct-cf63e86f-currentDateJulian
-                  call 'cf63e86f'
-               when Fct-cfc290ce-currentDateFreeFormat
-                  call 'cfc290ce' using arg1
+              when Fct-db42865c-currentDate
+                 call 'db42865c'
+              when Fct-fa5ee5e9-currentDateDB2
+                 call 'fa5ee5e9'
+              when Fct-cf63e86f-currentDateJulian
+                 call 'cf63e86f'
+              when Fct-cfc290ce-currentDateFreeFormat
+                 call 'cfc290ce' using arg1
                                         arg2
                                         arg3
                                         arg4
                                         arg5
-               when Fct-b8721d20-currentDateString
-                  call 'b8721d20'
-               when other
-                  TODO
+              when Fct-b8721d20-currentDateString
+                 call 'b8721d20'
+              when other
+                 TODO
            end-evaluate
            .
                           
@@ -149,6 +148,8 @@
            ACCEPT Result FROM DATE YYYYMMDD
            .
        END PROGRAM db42865c.
+
+
       *
       *DECLARE FUNCTION currentDateDB2 PUBLIC
       *    RETURNING Result Type dateDB2.
@@ -197,6 +198,8 @@
            
            .
        END PROGRAM fa5ee5e9.
+
+
       *
       *DECLARE FUNCTION currentDateJulian PUBLIC
       * my comment
@@ -236,6 +239,8 @@
            move        W-Dat to Result
            .
        END PROGRAM cf63e86f.
+
+
       *
       *DECLARE FUNCTION currentDateFreeFormat PUBLIC
       *                   INPUT dateType   PIC X(01)
@@ -294,6 +299,8 @@
            continue
            .
        END PROGRAM cfc290ce.
+
+
       *
       *DECLARE FUNCTION currentDateString PUBLIC
       *    RETURNING Result TYPE dateString.
@@ -316,3 +323,5 @@
            ACCEPT Result FROM DATE YYYYMMDD
            .
        END PROGRAM b8721d20.
+
+

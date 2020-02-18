@@ -65,18 +65,17 @@
        procedure division USING TC-FunctionCode
                           arg1
                           arg2.
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
 
        FctList-Process-Mode.
            evaluate true
-               when Fct-ea2e07d4-GetTecMsg
-                  call 'ea2e07d4' using arg1
+              when Fct-ea2e07d4-GetTecMsg
+                 call 'ea2e07d4' using arg1
                                         arg2
-               when other
-                  TODO
+              when other
+                 TODO
            end-evaluate
            .
                           
@@ -147,3 +146,5 @@
            continue
            .
        END PROGRAM ea2e07d4.
+
+

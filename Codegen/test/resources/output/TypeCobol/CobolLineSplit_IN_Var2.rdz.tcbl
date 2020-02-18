@@ -76,3 +76,5 @@
       *     output(mydate: pic X(30))
            CONTINUE.
        END PROGRAM cb5016db.
+
+

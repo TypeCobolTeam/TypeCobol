@@ -17,17 +17,16 @@
       *=================================================================
        PROCEDURE DIVISION USING TC-FunctionCode
                            .
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
 
        FctList-Process-Mode.
            evaluate true
-               when Fct-b8721d20-currentDateString
-                  call 'b8721d20'
-               when other
-                  TODO
+              when Fct-b8721d20-currentDateString
+                 call 'b8721d20'
+              when other
+                 TODO
            end-evaluate
            .
                                              
@@ -54,3 +53,5 @@
            display "toto"
            .
        END PROGRAM b8721d20.
+
+

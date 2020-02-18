@@ -16,17 +16,16 @@
        01 arg1 pic X.
        PROCEDURE DIVISION USING TC-FunctionCode
                           arg1.
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
 
        FctList-Process-Mode.
            evaluate true
-               when Fct-f18df3d0-StartCheckpoint
-                  call 'f18df3d0' using arg1
-               when other
-                  TODO
+              when Fct-f18df3d0-StartCheckpoint
+                 call 'f18df3d0' using arg1
+              when other
+                 TODO
            end-evaluate
            .
                           
@@ -45,3 +44,5 @@
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        END PROGRAM f18df3d0.
+
+

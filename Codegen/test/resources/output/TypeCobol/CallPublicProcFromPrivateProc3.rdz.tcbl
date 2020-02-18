@@ -15,17 +15,16 @@
        01 arg1 pic X.
        PROCEDURE DIVISION USING TC-FunctionCode
                            arg1.
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
 
        FctList-Process-Mode.
            evaluate true
-               when Fct-b179d81b-StartCheckpoint
-                  call 'b179d81b' using arg1
-               when other
-                  TODO
+              when Fct-b179d81b-StartCheckpoint
+                 call 'b179d81b' using arg1
+              when other
+                 TODO
            end-evaluate
            .
                                 
@@ -46,6 +45,8 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. b179d81b.
        END PROGRAM b179d81b.
+
+
       *
       *declare procedure testos private.
       *_________________________________________________________________
@@ -83,7 +84,6 @@
        PROCEDURE DIVISION
            .
       *TCOZCHKP.testos  - No Params
-           PERFORM TC-INITIALIZATIONS
       *    call TCOZCHKP::StartCheckpoint input var1
            CALL 'zcallpgm' using TC-TCOZCHKP
                     TCOZCHKP-Fct-b179d81b-StartChe
@@ -91,30 +91,6 @@
            end-call
                                                     
            .
-      *=================================================================
-       TC-INITIALIZATIONS.
-      *=================================================================
-            IF TC-FirstCall
-                 SET TC-NthCall TO TRUE
-                 SET ADDRESS OF TC-TCOZCHKP-b179d81b-Item  TO NULL
-            END-IF
-            .
-      *=================================================================
-       TC-LOAD-POINTERS-TCOZCHKP.
-      *=================================================================
-            CALL 'ZCALLPGM' USING TC-TCOZCHKP
-            ADDRESS OF TC-Library-PntTab
-            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
-            UNTIL TC-Library-Idx > TC-Library-PntNbr
-                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'b179d81b'
-                     SET ADDRESS OF
-                     TC-TCOZCHKP-b179d81b-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN OTHER
-                     CONTINUE
-                END-EVALUATE
-            END-PERFORM
-            .
        END PROGRAM d58351d5.
+
+

@@ -180,27 +180,26 @@
                           arg2
                           arg3
                           arg4.
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
 
        FctList-Process-Mode.
            evaluate true
-               when Fct-ca0ab46c-check
-                  call 'ca0ab46c' using arg1
-               when Fct-d0a59141-check2
-                  call 'd0a59141' using arg1
-               when Fct-e5b741a8-check2
-                  call 'e5b741a8' using arg1
+              when Fct-ca0ab46c-check
+                 call 'ca0ab46c' using arg1
+              when Fct-d0a59141-check2
+                 call 'd0a59141' using arg1
+              when Fct-e5b741a8-check2
+                 call 'e5b741a8' using arg1
                                         arg2
-               when Fct-ebb060ea-MyPublicProcedure
-                  call 'ebb060ea' using arg1
+              when Fct-ebb060ea-MyPublicProcedure
+                 call 'ebb060ea' using arg1
                                         arg2
                                         arg3
                                         arg4
-               when other
-                  TODO
+              when other
+                 TODO
            end-evaluate
            .
                           
@@ -246,6 +245,8 @@
       *     input(mydate: DATE)
            CONTINUE.
        END PROGRAM a0508f35.
+
+
       *
       *DECLARE PROCEDURE Pgm1PrivateValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
@@ -283,6 +284,8 @@
       *     output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
        END PROGRAM fde394fb.
+
+
       *
       *declare procedure check public
       *   input mydate        TYPE Date
@@ -305,6 +308,8 @@
       *     input(mydate: DATE)
            CONTINUE.
        END PROGRAM ca0ab46c.
+
+
       *
       *declare procedure check2 public
       *   input mydate        TYPE Date
@@ -327,6 +332,8 @@
       *     input(mydate: DATE)
            CONTINUE.
        END PROGRAM d0a59141.
+
+
       *
       *declare procedure check2 public
       *   input mydate        TYPE Date
@@ -355,6 +362,8 @@
       *     input(mydate: DATE, myDate2: DATE)
            CONTINUE.
        END PROGRAM e5b741a8.
+
+
       *
       *DECLARE PROCEDURE MyPublicProcedure PUBLIC
       *    INPUT mydate        TYPE Date
@@ -392,3 +401,5 @@
       *     output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
        END PROGRAM ebb060ea.
+
+

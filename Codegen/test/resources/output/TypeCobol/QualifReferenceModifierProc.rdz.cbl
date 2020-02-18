@@ -22,17 +22,16 @@
       
        PROCEDURE DIVISION USING TC-FunctionCode
                           .
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
 
        FctList-Process-Mode.
            evaluate true
-               when Fct-a711ebb5-StartCheckpoint
-                  call 'a711ebb5'
-               when other
-                  TODO
+              when Fct-a711ebb5-StartCheckpoint
+                 call 'a711ebb5'
+              when other
+                 TODO
            end-evaluate
            .
                           
@@ -84,3 +83,5 @@
       
            .
        END PROGRAM a711ebb5.
+
+

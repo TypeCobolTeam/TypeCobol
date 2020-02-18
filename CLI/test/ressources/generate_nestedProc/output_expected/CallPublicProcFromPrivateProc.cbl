@@ -15,41 +15,23 @@
        01  TC-PGM1-FctList-Loaded PIC X(02).
            88 TC-PGM1-FctList-IsLoaded      VALUE 'OK'.
 
-       01 TC-PGM1-PntTab.
-           05 TC-PGM1-PntNbr         PIC S9(04) COMP VALUE 2.
-      *To call program a0508f35
-      *Which is generated code for PGM1.check
-      *Declared in source file CallPublicProcFromPrivateProc.rdz.tcbl
-           05 TC-PGM1-a0508f35-Idt   PIC X(08) VALUE 'a0508f35'.
-           05 TC-PGM1-a0508f35 PROCEDURE-POINTER.
-      *To call program cd991005
-      *Which is generated code for PersonService.GetPersonById
-      *Declared in source file CallPublicProcFromPrivateProc.rdz.tcbl
-           05 TC-PGM1-cd991005-Idt   PIC X(08) VALUE 'cd991005'.
-           05 TC-PGM1-cd991005 PROCEDURE-POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program a0508f35
+      * Which is generated code for PGM1.check
+           08 Fct-a0508f35-check
+              value 'Fct=a0508f35-check'.
+      * Function which call program cd991005
+      * Which is generated code for PersonService.GetPersonById
+           08 Fct-cd991005-GetPersonById
+              value 'Fct=cd991005-GetPersonById'.
 
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
-       01 TC-A1 PIC X.
+       01 FunctionCode pic X(30).
+       01 arg1 PIC X.
 
 
        PROCEDURE DIVISiON USING TC-FunctionCode
                           
-       perform INIT-LIBRARY
-           PERFORM FctList-Process-Mode
-
-           GOBACK.
-
-        FctList-Process-Mode.
-            IF NOT TC-PGM1-FctList-IsLoaded
-              SET TC-PGM1-a0508f35   TO ENTRY 'a0508f35'
-              SET TC-PGM1-cd991005   TO ENTRY 'cd991005'
-              SET TC-PGM1-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-PGM1-PntTab
-
            .
                           
 
@@ -110,6 +92,8 @@
       *     input(name: pic x(15))
            CONTINUE.
        END PROGRAM f6b6da00.
+
+
        END PROGRAM PersonService.
 
 
@@ -160,7 +144,6 @@
            .
       *PGM1.check - Params :
       *     input(mydate: DATE)
-           PERFORM TC-INITIALIZATIONS
       *    Call PersonService::GetPersonById input mydate
            CALL 'zcallpgm' using TC-PersonSe
                     PersonSe-Fct-cd991005-GetPerso
@@ -168,33 +151,9 @@
            end-call
                                                          
            .
-      *=================================================================
-       TC-INITIALIZATIONS.
-      *=================================================================
-            IF TC-FirstCall
-                 SET TC-NthCall TO TRUE
-                 SET ADDRESS OF TC-PersonSe-cd991005-Item  TO NULL
-            END-IF
-            .
-      *=================================================================
-       TC-LOAD-POINTERS-PersonSe.
-      *=================================================================
-            CALL 'ZCALLPGM' USING TC-PersonSe
-            ADDRESS OF TC-Library-PntTab
-            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
-            UNTIL TC-Library-Idx > TC-Library-PntNbr
-                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'cd991005'
-                     SET ADDRESS OF
-                     TC-PersonSe-cd991005-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN OTHER
-                     CONTINUE
-                END-EVALUATE
-            END-PERFORM
-            .
        END PROGRAM a0508f35.
+
+
       *
       *declare procedure checkName private
       *   input myname        PIC X(15)
@@ -219,6 +178,8 @@
       *     input(myname: pic X(15))
            CONTINUE.
        END PROGRAM a02a7aa5.
+
+
       *
       *declare procedure GetPersonById public
       *   input  personId  type date.
@@ -240,5 +201,7 @@
       *     input(personId: DATE)
            CONTINUE.
        END PROGRAM cd991005.
+
+
        END PROGRAM PGM1.
 

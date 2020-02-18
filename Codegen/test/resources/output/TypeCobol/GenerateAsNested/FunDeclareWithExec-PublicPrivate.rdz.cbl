@@ -14,42 +14,24 @@
        01  TC-PGM1-FctList-Loaded PIC X(02).
            88 TC-PGM1-FctList-IsLoaded      VALUE 'OK'.
 
-       01 TC-PGM1-PntTab.
-           05 TC-PGM1-PntNbr         PIC S9(04) COMP VALUE 2.
-      *To call program a0508f35
-      *Which is generated code for PGM1.check
-      *Declared in source file FunDeclareWithExec-PublicPrivate.rdz.cbl
-           05 TC-PGM1-a0508f35-Idt   PIC X(08) VALUE 'a0508f35'.
-           05 TC-PGM1-a0508f35 PROCEDURE-POINTER.
-      *To call program efd9419f
-      *Which is generated code for PGM1.check
-      *Declared in source file FunDeclareWithExec-PublicPrivate.rdz.cbl
-           05 TC-PGM1-efd9419f-Idt   PIC X(08) VALUE 'efd9419f'.
-           05 TC-PGM1-efd9419f PROCEDURE-POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program a0508f35
+      * Which is generated code for PGM1.check
+           08 Fct-a0508f35-check
+              value 'Fct=a0508f35-check'.
+      * Function which call program efd9419f
+      * Which is generated code for PGM1.check
+           08 Fct-efd9419f-check
+              value 'Fct=efd9419f-check'.
 
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
-       01 TC-A1 PIC X.
-       01 TC-A2 PIC X.
+       01 FunctionCode pic X(30).
+       01 arg1 PIC X.
+       01 arg2 PIC X.
 
 
        PROCEDURE DIVISiON USING TC-FunctionCode
                           
-       perform INIT-LIBRARY
-           PERFORM FctList-Process-Mode
-
-           GOBACK.
-
-        FctList-Process-Mode.
-            IF NOT TC-PGM1-FctList-IsLoaded
-              SET TC-PGM1-a0508f35   TO ENTRY 'a0508f35'
-              SET TC-PGM1-efd9419f   TO ENTRY 'efd9419f'
-              SET TC-PGM1-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-PGM1-PntTab
-
            .
                           
 
@@ -115,6 +97,8 @@
            END-EXEC  
            CONTINUE.
        END PROGRAM a0508f35.
+
+
       *
       *declare procedure check public
       *   input mydate        TYPE Date
@@ -157,6 +141,8 @@
            END-EXEC  
            CONTINUE.
        END PROGRAM efd9419f.
+
+
       *
       *declare procedure checkName private
       *   input myname        PIC X(15)
@@ -192,5 +178,7 @@
                                 
            .
        END PROGRAM a02a7aa5.
+
+
        END PROGRAM PGM1.
 

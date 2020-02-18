@@ -32,17 +32,16 @@
       DX.  EXIT.
       DEND DECLARATIVES.
        .
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
 
        FctList-Process-Mode.
            evaluate true
-               when Fct-da2f236e-MyProc
-                  call 'da2f236e'
-               when other
-                  TODO
+              when Fct-da2f236e-MyProc
+                 call 'da2f236e'
+              when other
+                 TODO
            end-evaluate
            .
       
@@ -72,3 +71,5 @@
       *DeclarativesTest.MyProc  - No Params
         .
        END PROGRAM da2f236e.
+
+

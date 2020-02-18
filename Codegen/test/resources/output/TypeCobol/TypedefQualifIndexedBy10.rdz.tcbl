@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZF0OS3.
        data DIVISION.
        working-storage section.
@@ -148,6 +148,8 @@
            END-PERFORM
            GOBACK.
        END PROGRAM b845e622.
+
+
       *
       *DECLARE PROCEDURE DisplayEventList PRIVATE
       *     IN-OUT EventList type DVZF0OS3::EventList.
@@ -194,3 +196,5 @@
            END-PERFORM
            GOBACK.
        END PROGRAM d4d8ef40.
+
+

@@ -264,11 +264,13 @@ namespace TypeCobol.Codegen.Actions
                                 {
                                                 public dynamic definitions;
                                                 public dynamic programName8;
+                                                public dynamic maxargscount;
                                                 
                                                 public SkeleTonMAIN_DECLARE_NESTEDModel(TypeCobol.Compiler.Nodes.Node @Self)
                                                 {
                                                                 definitions = @Self["definitions"];
                                                                 programName8 = @Self["programName8"];
+                                                                maxargscount = @Self["maxargscount"];
                                                 }
                                                 private static Tuple<string,string>[] __ConditionsAttributes_0 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.CodeModel.SourceProgram"), new Tuple<string,string>("containnested","true")};
                                                 public static bool Conditions_0(TypeCobol.Compiler.Nodes.Node @Self)
@@ -717,6 +719,7 @@ namespace TypeCobol.Codegen.Actions
         }
         items += "                   arg" + @Model.maxargscount + ".\n";
         }
+        items = items.Substring(0, items.Length - 1);
         @SelfResult.Append(@"
 ");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"
     PERFORM INIT-LIBRARY
@@ -725,8 +728,8 @@ namespace TypeCobol.Codegen.Actions
 ");        
         var entries = "";
         foreach (var f in @Model.definitions.functions.Public) {
-        entries += "        when Fct-"+ f.Hash + "-" + f.ID + "\n";
-        entries += "           call '" + f.Hash + "'";
+        entries += "       when Fct-"+ f.Hash + "-" + f.ID + "\n";
+        entries += "          call '" + f.Hash + "'";
         int nbr = f.Profile.Parameters.Count;
         if (nbr == 0) {
         entries += "\n";
@@ -735,19 +738,18 @@ namespace TypeCobol.Codegen.Actions
         entries += " using arg1\n";
         if (nbr > 1) {
         for(int i=2; i != (nbr+1); i++) {
-        entries += "                                 arg" + i + "\n"; 
+        entries += "                                 arg" + i + "\n";
         }
         }
         }
         }
-        entries = entries.Substring(0, entries.Length - 1);
+        entries += "       when other\n";
+        entries += "          TODO\n";
+        entries += "    end-evaluate";
         @SelfResult.Append(@"
 FctList-Process-Mode.
     evaluate true
-");@SelfResult.Append($@"{@entries}");@SelfResult.Append(@"
-        when other
-           TODO
-    end-evaluate");
+");@SelfResult.Append($@"{@entries}");@SelfResult.Append(@"");
                                                                                 TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, "ProcedureDivisionCalleeWithoutExternal", @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR", "program.procedure-division.sentence-([0-9]+).begin", null, false);
                                                                                 if (@SelfAction != null)
                                                                                 {
@@ -795,7 +797,7 @@ FctList-Process-Mode.
                                                                                 @SelfResult.Append(@"");
         var items = "";
         if (@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
-        items += "01 PntTab-Pnt POINTER.\n";
+        items += "01 FunctionCode pic X(30).\n";
         }
         int maxVarCount = 0;
         foreach (var function in @Model.definitions.functionsGeneratedAsNested.Public) {
@@ -804,7 +806,7 @@ FctList-Process-Mode.
         }
         }
         for (int i = 1; i <= maxVarCount; i++) {
-        items += "01 TC-A" + i + " PIC X.\n";
+        items += "01 arg" + i + " PIC X.\n";
         }
         @SelfResult.Append(@"
 ");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"");
@@ -877,15 +879,13 @@ FctList-Process-Mode.
                                                                                 @SelfResult.Append(@"");
         var items = "";
         if (@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
-        items += "01 TC-"+ @Model.programName8 + "-PntTab.\n";
-        items += "    05 TC-" + @Model.programName8 + "-PntNbr         PIC S9(04) COMP VALUE "+(@Model.definitions.functionsGeneratedAsNested.Public.Count + @Model.definitions.functions.Public.Count) +".\n";
+        items += "01 TC-FunctionCode pic X(30).\n";
         }
         foreach (var f in @Model.definitions.functionsGeneratedAsNested.Concat(@Model.definitions.functions.Public, true)) {
-        items += "*To call program " + f.Hash + '\n';
-        items += "*Which is generated code for " + f.QualifiedName + '\n';
-        items += "*Declared in source file " + f.CodeElement.TokenSource.SourceName + '\n';
-        items += "    05 TC-"+@Model.programName8 + "-" + f.Hash +"-Idt   PIC X(08) VALUE '" + f.Hash + "'.\n";
-        items += "    05 TC-"+@Model.programName8 + "-" + f.Hash +" PROCEDURE-POINTER.\n";
+        items += "* Function which call program " + f.Hash + "\n";
+        items += "* Which is generated code for " + f.QualifiedName + "\n";
+        items += "    08 Fct-" + f.Hash + "-" + f.ID + "\n";
+        items += "       value 'Fct=" + f.Hash +"-" + f.ID + "'.\n";
         }
         @SelfResult.Append(@"
 ");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"");
@@ -901,28 +901,7 @@ FctList-Process-Mode.
                                                                 {
                                                                                 SkeleTonMAIN_DECLARE_NESTEDModel @Model = new SkeleTonMAIN_DECLARE_NESTEDModel(@Self);
                                                                                 StringBuilder @SelfResult = new StringBuilder();
-                                                                                @SelfResult.Append(@"");
-        var items = "";
-        if (@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
-        items += "    perform INIT-LIBRARY\n";
-        items += "    PERFORM FctList-Process-Mode\n\n";
-
-        items += "    GOBACK.\n\n";
-
-        items += " FctList-Process-Mode.\n";
-        items += "     IF NOT TC-" + @Model.programName8 + "-FctList-IsLoaded\n";
-        foreach (var f in @Model.definitions.functionsGeneratedAsNested.Concat(@Model.definitions.functions.Public, true))
-        items += "       SET TC-"+@Model.programName8 + "-" +f.Hash+"   TO ENTRY \'"+f.Hash+"\'\n";
-
-        items += "       SET TC-" + @Model.programName8 + "-FctList-IsLoaded TO TRUE\n";
-        items += "     END-IF\n";
-        items += "        .\n\n";
-
-        items += "     set PntTab-Pnt TO ADDRESS OF TC-"+@Model.programName8+"-PntTab\n";
-        }
-        @SelfResult.Append(@"
-");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"");
-                                                                                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, "ProcedureDivisionCalleeWithoutExternal", @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR", "program.procedure-division.sentence-([0-9]+).begin", null, true);
+                                                                                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, "ProcedureDivisionCalleeWithoutExternal", @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR", "program.procedure-division.sentence-([0-9]+).begin", null, false);
                                                                                 if (@SelfAction != null)
                                                                                 {
                                                                                                 @SelfActions.Add(@SelfAction);

@@ -66,6 +66,8 @@
            END-EXEC  
            CONTINUE.
        END PROGRAM a0508f35.
+
+
       *
       *declare procedure check private
       *   input mydate        TYPE Date
@@ -108,6 +110,8 @@
            END-EXEC  
            CONTINUE.
        END PROGRAM efd9419f.
+
+
       *
       *declare procedure checkName private
       *   input myname        PIC X(15)
@@ -143,5 +147,7 @@
                                 
            .
        END PROGRAM a02a7aa5.
+
+
        END PROGRAM PGM1.
 

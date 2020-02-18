@@ -45,17 +45,16 @@
        01 arg1 pic X.
        PROCEDURE DIVISION USING TC-FunctionCode
                            arg1.
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
 
        FctList-Process-Mode.
            evaluate true
-               when Fct-cd991005-GetPersonById
-                  call 'cd991005' using arg1
-               when other
-                  TODO
+              when Fct-cd991005-GetPersonById
+                 call 'cd991005' using arg1
+              when other
+                 TODO
            end-evaluate
            .
                                  
@@ -87,6 +86,8 @@
       *     input(personId: DATE)
            CONTINUE.
        END PROGRAM cd991005.
+
+
       *
       *declare procedure check private
       *   input mydate        TYPE Date
@@ -134,7 +135,6 @@
            .
       *PGM1.check - Params :
       *     input(mydate: DATE)
-           PERFORM TC-INITIALIZATIONS
       *    Call PersonService::GetPersonById input mydate
            CALL 'zcallpgm' using TC-PersonSe
                     PersonSe-Fct-cd991005-GetPerso
@@ -142,30 +142,6 @@
            end-call
                                                          
            .
-      *=================================================================
-       TC-INITIALIZATIONS.
-      *=================================================================
-            IF TC-FirstCall
-                 SET TC-NthCall TO TRUE
-                 SET ADDRESS OF TC-PersonSe-cd991005-Item  TO NULL
-            END-IF
-            .
-      *=================================================================
-       TC-LOAD-POINTERS-PersonSe.
-      *=================================================================
-            CALL 'ZCALLPGM' USING TC-PersonSe
-            ADDRESS OF TC-Library-PntTab
-            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
-            UNTIL TC-Library-Idx > TC-Library-PntNbr
-                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'cd991005'
-                     SET ADDRESS OF
-                     TC-PersonSe-cd991005-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN OTHER
-                     CONTINUE
-                END-EVALUATE
-            END-PERFORM
-            .
        END PROGRAM a0508f35.
+
+

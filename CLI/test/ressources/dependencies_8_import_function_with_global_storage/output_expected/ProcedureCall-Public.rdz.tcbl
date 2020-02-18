@@ -78,6 +78,8 @@
       *PGM1.MyProcedureUsingNothing  - No Params
            CONTINUE.
        END PROGRAM dc113db8.
+
+
       *
       *DECLARE PROCEDURE MyProcedureUsingGlobalStorage.
       *_________________________________________________________________
@@ -123,6 +125,8 @@
            MOVE G-Bool-value TO P-Bool-value.
            CONTINUE.
        END PROGRAM bf501b85.
+
+
       *
       *DECLARE PROCEDURE MyProcedureImportProc.
       *_________________________________________________________________
@@ -166,40 +170,15 @@
        PROCEDURE DIVISION
            .
       *PGM1.MyProcedureImportProc  - No Params
-           PERFORM TC-INITIALIZATIONS
       *    CALL Callee::DoNothing.
            CALL 'zcallpgm' using TC-Callee
                     Callee-Fct-a78211ce-DoNothing
            end-call
                                  .
            CONTINUE.
-      *=================================================================
-       TC-INITIALIZATIONS.
-      *=================================================================
-            IF TC-FirstCall
-                 SET TC-NthCall TO TRUE
-                 SET ADDRESS OF TC-Callee-a78211ce-Item  TO NULL
-            END-IF
-            .
-      *=================================================================
-       TC-LOAD-POINTERS-Callee.
-      *=================================================================
-            CALL 'ZCALLPGM' USING TC-Callee
-            ADDRESS OF TC-Library-PntTab
-            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
-            UNTIL TC-Library-Idx > TC-Library-PntNbr
-                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'a78211ce'
-                     SET ADDRESS OF
-                     TC-Callee-a78211ce-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN OTHER
-                     CONTINUE
-                END-EVALUATE
-            END-PERFORM
-            .
        END PROGRAM bd627c4b.
+
+
       *
       *DECLARE PROCEDURE MyProcedureUsingGlobalStorageAndImportProc.
       *_________________________________________________________________
@@ -259,7 +238,6 @@
        PROCEDURE DIVISION
            .
       *PGM1.MyProcedureUsingGlobalStorageAndImportProc  - No Params
-           PERFORM TC-INITIALIZATIONS
       *    MOVE G-Bool TO P-Bool.
            MOVE G-Bool-value TO P-Bool-value.
       *    CALL Callee::DoNothing.
@@ -268,37 +246,9 @@
            end-call
                                  .
            CONTINUE.
-      *=================================================================
-       TC-INITIALIZATIONS.
-      *=================================================================
-            IF TC-FirstCall
-                 SET TC-NthCall TO TRUE
-      * Get the data from the global storage section
-                 CALL 'fecb93f5' USING
-                     by reference address of TC-GlobalData
-                 end-call
-                 SET ADDRESS OF TC-Callee-a78211ce-Item  TO NULL
-            END-IF
-            .
-      *=================================================================
-       TC-LOAD-POINTERS-Callee.
-      *=================================================================
-            CALL 'ZCALLPGM' USING TC-Callee
-            ADDRESS OF TC-Library-PntTab
-            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
-            UNTIL TC-Library-Idx > TC-Library-PntNbr
-                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'a78211ce'
-                     SET ADDRESS OF
-                     TC-Callee-a78211ce-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN OTHER
-                     CONTINUE
-                END-EVALUATE
-            END-PERFORM
-            .
        END PROGRAM bd34ecc2.
+
+
       *
       * Global Storage Section variables
       *_________________________________________________________________

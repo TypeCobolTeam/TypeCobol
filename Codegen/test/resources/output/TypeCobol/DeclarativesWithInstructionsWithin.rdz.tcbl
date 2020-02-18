@@ -68,17 +68,16 @@
        01 arg1 pic X.
        PROCEDURE DIVISION USING TC-FunctionCode
                           arg1.
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
 
        FctList-Process-Mode.
            evaluate true
-               when Fct-ca0ab46c-check
-                  call 'ca0ab46c' using arg1
-               when other
-                  TODO
+              when Fct-ca0ab46c-check
+                 call 'ca0ab46c' using arg1
+              when other
+                 TODO
            end-evaluate
            .
                           
@@ -101,6 +100,8 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. ca0ab46c.
        END PROGRAM ca0ab46c.
+
+
       *
       *declare procedure check private
       *   input mydate        TYPE Date
@@ -112,3 +113,5 @@
        CONFIGURATION SECTION.
        SOURCE-COMPUTER. IBM-370 WITH DEBUGGING MODE.
        END PROGRAM a0508f35.
+
+

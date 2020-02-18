@@ -15,17 +15,16 @@
        01 arg1 pic X.
        PROCEDURE DIVISION USING TC-FunctionCode
                            arg1.
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
 
        FctList-Process-Mode.
            evaluate true
-               when Fct-f1c0385c-StartCheckpoint
-                  call 'f1c0385c' using arg1
-               when other
-                  TODO
+              when Fct-f1c0385c-StartCheckpoint
+                 call 'f1c0385c' using arg1
+              when other
+                 TODO
            end-evaluate
            .
                                 
@@ -51,17 +50,16 @@
        01 arg1 pic X.
        PROCEDURE DIVISION USING TC-FunctionCode
                            arg1.
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
 
        FctList-Process-Mode.
            evaluate true
-               when Fct-f73481e6-CheckContract
-                  call 'f73481e6' using arg1
-               when other
-                  TODO
+              when Fct-f73481e6-CheckContract
+                 call 'f73481e6' using arg1
+              when other
+                 TODO
            end-evaluate
            .
                                 
@@ -82,6 +80,8 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. f1c0385c.
        END PROGRAM f1c0385c.
+
+
       *
       *declare procedure CheckContract public
       *        input param1 pic X.
@@ -123,7 +123,6 @@
            .
       *PGM1.CheckContract - Params :
       *     input(param1: pic X)
-           PERFORM TC-INITIALIZATIONS
       *    call PGM1::StartCheckpoint input param1
            CALL 'zcallpgm' using TC-PGM1
                     PGM1-Fct-f1c0385c-StartCheckpo
@@ -131,33 +130,9 @@
            end-call
                                                   
            .
-      *=================================================================
-       TC-INITIALIZATIONS.
-      *=================================================================
-            IF TC-FirstCall
-                 SET TC-NthCall TO TRUE
-                 SET ADDRESS OF TC-PGM1-f1c0385c-Item  TO NULL
-            END-IF
-            .
-      *=================================================================
-       TC-LOAD-POINTERS-PGM1.
-      *=================================================================
-            CALL 'ZCALLPGM' USING TC-PGM1
-            ADDRESS OF TC-Library-PntTab
-            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
-            UNTIL TC-Library-Idx > TC-Library-PntNbr
-                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'f1c0385c'
-                     SET ADDRESS OF
-                     TC-PGM1-f1c0385c-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN OTHER
-                     CONTINUE
-                END-EVALUATE
-            END-PERFORM
-            .
        END PROGRAM f73481e6.
+
+
       *
       *declare procedure testos private.
       *_________________________________________________________________
@@ -195,7 +170,6 @@
        PROCEDURE DIVISION
            .
       *PGM1.testos  - No Params
-           PERFORM TC-INITIALIZATIONS
       *                        call PGM1::StartCheckpoint input param1
                                CALL 'zcallpgm' using TC-PGM1
                     PGM1-Fct-f1c0385c-StartCheckpo
@@ -203,30 +177,6 @@
            end-call
                                                                       
            .
-      *=================================================================
-       TC-INITIALIZATIONS.
-      *=================================================================
-            IF TC-FirstCall
-                 SET TC-NthCall TO TRUE
-                 SET ADDRESS OF TC-PGM1-f1c0385c-Item  TO NULL
-            END-IF
-            .
-      *=================================================================
-       TC-LOAD-POINTERS-PGM1.
-      *=================================================================
-            CALL 'ZCALLPGM' USING TC-PGM1
-            ADDRESS OF TC-Library-PntTab
-            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
-            UNTIL TC-Library-Idx > TC-Library-PntNbr
-                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'f1c0385c'
-                     SET ADDRESS OF
-                     TC-PGM1-f1c0385c-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN OTHER
-                     CONTINUE
-                END-EVALUATE
-            END-PERFORM
-            .
        END PROGRAM bfc74757.
+
+

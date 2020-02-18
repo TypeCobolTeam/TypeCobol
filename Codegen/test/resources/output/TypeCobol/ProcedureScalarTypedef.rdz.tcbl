@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. MyPgm.
        data division.
        working-storage section.
@@ -43,3 +43,5 @@
       *     input(Param1: MyAmount1, Param2: MyAmount2)
            .
        END PROGRAM f812db2d.
+
+

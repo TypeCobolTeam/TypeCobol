@@ -15,17 +15,16 @@
       
        procedure division USING TC-FunctionCode
                           arg1.
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
 
        FctList-Process-Mode.
            evaluate true
-               when Fct-af117577-InFct
-                  call 'af117577' using arg1
-               when other
-                  TODO
+              when Fct-af117577-InFct
+                 call 'af117577' using arg1
+              when other
+                 TODO
            end-evaluate
            .
                           
@@ -73,3 +72,5 @@
           WHEN OTHER
            continue.
        END PROGRAM af117577.
+
+

@@ -148,6 +148,8 @@
       *     input(mydate: DATE)
            CONTINUE.
        END PROGRAM a0508f35.
+
+
       *
       *DECLARE PROCEDURE Pgm1PrivateValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
@@ -185,3 +187,5 @@
       *     output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
        END PROGRAM fde394fb.
+
+

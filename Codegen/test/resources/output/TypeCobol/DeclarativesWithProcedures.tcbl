@@ -46,17 +46,16 @@
 	  
       *declare procedure Titi PUBLIC.
        .
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
 
        FctList-Process-Mode.
            evaluate true
-               when Fct-d6385c17-Titi
-                  call 'd6385c17'
-               when other
-                  TODO
+              when Fct-d6385c17-Titi
+                 call 'd6385c17'
+              when other
+                 TODO
            end-evaluate
            .
                                      
@@ -105,6 +104,8 @@
            goback
            .
        END PROGRAM d6385c17.
+
+
       *
       *declare procedure Toto.
       *_________________________________________________________________
@@ -138,3 +139,5 @@
            goback
            .
        END PROGRAM c9ad76eb.
+
+

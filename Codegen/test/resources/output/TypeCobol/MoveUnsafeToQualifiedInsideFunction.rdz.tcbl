@@ -1,4 +1,4 @@
-﻿      *TypeCobol_Version:TestTypeCobolVersion
+      *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Functions.
 
@@ -57,3 +57,5 @@
            END-EVALUATE
            .
        END PROGRAM d1dd0726.
+
+

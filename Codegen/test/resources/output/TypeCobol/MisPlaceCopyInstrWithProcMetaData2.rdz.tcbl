@@ -37,17 +37,16 @@
 
        PROCEDURE DIVISION USING TC-FunctionCode
                           .
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
 
        FctList-Process-Mode.
            evaluate true
-               when Fct-bdb3e928-Foo
-                  call 'bdb3e928'
-               when other
-                  TODO
+              when Fct-bdb3e928-Foo
+                 call 'bdb3e928'
+              when other
+                 TODO
            end-evaluate
            .
                           
@@ -59,3 +58,5 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. bdb3e928.
        END PROGRAM bdb3e928.
+
+

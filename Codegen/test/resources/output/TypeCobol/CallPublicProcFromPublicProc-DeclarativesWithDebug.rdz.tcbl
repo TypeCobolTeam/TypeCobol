@@ -25,17 +25,16 @@
       *-----------------------------------------------------------------
       *declare procedure StartCheckpoint public.
        .
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
 
        FctList-Process-Mode.
            evaluate true
-               when Fct-e3685b69-StartCheckpoint
-                  call 'e3685b69'
-               when other
-                  TODO
+              when Fct-e3685b69-StartCheckpoint
+                 call 'e3685b69'
+              when other
+                 TODO
            end-evaluate
            .
        INIT-LIBRARY.
@@ -67,17 +66,16 @@
       DEND DECLARATIVES.
       *declare procedure testos public.
        .
-
            PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
            GOBACK.
 
        FctList-Process-Mode.
            evaluate true
-               when Fct-bfc74757-testos
-                  call 'bfc74757'
-               when other
-                  TODO
+              when Fct-bfc74757-testos
+                 call 'bfc74757'
+              when other
+                 TODO
            end-evaluate
            .
        INIT-LIBRARY.
@@ -97,6 +95,8 @@
        CONFIGURATION SECTION.
        SOURCE-COMPUTER. IBM-370 WITH DEBUGGING MODE.
        END PROGRAM e3685b69.
+
+
       *
       *declare procedure testos public.
       *_________________________________________________________________
@@ -136,37 +136,12 @@
        PROCEDURE DIVISION
            .
       *PGM1.testos  - No Params
-           PERFORM TC-INITIALIZATIONS
       *    call PGM1::StartCheckpoint
            CALL 'zcallpgm' using TC-PGM1
                     PGM1-Fct-e3685b69-StartCheckpo
            end-call
                                      
            .
-      *=================================================================
-       TC-INITIALIZATIONS.
-      *=================================================================
-            IF TC-FirstCall
-                 SET TC-NthCall TO TRUE
-                 SET ADDRESS OF TC-PGM1-e3685b69-Item  TO NULL
-            END-IF
-            .
-      *=================================================================
-       TC-LOAD-POINTERS-PGM1.
-      *=================================================================
-            CALL 'ZCALLPGM' USING TC-PGM1
-            ADDRESS OF TC-Library-PntTab
-            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
-            UNTIL TC-Library-Idx > TC-Library-PntNbr
-                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'e3685b69'
-                     SET ADDRESS OF
-                     TC-PGM1-e3685b69-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN OTHER
-                     CONTINUE
-                END-EVALUATE
-            END-PERFORM
-            .
        END PROGRAM bfc74757.
+
+
