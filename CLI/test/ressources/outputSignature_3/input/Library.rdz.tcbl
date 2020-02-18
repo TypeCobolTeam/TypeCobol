@@ -1,0 +1,62 @@
+﻿       IDENTIFICATION DIVISION.
+      %<<
+        Multiline comment
+        should be hidden
+      %>>
+      * single comment
+       PROGRAM-ID. Library.
+       data division.
+       working-storage section.
+      %<<<
+        Formalized comment : Type VString
+        line 2
+      %>>>
+       01 VString typedef strict public.
+      %<<
+        Multiline comment : Declaration of type
+        line 2
+      %>>
+         05 len   pic S9(4) comp-5.
+         05 buf.
+           07  occurs 32760
+                  depending on len.
+              10 char    pic X.
+      
+       01 ListSearchProperty  typedef strict public.
+           05 SearchPropertyGroupData   pic X occurs 20
+                                        indexed by SearchPropertyIdx.
+      
+      * single comment
+       PROCEDURE DIVISION.
+       INIT-LIBRARY.
+           continue
+           .
+      %<<
+        Multiline comment
+        line 2
+      %>>
+      * single comment
+      
+      %<<<
+        Private procedure should not have
+        its signature generated
+        @Params:
+           - mydate description
+      %>>>
+       declare procedure check private
+           input mydate        TYPE Date.
+       procedure division.
+           continue.
+       end-declare.
+      
+      %<<<
+        Description of procedure myProc
+        @Params:
+           - arg1 description of arg1
+      %>>>
+       declare procedure myProc public
+           input arg1 PIC 999.
+       procedure division.
+           continue.
+       end-declare.
+       END PROGRAM Library.

@@ -18,14 +18,17 @@ namespace TypeCobol.Tools.APIHelpers
     {
         private static string[] _DependenciesExtensions = { ".tcbl", ".cbl", ".cpy" };
 
+        //Default extensions used for parsing
+        public static string[] DEFAULT_EXTENSIONS = { ".cbl", ".cpy", ".copy"};
+        public static string[] DEFAULT_COPY_EXTENSIONS = {".cpy", ".copy"};
+
         public static SymbolTable LoadIntrinsic(List<string> paths, DocumentFormat intrinsicDocumentFormat, EventHandler<DiagnosticsErrorEvent> diagEvent)
         {
             var parser = new Parser();
-            var diagnostics = new List<Diagnostic>();
             var table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
             var instrincicFiles = new List<string>();
 
-            foreach (string path in paths) instrincicFiles.AddRange(FileSystem.GetFiles(path, parser.Extensions, false));
+            foreach (string path in paths) instrincicFiles.AddRange(FileSystem.GetFiles(path, DEFAULT_EXTENSIONS, false));
 
             foreach (string path in instrincicFiles)
             {
@@ -34,11 +37,13 @@ namespace TypeCobol.Tools.APIHelpers
                     parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck }, intrinsicDocumentFormat);
                     parser.Parse(path);
 
-                    diagnostics.AddRange(parser.Results.AllDiagnostics());
-
+                    var diagnostics = parser.Results.AllDiagnostics();
                     if (diagEvent != null && diagnostics.Count > 0)
                     {
-                        diagnostics.ForEach(d => diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = d }));
+                        foreach (var diagnostic in diagnostics)
+                        {
+                            diagEvent(null, new DiagnosticsErrorEvent() {Path = path, Diagnostic = diagnostic});
+                        }
                     }
 
                     if (parser.Results.ProgramClassDocumentSnapshot.Root.Programs == null || parser.Results.ProgramClassDocumentSnapshot.Root.Programs.Count() == 0)
@@ -116,7 +121,6 @@ namespace TypeCobol.Tools.APIHelpers
         {
             usedCopies = new List<RemarksDirective.TextNameVariation>();
             missingCopies = new Dictionary<string, IEnumerable<string>>();
-            var diagnostics = new List<Diagnostic>();
             var table = new SymbolTable(intrinsicTable, SymbolTable.Scope.Namespace); //Generate a table of NameSPace containing the dependencies programs based on the previously created intrinsic table. 
 
             var dependencies = new List<string>();
@@ -178,20 +182,24 @@ namespace TypeCobol.Tools.APIHelpers
                 {
                     CompilationUnit parsingResult = ParseDependency(path, config, table);
 
+                    //Report diagnostics
+                    var diagnostics = parsingResult.AllDiagnostics();
+                    if (diagEvent != null && diagnostics.Count > 0)
+                    {
+                        foreach (var diagnostic in diagnostics)
+                        {
+                            diagEvent(null, new DiagnosticsErrorEvent() {Path = path, Diagnostic = diagnostic});
+                        }
+                    }
+
                     //Gather copies used
                     usedCopies.AddRange(parsingResult.CopyTextNamesVariations);
 
+                    //Collect missing copies
                     if (parsingResult.MissingCopies.Count > 0)
                     {
                         missingCopies.Add(path, parsingResult.MissingCopies.Select(mc => mc.TextName));
                         continue; //There will be diagnostics because copies are missing. Don't report diagnostic for this dependency, but load following dependencies
-                    }
-
-                    diagnostics.AddRange(parsingResult.AllDiagnostics());
-
-                    if (diagEvent != null && diagnostics.Count > 0)
-                    {
-                        diagnostics.ForEach(d => diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = d }));
                     }
 
                     if (parsingResult.TemporaryProgramClassDocumentSnapshot.Root.Programs == null || !parsingResult.TemporaryProgramClassDocumentSnapshot.Root.Programs.Any())
