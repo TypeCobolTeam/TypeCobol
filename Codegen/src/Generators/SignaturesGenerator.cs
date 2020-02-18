@@ -172,9 +172,20 @@ namespace TypeCobol.Codegen.Generators
                     {
                         //In case the node contains a line with multiple instructions
                         //Create new line containing only the CodeElement text
-                        string indent = child.Lines.First().Text.GetIndent();
-                        var lineText = indent + data.CodeElement.SourceText.Trim().Replace(Environment.NewLine, Environment.NewLine + indent);
-                        lines.Add(new CobolTextLine(new TextLineSnapshot(data.CodeElement.Line, lineText, null), ColumnsLayout.CobolReferenceFormat));
+                        string globalIndent = child.Lines.First().Text.GetIndent();
+
+                        //Indent the line(s) according to its declaration
+                        int i = 0;
+                        StringBuilder strB = new StringBuilder();
+                        var linesContent = data.CodeElement.SourceText.Split(new string[] { System.Environment.NewLine }, System.StringSplitOptions.None);
+                        foreach (string line in linesContent)
+                        {
+                            if (i == 1) strB.Append(Environment.NewLine);
+                            strB.Append(globalIndent + line.Trim());
+                            i = 1;
+                        }
+
+                        lines.Add(new CobolTextLine(new TextLineSnapshot(data.CodeElement.Line, strB.ToString(), null), ColumnsLayout.CobolReferenceFormat));
                     }
                     else
                     {
