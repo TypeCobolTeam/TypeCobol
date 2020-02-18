@@ -26,10 +26,8 @@ namespace TypeCobol.Server {
 
         protected List<Diagnostic> GetErrors(string key) {
             key = GetDefaultKeyIfNull(key);
-            List<Diagnostic> list;
-            try {
-                list = Errors[key];
-            } catch (KeyNotFoundException) {
+            if (!Errors.TryGetValue(key, out var list))
+            {
                 list = new List<Diagnostic>();
                 Errors[key] = list;
                 Inputs[key] = GenerateNumber().ToString();
