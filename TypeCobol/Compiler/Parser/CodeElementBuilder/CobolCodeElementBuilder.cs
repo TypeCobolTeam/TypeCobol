@@ -119,7 +119,7 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterProgramIdentification(CodeElementsParser.ProgramIdentificationContext context) {
 			var program = new ProgramIdentification();
 			program.ProgramName = CobolWordsBuilder.CreateProgramNameDefinition(context.programNameDefinition());
-			if (context.COMMON() != null) {
+            if (context.COMMON() != null) {
 				program.Common = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.COMMON()));
 			}
 			if (context.INITIAL() != null) {
@@ -133,6 +133,28 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
 			CodeElement = program;
             IsDebuggingModeEnabled = false;
+
+            if (context.pgmIdPeriodSeparator == null)
+            {
+                //a dot doesn't follow PROGRAM-ID
+                if (CodeElement.Diagnostics == null) CodeElement.Diagnostics = new List<Diagnostic>();
+
+                CodeElement.Diagnostics.Add(new ParserDiagnostic("Dot expected after PROGRAM-ID", context.PROGRAM_ID().Symbol, null, MessageCode.Warning));
+            }
+            if (context.pgmIdDeclarPeriodSeparator == null)
+            {
+                //a dot doesn't follow PROGRAM-ID declaration
+                if (CodeElement.Diagnostics == null) CodeElement.Diagnostics = new List<Diagnostic>();
+
+                IToken previousToken = context.Stop; ;
+                if (context.authoringProperties().ChildCount > 0)
+                {
+                    //authoring properties are in last position: search previous token of authoring properties
+                    previousToken = ParseTreeUtils.GetFirstToken(context.children.Reverse().Skip(1).First());
+                }
+
+                CodeElement.Diagnostics.Add(new ParserDiagnostic("Dot is missing at the end of PROGRAM-ID declaration", previousToken, null, MessageCode.Warning));
+            }
         }
 
 		public override void EnterProgramEnd(CodeElementsParser.ProgramEndContext context) {

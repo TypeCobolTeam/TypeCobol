@@ -1,11 +1,11 @@
 --- Diagnostics ---
-Line 2[14,29] <37, Warning, General> - Warning: Dot expected after PROGRAM-ID OffendingSymbol=[14,29:progIdWithoutDot]<UserDefinedWord>
-Line 9[14,30] <37, Warning, General> - Warning: Dot expected after PROGRAM-ID OffendingSymbol=[14,30:progIdWithoutDot2]<UserDefinedWord>
+Line 2[3,12] <37, Warning, General> - Warning: Dot expected after PROGRAM-ID OffendingSymbol=[3,12:PROGRAM-ID]<PROGRAM_ID>
+Line 9[3,12] <37, Warning, General> - Warning: Dot expected after PROGRAM-ID OffendingSymbol=[3,12:PROGRAM-ID]<PROGRAM_ID>
 Line 17[15,36] <37, Warning, General> - Warning: Dot is missing at the end of PROGRAM-ID declaration OffendingSymbol=[15,36:declarProgIdWithoutDot]<UserDefinedWord>
 Line 24[51,57] <37, Warning, General> - Warning: Dot is missing at the end of PROGRAM-ID declaration OffendingSymbol=[51,57:PROGRAM]<PROGRAM>
-Line 32[14,23] <37, Warning, General> - Warning: Dot expected after PROGRAM-ID OffendingSymbol=[14,23:allWithout]<UserDefinedWord>
+Line 32[3,12] <37, Warning, General> - Warning: Dot expected after PROGRAM-ID OffendingSymbol=[3,12:PROGRAM-ID]<PROGRAM_ID>
 Line 32[36,42] <37, Warning, General> - Warning: Dot is missing at the end of PROGRAM-ID declaration OffendingSymbol=[36,42:PROGRAM]<PROGRAM>
-Line 40[14,24] <37, Warning, General> - Warning: Dot expected after PROGRAM-ID OffendingSymbol=[14,24:allWithout2]<UserDefinedWord>
+Line 40[3,12] <37, Warning, General> - Warning: Dot expected after PROGRAM-ID OffendingSymbol=[3,12:PROGRAM-ID]<PROGRAM_ID>
 Line 40[14,24] <37, Warning, General> - Warning: Dot is missing at the end of PROGRAM-ID declaration OffendingSymbol=[14,24:allWithout2]<UserDefinedWord>
 Line 50[1,29] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 79[4,4] <27, Error, Syntax> - Syntax error : Group item x cannot have a "PICTURE" OffendingSymbol=[4,4:x]<UserDefinedWord>
