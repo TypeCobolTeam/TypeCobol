@@ -117,35 +117,34 @@ namespace TypeCobol.Compiler.Parser
         ////////////////////////////
 
         public override void EnterProgramIdentification(CodeElementsParser.ProgramIdentificationContext context) {
-			var program = new ProgramIdentification();
-			program.ProgramName = CobolWordsBuilder.CreateProgramNameDefinition(context.programNameDefinition());
+            var program = new ProgramIdentification();
+            program.ProgramName = CobolWordsBuilder.CreateProgramNameDefinition(context.programNameDefinition());
+
             if (context.COMMON() != null) {
-				program.Common = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.COMMON()));
-			}
-			if (context.INITIAL() != null) {
-				program.Initial = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.INITIAL()));
-			}
-			if (context.RECURSIVE() != null) {
-				program.Recursive = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.RECURSIVE()));
-			}
-			program.AuthoringProperties = CreateAuthoringProperties(context.authoringProperties());
-            
+                program.Common = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.COMMON()));
+            }
+            if (context.INITIAL() != null) {
+                program.Initial = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.INITIAL()));
+            }
+            if (context.RECURSIVE() != null) {
+                program.Recursive = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.RECURSIVE()));
+            }
+            program.AuthoringProperties = CreateAuthoringProperties(context.authoringProperties());
+
             Context = context;
-			CodeElement = program;
+            CodeElement = program;
             IsDebuggingModeEnabled = false;
 
             if (context.pgmIdPeriodSeparator == null)
             {
                 //a dot doesn't follow PROGRAM-ID
                 if (CodeElement.Diagnostics == null) CodeElement.Diagnostics = new List<Diagnostic>();
-
                 CodeElement.Diagnostics.Add(new ParserDiagnostic("Dot expected after PROGRAM-ID", context.PROGRAM_ID().Symbol, null, MessageCode.Warning));
             }
             if (context.pgmIdDeclarPeriodSeparator == null)
             {
                 //a dot doesn't follow PROGRAM-ID declaration
                 if (CodeElement.Diagnostics == null) CodeElement.Diagnostics = new List<Diagnostic>();
-
                 IToken previousToken = context.Stop; ;
                 if (context.authoringProperties().ChildCount > 0)
                 {
@@ -157,7 +156,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-		public override void EnterProgramEnd(CodeElementsParser.ProgramEndContext context) {
+        public override void EnterProgramEnd(CodeElementsParser.ProgramEndContext context) {
 			var programEnd = new ProgramEnd();
 			programEnd.ProgramName = CobolWordsBuilder.CreateProgramNameReference(context.programNameReference2());
 
