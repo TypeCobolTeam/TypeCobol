@@ -158,12 +158,18 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// Set a set of flags to true or false.
         /// </summary>
-        /// <param name="flag"></param>
-        /// <param name="value"></param>
-        internal virtual void SetFlag(Flags flag, bool value)
+        /// <param name="flag">Flag or flags to set.</param>
+        /// <param name="value">Boolean value indicating whether the flags should be applied or removed.</param>
+        /// <param name="propagate">True to apply flags to child components, false otherwise. True is the default for types.</param>
+        internal virtual void SetFlag(Flags flag, bool value, bool propagate = true)
         {
-            this.Flag = value ? (Flags)((ulong)this.Flag | (ulong)flag)
-                : (Flags)((ulong)this.Flag & ~(ulong)flag);
+            this.Flag = value
+                ? (Flags) ((ulong) this.Flag | (ulong) flag)
+                : (Flags) ((ulong) this.Flag & ~(ulong) flag);
+            if (propagate)
+            {
+                TypeComponent?.SetFlag(flag, value, true);
+            }
         }
 
         /// <summary>

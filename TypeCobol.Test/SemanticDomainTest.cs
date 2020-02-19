@@ -1011,111 +1011,86 @@ namespace TypeCobol.Test.Domain
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
-            var pointEntry = currentProgram.Types.Lookup("POINT");
-            Assert.IsNotNull(pointEntry);
-            Assert.IsTrue(pointEntry.Count == 1);
-            var tPoint = pointEntry.Symbol;
-            Assert.IsTrue(tPoint.Type != null);
-            Assert.IsTrue(tPoint.Type.Tag == Type.Tags.Typedef);
-            CyclicTypeChecker checker = new CyclicTypeChecker();
-            Assert.IsFalse(checker.IsCyclic(tPoint.Type, out _));
+            var program = document.Results.PrgSymbolTblBuilder.Programs[0];
+            var checker = new CyclicTypeChecker();
 
-            pointEntry = currentProgram.Types.Lookup("POINT-CYC0");
-            Assert.IsNotNull(pointEntry);
-            Assert.IsTrue(pointEntry.Count == 1);
-            var tPointCyc0 = pointEntry.Symbol;
-            Assert.IsTrue(tPointCyc0.Type != null);
-            Assert.IsTrue(tPointCyc0.Type.Tag == Type.Tags.Typedef);
-            Assert.IsTrue(checker.IsCyclic(tPointCyc0.Type, out var cyclicType));
-            Assert.IsTrue(cyclicType == tPointCyc0.Type);
+            //Check non-cyclic type
+            var notCyclic = GetTypedef("NotCyclic");
+            Assert.IsFalse(checker.IsCyclic(notCyclic));
 
-            pointEntry = currentProgram.Types.Lookup("POINT-CYC1");
-            Assert.IsNotNull(pointEntry);
-            Assert.IsTrue(pointEntry.Count == 1);
-            var tPointCyc1 = pointEntry.Symbol;
-            Assert.IsTrue(tPointCyc1.Type != null);
-            Assert.IsTrue(tPointCyc1.Type.Tag == Type.Tags.Typedef);
-            Assert.IsTrue(checker.IsCyclic(tPointCyc1.Type, out cyclicType));
-            Assert.IsTrue(cyclicType == tPointCyc0.Type);
-
-            pointEntry = currentProgram.Types.Lookup("POINT-CYC2");
-            Assert.IsNotNull(pointEntry);
-            Assert.IsTrue(pointEntry.Count == 1);
-            var tPointCyc2 = pointEntry.Symbol;
-            Assert.IsTrue(tPointCyc2.Type != null);
-            Assert.IsTrue(tPointCyc2.Type.Tag == Type.Tags.Typedef);
-            Assert.IsTrue(checker.IsCyclic(tPointCyc2.Type, out cyclicType));
-            Assert.IsTrue(cyclicType == tPointCyc2.Type);
-
-            pointEntry = currentProgram.Types.Lookup("POINT-CYC3");
-            Assert.IsNotNull(pointEntry);
-            Assert.IsTrue(pointEntry.Count == 1);
-            var tPointCyc3 = pointEntry.Symbol;
-            Assert.IsTrue(tPointCyc3.Type != null);
-            Assert.IsTrue(tPointCyc3.Type.Tag == Type.Tags.Typedef);
-            Assert.IsTrue(checker.IsCyclic(tPointCyc3.Type, out cyclicType));
-            Assert.IsTrue(cyclicType == tPointCyc3.Type);
-
-            //NO P1, P2, P3 and P4 symbols
-            for (int i = 1; i <= 4; i++)
+            //Check Cyclic types
+            Dictionary<int, TypedefType> cyclicTypes = new Dictionary<int, TypedefType>();
+            for (int i = 1; i <= 8; i++)
             {
-                var refs0 = currentProgram.ResolveReference(new string[] {"p" + i}, false);
-                Assert.IsNotNull(refs0);
-                Assert.IsTrue(refs0.Count == 0);
+                var cyclicType = GetTypedef("Cyclic" + i);
+                cyclicTypes.Add(i, cyclicType);
+                Assert.IsTrue(checker.IsCyclic(cyclicType));
             }
 
-            //Just Check that P5 if of type POINT which we know is cyclic.
-            var refs = currentProgram.ResolveReference(new string[] {"p5"}, false);
-            Assert.IsNotNull(refs);
-            Assert.IsTrue(refs.Count == 1);
-            var p5 = refs.Symbol;
-            Assert.IsTrue(p5.Type == tPointCyc0.Type);
+            //Check variables
+            for (int i = 1; i <= 8; i++)
+            {
+                var entry = program.ResolveReference(new[] {"var" + i}, false);
+                Assert.IsTrue(entry != null);
+                Assert.IsTrue(entry.Count == 1);
+                var symbol = entry.Symbol;
+                Assert.IsTrue(symbol.Type == cyclicTypes[i]);
+            }
 
-            //Just Check that P6 if of type POINT-CYC1 which we know is cyclic.
-            refs = currentProgram.ResolveReference(new string[] {"p6"}, false);
-            Assert.IsNotNull(refs);
-            Assert.IsTrue(refs.Count == 1);
-            var p6 = refs.Symbol;
-            Assert.IsTrue(p6.Type == tPointCyc1.Type);
+            //Check arrays
+            for (int i = 1; i <= 8; i++)
+            {
+                var entry = program.ResolveReference(new[] { "array" + i }, false);
+                Assert.IsTrue(entry != null);
+                Assert.IsTrue(entry.Count == 1);
+                var symbol = entry.Symbol;
+                Assert.IsTrue(symbol.Type != null);
+                Assert.IsTrue(symbol.Type.Tag == Type.Tags.Array);
+                var arrayType = (ArrayType) symbol.Type;
+                Assert.IsTrue(arrayType.ElementType == cyclicTypes[i]);
+            }
 
-            //Just Check that P7 if of type Array of POINT-CYC0 which we know leads cyclic.
-            refs = currentProgram.ResolveReference(new string[] {"p7"}, false);
-            Assert.IsNotNull(refs);
-            Assert.IsTrue(refs.Count == 1);
-            var p7 = refs.Symbol;
-            Assert.IsTrue(p7.Type.Tag == Type.Tags.Array);
-            Assert.IsTrue(p7.Type.TypeComponent == tPointCyc0.Type);
-            Assert.IsTrue(checker.IsCyclic(p7.Type, out cyclicType));
-            Assert.IsTrue(cyclicType == tPointCyc0.Type);
+            //Check group structure and types
+            var groupEntry = program.ResolveReference(new[] { "group1" }, false);
+            Assert.IsTrue(groupEntry != null);
+            Assert.IsTrue(groupEntry.Count == 1);
+            var group1 = groupEntry.Symbol;
+            Assert.IsTrue(group1.Type != null);
+            Assert.IsTrue(group1.Type.Tag == Type.Tags.Group);
+            var groupTypeOfGroup1 = (GroupType) group1.Type;
+            var fields = groupTypeOfGroup1.Fields.ToList();
+            Assert.IsTrue(fields.Count == 3);
+            var item1 = fields[0];
+            Assert.IsTrue(item1.Type != null);
+            Assert.IsTrue(item1.Type.Tag == Type.Tags.Picture);
+            var item2 = fields[1];
+            Assert.IsTrue(item2.Type != null);
+            Assert.IsTrue(item2.Type.Tag == Type.Tags.Group);
+            var groupTypeOfItem2 = (GroupType) item2.Type;
+            var subFields = groupTypeOfItem2.Fields.ToList();
+            Assert.IsTrue(subFields.Count == 3);
+            var subItem1 = subFields[0];
+            Assert.IsTrue(subItem1.Type != null);
+            Assert.IsTrue(subItem1.Type.Tag == Type.Tags.Picture);
+            var subItem2 = subFields[1];
+            Assert.IsTrue(subItem2.Type == cyclicTypes[8]);
+            var subItem3 = subFields[2];
+            Assert.IsTrue(subItem3.Type != null);
+            Assert.IsTrue(subItem3.Type.Tag == Type.Tags.Picture);
+            var item3 = fields[2];
+            Assert.IsTrue(item3.Type != null);
+            Assert.IsTrue(item3.Type.Tag == Type.Tags.Picture);
 
-            //Just Check that P8 if of type Array of POINT-CYC1 which we know leads cyclic.
-            refs = currentProgram.ResolveReference(new string[] {"p8"}, false);
-            Assert.IsNotNull(refs);
-            Assert.IsTrue(refs.Count == 1);
-            var p8 = refs.Symbol;
-            Assert.IsTrue(p8.Type.Tag == Type.Tags.Array);
-            Assert.IsTrue(p8.Type.TypeComponent == tPointCyc1.Type);
-            Assert.IsTrue(checker.IsCyclic(p8.Type, out cyclicType));
-            Assert.IsTrue(cyclicType == tPointCyc0.Type);
-
-            //Just Check that P9 is a RECORD with a field XX of a cyclic type.
-            refs = currentProgram.ResolveReference(new string[] {"p9"}, false);
-            Assert.IsNotNull(refs);
-            Assert.IsTrue(refs.Count == 1);
-            var p9 = refs.Symbol;
-            Assert.IsTrue(p9.Type.Tag == Type.Tags.Group);
-            Assert.IsTrue(checker.IsCyclic(p9.Type, out cyclicType));
-            Assert.IsTrue(cyclicType == tPointCyc0.Type);
-            var xx_refs = currentProgram.ResolveReference(new string[] {"xx"}, false);
-            //One of the XX has type is P9::XX
-            Assert.IsTrue(xx_refs.Count == 2);
-            var first = xx_refs.ElementAt(0);
-            var second = xx_refs.ElementAt(1);
-            Assert.IsTrue((first.Type == tPointCyc1.Type && second.Type == tPoint.Type) ||
-                          (second.Type == tPointCyc1.Type && first.Type == tPoint.Type)
-            );
-
+            TypedefType GetTypedef(string name)
+            {
+                var entry = program.Types.Lookup(name);
+                Assert.IsTrue(entry != null);
+                Assert.IsTrue(entry.Count == 1);
+                var symbol = entry.Symbol;
+                Assert.IsTrue(symbol.Type != null);
+                Assert.IsTrue(symbol.Type.Tag == Type.Tags.Typedef);
+                return (TypedefType)symbol.Type;
+            }
         }
 
         /// <summary>

@@ -223,6 +223,10 @@ namespace TypeCobol.Compiler.Symbols
             {
                 //Check first for cyclic definition.
                 typedef.Accept(_cyclicTypeChecker, null);
+                if (typedef.HasFlag(Symbol.Flags.IsCyclic))
+                {
+                    throw new Type.CyclicTypeException(typedef);
+                }
 
                 //Continue expansion through the TargetType.
                 return typedef.TargetType.Accept(this, owner);

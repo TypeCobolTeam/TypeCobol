@@ -31,12 +31,6 @@ namespace TypeCobol.Compiler.Types
             set;
         }
 
-        internal override void SetFlag(Flags flag, bool value)
-        {
-            base.SetFlag(flag, value);
-            ElementType?.SetFlag(flag, value);
-        }
-
         public override Type TypeComponent => ElementType;
         public override bool MayExpand => ElementType != null && ElementType.MayExpand;
         public override void Dump(TextWriter tw, int indentLevel)

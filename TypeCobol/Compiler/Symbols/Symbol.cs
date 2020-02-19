@@ -79,6 +79,10 @@ namespace TypeCobol.Compiler.Symbols
             BuiltinSymbol = 0x01L << 38, //This is a builting symbol.
             ProgramCompleted = 0x01L << 39, //This Top Program has been completed
 
+            //Flags for cyclic typedefs
+            HasBeenCheckedForCycles = 0x01L << 40,
+            IsCyclic = 0x01L << 41,
+
             //Etc...
         }
 

@@ -44,12 +44,15 @@ namespace TypeCobol.Compiler.Types
             internal set => _scope = value;
         }
 
-        internal override void SetFlag(Flags flag, bool value)
+        internal override void SetFlag(Flags flag, bool value, bool propagate = false)
         {
-            base.SetFlag(flag, value);
-            foreach (var varSym in Scope)
+            base.SetFlag(flag, value, propagate);
+            if (propagate)
             {
-                varSym.SetFlag(flag, value, true);
+                foreach (var varSym in Scope)
+                {
+                    varSym.SetFlag(flag, value, true);
+                }
             }
         }
 

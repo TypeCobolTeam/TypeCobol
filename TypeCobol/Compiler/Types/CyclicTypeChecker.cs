@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.Symbols;
 
 namespace TypeCobol.Compiler.Types
 {
     /// <summary>
-    /// Cyclic Type Checker. Determine if for instance a type contains a TYPEDEF type
-    /// which is cyclic.
-    /// An exception of type <exception cref="Type.CyclicTypeException">CyclicTypeException</exception> is thrown
-    /// by this visitor if a cyclic definition is found
+    /// Cyclic Type Checker : determine if a type is cyclic.
+    /// A cyclic type cannot be traversed by regular type visitors, so this visitor has to be called first.
+    /// Other type visitors can then use flags <see cref="Symbol.Flags.HasBeenCheckedForCycles" /> and <see cref="Symbol.Flags.IsCyclic" />
+    /// to adapt their behavior.
     /// </summary>
     public class CyclicTypeChecker : Type.AbstractTypeVisitor<object, object>
     {
@@ -19,7 +20,7 @@ namespace TypeCobol.Compiler.Types
         }
 
         public override object VisitType(Type type, object _)
-        {
+        { 
             //Continue visit through TypeComponent if any.
             type.TypeComponent?.Accept(this, null);
             return null;
@@ -38,39 +39,47 @@ namespace TypeCobol.Compiler.Types
 
         public override object VisitTypedefType(TypedefType typedefType, object _)
         {
+            if (typedefType.HasFlag(Symbol.Flags.HasBeenCheckedForCycles))
+            {
+                //Type has already been checked but we have to update the stack if the current type is actually cyclic.
+                if (typedefType.HasFlag(Symbol.Flags.IsCyclic))
+                {
+                    FlagParentsAsCyclic();
+                }
+                return null;
+            }
+
             if (_typedefStack.Contains(typedefType))
             {
-                _typedefStack.Clear();
-                throw new Type.CyclicTypeException(typedefType);
+                //Type is cyclic : mark all parent typedefs as cyclic (that includes current type).
+                FlagParentsAsCyclic();
+            }
+            else
+            {
+                //Continue visit through TargetType.
+                _typedefStack.Push(typedefType);
+                typedefType.TargetType.Accept(this, null);
+                _typedefStack.Pop();
             }
 
-            _typedefStack.Push(typedefType);
-            typedefType.TargetType.Accept(this, null);
-            _typedefStack.Pop();
-
+            //typedef has been fully checked.
+            typedefType.SetFlag(Symbol.Flags.HasBeenCheckedForCycles, true, false);
             return null;
+
+            //Local function to update parent typedefs and mark them as cyclic.
+            void FlagParentsAsCyclic()
+            {
+                foreach (var visitedTypedef in _typedefStack)
+                {
+                    visitedTypedef.SetFlag(Symbol.Flags.IsCyclic, true, false);
+                }
+            }
         }
 
-        /// <summary>
-        /// Tests if the given Type is cyclic.
-        /// </summary>
-        /// <param name="type">Type to test</param>
-        /// <param name="cyclicType">Type on which the cycle has been detected</param>
-        /// <returns>True if the type is cyclic, False otherwise</returns>
-        public bool IsCyclic([NotNull] Type type, out Type cyclicType)
+        public bool IsCyclic([NotNull] TypedefType typedef)
         {
-            System.Diagnostics.Debug.Assert(type != null);
-            try
-            {
-                type.Accept(this, null);
-                cyclicType = null;
-                return false;
-            }
-            catch (Type.CyclicTypeException cyclicTypeException)
-            {
-                cyclicType = cyclicTypeException.TargetType;
-                return true;
-            }
+            typedef.Accept(this, null);
+            return typedef.HasFlag(Symbol.Flags.IsCyclic);
         }
     }
 }

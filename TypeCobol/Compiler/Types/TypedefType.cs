@@ -52,13 +52,6 @@ namespace TypeCobol.Compiler.Types
             set;
         }
 
-        internal override void SetFlag(Symbol.Flags flag, bool value)
-        {
-            base.SetFlag(flag, value);
-            if (TargetType != null)
-                TargetType.SetFlag(flag, value);
-        }
-
         /// <summary>
         /// We take the the real representation type.
         /// For example:
@@ -74,7 +67,8 @@ namespace TypeCobol.Compiler.Types
 
         public override void Dump(TextWriter tw, int indentLevel)
         {
-            TargetType?.Dump(tw, indentLevel);
+            //Do not expand typedef while dumping because it may be cyclic.
+            tw.Write(Symbol.Name);
         }
 
         public override TR Accept<TR, TS>(IVisitor<TR, TS> v, TS s) { return v.VisitTypedefType(this, s); }
