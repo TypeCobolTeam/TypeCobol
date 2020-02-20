@@ -9,7 +9,6 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Analytics;
 using Castle.Core.Internal;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Scanner;
@@ -120,7 +119,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         message = string.Format("Function not found '{0}' {1}",
                             functionCaller.FunctionCall.FunctionName,
                             parameterList.GetSignature());
-                        DiagnosticUtils.AddError(node, message);
+                        DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
                         return; //Do not continue the function/procedure does not exists
                     }
 
@@ -632,10 +631,10 @@ namespace TypeCobol.Compiler.Diagnostics
             var functions = functionDeclaration.SymbolTable.GetFunction(headerNameURI, functionDeclaration.Profile);
             if (functions.Count > 1)
             {
-                Token declareToken = header.ConsumedTokens.First(t => t.TokenType == TokenType.DECLARE);
+                Token nameToken = header.FunctionName.NameLiteral.Token;
                 DiagnosticUtils.AddError(header,
                     "A function \"" + headerNameURI.Head + "\" with the same profile already exists in namespace \"" +
-                    headerNameURI.Tail + "\".", declareToken);
+                    headerNameURI.Tail + "\".", nameToken, null, MessageCode.SemanticTCErrorInParser);
             }
 
 
@@ -733,7 +732,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     if (condition.LevelNumber?.Value != 88 && condition.Name != null)
                         DiagnosticUtils.AddError(node,
-                                "Condition parameter \"" + condition.Name + "\" must be level 88.", condition);
+                            "Condition parameter \"" + condition.Name + "\" must be level 88.", condition);
                     if (condition.LevelNumber?.Value == 88 && parameter.DataType == DataType.Boolean)
                         DiagnosticUtils.AddError(node,
                             "The Level 88 symbol '" + parameter.Name +

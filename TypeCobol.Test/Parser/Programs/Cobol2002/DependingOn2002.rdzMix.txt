@@ -90,7 +90,7 @@ Line 85[43,53] <30, Error, Semantics> - Semantic error: Symbol DenpendingGroup.T
 
       *KO, trying to use an ambigous local var
             05 tableVar PIC X(1) occurs 5 
-Line 89[26,42] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DuplicatedCounter 
+Line 89[26,42] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol DuplicatedCounter 
 Symbols found: DependOnPgm::DependType::ambigousCounter::DuplicatedCounterType::DuplicatedCounter | DependOnPgm::DependType::ambigousCounter2::DuplicatedCounterType::DuplicatedCounter
             depending on DuplicatedCounter.
 

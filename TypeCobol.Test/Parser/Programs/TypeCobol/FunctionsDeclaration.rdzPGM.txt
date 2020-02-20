@@ -5,19 +5,19 @@ Line 59[11,11] <27, Error, Syntax> - Syntax error : Group item a cannot have a "
 Line 60[12,26] <27, Error, Syntax> - Syntax error : x is already a parameter.
 Line 61[12,26] <27, Error, Syntax> - Syntax error : z is already a parameter.
 Line 64[8,27] <27, Error, Syntax> - Syntax error : result is already a parameter.
-Line 66[22,27] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result 
+Line 66[22,27] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol result 
 Symbols found: FunDeclare::SumThreeWithClutterInLinkage::result | FunDeclare::SumThreeWithClutterInLinkage::result OffendingSymbol=[22,27:result]<UserDefinedWord>
-Line 67[16,16] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol x 
+Line 67[16,16] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol x 
 Symbols found: FunDeclare::SumThreeWithClutterInLinkage::x | FunDeclare::SumThreeWithClutterInLinkage::x | FunDeclare::SumThreeWithClutterInLinkage::a::x OffendingSymbol=[16,16:x]<UserDefinedWord>
-Line 67[21,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result 
+Line 67[21,26] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol result 
 Symbols found: FunDeclare::SumThreeWithClutterInLinkage::result | FunDeclare::SumThreeWithClutterInLinkage::result OffendingSymbol=[21,26:result]<UserDefinedWord>
-Line 68[16,16] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol y 
+Line 68[16,16] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol y 
 Symbols found: FunDeclare::SumThreeWithClutterInLinkage::y | FunDeclare::SumThreeWithClutterInLinkage::y OffendingSymbol=[16,16:y]<UserDefinedWord>
-Line 68[21,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result 
+Line 68[21,26] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol result 
 Symbols found: FunDeclare::SumThreeWithClutterInLinkage::result | FunDeclare::SumThreeWithClutterInLinkage::result OffendingSymbol=[21,26:result]<UserDefinedWord>
-Line 69[16,16] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol z 
+Line 69[16,16] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol z 
 Symbols found: FunDeclare::SumThreeWithClutterInLinkage::z | FunDeclare::SumThreeWithClutterInLinkage::a::z OffendingSymbol=[16,16:z]<UserDefinedWord>
-Line 69[21,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result 
+Line 69[21,26] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol result 
 Symbols found: FunDeclare::SumThreeWithClutterInLinkage::result | FunDeclare::SumThreeWithClutterInLinkage::result OffendingSymbol=[21,26:result]<UserDefinedWord>
 Line 89[21,21] <27, Error, Syntax> - Syntax error : Parameter with name 'x' declared multiple times OffendingSymbol=[21,21:x]<UserDefinedWord>
 Line 90[21,21] <27, Error, Syntax> - Syntax error : Parameter with name 'y' declared multiple times OffendingSymbol=[21,21:y]<UserDefinedWord>

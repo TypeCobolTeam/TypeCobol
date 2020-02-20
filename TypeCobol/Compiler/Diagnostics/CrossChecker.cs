@@ -556,7 +556,7 @@ namespace TypeCobol.Compiler.Diagnostics
                                         : symbol.Value.QualifiedName.ToString().Replace(".", "::"));
                     isFirst = false;
                 }
-                DiagnosticUtils.AddError(node, errorMessage, area.SymbolReference);
+                DiagnosticUtils.AddError(node, errorMessage, area.SymbolReference, MessageCode.SemanticTCErrorInParser);
             }
             else if (foundCount == 1)
             {
