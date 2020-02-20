@@ -104,7 +104,8 @@ functionReturningPhrase: RETURNING parameterDescription;
 // parameterDescription is a rule created from dataDescriptionEntry and enforcing rules:
 // - TCRFUN_PARAMETER_DESCRIPTION
 // - TCRFUN_LEVEL_88_PARAMETERS
-parameterDescription: (functionDataParameter | functionConditionParameter) PeriodSeparator?;
+// parameterDescription: (functionDataParameter | functionConditionParameter) PeriodSeparator?;
+parameterDescription: functionDataParameter PeriodSeparator?;
 
 functionDataParameter:
 	dataNameDefinition QUESTION_MARK? (pictureClause | POINTER | cobol2002TypeClause | FUNCTION_POINTER | PROCEDURE_POINTER)
@@ -138,8 +139,8 @@ tcfuncParameterUsageClause:
 					//FUNCTION_POINTER and PROCEDURE_POINTER are not implemented yet
 				    ;
 
-functionConditionParameter:
-	levelNumber=IntegerLiteral conditionNameDefinition valueClauseForCondition;
+//functionConditionParameter:
+//	levelNumber=IntegerLiteral conditionNameDefinition valueClauseForCondition;
 
 functionDeclarationEnd: END_DECLARE PeriodSeparator;
 

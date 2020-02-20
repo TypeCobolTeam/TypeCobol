@@ -24,9 +24,11 @@ Line 90[21,21] <27, Error, Syntax> - Syntax error : Parameter with name 'y' decl
 Line 92[21,21] <27, Error, Syntax> - Syntax error : Parameter with name 'x' declared multiple times OffendingSymbol=[21,21:x]<UserDefinedWord>
 Line 93[21,21] <27, Error, Syntax> - Syntax error : Parameter with name 'y' declared multiple times OffendingSymbol=[21,21:y]<UserDefinedWord>
 Line 103[11,11] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in function data item. OffendingSymbol=[11,11:g]<UserDefinedWord>
-Line 124[23,34] <27, Error, Syntax> - Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter. OffendingSymbol=[23,34:valid-gender]<UserDefinedWord>
-Line 124[23,34] <27, Error, Syntax> - Syntax error : The variable 'valid-gender' can only be of level 01 or 77 OffendingSymbol=[23,34:valid-gender]<UserDefinedWord>
-Line 127[24,27] <27, Error, Syntax> - Syntax error : Condition parameter "male" must be level 88. OffendingSymbol=[24,27:male]<UserDefinedWord>
+Line 112[25,37] <30, Error, Semantics> - Semantic error: A function "FunConditions" with the same profile already exists in namespace "FunDeclare". OffendingSymbol=[25,37:FunConditions]<UserDefinedWord>
+Line 120[25,37] <30, Error, Semantics> - Semantic error: A function "FunConditions" with the same profile already exists in namespace "FunDeclare". OffendingSymbol=[25,37:FunConditions]<UserDefinedWord>
+Line 121[20,21] <27, Error, Syntax> - Syntax error : extraneous input '88' expecting user defined word RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase,  OffendingSymbol=[20,21:88]<IntegerLiteral>{88}
+Line 121[36,40] <27, Error, Syntax> - Syntax error : mismatched input 'VALUE' expecting {FUNCTION-POINTER, PIC, PICTURE, POINTER, PROCEDURE-POINTER, TYPE, ?} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[36,40:VALUE]<VALUE>
+Line 121[23,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[23,34:valid-gender]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: FunDeclare common:False initial:False recursive:False
@@ -63,7 +65,6 @@ PROGRAM: FunDeclare common:False initial:False recursive:False
         in: gender:Alphanumeric
   FunConditions
         in: valid-gender:?
-        in: gender:Alphanumeric
   MyNOT
         in: x:BOOL
     return: y:BOOL

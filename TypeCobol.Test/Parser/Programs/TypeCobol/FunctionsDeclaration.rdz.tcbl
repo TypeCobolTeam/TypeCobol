@@ -111,9 +111,6 @@
        
        DECLARE FUNCTION FunConditions PRIVATE
              INPUT  gender PIC X(01)
-                 88  valid-gender VALUE 'F' 'M'
-                 88  female VALUE 'F'
-                 88  male   VALUE 'M'
          .
        PROCEDURE DIVISION.
            CONTINUE.
@@ -122,9 +119,6 @@
       * ERROR only level-88 parameter items shall have an explicit level number
        DECLARE FUNCTION FunConditions PRIVATE
              INPUT 88 valid-gender VALUE 'F' 'M'
-                      gender PIC X(01)
-                   88  female VALUE 'F'
-                   01  male   VALUE 'M'
          .
        PROCEDURE DIVISION.
            CONTINUE.

@@ -111,22 +111,6 @@ namespace TypeCobol.Compiler.Parser
                     AddTokensConsumedAndDiagnosticsAttachedInContext(data.ConsumedTokens, data.Diagnostics ?? new List<Diagnostic>(), context);
                     parameters.Add(data);
                 }
-                else if (context.functionConditionParameter() != null)
-                {
-                    var condition = CreateFunctionConditionParameter(context.functionConditionParameter());
-                    if (parameters.Count < 1)
-                    {
-                        var data = CreateFunctionDataParameter(condition);
-                        AddTokensConsumedAndDiagnosticsAttachedInContext(data.ConsumedTokens, data.Diagnostics ?? new List<Diagnostic>(), context);
-                        parameters.Add(data);
-                    }
-                    else
-                    {
-                        var parameter = parameters[parameters.Count - 1];
-                        if (parameter.DataConditions == null) parameter.DataConditions = new List<DataConditionEntry>();
-                        parameter.DataConditions.Add(condition);
-                    }
-                }
             }
             return parameters;
         }
@@ -355,16 +339,6 @@ namespace TypeCobol.Compiler.Parser
                    CreateDataUsageProperty(DataUsage.DBCS, c.DISPLAY_1()) ??
                    CreateDataUsageProperty(DataUsage.Index, c.INDEX()) ??
                    CreateDataUsageProperty(DataUsage.National, c.NATIONAL());
-        }
-
-        private DataConditionEntry CreateFunctionConditionParameter(
-            CodeElementsParser.FunctionConditionParameterContext context)
-        {
-            var parameter = new DataConditionEntry();
-            parameter.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber);
-            parameter.DataName = CobolWordsBuilder.CreateConditionNameDefinition(context.conditionNameDefinition());
-            SetConditionValues(parameter, context.valueClauseForCondition());
-            return parameter;
         }
 
         public override void ExitFunctionDeclarationHeader(CodeElementsParser.FunctionDeclarationHeaderContext context)

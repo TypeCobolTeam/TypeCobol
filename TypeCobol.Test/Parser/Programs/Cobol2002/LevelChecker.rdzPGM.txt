@@ -3,7 +3,6 @@ Line 21[11,16] <27, Error, Syntax> - Syntax error : Group item  MyVar2 cannot ha
 Line 23[11,16] <30, Error, Semantics> - Semantic error: Variable 'MyVar1' has to be limited to level 45 because of 'myType' maximum estimated children level OffendingSymbol=[11,16:MyVar1]<UserDefinedWord>
 Line 29[11,16] <30, Error, Semantics> - Semantic error: A 77 level variable cannot be typed with a type containing children OffendingSymbol=[11,16:MYVar5]<UserDefinedWord>
 Line 32[10,34] <27, Error, Syntax> - Syntax error : The Level 88 symbol 'WrongVarHere' cannot be declared under a BOOL typed symbol
-Line 46[20,28] <27, Error, Syntax> - Syntax error : The Level 88 symbol 'exists' cannot be declared under a BOOL typed symbol OffendingSymbol=[20,28:exists-Ok]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: LevelChecker common:False initial:False recursive:False
@@ -26,9 +25,6 @@ PROGRAM: LevelChecker common:False initial:False recursive:False
   myPic:myPic
   myType:myType
   secondType:secondType
--- FUNCTIONS ---
-  MyProc
-        in: exists:BOOL
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL

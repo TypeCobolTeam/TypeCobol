@@ -67,13 +67,11 @@ Line 40[29,32] <27, Error, Syntax> - Syntax error : Input variable 'var1' is mod
       %>>>
        declare InvalidParamProc private
 Line 63[32,37] <27, Error, Syntax> - Syntax error : 'occurs' is not supported yet
-Line 63[40,40] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting user defined word
               input var1 pic X occurs 5.
        end-declare.
       
        declare InvalidParamProc2 private
 Line 67[33,38] <27, Error, Syntax> - Syntax error : 'occurs' is not supported yet
-Line 67[41,41] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting user defined word
                input var1 pic X occurs 5.
        end-declare.
       
