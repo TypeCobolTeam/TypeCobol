@@ -65,7 +65,7 @@ namespace TypeCobol.Compiler.AntlrUtils
             if (copyDirective != null)
             {
                 Line = copyDirective.COPYToken.Line;
-                Message = $"Error in copy '{copyDirective.TextName}' : {Message}";
+                Message = $"Error in copy '{copyDirective.TextName}' at line {OffendingSymbol.Line} : {Message}";
             }
         }
 

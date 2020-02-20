@@ -49,7 +49,7 @@ namespace TypeCobol.Compiler.Diagnostics
 #if EUROINFO_LEGACY_TYPEDEF
             if (typedef.RestrictionLevel != RestrictionLevel.STRICT)
             {
-                string message = $"Custom EI rule : Only TYPEDEF STRICT is allowed in definition of type {typedef.DataName.Name}.";
+                string message = $"Custom EI rule : Type '{typedef.DataName.Name}' must be marked as STRICT.";
                 DiagnosticUtils.AddError(typedef, message, context.cobol2002TypedefClause());
                 return;
             }
