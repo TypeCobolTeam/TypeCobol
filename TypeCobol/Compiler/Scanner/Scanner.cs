@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Analytics;
 using Antlr4.Runtime.Atn;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;
@@ -1537,8 +1536,54 @@ namespace TypeCobol.Compiler.Scanner
 
                     if (BeSmartWithLevelNumber) { 
                         // Distinguish the special case of a LevelNumber
-                        if (tokensLine.ScanState.InsideDataDivision && tokensLine.ScanState.AtBeginningOfSentence) {
-                            token.CorrectType(TokenType.LevelNumber);
+                        if (tokensLine.ScanState.InsideDataDivision)
+                        {
+                            if (tokensLine.ScanState.AtBeginningOfSentence || GuessIfCurrentTokenIsLevelNumber())
+                            {
+                                token.CorrectType(TokenType.LevelNumber);
+                            }
+
+                            //This method is here to help recognize LevelNumbers when PeriodSeparator has been forgotten at the end of previous data definition.
+                            bool GuessIfCurrentTokenIsLevelNumber()
+                            {
+                                var lastSignificantToken = tokensLine.ScanState.LastSignificantToken;
+                                var beforeLastSignificantToken = tokensLine.ScanState.BeforeLastSignificantToken;
+
+                                bool currentTokenIsAtBeginningOfNewLine = token.Line > lastSignificantToken.Line;
+                                bool currentTokenIsBeforeAreaB = token.Column < 12;
+
+                                //Either a continuation line or we are still on the same line --> not a LevelNumber
+                                if (!currentTokenIsAtBeginningOfNewLine || tokensLine.HasTokenContinuationFromPreviousLine)
+                                    return false;
+
+                                //Literals can't be written outside of AreaB so it must be a LevelNumber
+                                if (currentTokenIsBeforeAreaB)
+                                    return true;
+
+                                //Try to guess if it is a LevelNumber or Literal depending on previous tokens
+                                bool currentTokenIsExpectedToBeALiteral =
+                                    lastSignificantToken.TokenType == TokenType.OCCURS ||
+                                    lastSignificantToken.TokenType == TokenType.VALUE  ||
+                                    lastSignificantToken.TokenType == TokenType.VALUES ||
+                                    (beforeLastSignificantToken.TokenType == TokenType.VALUE && lastSignificantToken.TokenType == TokenType.IS) ||
+                                    (beforeLastSignificantToken.TokenType == TokenType.VALUES && lastSignificantToken.TokenType == TokenType.ARE);
+                                if (!currentTokenIsExpectedToBeALiteral)
+                                {
+                                    /*
+                                     * Here we still have an ambiguity between multiple consecutive IntegerLiteral and LevelNumber like in this kind of declarations :
+                                     *    01 integers PIC 99.
+                                     *       88 odd  VALUES 01 03 05
+                                     *                      07 09.
+                                     *       88 even VALUES 02 04 06
+                                     *                      08.
+                                     * 07 and 08 are literals but we actually can't distinguish between a following literal and a LevelNumber. We assume the code
+                                     * is syntactically correct more often than not so we choose in that case to consider the token as a Literal.
+                                     */
+                                    return lastSignificantToken.TokenFamily != TokenFamily.NumericLiteral && lastSignificantToken.TokenFamily != TokenFamily.AlphanumericLiteral;
+                                }
+
+                                return false;
+                            }
                         }
                     }
 

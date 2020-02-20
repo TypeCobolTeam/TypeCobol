@@ -2644,5 +2644,27 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue((StackedProcPublic.Symbol.IsFunctionAccessible(StackedProcPublic.Symbol)));
 
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [TestMethod]
+        [TestCategory("SemanticDomain")]
+        [TestProperty("Object", "Types")]
+        public void TypedefDuplicated()
+        {
+            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "TypedefDuplicated.tcbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null, ExecutionStep.SemanticCheck);
+
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
+
+            //Check that there is one error and the Typedef User is reclared twice.
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Diagnostics.Count == 1);
+            Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser, 0, 0, 0,
+                string.Format(TypeCobolResource.TypeAlreadyDeclared, "User"));
+            Assert.AreEqual<string>(document.Results.PrgSymbolTblBuilder.Diagnostics[0].Message, d.Message);
+        }
     }
 }

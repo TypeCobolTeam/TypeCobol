@@ -1588,7 +1588,7 @@ namespace TypeCobol.Compiler.Domain
                     {
                         CommonDataDescriptionAndDataRedefines dataDescEntry =
                             (CommonDataDescriptionAndDataRedefines)dataDef.CodeElement;                            
-                        sym.Level = (int)dataDescEntry.LevelNumber.Value;
+                        sym.Level = dataDescEntry.LevelNumber != null ? (int)dataDescEntry.LevelNumber.Value : 0;
                         if (dataDescEntry.IsGlobal || parentScope.Owner.HasFlag(Symbol.Flags.Global))
                         {//No Global inside GLOBAL-STORAGE.
                             if (fSection.HasValue && fSection != Symbol.Flags.GLOBAL_STORAGE)
