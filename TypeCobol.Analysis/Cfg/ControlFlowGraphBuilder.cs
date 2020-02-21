@@ -232,7 +232,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// The Section and Paragraph Domain of this program.
         /// </summary>
-        internal Dictionary<string, Scope<Symbol>.MultiSymbols> SectionsParagraphs
+        internal Dictionary<string, Scope<Symbol>> SectionsParagraphs
         {
             get;
             set;
@@ -1011,16 +1011,16 @@ namespace TypeCobol.Analysis.Cfg
         {
             System.Diagnostics.Debug.Assert(sym.Kind == Symbol.Kinds.Section || sym.Kind == Symbol.Kinds.Paragraph);
             if (this.CurrentProgramCfgBuilder.SectionsParagraphs == null)
-                this.CurrentProgramCfgBuilder.SectionsParagraphs = new Dictionary<string, Scope<Symbol>.MultiSymbols>(StringComparer.OrdinalIgnoreCase);
+                this.CurrentProgramCfgBuilder.SectionsParagraphs = new Dictionary<string, Scope<Symbol>>(StringComparer.OrdinalIgnoreCase);
             string name = sym.Name;
-            Scope<Symbol>.MultiSymbols scope = null;
+            Scope<Symbol> scope = null;
             this.CurrentProgramCfgBuilder.SectionsParagraphs.TryGetValue(name, out scope);
             if (scope == null)
             {
-                scope = new Scope<Symbol>.MultiSymbols();
+                scope = new Scope<Symbol>(null);
                 this.CurrentProgramCfgBuilder.SectionsParagraphs[name] = scope;
             }
-            scope.Add(sym);
+            scope.Enter(sym);
             if (this.CurrentProgramCfgBuilder.AllSectionsParagraphs == null)
             {
                 this.CurrentProgramCfgBuilder.AllSectionsParagraphs = new List<Symbol>();
@@ -1054,21 +1054,21 @@ namespace TypeCobol.Analysis.Cfg
         /// </summary>
         /// <param name="symRef">The Symbol Reference instance to a section or a paragraph.</param>
         /// <returns>The scope of symbols found</returns>
-        internal Scope<Symbol>.MultiSymbols ResolveSectionOrParagraphSymbol(SymbolReference symRef)
+        internal Scope<Symbol> ResolveSectionOrParagraphSymbol(SymbolReference symRef)
         {
             System.Diagnostics.Debug.Assert(symRef != null);
-            Scope<Symbol>.MultiSymbols results = new Scope<Symbol>.MultiSymbols();
+            Scope<Symbol> results = new Scope<Symbol>(null);
 
             string[] paths = AbstractScope.SymbolReferenceToPath(symRef);
             string name = paths[0];
-            Scope<Symbol>.MultiSymbols candidates = null;
+            Scope<Symbol> candidates = null;
             this.CurrentProgramCfgBuilder.SectionsParagraphs.TryGetValue(name, out candidates);
             if (candidates == null)
                 return results;
             foreach (var candidate in candidates)
             {
                 if (candidate.IsMatchingPath(paths))
-                    results.Add(candidate);
+                    results.Enter(candidate);
             }
             return results;
         }
@@ -1318,7 +1318,7 @@ namespace TypeCobol.Analysis.Cfg
         private Symbol CheckSectionOrParagraph(Node node, SymbolReference symRef)
         {
             //Resolve the target Section or Paragraph.
-            Scope<Symbol>.MultiSymbols symbols = ResolveSectionOrParagraphSymbol(symRef);
+            Scope<Symbol> symbols = ResolveSectionOrParagraphSymbol(symRef);
 
             if (symbols.Count == 0)
             {
@@ -1340,7 +1340,8 @@ namespace TypeCobol.Analysis.Cfg
                 Diagnostics.Add(d);
                 return null;
             }
-            return symbols.Symbol;
+
+            return symbols[0];
         }
 
         /// <summary>

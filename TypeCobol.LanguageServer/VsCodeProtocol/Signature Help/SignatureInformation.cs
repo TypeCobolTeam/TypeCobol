@@ -20,18 +20,18 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// The label of this signature. Will be shown in
         /// the UI.
         /// </summary>
-        public string label { get; set; }
+        public string label { get; }
 
         /// <summary>
         /// The human-readable doc-comment of this signature. Will be shown
         /// in the UI but can be omitted.
         /// </summary>
-        public string documentation { get; set; }
+        public string documentation { get; }
 
         /// <summary>
         /// The parameters of this signature.
         /// </summary>
-        public ParameterInformation[] parameters { get; set; }
+        public ParameterInformation[] parameters { get; }
 
         public SignatureInformation(string label, string documentation, params ParameterInformation[] parameters)
         {

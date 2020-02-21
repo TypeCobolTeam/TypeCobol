@@ -99,22 +99,24 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="topScope">The top scope of the research</param>
         /// <param name="domain">The domain into which to search for</param>
         /// <returns>The Set of resolve symbols</returns>
-        protected Scope<TS>.Entry ResolveSymbol<TS>(string[] path, AbstractScope topScope,
-            Dictionary<string, Scope<TS>.MultiSymbols> domain) where TS : Symbol
+        protected Domain<TS>.Entry ResolveSymbol<TS>(string[] path, AbstractScope topScope, Domain<TS> domain)
+            where TS : Symbol
         {
-            Scope<TS>.MultiSymbols results = new Scope<TS>.MultiSymbols();
-            if (path == null || path.Length == 0)
-                return results;
-            bool bExits = domain.TryGetValue(path[0], out var candidates);
-            if (!bExits || candidates == null || candidates.Count == 0)
+            if (path == null || path.Length == 0 || path[0] == null)
+                return null;
+
+            string name = path[0];
+            Domain<TS>.Entry results = new Domain<TS>.Entry(name);
+            bool bExits = domain.TryGetValue(name, out var candidates);
+            if (!bExits)
                 return results;
             if (path.Length == 1)
             {
                 bool bLocal = topScope != this;
-                Scope<TS>.MultiSymbols localResults = bLocal ? new Scope<TS>.MultiSymbols() : null;
-                Scope<TS>.MultiSymbols topResults = results;
-                string[] topPath = new string[] { path[0], topScope.Name };
-                string[] localPath = bLocal ? new string[] { path[0], this.Name, topScope.Name } : null;
+                Domain<TS>.Entry localResults = bLocal ? new Domain<TS>.Entry(name) : null;
+                Domain<TS>.Entry topResults = results;
+                string[] topPath = new string[] { name, topScope.Name };
+                string[] localPath = bLocal ? new string[] { name, this.Name, topScope.Name } : null;
                 foreach (var candidate in candidates)
                 {
                     if (bLocal && candidate.IsMatchingPath(localPath))
@@ -125,7 +127,6 @@ namespace TypeCobol.Compiler.Symbols
                     {
                         topResults.Add(candidate);
                     }
-
                 }
                 if (bLocal && localResults.Count != 0)
                     return localResults;
@@ -149,7 +150,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="root">The root Symbol table</param>
         /// <param name="path">The Type's path to be resolved.'</param>
         /// <returns>The scope all accessible type</returns>
-        public abstract Scope<TypedefSymbol>.Entry ResolveAccessibleType(RootSymbolTable root, string[] path);
+        public abstract Domain<TypedefSymbol>.Entry ResolveAccessibleType(RootSymbolTable root, string[] path);
 
         /// <summary>
         /// Resolve all types accessible from this scope by its path.
@@ -157,7 +158,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="root">The Root Symbol Table</param>
         /// <param name="path">The type's path</param>
         /// <returns>The set of types that match</returns>
-        public abstract Scope<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path);
+        public abstract Domain<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path);
 
         /// <summary>
         /// Resolve all scopes accessible from this scope by its path.
@@ -166,7 +167,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="root">The Root Symbol Table</param>
         /// <param name="path">The function's path</param>
         /// <returns>The set of scopes that match</returns>
-        public abstract Scope<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path);
+        public abstract Domain<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path);
 
         /// <summary>
         /// Lookup a program.
@@ -175,7 +176,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="progName">The program name to be looked up</param>
         /// <param name="bCreate">true if an instance of the program symbol should be created, false otherwise.</param>
         /// <returns></returns>
-        protected virtual Scope<ProgramSymbol>.Entry LookupProgram(AbstractScope rootScope, string progName, bool bCreate)
+        protected virtual Domain<ProgramSymbol>.Entry LookupProgram(AbstractScope rootScope, string progName, bool bCreate)
         {
             AbstractScope currentScope = null;
             AbstractScope stopScope = null;
@@ -189,11 +190,11 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="progName">The program name to be looked up</param>
         /// <param name="bCreate">true if an instance of the program symbol should be created, false otherwise.</param>
         /// <returns></returns>
-        protected virtual Scope<ProgramSymbol>.Entry LookupProgram(AbstractScope rootScope, string progName, bool bCreate, out AbstractScope currentScope, out AbstractScope stopScope)
+        protected virtual Domain<ProgramSymbol>.Entry LookupProgram(AbstractScope rootScope, string progName, bool bCreate, out AbstractScope currentScope, out AbstractScope stopScope)
         {
             stopScope = rootScope;
             currentScope = this;
-            Scope<ProgramSymbol>.Entry entry = null;
+            Domain<ProgramSymbol>.Entry entry = null;
             while (currentScope != null)
             {
                 var programs = currentScope.Programs;
@@ -203,7 +204,7 @@ namespace TypeCobol.Compiler.Symbols
                     if (entry != null)
                     {
                         System.Diagnostics.Debug.Assert(entry.Count == 1);
-                        currentScope = entry[0];
+                        currentScope = entry.Symbol;
                         stopScope = currentScope;
                         break;
                     }
@@ -225,7 +226,7 @@ namespace TypeCobol.Compiler.Symbols
                     ProgramSymbol pgmSym = new ProgramSymbol(progName);
                     programs.Enter(pgmSym);
                     entry = programs.Lookup(progName);
-                    currentScope = entry[0];
+                    currentScope = entry.Symbol;
                     stopScope = currentScope;
                 }
             }
@@ -239,7 +240,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="path">Looking path à la COBOL85 --> in Reverse order</param>
         /// <param name="bCreate">true if the TypeDef symbol shall be created if not existing, false otherwise.</param>
         /// <returns>The TypedefSymbol if found, null otherwise.</returns>
-        public virtual Scope<TypedefSymbol>.Entry ReverseResolveType(AbstractScope rootScope, string[] path, bool bCreate)
+        public virtual Domain<TypedefSymbol>.Entry ReverseResolveType(AbstractScope rootScope, string[] path, bool bCreate)
         {
             System.Diagnostics.Debug.Assert(rootScope != null);
             System.Diagnostics.Debug.Assert(path != null);
@@ -257,13 +258,10 @@ namespace TypeCobol.Compiler.Symbols
                             while (currentScope != null)
                             {
                                 var types = currentScope.Types;
-                                if (types != null)
+                                Domain<TypedefSymbol>.Entry entry = types?.Lookup(path[i]);
+                                if (entry != null)
                                 {
-                                    Scope<TypedefSymbol>.Entry entry = types.Lookup(path[i]);
-                                    if (entry != null)
-                                    {
-                                        return entry;
-                                    }
+                                    return entry;
                                 }
                                 if (currentScope.Owner != null && currentScope != stopScope && currentScope.Owner.HasScope)
                                 {
@@ -283,7 +281,7 @@ namespace TypeCobol.Compiler.Symbols
                                     //Create an untypedef TypeDef as type.
                                     tdSym.Type = new TypedefType(tdSym);
                                     types.Enter(tdSym);
-                                    Scope<TypedefSymbol>.Entry entry = types.Lookup(path[i]);
+                                    Domain<TypedefSymbol>.Entry entry = types.Lookup(path[i]);
                                     return entry;
                                 }
                             }
@@ -291,7 +289,7 @@ namespace TypeCobol.Compiler.Symbols
                         break;
                     case 1://We must look for a Program
                         {
-                            Scope<ProgramSymbol>.Entry entry = LookupProgram(stopScope, path[i], bCreate, out currentScope, out stopScope);
+                            Domain<ProgramSymbol>.Entry entry = LookupProgram(stopScope, path[i], bCreate, out currentScope, out stopScope);
                         }
                         break;
                     default://We are looking for a Namepace
@@ -308,7 +306,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="rootScope">The top rootScope</param>
         /// <param name="path">Looking path à la COBOL85 --> in Reverse order</param>
         /// <returns>The FunctionSymbol instance if found, null otherwise.</returns>
-        public virtual Scope<FunctionSymbol>.Entry ReverseResolveFunction(AbstractScope rootScope, string[] path)
+        public virtual Domain<FunctionSymbol>.Entry ReverseResolveFunction(AbstractScope rootScope, string[] path)
         {
             System.Diagnostics.Debug.Assert(rootScope != null);
             System.Diagnostics.Debug.Assert(path != null);
@@ -326,13 +324,10 @@ namespace TypeCobol.Compiler.Symbols
                             while (currentScope != null)
                             {
                                 var functions = currentScope.Functions;
-                                if (functions != null)
+                                Domain<FunctionSymbol>.Entry entry = functions?.Lookup(path[i]);
+                                if (entry != null)
                                 {
-                                    Scope<FunctionSymbol>.Entry entry = functions.Lookup(path[i]);
-                                    if (entry != null)
-                                    {
-                                        return entry;
-                                    }
+                                    return entry;
                                 }
                                 if (currentScope.Owner != null && currentScope != stopScope && currentScope.Owner.HasScope)
                                 {
@@ -347,7 +342,7 @@ namespace TypeCobol.Compiler.Symbols
                         break;
                     case 1://We must look for a Program
                         {
-                            Scope<ProgramSymbol>.Entry entry = LookupProgram(stopScope, path[i], false, out currentScope, out stopScope);
+                            Domain<ProgramSymbol>.Entry entry = LookupProgram(stopScope, path[i], false, out currentScope, out stopScope);
                         }
                         break;
                     default://We are looking for a Namepace

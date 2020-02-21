@@ -33,7 +33,7 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// Fields in this Records.
         /// </summary>
-        public IList<VariableSymbol> Fields => Scope.Symbols;
+        public IEnumerable<VariableSymbol> Fields => Scope;
 
         /// <summary>
         /// Get the scope of this record.
@@ -47,7 +47,7 @@ namespace TypeCobol.Compiler.Types
         internal override void SetFlag(Flags flag, bool value)
         {
             base.SetFlag(flag, value);
-            foreach (var varSym in Scope.Symbols)
+            foreach (var varSym in Scope)
             {
                 varSym.SetFlag(flag, value, true);
             }
