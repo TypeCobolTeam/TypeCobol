@@ -143,7 +143,7 @@ internal class ParameterEntry: GenericNode<ParameterDescriptionEntry>, Generated
                     List<string> rootProcedures;
                     List<System.Tuple<string, string>> rootVars;
                     GeneratorHelper.ComputeTypedProperPaths(this, this.CodeElement, customtype, out rootProcedures, out rootVars);
-                    _cache.AddRange(TypedDataNode.InsertChildren(Layout, rootProcedures, rootVars, customtype, customtype, 2, 1));
+                    _cache.AddRange(TypedDataNode.InsertChildren(Layout, rootProcedures, rootVars, customtype, 2));
                 }
 			}
 			return _cache;

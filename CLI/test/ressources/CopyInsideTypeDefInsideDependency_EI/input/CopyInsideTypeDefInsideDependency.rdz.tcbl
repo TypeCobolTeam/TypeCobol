@@ -29,12 +29,31 @@
       
        01 MyConventionalTypeDef
            TYPE DVZDEP1::ConventionalTypeDefInDependency.
-      
+
+       01 myVar2 TYPE DVZDEP1::Type2.
+	   
        PROCEDURE DIVISION.
             MOVE 'X' TO MyCopiesInsideTypeDef::CONVEA
             MOVE 'X' TO
                 MyCopyInsideContainerInsideTypeDef::CONTAINER::CONVEA
+            MOVE 'X' TO
+             myVar2::varA-2::varB-22::CONVEA::CONVEA-SUB::CONVEA-SUB-1
             .
+
+       declare procedure MyProc
+            input myType1 type DVZDEP1::Type1.
+       PROCEDURE DIVISION.
+           DISPLAY myType1
+           .
+       end-declare.
+
+       declare procedure MyProc2
+            input myType2 type DVZDEP1::Type2.
+       PROCEDURE DIVISION.
+           DISPLAY myType2
+           .
+       end-declare.
+
        END PROGRAM PGM1.
       
        IDENTIFICATION DIVISION.

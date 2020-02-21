@@ -1,0 +1,9 @@
+﻿       IDENTIFICATION division.
+       PROGRAM-ID. MyPGM2.
+       procedure division.
+      * KO
+           display "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Line 6[17,18] <21, Error, Tokens> - The delimiter character of this continuation line is different from the initial delimiter of the alphanumeric literal
+      -          ' er zer '
+           .
+       END PROGRAM MyPGM2.

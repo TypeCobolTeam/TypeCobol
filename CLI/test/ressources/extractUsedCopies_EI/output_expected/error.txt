@@ -1,3 +1,5 @@
 ﻿ReturnCode=MissingCopy_
-1 error in "input\Copies.rdz.tcbl":
-Line 13[8,42] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: YTTMCOI
+3 errors in "input\Copies.rdz.tcbl":
+Line 13[18,31] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: YTRDF1L
+Line 16[14,61] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: YTRDF3L
+Line 19[8,42] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: YTTMCOI

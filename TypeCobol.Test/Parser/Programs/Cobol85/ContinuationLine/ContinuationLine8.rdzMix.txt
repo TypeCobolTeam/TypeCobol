@@ -1,0 +1,9 @@
+﻿       IDENTIFICATION division.
+       PROGRAM-ID. MyPGM8.
+       procedure division.
+      * KO
+                display 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Line 6[18,19] <27, Error, Syntax> - Syntax error : Starting delimiter of the continuation line is missing.
+      -           er zer "
+           .
+       END PROGRAM MyPGM8.
