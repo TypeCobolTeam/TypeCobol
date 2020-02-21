@@ -518,6 +518,8 @@ namespace TypeCobol.Compiler.Diagnostics
         }
 
 #if DOMAIN_CHECKER
+        private static readonly ProgramExpander _Expander = new ProgramExpander();
+
         /// <summary>
         /// Expand the top program.
         /// </summary>
@@ -528,20 +530,16 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             exception = null;
             ProgramSymbol topPrg = ProgramSymbol.GetTopProgram(curPrg);
-            if (!topPrg.HasFlag(Symbol.Flags.ProgramExpanded))
+            try
             {
-                try
-                {
-                    ProgramExpander expander = new ProgramExpander();
-                    expander.Expand(topPrg);
-                }
-                catch (Exception e) when(e is Types.Type.CyclicTypeException || e is Symbol.LevelExceeded)
-                {
-                    //Capture a Cyclic Type exception or Level Exceed exception
-                    exception = e;
-                    //Reset expansion flag to always detect exceptions during this test session
-                    topPrg.SetFlag(Symbol.Flags.ProgramExpanded, false);
-                }
+                _Expander.Expand(topPrg);
+            }
+            catch (Exception e) when (e is Types.Type.CyclicTypeException || e is Symbol.LevelExceeded)
+            {
+                //Capture a Cyclic Type exception or Level Exceed exception
+                exception = e;
+                //Reset expansion flag to always detect exceptions during this test session
+                topPrg.SetFlag(Symbol.Flags.SymbolExpanded, false);
             }
             return topPrg;
         }

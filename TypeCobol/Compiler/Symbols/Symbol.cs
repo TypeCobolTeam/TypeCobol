@@ -73,15 +73,14 @@ namespace TypeCobol.Compiler.Symbols
             Parameter = 0x01L << 32,//This a parameter variable.
             Returning = 0x01L << 33,//A Return variable.
             BuiltinType = 0x01L << 34,//This is a Builtin Type.
-            InsideTypedef = 0x01L << 35,//Flag of any symbol inside a Typedef definition
-            ProgramExpanded = 0x01L << 36,//Flag for a program that have been already expanded.
+            InsideTypedef = 0x01L << 35,//Flag of any symbol inside a Typedef definition.
+            SymbolExpanded = 0x01L << 36,//Flag of a symbol that have been expanded, used for variables and programs.
             NeedTypeCompletion = 0x01L << 37,//For a program that need type Completion, a pure COBOL Program does not need type completion (No TYPEDEF).
-            BuiltinSymbol = 0x01L << 38, //This is a builting symbol.
-            ProgramCompleted = 0x01L << 39, //This Top Program has been completed
+            BuiltinSymbol = 0x01L << 38, //This is a Builtin symbol.
 
             //Flags for cyclic typedefs
-            HasBeenCheckedForCycles = 0x01L << 40,
-            IsCyclic = 0x01L << 41,
+            CheckedForCycles = 0x01L << 39,
+            IsCyclic = 0x01L << 40,
 
             //Etc...
         }

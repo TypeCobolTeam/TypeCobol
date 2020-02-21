@@ -49,7 +49,11 @@ namespace TypeCobol.Compiler.Symbols
                 {
                     //The type has changed : update variable type and perform level renumbering
                     variable.Type = newType;
-                    variable.Accept(_levelRenumber, variable.Level);
+                    variable.SetFlag(Symbol.Flags.SymbolExpanded, true);
+                    if (!_levelRenumber.TryRenumber(variable, null))
+                    {
+                        throw new Symbol.LevelExceeded(variable);
+                    }
                 }
             }
 
@@ -62,7 +66,7 @@ namespace TypeCobol.Compiler.Symbols
             public override Symbol VisitProgramSymbol(ProgramSymbol programToExpand, object _)
             {
                 //No need to expand the Program if it has already been done.
-                if (programToExpand.HasFlag(Symbol.Flags.ProgramExpanded))
+                if (programToExpand.HasFlag(Symbol.Flags.SymbolExpanded))
                     return programToExpand;
 
                 //Save current expanding program and swap with the new one
@@ -87,7 +91,7 @@ namespace TypeCobol.Compiler.Symbols
                 finally
                 {
                     //Mark this program has being expanded
-                    programToExpand.SetFlag(Symbol.Flags.ProgramExpanded, true);
+                    programToExpand.SetFlag(Symbol.Flags.SymbolExpanded, true);
 
                     //Restore original expanding program
                     _parentExpander._currentExpandingProgram = previousExpandingProgram;
@@ -222,8 +226,7 @@ namespace TypeCobol.Compiler.Symbols
             public override Type VisitTypedefType(TypedefType typedef, Symbol owner)
             {
                 //Check first for cyclic definition.
-                typedef.Accept(_cyclicTypeChecker, null);
-                if (typedef.HasFlag(Symbol.Flags.IsCyclic))
+                if (_cyclicTypeChecker.IsCyclic(typedef))
                 {
                     throw new Type.CyclicTypeException(typedef);
                 }

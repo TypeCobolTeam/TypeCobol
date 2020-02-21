@@ -7,7 +7,7 @@ namespace TypeCobol.Compiler.Types
     /// <summary>
     /// Cyclic Type Checker : determine if a type is cyclic.
     /// A cyclic type cannot be traversed by regular type visitors, so this visitor has to be called first.
-    /// Other type visitors can then use flags <see cref="Symbol.Flags.HasBeenCheckedForCycles" /> and <see cref="Symbol.Flags.IsCyclic" />
+    /// Other type visitors can then use flags <see cref="Symbol.Flags.CheckedForCycles" /> and <see cref="Symbol.Flags.IsCyclic" />
     /// to adapt their behavior.
     /// </summary>
     public class CyclicTypeChecker : Type.AbstractTypeVisitor<object, object>
@@ -39,7 +39,7 @@ namespace TypeCobol.Compiler.Types
 
         public override object VisitTypedefType(TypedefType typedefType, object _)
         {
-            if (typedefType.HasFlag(Symbol.Flags.HasBeenCheckedForCycles))
+            if (typedefType.HasFlag(Symbol.Flags.CheckedForCycles))
             {
                 //Type has already been checked but we have to update the stack if the current type is actually cyclic.
                 if (typedefType.HasFlag(Symbol.Flags.IsCyclic))
@@ -63,7 +63,7 @@ namespace TypeCobol.Compiler.Types
             }
 
             //typedef has been fully checked.
-            typedefType.SetFlag(Symbol.Flags.HasBeenCheckedForCycles, true, false);
+            typedefType.SetFlag(Symbol.Flags.CheckedForCycles, true, false);
             return null;
 
             //Local function to update parent typedefs and mark them as cyclic.
