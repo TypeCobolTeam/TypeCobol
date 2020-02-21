@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace TypeCobol.Compiler.Types
 {
@@ -16,7 +13,7 @@ namespace TypeCobol.Compiler.Types
         /// Empty Constructor
         /// </summary>
         public PictureType()
-            : base(Tags.Picture)
+            : base(Type.Tags.Picture)
         {
             Category = PictureCategory.Error;
         }
@@ -46,8 +43,8 @@ namespace TypeCobol.Compiler.Types
         /// </summary>
         /// <param name="value">Picture string value</param>
         /// <param name="separateSign">a boolean value indicating whether the sign is separate character</param>
-        public PictureType(String value, bool separateSign) : this(new PictureValidator(value, separateSign))
-        {
+        public PictureType(string value, bool separateSign) : this(new PictureValidator(value, separateSign))
+        {            
         }
 
         /// <summary>
@@ -55,7 +52,7 @@ namespace TypeCobol.Compiler.Types
         /// </summary>
         /// <param name="validator"></param>
         public PictureType(PictureValidator validator)
-            : base(Tags.Picture)
+            : base(Type.Tags.Picture)
         {
             AssignFromValidator(validator);
         }
@@ -133,7 +130,7 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// a Normalized Textual String representation of the Picture clause.
         /// </summary>
-        public String Picture
+        public string Picture
         {
             get
             {
@@ -250,7 +247,7 @@ namespace TypeCobol.Compiler.Types
             {
                 if (Category == PictureCategory.Error)
                     return 0;
-                if (Usage == UsageFormat.None)
+                if (Usage == Type.UsageFormat.None)
                 {
                     int add = 0;
                     if (Category == PictureCategory.Dbcs)
@@ -270,10 +267,10 @@ namespace TypeCobol.Compiler.Types
                 }
                 switch (Usage)
                 {
-                    case UsageFormat.Binary:
-                    case UsageFormat.Comp:
-                    case UsageFormat.Comp4:
-                    case UsageFormat.Comp5:
+                    case Type.UsageFormat.Binary:
+                    case Type.UsageFormat.Comp:
+                    case Type.UsageFormat.Comp4:
+                    case Type.UsageFormat.Comp5:
                         // The Picture must be a numeric Picture.
                         System.Diagnostics.Contracts.Contract.Requires(Category == PictureCategory.Numeric);
                         System.Diagnostics.Debug.Assert(Category == PictureCategory.Numeric);
@@ -289,8 +286,8 @@ namespace TypeCobol.Compiler.Types
                         {
                             return 8;//8 bytes double word.
                         }
-                    case UsageFormat.Comp3:
-                    case UsageFormat.PackedDecimal:
+                    case Type.UsageFormat.Comp3:
+                    case Type.UsageFormat.PackedDecimal:
                         {
                             //S9(4) COMP - 3 would occupy 2 bytes.
                             //S9(6) COMP - 3 would occupy 3 bytes.
@@ -302,7 +299,7 @@ namespace TypeCobol.Compiler.Types
                             len += odd ? 0 : 1;//for sign
                             return len;
                         }
-                    case UsageFormat.Display1:
+                    case Type.UsageFormat.Display1:
                         {
                             int len = Size;
                             foreach (PictureValidator.Character c in Sequence)
@@ -333,7 +330,7 @@ namespace TypeCobol.Compiler.Types
                             }
                             return len;
                         }
-                    case UsageFormat.National:
+                    case Type.UsageFormat.National:
                         {
                             int len = Size;
                             foreach (PictureValidator.Character c in Sequence)

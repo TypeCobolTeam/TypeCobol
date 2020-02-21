@@ -265,7 +265,7 @@ namespace TypeCobol.Analysis.Report
                                              //Find the use point of the sending identifier in the DefPoint's Block.
                                              //(2.1.1.1.2.1) Resolve the identifier variable
                                                 SymbolReference symRef = simpleMove.SendingVariable.StorageArea.SymbolReference;
-                                                Compiler.Scopes.Scope<VariableSymbol>.MultiSymbols result = program.ResolveReference(symRef, true);
+                                                Compiler.Scopes.Domain<VariableSymbol>.Entry result = program.ResolveReference(symRef, true);
                                                 System.Diagnostics.Debug.Assert(result != null);
                                                 if (result.Count == 1)
                                                 {//(2.1.1.1.2.2) The sending identifier variable is resolved -> look for its UsePoint instruction in the definition block

@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Parser;
-using TypeCobol.Compiler.Parser.Generated;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Symbols;
+
 using static TypeCobol.Compiler.Symbols.Symbol;
 
 namespace TypeCobol.Compiler.Types

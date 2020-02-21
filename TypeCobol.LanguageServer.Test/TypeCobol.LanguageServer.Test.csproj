@@ -9,7 +9,6 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TypeCobol.LanguageServer.Test</RootNamespace>
     <AssemblyName>TypeCobol.LanguageServer.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -21,23 +20,21 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="TypeCobol.LanguageServer.JsonRPC, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TypeCobol.LanguageServer.JsonRPC.1.0.1\lib\net45\TypeCobol.LanguageServer.JsonRPC.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\TypeCobol.LanguageServer.JsonRPC.1.1.1\lib\net47\TypeCobol.LanguageServer.JsonRPC.dll</HintPath>
     </Reference>
     <Reference Include="TypeCobol.LanguageServer.Protocol, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TypeCobol.LanguageServer.Protocol.1.0.0\lib\net45\TypeCobol.LanguageServer.Protocol.dll</HintPath>
+      <HintPath>..\packages\TypeCobol.LanguageServer.Protocol.1.1.0\lib\net47\TypeCobol.LanguageServer.Protocol.dll</HintPath>
     </Reference>
     <Reference Include="TypeCobol.LanguageServer.Robot.Common, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TypeCobol.LanguageServer.Robot.Common.1.1.0\lib\net45\TypeCobol.LanguageServer.Robot.Common.dll</HintPath>
+      <HintPath>..\packages\TypeCobol.LanguageServer.Robot.Common.1.2.0\lib\net47\TypeCobol.LanguageServer.Robot.Common.dll</HintPath>
     </Reference>
     <Reference Include="TypeCobol.LanguageServerRobot, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TypeCobol.LanguageServerRobot.1.2.0\lib\net45\TypeCobol.LanguageServerRobot.exe</HintPath>
+      <HintPath>..\packages\TypeCobol.LanguageServerRobot.1.3.0\lib\net47\TypeCobol.LanguageServerRobot.exe</HintPath>
     </Reference>
   </ItemGroup>
   <Choose>
@@ -68,7 +65,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="LSRTests\CompletionAfterDotFromTypedDataDef\input\CompletionAfterDotFromTypedDataDef.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -76,6 +72,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\CompletionAfterDotFromTypedDataDef\output_expected\CompletionAfterDotFromTypedDataDef.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionOutputParamEmptyType\input\CompletionOutputParamEmptyType.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionOutputParamEmptyType\output_expected\CompletionOutputParamEmptyType.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\ProcedureCompletionNoParam\input\ProcedureCompletionNoParam.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\ProcedureCompletionNoParam\output_expected\ProcedureCompletionNoParam.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\RefreshCopiesNotif\input\RefreshCopyNotif.tlsp">
@@ -100,6 +108,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\CompletionOnPartialLibraryName\output_expected\CompletionOnPartialLibraryName.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionOnPartialTypeName\input\CompletionOnPartialTypeName.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionOnPartialTypeName\output_expected\CompletionOnPartialTypeName.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\FirstLineEditCommentBeforeIdentDiv\input\FirstLineEditCommentBeforeIdentDiv.tlsp">

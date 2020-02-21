@@ -74,7 +74,7 @@ namespace TypeCobol.Analysis.Dfa
             {
                 SymbolReference symRef = storageArea.SymbolReference;
                 //Resolve the Symbol Reference.
-                Compiler.Scopes.Scope<VariableSymbol>.MultiSymbols result = _program.ResolveReference(symRef, true);
+                Compiler.Scopes.Domain<VariableSymbol>.Entry result = _program.ResolveReference(symRef, true);
                 System.Diagnostics.Debug.Assert(result != null);
                 if (result.Count == 1)
                 {//We have found an unique match

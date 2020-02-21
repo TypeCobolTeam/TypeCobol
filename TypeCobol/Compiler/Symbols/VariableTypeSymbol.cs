@@ -101,7 +101,7 @@ namespace TypeCobol.Compiler.Symbols
             System.Diagnostics.Debug.Assert(root != null);
             if (root == null)
                 return false;
-            Scopes.Scope<TypedefSymbol>.Entry entry = program.ResolveType(root, TypePaths);
+            Domain<TypedefSymbol>.Entry entry = program.ResolveType(root, TypePaths);
             if (entry == null || entry.Count != 1)
             {//Unknown type or ambiguous types
                 return false;
@@ -112,7 +112,7 @@ namespace TypeCobol.Compiler.Symbols
             //program.IsTypeAccessible(entry.Symbol);
             //--------------------------------------------------------------------------------------------
             Type currentType = base.Type;//The type before completion can be an ArrayType or a PointerType
-            Typedef = entry[0];
+            Typedef = entry.Symbol;
             TypePaths = null;//GC : :-)
             if (currentType != null)
             {

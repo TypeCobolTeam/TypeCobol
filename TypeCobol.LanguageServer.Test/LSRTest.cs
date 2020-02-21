@@ -374,6 +374,13 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         [TestCategory("Completion")]
+        public void ProcedureCompletionNoParam()
+        {
+            LSRTestHelper.Test("ProcedureCompletionNoParam", LsrTestingOptions.NoLsrTesting);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
         public void ProcedureCompletionPotentialChildrenWithNoName()
         {
             LSRTestHelper.Test("ProcedureCompletionPotentialChildrenWithNoName", LsrTestingOptions.NoLsrTesting, true);
@@ -408,6 +415,20 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("CompletionOnPartialLibraryName", LsrTestingOptions.NoLsrTesting, true, true);
         }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void CompletionOnPartialTypeName()
+        {
+            LSRTestHelper.Test("CompletionOnPartialTypeName", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void CompletionOutputParamEmptyType()
+        {
+            LSRTestHelper.Test("CompletionOutputParamEmptyType", LsrTestingOptions.NoLsrTesting, true);
+        }
         #endregion
 
         [TestMethod]
@@ -418,8 +439,9 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
 #if DOMAIN_CHECKER
-        //This test does not pass CheckVariable with DOMAIN_CHECKER set because new semantic domain
-        //perform better.
+        //This test does not pass CheckVariable with DOMAIN_CHECKER because in presence of duplicated TYPEDEF declaration,
+        //new semantic domain retains the first definition, while the current implementation fails to build 
+        //TypesReferences links.
         [Ignore]
 #endif
         public void OnOutlineRefresh()

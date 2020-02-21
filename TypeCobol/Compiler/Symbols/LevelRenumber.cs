@@ -1,57 +1,76 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
 {
     /// <summary>
-    /// Given a Variable symbol this method renumber all level except levels
+    /// Given a Variable symbol or a Type this class renumber all level except levels
     /// 66, 88 and 77.
     /// Parameters is the start level.
     /// </summary>
-    public class LevelRenumber : Symbol.AbstractSymbolVisitor<int, int>
+    public class LevelRenumber : AbstractSymbolAndTypeVisitor<int, int>
     {
-        /// <summary>
-        /// The Type Level Renumber to use.
-        /// </summary>
-        private readonly Types.TypeLevelRenumber _typeLevelRenumber;
+        #region Symbols renumber
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="typLevelRenumber">The TypeLevelRenumber instance to use if any</param>
-        public LevelRenumber(Types.TypeLevelRenumber typLevelRenumber = null)
+        public override int VisitSymbol(Symbol symbol, int currentLevel)
         {
-            _typeLevelRenumber = typLevelRenumber??new Types.TypeLevelRenumber(this);
+            return currentLevel;
         }
 
-        public override int VisitSymbol(Symbol s, int curLevel)
+        public override int VisitVariableSymbol(VariableSymbol variableSymbol, int currentLevel)
         {
-            return curLevel;
-        }
-
-        public override int VisitVariableSymbol(VariableSymbol s, int curLevel)
-        {
-            System.Diagnostics.Debug.Assert(curLevel > 0);
-            if (curLevel <= 49)
+            System.Diagnostics.Debug.Assert(currentLevel > 0);
+            if (currentLevel <= 49)
             {
-                if (s.Level != 66 && s.Level != 77 && s.Level != 88)
+                if (variableSymbol.Level != 66 && variableSymbol.Level != 77 && variableSymbol.Level != 88)
                 {
-                    s.Level = curLevel;
+                    variableSymbol.Level = currentLevel;
                 }
-                return s.Type?.Accept(_typeLevelRenumber, curLevel) ?? curLevel;
+                return variableSymbol.Type?.Accept(this, currentLevel) ?? currentLevel;
             }
-            else
-            {
-                throw new Symbol.LevelExceed(s);
-            }
+
+            throw new Symbol.LevelExceed(variableSymbol);
         }
 
-        public override int VisitVariableTypeSymbol(VariableTypeSymbol s, int curLevel)
+        public override int VisitVariableTypeSymbol(VariableTypeSymbol variableTypeSymbol, int currentLevel)
         {
-            return VisitVariableSymbol(s, curLevel);
+            return VisitVariableSymbol(variableTypeSymbol, currentLevel);
         }
+        
+        #endregion
+
+        #region Types renumber
+
+        public override int VisitType(Types.Type type, int currentLevel)
+        {
+            return currentLevel;
+        }
+
+        public override int VisitArrayType(ArrayType arrayType, int currentLevel)
+        {
+            return arrayType.ElementType?.Accept(this, currentLevel) ?? currentLevel;
+        }
+
+        public override int VisitPointerType(PointerType pointerType, int currentLevel)
+        {
+            return pointerType.ElementType?.Accept(this, currentLevel) ?? currentLevel;
+        }
+
+        public override int VisitGroupType(GroupType groupType, int currentLevel)
+        {
+            int maxLevel = currentLevel;
+            foreach (var field in groupType.Scope)
+            {
+                maxLevel = Math.Max(maxLevel, field.Accept(this, currentLevel + 1));
+            }
+            return maxLevel;
+        }
+
+        public override int VisitTypedefType(TypedefType typedefType, int currentLevel)
+        {
+            return typedefType.TypeComponent?.Accept(this, currentLevel) ?? currentLevel;
+        }
+
+        #endregion
     }
 }

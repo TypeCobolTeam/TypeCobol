@@ -1,0 +1,11 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZZPGM2.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *Using voluntarily wrong syntax to create an invalid pgm
+       01 Type1 %typedef% strict public.
+          05 var1 PIC X(20).
+       procedure division.
+           goback
+           .
+       END PROGRAM DVZZPGM2.

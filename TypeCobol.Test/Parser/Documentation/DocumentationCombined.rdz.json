@@ -10,7 +10,7 @@ Line 78[21,24] <37, Warning, General> - Warning: Parameter does not have any des
 {
   "__type": "DocumentationForProgram:#TypeCobol.Compiler.Nodes",
   "Deprecated": "",
-  "Description": "My program \u000d\u000adescription ",
+  "Description": "My program \r\ndescription ",
   "Name": "DocCombined",
   "Namespace": "DocCombined",
   "Needs": [
@@ -80,7 +80,7 @@ Line 78[21,24] <37, Warning, General> - Warning: Parameter does not have any des
 {
   "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
   "Deprecated": "It is deprecated ",
-  "Description": "MyProc info \u000d\u000a",
+  "Description": "MyProc info \r\n",
   "Name": "MyProc",
   "Namespace": "DocCombined",
   "Needs": [

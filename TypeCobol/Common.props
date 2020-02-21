@@ -2,35 +2,35 @@
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<SolutionDir>$(MSBuildThisFileDirectory)</SolutionDir>
-	<!--<SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>-->
+    <SolutionDir>$(MSBuildThisFileDirectory)</SolutionDir>
+    <!--<SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>-->
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	
-	<!--For a unique "bin" folder -->
+
+    <!--For a unique "bin" folder -->
     <OutputPath>$(SolutionDir)\bin\$(Configuration)</OutputPath>
-	<!--For a per project "bin" folder -->
-	<!--<OutputPath>bin\$(Configuration)\</OutputPath>-->
+    <!--For a per project "bin" folder -->
+    <!--<OutputPath>bin\$(Configuration)\</OutputPath>-->
     <OutDir>$(OutputPath)</OutDir>
-	
-	<!--For a per project "obj" folder but in a unique obj folder on the root solution folder-->
+
+    <!--For a per project "obj" folder but in a unique obj folder on the root solution folder-->
     <TC_RootIntermediateOutputPath>$(SolutionDir)\obj\$(Configuration)</TC_RootIntermediateOutputPath>
     <TC_AntlrGeneratedFiles>$(TC_RootIntermediateOutputPath)\TypeCobol</TC_AntlrGeneratedFiles>
     <IntermediateOutputPath>$(TC_RootIntermediateOutputPath)\$(MSBuildProjectName)\</IntermediateOutputPath>
-	
-	<!--For a per project "obj" folder -->
-	<!--<IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>-->
+
+    <!--For a per project "obj" folder -->
+    <!--<IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>-->
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 
-	<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp></NuGetPackageImportStamp>
     <TargetFrameworkProfile />
     <RestorePackages>false</RestorePackages>
   </PropertyGroup>
-  
-   <PropertyGroup>
-        <LangVersion>7.3</LangVersion>
-    </PropertyGroup>
+
+  <PropertyGroup>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -40,7 +40,7 @@
     <DefineConstants>DEBUG;TRACE;DOMAIN_CHECKER</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-	<CodeAnalysisRuleSet>$(SolutionDir)\TypeCobol\TypeCobol.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>$(SolutionDir)\TypeCobol\TypeCobol.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -50,18 +50,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-	<CodeAnalysisRuleSet>$(SolutionDir)\TypeCobol\TypeCobol.ruleset</CodeAnalysisRuleSet>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'EI_Release|AnyCPU' ">
-    <DefineConstants>TRACE;CODE_ANALYSIS,EUROINFO_RULES, EUROINFO_LEGACY_TYPEDEF, NET45</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
- 	<CodeAnalysisRuleSet>$(SolutionDir)\TypeCobol\TypeCobol.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>$(SolutionDir)\TypeCobol\TypeCobol.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'EI_Debug|AnyCPU' ">
@@ -69,35 +58,20 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS,EUROINFO_RULES, EUROINFO_LEGACY_TYPEDEF, NET45</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;EUROINFO_RULES, EUROINFO_LEGACY_REPLACING_SYNTAX, EUROINFO_LEGACY_TYPEDEF</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-	<CodeAnalysisRuleSet>$(SolutionDir)\TypeCobol\TypeCobol.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>$(SolutionDir)\TypeCobol\TypeCobol.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EI_Debug_Net40|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\bin\EI_Debug_Net40\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS,EUROINFO_RULES, EUROINFO_LEGACY_TYPEDEF, NET40</DefineConstants>
-    <DebugType>full</DebugType>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'EI_Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-	<CodeAnalysisRuleSet>$(SolutionDir)\TypeCobol\TypeCobol.ruleset</CodeAnalysisRuleSet>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EI_Release_Net40|AnyCPU'">
-    <OutputPath>..\..\bin\EI_Release_Net40\</OutputPath>
-    <DefineConstants>TRACE;CODE_ANALYSIS,EUROINFO_RULES, EUROINFO_LEGACY_TYPEDEF, NET40</DefineConstants>
-    <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE;EUROINFO_RULES, EUROINFO_LEGACY_REPLACING_SYNTAX, EUROINFO_LEGACY_TYPEDEF</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-	<CodeAnalysisRuleSet>$(SolutionDir)\TypeCobol\TypeCobol.ruleset</CodeAnalysisRuleSet>
-    <RunCodeAnalysis>true</RunCodeAnalysis> 
- </PropertyGroup>
-
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>$(SolutionDir)\TypeCobol\TypeCobol.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+  </PropertyGroup>
 </Project>

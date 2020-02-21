@@ -9,7 +9,6 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Analytics;
 using Castle.Core.Internal;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Scanner;
@@ -1004,7 +1003,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public static void OnNode([NotNull] GlobalStorageSection globalStorageSection)
         {
             //Check if GlobalStorageSection is declared in main program Rule - GLOBALSS_ONLY_IN_MAIN 
-            if (!globalStorageSection.GetProgramNode().IsMainProgram)
+            if (globalStorageSection.IsFlagSet(Node.Flag.InsideProcedure) || !globalStorageSection.GetProgramNode().IsMainProgram)
                 DiagnosticUtils.AddError(globalStorageSection,
                     "GLOBAL-STORAGE SECTION is only authorized in the main program of this source file.");
 
