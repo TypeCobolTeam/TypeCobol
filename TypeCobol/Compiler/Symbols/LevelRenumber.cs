@@ -1,16 +1,16 @@
-﻿using System.Collections.Generic;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
+using TypeCobol.Compiler.Domain.Validator;
 using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
 {
     /// <summary>
     /// Given a variable symbol, this class renumbers all levels except levels 66, 77 and 88.
-    /// The renumbering starts at the original level value and increases by 1 at each level transition.
+    /// By default, the renumbering starts at the original level value (and increases by 1 at each level transition).
     /// </summary>
-    public class LevelRenumber
+    public class LevelRenumber : AbstractSymbolAndTypeVisitor<object, LevelRenumber.Context>
     {
-        private class RenumberingContext
+        public class Context
         {
             /// <summary>
             /// Keeps track of the current target level.
@@ -18,140 +18,134 @@ namespace TypeCobol.Compiler.Symbols
             public int TargetLevel { get; set; }
 
             /// <summary>
-            /// Stores variables that would get an invalid level (> 49) if renumbering would actually be applied.
+            /// Allows external error report.
             /// </summary>
-            public Dictionary<VariableSymbol, int> ExcessiveLevelVariables { get; set; }
+            public IValidationErrorReporter ErrorReporter { get; }
+
+            public Context(int initialLevel, IValidationErrorReporter errorReporter = null)
+            {
+                TargetLevel = initialLevel;
+                ErrorReporter = errorReporter;
+            }
         }
 
-        private class Visitor : AbstractSymbolAndTypeVisitor<bool, RenumberingContext>
+        #region Symbols renumbering
+
+        private void Renumber(VariableSymbol variable, Context context)
         {
-            #region Symbols renumbering
-
-            private bool Renumber(VariableSymbol variable, RenumberingContext context)
+            int targetLevel = context.TargetLevel;
+            if (targetLevel <= 49)
             {
-                int targetLevel = context.TargetLevel;
-                if (targetLevel <= 49)
-                {
-                    //Change the level for real
-                    variable.Level = targetLevel;
-                    return true;
-                }
-
-                //Memorize excessive level in dictionary
-                context.ExcessiveLevelVariables?.Add(variable, targetLevel);
-                return false;
+                //Change the level for real.
+                variable.Level = targetLevel;
             }
-
-            public override bool VisitSymbol(Symbol symbol, RenumberingContext renumberingContext)
+            else
             {
-                //Do nothing.
-                return true;
+                //Report an error
+                context.ErrorReporter?.Report(variable, string.Format(TypeCobolResource.LevelExceededDuringRenumber, variable.Name, targetLevel), null);
             }
+        }
 
-            public override bool VisitVariableSymbol(VariableSymbol variable, RenumberingContext context)
+        public override object VisitSymbol(Symbol symbol, Context context)
+        {
+            //Do nothing.
+            return null;
+        }
+
+        public override object VisitVariableSymbol(VariableSymbol variable, Context context)
+        {
+            System.Diagnostics.Debug.Assert(context.TargetLevel > 0);
+
+            if (!variable.HasFlag(Symbol.Flags.SymbolExpanded))
             {
-                System.Diagnostics.Debug.Assert(context.TargetLevel > 0);
-                bool result;
+                //Do not attempt renumbering of a non-expanded variable.
+                context.ErrorReporter?.Report(variable, string.Format(TypeCobolResource.RenumberingNonExpandedVariable, variable.Name), null);
+            }
+            else
+            {
                 switch (variable.Level)
                 {
                     case 66:
                     case 77:
                     case 88:
                         //Do not renumber
-                        result = true;
                         break;
                     default:
-                        result = Renumber(variable, context);
+                        Renumber(variable, context);
                         break;
                 }
 
-                //Continue visit through variable type
-                return (variable.Type?.Accept(this, context) ?? true) && result;
+                //Continue visit through variable's type.
+                variable.Type?.Accept(this, context);
             }
 
-            public override bool VisitVariableTypeSymbol(VariableTypeSymbol typedVariable, RenumberingContext context)
+            return null;
+        }
+
+        public override object VisitVariableTypeSymbol(VariableTypeSymbol typedVariable, Context context)
+        {
+            VisitVariableSymbol(typedVariable, context);
+            return null;
+        }
+
+        #endregion
+
+        #region Types renumbering
+
+        public override object VisitType(Type type, Context context)
+        {
+            //Continue visit through type component.
+            type.TypeComponent?.Accept(this, context);
+            return null;
+        }
+
+        public override object VisitGroupType(GroupType group, Context context)
+        {
+            //Continue visit through fields.
+            context.TargetLevel++;
+            foreach (var field in group.Fields)
             {
-                return VisitVariableSymbol(typedVariable, context);
+                field.Accept(this, context);
             }
+            context.TargetLevel--;
 
-            #endregion
+            return null;
+        }
 
-            #region Types renumbering
-
-            public override bool VisitType(Type type, RenumberingContext renumberingContext)
+        public override object VisitTypedefType(TypedefType typedef, Context context)
+        {
+            //Protection against cyclic typedefs.
+            if (typedef.HasFlag(Symbol.Flags.CheckedForCycles))
             {
-                //Continue visit through type component.
-                return type.TypeComponent?.Accept(this, renumberingContext) ?? true;
-            }
-
-            public override bool VisitGroupType(GroupType group, RenumberingContext context)
-            {
-                bool result = true;
-
-                //Continue visit through fields.
-                context.TargetLevel++;
-                foreach (var field in group.Fields)
-                {
-                    if (!field.Accept(this, context))
-                    {
-                        result = false;
-                    }
-                }
-                context.TargetLevel--;
-
-                return result;
-            }
-
-            public override bool VisitTypedefType(TypedefType typedef, RenumberingContext context)
-            {
-                //Protection against cyclic typedefs.
-
-                if (!typedef.HasFlag(Symbol.Flags.CheckedForCycles))
-                {
-                    throw new System.InvalidOperationException($"Typedef '{typedef.Symbol.Name}' must be checked for cycles before attempting level renumbering.");
-                }
-
                 if (typedef.HasFlag(Symbol.Flags.IsCyclic))
                 {
-                    throw new System.NotSupportedException($"Typedef '{typedef.Symbol.Name}' is cyclic, level renumbering cannot be performed.");
+                    context.ErrorReporter?.Report(typedef.Symbol, string.Format(TypeCobolResource.RenumberingCyclicType, typedef.Symbol.Name), null);
                 }
-
-                return VisitType(typedef, context);
+                else
+                {
+                    VisitType(typedef, context);
+                }
+            }
+            else
+            {
+                context.ErrorReporter?.Report(typedef.Symbol, string.Format(TypeCobolResource.RenumberingUnsafeType, typedef.Symbol.Name), null);
             }
 
-            #endregion
+            return null;
         }
 
-        private readonly Visitor _visitor;
-
-        public LevelRenumber()
-        {
-            _visitor = new Visitor();
-        }
+        #endregion
 
         /// <summary>
-        /// Attempts to renumber the given variable. Renumbering may fail on excessive levels reached because of expanded type variables.
-        /// Caller can request a list of variables that failed to renumber by passing a non-null Dictionary as second parameter.
+        /// Renumbers the given variable starting at its original level value.
         /// </summary>
-        /// <param name="variable">Variable to renumber, must be expanded first.</param>
-        /// <param name="excessiveLevelVariables">Dictionary of failed variables associated with its target level (beyond 49).
-        /// Pass a non-null instance to have it populated.</param>
-        /// <returns>True if renumbering fully succeeded, False if at least one variable got an excessive level.</returns>
-        public bool TryRenumber([NotNull] VariableSymbol variable, Dictionary<VariableSymbol, int> excessiveLevelVariables)
+        /// <param name="variable">Variable to renumber.</param>
+        /// <param name="errorReporter">Custom error reporter.</param>
+        public void Renumber([NotNull] VariableSymbol variable, IValidationErrorReporter errorReporter)
         {
             System.Diagnostics.Debug.Assert(variable != null);
-
-            if (!variable.HasFlag(Symbol.Flags.SymbolExpanded))
-            {
-                throw new System.InvalidOperationException("Level renumbering is allowed only on expanded variables.");
-            }
-
-            var context = new RenumberingContext()
-                          {
-                              TargetLevel = variable.Level,
-                              ExcessiveLevelVariables = excessiveLevelVariables
-                          };
-            return variable.Accept(_visitor, context);
+            var context = new Context(variable.Level, errorReporter);
+            variable.Accept(this, context);
         }
     }
 }

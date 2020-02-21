@@ -6,6 +6,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Domain.Validator;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Symbols;
@@ -16,6 +17,21 @@ namespace TypeCobol.Test.Domain
     [TestClass]
     public class SemanticDomainTest
     {
+        private class FailErrorReporter : IValidationErrorReporter
+        {
+            public static readonly FailErrorReporter Instance = new FailErrorReporter();
+
+            private FailErrorReporter()
+            {
+
+            }
+
+            public void Report(Symbol invalidSymbol, string message, System.Exception exception)
+            {
+                Assert.Fail(message);
+            }
+        }
+
         private static string GetTestLocation()
         {
             return Path.Combine(Directory.GetCurrentDirectory(), @"..\..\TypeCobol.Test");
@@ -36,7 +52,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
 
-            ProgramExpander expander = new ProgramExpander();
+            ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
             var vars = currentProgram.ResolveReference(new string[] { "idt" }, false);
@@ -85,7 +101,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(myCurrency3.Symbol.Type.Tag == Type.Tags.Typedef);
             Assert.IsTrue(myCurrency3.Symbol.Type == BuiltinTypes.CurrencyType);
 
-            ProgramExpander expander = new ProgramExpander();
+            ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
             //After expansion
             Assert.AreEqual(oldCurrencyOriginalType, oldCurrency.Symbol.Type);
@@ -139,7 +155,7 @@ namespace TypeCobol.Test.Domain
             var dd = currentProgram.ResolveReference(new string[] { "dd" }, false);
             Assert.IsTrue(dd.Count == 0);
 
-            ProgramExpander expander = new ProgramExpander();
+            ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
             Assert.AreEqual(olddateOriginalType, olddate.Symbol.Type);
             Type te_today = today.Symbol.Type;
@@ -185,7 +201,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(currentProgram.Programs.Count() == 1);
             var nestedPrg = currentProgram.Programs.Single();
 
-            ProgramExpander expander = new ProgramExpander();
+            ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
             TypeCobol.Compiler.Scopes.Domain<VariableSymbol>.Entry result;
@@ -232,7 +248,7 @@ namespace TypeCobol.Test.Domain
             var dd = currentProgram.ResolveReference(new string[] { "dd" }, false);
             Assert.IsTrue(dd.Count == 0);
 
-            ProgramExpander expander = new ProgramExpander();
+            ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
             //After expansion there are now YYYY, MM, DD variables in the program
@@ -284,7 +300,7 @@ namespace TypeCobol.Test.Domain
             var managed_false = currentProgram.ResolveReference(new string[] { "managed-false" }, false);
             Assert.IsTrue(check_false.Count == 0);
 
-            ProgramExpander expander = new ProgramExpander();
+            ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
             //After expansion there are no check-false variables in the program
@@ -380,7 +396,7 @@ namespace TypeCobol.Test.Domain
                 Assert.IsTrue(vari.Symbol.Type == types[i - 1].Type);
             }
 
-            ProgramExpander expander = new ProgramExpander();
+            ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
             //After expanding all variables have a PICTURE type.
@@ -507,7 +523,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(arr.Symbol.Type == rectarray.Symbol.Type);
 
             //Perform expansion
-            ProgramExpander expander = new ProgramExpander();
+            ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
             //Now rcarray is an array of Record.
@@ -733,7 +749,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(arrField.Type == rectarray.Symbol.Type);
 
             //Perform expansion
-            ProgramExpander expander = new ProgramExpander();
+            ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
             //After expanding there are X1, Y1, X2, Y2 variables in the program, will all 02 Level
@@ -1894,7 +1910,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
 
-            ProgramExpander expander = new ProgramExpander();
+            ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
             var vars = currentProgram.ResolveReference(new string[] { "td-var42", "var1" }, false);

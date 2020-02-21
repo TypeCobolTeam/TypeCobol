@@ -220,24 +220,6 @@ namespace TypeCobol.Compiler.Types
             tw.Write(System.Enum.GetName(typeof(UsageFormat), Usage));            
         }
 
-        /// <summary>
-        /// Exception thrown when a Type is Cyclic
-        /// </summary>
-        public class CyclicTypeException : Exception
-        {
-            /// <summary>
-            /// The target type.
-            /// </summary>
-            public Type TargetType
-            {
-                get;
-                private set;
-            }
-            public CyclicTypeException(Type type)
-            {
-                this.TargetType = type;
-            }
-        }
         public virtual TR Accept<TR, TS>(IVisitor<TR, TS> v, TS s) { return v.VisitType(this, s); }
 
         /// <summary>

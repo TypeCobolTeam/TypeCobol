@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using TypeCobol.Compiler.Domain;
 using Antlr4.Runtime;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Domain.Validator;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Symbols;
 
@@ -518,30 +519,40 @@ namespace TypeCobol.Compiler.Diagnostics
         }
 
 #if DOMAIN_CHECKER
-        private static readonly ProgramExpander _Expander = new ProgramExpander();
+        private class DelegateErrorReporter : IValidationErrorReporter
+        {
+            private readonly Action _onError;
+
+            public DelegateErrorReporter(Action onError)
+            {
+                _onError = onError;
+            }
+
+            public void Report(Symbol invalidSymbol, string message, Exception exception)
+            {
+                _onError();
+            }
+        }
 
         /// <summary>
         /// Expand the top program.
         /// </summary>
-        /// <param name="curPrg">Current program</param>
-        /// <param name="exception">If an exception is thrown during expansion, this variable will be set with the corresponding Exception instance.</param>
-        /// <returns>Expanded top program</returns>
-        static ProgramSymbol ExpandTopProgram(ProgramSymbol curPrg, out Exception exception)
+        /// <param name="curPrg">Current program.</param>
+        /// <returns>True if expansion succeeded, False otherwise.</returns>
+        private static bool ExpandTopProgram(ProgramSymbol curPrg)
         {
-            exception = null;
-            ProgramSymbol topPrg = ProgramSymbol.GetTopProgram(curPrg);
-            try
+            bool result = true;
+            var topProgram = ProgramSymbol.GetTopProgram(curPrg);
+            var expander = new ProgramExpander(new DelegateErrorReporter(() => result = false));
+
+            expander.Expand(topProgram);
+            if (!result)
             {
-                _Expander.Expand(topPrg);
+                //Reset expansion state for this test session
+                topProgram.SetFlag(Symbol.Flags.SymbolExpanded, false);
             }
-            catch (Exception e) when (e is Types.Type.CyclicTypeException || e is Symbol.LevelExceeded)
-            {
-                //Capture a Cyclic Type exception or Level Exceed exception
-                exception = e;
-                //Reset expansion flag to always detect exceptions during this test session
-                topPrg.SetFlag(Symbol.Flags.SymbolExpanded, false);
-            }
-            return topPrg;
+
+            return result;
         }
 
         /// <summary>
@@ -629,10 +640,9 @@ namespace TypeCobol.Compiler.Diagnostics
                     case Symbol.Kinds.Function:
                     {
                         ProgramSymbol prg = (ProgramSymbol) node.SemanticData;
-                        ProgramSymbol topPrg = ExpandTopProgram(prg, out var exception);
-                        if (exception == null)
+                        if (ExpandTopProgram(prg))
                         {
-                            //Ignore any failed expansion.
+                            //Consider only succeeded expansions.
                             result = prg.ResolveReference(area.SymbolReference, true);
                             System.Diagnostics.Debug.Assert(result != null);
                             //Check that we found the same number of symbols
@@ -664,10 +674,9 @@ namespace TypeCobol.Compiler.Diagnostics
                             FunctionSymbol fun = (FunctionSymbol) @var.TopParent(Symbol.Kinds.Function);
                             ProgramSymbol prg = (ProgramSymbol) @var.TopParent(Symbol.Kinds.Program);
                             System.Diagnostics.Debug.Assert(prg != null || fun != null);
-                            ProgramSymbol topPrg = ExpandTopProgram(prg, out var exception);
-                            if (exception == null)
+                            if (ExpandTopProgram(prg))
                             {
-                                //Ignore any failed expansion.
+                                //Consider only succeeded expansions.
                                 //Lookup itself in its program.
                                 result = (fun ?? prg).ResolveReference(area.SymbolReference, true);
                                 System.Diagnostics.Debug.Assert(result != null);

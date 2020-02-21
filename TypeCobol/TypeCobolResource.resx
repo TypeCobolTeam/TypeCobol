@@ -166,4 +166,19 @@
   <data name="TypedefDeclaredOutProgramOrFunction" xml:space="preserve">
     <value>TYPE '{0}' is not declared within a Program or Procedure scope.</value>
   </data>
+  <data name="ExpandingCyclicType" xml:space="preserve">
+    <value>Cannot expand type '{0}' because it is cyclic.</value>
+  </data>
+  <data name="LevelExceededDuringRenumber" xml:space="preserve">
+    <value>Variable '{0}' cannot be renumbered to level {1} because it is excessive, only levels below or equal to 49 are allowed.</value>
+  </data>
+  <data name="RenumberingCyclicType" xml:space="preserve">
+    <value>Cannot renumber : type '{0}' is cyclic.</value>
+  </data>
+  <data name="RenumberingNonExpandedVariable" xml:space="preserve">
+    <value>Variable '{0}' cannot be renumbered because it has not been expanded before.</value>
+  </data>
+  <data name="RenumberingUnsafeType" xml:space="preserve">
+    <value>Cannot renumber : type '{0}' must be checked for cycles before attempting to renumber.</value>
+  </data>
 </root>

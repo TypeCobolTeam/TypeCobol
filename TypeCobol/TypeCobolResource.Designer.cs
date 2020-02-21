@@ -115,6 +115,24 @@ namespace TypeCobol {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot expand type &apos;{0}&apos; because it is cyclic..
+        /// </summary>
+        public static string ExpandingCyclicType {
+            get {
+                return ResourceManager.GetString("ExpandingCyclicType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Variable &apos;{0}&apos; cannot be renumbered to level {1} because it is excessive, only levels below or equal to 49 are allowed..
+        /// </summary>
+        public static string LevelExceededDuringRenumber {
+            get {
+                return ResourceManager.GetString("LevelExceededDuringRenumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Multiple REDEFINES Symbol found for : &quot;{0}&quot;.
         /// </summary>
         public static string MultipleRenameSymbolFound {
@@ -156,6 +174,33 @@ namespace TypeCobol {
         public static string RenamesObjectOrder {
             get {
                 return ResourceManager.GetString("RenamesObjectOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot renumber : type &apos;{0}&apos; is cyclic..
+        /// </summary>
+        public static string RenumberingCyclicType {
+            get {
+                return ResourceManager.GetString("RenumberingCyclicType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Variable &apos;{0}&apos; cannot be renumbered because it has not been expanded before..
+        /// </summary>
+        public static string RenumberingNonExpandedVariable {
+            get {
+                return ResourceManager.GetString("RenumberingNonExpandedVariable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot renumber : type &apos;{0}&apos; must be checked for cycles before attempting to renumber..
+        /// </summary>
+        public static string RenumberingUnsafeType {
+            get {
+                return ResourceManager.GetString("RenumberingUnsafeType", resourceCulture);
             }
         }
         

@@ -446,23 +446,6 @@ namespace TypeCobol.Compiler.Symbols
 
         public virtual TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitSymbol(this, arg); }
 
-        public class LevelExceeded : Exception
-        {
-            /// <summary>
-            /// The symbol which level exceed.
-            /// </summary>
-            public VariableSymbol Symbol
-            {
-                get;
-                private set;
-            }
-
-            public LevelExceeded(VariableSymbol symbol)
-            {
-                this.Symbol = symbol;
-            }
-        }
-
         /// <summary>
         /// A visitor for symbols.  A visitor is used to implement operations
         /// (or relations) on symbols.  Most common operations on symbols are
