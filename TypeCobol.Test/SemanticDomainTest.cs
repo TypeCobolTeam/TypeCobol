@@ -26,9 +26,9 @@ namespace TypeCobol.Test.Domain
 
             }
 
-            public void Report(Symbol invalidSymbol, string message, System.Exception exception)
+            public void Report(ValidationError validationError)
             {
-                Assert.Fail(message);
+                Assert.Fail(validationError.Message);
             }
         }
 

@@ -521,16 +521,16 @@ namespace TypeCobol.Compiler.Diagnostics
 #if DOMAIN_CHECKER
         private class DelegateErrorReporter : IValidationErrorReporter
         {
-            private readonly Action _onError;
+            private readonly Action<ValidationError> _onError;
 
-            public DelegateErrorReporter(Action onError)
+            public DelegateErrorReporter(Action<ValidationError> onError)
             {
                 _onError = onError;
             }
 
-            public void Report(Symbol invalidSymbol, string message, Exception exception)
+            public void Report(ValidationError validationError)
             {
-                _onError();
+                _onError(validationError);
             }
         }
 
@@ -543,7 +543,7 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             bool result = true;
             var topProgram = ProgramSymbol.GetTopProgram(curPrg);
-            var expander = new ProgramExpander(new DelegateErrorReporter(() => result = false));
+            var expander = new ProgramExpander(new DelegateErrorReporter(v => result = false));
 
             expander.Expand(topProgram);
             if (!result)

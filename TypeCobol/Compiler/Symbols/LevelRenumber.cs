@@ -22,7 +22,7 @@ namespace TypeCobol.Compiler.Symbols
             /// </summary>
             public IValidationErrorReporter ErrorReporter { get; }
 
-            public Context(int initialLevel, IValidationErrorReporter errorReporter = null)
+            public Context(int initialLevel, IValidationErrorReporter errorReporter)
             {
                 TargetLevel = initialLevel;
                 ErrorReporter = errorReporter;
