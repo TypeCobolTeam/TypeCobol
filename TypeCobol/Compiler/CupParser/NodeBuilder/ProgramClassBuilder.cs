@@ -5,7 +5,6 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
-using Analytics;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
@@ -772,7 +771,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 CheckIfItsTyped(paramNode, paramNode.CodeElement);
             }
 
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.FunctionDeclared, declaration.FunctionName.ToString(), LogType.TypeCobolUsage);
             Dispatcher.StartFunctionDeclaration(header);
         }
 
