@@ -564,7 +564,7 @@ internal class DefinitionsAttribute: Attribute {
         get
         {
             if (this.functions.Public.Count == 0) return 0;
-            return this.functions.Public.Max(f => (f as FunctionDeclaration).Profile.Parameters.Count);
+            return this.functions.Public.OfType<FunctionDeclaration>().Max(f => f.Profile.Parameters.Count);
         }
     }
 
