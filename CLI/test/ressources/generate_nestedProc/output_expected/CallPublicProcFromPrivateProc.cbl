@@ -109,32 +109,15 @@
       *PGM1.check - Params :
       *     input(mydate: DATE)
                                
-       01 TC-PersonSe pic X(08) value 'PERSONSE'.
+       01 TypeCobol-Generated.
+           05 TC-PersonSe pic X(08) value 'PERSONSE'.
+           05 PersonSe-Fct-cd991005-GetPerso PIC X(30)
+               value 'Fct=cd991005-GetPersonById'.
 
-       01 TC-Call          PIC X     VALUE 'T'.
-           88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'
-                            X'00' thru 'S'
-                            'U' thru X'FF'.
        linkage section.
       *PGM1.check - Params :
       *     input(mydate: DATE)
                        
-      *Common to all librairies used by the program.
-       01 TC-Library-PntTab.
-           05 TC-Library-PntNbr          PIC S9(04) COMP.
-           05 TC-Library-Item OCCURS 1000
-                               DEPENDING ON TC-Library-PntNbr
-                               INDEXED   BY TC-Library-Idx.
-              10 TC-Library-Item-Idt      PIC X(08).
-              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
-
-      *To call program cd991005 in module PersonService
-      *Which is generated code for PersonService.GetPersonById
-      *Declared in source file CallPublicProcFromPrivateProc.rdz.tcbl
-       01 TC-PersonSe-cd991005-Item.
-          05 TC-PersonSe-cd991005-Idt PIC X(08).
-          05 TC-PersonSe-cd991005 PROCEDURE-POINTER.
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).

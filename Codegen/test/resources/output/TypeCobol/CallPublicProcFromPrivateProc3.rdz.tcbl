@@ -56,31 +56,14 @@
        working-storage section.
       *TCOZCHKP.testos  - No Params
                                
-       01 TC-TCOZCHKP pic X(08) value 'TCOZCHKP'.
-
-       01 TC-Call          PIC X     VALUE 'T'.
-           88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'
-                            X'00' thru 'S'
-                            'U' thru X'FF'.
        01 var1 pic X.
+       01 TypeCobol-Generated.
+           05 TC-TCOZCHKP pic X(08) value 'TCOZCHKP'.
+           05 TCOZCHKP-Fct-b179d81b-StartChe PIC X(30)
+               value 'Fct=b179d81b-StartCheckpoint'.
+
        LINKAGE SECTION.
       *TCOZCHKP.testos  - No Params
-      *Common to all librairies used by the program.
-       01 TC-Library-PntTab.
-           05 TC-Library-PntNbr          PIC S9(04) COMP.
-           05 TC-Library-Item OCCURS 1000
-                               DEPENDING ON TC-Library-PntNbr
-                               INDEXED   BY TC-Library-Idx.
-              10 TC-Library-Item-Idt      PIC X(08).
-              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
-
-      *To call program b179d81b in module TCOZCHKP
-      *Which is generated code for TCOZCHKP.StartCheckpoint
-      *Declared in source file CallPublicProcFromPrivateProc3.rdz.tcbl
-       01 TC-TCOZCHKP-b179d81b-Item.
-          05 TC-TCOZCHKP-b179d81b-Idt PIC X(08).
-          05 TC-TCOZCHKP-b179d81b PROCEDURE-POINTER.
        PROCEDURE DIVISION
            .
       *TCOZCHKP.testos  - No Params

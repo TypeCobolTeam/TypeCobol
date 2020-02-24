@@ -136,13 +136,6 @@
        WORKING-STORAGE SECTION.
       *PGM1.MyProcedureImportProc  - No Params
                                
-       01 TC-Callee pic X(08) value 'CALLEE'.
-
-       01 TC-Call          PIC X     VALUE 'T'.
-           88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'
-                            X'00' thru 'S'
-                            'U' thru X'FF'.
       *01 P-Bool TYPE BOOL.
        01  P-Bool-value PIC X VALUE LOW-VALUE.
            88  P-Bool       VALUE 'T'.
@@ -150,23 +143,13 @@
                            X'00' thru 'S'
                            'U' thru X'FF'.
                            
+       01 TypeCobol-Generated.
+           05 TC-Callee pic X(08) value 'CALLEE'.
+           05 Callee-Fct-a78211ce-DoNothing PIC X(30)
+               value 'Fct=a78211ce-DoNothing'.
+
        LINKAGE SECTION.
       *PGM1.MyProcedureImportProc  - No Params
-      *Common to all librairies used by the program.
-       01 TC-Library-PntTab.
-           05 TC-Library-PntNbr          PIC S9(04) COMP.
-           05 TC-Library-Item OCCURS 1000
-                               DEPENDING ON TC-Library-PntNbr
-                               INDEXED   BY TC-Library-Idx.
-              10 TC-Library-Item-Idt      PIC X(08).
-              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
-
-      *To call program a78211ce in module Callee
-      *Which is generated code for Callee.DoNothing
-      *Declared in source file Callee.rdz.tcbl
-       01 TC-Callee-a78211ce-Item.
-          05 TC-Callee-a78211ce-Idt PIC X(08).
-          05 TC-Callee-a78211ce PROCEDURE-POINTER.
        PROCEDURE DIVISION
            .
       *PGM1.MyProcedureImportProc  - No Params
@@ -188,13 +171,6 @@
        WORKING-STORAGE SECTION.
       *PGM1.MyProcedureUsingGlobalStorageAndImportProc  - No Params
                                
-       01 TC-Callee pic X(08) value 'CALLEE'.
-
-       01 TC-Call          PIC X     VALUE 'T'.
-           88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'
-                            X'00' thru 'S'
-                            'U' thru X'FF'.
       *01 P-Bool TYPE BOOL.
        01  P-Bool-value PIC X VALUE LOW-VALUE.
            88  P-Bool       VALUE 'T'.
@@ -202,23 +178,13 @@
                            X'00' thru 'S'
                            'U' thru X'FF'.
                            
+       01 TypeCobol-Generated.
+           05 TC-Callee pic X(08) value 'CALLEE'.
+           05 Callee-Fct-a78211ce-DoNothing PIC X(30)
+               value 'Fct=a78211ce-DoNothing'.
+
        LINKAGE SECTION.
       *PGM1.MyProcedureUsingGlobalStorageAndImportProc  - No Params
-      *Common to all librairies used by the program.
-       01 TC-Library-PntTab.
-           05 TC-Library-PntNbr          PIC S9(04) COMP.
-           05 TC-Library-Item OCCURS 1000
-                               DEPENDING ON TC-Library-PntNbr
-                               INDEXED   BY TC-Library-Idx.
-              10 TC-Library-Item-Idt      PIC X(08).
-              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
-
-      *To call program a78211ce in module Callee
-      *Which is generated code for Callee.DoNothing
-      *Declared in source file Callee.rdz.tcbl
-       01 TC-Callee-a78211ce-Item.
-          05 TC-Callee-a78211ce-Idt PIC X(08).
-          05 TC-Callee-a78211ce PROCEDURE-POINTER.
        01 TC-GlobalData.
 
       *01 G-Date TYPE DATE.

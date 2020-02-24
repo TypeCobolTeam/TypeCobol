@@ -92,31 +92,14 @@
        WORKING-STORAGE SECTION.
       *PGM1.CheckContract - Params :
       *     input(param1: pic X)
-       01 TC-PGM1 pic X(08) value 'PGM1'.
+       01 TypeCobol-Generated.
+           05 TC-PGM1 pic X(08) value 'PGM1'.
+           05 PGM1-Fct-f1c0385c-StartCheckpo PIC X(30)
+               value 'Fct=f1c0385c-StartCheckpoint'.
 
-       01 TC-Call          PIC X     VALUE 'T'.
-           88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'
-                            X'00' thru 'S'
-                            'U' thru X'FF'.
        LINKAGE SECTION.
       *PGM1.CheckContract - Params :
       *     input(param1: pic X)
-      *Common to all librairies used by the program.
-       01 TC-Library-PntTab.
-           05 TC-Library-PntNbr          PIC S9(04) COMP.
-           05 TC-Library-Item OCCURS 1000
-                               DEPENDING ON TC-Library-PntNbr
-                               INDEXED   BY TC-Library-Idx.
-              10 TC-Library-Item-Idt      PIC X(08).
-              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
-
-      *To call program f1c0385c in module PGM1
-      *Which is generated code for PGM1.StartCheckpoint
-      *Declared in source file CallPublicProcFromPublicProc.rdz.tcbl
-       01 TC-PGM1-f1c0385c-Item.
-          05 TC-PGM1-f1c0385c-Idt PIC X(08).
-          05 TC-PGM1-f1c0385c PROCEDURE-POINTER.
        01 param1 pic X.
        PROCEDURE DIVISION
              USING BY REFERENCE param1
@@ -142,40 +125,17 @@
        working-storage section.
       *PGM1.testos  - No Params
                                
-       01 TC-PGM2 pic X(08) value 'PGM2'.
-
-       01 TC-PGM1 pic X(08) value 'PGM1'.
-
-       01 TC-Call          PIC X     VALUE 'T'.
-           88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'
-                            X'00' thru 'S'
-                            'U' thru X'FF'.
        01 var1 pic X.
+       01 TypeCobol-Generated.
+           05 TC-PGM1 pic X(08) value 'PGM1'.
+           05 TC-PGM2 pic X(08) value 'PGM2'.
+           05 PGM1-Fct-f1c0385c-StartCheckpo PIC X(30)
+               value 'Fct=f1c0385c-StartCheckpoint'.
+           05 PGM2-Fct-f73481e6-CheckContrac PIC X(30)
+               value 'Fct=f73481e6-CheckContract'.
+
        LINKAGE SECTION.
       *PGM1.testos  - No Params
-      *Common to all librairies used by the program.
-       01 TC-Library-PntTab.
-           05 TC-Library-PntNbr          PIC S9(04) COMP.
-           05 TC-Library-Item OCCURS 1000
-                               DEPENDING ON TC-Library-PntNbr
-                               INDEXED   BY TC-Library-Idx.
-              10 TC-Library-Item-Idt      PIC X(08).
-              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
-
-      *To call program f1c0385c in module PGM1
-      *Which is generated code for PGM1.StartCheckpoint
-      *Declared in source file CallPublicProcFromPublicProc.rdz.tcbl
-       01 TC-PGM1-f1c0385c-Item.
-          05 TC-PGM1-f1c0385c-Idt PIC X(08).
-          05 TC-PGM1-f1c0385c PROCEDURE-POINTER.
-
-      *To call program f73481e6 in module PGM2
-      *Which is generated code for PGM2.CheckContract
-      *Declared in source file CallPublicProcFromPublicProc.rdz.tcbl
-       01 TC-PGM2-f73481e6-Item.
-          05 TC-PGM2-f73481e6-Idt PIC X(08).
-          05 TC-PGM2-f73481e6 PROCEDURE-POINTER.
        PROCEDURE DIVISION
            .
       *PGM1.testos  - No Params

@@ -61,15 +61,7 @@ namespace TypeCobol.Codegen.Nodes {
                         var workingStorageSection = GetOrCreateNode<Compiler.Nodes.WorkingStorageSection>(dataDivision, () => new WorkingStorageSection(originalNode), dataDivision);
 
                         ProgramImports imports = ProgramImportsAttribute.GetProgramImports(originalNode);
-                        Node[] toAddRange =
-                        {
-                            new GeneratedNode2("01 TC-Call          PIC X     VALUE 'T'.", true),
-                            new GeneratedNode2("    88 TC-FirstCall  VALUE 'T'.", true),
-                            new GeneratedNode2("    88 TC-NthCall    VALUE 'F'", true),
-                            new GeneratedNode2("                     X'00' thru 'S'", true),
-                            new GeneratedNode2("                     'U' thru X'FF'.", true)
-                        };
-                        workingStorageSection.AddRange(toAddRange, 0);
+                        workingStorageSection.Add(new GeneratedNode2("01 TypeCobol-Generated.", true));
                         GenerateCodeToCallPublicProc(originalNode, pdiv,  workingStorageSection, linkageSection);
                     }
                     else if (OriginalNode.IsFlagSet(Node.Flag.UseGlobalStorage))
@@ -119,34 +111,21 @@ namespace TypeCobol.Codegen.Nodes {
 
             foreach (var pgm in imports.Programs.Values) {
                 workingStorageSection.Add(
-                    new GeneratedNode2("01 TC-" + pgm.Name + " pic X(08) value '" + pgm.Name.ToUpperInvariant() + "'.\n", true), 0);
+                    new GeneratedNode2("    05 TC-" + pgm.Name + " pic X(08) value '" + pgm.Name.ToUpperInvariant() + "'.", true));
             }
-
-            List<Node> toAddRange = new List<Node>();
-            toAddRange.Add(new GeneratedNode2("*Common to all librairies used by the program.", true));
-            toAddRange.Add(new GeneratedNode2("01 TC-Library-PntTab.", false));
-            toAddRange.Add(new GeneratedNode2("    05 TC-Library-PntNbr          PIC S9(04) COMP.", true));
-            toAddRange.Add(new GeneratedNode2(
-                "    05 TC-Library-Item OCCURS 1000\n                        DEPENDING ON TC-Library-PntNbr\n                        INDEXED   BY TC-Library-Idx.",
-                false));
-            toAddRange.Add(new GeneratedNode2("       10 TC-Library-Item-Idt      PIC X(08).", true));
-            toAddRange.Add(new GeneratedNode2("       10 TC-Library-Item-Pnt      PROCEDURE-POINTER.", true));
-
-
-            foreach (var pgm in imports.Programs.Values) {
-                foreach (var proc in pgm.Procedures.Values) {
-                    proc.IsNotByExternalPointer = true;
-                    toAddRange.Add(new GeneratedNode2(" ", true));
-                    toAddRange.Add(new GeneratedNode2("*To call program " + proc.Hash + " in module " + proc.ProcStyleCall.FunctionDeclaration.QualifiedName.Tail, false));
-                    toAddRange.Add(new GeneratedNode2("*Which is generated code for " + proc.ProcStyleCall.FunctionDeclaration.QualifiedName, false));
-                    toAddRange.Add(new GeneratedNode2("*Declared in source file " + proc.ProcStyleCall.FunctionDeclaration.CodeElement.TokenSource.SourceName, false));
-                    toAddRange.Add(new GeneratedNode2("01 TC-" + pgm.Name + "-" + proc.Hash + "-Item.", false));
-                    toAddRange.Add(new GeneratedNode2("   05 TC-" + pgm.Name + "-" + proc.Hash + "-Idt PIC X(08).", true));
-                    toAddRange.Add(new GeneratedNode2("   05 TC-" + pgm.Name + "-" + proc.Hash + " PROCEDURE-POINTER.",
-                        true));
+            foreach (var pgm in imports.Programs.Values)
+            {
+                foreach (var proc in pgm.Procedures.Values)
+                {
+                    string name = pgm.Name + "-Fct-" + proc.Hash + "-" + proc.Name;
+                    if (name.Length > 30) name = name.Substring(0, 30);
+                    workingStorageSection.Add(new GeneratedNode2("    05 " + name + " PIC X(30)", true));
+                    name = "Fct=" + proc.Hash + "-" + proc.Name;
+                    if (name.Length > 30) name = name.Substring(0, 30);
+                    workingStorageSection.Add(new GeneratedNode2("        value '" + name + "'.", true));
                 }
             }
-            linkageSection.AddRange(toAddRange, 0);
+            workingStorageSection.Add(new GeneratedNode2(" ", true));
         }
 
         private void DeclareProceduresParametersIntoLinkage(Compiler.Nodes.FunctionDeclaration node, Compiler.Nodes.LinkageSection linkage, ParametersProfileNode profile) {

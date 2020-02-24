@@ -249,32 +249,15 @@
       *PGM1.checkName - Params :
       *     input(myname: pic X(15))
                                
-       01 TC-PersonSe pic X(08) value 'PERSONSE'.
+       01 TypeCobol-Generated.
+           05 TC-PersonSe pic X(08) value 'PERSONSE'.
+           05 PersonSe-Fct-f6b6da00-GetPerso PIC X(30)
+               value 'Fct=f6b6da00-GetPersonByName'.
 
-       01 TC-Call          PIC X     VALUE 'T'.
-           88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'
-                            X'00' thru 'S'
-                            'U' thru X'FF'.
        linkage section.
       *PGM1.checkName - Params :
       *     input(myname: pic X(15))
                        
-      *Common to all librairies used by the program.
-       01 TC-Library-PntTab.
-           05 TC-Library-PntNbr          PIC S9(04) COMP.
-           05 TC-Library-Item OCCURS 1000
-                               DEPENDING ON TC-Library-PntNbr
-                               INDEXED   BY TC-Library-Idx.
-              10 TC-Library-Item-Idt      PIC X(08).
-              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
-
-      *To call program f6b6da00 in module PersonService
-      *Which is generated code for PersonService.GetPersonByName
-      *Declared in source file FunDeclareWithExec.rdz.cbl
-       01 TC-PersonSe-f6b6da00-Item.
-          05 TC-PersonSe-f6b6da00-Idt PIC X(08).
-          05 TC-PersonSe-f6b6da00 PROCEDURE-POINTER.
        01 myname PIC X(15).
        PROCEDURE DIVISION
              USING BY REFERENCE myname

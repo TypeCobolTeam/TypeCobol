@@ -108,31 +108,13 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *PGM1.testos  - No Params
-       01 TC-PGM1 pic X(08) value 'PGM1'.
+       01 TypeCobol-Generated.
+           05 TC-PGM1 pic X(08) value 'PGM1'.
+           05 PGM1-Fct-e3685b69-StartCheckpo PIC X(30)
+               value 'Fct=e3685b69-StartCheckpoint'.
 
-       01 TC-Call          PIC X     VALUE 'T'.
-           88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'
-                            X'00' thru 'S'
-                            'U' thru X'FF'.
        LINKAGE SECTION.
       *PGM1.testos  - No Params
-      *Common to all librairies used by the program.
-       01 TC-Library-PntTab.
-           05 TC-Library-PntNbr          PIC S9(04) COMP.
-           05 TC-Library-Item OCCURS 1000
-                               DEPENDING ON TC-Library-PntNbr
-                               INDEXED   BY TC-Library-Idx.
-              10 TC-Library-Item-Idt      PIC X(08).
-              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
-
-      *To call program e3685b69 in module PGM1
-      *Which is generated code for PGM1.StartCheckpoint
-      *Declared in source file CallPublicProcFromPublicProc-Declaratives
-      *WithDebug.rdz.tcbl
-       01 TC-PGM1-e3685b69-Item.
-          05 TC-PGM1-e3685b69-Idt PIC X(08).
-          05 TC-PGM1-e3685b69 PROCEDURE-POINTER.
        PROCEDURE DIVISION
            .
       *PGM1.testos  - No Params

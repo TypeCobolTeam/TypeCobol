@@ -172,7 +172,7 @@
   </skeleton>
 
   <!-- replace DECLARE FUNCTION PUBLIC by a stacked program -->
-  <skeleton name="FUN.DECLARE.PUBLIC" var="definitions,copyname,programName8,maxargscount">
+  <skeleton name="FUN.DECLARE.PUBLIC" var="definitions,copyname,programName8">
     <conditions>
       <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" visibility="public" isnested="false"/>
     </conditions>
@@ -190,7 +190,7 @@
         items += "       value 'Fct=" + f.Hash + "-" + f.ID + "'.\n";
         }
         items += "\n";
-        for(var i=1; i != (@Model.maxargscount + 1); i++) {
+        for(var i=1; i != (@Model.definitions.MaxArgsCount + 1); i++) {
         items += "01 arg" + i + " pic X.\n";
         }
         items = items.Substring(0, items.Length - 1);
@@ -205,18 +205,18 @@
       <pattern name="ProcedureDivisionCalleeWithoutExternal" location="program.procedure-division.sentence-([0-9]+).begin" action="create" newline="false" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR" deprecated="false">
         @{
         var items = "";
-        if (@Model.maxargscount == 0) {
+        if (@Model.definitions.MaxArgsCount == 0) {
         items += "                 .\n";
         }
-        if (@Model.maxargscount == 1) {
+        if (@Model.definitions.MaxArgsCount == 1) {
         items += "                 arg1.\n";
         }
-        if (@Model.maxargscount > 1) {
+        if (@Model.definitions.MaxArgsCount > 1) {
         items += "                 arg1\n";
-        for(var i=2; i != @Model.maxargscount; i++) {
+        for(var i=2; i != @Model.definitions.MaxArgsCount; i++) {
         items += "                   arg" + i + "\n";
         }
-        items += "                   arg" + @Model.maxargscount + ".\n";
+        items += "                   arg" + @Model.definitions.MaxArgsCount + ".\n";
         }
         items = items.Substring(0, items.Length - 1);
         }
@@ -276,7 +276,7 @@ FctList-Process-Mode.
   </skeleton>
 
   <!-- generate code going with the generation of a public nested program in the main program-->
-  <skeleton name="MAIN.DECLARE.NESTED" var="definitions,programName8,maxargscount">
+  <skeleton name="MAIN.DECLARE.NESTED" var="definitions,programName8">
     <conditions>
       <condition node="TypeCobol.Compiler.CodeModel.SourceProgram" containnested="true"/>
     </conditions>
@@ -356,18 +356,18 @@ FctList-Process-Mode.
       <pattern name="ProcedureDivisionCalleeWithoutExternal" location="program.procedure-division.sentence-([0-9]+).begin" action="create" newline="false" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR" deprecated="false">
         @{
         var items = "";
-        if (@Model.maxargscount == 0) {
+        if (@Model.definitions.MaxArgsCount == 0) {
         items += "                 .\n";
         }
-        if (@Model.maxargscount == 1) {
+        if (@Model.definitions.MaxArgsCount == 1) {
         items += "                 arg1.\n";
         }
-        if (@Model.maxargscount > 1) {
+        if (@Model.definitions.MaxArgsCount > 1) {
         items += "                 arg1\n";
-        for(var i=2; i != @Model.maxargscount; i++) {
+        for(var i=2; i != @Model.definitions.MaxArgsCount; i++) {
         items += "                   arg" + i + "\n";
         }
-        items += "                   arg" + @Model.maxargscount + ".\n";
+        items += "                   arg" + @Model.definitions.MaxArgsCount + ".\n";
         }
         }
         @items

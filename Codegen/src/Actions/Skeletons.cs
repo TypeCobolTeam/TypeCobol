@@ -206,14 +206,12 @@ namespace TypeCobol.Codegen.Actions
                                                 public dynamic definitions;
                                                 public dynamic copyname;
                                                 public dynamic programName8;
-                                                public dynamic maxargscount;
                                                 
                                                 public SkeleTonFUN_DECLARE_PUBLICModel(TypeCobol.Compiler.Nodes.Node @Self)
                                                 {
                                                                 definitions = @Self["definitions"];
                                                                 copyname = @Self["copyname"];
                                                                 programName8 = @Self["programName8"];
-                                                                maxargscount = @Self["maxargscount"];
                                                 }
                                                 private static Tuple<string,string>[] __ConditionsAttributes_0 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.Nodes.FunctionDeclaration"), new Tuple<string,string>("visibility","public"), new Tuple<string,string>("isnested","false")};
                                                 public static bool Conditions_0(TypeCobol.Compiler.Nodes.Node @Self)
@@ -264,13 +262,11 @@ namespace TypeCobol.Codegen.Actions
                                 {
                                                 public dynamic definitions;
                                                 public dynamic programName8;
-                                                public dynamic maxargscount;
                                                 
                                                 public SkeleTonMAIN_DECLARE_NESTEDModel(TypeCobol.Compiler.Nodes.Node @Self)
                                                 {
                                                                 definitions = @Self["definitions"];
                                                                 programName8 = @Self["programName8"];
-                                                                maxargscount = @Self["maxargscount"];
                                                 }
                                                 private static Tuple<string,string>[] __ConditionsAttributes_0 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.CodeModel.SourceProgram"), new Tuple<string,string>("containnested","true")};
                                                 public static bool Conditions_0(TypeCobol.Compiler.Nodes.Node @Self)
@@ -673,7 +669,7 @@ namespace TypeCobol.Codegen.Actions
         items += "       value 'Fct=" + f.Hash + "-" + f.ID + "'.\n";
         }
         items += "\n";
-        for(var i=1; i != (@Model.maxargscount + 1); i++) {
+        for(var i=1; i != (@Model.definitions.MaxArgsCount + 1); i++) {
         items += "01 arg" + i + " pic X.\n";
         }
         items = items.Substring(0, items.Length - 1);
@@ -706,18 +702,18 @@ namespace TypeCobol.Codegen.Actions
                                                                                 StringBuilder @SelfResult = new StringBuilder();
                                                                                 @SelfResult.Append(@"");
         var items = "";
-        if (@Model.maxargscount == 0) {
+        if (@Model.definitions.MaxArgsCount == 0) {
         items += "                 .\n";
         }
-        if (@Model.maxargscount == 1) {
+        if (@Model.definitions.MaxArgsCount == 1) {
         items += "                 arg1.\n";
         }
-        if (@Model.maxargscount > 1) {
+        if (@Model.definitions.MaxArgsCount > 1) {
         items += "                 arg1\n";
-        for(var i=2; i != @Model.maxargscount; i++) {
+        for(var i=2; i != @Model.definitions.MaxArgsCount; i++) {
         items += "                   arg" + i + "\n";
         }
-        items += "                   arg" + @Model.maxargscount + ".\n";
+        items += "                   arg" + @Model.definitions.MaxArgsCount + ".\n";
         }
         items = items.Substring(0, items.Length - 1);
         @SelfResult.Append(@"
