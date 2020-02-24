@@ -42,7 +42,7 @@ namespace TypeCobol.Compiler.Symbols
             else
             {
                 //Report an error
-                context.ErrorReporter?.Report(variable, string.Format(TypeCobolResource.LevelExceededDuringRenumber, variable.Name, targetLevel), null);
+                context.ErrorReporter?.Report(new ValidationError(variable, string.Format(TypeCobolResource.LevelExceededDuringRenumber, variable.Name, targetLevel)));
             }
         }
 
@@ -59,7 +59,7 @@ namespace TypeCobol.Compiler.Symbols
             if (!variable.HasFlag(Symbol.Flags.SymbolExpanded))
             {
                 //Do not attempt renumbering of a non-expanded variable.
-                context.ErrorReporter?.Report(variable, string.Format(TypeCobolResource.RenumberingNonExpandedVariable, variable.Name), null);
+                context.ErrorReporter?.Report(new ValidationError(variable, string.Format(TypeCobolResource.RenumberingNonExpandedVariable, variable.Name)));
             }
             else
             {
@@ -119,7 +119,7 @@ namespace TypeCobol.Compiler.Symbols
             {
                 if (typedef.HasFlag(Symbol.Flags.IsCyclic))
                 {
-                    context.ErrorReporter?.Report(typedef.Symbol, string.Format(TypeCobolResource.RenumberingCyclicType, typedef.Symbol.Name), null);
+                    context.ErrorReporter?.Report(new ValidationError(typedef.Symbol, string.Format(TypeCobolResource.RenumberingCyclicType, typedef.Symbol.Name)));
                 }
                 else
                 {
@@ -128,7 +128,7 @@ namespace TypeCobol.Compiler.Symbols
             }
             else
             {
-                context.ErrorReporter?.Report(typedef.Symbol, string.Format(TypeCobolResource.RenumberingUnsafeType, typedef.Symbol.Name), null);
+                context.ErrorReporter?.Report(new ValidationError(typedef.Symbol, string.Format(TypeCobolResource.RenumberingUnsafeType, typedef.Symbol.Name)));
             }
 
             return null;

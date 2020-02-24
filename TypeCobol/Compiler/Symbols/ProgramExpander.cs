@@ -226,7 +226,7 @@ namespace TypeCobol.Compiler.Symbols
                 if (_cyclicTypeChecker.IsCyclic(typedef))
                 {
                     //Report error, no expansion performed.
-                    _parentExpander._errorReporter?.Report(typedef.Symbol, string.Format(TypeCobolResource.ExpandingCyclicType, typedef.Symbol.Name), null);
+                    _parentExpander._errorReporter?.Report(new ValidationError(typedef.Symbol, string.Format(TypeCobolResource.ExpandingCyclicType, typedef.Symbol.Name)));
                     return typedef;
                 }
 
