@@ -14,14 +14,8 @@ namespace TypeCobol.Codegen {
     
     public class CodegenTestUtils {
         private const string ROOT = "resources";
-        private const string CONFIG = "config";
         private const string INPUT = "input";
         private const string OUTPUT = "output";
-
-
-        public static void ParseGenerateCompare(string path, string skeletonPath, bool autoRemarks = false) {
-            ParseGenerateCompare(path, ParseConfig(skeletonPath), autoRemarks);
-        }
 
         /// <summary>
         /// Parse and generate using DocumentFormat.RDZReferenceFormat by default, because it's our only real target 
@@ -109,12 +103,6 @@ namespace TypeCobol.Codegen {
             if (columns == Compiler.Text.ColumnsLayout.CobolReferenceFormat)
                 return "      *";
             return "*";
-        }
-
-
-        public static List<Skeleton> ParseConfig(string resource) {
-            var path = Path.Combine(ROOT, CONFIG, resource);
-            return Config.Config.Parse(path);
         }
     }
 }

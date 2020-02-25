@@ -4,7 +4,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
-using TypeCobol.Codegen.Config;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Test.Utils;
@@ -136,7 +135,7 @@ namespace TypeCobol.Test {
 
                     var writer = new StringWriter();
                     //Retrieve skeletons
-                    var skeletons = !string.IsNullOrEmpty(skelPath) ? Config.Parse(skelPath) : new List<Codegen.Skeletons.Skeleton>();
+                    var skeletons = new List<Codegen.Skeletons.Skeleton>();
 
                     var generatedCobolStringBuilder = new StringBuilder();
 			        var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, generatedCobolStringBuilder, skeletons, null);
