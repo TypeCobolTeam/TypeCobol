@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Diagnostics;
 using Antlr4.Runtime.Misc;
-using Castle.Core.Internal;
 
 namespace TypeCobol.Compiler.Parser
 {

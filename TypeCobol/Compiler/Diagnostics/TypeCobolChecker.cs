@@ -1,5 +1,4 @@
 using System;
-using Antlr4.Runtime;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
@@ -8,9 +7,6 @@ using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using System.Linq;
-using System.Runtime.InteropServices;
-using Castle.Core.Internal;
-using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Parser.Generated;
 

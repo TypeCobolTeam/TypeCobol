@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Castle.Core.Internal;
 using Mono.Options;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
@@ -266,71 +265,80 @@ namespace TypeCobol.Tools.Options_Config
                 // Last parameter doesn't have any value
                 errorStack.Add(ReturnCode.FatalError, ex.Message);
             }
-            
 
             // ExecToStepError
             if (!Enum.TryParse(config.RawExecToStep, true, out config.ExecToStep))
                 errorStack.Add(ReturnCode.ExecToStepError, TypeCobolConfiguration.ErrorMessages[ReturnCode.ExecToStepError]);
 
             //// Check required options
+            int? inputFilesCount = config.InputFiles?.Count;
+            int? outputFilesCount = config.OutputFiles?.Count;
             //InputFileMissing
-            if (config.InputFiles.IsNullOrEmpty())
+            if (inputFilesCount == null || inputFilesCount == 0)
+            {
+                inputFilesCount = 0;
                 errorStack.Add(ReturnCode.InputFileMissing, TypeCobolConfiguration.ErrorMessages[ReturnCode.InputFileMissing]);
-            //OutputFileMissing/OutputFileError
+            }
             if (config.ExecToStep == ExecutionStep.Generate && !errorStack.ContainsKey(ReturnCode.ExecToStepError))
             {
-                if (config.OutputFiles.IsNullOrEmpty())
+                //OutputFileMissing
+                if (outputFilesCount == null || outputFilesCount == 0)
+                {
+                    outputFilesCount = 0;
                     errorStack.Add(ReturnCode.OutputFileMissing, TypeCobolConfiguration.ErrorMessages[ReturnCode.OutputFileMissing]);
-                else if (config.InputFiles.Count != config.OutputFiles.Count)
+                }
+                //OutputFileError
+                if (inputFilesCount != outputFilesCount)
+                {
                     errorStack.Add(ReturnCode.OutputFileError, TypeCobolConfiguration.ErrorMessages[ReturnCode.OutputFileError]);
+                }
             }
-            //SkeletonMissing
-            //if (config.ExecToStep == ExecutionStep.Generate && config.skeletonPath.IsNullOrEmpty() && !errorStack.ContainsKey(ReturnCode.ExecToStepError))
-            //    errorStack.Add(ReturnCode.SkeletonMissing, TypeCobolConfiguration.ErrorMessages[ReturnCode.SkeletonMissing]);
-
-
+            
             //// Check unexpected token
             if (unexpectedStrings.Count != 0)
                 errorStack.Add(ReturnCode.UnexpectedParamError, TypeCobolConfiguration.ErrorMessages[ReturnCode.UnexpectedParamError]);
 
             //// Options values verification
             //InputFileError
-            VerifFiles(config.InputFiles, ReturnCode.InputFileError, ref errorStack);
+            VerifFiles(config.InputFiles, ReturnCode.InputFileError, errorStack);
 
             //outputFilePathsWrong
-            foreach (var path in config.OutputFiles)
+            if (config.OutputFiles != null)
             {
-                if (!CanCreateFile(path) && !errorStack.ContainsKey(ReturnCode.OutputPathError))
+                foreach (var path in config.OutputFiles)
                 {
-                    errorStack.Add(ReturnCode.OutputPathError, TypeCobolConfiguration.ErrorMessages[ReturnCode.OutputPathError]);
+                    if (!CanCreateFile(path) && !errorStack.ContainsKey(ReturnCode.OutputPathError))
+                    {
+                        errorStack.Add(ReturnCode.OutputPathError, TypeCobolConfiguration.ErrorMessages[ReturnCode.OutputPathError]);
+                    }
                 }
             }
 
             //ErrorFilePathError
-            if (!CanCreateFile(config.ErrorFile) && !config.ErrorFile.IsNullOrEmpty())
+            if (!CanCreateFile(config.ErrorFile) && !string.IsNullOrEmpty(config.ErrorFile))
                 errorStack.Add(ReturnCode.ErrorFileError, TypeCobolConfiguration.ErrorMessages[ReturnCode.ErrorFileError]);
 
             //SkeletonFileError
-            if (config.ExecToStep == ExecutionStep.Generate && !config.skeletonPath.IsNullOrEmpty() &&  !errorStack.ContainsKey(ReturnCode.ExecToStepError))
+            if (config.ExecToStep == ExecutionStep.Generate && !string.IsNullOrEmpty(config.skeletonPath) &&  !errorStack.ContainsKey(ReturnCode.ExecToStepError))
             {
-                if (FileSystem.GetFiles(config.skeletonPath, recursive: false).IsNullOrEmpty() && !errorStack.ContainsKey(ReturnCode.SkeletonFileError))
+                if (FileSystem.GetFiles(config.skeletonPath, recursive: false).Count == 0 && !errorStack.ContainsKey(ReturnCode.SkeletonFileError))
                 {
                     errorStack.Add(ReturnCode.SkeletonFileError, TypeCobolConfiguration.ErrorMessages[ReturnCode.SkeletonFileError]);
                 }
             }
 
             //HaltOnMissingCopyFilePathError
-            if (!CanCreateFile(config.HaltOnMissingCopyFilePath) && !config.HaltOnMissingCopyFilePath.IsNullOrEmpty())
+            if (!CanCreateFile(config.HaltOnMissingCopyFilePath) && !string.IsNullOrEmpty(config.HaltOnMissingCopyFilePath))
                 errorStack.Add(ReturnCode.HaltOnMissingCopyError, TypeCobolConfiguration.ErrorMessages[ReturnCode.HaltOnMissingCopyError]);
 
             // EncodingError
             config.Format = CreateFormat(config.RawFormat, ref config);
 
             //IntrinsicError
-            VerifFiles(config.Copies, ReturnCode.IntrinsicError, ref errorStack);
+            VerifFiles(config.Copies, ReturnCode.IntrinsicError, errorStack);
 
             //CopiesError
-            VerifFiles(config.CopyFolders, ReturnCode.CopiesError, ref errorStack, true);
+            VerifFiles(config.CopyFolders, ReturnCode.CopiesError, errorStack, true);
 
             ////DependencyFolderMissing
             if (config.ExecToStep == ExecutionStep.Generate && !errorStack.ContainsKey(ReturnCode.ExecToStepError))
@@ -343,14 +351,14 @@ namespace TypeCobol.Tools.Options_Config
                     if (file?.Contains("*") == true)
                         file = string.Empty;
 
-                    if ((!Directory.Exists(directory) || !file.IsNullOrEmpty() && !File.Exists(dependency)) && !errorStack.ContainsKey(ReturnCode.DependenciesError))
+                    if ((!Directory.Exists(directory) || !string.IsNullOrEmpty(file) && !File.Exists(dependency)) && !errorStack.ContainsKey(ReturnCode.DependenciesError))
                         errorStack.Add(ReturnCode.DependenciesError, TypeCobolConfiguration.ErrorMessages[ReturnCode.DependenciesError] + directory + Path.DirectorySeparatorChar + file);
 
                 }
             }
 
             // MaxDiagnosticsError
-            if (!config.RawMaximumDiagnostics.IsNullOrEmpty())
+            if (!string.IsNullOrEmpty(config.RawMaximumDiagnostics))
             {
                 if (!int.TryParse(config.RawMaximumDiagnostics, out config.MaximumDiagnostics))
                     errorStack.Add(ReturnCode.MaxDiagnosticsError, TypeCobolConfiguration.ErrorMessages[ReturnCode.MaxDiagnosticsError]);
@@ -361,26 +369,26 @@ namespace TypeCobol.Tools.Options_Config
                 errorStack.Add(ReturnCode.OutputFormatError, TypeCobolConfiguration.ErrorMessages[ReturnCode.OutputFormatError]);
 
             //ExpandingCopyFilePathError
-            if (!CanCreateFile(config.ExpandingCopyFilePath) && !config.ExpandingCopyFilePath.IsNullOrEmpty())
+            if (!CanCreateFile(config.ExpandingCopyFilePath) && !string.IsNullOrEmpty(config.ExpandingCopyFilePath))
                 errorStack.Add(ReturnCode.ExpandingCopyError, TypeCobolConfiguration.ErrorMessages[ReturnCode.ExpandingCopyError]);
 
             //HaltOnMissingCopyFilePathError
-            if (!CanCreateFile(config.ExtractedCopiesFilePath) && !config.ExtractedCopiesFilePath.IsNullOrEmpty())
+            if (!CanCreateFile(config.ExtractedCopiesFilePath) && !string.IsNullOrEmpty(config.ExtractedCopiesFilePath))
                 errorStack.Add(ReturnCode.ExtractusedCopyError, TypeCobolConfiguration.ErrorMessages[ReturnCode.ExtractusedCopyError]);
 
             //LogFilePathError
-            if (!CanCreateFile(config.LogFile) && !config.LogFile.IsNullOrEmpty())
+            if (!CanCreateFile(config.LogFile) && !string.IsNullOrEmpty(config.LogFile))
                 errorStack.Add(ReturnCode.LogFileError, TypeCobolConfiguration.ErrorMessages[ReturnCode.LogFileError]);
 
             return errorStack;
         }
 
 
-        public static void VerifFiles(List<string> paths, ReturnCode errorCode, ref Dictionary<ReturnCode, string> errorStack, bool isFolder=false)
+        public static void VerifFiles(List<string> paths, ReturnCode errorCode, Dictionary<ReturnCode, string> errorStack, bool isFolder = false)
         {
             foreach (var path in paths)
             {
-                if ((isFolder ? !Directory.Exists(path) : FileSystem.GetFiles(path, recursive: false).IsNullOrEmpty()) && !errorStack.ContainsKey(errorCode))
+                if ((isFolder ? !Directory.Exists(path) : FileSystem.GetFiles(path, recursive: false).Count == 0) && !errorStack.ContainsKey(errorCode))
                 {
                     errorStack.Add(errorCode, TypeCobolConfiguration.ErrorMessages[errorCode]);
                 }
