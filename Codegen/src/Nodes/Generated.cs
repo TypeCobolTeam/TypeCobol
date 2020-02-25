@@ -27,54 +27,10 @@ namespace TypeCobol.Codegen.Nodes
         string ReplaceCode { get; }
     }
 
-    internal class GeneratedNode : Compiler.Nodes.Node, Generated
-    {
-        private Solver Solver;
-
-        public GeneratedNode(Solver solver)  { this.Solver = solver; }
-        public GeneratedNode(Solver solver, CodeElement codelement)
-        {
-            this.Solver = solver;
-            this.InternalCodeElement = codelement;
-        }
-
-        protected override CodeElement InternalCodeElement { get; }
-
-        private IList<ITextLine> _cache = null;
-        public override IEnumerable<ITextLine> Lines
-        {
-            get
-            {
-                if (_cache == null)
-                {
-                    string text = Solver.Replace().TrimStart();
-                    _cache = new List<ITextLine>();
-                    if (this.IsFlagSet(Flag.FactoryGeneratedNodeWithFirstNewLine))
-                        _cache.Add(new TextLineSnapshot(-1, "", null));
-                    foreach (string line in text.Split('\n'))
-                    {
-                        _cache.Add(new TextLineSnapshot(-1, line, null));
-                    }
-                }
-                return _cache;
-            }
-        }
-        
-
-        public bool IsLeaf { get { return false; } }
-
-        public override bool VisitNode(IASTVisitor astVisitor)
-        {
-            //Generated Node doesn't need to be visited
-            return false;
-        }
-    }
-
-
     internal class GeneratedNode2 : Compiler.Nodes.Node, Generated
     {
         /// <summary>
-        /// Code Element to appy to this Generated Node
+        /// Code Element to apply to this Generated Node
         /// </summary>
 
         public GeneratedNode2(string text, bool isLeaf) {

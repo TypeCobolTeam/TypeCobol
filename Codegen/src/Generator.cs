@@ -135,7 +135,9 @@ namespace TypeCobol.Codegen
             if (!string.IsNullOrEmpty(TypeCobolVersion))
                 Destination.AppendLine("      *TypeCobol_Version:" + TypeCobolVersion);
 
-            Actions = new GeneratorActions(this, skeletons, document, skeletons != null ? null : new TypeCobol.Codegen.Actions.Skeletons());
+            //Use pre-generated skeletons as the ActionsProvider.
+            IActionsProvider actionsProvider = new Actions.Skeletons();
+            Actions = new GeneratorActions(this, skeletons, document, actionsProvider);
             //To Store Erased Nodes by the Erase Action.
             ErasedNodes = new List<Node>();
             //To Store Cloned Nodes by the Clone Action.
