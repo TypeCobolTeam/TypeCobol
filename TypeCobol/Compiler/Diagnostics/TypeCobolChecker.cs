@@ -725,21 +725,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(node,
                     "Condition parameter \"" + parameter.Name + "\" must be subordinate to another parameter.", parameter);
             }
-
-            if (parameter.DataConditions != null)
-            {
-                foreach (var condition in parameter.DataConditions)
-                {
-                    if (condition.LevelNumber?.Value != 88 && condition.Name != null)
-                        DiagnosticUtils.AddError(node,
-                            "Condition parameter \"" + condition.Name + "\" must be level 88.", condition);
-                    if (condition.LevelNumber?.Value == 88 && parameter.DataType == DataType.Boolean)
-                        DiagnosticUtils.AddError(node,
-                            "The Level 88 symbol '" + parameter.Name +
-                            "' cannot be declared under a BOOL typed symbol", condition);
-                }
-            }
-
         }
 
         /// <summary>TCRFUN_DECLARATION_NO_DUPLICATE_NAME</summary>
