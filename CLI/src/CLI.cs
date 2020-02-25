@@ -269,7 +269,7 @@ namespace TypeCobol.Server
             {
                 foreach (var program in programs.Where(p => p.IsMainProgram))
                 {
-                    // a stacked program should not be referenced from another source file
+                    // a stacked or a nested program should not be referenced from another source file
                     var previousPrograms = rootTable.GetPrograms();
                     foreach (var previousProgram in previousPrograms)
                     {
