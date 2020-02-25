@@ -171,7 +171,6 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <PropertyGroup>
     <PreBuildEvent>$(OutDir)\CSCup.exe -nodate -nopositions -expect 2000 -parser CobolCompilerDirectivesParser -symbols CobolCompilerDirectivesSymbols $(ProjectDir)\Compiler\CupPreprocessor\CobolCompilerDirectives.cup
 COPY $(TargetDir)CobolCompilerDirectivesParser.cs $(ProjectDir)\Compiler\CupPreprocessor\

@@ -66,7 +66,7 @@ namespace TypeCobol.Codegen
             // Generator.
             StringBuilder destination = new StringBuilder();
             var columnsLayout = fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
-            IGenerator generator = new DefaultGenerator(fileCompiler.CompilationResultsForProgram, destination, null, null);
+            IGenerator generator = new DefaultGenerator(fileCompiler.CompilationResultsForProgram, destination, null);
 
             // Codegen iterations.
             Console.WriteLine("FILE;ITERATION;STEP;TIME_TAKEN");

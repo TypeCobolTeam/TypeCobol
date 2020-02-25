@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using TypeCobol.Codegen.Skeletons;
+
 namespace TypeCobol.Codegen.Generators
 {
     /// <summary>
@@ -13,11 +12,11 @@ namespace TypeCobol.Codegen.Generators
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="Document"> The compilation document </param>
+        /// <param name="document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
-        /// <param name="skeletons">All skeletons pattern for code generation </param>
-        public TypeCobolGenerator(TypeCobol.Compiler.CompilationDocument document, StringBuilder destination, List<Skeleton> skeletons, string typeCobolVersion)
-            : base(document, destination, skeletons, typeCobolVersion)
+        /// <param name="typeCobolVersion">Current version of TypeCobol parser/codegen</param>
+        public TypeCobolGenerator(TypeCobol.Compiler.CompilationDocument document, StringBuilder destination, string typeCobolVersion)
+            : base(document, destination, typeCobolVersion)
         {
         }
 

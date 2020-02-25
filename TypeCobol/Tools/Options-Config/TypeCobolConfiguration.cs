@@ -72,7 +72,6 @@ namespace TypeCobol.Tools.Options_Config
             // Missing Parameters
             { ReturnCode.InputFileMissing,       "Input file(s) are required." },
             { ReturnCode.OutputFileMissing,      "Output are required in execution to generate step." },
-            { ReturnCode.SkeletonMissing,        "Skeleton file is required in execution to generate step." }, 
             // Wrong parameter
             { ReturnCode.InputFileError,         "Input files given are unreachable." },
             { ReturnCode.OutputPathError,        "Output paths given are unreachable." },
@@ -128,7 +127,6 @@ namespace TypeCobol.Tools.Options_Config
         // Missing parameter           
         InputFileMissing = 1010,        // Missing input file parameter
         OutputFileMissing = 1011,       // Missing output files and ExecToStep set to "Generate"
-        SkeletonMissing = 1012,         // Missing skeleton file and ExecToStep set to "Generate"
 
         // Wrong parameter
         InputFileError = 1020,          // Wrong input file(s) given

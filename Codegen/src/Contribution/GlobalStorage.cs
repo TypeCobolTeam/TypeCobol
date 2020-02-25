@@ -17,7 +17,7 @@ namespace TypeCobol.Codegen.Contribution
     /// </summary>
     public class GlobalStorage : IContribute
     {
-        internal class GlobalStorageNode : GeneratedNode2, IGeneratorContext
+        internal class GlobalStorageNode : GeneratedNode, IGeneratorContext
         {
             public IGenerator Generator
             {get; set; }

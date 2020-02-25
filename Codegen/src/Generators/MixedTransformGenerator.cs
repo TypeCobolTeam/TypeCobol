@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Nodes;
@@ -18,10 +16,9 @@ namespace TypeCobol.Codegen.Generators
         /// Generator used to generate Cobol code (Could be Cobol85, Cobol2002 ...)
         /// </summary>
         private Generator _usedGenerator;
-        public MixedTransformGenerator(CompilationDocument document, StringBuilder destination, List<Skeleton> skeletons, Generator generator) 
-            : base(document, destination, skeletons, null)
+        public MixedTransformGenerator(CompilationDocument document, StringBuilder destination, Generator generator) 
+            : base(document, destination, null)
         {
-
             _usedGenerator = generator;
         }
 

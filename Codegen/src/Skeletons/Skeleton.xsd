@@ -37,7 +37,7 @@
                     <!-- Condition that must satisfy the the node to match the skeleton -->
                     <xs:element name="condition">
                       <xs:complexType>
-                        <!-- All attributes that represents dynamic variable in the Razor's @Model-->
+                        <!-- All attributes that represent dynamic variables in the @Model object -->
                         <!-- Full name Type of the concerned Node-->
                         <xs:attribute name="node" type="xs:string" use="required"/>
                         <xs:attribute name="name" type="xs:string"/>
