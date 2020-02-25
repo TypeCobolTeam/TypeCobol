@@ -137,7 +137,7 @@ namespace TypeCobol.Codegen.Actions
             {
                 if (group != null) this.Group = group;
                 //JCM Give to the replaced form the same Code element So that positions will be calculated correctly
-                this.New = new GeneratedNode2(code, false, Old.CodeElement);
+                this.New = new GeneratedNode(code, false, Old.CodeElement);
             }            
         }
 

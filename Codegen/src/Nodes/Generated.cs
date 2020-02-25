@@ -27,18 +27,18 @@ namespace TypeCobol.Codegen.Nodes
         string ReplaceCode { get; }
     }
 
-    internal class GeneratedNode2 : Compiler.Nodes.Node, Generated
+    internal class GeneratedNode : Compiler.Nodes.Node, Generated
     {
         /// <summary>
         /// Code Element to apply to this Generated Node
         /// </summary>
 
-        public GeneratedNode2(string text, bool isLeaf) {
+        public GeneratedNode(string text, bool isLeaf) {
             this.Text = text;
             this.IsLeaf = isLeaf;
         }
 
-        public GeneratedNode2(string text, bool isLeaf, CodeElement codelement) 
+        public GeneratedNode(string text, bool isLeaf, CodeElement codelement) 
         {
             this.Text = text;
             this.IsLeaf = isLeaf;
