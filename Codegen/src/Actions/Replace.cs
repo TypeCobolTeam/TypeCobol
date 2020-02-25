@@ -11,7 +11,7 @@ namespace TypeCobol.Codegen.Actions
     /// Action to replace a Node by a new Generated one. The Old node is commented but not its children.
     /// The children are copied in the new Generated Node.
     /// </summary>
-    public class ReplaceCode : EventArgs, Action
+    public class Replace : EventArgs, Action
     {
         public string Group { get; private set; }
         internal Node Old;
@@ -127,7 +127,7 @@ namespace TypeCobol.Codegen.Actions
         /// <param name="pattern">The pattern's name</param>
         /// <param name="code">The code to be applied</param>
         /// <param name="group"></param>        
-        public ReplaceCode(Node node, string pattern, string code, string group)
+        public Replace(Node node, string pattern, string code, string group)
         {
             this.Old = node;
             UseRazor = true;

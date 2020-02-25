@@ -160,11 +160,11 @@ namespace TypeCobol.Codegen
             var destination = GetLocation(source, location, out index);
             if ("create".Equals(action))
             {
-                return new CreateCode(destination, pattern, code, group, index, newline);
+                return new Create(destination, pattern, code, group, index, newline);
             }
             if ("replace".Equals(action))
             {
-                return new ReplaceCode(destination, pattern, code, group);
+                return new Replace(destination, pattern, code, group);
             }
             if ("comment".Equals(action))
             {

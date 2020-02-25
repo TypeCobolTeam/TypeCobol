@@ -8,7 +8,7 @@ namespace TypeCobol.Codegen.Actions
     /// <summary>
     /// Action to create a new Generate Node.
     /// </summary>
-    public class CreateCode : EventArgs, Action
+    public class Create : EventArgs, Action
     {
         public string Group { get; private set; }
         public Node Parent
@@ -26,7 +26,7 @@ namespace TypeCobol.Codegen.Actions
         /// <param name="code">The code to apply</param>
         /// <param name="group">The Group ID</param>
         /// <param name="position">The Insertion position (index) as child in the Parent node</param>
-        public CreateCode(Node parent, string pattern, string code, string group, int? position, bool newline)
+        public Create(Node parent, string pattern, string code, string group, int? position, bool newline)
         {
             this.Parent = parent;
             this.Group = group;
