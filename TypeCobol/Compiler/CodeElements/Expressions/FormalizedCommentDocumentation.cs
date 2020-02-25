@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Antlr4.Runtime;
-using Castle.Core.Internal;
-using JetBrains.Annotations;
 using TypeCobol.Compiler.Diagnostics;
-using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 
@@ -157,7 +153,7 @@ namespace TypeCobol.Compiler.CodeElements
         {
             string value = symbol?.Text;
             value = value == null ? "" : value.Trim();
-            if (!value.IsNullOrEmpty())
+            if (!string.IsNullOrEmpty(value))
             {
                 switch (parameter)
                 {
@@ -174,33 +170,33 @@ namespace TypeCobol.Compiler.CodeElements
                         ToDo.Add(value);
                     break;
                 case Fields.Description:
-                    if (!Description.IsNullOrEmpty())
+                    if (!string.IsNullOrEmpty(Description))
                         Description += Environment.NewLine;
                     Description += value + " ";
                     break;
                 case Fields.Deprecated:
-                    if (!Deprecated.IsNullOrEmpty())
+                    if (!string.IsNullOrEmpty(Deprecated))
                         Description += Environment.NewLine;
                     Deprecated += value + " ";
                     break;
                 case Fields.ReplacedBy:
-                    if (!ReplacedBy.IsNullOrEmpty())
+                    if (!string.IsNullOrEmpty(ReplacedBy))
                         ReplacedBy += Environment.NewLine;
                     ReplacedBy += value + " ";
                     break;
                 case Fields.Restriction:
-                    if (!Restriction.IsNullOrEmpty())
+                    if (!string.IsNullOrEmpty(Restriction))
                         Restriction += Environment.NewLine;
                     Restriction += value + " ";
                     break;
                 case Fields.See:
-                    if (!See.IsNullOrEmpty())
+                    if (!string.IsNullOrEmpty(See))
                         See += Environment.NewLine;
                     See += value + " ";
                     break;
                 case Fields.Parameters:
                     if (isContinuation)
-                        Parameters[_lastParameterRegistered] += (Parameters[_lastParameterRegistered].IsNullOrEmpty()? "" : " ") + value;
+                        Parameters[_lastParameterRegistered] += (Parameters[_lastParameterRegistered].Length == 0 ? string.Empty : " ") + value;
                     else
                     {
                         Token token = symbol as Token;
@@ -223,23 +219,16 @@ namespace TypeCobol.Compiler.CodeElements
         /// <param name="key">The key is corresponding to the parameter name</param>
         /// <param name="value">The description associated to the key</param>
         public void Add(Fields parameter, string key,  string value)
-        { 
+        {
             if (parameter == Fields.Parameters)
             {
-                if (!key.IsNullOrEmpty() && !value.IsNullOrEmpty())
-                    Parameters.Add(key.Trim(), value.Trim());
-                _lastParameterRegistered = key.Trim();
+                if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
+                {
+                    var trimmedKey = key.Trim();
+                    Parameters.Add(trimmedKey, value.Trim());
+                    _lastParameterRegistered = trimmedKey;
+                }
             }
-        }
-
-        /// <summary>
-        /// Is a mirror of the Add method that add a key value pair to a parameter (only for Parameters)
-        /// </summary>
-        /// <param name="parameter">The parameter to add to (have to be Parameters for now)</param>
-        /// <param name="item">The key-value pair with the parameter name as key and its description as value</param>
-        public void Add(Fields parameter, KeyValuePair<string, string> item)
-        {
-            Add(parameter, item.Key, item.Value);
         }
 
         public override string ToString()
