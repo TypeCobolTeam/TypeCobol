@@ -24,7 +24,8 @@ namespace TypeCobol.Codegen.Actions
         /// True if this replace action is for a "replace SET <pointer> UP BY <integer>" pattern, false otherwise.
         /// </summary>
         private bool IsReplaceSetUpByPointer;
-        private bool UseRazor;
+
+        private bool _optimized;
 
         /// <summary>
         /// Determine if the given node, the given template and the set of template variables correspond to a "replace SET <boolean> TO FALSE"
@@ -80,7 +81,7 @@ namespace TypeCobol.Codegen.Actions
 
             if (IsReplaceSetBool)
             {
-                //Method : Optimization don't use Razor just create adequate TypeCobol.Codegen.Actions.Qualifier.GenerateToken.
+                //Optimization : for SET instructions on booleans, just create adequate TypeCobol.Codegen.Actions.Qualifier.GenerateToken.
                 //In addition this method can allow the Code Generator to detect a column 72 overflow.
                 int count = node.Children.Count;
                 Node previousNode = null;
@@ -112,7 +113,7 @@ namespace TypeCobol.Codegen.Actions
                         break;
                     }
                 }
-                UseRazor = false;
+                _optimized = true;
             }
             else if (IsReplaceSetUpByPointer)
             {
@@ -130,10 +131,10 @@ namespace TypeCobol.Codegen.Actions
         public Replace(Node node, string pattern, string code, string group)
         {
             this.Old = node;
-            UseRazor = true;
+            _optimized = false;
             CheckCustomReplace(node, pattern);
             //Substitute any group code
-            if (UseRazor)
+            if (!_optimized)
             {
                 if (group != null) this.Group = group;
                 //JCM Give to the replaced form the same Code element So that positions will be calculated correctly
@@ -149,7 +150,7 @@ namespace TypeCobol.Codegen.Actions
             //No need to replace an erased node.
             if (!Old.IsFlagSet(Node.Flag.GeneratorErasedNode) || Old.IsFlagSet(Node.Flag.PersistentNode))
             {
-                if (UseRazor)
+                if (!_optimized)
                 {
                     // transfer Old's children to New
                     for (int i = Old.Children.Count - 1; i >= 0; --i)

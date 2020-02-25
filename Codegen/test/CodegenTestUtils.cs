@@ -71,8 +71,8 @@ namespace TypeCobol.Codegen {
         /// for now and we don't have specifications for FreeFormat.
         /// </summary>
         /// <param name="path"></param>
-        /// <param name="skeletons"></param>
         /// <param name="autoRemarks"></param>
+        /// <param name="typeCobolVersion"></param>
         /// <param name="copies"></param>        
         public static void ParseGenerateCompareWithLineMapping(string path, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null)
         {
