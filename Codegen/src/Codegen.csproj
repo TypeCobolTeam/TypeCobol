@@ -60,8 +60,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <TCTemplate Include="..\..\CLI\src\config\skeletons.xml">
-      <Link>Actions\skeletons.xml</Link>
+    <TCTemplate Include="Skeletons\skeletons.xml">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>..\..\..\Codegen\src\Actions\Skeletons.cs</CustomToolNamespace>
       <SubType>Designer</SubType>

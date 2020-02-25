@@ -40,10 +40,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include="config\skeletons.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
     <None Include="config\TCIntrinsic-SampleDate.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
