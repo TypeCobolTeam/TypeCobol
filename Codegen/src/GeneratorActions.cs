@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using TypeCobol.Codegen.Actions;
-using TypeCobol.Codegen.Nodes;
-using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler;
-using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Nodes;
@@ -17,14 +13,6 @@ namespace TypeCobol.Codegen
     /// </summary>
     public class GeneratorActions : List<TypeCobol.Codegen.Actions.Action>, NodeVisitor
     {
-        /// <summary>
-        /// Skeletons patterns
-        /// </summary>
-        public List<Skeleton> Skeletons
-        {
-            get;
-            private set;
-        }
         /// <summary>
         /// CompilationDocument that contains all the code parsing results
         /// </summary>
@@ -53,10 +41,11 @@ namespace TypeCobol.Codegen
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="Skeletons">Skeletons pattern for actions</param>
-        public GeneratorActions(Generator generator, List<Skeleton> skeletons, CompilationDocument compilationDocument, IActionsProvider actionsProvider) {
+        /// <param name="generator">Associated generator for this collection of actions.</param>
+        /// <param name="compilationDocument">Current compilation document</param>
+        /// <param name="actionsProvider">Actions provider</param>
+        public GeneratorActions(Generator generator, CompilationDocument compilationDocument, IActionsProvider actionsProvider) {
             Generator = generator;
-            Skeletons = skeletons ?? new List<Skeleton>();
             CompilationDocument = compilationDocument;
             ActionsProvider = actionsProvider;
         }

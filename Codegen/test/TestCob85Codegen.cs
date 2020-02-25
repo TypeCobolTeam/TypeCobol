@@ -1,13 +1,5 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
-using TypeCobol.Codegen.Skeletons;
-using TypeCobol.Compiler;
-using TypeCobol.Compiler.Directives;
-// DocumentFormat
-using TypeCobol.Tools; // CodeElementDiagnostics
-
 
 namespace TypeCobol.Codegen.Test {
 

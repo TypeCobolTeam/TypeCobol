@@ -134,11 +134,8 @@ namespace TypeCobol.Test {
 			        watch.Start();
 
                     var writer = new StringWriter();
-                    //Retrieve skeletons
-                    var skeletons = new List<Codegen.Skeletons.Skeleton>();
-
                     var generatedCobolStringBuilder = new StringBuilder();
-			        var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, generatedCobolStringBuilder, skeletons, null);
+			        var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, generatedCobolStringBuilder, null);
 			        var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
 			        generator.Generate(document.Results, columns);
                     writer.Write(generatedCobolStringBuilder);

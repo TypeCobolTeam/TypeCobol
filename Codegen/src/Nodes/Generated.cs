@@ -2,9 +2,7 @@
 
 namespace TypeCobol.Codegen.Nodes
 {
-
     using System.Collections.Generic;
-    using TypeCobol.Codegen.Skeletons.Templates;
     using TypeCobol.Compiler.Text;
     using TypeCobol.Compiler.CodeElements;
     using System;

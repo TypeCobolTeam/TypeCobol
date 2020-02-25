@@ -1,10 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.IO;
-using TypeCobol.Codegen.Skeletons;
-using TypeCobol.Compiler; // DocumentFormat
-using TypeCobol.Tools; // CodeElementDiagnostics
-
 
 namespace TypeCobol.Codegen {
 
@@ -548,7 +544,7 @@ namespace TypeCobol.Codegen {
         [TestProperty("Time", "fast")]
         public void TypeCobolVersionTest()
         {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TCOBVersion") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TCOBVersion") + ".rdz.tcbl", false, "TestTypeCobolVersion");
         }
 
 	    [TestMethod]
@@ -556,7 +552,7 @@ namespace TypeCobol.Codegen {
 	    [TestProperty("Time", "fast")]
 	    public void ProcedureSubscriptTest()
 	    {
-	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "ProcedureSubscript") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
+	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "ProcedureSubscript") + ".rdz.tcbl", false, "TestTypeCobolVersion");
 	    }
 
 	    [TestMethod]
@@ -564,7 +560,7 @@ namespace TypeCobol.Codegen {
 	    [TestProperty("Time", "fast")]
 	    public void PointersTest()
 	    {
-	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Pointers") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
+	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Pointers") + ".rdz.tcbl", false, "TestTypeCobolVersion");
 	    }
 
         [TestMethod]
@@ -572,7 +568,7 @@ namespace TypeCobol.Codegen {
         [TestProperty("Time", "fast")]
         public void ProgramParameterCompUsageTypesTest()
         {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "ProgramParameterCompUsageTypes") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "ProgramParameterCompUsageTypes") + ".rdz.tcbl", false, "TestTypeCobolVersion");
         }
 
         [TestMethod]
@@ -580,9 +576,9 @@ namespace TypeCobol.Codegen {
         [TestProperty("Time", "fast")]
         public void CobolLineSplit_IN_VarTest()
         {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CobolLineSplit_IN_Var") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CobolLineSplit_IN_Var1") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CobolLineSplit_IN_Var2") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CobolLineSplit_IN_Var") + ".rdz.tcbl", false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CobolLineSplit_IN_Var1") + ".rdz.tcbl", false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CobolLineSplit_IN_Var2") + ".rdz.tcbl", false, "TestTypeCobolVersion");
         }
 
         [TestMethod]
@@ -590,7 +586,7 @@ namespace TypeCobol.Codegen {
         [TestProperty("Time", "fast")]
         public void GenQualifiedBoolVarTest()
         {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenQualifiedBoolVar") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenQualifiedBoolVar") + ".rdz.tcbl", false, "TestTypeCobolVersion");
         }
 
         [TestMethod]
@@ -598,7 +594,7 @@ namespace TypeCobol.Codegen {
         [TestProperty("Time", "fast")]
         public void GenMoveCorrTest()
         {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenMoveCorr") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenMoveCorr") + ".rdz.tcbl", false, "TestTypeCobolVersion");
         }
 
         [TestMethod]
@@ -606,7 +602,7 @@ namespace TypeCobol.Codegen {
         [TestProperty("Time", "fast")]
         public void GenCorrStatementsTest()
         {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenCorrStatements") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenCorrStatements") + ".rdz.tcbl", false, "TestTypeCobolVersion");
         }
 
         [TestMethod]
@@ -614,7 +610,7 @@ namespace TypeCobol.Codegen {
         [TestProperty("Time", "fast")]
         public void GenContinueInsideTypdefTest()
         {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenContinueInsideTypdef") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenContinueInsideTypdef") + ".rdz.tcbl", false, "TestTypeCobolVersion");
         }
 
 
@@ -623,7 +619,7 @@ namespace TypeCobol.Codegen {
         [TestProperty("Time", "fast")]
         public void Gen_73_80_RemoveTextTest()
         {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Gen_73_80_RemoveText") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Gen_73_80_RemoveText") + ".rdz.tcbl", false, "TestTypeCobolVersion");
         }
 
         [TestMethod]
@@ -631,7 +627,7 @@ namespace TypeCobol.Codegen {
         [TestProperty("Time", "fast")]
         public void GenGlobalKeywordTest()
         {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenGlobalKeyword") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenGlobalKeyword") + ".rdz.tcbl", false, "TestTypeCobolVersion");
         }
 
         [TestMethod]
@@ -639,7 +635,7 @@ namespace TypeCobol.Codegen {
         [TestProperty("Time", "fast")]
         public void SetUnsafeTest()
         {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "SetUnsafe") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "SetUnsafe") + ".rdz.tcbl", false, "TestTypeCobolVersion");
         }
 
         [TestMethod]
@@ -647,7 +643,7 @@ namespace TypeCobol.Codegen {
         [TestProperty("Time", "fast")]
         public void GenTCobVersionAfterOptionsTest()
         {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenTCobVersionAfterOptions") + ".rdz.cbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenTCobVersionAfterOptions") + ".rdz.cbl", false, "TestTypeCobolVersion");
         }
 
         [TestMethod]
@@ -655,7 +651,7 @@ namespace TypeCobol.Codegen {
         [TestProperty("Time", "fast")]
         public void CopyReplaceInProcLinkage()
         {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CopyReplaceInProcLinkage") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CopyReplaceInProcLinkage") + ".rdz.tcbl", false, "TestTypeCobolVersion");
         }
 
 	    [TestMethod]
@@ -663,8 +659,8 @@ namespace TypeCobol.Codegen {
 	    [TestProperty("Time", "fast")]
 	    public void MisPlaceCopyInstrWithProcMetaDataTest()
 	    {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "MisPlaceCopyInstrWithProcMetaData") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "MisPlaceCopyInstrWithProcMetaData2") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "MisPlaceCopyInstrWithProcMetaData") + ".rdz.tcbl", false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "MisPlaceCopyInstrWithProcMetaData2") + ".rdz.tcbl", false, "TestTypeCobolVersion");
         }
 
 
@@ -673,7 +669,7 @@ namespace TypeCobol.Codegen {
 	    [TestProperty("Time", "fast")]
 	    public void DeclarativesWithProcedures()
 	    {
-	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "DeclarativesWithProcedures") + ".tcbl", null, false, "TestTypeCobolVersion");
+	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "DeclarativesWithProcedures") + ".tcbl", false, "TestTypeCobolVersion");
 	    }
 
 	    [TestMethod]
@@ -681,7 +677,7 @@ namespace TypeCobol.Codegen {
 	    [TestProperty("Time", "fast")]
 	    public void DeclarativesWithProcedures2()
 	    {
-	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "DeclarativesWithProcedures2") + ".tcbl", null, false, "TestTypeCobolVersion");
+	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "DeclarativesWithProcedures2") + ".tcbl", false, "TestTypeCobolVersion");
 	    }
 
         [TestMethod]
@@ -689,7 +685,7 @@ namespace TypeCobol.Codegen {
         [TestProperty("Time", "fast")]
         public void DeclarativesWithInstructionsWithinTest()
         {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "DeclarativesWithInstructionsWithin") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "DeclarativesWithInstructionsWithin") + ".rdz.tcbl", false, "TestTypeCobolVersion");
         }
 
 	    [TestMethod]
@@ -697,7 +693,7 @@ namespace TypeCobol.Codegen {
 	    [TestProperty("Time", "fast")]
 	    public void FormalizedCommentsTest()
 	    {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "FormalizedComments") + ".tcbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "FormalizedComments") + ".tcbl", false, "TestTypeCobolVersion");
 	    }
 
 	    [TestMethod]
@@ -705,7 +701,7 @@ namespace TypeCobol.Codegen {
 	    [TestProperty("Time", "fast")]
 	    public void MultilinesCommentsTest()
 	    {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "MultilinesComments") + ".tcbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "MultilinesComments") + ".tcbl", false, "TestTypeCobolVersion");
 	    }
 
 	    [TestMethod]
@@ -713,7 +709,7 @@ namespace TypeCobol.Codegen {
 	    [TestProperty("Time", "fast")]
 	    public void MoveUnsafeToQualifiedInsideFunction()
 	    {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "MoveUnsafeToQualifiedInsideFunction") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "MoveUnsafeToQualifiedInsideFunction") + ".rdz.tcbl", false, "TestTypeCobolVersion");
 	    }
 	    
         [TestMethod]
@@ -723,7 +719,7 @@ namespace TypeCobol.Codegen {
 	    {    
 	        string dir = System.IO.Directory.GetCurrentDirectory();
 	        string copies = Path.Combine(dir, "resources", "input", "TypeCobol", "TypedefCopys");
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefCopys", "TypedefBodyInsideCopy") + ".rdz.tcbl", null, false,
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefCopys", "TypedefBodyInsideCopy") + ".rdz.tcbl", false,
 	            null, new List<string>() {copies});
 	    }
 
@@ -735,7 +731,7 @@ namespace TypeCobol.Codegen {
         [TestProperty("Time", "fast")]
         public void EvaluateWhenGroupInProc()
         {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "EvaluateWhenGroupInProc") + ".tcbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "EvaluateWhenGroupInProc") + ".tcbl", false, "TestTypeCobolVersion");
         }
 
         [TestMethod]
@@ -743,7 +739,7 @@ namespace TypeCobol.Codegen {
         [TestProperty("Time", "fast")]
         public void GlobalStorageLineMapping()
         {
-            CodegenTestUtils.ParseGenerateCompareWithLineMapping(Path.Combine("TypeCobol", "Global_Storage", "GlobalStorage") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompareWithLineMapping(Path.Combine("TypeCobol", "Global_Storage", "GlobalStorage") + ".rdz.tcbl", false, "TestTypeCobolVersion");
         }
 
         [TestMethod]
@@ -751,9 +747,9 @@ namespace TypeCobol.Codegen {
 	    [TestProperty("Time", "fast")]
 	    public void GlobalStorage()
 	    {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Global_Storage", "GlobalStorage") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Global_Storage", "GlobalStorageWithUsingTypeDef") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Global_Storage", "CopyConfigSectionOnly") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Global_Storage", "GlobalStorage") + ".rdz.tcbl", false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Global_Storage", "GlobalStorageWithUsingTypeDef") + ".rdz.tcbl", false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Global_Storage", "CopyConfigSectionOnly") + ".rdz.tcbl", false, "TestTypeCobolVersion");
         }
 
         [TestMethod]
@@ -761,7 +757,7 @@ namespace TypeCobol.Codegen {
         [TestProperty("Time", "fast")]
         public void GlobalStorageWith_6_73_80()
         {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Global_Storage", "GlobalStorage2") + ".rdz.tcbl", null, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Global_Storage", "GlobalStorage2") + ".rdz.tcbl", false, "TestTypeCobolVersion");
         }
 
         [TestMethod]
@@ -794,10 +790,10 @@ namespace TypeCobol.Codegen {
         [TestProperty("Time", "fast")]
         public void RemarksGeneration()
         {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Remarks", "RemarksLess") + ".rdz.cbl", null, true);
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Remarks", "RemarksPartial") + ".rdz.cbl", null, true);
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Remarks", "RemarksNonUsed") + ".rdz.cbl", null, true);
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Remarks", "NestedProgram") + ".rdz.cbl", null, true);
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Remarks", "RemarksLess") + ".rdz.cbl", true);
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Remarks", "RemarksPartial") + ".rdz.cbl", true);
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Remarks", "RemarksNonUsed") + ".rdz.cbl", true);
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Remarks", "NestedProgram") + ".rdz.cbl", true);
         }
 #endif
     }
