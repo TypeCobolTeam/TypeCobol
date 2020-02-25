@@ -340,19 +340,12 @@ namespace TypeCobol.Server
         {
             try
             {
-                //Load skeletons if necessary
-                List<Skeleton> skeletons = null;
-                if (!string.IsNullOrEmpty(_configuration.skeletonPath))
-                {
-                    skeletons = Codegen.Config.Config.Parse(_configuration.skeletonPath);
-                }
-
                 //Get Generator from specified config.OutputFormat
                 var sb = new StringBuilder();
                 bool needLineMap = _configuration.LineMapFiles.Count > fileIndex;
                 var generator = GeneratorFactoryManager.Instance.Create(_configuration.OutputFormat.ToString(),
                     compilationUnit,
-                    sb, skeletons, AnalyticsWrapper.Telemetry.TypeCobolVersion, needLineMap);
+                    sb, null, AnalyticsWrapper.Telemetry.TypeCobolVersion, needLineMap);
                 if (generator == null)
                 {
                     throw new GenerationException("Unknown OutputFormat=" + _configuration.OutputFormat + "_", inputFilePath);

@@ -27,7 +27,6 @@ namespace TypeCobol.Tools.Options_Config
         public List<string> LineMapFiles = new List<string>();
         public ExecutionStep ExecToStep = ExecutionStep.Generate; //Default value is Generate
         public string ErrorFile = null;
-        public string skeletonPath = "";
         public string LogFile = null;
 
         //Log file name
@@ -78,7 +77,6 @@ namespace TypeCobol.Tools.Options_Config
             { ReturnCode.InputFileError,         "Input files given are unreachable." },
             { ReturnCode.OutputPathError,        "Output paths given are unreachable." },
             { ReturnCode.ErrorFileError,         "Error diagnostics path is unreachable." },
-            { ReturnCode.SkeletonFileError,      "Skeleton file given is unreachable." },
             { ReturnCode.HaltOnMissingCopyError, "Missing copy path given is unreachable." },
             { ReturnCode.ExecToStepError,        "Unexpected parameter given for ExecToStep. Accepted parameters are \"Scanner\"/0, \"Preprocessor\"/1, \"SyntaxCheck\"/2, \"SemanticCheck\"/3, \"CrossCheck\"/4, \"Generate\"/5(default)." },
             { ReturnCode.EncodingError,          "Unexpected parameter given for encoding option. Accepted parameters are \"rdz\"(default), \"zos\", \"utf8\"." },
@@ -136,7 +134,6 @@ namespace TypeCobol.Tools.Options_Config
         InputFileError = 1020,          // Wrong input file(s) given
         OutputPathError = 1021,         // Output paths given are unreachable.
         ErrorFileError = 1022,          // Wrong error path given
-        SkeletonFileError = 1023,       // Wrong skeleton file given
         HaltOnMissingCopyError = 1024,  // Missing copy path given is unreachable.
         ExecToStepError = 1025,         // Unexpected user input for exectostep option
         EncodingError = 1026,           // Unexpected user input for encoding option
@@ -226,7 +223,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "i|input=", "{PATH} to an input file to parse. This option can be specified more than once.", v => typeCobolConfig.InputFiles.Add(v) },
                 { "o|output=","{PATH} to an output file where to generate code. This option can be specified more than once.", v => typeCobolConfig.OutputFiles.Add(v) },
                 { "d|diagnostics=", "{PATH} to the error diagnostics file.", v => typeCobolConfig.ErrorFile = v },
-                { "s|skeletons=", "{PATH} to the skeletons file.", v => typeCobolConfig.skeletonPath = null },
+                { "s|skeletons=", "{PATH} to the skeletons file. DEPRECATED : generation using dynamic skeleton is not supported.", v => {}},
                 { "a|autoremarks", "Enable automatic remarks creation while parsing and generating Cobol.", v => typeCobolConfig.AutoRemarks = true },
                 { "hc|haltonmissingcopy=", "HaltOnMissingCopy will generate a file to list all the absent copies.", v => typeCobolConfig.HaltOnMissingCopyFilePath = v },
                 { "ets|exectostep=", "ExecToStep will execute TypeCobol Compiler until the included given step (Scanner/0, Preprocessor/1, SyntaxCheck/2, SemanticCheck/3, CrossCheck/4, Generate/5).", v => typeCobolConfig.RawExecToStep = v},
@@ -317,15 +314,6 @@ namespace TypeCobol.Tools.Options_Config
             //ErrorFilePathError
             if (!CanCreateFile(config.ErrorFile) && !string.IsNullOrEmpty(config.ErrorFile))
                 errorStack.Add(ReturnCode.ErrorFileError, TypeCobolConfiguration.ErrorMessages[ReturnCode.ErrorFileError]);
-
-            //SkeletonFileError
-            if (config.ExecToStep == ExecutionStep.Generate && !string.IsNullOrEmpty(config.skeletonPath) &&  !errorStack.ContainsKey(ReturnCode.ExecToStepError))
-            {
-                if (FileSystem.GetFiles(config.skeletonPath, recursive: false).Count == 0 && !errorStack.ContainsKey(ReturnCode.SkeletonFileError))
-                {
-                    errorStack.Add(ReturnCode.SkeletonFileError, TypeCobolConfiguration.ErrorMessages[ReturnCode.SkeletonFileError]);
-                }
-            }
 
             //HaltOnMissingCopyFilePathError
             if (!CanCreateFile(config.HaltOnMissingCopyFilePath) && !string.IsNullOrEmpty(config.HaltOnMissingCopyFilePath))
