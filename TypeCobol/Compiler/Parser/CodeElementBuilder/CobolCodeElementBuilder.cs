@@ -145,14 +145,14 @@ namespace TypeCobol.Compiler.Parser
             {
                 //a dot doesn't follow PROGRAM-ID declaration
                 if (CodeElement.Diagnostics == null) CodeElement.Diagnostics = new List<Diagnostic>();
-                IToken previousToken = context.Stop; ;
+                IToken previousToken = context.Stop;
                 if (context.authoringProperties().ChildCount > 0)
                 {
                     //authoring properties are in last position: search previous token of authoring properties
                     previousToken = ParseTreeUtils.GetFirstToken(context.children.Reverse().Skip(1).First());
                 }
 
-                CodeElement.Diagnostics.Add(new ParserDiagnostic("Dot is missing at the end of PROGRAM-ID declaration", previousToken, null, MessageCode.Warning));
+                CodeElement.Diagnostics.Add(new ParserDiagnostic("Dot expected at the end of PROGRAM-ID declaration", previousToken, null, MessageCode.Warning));
             }
         }
 
