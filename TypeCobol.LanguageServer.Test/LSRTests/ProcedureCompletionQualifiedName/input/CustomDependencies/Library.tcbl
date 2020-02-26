@@ -1,0 +1,26 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Library.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 LibMyType typedef strict public.
+           05 dt pic X.
+           05 dt2 pic X.
+       PROCEDURE DIVISION.
+       INIT-LIBRARY.
+           exit.
+		   
+           CONTINUE.
+      
+       DECLARE PROCEDURE ProcLib1 PUBLIC
+           input var1 type LibMyType.
+       PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+      
+       DECLARE PROCEDURE ProcLib2 PUBLIC
+           input var1 type Library::LibMyType.
+       PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+      
+       END PROGRAM Library.

@@ -1,0 +1,227 @@
+{
+  "name": "ProcedureCompletionQualifiedName.tlsp",
+  "session": "C:\\Users\\LANOYDO\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2020_02_26_11_22_54_710\\TestSuite_2020_02_26_11_22_54_710.slsp",
+  "user": "LANOYDO",
+  "date": "2020/02/26 11:22:54 724",
+  "uri": "file:///C:/Users/LANOYDO/Documents/ProcedureCompletionQualifiedName.tlsp",
+  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\Users\\\\LANOYDO\\\\source\\\\repos\\\\TypeCobol\\\\bin\\\\EI_Debug\",\"rootUri\":\"file:/C:/Users/LANOYDO/source/repos/TypeCobol/bin/EI_Debug/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"signatureHelp\":{\"dynamicRegistration\":true},\"references\":{\"dynamicRegistration\":true},\"documentHighlight\":{\"dynamicRegistration\":true},\"documentSymbol\":{\"dynamicRegistration\":true},\"formatting\":{\"dynamicRegistration\":true},\"rangeFormatting\":{\"dynamicRegistration\":true},\"onTypeFormatting\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true},\"codeAction\":{\"dynamicRegistration\":true},\"codeLens\":{\"dynamicRegistration\":true},\"documentLink\":{\"dynamicRegistration\":true},\"rename\":{\"dynamicRegistration\":true}}},\"trace\":\"off\"}}",
+  "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"experimental\":[{\"Item1\":\"version\",\"Item2\":\"v1.4.0.4\"}],\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
+  "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\Users\\\\LANOYDO\\\\source\\\\repos\\\\TypeCobol\\\\bin\\\\EI_Debug\\\\TypeCobol.CLI.exe\",\"-1\",\"-e\",\"rdz\",\"-y\",\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\Intrinsic\\\\Intrinsic.txt\",\"-glm\",\"\\\"{6}\\\"\",\"--autoremarks\",\"--outputFormat\\u003dCobol85Mixed\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\Production\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\MISC\",\"-md\",\"200\",\"--dependencies\",\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\Dependencies\\\\*.tcbl\",\"--dependencies\",\"\\\\\\\\uf44-004\\\\TYPECOBOL-DEPENDENCIES\\\\Y530\\\\*.tcbl\",\"--dependencies\",\"C:\\\\TypeCobol\\\\MyDependencies\\\\*.tcbl\",\"--dependencies\",\"C:\\\\TypeCobol\\\\Export\\\\*.tcbl\"]}}",
+  "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. MyPGM.\\r\\n       DATA DIVISION.\\r\\n       working-storage section.\\r\\n       01 Toto typedef strict private pic X.\\r\\n       01 toto1 type Toto.\\r\\n       01 toto2 type Toto.\\r\\n       01 mychar pic x.\\r\\n       01 lib1 type Library::LibMyType.\\r\\n       01 nested1 type NESTED::TotoNested.\\r\\n       01 stacked1 type STACKD::TotoStacked.\\r\\n\\r\\n       PROCEDURE DIVISION.\\r\\n           call ProcLoc1 input toto1\\r\\n           call ProcLoc2 output toto2\\r\\n           call ProcLoc3 input mychar\\r\\n           call Library::ProcLib1 input lib1\\r\\n           call Library::ProcLib2 input lib1\\r\\n           call NESTED::ProcNested input nested1\\r\\n           call STACKD::ProcStacked input stacked1\\r\\n           .\\r\\n       declare ProcLoc1 private input var1 type MyPGM::Toto.\\r\\n       end-declare.\\r\\n\\r\\n       declare ProcLoc2 private output var1 type mypgm::Toto.\\r\\n       end-declare.\\r\\n\\r\\n       declare ProcLoc3 private input var1 pic X.\\r\\n       end-declare.\\r\\n\\r\\n       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. NESTED.\\r\\n       DATA DIVISION.\\r\\n       working-storage section.\\r\\n       01 TotoNested typedef strict private pic X.\\r\\n       PROCEDURE DIVISION.\\r\\n       INIT-LIBRARY.\\r\\n           exit.\\r\\n           .\\r\\n       declare ProcNested public input var1 type NESTED::TotoNested.\\r\\n       end-declare.\\r\\n       END PROGRAM NESTED.\\r\\n\\r\\n       END PROGRAM MyPGM.\\r\\n\\r\\n       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. STACKD.\\r\\n       DATA DIVISION.\\r\\n       working-storage section.\\r\\n       01 TotoStacked typedef strict public pic X.\\r\\n       PROCEDURE DIVISION.\\r\\n       INIT-LIBRARY.\\r\\n           exit.\\r\\n           .\\r\\n       declare ProcStacked public input var1 type STACKD::TotoStacked.\\r\\n       end-declare.\\r\\n       END PROGRAM STACKD.\"}}}",
+  "messages": [
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. MyPGM.\\r\\n       DATA DIVISION.\\r\\n       working-storage section.\\r\\n       01 Toto typedef strict private pic X.\\r\\n       01 toto1 type Toto.\\r\\n       01 toto2 type Toto.\\r\\n       01 mychar pic x.\\r\\n       01 lib1 type Library::LibMyType.\\r\\n       01 nested1 type NESTED::TotoNested.\\r\\n       01 stacked1 type STACKD::TotoStacked.\\r\\n\\r\\n       PROCEDURE DIVISION.\\r\\n      *     call ProcLoc1 input\\r\\n      *     call ProcLoc2 output\\r\\n      *     call ProcLoc3 input\\r\\n      *     call Library::ProcLib1 input\\r\\n      *     call Library::ProcLib2 input\\r\\n      *     call NESTED::ProcNested input\\r\\n      *     call STACKD::ProcStacked input\\r\\n           .\\r\\n       declare ProcLoc1 private input var1 type MyPGM::Toto.\\r\\n       end-declare.\\r\\n\\r\\n       declare ProcLoc2 private output var1 type mypgm::Toto.\\r\\n       end-declare.\\r\\n\\r\\n       declare ProcLoc3 private input var1 pic X.\\r\\n       end-declare.\\r\\n\\r\\n       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. NESTED.\\r\\n       DATA DIVISION.\\r\\n       working-storage section.\\r\\n       01 TotoNested typedef strict private pic X.\\r\\n       PROCEDURE DIVISION.\\r\\n       INIT-LIBRARY.\\r\\n           exit.\\r\\n           .\\r\\n       declare ProcNested public input var1 type NESTED::TotoNested.\\r\\n       end-declare.\\r\\n       END PROGRAM NESTED.\\r\\n\\r\\n       END PROGRAM MyPGM.\\r\\n\\r\\n       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. STACKD.\\r\\n       DATA DIVISION.\\r\\n       working-storage section.\\r\\n       01 TotoStacked typedef strict public pic X.\\r\\n       PROCEDURE DIVISION.\\r\\n       INIT-LIBRARY.\\r\\n           exit.\\r\\n           .\\r\\n       declare ProcStacked public input var1 type STACKD::TotoStacked.\\r\\n       end-declare.\\r\\n       END PROGRAM STACKD.\"}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":13,\"character\":6},\"end\":{\"line\":13,\"character\":7}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":13,\"character\":30},\"end\":{\"line\":13,\"character\":30}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":21,\"character\":12},\"end\":{\"line\":21,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'ProcLoc1' \"},{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'ProcLoc1' is missing parameter 'var1' of type MyPGM.Toto and length 1\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"position\":{\"line\":14,\"character\":32}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"toto1 (Toto) (toto1)\",\"kind\":6,\"insertText\":\"toto1\"},{\"label\":\"toto2 (Toto) (toto2)\",\"kind\":6,\"insertText\":\"toto2\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":14,\"character\":32},\"end\":{\"line\":14,\"character\":32}},\"rangeLength\":0,\"text\":\"toto2\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":15,\"character\":6},\"end\":{\"line\":15,\"character\":7}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":15,\"character\":30},\"end\":{\"line\":15,\"character\":30}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":16,\"character\":12},\"end\":{\"line\":16,\"character\":15}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input 'call' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":21,\"character\":12},\"end\":{\"line\":21,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'ProcLoc1' \"},{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'ProcLoc1' is missing parameter 'var1' of type MyPGM.Toto and length 1\"},{\"range\":{\"start\":{\"line\":16,\"character\":12},\"end\":{\"line\":16,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'ProcLoc3' \"},{\"range\":{\"start\":{\"line\":16,\"character\":12},\"end\":{\"line\":16,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'ProcLoc3' is missing parameter 'var1' of type Alphanumeric and length 1\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"position\":{\"line\":15,\"character\":31}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"mychar (Alphanumeric) (mychar)\",\"kind\":6,\"insertText\":\"mychar\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":15,\"character\":31},\"end\":{\"line\":15,\"character\":31}},\"rangeLength\":0,\"text\":\"mychar\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":16,\"character\":6},\"end\":{\"line\":16,\"character\":7}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":16,\"character\":39},\"end\":{\"line\":16,\"character\":39}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":16,\"character\":12},\"end\":{\"line\":16,\"character\":15}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input 'call' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":21,\"character\":12},\"end\":{\"line\":21,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'ProcLoc1' \"},{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'ProcLoc1' is missing parameter 'var1' of type MyPGM.Toto and length 1\"},{\"range\":{\"start\":{\"line\":17,\"character\":12},\"end\":{\"line\":17,\"character\":39}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'Library.ProcLib1' \"},{\"range\":{\"start\":{\"line\":17,\"character\":12},\"end\":{\"line\":17,\"character\":39}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'Library.ProcLib1' is missing parameter 'var1' of type LibMyType and length 2\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"position\":{\"line\":16,\"character\":40}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"result\":[{\"label\":\"lib1 (Library.LibMyType) (lib1)\",\"kind\":6,\"insertText\":\"lib1\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":16,\"character\":40},\"end\":{\"line\":16,\"character\":40}},\"rangeLength\":0,\"text\":\"lib1\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":6},\"end\":{\"line\":17,\"character\":7}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":39},\"end\":{\"line\":17,\"character\":39}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"9\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":16,\"character\":12},\"end\":{\"line\":16,\"character\":15}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input 'call' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":21,\"character\":12},\"end\":{\"line\":21,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'ProcLoc1' \"},{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'ProcLoc1' is missing parameter 'var1' of type MyPGM.Toto and length 1\"},{\"range\":{\"start\":{\"line\":18,\"character\":12},\"end\":{\"line\":18,\"character\":39}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'Library.ProcLib2' \"},{\"range\":{\"start\":{\"line\":18,\"character\":12},\"end\":{\"line\":18,\"character\":39}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'Library.ProcLib2' is missing parameter 'var1' of type Library.LibMyType and length 2\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"9\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"position\":{\"line\":17,\"character\":40}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"result\":[{\"label\":\"lib1 (Library.LibMyType) (lib1)\",\"kind\":6,\"insertText\":\"lib1\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":17,\"character\":40},\"end\":{\"line\":17,\"character\":40}},\"rangeLength\":0,\"text\":\"lib1\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":18,\"character\":6},\"end\":{\"line\":18,\"character\":7}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":18,\"character\":40},\"end\":{\"line\":18,\"character\":40}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":16,\"character\":12},\"end\":{\"line\":16,\"character\":15}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input 'call' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":21,\"character\":12},\"end\":{\"line\":21,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'ProcLoc1' \"},{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'ProcLoc1' is missing parameter 'var1' of type MyPGM.Toto and length 1\"},{\"range\":{\"start\":{\"line\":19,\"character\":12},\"end\":{\"line\":19,\"character\":40}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NESTED.ProcNested' \"},{\"range\":{\"start\":{\"line\":19,\"character\":12},\"end\":{\"line\":19,\"character\":40}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'NESTED.ProcNested' is missing parameter 'var1' of type NESTED.TotoNested and length 1\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"position\":{\"line\":18,\"character\":41}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"result\":[{\"label\":\"nested1 (NESTED.TotoNested) (nested1)\",\"kind\":6,\"insertText\":\"nested1\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":18,\"character\":41},\"end\":{\"line\":18,\"character\":41}},\"rangeLength\":0,\"text\":\"nested1\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":19,\"character\":6},\"end\":{\"line\":19,\"character\":7}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":19,\"character\":41},\"end\":{\"line\":19,\"character\":41}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":16,\"character\":12},\"end\":{\"line\":16,\"character\":15}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input 'call' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":21,\"character\":12},\"end\":{\"line\":21,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'ProcLoc1' \"},{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'ProcLoc1' is missing parameter 'var1' of type MyPGM.Toto and length 1\"},{\"range\":{\"start\":{\"line\":20,\"character\":12},\"end\":{\"line\":20,\"character\":41}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'STACKD.ProcStacked' \"},{\"range\":{\"start\":{\"line\":20,\"character\":12},\"end\":{\"line\":20,\"character\":41}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'STACKD.ProcStacked' is missing parameter 'var1' of type STACKD.TotoStacked and length 1\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"position\":{\"line\":19,\"character\":42}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"result\":[{\"label\":\"stacked1 (STACKD.TotoStacked) (stacked1)\",\"kind\":6,\"insertText\":\"stacked1\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":19,\"character\":42},\"end\":{\"line\":19,\"character\":42}},\"rangeLength\":0,\"text\":\"stacked1\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. MyPGM.\\r\\n       DATA DIVISION.\\r\\n       working-storage section.\\r\\n       01 Toto typedef strict private pic X.\\r\\n       01 toto1 type Toto.\\r\\n       01 toto2 type Toto.\\r\\n       01 mychar pic x.\\r\\n       01 lib1 type Library::LibMyType.\\r\\n       01 nested1 type NESTED::TotoNested.\\r\\n       01 stacked1 type STACKD::TotoStacked.\\r\\n\\r\\n       PROCEDURE DIVISION.\\r\\n           call ProcLoc1 input toto1\\r\\n           call ProcLoc2 output toto2\\r\\n           call ProcLoc3 input mychar\\r\\n           call Library::ProcLib1 input lib1\\r\\n           call Library::ProcLib2 input lib1\\r\\n           call NESTED::ProcNested input nested1\\r\\n           call STACKD::ProcStacked input stacked1\\r\\n           .\\r\\n       declare ProcLoc1 private input var1 type MyPGM::Toto.\\r\\n       end-declare.\\r\\n\\r\\n       declare ProcLoc2 private output var1 type mypgm::Toto.\\r\\n       end-declare.\\r\\n\\r\\n       declare ProcLoc3 private input var1 pic X.\\r\\n       end-declare.\\r\\n\\r\\n       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. NESTED.\\r\\n       DATA DIVISION.\\r\\n       working-storage section.\\r\\n       01 TotoNested typedef strict private pic X.\\r\\n       PROCEDURE DIVISION.\\r\\n       INIT-LIBRARY.\\r\\n           exit.\\r\\n           .\\r\\n       declare ProcNested public input var1 type NESTED::TotoNested.\\r\\n       end-declare.\\r\\n       END PROGRAM NESTED.\\r\\n\\r\\n       END PROGRAM MyPGM.\\r\\n\\r\\n       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. STACKD.\\r\\n       DATA DIVISION.\\r\\n       working-storage section.\\r\\n       01 TotoStacked typedef strict public pic X.\\r\\n       PROCEDURE DIVISION.\\r\\n       INIT-LIBRARY.\\r\\n           exit.\\r\\n           .\\r\\n       declare ProcStacked public input var1 type STACKD::TotoStacked.\\r\\n       end-declare.\\r\\n       END PROGRAM STACKD.\"}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY15577628083035040189.cee\",\"diagnostics\":[]}}"
+    }
+  ],
+  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY17939216987989579482.cee\"}}}",
+  "IsValid": true
+}
