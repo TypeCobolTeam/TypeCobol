@@ -11,7 +11,7 @@
       *01 Type1 TYPEDEF STRICT.
       *   05 item-1 PIC X
       *Single-line comment
-      *   VALUE 'A'.
+      *    VALUE 'A'.
       *   05 item-2 PIC X. *> Floating comment
                            *> Floating comment
       
@@ -21,18 +21,18 @@
       *Multiline
       *comment
       *>>
-      *   VALUE 'B'.
+      *    VALUE 'B'.
       
       *01 var1 Type Type1.
        01 var1.
            02 item-1 PIC X
-          VALUE 'A'.
+           VALUE 'A'.
            02 item-2 PIC X.
                           
       *01 var2 Type Type2.
        01 var2.
            02 item-1 PIC X
-          VALUE 'B'.
+           VALUE 'B'.
                           
       
        PROCEDURE DIVISION.

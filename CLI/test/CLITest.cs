@@ -191,6 +191,16 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// Try parsing with copy inside a typedef.
+        /// Should return success.
+        /// </summary>
+        [TestMethod]
+        public void TestTypeDefCopy()
+        {
+            CLITestHelper.Test("typedefCopy", ReturnCode.Success);
+        }
+
+        /// <summary>
         /// Try parsing with PublicSignature as output format.
         /// Should return success.
         /// </summary>
