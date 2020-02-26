@@ -1,0 +1,65 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM1.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 tt pic x.
+       PROCEDURE DIVISION.
+       INIT-LIBRARY.
+           continue.
+
+      *OK: local nested
+          Call NESTED::Foo input tt
+      *OK: Foo is common STACKED.Pgm1 and STACKED.Pgm2
+      *   STACKED.Pgm1 is considered inside Pgm1
+          call STACKED::Foo input tt
+      *OK: FooPgm1 declared only in Pgm1
+          call STACKED::FooPgm1 input tt
+      *OK: GetTechnicalContext declared in Pgm2 main
+          Call Pgm2::GetTechnicalContext input tt
+      *KO: FooPgm2 is declared in Pgm2 stacked
+      *   STACKED.Pgm2 is not considered inside Pgm1
+          Call STACKED::FooPgm2 input tt
+      *KO: Foo is declared in Pgm2 stacked
+      *   STACKED2.Pgm2 is not considered inside Pgm1
+          Call STACKED2::Foo input tt
+
+      *OK: GetTechnicalContext declared in Pgm2 main (Pgm2)
+          Call Pgm2::GetTechnicalContext input tt
+      *KO: Proc1 declared in Pgm2 main (Pgm2 and Pgm2Same)
+          Call Pgm2::Proc1 input tt
+
+          goback.
+      
+       declare procedure Proc1 public
+           input t pic x.
+       procedure division.
+           .
+       end-declare.
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. NESTED.
+       PROCEDURE DIVISION.
+       declare procedure Foo public
+           input t pic x.
+       procedure division.
+           .
+       end-declare.
+       END PROGRAM NESTED.
+      
+       END PROGRAM PGM1.
+      
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. STACKED.
+       PROCEDURE DIVISION.
+       declare procedure Foo public
+           input t pic x.
+       procedure division.
+           .
+       end-declare.
+       declare procedure FooPgm1 public
+           input t pic x.
+       procedure division.
+           .
+       end-declare.
+       END PROGRAM STACKED.
+      
