@@ -56,7 +56,7 @@
 - INSTALLATION = Environment 1     Environment 2
 - SECURITY = Hidden
 
-[[ProgramIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [8,14:INITIAL]<INITIAL>
+[[ProgramIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [15,15+:.]<PeriodSeparator>
 - ProgramName = MyProgram3
 - IsInitial = True
 - IsRecursive = False
