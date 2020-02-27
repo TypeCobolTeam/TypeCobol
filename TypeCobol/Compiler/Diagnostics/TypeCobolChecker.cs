@@ -696,12 +696,8 @@ namespace TypeCobol.Compiler.Diagnostics
         private static void CheckParameters([NotNull] ParametersProfile profile, Node node)
         {
             var parameters = profile.Parameters;
-            foreach (var parameter in profile.InputParameters) CheckParameter(parameter, node);
-            foreach (var parameter in profile.InoutParameters) CheckParameter(parameter, node);
-            foreach (var parameter in profile.OutputParameters) CheckParameter(parameter, node);
             if (profile.ReturningParameter != null)
             {
-                CheckParameter(profile.ReturningParameter, node);
                 parameters.Add(profile.ReturningParameter);
             }
 
@@ -715,16 +711,6 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
 
-        }
-
-        private static void CheckParameter([NotNull] ParameterDescriptionEntry parameter, Node node)
-        {
-            // TCRFUN_LEVEL_88_PARAMETERS
-            if (parameter.LevelNumber?.Value != 1)
-            {
-                DiagnosticUtils.AddError(node,
-                    "Condition parameter \"" + parameter.Name + "\" must be subordinate to another parameter.", parameter);
-            }
         }
 
         /// <summary>TCRFUN_DECLARATION_NO_DUPLICATE_NAME</summary>

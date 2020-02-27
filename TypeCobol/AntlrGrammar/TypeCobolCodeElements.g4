@@ -103,8 +103,6 @@ functionReturningPhrase: RETURNING parameterDescription;
 
 // parameterDescription is a rule created from dataDescriptionEntry and enforcing rules:
 // - TCRFUN_PARAMETER_DESCRIPTION
-// - TCRFUN_LEVEL_88_PARAMETERS
-// parameterDescription: (functionDataParameter | functionConditionParameter) PeriodSeparator?;
 parameterDescription: functionDataParameter PeriodSeparator?;
 
 functionDataParameter:
@@ -138,9 +136,6 @@ tcfuncParameterUsageClause:
 					//Try to rewrite a cleaner/simpler grammar so POINTER must be declared at picture or type level.
 					//FUNCTION_POINTER and PROCEDURE_POINTER are not implemented yet
 				    ;
-
-//functionConditionParameter:
-//	levelNumber=IntegerLiteral conditionNameDefinition valueClauseForCondition;
 
 functionDeclarationEnd: END_DECLARE PeriodSeparator;
 

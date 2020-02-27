@@ -40,4 +40,10 @@
 
        PROCEDURE DIVISION.
 
+      *KO Level 88 under type bool in parameter
+       DECLARE PROCEDURE MyProc
+         INPUT exists TYPE BOOL
+                88 exists-Ok value 'O'.
+       END-DECLARE.
+
        END PROGRAM LevelChecker.
