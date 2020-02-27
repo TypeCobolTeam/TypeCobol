@@ -60,7 +60,6 @@
     </TCTemplate>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Import Project="..\..\packages\TypeCobol.TemplateTask.1.1.0\lib\net46\TypeCobol.TemplateTask.targets" Condition="Exists('..\..\packages\TypeCobol.TemplateTask.1.1.0\lib\net46\TypeCobol.TemplateTask.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
