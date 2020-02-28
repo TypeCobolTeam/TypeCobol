@@ -3,8 +3,10 @@ using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
