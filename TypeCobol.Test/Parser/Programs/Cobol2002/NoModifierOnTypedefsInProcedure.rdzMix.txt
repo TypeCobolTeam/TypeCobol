@@ -49,7 +49,7 @@ Line 33[13,17] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in fun
       
       *Stacked ---------------------------------------------------------
        IDENTIFICATION DIVISION.
-       PROGRAM-ID Stacked.
+       PROGRAM-ID. Stacked.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        PROCEDURE DIVISION.

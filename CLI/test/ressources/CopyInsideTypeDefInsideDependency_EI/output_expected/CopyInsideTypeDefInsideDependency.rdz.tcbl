@@ -60,7 +60,12 @@
            02 firstname PIC X(20).
            02 lastname PIC X(20).
                                                          
-      
+
+      *01 myVar2 TYPE DVZDEP1::Type2.
+       01 myVar2.
+          COPY SUPCPY.
+                                     
+	   
        PROCEDURE DIVISION.
       *     MOVE 'X' TO MyCopiesInsideTypeDef::CONVEA
             MOVE 'X' TO CONVEA OF MyCopiesInsideTypeDef
@@ -69,7 +74,19 @@
             MOVE 'X' TO
                 CONVEA OF CONTAINER OF 
                                       MyCopyInsideContainerInsideTypeDef
+      *     MOVE 'X' TO
+      *      myVar2::varA-2::varB-22::CONVEA::CONVEA-SUB::CONVEA-SUB-1
+            MOVE 'X' TO
+             CONVEA-SUB-1 OF CONVEA-SUB OF CONVEA OF varB-22 OF varA-2
+              OF myVar2
             .
+
+      *declare procedure MyProc
+      *     input myType1 type DVZDEP1::Type1.
+
+      *declare procedure MyProc2
+      *     input myType2 type DVZDEP1::Type2.
+
        END PROGRAM PGM1.
       
        IDENTIFICATION DIVISION.
@@ -100,3 +117,48 @@
        PROCEDURE DIVISION.
             .
        END PROGRAM PGMSTK1.
+      *
+      *declare procedure MyProc
+      *     input myType1 type DVZDEP1::Type1.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. cd31ff38.
+       DATA DIVISION.
+       LINKAGE SECTION.
+      *PGM1.MyProc - Params :
+      *     input(myType1: DVZDEP1.Type1)
+       01 myType1.
+           02 Body.
+          COPY YCONVEA.
+           02 Part1.
+          COPY YPRTD20.
+           02 Part2.
+          COPY YCONVEA.
+       PROCEDURE DIVISION
+             USING BY REFERENCE myType1
+           .
+      *PGM1.MyProc - Params :
+      *     input(myType1: DVZDEP1.Type1)
+           DISPLAY myType1
+           .
+       END PROGRAM cd31ff38.
+      *
+      *declare procedure MyProc2
+      *     input myType2 type DVZDEP1::Type2.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. a82f46f0.
+       DATA DIVISION.
+       LINKAGE SECTION.
+      *PGM1.MyProc2 - Params :
+      *     input(myType2: DVZDEP1.Type2)
+       01 myType2.
+          COPY SUPCPY.
+       PROCEDURE DIVISION
+             USING BY REFERENCE myType2
+           .
+      *PGM1.MyProc2 - Params :
+      *     input(myType2: DVZDEP1.Type2)
+           DISPLAY myType2
+           .
+       END PROGRAM a82f46f0.

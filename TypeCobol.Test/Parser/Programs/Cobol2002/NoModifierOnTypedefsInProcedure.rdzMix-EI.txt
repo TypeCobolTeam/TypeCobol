@@ -6,15 +6,15 @@
        DECLARE PROCEDURE Proc1.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-Line 9[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 9[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type1' must be marked as STRICT.
 Line 9[10,33] <30, Error, Semantics> - Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a procedure.
          01 type1 typedef public.
             05 champ1 pic x.
-Line 11[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 11[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type2' must be marked as STRICT.
 Line 11[10,34] <30, Error, Semantics> - Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a procedure.
          01 type2 typedef private.
             05 champ1 pic x.
-Line 13[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 13[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type3' must be marked as STRICT.
 Line 13[13,17] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in function data item.
          01 type3 typedef global.
             05 champ1 pic x.
@@ -32,15 +32,15 @@ Line 13[13,17] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in fun
        DECLARE PROCEDURE Proc2.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-Line 29[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 29[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type4' must be marked as STRICT.
 Line 29[10,33] <30, Error, Semantics> - Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a procedure.
          01 type4 typedef public.
             05 champ1 pic x.
-Line 31[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 31[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type5' must be marked as STRICT.
 Line 31[10,34] <30, Error, Semantics> - Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a procedure.
          01 type5 typedef private.
             05 champ1 pic x.
-Line 33[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 33[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type6' must be marked as STRICT.
 Line 33[13,17] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in function data item.
          01 type6 typedef global.
             05 champ1 pic x.
@@ -55,22 +55,22 @@ Line 33[13,17] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in fun
       
       *Stacked ---------------------------------------------------------
        IDENTIFICATION DIVISION.
-       PROGRAM-ID Stacked.
+       PROGRAM-ID. Stacked.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        PROCEDURE DIVISION.
        DECLARE PROCEDURE Proc3.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-Line 53[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 53[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type7' must be marked as STRICT.
 Line 53[10,33] <30, Error, Semantics> - Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a procedure.
          01 type7 typedef public.
             05 champ1 pic x.
-Line 55[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 55[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type8' must be marked as STRICT.
 Line 55[10,34] <30, Error, Semantics> - Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a procedure.
          01 type8 typedef private.
             05 champ1 pic x.
-Line 57[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 57[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type9' must be marked as STRICT.
 Line 57[13,17] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in function data item.
          01 type9 typedef global.
             05 champ1 pic x.

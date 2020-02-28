@@ -114,6 +114,12 @@
     <None Include="LSRTests\CompletionOnPartialLibraryName\output_expected\CompletionOnPartialLibraryName.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\CompletionOnPartialTypeName\input\CompletionOnPartialTypeName.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionOnPartialTypeName\output_expected\CompletionOnPartialTypeName.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\FirstLineEditCommentBeforeIdentDiv\input\FirstLineEditCommentBeforeIdentDiv.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

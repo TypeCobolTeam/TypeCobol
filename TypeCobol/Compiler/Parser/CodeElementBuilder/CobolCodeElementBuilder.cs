@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Diagnostics;
 using Antlr4.Runtime.Misc;
-using Castle.Core.Internal;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -120,25 +117,46 @@ namespace TypeCobol.Compiler.Parser
         ////////////////////////////
 
         public override void EnterProgramIdentification(CodeElementsParser.ProgramIdentificationContext context) {
-			var program = new ProgramIdentification();
-			program.ProgramName = CobolWordsBuilder.CreateProgramNameDefinition(context.programNameDefinition());
-			if (context.COMMON() != null) {
-				program.Common = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.COMMON()));
-			}
-			if (context.INITIAL() != null) {
-				program.Initial = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.INITIAL()));
-			}
-			if (context.RECURSIVE() != null) {
-				program.Recursive = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.RECURSIVE()));
-			}
-			program.AuthoringProperties = CreateAuthoringProperties(context.authoringProperties());
-            
+            var program = new ProgramIdentification();
+            program.ProgramName = CobolWordsBuilder.CreateProgramNameDefinition(context.programNameDefinition());
+
+            if (context.COMMON() != null) {
+                program.Common = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.COMMON()));
+            }
+            if (context.INITIAL() != null) {
+                program.Initial = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.INITIAL()));
+            }
+            if (context.RECURSIVE() != null) {
+                program.Recursive = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.RECURSIVE()));
+            }
+            program.AuthoringProperties = CreateAuthoringProperties(context.authoringProperties());
+
             Context = context;
-			CodeElement = program;
+            CodeElement = program;
             IsDebuggingModeEnabled = false;
+
+            if (context.pgmIdPeriodSeparator == null)
+            {
+                //a dot doesn't follow PROGRAM-ID
+                if (CodeElement.Diagnostics == null) CodeElement.Diagnostics = new List<Diagnostic>();
+                CodeElement.Diagnostics.Add(new ParserDiagnostic("Dot expected after PROGRAM-ID", context.PROGRAM_ID().Symbol, null, MessageCode.Warning));
+            }
+            if (context.pgmIdDeclarPeriodSeparator == null)
+            {
+                //a dot doesn't follow PROGRAM-ID declaration
+                if (CodeElement.Diagnostics == null) CodeElement.Diagnostics = new List<Diagnostic>();
+                IToken previousToken = context.Stop;
+                if (context.authoringProperties().ChildCount > 0)
+                {
+                    //authoring properties are in last position: search previous token of authoring properties
+                    previousToken = ParseTreeUtils.GetFirstToken(context.children.Reverse().Skip(1).First());
+                }
+
+                CodeElement.Diagnostics.Add(new ParserDiagnostic("Dot expected at the end of PROGRAM-ID declaration", previousToken, null, MessageCode.Warning));
+            }
         }
 
-		public override void EnterProgramEnd(CodeElementsParser.ProgramEndContext context) {
+        public override void EnterProgramEnd(CodeElementsParser.ProgramEndContext context) {
 			var programEnd = new ProgramEnd();
 			programEnd.ProgramName = CobolWordsBuilder.CreateProgramNameReference(context.programNameReference2());
 
@@ -221,6 +239,7 @@ namespace TypeCobol.Compiler.Parser
 
 		internal AuthoringProperties CreateAuthoringProperties(CodeElementsParser.AuthoringPropertiesContext context) {
 			var authoringProperties = new AuthoringProperties();
+            if (context == null) return authoringProperties;
 			if (context.authorParagraph().Length > 0) {
 				var alphanumericValueContexts = context.authorParagraph().SelectMany(p => p.CommentEntry()).ToArray();
 				authoringProperties.Author = CreateAlphanumericValues(alphanumericValueContexts);
