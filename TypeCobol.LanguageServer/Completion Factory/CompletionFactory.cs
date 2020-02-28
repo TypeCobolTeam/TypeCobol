@@ -229,24 +229,14 @@ namespace TypeCobol.LanguageServer
                 var parameterToFill = procParams.ToArray()[alreadyGivenParametersCount];
                 //Get local/global variable that could correspond to the parameter
 
-                DataType paramDataType = parameterToFill.DataType;
-                string paramQualifiedNameTail = string.Empty;
-                if (paramDataType.Name.Contains("."))
+                if (parameterToFill.TypeDefinition == null)
                 {
-                    // parameter has a qualified name 
-                    int pos = paramDataType.Name.IndexOf(".");
-                    paramQualifiedNameTail = paramDataType.Name.Substring(0, pos);
-                    paramDataType = new DataType(paramDataType.Name.Substring(pos + 1), paramDataType.RestrictionLevel, paramDataType.CobolLanguageLevel);
+                    potentialVariablesForCompletion = node.SymbolTable.GetVariablesByType(parameterToFill.DataType, potentialVariablesForCompletion, SymbolTable.Scope.Program);
                 }
-                List<DataDefinition> variablesForCompletion = node.SymbolTable.GetVariablesByType(paramDataType, potentialVariablesForCompletion, SymbolTable.Scope.Program);
-
-                if (!string.IsNullOrEmpty(paramQualifiedNameTail))
+                else
                 {
-                    variablesForCompletion = variablesForCompletion.Where(v => string.Equals(v.QualifiedName.Tail, paramQualifiedNameTail, StringComparison.OrdinalIgnoreCase) || 
-                                                                               string.Equals(v.DataType.Name, parameterToFill.DataType.Name, StringComparison.OrdinalIgnoreCase)).ToList();
+                    potentialVariablesForCompletion = node.SymbolTable.GetVariablesByType(parameterToFill.TypeDefinition, potentialVariablesForCompletion, SymbolTable.Scope.Program);
                 }
-
-                potentialVariablesForCompletion = (potentialVariablesForCompletion == null) ? variablesForCompletion : potentialVariablesForCompletion.Concat(variablesForCompletion);
             }
 
             if (potentialVariablesForCompletion == null) return completionItems;
