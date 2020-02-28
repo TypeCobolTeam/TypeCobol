@@ -69,7 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-<None Include="LSRTests\**">
+    <None Include="LSRTests\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
