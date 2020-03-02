@@ -137,21 +137,22 @@ namespace TypeCobol.Tools.APIHelpers
 
 #if EUROINFO_RULES
             //Create list of inputFileName according to our naming convention in the case of an usage with RDZ
+            const string PROGRAM_ID = "PROGRAM-ID";
             var programsNames = new List<string>();
             foreach (var inputFile in config.InputFiles)
             {
                 string PgmName = null;
                 foreach (var line in File.ReadLines(inputFile))
                 {
-                    if (line.StartsWith("       PROGRAM-ID.", StringComparison.InvariantCultureIgnoreCase))
+                    if (line.TrimStart().StartsWith(PROGRAM_ID, StringComparison.OrdinalIgnoreCase))
                     {
-                        PgmName = line.Split('.')[1].Trim();
+                        PgmName = line.TrimStart().Substring(PROGRAM_ID.Length).Replace(".", "").Trim();
+                        if (PgmName.Contains(" ")) PgmName = PgmName.Split(' ')[0];
                         break;
                     }
                 }
 
                 programsNames.Add(PgmName);
-
             }
 #endif
 

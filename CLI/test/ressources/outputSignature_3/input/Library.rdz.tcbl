@@ -21,6 +21,11 @@
            07  occurs 32760
                   depending on len.
               10 char    pic X.
+      
+       01 ListSearchProperty  typedef strict public.
+           05 SearchPropertyGroupData   pic X occurs 20
+                                        indexed by SearchPropertyIdx.
+      
       * single comment
        PROCEDURE DIVISION.
        INIT-LIBRARY.
