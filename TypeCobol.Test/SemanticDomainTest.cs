@@ -1032,7 +1032,8 @@ namespace TypeCobol.Test.Domain
 
             //Check non-cyclic type
             var notCyclic = GetTypedef("NotCyclic");
-            Assert.IsFalse(checker.IsCyclic(notCyclic));
+            Assert.IsFalse(checker.IsCyclic(notCyclic, out var firstCycleFound));
+            Assert.IsNull(firstCycleFound);
 
             //Check Cyclic types
             Dictionary<int, TypedefType> cyclicTypes = new Dictionary<int, TypedefType>();
@@ -1040,8 +1041,23 @@ namespace TypeCobol.Test.Domain
             {
                 var cyclicType = GetTypedef("Cyclic" + i);
                 cyclicTypes.Add(i, cyclicType);
-                Assert.IsTrue(checker.IsCyclic(cyclicType));
             }
+            Assert.IsTrue(checker.IsCyclic(cyclicTypes[1], out firstCycleFound));
+            Assert.AreEqual("Cyclic1 -> Cyclic1", CycleAsText(firstCycleFound));
+            Assert.IsTrue(checker.IsCyclic(cyclicTypes[2], out firstCycleFound));
+            Assert.AreEqual("Cyclic2 -> Cyclic3 -> Cyclic2", CycleAsText(firstCycleFound));
+            Assert.IsTrue(checker.IsCyclic(cyclicTypes[3], out firstCycleFound));
+            Assert.AreEqual(null, CycleAsText(firstCycleFound));
+            Assert.IsTrue(checker.IsCyclic(cyclicTypes[4], out firstCycleFound));
+            Assert.AreEqual("Cyclic4 -> Cyclic5 -> Cyclic6 -> Cyclic5", CycleAsText(firstCycleFound));
+            Assert.IsTrue(checker.IsCyclic(cyclicTypes[5], out firstCycleFound));
+            Assert.AreEqual(null, CycleAsText(firstCycleFound));
+            Assert.IsTrue(checker.IsCyclic(cyclicTypes[6], out firstCycleFound));
+            Assert.AreEqual(null, CycleAsText(firstCycleFound));
+            Assert.IsTrue(checker.IsCyclic(cyclicTypes[7], out firstCycleFound));
+            Assert.AreEqual(null, CycleAsText(firstCycleFound));
+            Assert.IsTrue(checker.IsCyclic(cyclicTypes[8], out firstCycleFound));
+            Assert.AreEqual(null, CycleAsText(firstCycleFound));
 
             //Check variables
             for (int i = 1; i <= 8; i++)
@@ -1106,6 +1122,12 @@ namespace TypeCobol.Test.Domain
                 Assert.IsTrue(symbol.Type != null);
                 Assert.IsTrue(symbol.Type.Tag == Type.Tags.Typedef);
                 return (TypedefType)symbol.Type;
+            }
+
+            string CycleAsText(List<TypedefType> cycle)
+            {
+                if (cycle == null) return null;
+                return string.Join(" -> ", cycle.Select(t => t.Symbol.Name));
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System.Linq;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.Domain.Validator;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Types;
@@ -223,10 +224,13 @@ namespace TypeCobol.Compiler.Symbols
             public override Type VisitTypedefType(TypedefType typedef, Symbol owner)
             {
                 //Check first for cyclic definition.
-                if (_cyclicTypeChecker.IsCyclic(typedef))
+                if (_cyclicTypeChecker.IsCyclic(typedef, out var firstCycleFound))
                 {
                     //Report error, no expansion performed.
-                    _parentExpander._errorReporter?.Report(new ValidationError(typedef.Symbol, string.Format(TypeCobolResource.ExpandingCyclicType, typedef.Symbol.Name)));
+                    var detail = firstCycleFound != null
+                        ? string.Join(" -> ", firstCycleFound.Select(t => t.Symbol.Name))
+                        : typedef.Symbol.Name;
+                    _parentExpander._errorReporter?.Report(new ValidationError(typedef.Symbol, string.Format(TypeCobolResource.ExpandingCyclicType, detail)));
                     return typedef;
                 }
 
