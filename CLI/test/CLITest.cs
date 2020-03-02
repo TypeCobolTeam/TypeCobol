@@ -55,6 +55,15 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// Perform a generation with procedure generated as nested programs
+        /// </summary>
+        [TestMethod]
+        public void TestGenerate_StackedProcedure()
+        {
+            CLITestHelper.Test("generate_stackedProc", ReturnCode.ParsingDiagnostics);
+        }
+
+        /// <summary>
         /// Test various case of usage of dependencies such as good usage, bad file, bad path.
         /// </summary>
         [TestMethod]
@@ -178,6 +187,16 @@ namespace CLI.Test
             CLITestHelper.Test("return_code_2", ReturnCode.OutputFileError); // 1001
             CLITestHelper.Test("return_code_3", ReturnCode.ParsingDiagnostics);// 1000
             CLITestHelper.Test("return_code_4", ReturnCode.Warning);//1
+        }
+
+        /// <summary>
+        /// Try parsing with copy inside a typedef.
+        /// Should return success.
+        /// </summary>
+        [TestMethod]
+        public void TestTypeDefCopy()
+        {
+            CLITestHelper.Test("typedefCopy", ReturnCode.Success);
         }
 
         /// <summary>
