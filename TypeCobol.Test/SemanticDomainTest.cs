@@ -1020,10 +1020,10 @@ namespace TypeCobol.Test.Domain
         [TestMethod]
         [TestCategory("SemanticDomain")]
         [TestProperty("Object", "Typedef")]
-        public void TypedefCyclic0()
+        public void CircularReferenceType()
         {
-            //string path, List<Skeleton> skeletons = null, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null, Compiler.CodeModel.SymbolTable baseSymTable = null            
-            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "TypedefCyclic0.cbl");
+            //Re-use COBOL code from existing circular typedef test
+            string path = Path.Combine(GetTestLocation(), "Parser", "Programs", "TypeCobol", "CircularReferenceType.rdz.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
@@ -1032,8 +1032,7 @@ namespace TypeCobol.Test.Domain
 
             //Check non-cyclic type
             var notCyclic = GetTypedef("NotCyclic");
-            Assert.IsFalse(checker.IsCyclic(notCyclic, out var firstCycleFound));
-            Assert.IsNull(firstCycleFound);
+            Assert.IsFalse(checker.IsCyclic(notCyclic, out _));
 
             //Check Cyclic types
             Dictionary<int, TypedefType> cyclicTypes = new Dictionary<int, TypedefType>();
@@ -1041,23 +1040,17 @@ namespace TypeCobol.Test.Domain
             {
                 var cyclicType = GetTypedef("Cyclic" + i);
                 cyclicTypes.Add(i, cyclicType);
+                Assert.IsTrue(checker.IsCyclic(cyclicTypes[i], out _));
             }
-            Assert.IsTrue(checker.IsCyclic(cyclicTypes[1], out firstCycleFound));
-            Assert.AreEqual("Cyclic1 -> Cyclic1", CycleAsText(firstCycleFound));
-            Assert.IsTrue(checker.IsCyclic(cyclicTypes[2], out firstCycleFound));
-            Assert.AreEqual("Cyclic2 -> Cyclic3 -> Cyclic2", CycleAsText(firstCycleFound));
-            Assert.IsTrue(checker.IsCyclic(cyclicTypes[3], out firstCycleFound));
-            Assert.AreEqual(null, CycleAsText(firstCycleFound));
-            Assert.IsTrue(checker.IsCyclic(cyclicTypes[4], out firstCycleFound));
-            Assert.AreEqual("Cyclic4 -> Cyclic5 -> Cyclic6 -> Cyclic5", CycleAsText(firstCycleFound));
-            Assert.IsTrue(checker.IsCyclic(cyclicTypes[5], out firstCycleFound));
-            Assert.AreEqual(null, CycleAsText(firstCycleFound));
-            Assert.IsTrue(checker.IsCyclic(cyclicTypes[6], out firstCycleFound));
-            Assert.AreEqual(null, CycleAsText(firstCycleFound));
-            Assert.IsTrue(checker.IsCyclic(cyclicTypes[7], out firstCycleFound));
-            Assert.AreEqual(null, CycleAsText(firstCycleFound));
-            Assert.IsTrue(checker.IsCyclic(cyclicTypes[8], out firstCycleFound));
-            Assert.AreEqual(null, CycleAsText(firstCycleFound));
+            var root = (RootSymbolTable) program.Owner;
+            foreach (var letter in new[] {"A", "B", "C"})
+            {
+                for (int i = 1; i <= 3; i++)
+                {
+                    var type = (TypedefType) root.LookupType(letter + i).Symbol.Type;
+                    Assert.IsTrue(checker.IsCyclic(type, out _));
+                }
+            }
 
             //Check variables
             for (int i = 1; i <= 8; i++)
@@ -1082,7 +1075,7 @@ namespace TypeCobol.Test.Domain
                 Assert.IsTrue(arrayType.ElementType == cyclicTypes[i]);
             }
 
-            //Check group structure and types
+            //Check group structures and types
             var groupEntry = program.ResolveReference(new[] { "group1" }, false);
             Assert.IsTrue(groupEntry != null);
             Assert.IsTrue(groupEntry.Count == 1);
@@ -1112,6 +1105,19 @@ namespace TypeCobol.Test.Domain
             var item3 = fields[2];
             Assert.IsTrue(item3.Type != null);
             Assert.IsTrue(item3.Type.Tag == Type.Tags.Picture);
+            groupEntry = program.ResolveReference(new[] { "group2" }, false);
+            Assert.IsTrue(groupEntry != null);
+            Assert.IsTrue(groupEntry.Count == 1);
+            var group2 = groupEntry.Symbol;
+            Assert.IsTrue(group2.Type != null);
+            Assert.IsTrue(group2.Type.Tag == Type.Tags.Group);
+            var groupTypeOfGroup2 = (GroupType) group2.Type;
+            fields = groupTypeOfGroup2.Fields.ToList();
+            Assert.IsTrue(fields.Count == 2);
+            var myVar1 = fields[0];
+            Assert.IsTrue(myVar1.Type == cyclicTypes[8]);
+            var myVar2 = fields[1];
+            Assert.IsTrue(myVar2.Type == cyclicTypes[8]);
 
             TypedefType GetTypedef(string name)
             {
@@ -1122,12 +1128,6 @@ namespace TypeCobol.Test.Domain
                 Assert.IsTrue(symbol.Type != null);
                 Assert.IsTrue(symbol.Type.Tag == Type.Tags.Typedef);
                 return (TypedefType)symbol.Type;
-            }
-
-            string CycleAsText(List<TypedefType> cycle)
-            {
-                if (cycle == null) return null;
-                return string.Join(" -> ", cycle.Select(t => t.Symbol.Name));
             }
         }
 
