@@ -166,7 +166,7 @@
   <data name="TypedefDeclaredOutProgramOrFunction" xml:space="preserve">
     <value>TYPE "{0}" is not declared within a Program or Procedure scope.</value>
   </data>
-  <data name="ExpandingCyclicType" xml:space="preserve">
+  <data name="CyclicTypeDetected" xml:space="preserve">
     <value>Circular type reference detected : {0}.</value>
   </data>
   <data name="LevelExceededDuringRenumber" xml:space="preserve">
@@ -180,5 +180,8 @@
   </data>
   <data name="RenumberingUnsafeType" xml:space="preserve">
     <value>Cannot renumber : type '{0}' must be checked for cycles before attempting to renumber.</value>
+  </data>
+  <data name="DependsOnCyclicType" xml:space="preserve">
+    <value>Type "{0}" is unusable because it depends on cyclic type "{1}".</value>
   </data>
 </root>

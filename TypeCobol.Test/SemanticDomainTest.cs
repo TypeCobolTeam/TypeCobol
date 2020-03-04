@@ -32,6 +32,24 @@ namespace TypeCobol.Test.Domain
             }
         }
 
+        private class CompareMessagesErrorReporter : IValidationErrorReporter
+        {
+            private readonly string[] _expectedMessages;
+            private int _index;
+
+            public CompareMessagesErrorReporter(params string[] expectedMessages)
+            {
+                _expectedMessages = expectedMessages ?? new string[0];
+                _index = 0;
+            }
+
+            public void Report(ValidationError validationError)
+            {
+                Assert.IsTrue(_index < _expectedMessages.Length);
+                Assert.AreEqual(_expectedMessages[_index++], validationError.Message);
+            }
+        }
+
         private static string GetTestLocation()
         {
             return Path.Combine(Directory.GetCurrentDirectory(), @"..\..\TypeCobol.Test");
@@ -1032,7 +1050,7 @@ namespace TypeCobol.Test.Domain
 
             //Check non-cyclic type
             var notCyclic = GetTypedef("NotCyclic");
-            Assert.IsFalse(checker.IsCyclic(notCyclic, out _));
+            Assert.IsFalse(checker.Check(notCyclic, FailErrorReporter.Instance));
 
             //Check Cyclic types
             Dictionary<int, TypedefType> cyclicTypes = new Dictionary<int, TypedefType>();
@@ -1040,17 +1058,42 @@ namespace TypeCobol.Test.Domain
             {
                 var cyclicType = GetTypedef("Cyclic" + i);
                 cyclicTypes.Add(i, cyclicType);
-                Assert.IsTrue(checker.IsCyclic(cyclicTypes[i], out _));
+                Assert.IsTrue(checker.Check(cyclicTypes[i]));
             }
             var root = (RootSymbolTable) program.Owner;
-            foreach (var letter in new[] {"A", "B", "C"})
-            {
-                for (int i = 1; i <= 3; i++)
-                {
-                    var type = (TypedefType) root.LookupType(letter + i).Symbol.Type;
-                    Assert.IsTrue(checker.IsCyclic(type, out _));
-                }
-            }
+            var a1 = (TypedefType) root.LookupType("A1").Symbol.Type;
+            var b1 = (TypedefType) root.LookupType("B1").Symbol.Type;
+            var c1 = (TypedefType) root.LookupType("C1").Symbol.Type;
+            Assert.IsTrue(checker.Check(a1, new CompareMessagesErrorReporter(
+                "Circular type reference detected : A1 -> B1 -> C1 -> A1.",
+                "Type \"C1\" is unusable because it depends on cyclic type \"A1\".",
+                "Type \"B1\" is unusable because it depends on cyclic type \"A1\".")));
+            Assert.IsTrue(b1.HasFlag(Symbol.Flags.CheckedForCycles));
+            Assert.IsTrue(b1.HasFlag(Symbol.Flags.IsCyclic));
+            Assert.IsTrue(c1.HasFlag(Symbol.Flags.CheckedForCycles));
+            Assert.IsTrue(c1.HasFlag(Symbol.Flags.IsCyclic));
+            var a2 = (TypedefType)root.LookupType("A2").Symbol.Type;
+            var b2 = (TypedefType)root.LookupType("B2").Symbol.Type;
+            var c2 = (TypedefType)root.LookupType("C2").Symbol.Type;
+            Assert.IsTrue(checker.Check(c2, new CompareMessagesErrorReporter(
+                "Circular type reference detected : C2 -> A2 -> B2 -> C2.",
+                "Type \"B2\" is unusable because it depends on cyclic type \"C2\".",
+                "Type \"A2\" is unusable because it depends on cyclic type \"C2\".")));
+            Assert.IsTrue(a2.HasFlag(Symbol.Flags.CheckedForCycles));
+            Assert.IsTrue(a2.HasFlag(Symbol.Flags.IsCyclic));
+            Assert.IsTrue(b2.HasFlag(Symbol.Flags.CheckedForCycles));
+            Assert.IsTrue(b2.HasFlag(Symbol.Flags.IsCyclic));
+            var a3 = (TypedefType)root.LookupType("A3").Symbol.Type;
+            var b3 = (TypedefType)root.LookupType("B3").Symbol.Type;
+            var c3 = (TypedefType)root.LookupType("C3").Symbol.Type;
+            Assert.IsTrue(checker.Check(b3, new CompareMessagesErrorReporter(
+                "Circular type reference detected : B3 -> C3 -> A3 -> B3.",
+                "Type \"A3\" is unusable because it depends on cyclic type \"B3\".",
+                "Type \"C3\" is unusable because it depends on cyclic type \"B3\".")));
+            Assert.IsTrue(a3.HasFlag(Symbol.Flags.CheckedForCycles));
+            Assert.IsTrue(a3.HasFlag(Symbol.Flags.IsCyclic));
+            Assert.IsTrue(c3.HasFlag(Symbol.Flags.CheckedForCycles));
+            Assert.IsTrue(c3.HasFlag(Symbol.Flags.IsCyclic));
 
             //Check variables
             for (int i = 1; i <= 8; i++)

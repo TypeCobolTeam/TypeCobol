@@ -88,6 +88,24 @@ namespace TypeCobol {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Circular type reference detected : {0}..
+        /// </summary>
+        public static string CyclicTypeDetected {
+            get {
+                return ResourceManager.GetString("CyclicTypeDetected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type &quot;{0}&quot; is unusable because it depends on cyclic type &quot;{1}&quot;..
+        /// </summary>
+        public static string DependsOnCyclicType {
+            get {
+                return ResourceManager.GetString("DependsOnCyclicType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Program with identifier &quot;{0}&quot; is defined multiple times..
         /// </summary>
         public static string DuplicateProgram {
@@ -111,15 +129,6 @@ namespace TypeCobol {
         public static string ErrRedefineWasNotImmediatlyPrec {
             get {
                 return ResourceManager.GetString("ErrRedefineWasNotImmediatlyPrec", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Circular type reference detected : {0}..
-        /// </summary>
-        public static string ExpandingCyclicType {
-            get {
-                return ResourceManager.GetString("ExpandingCyclicType", resourceCulture);
             }
         }
         

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.Domain.Validator;
 using TypeCobol.Compiler.Symbols;
 
 namespace TypeCobol.Compiler.Types
@@ -11,7 +12,7 @@ namespace TypeCobol.Compiler.Types
     /// Other type visitors can then use flags <see cref="Symbol.Flags.CheckedForCycles" /> and <see cref="Symbol.Flags.IsCyclic" />
     /// to adapt their behavior.
     /// </summary>
-    public class CyclicTypeChecker : Type.AbstractTypeVisitor<List<TypedefType>, object>
+    public class CyclicTypeChecker : Type.AbstractTypeVisitor<object, IValidationErrorReporter>
     {
         private readonly Stack<TypedefType> _typedefStack;
 
@@ -20,27 +21,25 @@ namespace TypeCobol.Compiler.Types
             _typedefStack = new Stack<TypedefType>();
         }
 
-        public override List<TypedefType> VisitType(Type type, object _)
+        public override object VisitType(Type type, IValidationErrorReporter errorReporter)
         { 
             //Continue visit through TypeComponent if any.
-            return type.TypeComponent?.Accept(this, null);
+            type.TypeComponent?.Accept(this, errorReporter);
+            return null;
         }
 
-        public override List<TypedefType> VisitGroupType(GroupType groupType, object _)
+        public override object VisitGroupType(GroupType groupType, IValidationErrorReporter errorReporter)
         {
-            List<TypedefType> firstCycleFound = null;
-
             //Continue visit through fields
             foreach (var field in groupType.Fields)
             {
-                var fieldFirstCycleFound = field.Type?.Accept(this, null);
-                firstCycleFound = firstCycleFound ?? fieldFirstCycleFound;
+                field.Type?.Accept(this, errorReporter);
             }
 
-            return firstCycleFound;
+            return null;
         }
 
-        public override List<TypedefType> VisitTypedefType(TypedefType typedefType, object _)
+        public override object VisitTypedefType(TypedefType typedefType, IValidationErrorReporter errorReporter)
         {
             if (typedefType.HasFlag(Symbol.Flags.CheckedForCycles))
             {
@@ -52,39 +51,54 @@ namespace TypeCobol.Compiler.Types
                 return null;
             }
 
-            List<TypedefType> firstCycleFound;
             if (_typedefStack.Contains(typedefType))
             {
-                //Type is cyclic : mark all parent typedefs as cyclic (that includes current type).
+                //Type is cyclic : flag it, report error with cycle and mark all visited parent types as cyclic.
+                typedefType.SetFlag(Symbol.Flags.IsCyclic, true, false);
+                if (errorReporter != null)
+                {
+                    //Report error with first cycle found during visit.
+                    var cycle = _typedefStack.Reverse().SkipWhile(typedef => typedef != typedefType).ToList();
+                    cycle.Add(typedefType);
+                    var chain = string.Join(" -> ", cycle.Select(t => t.Symbol.Name));
+                    errorReporter.Report(new ValidationError(typedefType.Symbol, string.Format(TypeCobolResource.CyclicTypeDetected, chain)));
+                }
                 FlagParentsAsCyclic();
-                firstCycleFound = _typedefStack.Reverse().ToList();
-                firstCycleFound.Add(typedefType);
             }
             else
             {
                 //Continue visit through TargetType.
                 _typedefStack.Push(typedefType);
-                firstCycleFound = typedefType.TargetType.Accept(this, null);
+                typedefType.TargetType.Accept(this, errorReporter);
                 _typedefStack.Pop();
             }
 
             //typedef has been fully checked.
             typedefType.SetFlag(Symbol.Flags.CheckedForCycles, true, false);
-            return firstCycleFound;
+            return null;
 
             //Local function to update parent typedefs and mark them as cyclic.
             void FlagParentsAsCyclic()
             {
-                foreach (var visitedTypedef in _typedefStack)
+                foreach (var visitedTypedef in _typedefStack.Where(typedef => typedef != typedefType))
                 {
+                    if (visitedTypedef.HasFlag(Symbol.Flags.IsCyclic)) continue;
+
                     visitedTypedef.SetFlag(Symbol.Flags.IsCyclic, true, false);
+                    errorReporter?.Report(new ValidationError(visitedTypedef.Symbol, string.Format(TypeCobolResource.DependsOnCyclicType, visitedTypedef.Symbol.Name, typedefType.Symbol.Name)));
                 }
             }
         }
 
-        public bool IsCyclic([NotNull] TypedefType typedef, out List<TypedefType> firstCycleFound)
+        /// <summary>
+        /// Check for cycles the given Typedef.
+        /// </summary>
+        /// <param name="typedef">Typedef instance to be checked.</param>
+        /// <param name="errorReporter">Custom error reporter.</param>
+        /// <returns>True if the given typedef is cyclic, False otherwise.</returns>
+        public bool Check([NotNull] TypedefType typedef, IValidationErrorReporter errorReporter = null)
         {
-            firstCycleFound = typedef.Accept(this, null);
+            typedef.Accept(this, errorReporter);
             return typedef.HasFlag(Symbol.Flags.IsCyclic);
         }
     }

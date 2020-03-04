@@ -141,7 +141,7 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="variable">Variable to renumber.</param>
         /// <param name="errorReporter">Custom error reporter.</param>
-        public void Renumber([NotNull] VariableSymbol variable, IValidationErrorReporter errorReporter)
+        public void Renumber([NotNull] VariableSymbol variable, IValidationErrorReporter errorReporter = null)
         {
             System.Diagnostics.Debug.Assert(variable != null);
             var context = new Context(variable.Level, errorReporter);
