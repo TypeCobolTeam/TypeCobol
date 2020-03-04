@@ -266,8 +266,9 @@ namespace TypeCobol.Server
         {
             if (_configuration.ExecToStep >= ExecutionStep.SemanticCheck)
             {
-                foreach (var program in programs)
+                foreach (var program in programs.Where(p => p.IsMainProgram))
                 {
+                    // a stacked or a nested program should not be referenced from another source file
                     var previousPrograms = rootTable.GetPrograms();
                     foreach (var previousProgram in previousPrograms)
                     {

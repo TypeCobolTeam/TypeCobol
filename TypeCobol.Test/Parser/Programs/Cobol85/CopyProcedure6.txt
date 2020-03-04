@@ -5,9 +5,21 @@
 - IsRecursive = False
 - IsCommon = False
 
+[[DataDivisionHeader]] [1,4:DATA]<DATA> --> [14,14+:.]<PeriodSeparator>
+
+[[WorkingStorageSectionHeader]] [1,15:WORKING-STORAGE]<WORKING_STORAGE> --> [24,24+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [1,2:01]<LevelNumber>{1} --> [11,11+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [1,2:01]<LevelNumber>{1} --> [11,11+:.]<PeriodSeparator>
+
 [[ProcedureDivisionHeader]] [1,9:PROCEDURE]<PROCEDURE> --> [19,19+:.]<PeriodSeparator>
 
 [[MoveStatement]] [1,4:move]<MOVE> --> [11,11:b]<UserDefinedWord>
+
+[[MoveStatement]] [1,4:move]<MOVE> --> [11,11:b]<UserDefinedWord>
+
+[[MoveStatement]] [1,4:move]<MOVE> --> [11,11:c]<UserDefinedWord>
 
 [[MoveStatement]] [1,4:move]<MOVE> --> [11,11:d]<UserDefinedWord>
 
