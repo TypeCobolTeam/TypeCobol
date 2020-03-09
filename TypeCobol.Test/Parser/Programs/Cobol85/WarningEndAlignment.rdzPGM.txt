@@ -1,10 +1,14 @@
 --- Diagnostics ---
+Line 1[8,27] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 25[16,21] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
 Line 32[17,22] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
 Line 40[16,27] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
 Line 45[14,24] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
 Line 51[14,23] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
 Line 96[10,21] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+Line 107[14,23] <37, Warning, General> - Warning: "end-if" is missing
+Line 109[14,17] <27, Error, Syntax> - Syntax error : extraneous input 'ELSE' expecting {AcceptStatement, AddStatement, AllocateStatement, AlterStatement, CallStatement, CancelStatement, CloseStatement, ComputeStatement, ContinueStatement, DeleteStatement, DisplayStatement, DivideStatement, EntryStatement, EvaluateStatement, ExecStatement, ExitMethodStatement, ExitProgramStatement, ExitStatement, FreeStatement, GobackStatement, GotoStatement, IfStatement, InitializeStatement, InspectStatement, InvokeStatement, JsonGenerateStatement, JsonParseStatement, MergeStatement, MoveStatement, MultiplyStatement, NextSentenceStatement, OpenStatement, PerformProcedureStatement, PerformStatement, ReadStatement, ReleaseStatement, ReturnStatement, RewriteStatement, SearchStatement, SetStatement, SortStatement, StartStatement, StopStatement, StringStatement, SubtractStatement, UnstringStatement, WriteStatement, XmlGenerateStatement, XmlParseStatement, ProcedureStyleCall} OffendingSymbol=[[ElseCondition]] [14,17:ELSE]<ELSE> --> [14,17:ELSE]<ELSE>
+
 
 --- Program ---
 PROGRAM: PgmTest common:False initial:False recursive:False
@@ -29,6 +33,7 @@ PROGRAM: PgmTest common:False initial:False recursive:False
      inout: myBool:BOOL
   procCopy
         in: myname:Alphanumeric
+  MyProc3
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL
