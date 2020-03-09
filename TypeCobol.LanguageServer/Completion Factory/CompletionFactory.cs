@@ -182,22 +182,22 @@ namespace TypeCobol.LanguageServer
                 switch (lastSignificantToken.TokenType)
                 {
                     case TokenType.INPUT:
-                        {
-                            procParams = procedure.Profile.InputParameters;
-                            //Get number of input parameters left per procedure
-                            break;
-                        }
+                    {
+                        procParams = procedure.Profile.InputParameters;
+                        //Get number of input parameters left per procedure
+                        break;
+                    }
                     case TokenType.OUTPUT:
-                        {
-                            procParams = procedure.Profile.OutputParameters;
-                            break;
-                        }
+                    {
+                        procParams = procedure.Profile.OutputParameters;
+                        break;
+                    }
                     case TokenType.IN_OUT:
-                        {
-                            procParams = procedure.Profile.InoutParameters;
-                            //Get number of inout parameters left per procedure
-                            break;
-                        }
+                    {
+                        procParams = procedure.Profile.InoutParameters;
+                        //Get number of inout parameters left per procedure
+                        break;
+                    }
                     default:
                         procParams = new List<ParameterDescription>();
                         break;
@@ -219,8 +219,8 @@ namespace TypeCobol.LanguageServer
                 if (procedure.Profile.OutputParameters.Count == 0) {
                     allProcsHaveOutputParams = false;
                 }
-                
-                
+
+
                 //If the user already written all or more parameters than required let's check for an other proc signature
                 if (alreadyGivenParametersCount >= procParams.Count())
                     continue;
@@ -229,8 +229,14 @@ namespace TypeCobol.LanguageServer
                 var parameterToFill = procParams.ToArray()[alreadyGivenParametersCount];
                 //Get local/global variable that could correspond to the parameter
 
-                potentialVariablesForCompletion = node.SymbolTable.GetVariablesByType(parameterToFill.DataType, potentialVariablesForCompletion, SymbolTable.Scope.Program);
-
+                if (parameterToFill.TypeDefinition == null)
+                {
+                    potentialVariablesForCompletion = node.SymbolTable.GetVariablesByType(parameterToFill.DataType, potentialVariablesForCompletion, SymbolTable.Scope.Program);
+                }
+                else
+                {
+                    potentialVariablesForCompletion = node.SymbolTable.GetVariablesByType(parameterToFill.TypeDefinition, potentialVariablesForCompletion, SymbolTable.Scope.Program);
+                }
             }
 
             if (potentialVariablesForCompletion == null) return completionItems;

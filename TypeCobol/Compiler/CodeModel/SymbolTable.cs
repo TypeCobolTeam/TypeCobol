@@ -211,7 +211,16 @@ namespace TypeCobol.Compiler.CodeModel
 
         public List<DataDefinition> GetVariablesByType(DataType dataType, IEnumerable<DataDefinition> existingVariables, Scope maximalScope)
         {
+            return GetVariablesByDataTypeTypeDef(dataType, null, existingVariables, maximalScope);
+        }
 
+        public List<DataDefinition> GetVariablesByType(TypeDefinition typeDefinition, IEnumerable<DataDefinition> existingVariables, Scope maximalScope)
+        {
+            return GetVariablesByDataTypeTypeDef(null, typeDefinition, existingVariables, maximalScope);
+        }
+
+        private List<DataDefinition> GetVariablesByDataTypeTypeDef(DataType dataType, TypeDefinition typeDefinition, IEnumerable<DataDefinition> existingVariables, Scope maximalScope)
+        {
             var foundedVariables = new List<DataDefinition>();
             if (existingVariables != null && existingVariables.Any()) foundedVariables.AddRange(existingVariables);
 
@@ -221,24 +230,31 @@ namespace TypeCobol.Compiler.CodeModel
                 if (currentTable.CurrentScope == Scope.Namespace || currentTable.CurrentScope == Scope.Intrinsic)
                     throw new NotSupportedException();
 
-
-                if (dataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
+                if (typeDefinition == null)
                 {
-                    var references = currentTable.TypesReferences.Where(t => t.Key.DataType == dataType).SelectMany(t => t.Value);
-                    foundedVariables.AddRange(references);
+                    if (dataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
+                    {
+                        var references = currentTable.TypesReferences.Where(t => t.Key.DataType == dataType).SelectMany(t => t.Value);
+                        foundedVariables.AddRange(references);
+                    }
+                    else
+                    {
+                        foreach (var variable in currentTable.DataEntries.Values.SelectMany(t => t))
+                        {
+                            SeekVariableType(dataType, variable, ref foundedVariables);
+                        }
+                    }
                 }
                 else
                 {
-                    foreach (var variable in currentTable.DataEntries.Values.SelectMany(t => t))
-                    {
-                        SeekVariableType(dataType, variable, ref foundedVariables);
-                    }
+                    var references = currentTable.TypesReferences.SelectMany(t => t.Value).Where(v => v.TypeDefinition != null && v.TypeDefinition.Equals(typeDefinition));
+                    foundedVariables.AddRange(references);
                 }
 
                 currentTable = currentTable.EnclosingScope;
 
             }
-            
+
             return foundedVariables;
         }
 

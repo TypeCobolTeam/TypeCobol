@@ -386,6 +386,13 @@ namespace TypeCobol.LanguageServer.Test
             LSRTestHelper.Test("ProcedureCompletionPotentialChildrenWithNoName", LsrTestingOptions.NoLsrTesting, true);
         }
 
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void ProcedureCompletionQualifiedName()
+        {
+            LSRTestHelper.Test("ProcedureCompletionQualifiedName", LsrTestingOptions.NoLsrTesting, true, false, false, null, null, "CustomDependencies");
+        }
+
 #if EUROINFO_RULES
         [TestMethod]
         [TestCategory("Completion")]

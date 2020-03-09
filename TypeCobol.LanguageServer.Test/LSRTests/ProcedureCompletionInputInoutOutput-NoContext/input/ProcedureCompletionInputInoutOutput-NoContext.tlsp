@@ -119,7 +119,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":71,\"character\":12},\"end\":{\"line\":71,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '<end of file>'\"},{\"range\":{\"start\":{\"line\":69,\"character\":12},\"end\":{\"line\":69,\"character\":31}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' \"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":71,\"character\":12},\"end\":{\"line\":71,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":69,\"character\":12},\"end\":{\"line\":69,\"character\":31}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext(no arguments)'\"}]}}"
     },
     {
       "category": 2,
@@ -131,7 +131,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate IN-OUT \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate IN-OUT \"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
     },
     {
       "category": 0,
@@ -171,7 +171,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\\n                          in-out \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\\n                          in-out \"}]}"
     },
     {
       "category": 0,
@@ -183,7 +183,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":72,\"character\":12},\"end\":{\"line\":72,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '<end of file>'\"},{\"range\":{\"start\":{\"line\":69,\"character\":12},\"end\":{\"line\":69,\"character\":32}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE, DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":72,\"character\":12},\"end\":{\"line\":72,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":69,\"character\":12},\"end\":{\"line\":69,\"character\":32}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE, DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -239,7 +239,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate OUTPUT \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate OUTPUT \"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\\n                          output \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\\n                          output \"}]}"
     },
     {
       "category": 0,
@@ -251,7 +251,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":73,\"character\":12},\"end\":{\"line\":73,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '<end of file>'\"},{\"range\":{\"start\":{\"line\":69,\"character\":12},\"end\":{\"line\":69,\"character\":32}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE, DATE) in-out(DATE, DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":73,\"character\":12},\"end\":{\"line\":73,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":69,\"character\":12},\"end\":{\"line\":69,\"character\":32}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE, DATE) in-out(DATE, DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -343,7 +343,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":88,\"character\":12},\"end\":{\"line\":88,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '<end of file>'\"},{\"range\":{\"start\":{\"line\":87,\"character\":12},\"end\":{\"line\":87,\"character\":46}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut' \"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":88,\"character\":12},\"end\":{\"line\":88,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":87,\"character\":12},\"end\":{\"line\":87,\"character\":46}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut(no arguments)'\"}]}}"
     },
     {
       "category": 2,
@@ -363,7 +363,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate OUTPUT \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate OUTPUT \"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
     },
     {
       "category": 0,
@@ -391,7 +391,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"18\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"18\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\\n                                         output \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\\n                                         output \"}]}"
     },
     {
       "category": 0,
@@ -403,7 +403,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":89,\"character\":12},\"end\":{\"line\":89,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '<end of file>'\"},{\"range\":{\"start\":{\"line\":87,\"character\":12},\"end\":{\"line\":87,\"character\":47}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut' input(DATE, DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":89,\"character\":12},\"end\":{\"line\":89,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":87,\"character\":12},\"end\":{\"line\":87,\"character\":47}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut' input(DATE, DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -539,7 +539,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":106,\"character\":12},\"end\":{\"line\":106,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '<end of file>'\"},{\"range\":{\"start\":{\"line\":105,\"character\":12},\"end\":{\"line\":105,\"character\":44}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput' \"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":106,\"character\":12},\"end\":{\"line\":106,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":105,\"character\":12},\"end\":{\"line\":105,\"character\":44}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput(no arguments)'\"}]}}"
     },
     {
       "category": 2,
@@ -551,7 +551,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"26\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate IN-OUT \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate IN-OUT \"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"26\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
     },
     {
       "category": 0,
@@ -587,7 +587,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"29\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"29\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\\n                                       in-out \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\\n                                       in-out \"}]}"
     },
     {
       "category": 0,
@@ -599,7 +599,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":107,\"character\":12},\"end\":{\"line\":107,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '<end of file>'\"},{\"range\":{\"start\":{\"line\":105,\"character\":12},\"end\":{\"line\":105,\"character\":45}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput' input(DATE, DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":107,\"character\":12},\"end\":{\"line\":107,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":105,\"character\":12},\"end\":{\"line\":105,\"character\":45}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput' input(DATE, DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -655,7 +655,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"35\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate OUTPUT \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate OUTPUT \"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"35\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
     },
     {
       "category": 0,
