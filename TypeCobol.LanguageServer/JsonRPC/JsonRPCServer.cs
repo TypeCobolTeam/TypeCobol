@@ -259,7 +259,7 @@ namespace TypeCobol.LanguageServer.JsonRPC
                 }
                 catch (Exception e)
                 {
-                    WriteServerLog(String.Format("Task completion for the response expected by request {0} of type {1} failed : {1}", requestId, requestType.GetType().Name, e.Message));
+                    WriteServerLog(String.Format("Task completion for the response expected by request {0} of type {1} failed : {2}", requestId, requestType.GetType().Name, e.Message));
                 }
             }
         }

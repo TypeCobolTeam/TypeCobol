@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using TypeCobol.CLI.CustomExceptions;
 using TypeCobol.Codegen;
-using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
@@ -293,7 +292,7 @@ namespace TypeCobol.Server
                 try
                 {
                     StringBuilder output = new StringBuilder();
-                    var generator = GeneratorFactoryManager.Instance.Create(OutputFormat.ExpandingCopy.ToString(), compilationUnit, output, null, null, false);
+                    var generator = GeneratorFactoryManager.Instance.Create(OutputFormat.ExpandingCopy.ToString(), compilationUnit, output, null, false);
                     var streamWriter = new StreamWriter(_configuration.ExpandingCopyFilePath);
                     generator.Generate(compilationUnit, ColumnsLayout.CobolReferenceFormat);
                     streamWriter.Write(output);
@@ -341,19 +340,12 @@ namespace TypeCobol.Server
         {
             try
             {
-                //Load skeletons if necessary
-                List<Skeleton> skeletons = null;
-                if (!string.IsNullOrEmpty(_configuration.skeletonPath))
-                {
-                    skeletons = Codegen.Config.Config.Parse(_configuration.skeletonPath);
-                }
-
                 //Get Generator from specified config.OutputFormat
                 var sb = new StringBuilder();
                 bool needLineMap = _configuration.LineMapFiles.Count > fileIndex;
                 var generator = GeneratorFactoryManager.Instance.Create(_configuration.OutputFormat.ToString(),
                     compilationUnit,
-                    sb, skeletons, AnalyticsWrapper.Telemetry.TypeCobolVersion, needLineMap);
+                    sb, AnalyticsWrapper.Telemetry.TypeCobolVersion, needLineMap);
                 if (generator == null)
                 {
                     throw new GenerationException("Unknown OutputFormat=" + _configuration.OutputFormat + "_", inputFilePath);

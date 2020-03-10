@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using TypeCobol.Codegen.Actions;
 using TypeCobol.Codegen.Nodes;
-using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Source;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.File;
-using static TypeCobol.Codegen.Generators.LinearNodeSourceCodeMapper;
 using System.Runtime.CompilerServices;
 using TypeCobol.Compiler;
+
+using static TypeCobol.Codegen.Generators.LinearNodeSourceCodeMapper;
 
 namespace TypeCobol.Codegen.Generators
 {
@@ -56,11 +54,11 @@ namespace TypeCobol.Codegen.Generators
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="Document"> The compilation document </param>
+        /// <param name="document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
-        /// <param name="skeletons">All skeletons pattern for code generation </param>
-        public DefaultGenerator(TypeCobol.Compiler.CompilationDocument document, StringBuilder destination, List<Skeleton> skeletons, string typeCobolVersion)
-            : base(document, destination, skeletons, typeCobolVersion)
+        /// <param name="typeCobolVersion">Current version of the TypeCobol parser/codegen</param>
+        public DefaultGenerator(TypeCobol.Compiler.CompilationDocument document, StringBuilder destination, string typeCobolVersion)
+            : base(document, destination, typeCobolVersion)
         {
 
         }
