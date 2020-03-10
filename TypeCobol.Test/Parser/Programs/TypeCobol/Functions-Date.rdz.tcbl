@@ -157,6 +157,11 @@
         PROCEDURE DIVISION.
         END-DECLARE.
       *  05: KO because same input as 02
+      %<<<
+           Description conflict.
+           @Params:
+               - x pic 9(08)
+      %>>>
        DECLARE FUNCTION conflict PRIVATE
            INPUT     x   PIC 9(08)
            RETURNING y   PIC 9(08).

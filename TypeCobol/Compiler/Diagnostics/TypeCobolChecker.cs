@@ -9,7 +9,6 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Analytics;
 using Castle.Core.Internal;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Scanner;
@@ -694,12 +693,8 @@ namespace TypeCobol.Compiler.Diagnostics
         private static void CheckParameters([NotNull] ParametersProfile profile, Node node)
         {
             var parameters = profile.Parameters;
-            foreach (var parameter in profile.InputParameters) CheckParameter(parameter, node);
-            foreach (var parameter in profile.InoutParameters) CheckParameter(parameter, node);
-            foreach (var parameter in profile.OutputParameters) CheckParameter(parameter, node);
             if (profile.ReturningParameter != null)
             {
-                CheckParameter(profile.ReturningParameter, node);
                 parameters.Add(profile.ReturningParameter);
             }
 
@@ -712,31 +707,6 @@ namespace TypeCobol.Compiler.Diagnostics
                     string.Format("Parameter with name '{0}' declared multiple times", duplicatedParameter.Name), duplicatedParameter);
             }
 
-
-        }
-
-        private static void CheckParameter([NotNull] ParameterDescriptionEntry parameter, Node node)
-        {
-            // TCRFUN_LEVEL_88_PARAMETERS
-            if (parameter.LevelNumber?.Value != 1)
-            {
-                DiagnosticUtils.AddError(node,
-                    "Condition parameter \"" + parameter.Name + "\" must be subordinate to another parameter.", parameter);
-            }
-
-            if (parameter.DataConditions != null)
-            {
-                foreach (var condition in parameter.DataConditions)
-                {
-                    if (condition.LevelNumber?.Value != 88)
-                        DiagnosticUtils.AddError(node,
-                            "Condition parameter \"" + condition.Name + "\" must be level 88.", condition);
-                    if (condition.LevelNumber?.Value == 88 && parameter.DataType == DataType.Boolean)
-                        DiagnosticUtils.AddError(node,
-                            "The Level 88 symbol '" + parameter.Name +
-                            "' cannot be declared under a BOOL typed symbol", condition);
-                }
-            }
 
         }
 

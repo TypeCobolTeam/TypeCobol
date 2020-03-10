@@ -2,10 +2,32 @@
 Line 1[8,33] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 6[25,31] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'DateJulian' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[25,31:TYPEDEF]<TYPEDEF>
 Line 9[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'DateDB2' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[19,25:TYPEDEF]<TYPEDEF>
+Line 26[23,24] <27, Error, Syntax> - Syntax error : no viable alternative at input '88' RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter>tcfuncParameterUsageClause,  OffendingSymbol=[23,24:88]<IntegerLiteral>{88}
+Line 26[51,55] <27, Error, Syntax> - Syntax error : mismatched input 'value' expecting {FUNCTION-POINTER, PIC, PICTURE, POINTER, PROCEDURE-POINTER, TYPE, ?} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[51,55:value]<VALUE>
+Line 26[26,44] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[26,44:direction-YearFirst]<UserDefinedWord>
+Line 27[51,55] <27, Error, Syntax> - Syntax error : mismatched input 'value' expecting {FUNCTION-POINTER, PIC, PICTURE, POINTER, PROCEDURE-POINTER, TYPE, ?} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[51,55:value]<VALUE>
+Line 27[26,43] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[26,43:direction-DayFirst]<UserDefinedWord>
+Line 28[51,55] <27, Error, Syntax> - Syntax error : mismatched input 'value' expecting {FUNCTION-POINTER, PIC, PICTURE, POINTER, PROCEDURE-POINTER, TYPE, ?} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[51,55:value]<VALUE>
+Line 28[26,45] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[26,45:direction-MonthFirst]<UserDefinedWord>
+Line 29[51,55] <27, Error, Syntax> - Syntax error : mismatched input 'value' expecting {FUNCTION-POINTER, PIC, PICTURE, POINTER, PROCEDURE-POINTER, TYPE, ?} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[51,55:value]<VALUE>
+Line 29[26,49] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[26,49:direction-LocalDependent]<UserDefinedWord>
+Line 31[23,24] <27, Error, Syntax> - Syntax error : no viable alternative at input '88' RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter>tcfuncParameterUsageClause,  OffendingSymbol=[23,24:88]<IntegerLiteral>{88}
+Line 31[51,55] <27, Error, Syntax> - Syntax error : mismatched input 'value' expecting {FUNCTION-POINTER, PIC, PICTURE, POINTER, PROCEDURE-POINTER, TYPE, ?} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[51,55:value]<VALUE>
+Line 31[26,42] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[26,42:separator-without]<UserDefinedWord>
+Line 32[51,55] <27, Error, Syntax> - Syntax error : mismatched input 'value' expecting {FUNCTION-POINTER, PIC, PICTURE, POINTER, PROCEDURE-POINTER, TYPE, ?} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[51,55:value]<VALUE>
+Line 32[26,40] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[26,40:separator-blank]<UserDefinedWord>
+Line 33[51,55] <27, Error, Syntax> - Syntax error : mismatched input 'value' expecting {FUNCTION-POINTER, PIC, PICTURE, POINTER, PROCEDURE-POINTER, TYPE, ?} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[51,55:value]<VALUE>
+Line 33[26,40] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[26,40:separator-slash]<UserDefinedWord>
+Line 34[51,55] <27, Error, Syntax> - Syntax error : mismatched input 'value' expecting {FUNCTION-POINTER, PIC, PICTURE, POINTER, PROCEDURE-POINTER, TYPE, ?} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[51,55:value]<VALUE>
+Line 34[26,38] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[26,38:separator-dot]<UserDefinedWord>
+Line 35[51,55] <27, Error, Syntax> - Syntax error : mismatched input 'value' expecting {FUNCTION-POINTER, PIC, PICTURE, POINTER, PROCEDURE-POINTER, TYPE, ?} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[51,55:value]<VALUE>
+Line 35[26,41] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[26,41:separator-hyphen]<UserDefinedWord>
+Line 36[51,55] <27, Error, Syntax> - Syntax error : mismatched input 'value' expecting {FUNCTION-POINTER, PIC, PICTURE, POINTER, PROCEDURE-POINTER, TYPE, ?} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[51,55:value]<VALUE>
+Line 36[26,49] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[26,49:separator-LocalDependent]<UserDefinedWord>
 Line 136[9,36] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions".
 Line 142[9,36] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions".
 Line 154[9,36] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions".
-Line 160[8,35] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions".
+Line 160[7,35] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions".
 
 --- Program ---
 PROGRAM: DateFunctions common:False initial:False recursive:False
@@ -20,7 +42,17 @@ PROGRAM: DateFunctions common:False initial:False recursive:False
   currentDateFreeFormat
         in: dateType:Alphanumeric
         in: direction:Alphanumeric
+        in: direction-YearFirst:?
+        in: direction-DayFirst:?
+        in: direction-MonthFirst:?
+        in: direction-LocalDependent:?
         in: separator:Alphanumeric
+        in: separator-without:?
+        in: separator-blank:?
+        in: separator-slash:?
+        in: separator-dot:?
+        in: separator-hyphen:?
+        in: separator-LocalDependent:?
         in: languageCode:Alphanumeric
         in: countryCode:Alphanumeric
     return: result:Alphanumeric
