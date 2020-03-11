@@ -167,13 +167,11 @@ namespace TypeCobol.Compiler.Symbols
         public VariableSymbol AddToDomain(VariableSymbol varSym)
         {
             System.Diagnostics.Debug.Assert(varSym != null);
-            lock (Domain)
-            {
-                //First add it in the Global Domain.
-                Symbol root = TopParent(Kinds.Root);
-                ((RootSymbolTable) root)?.AddToUniverse(varSym);
-                Domain.Add(varSym);
-            }
+            
+            //First add it in the Global Domain.
+            Symbol root = TopParent(Kinds.Root);
+            ((RootSymbolTable) root)?.AddToUniverse(varSym);
+            Domain.Add(varSym);
             return varSym;
         }
 
