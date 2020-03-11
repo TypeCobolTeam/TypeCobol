@@ -119,7 +119,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         message = string.Format("Function not found '{0}' {1}",
                             functionCaller.FunctionCall.FunctionName,
                             parameterList.GetSignature());
-                        DiagnosticUtils.AddError(node, message);
+                        DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
                         return; //Do not continue the function/procedure does not exists
                     }
 
@@ -630,9 +630,12 @@ namespace TypeCobol.Compiler.Diagnostics
             var headerNameURI = new URI(header.Name);
             var functions = functionDeclaration.SymbolTable.GetFunction(headerNameURI, functionDeclaration.Profile);
             if (functions.Count > 1)
-                DiagnosticUtils.AddError(functionDeclaration,
+            {
+                Token nameToken = header.FunctionName.NameLiteral.Token;
+                DiagnosticUtils.AddError(header,
                     "A function \"" + headerNameURI.Head + "\" with the same profile already exists in namespace \"" +
-                    headerNameURI.Tail + "\".");
+                    headerNameURI.Tail + "\".", nameToken, null, MessageCode.SemanticTCErrorInParser);
+            }
 
 
             //// Set a Warning if the formalized comment parameter is unknown or if the function parameter have no description
