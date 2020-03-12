@@ -60,6 +60,21 @@ Line 40[29,32] <27, Error, Syntax> - Syntax error : Input variable 'var1' is mod
            goback.
        end-declare.
       
+      %<<<
+           Description InvalidParamProc.
+           @Params:
+               - var1 pic X
+      %>>>
+       declare InvalidParamProc private
+Line 63[32,37] <27, Error, Syntax> - Syntax error : 'occurs' is not supported yet
+              input var1 pic X occurs 5.
+       end-declare.
+      
+       declare InvalidParamProc2 private
+Line 67[33,38] <27, Error, Syntax> - Syntax error : 'occurs' is not supported yet
+               input var1 pic X occurs 5.
+       end-declare.
+      
        Traitement.
            call IsPersonValid
                 INPUT myPerson, myName
