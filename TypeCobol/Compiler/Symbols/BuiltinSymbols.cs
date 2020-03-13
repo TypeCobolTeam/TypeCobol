@@ -58,7 +58,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Store Builtins Symbol in the given scope
         /// </summary>
-        internal static void StoreSymbols(Scope<TypedefSymbol> types)
+        internal static void StoreSymbols(Domain<TypedefSymbol> types)
         {
             types.Enter(Omitted);
             types.Enter(Alphabetic);

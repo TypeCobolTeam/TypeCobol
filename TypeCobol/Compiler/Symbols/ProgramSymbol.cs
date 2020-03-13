@@ -19,103 +19,103 @@ namespace TypeCobol.Compiler.Symbols
         public ProgramSymbol(string name) : base(name, Kinds.Program)
         {
             _variables = new Container<VariableSymbol>();
-            Types = new Scope<TypedefSymbol>(this);
-            FileData = new Scope<VariableSymbol>(this);
-            GlobalStorageData = new Scope<VariableSymbol>(this);
-            WorkingStorageData = new Scope<VariableSymbol>(this);
-            LocalStorageData = new Scope<VariableSymbol>(this);
-            LinkageStorageData = new Scope<VariableSymbol>(this);
-            Sections = new Scope<SectionSymbol>(this);
-            Paragraphs = new Scope<ParagraphSymbol>(this);
-            Functions = new Scope<FunctionSymbol>(this);
-            Programs = new Scope<ProgramSymbol>(this);
+            Types = new Domain<TypedefSymbol>(this);
+            FileData = new Domain<VariableSymbol>(this);
+            GlobalStorageData = new Domain<VariableSymbol>(this);
+            WorkingStorageData = new Domain<VariableSymbol>(this);
+            LocalStorageData = new Domain<VariableSymbol>(this);
+            LinkageStorageData = new Domain<VariableSymbol>(this);
+            Sections = new Domain<SectionSymbol>(this);
+            Paragraphs = new Domain<ParagraphSymbol>(this);
+            Functions = new Domain<FunctionSymbol>(this);
+            Programs = new Domain<ProgramSymbol>(this);
         }
 
         /// <summary>
-        /// All types of this program.
+        /// All types defined in this program.
         /// </summary>
-        public override Scope<TypedefSymbol> Types
+        public override Domain<TypedefSymbol> Types
         {
             get;
             protected set;
         }
 
         /// <summary>
-        /// File data scope of the program.
+        /// Data of the FILE SECTION of the program.
         /// </summary>
-        public override Scope<VariableSymbol> FileData
+        public override Domain<VariableSymbol> FileData
         {
             get;
             protected set;
         }
 
         /// <summary>
-        /// Global Storage data scope of the program.
+        /// Data of the GLOBAL-STORAGE SECTION of the program.
         /// </summary>
-        public override Scope<VariableSymbol> GlobalStorageData
+        public override Domain<VariableSymbol> GlobalStorageData
         {
             get;
             protected set;
         }
 
         /// <summary>
-        /// Working Storage data scope of the program.
+        /// Data of the WORKING-STORAGE SECTION of the program.
         /// </summary>
-        public override Scope<VariableSymbol> WorkingStorageData
+        public override Domain<VariableSymbol> WorkingStorageData
         {
             get;
             protected set;
         }
 
         /// <summary>
-        /// Working Storage data scope of the program.
+        /// Data of the LOCAL-STORAGE SECTION of the program.
         /// </summary>
-        public override Scope<VariableSymbol> LocalStorageData
+        public override Domain<VariableSymbol> LocalStorageData
         {
             get;
             protected set;
         }
 
         /// <summary>
-        /// Linkage Storage data scope of the program.
+        /// Data of the LINKAGE SECTION of the program.
         /// </summary>
-        public override Scope<VariableSymbol> LinkageStorageData
+        public override Domain<VariableSymbol> LinkageStorageData
         {
             get;
             protected set;
         }
 
         /// <summary>
-        /// Section scope of the program.
+        /// Sections of the program.
         /// </summary>
-        public override Scope<SectionSymbol> Sections
+        public override Domain<SectionSymbol> Sections
         {
             get;
             protected set;
         }
 
         /// <summary>
-        /// Paragraph scope of the program.
+        /// Paragraps of the program.
         /// </summary>
-        public override Scope<ParagraphSymbol> Paragraphs
+        public override Domain<ParagraphSymbol> Paragraphs
         {
             get;
             protected set;
         }
 
         /// <summary>
-        /// Functions scope of the program.
+        /// Functions/Procedures defined in the program.
         /// </summary>
-        public override Scope<FunctionSymbol> Functions
+        public override Domain<FunctionSymbol> Functions
         {
             get;
             protected set;
         }
 
         /// <summary>
-        /// Programs scope of the program.
+        /// Nested Programs defined in the program.
         /// </summary>
-        public override Scope<ProgramSymbol> Programs
+        public override Domain<ProgramSymbol> Programs
         {
             get;
             protected set;
@@ -180,16 +180,6 @@ namespace TypeCobol.Compiler.Symbols
             ((RootSymbolTable)root)?.AddToUniverse(variable);
             _variables.Add(variable);
             return variable;
-        }
-
-        /// <summary>
-        /// Get the Scope of symbol associated to the given symbol name.
-        /// </summary>
-        /// <param name="path">The Symbol's path to get the Scope, the path is in reverse order à la COBOL.</param>
-        /// <returns>The Multi Symbol set of all symbol corresponding to the given path.</returns>
-        public Container<VariableSymbol>.Entry Get(string[] path)
-        {
-            return ResolveReference(path, true);
         }
 
         /// <summary>
@@ -418,7 +408,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="section">The section to dump</param>
         /// <param name="tw">TextWriter instance</param>
         /// <param name="indentLevel">indentation level</param>
-        private void DumpSection(string name, Scope<VariableSymbol> section, TextWriter tw, int indentLevel)
+        private void DumpSection(string name, Domain<VariableSymbol> section, TextWriter tw, int indentLevel)
         {
             if (section.Any())
             {

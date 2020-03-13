@@ -19,61 +19,61 @@ namespace TypeCobol.Compiler.Symbols
         {
         }
 
-        public virtual Scope<TypedefSymbol> Types
+        public virtual Domain<TypedefSymbol> Types
         {
             get { return null; }
             protected set { ; }
         }
 
-        public virtual Scope<VariableSymbol> FileData
+        public virtual Domain<VariableSymbol> FileData
         {
             get { return null; }
             protected set {; }
         }
 
-        public virtual Scope<VariableSymbol> GlobalStorageData
+        public virtual Domain<VariableSymbol> GlobalStorageData
         {
             get { return null; }
             protected set {; }
         }
 
-        public virtual Scope<VariableSymbol> WorkingStorageData
+        public virtual Domain<VariableSymbol> WorkingStorageData
         {
             get { return null; }
             protected set {; }
         }
 
-        public virtual Scope<VariableSymbol> LocalStorageData
+        public virtual Domain<VariableSymbol> LocalStorageData
         {
             get { return null; }
             protected set {; }
         }
 
-        public virtual Scope<VariableSymbol> LinkageStorageData
+        public virtual Domain<VariableSymbol> LinkageStorageData
         {
             get { return null; }
             protected set {; }
         }
 
-        public virtual Scope<SectionSymbol> Sections
+        public virtual Domain<SectionSymbol> Sections
         {
             get { return null; }
             protected set {; }
         }
 
-        public virtual Scope<ParagraphSymbol> Paragraphs
+        public virtual Domain<ParagraphSymbol> Paragraphs
         {
             get { return null; }
             protected set { }
         }
 
-        public virtual Scope<FunctionSymbol> Functions
+        public virtual Domain<FunctionSymbol> Functions
         {
             get { return null; }
             protected set {; }
         }
 
-        public virtual Scope<ProgramSymbol> Programs
+        public virtual Domain<ProgramSymbol> Programs
         {
             get { return null; }
             protected set { }

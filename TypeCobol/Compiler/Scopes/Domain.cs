@@ -7,33 +7,33 @@ using TypeCobol.Compiler.Symbols;
 namespace TypeCobol.Compiler.Scopes
 {
     /// <summary>
-    /// A Scope associates a set of symbols with an owner.
+    /// A Domain associates a set of symbols with an owner.
     /// </summary>
-    public class Scope<TSymbol> : IEnumerable<TSymbol>
+    public class Domain<TSymbol> : IEnumerable<TSymbol>
         where TSymbol : Symbol
     {
         /// <summary>
-        /// The Owner of this scope.
+        /// The Owner of this domain.
         /// </summary>
         private Symbol _owner;
 
         /// <summary>
-        /// The symbols declared in this scope.
+        /// The symbols declared in this domain.
         /// </summary>
         private Container<TSymbol> _symbols;
 
         /// <summary>
-        /// Instantiates a new empty scope.
+        /// Instantiates a new empty domain.
         /// </summary>
-        /// <param name="owner">The owner of the new scope.</param>
-        public Scope([NotNull] Symbol owner)
+        /// <param name="owner">The owner of the new domain.</param>
+        public Domain([NotNull] Symbol owner)
         {
             System.Diagnostics.Debug.Assert(owner != null);
             _owner = owner;
         }
 
         /// <summary>
-        /// The Owner of this scope.
+        /// The Owner of this domain.
         /// </summary>
         [NotNull]
         public Symbol Owner
@@ -54,7 +54,7 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
-        /// Looks up a Symbol in this scope using a name.
+        /// Looks up a Symbol in this domain using a name.
         /// </summary>
         /// <param name="name">Name of the symbol searched.</param>
         /// <returns>An entry if any symbol with the given name has been found, null otherwise.</returns>
@@ -70,7 +70,7 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
-        /// Adds a symbol in this scope.
+        /// Adds a symbol in this domain.
         /// </summary>
         /// <param name="symbol">Symbol to add.</param>
         /// <returns>The container entry corresponding to the symbol.</returns>
@@ -86,7 +86,7 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
-        /// Removes a symbol from this scope.
+        /// Removes a symbol from this domain.
         /// </summary>
         /// <param name="symbol">Symbol to remove.</param>
         public void Delete([NotNull] TSymbol symbol)
@@ -96,7 +96,7 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
-        /// Enumerates all symbols in this scope in entering order.
+        /// Enumerates all symbols in this domain in entering order.
         /// </summary>
         /// <returns></returns>
         public IEnumerator<TSymbol> GetEnumerator()

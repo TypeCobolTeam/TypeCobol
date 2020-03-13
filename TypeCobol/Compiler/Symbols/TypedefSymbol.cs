@@ -219,7 +219,7 @@ namespace TypeCobol.Compiler.Symbols
 
             public override LookupContext VisitGroupType(Types.GroupType t, LookupContext ctx)
             {
-                foreach (var field in t.Scope)
+                foreach (var field in t.Fields)
                 {
                     field.Accept(this, ctx);
                 }

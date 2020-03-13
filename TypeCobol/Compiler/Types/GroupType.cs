@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Domain;
+﻿using System.IO;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Symbols;
+
 using static TypeCobol.Compiler.Symbols.Symbol;
 
 namespace TypeCobol.Compiler.Types
@@ -17,31 +12,18 @@ namespace TypeCobol.Compiler.Types
     public class GroupType : Type
     {
         /// <summary>
-        /// The Scope of variables in this record.
+        /// The fields of this GroupType.
         /// </summary>
-        private Scope<VariableSymbol> _scope;
+        public Domain<VariableSymbol> Fields { get; internal set; }
 
         /// <summary>
         /// Scope Owner constructor
         /// </summary>
         /// <param name="owner">Owner of the group scope if any</param>
-        public GroupType(Symbol owner) : base(Tags.Group)
+        public GroupType(Symbol owner)
+            : base(Tags.Group)
         {
-            _scope = new Scope<VariableSymbol>(owner);
-        }
-
-        /// <summary>
-        /// Fields in this Records.
-        /// </summary>
-        public IEnumerable<VariableSymbol> Fields => Scope;
-
-        /// <summary>
-        /// Get the scope of this record.
-        /// </summary>
-        public Scope<VariableSymbol> Scope
-        {
-            get => _scope;
-            internal set => _scope = value;
+            Fields = new Domain<VariableSymbol>(owner);
         }
 
         internal override void SetFlag(Flags flag, bool value, bool propagate = false)
@@ -49,7 +31,7 @@ namespace TypeCobol.Compiler.Types
             base.SetFlag(flag, value, propagate);
             if (propagate)
             {
-                foreach (var varSym in Scope)
+                foreach (var varSym in Fields)
                 {
                     varSym.SetFlag(flag, value, true);
                 }
@@ -82,7 +64,7 @@ namespace TypeCobol.Compiler.Types
         public override void Dump(TextWriter tw, int indentLevel)
         {
             indentLevel++;            
-            foreach (var field in Scope)
+            foreach (var field in Fields)
             {                
                 string s = new string(' ', 2 * indentLevel);
                 tw.Write(s);

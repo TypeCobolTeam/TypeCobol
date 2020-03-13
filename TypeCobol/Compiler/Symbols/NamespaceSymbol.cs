@@ -16,9 +16,9 @@ namespace TypeCobol.Compiler.Symbols
         public NamespaceSymbol(string name)
             : base(name, Kinds.Namespace)
         {
-            Types = new Scope<TypedefSymbol>(this);
-            Programs = new Scope < ProgramSymbol >(this);
-            Namespaces = new Scope<NamespaceSymbol>(this);
+            Types = new Domain<TypedefSymbol>(this);
+            Programs = new Domain< ProgramSymbol >(this);
+            Namespaces = new Domain<NamespaceSymbol>(this);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// All Types declared in this namespace
         /// </summary>
-        public override Scope<TypedefSymbol> Types
+        public override Domain<TypedefSymbol> Types
         {
             get;
             protected set;
@@ -91,7 +91,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// All programs declared in this namespace.
         /// </summary>
-        public override Scope<ProgramSymbol> Programs
+        public override Domain<ProgramSymbol> Programs
         {
             get;
             protected set;
@@ -124,7 +124,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// All namespaces declared in this namespace.
         /// </summary>
-        public Scope<NamespaceSymbol> Namespaces
+        public Domain<NamespaceSymbol> Namespaces
         {
             get;
             protected set;
