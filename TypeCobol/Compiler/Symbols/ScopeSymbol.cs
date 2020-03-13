@@ -7,14 +7,13 @@ namespace TypeCobol.Compiler.Symbols
 {
     /// <summary>
     /// Represents any symbol that contain other symbols (i.e. ProgramSymbol or NamespaceSymbol)
-    /// Don't confuse with Scope class
     /// </summary>
-    public abstract class AbstractScope : Symbol, IScope
+    public abstract class ScopeSymbol : Symbol, IScope
     {
         /// <summary>
         /// Named constructor
         /// </summary>
-        protected AbstractScope(string name, Kinds kind)
+        protected ScopeSymbol(string name, Kinds kind)
             : base(name, kind)
         {
         }
@@ -88,7 +87,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="topScope">The top scope of the research</param>
         /// <param name="lookupSymbol">Delegate to lookup symbol inside a RootSymbolTable</param>
         /// <returns>The Set of resolve symbols</returns>
-        protected Container<TS>.Entry ResolveSymbol<TS>(string[] path, AbstractScope topScope, Func<string, Container<TS>.Entry> lookupSymbol)
+        protected Container<TS>.Entry ResolveSymbol<TS>(string[] path, ScopeSymbol topScope, Func<string, Container<TS>.Entry> lookupSymbol)
             where TS : Symbol
         {
             if (path == null || path.Length == 0 || path[0] == null)
@@ -149,7 +148,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="root">The Root Symbol Table</param>
         /// <param name="path">The function's path</param>
         /// <returns>The set of scopes that match</returns>
-        public abstract Container<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path);
+        public abstract Container<ScopeSymbol>.Entry ResolveScope(RootSymbolTable root, string[] path);
 
         /// <summary>
         /// Lookup a program.
@@ -157,7 +156,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="rootScope">The top root scope</param>
         /// <param name="progName">The program name to be looked up</param>
         /// <returns></returns>
-        protected virtual Container<ProgramSymbol>.Entry LookupProgram(AbstractScope rootScope, string progName, out AbstractScope currentScope, out AbstractScope stopScope)
+        protected virtual Container<ProgramSymbol>.Entry LookupProgram(ScopeSymbol rootScope, string progName, out ScopeSymbol currentScope, out ScopeSymbol stopScope)
         {
             stopScope = rootScope;
             currentScope = this;
@@ -178,7 +177,7 @@ namespace TypeCobol.Compiler.Symbols
                 }
                 if (currentScope.Owner != null && currentScope != stopScope && currentScope.Owner.HasScope)
                 {
-                    currentScope = currentScope.Owner as AbstractScope;
+                    currentScope = currentScope.Owner as ScopeSymbol;
                 }
                 else
                 {
@@ -194,21 +193,21 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="rootScope">The top rootScope</param>
         /// <param name="path">Looking path à la COBOL85 --> in Reverse order</param>
         /// <returns>The TypedefSymbol if found, null otherwise.</returns>
-        public virtual Container<TypedefSymbol>.Entry ReverseResolveType(AbstractScope rootScope, string[] path)
+        public virtual Container<TypedefSymbol>.Entry ReverseResolveType(ScopeSymbol rootScope, string[] path)
         {
             System.Diagnostics.Debug.Assert(rootScope != null);
             System.Diagnostics.Debug.Assert(path != null);
             System.Diagnostics.Debug.Assert(path.Length > 0);
 
-            AbstractScope stopScope = rootScope;
-            AbstractScope currentScope = this;
+            ScopeSymbol stopScope = rootScope;
+            ScopeSymbol currentScope = this;
             for (int i = path.Length - 1; i >= 0 && currentScope != null; i--)
             {
                 switch(i)
                 {
                     case 0://We must look for a Type
                         {
-                            AbstractScope startScope = currentScope;
+                            ScopeSymbol startScope = currentScope;
                             while (currentScope != null)
                             {
                                 var types = currentScope.Types;
@@ -219,7 +218,7 @@ namespace TypeCobol.Compiler.Symbols
                                 }
                                 if (currentScope.Owner != null && currentScope != stopScope && currentScope.Owner.HasScope)
                                 {
-                                    currentScope = currentScope.Owner as AbstractScope;
+                                    currentScope = currentScope.Owner as ScopeSymbol;
                                 }
                                 else
                                 {
@@ -247,21 +246,21 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="rootScope">The top rootScope</param>
         /// <param name="path">Looking path à la COBOL85 --> in Reverse order</param>
         /// <returns>The FunctionSymbol instance if found, null otherwise.</returns>
-        public virtual Container<FunctionSymbol>.Entry ReverseResolveFunction(AbstractScope rootScope, string[] path)
+        public virtual Container<FunctionSymbol>.Entry ReverseResolveFunction(ScopeSymbol rootScope, string[] path)
         {
             System.Diagnostics.Debug.Assert(rootScope != null);
             System.Diagnostics.Debug.Assert(path != null);
             System.Diagnostics.Debug.Assert(path.Length > 0);
 
-            AbstractScope stopScope = rootScope;
-            AbstractScope currentScope = this;
+            ScopeSymbol stopScope = rootScope;
+            ScopeSymbol currentScope = this;
             for (int i = path.Length - 1; i >= 0 && currentScope != null; i--)
             {
                 switch (i)
                 {
                     case 0://We must look for a Function
                         {
-                            AbstractScope startScope = currentScope;
+                            ScopeSymbol startScope = currentScope;
                             while (currentScope != null)
                             {
                                 var functions = currentScope.Functions;
@@ -272,7 +271,7 @@ namespace TypeCobol.Compiler.Symbols
                                 }
                                 if (currentScope.Owner != null && currentScope != stopScope && currentScope.Owner.HasScope)
                                 {
-                                    currentScope = currentScope.Owner as AbstractScope;
+                                    currentScope = currentScope.Owner as ScopeSymbol;
                                 }
                                 else
                                 {
@@ -330,9 +329,9 @@ namespace TypeCobol.Compiler.Symbols
         {
         }
 
-        public virtual void Add(AbstractScope absScope)
+        public virtual void Add(ScopeSymbol scope)
         { }
-        public virtual void Remove(AbstractScope absScope)
+        public virtual void Remove(ScopeSymbol scope)
         { }
         public virtual void Add(TypedefSymbol type)
         { }

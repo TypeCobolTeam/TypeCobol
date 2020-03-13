@@ -8,7 +8,7 @@ namespace TypeCobol.Compiler.Symbols
     /// <summary>
     /// Represents a Program Symbol
     /// </summary>
-    public class ProgramSymbol : AbstractScope
+    public class ProgramSymbol : ScopeSymbol
     {
         private readonly Container<VariableSymbol> _variables;
 
@@ -395,10 +395,10 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="root">The Root Symbol Table</param>
         /// <param name="path">The type's path'</param>
         /// <returns>The Set of resolve types</returns>
-        public override Container<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path)
+        public override Container<ScopeSymbol>.Entry ResolveScope(RootSymbolTable root, string[] path)
         {
             ProgramSymbol topPrg = (ProgramSymbol)TopParent(Kinds.Program);
-            return ResolveSymbol<AbstractScope>(path, topPrg, root.LookupScope);
+            return ResolveSymbol<ScopeSymbol>(path, topPrg, root.LookupScope);
         }
 
         /// <summary>

@@ -69,7 +69,7 @@ namespace TypeCobol.Compiler.Domain
         /// <summary>
         /// The Current scope
         /// </summary>
-        private AbstractScope CurrentScope
+        private ScopeSymbol CurrentScope
         {
             get;
             set;
@@ -515,7 +515,7 @@ namespace TypeCobol.Compiler.Domain
             _functionDeclStack.Pop();
             //Also Pop Scopes
             System.Diagnostics.Debug.Assert(funSym.Owner is ProgramSymbol);
-            CurrentScope = (AbstractScope)funSym.Owner;
+            CurrentScope = (ScopeSymbol)funSym.Owner;
             CurrentProgram = (ProgramSymbol)funSym.Owner;
         }
 
@@ -952,7 +952,7 @@ namespace TypeCobol.Compiler.Domain
             //We need also a valid CurrentScope to lookup Typedef if one exit, or to create an unresolved Typedef declaration.
             System.Diagnostics.Debug.Assert(CurrentScope != null);
 
-            string[] paths = datSymRef == null ? new string[] { dataType.Name } : AbstractScope.SymbolReferenceToPath(datSymRef);
+            string[] paths = datSymRef == null ? new string[] { dataType.Name } : ScopeSymbol.SymbolReferenceToPath(datSymRef);
             VariableTypeSymbol varTypeSym = new VariableTypeSymbol(dataDef.Name, paths);
             DecorateSymbol(dataDef, varTypeSym, currentDomain);
             if (typedef == null)

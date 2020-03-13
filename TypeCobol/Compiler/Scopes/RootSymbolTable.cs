@@ -13,7 +13,7 @@ namespace TypeCobol.Compiler.Scopes
     public class RootSymbolTable : NamespaceSymbol
     {
         /// <summary>
-        /// All Kinds of scope that contains symbols (i.e. inheritors of AbstractScope except RootSymbolTable).
+        /// All Kinds of scope that contains symbols (i.e. inheritors of ScopeSymbol except RootSymbolTable).
         /// </summary>
         private static readonly Symbol.Kinds[] _AllScopeKinds = new Kinds[] { Kinds.Namespace, Kinds.Program, Kinds.Function };
 
@@ -41,7 +41,7 @@ namespace TypeCobol.Compiler.Scopes
         /// <summary>
         /// All known namespaces, programs and functions.
         /// </summary>
-        private readonly Container<AbstractScope> _allScopes;
+        private readonly Container<ScopeSymbol> _allScopes;
 
         /// <summary>
         /// All known types.
@@ -60,7 +60,7 @@ namespace TypeCobol.Compiler.Scopes
             _globalIndexPool = new Stack<int>();
 
             _universe = new List<VariableSymbol>();
-            _allScopes = new Container<AbstractScope>();
+            _allScopes = new Container<ScopeSymbol>();
             _allTypes = new Container<TypedefSymbol>();
 
             //Register BottomVariable
@@ -149,29 +149,29 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
-        /// Add the given AbstractScope instance in this table.
+        /// Add the given ScopeSymbol instance in this table.
         /// </summary>
-        /// <param name="absScope">Abstract Scope to be added</param>
-        public override void Add(AbstractScope absScope)
+        /// <param name="scope">The scope to be added</param>
+        public override void Add(ScopeSymbol scope)
         {
-            System.Diagnostics.Debug.Assert(absScope != null);
-            _allScopes.Add(absScope);
-            if (ProgramAdded != null && absScope.Kind == Kinds.Program)
-                ProgramAdded(this, new SymbolEventArgs(absScope));
+            System.Diagnostics.Debug.Assert(scope != null);
+            _allScopes.Add(scope);
+            if (ProgramAdded != null && scope.Kind == Kinds.Program)
+                ProgramAdded(this, new SymbolEventArgs(scope));
         }
 
         /// <summary>
-        /// Remove the given scope from this table.
+        /// Remove the given ScopeSymbol from this table.
         /// </summary>
-        /// <param name="absScope">The Scope to be removed</param>
-        public override void Remove(AbstractScope absScope)
+        /// <param name="scope">The scope to be removed</param>
+        public override void Remove(ScopeSymbol scope)
         {
-            _allScopes.Remove(absScope);
+            _allScopes.Remove(scope);
 
-            absScope.Clear();
+            scope.Clear();
 
             //Remove all Types
-            var types = absScope.Types;
+            var types = scope.Types;
             if (types != null)
             {
                 foreach (var t in types)
@@ -181,7 +181,7 @@ namespace TypeCobol.Compiler.Scopes
             }
 
             //Remove all programs
-            var programs = absScope.Programs;
+            var programs = scope.Programs;
             if (programs != null)
             {
                 foreach (var p in programs)
@@ -191,7 +191,7 @@ namespace TypeCobol.Compiler.Scopes
             }
 
             //Remove all functions
-            var functions = absScope.Functions;
+            var functions = scope.Functions;
             if (functions != null)
             {
                 foreach (var p in functions)
@@ -201,9 +201,9 @@ namespace TypeCobol.Compiler.Scopes
             }
 
             //Special case Namespace
-            if (absScope.Kind == Kinds.Namespace)
+            if (scope.Kind == Kinds.Namespace)
             {
-                NamespaceSymbol ns = (NamespaceSymbol)absScope;
+                NamespaceSymbol ns = (NamespaceSymbol) scope;
                 var nss = ns.Namespaces;
                 if (nss != null)
                 {
@@ -261,14 +261,14 @@ namespace TypeCobol.Compiler.Scopes
         /// <param name="name">Name of the scope searched.</param>
         /// <returns>A non-null container entry of scopes matching the given name.</returns>
         [NotNull]
-        public Container<AbstractScope>.Entry LookupScope([NotNull] string name)
+        public Container<ScopeSymbol>.Entry LookupScope([NotNull] string name)
         {
             System.Diagnostics.Debug.Assert(name != null);
 
             if (_allScopes.TryGetValue(name, out var result))
                 return result;
 
-            return new Container<AbstractScope>.Entry(name);
+            return new Container<ScopeSymbol>.Entry(name);
         }
 
         /// <summary>
@@ -288,13 +288,13 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
-        /// Resolve any AbstractScope. Namespace, program and function are abstract scopes.
+        /// Resolve any ScopeSymbol. Namespace, program and function are abstract scopes.
         /// </summary>
         /// <param name="path">The Abstract scope path</param>
         /// <param name="kinds">All kinds of scope to be resolved.</param>
         /// <returns>A Scope instance of matches</returns>
         private Container<TScope>.Entry ResolveScope<TScope>(string[] path, params Symbol.Kinds[] kinds)
-            where TScope : AbstractScope
+            where TScope : ScopeSymbol
         {
             var candidates = ResolveScope(this, path);
             if (candidates == null)

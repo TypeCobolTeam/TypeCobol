@@ -7,7 +7,7 @@ namespace TypeCobol.Compiler.Symbols
     /// Symbol that represents a Namespace. A namespace can only contains 
     /// programs or namespaces.
     /// </summary>
-    public class NamespaceSymbol : AbstractScope
+    public class NamespaceSymbol : ScopeSymbol
     {
         /// <summary>
         /// Named constructor.
@@ -132,9 +132,9 @@ namespace TypeCobol.Compiler.Symbols
 
         public override TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitNamespaceSymbol(this, arg); }
 
-        public override Container<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path)
+        public override Container<ScopeSymbol>.Entry ResolveScope(RootSymbolTable root, string[] path)
         {
-            return ResolveSymbol<AbstractScope>(path, root.LookupScope);
+            return ResolveSymbol<ScopeSymbol>(path, root.LookupScope);
         }
     }
 }

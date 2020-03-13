@@ -663,7 +663,7 @@ namespace TypeCobol.Compiler.Diagnostics
                             //We looking inside a TYPEDEF.
                             TypedefSymbol tdSym = (TypedefSymbol) @var.TopParent(Symbol.Kinds.Typedef);
                             foundSymbolTypedPaths = new List<Symbol[]>();
-                            result = tdSym.Get(AbstractScope.SymbolReferenceToPath(area.SymbolReference), null,
+                            result = tdSym.Get(ScopeSymbol.SymbolReferenceToPath(area.SymbolReference), null,
                                 foundSymbolTypedPaths);
                             System.Diagnostics.Debug.Assert(result != null);
                             System.Diagnostics.Debug.Assert(result.Count == foundCount);
