@@ -7,7 +7,7 @@ using TypeCobol.Compiler.Symbols;
 namespace TypeCobol.Compiler.Scopes
 {
     /// <summary>
-    /// A Scope associates a set of symbols (a domain) with an owner.
+    /// A Scope associates a set of symbols with an owner.
     /// </summary>
     public class Scope<TSymbol> : IEnumerable<TSymbol>
         where TSymbol : Symbol
@@ -20,7 +20,7 @@ namespace TypeCobol.Compiler.Scopes
         /// <summary>
         /// The symbols declared in this scope.
         /// </summary>
-        private Domain<TSymbol> _symbols;
+        private Container<TSymbol> _symbols;
 
         /// <summary>
         /// Instantiates a new empty scope.
@@ -58,7 +58,7 @@ namespace TypeCobol.Compiler.Scopes
         /// </summary>
         /// <param name="name">Name of the symbol searched.</param>
         /// <returns>An entry if any symbol with the given name has been found, null otherwise.</returns>
-        public Domain<TSymbol>.Entry Lookup([NotNull] string name)
+        public Container<TSymbol>.Entry Lookup([NotNull] string name)
         {
             System.Diagnostics.Debug.Assert(name != null);
             if (_symbols != null && _symbols.TryGetValue(name, out var entry))
@@ -73,13 +73,13 @@ namespace TypeCobol.Compiler.Scopes
         /// Adds a symbol in this scope.
         /// </summary>
         /// <param name="symbol">Symbol to add.</param>
-        /// <returns>The domain entry corresponding to the symbol.</returns>
-        public Domain<TSymbol>.Entry Enter([NotNull] TSymbol symbol)
+        /// <returns>The container entry corresponding to the symbol.</returns>
+        public Container<TSymbol>.Entry Enter([NotNull] TSymbol symbol)
         {
             System.Diagnostics.Debug.Assert(symbol != null);
             if (_symbols == null)
             {
-                _symbols = new Domain<TSymbol>();
+                _symbols = new Container<TSymbol>();
             }
 
             return _symbols.Add(symbol);

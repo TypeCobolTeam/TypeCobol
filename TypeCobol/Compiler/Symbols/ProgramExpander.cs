@@ -206,8 +206,8 @@ namespace TypeCobol.Compiler.Symbols
                     newField.Owner = owner;
                     if (isInTypedef)
                     {
-                        //Important add to the domain the new field that was cloned.
-                        _parentExpander._currentExpandingProgram.AddToDomain(newField);
+                        //Important : register the new field that was cloned in the current program
+                        _parentExpander._currentExpandingProgram.Add(newField);
                     }
                 }
                 return newType;

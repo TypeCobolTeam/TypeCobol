@@ -222,7 +222,7 @@ namespace TypeCobol.Test.Domain
             ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
-            TypeCobol.Compiler.Scopes.Domain<VariableSymbol>.Entry result;
+            TypeCobol.Compiler.Scopes.Container<VariableSymbol>.Entry result;
 
             // Main pgm
             result = currentProgram.ResolveReference(new[] { "var1" }, true);
@@ -2000,7 +2000,7 @@ namespace TypeCobol.Test.Domain
             Assert.AreEqual(currentProgram, mainProgram.SemanticData);
 
             //Get the nested program.
-            Domain<ProgramSymbol>.Entry nestedPrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[]{"Nested" });
+            var nestedPrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[]{"Nested" });
             Assert.IsTrue(nestedPrgEntry.Count == 1);
             ProgramSymbol nestedProgram = nestedPrgEntry.Symbol;//Nested
             IList<NestedProgram> nestedPrgs = mainProgram.GetChildren<NestedProgram>();
@@ -2010,7 +2010,7 @@ namespace TypeCobol.Test.Domain
             //Get the Nested program of the Nested Program: Nested2
             var nestedNestedPrgs = nestedPrg.GetChildren<NestedProgram>();
             var nestedNestedPrg = nestedNestedPrgs[0];
-            Domain<ProgramSymbol>.Entry nested2PrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested2" });
+            var nested2PrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested2" });
             Assert.IsTrue(nested2PrgEntry.Count == 1);
             ProgramSymbol nested2Program = nested2PrgEntry.Symbol;//Nested2
             IList<NestedProgram> nested2Prgs = nestedPrg.GetChildren<NestedProgram>();
@@ -2020,12 +2020,12 @@ namespace TypeCobol.Test.Domain
             //Get the Nested program Nested21
             var nestedNested21Prgs = nested2Prg.GetChildren<NestedProgram>();
             var nestedNested21Prg = nestedNested21Prgs[0];
-            Domain<ProgramSymbol>.Entry nested21PrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21" });
+            var nested21PrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21" });
             Assert.IsTrue(nested21PrgEntry.Count == 1);
-            Domain<ProgramSymbol>.Entry nested21PrgEntryBis = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21", "Nested2" });
+            var nested21PrgEntryBis = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21", "Nested2" });
             Assert.IsTrue(nested21PrgEntryBis.Count == 1);
             Assert.AreEqual(nested21PrgEntry.Symbol, nested21PrgEntryBis.Symbol);
-            Domain<ProgramSymbol>.Entry nested21PrgEntryTer = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21", "TypeVisNestedPrgAndProc" });
+            var nested21PrgEntryTer = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(nested21PrgEntryTer.Count == 1);
             Assert.AreEqual(nested21PrgEntry.Symbol, nested21PrgEntryTer.Symbol);
             ProgramSymbol nested21Program = nested21PrgEntry.Symbol;//Nested21
@@ -2037,25 +2037,25 @@ namespace TypeCobol.Test.Domain
             //Immediatly Resolve nested procedures of Nested2
             //------------------------------------------------
             //NestedProcLocal
-            Domain<FunctionSymbol>.Entry NestedProcLocalEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcLocal" });
+            var NestedProcLocalEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcLocal" });
             Assert.IsTrue(NestedProcLocalEntry.Count == 1);
-            Domain<FunctionSymbol>.Entry NestedProcLocalEntryBis = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcLocal", "Nested" });
+            var NestedProcLocalEntryBis = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcLocal", "Nested" });
             Assert.IsTrue(NestedProcLocalEntryBis.Count == 1);
             Assert.AreEqual(NestedProcLocalEntry.Symbol, NestedProcLocalEntryBis.Symbol);
 
 
             //NestedProcPrivate
-            Domain<FunctionSymbol>.Entry NestedProcPrivateEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcPrivate" });
+            var NestedProcPrivateEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcPrivate" });
             Assert.IsTrue(NestedProcPrivateEntry.Count == 1);
 
             //NestedProcPublic
-            Domain<FunctionSymbol>.Entry NestedProcPublicEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcPublic" });
+            var NestedProcPublicEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcPublic" });
             Assert.IsTrue(NestedProcPublicEntry.Count == 1);
 
             //-------------------------------------
             ///Resolve TypeVisStackedPrg
             //-------------------------------------
-            Domain<ProgramSymbol>.Entry TypeVisStackedPrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "TypeVisStackedPrg" });
+            var TypeVisStackedPrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "TypeVisStackedPrg" });
             Assert.IsTrue(TypeVisStackedPrgEntry.Count == 1);
 
             //---------------------------------------
@@ -2357,7 +2357,7 @@ namespace TypeCobol.Test.Domain
             Assert.AreEqual(currentProgram, mainProgram.SemanticData);
 
             //Get the nested program.
-            Domain<ProgramSymbol>.Entry nestedPrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested" });
+            var nestedPrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested" });
             Assert.IsTrue(nestedPrgEntry.Count == 1);
             ProgramSymbol nestedProgram = nestedPrgEntry.Symbol;//Nested
             IList<NestedProgram> nestedPrgs = mainProgram.GetChildren<NestedProgram>();
@@ -2367,7 +2367,7 @@ namespace TypeCobol.Test.Domain
             //Get the Nested program of the Nested Program: Nested2
             var nestedNestedPrgs = nestedPrg.GetChildren<NestedProgram>();
             var nestedNestedPrg = nestedNestedPrgs[0];
-            Domain<ProgramSymbol>.Entry nested2PrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested2" });
+            var nested2PrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested2" });
             Assert.IsTrue(nested2PrgEntry.Count == 1);
             ProgramSymbol nested2Program = nested2PrgEntry.Symbol;//Nested2
             IList<NestedProgram> nested2Prgs = nestedPrg.GetChildren<NestedProgram>();
@@ -2377,12 +2377,12 @@ namespace TypeCobol.Test.Domain
             //Get the Nested program Nested21
             var nestedNested21Prgs = nested2Prg.GetChildren<NestedProgram>();
             var nestedNested21Prg = nestedNested21Prgs[0];
-            Domain<ProgramSymbol>.Entry nested21PrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21" });
+            var nested21PrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21" });
             Assert.IsTrue(nested21PrgEntry.Count == 1);
-            Domain<ProgramSymbol>.Entry nested21PrgEntryBis = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21", "Nested2" });
+            var nested21PrgEntryBis = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21", "Nested2" });
             Assert.IsTrue(nested21PrgEntryBis.Count == 1);
             Assert.AreEqual(nested21PrgEntry.Symbol, nested21PrgEntryBis.Symbol);
-            Domain<ProgramSymbol>.Entry nested21PrgEntryTer = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21", "TypeVisNestedPrgAndProc" });
+            var nested21PrgEntryTer = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested21", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(nested21PrgEntryTer.Count == 1);
             Assert.AreEqual(nested21PrgEntry.Symbol, nested21PrgEntryTer.Symbol);
             ProgramSymbol nested21Program = nested21PrgEntry.Symbol;//Nested21
@@ -2394,25 +2394,25 @@ namespace TypeCobol.Test.Domain
             //Immediatly Resolve nested procedures of Nested2
             //------------------------------------------------
             //NestedProcLocal
-            Domain<FunctionSymbol>.Entry NestedProcLocalEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcLocal" });
+            var NestedProcLocalEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcLocal" });
             Assert.IsTrue(NestedProcLocalEntry.Count == 1);
-            Domain<FunctionSymbol>.Entry NestedProcLocalEntryBis = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcLocal", "Nested" });
+            var NestedProcLocalEntryBis = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcLocal", "Nested" });
             Assert.IsTrue(NestedProcLocalEntryBis.Count == 1);
             Assert.AreEqual(NestedProcLocalEntry.Symbol, NestedProcLocalEntryBis.Symbol);
 
 
             //NestedProcPrivate
-            Domain<FunctionSymbol>.Entry NestedProcPrivateEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcPrivate" });
+            var NestedProcPrivateEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcPrivate" });
             Assert.IsTrue(NestedProcPrivateEntry.Count == 1);
 
             //NestedProcPublic
-            Domain<FunctionSymbol>.Entry NestedProcPublicEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcPublic" });
+            var NestedProcPublicEntry = document.Results.RootSymbolTable.ResolveFunction(new string[] { "NestedProcPublic" });
             Assert.IsTrue(NestedProcPublicEntry.Count == 1);
 
             //-------------------------------------
             ///Resolve TypeVisStackedPrg
             //-------------------------------------
-            Domain<ProgramSymbol>.Entry TypeVisStackedPrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "TypeVisStackedPrg" });
+            var TypeVisStackedPrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "TypeVisStackedPrg" });
             Assert.IsTrue(TypeVisStackedPrgEntry.Count == 1);
 
             //-------------------------------------------

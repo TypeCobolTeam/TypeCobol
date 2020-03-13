@@ -8,7 +8,6 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using System.Text.RegularExpressions;
-using TypeCobol.Compiler.Domain;
 using Antlr4.Runtime;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Domain.Validator;
@@ -630,7 +629,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
             var foundCount = found.Count();
 #if DOMAIN_CHECKER
-            Scopes.Domain<VariableSymbol>.Entry result = null;
+            Scopes.Container<VariableSymbol>.Entry result = null;
             List<Symbol[]> foundSymbolTypedPaths = null;
             if (_compilerOptions.UseSemanticDomain)
             {
@@ -814,7 +813,7 @@ namespace TypeCobol.Compiler.Diagnostics
 #if DOMAIN_CHECKER
                 if (_compilerOptions.UseSemanticDomain)
                 {
-                    //Ensure that domain SemanticData is also in index symbol
+                    //Ensure that SemanticData is actually an index symbol
                     System.Diagnostics.Debug.Assert(((Symbol)dataDefinition.SemanticData).Kind == Symbol.Kinds.Index);
                 }
 #endif

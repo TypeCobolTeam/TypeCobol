@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Scopes;
-using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -89,14 +88,14 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="topScope">The top scope of the research</param>
         /// <param name="lookupSymbol">Delegate to lookup symbol inside a RootSymbolTable</param>
         /// <returns>The Set of resolve symbols</returns>
-        protected Domain<TS>.Entry ResolveSymbol<TS>(string[] path, AbstractScope topScope, Func<string, Domain<TS>.Entry> lookupSymbol)
+        protected Container<TS>.Entry ResolveSymbol<TS>(string[] path, AbstractScope topScope, Func<string, Container<TS>.Entry> lookupSymbol)
             where TS : Symbol
         {
             if (path == null || path.Length == 0 || path[0] == null)
                 return null;
 
             string name = path[0];
-            Domain<TS>.Entry results = new Domain<TS>.Entry(name);
+            Container<TS>.Entry results = new Container<TS>.Entry(name);
             var candidates = lookupSymbol(name);
             if (candidates.Count == 0)
                 return results;
@@ -104,8 +103,8 @@ namespace TypeCobol.Compiler.Symbols
             if (path.Length == 1)
             {
                 bool bLocal = topScope != this;
-                Domain<TS>.Entry localResults = bLocal ? new Domain<TS>.Entry(name) : null;
-                Domain<TS>.Entry topResults = results;
+                Container<TS>.Entry localResults = bLocal ? new Container<TS>.Entry(name) : null;
+                Container<TS>.Entry topResults = results;
                 string[] topPath = new string[] { name, topScope.Name };
                 string[] localPath = bLocal ? new string[] { name, this.Name, topScope.Name } : null;
                 foreach (var candidate in candidates)
@@ -141,7 +140,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="root">The Root Symbol Table</param>
         /// <param name="path">The type's path</param>
         /// <returns>The set of types that match</returns>
-        public abstract Domain<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path);
+        public abstract Container<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path);
 
         /// <summary>
         /// Resolve all scopes accessible from this scope by its path.
@@ -150,7 +149,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="root">The Root Symbol Table</param>
         /// <param name="path">The function's path</param>
         /// <returns>The set of scopes that match</returns>
-        public abstract Domain<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path);
+        public abstract Container<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path);
 
         /// <summary>
         /// Lookup a program.
@@ -158,11 +157,11 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="rootScope">The top root scope</param>
         /// <param name="progName">The program name to be looked up</param>
         /// <returns></returns>
-        protected virtual Domain<ProgramSymbol>.Entry LookupProgram(AbstractScope rootScope, string progName, out AbstractScope currentScope, out AbstractScope stopScope)
+        protected virtual Container<ProgramSymbol>.Entry LookupProgram(AbstractScope rootScope, string progName, out AbstractScope currentScope, out AbstractScope stopScope)
         {
             stopScope = rootScope;
             currentScope = this;
-            Domain<ProgramSymbol>.Entry entry = null;
+            Container<ProgramSymbol>.Entry entry = null;
             while (currentScope != null)
             {
                 var programs = currentScope.Programs;
@@ -195,7 +194,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="rootScope">The top rootScope</param>
         /// <param name="path">Looking path à la COBOL85 --> in Reverse order</param>
         /// <returns>The TypedefSymbol if found, null otherwise.</returns>
-        public virtual Domain<TypedefSymbol>.Entry ReverseResolveType(AbstractScope rootScope, string[] path)
+        public virtual Container<TypedefSymbol>.Entry ReverseResolveType(AbstractScope rootScope, string[] path)
         {
             System.Diagnostics.Debug.Assert(rootScope != null);
             System.Diagnostics.Debug.Assert(path != null);
@@ -213,7 +212,7 @@ namespace TypeCobol.Compiler.Symbols
                             while (currentScope != null)
                             {
                                 var types = currentScope.Types;
-                                Domain<TypedefSymbol>.Entry entry = types?.Lookup(path[i]);
+                                Container<TypedefSymbol>.Entry entry = types?.Lookup(path[i]);
                                 if (entry != null)
                                 {
                                     return entry;
@@ -231,7 +230,7 @@ namespace TypeCobol.Compiler.Symbols
                         break;
                     case 1://We must look for a Program
                         {
-                            Domain<ProgramSymbol>.Entry entry = LookupProgram(stopScope, path[i], out currentScope, out stopScope);
+                            Container<ProgramSymbol>.Entry entry = LookupProgram(stopScope, path[i], out currentScope, out stopScope);
                         }
                         break;
                     default://We are looking for a Namepace
@@ -248,7 +247,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="rootScope">The top rootScope</param>
         /// <param name="path">Looking path à la COBOL85 --> in Reverse order</param>
         /// <returns>The FunctionSymbol instance if found, null otherwise.</returns>
-        public virtual Domain<FunctionSymbol>.Entry ReverseResolveFunction(AbstractScope rootScope, string[] path)
+        public virtual Container<FunctionSymbol>.Entry ReverseResolveFunction(AbstractScope rootScope, string[] path)
         {
             System.Diagnostics.Debug.Assert(rootScope != null);
             System.Diagnostics.Debug.Assert(path != null);
@@ -266,7 +265,7 @@ namespace TypeCobol.Compiler.Symbols
                             while (currentScope != null)
                             {
                                 var functions = currentScope.Functions;
-                                Domain<FunctionSymbol>.Entry entry = functions?.Lookup(path[i]);
+                                Container<FunctionSymbol>.Entry entry = functions?.Lookup(path[i]);
                                 if (entry != null)
                                 {
                                     return entry;
@@ -284,7 +283,7 @@ namespace TypeCobol.Compiler.Symbols
                         break;
                     case 1://We must look for a Program
                         {
-                            Domain<ProgramSymbol>.Entry entry = LookupProgram(stopScope, path[i], out currentScope, out stopScope);
+                            Container<ProgramSymbol>.Entry entry = LookupProgram(stopScope, path[i], out currentScope, out stopScope);
                         }
                         break;
                     default://We are looking for a Namepace
@@ -323,20 +322,21 @@ namespace TypeCobol.Compiler.Symbols
 
             return paths;
         }
+
         /// <summary>
-        /// Free any domain associated to this scope?
+        /// Free all symbols or types associated to this scope?
         /// </summary>
-        internal virtual void FreeDomain()
+        internal virtual void Clear()
         {
         }
 
-        public virtual void AddToDomain(AbstractScope absScope)
+        public virtual void Add(AbstractScope absScope)
         { }
-        public virtual void RemoveFromDomain(AbstractScope absScope)
+        public virtual void Remove(AbstractScope absScope)
         { }
-        public virtual void AddToDomain(TypedefSymbol type)
+        public virtual void Add(TypedefSymbol type)
         { }
-        public virtual void RemoveFromDomain(TypedefSymbol type)
+        public virtual void Remove(TypedefSymbol type)
         { }
     }
 }

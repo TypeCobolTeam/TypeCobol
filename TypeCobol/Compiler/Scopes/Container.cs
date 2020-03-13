@@ -7,14 +7,14 @@ using TypeCobol.Compiler.Symbols;
 namespace TypeCobol.Compiler.Scopes
 {
     /// <summary>
-    /// A domain is a set of symbols.
+    /// A container for an arbitrary set of symbols.
     /// </summary>
-    /// <typeparam name="TSymbol">Type of symbols stored in this domain.</typeparam>
-    public class Domain<TSymbol> : IEnumerable<TSymbol>
+    /// <typeparam name="TSymbol">Type of symbols stored in this container.</typeparam>
+    public class Container<TSymbol> : IEnumerable<TSymbol>
         where TSymbol : Symbol
     {
         /// <summary>
-        /// Represents an entry in a domain. Regroups some symbols which have the same name.
+        /// Represents an entry in the container. Regroups some symbols which have the same name.
         /// </summary>
         public class Entry : IEnumerable<TSymbol>
         {
@@ -152,19 +152,19 @@ namespace TypeCobol.Compiler.Scopes
         private readonly List<TSymbol> _symbolsInOrder;
 
         /// <summary>
-        /// Creates an empty domain.
+        /// Creates an empty container.
         /// </summary>
-        public Domain()
+        public Container()
         {
             _symbols = new Dictionary<string, Entry>(StringComparer.OrdinalIgnoreCase);
             _symbolsInOrder = new List<TSymbol>();
         }
 
         /// <summary>
-        /// Creates a domain from an existing one.
+        /// Creates a container from an existing one.
         /// </summary>
-        /// <param name="other">Other domain to copy symbols from.</param>
-        public Domain([NotNull] Domain<TSymbol> other)
+        /// <param name="other">Other container to copy symbols from.</param>
+        public Container([NotNull] Container<TSymbol> other)
         {
             System.Diagnostics.Debug.Assert(other != null);
             _symbols = new Dictionary<string, Entry>(other._symbols, StringComparer.OrdinalIgnoreCase);
@@ -182,10 +182,10 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
-        /// Searches an entry in this domain according to a name.
+        /// Searches an entry in this container according to a name.
         /// </summary>
         /// <param name="name">Name of searched Symbol.</param>
-        /// <param name="entry">Result of the search. If an entry has been found in this domain it is not empty.</param>
+        /// <param name="entry">Result of the search. If an entry has been found in this container it is not empty.</param>
         /// <returns>True if an entry has been found, False otherwise.</returns>
         public bool TryGetValue([NotNull] string name, out Entry entry)
         {
@@ -194,12 +194,12 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
-        /// Adds a Symbol to this domain and returns the corresponding entry.
+        /// Adds a Symbol to this container and returns the corresponding entry.
         /// </summary>
         /// <param name="symbol">Symbol to add.</param>
         /// <returns>
         /// The entry associated with the symbol, it can be either a new entry or an existing
-        /// one depending whether the symbol's name already exists in the domain or not.
+        /// one depending whether the symbol's name already exists in the container or not.
         /// </returns>
         public Entry Add([NotNull] TSymbol symbol)
         {
@@ -222,7 +222,7 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
-        /// Removes a Symbol from this domain.
+        /// Removes a Symbol from this container.
         /// </summary>
         /// <param name="symbol">Symbol to remove.</param>
         public void Remove([NotNull] TSymbol symbol)

@@ -1,11 +1,8 @@
-﻿using System;
-using TypeCobol.Compiler.CodeModel;
+﻿using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.CupParser.NodeBuilder;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Symbols;
-using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Compiler.Domain
 {
@@ -39,10 +36,10 @@ namespace TypeCobol.Compiler.Domain
             BuiltinSymbols.StoreSymbols(root.Types);
             foreach (var t in root.Types)
             {
-                //Enter each Builtin symbol in the domain also.
+                //Enter each Builtin symbol in the root also.
                 //And mark it as a builtin symbol.
                 t.SetFlag(Symbol.Flags.BuiltinSymbol, true);
-                root.AddToDomain(t);
+                root.Add(t);
             }
         }
     }

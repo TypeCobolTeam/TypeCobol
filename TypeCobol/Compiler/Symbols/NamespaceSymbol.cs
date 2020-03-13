@@ -49,7 +49,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <returns>The ProgramSymbol</returns>
         public ProgramSymbol EnterProgram(string name)
         {
-            Domain<ProgramSymbol>.Entry entry = Programs.Lookup(name);
+            Container<ProgramSymbol>.Entry entry = Programs.Lookup(name);
             if (entry == null) 
             {
                 ProgramSymbol prgSym = new ProgramSymbol(name);
@@ -57,9 +57,9 @@ namespace TypeCobol.Compiler.Symbols
             }
             //Set the owner
             entry.Symbol.Owner = this;
-            //Add it to the all scope domain
+            //Add it to the root symbol table.
             Symbol root = TopParent(Kinds.Root);
-            ((RootSymbolTable)root)?.AddToDomain(entry.Symbol);
+            ((RootSymbolTable)root)?.Add(entry.Symbol);
             return entry.Symbol;
         }
 
@@ -72,9 +72,9 @@ namespace TypeCobol.Compiler.Symbols
             if (prgSym != null)
             {
                 Programs.Delete(prgSym);
-                //Remove it from the all scope domain
+                //Remove it from the root symbol table.
                 Symbol root = TopParent(Kinds.Root);
-                ((RootSymbolTable)root)?.RemoveFromDomain(prgSym);
+                ((RootSymbolTable)root)?.Remove(prgSym);
                 prgSym.Owner = null;
             }
         }
@@ -97,14 +97,14 @@ namespace TypeCobol.Compiler.Symbols
             protected set;
         }
 
-        private Domain<TSymbol>.Entry ResolveSymbol<TSymbol>(string[] path, Func<string, Domain<TSymbol>.Entry> lookupSymbol)
+        private Container<TSymbol>.Entry ResolveSymbol<TSymbol>(string[] path, Func<string, Container<TSymbol>.Entry> lookupSymbol)
             where TSymbol : Symbol
         {
             if (path == null || path.Length == 0 || path[0] == null)
                 return null;
 
             var name = path[0];
-            var results = new Domain<TSymbol>.Entry(name);
+            var results = new Container<TSymbol>.Entry(name);
             foreach (var candidate in lookupSymbol(name))
             {
                 if (candidate.IsMatchingPath(path))
@@ -116,7 +116,7 @@ namespace TypeCobol.Compiler.Symbols
             return results;
         }
 
-        public override Domain<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path)
+        public override Container<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path)
         {
             return ResolveSymbol<TypedefSymbol>(path, root.LookupType);
         }
@@ -132,7 +132,7 @@ namespace TypeCobol.Compiler.Symbols
 
         public override TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitNamespaceSymbol(this, arg); }
 
-        public override Domain<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path)
+        public override Container<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path)
         {
             return ResolveSymbol<AbstractScope>(path, root.LookupScope);
         }

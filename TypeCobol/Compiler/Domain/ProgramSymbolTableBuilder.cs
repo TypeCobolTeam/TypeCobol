@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
@@ -12,8 +8,6 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Symbols;
 using TypeCobol.Compiler.Types;
-using Type = TypeCobol.Compiler.Types.Type;
-
 
 namespace TypeCobol.Compiler.Domain
 {
@@ -206,8 +200,8 @@ namespace TypeCobol.Compiler.Domain
                     this.CurrentProgram.Programs.Enter(nestedProgram);
                     nestedProgram.Owner = this.CurrentProgram;
                     this.CurrentProgram = nestedProgram;
-                    //Add it to the all scope domain
-                    this.MyRoot.AddToDomain(nestedProgram);
+                    //Add it into the root table
+                    this.MyRoot.Add(nestedProgram);
                 }
                 else
                 {
@@ -427,8 +421,8 @@ namespace TypeCobol.Compiler.Domain
             funDecl.SemanticData = funSym;
             //Enter the function in the current scope
             this.CurrentScope.Functions.Enter(funSym);
-            //Add it to the all scope domain
-            this.MyRoot.AddToDomain(funSym);
+            //Add it into the root table
+            this.MyRoot.Add(funSym);
             //The its owner has the current scope.
             funSym.Owner = this.CurrentScope;
             //What about function visibility.
@@ -666,11 +660,11 @@ namespace TypeCobol.Compiler.Domain
         /// <summary>
         /// This method handles the case if a symbol is a redefines symbol if so it creates a RedefinesSymbol instance
         /// otherwise it creates a VariableSymbol instance.
-        /// The symbol will be put in the the domain of the current program if the typedef instance is null, otherwise it will
+        /// The symbol will be registered in the current program if the typedef instance is null, otherwise it will
         /// be put in the typedef instance.
         /// </summary>
         /// <param name="type">The type of the Symbol to be created</param>
-        /// <param name="dataDef">The DataDefintion instance from which the Symbol is created</param>
+        /// <param name="dataDef">The DataDefinition instance from which the Symbol is created</param>
         /// <param name="parentScope">The current Parent Scope.</param>
         /// <param name="typedef">The TypedefSymbol instance if the symbol to be created is a field of a Typedef symbol, null otherwise</param>
         /// <returns>The Symbol created</returns>
@@ -684,9 +678,7 @@ namespace TypeCobol.Compiler.Domain
                 sym.Type = type;
                 DecorateSymbol(dataDef, sym, parentScope);
                 if (typedef == null)
-                    CurrentProgram.AddToDomain(sym);
-                else
-                    typedef.Add(sym);
+                    CurrentProgram.Add(sym);
             }
             return sym;
         }
@@ -783,9 +775,8 @@ namespace TypeCobol.Compiler.Domain
 
                 DecorateSymbol(dataDef, sym, parentScope);
                 if (typedef == null)
-                    CurrentProgram.AddToDomain(sym);
-                else
-                    typedef.Add(sym);
+                    CurrentProgram.Add(sym);
+
                 //We build the GroupType fields
                 foreach (var child in dataDef.Children)
                 {
@@ -894,8 +885,8 @@ namespace TypeCobol.Compiler.Domain
                 {
                     tdSym.Owner = parentScope.Owner;
                     ((ProgramSymbol)parentScope.Owner).Types.Enter(tdSym);
-                    //Add the type to the domain of types
-                    this.MyRoot.AddToDomain(tdSym);
+                    //Add the type to the root table
+                    this.MyRoot.Add(tdSym);
                 }
                 else
                 {//Declaration of a TypeDef out of a Program or a Function 
@@ -925,7 +916,7 @@ namespace TypeCobol.Compiler.Domain
             }
             //Mark all symbol has belonging to a TYPEDEF
             tdSym.SetFlag(Symbol.Flags.InsideTypedef, true, true);
-            //We do not enter typedef in the domain but we propagate any decoration.
+            //We do not register typedef yet but we propagate any decoration.
             DecorateSymbol(dataDef, tdSym, parentScope);
             return tdSym;
         }
@@ -965,10 +956,8 @@ namespace TypeCobol.Compiler.Domain
             VariableTypeSymbol varTypeSym = new VariableTypeSymbol(dataDef.Name, paths);
             DecorateSymbol(dataDef, varTypeSym, parentScope);
             if (typedef == null)
-                CurrentProgram.AddToDomain(varTypeSym);
-            else
-                typedef.Add(varTypeSym);
-            
+                CurrentProgram.Add(varTypeSym);
+
             //If we have created a VariableTypeSymbol Symbol instance then sure the underlying Program should be completed from the Top Program.
             //This can be an optimization to avoid pur Cobol85 program to be completed, they don't have TYPEDEF.
             if (!CurrentProgram.HasFlag(Symbol.Flags.NeedTypeCompletion))
@@ -995,9 +984,8 @@ namespace TypeCobol.Compiler.Domain
             sym.Type = BuiltinTypes.BooleanType;
             DecorateSymbol(dataDef, sym, parentScope);
             if (typedef == null)
-                CurrentProgram.AddToDomain(sym);
-            else
-                typedef.Add(sym);
+                CurrentProgram.Add(sym);
+
             return sym;
         }
 
@@ -1098,9 +1086,7 @@ namespace TypeCobol.Compiler.Domain
             IndexSymbol sym = new IndexSymbol(dataDef.Name);
             DecorateSymbol(dataDef, sym, parentScope);
             if (typedef == null)
-                CurrentProgram.AddToDomain(sym);
-            else
-                typedef.Add(sym);
+                CurrentProgram.Add(sym);
             return sym;
         }
 
@@ -1112,7 +1098,7 @@ namespace TypeCobol.Compiler.Domain
         /// <returns>The Renamed variable resolved if any, null otherwise</returns>
         private VariableSymbol ResolveRenamedVariable(SymbolReference renamed, Scope<VariableSymbol> parentScope)
         {
-            Domain<VariableSymbol>.Entry candidateRenamed = CurrentProgram.ResolveReference(renamed, true);
+            Container<VariableSymbol>.Entry candidateRenamed = CurrentProgram.ResolveReference(renamed, true);
             if (candidateRenamed == null || candidateRenamed.Count == 0)
             {
                 Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
@@ -1313,9 +1299,7 @@ namespace TypeCobol.Compiler.Domain
 
             DecorateSymbol(dataDef, sym, parentScope);
             if (typedef == null)
-                CurrentProgram.AddToDomain(sym);
-            else
-                typedef.Add(sym);
+                CurrentProgram.Add(sym);
 
             return sym;
         }
