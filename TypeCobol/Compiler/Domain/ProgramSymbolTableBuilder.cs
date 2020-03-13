@@ -31,15 +31,17 @@ namespace TypeCobol.Compiler.Domain
     /// </summary>
     public class ProgramSymbolTableBuilder : SymbolTableBuilder
     {
-        public enum DataDivisionSection
+        private class DataDivisionSection
         {
-            None,
-            File,
-            Global,
-            Working,
-            Local,
-            Linkage
-        };
+            public Symbol.Flags Flag { get; }
+            public Domain<VariableSymbol> Variables { get; }
+
+            public DataDivisionSection(Symbol.Flags flag, Domain<VariableSymbol> variables)
+            {
+                Flag = flag;
+                Variables = variables;
+            }
+        }
 
         /// <summary>
         /// Add Diagnostics
@@ -243,67 +245,67 @@ namespace TypeCobol.Compiler.Domain
 
         public override void StartDataDivision(DataDivisionHeader header)
         {
-            CurrentDataDivisionSection = DataDivisionSection.None;
+            CurrentDataDivisionSection = null;
             LastDataDefinitionSymbol = null;
         }
 
         public override void StartFileSection(FileSectionHeader header)
         {
-            CurrentDataDivisionSection = DataDivisionSection.File;
+            CurrentDataDivisionSection = new DataDivisionSection(Symbol.Flags.FILE_SECTION, CurrentScope.FileData);
             LastDataDefinitionSymbol = null;
         }
 
         public override void EndFileSection()
         {
-            CurrentDataDivisionSection = DataDivisionSection.None;
+            CurrentDataDivisionSection = null;
             LastDataDefinitionSymbol = null;
         }
 
         public override void StartGlobalStorageSection(GlobalStorageSectionHeader header)
         {
-            CurrentDataDivisionSection = DataDivisionSection.Global;
+            CurrentDataDivisionSection = new DataDivisionSection(Symbol.Flags.GLOBAL_STORAGE, CurrentScope.GlobalStorageData);
             LastDataDefinitionSymbol = null;
         }
 
         public override void EndGlobalStorageSection()
         {
-            CurrentDataDivisionSection = DataDivisionSection.None;
+            CurrentDataDivisionSection = null;
             LastDataDefinitionSymbol = null;
         }
 
         public override void StartWorkingStorageSection(WorkingStorageSectionHeader header)
         {
-            CurrentDataDivisionSection = DataDivisionSection.Working;
+            CurrentDataDivisionSection = new DataDivisionSection(Symbol.Flags.WORKING_STORAGE, CurrentScope.WorkingStorageData);
             LastDataDefinitionSymbol = null;
         }
 
         public override void EndWorkingStorageSection()
         {
-            CurrentDataDivisionSection = DataDivisionSection.None;
+            CurrentDataDivisionSection = null;
             LastDataDefinitionSymbol = null;
         }
 
         public override void StartLocalStorageSection(LocalStorageSectionHeader header)
         {
-            CurrentDataDivisionSection = DataDivisionSection.Local;
+            CurrentDataDivisionSection = new DataDivisionSection(Symbol.Flags.LOCAL_STORAGE, CurrentScope.LocalStorageData);
             LastDataDefinitionSymbol = null;
         }
 
         public override void EndLocalStorageSection()
         {
-            CurrentDataDivisionSection = DataDivisionSection.None;
+            CurrentDataDivisionSection = null;
             LastDataDefinitionSymbol = null;
         }
 
         public override void StartLinkageSection(LinkageSectionHeader header)
         {
-            CurrentDataDivisionSection = DataDivisionSection.Linkage;
+            CurrentDataDivisionSection = new DataDivisionSection(Symbol.Flags.LINKAGE, CurrentScope.LinkageStorageData);
             LastDataDefinitionSymbol = null;
         }
 
         public override void EndLinkageSection()
         {
-            CurrentDataDivisionSection = DataDivisionSection.None;
+            CurrentDataDivisionSection = null;
             LastDataDefinitionSymbol = null;
         }
 
@@ -1441,61 +1443,6 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Get the domain of variables for the current DataDivision section of the CurrentScope.
-        /// </summary>
-        private Domain<VariableSymbol> GetCurrentDataDivisionSection()
-        {
-            switch (CurrentDataDivisionSection)
-            {
-                case DataDivisionSection.File:                    
-                    return CurrentScope.FileData;
-                case DataDivisionSection.Global:
-                    return CurrentScope.GlobalStorageData;
-                case DataDivisionSection.Working:
-                    return CurrentScope.WorkingStorageData;
-                case DataDivisionSection.Local:
-                    return CurrentScope.LocalStorageData;
-                case DataDivisionSection.Linkage:
-                    return CurrentScope.LinkageStorageData;
-                default:
-                    System.Diagnostics.Debug.Assert(CurrentDataDivisionSection == DataDivisionSection.File ||
-                        CurrentDataDivisionSection == DataDivisionSection.Global ||
-                        CurrentDataDivisionSection == DataDivisionSection.Working ||
-                        CurrentDataDivisionSection == DataDivisionSection.Local ||
-                        CurrentDataDivisionSection == DataDivisionSection.Linkage
-                        );
-                    break;
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Get the current Data Division section flag.
-        /// </summary>
-        /// <returns></returns>
-        internal Symbol.Flags? GetCurrentDataDivisionSectionFlag()
-        {
-            switch (CurrentDataDivisionSection)
-            {
-                case DataDivisionSection.File:
-                    return Symbol.Flags.FILE_SECTION;
-                case DataDivisionSection.Global:
-                    return Symbol.Flags.GLOBAL_STORAGE;
-                case DataDivisionSection.Working:
-                    return Symbol.Flags.WORKING_STORAGE;
-                case DataDivisionSection.Local:
-                    return Symbol.Flags.LOCAL_STORAGE;
-                case DataDivisionSection.Linkage:
-                    return Symbol.Flags.LINKAGE;
-                default:
-                    break;
-            }
-
-            return null;
-        }
-
-        /// <summary>
         /// Decorate the given Variable Symbol, with some flags
         /// </summary>
         /// <param name="dataDef">Symbol's Data Definition</param>
@@ -1507,10 +1454,15 @@ namespace TypeCobol.Compiler.Domain
             if (sym.Owner == null)
                 sym.Owner = currentDomain.Owner;
             //Section flag
-            Symbol.Flags? fSection = GetCurrentDataDivisionSectionFlag();
-            if (fSection.HasValue)
+            bool inGlobalStorageSection;
+            if (CurrentDataDivisionSection != null)
             {
-                sym.SetFlag(fSection.Value, true);
+                sym.SetFlag(CurrentDataDivisionSection.Flag, true);
+                inGlobalStorageSection = CurrentDataDivisionSection.Flag == Symbol.Flags.GLOBAL_STORAGE;
+            }
+            else
+            {
+                inGlobalStorageSection = false;
             }
 
             //Global variable ?
@@ -1540,7 +1492,7 @@ namespace TypeCobol.Compiler.Domain
                         sym.Level = dataDescEntry.LevelNumber != null ? (int)dataDescEntry.LevelNumber.Value : 0;
                         if (dataDescEntry.IsGlobal || currentDomain.Owner.HasFlag(Symbol.Flags.Global))
                         {//No Global inside GLOBAL-STORAGE.
-                            if (fSection.HasValue && fSection != Symbol.Flags.GLOBAL_STORAGE)
+                            if (!inGlobalStorageSection)
                             {
                                 //This a global symbol
                                 sym.SetFlag(Symbol.Flags.Global, true);
@@ -1586,52 +1538,19 @@ namespace TypeCobol.Compiler.Domain
         {
             System.Diagnostics.Debug.Assert(dataDefSym != null);
             System.Diagnostics.Debug.Assert(CurrentScope != null);
-            System.Diagnostics.Debug.Assert(CurrentDataDivisionSection != DataDivisionSection.None);
+            System.Diagnostics.Debug.Assert(CurrentDataDivisionSection != null);
             //We must be in ProgramScope
             System.Diagnostics.Debug.Assert(CurrentScope is ProgramSymbol);
 
             if (dataDefSym.Owner == null) //Because Symbols as TYPEDEF already have their parent.
                 dataDefSym.Owner = CurrentProgram;
-            if (dataDefSym.Kind == Symbol.Kinds.Typedef)
-            {//Typedef are already entered at creation time.
-                ;
+
+            if (dataDefSym.Kind != Symbol.Kinds.Typedef) //Typedef are already entered at creation time.
+            {
+                System.Diagnostics.Debug.Assert(CurrentDataDivisionSection.Variables != null);
+                CurrentDataDivisionSection.Variables.Enter(dataDefSym);
+                dataDefSym.SetFlag(CurrentDataDivisionSection.Flag, true);
             }
-            else switch (CurrentDataDivisionSection)
-                {
-                    case DataDivisionSection.File:
-                        System.Diagnostics.Debug.Assert(CurrentScope.FileData != null);
-                        CurrentScope.FileData.Enter(dataDefSym);
-                        dataDefSym.SetFlag(Symbol.Flags.FILE_SECTION, true);
-                        break;
-                    case DataDivisionSection.Global:
-                        System.Diagnostics.Debug.Assert(CurrentScope.GlobalStorageData != null);
-                        CurrentScope.GlobalStorageData.Enter(dataDefSym);
-                        dataDefSym.SetFlag(Symbol.Flags.GLOBAL_STORAGE, true);
-                        break;
-                    case DataDivisionSection.Working:
-                        System.Diagnostics.Debug.Assert(CurrentScope.WorkingStorageData != null);
-                        CurrentScope.WorkingStorageData.Enter(dataDefSym);
-                        dataDefSym.SetFlag(Symbol.Flags.WORKING_STORAGE, true);
-                        break;
-                    case DataDivisionSection.Local:
-                        System.Diagnostics.Debug.Assert(CurrentScope.LocalStorageData != null);
-                        CurrentScope.LocalStorageData.Enter(dataDefSym);
-                        dataDefSym.SetFlag(Symbol.Flags.LOCAL_STORAGE, true);
-                        break;
-                    case DataDivisionSection.Linkage:
-                        System.Diagnostics.Debug.Assert(CurrentScope.LinkageStorageData != null);
-                        CurrentScope.LinkageStorageData.Enter(dataDefSym);
-                        dataDefSym.SetFlag(Symbol.Flags.LINKAGE, true);
-                        break;
-                    default:
-                        System.Diagnostics.Debug.Assert(CurrentDataDivisionSection == DataDivisionSection.File ||
-                            CurrentDataDivisionSection == DataDivisionSection.Global ||
-                            CurrentDataDivisionSection == DataDivisionSection.Working ||
-                            CurrentDataDivisionSection == DataDivisionSection.Local ||
-                            CurrentDataDivisionSection == DataDivisionSection.Linkage
-                            );
-                        break;
-                }
         }
 
         /// <summary>
@@ -1642,8 +1561,8 @@ namespace TypeCobol.Compiler.Domain
         {
             //Clear any pending RENAMES to validate.
             _renamesToValidate.Clear();
-            var section = GetCurrentDataDivisionSection();
-            VariableSymbol dataDefSym = DataDefinition2Symbol(level1Node, section, null);
+            var sectionVariables = CurrentDataDivisionSection.Variables;
+            VariableSymbol dataDefSym = DataDefinition2Symbol(level1Node, sectionVariables, null);
             this.LastDataDefinitionSymbol = dataDefSym;
             if (dataDefSym != null)
             {
@@ -1651,7 +1570,7 @@ namespace TypeCobol.Compiler.Domain
                 ValidateRenames();
                 StoreDataDivisionSymbol(dataDefSym);
                 //Handle indexes belonging to this Data Definition
-                HandleIndexes(level1Node, dataDefSym, section, null);
+                HandleIndexes(level1Node, dataDefSym, sectionVariables, null);
             }
         }
     }
