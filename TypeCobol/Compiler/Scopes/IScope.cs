@@ -43,9 +43,9 @@ namespace TypeCobol.Compiler.Scopes
             get;
         }
         /// <summary>
-        /// LinkageStorageData symbols
+        /// LinkageData symbols
         /// </summary>
-        Domain<VariableSymbol> LinkageStorageData
+        Domain<VariableSymbol> LinkageData
         {
             get;
         }

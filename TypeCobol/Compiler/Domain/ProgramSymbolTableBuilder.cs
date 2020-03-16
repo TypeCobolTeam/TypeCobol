@@ -299,7 +299,7 @@ namespace TypeCobol.Compiler.Domain
 
         public override void StartLinkageSection(LinkageSectionHeader header)
         {
-            CurrentDataDivisionSection = new DataDivisionSection(Symbol.Flags.LINKAGE, CurrentScope.LinkageStorageData);
+            CurrentDataDivisionSection = new DataDivisionSection(Symbol.Flags.LINKAGE, CurrentScope.LinkageData);
             LastDataDefinitionSymbol = null;
         }
 
@@ -322,7 +322,7 @@ namespace TypeCobol.Compiler.Domain
         private VariableSymbol ResolveUsingParameter(CallTargetParameter p)
         {
             string pname = p.StorageArea.SymbolReference.Name;
-            var pvar = this.CurrentProgram.LinkageStorageData.Lookup(pname);
+            var pvar = this.CurrentProgram.LinkageData.Lookup(pname);
             if (pvar != null)
             {
                 if (p.SharingMode == null)
@@ -482,19 +482,19 @@ namespace TypeCobol.Compiler.Domain
             //Input
             foreach (ParameterDescription input in funcProfile.InputParameters)
             {
-                VariableSymbol p = FunctionParameter2Symbol(input, funSym.LinkageStorageData);
+                VariableSymbol p = FunctionParameter2Symbol(input, funSym.LinkageData);
                 p.SetFlag(Symbol.Flags.Parameter | Symbol.Flags.Input | Symbol.Flags.LINKAGE, true);
                 parameters.Add(p);
             }
             foreach (ParameterDescription inout in funcProfile.InoutParameters)
             {
-                VariableSymbol p = FunctionParameter2Symbol(inout, funSym.LinkageStorageData);
+                VariableSymbol p = FunctionParameter2Symbol(inout, funSym.LinkageData);
                 p.SetFlag(Symbol.Flags.Parameter | Symbol.Flags.Inout | Symbol.Flags.LINKAGE, true);
                 parameters.Add(p);
             }
             foreach (ParameterDescription output in funcProfile.OutputParameters)
             {
-                VariableSymbol p = FunctionParameter2Symbol(output, funSym.LinkageStorageData);
+                VariableSymbol p = FunctionParameter2Symbol(output, funSym.LinkageData);
                 p.SetFlag(Symbol.Flags.Parameter | Symbol.Flags.Output | Symbol.Flags.LINKAGE, true);
                 parameters.Add(p);
             }
@@ -503,7 +503,7 @@ namespace TypeCobol.Compiler.Domain
             if (funcProfile.ReturningParameter != null)
             {
                 ParameterDescription ret = funcProfile.ReturningParameter;
-                retVar = FunctionParameter2Symbol(ret, funSym.LinkageStorageData);
+                retVar = FunctionParameter2Symbol(ret, funSym.LinkageData);
                 retVar.SetFlag(Symbol.Flags.Returning | Symbol.Flags.LINKAGE, true);
             }
 

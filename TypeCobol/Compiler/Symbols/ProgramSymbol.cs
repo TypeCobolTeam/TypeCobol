@@ -24,7 +24,7 @@ namespace TypeCobol.Compiler.Symbols
             GlobalStorageData = new Domain<VariableSymbol>(this);
             WorkingStorageData = new Domain<VariableSymbol>(this);
             LocalStorageData = new Domain<VariableSymbol>(this);
-            LinkageStorageData = new Domain<VariableSymbol>(this);
+            LinkageData = new Domain<VariableSymbol>(this);
             Sections = new Domain<SectionSymbol>(this);
             Paragraphs = new Domain<ParagraphSymbol>(this);
             Functions = new Domain<FunctionSymbol>(this);
@@ -79,7 +79,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Data of the LINKAGE SECTION of the program.
         /// </summary>
-        public override Domain<VariableSymbol> LinkageStorageData
+        public override Domain<VariableSymbol> LinkageData
         {
             get;
             protected set;
@@ -442,7 +442,7 @@ namespace TypeCobol.Compiler.Symbols
         }
         public void DumpLinkageSection(TextWriter tw, int indentLevel)
         {
-            DumpSection("LINKAGE SECTION.", this.LinkageStorageData, tw, indentLevel);
+            DumpSection("LINKAGE SECTION.", this.LinkageData, tw, indentLevel);
         }
         /// <summary>
         /// Dump the DataDivision

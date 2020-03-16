@@ -48,7 +48,7 @@ namespace TypeCobol.Compiler.Symbols
             protected set {; }
         }
 
-        public virtual Domain<VariableSymbol> LinkageStorageData
+        public virtual Domain<VariableSymbol> LinkageData
         {
             get { return null; }
             protected set {; }

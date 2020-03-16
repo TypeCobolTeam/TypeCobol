@@ -78,7 +78,7 @@ namespace TypeCobol.Compiler.Symbols
                     ExpandDomain(programToExpand.GlobalStorageData);
                     ExpandDomain(programToExpand.WorkingStorageData);
                     ExpandDomain(programToExpand.LocalStorageData);
-                    ExpandDomain(programToExpand.LinkageStorageData);
+                    ExpandDomain(programToExpand.LinkageData);
 
                     //Check each Nested Programs
                     ExpandDomain(programToExpand.Programs);
