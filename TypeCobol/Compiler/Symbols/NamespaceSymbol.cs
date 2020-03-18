@@ -80,15 +80,6 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// All Types declared in this namespace
-        /// </summary>
-        public override Scope<TypedefSymbol> Types
-        {
-            get;
-            protected set;
-        }
-
-        /// <summary>
         /// All programs declared in this namespace.
         /// </summary>
         public override Scope<ProgramSymbol> Programs
@@ -97,7 +88,25 @@ namespace TypeCobol.Compiler.Symbols
             protected set;
         }
 
-        private Domain<TSymbol>.Entry ResolveSymbol<TSymbol>(string[] path, Func<string, Domain<TSymbol>.Entry> lookupSymbol)
+        /// <summary>
+        /// All namespaces declared in this namespace.
+        /// </summary>
+        public Scope<NamespaceSymbol> Namespaces
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
+        /// All types declared in this namespace.
+        /// </summary>
+        public override Scope<TypedefSymbol> Types
+        {
+            get;
+            protected set;
+        }
+
+        protected Domain<TSymbol>.Entry ResolveSymbol<TSymbol>(string[] path, Func<string, Domain<TSymbol>.Entry> lookupSymbol) 
             where TSymbol : Symbol
         {
             if (path == null || path.Length == 0 || path[0] == null)
@@ -118,23 +127,14 @@ namespace TypeCobol.Compiler.Symbols
 
         public override Domain<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path)
         {
-            return ResolveSymbol<TypedefSymbol>(path, root.LookupType);
+            throw new InvalidOperationException("Namespace symbol does not contain any type.");
         }
-
-        /// <summary>
-        /// All namespaces declared in this namespace.
-        /// </summary>
-        public Scope<NamespaceSymbol> Namespaces
-        {
-            get;
-            protected set;
-        }
-
-        public override TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitNamespaceSymbol(this, arg); }
 
         public override Domain<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path)
         {
             return ResolveSymbol<AbstractScope>(path, root.LookupScope);
         }
+
+        public override TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitNamespaceSymbol(this, arg); }
     }
 }
