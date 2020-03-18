@@ -16,9 +16,9 @@ namespace TypeCobol.Compiler.Symbols
         public NamespaceSymbol(string name)
             : base(name, Kinds.Namespace)
         {
-            Types = new Domain<TypedefSymbol>(this);
             Programs = new Domain< ProgramSymbol >(this);
             Namespaces = new Domain<NamespaceSymbol>(this);
+            Types = new Domain<TypedefSymbol>(this);
         }
 
         /// <summary>
@@ -28,10 +28,6 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="from"></param>
         public NamespaceSymbol(string name, NamespaceSymbol from) : this(name)
         {
-            foreach (var t in from.Types)
-            {
-                Types.Enter(t);
-            }
             foreach (var p in from.Programs)
             {
                 Programs.Enter(p);
@@ -39,6 +35,10 @@ namespace TypeCobol.Compiler.Symbols
             foreach (var n in from.Namespaces)
             {
                 Namespaces.Enter(n);
+            }
+            foreach (var t in from.Types)
+            {
+                Types.Enter(t);
             }
         }
 
@@ -80,15 +80,6 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// All Types declared in this namespace
-        /// </summary>
-        public override Domain<TypedefSymbol> Types
-        {
-            get;
-            protected set;
-        }
-
-        /// <summary>
         /// All programs declared in this namespace.
         /// </summary>
         public override Domain<ProgramSymbol> Programs
@@ -97,7 +88,25 @@ namespace TypeCobol.Compiler.Symbols
             protected set;
         }
 
-        private Container<TSymbol>.Entry ResolveSymbol<TSymbol>(string[] path, Func<string, Container<TSymbol>.Entry> lookupSymbol)
+        /// <summary>
+        /// All namespaces declared in this namespace.
+        /// </summary>
+        public Domain<NamespaceSymbol> Namespaces
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
+        /// All Types declared in this namespace
+        /// </summary>
+        public override Domain<TypedefSymbol> Types
+        {
+            get;
+            protected set;
+        }
+
+        protected Container<TSymbol>.Entry ResolveSymbol<TSymbol>(string[] path, Func<string, Container<TSymbol>.Entry> lookupSymbol)
             where TSymbol : Symbol
         {
             if (path == null || path.Length == 0 || path[0] == null)
@@ -118,23 +127,14 @@ namespace TypeCobol.Compiler.Symbols
 
         public override Container<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path)
         {
-            return ResolveSymbol<TypedefSymbol>(path, root.LookupType);
+            throw new InvalidOperationException("Namespace symbol does not contain any type.");
         }
-
-        /// <summary>
-        /// All namespaces declared in this namespace.
-        /// </summary>
-        public Domain<NamespaceSymbol> Namespaces
-        {
-            get;
-            protected set;
-        }
-
-        public override TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitNamespaceSymbol(this, arg); }
 
         public override Container<ScopeSymbol>.Entry ResolveScope(RootSymbolTable root, string[] path)
         {
             return ResolveSymbol<ScopeSymbol>(path, root.LookupScope);
         }
+
+        public override TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitNamespaceSymbol(this, arg); }
     }
 }

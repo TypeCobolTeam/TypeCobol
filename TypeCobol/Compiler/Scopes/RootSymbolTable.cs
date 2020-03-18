@@ -296,7 +296,7 @@ namespace TypeCobol.Compiler.Scopes
         private Container<TScope>.Entry ResolveScope<TScope>(string[] path, params Symbol.Kinds[] kinds)
             where TScope : ScopeSymbol
         {
-            var candidates = ResolveScope(this, path);
+            var candidates = ResolveSymbol<ScopeSymbol>(path, LookupScope);
             if (candidates == null)
                 return null;
 
@@ -358,7 +358,7 @@ namespace TypeCobol.Compiler.Scopes
         /// <returns>The set of matching results</returns>
         public Container<TypedefSymbol>.Entry ResolveType(string[] path)
         {
-            return ResolveType(this, path);
+            return ResolveSymbol<TypedefSymbol>(path, LookupType);
         }
     }
 }
