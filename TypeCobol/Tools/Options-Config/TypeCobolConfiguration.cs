@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Castle.Core.Internal;
+using System.Text;
 using Mono.Options;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
@@ -14,7 +14,7 @@ namespace TypeCobol.Tools.Options_Config
     public class TypeCobolConfiguration : ITypeCobolCheckOptions
     {
         public string CommandLine { get; set; }
-        public DocumentFormat Format = DocumentFormat.RDZReferenceFormat;
+        public DocumentFormat Format;
         public bool AutoRemarks;
         public string HaltOnMissingCopyFilePath;
         public string ExpandingCopyFilePath;
@@ -47,14 +47,14 @@ namespace TypeCobol.Tools.Options_Config
         }
         public List<string> Copies = new List<string>();
         public List<string> Dependencies = new List<string>();
-        public string EncFormat = null;
         public bool Telemetry;
         public int MaximumDiagnostics;
         public OutputFormat OutputFormat = OutputFormat.Cobol85;
 
 
         // Raw values (it has to be verified)
-        public string RawFormat = "rdz";
+        public string RawFormat;
+        public string RawInputCodepageOrEncoding;
         public string RawExecToStep = "5";
         public string RawMaximumDiagnostics;
         public string RawOutputFormat = "0";
@@ -233,6 +233,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "ets|exectostep=", "ExecToStep will execute TypeCobol Compiler until the included given step (Scanner/0, Preprocessor/1, SyntaxCheck/2, SemanticCheck/3, CrossCheck/4, Generate/5).", v => typeCobolConfig.RawExecToStep = v},
                 { "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "+"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
                     v => typeCobolConfig.RawFormat = v},
+                { "ie|inputencoding=", "Allows to change default encoding when used with RDZ format. Specify a valid encoding name, example : -ie \"Windows-1252\".", v => typeCobolConfig.RawInputCodepageOrEncoding = v },
                 { "y|intrinsic=", "{PATH} to intrinsic definitions to load.\nThis option can be specified more than once.", v => typeCobolConfig.Copies.Add(v) },
                 { "c|copies=",  "Folder where COBOL copies can be found.\nThis option can be specified more than once.", v => typeCobolConfig.CopyFolders.Add(v) },
                 { "dp|dependencies=", "Path to folder containing programs to load and to use for parsing a generating the input program.", v => typeCobolConfig.Dependencies.Add(v) },
@@ -324,7 +325,7 @@ namespace TypeCobol.Tools.Options_Config
                 errorStack.Add(ReturnCode.HaltOnMissingCopyError, TypeCobolConfiguration.ErrorMessages[ReturnCode.HaltOnMissingCopyError]);
 
             // EncodingError
-            config.Format = CreateFormat(config.RawFormat, ref config);
+            config.Format = CreateFormat(config.RawFormat, config.RawInputCodepageOrEncoding);
 
             //IntrinsicError
             VerifFiles(config.Copies, ReturnCode.IntrinsicError, ref errorStack);
@@ -398,20 +399,38 @@ namespace TypeCobol.Tools.Options_Config
         }
 
         /// <summary>
-        /// CreateFormat method to get the format name.
+        /// Create a new DocumentFormat instance for input documents
+        /// according to the specified format and encoding.
         /// </summary>
-        /// <param name="encoding">string</param>
-        /// <param name="config">Config</param>
-        /// <returns>DocumentFormat</returns>
-        public static Compiler.DocumentFormat CreateFormat(string encoding, ref TypeCobolConfiguration config)
+        /// <param name="format">Recognized format values are "zos", "utf8", "rdz" (default is "rdz").</param>
+        /// <param name="inputEncoding">Recognized input encoding values are those supported by System.Text.Encoding.GetEncoding(string) method.
+        /// Only applied when used with "rdz" format, ignored otherwise.</param>
+        /// <returns>instance of DocumentFormat.</returns>
+        public static Compiler.DocumentFormat CreateFormat(string format, string inputEncoding)
         {
-            config.EncFormat = encoding;
+            switch (format?.ToLower())
+            {
+                case "zos":
+                    return DocumentFormat.ZOsReferenceFormat;
+                case "utf8":
+                    return DocumentFormat.FreeUTF8Format;
+            }
 
-            if (encoding == null) return null;
-            if (encoding.ToLower().Equals("zos")) return TypeCobol.Compiler.DocumentFormat.ZOsReferenceFormat;
-            if (encoding.ToLower().Equals("utf8")) return TypeCobol.Compiler.DocumentFormat.FreeUTF8Format;
-            /*if (encoding.ToLower().Equals("rdz"))*/
-            return TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
+            var documentFormat = DocumentFormat.RDZReferenceFormat;
+            if (inputEncoding != null)
+            {
+                try
+                {
+                    var substitutionEncoding = Encoding.GetEncoding(inputEncoding);
+                    documentFormat = new DocumentFormat(substitutionEncoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout);
+                }
+                catch
+                {
+                    //Could not find the desired encoding, fallback to default encoding of RDZ format (UTF-8).
+                }
+            }
+
+            return documentFormat;
         }
     }
 }
