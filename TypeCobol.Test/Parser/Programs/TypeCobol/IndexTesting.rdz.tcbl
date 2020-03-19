@@ -79,7 +79,7 @@
 
        SET myPointer Down BY ((MyFinalIdxVar::Counter)**2).
 
-      *KO index is not referenced
+      *OK index is referenced
        SET W003-INDX             To 1.
 
        END PROGRAM IndexTesting.
