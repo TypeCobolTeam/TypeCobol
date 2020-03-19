@@ -53,7 +53,6 @@
 
       *Test on index reference in redefined picture
        01 W-VAR    PIC XXX.
-      *KO index is not referenced
        01 W003-REQUESTS REDEFINES W-VAR
                    OCCURS 3 TIMES INDEXED BY W003-INDX PIC X.
 
