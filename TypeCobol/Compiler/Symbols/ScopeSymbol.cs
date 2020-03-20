@@ -27,55 +27,55 @@ namespace TypeCobol.Compiler.Symbols
         public virtual Domain<VariableSymbol> FileData
         {
             get { return null; }
-            protected set {; }
+            protected set { ; }
         }
 
         public virtual Domain<VariableSymbol> GlobalStorageData
         {
             get { return null; }
-            protected set {; }
+            protected set { ; }
         }
 
         public virtual Domain<VariableSymbol> WorkingStorageData
         {
             get { return null; }
-            protected set {; }
+            protected set { ; }
         }
 
         public virtual Domain<VariableSymbol> LocalStorageData
         {
             get { return null; }
-            protected set {; }
+            protected set { ; }
         }
 
         public virtual Domain<VariableSymbol> LinkageData
         {
             get { return null; }
-            protected set {; }
+            protected set { ; }
         }
 
         public virtual Domain<SectionSymbol> Sections
         {
             get { return null; }
-            protected set {; }
+            protected set { ; }
         }
 
         public virtual Domain<ParagraphSymbol> Paragraphs
         {
             get { return null; }
-            protected set { }
+            protected set { ; }
         }
 
         public virtual Domain<FunctionSymbol> Functions
         {
             get { return null; }
-            protected set {; }
+            protected set { ; }
         }
 
         public virtual Domain<ProgramSymbol> Programs
         {
             get { return null; }
-            protected set { }
+            protected set { ; }
         }
 
         /// <summary>
@@ -156,7 +156,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="rootScope">The top root scope</param>
         /// <param name="progName">The program name to be looked up</param>
         /// <returns></returns>
-        protected virtual Container<ProgramSymbol>.Entry LookupProgram(ScopeSymbol rootScope, string progName, out ScopeSymbol currentScope, out ScopeSymbol stopScope)
+        protected Container<ProgramSymbol>.Entry LookupProgram(ScopeSymbol rootScope, string progName, out ScopeSymbol currentScope, out ScopeSymbol stopScope)
         {
             stopScope = rootScope;
             currentScope = this;
@@ -193,7 +193,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="rootScope">The top rootScope</param>
         /// <param name="path">Looking path à la COBOL85 --> in Reverse order</param>
         /// <returns>The TypedefSymbol if found, null otherwise.</returns>
-        public virtual Container<TypedefSymbol>.Entry ReverseResolveType(ScopeSymbol rootScope, string[] path)
+        public Container<TypedefSymbol>.Entry ReverseResolveType(ScopeSymbol rootScope, string[] path)
         {
             System.Diagnostics.Debug.Assert(rootScope != null);
             System.Diagnostics.Debug.Assert(path != null);
@@ -246,7 +246,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="rootScope">The top rootScope</param>
         /// <param name="path">Looking path à la COBOL85 --> in Reverse order</param>
         /// <returns>The FunctionSymbol instance if found, null otherwise.</returns>
-        public virtual Container<FunctionSymbol>.Entry ReverseResolveFunction(ScopeSymbol rootScope, string[] path)
+        public Container<FunctionSymbol>.Entry ReverseResolveFunction(ScopeSymbol rootScope, string[] path)
         {
             System.Diagnostics.Debug.Assert(rootScope != null);
             System.Diagnostics.Debug.Assert(path != null);
@@ -326,8 +326,7 @@ namespace TypeCobol.Compiler.Symbols
         /// Free all symbols or types associated to this scope?
         /// </summary>
         internal virtual void Clear()
-        {
-        }
+        { }
 
         public virtual void Add(ScopeSymbol scope)
         { }
