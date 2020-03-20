@@ -326,7 +326,7 @@ namespace TypeCobol.Tools.Options_Config
                 errorStack.Add(ReturnCode.HaltOnMissingCopyError, TypeCobolConfiguration.ErrorMessages[ReturnCode.HaltOnMissingCopyError]);
 
             // EncodingError
-            config.Format = CreateFormat(config.RawFormat, config.RawInputCodepageOrEncoding);
+            config.Format = CreateFormat(config.RawFormat, config.RawInputCodepageOrEncoding, errorStack);
 
             //IntrinsicError
             VerifFiles(config.Copies, ReturnCode.IntrinsicError, ref errorStack);
@@ -406,8 +406,9 @@ namespace TypeCobol.Tools.Options_Config
         /// <param name="format">Recognized format values are "zos", "utf8", "rdz" (default is "rdz").</param>
         /// <param name="inputEncoding">Recognized input encoding values are those supported by System.Text.Encoding.GetEncoding(string) method.
         /// Only applied when used with "rdz" format, ignored otherwise.</param>
+        /// <param name="errorStack">Dictionary of errors accumulated so far.</param>
         /// <returns>instance of DocumentFormat.</returns>
-        public static Compiler.DocumentFormat CreateFormat(string format, string inputEncoding)
+        private static Compiler.DocumentFormat CreateFormat(string format, string inputEncoding, Dictionary<ReturnCode, string> errorStack)
         {
             switch (format?.ToLower())
             {
@@ -415,6 +416,12 @@ namespace TypeCobol.Tools.Options_Config
                     return DocumentFormat.ZOsReferenceFormat;
                 case "utf8":
                     return DocumentFormat.FreeUTF8Format;
+                case null:
+                case "rdz":
+                    break;
+                default:
+                    errorStack.Add(ReturnCode.EncodingError, $"The format '{format}' is not supported.");
+                    break;
             }
 
             var documentFormat = DocumentFormat.RDZReferenceFormat;
@@ -427,7 +434,7 @@ namespace TypeCobol.Tools.Options_Config
                 }
                 catch
                 {
-                    //Could not find the desired encoding, fallback to default encoding of RDZ format (UTF-8).
+                    //Could not find the desired encoding, fallback silently to default encoding of RDZ format (UTF-8).
                 }
             }
 
