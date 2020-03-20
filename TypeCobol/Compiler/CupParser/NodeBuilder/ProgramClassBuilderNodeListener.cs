@@ -54,6 +54,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         }
 
+        public virtual void EndCobolCompilationUnit()
+        {
+
+        }
+
         public virtual void EndCobolProgram(ProgramEnd end)
         {
 

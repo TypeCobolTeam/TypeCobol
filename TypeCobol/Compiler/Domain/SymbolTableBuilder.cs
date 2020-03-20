@@ -15,14 +15,6 @@ namespace TypeCobol.Compiler.Domain
     public abstract class SymbolTableBuilder : ProgramClassBuilderNodeListener
     {
         /// <summary>
-        /// The abstract scope of the SymbolTable built.
-        /// </summary>
-        public abstract AbstractScope Scope
-        {
-            get;
-        }
-
-        /// <summary>
         /// Path of the Intrinsic file
         /// </summary>
         public static string IntrinsicPath

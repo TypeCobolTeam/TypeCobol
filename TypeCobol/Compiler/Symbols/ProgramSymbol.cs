@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Domain;
 using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
 {
     /// <summary>
-    /// Reprsents a Program Symbol
+    /// Represents a Program Symbol
     /// </summary>
     public class ProgramSymbol : AbstractScope
     {
@@ -20,7 +15,7 @@ namespace TypeCobol.Compiler.Symbols
         /// Named constructor.
         /// </summary>
         /// <param name="name"></param>
-        public ProgramSymbol(String name) : base(name, Kinds.Program)
+        public ProgramSymbol(string name) : base(name, Kinds.Program)
         {
             Types = new Scope<TypedefSymbol>(this);
             FileData = new Scope<VariableSymbol>(this);
@@ -32,7 +27,6 @@ namespace TypeCobol.Compiler.Symbols
             Paragraphs = new Scope<ParagraphSymbol>(this);
             Functions = new Scope<FunctionSymbol>(this);
             Programs = new Scope<ProgramSymbol>(this);
-            VariableTypeSymbols = new LinkedList<VariableTypeSymbol>();
             Domain = new Domain<VariableSymbol>();
         }
 
@@ -136,20 +130,11 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// All variable that uses a Type that comes from a TypeDef
-        /// </summary>
-        public LinkedList<VariableTypeSymbol> VariableTypeSymbols
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
         /// Enter a Program in this namespace
         /// </summary>
         /// <param name="name">Program's name</param>
         /// <returns>The ProgramSymbol</returns>
-        public ProgramSymbol EnterProgram(String name)
+        public ProgramSymbol EnterProgram(string name)
         {
             Domain<ProgramSymbol>.Entry entry = Programs.Lookup(name);
             if (entry == null)
@@ -188,13 +173,6 @@ namespace TypeCobol.Compiler.Symbols
                 Symbol root = TopParent(Kinds.Root);
                 ((RootSymbolTable) root)?.AddToUniverse(varSym);
                 Domain.Add(varSym);
-
-                //Remember a variable that maybe expanded.
-                if (varSym.HasFlag(Flags.HasATypedefType))
-                {
-                    System.Diagnostics.Debug.Assert((varSym is VariableTypeSymbol));
-                    VariableTypeSymbols.AddLast((VariableTypeSymbol)varSym);
-                }
             }
             return varSym;
         }
@@ -357,10 +335,11 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="bRecurseEnglobingPrograms">true to recurse into englobing variables to look for global variable, false otherwise</param>
         /// <param name="visibilityMask">Visibility Mask</param>
         /// <returns>The referenced symbols if any</returns>
-        public Domain<VariableSymbol>.Entry ResolveReference(string[] paths, Domain<VariableSymbol>.Entry results, bool bRecurseEnglobingPrograms, Symbol.Flags visibilityMask)
+        private void ResolveReference(string[] paths, Domain<VariableSymbol>.Entry results, bool bRecurseEnglobingPrograms, Symbol.Flags visibilityMask)
         {
             if (paths == null || paths.Length == 0 || paths[0] == null)
-                return results;
+                return;
+
             string name = paths[0];
             if (this.Domain.TryGetValue(name, out var candidates))
             {
@@ -385,7 +364,7 @@ namespace TypeCobol.Compiler.Symbols
                     if (curProg.Owner != null && curProg.Owner.Kind == Kinds.Program)
                     {
                         curProg = (ProgramSymbol)curProg.Owner;
-                        curProg.ResolveReference(paths, results, bRecurseEnglobingPrograms, visibilityMask == 0 ? VariableVisibilityMask : visibilityMask);
+                        curProg.ResolveReference(paths, results, true, visibilityMask == 0 ? VariableVisibilityMask : visibilityMask);
                     }
                 }
                 else if ((visibilityMask & Flags.GLOBAL_STORAGE) == 0)
@@ -398,7 +377,6 @@ namespace TypeCobol.Compiler.Symbols
                     }
                 }
             }
-            return results;
         }
 
         /// <summary>
@@ -424,30 +402,9 @@ namespace TypeCobol.Compiler.Symbols
             if (paths == null || paths.Length == 0 || paths[0] == null)
                 return null;
 
-            return ResolveReference(paths, new Domain<VariableSymbol>.Entry(paths[0]), bRecurseEnglobingPrograms, 0);
-        }
-
-        /// <summary>
-        /// Resolve all accessible types by this scope from a root symbol table
-        /// </summary>
-        /// <param name="root">The root Symbol table</param>
-        /// <param name="path">The Type's path to be resolved.'</param>
-        /// <returns>The scope all accessible type</returns>
-        public override Domain<TypedefSymbol>.Entry ResolveAccessibleType(RootSymbolTable root, string[] path)
-        {
-            Domain<TypedefSymbol>.Entry candidates = root.ResolveQualifiedType(path, true);
-            if (candidates == null || candidates.Count == 0)
-                return candidates;
-            Domain<TypedefSymbol>.Entry types = new Domain<TypedefSymbol>.Entry(path[0]);
-            foreach (var t in candidates)
-            {
-                if (IsTypeAccessible(t))
-                {
-                    types.Add(t);
-                }
-            }
-
-            return types;
+            var results = new Domain<VariableSymbol>.Entry(paths[0]);
+            ResolveReference(paths, results, bRecurseEnglobingPrograms, 0);
+            return results;
         }
 
         /// <summary>
@@ -459,7 +416,7 @@ namespace TypeCobol.Compiler.Symbols
         public override Domain<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path)
         {
             ProgramSymbol topPrg = (ProgramSymbol)TopParent(Kinds.Program);
-            return ResolveSymbol(path, topPrg, root.TypeDomain);
+            return ResolveSymbol<TypedefSymbol>(path, topPrg, root.LookupType);
         }
 
         /// <summary>
@@ -471,7 +428,7 @@ namespace TypeCobol.Compiler.Symbols
         public override Domain<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path)
         {
             ProgramSymbol topPrg = (ProgramSymbol)TopParent(Kinds.Program);
-            return ResolveSymbol< AbstractScope>(path, topPrg, root.ScopeDomain);
+            return ResolveSymbol<AbstractScope>(path, topPrg, root.LookupScope);
         }
 
         /// <summary>

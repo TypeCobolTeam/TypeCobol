@@ -398,8 +398,8 @@ starts ::= compilationUnit		/* rule for starting analyzing a compilation unit */
 	| StatementEntryPoint statementEntry /* rule for starting analyzing a TypeCobol statement */
 	;
 
-compilationUnit ::= {: my_parser.Builder.StartCobolCompilationUnit(); :} cobolCompilationUnit
-	| {: my_parser.Builder.StartCobolCompilationUnit(); :} /*empty*/
+compilationUnit ::= {: my_parser.Builder.StartCobolCompilationUnit(); :} cobolCompilationUnit {: my_parser.Builder.EndCobolCompilationUnit(); :}
+	| {: my_parser.Builder.StartCobolCompilationUnit(); my_parser.Builder.EndCobolCompilationUnit(); :} /*empty*/
 	;
 
 /* The grammar */

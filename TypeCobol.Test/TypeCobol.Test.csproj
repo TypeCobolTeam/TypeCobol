@@ -65,7 +65,6 @@
     <Content Include="ThirdParty\**" />
     <Content Include="SemanticDomain\**" />
     <Content Include="Properties\AssemblyInfo.cs" />
-    <None Include="SemanticDomain\TypedefDuplicated.tcbl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Codegen\src\Codegen.csproj">
