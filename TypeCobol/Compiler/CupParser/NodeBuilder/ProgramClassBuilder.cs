@@ -448,7 +448,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 Enter(node, null, symbolTable);
 
                 //Add all index to symbol table
-                AddIndexToSymbolTableAll(entry, symbolTable);
+                CreateIndexAndAddToSymbolTable(entry, symbolTable);
 
 
                 if (_IsInsideWorkingStorageContext)
@@ -513,14 +513,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             node.SymbolTable.AddVariable(node);
 
             //Add all index to symbol table
-            AddIndexToSymbolTableAll(entry, symbolTable);
+            CreateIndexAndAddToSymbolTable(entry, symbolTable);
             
             Dispatcher.StartDataRedefinesEntry(entry);
 
             CheckIfItsTyped(node, node.CodeElement);
         }
 
-        public virtual void AddIndexToSymbolTableAll(CommonDataDescriptionAndDataRedefines entry, SymbolTable symbolTable)
+        public virtual void CreateIndexAndAddToSymbolTable(CommonDataDescriptionAndDataRedefines entry, SymbolTable symbolTable)
         {
             if (entry.Indexes == null || !entry.Indexes.Any()) return;
             foreach (var index in entry.Indexes)
