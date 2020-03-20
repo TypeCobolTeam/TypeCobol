@@ -807,7 +807,7 @@ namespace TypeCobol.Compiler.Scanner
                             }
                             return token;
                         }
-                        return ScanUntilDelimiter(startIndex, TokenType.FORMALIZED_COMMENTS_VALUE, "*>>>");
+                        return ScanUntilDelimiter(startIndex, TokenType.FORMALIZED_COMMENTS_VALUE, "%>>>");
                 }
             }
 
