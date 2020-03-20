@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Castle.Core.Internal;
 using System.Text;
 using Mono.Options;
 using TypeCobol.Compiler;
