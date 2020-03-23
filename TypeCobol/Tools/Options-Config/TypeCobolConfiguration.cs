@@ -410,6 +410,7 @@ namespace TypeCobol.Tools.Options_Config
         /// <returns>instance of DocumentFormat.</returns>
         private static Compiler.DocumentFormat CreateFormat(string format, string inputEncoding, Dictionary<ReturnCode, string> errorStack)
         {
+            string errorMessage = null;
             switch (format?.ToLower())
             {
                 case "zos":
@@ -420,7 +421,7 @@ namespace TypeCobol.Tools.Options_Config
                 case "rdz":
                     break;
                 default:
-                    errorStack.Add(ReturnCode.EncodingError, $"The format '{format}' is not supported.");
+                    errorMessage = $"The format '{format}' is not supported.";
                     break;
             }
 
@@ -434,10 +435,16 @@ namespace TypeCobol.Tools.Options_Config
                 }
                 catch
                 {
-                    //Could not find the desired encoding, fallback silently to default encoding of RDZ format (UTF-8).
+                    //Could not find the desired encoding, complete the error message if any.
+                    if (errorMessage != null) errorMessage += " ";
+                    errorMessage += $"The input encoding '{inputEncoding}' could not be found.";
                 }
             }
 
+            if (errorMessage != null)
+            {
+                errorStack.Add(ReturnCode.EncodingError, errorMessage);
+            }
             return documentFormat;
         }
     }
