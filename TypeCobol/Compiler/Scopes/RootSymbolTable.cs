@@ -222,6 +222,10 @@ namespace TypeCobol.Compiler.Scopes
         public override void Add(TypedefSymbol type)
         {
             System.Diagnostics.Debug.Assert(type != null);
+            if (type.HasFlag(Flags.BuiltinSymbol))
+            {
+                Types.Enter(type);
+            }
             _allTypes.Add(type);
         }
 
@@ -232,6 +236,10 @@ namespace TypeCobol.Compiler.Scopes
         public override void Remove(TypedefSymbol type)
         {
             System.Diagnostics.Debug.Assert(type != null);
+            if (type.HasFlag(Flags.BuiltinSymbol))
+            {
+                Types.Delete(type);
+            }
             _allTypes.Remove(type);
         }
 

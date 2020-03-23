@@ -33,13 +33,9 @@ namespace TypeCobol.Compiler.Domain
         /// <param name="root">The RootSymbolTable instance</param>
         public static void AddBuiltinSymbol(RootSymbolTable root)
         {
-            BuiltinSymbols.StoreSymbols(root.Types);
-            foreach (var t in root.Types)
+            foreach (var type in BuiltinSymbols.All)
             {
-                //Enter each Builtin symbol in the root also.
-                //And mark it as a builtin symbol.
-                t.SetFlag(Symbol.Flags.BuiltinSymbol, true);
-                root.Add(t);
+                root.Add(type);
             }
         }
     }
