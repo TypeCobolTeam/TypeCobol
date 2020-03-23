@@ -1089,7 +1089,14 @@ namespace TypeCobol.Compiler.Scanner
                         // scan the = char and a space
                         return ScanOneCharWithPossibleSpaceAfter(startIndex, TokenType.GreaterThanOrEqualOperator);
                     }
-                    else {
+                    else if (line[currentIndex + 1] == '>')
+                    {
+                        // consume the >> chars
+                        currentIndex += 2;
+                        return new StartDirectiveToken(TokenType.StartSingleLineCompilerDirective, startIndex, startIndex + 1, tokensLine);
+                    }
+                    else
+                    {
                         // consume > char and try to match it as a greater than operator
                         currentIndex++;
                         return new Token(TokenType.GreaterThanOperator, startIndex, startIndex, tokensLine);

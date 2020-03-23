@@ -310,5 +310,12 @@ namespace TypeCobol.Test {
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
         }
+
+        [TestMethod]
+        [TestProperty("Time", "fast")]
+        public void CheckSingleLinePreprocessor()
+        {
+            TestSingleLineCompilerDirectiveBuilder.CheckCALLINTERFACE();
+        }
     }
 }

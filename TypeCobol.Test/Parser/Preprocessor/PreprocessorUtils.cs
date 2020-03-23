@@ -16,6 +16,7 @@ namespace TypeCobol.Test.Parser.Preprocessor
         public static CompilationProject DirectivesProject;
         public static CompilationProject CopyProject;
         public static CompilationProject ReplaceProject;
+        public static CompilationProject SingleLineDirectivesProject;
 
         static PreprocessorUtils()
         {
@@ -30,6 +31,10 @@ namespace TypeCobol.Test.Parser.Preprocessor
             ReplaceProject = new CompilationProject("replace",
                 PlatformUtils.GetPathForProjectFile(Root + Path.DirectorySeparatorChar + "ReplaceTestFiles"), new string[] { ".cbl", ".cpy" },
                 Encoding.Unicode, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.CobolReferenceFormat, CompilerOptions);
+
+            SingleLineDirectivesProject = new CompilationProject("single line directives",
+                PlatformUtils.GetPathForProjectFile(Root + Path.DirectorySeparatorChar + "SingleLineDirectiveTestFiles"), new string[] { ".cbl", ".cpy" },
+                Encoding.Unicode, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.CobolReferenceFormat, CompilerOptions);
         }
 
         public static TypeCobolOptions CompilerOptions = new TypeCobolOptions();
@@ -38,7 +43,18 @@ namespace TypeCobol.Test.Parser.Preprocessor
         {
             PerfStatsForImportedDocument perfStats;
             ProcessedTokensDocument processedDoc = DirectivesProject.GetProcessedTokensDocument(null, testName, out perfStats);
+            return ProcessTokensDocument(processedDoc);
+        }
 
+        public static string ProcessSingleLineCompilerDirectives(string testName)
+        {
+            PerfStatsForImportedDocument perfStats;
+            ProcessedTokensDocument processedDoc = SingleLineDirectivesProject.GetProcessedTokensDocument(null, testName, out perfStats);
+            return ProcessTokensDocument(processedDoc);
+        }
+
+        private static string ProcessTokensDocument(ProcessedTokensDocument processedDoc)
+        {
             StringBuilder sbResult = new StringBuilder();
             int lineNumber = 1;
             foreach (var line in processedDoc.Lines)
@@ -75,7 +91,17 @@ namespace TypeCobol.Test.Parser.Preprocessor
 
         public static void CheckWithDirectiveResultFile(string result, string testName)
         {
-            string path = Path.Combine(Root, "DirectiveResultFiles", testName + ".txt");
+            CheckWithDirectoryResultFile("DirectiveResultFiles", result, testName);
+        }
+
+        public static void CheckWithSingleLineDirectiveResultFile(string result, string testName)
+        {
+            CheckWithDirectoryResultFile("SingleLineDirectiveResultFiles", result, testName);
+        }
+
+        public static void CheckWithDirectoryResultFile(string directory, string result, string testName)
+        {
+            string path = Path.Combine(Root, directory, testName + ".txt");
             string expected = System.IO.File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
             TypeCobol.Test.TestUtils.compareLines(path, result, expected, PlatformUtils.GetPathForProjectFile(path));
         }

@@ -438,7 +438,7 @@ namespace TypeCobol.Compiler.Preprocessor
             foreach (Token compilerDirectiveStartingToken in documentLines
                 .Where(line => line.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing)
                 .SelectMany(line => line.SourceTokens)
-                .Where(token => token.TokenFamily == TokenFamily.CompilerDirectiveStartingKeyword))
+                .Where(token => token.TokenFamily == TokenFamily.CompilerDirectiveStartingKeyword || token.TokenFamily == TokenFamily.SingleLineCompilerDirectiveFamily))
             {
                 // 2. Reset the compiler directive parser state
 

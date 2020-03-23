@@ -151,6 +151,9 @@ non terminal Token skipTokens;
 non terminal skipCompilerStatement;
 
 non terminal titleCompilerStatement;
+non terminal compilerDirectiveStatement;
+non terminal CompilerDirectiveType directiveStatement;
+non terminal System.Collections.IList singleLineConsumedTokens;
 
 non terminal codeElementStartingKeyword;
 non terminal end_exec;
@@ -212,6 +215,7 @@ compilerDirectingStatement ::= basisCompilerStatement
 		| serviceReloadCompilerStatement 
 		| skipCompilerStatement 
 		| titleCompilerStatement
+		| compilerDirectiveStatement
 		;
 
 // p527: BASIS statement 
@@ -1055,7 +1059,33 @@ titleCompilerStatement ::=
 		my_parser.Builder.EnterTitleCompilerStatement(t, a);
 	:} 
 	;
-						 
+					
+compilerDirectiveStatement ::= StartSingleLineCompilerDirective:pptoken
+	singleLineConsumedTokens:tokens
+	directiveStatement:directive
+	{: my_parser.Builder.EnterSingleLineCompilerDirectiveStatement(pptoken, directive, (List<Token>)tokens); :}
+	;
+
+singleLineConsumedTokens ::= 	
+{: 
+	List<Token> consumedTokens = ((CobolWordsTokenizer)my_parser.getScanner()).ConsumeAllTokensOnTheSameLineAndStop(); 
+	RESULT = (System.Collections.IList)consumedTokens;
+:}	
+ ;
+
+directiveStatement ::=  
+	  {: RESULT = CompilerDirectiveType.CALLINTERFACE; :} CallInterfaceCompilerDirective	
+	| {: RESULT = CompilerDirectiveType.INLINE; :} InlineCompilerDirective	
+	| {: RESULT = CompilerDirectiveType.DEFINE; :}  DefineCompilerDirective	
+	| {: RESULT = CompilerDirectiveType.IF; :} IfCompilerDirective	
+	| {: RESULT = CompilerDirectiveType.ELSE; :} ElseCompilerDirective	
+	| {: RESULT = CompilerDirectiveType.END_IF; :} EndIfCompilerDirective	
+	| {: RESULT = CompilerDirectiveType.EVALUATE; :} EvaluateCompilerDirective	
+	| {: RESULT = CompilerDirectiveType.WHEN; :} WhenCompilerDirective
+	| {: RESULT = CompilerDirectiveType.END_EVALUATE; :} EndEvaluateCompilerDirective	
+	;
+
+	
 // p546: USE statement
 // -> see the DECLARATIVES section in CobolCodeElements.g4
 

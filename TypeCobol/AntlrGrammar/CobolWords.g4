@@ -584,7 +584,20 @@ tokens
 	FORMALIZED_COMMENTS_VALUE,
 	AT_SIGN,
 	MULTILINES_COMMENTS_START,
-	MULTILINES_COMMENTS_STOP
+	MULTILINES_COMMENTS_STOP,
+
+	//Compiler Directive Tokens
+	StartSingleLineCompilerDirective,
+	CallInterfaceCompilerDirective,
+	InlineCompilerDirective,
+	DefineCompilerDirective,
+	IfCompilerDirective,
+	ElseCompilerDirective,
+	EndIfCompilerDirective,
+	EvaluateCompilerDirective,
+	WhenCompilerDirective,
+	EndEvaluateCompilerDirective
+
 }
 
 

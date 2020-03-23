@@ -57,6 +57,59 @@ namespace TypeCobol.Compiler.Scanner
         public bool HasTokenContinuationFromPreviousLine { get; private set; }
 
         /// <summary>
+        /// Check that in presence of a Compiler Directive line, the given token must be change
+        /// to its associated Compiler Directive token.
+        /// </summary>
+        /// <param name="token"></param>
+        private void CheckCompilerDirectiveToken(Token token)
+        {
+            if (SourceTokens.Count <= 2)
+            {//On this line if we have a compiler directive statement then it mut be preceded by only a >> token
+                switch(SourceTokens.Count)
+                {
+                    case 0:
+                        return;
+                    case 1:
+                        if (SourceTokens[0].TokenType != TokenType.StartSingleLineCompilerDirective)
+                            return;
+                        break;
+                    case 2:
+                        if (SourceTokens[0].TokenType != TokenType.BLANK || SourceTokens[1].TokenType != TokenType.StartSingleLineCompilerDirective)
+                            return;
+                    break;
+                }
+                switch(token.TokenType)
+                {   //Change these tokens to Compiler directive
+                    case TokenType.IF:
+                        token.TokenType = TokenType.IfCompilerDirective;
+                        break;
+                    case TokenType.ELSE:
+                        token.TokenType = TokenType.ElseCompilerDirective;
+                        break;
+                    case TokenType.END_IF:
+                        token.TokenType = TokenType.EndIfCompilerDirective;
+                        break;
+                    case TokenType.EVALUATE:
+                        token.TokenType = TokenType.EvaluateCompilerDirective;
+                        break;
+                    case TokenType.WHEN:
+                        token.TokenType = TokenType.WhenCompilerDirective;
+                        break;
+                    case TokenType.END_EVALUATE:
+                        token.TokenType = TokenType.EndEvaluateCompilerDirective;
+                        break;
+                    case TokenType.UserDefinedWord:
+                        if (token.Text.Equals("callinterface", StringComparison.InvariantCultureIgnoreCase) ||
+                            token.Text.Equals("callint", StringComparison.InvariantCultureIgnoreCase))
+                            token.TokenType = TokenType.CallInterfaceCompilerDirective;
+                        else if (token.Text.Equals("inline", StringComparison.InvariantCultureIgnoreCase))
+                            token.TokenType = TokenType.InlineCompilerDirective;
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
         /// Always use this method add new token to this line (never call directly Tokens.Add)
         /// </summary>
         internal void AddToken(Token token)
@@ -66,6 +119,9 @@ namespace TypeCobol.Compiler.Scanner
             {
                 token.IsPseudoText = true;
             }
+
+            //Check any Compiler Directive Token
+            CheckCompilerDirectiveToken(token);
 
             // Register new token in list
             SourceTokens.Add(token);

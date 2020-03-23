@@ -170,6 +170,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int EXCEPTION = 291;
   public const int SHIFT_IN = 174;
   public const int XML_INFORMATION = 186;
+  public const int EndEvaluateCompilerDirective = 541;
   public const int PASSWORD = 363;
   public const int EXEC = 107;
   public const int ALL = 212;
@@ -207,6 +208,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int DELIMITER = 276;
   public const int LEADING = 324;
   public const int FUNCTION = 301;
+  public const int EndIfCompilerDirective = 538;
   public const int SORT_MERGE = 406;
   public const int DELIMITED = 275;
   public const int COMPUTATIONAL_1 = 255;
@@ -255,6 +257,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int FILE_CONTROL = 112;
   public const int SORT_FILE_SIZE = 178;
   public const int REDEFINES = 380;
+  public const int ElseCompilerDirective = 537;
   public const int CONTAINS = 260;
   public const int SQLIMS = 408;
   public const int SELECT = 143;
@@ -304,6 +307,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int FORMALIZED_COMMENTS_DEPRECATED = 522;
   public const int DEBUG_SUB_3 = 167;
   public const int DECLARE = 76;
+  public const int InlineCompilerDirective = 534;
   public const int ADD = 65;
   public const int METHOD_ID = 333;
   public const int FOOTING = 298;
@@ -338,6 +342,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int SERVICE = 144;
   public const int ALPHABET = 213;
   public const int INSTALLATION = 315;
+  public const int CallInterfaceCompilerDirective = 533;
   public const int END_RETURN = 95;
   public const int ORGANIZATION = 355;
   public const int CORRESPONDING = 264;
@@ -388,6 +393,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int END_XML = 103;
   public const int TIMES = 426;
   public const int LESS = 326;
+  public const int IfCompilerDirective = 536;
   public const int STRING = 151;
   public const int RUN = 396;
   public const int INDICATE = 470;
@@ -405,6 +411,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int COPY_IMPORT_DIRECTIVE = 515;
   public const int END_ADD = 82;
   public const int COMP_1 = 249;
+  public const int WhenCompilerDirective = 540;
   public const int VALUES = 441;
   public const int END_INVOKE = 91;
   public const int UPON = 437;
@@ -443,6 +450,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int MODE = 334;
   public const int OPEN = 131;
   public const int SAME = 140;
+  public const int StartSingleLineCompilerDirective = 532;
   public const int COMPUTATIONAL = 254;
   public const int CODE = 242;
   public const int QUESTION_MARK = 513;
@@ -511,6 +519,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int NATIVE = 339;
   public const int RECORD = 376;
   public const int LevelNumber = 33;
+  public const int DefineCompilerDirective = 535;
   public const int OVERRIDE = 359;
   public const int STANDARD_1 = 410;
   public const int REPLACING = 389;
@@ -534,6 +543,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int FD = 110;
   public const int SORT_MODE_SIZE = 180;
   public const int DELETE_CD = 50;
+  public const int EvaluateCompilerDirective = 539;
   public const int LessThanOrEqualOperator = 24;
   public const int COPY = 49;
   public const int COMP_5 = 253;

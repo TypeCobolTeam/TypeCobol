@@ -66,7 +66,27 @@ namespace TypeCobol.Compiler.Directives
         SKIP2,
         SKIP3,
         // titleCompilerStatement
-        TITLE
+        TITLE,
+        // CallInterfaceCompilerDirective
+        CALLINTERFACE,
+        // InlineCompilerDirective
+        INLINE,
+        // DefineCompilerDirective
+        DEFINE,
+        // IfCompilerDirective
+        IF,
+        // ElseCompilerDirective
+        ELSE,
+        // EndIfCompilerDirective
+        END_IF,
+        // EvaluateCompilerDirective
+        EVALUATE,
+        // WhenCompilerDirective
+        WHEN,
+        // WhenCompilerDirective OTHER
+        WHEN_OTHER,
+        // EndEvaluateCompilerDirective
+        END_EVALUATE
     }
 
     public abstract class CompilerDirective
@@ -98,6 +118,39 @@ namespace TypeCobol.Compiler.Directives
         public override string ToString()
         {
             return Type.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Same as CompilerDirective, but with a list of all Consumed Tokens for the
+    /// directive on a single line.
+    /// </summary>
+    public abstract class SingleLineCompilerDirective : CompilerDirective
+    {
+        protected SingleLineCompilerDirective(CompilerDirectiveType type) : base(type)
+        {
+        }
+        /// <summary>
+        /// The original Start Directive token: >>
+        /// </summary>
+        public StartDirectiveToken StartDirectiveToken
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// All tokens consumed on the Single line directive statement
+        /// </summary>
+        public List<Token> Tokens
+        {
+            get;
+            internal set;
+        }
+
+        public override string ToString()
+        {
+            return String.Join(" ", Tokens);
         }
     }
 
@@ -1088,4 +1141,105 @@ namespace TypeCobol.Compiler.Directives
             return Type.ToString() + " \"" + Title + "\"";
         }
     }
+
+    /// <summary>
+    /// Enterprise COBOL for z/OS Version 6.2 : Language Reference page 523
+    /// >>CALLINTERFACE Compiler Directive
+    /// </summary>
+    public class CallInterfaceDirective : SingleLineCompilerDirective
+    {
+        public CallInterfaceDirective() : base(CompilerDirectiveType.CALLINTERFACE)
+        { }
+    }
+
+    /// <summary>
+    /// Enterprise COBOL for z/OS Version 6.2 : Language Reference page 524
+    /// >>INLINE Compiler Directive
+    /// </summary>
+    public class InlineDirective : SingleLineCompilerDirective
+    {
+        public InlineDirective() : base(CompilerDirectiveType.INLINE)
+        { }
+    }
+
+    /// <summary>
+    /// Enterprise COBOL for z/OS Version 6.2 : Language Reference page 526
+    /// >>DEFINE Compiler Directive
+    /// </summary>
+    public class DefineDirective : SingleLineCompilerDirective
+    {
+        public DefineDirective() : base(CompilerDirectiveType.DEFINE)
+        { }
+    }
+
+    /// <summary>
+    /// Enterprise COBOL for z/OS Version 6.2 : Language Reference page 528
+    /// >>EVALUATE Compiler Directive
+    /// </summary>
+    public class EvaluateDirective : SingleLineCompilerDirective
+    {
+        public EvaluateDirective() : base(CompilerDirectiveType.EVALUATE)
+        { }
+    }
+
+    /// <summary>
+    /// Enterprise COBOL for z/OS Version 6.2 : Language Reference page 528
+    /// >>WHEN Compiler Directive
+    /// </summary>
+    public class WhenDirective : SingleLineCompilerDirective
+    {
+        public WhenDirective() : base(CompilerDirectiveType.WHEN)
+        { }
+    }
+
+    /// <summary>
+    /// Enterprise COBOL for z/OS Version 6.2 : Language Reference page 528
+    /// >>WHEN OTHER Compiler Directive
+    /// </summary>
+    public class WhenOtherDirective : SingleLineCompilerDirective
+    {
+        public WhenOtherDirective() : base(CompilerDirectiveType.WHEN_OTHER)
+        { }
+    }
+
+    /// <summary>
+    /// Enterprise COBOL for z/OS Version 6.2 : Language Reference page 528
+    /// >>END EVALUATE Compiler Directive
+    /// </summary>
+    public class EndEvaluateDirective : SingleLineCompilerDirective
+    {
+        public EndEvaluateDirective() : base(CompilerDirectiveType.END_EVALUATE)
+        { }
+    }
+
+    /// <summary>
+    /// Enterprise COBOL for z/OS Version 6.2 : Language Reference page 530
+    /// >>IF Compiler Directive
+    /// </summary>
+    public class IfDirective : SingleLineCompilerDirective
+    {
+        public IfDirective() : base(CompilerDirectiveType.IF)
+        { }
+    }
+
+    /// <summary>
+    /// Enterprise COBOL for z/OS Version 6.2 : Language Reference page 530
+    /// >>ELSE Compiler Directive
+    /// </summary>
+    public class ElseDirective : SingleLineCompilerDirective
+    {
+        public ElseDirective() : base(CompilerDirectiveType.ELSE)
+        { }
+    }
+
+    /// <summary>
+    /// Enterprise COBOL for z/OS Version 6.2 : Language Reference page 530
+    /// >>END-IF Compiler Directive
+    /// </summary>
+    public class EndIfDirective : SingleLineCompilerDirective
+    {
+        public EndIfDirective() : base(CompilerDirectiveType.END_IF)
+        { }
+    }
+
 }

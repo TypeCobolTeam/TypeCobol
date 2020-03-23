@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler.CupCommon;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CupPreprocessor
 {
@@ -191,5 +192,13 @@ namespace TypeCobol.Compiler.CupPreprocessor
         /// <param name="titleToken"></param>
         /// <param name="title"></param>
         void EnterTitleCompilerStatement(TypeCobol.Compiler.Scanner.Token titleToken, TypeCobol.Compiler.Scanner.Token title);
+
+        /// <summary>
+        /// Enter the current SingleLineCompilerDirective
+        /// </summary>
+        /// <param name="startDirectiveToken">The start directive token</param>
+        /// <param name="type">Compiler Directive Type</param>
+        /// <param name="consumedTokens">The consumed tokens associated to the Single line compiler directive</param>
+        void EnterSingleLineCompilerDirectiveStatement(Token startDirectiveToken, CompilerDirectiveType type, List<Token> consumedTokens);
     }
 }

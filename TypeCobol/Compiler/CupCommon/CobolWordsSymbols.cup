@@ -595,6 +595,19 @@ terminal TypeCobol.Compiler.Scanner.Token AT_SIGN;
 terminal TypeCobol.Compiler.Scanner.Token MULTILINES_COMMENTS_START;
 terminal TypeCobol.Compiler.Scanner.Token MULTILINES_COMMENTS_STOP;
 
+//Compiler Directive Tokens.
+terminal TypeCobol.Compiler.Scanner.Token StartSingleLineCompilerDirective;
+terminal TypeCobol.Compiler.Scanner.Token CallInterfaceCompilerDirective;
+terminal TypeCobol.Compiler.Scanner.Token InlineCompilerDirective;
+terminal TypeCobol.Compiler.Scanner.Token DefineCompilerDirective;
+terminal TypeCobol.Compiler.Scanner.Token IfCompilerDirective;
+terminal TypeCobol.Compiler.Scanner.Token ElseCompilerDirective;
+terminal TypeCobol.Compiler.Scanner.Token EndIfCompilerDirective;
+terminal TypeCobol.Compiler.Scanner.Token EvaluateCompilerDirective;
+terminal TypeCobol.Compiler.Scanner.Token WhenCompilerDirective;
+terminal TypeCobol.Compiler.Scanner.Token EndEvaluateCompilerDirective;
+
+
 // Non terminals
 non terminal TypeCobol.Compiler.Scanner.Token numericLiteralToken;
 non terminal TypeCobol.Compiler.Scanner.Token numericFigurativeConstant;

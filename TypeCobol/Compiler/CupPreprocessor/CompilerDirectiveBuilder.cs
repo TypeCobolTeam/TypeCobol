@@ -438,5 +438,58 @@ namespace TypeCobol.Compiler.CupPreprocessor
             string title = ((AlphanumericLiteralTokenValue)titleLiteral.LiteralValue).Text;
             titleDirective.Title = title;
         }
+
+        public virtual void EnterSingleLineCompilerDirectiveStatement(Token startDirectiveToken, CompilerDirectiveType type, List<Token> consumedTokens)
+        {
+            CompilerDirective = null;
+            switch (type)
+            {
+                case CompilerDirectiveType.CALLINTERFACE:
+                    CompilerDirective = new CallInterfaceDirective(); ;
+                    break;
+                case CompilerDirectiveType.INLINE:
+                    CompilerDirective = new InlineDirective(); ;
+                    break;
+                case CompilerDirectiveType.DEFINE:
+                    CompilerDirective = new DefineDirective();
+                    break;
+                case CompilerDirectiveType.IF:
+                    CompilerDirective = new IfDirective();
+                    break;
+                case CompilerDirectiveType.ELSE:
+                    CompilerDirective = new ElseDirective();
+                    break;
+                case CompilerDirectiveType.END_IF:
+                    CompilerDirective = new EndIfDirective();
+                    break;
+                case CompilerDirectiveType.EVALUATE:
+                    CompilerDirective = new EvaluateDirective();
+                    break;
+                case CompilerDirectiveType.WHEN:
+                    {
+                        // Special case WHEN OTHER MUST BE Handled here, because after the WHEN token as been
+                        // encountered all remaining tokens en put in the consumedTokens list.
+                        if (consumedTokens.Count >= 2 && consumedTokens[1].TokenType == TokenType.OTHER)
+                            CompilerDirective = new WhenOtherDirective();
+                        else
+                            CompilerDirective = new WhenDirective();
+                    }
+                    break;
+                case CompilerDirectiveType.END_EVALUATE:
+                    CompilerDirective = new EndEvaluateDirective();
+                    break;
+                default://Should never arise otherwise it should be a Syntax Error
+                    break;
+            }
+            if (CompilerDirective != null)
+            {
+                SingleLineCompilerDirective scd = (CompilerDirective as SingleLineCompilerDirective);
+                scd.Tokens = consumedTokens;
+                System.Diagnostics.Debug.Assert(startDirectiveToken is StartDirectiveToken);
+                StartDirectiveToken sdt = (StartDirectiveToken)startDirectiveToken;
+                sdt.CompilerDirective = CompilerDirective;
+                scd.StartDirectiveToken = sdt;
+            }
+        }
     }
 }

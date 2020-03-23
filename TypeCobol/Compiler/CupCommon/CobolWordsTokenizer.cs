@@ -259,6 +259,45 @@ namespace TypeCobol.Compiler.CupCommon
         }
 
         /// <summary>
+        /// Consume all tokens on the same line than the current token
+        /// </summary>
+        /// <returns>The list of consumed tokens</returns>
+        public List<Token> ConsumeAllTokensOnTheSameLine()
+        {
+            List<Token> consumedTokens = new List<Token>();
+            for (; ; )
+            {
+                Token currentToken = base.CurrentToken;
+                if (currentToken == Token.END_OF_FILE)
+                    return consumedTokens;//Ignore if end of file
+                if (currentToken != null)
+                    consumedTokens.Add(currentToken);
+                Token nextToken = base.NextToken();
+                if (nextToken != null && currentToken != null &&
+                    nextToken.TokensLine == currentToken.TokensLine)
+                {
+                    LastToken = nextToken;
+                }
+                else if (nextToken != null && currentToken != null)
+                {//Rollback
+                    base.PreviousToken();
+                    return consumedTokens;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Consume all tokens on the same line and stop scanning
+        /// </summary>
+        /// /// <returns>The list of consumed tokens</returns>
+        public List<Token> ConsumeAllTokensOnTheSameLineAndStop()
+        {
+            List<Token> consumedTokens = ConsumeAllTokensOnTheSameLine();
+            EnterStopScanningMode();
+            return consumedTokens;
+        }
+
+        /// <summary>
         /// Enter in the Stop Scanning Mode if the current is not of the given type
         /// </summary>
         /// <param name="tokenType">The Token type to check</param>

@@ -79,7 +79,10 @@ namespace TypeCobol.Compiler.Scanner
         FormalizedCommentsFamily = 513,
 
         // 525 -> 526 : Multilines Comments Tokens
-        MultilinesCommentsFamily = 525
+        MultilinesCommentsFamily = 525,
+
+        // 527 -> 536 : Compiler Directive Statement
+        SingleLineCompilerDirectiveFamily = 527,
     }
 
     // INFO : the list below is generated from the file Documentation/Studies/CobolLexer.tokens.xls
@@ -616,5 +619,17 @@ namespace TypeCobol.Compiler.Scanner
         AT_SIGN = 524,
         MULTILINES_COMMENTS_START = 525,
         MULTILINES_COMMENTS_STOP = 526,
+
+        StartSingleLineCompilerDirective = 527,  /* >> */
+        CallInterfaceCompilerDirective = 528,
+        InlineCompilerDirective = 529,
+        DefineCompilerDirective = 530,
+        IfCompilerDirective = 531,
+        ElseCompilerDirective = 532,
+        EndIfCompilerDirective = 533,
+        EvaluateCompilerDirective = 534,
+        WhenCompilerDirective = 535,
+        EndEvaluateCompilerDirective = 536,
+
     }
 }

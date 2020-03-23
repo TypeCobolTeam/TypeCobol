@@ -1,0 +1,44 @@
+-- Line 1 --
+*** DIRECTIVE [10,22:CALLINTERFACE]<CallInterfaceCompilerDirective> [24,26:DLL]<UserDefinedWord> ([8,9:>>]<StartSingleLineCompilerDirective>[10,22:CALLINTERFACE]<CallInterfaceCompilerDirective>[23,23: ]<SpaceSeparator>[24,26:DLL]<UserDefinedWord>) ***
+
+-- Line 2 --
+*** DIRECTIVE [10,22:CALLINTERFACE]<CallInterfaceCompilerDirective> [24,30:DYNAMIC]<DYNAMIC> ([8,9:>>]<StartSingleLineCompilerDirective>[10,22:CALLINTERFACE]<CallInterfaceCompilerDirective>[23,23: ]<SpaceSeparator>[24,30:DYNAMIC]<DYNAMIC>) ***
+
+-- Line 3 --
+*** DIRECTIVE [10,22:CALLINTERFACE]<CallInterfaceCompilerDirective> [24,29:STATIC]<UserDefinedWord> ([8,9:>>]<StartSingleLineCompilerDirective>[10,22:CALLINTERFACE]<CallInterfaceCompilerDirective>[23,23: ]<SpaceSeparator>[24,29:STATIC]<UserDefinedWord>) ***
+
+-- Line 4 --
+
+-- Line 5 --
+*** DIRECTIVE [10,22:CALLINTERFACE]<CallInterfaceCompilerDirective> [24,26:DLL]<UserDefinedWord> [28,30:BAD]<UserDefinedWord> ([8,9:>>]<StartSingleLineCompilerDirective>[10,22:CALLINTERFACE]<CallInterfaceCompilerDirective>[23,23: ]<SpaceSeparator>[24,26:DLL]<UserDefinedWord>[27,27: ]<SpaceSeparator>[28,30:BAD]<UserDefinedWord>) ***
+
+-- Line 6 --
+*** DIRECTIVE [10,22:CALLINTERFACE]<CallInterfaceCompilerDirective> [24,30:DYNAMIC]<DYNAMIC> [32,34:BAD]<UserDefinedWord> ([8,9:>>]<StartSingleLineCompilerDirective>[10,22:CALLINTERFACE]<CallInterfaceCompilerDirective>[23,23: ]<SpaceSeparator>[24,30:DYNAMIC]<DYNAMIC>[31,31: ]<SpaceSeparator>[32,34:BAD]<UserDefinedWord>) ***
+
+-- Line 7 --
+*** DIRECTIVE [10,22:CALLINTERFACE]<CallInterfaceCompilerDirective> [24,29:STATIC]<UserDefinedWord> [31,33:BAD]<UserDefinedWord> ([8,9:>>]<StartSingleLineCompilerDirective>[10,22:CALLINTERFACE]<CallInterfaceCompilerDirective>[23,23: ]<SpaceSeparator>[24,29:STATIC]<UserDefinedWord>[30,30: ]<SpaceSeparator>[31,33:BAD]<UserDefinedWord>) ***
+
+-- Line 8 --
+
+-- Line 9 --
+*** DIRECTIVE [10,16:CALLINT]<CallInterfaceCompilerDirective> [18,20:DLL]<UserDefinedWord> ([8,9:>>]<StartSingleLineCompilerDirective>[10,16:CALLINT]<CallInterfaceCompilerDirective>[17,17: ]<SpaceSeparator>[18,20:DLL]<UserDefinedWord>) ***
+
+-- Line 10 --
+*** DIRECTIVE [10,16:CALLINT]<CallInterfaceCompilerDirective> [18,24:DYNAMIC]<DYNAMIC> ([8,9:>>]<StartSingleLineCompilerDirective>[10,16:CALLINT]<CallInterfaceCompilerDirective>[17,17: ]<SpaceSeparator>[18,24:DYNAMIC]<DYNAMIC>) ***
+
+-- Line 11 --
+*** DIRECTIVE [10,16:CALLINT]<CallInterfaceCompilerDirective> [18,23:STATIC]<UserDefinedWord> ([8,9:>>]<StartSingleLineCompilerDirective>[10,16:CALLINT]<CallInterfaceCompilerDirective>[17,17: ]<SpaceSeparator>[18,23:STATIC]<UserDefinedWord>) ***
+
+-- Line 12 --
+
+-- Line 13 --
+[8,32:NT DLL BAD BEFORE COLUM 8]<InvalidToken>
+
+-- Line 14 --
+[8,36:NT DYNAMIC BAD BEFORE COLUM 8]<InvalidToken>
+
+-- Line 15 --
+[8,35:NT STATIC BAD BEFORE COLUM 8]<InvalidToken>
+
+-- Line 16 --
+
