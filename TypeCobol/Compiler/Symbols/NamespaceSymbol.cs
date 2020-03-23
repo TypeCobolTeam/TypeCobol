@@ -18,7 +18,6 @@ namespace TypeCobol.Compiler.Symbols
         {
             Programs = new Domain< ProgramSymbol >(this);
             Namespaces = new Domain<NamespaceSymbol>(this);
-            Types = new Domain<TypedefSymbol>(this);
         }
 
         /// <summary>
@@ -35,10 +34,6 @@ namespace TypeCobol.Compiler.Symbols
             foreach (var n in from.Namespaces)
             {
                 Namespaces.Enter(n);
-            }
-            foreach (var t in from.Types)
-            {
-                Types.Enter(t);
             }
         }
 
@@ -92,15 +87,6 @@ namespace TypeCobol.Compiler.Symbols
         /// All namespaces declared in this namespace.
         /// </summary>
         public Domain<NamespaceSymbol> Namespaces
-        {
-            get;
-            protected set;
-        }
-
-        /// <summary>
-        /// All Types declared in this namespace
-        /// </summary>
-        public override Domain<TypedefSymbol> Types
         {
             get;
             protected set;

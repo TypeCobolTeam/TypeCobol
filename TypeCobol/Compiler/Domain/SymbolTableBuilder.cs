@@ -26,17 +26,5 @@ namespace TypeCobol.Compiler.Domain
         /// <param name="node">The node being built</param>
         /// <param name="program">The Program that contains the node.</param>
         public abstract override void OnNode(Node node, Program program);
-
-        /// <summary>
-        /// Add in the given RootSymbolTable instance all Builtin symbols
-        /// </summary>
-        /// <param name="root">The RootSymbolTable instance</param>
-        public static void AddBuiltinSymbol(RootSymbolTable root)
-        {
-            foreach (var type in BuiltinSymbols.All)
-            {
-                root.Add(type);
-            }
-        }
     }
 }

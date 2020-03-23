@@ -67,8 +67,17 @@ namespace TypeCobol.Compiler.Scopes
             AddToUniverse(BottomVariable);
 
             //Load Builtin symbols
-            SymbolTableBuilder.AddBuiltinSymbol(this);
+            Types = new Domain<TypedefSymbol>(this);
+            foreach (var type in BuiltinSymbols.All)
+            {
+                Add(type);
+            }
         }
+
+        /// <summary>
+        /// Contains intrinsic types.
+        /// </summary>
+        public override Domain<TypedefSymbol> Types { get; protected set; }
 
         /// <summary>
         /// Full qualified name of this Symbol à la TypeCobol using "::"
