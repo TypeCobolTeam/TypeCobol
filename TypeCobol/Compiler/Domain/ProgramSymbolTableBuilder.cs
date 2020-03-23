@@ -2,6 +2,7 @@
 using System.Linq;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.CupParser.NodeBuilder;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Domain.Validator;
 using TypeCobol.Compiler.Nodes;
@@ -29,7 +30,7 @@ namespace TypeCobol.Compiler.Domain
     /// TypeCobol Rules can be read at: https://github.com/TypeCobolTeam/TypeCobol/issues/1081
     /// --------------------------------
     /// </summary>
-    public class ProgramSymbolTableBuilder : SymbolTableBuilder
+    public class ProgramSymbolTableBuilder : ProgramClassBuilderNodeListener
     {
         private class DataDivisionSection
         {

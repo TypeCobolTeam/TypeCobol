@@ -75,7 +75,7 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
-        /// Contains intrinsic types.
+        /// Contains Built-in types.
         /// </summary>
         public override Domain<TypedefSymbol> Types { get; protected set; }
 
