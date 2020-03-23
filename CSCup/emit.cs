@@ -392,7 +392,7 @@ public class emit {
 	    and be changed by action code
 	    6/13/96 frankf */
 	  cout.WriteLine("              " +  prod.lhs().the_symbol().stack_type() +
-		      " RESULT = null;");
+		      " RESULT = default;");
 
 	  /* Add code to propagate RESULT assignments that occur in
 	   * action code embedded in a production (ie, non-rightmost
