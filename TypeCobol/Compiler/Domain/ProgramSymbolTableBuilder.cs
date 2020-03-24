@@ -149,6 +149,7 @@ namespace TypeCobol.Compiler.Domain
             {
                 this.MyRoot.RemoveProgram(prog);
             }
+            Programs.Clear();
         }
 
         public override void OnNode(Node node, Program program)
@@ -204,7 +205,7 @@ namespace TypeCobol.Compiler.Domain
                     nestedProgram.Owner = this.CurrentProgram;
                     this.CurrentProgram = nestedProgram;
                     //Add it into the root table
-                    this.MyRoot.Add(nestedProgram);
+                    this.MyRoot.Register(nestedProgram);
                 }
                 else
                 {
@@ -425,7 +426,7 @@ namespace TypeCobol.Compiler.Domain
             //Enter the function in the current scope
             this.CurrentScope.Functions.Enter(funSym);
             //Add it into the root table
-            this.MyRoot.Add(funSym);
+            this.MyRoot.Register(funSym);
             //Its owner is the current scope.
             funSym.Owner = this.CurrentScope;
             //What about function visibility.
@@ -889,7 +890,7 @@ namespace TypeCobol.Compiler.Domain
                     tdSym.Owner = currentDomain.Owner;
                     ((ProgramSymbol) currentDomain.Owner).Types.Enter(tdSym);
                     //Add the type to the root table
-                    this.MyRoot.Add(tdSym);
+                    this.MyRoot.Register(tdSym);
                 }
                 else
                 {//Declaration of a TypeDef out of a Program or a Function 

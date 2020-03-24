@@ -151,18 +151,27 @@ namespace TypeCobol.Compiler.Symbols
             }
         }
 
-        /// <summary>
-        /// Free the variables associated to this program.
-        /// </summary>
-        internal override void Clear()
+        internal override void ReleaseSymbols()
         {
-            RootSymbolTable root = (RootSymbolTable) TopParent(Kinds.Root);
-            if (root != null)
+            var root = TopParent(Kinds.Root) as RootSymbolTable;
+            System.Diagnostics.Debug.Assert(root != null);
+
+            //Release all types, variables, functions and nested programs
+            foreach (var type in Types)
             {
-                foreach (var varSym in _variables)
-                {
-                    root.RemoveFromUniverse(varSym);
-                }
+                root.Forget(type);
+            }
+            foreach (var variable in _variables)
+            {
+                root.RemoveFromUniverse(variable);
+            }
+            foreach (var function in Functions)
+            {
+                root.Forget(function);
+            }
+            foreach (var nestedProgram in Programs)
+            {
+                root.Forget(nestedProgram);
             }
         }
 

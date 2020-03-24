@@ -323,18 +323,9 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// Free all symbols or types associated to this scope?
+        /// Remove all symbols and types currently held by this Scope from the RootSymbolTable.
         /// </summary>
-        internal virtual void Clear()
-        { }
-
-        public virtual void Add(ScopeSymbol scope)
-        { }
-        public virtual void Remove(ScopeSymbol scope)
-        { }
-        public virtual void Add(TypedefSymbol type)
-        { }
-        public virtual void Remove(TypedefSymbol type)
+        internal virtual void ReleaseSymbols()
         { }
     }
 }

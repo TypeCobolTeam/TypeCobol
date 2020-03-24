@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
-using TypeCobol.Compiler.Domain;
 using TypeCobol.Compiler.Symbols;
 
 namespace TypeCobol.Compiler.Scopes
@@ -70,7 +69,9 @@ namespace TypeCobol.Compiler.Scopes
             Types = new Domain<TypedefSymbol>(this);
             foreach (var type in BuiltinSymbols.All)
             {
-                Add(type);
+                //add in the designated built-in types collection and register
+                Types.Enter(type);
+                Register(type);
             }
         }
 
@@ -161,7 +162,7 @@ namespace TypeCobol.Compiler.Scopes
         /// Add the given ScopeSymbol instance in this table.
         /// </summary>
         /// <param name="scope">The scope to be added</param>
-        public override void Add(ScopeSymbol scope)
+        public void Register(ScopeSymbol scope)
         {
             System.Diagnostics.Debug.Assert(scope != null);
             _allScopes.Add(scope);
@@ -173,68 +174,20 @@ namespace TypeCobol.Compiler.Scopes
         /// Remove the given ScopeSymbol from this table.
         /// </summary>
         /// <param name="scope">The scope to be removed</param>
-        public override void Remove(ScopeSymbol scope)
+        public void Forget(ScopeSymbol scope)
         {
+            System.Diagnostics.Debug.Assert(scope != null);
             _allScopes.Remove(scope);
-
-            scope.Clear();
-
-            //Remove all Types
-            var types = scope.Types;
-            if (types != null)
-            {
-                foreach (var t in types)
-                {
-                    Remove(t);
-                }
-            }
-
-            //Remove all programs
-            var programs = scope.Programs;
-            if (programs != null)
-            {
-                foreach (var p in programs)
-                {
-                    Remove(p);
-                }
-            }
-
-            //Remove all functions
-            var functions = scope.Functions;
-            if (functions != null)
-            {
-                foreach (var p in functions)
-                {
-                    Remove(p);
-                }
-            }
-
-            //Special case Namespace
-            if (scope.Kind == Kinds.Namespace)
-            {
-                NamespaceSymbol ns = (NamespaceSymbol) scope;
-                var nss = ns.Namespaces;
-                if (nss != null)
-                {
-                    foreach (var n in nss)
-                    {
-                        Remove(n);
-                    }
-                }
-            }
+            scope.ReleaseSymbols();
         }
 
         /// <summary>
         /// Add the given Type instance in this table.
         /// </summary>
         /// <param name="type">The type to add to be added</param>
-        public override void Add(TypedefSymbol type)
+        public void Register(TypedefSymbol type)
         {
             System.Diagnostics.Debug.Assert(type != null);
-            if (type.HasFlag(Flags.BuiltinSymbol))
-            {
-                Types.Enter(type);
-            }
             _allTypes.Add(type);
         }
 
@@ -242,13 +195,9 @@ namespace TypeCobol.Compiler.Scopes
         /// Remove the given type from this table.
         /// </summary>
         /// <param name="type">The type to be removed</param>
-        public override void Remove(TypedefSymbol type)
+        public void Forget(TypedefSymbol type)
         {
             System.Diagnostics.Debug.Assert(type != null);
-            if (type.HasFlag(Flags.BuiltinSymbol))
-            {
-                Types.Delete(type);
-            }
             _allTypes.Remove(type);
         }
 
