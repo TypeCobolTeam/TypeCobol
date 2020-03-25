@@ -886,20 +886,28 @@ namespace TypeCobol.Compiler.CodeModel
         /// <summary>
         /// Get type into a specific program by giving program name
         /// </summary>
-        /// <param name="name">Qualified name of the wated type</param>
-        /// <param name="pgmName">Name of the program tha tmay contains the type</param>
+        /// <param name="name">Qualified name of the wanted type</param>
+        /// <param name="pgmName">Name of the program that may contains the type</param>
         /// <returns></returns>
         private List<TypeDefinition> GetType(QualifiedName name, string pgmName, List<TypeDefinition> found = null)
         {
             found = found ?? new List<TypeDefinition>();
-            var program = GetProgramHelper(pgmName); //Get the program corresponding to the given namespace
-            if (program != null)
-            {
-                //Get all TYPEDEF PUBLIC from this program
-                var programTypes = GetPublicTypes(program.SymbolTable.GetTableFromScope(Scope.Program).Types);
+            var programs = GetProgramsHelper(pgmName); //Get the program corresponding to the given namespace
 
-                //Check if there is a type that correspond to the given name (head)
-                return GetFromTable(name.Head, programTypes); 
+            if (programs != null)
+            {
+                var types = new List<TypeDefinition>();
+                foreach (var program in programs)
+                {
+                    //Get all TYPEDEF PUBLIC from this program
+                    var programTypes = GetPublicTypes(program.SymbolTable.GetTableFromScope(Scope.Program).Types);
+
+                    //Check if there is a type that correspond to the given name (head)
+                    var typeList =  GetFromTable(name.Head, programTypes);
+                    if (typeList.Count > 0) types.AddRange(typeList);
+                }
+
+                return types;
             }
 
             return found;
@@ -1040,16 +1048,25 @@ namespace TypeCobol.Compiler.CodeModel
             if (string.IsNullOrEmpty(nameSpace) || result.Count > 0)
                 return result;
 
-            var program = GetProgramHelper(nameSpace); //Get the program corresponding to the given namespace
-            if(program != null)
+            var programs = GetProgramsHelper(nameSpace); //Get the programs corresponding to the given namespace
+            if (programs != null)
             {
-                var programFunctions = program.SymbolTable.GetTableFromScope(Scope.Program).Functions; //Get all function from this program
-                programFunctions = programFunctions
-                                    .Where(p =>
-                                            p.Value.All(f => (f.CodeElement).Visibility == AccessModifier.Public))
-                                            .ToDictionary(f => f.Key, f => f.Value, StringComparer.OrdinalIgnoreCase); //Sort functions to get only the one with public AccessModifier
+                result = new List<FunctionDeclaration>();
+                foreach (var program in programs)
+                {
+                    var programFunctions = program.SymbolTable.GetTableFromScope(Scope.Program)
+                            .Functions; //Get all function from this program
+                    programFunctions = programFunctions
+                                        .Where(p =>
+                                               p.Value.All(f => (f.CodeElement).Visibility == AccessModifier.Public))
+                                               .ToDictionary(f => f.Key, f => f.Value, StringComparer.OrdinalIgnoreCase); //Sort functions to get only the one with public AccessModifier
 
-                result = GetFromTable(name.Head, programFunctions); //Check if there is a function that correspond to the given name (head)
+                    var res = GetFromTable(name.Head, programFunctions); //Check if there is a function that correspond to the given name (head)
+                    if (res.Count > 0)
+                    {
+                        result.AddRange(res);
+                    }
+                }
             }
 
             return result;
@@ -1072,7 +1089,7 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         [NotNull]
-        private List<Program> GetProgram(QualifiedName name)
+        private List<Program> GetPrograms(QualifiedName name)
         {
             return GetFromTableAndEnclosing(name, st => st.Programs, MatchUsingName, Scope.Namespace);
         }
@@ -1173,14 +1190,9 @@ namespace TypeCobol.Compiler.CodeModel
             Function
         }
 
-        private Program GetProgramHelper(string nameSpace)
+        private List<Program> GetProgramsHelper(string nameSpace)
         {
-            var programs = GetProgram(new URI(nameSpace));
-  
-            if (programs.Count > 1)
-                throw new Exception(string.Format("Program with identifier {0} is defined multiple times.", programs.FirstOrDefault()?.Name));
-
-            return programs.FirstOrDefault();
+            return GetPrograms(new URI(nameSpace));
         }
 
         public override string ToString()

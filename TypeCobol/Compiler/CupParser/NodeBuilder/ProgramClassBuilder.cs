@@ -3,8 +3,10 @@ using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
@@ -99,7 +101,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
 
 
-        public NodeDispatcher Dispatcher { get; internal set; }
+        public ProgramClassBuilderNodeDispatcher Dispatcher { get; internal set; }
 
         public Node CurrentNode { get { return SyntaxTree.CurrentNode; } }
 
@@ -125,6 +127,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
             if (node.CodeElement != null)
                 NodeCodeElementLinkers.Add(node.CodeElement, node);
+            Dispatcher.Enter(node);
         }
 
         private void Exit()
@@ -133,6 +136,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Dispatcher.OnNode(node, CurrentProgram);
             SyntaxTree.Exit();
             LastEnteredNode = node;
+            Dispatcher.Exit(node);
         }
 
         private void AttachEndIfExists(CodeElementEnd end)
@@ -190,12 +194,20 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         private void ExitLastLevel1Definition()
         {
             _CurrentTypeDefinition = null;
-            while (CurrentNode.CodeElement != null && CurrentNode.CodeElement is DataDefinitionEntry) Exit();
+            Node LastLevel1Def = null;
+            while (CurrentNode.CodeElement != null && CurrentNode.CodeElement is DataDefinitionEntry)
+            {
+                LastLevel1Def = CurrentNode;
+                Exit();
+            }
+            if (LastLevel1Def != null)
+                Dispatcher.OnLevel1Definition((DataDefinition)LastLevel1Def);
         }
 
         public virtual void StartCobolCompilationUnit()
         {
             SyntaxTree.Root.SymbolTable = TableOfNamespaces; //Set SymbolTable of SourceFile Node, Limited to NameSpace and Intrinsic scopes
+            Dispatcher.StartCobolCompilationUnit();
         }
 
         public virtual void StartCobolProgram(ProgramIdentification programIdentification, LibraryCopyCodeElement libraryCopy)
@@ -212,7 +224,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 else
                 {
                     // Stacked
-                    CurrentProgram = new StackedProgram(TableOfNamespaces, programIdentification);                    
+                    CurrentProgram = new StackedProgram(TableOfNamespaces, programIdentification);
                 }
             }
             else
@@ -231,6 +243,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             }
 
             TableOfNamespaces.AddProgram(CurrentProgram); //Add Program to Namespace table. 
+            Dispatcher.StartCobolProgram(programIdentification, libraryCopy);
         }
 
         public virtual void EndCobolProgram(TypeCobol.Compiler.CodeElements.ProgramEnd end)
@@ -238,113 +251,135 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             AttachEndIfExists(end);
             Exit();
             programsStack.Pop();
+            Dispatcher.EndCobolProgram(end);
         }
 
         public virtual void StartEnvironmentDivision(EnvironmentDivisionHeader header)
         {
             Enter(new EnvironmentDivision(header), header);
+            Dispatcher.StartEnvironmentDivision(header);
         }
 
         public virtual void EndEnvironmentDivision()
         {
             Exit();
+            Dispatcher.EndEnvironmentDivision();
         }
 
         public virtual void StartConfigurationSection(ConfigurationSectionHeader header)
         {
             Enter(new ConfigurationSection(header), header);
+            Dispatcher.StartConfigurationSection(header);
         }
 
         public virtual void EndConfigurationSection()
         {
             Exit();
+            Dispatcher.EndConfigurationSection();
         }
 
         public virtual void StartSourceComputerParagraph(SourceComputerParagraph paragraph)
         {
             Enter(new SourceComputer(paragraph));
+            Dispatcher.StartSourceComputerParagraph(paragraph);
         }
 
         public virtual void EndSourceComputerParagraph()
         {
             Exit();
+            Dispatcher.EndSourceComputerParagraph();
         }
 
         public virtual void StartObjectComputerParagraph(ObjectComputerParagraph paragraph)
         {
             Enter(new ObjectComputer(paragraph));
+            Dispatcher.StartObjectComputerParagraph(paragraph);
         }
 
         public virtual void EndObjectComputerParagraph()
         {
             Exit();
+            Dispatcher.EndObjectComputerParagraph();
         }
 
         public virtual void StartSpecialNamesParagraph(SpecialNamesParagraph paragraph)
         {
             Enter(new SpecialNames(paragraph));
+            Dispatcher.StartSpecialNamesParagraph(paragraph);
         }
 
         public virtual void EndSpecialNamesParagraph()
         {
             Exit();
+            Dispatcher.EndSpecialNamesParagraph();
         }
 
         public virtual void StartRepositoryParagraph(RepositoryParagraph paragraph)
         {
             Enter(new Repository(paragraph));
+            Dispatcher.StartRepositoryParagraph(paragraph);
         }
 
         public virtual void EndRepositoryParagraph()
         {
             Exit();
+            Dispatcher.EndRepositoryParagraph();
         }
 
         public virtual void StartInputOutputSection(InputOutputSectionHeader header)
         {
             Enter(new InputOutputSection(header), header);
+            Dispatcher.StartInputOutputSection(header);
         }
 
         public virtual void EndInputOutputSection()
         {
             Exit();
+            Dispatcher.EndInputOutputSection();
         }
 
         public virtual void StartFileControlParagraph(FileControlParagraphHeader header)
         {
             Enter(new FileControlParagraphHeaderNode(header), header);
+            Dispatcher.StartFileControlParagraph(header);
         }
 
         public virtual void EndFileControlParagraph()
         {
             Exit();
+            Dispatcher.EndFileControlParagraph();
         }
 
         public virtual void StartFileControlEntry(FileControlEntry entry)
         {
             var fileControlEntry = new FileControlEntryNode(entry);
             Enter(fileControlEntry, entry);
+            Dispatcher.StartFileControlEntry(entry);
         }
 
         public virtual void EndFileControlEntry()
         {
             Exit();
+            Dispatcher.EndFileControlEntry();
         }
 
         public virtual void StartDataDivision(DataDivisionHeader header)
         {
             Enter(new DataDivision(header), header);
+            Dispatcher.StartDataDivision(header);
         }
 
         public virtual void EndDataDivision()
         {
             Exit();
+            Dispatcher.EndDataDivision();
         }
 
         public virtual void StartFileSection(FileSectionHeader header)
         {
             Enter(new FileSection(header), header);
             _IsInsideFileSectionContext = true;
+            Dispatcher.StartFileSection(header);
         }
 
         public virtual void EndFileSection()
@@ -352,6 +387,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             ExitLastLevel1Definition();
             Exit();
             _IsInsideFileSectionContext = false;
+            Dispatcher.EndFileSection();
         }
 
         public virtual void StartGlobalStorageSection(GlobalStorageSectionHeader header)
@@ -359,6 +395,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             GlobalStorageSection gs = new GlobalStorageSection(header);
             Enter(gs, header, SyntaxTree.Root.MainProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.Program));
             _IsInsideGlobalStorageSection = true;
+            Dispatcher.StartGlobalStorageSection(header);
         }
 
         public virtual void EndGlobalStorageSection()
@@ -366,17 +403,20 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             ExitLastLevel1Definition();
             Exit(); // Exit GlobalStorageSection
             _IsInsideGlobalStorageSection = false;
+            Dispatcher.EndGlobalStorageSection();
         }
 
         public virtual void StartFileDescriptionEntry(FileDescriptionEntry entry)
         {
             ExitLastLevel1Definition();
             Enter(new FileDescriptionEntryNode(entry), entry);
+            Dispatcher.StartFileDescriptionEntry(entry);
         }
 
         public virtual void EndFileDescriptionEntry()
-        {            
+        {
             Exit();
+            Dispatcher.EndFileDescriptionEntry();
         }
 
         public virtual void EndFileDescriptionEntryIfAny()
@@ -385,6 +425,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             {
                 EndFileDescriptionEntry();
             }
+            Dispatcher.EndFileDescriptionEntryIfAny();
         }
 
         public virtual void StartDataDescriptionEntry(DataDescriptionEntry entry)
@@ -406,31 +447,22 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                     node.ParentTypeDefinition = _CurrentTypeDefinition;
                 Enter(node, null, symbolTable);
 
-                if (entry.Indexes != null && entry.Indexes.Any())
-                {
-                    
-                    foreach (var index in entry.Indexes)
-                    {
-                        var indexNode = new IndexDefinition(index);
-                        Enter(indexNode, null, symbolTable);
-                        if (_CurrentTypeDefinition != null)
-                            indexNode.ParentTypeDefinition = _CurrentTypeDefinition;
-                        symbolTable.AddVariable(indexNode);
-                        Exit();
-                    }
-                }
+                //Add all index to symbol table
+                CreateIndexAndAddToSymbolTable(entry, symbolTable);
 
 
-                if(_IsInsideWorkingStorageContext)
+                if (_IsInsideWorkingStorageContext)
                     node.SetFlag(Node.Flag.WorkingSectionNode, true);      //Set flag to know that this node belongs to Working Storage Section
-                if(_IsInsideLinkageSectionContext)               
+                if (_IsInsideLinkageSectionContext)
                     node.SetFlag(Node.Flag.LinkageSectionNode, true);      //Set flag to know that this node belongs to Linkage Section
-                if(_IsInsideLocalStorageSectionContext)
+                if (_IsInsideLocalStorageSectionContext)
                     node.SetFlag(Node.Flag.LocalStorageSectionNode, true); //Set flag to know that this node belongs to Local Storage Section
                 if (_IsInsideFileSectionContext)
                     node.SetFlag(Node.Flag.FileSectionNode, true);         //Set flag to know that this node belongs to File Section
                 if (_IsInsideGlobalStorageSection)
                     node.SetFlag(Node.Flag.GlobalStorageSection, true);         //Set flag to know that this node belongs to Global Storage Section
+
+                Dispatcher.StartDataDescriptionEntry(entry);
 
                 node.SymbolTable.AddVariable(node);
                 CheckIfItsTyped(node, node.CodeElement);
@@ -480,7 +512,26 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Enter(node, null, symbolTable);
             node.SymbolTable.AddVariable(node);
 
+            //Add all index to symbol table
+            CreateIndexAndAddToSymbolTable(entry, symbolTable);
+            
+            Dispatcher.StartDataRedefinesEntry(entry);
+
             CheckIfItsTyped(node, node.CodeElement);
+        }
+
+        public virtual void CreateIndexAndAddToSymbolTable(CommonDataDescriptionAndDataRedefines entry, SymbolTable symbolTable)
+        {
+            if (entry.Indexes == null || !entry.Indexes.Any()) return;
+            foreach (var index in entry.Indexes)
+            {
+                var indexNode = new IndexDefinition(index);
+                Enter(indexNode, null, symbolTable);
+                if (_CurrentTypeDefinition != null)
+                    indexNode.ParentTypeDefinition = _CurrentTypeDefinition;
+                symbolTable.AddVariable(indexNode);
+                Exit();
+            }
         }
 
         public virtual void StartDataRenamesEntry(DataRenamesEntry entry)
@@ -491,6 +542,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 node.ParentTypeDefinition = _CurrentTypeDefinition;
             Enter(node);
             node.SymbolTable.AddVariable(node);
+            Dispatcher.StartDataRenamesEntry(entry);
         }
 
         public virtual void StartDataConditionEntry(DataConditionEntry entry)
@@ -501,6 +553,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 node.ParentTypeDefinition = _CurrentTypeDefinition;
             Enter(node);
             node.SymbolTable.AddVariable(node);
+            Dispatcher.StartDataConditionEntry(entry);
         }
 
         public virtual void StartTypeDefinitionEntry(DataTypeDescriptionEntry typedef)
@@ -543,6 +596,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
 
             _CurrentTypeDefinition = node;
+            Dispatcher.StartTypeDefinitionEntry(typedef);
             CheckIfItsTyped(node, node.CodeElement);
         }
 
@@ -554,6 +608,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             {
                 CurrentNode.SetFlag(Node.Flag.ForceGetGeneratedLines, true);
             }
+            Dispatcher.StartWorkingStorageSection(header);
         }
 
         public virtual void EndWorkingStorageSection()
@@ -561,6 +616,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             ExitLastLevel1Definition();
             Exit(); // Exit WorkingStorageSection
             _IsInsideWorkingStorageContext = false;
+            Dispatcher.EndWorkingStorageSection();
         }
 
         public virtual void StartLocalStorageSection(LocalStorageSectionHeader header)
@@ -571,6 +627,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             {
                 CurrentNode.SetFlag(Node.Flag.ForceGetGeneratedLines, true);
             }
+            Dispatcher.StartLocalStorageSection(header);
         }
 
         public virtual void EndLocalStorageSection()
@@ -578,6 +635,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             ExitLastLevel1Definition();
             Exit(); // Exit LocalStorageSection
             _IsInsideLocalStorageSectionContext = false;
+            Dispatcher.EndLocalStorageSection();
         }
 
         public virtual void StartLinkageSection(LinkageSectionHeader header)
@@ -588,6 +646,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             {
                 CurrentNode.SetFlag(Node.Flag.ForceGetGeneratedLines, true);
             }
+            Dispatcher.StartLinkageSection(header);
         }
 
         public virtual void EndLinkageSection()
@@ -595,6 +654,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             ExitLastLevel1Definition();
             Exit(); // Exit LinkageSection
             _IsInsideLinkageSectionContext = false;
+            Dispatcher.EndLinkageSection();
         }
 
         public virtual void StartProcedureDivision(ProcedureDivisionHeader header)
@@ -604,28 +664,33 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             {
                 CurrentNode.SetFlag(Node.Flag.ForceGetGeneratedLines, true);
             }
+            Dispatcher.StartProcedureDivision(header);
         }
 
         public virtual void EndProcedureDivision()
         {
             Exit();
+            Dispatcher.EndProcedureDivision();
         }
 
         public virtual void StartDeclaratives(DeclarativesHeader header)
         {
             Enter(new Declaratives(header), header);
+            Dispatcher.StartDeclaratives(header);
         }
 
         public virtual void EndDeclaratives(DeclarativesEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndDeclaratives(end);
         }
 
         public virtual void EnterUseStatement(UseStatement useStatement)
         {
             Enter(new Use(useStatement), useStatement);
             Exit();
+            Dispatcher.EnterUseStatement(useStatement);
         }
 
         private Tools.UIDStore uidfactory = new Tools.UIDStore();
@@ -708,6 +773,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 CurrentNode.SymbolTable.AddVariable(paramNode);
                 CheckIfItsTyped(paramNode, paramNode.CodeElement);
             }
+
+            Dispatcher.StartFunctionDeclaration(header);
         }
 
         public virtual void EndFunctionDeclaration(FunctionDeclarationEnd end)
@@ -715,6 +782,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Enter(new FunctionEnd(end), end);
             Exit();
             Exit();// exit DECLARE FUNCTION
+            Dispatcher.EndFunctionDeclaration(end);
             _ProcedureDeclaration = null;
         }
 
@@ -724,11 +792,13 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 DiagnosticUtils.AddError(header, "TCRFUN_DECLARATION_NO_USING");//TODO#249
 
             Enter(new ProcedureDivision(header), header);
+            Dispatcher.StartFunctionProcedureDivision(header);
         }
 
         public virtual void EndFunctionProcedureDivision()
         {
             Exit();
+            Dispatcher.EndFunctionProcedureDivision();
         }
 
         public virtual void StartSection(SectionHeader header)
@@ -736,11 +806,13 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             var section = new Section(header);
             Enter(section, header);
             section.SymbolTable.AddSection(section);
+            Dispatcher.StartSection(header);
         }
 
         public virtual void EndSection()
         {
             Exit();
+            Dispatcher.EndSection();
         }
 
         public virtual void StartParagraph(ParagraphHeader header)
@@ -748,16 +820,19 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             var paragraph = new Paragraph(header);
             Enter(paragraph, header);
             paragraph.SymbolTable.AddParagraph(paragraph);
+            Dispatcher.StartParagraph(header);
         }
 
         public virtual void EndParagraph()
         {
             Exit();
+            Dispatcher.EndParagraph();
         }
 
         public virtual void StartSentence()
         {
             Enter(new Sentence(), null);
+            Dispatcher.StartSentence();
         }
 
         public virtual void EndSentence(SentenceEnd end, bool bCheck)
@@ -771,6 +846,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             //}
             AttachEndIfExists(end);
             if (CurrentNode is Sentence) Exit();//TODO remove this and check what happens when exiting last CALL in FIN-STANDARD in BigBatch file (ie. CheckPerformance test)
+            Dispatcher.EndSentence(end, bCheck);
         }
 
         /// <summary>
@@ -790,7 +866,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                     parent.Remove(LastEnteredNode);
                     //Start a sentence
                     StartSentence();
-                    CurrentNode.Add(LastEnteredNode);                    
+                    CurrentNode.Add(LastEnteredNode);
                 }
             }
         }
@@ -799,6 +875,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             ExitLastLevel1Definition();
             Enter(new Exec(execStmt), execStmt);
+            Dispatcher.StartExecStatement(execStmt);
         }
 
         public virtual void EndExecStatement()
@@ -821,157 +898,183 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 CurrentNode.Root.MainProgram.SetFlag(Node.Flag.GenerateAsNested, true);
             }
             Exit();
+            Dispatcher.EndExecStatement();
         }
 
         public virtual void OnContinueStatement(ContinueStatement stmt)
         {
             Enter(new Continue(stmt), stmt);
             Exit();
+            Dispatcher.OnContinueStatement(stmt);
         }
 
         public virtual void OnEntryStatement(EntryStatement stmt)
         {
             Enter(new Entry(stmt), stmt);
             Exit();
+            Dispatcher.OnEntryStatement(stmt);
         }
 
         public virtual void OnAcceptStatement(AcceptStatement stmt)
         {
             Enter(new Accept(stmt), stmt);
             Exit();
+            Dispatcher.OnAcceptStatement(stmt);
         }
 
         public virtual void OnInitializeStatement(InitializeStatement stmt)
         {
             Enter(new Initialize(stmt), stmt);
             Exit();
+            Dispatcher.OnInitializeStatement(stmt);
         }
 
         public virtual void OnInspectStatement(InspectStatement stmt)
         {
             Enter(new Inspect(stmt), stmt);
             Exit();
+            Dispatcher.OnInspectStatement(stmt);
         }
 
         public virtual void OnMoveStatement(MoveStatement stmt)
         {
             Enter(new Move(stmt), stmt);
             Exit();
+            Dispatcher.OnMoveStatement(stmt);
         }
 
         public virtual void OnSetStatement(SetStatement stmt)
         {
             Enter(new Set(stmt), stmt);
             Exit();
+            Dispatcher.OnSetStatement(stmt);
         }
 
         public virtual void OnStopStatement(StopStatement stmt)
         {
             Enter(new Stop(stmt), stmt);
             Exit();
+            Dispatcher.OnStopStatement(stmt);
         }
 
         public virtual void OnExitMethodStatement(ExitMethodStatement stmt)
         {
             Enter(new ExitMethod(stmt), stmt);
             Exit();
+            Dispatcher.OnExitMethodStatement(stmt);
         }
 
         public virtual void OnExitProgramStatement(ExitProgramStatement stmt)
         {
             Enter(new ExitProgram(stmt), stmt);
             Exit();
+            Dispatcher.OnExitProgramStatement(stmt);
         }
 
         public virtual void OnAllocateStatement(AllocateStatement stmt)
         {
             Enter(new Allocate(stmt), stmt);
             Exit();
+            Dispatcher.OnAllocateStatement(stmt);
         }
 
         public virtual void OnFreeStatement(FreeStatement stmt)
         {
             Enter(new Free(stmt), stmt);
             Exit();
+            Dispatcher.OnFreeStatement(stmt);
         }
 
         public virtual void OnGobackStatement(GobackStatement stmt)
         {
             Enter(new Goback(stmt), stmt);
             Exit();
+            Dispatcher.OnGobackStatement(stmt);
         }
 
         public virtual void OnCloseStatement(CloseStatement stmt)
         {
             Enter(new Close(stmt), stmt);
             Exit();
+            Dispatcher.OnCloseStatement(stmt);
         }
 
         public virtual void OnDisplayStatement(DisplayStatement stmt)
         {
             Enter(new Display(stmt), stmt);
             Exit();
+            Dispatcher.OnDisplayStatement(stmt);
         }
 
         public virtual void OnOpenStatement(OpenStatement stmt)
         {
             Enter(new Open(stmt), stmt);
             Exit();
+            Dispatcher.OnOpenStatement(stmt);
         }
 
         public virtual void OnMergeStatement(MergeStatement stmt)
         {
             Enter(new Merge(stmt), stmt);
             Exit();
+            Dispatcher.OnMergeStatement(stmt);
         }
 
         public virtual void OnReleaseStatement(ReleaseStatement stmt)
         {
             Enter(new Release(stmt), stmt);
             Exit();
+            Dispatcher.OnReleaseStatement(stmt);
         }
 
         public virtual void OnSortStatement(SortStatement stmt)
         {
             Enter(new Sort(stmt), stmt);
             Exit();
+            Dispatcher.OnSortStatement(stmt);
         }
 
         public virtual void OnAlterStatement(AlterStatement stmt)
         {
             Enter(new Alter(stmt), stmt);
             Exit();
+            Dispatcher.OnAlterStatement(stmt);
         }
 
         public void OnExitStatement(ExitStatement stmt)
         {
             Enter(new Exit(stmt), stmt);
             Exit();
+            Dispatcher.OnExitStatement(stmt);
         }
 
         public virtual void OnGotoStatement(GotoStatement stmt)
         {
             Enter(new Goto(stmt), stmt);
             Exit();
+            Dispatcher.OnGotoStatement(stmt);
         }
 
         public virtual void OnPerformProcedureStatement(PerformProcedureStatement stmt)
         {
             Enter(new PerformProcedure(stmt), stmt);
             Exit();
+            Dispatcher.OnPerformProcedureStatement(stmt);
         }
 
         public virtual void OnCancelStatement(CancelStatement stmt)
         {
             Enter(new Cancel(stmt), stmt);
             Exit();
+            Dispatcher.OnCancelStatement(stmt);
         }
 
         public virtual void OnProcedureStyleCall(ProcedureStyleCallStatement stmt, CallStatementEnd end)
         {
-            Enter(new ProcedureStyleCall(stmt), stmt);            
+            Enter(new ProcedureStyleCall(stmt), stmt);
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.OnProcedureStyleCall(stmt, end);
         }
 
         public virtual void OnExecStatement(ExecStatement stmt)
@@ -996,178 +1099,211 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 CurrentNode.Root.MainProgram.SetFlag(Node.Flag.GenerateAsNested, true);
             }
             Exit();
+            Dispatcher.OnExecStatement(stmt);
         }
 
         public virtual void StartAddStatementConditional(TypeCobol.Compiler.CodeElements.AddStatement stmt)
         {
             Enter(new Add(stmt), stmt);
+            Dispatcher.StartAddStatementConditional(stmt);
         }
 
         public virtual void EndAddStatementConditional(TypeCobol.Compiler.CodeElements.AddStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndAddStatementConditional(end);
         }
 
         public virtual void StartCallStatementConditional(TypeCobol.Compiler.CodeElements.CallStatement stmt)
         {
             Enter(new Call(stmt), stmt);
+            Dispatcher.StartCallStatementConditional(stmt);
         }
 
         public virtual void EndCallStatementConditional(TypeCobol.Compiler.CodeElements.CallStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndCallStatementConditional(end);
         }
 
         public virtual void StartComputeStatementConditional(TypeCobol.Compiler.CodeElements.ComputeStatement stmt)
         {
             Enter(new Compute(stmt), stmt);
+            Dispatcher.StartComputeStatementConditional(stmt);
         }
 
         public virtual void EndComputeStatementConditional(TypeCobol.Compiler.CodeElements.ComputeStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndComputeStatementConditional(end);
         }
 
         public virtual void StartOnSizeError(TypeCobol.Compiler.CodeElements.OnSizeErrorCondition cond)
         {
             Enter(new OnSizeError(cond), cond);
+            Dispatcher.StartOnSizeError(cond);
         }
 
         public virtual void EndOnSizeError()
         {
             Exit();
+            Dispatcher.EndOnSizeError();
         }
 
         public virtual void StartNoSizeError(TypeCobol.Compiler.CodeElements.NotOnSizeErrorCondition cond)
         {
             Enter(new NoSizeError(cond), cond);
+            Dispatcher.StartNoSizeError(cond);
         }
 
         public virtual void EndNoSizeError()
         {
             Exit();
+            Dispatcher.EndNoSizeError();
         }
 
         public virtual void StartOnException(TypeCobol.Compiler.CodeElements.OnExceptionCondition cond)
         {
             Enter(new OnException(cond), cond);
+            Dispatcher.StartOnException(cond);
         }
 
         public virtual void EndOnException()
         {
             Exit();
+            Dispatcher.EndOnException();
         }
 
         public virtual void StartNoException(TypeCobol.Compiler.CodeElements.NotOnExceptionCondition cond)
         {
             Enter(new NoException(cond), cond);
+            Dispatcher.StartNoException(cond);
         }
 
         public virtual void EndNoException()
         {
             Exit();
+            Dispatcher.EndNoException();
         }
 
         public virtual void StartOnOverflow(TypeCobol.Compiler.CodeElements.OnOverflowCondition cond)
         {
             Enter(new OnOverflow(cond), cond);
+            Dispatcher.StartOnOverflow(cond);
         }
 
         public virtual void EndOnOverflow()
         {
             Exit();
+            Dispatcher.EndOnOverflow();
         }
 
         public virtual void StartNoOverflow(TypeCobol.Compiler.CodeElements.NotOnOverflowCondition cond)
         {
             Enter(new NoOverflow(cond), cond);
+            Dispatcher.StartNoOverflow(cond);
         }
 
         public virtual void EndNoOverflow()
         {
             Exit();
+            Dispatcher.EndNoOverflow();
         }
 
         public virtual void StartOnInvalidKey(TypeCobol.Compiler.CodeElements.InvalidKeyCondition cond)
         {
             Enter(new OnInvalidKey(cond), cond);
+            Dispatcher.StartOnInvalidKey(cond);
         }
 
         public virtual void EndOnInvalidKey()
         {
             Exit();
+            Dispatcher.EndOnInvalidKey();
         }
 
         public virtual void StartNoInvalidKey(TypeCobol.Compiler.CodeElements.NotInvalidKeyCondition cond)
         {
             Enter(new NoInvalidKey(cond), cond);
+            Dispatcher.StartNoInvalidKey(cond);
         }
 
         public virtual void EndNoInvalidKey()
         {
             Exit();
+            Dispatcher.EndNoInvalidKey();
         }
 
         public virtual void StartOnAtEnd(TypeCobol.Compiler.CodeElements.AtEndCondition cond)
         {
             Enter(new OnAtEnd(cond), cond);
+            Dispatcher.StartOnAtEnd(cond);
         }
 
         public virtual void EndOnAtEnd()
         {
             Exit();
+            Dispatcher.EndOnAtEnd();
         }
 
         public virtual void StartNoAtEnd(TypeCobol.Compiler.CodeElements.NotAtEndCondition cond)
         {
             Enter(new NoAtEnd(cond), cond);
+            Dispatcher.StartNoAtEnd(cond);
         }
 
         public virtual void EndNoAtEnd()
         {
             Exit();
+            Dispatcher.EndNoAtEnd();
         }
 
         public virtual void StartDeleteStatementConditional(TypeCobol.Compiler.CodeElements.DeleteStatement stmt)
         {
             Enter(new Delete(stmt), stmt);
+            Dispatcher.StartDeleteStatementConditional(stmt);
         }
 
         public virtual void EndDeleteStatementConditional(TypeCobol.Compiler.CodeElements.DeleteStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndDeleteStatementConditional(end);
         }
 
         public virtual void StartDivideStatementConditional(TypeCobol.Compiler.CodeElements.DivideStatement stmt)
         {
             Enter(new Divide(stmt), stmt);
+            Dispatcher.StartDivideStatementConditional(stmt);
         }
 
         public virtual void EndDivideStatementConditional(TypeCobol.Compiler.CodeElements.DivideStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndDivideStatementConditional(end);
         }
 
         public virtual void StartEvaluateStatementWithBody(TypeCobol.Compiler.CodeElements.EvaluateStatement stmt)
         {
             Enter(new Evaluate(stmt), stmt);// enter EVALUATE
+            Dispatcher.StartEvaluateStatementWithBody(stmt);
         }
 
         public virtual void EndEvaluateStatementWithBody(TypeCobol.Compiler.CodeElements.EvaluateStatementEnd end)
         {
             AttachEndIfExists(end);// exit EVALUATE
             Exit();
+            Dispatcher.EndEvaluateStatementWithBody(end);
         }
 
         public virtual void StartWhenConditionClause(List<TypeCobol.Compiler.CodeElements.CodeElement> conditions)
         {
             Enter(new WhenGroup(), null);// enter WHEN group
-            foreach(var cond in conditions)
+            foreach (var cond in conditions)
             {
                 TypeCobol.Compiler.CodeElements.WhenCondition condition = null;
                 if (cond is TypeCobol.Compiler.CodeElements.WhenSearchCondition)
@@ -1190,33 +1326,39 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             }
             Exit();// exit WHEN group
             Enter(new Then(), conditions[0]);// enter THEN
+            Dispatcher.StartWhenConditionClause(conditions);
         }
 
 
         public virtual void EndWhenConditionClause()
         {
             Exit();// exit THEN
+            Dispatcher.EndWhenConditionClause();
         }
 
         public virtual void StartWhenOtherClause(TypeCobol.Compiler.CodeElements.WhenOtherCondition cond)
         {
             Enter(new WhenOther(cond), cond);// enter WHEN OTHER
+            Dispatcher.StartWhenOtherClause(cond);
         }
 
         public virtual void EndWhenOtherClause()
         {
             Exit();// exit WHEN OTHER
+            Dispatcher.EndWhenOtherClause();
         }
 
         public virtual void StartIfStatementWithBody(TypeCobol.Compiler.CodeElements.IfStatement stmt)
         {
             Enter(new If(stmt), stmt);
             Enter(new Then(), stmt);
+            Dispatcher.StartIfStatementWithBody(stmt);
         }
         public virtual void EnterElseClause(TypeCobol.Compiler.CodeElements.ElseCondition clause)
         {
             Exit();// we want ELSE to be child of IF, not THEN, so exit THEN
             Enter(new Else(clause), clause);// ELSE
+            Dispatcher.EnterElseClause(clause);
         }
         public virtual void EndIfStatementWithBody(TypeCobol.Compiler.CodeElements.IfStatementEnd end)
         {
@@ -1224,31 +1366,48 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             AttachEndIfExists(end);
             // DO NOT Exit() IF node because this will be done in ExitStatement
             Exit();//JCM exit any way ???
+            Dispatcher.EndIfStatementWithBody(end);
         }
 
         public virtual void AddNextSentenceStatement(TypeCobol.Compiler.CodeElements.NextSentenceStatement stmt)
         {
             Enter(new NextSentence(stmt));
             Exit();
+            Dispatcher.AddNextSentenceStatement(stmt);
         }
 
         public virtual void StartInvokeStatementConditional(TypeCobol.Compiler.CodeElements.InvokeStatement stmt)
         {
             Enter(new Invoke(stmt), stmt);
+            Dispatcher.StartInvokeStatementConditional(stmt);
         }
 
         public virtual void EndInvokeStatementConditional(TypeCobol.Compiler.CodeElements.InvokeStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndInvokeStatementConditional(end);
         }
 
         public virtual void StartJsonGenerateStatementConditional(TypeCobol.Compiler.CodeElements.JsonGenerateStatement stmt)
         {
             Enter(new JsonGenerate(stmt), stmt);
+            Dispatcher.StartJsonGenerateStatementConditional(stmt);
         }
 
         public virtual void EndJsonGenerateStatementConditional(TypeCobol.Compiler.CodeElements.JsonStatementEnd end)
+        {
+            AttachEndIfExists(end);
+            Exit();
+            Dispatcher.EndJsonGenerateStatementConditional(end);
+        }
+
+        public virtual void StartJsonParseStatementConditional(TypeCobol.Compiler.CodeElements.JsonParseStatement stmt)
+        {
+            Enter(new JsonParse(stmt), stmt);
+        }
+
+        public virtual void EndJsonParseStatementConditional(TypeCobol.Compiler.CodeElements.JsonStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
@@ -1257,155 +1416,182 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         public virtual void StartMultiplyStatementConditional(TypeCobol.Compiler.CodeElements.MultiplyStatement stmt)
         {
             Enter(new Multiply(stmt), stmt);
+            Dispatcher.StartMultiplyStatementConditional(stmt);
         }
 
         public virtual void EndMultiplyStatementConditional(TypeCobol.Compiler.CodeElements.MultiplyStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndMultiplyStatementConditional(end);
         }
 
         public virtual void StartPerformStatementWithBody(TypeCobol.Compiler.CodeElements.PerformStatement stmt)
         {
             Enter(new Perform(stmt), stmt);
+            Dispatcher.StartPerformStatementWithBody(stmt);
         }
 
         public virtual void EndPerformStatementWithBody(TypeCobol.Compiler.CodeElements.PerformStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndPerformStatementWithBody(end);
         }
 
         public virtual void StartSearchStatementWithBody([NotNull] TypeCobol.Compiler.CodeElements.SearchStatement stmt)
         {
             Enter(new Search(stmt), stmt);
+            Dispatcher.StartSearchStatementWithBody(stmt);
         }
 
         public virtual void EndSearchStatementWithBody(TypeCobol.Compiler.CodeElements.SearchStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndSearchStatementWithBody(end);
         }
 
         public virtual void StartWhenSearchConditionClause(TypeCobol.Compiler.CodeElements.WhenSearchCondition condition)
         {
             Enter(new WhenSearch(condition), condition);
+            Dispatcher.StartWhenSearchConditionClause(condition);
         }
 
         public virtual void EndWhenSearchConditionClause()
         {
             Exit(); // WHEN
+            Dispatcher.EndWhenSearchConditionClause();
         }
 
         public virtual void EnterReadStatementConditional(TypeCobol.Compiler.CodeElements.ReadStatement stmt)
         {
             Enter(new Read(stmt), stmt);
+            Dispatcher.EnterReadStatementConditional(stmt);
         }
 
         public virtual void EndReadStatementConditional(TypeCobol.Compiler.CodeElements.ReadStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndReadStatementConditional(end);
         }
 
         public virtual void EnterReturnStatementConditional(TypeCobol.Compiler.CodeElements.ReturnStatement stmt)
         {
             Enter(new Return(stmt), stmt);
+            Dispatcher.EnterReturnStatementConditional(stmt);
         }
 
         public virtual void EndReturnStatementConditional(TypeCobol.Compiler.CodeElements.ReturnStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndReturnStatementConditional(end);
         }
 
         public virtual void StartRewriteStatementConditional(TypeCobol.Compiler.CodeElements.RewriteStatement stmt)
         {
             Enter(new Rewrite(stmt), stmt);
+            Dispatcher.StartRewriteStatementConditional(stmt);
         }
 
         public virtual void EndRewriteStatementConditional(TypeCobol.Compiler.CodeElements.RewriteStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndRewriteStatementConditional(end);
         }
 
         public virtual void StartStartStatementConditional(TypeCobol.Compiler.CodeElements.StartStatement stmt)
         {
             Enter(new Start(stmt), stmt);
+            Dispatcher.StartStartStatementConditional(stmt);
         }
 
         public virtual void EndStartStatementConditional(TypeCobol.Compiler.CodeElements.StartStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndStartStatementConditional(end);
         }
 
         public virtual void StartStringStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.StringStatement stmt)
         {
             Enter(new Nodes.String(stmt), stmt);
+            Dispatcher.StartStringStatementConditional(stmt);
         }
 
         public virtual void EndStringStatementConditional(TypeCobol.Compiler.CodeElements.StringStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndStringStatementConditional(end);
         }
 
         public virtual void StartSubtractStatementConditional(TypeCobol.Compiler.CodeElements.SubtractStatement stmt)
         {
             Enter(new Subtract(stmt), stmt);
+            Dispatcher.StartSubtractStatementConditional(stmt);
         }
 
         public virtual void EndSubtractStatementConditional(TypeCobol.Compiler.CodeElements.SubtractStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndSubtractStatementConditional(end);
         }
 
         public virtual void StartUnstringStatementConditional(TypeCobol.Compiler.CodeElements.UnstringStatement stmt)
         {
             Enter(new Unstring(stmt), stmt);
+            Dispatcher.StartUnstringStatementConditional(stmt);
         }
 
         public virtual void EndUnstringStatementConditional(TypeCobol.Compiler.CodeElements.UnstringStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndUnstringStatementConditional(end);
         }
 
         public virtual void StartWriteStatementConditional(TypeCobol.Compiler.CodeElements.WriteStatement stmt)
         {
             Enter(new Write(stmt), stmt);
+            Dispatcher.StartWriteStatementConditional(stmt);
         }
 
         public virtual void EndWriteStatementConditional(TypeCobol.Compiler.CodeElements.WriteStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndWriteStatementConditional(end);
         }
 
         public virtual void StartXmlGenerateStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.XmlGenerateStatement stmt)
         {
             Enter(new XmlGenerate(stmt), stmt);
+            Dispatcher.StartXmlGenerateStatementConditional(stmt);
         }
 
         public virtual void EndXmlGenerateStatementConditional(TypeCobol.Compiler.CodeElements.XmlStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndXmlGenerateStatementConditional(end);
         }
 
         public virtual void StartXmlParseStatementConditional([NotNull] TypeCobol.Compiler.CodeElements.XmlParseStatement stmt)
         {
             Enter(new XmlParse(stmt), stmt);
+            Dispatcher.StartXmlParseStatementConditional(stmt);
         }
 
         public virtual void EndXmlParseStatementConditional(TypeCobol.Compiler.CodeElements.XmlStatementEnd end)
         {
             AttachEndIfExists(end);
             Exit();
+            Dispatcher.EndXmlParseStatementConditional(end);
         }
-
     }
 }

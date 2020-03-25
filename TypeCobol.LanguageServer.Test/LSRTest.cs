@@ -374,6 +374,13 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         [TestCategory("Completion")]
+        public void ProcedureCompletionNoParam()
+        {
+            LSRTestHelper.Test("ProcedureCompletionNoParam", LsrTestingOptions.NoLsrTesting);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
         public void ProcedureCompletionPotentialChildrenWithNoName()
         {
             LSRTestHelper.Test("ProcedureCompletionPotentialChildrenWithNoName", LsrTestingOptions.NoLsrTesting, true);
@@ -407,6 +414,20 @@ namespace TypeCobol.LanguageServer.Test
         public void CompletionOnPartialLibraryName()
         {
             LSRTestHelper.Test("CompletionOnPartialLibraryName", LsrTestingOptions.NoLsrTesting, true, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void CompletionOnPartialTypeName()
+        {
+            LSRTestHelper.Test("CompletionOnPartialTypeName", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void CompletionOutputParamEmptyType()
+        {
+            LSRTestHelper.Test("CompletionOutputParamEmptyType", LsrTestingOptions.NoLsrTesting, true);
         }
         #endregion
 

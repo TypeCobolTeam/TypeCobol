@@ -165,7 +165,7 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
-        
+
 
         private URI _uri;
         public URI URI {
@@ -176,7 +176,6 @@ namespace TypeCobol.Compiler.CodeElements
         {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
         }
-
     }
 
     /// <summary>
@@ -239,13 +238,13 @@ namespace TypeCobol.Compiler.CodeElements
         }
     }
 
-	/// <summary>
-	/// A name that exists within a hierarchy of names can be made unique
-	/// by specifying one or more higher-level names in the hierarchy.
-	/// The higher-level names are called qualifiers, and the process by which
-	/// such names are made unique is called qualification.
-	/// </summary>
-	public class QualifiedSymbolReference: SymbolReference, IList<SymbolReference> {
+    /// <summary>
+    /// A name that exists within a hierarchy of names can be made unique
+    /// by specifying one or more higher-level names in the hierarchy.
+    /// The higher-level names are called qualifiers, and the process by which
+    /// such names are made unique is called qualification.
+    /// </summary>
+    public class QualifiedSymbolReference: SymbolReference, IList<SymbolReference> {
 		public QualifiedSymbolReference(SymbolReference head, SymbolReference tail): base(head.NameLiteral, head.Type) {
 			IsAmbiguous = head.IsAmbiguous || tail.IsAmbiguous;
 			IsQualifiedReference = true;
@@ -321,7 +320,7 @@ namespace TypeCobol.Compiler.CodeElements
 			return refs;
 		}
 
-	    public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
 	        return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
                 && this.ContinueVisitToChildren(astVisitor, Head, Tail);
 	    }
@@ -378,7 +377,7 @@ namespace TypeCobol.Compiler.CodeElements
 	    public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
 	        return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
 	    }
-	}
+    }
 
     /// <summary>
     /// Role ambiguity between :

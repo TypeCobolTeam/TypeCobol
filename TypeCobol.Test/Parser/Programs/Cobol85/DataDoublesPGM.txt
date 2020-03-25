@@ -1,12 +1,12 @@
 --- Diagnostics ---
 Line 1[1,22] <37, Warning, General> - Warning: "END PROGRAM" is missing.
-Line 34[16,19] <27, Error, Syntax> - Syntax error : Symbol GROUP-DOUBLE.GROUP-DOUBLE.V1A2 is not referenced OffendingSymbol=[16,19:V1A2]<UserDefinedWord>
-Line 37[13,13] <27, Error, Syntax> - Syntax error : Symbol Y is not referenced OffendingSymbol=[13,13:Y]<UserDefinedWord>
-Line 38[13,20] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol I-DOUBLE 
+Line 34[16,19] <30, Error, Semantics> - Semantic error: Symbol GROUP-DOUBLE.GROUP-DOUBLE.V1A2 is not referenced OffendingSymbol=[16,19:V1A2]<UserDefinedWord>
+Line 37[13,13] <30, Error, Semantics> - Semantic error: Symbol Y is not referenced OffendingSymbol=[13,13:Y]<UserDefinedWord>
+Line 38[13,20] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol I-DOUBLE 
 Symbols found: Doubles::I-DOUBLE | Doubles::I-DOUBLE | Doubles::I-DOUBLE OffendingSymbol=[13,20:I-DOUBLE]<UserDefinedWord>
-Line 40[22,31] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol VARIANT-1B 
+Line 40[22,31] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol VARIANT-1B 
 Symbols found: Doubles::GROUP-DOUBLE::VARIANT-1B | Doubles::ANOTHER-GROUP::VARIANT-1B OffendingSymbol=[22,31:VARIANT-1B]<UserDefinedWord>
-Line 42[22,30] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol GROUP-DOUBLE.VARIANT-2 
+Line 42[22,30] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol GROUP-DOUBLE.VARIANT-2 
 Symbols found: Doubles::GROUP-DOUBLE::VARIANT-2 | Doubles::GROUP-DOUBLE::VARIANT-2 OffendingSymbol=[22,30:VARIANT-2]<UserDefinedWord>
 
 --- Program ---

@@ -52,9 +52,9 @@ Line 47[32,35] <30, Error, Semantics> - Semantic error: Cannot write DATE to str
 Line 49[32,35] <30, Error, Semantics> - Semantic error: Cannot write DATE to strongly typed variable groupB-1.varB:BOOL.
                   To groupB-1::varB
 
-Line 51[22,38] <27, Error, Syntax> - Syntax error : Symbol undefinedVariable is not referenced
+Line 51[22,38] <30, Error, Semantics> - Semantic error: Symbol undefinedVariable is not referenced
            MOVE CORR undefinedVariable
-Line 52[22,39] <27, Error, Syntax> - Syntax error : Symbol undefinedVariable2 is not referenced
+Line 52[22,39] <30, Error, Semantics> - Semantic error: Symbol undefinedVariable2 is not referenced
                   To undefinedVariable2
 
            MOVE CORR MyGroup1 TO MyGroup2.

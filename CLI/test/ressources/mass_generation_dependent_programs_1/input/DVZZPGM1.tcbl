@@ -1,0 +1,9 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZZPGM1.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 str-message TYPE DVZZPGM2::Type1.
+       procedure division.
+           DISPLAY str-message::var1
+           .
+       END PROGRAM DVZZPGM1.

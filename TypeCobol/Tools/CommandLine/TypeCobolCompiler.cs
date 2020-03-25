@@ -6,6 +6,7 @@ using TypeCobol.Compiler;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Tools.APIHelpers;
 
 namespace TypeCobol.Tools.CommandLine
 {
@@ -23,12 +24,11 @@ namespace TypeCobol.Tools.CommandLine
 
             string sourcePath = projectRootPath + @"TypeCobol.Test\Samples\EI Cobol samples\EI-Production";
             string[] programExtensions = { ".PGM" };
-            string[] copyExtensions = { ".CPY" };
 
             DocumentFormat docFormat = new DocumentFormat(Encoding.GetEncoding("iso8859-1"), EndOfLineDelimiter.CrLfCharacters, 80, ColumnsLayout.CobolReferenceFormat);
 
             TypeCobolOptions compilerOptions = new TypeCobolOptions();
-            CompilationProject project = new CompilationProject("samples", sourcePath, programExtensions.Concat(copyExtensions).ToArray(),
+            CompilationProject project = new CompilationProject("samples", sourcePath, programExtensions.Concat(Helpers.DEFAULT_COPY_EXTENSIONS).ToArray(),
                 docFormat.Encoding, docFormat.EndOfLineDelimiter, docFormat.FixedLineLength, docFormat.ColumnsLayout, compilerOptions);
             
             // Iterate over all programs in the source directory

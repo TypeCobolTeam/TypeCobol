@@ -15,24 +15,6 @@
     <FileAlignment>512</FileAlignment>
     <DoNotCopyLocalIfInGac>true</DoNotCopyLocalIfInGac>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\bin\Debug\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\bin\Release\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EI_Debug|AnyCPU'">
-    <OutputPath>..\bin\EI_Debug\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EI_Debug_Net40|AnyCPU'">
-    <OutputPath>..\bin\EI_Debug_Net40\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EI_Release|AnyCPU'">
-    <OutputPath>..\bin\EI_Release\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EI_Release_Net40|AnyCPU'">
-    <OutputPath>..\bin\EI_Release_Net40\</OutputPath>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
