@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Types;
 
@@ -18,7 +14,7 @@ namespace TypeCobol.Compiler.Symbols
         /// Named constructor
         /// </summary>
         /// <param name="name"></param>
-        public VariableSymbol(String name)
+        public VariableSymbol(string name)
             : base(name, Kinds.Variable)
         {
         }
@@ -177,7 +173,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Lookup for the parent having the given Level
         /// </summary>
-        /// <param name="level"></param>
+        /// <param name="level">Target level</param>
         /// <param name="inclusive">true if this symbol must be taken in account, false otherwise</param>
         /// <returns>The parent symbol of the level if one exists, null otherwise</returns>
         public override Symbol LookupParentLevelSymbol(int level, bool inclusive)
@@ -187,9 +183,7 @@ namespace TypeCobol.Compiler.Symbols
             if (Owner == null)
                 return null;
             if (Owner.Kind != Kinds.Variable)
-            {
                 return null;
-            }
 
             return Owner.LookupParentLevelSymbol(level, true);
         }

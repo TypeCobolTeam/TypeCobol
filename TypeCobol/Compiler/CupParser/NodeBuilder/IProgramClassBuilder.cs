@@ -34,6 +34,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         void StartCobolCompilationUnit();
 
         /// <summary>
+        /// Ends a compilation unit.
+        /// </summary>
+        void EndCobolCompilationUnit();
+
+        /// <summary>
         /// Start a Cobol Program
         /// </summary>
         /// <param name="programIdentification">The Program Identification Code Element</param>

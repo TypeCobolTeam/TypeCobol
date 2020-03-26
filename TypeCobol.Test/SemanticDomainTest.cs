@@ -6,6 +6,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Domain.Validator;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Symbols;
@@ -16,6 +17,39 @@ namespace TypeCobol.Test.Domain
     [TestClass]
     public class SemanticDomainTest
     {
+        private class FailErrorReporter : IValidationErrorReporter
+        {
+            public static readonly FailErrorReporter Instance = new FailErrorReporter();
+
+            private FailErrorReporter()
+            {
+
+            }
+
+            public void Report(ValidationError validationError)
+            {
+                Assert.Fail(validationError.Message);
+            }
+        }
+
+        private class CompareMessagesErrorReporter : IValidationErrorReporter
+        {
+            private readonly string[] _expectedMessages;
+            private int _index;
+
+            public CompareMessagesErrorReporter(params string[] expectedMessages)
+            {
+                _expectedMessages = expectedMessages ?? new string[0];
+                _index = 0;
+            }
+
+            public void Report(ValidationError validationError)
+            {
+                Assert.IsTrue(_index < _expectedMessages.Length);
+                Assert.AreEqual(_expectedMessages[_index++], validationError.Message);
+            }
+        }
+
         private static string GetTestLocation()
         {
             return Path.Combine(Directory.GetCurrentDirectory(), @"..\..\TypeCobol.Test");
@@ -36,7 +70,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
 
-            ProgramExpander expander = new ProgramExpander();
+            ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
             var vars = currentProgram.ResolveReference(new string[] { "idt" }, false);
@@ -85,7 +119,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(myCurrency3.Symbol.Type.Tag == Type.Tags.Typedef);
             Assert.IsTrue(myCurrency3.Symbol.Type == BuiltinTypes.CurrencyType);
 
-            ProgramExpander expander = new ProgramExpander();
+            ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
             //After expansion
             Assert.AreEqual(oldCurrencyOriginalType, oldCurrency.Symbol.Type);
@@ -139,7 +173,7 @@ namespace TypeCobol.Test.Domain
             var dd = currentProgram.ResolveReference(new string[] { "dd" }, false);
             Assert.IsTrue(dd.Count == 0);
 
-            ProgramExpander expander = new ProgramExpander();
+            ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
             Assert.AreEqual(olddateOriginalType, olddate.Symbol.Type);
             Type te_today = today.Symbol.Type;
@@ -185,7 +219,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(currentProgram.Programs.Count() == 1);
             var nestedPrg = currentProgram.Programs.Single();
 
-            ProgramExpander expander = new ProgramExpander();
+            ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
             TypeCobol.Compiler.Scopes.Domain<VariableSymbol>.Entry result;
@@ -232,7 +266,7 @@ namespace TypeCobol.Test.Domain
             var dd = currentProgram.ResolveReference(new string[] { "dd" }, false);
             Assert.IsTrue(dd.Count == 0);
 
-            ProgramExpander expander = new ProgramExpander();
+            ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
             //After expansion there are now YYYY, MM, DD variables in the program
@@ -284,7 +318,7 @@ namespace TypeCobol.Test.Domain
             var managed_false = currentProgram.ResolveReference(new string[] { "managed-false" }, false);
             Assert.IsTrue(check_false.Count == 0);
 
-            ProgramExpander expander = new ProgramExpander();
+            ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
             //After expansion there are no check-false variables in the program
@@ -341,7 +375,7 @@ namespace TypeCobol.Test.Domain
             //Get all TYPEDEF Types
             //----------------------------
             //Lookup the type "typeOfDaysPublic"
-            var typeOfDaysPublic = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPublic" }, false);
+            var typeOfDaysPublic = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPublic" });
             Assert.IsNotNull(typeOfDaysPublic);
             Assert.IsTrue(typeOfDaysPublic.Count == 1);
             Assert.IsNotNull(typeOfDaysPublic.Symbol.Type);
@@ -350,7 +384,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(typeOfDaysPublic.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
 
             //Lookup the type "typeOfDaysPrivate"
-            var typeOfDaysPrivate = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPrivate" }, false);
+            var typeOfDaysPrivate = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPrivate" });
             Assert.IsNotNull(typeOfDaysPrivate);
             Assert.IsTrue(typeOfDaysPrivate.Count == 1);
             Assert.IsNotNull(typeOfDaysPrivate.Symbol.Type);
@@ -360,7 +394,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(typeOfDaysPrivate.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
 
             //Lookup the type "typeOfDaysLocal"
-            var typeOfDaysLocal = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysLocal" }, false);
+            var typeOfDaysLocal = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysLocal" });
             Assert.IsNotNull(typeOfDaysLocal);
             Assert.IsTrue(typeOfDaysLocal.Count == 1);
             Assert.IsNotNull(typeOfDaysLocal.Symbol.Type);
@@ -380,7 +414,7 @@ namespace TypeCobol.Test.Domain
                 Assert.IsTrue(vari.Symbol.Type == types[i - 1].Type);
             }
 
-            ProgramExpander expander = new ProgramExpander();
+            ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
             //After expanding all variables have a PICTURE type.
@@ -493,7 +527,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(rc.Count == 1);
             Assert.IsNotNull(rc.Symbol.Type);
             Assert.IsTrue(rc.Symbol.Type.Tag == Type.Tags.Typedef);
-            var pt = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "pt" }, false);
+            var pt = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "pt" });
             Assert.IsTrue(pt.Count == 1);
             Assert.IsTrue(rc.Symbol.Type == pt.Symbol.Type);
 
@@ -502,12 +536,12 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(arr.Count == 1);
             Assert.IsNotNull(arr.Symbol.Type);
             Assert.IsTrue(arr.Symbol.Type.Tag == Type.Tags.Typedef);
-            var rectarray = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "rectarray" }, false);
+            var rectarray = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "rectarray" });
             Assert.IsTrue(rectarray.Count == 1);
             Assert.IsTrue(arr.Symbol.Type == rectarray.Symbol.Type);
 
             //Perform expansion
-            ProgramExpander expander = new ProgramExpander();
+            ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
             //Now rcarray is an array of Record.
@@ -733,7 +767,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(arrField.Type == rectarray.Symbol.Type);
 
             //Perform expansion
-            ProgramExpander expander = new ProgramExpander();
+            ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
             //After expanding there are X1, Y1, X2, Y2 variables in the program, will all 02 Level
@@ -927,7 +961,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(filter.Count == 1);
             Assert.IsTrue(filter.Symbol.HasFlag(Symbol.Flags.Redefines));
             Assert.AreEqual(((RedefinesSymbol)filter.Symbol).Redefined, VarGroupBis.Symbol);
-            Assert.AreEqual(((RedefinesSymbol)filter.Symbol).ToppestRedefined, VarGroup.Symbol);
+            Assert.AreEqual(((RedefinesSymbol)filter.Symbol).TopRedefined, VarGroup.Symbol);
         }
 
         /// <summary>
@@ -1004,125 +1038,140 @@ namespace TypeCobol.Test.Domain
         [TestMethod]
         [TestCategory("SemanticDomain")]
         [TestProperty("Object", "Typedef")]
-        public void TypedefCyclic0()
+        public void CircularReferenceType()
         {
-            //string path, List<Skeleton> skeletons = null, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null, Compiler.CodeModel.SymbolTable baseSymTable = null            
-            string path = Path.Combine(GetTestLocation(), "SemanticDomain", "TypedefCyclic0.cbl");
+            //Re-use COBOL code from existing circular typedef test
+            string path = Path.Combine(GetTestLocation(), "Parser", "Programs", "TypeCobol", "CircularReferenceType.rdz.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
-            var pointEntry = currentProgram.Types.Lookup("POINT");
-            Assert.IsNotNull(pointEntry);
-            Assert.IsTrue(pointEntry.Count == 1);
-            var tPoint = pointEntry.Symbol;
-            Assert.IsTrue(tPoint.Type != null);
-            Assert.IsTrue(tPoint.Type.Tag == Type.Tags.Typedef);
-            CyclicTypeChecker checker = new CyclicTypeChecker();
-            Assert.IsFalse(tPoint.Type.Accept(checker, null));
+            var program = document.Results.PrgSymbolTblBuilder.Programs[0];
+            var checker = new CyclicTypeChecker();
 
-            pointEntry = currentProgram.Types.Lookup("POINT-CYC0");
-            Assert.IsNotNull(pointEntry);
-            Assert.IsTrue(pointEntry.Count == 1);
-            var tPointCyc0 = pointEntry.Symbol;
-            Assert.IsTrue(tPointCyc0.Type != null);
-            Assert.IsTrue(tPointCyc0.Type.Tag == Type.Tags.Typedef);
-            checker = new CyclicTypeChecker();
-            Assert.IsTrue(tPointCyc0.Type.Accept(checker, null));
-            Assert.IsTrue(checker.CyclicType == tPointCyc0.Type);
+            //Check non-cyclic type
+            var notCyclic = GetTypedef("NotCyclic");
+            Assert.IsFalse(checker.Check(notCyclic, FailErrorReporter.Instance));
 
-            pointEntry = currentProgram.Types.Lookup("POINT-CYC1");
-            Assert.IsNotNull(pointEntry);
-            Assert.IsTrue(pointEntry.Count == 1);
-            var tPointCyc1 = pointEntry.Symbol;
-            Assert.IsTrue(tPointCyc1.Type != null);
-            Assert.IsTrue(tPointCyc1.Type.Tag == Type.Tags.Typedef);
-            checker = new CyclicTypeChecker();
-            Assert.IsTrue(tPointCyc1.Type.Accept(checker, null));
-            Assert.IsTrue(checker.CyclicType == tPointCyc0.Type);
-
-            pointEntry = currentProgram.Types.Lookup("POINT-CYC2");
-            Assert.IsNotNull(pointEntry);
-            Assert.IsTrue(pointEntry.Count == 1);
-            var tPointCyc2 = pointEntry.Symbol;
-            Assert.IsTrue(tPointCyc2.Type != null);
-            Assert.IsTrue(tPointCyc2.Type.Tag == Type.Tags.Typedef);
-            checker = new CyclicTypeChecker();
-            Assert.IsTrue(tPointCyc2.Type.Accept(checker,null));
-            Assert.IsTrue(checker.CyclicType == tPointCyc2.Type);
-
-            pointEntry = currentProgram.Types.Lookup("POINT-CYC3");
-            Assert.IsNotNull(pointEntry);
-            Assert.IsTrue(pointEntry.Count == 1);
-            var tPointCyc3 = pointEntry.Symbol;
-            Assert.IsTrue(tPointCyc3.Type != null);
-            Assert.IsTrue(tPointCyc3.Type.Tag == Type.Tags.Typedef);
-            checker = new CyclicTypeChecker();
-            Assert.IsTrue(tPointCyc3.Type.Accept(checker, null));
-            Assert.IsTrue(checker.CyclicType == tPointCyc3.Type);
-
-            //NO P1, P2, P3 and P4 symbols
-            for (int i = 1; i <= 4; i++)
+            //Check Cyclic types
+            Dictionary<int, TypedefType> cyclicTypes = new Dictionary<int, TypedefType>();
+            for (int i = 1; i <= 8; i++)
             {
-                var refs0 = currentProgram.ResolveReference(new string[] {"p" + i}, false);
-                Assert.IsNotNull(refs0);
-                Assert.IsTrue(refs0.Count == 0);
+                var cyclicType = GetTypedef("Cyclic" + i);
+                cyclicTypes.Add(i, cyclicType);
+                Assert.IsTrue(checker.Check(cyclicTypes[i]));
+            }
+            var root = (RootSymbolTable) program.Owner;
+            var a1 = (TypedefType) root.LookupType("A1").Symbol.Type;
+            var b1 = (TypedefType) root.LookupType("B1").Symbol.Type;
+            var c1 = (TypedefType) root.LookupType("C1").Symbol.Type;
+            Assert.IsTrue(checker.Check(a1, new CompareMessagesErrorReporter(
+                "Circular type reference detected : A1 -> B1 -> C1 -> A1.",
+                "Type \"C1\" is unusable because it depends on cyclic type \"A1\".",
+                "Type \"B1\" is unusable because it depends on cyclic type \"A1\".")));
+            Assert.IsTrue(b1.HasFlag(Symbol.Flags.CheckedForCycles));
+            Assert.IsTrue(b1.HasFlag(Symbol.Flags.IsCyclic));
+            Assert.IsTrue(c1.HasFlag(Symbol.Flags.CheckedForCycles));
+            Assert.IsTrue(c1.HasFlag(Symbol.Flags.IsCyclic));
+            var a2 = (TypedefType)root.LookupType("A2").Symbol.Type;
+            var b2 = (TypedefType)root.LookupType("B2").Symbol.Type;
+            var c2 = (TypedefType)root.LookupType("C2").Symbol.Type;
+            Assert.IsTrue(checker.Check(c2, new CompareMessagesErrorReporter(
+                "Circular type reference detected : C2 -> A2 -> B2 -> C2.",
+                "Type \"B2\" is unusable because it depends on cyclic type \"C2\".",
+                "Type \"A2\" is unusable because it depends on cyclic type \"C2\".")));
+            Assert.IsTrue(a2.HasFlag(Symbol.Flags.CheckedForCycles));
+            Assert.IsTrue(a2.HasFlag(Symbol.Flags.IsCyclic));
+            Assert.IsTrue(b2.HasFlag(Symbol.Flags.CheckedForCycles));
+            Assert.IsTrue(b2.HasFlag(Symbol.Flags.IsCyclic));
+            var a3 = (TypedefType)root.LookupType("A3").Symbol.Type;
+            var b3 = (TypedefType)root.LookupType("B3").Symbol.Type;
+            var c3 = (TypedefType)root.LookupType("C3").Symbol.Type;
+            Assert.IsTrue(checker.Check(b3, new CompareMessagesErrorReporter(
+                "Circular type reference detected : B3 -> C3 -> A3 -> B3.",
+                "Type \"A3\" is unusable because it depends on cyclic type \"B3\".",
+                "Type \"C3\" is unusable because it depends on cyclic type \"B3\".")));
+            Assert.IsTrue(a3.HasFlag(Symbol.Flags.CheckedForCycles));
+            Assert.IsTrue(a3.HasFlag(Symbol.Flags.IsCyclic));
+            Assert.IsTrue(c3.HasFlag(Symbol.Flags.CheckedForCycles));
+            Assert.IsTrue(c3.HasFlag(Symbol.Flags.IsCyclic));
+
+            //Check variables
+            for (int i = 1; i <= 8; i++)
+            {
+                var entry = program.ResolveReference(new[] {"var" + i}, false);
+                Assert.IsTrue(entry != null);
+                Assert.IsTrue(entry.Count == 1);
+                var symbol = entry.Symbol;
+                Assert.IsTrue(symbol.Type == cyclicTypes[i]);
             }
 
-            //Just Check that P5 if of type POINT which we know is cyclic.
-            var refs = currentProgram.ResolveReference(new string[] {"p5"}, false);
-            Assert.IsNotNull(refs);
-            Assert.IsTrue(refs.Count == 1);
-            var p5 = refs.Symbol;
-            Assert.IsTrue(p5.Type == tPointCyc0.Type);
+            //Check arrays
+            for (int i = 1; i <= 8; i++)
+            {
+                var entry = program.ResolveReference(new[] { "array" + i }, false);
+                Assert.IsTrue(entry != null);
+                Assert.IsTrue(entry.Count == 1);
+                var symbol = entry.Symbol;
+                Assert.IsTrue(symbol.Type != null);
+                Assert.IsTrue(symbol.Type.Tag == Type.Tags.Array);
+                var arrayType = (ArrayType) symbol.Type;
+                Assert.IsTrue(arrayType.ElementType == cyclicTypes[i]);
+            }
 
-            //Just Check that P6 if of type POINT-CYC1 which we know is cyclic.
-            refs = currentProgram.ResolveReference(new string[] {"p6"}, false);
-            Assert.IsNotNull(refs);
-            Assert.IsTrue(refs.Count == 1);
-            var p6 = refs.Symbol;
-            Assert.IsTrue(p6.Type == tPointCyc1.Type);
+            //Check group structures and types
+            var groupEntry = program.ResolveReference(new[] { "group1" }, false);
+            Assert.IsTrue(groupEntry != null);
+            Assert.IsTrue(groupEntry.Count == 1);
+            var group1 = groupEntry.Symbol;
+            Assert.IsTrue(group1.Type != null);
+            Assert.IsTrue(group1.Type.Tag == Type.Tags.Group);
+            var groupTypeOfGroup1 = (GroupType) group1.Type;
+            var fields = groupTypeOfGroup1.Fields.ToList();
+            Assert.IsTrue(fields.Count == 3);
+            var item1 = fields[0];
+            Assert.IsTrue(item1.Type != null);
+            Assert.IsTrue(item1.Type.Tag == Type.Tags.Picture);
+            var item2 = fields[1];
+            Assert.IsTrue(item2.Type != null);
+            Assert.IsTrue(item2.Type.Tag == Type.Tags.Group);
+            var groupTypeOfItem2 = (GroupType) item2.Type;
+            var subFields = groupTypeOfItem2.Fields.ToList();
+            Assert.IsTrue(subFields.Count == 3);
+            var subItem1 = subFields[0];
+            Assert.IsTrue(subItem1.Type != null);
+            Assert.IsTrue(subItem1.Type.Tag == Type.Tags.Picture);
+            var subItem2 = subFields[1];
+            Assert.IsTrue(subItem2.Type == cyclicTypes[8]);
+            var subItem3 = subFields[2];
+            Assert.IsTrue(subItem3.Type != null);
+            Assert.IsTrue(subItem3.Type.Tag == Type.Tags.Picture);
+            var item3 = fields[2];
+            Assert.IsTrue(item3.Type != null);
+            Assert.IsTrue(item3.Type.Tag == Type.Tags.Picture);
+            groupEntry = program.ResolveReference(new[] { "group2" }, false);
+            Assert.IsTrue(groupEntry != null);
+            Assert.IsTrue(groupEntry.Count == 1);
+            var group2 = groupEntry.Symbol;
+            Assert.IsTrue(group2.Type != null);
+            Assert.IsTrue(group2.Type.Tag == Type.Tags.Group);
+            var groupTypeOfGroup2 = (GroupType) group2.Type;
+            fields = groupTypeOfGroup2.Fields.ToList();
+            Assert.IsTrue(fields.Count == 2);
+            var myVar1 = fields[0];
+            Assert.IsTrue(myVar1.Type == cyclicTypes[8]);
+            var myVar2 = fields[1];
+            Assert.IsTrue(myVar2.Type == cyclicTypes[8]);
 
-            //Just Check that P7 if of type Array of POINT-CYC0 which we know leads cyclic.
-            refs = currentProgram.ResolveReference(new string[] {"p7"}, false);
-            Assert.IsNotNull(refs);
-            Assert.IsTrue(refs.Count == 1);
-            var p7 = refs.Symbol;
-            Assert.IsTrue(p7.Type.Tag == Type.Tags.Array);
-            Assert.IsTrue(p7.Type.TypeComponent == tPointCyc0.Type);
-            checker = new CyclicTypeChecker();
-            Assert.IsTrue(p7.Type.Accept(checker, null));
-            Assert.IsTrue(checker.CyclicType == tPointCyc0.Type);
-
-            //Just Check that P8 if of type Array of POINT-CYC1 which we know leads cyclic.
-            refs = currentProgram.ResolveReference(new string[] {"p8"}, false);
-            Assert.IsNotNull(refs);
-            Assert.IsTrue(refs.Count == 1);
-            var p8 = refs.Symbol;
-            Assert.IsTrue(p8.Type.Tag == Type.Tags.Array);
-            Assert.IsTrue(p8.Type.TypeComponent == tPointCyc1.Type);
-            checker = new CyclicTypeChecker();
-            Assert.IsTrue(p8.Type.Accept(checker, null));
-            Assert.IsTrue(checker.CyclicType == tPointCyc0.Type);
-
-            //Just Check that P9 is a RECORD with a field XX of a cyclic type.
-            refs = currentProgram.ResolveReference(new string[] {"p9"}, false);
-            Assert.IsNotNull(refs);
-            Assert.IsTrue(refs.Count == 1);
-            var p9 = refs.Symbol;
-            Assert.IsTrue(p9.Type.Tag == Type.Tags.Group);
-            checker = new CyclicTypeChecker();
-            Assert.IsTrue(p9.Type.Accept(checker, null));
-            Assert.IsTrue(checker.CyclicType == tPointCyc0.Type);
-            var xx_refs = currentProgram.ResolveReference(new string[] {"xx"}, false);
-            //One of the XX has type is P9::XX
-            Assert.IsTrue(xx_refs.Count == 2);
-            var first = xx_refs.ElementAt(0);
-            var second = xx_refs.ElementAt(1);
-            Assert.IsTrue((first.Type == tPointCyc1.Type && second.Type == tPoint.Type) ||
-                          (second.Type == tPointCyc1.Type && first.Type == tPoint.Type)
-            );
-
+            TypedefType GetTypedef(string name)
+            {
+                var entry = program.Types.Lookup(name);
+                Assert.IsTrue(entry != null);
+                Assert.IsTrue(entry.Count == 1);
+                var symbol = entry.Symbol;
+                Assert.IsTrue(symbol.Type != null);
+                Assert.IsTrue(symbol.Type.Tag == Type.Tags.Typedef);
+                return (TypedefType)symbol.Type;
+            }
         }
 
         /// <summary>
@@ -1758,7 +1807,7 @@ namespace TypeCobol.Test.Domain
             Assert.AreEqual(nestPrgSym.Name, "Tester");
 
             //Lookup the type "typeOfDays"
-            var typeOfDaysPublic = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPublic" }, false);
+            var typeOfDaysPublic = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPublic" });
             Assert.IsNotNull(typeOfDaysPublic);
             Assert.IsTrue(typeOfDaysPublic.Count == 1);
             Assert.IsNotNull(typeOfDaysPublic.Symbol.Type);
@@ -1779,7 +1828,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(nestPrgSym.IsTypeAccessible(typeOfDaysPublic.Symbol));
 
             //Lookup the type "typeOfDaysPrivate"
-            var typeOfDaysPrivate = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPrivate" }, false);
+            var typeOfDaysPrivate = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPrivate" });
             Assert.IsNotNull(typeOfDaysPrivate);
             Assert.IsTrue(typeOfDaysPrivate.Count == 1);
             Assert.IsNotNull(typeOfDaysPrivate.Symbol.Type);
@@ -1801,7 +1850,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(nestPrgSym.IsTypeAccessible(typeOfDaysPrivate.Symbol));
 
             //Lookup the type "typeOfDaysLocal"
-            var typeOfDaysLocal = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysLocal" }, false);
+            var typeOfDaysLocal = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysLocal" });
             Assert.IsNotNull(typeOfDaysLocal);
             Assert.IsTrue(typeOfDaysLocal.Count == 1);
             Assert.IsNotNull(typeOfDaysLocal.Symbol.Type);
@@ -1926,7 +1975,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
 
-            ProgramExpander expander = new ProgramExpander();
+            ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
             var vars = currentProgram.ResolveReference(new string[] { "td-var42", "var1" }, false);
@@ -2012,79 +2061,79 @@ namespace TypeCobol.Test.Domain
             //---------------------------------------
             //Resolve all types of the MAIN Program.
             //---------------------------------------
-            var POINTMainGblEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] {"POINTMainGbl", "TypeVisNestedPrgAndProc" });
+            var POINTMainGblEntry = document.Results.RootSymbolTable.ResolveType(new string[] {"POINTMainGbl", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(POINTMainGblEntry.Count == 1);
 
-            var POINTMainPrivEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTMainPriv", "TypeVisNestedPrgAndProc" });
+            var POINTMainPrivEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTMainPriv", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(POINTMainPrivEntry.Count == 1);
 
-            var POINTMainLocalEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTMainLocal", "TypeVisNestedPrgAndProc" });
+            var POINTMainLocalEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTMainLocal", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(POINTMainLocalEntry.Count == 1);
 
-            var POINTMainPublicEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTMainPublic", "TypeVisNestedPrgAndProc" });
+            var POINTMainPublicEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTMainPublic", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(POINTMainPublicEntry.Count == 1);
 
             //---------------------------------------
             //Resolve all types of the Nested Program.
             //---------------------------------------
-            var typ = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "POINTNestedPriv" }, false);
+            var typ = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "POINTNestedPriv" });
 
-            var POINTNestedGblEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedGbl", "Nested" });
+            var POINTNestedGblEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedGbl", "Nested" });
             Assert.IsTrue(POINTNestedGblEntry.Count == 1);
 
-            var POINTNestedPrivEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedPriv", "Nested" });
+            var POINTNestedPrivEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedPriv", "Nested" });
             Assert.IsTrue(POINTNestedPrivEntry.Count == 1);//As it is private it is defined in TypeVisNestedPrgAndProc
-            var POINTNestedPrivEntry2 = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedPriv", "TypeVisNestedPrgAndProc" });
+            var POINTNestedPrivEntry2 = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedPriv", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(POINTNestedPrivEntry2.Count == 1);
             Assert.AreEqual(POINTNestedPrivEntry.Symbol, POINTNestedPrivEntry2.Symbol);
 
-            var POINTNestedLocalEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedLocal", "Nested" });
+            var POINTNestedLocalEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedLocal", "Nested" });
             Assert.IsTrue(POINTNestedLocalEntry.Count == 1);
 
-            var POINTNestedPublicEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedPublic", "Nested" });
+            var POINTNestedPublicEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedPublic", "Nested" });
             Assert.IsTrue(POINTNestedPublicEntry.Count == 1);//As it is public it is defined in TypeVisNestedPrgAndProc
-            var POINTNestedPublicEntry2 = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedPublic", "TypeVisNestedPrgAndProc" });
+            var POINTNestedPublicEntry2 = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedPublic", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(POINTNestedPublicEntry.Count == 1);
             Assert.AreEqual(POINTNestedPublicEntry.Symbol, POINTNestedPublicEntry2.Symbol);
 
             //-----------------------------------------
             //Resolve all types of the Nested2 Program.
             //-----------------------------------------
-            var typ2 = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "POINTNestedNestedPriv" }, false);
+            var typ2 = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "POINTNestedNestedPriv" });
 
-            var POINTNestedNestedGblEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedNestedGbl", "Nested2" });
+            var POINTNestedNestedGblEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedNestedGbl", "Nested2" });
             Assert.IsTrue(POINTNestedNestedGblEntry.Count == 1);
 
-            var POINTNestedNestedPrivEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedNestedPriv", "Nested2" });
+            var POINTNestedNestedPrivEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedNestedPriv", "Nested2" });
             Assert.IsTrue(POINTNestedNestedPrivEntry.Count == 1);//As it is private it is defined in TypeVisNestedPrgAndProc
-            var POINTNestedNestedPrivEntry2 = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedNestedPriv", "TypeVisNestedPrgAndProc" });
+            var POINTNestedNestedPrivEntry2 = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedNestedPriv", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(POINTNestedNestedPrivEntry2.Count == 1);
             Assert.AreEqual(POINTNestedNestedPrivEntry.Symbol, POINTNestedNestedPrivEntry2.Symbol);
 
-            var POINTNestedNestedLocalEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedNestedLocal", "Nested2" });
+            var POINTNestedNestedLocalEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedNestedLocal", "Nested2" });
             Assert.IsTrue(POINTNestedNestedLocalEntry.Count == 1);
 
-            var POINTNestedNestedPublicEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedNestedPublic", "Nested2" });
+            var POINTNestedNestedPublicEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedNestedPublic", "Nested2" });
             Assert.IsTrue(POINTNestedNestedPublicEntry.Count == 1);//As it is public it is defined in TypeVisNestedPrgAndProc
-            var POINTNestedNestedPublicEntry2 = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTNestedNestedPublic", "TypeVisNestedPrgAndProc" });
+            var POINTNestedNestedPublicEntry2 = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedNestedPublic", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(POINTNestedNestedPublicEntry.Count == 1);
             Assert.AreEqual(POINTNestedNestedPublicEntry.Symbol, POINTNestedNestedPublicEntry2.Symbol);
 
             //-----------------------------------------
             //Resolve all types of the Stacked Program.
             //-----------------------------------------
-            var typStacked = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTStackedPriv" });
+            var typStacked = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTStackedPriv" });
 
-            var POINTStackedGblEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTStackedGbl", "TypeVisStackedPrg" });
+            var POINTStackedGblEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTStackedGbl", "TypeVisStackedPrg" });
             Assert.IsTrue(POINTStackedGblEntry.Count == 1);
 
-            var POINTStackedPrivEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTStackedPriv", "TypeVisStackedPrg" });
+            var POINTStackedPrivEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTStackedPriv", "TypeVisStackedPrg" });
             Assert.IsTrue(POINTStackedPrivEntry.Count == 1);
 
-            var POINTStackedLocalEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTStackedLocal", "TypeVisStackedPrg" });
+            var POINTStackedLocalEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTStackedLocal", "TypeVisStackedPrg" });
             Assert.IsTrue(POINTStackedLocalEntry.Count == 1);
 
-            var POINTStackedPublicEntry = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTStackedPublic", "TypeVisStackedPrg" });
+            var POINTStackedPublicEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTStackedPublic", "TypeVisStackedPrg" });
             Assert.IsTrue(POINTStackedPublicEntry.Count == 1);
 
             //-----------------------------------------------
@@ -2214,13 +2263,13 @@ namespace TypeCobol.Test.Domain
             //---------------------------------------------
             // TESTING type inside Function
             //---------------------------------------------
-            var POINTFunc = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTFunc"});
+            var POINTFunc = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTFunc"});
             Assert.AreEqual(3, POINTFunc.Count);
-            var POINTFuncLocal = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTFunc", "NestedProcLocal" });
+            var POINTFuncLocal = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTFunc", "NestedProcLocal" });
             Assert.IsTrue(POINTFuncLocal.Count == 1);
-            var POINTFuncPrivate = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTFunc", "NestedProcPrivate" });
+            var POINTFuncPrivate = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTFunc", "NestedProcPrivate" });
             Assert.IsTrue(POINTFuncPrivate.Count == 1);
-            var POINTFuncPublic = document.Results.RootSymbolTable.ResolveQualifiedType(new string[] { "POINTFunc", "NestedProcPublic" });
+            var POINTFuncPublic = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTFunc", "NestedProcPublic" });
             Assert.IsTrue(POINTFuncPublic.Count == 1);
 
             Assert.IsFalse(currentProgram.IsTypeAccessible(POINTFuncLocal.Symbol));

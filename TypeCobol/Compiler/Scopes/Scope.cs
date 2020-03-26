@@ -14,22 +14,44 @@ namespace TypeCobol.Compiler.Scopes
         where TSymbol : Symbol
     {
         /// <summary>
+        /// The Owner of this scope.
+        /// </summary>
+        private Symbol _owner;
+
+        /// <summary>
         /// The symbols declared in this scope.
         /// </summary>
         private Domain<TSymbol> _symbols;
 
         /// <summary>
-        /// The Owner of this scope.
-        /// </summary>
-        public Symbol Owner { get; private set; }
-
-        /// <summary>
         /// Instantiates a new empty scope.
         /// </summary>
         /// <param name="owner">The owner of the new scope.</param>
-        public Scope(Symbol owner)
+        public Scope([NotNull] Symbol owner)
         {
-            Owner = owner;
+            System.Diagnostics.Debug.Assert(owner != null);
+            _owner = owner;
+        }
+
+        /// <summary>
+        /// The Owner of this scope.
+        /// </summary>
+        [NotNull]
+        public Symbol Owner
+        {
+            get => _owner;
+            set
+            {
+                System.Diagnostics.Debug.Assert(value != null);
+                _owner = value;
+                if (_symbols != null)
+                {
+                    foreach (var symbol in _symbols)
+                    {
+                        symbol.Owner = _owner;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -86,22 +108,6 @@ namespace TypeCobol.Compiler.Scopes
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
-        }
-
-        /// <summary>
-        /// Change the Owner of this scope, and does it for all symbols.
-        /// </summary>
-        /// <param name="owner">The new Owner</param>
-        public void ChangeOwner(Symbol owner)
-        {
-            this.Owner = owner;
-            if (_symbols != null)
-            {
-                foreach (var symbol in _symbols)
-                {
-                    symbol.Owner = owner;
-                }
-            }
         }
 
         /// <summary>

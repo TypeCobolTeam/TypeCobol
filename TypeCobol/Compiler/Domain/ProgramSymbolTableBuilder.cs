@@ -44,8 +44,7 @@ namespace TypeCobol.Compiler.Domain
             Global,
             Working,
             Local,
-            Linkage,
-
+            Linkage
         };
 
         /// <summary>
@@ -67,10 +66,10 @@ namespace TypeCobol.Compiler.Domain
         /// <summary>
         /// The Current Program symbol being built as a Scope
         /// </summary>
-        public ProgramSymbol CurrentProgram
+        private ProgramSymbol CurrentProgram
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
@@ -119,13 +118,6 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Constructor
-        /// </summary>
-        public ProgramSymbolTableBuilder() : this(new RootSymbolTable())
-        {
-        }
-
-        /// <summary>
         /// RootSymbolTable instance constructor.
         /// </summary>
         /// <param name="root">The RootSymbolTable to be used</param>
@@ -135,11 +127,6 @@ namespace TypeCobol.Compiler.Domain
             Programs = new List<ProgramSymbol>();
             Diagnostics = new List<Diagnostic>();
         }
-
-        /// <summary>
-        /// The Scope of the main program
-        /// </summary>
-        public override AbstractScope Scope => Programs.Count != 0 ? Programs[0] : null;
 
         /// <summary>
         /// The Last FunctionDeclarationHeader encountered
@@ -169,6 +156,7 @@ namespace TypeCobol.Compiler.Domain
 
         public override void OnNode(Node node, Program program)
         {
+            
         }
 
         /// <summary>
@@ -187,11 +175,6 @@ namespace TypeCobol.Compiler.Domain
             System.Diagnostics.Debug.Assert(CurrentNode == node);
             CurrentNode = node.Parent;
             LastExitedNode = node;
-        }
-
-        public override void StartCobolCompilationUnit()
-        {
-
         }
 
         public override void StartCobolProgram(ProgramIdentification programIdentification, LibraryCopyCodeElement libraryCopy)
@@ -260,16 +243,8 @@ namespace TypeCobol.Compiler.Domain
             //System.Diagnostics.Debug.Assert(LastExitedNode.CodeElement.Type == CodeElementType.ProgramIdentification);
             //------------------------------------------------------------------------------------------------------------
 
-            ProgramSymbol lastPrg = this.CurrentProgram;
             //For a stacked program the Parent is null and not for a nested program.
-            this.CurrentProgram = LastExitedNode.Parent != null ? (ProgramSymbol)LastExitedNode.Parent.SemanticData : null;
-            if (this.CurrentProgram == null && lastPrg.HasFlag(Symbol.Flags.NeedTypeCompletion))
-            {
-                //Entire stacked program has been parsed ==> Resolve Types if needed.
-                TypeCobol.Compiler.Domain.Validator.TypeResolver resolver = new TypeCobol.Compiler.Domain.Validator.TypeResolver(MyRoot);
-                resolver.ResolveTypes(lastPrg, out _, out _);
-                lastPrg.SetFlag(Symbol.Flags.ProgramCompleted, true);
-            }
+            this.CurrentProgram = (ProgramSymbol) LastExitedNode.Parent?.SemanticData;
         }
 
         public override void StartDataDivision(DataDivisionHeader header)
@@ -301,7 +276,6 @@ namespace TypeCobol.Compiler.Domain
             CurrentDataDivisionSection = DataDivisionSection.None;
             LastDataDefinitionSymbol = null;
         }
-
 
         public override void StartWorkingStorageSection(WorkingStorageSectionHeader header)
         {
@@ -437,8 +411,7 @@ namespace TypeCobol.Compiler.Domain
         /// <summary>
         /// The Function declaration context Stack.
         /// </summary>
-        private Stack<FunctionDeclaration> FunctionDeclStack = new Stack<FunctionDeclaration>();
-
+        private readonly Stack<FunctionDeclaration> _functionDeclStack = new Stack<FunctionDeclaration>();
 
         /// <summary>
         /// Start a Function Declaration
@@ -448,7 +421,7 @@ namespace TypeCobol.Compiler.Domain
         {
             System.Diagnostics.Debug.Assert(CurrentNode != null && CurrentNode.CodeElement == header);            
             FunctionDeclaration funDecl = (FunctionDeclaration) CurrentNode;
-            FunctionDeclStack.Push(funDecl);
+            _functionDeclStack.Push(funDecl);
             //Create a function symbol
             FunctionSymbol funSym = new FunctionSymbol(header.FunctionName.Name);
             funDecl.SemanticData = funSym;
@@ -501,7 +474,6 @@ namespace TypeCobol.Compiler.Domain
             return p;
         }
 
-
         public override void EndFunctionDeclaration(FunctionDeclarationEnd end)
         {            
             System.Diagnostics.Debug.Assert(this.CurrentScope != null && this.CurrentScope is FunctionSymbol && CurrentScope == CurrentProgram);
@@ -545,8 +517,8 @@ namespace TypeCobol.Compiler.Domain
             funSym.Type = funType;
 
             //Pop the Function declaration context
-            System.Diagnostics.Debug.Assert(FunctionDeclStack.Count > 0);
-            FunctionDeclStack.Pop();
+            System.Diagnostics.Debug.Assert(_functionDeclStack.Count > 0);
+            _functionDeclStack.Pop();
             //Also Pop Scopes
             System.Diagnostics.Debug.Assert(funSym.Owner is ProgramSymbol);
             CurrentScope = (AbstractScope)funSym.Owner;
@@ -883,7 +855,7 @@ namespace TypeCobol.Compiler.Domain
 
             //First lookup in the current scope if the typedef symbol exists.
             TypedefSymbol tdSym = null;
-            var entry = programScope.ReverseResolveType(programScope, new string[] { dataDef.Name }, false);
+            var entry = programScope.ReverseResolveType(programScope, new string[] { dataDef.Name });
             if (entry != null)
             {
                 System.Diagnostics.Debug.Assert(entry.Count == 1);
@@ -949,7 +921,7 @@ namespace TypeCobol.Compiler.Domain
             if (elemType != null && elemType.Tag == Type.Tags.Group)
             {
                 GroupType recType = (GroupType)elemType;
-                recType.Scope.ChangeOwner(tdSym);
+                recType.Scope.Owner = tdSym;
             }
             //Mark all symbol has belonging to a TYPEDEF
             tdSym.SetFlag(Symbol.Flags.InsideTypedef, true, true);
@@ -989,13 +961,14 @@ namespace TypeCobol.Compiler.Domain
             //We need also a valid CurrentScope to lookup Typedef if one exit, or to create an unresolved Typedef declaration.
             System.Diagnostics.Debug.Assert(CurrentScope != null);
 
-            string[] paths = paths = datSymRef == null ? new string[] { dataType.Name } : AbstractScope.SymbolReferenceToPath(datSymRef);
+            string[] paths = datSymRef == null ? new string[] { dataType.Name } : AbstractScope.SymbolReferenceToPath(datSymRef);
             VariableTypeSymbol varTypeSym = new VariableTypeSymbol(dataDef.Name, paths);
             DecorateSymbol(dataDef, varTypeSym, parentScope);
             if (typedef == null)
                 CurrentProgram.AddToDomain(varTypeSym);
             else
                 typedef.Add(varTypeSym);
+            
             //If we have created a VariableTypeSymbol Symbol instance then sure the underlying Program should be completed from the Top Program.
             //This can be an optimization to avoid pur Cobol85 program to be completed, they don't have TYPEDEF.
             if (!CurrentProgram.HasFlag(Symbol.Flags.NeedTypeCompletion))
@@ -1203,7 +1176,7 @@ namespace TypeCobol.Compiler.Domain
         /// <summary>
         /// The List of Renames to validate.
         /// </summary>
-        private List<RenamesContext> _renamesToValidate = new List<RenamesContext>();
+        private readonly List<RenamesContext> _renamesToValidate = new List<RenamesContext>();
 
         /// <summary>
         /// Validate a RENAMES Symbol.
@@ -1250,7 +1223,7 @@ namespace TypeCobol.Compiler.Domain
 
             //Full Validate the rename.
             GroupType containerType = (GroupType)lastSymbol.Type;
-            RenamesValidator validator = new RenamesValidator(containerType, fromSymbol, toSymbol);
+            RenamesValidator validator = new RenamesValidator(renamesSymbol, containerType, fromSymbol, toSymbol);
             lastSymbol.Accept(validator, null);
             if (!validator.IsValid)
             {
@@ -1310,8 +1283,6 @@ namespace TypeCobol.Compiler.Domain
                     RenamesType type = ValidateRenamesSymbol(rename);
                     if (type != null)
                     {
-                        //It's important to set the Owner of the scope here
-                        type.Scope.ChangeOwner(rename.Symbol);
                         rename.Symbol.Type = type;
                     }
                 }

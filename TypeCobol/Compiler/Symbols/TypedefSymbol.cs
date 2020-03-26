@@ -1,10 +1,7 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
@@ -18,7 +15,7 @@ namespace TypeCobol.Compiler.Symbols
         /// Named constructor.
         /// </summary>
         /// <param name="name"></param>
-        public TypedefSymbol(String name)
+        public TypedefSymbol(string name)
             : base(name)
         {
             base.Kind = Kinds.Typedef;
@@ -201,8 +198,6 @@ namespace TypeCobol.Compiler.Symbols
             {
                 ctx.Path.AddLast(s);
                 ctx.TypedPath.AddLast(s);
-                //Firt complete symbol
-                s.TypeCompleter();
                 if (s.Typedef != null)
                 {
                     ctx.TypedPath.AddLast(s.Typedef);
