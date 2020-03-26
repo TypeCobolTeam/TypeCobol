@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.Domain;
 using TypeCobol.Compiler.Symbols;
 
@@ -14,73 +13,87 @@ namespace TypeCobol.Compiler.Scopes
     public class RootSymbolTable : NamespaceSymbol
     {
         /// <summary>
-        /// This is the first variable of the universe that can be assimilated to the 0 or null variable.
+        /// All Kinds of scope that contains symbols (i.e. inheritors of AbstractScope except RootSymbolTable).
         /// </summary>
-        public VariableSymbol BottomVariable { get; private set; }
+        private static readonly Symbol.Kinds[] _AllScopeKinds = new Kinds[] { Kinds.Namespace, Kinds.Program, Kinds.Function };
 
         /// <summary>
-        /// The count of all variable created in this RootSymbolTable
+        /// This is the first variable of the universe that can be assimilated to the 0 or null variable.
         /// </summary>
-        private int _variableSymbolCounter = 0;
+        public static readonly VariableSymbol BottomVariable = new VariableSymbol("<<BottomVariable>>");
+
         /// <summary>
-        /// A pool of free global index
+        /// The index of the last variable symbol entered in this table.
         /// </summary>
-        private Stack<int> GlobalIndexPool = new Stack<int>();
+        private int _variableSymbolIndex;
+
+        /// <summary>
+        /// A pool of free global index to be reused when entering a new variable.
+        /// </summary>
+        private readonly Stack<int> _globalIndexPool;
+
+        /// <summary>
+        /// All Ordered Symbol that can be reached from this Root Symbol Table.
+        /// This is in fact the entire domain of variable within this Root Symbol Table.
+        /// </summary>
+        private IList<VariableSymbol> Universe { get; }
+
+        /// <summary>
+        /// The Domain of all namespaces, programs and functions.
+        /// </summary>
+        private Domain<AbstractScope> ScopeDomain { get; }
+
+        /// <summary>
+        /// The Domain of all types.
+        /// </summary>
+        private Domain<TypedefSymbol> TypeDomain { get; }
 
         /// <summary>
         /// Empty Constructor.
         /// </summary>
-        public RootSymbolTable() : base(string.Intern("<<Root>>"))
+        public RootSymbolTable()
+            : base(string.Intern("<<Root>>"))
         {
             base.Kind = Kinds.Root;
+
+            _variableSymbolIndex = 0;
+            _globalIndexPool = new Stack<int>();
+
             Universe = new List<VariableSymbol>();
             ScopeDomain = new Domain<AbstractScope>();
             TypeDomain = new Domain<TypedefSymbol>();
-            BottomVariable = new VariableSymbol("<<BottomVariable>>");
-            AddToUniverse(BottomVariable);
-            //Load Builtin symbol in it
-            SymbolTableBuilder.AddBuiltinSymbol(this);
-        }
 
-        /// <summary>
-        /// Copy Constructor
-        /// </summary>
-        /// <param name="from">RootSymbolTable instance from which to copy</param>
-        public RootSymbolTable(RootSymbolTable from) : base(string.Intern("<<Root>>"), from)
-        {
-            base.Kind = Kinds.Root;
-            if (from != null)
-            {
-                this.BottomVariable = from.BottomVariable;
-                this.GlobalIndexPool = new Stack<int>(from.GlobalIndexPool);
-                this._variableSymbolCounter = from._variableSymbolCounter;
-                Universe = new List<VariableSymbol>(from.Universe);
-                ScopeDomain = new Domain<AbstractScope>(from.ScopeDomain);
-                TypeDomain = new Domain<TypedefSymbol>(from.TypeDomain);
-            }
+            //Register BottomVariable
+            AddToUniverse(BottomVariable);
+
+            //Load Builtin symbols
+            SymbolTableBuilder.AddBuiltinSymbol(this);
         }
 
         /// <summary>
         /// Full qualified name of this Symbol à la TypeCobol using "::"
         /// </summary>
-        public override String FullName => "";
+        public override string FullName => "";
 
         /// <summary>
         /// Full qualified name of this Symbol à la COBOL85 using OF
         /// </summary>
-        public override String FullOfName => "";
+        public override string FullOfName => "";
 
         /// <summary>
         /// Full dotted qualified name
         /// </summary>
-        public override String FullDotName => "";
+        public override string FullDotName => "";
 
         /// <summary>
         /// Full typed dotted qualified name
         /// </summary>
-        public override String FullTypedDotName => "";
+        public override string FullTypedDotName => "";
 
-        public override String TypedName => "";
+        /// <summary>
+        /// Name followed by type name.
+        /// </summary>
+        public override string TypedName => "";
 
         /// <summary>
         /// Program add event.
@@ -88,21 +101,19 @@ namespace TypeCobol.Compiler.Scopes
         public event EventHandler<SymbolEventArgs> ProgramAdded;
 
         /// <summary>
-        /// The Count of Variable Symbol created
-        /// </summary>
-        public int VariableSymbolCount => _variableSymbolCounter;
-
-        /// <summary>
         /// Get the Next VariableSymbol Context.
         /// </summary>
         /// <returns></returns>
         private int NextVariableSymbolIndex()
         {
-            if (GlobalIndexPool.Count > 0)
+            if (_globalIndexPool.Count > 0)
             {
-                return GlobalIndexPool.Pop();
+                //Re-use free global index.
+                return _globalIndexPool.Pop();
             }
-            return _variableSymbolCounter++;
+
+            //Increment global counter
+            return _variableSymbolIndex++;
         }
 
         /// <summary>
@@ -114,12 +125,9 @@ namespace TypeCobol.Compiler.Scopes
         {
             System.Diagnostics.Debug.Assert(varSym != null);
             System.Diagnostics.Debug.Assert(varSym.GlobalIndex == 0);
-            lock (Universe)
-            {
-                varSym.GlobalIndex = NextVariableSymbolIndex();
-                Universe.Add(varSym);
-            }
 
+            varSym.GlobalIndex = NextVariableSymbolIndex();
+            Universe.Add(varSym);
             return varSym;
         }
 
@@ -131,32 +139,14 @@ namespace TypeCobol.Compiler.Scopes
         {
             System.Diagnostics.Debug.Assert(varSym != null);
             System.Diagnostics.Debug.Assert(varSym.GlobalIndex != 0);
+
             if (varSym.GlobalIndex != 0)
             {
-                lock (Universe)
-                {
-                    ((IList < VariableSymbol >)Universe)[varSym.GlobalIndex] = null;
-                    GlobalIndexPool.Push(varSym.GlobalIndex);
-                    varSym.GlobalIndex = 0;
-                }
+                Universe[varSym.GlobalIndex] = null;
+                _globalIndexPool.Push(varSym.GlobalIndex);
+                varSym.GlobalIndex = 0;
             }
         }
-
-        /// <summary>
-        /// All Ordered Symbol that can be reached from this Root Symbol Table.
-        /// This is in fact the entire domain of variable within this Root Symbol Table.
-        /// </summary>
-        public IList<VariableSymbol> Universe { get; internal set; }
-
-        /// <summary>
-        /// The Domain of all namespaces, programs and functions.
-        /// </summary>
-        internal Domain<AbstractScope> ScopeDomain { get; private set; }
-
-        /// <summary>
-        /// The Domain of all types.
-        /// </summary>
-        internal Domain<TypedefSymbol> TypeDomain { get; private set; }
 
         /// <summary>
         /// Add the given AbstractScope instance the domain
@@ -241,14 +231,61 @@ namespace TypeCobol.Compiler.Scopes
         /// <param name="type">The type to be removed</param>
         public override void RemoveFromDomain(TypedefSymbol type)
         {
+            System.Diagnostics.Debug.Assert(type != null);
             TypeDomain.Remove(type);
         }
 
         /// <summary>
-        /// All Kinds of scope that.
+        /// Performs a search in the universe of variables of this RootSymbolTable
+        /// using a name.
         /// </summary>
-        private static readonly Symbol.Kinds[] AllScopeKinds = new Kinds[]
-            {Kinds.Namespace, Kinds.Program, Kinds.Function};
+        /// <param name="name">Name of the variable searched.</param>
+        /// <returns>A non-null domain entry of variables matching the given name.</returns>
+        [NotNull]
+        public Domain<VariableSymbol>.Entry LookupVariable([NotNull] string name)
+        {
+            System.Diagnostics.Debug.Assert(name != null);
+
+            var results = new Domain<VariableSymbol>.Entry(name);
+            foreach (var variableSymbol in Universe.Where(v => string.Equals(v.Name, name, StringComparison.OrdinalIgnoreCase)))
+            {
+                results.Add(variableSymbol);
+            }
+
+            return results;
+        }
+
+        /// <summary>
+        /// Searches for scopes of this RootSymbolTable having the given name.
+        /// </summary>
+        /// <param name="name">Name of the scope searched.</param>
+        /// <returns>A non-null domain entry of scopes matching the given name.</returns>
+        [NotNull]
+        public Domain<AbstractScope>.Entry LookupScope([NotNull] string name)
+        {
+            System.Diagnostics.Debug.Assert(name != null);
+
+            if (ScopeDomain.TryGetValue(name, out var result))
+                return result;
+
+            return new Domain<AbstractScope>.Entry(name);
+        }
+
+        /// <summary>
+        /// Searches for types of this RootSymbolTable having the given name.
+        /// </summary>
+        /// <param name="name">Name of the type searched.</param>
+        /// <returns>A non-null domain entry of types matching the given name.</returns>
+        [NotNull]
+        public Domain<TypedefSymbol>.Entry LookupType([NotNull] string name)
+        {
+            System.Diagnostics.Debug.Assert(name != null);
+
+            if (TypeDomain.TryGetValue(name, out var result))
+                return result;
+
+            return new Domain<TypedefSymbol>.Entry(name);
+        }
 
         /// <summary>
         /// Resolve any AbstractScope. Namespace, program and function are abstract scopes.
@@ -256,22 +293,19 @@ namespace TypeCobol.Compiler.Scopes
         /// <param name="path">The Abstract scope path</param>
         /// <param name="kinds">All kinds of scope to be resolved.</param>
         /// <returns>A Scope instance of matches</returns>
-        public Domain<TS>.Entry ResolveScope<TS>(string[] path, params Symbol.Kinds[] kinds)
-            where TS : AbstractScope
+        private Domain<TScope>.Entry ResolveScope<TScope>(string[] path, params Symbol.Kinds[] kinds)
+            where TScope : AbstractScope
         {
-            if (path == null || path.Length == 0 || path[0] == null)
+            var candidates = ResolveSymbol<AbstractScope>(path, LookupScope);
+            if (candidates == null)
                 return null;
 
-            string name = path[0];
-            Domain<TS>.Entry results = new Domain<TS>.Entry(name);
-            if (this.ScopeDomain.TryGetValue(name, out var candidates))
+            Domain<TScope>.Entry results = new Domain<TScope>.Entry(candidates.Name);
+            kinds = kinds == null || kinds.Length == 0 ? _AllScopeKinds : kinds;
+            foreach (var candidate in candidates)
             {
-                kinds = kinds == null || kinds.Length == 0 ? AllScopeKinds : kinds;
-                foreach (var candidate in candidates)
-                {
-                    if (kinds.Contains(candidate.Kind) && candidate.IsMatchingPath(path))
-                        results.Add((TS) candidate);
-                }
+                if (kinds.Contains(candidate.Kind))
+                    results.Add((TScope)candidate);
             }
 
             return results;
@@ -321,26 +355,10 @@ namespace TypeCobol.Compiler.Scopes
         /// Resolve a Type
         /// </summary>
         /// <param name="path">Type's path'</param>
-        /// <param name="bIncludeUndefined">True if undefined type must also be included, false otherwise</param>
         /// <returns>The set of matching results</returns>
-        public Domain<TypedefSymbol>.Entry ResolveQualifiedType(string[] path, bool bIncludeUndefined = false)
+        public Domain<TypedefSymbol>.Entry ResolveType(string[] path)
         {
-            if (path == null || path.Length == 0 || path[0] == null)
-                return null;
-
-            string name = path[0];
-            var results = new Domain<TypedefSymbol>.Entry(name);
-            if (this.TypeDomain.TryGetValue(name, out var candidates))
-            {
-                foreach (var candidate in candidates)
-                {
-                    //Only selected whose Type is defined.
-                    if ((bIncludeUndefined || candidate.Type != null) && candidate.IsMatchingPath(path))
-                        results.Add(candidate);
-                }
-            }
-
-            return results;
+            return ResolveSymbol<TypedefSymbol>(path, LookupType);
         }
     }
 }

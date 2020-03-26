@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using TypeCobol.Compiler.Scopes;
+﻿using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
@@ -16,19 +11,19 @@ namespace TypeCobol.Compiler.Symbols
         //--------------------------
         // Type Symbols
         //--------------------------
-        public static TypedefSymbol Omitted;
-        public static TypedefSymbol Alphabetic;
-        public static TypedefSymbol Numeric;
-        public static TypedefSymbol NumericEdited;
-        public static TypedefSymbol Alphanumeric;
-        public static TypedefSymbol AlphanumericEdited;
-        public static TypedefSymbol DBCS;
-        public static TypedefSymbol FloatingPoint;
+        public static readonly TypedefSymbol Omitted;
+        public static readonly TypedefSymbol Alphabetic;
+        public static readonly TypedefSymbol Numeric;
+        public static readonly TypedefSymbol NumericEdited;
+        public static readonly TypedefSymbol Alphanumeric;
+        public static readonly TypedefSymbol AlphanumericEdited;
+        public static readonly TypedefSymbol DBCS;
+        public static readonly TypedefSymbol FloatingPoint;
 
-        public static TypedefSymbol Boolean;
-        public static TypedefSymbol Date;
-        public static TypedefSymbol Currency;
-        public static TypedefSymbol String;
+        public static readonly TypedefSymbol Boolean;
+        public static readonly TypedefSymbol Date;
+        public static readonly TypedefSymbol Currency;
+        public static readonly TypedefSymbol String;
 
         /// <summary>
         /// Static constructor.

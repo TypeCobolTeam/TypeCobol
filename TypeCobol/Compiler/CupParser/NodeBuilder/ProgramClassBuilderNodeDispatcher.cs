@@ -95,6 +95,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 }
         }
 
+        public void EndCobolCompilationUnit()
+        {
+            if (_builderListeners != null) foreach (var l in _builderListeners)
+                {
+                    l.EndCobolCompilationUnit();
+                }
+        }
+
         public void EndCobolProgram(ProgramEnd end)
         {
             if (_builderListeners != null) foreach (var l in _builderListeners)

@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Domain;
 using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
@@ -18,7 +13,7 @@ namespace TypeCobol.Compiler.Symbols
         /// Named constructor.
         /// </summary>
         /// <param name="name"></param>
-        public NamespaceSymbol(String name)
+        public NamespaceSymbol(string name)
             : base(name, Kinds.Namespace)
         {
             Types = new Scope<TypedefSymbol>(this);
@@ -31,7 +26,7 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="name"></param>
         /// <param name="from"></param>
-        public NamespaceSymbol(String name, NamespaceSymbol from) : this(name)
+        public NamespaceSymbol(string name, NamespaceSymbol from) : this(name)
         {
             foreach (var t in from.Types)
             {
@@ -52,7 +47,7 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="name">Program's name</param>
         /// <returns>The ProgramSymbol</returns>
-        public ProgramSymbol EnterProgram(String name)
+        public ProgramSymbol EnterProgram(string name)
         {
             Domain<ProgramSymbol>.Entry entry = Programs.Lookup(name);
             if (entry == null) 
@@ -85,31 +80,12 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// All Types declared in this namespace
-        /// </summary>
-        public override Scope<TypedefSymbol> Types
-        {
-            get;
-            protected set;
-        }
-
-        /// <summary>
         /// All programs declared in this namespace.
         /// </summary>
         public override Scope<ProgramSymbol> Programs
         {
             get;
             protected set;
-        }
-
-        public override Domain<TypedefSymbol>.Entry ResolveAccessibleType(RootSymbolTable root, string[] path)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Domain<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path)
-        {
-            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -121,11 +97,44 @@ namespace TypeCobol.Compiler.Symbols
             protected set;
         }
 
-        public override TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitNamespaceSymbol(this, arg); }
+        /// <summary>
+        /// All types declared in this namespace.
+        /// </summary>
+        public override Scope<TypedefSymbol> Types
+        {
+            get;
+            protected set;
+        }
+
+        protected Domain<TSymbol>.Entry ResolveSymbol<TSymbol>(string[] path, Func<string, Domain<TSymbol>.Entry> lookupSymbol) 
+            where TSymbol : Symbol
+        {
+            if (path == null || path.Length == 0 || path[0] == null)
+                return null;
+
+            var name = path[0];
+            var results = new Domain<TSymbol>.Entry(name);
+            foreach (var candidate in lookupSymbol(name))
+            {
+                if (candidate.IsMatchingPath(path))
+                {
+                    results.Add(candidate);
+                }
+            }
+
+            return results;
+        }
+
+        public override Domain<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path)
+        {
+            throw new InvalidOperationException("Namespace symbol does not contain any type.");
+        }
 
         public override Domain<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path)
         {
-            throw new NotImplementedException();
+            return ResolveSymbol<AbstractScope>(path, root.LookupScope);
         }
+
+        public override TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitNamespaceSymbol(this, arg); }
     }
 }

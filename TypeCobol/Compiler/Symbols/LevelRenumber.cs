@@ -1,76 +1,151 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using TypeCobol.Compiler.Domain.Validator;
 using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
 {
     /// <summary>
-    /// Given a Variable symbol or a Type this class renumber all level except levels
-    /// 66, 88 and 77.
-    /// Parameters is the start level.
+    /// Given a variable symbol, this class renumbers all levels except levels 66, 77 and 88.
+    /// By default, the renumbering starts at the original level value (and increases by 1 at each level transition).
     /// </summary>
-    public class LevelRenumber : AbstractSymbolAndTypeVisitor<int, int>
+    public class LevelRenumber : AbstractSymbolAndTypeVisitor<object, LevelRenumber.Context>
     {
-        #region Symbols renumber
-
-        public override int VisitSymbol(Symbol symbol, int currentLevel)
+        public class Context
         {
-            return currentLevel;
+            /// <summary>
+            /// Keeps track of the current target level.
+            /// </summary>
+            public int TargetLevel { get; set; }
+
+            /// <summary>
+            /// Allows external error report.
+            /// </summary>
+            public IValidationErrorReporter ErrorReporter { get; }
+
+            public Context(int initialLevel, IValidationErrorReporter errorReporter)
+            {
+                TargetLevel = initialLevel;
+                ErrorReporter = errorReporter;
+            }
         }
 
-        public override int VisitVariableSymbol(VariableSymbol variableSymbol, int currentLevel)
+        #region Symbols renumbering
+
+        private void Renumber(VariableSymbol variable, Context context)
         {
-            System.Diagnostics.Debug.Assert(currentLevel > 0);
-            if (currentLevel <= 49)
+            int targetLevel = context.TargetLevel;
+            if (targetLevel <= 49)
             {
-                if (variableSymbol.Level != 66 && variableSymbol.Level != 77 && variableSymbol.Level != 88)
+                //Change the level for real.
+                variable.Level = targetLevel;
+            }
+            else
+            {
+                //Report an error
+                context.ErrorReporter?.Report(new ValidationError(variable, string.Format(TypeCobolResource.LevelExceededDuringRenumber, variable.Name, targetLevel)));
+            }
+        }
+
+        public override object VisitSymbol(Symbol symbol, Context context)
+        {
+            //Do nothing.
+            return null;
+        }
+
+        public override object VisitVariableSymbol(VariableSymbol variable, Context context)
+        {
+            System.Diagnostics.Debug.Assert(context.TargetLevel > 0);
+
+            if (!variable.HasFlag(Symbol.Flags.SymbolExpanded))
+            {
+                //Do not attempt renumbering of a non-expanded variable.
+                context.ErrorReporter?.Report(new ValidationError(variable, string.Format(TypeCobolResource.RenumberingNonExpandedVariable, variable.Name)));
+            }
+            else
+            {
+                switch (variable.Level)
                 {
-                    variableSymbol.Level = currentLevel;
+                    case 66:
+                    case 77:
+                    case 88:
+                        //Do not renumber
+                        break;
+                    default:
+                        Renumber(variable, context);
+                        break;
                 }
-                return variableSymbol.Type?.Accept(this, currentLevel) ?? currentLevel;
+
+                //Continue visit through variable's type.
+                variable.Type?.Accept(this, context);
             }
 
-            throw new Symbol.LevelExceed(variableSymbol);
+            return null;
         }
 
-        public override int VisitVariableTypeSymbol(VariableTypeSymbol variableTypeSymbol, int currentLevel)
+        public override object VisitVariableTypeSymbol(VariableTypeSymbol typedVariable, Context context)
         {
-            return VisitVariableSymbol(variableTypeSymbol, currentLevel);
+            VisitVariableSymbol(typedVariable, context);
+            return null;
         }
-        
+
         #endregion
 
-        #region Types renumber
+        #region Types renumbering
 
-        public override int VisitType(Types.Type type, int currentLevel)
+        public override object VisitType(Type type, Context context)
         {
-            return currentLevel;
+            //Continue visit through type component.
+            type.TypeComponent?.Accept(this, context);
+            return null;
         }
 
-        public override int VisitArrayType(ArrayType arrayType, int currentLevel)
+        public override object VisitGroupType(GroupType group, Context context)
         {
-            return arrayType.ElementType?.Accept(this, currentLevel) ?? currentLevel;
-        }
-
-        public override int VisitPointerType(PointerType pointerType, int currentLevel)
-        {
-            return pointerType.ElementType?.Accept(this, currentLevel) ?? currentLevel;
-        }
-
-        public override int VisitGroupType(GroupType groupType, int currentLevel)
-        {
-            int maxLevel = currentLevel;
-            foreach (var field in groupType.Scope)
+            //Continue visit through fields.
+            context.TargetLevel++;
+            foreach (var field in group.Fields)
             {
-                maxLevel = Math.Max(maxLevel, field.Accept(this, currentLevel + 1));
+                field.Accept(this, context);
             }
-            return maxLevel;
+            context.TargetLevel--;
+
+            return null;
         }
 
-        public override int VisitTypedefType(TypedefType typedefType, int currentLevel)
+        public override object VisitTypedefType(TypedefType typedef, Context context)
         {
-            return typedefType.TypeComponent?.Accept(this, currentLevel) ?? currentLevel;
+            //Protection against cyclic typedefs.
+            if (typedef.HasFlag(Symbol.Flags.CheckedForCycles))
+            {
+                if (typedef.HasFlag(Symbol.Flags.IsCyclic))
+                {
+                    context.ErrorReporter?.Report(new ValidationError(typedef.Symbol, string.Format(TypeCobolResource.RenumberingCyclicType, typedef.Symbol.Name)));
+                }
+                else
+                {
+                    VisitType(typedef, context);
+                }
+            }
+            else
+            {
+                context.ErrorReporter?.Report(new ValidationError(typedef.Symbol, string.Format(TypeCobolResource.RenumberingUnsafeType, typedef.Symbol.Name)));
+            }
+
+            return null;
         }
 
         #endregion
+
+        /// <summary>
+        /// Renumbers the given variable starting at its original level value.
+        /// </summary>
+        /// <param name="variable">Variable to renumber.</param>
+        /// <param name="errorReporter">Custom error reporter.</param>
+        public void Renumber([NotNull] VariableSymbol variable, IValidationErrorReporter errorReporter = null)
+        {
+            System.Diagnostics.Debug.Assert(variable != null);
+            var context = new Context(variable.Level, errorReporter);
+            variable.Accept(this, context);
+        }
     }
 }

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
+using TypeCobol.Compiler.Domain.Validator;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Types;
 
@@ -50,7 +50,8 @@ namespace TypeCobol.Compiler.Symbols
                 {
                     //The type has changed : update variable type and perform level renumbering
                     variable.Type = newType;
-                    variable.Accept(_levelRenumber, variable.Level);
+                    variable.SetFlag(Symbol.Flags.SymbolExpanded, true, true);
+                    _levelRenumber.Renumber(variable, _parentExpander._errorReporter);
                 }
             }
 
@@ -63,7 +64,7 @@ namespace TypeCobol.Compiler.Symbols
             public override Symbol VisitProgramSymbol(ProgramSymbol programToExpand, object _)
             {
                 //No need to expand the Program if it has already been done.
-                if (programToExpand.HasFlag(Symbol.Flags.ProgramExpanded))
+                if (programToExpand.HasFlag(Symbol.Flags.SymbolExpanded))
                     return programToExpand;
 
                 //Save current expanding program and swap with the new one
@@ -88,7 +89,7 @@ namespace TypeCobol.Compiler.Symbols
                 finally
                 {
                     //Mark this program has being expanded
-                    programToExpand.SetFlag(Symbol.Flags.ProgramExpanded, true);
+                    programToExpand.SetFlag(Symbol.Flags.SymbolExpanded, true);
 
                     //Restore original expanding program
                     _parentExpander._currentExpandingProgram = previousExpandingProgram;
@@ -134,12 +135,12 @@ namespace TypeCobol.Compiler.Symbols
         private class TypeExpander : Type.AbstractTypeVisitor<Type, Symbol>
         {
             private readonly ProgramExpander _parentExpander;
-            private readonly HashSet<TypedefType> _cyclicTypedefCheckSet;
+            private readonly CyclicTypeChecker _cyclicTypeChecker;
 
             public TypeExpander(ProgramExpander parentExpander)
             {
                 _parentExpander = parentExpander;
-                _cyclicTypedefCheckSet = new HashSet<TypedefType>();
+                _cyclicTypeChecker = new CyclicTypeChecker();
             }
 
             public override Type VisitType(Type type, Symbol owner)
@@ -218,40 +219,36 @@ namespace TypeCobol.Compiler.Symbols
             /// </summary>
             /// <param name="typedef">Typedef to expand.</param>
             /// <param name="owner">The current owner symbol.</param>
-            /// <exception cref="Type.CyclicTypeException">If the type definition is cyclic.</exception>
             /// <returns>The expanded type.</returns>
             public override Type VisitTypedefType(TypedefType typedef, Symbol owner)
             {
-                try
+                //Check first for cyclic definition.
+                if (_cyclicTypeChecker.Check(typedef, _parentExpander._errorReporter))
                 {
-                    if (_cyclicTypedefCheckSet.Contains(typedef))
-                        throw new Type.CyclicTypeException(typedef);
-
-                    _cyclicTypedefCheckSet.Add(typedef);
-
-                    //Take the representing type.
-                    Type typeComponent = typedef.TypeComponent;
-                    return (typeComponent == null || !typeComponent.MayExpand) ? typeComponent : typeComponent.Accept(this, owner);
+                    //Type is cyclic, stop visit.
+                    return typedef;
                 }
-                finally
-                {
-                    _cyclicTypedefCheckSet.Remove(typedef);
-                }
+
+                //Continue expansion through the TargetType.
+                return typedef.TargetType.Accept(this, owner);
             }
         }
 
         private ProgramSymbol _currentExpandingProgram;
         private readonly SymbolExpander _symbolExpander;
         private readonly TypeExpander _typeExpander;
+        private readonly IValidationErrorReporter _errorReporter;
 
         /// <summary>
-        /// Creates a new ProgramExpander for the supplied program.
+        /// Creates a new ProgramExpander.
         /// </summary>
-        public ProgramExpander()
+        /// <param name="errorReporter">Custom error reporter.</param>
+        public ProgramExpander(IValidationErrorReporter errorReporter)
         {
             _currentExpandingProgram = null;
             _symbolExpander = new SymbolExpander(this);
             _typeExpander = new TypeExpander(this);
+            _errorReporter = errorReporter;
         }
 
         /// <summary>
