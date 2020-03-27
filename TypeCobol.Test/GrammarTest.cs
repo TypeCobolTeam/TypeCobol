@@ -25,14 +25,21 @@ namespace TypeCobol.Test {
 
 	    }
 
+        [Obsolete("Dynamic skeletons are not supported anymore. Use the appropriate CheckTests overload.")]
+        public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex,
+            string[] include, string[] exclude, string skelPath = "", int stopAfterAsManyErrors = 10000, bool autoRemarks = false, string expectedResultFile = null, bool ignoreWarningDiag = false)
+        {
+            //This method is kept for compatibility with EI-specific tests, we force codegen to false here.
+            CheckTests(rootFolder, resultFolder, timedResultFile, regex, include, exclude, new string[] { }, false, stopAfterAsManyErrors, autoRemarks, expectedResultFile, ignoreWarningDiag);
+        }
 
-	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex = "*.cbl", string skelPath = "", string expectedResultFile = null, bool ignoreWarningDiag = false) {
-	        CheckTests(rootFolder, resultFolder, timedResultFile, regex, new string[] {}, new string[] {}, skelPath, 10000, false, expectedResultFile, ignoreWarningDiag);
+        public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex = "*.cbl", bool codegen = true, string expectedResultFile = null, bool ignoreWarningDiag = false) {
+	        CheckTests(rootFolder, resultFolder, timedResultFile, regex, new string[] {}, new string[] {}, codegen, 10000, false, expectedResultFile, ignoreWarningDiag);
 	    }
 
 	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex,
-	        string[] include, string[] exclude, string skelPath = "", int stopAfterAsManyErrors = 10000, bool autoRemarks = false, string expectedResultFile = null, bool ignoreWarningDiag = false) {
-            CheckTests(rootFolder, resultFolder, timedResultFile, regex, include, exclude, new string[] { }, skelPath, stopAfterAsManyErrors, autoRemarks, expectedResultFile, ignoreWarningDiag);
+	        string[] include, string[] exclude, bool codegen = true, int stopAfterAsManyErrors = 10000, bool autoRemarks = false, string expectedResultFile = null, bool ignoreWarningDiag = false) {
+            CheckTests(rootFolder, resultFolder, timedResultFile, regex, include, exclude, new string[] { }, codegen, stopAfterAsManyErrors, autoRemarks, expectedResultFile, ignoreWarningDiag);
         }
 
 	    private static void AppendTextToFiles(string tetxToAppend, params string[] files)
@@ -47,10 +54,9 @@ namespace TypeCobol.Test {
 	            
 	    }
 
-	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex, string[] include, string[] exclude, string[] copiesFolder, string skelPath, int stopAfterAsManyErrors, bool autoRemarks, string expectedResultFile, bool ignoreWarningDiag) { 
+	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex, string[] include, string[] exclude, string[] copiesFolder, bool codegen, int stopAfterAsManyErrors, bool autoRemarks, string expectedResultFile, bool ignoreWarningDiag) { 
 			string[] files = Directory.GetFiles(rootFolder, regex, SearchOption.AllDirectories);
-			bool codegen = true;
-			var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
+            var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 	        string resultFile = "GeneratedResultFile.txt";
 
             //Initialize both files
