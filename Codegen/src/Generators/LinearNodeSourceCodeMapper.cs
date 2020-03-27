@@ -1399,8 +1399,8 @@ namespace TypeCobol.Codegen.Generators
             Node parent = node.Parent;
             while (parent != null)
             {
-                //The Parent must not be a generated node
-                if (parent.NodeIndex >= 0 && Nodes[parent.NodeIndex].Positions != null && !(parent is GeneratedNode))
+                //Positions must not be null.
+                if (parent.NodeIndex >= 0 && Nodes[parent.NodeIndex].Positions != null)
                     return parent;
                 parent = parent.Parent;
             }
