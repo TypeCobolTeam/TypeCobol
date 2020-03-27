@@ -151,27 +151,27 @@ namespace TypeCobol.Compiler.Symbols
             }
         }
 
-        internal override void ReleaseSymbols()
+        internal override void UnregisterSymbolsFromRoot()
         {
             var root = TopParent(Kinds.Root) as RootSymbolTable;
             System.Diagnostics.Debug.Assert(root != null);
 
-            //Release all types, variables, functions and nested programs
+            //Unregister all types, variables, functions and nested programs from root
             foreach (var type in Types)
             {
-                root.Forget(type);
+                root.Unregister(type);
             }
             foreach (var variable in _variables)
             {
-                root.RemoveFromUniverse(variable);
+                root.Unregister(variable);
             }
             foreach (var function in Functions)
             {
-                root.Forget(function);
+                root.Unregister(function);
             }
             foreach (var nestedProgram in Programs)
             {
-                root.Forget(nestedProgram);
+                root.Unregister(nestedProgram);
             }
         }
 
@@ -180,15 +180,14 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="variable">VariableSymbol to add.</param>
         /// <returns>The given variable is returned.</returns>
-        public VariableSymbol Add(VariableSymbol variable)
+        public void Add(VariableSymbol variable)
         {
             System.Diagnostics.Debug.Assert(variable != null);
 
-            //First add it in the root table.
+            //First register it in the root table.
             Symbol root = TopParent(Kinds.Root);
-            ((RootSymbolTable)root)?.AddToUniverse(variable);
+            ((RootSymbolTable)root)?.Register(variable);
             _variables.Add(variable);
-            return variable;
         }
 
         /// <summary>

@@ -67,9 +67,9 @@ namespace TypeCobol.Compiler.Symbols
             if (prgSym != null)
             {
                 Programs.Delete(prgSym);
-                //Remove it from the root symbol table.
+                //Unregister it from the root symbol table.
                 Symbol root = TopParent(Kinds.Root);
-                ((RootSymbolTable)root)?.Forget(prgSym);
+                ((RootSymbolTable)root)?.Unregister(prgSym);
                 prgSym.Owner = null;
             }
         }
@@ -123,21 +123,21 @@ namespace TypeCobol.Compiler.Symbols
 
         public override TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitNamespaceSymbol(this, arg); }
 
-        internal override void ReleaseSymbols()
+        internal override void UnregisterSymbolsFromRoot()
         {
             var root = TopParent(Kinds.Root) as RootSymbolTable;
             System.Diagnostics.Debug.Assert(root != null);
 
-            //Release all programs
+            //Unregister all programs from root
             foreach (var program in Programs)
             {
-                root.Forget(program);
+                root.Unregister(program);
             }
 
-            //Release all sub-namespaces
+            //Unregister all sub-namespaces from root
             foreach (var @namespace in Namespaces)
             {
-                root.Forget(@namespace);
+                root.Unregister(@namespace);
             }
         }
     }

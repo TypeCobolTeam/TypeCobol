@@ -62,8 +62,7 @@ namespace TypeCobol.Compiler.Scopes
             _allScopes = new Container<ScopeSymbol>();
             _allTypes = new Container<TypedefSymbol>();
 
-            //Register BottomVariable
-            AddToUniverse(BottomVariable);
+            Register(BottomVariable);
 
             //Load Builtin symbols
             Types = new Domain<TypedefSymbol>(this);
@@ -127,25 +126,24 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
-        /// Add the given VariableSymbol instance in this Root Symbol Table universe
+        /// Reference the given VariableSymbol instance in this Root Symbol Table universe.
         /// </summary>
-        /// <param name="varSym">The Variable Symbol to be added</param>
-        /// <returns>The given VariableSymbol instance.</returns>
-        internal VariableSymbol AddToUniverse(VariableSymbol varSym)
+        /// <param name="varSym">The Variable Symbol to be referenced.</param>
+        internal void Register(VariableSymbol varSym)
         {
             System.Diagnostics.Debug.Assert(varSym != null);
             System.Diagnostics.Debug.Assert(varSym.GlobalIndex == 0);
 
             varSym.GlobalIndex = NextVariableSymbolIndex();
             _universe.Add(varSym);
-            return varSym;
         }
 
         /// <summary>
-        /// Remove from the universe the given variable symbol.
+        /// Forget the given variable symbol, the variable is removed from the universe
+        /// of variables.
         /// </summary>
-        /// <param name="varSym">The variable symbol to be removed</param>
-        internal void RemoveFromUniverse(VariableSymbol varSym)
+        /// <param name="varSym">The variable symbol to be removed.</param>
+        internal void Unregister(VariableSymbol varSym)
         {
             System.Diagnostics.Debug.Assert(varSym != null);
             System.Diagnostics.Debug.Assert(varSym.GlobalIndex != 0);
@@ -159,9 +157,9 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
-        /// Add the given ScopeSymbol instance in this table.
+        /// Reference the given ScopeSymbol instance in this table.
         /// </summary>
-        /// <param name="scope">The scope to be added</param>
+        /// <param name="scope">The scope to be referenced.</param>
         public void Register(ScopeSymbol scope)
         {
             System.Diagnostics.Debug.Assert(scope != null);
@@ -171,20 +169,21 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
-        /// Remove the given ScopeSymbol from this table.
+        /// Forget the given ScopeSymbol. The scope is removed
+        /// from the list of known scopes.
         /// </summary>
-        /// <param name="scope">The scope to be removed</param>
-        public void Forget(ScopeSymbol scope)
+        /// <param name="scope">The scope to be removed.</param>
+        public void Unregister(ScopeSymbol scope)
         {
             System.Diagnostics.Debug.Assert(scope != null);
             _allScopes.Remove(scope);
-            scope.ReleaseSymbols();
+            scope.UnregisterSymbolsFromRoot();
         }
 
         /// <summary>
-        /// Add the given Type instance in this table.
+        /// Reference the given Type instance in this table.
         /// </summary>
-        /// <param name="type">The type to add to be added</param>
+        /// <param name="type">The type to be referenced.</param>
         public void Register(TypedefSymbol type)
         {
             System.Diagnostics.Debug.Assert(type != null);
@@ -192,10 +191,11 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
-        /// Remove the given type from this table.
+        /// Forget the given type. The type is removed from the list
+        /// of known types.
         /// </summary>
-        /// <param name="type">The type to be removed</param>
-        public void Forget(TypedefSymbol type)
+        /// <param name="type">The type to be removed.</param>
+        public void Unregister(TypedefSymbol type)
         {
             System.Diagnostics.Debug.Assert(type != null);
             _allTypes.Remove(type);
