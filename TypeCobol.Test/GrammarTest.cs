@@ -131,7 +131,8 @@ namespace TypeCobol.Test {
 
                 
 				if (!okay) {
-					nbFilesInError++;
+                    AppendTextToFiles("\n", timedResultFile, resultFile);
+                    nbFilesInError++;
 					if (nbFilesInError >= stopAfterAsManyErrors) break;
 				}
 
@@ -224,10 +225,6 @@ namespace TypeCobol.Test {
                             if (okay) nbFilesInError++;
                         }
                     }
-
-                    
-			    } else {
-                    AppendTextToFiles("\n", timedResultFile, resultFile);
                 }
 			}
             TimeSpan totalTestDuration = parsingSumDuration + codeGenSumDuration;
