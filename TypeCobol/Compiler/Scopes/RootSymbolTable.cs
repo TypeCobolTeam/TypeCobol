@@ -62,15 +62,16 @@ namespace TypeCobol.Compiler.Scopes
             _allScopes = new Container<ScopeSymbol>();
             _allTypes = new Container<TypedefSymbol>();
 
-            Register(BottomVariable);
+            //Initialize the universe of variables with BottomVariable
+            Store(BottomVariable);
 
             //Load Builtin symbols
             Types = new Domain<TypedefSymbol>(this);
             foreach (var type in BuiltinSymbols.All)
             {
-                //add in the designated built-in types collection and register
+                //add in the designated built-in types collection and store in allTypes
                 Types.Enter(type);
-                Register(type);
+                Store(type);
             }
         }
 
@@ -126,10 +127,10 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
-        /// Reference the given VariableSymbol instance in this Root Symbol Table universe.
+        /// Store the given VariableSymbol instance in this Root Symbol Table universe.
         /// </summary>
-        /// <param name="varSym">The Variable Symbol to be referenced.</param>
-        internal void Register(VariableSymbol varSym)
+        /// <param name="varSym">The Variable Symbol to be stored.</param>
+        internal void Store(VariableSymbol varSym)
         {
             System.Diagnostics.Debug.Assert(varSym != null);
             System.Diagnostics.Debug.Assert(varSym.GlobalIndex == 0);
@@ -139,11 +140,11 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
-        /// Forget the given variable symbol, the variable is removed from the universe
+        /// Discard the given variable symbol. The variable is removed from the universe
         /// of variables.
         /// </summary>
-        /// <param name="varSym">The variable symbol to be removed.</param>
-        internal void Unregister(VariableSymbol varSym)
+        /// <param name="varSym">The variable symbol to be discarded.</param>
+        internal void Discard(VariableSymbol varSym)
         {
             System.Diagnostics.Debug.Assert(varSym != null);
             System.Diagnostics.Debug.Assert(varSym.GlobalIndex != 0);
@@ -157,10 +158,10 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
-        /// Reference the given ScopeSymbol instance in this table.
+        /// Store the given ScopeSymbol instance in this table.
         /// </summary>
-        /// <param name="scope">The scope to be referenced.</param>
-        public void Register(ScopeSymbol scope)
+        /// <param name="scope">The scope to be stored.</param>
+        public void Store(ScopeSymbol scope)
         {
             System.Diagnostics.Debug.Assert(scope != null);
             _allScopes.Add(scope);
@@ -169,33 +170,33 @@ namespace TypeCobol.Compiler.Scopes
         }
 
         /// <summary>
-        /// Forget the given ScopeSymbol. The scope is removed
+        /// Discard the given ScopeSymbol. The scope is removed
         /// from the list of known scopes.
         /// </summary>
-        /// <param name="scope">The scope to be removed.</param>
-        public void Unregister(ScopeSymbol scope)
+        /// <param name="scope">The scope to be discarded.</param>
+        public void Discard(ScopeSymbol scope)
         {
             System.Diagnostics.Debug.Assert(scope != null);
             _allScopes.Remove(scope);
-            scope.UnregisterSymbolsFromRoot();
+            scope.DiscardSymbolsFromRoot();
         }
 
         /// <summary>
-        /// Reference the given Type instance in this table.
+        /// Store the given Type instance in this table.
         /// </summary>
-        /// <param name="type">The type to be referenced.</param>
-        public void Register(TypedefSymbol type)
+        /// <param name="type">The type to be stored.</param>
+        public void Store(TypedefSymbol type)
         {
             System.Diagnostics.Debug.Assert(type != null);
             _allTypes.Add(type);
         }
 
         /// <summary>
-        /// Forget the given type. The type is removed from the list
+        /// Discard the given type. The type is removed from the list
         /// of known types.
         /// </summary>
-        /// <param name="type">The type to be removed.</param>
-        public void Unregister(TypedefSymbol type)
+        /// <param name="type">The type to be discarded.</param>
+        public void Discard(TypedefSymbol type)
         {
             System.Diagnostics.Debug.Assert(type != null);
             _allTypes.Remove(type);

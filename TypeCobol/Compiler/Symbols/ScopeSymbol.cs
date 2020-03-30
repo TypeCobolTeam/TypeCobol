@@ -323,11 +323,11 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// Unregister all symbols and types currently held by this Scope from the RootSymbolTable.
+        /// Discard all symbols and types currently held by this Scope from the RootSymbolTable.
         /// The symbols and types stay in this ScopeSymbol and their respective owners do not change
         /// but they are not known anymore by the Root Table.
         /// </summary>
-        internal virtual void UnregisterSymbolsFromRoot()
+        internal virtual void DiscardSymbolsFromRoot()
         { }
     }
 }

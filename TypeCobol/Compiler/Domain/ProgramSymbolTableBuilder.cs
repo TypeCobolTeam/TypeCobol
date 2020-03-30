@@ -204,8 +204,8 @@ namespace TypeCobol.Compiler.Domain
                     this.CurrentProgram.Programs.Enter(nestedProgram);
                     nestedProgram.Owner = this.CurrentProgram;
                     this.CurrentProgram = nestedProgram;
-                    //Add it into the root table
-                    this.MyRoot.Register(nestedProgram);
+                    //Store it into the root table
+                    this.MyRoot.Store(nestedProgram);
                 }
                 else
                 {
@@ -425,8 +425,8 @@ namespace TypeCobol.Compiler.Domain
             funDecl.SemanticData = funSym;
             //Enter the function in the current scope
             this.CurrentScope.Functions.Enter(funSym);
-            //Add it into the root table
-            this.MyRoot.Register(funSym);
+            //Store it into the root table
+            this.MyRoot.Store(funSym);
             //Its owner is the current scope.
             funSym.Owner = this.CurrentScope;
             //What about function visibility.
@@ -889,8 +889,8 @@ namespace TypeCobol.Compiler.Domain
                 {
                     tdSym.Owner = currentDomain.Owner;
                     ((ProgramSymbol) currentDomain.Owner).Types.Enter(tdSym);
-                    //Add the type to the root table
-                    this.MyRoot.Register(tdSym);
+                    //Store the type into the root table
+                    this.MyRoot.Store(tdSym);
                 }
                 else
                 {//Declaration of a TypeDef out of a Program or a Function 

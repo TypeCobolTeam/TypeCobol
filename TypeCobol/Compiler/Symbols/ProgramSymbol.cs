@@ -151,27 +151,27 @@ namespace TypeCobol.Compiler.Symbols
             }
         }
 
-        internal override void UnregisterSymbolsFromRoot()
+        internal override void DiscardSymbolsFromRoot()
         {
             var root = TopParent(Kinds.Root) as RootSymbolTable;
             System.Diagnostics.Debug.Assert(root != null);
 
-            //Unregister all types, variables, functions and nested programs from root
+            //Discard all types, variables, functions and nested programs from root
             foreach (var type in Types)
             {
-                root.Unregister(type);
+                root.Discard(type);
             }
             foreach (var variable in _variables)
             {
-                root.Unregister(variable);
+                root.Discard(variable);
             }
             foreach (var function in Functions)
             {
-                root.Unregister(function);
+                root.Discard(function);
             }
             foreach (var nestedProgram in Programs)
             {
-                root.Unregister(nestedProgram);
+                root.Discard(nestedProgram);
             }
         }
 
@@ -184,9 +184,9 @@ namespace TypeCobol.Compiler.Symbols
         {
             System.Diagnostics.Debug.Assert(variable != null);
 
-            //First register it in the root table.
+            //First store it in the root table.
             Symbol root = TopParent(Kinds.Root);
-            ((RootSymbolTable)root)?.Register(variable);
+            ((RootSymbolTable)root)?.Store(variable);
             _variables.Add(variable);
         }
 
