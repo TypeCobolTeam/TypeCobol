@@ -422,11 +422,34 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             DataDescriptionEntry dataDescriptionEntry = dataDescription.CodeElement;
 
-            var levelNumber = dataDescriptionEntry.LevelNumber;
             //Check if the DataDescription is an empty group
-            if (levelNumber != null && dataDescription.IsDataDescriptionGroup && dataDescription.ChildrenCount == 0)
+            if (dataDescriptionEntry.LevelNumber != null && dataDescription.IsDataDescriptionGroup && dataDescription.ChildrenCount == 0)
             {
-                DiagnosticUtils.AddError(dataDescription, "A group item cannot be empty.", dataDescriptionEntry);
+                //Get all sibling nodes
+                var siblingNodes = dataDescription.Parent.Children.ToList();
+                //Get current node index
+                var nodeIndex = siblingNodes.IndexOf(dataDescription);
+
+                //Node is followed by at least one other node
+                if (siblingNodes.Count > nodeIndex + 1)
+                {
+                    //Get immediately following node
+                    var nextSibling = siblingNodes.ToArray()[nodeIndex + 1];
+                    //Check if next node is inside a copy
+                    if (nextSibling.IsInsideCopy())
+                    {
+                        DiagnosticUtils.AddError(dataDescription, $"Copy declaration cannot use level {dataDescriptionEntry.LevelNumber} because a level {((DataDescription)nextSibling).CodeElement.LevelNumber} already exists in copy.", dataDescriptionEntry);
+                    }
+                    else
+                    {
+                        DiagnosticUtils.AddError(dataDescription, "A group item cannot be empty.", dataDescriptionEntry);
+                    }
+                }
+                //Last node so this is an empty group item
+                else
+                {
+                    DiagnosticUtils.AddError(dataDescription, "A group item cannot be empty.", dataDescriptionEntry);
+                }
             }
 
             return true;
