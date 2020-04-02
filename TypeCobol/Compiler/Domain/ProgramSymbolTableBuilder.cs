@@ -61,18 +61,10 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// The Current Program symbol being built as a Scope
+        /// The Current ProgramSymbol being built as a Scope.
+        /// It is either a Program or a Function.
         /// </summary>
-        private ProgramSymbol CurrentProgram
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// The Current scope
-        /// </summary>
-        private ScopeSymbol CurrentScope
+        private ProgramSymbol CurrentScope
         {
             get;
             set;
@@ -180,30 +172,30 @@ namespace TypeCobol.Compiler.Domain
             System.Diagnostics.Debug.Assert(CurrentNode != null);
             System.Diagnostics.Debug.Assert(CurrentNode.CodeElement == programIdentification);
             bool bDuplicate = false;
-            if (this.CurrentProgram == null)
+            if (this.CurrentScope == null)
             {//This is the main program or a stacked program with no parent.
                 var prg = this.MyRoot.Programs.Lookup(programIdentification.ProgramName.Name);
                 if (prg != null)
                 {//Duplicate Program
                     bDuplicate = true;
                 }
-                this.CurrentProgram = this.MyRoot.EnterProgram(programIdentification.ProgramName.Name);
+                this.CurrentScope = this.MyRoot.EnterProgram(programIdentification.ProgramName.Name);
                 //Add the new Stacked program.
-                Programs.Add(CurrentProgram);
+                Programs.Add(CurrentScope);
             }
             else
             {//Nested program.
                 System.Diagnostics.Debug.Assert(CurrentNode.Parent != null);
                 System.Diagnostics.Debug.Assert(CurrentNode.Parent.CodeElement != null);
                 System.Diagnostics.Debug.Assert(CurrentNode.Parent.CodeElement.Type == CodeElementType.ProgramIdentification);
-                var prgEntry = this.CurrentProgram.Programs.Lookup(programIdentification.ProgramName.Name);
+                var prgEntry = this.CurrentScope.Programs.Lookup(programIdentification.ProgramName.Name);
                 if (prgEntry == null)
                 {
                     ProgramSymbol nestedProgram = new ProgramSymbol(programIdentification.ProgramName.Name);
                     //Reenter the program as nested here and change the parent.
-                    this.CurrentProgram.Programs.Enter(nestedProgram);
-                    nestedProgram.Owner = this.CurrentProgram;
-                    this.CurrentProgram = nestedProgram;
+                    this.CurrentScope.Programs.Enter(nestedProgram);
+                    nestedProgram.Owner = this.CurrentScope;
+                    this.CurrentScope = nestedProgram;
                     //Store it into the root table
                     this.MyRoot.Store(nestedProgram);
                 }
@@ -223,14 +215,12 @@ namespace TypeCobol.Compiler.Domain
                 Diagnostics.Add(d);
             }
             //The Program Type
-            if (this.CurrentProgram.Type == null)
+            if (this.CurrentScope.Type == null)
             {
-                this.CurrentProgram.Type = new ProgramType(this.CurrentProgram);
+                this.CurrentScope.Type = new ProgramType(this.CurrentScope);
             }
             //Semantic data on the node
-            CurrentNode.SemanticData = this.CurrentProgram;
-            //Current scope is the current program.
-            this.CurrentScope = this.CurrentProgram;
+            CurrentNode.SemanticData = this.CurrentScope;
         }
 
         public override void EndCobolProgram(TypeCobol.Compiler.CodeElements.ProgramEnd end)
@@ -242,7 +232,7 @@ namespace TypeCobol.Compiler.Domain
             //------------------------------------------------------------------------------------------------------------
 
             //For a stacked program the Parent is null and not for a nested program.
-            this.CurrentProgram = (ProgramSymbol) LastExitedNode.Parent?.SemanticData;
+            this.CurrentScope = (ProgramSymbol) LastExitedNode.Parent?.SemanticData;
         }
 
         public override void StartDataDivision(DataDivisionHeader header)
@@ -324,7 +314,7 @@ namespace TypeCobol.Compiler.Domain
         private VariableSymbol ResolveUsingParameter(CallTargetParameter p)
         {
             string pname = p.StorageArea.SymbolReference.Name;
-            var pvar = this.CurrentProgram.LinkageData.Lookup(pname);
+            var pvar = this.CurrentScope.LinkageData.Lookup(pname);
             if (pvar != null)
             {
                 if (p.SharingMode == null)
@@ -369,10 +359,10 @@ namespace TypeCobol.Compiler.Domain
         /// <param name="header"></param>
         public override void StartProcedureDivision(ProcedureDivisionHeader header)
         {
-            System.Diagnostics.Debug.Assert(CurrentProgram != null);
-            System.Diagnostics.Debug.Assert(CurrentProgram.Type != null);
-            System.Diagnostics.Debug.Assert(CurrentProgram.Type.Tag == Type.Tags.Program);
-            if (CurrentProgram.Type != null)
+            System.Diagnostics.Debug.Assert(CurrentScope != null);
+            System.Diagnostics.Debug.Assert(CurrentScope.Type != null);
+            System.Diagnostics.Debug.Assert(CurrentScope.Type.Tag == Type.Tags.Program);
+            if (CurrentScope.Type != null)
             {
                 LastDataDefinitionSymbol = null;
                 List<VariableSymbol> usings = new List<VariableSymbol>();
@@ -395,7 +385,7 @@ namespace TypeCobol.Compiler.Domain
                     returnVar = ResolveUsingParameter(retParam);
                 }
 
-                ProgramType prgType = (ProgramType) CurrentProgram.Type;
+                ProgramType prgType = (ProgramType) CurrentScope.Type;
                 prgType.Usings = usings;
                 prgType.ReturnVariable = returnVar;
             }
@@ -432,8 +422,7 @@ namespace TypeCobol.Compiler.Domain
             //What about function visibility.
             SetSymbolAccessModifer(funSym, header.Visibility);
             //The current scope is now the function.
-            this.CurrentScope = funSym;            
-            CurrentProgram = funSym;
+            this.CurrentScope = funSym;
             LastFunctionDeclaration = funDecl;
         }
 
@@ -474,9 +463,9 @@ namespace TypeCobol.Compiler.Domain
 
         public override void EndFunctionDeclaration(FunctionDeclarationEnd end)
         {            
-            System.Diagnostics.Debug.Assert(this.CurrentScope != null && this.CurrentScope is FunctionSymbol && CurrentScope == CurrentProgram);
+            System.Diagnostics.Debug.Assert(CurrentScope is FunctionSymbol);
             FunctionDeclaration funDecl = LastFunctionDeclaration;
-            FunctionSymbol funSym = (FunctionSymbol)CurrentProgram;
+            FunctionSymbol funSym = (FunctionSymbol) CurrentScope;
 
             //Collect Function parameters.
             ParametersProfileNode funcProfile = funDecl.Profile;
@@ -519,8 +508,7 @@ namespace TypeCobol.Compiler.Domain
             _functionDeclStack.Pop();
             //Also Pop Scopes
             System.Diagnostics.Debug.Assert(funSym.Owner is ProgramSymbol);
-            CurrentScope = (ScopeSymbol)funSym.Owner;
-            CurrentProgram = (ProgramSymbol)funSym.Owner;
+            CurrentScope = (ProgramSymbol) funSym.Owner;
         }
 
         /// <summary>
@@ -682,7 +670,7 @@ namespace TypeCobol.Compiler.Domain
                 sym.Type = type;
                 DecorateSymbol(dataDef, sym, currentDomain);
                 if (typedef == null)
-                    CurrentProgram.Add(sym);
+                    CurrentScope.Add(sym);
             }
             return sym;
         }
@@ -779,7 +767,7 @@ namespace TypeCobol.Compiler.Domain
 
                 DecorateSymbol(dataDef, sym, currentDomain);
                 if (typedef == null)
-                    CurrentProgram.Add(sym);
+                    CurrentScope.Add(sym);
 
                 //We build the GroupType fields
                 foreach (var child in dataDef.Children)
@@ -960,15 +948,15 @@ namespace TypeCobol.Compiler.Domain
             VariableTypeSymbol varTypeSym = new VariableTypeSymbol(dataDef.Name, paths);
             DecorateSymbol(dataDef, varTypeSym, currentDomain);
             if (typedef == null)
-                CurrentProgram.Add(varTypeSym);
+                CurrentScope.Add(varTypeSym);
 
             //If we have created a VariableTypeSymbol Symbol instance then sure the underlying Program should be completed from the Top Program.
             //This can be an optimization to avoid pur Cobol85 program to be completed, they don't have TYPEDEF.
-            if (!CurrentProgram.HasFlag(Symbol.Flags.NeedTypeCompletion))
+            if (!CurrentScope.HasFlag(Symbol.Flags.NeedTypeCompletion))
             {
-                CurrentProgram.SetFlag(Symbol.Flags.NeedTypeCompletion, true);
-                ProgramSymbol toProgram = (ProgramSymbol)CurrentProgram.TopParent(Symbol.Kinds.Program);
-                if (toProgram != CurrentProgram)
+                CurrentScope.SetFlag(Symbol.Flags.NeedTypeCompletion, true);
+                ProgramSymbol toProgram = (ProgramSymbol)CurrentScope.TopParent(Symbol.Kinds.Program);
+                if (toProgram != CurrentScope)
                     toProgram.SetFlag(Symbol.Flags.NeedTypeCompletion, true);
             }
             return varTypeSym;
@@ -988,7 +976,7 @@ namespace TypeCobol.Compiler.Domain
             sym.Type = BuiltinTypes.BooleanType;
             DecorateSymbol(dataDef, sym, currentDomain);
             if (typedef == null)
-                CurrentProgram.Add(sym);
+                CurrentScope.Add(sym);
 
             return sym;
         }
@@ -1090,7 +1078,7 @@ namespace TypeCobol.Compiler.Domain
             IndexSymbol sym = new IndexSymbol(dataDef.Name);
             DecorateSymbol(dataDef, sym, currentDomain);
             if (typedef == null)
-                CurrentProgram.Add(sym);
+                CurrentScope.Add(sym);
             return sym;
         }
 
@@ -1102,7 +1090,7 @@ namespace TypeCobol.Compiler.Domain
         /// <returns>The Renamed variable resolved if any, null otherwise</returns>
         private VariableSymbol ResolveRenamedVariable(SymbolReference renamed, Domain<VariableSymbol> currentDomain)
         {
-            Container<VariableSymbol>.Entry candidateRenamed = CurrentProgram.ResolveReference(renamed, true);
+            Container<VariableSymbol>.Entry candidateRenamed = CurrentScope.ResolveReference(renamed, true);
             if (candidateRenamed == null || candidateRenamed.Count == 0)
             {
                 Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
@@ -1303,7 +1291,7 @@ namespace TypeCobol.Compiler.Domain
 
             DecorateSymbol(dataDef, sym, currentDomain);
             if (typedef == null)
-                CurrentProgram.Add(sym);
+                CurrentScope.Add(sym);
 
             return sym;
         }
@@ -1541,11 +1529,9 @@ namespace TypeCobol.Compiler.Domain
             System.Diagnostics.Debug.Assert(dataDefSym != null);
             System.Diagnostics.Debug.Assert(CurrentScope != null);
             System.Diagnostics.Debug.Assert(CurrentDataDivisionSection != null);
-            //We must be in ProgramScope
-            System.Diagnostics.Debug.Assert(CurrentScope is ProgramSymbol);
 
             if (dataDefSym.Owner == null) //Because Symbols as TYPEDEF already have their parent.
-                dataDefSym.Owner = CurrentProgram;
+                dataDefSym.Owner = CurrentScope;
 
             if (dataDefSym.Kind != Symbol.Kinds.Typedef) //Typedef are already entered at creation time.
             {
