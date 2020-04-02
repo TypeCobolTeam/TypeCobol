@@ -77,7 +77,7 @@ namespace TypeCobol.Compiler.Domain.Validator
                     case Tags.Group:
                     {//Validate each Symbol in the Group
                         GroupType recType = (GroupType) s.Type;
-                        foreach (var field in recType.Scope)
+                        foreach (var field in recType.Fields)
                         {
                             if (!field.Accept(this, null))
                                 result = false;
@@ -95,7 +95,7 @@ namespace TypeCobol.Compiler.Domain.Validator
                     this.Type = new RenamesType(_renamesSymbol, _containerType, _from, _to);
                 }
 
-                this.Type.Scope.Enter((VariableSymbol)s);
+                this.Type.Fields.Enter((VariableSymbol)s);
             }
             return result;
         }

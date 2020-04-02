@@ -46,7 +46,7 @@ namespace TypeCobol.Compiler.Nodes {
         protected abstract CodeElement InternalCodeElement {  get;}
 
         /// <summary>
-        /// The Semantic data of this Code Element, usually type information.
+        /// The Semantic data of this Node, usually type information.
         /// This is a Weak reference because the data can be hold elsewhere, and it 
         /// can be garbage collected at any moment.
         /// </summary>
@@ -56,13 +56,10 @@ namespace TypeCobol.Compiler.Nodes {
             get => _mySemanticData;
             set
             {
-                lock (this)
+                _mySemanticData = value;
+                if (value != null && value.SemanticKind == SemanticKinds.Symbol)
                 {
-                    _mySemanticData = value;
-                    if (value != null && value.SemanticKind == SemanticKinds.Symbol)
-                    {
-                        ((Symbol) value).TargetNode = this;
-                    }
+                    ((Symbol)value).TargetNode = this;
                 }
             }
         }

@@ -25,27 +25,6 @@ namespace TypeCobol.LanguageServer.Utilities
                 return System.Console.Out.FormatProvider;
             }
         }
-        /// <summary>
-        /// The NewLine sequence to use.
-        /// </summary>
-        private String MyNewLine = System.Console.Out.NewLine;
-        public override string NewLine
-        {
-            get
-            {
-                lock(GetType())
-                {
-                    return MyNewLine;
-                }
-            }
-            set
-            {
-                lock (GetType())
-                {
-                    MyNewLine = value;
-                }
-            }
-        }
         public override void Flush()
         {
             Debug.Flush();            
@@ -141,7 +120,7 @@ namespace TypeCobol.LanguageServer.Utilities
         }
         public override void WriteLine()
         {
-            Debug.WriteLine(MyNewLine);
+            Debug.WriteLine(NewLine);
         }
         public override void WriteLine(bool value)
         {
@@ -214,7 +193,7 @@ namespace TypeCobol.LanguageServer.Utilities
         }
         public override Task WriteLineAsync()
         {
-            return new Task(() => Debug.Write(MyNewLine));
+            return new Task(() => Debug.Write(NewLine));
         }
         public override Task WriteLineAsync(char value)
         {
