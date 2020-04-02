@@ -385,11 +385,11 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="kinds">The Kinds to look for</param>
         /// <returns>The Nearest Symbol</returns>
-        public Symbol NearestKind(params Symbol.Kinds[] kinds)
+        public Symbol NearestParent(params Symbol.Kinds[] kinds)
         {
             System.Diagnostics.Debug.Assert(kinds != null);
             System.Diagnostics.Debug.Assert(kinds.Length > 0);
-            return kinds.Contains(this.Kind) ? this : Owner?.NearestKind(kinds);
+            return kinds.Contains(this.Kind) ? this : Owner?.NearestParent(kinds);
         }
 
         /// <summary>

@@ -37,7 +37,7 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         private void LinkTypedef()
         {
-            var declaringProgram = (ProgramSymbol) NearestKind(Kinds.Program, Kinds.Function);
+            var declaringProgram = (ProgramSymbol) NearestParent(Kinds.Program, Kinds.Function);
             if (declaringProgram == null)
             {
                 //variable has no owner yet

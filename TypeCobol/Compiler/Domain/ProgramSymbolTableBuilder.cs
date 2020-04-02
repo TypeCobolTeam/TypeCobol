@@ -845,7 +845,7 @@ namespace TypeCobol.Compiler.Domain
             //Find the declaring program of function scope.
             DataTypeDescriptionEntry dtde = (DataTypeDescriptionEntry)dataDef.CodeElement;
 
-            ProgramSymbol programScope = (ProgramSymbol)CurrentScope.NearestKind(Symbol.Kinds.Program, Symbol.Kinds.Function);
+            ProgramSymbol programScope = (ProgramSymbol) CurrentScope.NearestParent(Symbol.Kinds.Program, Symbol.Kinds.Function);
             System.Diagnostics.Debug.Assert(programScope != null);
 
             //First lookup in the current scope if the typedef symbol exists.
