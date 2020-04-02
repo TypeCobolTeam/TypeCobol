@@ -1,13 +1,13 @@
 ﻿--- Diagnostics ---
 Line 25[12,70] <37, Warning, General> - Warning: An index named 'MyIdxsdfsdfzezerzerzerzerzerz' is already defined.
 Line 26[12,70] <37, Warning, General> - Warning: An index named 'MyIdxsdfsdfzezerzerzerzerzerz' is already defined.
-Line 60[12,14] <27, Error, Syntax> - Syntax error : Index can not be use with OF or IN qualifiers Account1.Holders.Idx OffendingSymbol=[12,14:Idx]<UserDefinedWord>
-Line 63[12,17] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol BadIdx 
+Line 65[12,14] <27, Error, Syntax> - Syntax error : Index can not be use with OF or IN qualifiers Account1.Holders.Idx OffendingSymbol=[12,14:Idx]<UserDefinedWord>
+Line 68[12,17] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol BadIdx 
 Symbols found: IndexTesting::Bad::BadType::BadVar::BadIdx | IndexTesting::Bad::BadType::BadVar2::BadIdx OffendingSymbol=[12,17:BadIdx]<UserDefinedWord>
-Line 65[19,23] <27, Error, Syntax> - Syntax error : Index 'MyIdx' inside a COPY cannot be use with qualified symbol OffendingSymbol=[19,23:MyIdx]<UserDefinedWord>
-Line 67[18,46] <27, Error, Syntax> - Syntax error : Index name 'MyIdx3azeazeazeazeazeazeazeaz' is over 22 characters. OffendingSymbol=[18,46:MyIdx3azeazeazeazeazeazeazeaz]<UserDefinedWord>
-Line 70[8,41] <27, Error, Syntax> - Syntax error : [Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.
-Line 72[8,49] <27, Error, Syntax> - Syntax error : Increment only support integer values, numeric variables and arithmetic expressions
+Line 70[19,23] <27, Error, Syntax> - Syntax error : Index 'MyIdx' inside a COPY cannot be use with qualified symbol OffendingSymbol=[19,23:MyIdx]<UserDefinedWord>
+Line 72[18,46] <27, Error, Syntax> - Syntax error : Index name 'MyIdx3azeazeazeazeazeazeazeaz' is over 22 characters. OffendingSymbol=[18,46:MyIdx3azeazeazeazeazeazeazeaz]<UserDefinedWord>
+Line 75[8,41] <27, Error, Syntax> - Syntax error : [Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.
+Line 77[8,49] <27, Error, Syntax> - Syntax error : Increment only support integer values, numeric variables and arithmetic expressions
 
 --- Program ---
 PROGRAM: IndexTesting common:False initial:False recursive:False
@@ -38,6 +38,9 @@ PROGRAM: IndexTesting common:False initial:False recursive:False
   strVar:Alphanumeric
   ThisIndexNameIsClearlyToLong:Numeric
   ToLingIndx:Alphanumeric
+  W-VAR:Alphanumeric
+  W003-REQUESTS:Alphanumeric
+  W003-INDX:Numeric
 -- TYPES -------
   MyIdxType:MyIdxType
   Account:Account

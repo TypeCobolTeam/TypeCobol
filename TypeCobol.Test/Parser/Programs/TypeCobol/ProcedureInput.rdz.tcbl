@@ -54,6 +54,19 @@
            goback.
        end-declare.
       
+      %<<<
+           Description InvalidParamProc.
+           @Params:
+               - var1 pic X
+      %>>>
+       declare InvalidParamProc private
+              input var1 pic X occurs 5.
+       end-declare.
+      
+       declare InvalidParamProc2 private
+               input var1 pic X occurs 5.
+       end-declare.
+      
        Traitement.
            call IsPersonValid
                 INPUT myPerson, myName
