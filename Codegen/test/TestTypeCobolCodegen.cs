@@ -888,7 +888,8 @@ namespace TypeCobol.Codegen {
         [TestProperty("Time", "fast")]
         public void GlobalStorage_TypedefWithIndexedArray()
         {
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Global_Storage", "GlobalStorageWithTypedefAndIndex") + ".rdz.tcbl", false, "TestTypeCobolVersion");
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Global_Storage", "GlobalStorageWithTypedefAndIndex") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
         }
 
         [TestMethod]
