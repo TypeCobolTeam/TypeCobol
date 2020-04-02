@@ -1,0 +1,3 @@
+ReturnCode=Success_
+No error in "input\Main.tcbl".
+No error in "input\Secondary.tcbl".

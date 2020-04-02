@@ -1,0 +1,16 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Secondary.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 TypeInSecondary TYPEDEF PUBLIC.
+          05 VarSecondary TYPE Main::TypeInMain.
+       01 Result TYPE TypeInSecondary.
+       PROCEDURE DIVISION.
+           DISPLAY VarIntrinsic1 OF VarIntrinsic2
+                   OF VarDependency1
+                   OF VarDependency2
+                   OF VarMain
+                   OF VarSecondary
+                   OF Result
+           .
+       END PROGRAM Secondary.

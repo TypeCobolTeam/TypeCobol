@@ -275,6 +275,15 @@ namespace CLI.Test
             CLITestHelper.Test("mass_generation_dependent_programs_1", ReturnCode.Success);
             CLITestHelper.Test("mass_generation_dependent_programs_2", ReturnCode.ParsingDiagnostics);
         }
+
+        /// <summary>
+        /// Type resolution test with dependencies and intrinsics files.
+        /// </summary>
+        [TestMethod]
+        public void ComplexTypeLinking()
+        {
+            CLITestHelper.Test("complex_type_linking", ReturnCode.Success);
+        }
     }
 
     public class CLITestHelper {

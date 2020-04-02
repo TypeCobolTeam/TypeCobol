@@ -1,0 +1,12 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Intrinsics.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 TypeInIntrinsic1 TYPEDEF PUBLIC.
+          05 VarIntrinsic1 PIC X.
+       01 TypeInIntrinsic2 TYPEDEF PUBLIC.
+          05 VarIntrinsic2 TYPE TypeInIntrinsic1.
+       PROCEDURE DIVISION.
+           GOBACK
+           .
+       END PROGRAM Intrinsics.

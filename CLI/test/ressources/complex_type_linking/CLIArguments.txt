@@ -1,0 +1,1 @@
+﻿-i input\Main.tcbl -i input\Secondary.tcbl -o output\Main.generated.cbl -o output\Secondary.generated.cbl -d output\errors.txt -dp input\Dependencies\*.tcbl -y input\Intrinsics\*.tcbl
