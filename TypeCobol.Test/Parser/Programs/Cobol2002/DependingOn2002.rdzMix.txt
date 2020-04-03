@@ -70,27 +70,27 @@
 
       *KO, trying to use a variable declared outside typedef
             05 tableVar PIC X(1) occurs 5 
-Line 73[39,49] <27, Error, Syntax> - Syntax error : Symbol MyTypedVar2.TypeCounter is not referenced
+Line 73[39,49] <30, Error, Semantics> - Semantic error: Symbol MyTypedVar2.TypeCounter is not referenced
             depending on MyTypedVar2::TypeCounter.
 
       *KO, trying to use a variable declared outside typedef
             05 tableVar PIC X(1) occurs 5 
-Line 77[43,49] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.Counter is not referenced
+Line 77[43,49] <30, Error, Semantics> - Semantic error: Symbol DenpendingGroup.Counter is not referenced
             depending on DenpendingGroup::Counter.
 
       *KO, trying to use a variable declared outside typedef
             05 tableVar PIC X(1) occurs 5 
-Line 81[55,61] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.VarCounter.Counter is not referenced
+Line 81[55,61] <30, Error, Semantics> - Semantic error: Symbol DenpendingGroup.VarCounter.Counter is not referenced
             depending on DenpendingGroup::VarCounter::Counter.
 
       *KO, trying to use a variable declared outside typedef
             05 tableVar PIC X(1) occurs 5 
-Line 85[43,53] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.TypeCounter is not referenced
+Line 85[43,53] <30, Error, Semantics> - Semantic error: Symbol DenpendingGroup.TypeCounter is not referenced
             depending on DenpendingGroup::TypeCounter.
 
       *KO, trying to use an ambigous local var
             05 tableVar PIC X(1) occurs 5 
-Line 89[26,42] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DuplicatedCounter 
+Line 89[26,42] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol DuplicatedCounter 
 Symbols found: DependOnPgm::DependType::ambigousCounter::DuplicatedCounterType::DuplicatedCounter | DependOnPgm::DependType::ambigousCounter2::DuplicatedCounterType::DuplicatedCounter
             depending on DuplicatedCounter.
 

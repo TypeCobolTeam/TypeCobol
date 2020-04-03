@@ -1,8 +1,8 @@
 --- Diagnostics ---
-Line 26[41,52] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol HolderNumber 
+Line 26[41,52] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol HolderNumber 
 Symbols found: VariableSeeking::Account2::HolderNumber | VariableSeeking::Account2::HolderNumber OffendingSymbol=[41,52:HolderNumber]<UserDefinedWord>
-Line 33[51,62] <27, Error, Syntax> - Syntax error : Symbol Account1.HolderNumber is not referenced OffendingSymbol=[51,62:HolderNumber]<UserDefinedWord>
-Line 72[24,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol bla 
+Line 33[51,62] <30, Error, Semantics> - Semantic error: Symbol Account1.HolderNumber is not referenced OffendingSymbol=[51,62:HolderNumber]<UserDefinedWord>
+Line 72[24,26] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol bla 
 Symbols found: VariableSeeking::MyVar1::MySimpleType::bla | VariableSeeking::MyVar2::MySimpleType::bla | VariableSeeking::MySuperVar1::MySuperType::MySubType::bla | VariableSeeking::MySuperVar2::MySuperType::MySubType::bla OffendingSymbol=[24,26:bla]<UserDefinedWord>
 
 --- Program ---

@@ -479,20 +479,25 @@ namespace TypeCobol.Codegen.Nodes
         /// <param name="indexes">The Array of Index Symbol Definition</param>
         /// <param name="ownerDefinition">The Owner of the definition that contains the INDEXED BY clause</param>
         /// <returns>The Dictionary</returns>
-        private static Dictionary<Compiler.Scanner.Token, string> BuiltIndexMap(Node rootNode, List<string> rootProcedures, List<Tuple<string, string>> rootVariableName, SymbolDefinition[] indexes, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition)
+        private static Dictionary<Compiler.Scanner.Token, string> BuildIndexMap(Node rootNode, List<string> rootProcedures, List<Tuple<string, string>> rootVariableName, SymbolDefinition[] indexes, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition)
         {
             Dictionary<Compiler.Scanner.Token, string> map = new Dictionary<Compiler.Scanner.Token, string>(indexes.Length);
             List<string> pathProcedures;
             List<string> pathVariables;
             GeneratorHelper.ComputeProperPaths(ownerDefinition, out pathProcedures, out pathVariables);
             List<string> list_items = new List<string>();
-            //list_items.AddRange(pathProcedures);
 
             //Add root procedures
-
-            for (int j = rootProcedures.Count - 1; j >= 0; j--)
+            if (rootProcedures.Count == 0)
             {
-                list_items.Add(rootProcedures[j]);
+                list_items.AddRange(pathProcedures);
+            }
+            else
+            {
+                for (int j = rootProcedures.Count - 1; j >= 0; j--)
+                {
+                    list_items.Add(rootProcedures[j]);
+                }
             }
 
             //Add Root variables
@@ -600,7 +605,7 @@ namespace TypeCobol.Codegen.Nodes
             {
                 bHasIndexes = true;
                 //So Children of the owner definition contains all indexes
-                indexesMap = BuiltIndexMap(rootNode, rootProcedures, rootVariableName, data.Indexes, ownerDefinition);
+                indexesMap = BuildIndexMap(rootNode, rootProcedures, rootVariableName, data.Indexes, ownerDefinition);
             }
         }
 

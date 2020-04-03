@@ -279,9 +279,6 @@ namespace TypeCobol.Codegen.Nodes {
         {
             var paramEntry = parameter.CodeElement as ParameterDescriptionEntry;
             var generated = new ParameterEntry(paramEntry, node.SymbolTable, parameter);
-            if (paramEntry.DataConditions != null) {
-                foreach (var child in paramEntry.DataConditions) generated.Add(new DataCondition(child));
-            }
 
             var parameterNode = node.Profile.Parameters.FirstOrDefault(x => x.Name == paramEntry.Name);
             if (parameterNode != null)

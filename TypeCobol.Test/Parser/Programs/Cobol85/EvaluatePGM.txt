@@ -1,15 +1,15 @@
 --- Diagnostics ---
 Line 1[1,32] <37, Warning, General> - Warning: "END PROGRAM" is missing.
-Line 12[10,15] <27, Error, Syntax> - Syntax error : Symbol VALUE1 is not referenced OffendingSymbol=[10,15:VALUE1]<UserDefinedWord>
+Line 12[10,15] <30, Error, Semantics> - Semantic error: Symbol VALUE1 is not referenced OffendingSymbol=[10,15:VALUE1]<UserDefinedWord>
 Line 12[1,15] <37, Warning, General> - Warning: "when other" is missing
-Line 13[8,8] <27, Error, Syntax> - Syntax error : Symbol A is not referenced OffendingSymbol=[8,8:A]<UserDefinedWord>
-Line 21[10,15] <27, Error, Syntax> - Syntax error : Symbol VALUE2 is not referenced OffendingSymbol=[10,15:VALUE2]<UserDefinedWord>
-Line 22[8,8] <27, Error, Syntax> - Syntax error : Symbol A is not referenced OffendingSymbol=[8,8:A]<UserDefinedWord>
-Line 25[8,8] <27, Error, Syntax> - Syntax error : Symbol B is not referenced OffendingSymbol=[8,8:B]<UserDefinedWord>
-Line 26[8,8] <27, Error, Syntax> - Syntax error : Symbol C is not referenced OffendingSymbol=[8,8:C]<UserDefinedWord>
-Line 39[10,15] <27, Error, Syntax> - Syntax error : Symbol VALUE3 is not referenced OffendingSymbol=[10,15:VALUE3]<UserDefinedWord>
+Line 13[8,8] <30, Error, Semantics> - Semantic error: Symbol A is not referenced OffendingSymbol=[8,8:A]<UserDefinedWord>
+Line 21[10,15] <30, Error, Semantics> - Semantic error: Symbol VALUE2 is not referenced OffendingSymbol=[10,15:VALUE2]<UserDefinedWord>
+Line 22[8,8] <30, Error, Semantics> - Semantic error: Symbol A is not referenced OffendingSymbol=[8,8:A]<UserDefinedWord>
+Line 25[8,8] <30, Error, Semantics> - Semantic error: Symbol B is not referenced OffendingSymbol=[8,8:B]<UserDefinedWord>
+Line 26[8,8] <30, Error, Semantics> - Semantic error: Symbol C is not referenced OffendingSymbol=[8,8:C]<UserDefinedWord>
+Line 39[10,15] <30, Error, Semantics> - Semantic error: Symbol VALUE3 is not referenced OffendingSymbol=[10,15:VALUE3]<UserDefinedWord>
 Line 39[1,15] <37, Warning, General> - Warning: "when other" is missing
-Line 40[8,8] <27, Error, Syntax> - Syntax error : Symbol A is not referenced OffendingSymbol=[8,8:A]<UserDefinedWord>
+Line 40[8,8] <30, Error, Semantics> - Semantic error: Symbol A is not referenced OffendingSymbol=[8,8:A]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: evaluate-semantic common:False initial:False recursive:False

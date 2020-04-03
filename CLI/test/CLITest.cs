@@ -294,6 +294,16 @@ namespace CLI.Test
             CLITestHelper.Test("mass_generation_dependent_programs_1", ReturnCode.Success);
             CLITestHelper.Test("mass_generation_dependent_programs_2", ReturnCode.ParsingDiagnostics);
         }
+
+        /// <summary>
+        /// Test override of UTF-8 encoding for RDZ format.
+        /// </summary>
+        [TestMethod]
+        public void TestRDZFormatInputEncodings()
+        {
+            CLITestHelper.Test("rdzformat_inputencoding_wrong", ReturnCode.Success);
+            CLITestHelper.Test("rdzformat_inputencoding_good", ReturnCode.Success);
+        }
     }
 
     public class CLITestHelper {

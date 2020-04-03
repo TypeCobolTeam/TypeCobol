@@ -1,9 +1,9 @@
 --- Diagnostics ---
-Line 33[11,24] <27, Error, Syntax> - Syntax error : Symbol MyNotGlobalVar is not referenced OffendingSymbol=[11,24:MyNotGlobalVar]<UserDefinedWord>
-Line 40[11,26] <27, Error, Syntax> - Syntax error : Symbol MyNotGlobalGroup is not referenced OffendingSymbol=[11,26:MyNotGlobalGroup]<UserDefinedWord>
-Line 41[11,15] <27, Error, Syntax> - Syntax error : Symbol MyNotGlobalGroup.MNGG1 is not referenced OffendingSymbol=[11,15:MNGG1]<UserDefinedWord>
-Line 42[11,15] <27, Error, Syntax> - Syntax error : Symbol MNGG2 is not referenced OffendingSymbol=[11,15:MNGG2]<UserDefinedWord>
-Line 43[11,18] <27, Error, Syntax> - Syntax error : Symbol MNGGDate is not referenced OffendingSymbol=[11,18:MNGGDate]<UserDefinedWord>
+Line 33[11,24] <30, Error, Semantics> - Semantic error: Symbol MyNotGlobalVar is not referenced OffendingSymbol=[11,24:MyNotGlobalVar]<UserDefinedWord>
+Line 40[11,26] <30, Error, Semantics> - Semantic error: Symbol MyNotGlobalGroup is not referenced OffendingSymbol=[11,26:MyNotGlobalGroup]<UserDefinedWord>
+Line 41[11,15] <30, Error, Semantics> - Semantic error: Symbol MyNotGlobalGroup.MNGG1 is not referenced OffendingSymbol=[11,15:MNGG1]<UserDefinedWord>
+Line 42[11,15] <30, Error, Semantics> - Semantic error: Symbol MNGG2 is not referenced OffendingSymbol=[11,15:MNGG2]<UserDefinedWord>
+Line 43[11,18] <30, Error, Semantics> - Semantic error: Symbol MNGGDate is not referenced OffendingSymbol=[11,18:MNGGDate]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: EnclosingPgm common:False initial:False recursive:False

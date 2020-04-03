@@ -1,13 +1,13 @@
 --- Diagnostics ---
 Line 1[1,18] <37, Warning, General> - Warning: "END PROGRAM" is missing.
-Line 89[25,29] <27, Error, Syntax> - Syntax error : Symbol T1-A.T1-B3 is not referenced OffendingSymbol=[25,29:T1-B3]<UserDefinedWord>
-Line 90[17,21] <27, Error, Syntax> - Syntax error : Symbol T1-A.T1-B3 is not referenced OffendingSymbol=[17,21:T1-B3]<UserDefinedWord>
-Line 92[26,29] <27, Error, Syntax> - Syntax error : Symbol T1-B2.T1-A is not referenced OffendingSymbol=[26,29:T1-A]<UserDefinedWord>
-Line 93[17,20] <27, Error, Syntax> - Syntax error : Symbol T1-B2.T1-A is not referenced OffendingSymbol=[17,20:T1-A]<UserDefinedWord>
-Line 102[41,45] <27, Error, Syntax> - Syntax error : Symbol T2-A.T2-B.T2-C.T2-D3 is not referenced OffendingSymbol=[41,45:T2-D3]<UserDefinedWord>
-Line 103[17,21] <27, Error, Syntax> - Syntax error : Symbol T2-A.T2-B.T2-C.T2-D3 is not referenced OffendingSymbol=[17,21:T2-D3]<UserDefinedWord>
-Line 105[42,45] <27, Error, Syntax> - Syntax error : Symbol T2-D2.T2-C.T2-B.T2-A is not referenced OffendingSymbol=[42,45:T2-A]<UserDefinedWord>
-Line 106[17,20] <27, Error, Syntax> - Syntax error : Symbol T2-C2.T2-C.T2-B.T2-A is not referenced OffendingSymbol=[17,20:T2-A]<UserDefinedWord>
+Line 89[25,29] <30, Error, Semantics> - Semantic error: Symbol T1-A.T1-B3 is not referenced OffendingSymbol=[25,29:T1-B3]<UserDefinedWord>
+Line 90[17,21] <30, Error, Semantics> - Semantic error: Symbol T1-A.T1-B3 is not referenced OffendingSymbol=[17,21:T1-B3]<UserDefinedWord>
+Line 92[26,29] <30, Error, Semantics> - Semantic error: Symbol T1-B2.T1-A is not referenced OffendingSymbol=[26,29:T1-A]<UserDefinedWord>
+Line 93[17,20] <30, Error, Semantics> - Semantic error: Symbol T1-B2.T1-A is not referenced OffendingSymbol=[17,20:T1-A]<UserDefinedWord>
+Line 102[41,45] <30, Error, Semantics> - Semantic error: Symbol T2-A.T2-B.T2-C.T2-D3 is not referenced OffendingSymbol=[41,45:T2-D3]<UserDefinedWord>
+Line 103[17,21] <30, Error, Semantics> - Semantic error: Symbol T2-A.T2-B.T2-C.T2-D3 is not referenced OffendingSymbol=[17,21:T2-D3]<UserDefinedWord>
+Line 105[42,45] <30, Error, Semantics> - Semantic error: Symbol T2-D2.T2-C.T2-B.T2-A is not referenced OffendingSymbol=[42,45:T2-A]<UserDefinedWord>
+Line 106[17,20] <30, Error, Semantics> - Semantic error: Symbol T2-C2.T2-C.T2-B.T2-A is not referenced OffendingSymbol=[17,20:T2-A]<UserDefinedWord>
 Line 115[5,61] <37, Warning, General> - Warning: "end-if" is missing
 Line 116[5,61] <37, Warning, General> - Warning: "end-if" is missing
 Line 120[5,61] <37, Warning, General> - Warning: "end-if" is missing
