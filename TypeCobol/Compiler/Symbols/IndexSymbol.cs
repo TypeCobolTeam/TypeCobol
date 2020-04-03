@@ -53,11 +53,11 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// When an IndexSymbol is normalized it IndexedSymbol must changed.
         /// </summary>
-        /// <param name="scope"></param>
-        internal override void NormalizeExpandedSymbol(Scope<VariableSymbol> scope)
+        /// <param name="domain"></param>
+        internal override void NormalizeExpandedSymbol(Domain<VariableSymbol> domain)
         {
-            base.NormalizeExpandedSymbol(scope);
-            Domain<VariableSymbol>.Entry entry = scope.Lookup(Indexed.Name);
+            base.NormalizeExpandedSymbol(domain);
+            Container<VariableSymbol>.Entry entry = domain.Lookup(Indexed.Name);
             System.Diagnostics.Debug.Assert(entry != null);
             System.Diagnostics.Debug.Assert(entry.Count == 1);
             Indexed = entry.Symbol;            
