@@ -151,40 +151,90 @@ namespace TypeCobol.Compiler.Symbols
         public abstract Container<ScopeSymbol>.Entry ResolveScope(RootSymbolTable root, string[] path);
 
         /// <summary>
-        /// Lookup a program.
+        /// Looks for a symbol designated by the given path.
+        /// Searches from this current ScopeSymbol up to rootScope.
         /// </summary>
-        /// <param name="rootScope">The top root scope</param>
-        /// <param name="progName">The program name to be looked up</param>
-        /// <returns></returns>
-        protected Container<ProgramSymbol>.Entry LookupProgram(ScopeSymbol rootScope, string progName, out ScopeSymbol currentScope, out ScopeSymbol stopScope)
+        /// <typeparam name="TSymbol">Type of symbols searched.</typeparam>
+        /// <param name="path">Looking path à la COBOL85 --> in Reverse order</param>
+        /// <param name="rootScope">Top Scope allowed for searching.</param>
+        /// <param name="domainSelector">Delegate to select the correct domain of symbols (i.e. Types, Functions, etc)</param>
+        /// <returns>The symbol entry if found, null otherwise.</returns>
+        private Container<TSymbol>.Entry ReverseResolveSymbol<TSymbol>(string[] path, ScopeSymbol rootScope, Func<ScopeSymbol, Domain<TSymbol>> domainSelector)
+            where TSymbol : Symbol
         {
-            stopScope = rootScope;
-            currentScope = this;
-            Container<ProgramSymbol>.Entry entry = null;
-            while (currentScope != null)
+            System.Diagnostics.Debug.Assert(path != null);
+            System.Diagnostics.Debug.Assert(path.Length > 0);
+            System.Diagnostics.Debug.Assert(path[0] != null);
+            System.Diagnostics.Debug.Assert(rootScope != null);
+            System.Diagnostics.Debug.Assert(domainSelector != null);
+
+            ScopeSymbol currentScope = this;
+            ScopeSymbol stopScope = rootScope;
+
+            //Main loop : we iterate over the part of the path
+            for (int i = path.Length - 1; i >= 0; i--)
             {
-                var programs = currentScope.Programs;
-                if (programs != null)
+                switch (i)
                 {
-                    entry = programs.Lookup(progName);
-                    if (entry != null)
+                    case 0: //We must look for the target Symbol
+                        return Lookup(path[i], domainSelector);
+
+                    case 1: //We must look for a Program declaring the target Symbol
+                        var programSymbolEntry = Lookup(path[i], s => s.Programs);
+                        if (programSymbolEntry != null)
+                        {
+                            System.Diagnostics.Debug.Assert(programSymbolEntry.Count == 1);
+                            //Continue searching for target symbol inside found Program
+                            currentScope = programSymbolEntry.Symbol;
+                            stopScope = currentScope;
+                        }
+                        else
+                        {
+                            //Could not resolve program, abort search.
+                            return null;
+                        }
+                        break;
+
+                    default: //We are looking for a Namepace
+                        //TODO
+                        break;
+                }
+            }
+
+            return null;
+
+            //Secondary loop : we iterate over scopes until we either find the symbol or reach stopScope.
+            Container<T>.Entry Lookup<T>(string name, Func<ScopeSymbol, Domain<T>> getDomain)
+                where T : Symbol
+            {
+                Container<T>.Entry result = null;
+                while (currentScope != null)
+                {
+                    //Search current Scope.
+                    var domain = getDomain(currentScope);
+                    if (domain != null)
                     {
-                        System.Diagnostics.Debug.Assert(entry.Count == 1);
-                        currentScope = entry.Symbol;
-                        stopScope = currentScope;
+                        result = domain.Lookup(name);
+                        if (result != null)
+                        {
+                            stopScope = currentScope;
+                            break;
+                        }
+                    }
+
+                    //The current scope lookup failed, move up to parent Scope (if possible).
+                    if (currentScope.Owner != null && currentScope != stopScope && currentScope.Owner.HasScope)
+                    {
+                        currentScope = currentScope.Owner as ScopeSymbol;
+                    }
+                    else
+                    {
                         break;
                     }
                 }
-                if (currentScope.Owner != null && currentScope != stopScope && currentScope.Owner.HasScope)
-                {
-                    currentScope = currentScope.Owner as ScopeSymbol;
-                }
-                else
-                {
-                    currentScope = null;
-                }
+
+                return result;
             }
-            return entry;
         }
 
         /// <summary>
@@ -195,49 +245,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <returns>The TypedefSymbol if found, null otherwise.</returns>
         public Container<TypedefSymbol>.Entry ReverseResolveType(ScopeSymbol rootScope, string[] path)
         {
-            System.Diagnostics.Debug.Assert(rootScope != null);
-            System.Diagnostics.Debug.Assert(path != null);
-            System.Diagnostics.Debug.Assert(path.Length > 0);
-
-            ScopeSymbol stopScope = rootScope;
-            ScopeSymbol currentScope = this;
-            for (int i = path.Length - 1; i >= 0 && currentScope != null; i--)
-            {
-                switch(i)
-                {
-                    case 0://We must look for a Type
-                        {
-                            ScopeSymbol startScope = currentScope;
-                            while (currentScope != null)
-                            {
-                                var types = currentScope.Types;
-                                Container<TypedefSymbol>.Entry entry = types?.Lookup(path[i]);
-                                if (entry != null)
-                                {
-                                    return entry;
-                                }
-                                if (currentScope.Owner != null && currentScope != stopScope && currentScope.Owner.HasScope)
-                                {
-                                    currentScope = currentScope.Owner as ScopeSymbol;
-                                }
-                                else
-                                {
-                                    currentScope = null;
-                                }
-                            }
-                        }
-                        break;
-                    case 1://We must look for a Program
-                        {
-                            Container<ProgramSymbol>.Entry entry = LookupProgram(stopScope, path[i], out currentScope, out stopScope);
-                        }
-                        break;
-                    default://We are looking for a Namepace
-                        //TODO
-                        break;                        
-                }
-            }
-            return null;
+            return ReverseResolveSymbol(path, rootScope, s => s.Types);
         }
 
         /// <summary>
@@ -248,49 +256,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <returns>The FunctionSymbol instance if found, null otherwise.</returns>
         public Container<FunctionSymbol>.Entry ReverseResolveFunction(ScopeSymbol rootScope, string[] path)
         {
-            System.Diagnostics.Debug.Assert(rootScope != null);
-            System.Diagnostics.Debug.Assert(path != null);
-            System.Diagnostics.Debug.Assert(path.Length > 0);
-
-            ScopeSymbol stopScope = rootScope;
-            ScopeSymbol currentScope = this;
-            for (int i = path.Length - 1; i >= 0 && currentScope != null; i--)
-            {
-                switch (i)
-                {
-                    case 0://We must look for a Function
-                        {
-                            ScopeSymbol startScope = currentScope;
-                            while (currentScope != null)
-                            {
-                                var functions = currentScope.Functions;
-                                Container<FunctionSymbol>.Entry entry = functions?.Lookup(path[i]);
-                                if (entry != null)
-                                {
-                                    return entry;
-                                }
-                                if (currentScope.Owner != null && currentScope != stopScope && currentScope.Owner.HasScope)
-                                {
-                                    currentScope = currentScope.Owner as ScopeSymbol;
-                                }
-                                else
-                                {
-                                    currentScope = null;
-                                }
-                            }
-                        }
-                        break;
-                    case 1://We must look for a Program
-                        {
-                            Container<ProgramSymbol>.Entry entry = LookupProgram(stopScope, path[i], out currentScope, out stopScope);
-                        }
-                        break;
-                    default://We are looking for a Namepace
-                        //TODO
-                        break;
-                }
-            }
-            return null;
+            return ReverseResolveSymbol(path, rootScope, s => s.Functions);
         }
 
         /// <summary>
