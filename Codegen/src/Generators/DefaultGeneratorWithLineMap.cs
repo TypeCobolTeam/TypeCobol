@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler.Source;
-using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Codegen.Generators
 {
@@ -27,11 +23,11 @@ namespace TypeCobol.Codegen.Generators
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="Document"> The compilation document </param>
+        /// <param name="document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
-        /// <param name="skeletons">All skeletons pattern for code generation </param>
-        public DefaultGeneratorWithLineMap(TypeCobol.Compiler.CompilationDocument document, StringBuilder destination, List<Skeleton> skeletons, string typeCobolVersion)
-            : base(document, destination, skeletons, typeCobolVersion)
+        /// <param name="typeCobolVersion">Current version of the TypeCobol parser/codegen</param>
+        public DefaultGeneratorWithLineMap(TypeCobol.Compiler.CompilationDocument document, StringBuilder destination, string typeCobolVersion)
+            : base(document, destination, typeCobolVersion)
         {
             int count = CompilationResults.TokensLines.Count;
             LineMapping = new Tuple<int, int>[count];

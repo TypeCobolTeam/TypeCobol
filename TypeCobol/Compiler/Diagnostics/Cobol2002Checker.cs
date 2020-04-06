@@ -1,14 +1,11 @@
 ﻿using System.Linq;
-using System;
 using System.Collections.Generic;
-using Antlr4.Runtime;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Nodes;
-using Castle.Core.Internal;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics
@@ -48,7 +45,7 @@ namespace TypeCobol.Compiler.Diagnostics
 #if EUROINFO_LEGACY_TYPEDEF
             if (typedef.RestrictionLevel != RestrictionLevel.STRICT)
             {
-                string message = "Custom EI rule : Only TYPEDEF STRICT is allowed.";
+                string message = $"Custom EI rule : Type '{typedef.DataName.Name}' must be marked as STRICT.";
                 DiagnosticUtils.AddError(typedef, message, context.cobol2002TypedefClause());
                 return;
             }
@@ -131,8 +128,7 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             // Add a warning if a parameters field is set inside the formalized comment
-            if (typeDefinition.CodeElement.FormalizedCommentDocumentation != null &&
-                !typeDefinition.CodeElement.FormalizedCommentDocumentation.Parameters.IsNullOrEmpty())
+            if (typeDefinition.CodeElement.FormalizedCommentDocumentation != null && typeDefinition.CodeElement.FormalizedCommentDocumentation.Parameters.Any())
             {
                 var token = typeDefinition.CodeElement.ConsumedTokens
                     .FirstOrDefault(t => t.TokenType == TokenType.FORMALIZED_COMMENTS_PARAMETERS);

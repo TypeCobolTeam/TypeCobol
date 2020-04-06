@@ -438,34 +438,13 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Handle the special case of function parameter with DataConditions.
-        /// These DataConditions must created as child of the current declaration
+        /// Creates a VariableSymbol for the supplied ParameterDescription node.
         /// </summary>
-        /// <param name="parameter">The parameter to be handled</param>
+        /// <param name="parameter">The parameter to be handled.</param>
         private VariableSymbol FunctionParameter2Symbol(ParameterDescription parameter, Domain<VariableSymbol> linkageData)
         {
-            ParameterDescriptionEntry desc = parameter.CodeElement;
-            List<DataCondition> toBeRemoved = null;
-            if (desc.DataConditions != null)
-            {
-                //Create a list of DataConditionEntry to be added as children and then to be removed.
-                //Doing this will make these DatConditions to be perfectly handled.
-                toBeRemoved = new List<DataCondition>();
-                foreach (DataConditionEntry condition in desc.DataConditions)
-                {
-                    DataCondition cond = new DataCondition(condition);
-                    toBeRemoved.Add(cond);
-                }
-                parameter.AddRange(toBeRemoved);
-            }
             VariableSymbol p = DataDefinition2Symbol(parameter, linkageData, null);
-            if (toBeRemoved != null)
-            {
-                foreach (var r in toBeRemoved)
-                {
-                    parameter.Remove(r);
-                }
-            }
+            
             //Enter the symbol in the linkage section domain
             linkageData.Enter(p);
             p.Owner = linkageData.Owner;

@@ -1,16 +1,12 @@
 using System;
-using Antlr4.Runtime;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
-using System.Linq;
-using System.Runtime.InteropServices;
-using Castle.Core.Internal;
-using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Parser.Generated;
 
@@ -119,7 +115,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         message = string.Format("Function not found '{0}' {1}",
                             functionCaller.FunctionCall.FunctionName,
                             parameterList.GetSignature());
-                        DiagnosticUtils.AddError(node, message);
+                        DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
                         return; //Do not continue the function/procedure does not exists
                     }
 
@@ -630,9 +626,12 @@ namespace TypeCobol.Compiler.Diagnostics
             var headerNameURI = new URI(header.Name);
             var functions = functionDeclaration.SymbolTable.GetFunction(headerNameURI, functionDeclaration.Profile);
             if (functions.Count > 1)
-                DiagnosticUtils.AddError(functionDeclaration,
+            {
+                Token nameToken = header.FunctionName.NameLiteral.Token;
+                DiagnosticUtils.AddError(header,
                     "A function \"" + headerNameURI.Head + "\" with the same profile already exists in namespace \"" +
-                    headerNameURI.Tail + "\".");
+                    headerNameURI.Tail + "\".", nameToken, null, MessageCode.SemanticTCErrorInParser);
+            }
 
 
             //// Set a Warning if the formalized comment parameter is unknown or if the function parameter have no description
@@ -693,12 +692,8 @@ namespace TypeCobol.Compiler.Diagnostics
         private static void CheckParameters([NotNull] ParametersProfile profile, Node node)
         {
             var parameters = profile.Parameters;
-            foreach (var parameter in profile.InputParameters) CheckParameter(parameter, node);
-            foreach (var parameter in profile.InoutParameters) CheckParameter(parameter, node);
-            foreach (var parameter in profile.OutputParameters) CheckParameter(parameter, node);
             if (profile.ReturningParameter != null)
             {
-                CheckParameter(profile.ReturningParameter, node);
                 parameters.Add(profile.ReturningParameter);
             }
 
@@ -711,31 +706,6 @@ namespace TypeCobol.Compiler.Diagnostics
                     string.Format("Parameter with name '{0}' declared multiple times", duplicatedParameter.Name), duplicatedParameter);
             }
 
-
-        }
-
-        private static void CheckParameter([NotNull] ParameterDescriptionEntry parameter, Node node)
-        {
-            // TCRFUN_LEVEL_88_PARAMETERS
-            if (parameter.LevelNumber?.Value != 1)
-            {
-                DiagnosticUtils.AddError(node,
-                    "Condition parameter \"" + parameter.Name + "\" must be subordinate to another parameter.", parameter);
-            }
-
-            if (parameter.DataConditions != null)
-            {
-                foreach (var condition in parameter.DataConditions)
-                {
-                    if (condition.LevelNumber?.Value != 88)
-                        DiagnosticUtils.AddError(node,
-                            "Condition parameter \"" + condition.Name + "\" must be level 88.", condition);
-                    if (condition.LevelNumber?.Value == 88 && parameter.DataType == DataType.Boolean)
-                        DiagnosticUtils.AddError(node,
-                            "The Level 88 symbol '" + parameter.Name +
-                            "' cannot be declared under a BOOL typed symbol", condition);
-                }
-            }
 
         }
 

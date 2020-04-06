@@ -1,10 +1,10 @@
 ﻿--- Diagnostics ---
 Line 17[12,53] <30, Error, Semantics> - Semantic error: TYPE 'typeOfDays' is not referenced
 Line 18[12,64] <30, Error, Semantics> - Semantic error: TYPE 'absentPgm.typeOfDays' is not referenced
-Line 71[12,39] <27, Error, Syntax> - Syntax error : Function not found 'case1' input(DATE, Alphanumeric) output(BOOL)
-Line 74[12,39] <27, Error, Syntax> - Syntax error : Function not found 'case2' input(DATE, Alphanumeric) output(BOOL)
-Line 77[12,48] <27, Error, Syntax> - Syntax error : Function not found 'case3' input(Alphanumeric, DATE, Alphanumeric) output(Alphanumeric, BOOL)
-Line 80[12,48] <27, Error, Syntax> - Syntax error : Function not found 'case4' input(Alphanumeric, DATE, Alphanumeric) output(Alphanumeric, BOOL)
+Line 71[12,39] <30, Error, Semantics> - Semantic error: Function not found 'case1' input(DATE, Alphanumeric) output(BOOL)
+Line 74[12,39] <30, Error, Semantics> - Semantic error: Function not found 'case2' input(DATE, Alphanumeric) output(BOOL)
+Line 77[12,48] <30, Error, Semantics> - Semantic error: Function not found 'case3' input(Alphanumeric, DATE, Alphanumeric) output(Alphanumeric, BOOL)
+Line 80[12,48] <30, Error, Semantics> - Semantic error: Function not found 'case4' input(Alphanumeric, DATE, Alphanumeric) output(Alphanumeric, BOOL)
 Line 83[12,22] <27, Error, Syntax> - Syntax error : No function or variable found for 'case51'(no arguments)
 Line 85[12,22] <27, Error, Syntax> - Syntax error : No function or variable found for 'case52'(no arguments)
 Line 87[12,22] <27, Error, Syntax> - Syntax error : No function or variable found for 'case53'(no arguments)
@@ -13,13 +13,13 @@ Line 92[12,22] <27, Error, Syntax> - Syntax error : Call to 'case62'(no argument
 Line 94[12,22] <27, Error, Syntax> - Syntax error : Call to 'case63'(no arguments) is ambigous. 'case63' is defined 2 times
 Line 97[12,21] <27, Error, Syntax> - Syntax error : No function or variable found for 'case7'(no arguments)
 Line 103[12,21] <27, Error, Syntax> - Syntax error : Call to 'case9'(no arguments) is ambigous. 'case9' is defined 2 times
-Line 106[12,48] <27, Error, Syntax> - Syntax error : Function not found 'case10' input(Alphanumeric, DATE, Alphanumeric) output(Alphanumeric, BOOL)
+Line 106[12,48] <30, Error, Semantics> - Semantic error: Function not found 'case10' input(Alphanumeric, DATE, Alphanumeric) output(Alphanumeric, BOOL)
 Line 113[12,22] <27, Error, Syntax> - Syntax error : Call to 'case12'(no arguments) is ambigous. 'case12' is defined 2 times
 Line 116[12,22] <27, Error, Syntax> - Syntax error : No function or variable found for 'case13'(no arguments)
 Line 122[12,22] <27, Error, Syntax> - Syntax error : Call to 'case15'(no arguments) is ambigous. 'case15' is defined 2 times
 Line 141[12,56] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.addDaysToDate' input(DATE, Numeric, typeOfDays) output(DATE, PublicProcedures.returnCode)
 Line 149[12,56] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.addDaysToDate' input(DATE, Numeric, absentPgm.typeOfDays) output(DATE, PublicProcedures.returnCode)
-Line 161[12,39] <27, Error, Syntax> - Syntax error : Function not found 'PublicProcedures.case2' input(DATE, Alphanumeric) output(BOOL)
+Line 161[12,39] <30, Error, Semantics> - Semantic error: Function not found 'PublicProcedures.case2' input(DATE, Alphanumeric) output(BOOL)
 Line 167[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' only takes 3 parameter(s)
 Line 167[12,48] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case3' input(Alphanumeric, DATE, Alphanumeric) output(Alphanumeric, BOOL)
 Line 167[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'mydate' of type DATE and received 'fakeDate' of type Alphanumeric 
@@ -43,7 +43,7 @@ Line 216[12,40] <27, Error, Syntax> - Syntax error : No suitable function signat
 Line 220[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case14(no arguments)'
 Line 223[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case15(no arguments)'
 Line 226[12,49] <27, Error, Syntax> - Syntax error : No function or variable found for 'PublicProcedures.case15.unknown'(no arguments)
-Line 229[17,34] <27, Error, Syntax> - Syntax error : Symbol undefinedProcedure is not referenced OffendingSymbol=[17,34:undefinedProcedure]<UserDefinedWord>
+Line 229[17,34] <30, Error, Semantics> - Semantic error: Symbol undefinedProcedure is not referenced OffendingSymbol=[17,34:undefinedProcedure]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: CallToPublicProcedure common:False initial:False recursive:False

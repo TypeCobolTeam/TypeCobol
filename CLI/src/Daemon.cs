@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using TypeCobol.Compiler.Diagnostics;
 using Analytics;
-using Castle.Core.Internal;
+using TypeCobol.Tools;
 using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Server {
@@ -14,7 +14,6 @@ namespace TypeCobol.Server {
     class Server {
         static int Main(string[] argv)
         {
-
             bool help = false;
             bool version = false;
 
@@ -45,7 +44,7 @@ namespace TypeCobol.Server {
                     return 0;
                 }
 
-                if (!errors.IsNullOrEmpty())
+                if (errors.Any())
                     return exit(errors);
 
                 if (version)
@@ -141,10 +140,6 @@ namespace TypeCobol.Server {
             errmsg += "Try " + PROGNAME + " --help for usage information.";
             Console.WriteLine(errmsg);
             return errors.Count > 1 ? (int)ReturnCode.MultipleErrors : (int)errors.Keys.First();
-        }
-        static int exit(ReturnCode code)
-        {
-            return exit(code, TypeCobolConfiguration.ErrorMessages[code].IsNullOrEmpty() ? "" : TypeCobolConfiguration.ErrorMessages[code]);
         }
     }
 }

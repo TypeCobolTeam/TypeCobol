@@ -40,10 +40,6 @@
     <None Include="resources\output\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\CLI\src\config\skeletons.xml">
-      <Link>resources\config\TypeCobol\skeletons.xml</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\TypeCobol.Test\TypeCobol.Test.csproj">
@@ -58,12 +54,6 @@
       <Project>{4034cbc5-d3dc-45e5-81f2-605579e6b876}</Project>
       <Name>Codegen</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Antlr4.Runtime, Version=4.6.0.0, Culture=neutral, PublicKeyToken=e9931a4108ef2354, processorArchitecture=MSIL">
-      <HintPath>..\packages\Antlr4.Runtime.4.6.6-rc001\lib\net45\Antlr4.Runtime.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
