@@ -3,7 +3,7 @@
        PROGRAM-ID. Main.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-      *01 TypeInMain TYPEDEF PUBLIC.
+      *01 TypeInMain TYPEDEF STRICT PUBLIC.
       *   05 VarMain TYPE Dependency2::TypeInDependency2.
        PROCEDURE DIVISION.
            GOBACK

@@ -3,7 +3,7 @@
        PROGRAM-ID. Secondary.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-      *01 TypeInSecondary TYPEDEF PUBLIC.
+      *01 TypeInSecondary TYPEDEF STRICT PUBLIC.
       *   05 VarSecondary TYPE Main::TypeInMain.
       *01 Result TYPE TypeInSecondary.
        01 Result.

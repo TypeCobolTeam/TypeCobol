@@ -2,7 +2,7 @@
        PROGRAM-ID. Dependency1.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01 TypeInDependency1 TYPEDEF PUBLIC.
+       01 TypeInDependency1 TYPEDEF STRICT PUBLIC.
           05 VarDependency1 TYPE TypeInIntrinsic2.
        PROCEDURE DIVISION.
            GOBACK
