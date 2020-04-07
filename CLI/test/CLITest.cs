@@ -52,6 +52,15 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// Perform a generation with procedure generated as nested programs
+        /// </summary>
+        [TestMethod]
+        public void TestGenerate_StackedProcedure()
+        {
+            CLITestHelper.Test("generate_stackedProc", ReturnCode.ParsingDiagnostics);
+        }
+
+        /// <summary>
         /// Test various case of usage of dependencies such as good usage, bad file, bad path.
         /// </summary>
         [TestMethod]
@@ -181,6 +190,16 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// Try parsing with copy inside a typedef.
+        /// Should return success.
+        /// </summary>
+        [TestMethod]
+        public void TestTypeDefCopy()
+        {
+            CLITestHelper.Test("typedefCopy", ReturnCode.Success);
+        }
+
+        /// <summary>
         /// Try parsing with PublicSignature as output format.
         /// Should return success.
         /// </summary>
@@ -283,6 +302,16 @@ namespace CLI.Test
         public void ComplexTypeLinking()
         {
             CLITestHelper.Test("complex_type_linking", ReturnCode.Success);
+        }
+
+        /// <summary>
+        /// Test override of UTF-8 encoding for RDZ format.
+        /// </summary>
+        [TestMethod]
+        public void TestRDZFormatInputEncodings()
+        {
+            CLITestHelper.Test("rdzformat_inputencoding_wrong", ReturnCode.Success);
+            CLITestHelper.Test("rdzformat_inputencoding_good", ReturnCode.Success);
         }
     }
 

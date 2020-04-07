@@ -691,7 +691,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (foundCount == 0)
             {
                 if (node.SymbolTable.GetFunction(area).Count < 1)
-                    DiagnosticUtils.AddError(node, "Symbol " + area + " is not referenced", area.SymbolReference);
+                    DiagnosticUtils.AddError(node, "Symbol " + area + " is not referenced", area.SymbolReference, MessageCode.SemanticTCErrorInParser);
             }
             else if (foundCount > 1)
             {
@@ -709,7 +709,7 @@ namespace TypeCobol.Compiler.Diagnostics
                                         : symbol.Value.QualifiedName.ToString().Replace(".", "::"));
                     isFirst = false;
                 }
-                DiagnosticUtils.AddError(node, errorMessage, area.SymbolReference);
+                DiagnosticUtils.AddError(node, errorMessage, area.SymbolReference, MessageCode.SemanticTCErrorInParser);
             }
             else if (foundCount == 1)
             {
@@ -937,10 +937,10 @@ namespace TypeCobol.Compiler.Diagnostics
                 node.QualifiedStorageAreas.Add(storageArea, dataDefinitionPath);
         }
 
-        private void CheckEndNode(IToken openingToken, CodeElement endCodeElement)
+        private void CheckEndNode([CanBeNull]IToken openingToken, CodeElement endCodeElement)
         {
             // Check end statement is aligned with the matching opening statement
-            if (openingToken.Line != endCodeElement.Line &&
+            if (openingToken != null && openingToken.Line != endCodeElement.Line &&
                 openingToken.StartIndex != endCodeElement.StartIndex)
             {
                 DiagnosticUtils.AddError(endCodeElement,
@@ -983,7 +983,7 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 if (sname == null)
                 {
-                    DiagnosticUtils.AddError(node, "Symbol " + symbol.Name + " is not referenced", symbol);
+                    DiagnosticUtils.AddError(node, "Symbol " + symbol.Name + " is not referenced", symbol, MessageCode.SemanticTCErrorInParser);
                 }
                 else
                 {

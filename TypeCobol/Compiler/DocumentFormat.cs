@@ -34,22 +34,22 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Encoding used to read or write the Cobol file
         /// </summary>
-        public Encoding Encoding { get; protected set; }
+        public Encoding Encoding { get; }
 
         /// <summary>
         /// Tells the compiler how to split a character stream in consecutive lines
         /// </summary>
-        public EndOfLineDelimiter EndOfLineDelimiter { get; private set; }
+        public EndOfLineDelimiter EndOfLineDelimiter { get; }
 
         /// <summary>
         /// Used only in case the text is formatted with fixed length line
         /// </summary>
-        public int FixedLineLength { get; private set; }
+        public int FixedLineLength { get; }
 
         /// <summary>
         /// Tells the compiler how to interpret the column position of each character in the source text
         /// </summary>
-        public ColumnsLayout ColumnsLayout { get; private set; }
+        public ColumnsLayout ColumnsLayout { get; }
 
         // Most often used document formats
         public static DocumentFormat ZOsReferenceFormat = new DocumentFormat(IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147), EndOfLineDelimiter.FixedLengthLines, 80, ColumnsLayout.CobolReferenceFormat);

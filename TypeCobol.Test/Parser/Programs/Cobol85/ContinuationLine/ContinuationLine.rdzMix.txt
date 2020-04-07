@@ -7,7 +7,7 @@
        01 var1 pic x(100) value "hi".
        PROCEDURE DIVISION.
              move 'CHAMPS 082 A 085 INTERDITS EN OUVERTURE'
-Line 10[19,21] <27, Error, Syntax> - Syntax error : Symbol foo is not referenced
+Line 10[19,21] <30, Error, Semantics> - Semantic error: Symbol foo is not referenced
       -        to foo
       
 

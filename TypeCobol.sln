@@ -21,13 +21,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codegen.Test", "Codegen\tes
 		{4034CBC5-D3DC-45E5-81F2-605579E6B876} = {4034CBC5-D3DC-45E5-81F2-605579E6B876}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{B0CAA3CA-E1B4-4396-8426-50BE588BA574}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Transform", "TypeCobol.Transform\TypeCobol.Transform.csproj", "{24C85D7C-A234-4AF6-BAD1-2C7425BA2D5F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLI.Test", "CLI\test\CLI.Test.csproj", "{CFBF4D30-56F3-4794-9067-B651DC1CAB1E}"

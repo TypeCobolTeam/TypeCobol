@@ -8,7 +8,7 @@ Line 85[13,28] <30, Error, Semantics> - Semantic error: Type circular reference 
 Line 92[13,28] <30, Error, Semantics> - Semantic error: Type circular reference detected : B2 -> A2 -> C2
 Line 111[13,28] <30, Error, Semantics> - Semantic error: Type circular reference detected : C3 -> B3 -> A3
 Line 127[13,29] <30, Error, Semantics> - Semantic error: Type circular reference detected : C4 -> B4 -> A4
-Line 134[47,51] <27, Error, Syntax> - Syntax error : Symbol MyVar.A4var.B4Var.C4Var.A4Var is not referenced OffendingSymbol=[47,51:A4Var]<UserDefinedWord>
+Line 134[47,51] <30, Error, Semantics> - Semantic error: Symbol MyVar.A4var.B4Var.C4Var.A4Var is not referenced OffendingSymbol=[47,51:A4Var]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: CircularRefCheck common:False initial:False recursive:False

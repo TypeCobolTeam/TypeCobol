@@ -1,11 +1,11 @@
 --- Diagnostics ---
 Line 1[1,28] <37, Warning, General> - Warning: "END PROGRAM" is missing.
-Line 33[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[18,24:TYPEDEF]<TYPEDEF>
-Line 35[12,18] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[12,18:TYPEDEF]<TYPEDEF>
-Line 39[16,22] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[16,22:TYPEDEF]<TYPEDEF>
-Line 41[10,16] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[10,16:TYPEDEF]<TYPEDEF>
-Line 68[24,34] <27, Error, Syntax> - Syntax error : Symbol CharsStrong is not referenced OffendingSymbol=[24,34:CharsStrong]<UserDefinedWord>
-Line 71[23,33] <27, Error, Syntax> - Syntax error : Symbol CharsStrong is not referenced OffendingSymbol=[23,33:CharsStrong]<UserDefinedWord>
+Line 33[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'IntegerStrong' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[18,24:TYPEDEF]<TYPEDEF>
+Line 35[12,18] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'Integer' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[12,18:TYPEDEF]<TYPEDEF>
+Line 39[16,22] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'CharsStrong' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[16,22:TYPEDEF]<TYPEDEF>
+Line 41[10,16] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'Chars' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[10,16:TYPEDEF]<TYPEDEF>
+Line 68[24,34] <30, Error, Semantics> - Semantic error: Symbol CharsStrong is not referenced OffendingSymbol=[24,34:CharsStrong]<UserDefinedWord>
+Line 71[23,33] <30, Error, Semantics> - Semantic error: Symbol CharsStrong is not referenced OffendingSymbol=[23,33:CharsStrong]<UserDefinedWord>
 Line 77[9,19] <30, Error, Semantics> - Semantic error: Cannot write  to strongly typed variable myStrongInt:IntegerStrong. OffendingSymbol=[9,19:myStrongInt]<UserDefinedWord>
 Line 81[51,63] <30, Error, Semantics> - Semantic error: Cannot write  to strongly typed variable myStrongChars:CharsStrong. OffendingSymbol=[51,63:myStrongChars]<UserDefinedWord>
 Line 85[51,63] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strongly typed variable myStrongChars:CharsStrong. OffendingSymbol=[51,63:myStrongChars]<UserDefinedWord>

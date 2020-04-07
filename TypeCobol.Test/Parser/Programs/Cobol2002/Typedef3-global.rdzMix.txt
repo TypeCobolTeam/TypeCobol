@@ -68,18 +68,18 @@ Line 63[25,28] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeri
 
       *KO these 2 vars are only present in a TypeDef
       *no var use this Type
-Line 70[17,34] <27, Error, Syntax> - Syntax error : Symbol UnusedTypeDef-Var1 is not referenced
-Line 70[39,56] <27, Error, Syntax> - Syntax error : Symbol UnusedTypeDef-Var2 is not referenced
+Line 70[17,34] <30, Error, Semantics> - Semantic error: Symbol UnusedTypeDef-Var1 is not referenced
+Line 70[39,56] <30, Error, Semantics> - Semantic error: Symbol UnusedTypeDef-Var2 is not referenced
            move UnusedTypeDef-Var1 to UnusedTypeDef-Var2
 
       *KO these 2 vars are only present in a TypeDef
       *no var use this Type
-Line 74[17,25] <27, Error, Syntax> - Syntax error : Symbol utd-var32 is not referenced
-Line 74[30,38] <27, Error, Syntax> - Syntax error : Symbol utd-var21 is not referenced
+Line 74[17,25] <30, Error, Semantics> - Semantic error: Symbol utd-var32 is not referenced
+Line 74[30,38] <30, Error, Semantics> - Semantic error: Symbol utd-var21 is not referenced
            move utd-var32 to utd-var21
       *KO for same reason
-Line 76[17,25] <27, Error, Syntax> - Syntax error : Symbol utd-var10.utd-var32 is not referenced
-Line 76[43,51] <27, Error, Syntax> - Syntax error : Symbol utd-var20.utd-var21 is not referenced
+Line 76[17,25] <30, Error, Semantics> - Semantic error: Symbol utd-var10.utd-var32 is not referenced
+Line 76[43,51] <30, Error, Semantics> - Semantic error: Symbol utd-var20.utd-var21 is not referenced
            move utd-var32 of utd-var10 to utd-var21 of utd-var20
 
 

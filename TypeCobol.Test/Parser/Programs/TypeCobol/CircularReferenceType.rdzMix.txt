@@ -140,7 +140,7 @@ Line 127[13,29] <30, Error, Semantics> - Semantic error: Type circular reference
           display MyVar::A4var::B4Var::C4Var
  
       *KO, A4Var must not be a valid child of C4Var as it's a circular reference
-Line 134[47,51] <27, Error, Syntax> - Syntax error : Symbol MyVar.A4var.B4Var.C4Var.A4Var is not referenced
+Line 134[47,51] <30, Error, Semantics> - Semantic error: Symbol MyVar.A4var.B4Var.C4Var.A4Var is not referenced
           display MyVar::A4var::B4Var::C4Var::A4Var
           .
        end-declare.

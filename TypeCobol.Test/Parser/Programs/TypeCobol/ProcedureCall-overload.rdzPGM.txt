@@ -1,5 +1,5 @@
 --- Diagnostics ---
-Line 227[12,39] <27, Error, Syntax> - Syntax error : Function not found 'case2' input(DATE, Alphanumeric) output(BOOL)
+Line 227[12,39] <30, Error, Semantics> - Semantic error: Function not found 'case2' input(DATE, Alphanumeric) output(BOOL)
 Line 233[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' only takes 3 parameter(s)
 Line 233[12,48] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'case3' input(Alphanumeric, DATE, Alphanumeric) output(Alphanumeric, BOOL)
 Line 233[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' expected parameter 'mydate' of type DATE and received 'fakeDate' of type Alphanumeric 
