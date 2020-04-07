@@ -179,6 +179,8 @@ namespace TypeCobol.Compiler.Symbols
             System.Diagnostics.Debug.Assert(domain.Owner != null);
             this.Flag &= ~Symbol.SectionMask;
             this.Flag |= domain.Owner.Flag & (Symbol.SectionMask | Flags.Global);
+            //After expansion, symbol is no longer part of a typedef.
+            this.Flag &= ~Symbol.Flags.InsideTypedef;
         }
 
         /// <summary>
