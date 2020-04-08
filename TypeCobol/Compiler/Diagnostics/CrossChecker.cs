@@ -425,25 +425,18 @@ namespace TypeCobol.Compiler.Diagnostics
             //Check if the DataDescription is an empty group
             if (dataDescriptionEntry.LevelNumber != null && dataDescription.IsDataDescriptionGroup && dataDescription.ChildrenCount == 0)
             {
-                //Get all sibling nodes
-                var siblingNodes = dataDescription.Parent.Children.ToList();
                 //Get current node index
-                var nodeIndex = siblingNodes.IndexOf(dataDescription);
-
-                //Node is followed by at least one other node
-                if (siblingNodes.Count > nodeIndex + 1)
+                var nodeIndex = dataDescription.Parent.IndexOf(dataDescription);
+                //Get sibling nodes
+                var siblingNodes = dataDescription.Parent.Children;
+                //Check if next node is inside a copy when this isn't the last node
+                if (siblingNodes.Count > nodeIndex + 1 && siblingNodes[nodeIndex + 1].IsInsideCopy())
                 {
-                    //Get immediately following node
-                    var nextSibling = siblingNodes.ToArray()[nodeIndex + 1];
-                    //Check if next node is inside a copy
-                    if (nextSibling.IsInsideCopy())
-                    {
-                        DiagnosticUtils.AddError(dataDescription, $"Copy declaration cannot use level {dataDescriptionEntry.LevelNumber} because a level {((DataDescription)nextSibling).CodeElement.LevelNumber} already exists in copy.", dataDescriptionEntry);
-                    }
-                    else
-                    {
-                        DiagnosticUtils.AddError(dataDescription, "A group item cannot be empty.", dataDescriptionEntry);
-                    }
+                    //Get next sibling node
+                    var nextSibling = siblingNodes[nodeIndex + 1];
+                    DiagnosticUtils.AddError(dataDescription, $"Cannot include copy {nextSibling.CodeElement?.FirstCopyDirective.TextName} " +
+                                                              $"under level {dataDescriptionEntry.LevelNumber} " +
+                                                              $"because copy starts at level {((DataDescription)nextSibling).CodeElement.LevelNumber}.", dataDescriptionEntry);
                 }
                 //Last node so this is an empty group item
                 else

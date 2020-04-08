@@ -33,7 +33,7 @@ copy CPYData.
         COPY CPYData4  REPLACING ==:MyCopy:== BY ==MyCopy==.
 
 *ok
-01 STR5.   COPY CPYData4 REPLACING ==:MyCopy:== BY ==MyCopy==.
+01 STR7.   COPY CPYData4 REPLACING ==:MyCopy:== BY ==MyCopy==.
 
 PROCEDURE DIVISION.
 
