@@ -1,0 +1,44 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Caller.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+                        WITH DEBUGGING MODE
+                        .
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       PROCEDURE DIVISION.
+
+       declare procedure MyProcedure private
+                   input myInput Pic X.
+       data division.
+       Working-storage section.
+       procedure division.
+      DDECLARATIVES.
+      DREADY-TRACE SECTION.
+      D    USE FOR DEBUGGING ON ALL PROCEDURES.
+      D    DISPLAY 'Caller'
+      D    DEBUG-ITEM '.'.
+      DEND DECLARATIVES.
+             Call Callee::MyProcedure2 Input myInput
+             .
+       end-declare.
+       END PROGRAM Caller.
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Callee.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       PROCEDURE DIVISION.
+       INIT-LIBRARY.
+          CONTINUE
+          .
+       declare procedure MyProcedure2 public
+                   input myInput pic X.
+       data division.
+       Working-storage section.
+       procedure division.
+             Continue
+             .
+       end-declare.
+       END PROGRAM Callee.
