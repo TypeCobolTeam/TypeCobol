@@ -21,7 +21,19 @@ WORKING-storage section.
     04 MyGroup.
         COPY CPYData2.
 
+*ok
 copy CPYData. 
+
+*ko
+01 STR5.   COPY CPYData3 REPLACING ==:MyCopy:== BY ==MyCopy==.
+
+*ko
+01 STR6.   
+    05 MyGroup. 
+        COPY CPYData4  REPLACING ==:MyCopy:== BY ==MyCopy==.
+
+*ok
+01 STR7.   COPY CPYData4 REPLACING ==:MyCopy:== BY ==MyCopy==.
 
 PROCEDURE DIVISION.
 
