@@ -8,7 +8,7 @@
     using TypeCobol.Compiler.Scanner;
 
     /// <summary>
-    /// Base class for  7 differents forms of set statement:
+    /// Base class for  7 different forms of set statement:
     ///
     /// Format 1: SET for basic table handling
     /// Format 2: SET for adjusting indexes
