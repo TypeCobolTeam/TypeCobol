@@ -600,9 +600,16 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (!isReadStorageArea && node.SymbolTable.CurrentScope == SymbolTable.Scope.Function)
                 {
                     var paramDesc = (dataDefinitionPath?.CurrentDataDefinition ?? dataDefinitionFound) as ParameterDescription;
+                    //Check if we're dealing with an input parameter
                     if (paramDesc?.PassingType == ParameterDescription.PassingTypes.Input)
                     {
-                        DiagnosticUtils.AddError(node, "Input variable '" + paramDesc.Name + "' is modified by an instruction", area.SymbolReference);
+                        var specialRegister = storageArea as StorageAreaPropertySpecialRegister;
+                        //Unless this is a format 5 set statement, we have an error. So we're checking we're not in the following format  :
+                        //set (address of)? identifier(pointer) TO (address of)? identifier | NULL
+                        if (specialRegister?.SpecialRegisterName.TokenType != TokenType.ADDRESS || !specialRegister.IsWrittenTo)
+                        {
+                            DiagnosticUtils.AddError(node, "Input variable '" + paramDesc.Name + "' is modified by an instruction", area.SymbolReference);
+                        }
                     }
                 }
 
