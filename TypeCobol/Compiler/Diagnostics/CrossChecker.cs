@@ -642,7 +642,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         if (ExpandTopProgram(prg))
                         {
                             //Consider only succeeded expansions.
-                            result = prg.ResolveReference(area.SymbolReference, true);
+                            result = prg.ResolveReference(area.SymbolReference);
                             System.Diagnostics.Debug.Assert(result != null);
                             //Check that we found the same number of symbols
                             System.Diagnostics.Debug.Assert(result.Count == foundCount);
@@ -677,7 +677,7 @@ namespace TypeCobol.Compiler.Diagnostics
                             {
                                 //Consider only succeeded expansions.
                                 //Lookup itself in its program.
-                                result = (fun ?? prg).ResolveReference(area.SymbolReference, true);
+                                result = (fun ?? prg).ResolveReference(area.SymbolReference);
                                 System.Diagnostics.Debug.Assert(result != null);
                                 System.Diagnostics.Debug.Assert(result.Count == foundCount);
                             }

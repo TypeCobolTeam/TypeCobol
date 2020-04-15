@@ -73,7 +73,7 @@ namespace TypeCobol.Test.Domain
             ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
-            var vars = currentProgram.ResolveReference(new string[] { "idt" }, false);
+            var vars = currentProgram.ResolveReference(new string[] { "idt" });
             Assert.IsTrue(vars.Count == 1);
         }
 
@@ -93,27 +93,27 @@ namespace TypeCobol.Test.Domain
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
 
             //Get oldCurrency symbol
-            var oldCurrency = currentProgram.ResolveReference(new string[] { "oldCurrency" }, false);
+            var oldCurrency = currentProgram.ResolveReference(new string[] { "oldCurrency" });
             Assert.IsTrue(oldCurrency.Count == 1);
             Assert.IsNotNull(oldCurrency.Symbol.Type);
             var oldCurrencyOriginalType = oldCurrency.Symbol.Type;
 
             //Get myCurrency1 symbol
-            var myCurrency1 = currentProgram.ResolveReference(new string[] { "myCurrency1" }, false);
+            var myCurrency1 = currentProgram.ResolveReference(new string[] { "myCurrency1" });
             Assert.IsTrue(myCurrency1.Count == 1);
             Assert.IsNotNull(myCurrency1.Symbol.Type);
             Assert.IsTrue(myCurrency1.Symbol.Type.Tag == Type.Tags.Typedef);
             Assert.IsTrue(myCurrency1.Symbol.Type == BuiltinTypes.CurrencyType);
 
             //Get myCurrency2 symbol
-            var myCurrency2 = currentProgram.ResolveReference(new string[] { "myCurrency2" }, false);
+            var myCurrency2 = currentProgram.ResolveReference(new string[] { "myCurrency2" });
             Assert.IsTrue(myCurrency2.Count == 1);
             Assert.IsNotNull(myCurrency2.Symbol.Type);
             Assert.IsTrue(myCurrency2.Symbol.Type.Tag == Type.Tags.Typedef);
             Assert.IsTrue(myCurrency2.Symbol.Type == BuiltinTypes.CurrencyType);
 
             //Get myCurrency3 symbol
-            var myCurrency3 = currentProgram.ResolveReference(new string[] { "myCurrency3" }, false);
+            var myCurrency3 = currentProgram.ResolveReference(new string[] { "myCurrency3" });
             Assert.IsTrue(myCurrency3.Count == 1);
             Assert.IsNotNull(myCurrency3.Symbol.Type);
             Assert.IsTrue(myCurrency3.Symbol.Type.Tag == Type.Tags.Typedef);
@@ -153,24 +153,24 @@ namespace TypeCobol.Test.Domain
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
 
             //Get olddate symbol
-            var olddate = currentProgram.ResolveReference(new string[] { "olddate" }, false);
+            var olddate = currentProgram.ResolveReference(new string[] { "olddate" });
             Assert.IsTrue(olddate.Count == 1);
             Assert.IsNotNull(olddate.Symbol.Type);
             var olddateOriginalType = olddate.Symbol.Type;
 
             //Get today symbol
-            var today = currentProgram.ResolveReference(new string[] { "today" }, false);
+            var today = currentProgram.ResolveReference(new string[] { "today" });
             Assert.IsTrue(today.Count == 1);
             Assert.IsNotNull(today.Symbol.Type);
             Assert.IsTrue(today.Symbol.Type.Tag == Type.Tags.Typedef);
             Assert.IsTrue(today.Symbol.Type == BuiltinTypes.DateType);
 
             //Before expansion there are no YYYY, MM, DD variables in the program
-            var yyyy = currentProgram.ResolveReference(new string[] { "yyyy" }, false);
+            var yyyy = currentProgram.ResolveReference(new string[] { "yyyy" });
             Assert.IsTrue(yyyy.Count == 0);
-            var mm = currentProgram.ResolveReference(new string[] { "mm" }, false);
+            var mm = currentProgram.ResolveReference(new string[] { "mm" });
             Assert.IsTrue(mm.Count == 0);
-            var dd = currentProgram.ResolveReference(new string[] { "dd" }, false);
+            var dd = currentProgram.ResolveReference(new string[] { "dd" });
             Assert.IsTrue(dd.Count == 0);
 
             ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
@@ -181,11 +181,11 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(te_today.Tag == Type.Tags.Group);
 
             //After expansion there are YYYY, MM, DD variables in the program
-            yyyy = currentProgram.ResolveReference(new string[] { "yyyy" }, false);
+            yyyy = currentProgram.ResolveReference(new string[] { "yyyy" });
             Assert.IsTrue(yyyy.Count == 3);
-            mm = currentProgram.ResolveReference(new string[] { "mm" }, false);
+            mm = currentProgram.ResolveReference(new string[] { "mm" });
             Assert.IsTrue(mm.Count == 3);
-            dd = currentProgram.ResolveReference(new string[] { "dd" }, false);
+            dd = currentProgram.ResolveReference(new string[] { "dd" });
             Assert.IsTrue(dd.Count == 3);
 //            string @dump_today_type = @"  02 YYYY PIC 9(4).
 //  02 MM PIC 9(2).
@@ -225,21 +225,21 @@ namespace TypeCobol.Test.Domain
             TypeCobol.Compiler.Scopes.Container<VariableSymbol>.Entry result;
 
             // Main pgm
-            result = currentProgram.ResolveReference(new[] { "var1" }, true);
+            result = currentProgram.ResolveReference(new[] { "var1" });
             Assert.IsTrue(result.Count == 2);
-            result = currentProgram.ResolveReference(new[] { "XX", "MyPoint" }, true);
+            result = currentProgram.ResolveReference(new[] { "XX", "MyPoint" });
             Assert.IsTrue(result.Count == 2);
 
             // Nested pgm
-            result = nestedPrg.ResolveReference(new[] { "var1" }, true);
+            result = nestedPrg.ResolveReference(new[] { "var1" });
             Assert.IsTrue(result.Count == 2);
-            result = nestedPrg.ResolveReference(new[] { "var2" }, true);
+            result = nestedPrg.ResolveReference(new[] { "var2" });
             Assert.IsTrue(result.Count == 2);
-            result = nestedPrg.ResolveReference(new[] { "var3" }, true);
+            result = nestedPrg.ResolveReference(new[] { "var3" });
             Assert.IsTrue(result.Count == 2);
-            result = nestedPrg.ResolveReference(new[] { "var4" }, true);
+            result = nestedPrg.ResolveReference(new[] { "var4" });
             Assert.IsTrue(result.Count == 1);
-            result = nestedPrg.ResolveReference(new[] { "XX", "MyPoint" }, true);
+            result = nestedPrg.ResolveReference(new[] { "XX", "MyPoint" });
             Assert.IsTrue(result.Count == 2);
         }
 
@@ -259,35 +259,35 @@ namespace TypeCobol.Test.Domain
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
 
             //Before expansion there are no YYYY, MM, DD variables in the program
-            var yyyy = currentProgram.ResolveReference(new string[] { "yyyy" }, false);
+            var yyyy = currentProgram.ResolveReference(new string[] { "yyyy" });
             Assert.IsTrue(yyyy.Count == 0);
-            var mm = currentProgram.ResolveReference(new string[] { "mm" }, false);
+            var mm = currentProgram.ResolveReference(new string[] { "mm" });
             Assert.IsTrue(mm.Count == 0);
-            var dd = currentProgram.ResolveReference(new string[] { "dd" }, false);
+            var dd = currentProgram.ResolveReference(new string[] { "dd" });
             Assert.IsTrue(dd.Count == 0);
 
             ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
             //After expansion there are now YYYY, MM, DD variables in the program
-            yyyy = currentProgram.ResolveReference(new string[] { "yyyy" }, false);
+            yyyy = currentProgram.ResolveReference(new string[] { "yyyy" });
             Assert.IsTrue(yyyy.Count == 3);
-            mm = currentProgram.ResolveReference(new string[] { "mm" }, false);
+            mm = currentProgram.ResolveReference(new string[] { "mm" });
             Assert.IsTrue(mm.Count == 3);
-            dd = currentProgram.ResolveReference(new string[] { "dd" }, false);
+            dd = currentProgram.ResolveReference(new string[] { "dd" });
             Assert.IsTrue(dd.Count == 3);
 
-            var today_yyyy = currentProgram.ResolveReference(new string[] { "yyyy", "today" }, false);
+            var today_yyyy = currentProgram.ResolveReference(new string[] { "yyyy", "today" });
             Assert.IsTrue(today_yyyy.Count == 1);
             string today_yyyy_fullname = today_yyyy.Symbol.FullName;
             Assert.AreEqual("TEST-DATE::today::YYYY", today_yyyy_fullname);
 
-            var tomorrow_yyyy = currentProgram.ResolveReference(new string[] { "yyyy", "tomorrow" }, false);
+            var tomorrow_yyyy = currentProgram.ResolveReference(new string[] { "yyyy", "tomorrow" });
             Assert.IsTrue(tomorrow_yyyy.Count == 1);
             string tomorrow_yyyy_fullname = tomorrow_yyyy.Symbol.FullName;
             Assert.AreEqual("TEST-DATE::tomorrow::YYYY", tomorrow_yyyy_fullname);
 
-            var date1_yyyy = currentProgram.ResolveReference(new string[] { "yyyy", "date1" }, false);
+            var date1_yyyy = currentProgram.ResolveReference(new string[] { "yyyy", "date1" });
             Assert.IsTrue(date1_yyyy.Count == 1);
             string date1_yyyy_fullname = date1_yyyy.Symbol.FullName;
             Assert.AreEqual("TEST-DATE::groupe::date1::YYYY", date1_yyyy_fullname);
@@ -313,29 +313,29 @@ namespace TypeCobol.Test.Domain
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
 
             //Before expansion there are no check-false variables in the program
-            var check_false = currentProgram.ResolveReference(new string[] { "check-false" }, false);
+            var check_false = currentProgram.ResolveReference(new string[] { "check-false" });
             Assert.IsTrue(check_false.Count == 0);
-            var managed_false = currentProgram.ResolveReference(new string[] { "managed-false" }, false);
+            var managed_false = currentProgram.ResolveReference(new string[] { "managed-false" });
             Assert.IsTrue(check_false.Count == 0);
 
             ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
             //After expansion there are no check-false variables in the program
-            check_false = currentProgram.ResolveReference(new string[] { "check-false" }, false);
+            check_false = currentProgram.ResolveReference(new string[] { "check-false" });
             Assert.IsTrue(check_false.Count == 0);
-            managed_false = currentProgram.ResolveReference(new string[] { "managed-false" }, false);
+            managed_false = currentProgram.ResolveReference(new string[] { "managed-false" });
             Assert.IsTrue(check_false.Count == 0);
 
             //Finally check that variables "check" and "managed" are of the Builtin type Bool.
-            var check = currentProgram.ResolveReference(new string[] { "check" }, false);
+            var check = currentProgram.ResolveReference(new string[] { "check" });
             Assert.IsTrue(check.Count == 1);
             Assert.IsNotNull(check.Symbol.Type);
             Assert.IsNotNull(check.Symbol.Type.Tag == Type.Tags.Typedef);
             Assert.AreEqual(check.Symbol.Type, BuiltinTypes.BooleanType);
 
             //Finally check that variables "check" and "managed" are of the Builtin type Bool.
-            var managed = currentProgram.ResolveReference(new string[] { "managed" }, false);
+            var managed = currentProgram.ResolveReference(new string[] { "managed" });
             Assert.IsTrue(managed.Count == 1);
             Assert.IsNotNull(managed.Symbol.Type);
             Assert.IsNotNull(managed.Symbol.Type.Tag == Type.Tags.Typedef);
@@ -408,7 +408,7 @@ namespace TypeCobol.Test.Domain
             VariableSymbol[] vars = new VariableSymbol[3];
             for (int i = 1; i < 4; i++)
             {
-                var vari = nestPrgSym.ResolveReference(new string[] { "var" + i }, false);                
+                var vari = nestPrgSym.ResolveReference(new string[] { "var" + i });                
                 Assert.IsTrue(vari.Count == (i == 3 ? 1 : 3));
                 vars[i - 1] = vari.Symbol;
                 Assert.IsTrue(vari.Symbol.Type == types[i - 1].Type);
@@ -470,52 +470,52 @@ namespace TypeCobol.Test.Domain
             //-------------------------
             // rcarray variable.
             //-------------------------
-            var rcarray = currentProgram.ResolveReference(new string[] { "rcarray" }, false);
+            var rcarray = currentProgram.ResolveReference(new string[] { "rcarray" });
             Assert.IsTrue(rcarray.Count == 1);
             Assert.IsNotNull(rcarray.Symbol.Type);
             Assert.IsTrue(rcarray.Symbol.Type.Tag == Type.Tags.Array);
             Assert.IsTrue(rcarray.Symbol.Type.TypeComponent.Tag == Type.Tags.Typedef);
 
             //Before expanding there were no X1, Y1, X2, Y2 variables in the program.
-            var x1 = currentProgram.ResolveReference(new string[] { "x1" }, false);
+            var x1 = currentProgram.ResolveReference(new string[] { "x1" });
             Assert.IsTrue(x1.Count == 0);
-            var X1 = currentProgram.ResolveReference(new string[] { "X1" }, false);
+            var X1 = currentProgram.ResolveReference(new string[] { "X1" });
             Assert.IsTrue(X1.Count == 0);
-            var y1 = currentProgram.ResolveReference(new string[] { "y1" }, false);
+            var y1 = currentProgram.ResolveReference(new string[] { "y1" });
             Assert.IsTrue(y1.Count == 0);
-            var Y1 = currentProgram.ResolveReference(new string[] { "Y1" }, false);
+            var Y1 = currentProgram.ResolveReference(new string[] { "Y1" });
             Assert.IsTrue(Y1.Count == 0);
-            var x2 = currentProgram.ResolveReference(new string[] { "x2" }, false);
+            var x2 = currentProgram.ResolveReference(new string[] { "x2" });
             Assert.IsTrue(x2.Count == 0);
-            var X2 = currentProgram.ResolveReference(new string[] { "X2" }, false);
+            var X2 = currentProgram.ResolveReference(new string[] { "X2" });
             Assert.IsTrue(X2.Count == 0);
-            var y2 = currentProgram.ResolveReference(new string[] { "y2" }, false);
+            var y2 = currentProgram.ResolveReference(new string[] { "y2" });
             Assert.IsTrue(y2.Count == 0);
-            var Y2 = currentProgram.ResolveReference(new string[] { "Y2" }, false);
+            var Y2 = currentProgram.ResolveReference(new string[] { "Y2" });
             Assert.IsTrue(Y2.Count == 0);
 
             //-------------------------
             // rcpt variable.
             //-------------------------
-            var rcpt = currentProgram.ResolveReference(new string[] { "rcpt" }, false);
+            var rcpt = currentProgram.ResolveReference(new string[] { "rcpt" });
             Assert.IsTrue(rcpt.Count == 1);
             Assert.IsNotNull(rcpt.Symbol.Type);
             Assert.IsTrue(rcpt.Symbol.Type.Tag == Type.Tags.Typedef);
 
             //Before expanding there were no x, y, pt1, pt2 variables in the program.
-            var x = currentProgram.ResolveReference(new string[] { "x" }, false);
+            var x = currentProgram.ResolveReference(new string[] { "x" });
             Assert.IsTrue(x.Count == 0);
-            var y = currentProgram.ResolveReference(new string[] { "y" }, false);
+            var y = currentProgram.ResolveReference(new string[] { "y" });
             Assert.IsTrue(y.Count == 0);
-            var pt1 = currentProgram.ResolveReference(new string[] { "pt1" }, false);
+            var pt1 = currentProgram.ResolveReference(new string[] { "pt1" });
             Assert.IsTrue(pt1.Count == 0);
-            var pt2 = currentProgram.ResolveReference(new string[] { "pt2" }, false);
+            var pt2 = currentProgram.ResolveReference(new string[] { "pt2" });
             Assert.IsTrue(pt2.Count == 0);
 
             //-------------------------
             // grcarray variable.
             //-------------------------
-            var grcarray = currentProgram.ResolveReference(new string[] { "grcarray" }, false);
+            var grcarray = currentProgram.ResolveReference(new string[] { "grcarray" });
             Assert.IsTrue(grcarray.Count == 1);
             Assert.IsNotNull(grcarray.Symbol.Type);
             Assert.IsTrue(grcarray.Symbol.Type.Tag == Type.Tags.Group);
@@ -523,7 +523,7 @@ namespace TypeCobol.Test.Domain
             //Before expansion
             //____________________
             //There is one rc variable of type PT in the program .
-            var rc = currentProgram.ResolveReference(new string[] { "rc" }, false);
+            var rc = currentProgram.ResolveReference(new string[] { "rc" });
             Assert.IsTrue(rc.Count == 1);
             Assert.IsNotNull(rc.Symbol.Type);
             Assert.IsTrue(rc.Symbol.Type.Tag == Type.Tags.Typedef);
@@ -532,7 +532,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(rc.Symbol.Type == pt.Symbol.Type);
 
             //There is one arr variable of type RECTARRAY in the program .
-            var arr = currentProgram.ResolveReference(new string[] { "arr" }, false);
+            var arr = currentProgram.ResolveReference(new string[] { "arr" });
             Assert.IsTrue(arr.Count == 1);
             Assert.IsNotNull(arr.Symbol.Type);
             Assert.IsTrue(arr.Symbol.Type.Tag == Type.Tags.Typedef);
@@ -550,59 +550,59 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(rcarray.Symbol.Type.TypeComponent.Tag == Type.Tags.Group);
 
             //After expanding there are X1, Y1, X2, Y2 variables in the program.
-            x1 = currentProgram.ResolveReference(new string[] { "x1" }, false);
+            x1 = currentProgram.ResolveReference(new string[] { "x1" });
             Assert.IsTrue(x1.Count == 1);
             Assert.IsNotNull(x1.Symbol.Type);
-            X1 = currentProgram.ResolveReference(new string[] { "X1" }, false);
+            X1 = currentProgram.ResolveReference(new string[] { "X1" });
             Assert.IsTrue(X1.Count == 1);
             Assert.IsNotNull(X1.Symbol.Type);
             Assert.IsNotNull(x1.Symbol == X1.Symbol);
-            y1 = currentProgram.ResolveReference(new string[] { "y1" }, false);
+            y1 = currentProgram.ResolveReference(new string[] { "y1" });
             Assert.IsTrue(y1.Count == 1);
             Assert.IsNotNull(y1.Symbol.Type);
-            Y1 = currentProgram.ResolveReference(new string[] { "Y1" }, false);
+            Y1 = currentProgram.ResolveReference(new string[] { "Y1" });
             Assert.IsTrue(Y1.Count == 1);
             Assert.IsNotNull(Y1.Symbol.Type);
             Assert.IsNotNull(y1.Symbol == Y1.Symbol);
-            x2 = currentProgram.ResolveReference(new string[] { "x2" }, false);            
+            x2 = currentProgram.ResolveReference(new string[] { "x2" });            
             Assert.IsTrue(x2.Count == 1);
             Assert.IsNotNull(x2.Symbol.Type);
-            X2 = currentProgram.ResolveReference(new string[] { "X2" }, false);
+            X2 = currentProgram.ResolveReference(new string[] { "X2" });
             Assert.IsTrue(X2.Count == 1);
             Assert.IsNotNull(X2.Symbol.Type);
             Assert.IsNotNull(x2.Symbol == X2.Symbol);
-            y2 = currentProgram.ResolveReference(new string[] { "y2" }, false);            
+            y2 = currentProgram.ResolveReference(new string[] { "y2" });            
             Assert.IsTrue(y2.Count == 1);
             Assert.IsNotNull(y2.Symbol.Type);
-            Y2 = currentProgram.ResolveReference(new string[] { "Y2" }, false);
+            Y2 = currentProgram.ResolveReference(new string[] { "Y2" });
             Assert.IsTrue(Y2.Count == 1);
             Assert.IsNotNull(Y2.Symbol.Type);
             Assert.IsNotNull(y2.Symbol == Y2.Symbol);
 
-            var rcarray_x1 = currentProgram.ResolveReference(new string[] { "x1", "rcarray" }, false);
+            var rcarray_x1 = currentProgram.ResolveReference(new string[] { "x1", "rcarray" });
             Assert.IsTrue(rcarray_x1.Count == 1);
             Assert.IsTrue(rcarray_x1.Symbol == x1.Symbol);
-            var rcarray_y1 = currentProgram.ResolveReference(new string[] { "y1", "rcarray" }, false);
+            var rcarray_y1 = currentProgram.ResolveReference(new string[] { "y1", "rcarray" });
             Assert.IsTrue(rcarray_y1.Count == 1);
             Assert.IsTrue(rcarray_y1.Symbol == y1.Symbol);
-            var rcarray_x2 = currentProgram.ResolveReference(new string[] { "x2", "rcarray" }, false);
+            var rcarray_x2 = currentProgram.ResolveReference(new string[] { "x2", "rcarray" });
             Assert.IsTrue(rcarray_x2.Count == 1);
             Assert.IsTrue(rcarray_x2.Symbol == x2.Symbol);
-            var rcarray_y2 = currentProgram.ResolveReference(new string[] { "y2", "rcarray" }, false);
+            var rcarray_y2 = currentProgram.ResolveReference(new string[] { "y2", "rcarray" });
             Assert.IsTrue(rcarray_y2.Count == 1);
             Assert.IsTrue(rcarray_y2.Symbol == y2.Symbol);
 
             //Case Sensitive Tests
-            var rcArraY_x1 = currentProgram.ResolveReference(new string[] { "X1", "rcArRaY" }, false);
+            var rcArraY_x1 = currentProgram.ResolveReference(new string[] { "X1", "rcArRaY" });
             Assert.IsTrue(rcArraY_x1.Count == 1);
             Assert.IsTrue(rcArraY_x1.Symbol == x1.Symbol);
-            var rcArraY_y1 = currentProgram.ResolveReference(new string[] { "Y1", "rcArRaY" }, false);
+            var rcArraY_y1 = currentProgram.ResolveReference(new string[] { "Y1", "rcArRaY" });
             Assert.IsTrue(rcArraY_y1.Count == 1);
             Assert.IsTrue(rcArraY_y1.Symbol == y1.Symbol);
-            var rcArraY_x2 = currentProgram.ResolveReference(new string[] { "X2", "rcArRaY" }, false);
+            var rcArraY_x2 = currentProgram.ResolveReference(new string[] { "X2", "rcArRaY" });
             Assert.IsTrue(rcArraY_x2.Count == 1);
             Assert.IsTrue(rcArraY_x2.Symbol == x2.Symbol);
-            var rcArraY_y2 = currentProgram.ResolveReference(new string[] { "Y2", "rcArRaY" }, false);
+            var rcArraY_y2 = currentProgram.ResolveReference(new string[] { "Y2", "rcArRaY" });
             Assert.IsTrue(rcArraY_y2.Count == 1);
             Assert.IsTrue(rcArraY_y2.Symbol == y2.Symbol);
 
@@ -611,39 +611,39 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(rcpt.Symbol.Type.Tag == Type.Tags.Group);
 
             //After expanding there are now x, y, pt1, pt2 variables in the program.
-            x = currentProgram.ResolveReference(new string[] { "x" }, false);
+            x = currentProgram.ResolveReference(new string[] { "x" });
             Assert.IsTrue(x.Count == 5);
-            y = currentProgram.ResolveReference(new string[] { "y" }, false);
+            y = currentProgram.ResolveReference(new string[] { "y" });
             Assert.IsTrue(y.Count == 5);
-            pt1 = currentProgram.ResolveReference(new string[] { "pt1" }, false);
+            pt1 = currentProgram.ResolveReference(new string[] { "pt1" });
             Assert.IsTrue(pt1.Count == 2);
             Assert.IsNotNull(pt1.ElementAt(0).Type);
             Assert.IsNotNull(pt1.ElementAt(0).Type.Tag == Type.Tags.Group);
             Assert.IsNotNull(pt1.ElementAt(1).Type);
             Assert.IsNotNull(pt1.ElementAt(1).Type.Tag == Type.Tags.Group);
-            pt2 = currentProgram.ResolveReference(new string[] { "pt2" }, false);
+            pt2 = currentProgram.ResolveReference(new string[] { "pt2" });
             Assert.IsTrue(pt2.Count == 2);
             Assert.IsNotNull(pt2.ElementAt(0).Type);
             Assert.IsNotNull(pt2.ElementAt(0).Type.Tag == Type.Tags.Group);
             Assert.IsNotNull(pt2.ElementAt(1).Type);
             Assert.IsNotNull(pt2.ElementAt(1).Type.Tag == Type.Tags.Group);
 
-            var pt1_x = currentProgram.ResolveReference(new string[] { "x", "pt1" }, false);
+            var pt1_x = currentProgram.ResolveReference(new string[] { "x", "pt1" });
             Assert.IsTrue(pt1_x.Count == 2);
-            var pt1_y = currentProgram.ResolveReference(new string[] { "y", "pt1" }, false);
+            var pt1_y = currentProgram.ResolveReference(new string[] { "y", "pt1" });
             Assert.IsTrue(pt1_y.Count == 2);
-            var pt2_x = currentProgram.ResolveReference(new string[] { "x", "pt2" }, false);
+            var pt2_x = currentProgram.ResolveReference(new string[] { "x", "pt2" });
             Assert.IsTrue(pt2_x.Count == 2);
-            var pt2_y = currentProgram.ResolveReference(new string[] { "y", "pt2" }, false);
+            var pt2_y = currentProgram.ResolveReference(new string[] { "y", "pt2" });
             Assert.IsTrue(pt2_y.Count == 2);
 
-            var rcpt_pt1_x = currentProgram.ResolveReference(new string[] { "x", "pt1", "rcpt" }, false);
+            var rcpt_pt1_x = currentProgram.ResolveReference(new string[] { "x", "pt1", "rcpt" });
             Assert.IsTrue(rcpt_pt1_x.Count == 1);
-            var rcpt_pt1_y = currentProgram.ResolveReference(new string[] { "y", "pt1", "rcpt" }, false);
+            var rcpt_pt1_y = currentProgram.ResolveReference(new string[] { "y", "pt1", "rcpt" });
             Assert.IsTrue(rcpt_pt1_y.Count == 1);
-            var rcpt_pt2_x = currentProgram.ResolveReference(new string[] { "x", "pt2", "rcpt" }, false);
+            var rcpt_pt2_x = currentProgram.ResolveReference(new string[] { "x", "pt2", "rcpt" });
             Assert.IsTrue(rcpt_pt2_x.Count == 1);
-            var rcpt_pt2_y = currentProgram.ResolveReference(new string[] { "y", "pt2", "rcpt" }, false);
+            var rcpt_pt2_y = currentProgram.ResolveReference(new string[] { "y", "pt2", "rcpt" });
             Assert.IsTrue(rcpt_pt2_y.Count == 1);
 
             Assert.AreNotSame(rcpt_pt1_x.Symbol, rcpt_pt2_x.Symbol);
@@ -652,14 +652,14 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue((rcpt_pt1_y.Symbol == y.ElementAt(0) && rcpt_pt2_y.Symbol == y.ElementAt(1)) || (rcpt_pt1_y.Symbol == y.ElementAt(1) && rcpt_pt2_y.Symbol == y.ElementAt(0)));
 
             //There are now two rc variables both of type Record .
-            var rc_after = currentProgram.ResolveReference(new string[] { "rc" }, false);
+            var rc_after = currentProgram.ResolveReference(new string[] { "rc" });
             Assert.IsTrue(rc_after.Count == 2);
             Assert.IsNotNull(rc_after.ElementAt(0).Type);
             Assert.IsNotNull(rc_after.ElementAt(0).Type.Tag == Type.Tags.Group);
             Assert.IsNotNull(rc_after.ElementAt(1).Type);
             Assert.IsNotNull(rc_after.ElementAt(1).Type.Tag == Type.Tags.Group);
             Assert.IsTrue(rc_after.ElementAt(0) != rc_after.ElementAt(1));
-            var rc_arr = currentProgram.ResolveReference(new string[] { "rc", "arr" }, false);
+            var rc_arr = currentProgram.ResolveReference(new string[] { "rc", "arr" });
             Assert.IsTrue(rc_arr.Count == 1);
             Assert.IsTrue(rc_arr.Symbol == rc_after.ElementAt(0) || rc_arr.Symbol == rc_after.ElementAt(1));
 
@@ -732,7 +732,7 @@ namespace TypeCobol.Test.Domain
             //-------------------------
             // rcarray variable.
             //-------------------------
-            var rcarray = currentProgram.ResolveReference(new string[] { "rcarray" }, false);
+            var rcarray = currentProgram.ResolveReference(new string[] { "rcarray" });
             Assert.IsTrue(rcarray.Count == 1);
             Assert.IsNotNull(rcarray.Symbol.Type);
             Assert.IsTrue(rcarray.Symbol.Type.Tag == Type.Tags.Array);
@@ -741,7 +741,7 @@ namespace TypeCobol.Test.Domain
             //-------------------------
             // rcpt variable.
             //-------------------------
-            var rcpt = currentProgram.ResolveReference(new string[] { "rcpt" }, false);
+            var rcpt = currentProgram.ResolveReference(new string[] { "rcpt" });
             Assert.IsTrue(rcpt.Count == 1);
             Assert.IsNotNull(rcpt.Symbol.Type);
             Assert.IsTrue(rcpt.Symbol.Type == rectpt.Symbol.Type);
@@ -749,7 +749,7 @@ namespace TypeCobol.Test.Domain
             //-------------------------
             // grcarray variable.
             //-------------------------
-            var grcarray = currentProgram.ResolveReference(new string[] { "grcarray" }, false);
+            var grcarray = currentProgram.ResolveReference(new string[] { "grcarray" });
             Assert.IsTrue(grcarray.Count == 1);
             Assert.IsNotNull(grcarray.Symbol.Type);
             Assert.IsTrue(grcarray.Symbol.Type.Tag == Type.Tags.Group);
@@ -772,41 +772,41 @@ namespace TypeCobol.Test.Domain
 
             //After expanding there are X1, Y1, X2, Y2 variables in the program, will all 02 Level
             //After renumber from 1, X1, Y1, X2, Y2 level has not changed because their levels were already 2
-            var x1 = currentProgram.ResolveReference(new string[] { "x1" }, false);
+            var x1 = currentProgram.ResolveReference(new string[] { "x1" });
             Assert.IsTrue(x1.Count == 1);
             Assert.IsTrue(x1.Symbol.Level == 2);
-            var y1 = currentProgram.ResolveReference(new string[] { "y1" }, false);
+            var y1 = currentProgram.ResolveReference(new string[] { "y1" });
             Assert.IsTrue(y1.Count == 1);
             Assert.IsTrue(y1.Symbol.Level == 2);
-            var x2 = currentProgram.ResolveReference(new string[] { "x2" }, false);
+            var x2 = currentProgram.ResolveReference(new string[] { "x2" });
             Assert.IsTrue(x2.Count == 1);
             Assert.IsTrue(x2.Symbol.Level == 2);
-            var y2 = currentProgram.ResolveReference(new string[] { "y2" }, false);
+            var y2 = currentProgram.ResolveReference(new string[] { "y2" });
             Assert.IsTrue(y2.Count == 1);
             Assert.IsTrue(y2.Symbol.Level == 2);
             Assert.IsTrue(rcarray.Symbol.Level == 1);
 
             //After expanding there are x, y, pt1, pt2 variables in the program
-            var x = currentProgram.ResolveReference(new string[] { "x" }, false);
+            var x = currentProgram.ResolveReference(new string[] { "x" });
             Assert.IsTrue(x.Count == 5);
-            var y = currentProgram.ResolveReference(new string[] { "y" }, false);
+            var y = currentProgram.ResolveReference(new string[] { "y" });
             Assert.IsTrue(y.Count == 5);
-            var pt1 = currentProgram.ResolveReference(new string[] { "pt1" }, false);
+            var pt1 = currentProgram.ResolveReference(new string[] { "pt1" });
             Assert.IsTrue(pt1.Count == 2);
-            var pt2 = currentProgram.ResolveReference(new string[] { "pt2" }, false);
+            var pt2 = currentProgram.ResolveReference(new string[] { "pt2" });
             Assert.IsTrue(pt2.Count == 2);
 
             //Check levels in expanded rcpt
-            var rcpt_x = currentProgram.ResolveReference(new string[] { "x", "rcpt" }, false);
+            var rcpt_x = currentProgram.ResolveReference(new string[] { "x", "rcpt" });
             Assert.IsTrue(rcpt_x.Count == 2);
             Assert.IsTrue(rcpt_x.All(v => v.Level == 3));
-            var rcpt_y = currentProgram.ResolveReference(new string[] { "x", "rcpt" }, false);
+            var rcpt_y = currentProgram.ResolveReference(new string[] { "x", "rcpt" });
             Assert.IsTrue(rcpt_y.Count == 2);
             Assert.IsTrue(rcpt_y.All(v => v.Level == 3));
-            var rcpt_p1 = currentProgram.ResolveReference(new string[] { "pt1", "rcpt" }, false);
+            var rcpt_p1 = currentProgram.ResolveReference(new string[] { "pt1", "rcpt" });
             Assert.IsTrue(rcpt_p1.Count == 1);
             Assert.IsTrue(rcpt_p1.Symbol.Level == 2);
-            var rcpt_p2 = currentProgram.ResolveReference(new string[] { "pt2", "rcpt" }, false);
+            var rcpt_p2 = currentProgram.ResolveReference(new string[] { "pt2", "rcpt" });
             Assert.IsTrue(rcpt_p2.Count == 1);
             Assert.IsTrue(rcpt_p2.Symbol.Level == 2);
             Assert.IsTrue(rcpt.Symbol.Level == 1);
@@ -828,46 +828,46 @@ namespace TypeCobol.Test.Domain
             //               06 PT2.
             //                  07 X PIC 9(4).
             //                  07 Y PIC 9(4).
-            x = currentProgram.ResolveReference(new string[] { "x", "grcarray" }, false);
+            x = currentProgram.ResolveReference(new string[] { "x", "grcarray" });
             Assert.IsTrue(x.Count == 3);
-            y = currentProgram.ResolveReference(new string[] { "y", "grcarray" }, false);
+            y = currentProgram.ResolveReference(new string[] { "y", "grcarray" });
             Assert.IsTrue(y.Count == 3);
-            pt1 = currentProgram.ResolveReference(new string[] { "pt1", "grcarray" }, false);
+            pt1 = currentProgram.ResolveReference(new string[] { "pt1", "grcarray" });
             Assert.IsTrue(pt1.Count == 1);
             Assert.IsTrue(pt1.Symbol.Level == 6);
-            pt2 = currentProgram.ResolveReference(new string[] { "pt2", "grcarray" }, false);
+            pt2 = currentProgram.ResolveReference(new string[] { "pt2", "grcarray" });
             Assert.IsTrue(pt2.Count == 1);
             Assert.IsTrue(pt2.Symbol.Level == 6);
 
-            var rc = currentProgram.ResolveReference(new string[] { "rc" }, false);
+            var rc = currentProgram.ResolveReference(new string[] { "rc" });
             Assert.IsTrue(rc.Count == 2);
 
-            var a = currentProgram.ResolveReference(new string[] { "a" }, false);
+            var a = currentProgram.ResolveReference(new string[] { "a" });
             Assert.IsTrue(a.Count == 1);
             Assert.IsTrue(a.Symbol.Level == 4);
 
-            var arr = currentProgram.ResolveReference(new string[] { "arr" }, false);
+            var arr = currentProgram.ResolveReference(new string[] { "arr" });
             Assert.IsTrue(arr.Count == 1);
             Assert.IsTrue(arr.Symbol.Level == 3);
 
-            var grp = currentProgram.ResolveReference(new string[] { "grp" }, false);
+            var grp = currentProgram.ResolveReference(new string[] { "grp" });
             Assert.IsTrue(grp.Count == 1);
             Assert.IsTrue(grp.Symbol.Level == 2);
 
-            var xx = currentProgram.ResolveReference(new string[] { "xx" }, false);
+            var xx = currentProgram.ResolveReference(new string[] { "xx" });
             Assert.IsTrue(xx.Count == 1);
             Assert.IsTrue(xx.Symbol.Level == 2);
 
-            var x_pt1_a = currentProgram.ResolveReference(new string[] { "x", "pt1", "a" }, false);
+            var x_pt1_a = currentProgram.ResolveReference(new string[] { "x", "pt1", "a" });
             Assert.IsTrue(x_pt1_a.Count == 1);
             Assert.IsTrue(x_pt1_a.Symbol.Level == 7);
-            var x_pt2_a = currentProgram.ResolveReference(new string[] { "x", "pt2", "a" }, false);
+            var x_pt2_a = currentProgram.ResolveReference(new string[] { "x", "pt2", "a" });
             Assert.IsTrue(x_pt2_a.Count == 1);
             Assert.IsTrue(x_pt2_a.Symbol.Level == 7);
-            var y_pt1_a = currentProgram.ResolveReference(new string[] { "y", "pt1", "a" }, false);
+            var y_pt1_a = currentProgram.ResolveReference(new string[] { "y", "pt1", "a" });
             Assert.IsTrue(y_pt1_a.Count == 1);
             Assert.IsTrue(y_pt1_a.Symbol.Level == 7);
-            var y_pt2_a = currentProgram.ResolveReference(new string[] { "y", "pt2", "a" }, false);
+            var y_pt2_a = currentProgram.ResolveReference(new string[] { "y", "pt2", "a" });
             Assert.IsTrue(y_pt2_a.Count == 1);
             Assert.IsTrue(y_pt2_a.Symbol.Level == 7);
             Assert.IsTrue(x.ElementAt(0).Level == 3);
@@ -877,7 +877,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(y.ElementAt(1) == y_pt1_a.Symbol);
             Assert.IsTrue(y.ElementAt(2) == y_pt2_a.Symbol);
 
-            var rc_a = currentProgram.ResolveReference(new string[] { "rc", "a" }, false);
+            var rc_a = currentProgram.ResolveReference(new string[] { "rc", "a" });
             Assert.IsTrue(rc_a.Count == 1);
             Assert.IsTrue(rc_a.Symbol.Level == 5);
             Assert.IsTrue(rc.ElementAt(0).Level == 2);
@@ -913,7 +913,7 @@ namespace TypeCobol.Test.Domain
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
 
             //Get MyVar1 symbol
-            var myvar1 = currentProgram.ResolveReference(new string[] {"myvar1"}, false);
+            var myvar1 = currentProgram.ResolveReference(new string[] {"myvar1"});
             Assert.IsTrue(myvar1.Count == 1);
 
             //Check Errors : Cannot REDEFINES access MyVar1.
@@ -923,7 +923,7 @@ namespace TypeCobol.Test.Domain
             Assert.AreEqual<string>(document.Results.PrgSymbolTblBuilder.Diagnostics[0].Message, d.Message);
 
             //Get MyVar2 symbol with PIC X(9)
-            var myvar2s = currentProgram.ResolveReference(new string[] { "myvar2" }, false);
+            var myvar2s = currentProgram.ResolveReference(new string[] { "myvar2" });
             Assert.IsTrue(myvar2s.Count == 3);
             Assert.IsTrue(myvar2s.Distinct().Count() == 3);
             //Get the MyVar2 with PIC X(9).
@@ -931,7 +931,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsNotNull(myvar2);
 
             //Check that MyRedifines REDEFINES MyVar2 with PIC x(9)
-            var MyRedifines = currentProgram.ResolveReference(new string[] { "myredifines" }, false);
+            var MyRedifines = currentProgram.ResolveReference(new string[] { "myredifines" });
             Assert.IsTrue(MyRedifines.Count == 1);
             Assert.IsTrue(MyRedifines.Symbol.HasFlag(Symbol.Flags.Redefines));
             RedefinesSymbol sref = (RedefinesSymbol) MyRedifines.Symbol;
@@ -940,7 +940,7 @@ namespace TypeCobol.Test.Domain
             //Check that MyRedifines{i} with 2 <= i <= 4 REDEFINES MyVar2 with PIC x(9)
             for (int i = 2; i <= 4; i++)
             {
-                MyRedifines = currentProgram.ResolveReference(new string[] { "myredifines" + i }, false);
+                MyRedifines = currentProgram.ResolveReference(new string[] { "myredifines" + i });
                 Assert.AreEqual(MyRedifines.Count, 1);
                 Assert.IsTrue(MyRedifines.Symbol.HasFlag(Symbol.Flags.Redefines));
                 sref = (RedefinesSymbol)MyRedifines.Symbol;
@@ -948,16 +948,16 @@ namespace TypeCobol.Test.Domain
             }
 
             //Check transitives REDEFINES: FILTER REDEFINES VarGroupBis REDEFINE VarGroup.
-            var VarGroup = currentProgram.ResolveReference(new string[] { "vargroup" }, false);
+            var VarGroup = currentProgram.ResolveReference(new string[] { "vargroup" });
             Assert.IsTrue(VarGroup.Count == 1);
             Assert.IsFalse(VarGroup.Symbol.HasFlag(Symbol.Flags.Redefines));
 
-            var VarGroupBis = currentProgram.ResolveReference(new string[] { "vargroup-bis" }, false);
+            var VarGroupBis = currentProgram.ResolveReference(new string[] { "vargroup-bis" });
             Assert.IsTrue(VarGroupBis.Count == 1);
             Assert.IsTrue(VarGroupBis.Symbol.HasFlag(Symbol.Flags.Redefines));
             Assert.AreEqual(((RedefinesSymbol)VarGroupBis.Symbol).Redefined, VarGroup.Symbol);
 
-            var filter = currentProgram.ResolveReference(new string[] { "filter" }, false);
+            var filter = currentProgram.ResolveReference(new string[] { "filter" });
             Assert.IsTrue(filter.Count == 1);
             Assert.IsTrue(filter.Symbol.HasFlag(Symbol.Flags.Redefines));
             Assert.AreEqual(((RedefinesSymbol)filter.Symbol).Redefined, VarGroupBis.Symbol);
@@ -980,7 +980,7 @@ namespace TypeCobol.Test.Domain
             //Locate Redefines
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
-            var vars = currentProgram.ResolveReference(new string[] {"yy"}, false);
+            var vars = currentProgram.ResolveReference(new string[] {"yy"});
             Assert.IsTrue(vars.Count == 1);
             string yy = vars.Single().ToString();
             Assert.AreEqual(yy, "66 YY RENAMES RX THRU RY." + System.Environment.NewLine);
@@ -1008,6 +1008,7 @@ namespace TypeCobol.Test.Domain
 
             Assert.AreEqual<string>(document.Results.PrgSymbolTblBuilder.Diagnostics[0].Message, d.Message);
         }
+
         /// <summary>
         /// This test test that when renames objects are not found a diagnostics is emitted.
         /// </summary>
@@ -1024,7 +1025,7 @@ namespace TypeCobol.Test.Domain
             //Locate Redefines
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
-            var vars = currentProgram.ResolveReference(new string[] { "yy" }, false);
+            var vars = currentProgram.ResolveReference(new string[] { "yy" });
             Assert.IsTrue(vars.Count == 1);
 
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Diagnostics.Count == 2);
@@ -1098,7 +1099,7 @@ namespace TypeCobol.Test.Domain
             //Check variables
             for (int i = 1; i <= 8; i++)
             {
-                var entry = program.ResolveReference(new[] {"var" + i}, false);
+                var entry = program.ResolveReference(new[] {"var" + i});
                 Assert.IsTrue(entry != null);
                 Assert.IsTrue(entry.Count == 1);
                 var symbol = entry.Symbol;
@@ -1108,7 +1109,7 @@ namespace TypeCobol.Test.Domain
             //Check arrays
             for (int i = 1; i <= 8; i++)
             {
-                var entry = program.ResolveReference(new[] { "array" + i }, false);
+                var entry = program.ResolveReference(new[] { "array" + i });
                 Assert.IsTrue(entry != null);
                 Assert.IsTrue(entry.Count == 1);
                 var symbol = entry.Symbol;
@@ -1119,7 +1120,7 @@ namespace TypeCobol.Test.Domain
             }
 
             //Check group structures and types
-            var groupEntry = program.ResolveReference(new[] { "group1" }, false);
+            var groupEntry = program.ResolveReference(new[] { "group1" });
             Assert.IsTrue(groupEntry != null);
             Assert.IsTrue(groupEntry.Count == 1);
             var group1 = groupEntry.Symbol;
@@ -1148,7 +1149,7 @@ namespace TypeCobol.Test.Domain
             var item3 = fields[2];
             Assert.IsTrue(item3.Type != null);
             Assert.IsTrue(item3.Type.Tag == Type.Tags.Picture);
-            groupEntry = program.ResolveReference(new[] { "group2" }, false);
+            groupEntry = program.ResolveReference(new[] { "group2" });
             Assert.IsTrue(groupEntry != null);
             Assert.IsTrue(groupEntry.Count == 1);
             var group2 = groupEntry.Symbol;
@@ -1198,13 +1199,13 @@ namespace TypeCobol.Test.Domain
             Symbol symbol = (Symbol) data;
             Assert.IsTrue(symbol.Kind == Symbol.Kinds.Program);
             ProgramSymbol prgSym = (ProgramSymbol) symbol;
-            var var1 = prgSym.ResolveReference(new string[] { "var1" }, false);
+            var var1 = prgSym.ResolveReference(new string[] { "var1" });
             Assert.IsNotNull(var1);
             Assert.IsTrue(var1.Count == 1);
             Assert.IsTrue(var1.Symbol.HasFlag(Symbol.Flags.WORKING_STORAGE));
             Assert.IsFalse(var1.Symbol.HasFlag((Symbol.Flags)((ulong)Symbol.Flags.LOCAL_STORAGE | (ulong)Symbol.Flags.GLOBAL_STORAGE | (ulong)Symbol.Flags.Global)));
             Assert.AreEqual(var1.Symbol.Name, "Var1");
-            var var2 = prgSym.ResolveReference(new string[] { "var2" }, false);
+            var var2 = prgSym.ResolveReference(new string[] { "var2" });
             Assert.IsNotNull(var2);
             Assert.IsTrue(var2.Count == 1);
             Assert.IsTrue(var2.Symbol.HasFlag(Symbol.Flags.LOCAL_STORAGE));
@@ -1237,25 +1238,24 @@ namespace TypeCobol.Test.Domain
             Symbol symbol = (Symbol)data;
             Assert.IsTrue(symbol.Kind == Symbol.Kinds.Program);
             ProgramSymbol prgSym = (ProgramSymbol)symbol;
-            var var1 = prgSym.ResolveReference(new string[] { "var1" }, false);
+            var var1 = prgSym.ResolveReference(new string[] { "var1" });
             Assert.IsNotNull(var1);
             Assert.IsTrue(var1.Count == 1);
             Assert.IsTrue(var1.Symbol.HasFlag((Symbol.Flags)((ulong)Symbol.Flags.WORKING_STORAGE | (ulong)Symbol.Flags.Global)));
             Assert.IsFalse(var1.Symbol.HasFlag((Symbol.Flags)((ulong)Symbol.Flags.LOCAL_STORAGE | (ulong)Symbol.Flags.GLOBAL_STORAGE)));
             Assert.AreEqual(var1.Symbol.Name, "Var1");
-            var var2 = prgSym.ResolveReference(new string[] { "var2" }, false);
+            var var2 = prgSym.ResolveReference(new string[] { "var2" });
             Assert.IsNotNull(var2);
             Assert.IsTrue(var2.Count == 1);
             Assert.IsTrue(var2.Symbol.HasFlag((Symbol.Flags)((ulong)Symbol.Flags.LOCAL_STORAGE | (ulong)Symbol.Flags.Global)));
             Assert.IsFalse(var2.Symbol.HasFlag((Symbol.Flags)((ulong)Symbol.Flags.WORKING_STORAGE | (ulong)Symbol.Flags.GLOBAL_STORAGE)));
             Assert.AreEqual(var2.Symbol.Name, "Var2");
-            var var0 = prgSym.ResolveReference(new string[] { "var0" }, false);
+            var var0 = prgSym.ResolveReference(new string[] { "var0" });
             Assert.IsNotNull(var0);
             Assert.IsTrue(var0.Count == 1);
             Assert.IsTrue(var0.Symbol.HasFlag(Symbol.Flags.GLOBAL_STORAGE));
             Assert.IsFalse(var0.Symbol.HasFlag((Symbol.Flags)((ulong)Symbol.Flags.LOCAL_STORAGE | (ulong)Symbol.Flags.WORKING_STORAGE | (ulong)Symbol.Flags.Global)));
             Assert.AreEqual(var0.Symbol.Name, "Var0");
-
         }
 
         /// <summary>
@@ -1303,18 +1303,14 @@ namespace TypeCobol.Test.Domain
             Assert.IsFalse(symbol0.Kind == Symbol.Kinds.Program);
             Assert.IsTrue(symbol0.Kind == Symbol.Kinds.Function);
             FunctionSymbol prgSym0 = (FunctionSymbol)symbol0;
-
-            //Without lookup upward enclosing programs "var0" cannot be found
-            var var0 = prgSym0.ResolveReference(new string[] { "var0" }, false);
-            Assert.IsNotNull(var0);
-            Assert.IsTrue(var0.Count == 0);
-            //But with looking upward inclosing programs "var0" is found as it is in GLOBAL-STORAGE section
-            var0 = prgSym0.ResolveReference(new string[] { "var0" }, true);
+            //Check that "var0" is found in GLOBAL-STORAGE section
+            var var0 = prgSym0.ResolveReference(new string[] { "var0" });
             Assert.IsNotNull(var0);
             Assert.IsTrue(var0.Count == 1);
+            Assert.IsTrue(var0.Symbol.Owner == currentProgram);
             Assert.IsTrue(var0.Symbol.HasFlag(Symbol.Flags.GLOBAL_STORAGE));
             Assert.IsFalse(var0.Symbol.HasFlag((Symbol.Flags)((ulong)Symbol.Flags.LOCAL_STORAGE | (ulong)Symbol.Flags.WORKING_STORAGE | (ulong)Symbol.Flags.Global)));
-            Assert.AreEqual(var0.Symbol.Name, "Var0");
+            Assert.AreEqual("Var0", var0.Symbol.Name);
 
             //------------------------------------------------------------------
             // DISPLAY Var1
@@ -1327,14 +1323,18 @@ namespace TypeCobol.Test.Domain
             Assert.IsFalse(symbol1.Kind == Symbol.Kinds.Program);
             Assert.IsTrue(symbol1.Kind == Symbol.Kinds.Function);
             FunctionSymbol prgSym1 = (FunctionSymbol)symbol1;
-            //Without lookup upward enclosing programs "var1" cannot be found
-            var var1 = prgSym0.ResolveReference(new string[] { "var1" }, false);
+            Assert.IsTrue(prgSym1 == prgSym0);
+            //Check that "var1" is found in WORKING-STORAGE section of enclosing program but not visible by function
+            var var1 = prgSym0.ResolveReference(new string[] { "var1" });
             Assert.IsNotNull(var1);
             Assert.IsTrue(var1.Count == 0);
-            //With looking upward inclosing programs "var1" is not found has is visibility is not GLOBAL-STORAGE.
-            var1 = prgSym0.ResolveReference(new string[] { "var1" }, true);
+            var1 = currentProgram.ResolveReference(new string[] { "var1" });
             Assert.IsNotNull(var1);
-            Assert.IsTrue(var1.Count == 0);
+            Assert.IsTrue(var1.Count == 1);
+            Assert.IsTrue(var1.Symbol.Owner == currentProgram);
+            Assert.IsTrue(var1.Symbol.HasFlag(Symbol.Flags.WORKING_STORAGE | Symbol.Flags.Global));
+            Assert.IsFalse(var1.Symbol.HasFlag(Symbol.Flags.GLOBAL_STORAGE | Symbol.Flags.LOCAL_STORAGE));
+            Assert.AreEqual("Var1", var1.Symbol.Name);
 
             //------------------------------------------------------------------
             // DISPLAY Var2
@@ -1347,15 +1347,18 @@ namespace TypeCobol.Test.Domain
             Assert.IsFalse(symbol2.Kind == Symbol.Kinds.Program);
             Assert.IsTrue(symbol2.Kind == Symbol.Kinds.Function);
             FunctionSymbol prgSym2 = (FunctionSymbol)symbol2;
-            //Without lookup upward enclosing programs "var2" cannot be found
-            var var2 = prgSym0.ResolveReference(new string[] { "var2" }, false);
+            Assert.IsTrue(prgSym2 == prgSym0);
+            //Check that "var2" is found in LOCAL-STORAGE section of enclosing program but not visible by function
+            var var2 = prgSym0.ResolveReference(new string[] { "var2" });
             Assert.IsNotNull(var2);
             Assert.IsTrue(var2.Count == 0);
-            //With looking upward inclosing programs "var2" is not found has is visibility is not GLOBAL-STORAGE.
-            //even if it's visibility is GLOBAL.
-            var2 = prgSym0.ResolveReference(new string[] { "var2" }, true);
+            var2 = currentProgram.ResolveReference(new string[] { "var2" });
             Assert.IsNotNull(var2);
-            Assert.IsTrue(var2.Count == 0);
+            Assert.IsTrue(var2.Count == 1);
+            Assert.IsTrue(var2.Symbol.Owner == currentProgram);
+            Assert.IsTrue(var2.Symbol.HasFlag(Symbol.Flags.LOCAL_STORAGE | Symbol.Flags.Global));
+            Assert.IsFalse(var2.Symbol.HasFlag(Symbol.Flags.GLOBAL_STORAGE | Symbol.Flags.WORKING_STORAGE));
+            Assert.AreEqual("Var2", var2.Symbol.Name);
         }
 
         /// <summary>
@@ -1398,18 +1401,14 @@ namespace TypeCobol.Test.Domain
             Symbol symbol0 = (Symbol)data0;
             Assert.IsTrue(symbol0.Kind == Symbol.Kinds.Program);
             ProgramSymbol prgSym0 = (ProgramSymbol)symbol0;
-
-            //Without lookup upward enclosing programs "var0" cannot be found
-            var var0 = prgSym0.ResolveReference(new string[] { "var0" }, false);
-            Assert.IsNotNull(var0);
-            Assert.IsTrue(var0.Count == 0);
-            //But with looking upward inclosing programs "var0" is found as it is in GLOBAL-STORAGE section
-            var0 = prgSym0.ResolveReference(new string[] { "var0" }, true);
+            //Check that "var0" is found in GLOBAL-STORAGE section
+            var var0 = prgSym0.ResolveReference(new string[] { "var0" });
             Assert.IsNotNull(var0);
             Assert.IsTrue(var0.Count == 1);
+            Assert.IsTrue(var0.Symbol.Owner == currentProgram);
             Assert.IsTrue(var0.Symbol.HasFlag(Symbol.Flags.GLOBAL_STORAGE));
             Assert.IsFalse(var0.Symbol.HasFlag((Symbol.Flags)((ulong)Symbol.Flags.LOCAL_STORAGE | (ulong)Symbol.Flags.WORKING_STORAGE | (ulong)Symbol.Flags.Global)));
-            Assert.AreEqual(var0.Symbol.Name, "Var0");
+            Assert.AreEqual("Var0", var0.Symbol.Name);
 
             //------------------------------------------------------------------
             // DISPLAY Var1
@@ -1421,18 +1420,15 @@ namespace TypeCobol.Test.Domain
             Symbol symbol1 = (Symbol)data1;
             Assert.IsTrue(symbol1.Kind == Symbol.Kinds.Program);
             ProgramSymbol prgSym1 = (ProgramSymbol)symbol1;
-
-            //Without lookup upward enclosing programs "var1" cannot be found
-            var var1 = prgSym1.ResolveReference(new string[] { "var1" }, false);
-            Assert.IsNotNull(var1);
-            Assert.IsTrue(var1.Count == 0);
-            //But with looking upward inclosing programs "var1" is found as it is in GLOBAL.
-            var1 = prgSym1.ResolveReference(new string[] { "var1" }, true);
+            Assert.IsTrue(prgSym1 == prgSym0);
+            //Check that "var1" is found in WORKING-STORAGE section of enclosing program.
+            var var1 = prgSym0.ResolveReference(new string[] { "var1" });
             Assert.IsNotNull(var1);
             Assert.IsTrue(var1.Count == 1);
+            Assert.IsTrue(var1.Symbol.Owner == currentProgram);
             Assert.IsTrue(var1.Symbol.HasFlag((Symbol.Flags)((ulong)Symbol.Flags.WORKING_STORAGE | (ulong)Symbol.Flags.Global)));
             Assert.IsFalse(var1.Symbol.HasFlag((Symbol.Flags)((ulong)Symbol.Flags.LOCAL_STORAGE | (ulong)Symbol.Flags.GLOBAL_STORAGE)));
-            Assert.AreEqual(var1.Symbol.Name, "Var1");
+            Assert.AreEqual("Var1", var1.Symbol.Name);
 
             //------------------------------------------------------------------
             // DISPLAY Var2
@@ -1444,18 +1440,15 @@ namespace TypeCobol.Test.Domain
             Symbol symbol2 = (Symbol)data2;
             Assert.IsTrue(symbol2.Kind == Symbol.Kinds.Program);
             ProgramSymbol prgSym2 = (ProgramSymbol)symbol2;
-
-            //Without lookup upward enclosing programs "var2" cannot be found
-            var var2 = prgSym2.ResolveReference(new string[] { "var2" }, false);
-            Assert.IsNotNull(var2);
-            Assert.IsTrue(var2.Count == 0);
-            //But with looking upward inclosing programs "var2" is found as it is in GLOBAL.
-            var2 = prgSym2.ResolveReference(new string[] { "var2" }, true);
+            Assert.IsTrue(prgSym2 == prgSym0);
+            //Check that "var2" is found in LOCAL-STORAGE section of enclosing program.
+            var var2 = prgSym0.ResolveReference(new string[] { "var2" });
             Assert.IsNotNull(var2);
             Assert.IsTrue(var2.Count == 1);
+            Assert.IsTrue(var2.Symbol.Owner == currentProgram);
             Assert.IsTrue(var2.Symbol.HasFlag((Symbol.Flags)((ulong)Symbol.Flags.LOCAL_STORAGE | (ulong)Symbol.Flags.Global)));
             Assert.IsFalse(var2.Symbol.HasFlag((Symbol.Flags)((ulong)Symbol.Flags.WORKING_STORAGE | (ulong)Symbol.Flags.GLOBAL_STORAGE)));
-            Assert.AreEqual(var2.Symbol.Name, "Var2");
+            Assert.AreEqual("Var2", var2.Symbol.Name);
 
             //------------------------------------------------------------------
             // DISPLAY NoVar1
@@ -1469,15 +1462,18 @@ namespace TypeCobol.Test.Domain
             Symbol symbol3 = (Symbol)data3;
             Assert.IsTrue(symbol3.Kind == Symbol.Kinds.Program);
             ProgramSymbol prgSym3 = (ProgramSymbol)symbol3;
-
-            //Without lookup upward enclosing programs "novar1" cannot be found
-            var novar1 = prgSym3.ResolveReference(new string[] { "novar1" }, false);
+            Assert.IsTrue(prgSym3 == prgSym0);
+            //Check that "novar1" is not visible by nested prg and that it is declared in WORKING of enclosing prg.
+            var novar1 = prgSym0.ResolveReference(new string[] { "novar1" });
             Assert.IsNotNull(novar1);
             Assert.IsTrue(novar1.Count == 0);
-            //But with looking upward inclosing programs "novar1" is not found as it is not GLOBAL.
-            novar1 = prgSym3.ResolveReference(new string[] { "novar1" }, true);
+            novar1 = currentProgram.ResolveReference(new string[] { "novar1" });
             Assert.IsNotNull(novar1);
-            Assert.IsTrue(novar1.Count == 0);
+            Assert.IsTrue(novar1.Count == 1);
+            Assert.IsTrue(novar1.Symbol.Owner == currentProgram);
+            Assert.IsTrue(novar1.Symbol.HasFlag(Symbol.Flags.WORKING_STORAGE));
+            Assert.IsFalse(novar1.Symbol.HasFlag(Symbol.Flags.GLOBAL_STORAGE | Symbol.Flags.LOCAL_STORAGE | Symbol.Flags.Global));
+            Assert.AreEqual("NoVar1", novar1.Symbol.Name);
 
             //------------------------------------------------------------------
             // DISPLAY NoVar2
@@ -1491,15 +1487,18 @@ namespace TypeCobol.Test.Domain
             Symbol symbol4 = (Symbol)data4;
             Assert.IsTrue(symbol4.Kind == Symbol.Kinds.Program);
             ProgramSymbol prgSym4 = (ProgramSymbol)symbol4;
-
-            //Without lookup upward enclosing programs "novar2" cannot be found
-            var novar2 = prgSym4.ResolveReference(new string[] { "novar2" }, false);
+            Assert.IsTrue(prgSym4 == prgSym0);
+            //Check that "novar2" is not visible by nested prg and that it is declared in LOCAL of enclosing prg.
+            var novar2 = prgSym0.ResolveReference(new string[] { "novar2" });
             Assert.IsNotNull(novar2);
             Assert.IsTrue(novar2.Count == 0);
-            //But with looking upward inclosing programs "novar1" is not found as it is not GLOBAL.
-            novar1 = prgSym3.ResolveReference(new string[] { "novar2" }, true);
+            novar2 = currentProgram.ResolveReference(new string[] { "novar2" });
             Assert.IsNotNull(novar2);
-            Assert.IsTrue(novar2.Count == 0);
+            Assert.IsTrue(novar2.Count == 1);
+            Assert.IsTrue(novar2.Symbol.Owner == currentProgram);
+            Assert.IsTrue(novar2.Symbol.HasFlag(Symbol.Flags.LOCAL_STORAGE));
+            Assert.IsFalse(novar2.Symbol.HasFlag(Symbol.Flags.GLOBAL_STORAGE | Symbol.Flags.WORKING_STORAGE | Symbol.Flags.Global));
+            Assert.AreEqual("NoVar2", novar2.Symbol.Name);
         }
 
         /// <summary>
@@ -1543,23 +1542,19 @@ namespace TypeCobol.Test.Domain
             Symbol symbol0 = (Symbol)data0;
             Assert.IsTrue(symbol0.Kind == Symbol.Kinds.Program);
             ProgramSymbol prgSym0 = (ProgramSymbol)symbol0;
-
-            //Without lookup upward enclosing programs "var0" cannot be found
+            //Check that "var0" is found in GLOBAL-STORAGE section
             Assert.IsTrue(display0.CodeElement.Type == CodeElementType.DisplayStatement);
-            DisplayStatement displayStmt0 = (DisplayStatement)display0.CodeElement;
+            var displayStmt0 = display0.CodeElement;
             Assert.IsTrue(displayStmt0.Variables != null && displayStmt0.Variables.Length == 1);
             var srefVar0 = displayStmt0.Variables[0].MainSymbolReference;
             Assert.AreEqual(srefVar0.Name, "Var0");
-            var var0 = prgSym0.ResolveReference(srefVar0, false);
-            Assert.IsNotNull(var0);
-            Assert.IsTrue(var0.Count == 0);
-            //But with looking upward inclosing programs "var0" is found as it is in GLOBAL-STORAGE section
-            var0 = prgSym0.ResolveReference(srefVar0, true);
+            var var0 = prgSym0.ResolveReference(srefVar0);
             Assert.IsNotNull(var0);
             Assert.IsTrue(var0.Count == 1);
+            Assert.IsTrue(var0.Symbol.Owner == currentProgram);
             Assert.IsTrue(var0.Symbol.HasFlag(Symbol.Flags.GLOBAL_STORAGE));
             Assert.IsFalse(var0.Symbol.HasFlag((Symbol.Flags)((ulong)Symbol.Flags.LOCAL_STORAGE | (ulong)Symbol.Flags.WORKING_STORAGE | (ulong)Symbol.Flags.Global)));
-            Assert.AreEqual(var0.Symbol.Name, "Var0");
+            Assert.AreEqual("Var0", var0.Symbol.Name);
 
             //------------------------------------------------------------------
             // DISPLAY Var1
@@ -1571,23 +1566,20 @@ namespace TypeCobol.Test.Domain
             Symbol symbol1 = (Symbol)data1;
             Assert.IsTrue(symbol1.Kind == Symbol.Kinds.Program);
             ProgramSymbol prgSym1 = (ProgramSymbol)symbol1;
-
-            //Without lookup upward enclosing programs "var1" cannot be found
+            Assert.IsTrue(prgSym1 == prgSym0);
+            //Check that "var1" is found in WORKING-STORAGE section of enclosing program.
             Assert.IsTrue(display1.CodeElement.Type == CodeElementType.DisplayStatement);
-            DisplayStatement displayStmt1 = (DisplayStatement)display1.CodeElement;
+            var displayStmt1 = display1.CodeElement;
             Assert.IsTrue(displayStmt1.Variables != null && displayStmt1.Variables.Length == 1);
             var srefVar1 = displayStmt1.Variables[0].MainSymbolReference;
             Assert.AreEqual(srefVar1.Name, "Var1");
-            var var1 = prgSym1.ResolveReference(srefVar1, false);
-            Assert.IsNotNull(var1);
-            Assert.IsTrue(var1.Count == 0);
-            //But with looking upward inclosing programs "var1" is found as it is in GLOBAL.
-            var1 = prgSym1.ResolveReference(srefVar1, true);
+            var var1 = prgSym0.ResolveReference(srefVar1);
             Assert.IsNotNull(var1);
             Assert.IsTrue(var1.Count == 1);
+            Assert.IsTrue(var1.Symbol.Owner == currentProgram);
             Assert.IsTrue(var1.Symbol.HasFlag((Symbol.Flags)((ulong)Symbol.Flags.WORKING_STORAGE | (ulong)Symbol.Flags.Global)));
             Assert.IsFalse(var1.Symbol.HasFlag((Symbol.Flags)((ulong)Symbol.Flags.LOCAL_STORAGE | (ulong)Symbol.Flags.GLOBAL_STORAGE)));
-            Assert.AreEqual(var1.Symbol.Name, "Var1");
+            Assert.AreEqual("Var1", var1.Symbol.Name);
 
             //------------------------------------------------------------------
             // DISPLAY Var2
@@ -1599,23 +1591,20 @@ namespace TypeCobol.Test.Domain
             Symbol symbol2 = (Symbol)data2;
             Assert.IsTrue(symbol2.Kind == Symbol.Kinds.Program);
             ProgramSymbol prgSym2 = (ProgramSymbol)symbol2;
-
-            //Without lookup upward enclosing programs "var2" cannot be found
+            Assert.IsTrue(prgSym2 == prgSym0);
+            //Check that "var2" is found in LOCAL-STORAGE section of enclosing program.
             Assert.IsTrue(display2.CodeElement.Type == CodeElementType.DisplayStatement);
-            DisplayStatement displayStmt2 = (DisplayStatement)display2.CodeElement;
+            var displayStmt2 = display2.CodeElement;
             Assert.IsTrue(displayStmt2.Variables != null && displayStmt2.Variables.Length == 1);
             var srefVar2 = displayStmt2.Variables[0].MainSymbolReference;
             Assert.AreEqual(srefVar2.Name, "Var2");
-            var var2 = prgSym2.ResolveReference(srefVar2, false);
-            Assert.IsNotNull(var2);
-            Assert.IsTrue(var2.Count == 0);
-            //But with looking upward inclosing programs "var2" is found as it is in GLOBAL.
-            var2 = prgSym2.ResolveReference(srefVar2, true);
+            var var2 = prgSym0.ResolveReference(srefVar2);
             Assert.IsNotNull(var2);
             Assert.IsTrue(var2.Count == 1);
+            Assert.IsTrue(var2.Symbol.Owner == currentProgram);
             Assert.IsTrue(var2.Symbol.HasFlag((Symbol.Flags)((ulong)Symbol.Flags.LOCAL_STORAGE | (ulong)Symbol.Flags.Global)));
             Assert.IsFalse(var2.Symbol.HasFlag((Symbol.Flags)((ulong)Symbol.Flags.WORKING_STORAGE | (ulong)Symbol.Flags.GLOBAL_STORAGE)));
-            Assert.AreEqual(var2.Symbol.Name, "Var2");
+            Assert.AreEqual("Var2", var2.Symbol.Name);
 
             //------------------------------------------------------------------
             // DISPLAY NoVar1
@@ -1629,20 +1618,23 @@ namespace TypeCobol.Test.Domain
             Symbol symbol3 = (Symbol)data3;
             Assert.IsTrue(symbol3.Kind == Symbol.Kinds.Program);
             ProgramSymbol prgSym3 = (ProgramSymbol)symbol3;
-
-            //Without lookup upward enclosing programs "novar1" cannot be found
+            Assert.IsTrue(prgSym3 == prgSym0);
+            //Check that "novar1" is not visible by nested prg and that it is declared in WORKING of enclosing prg.
             Assert.IsTrue(display3.CodeElement.Type == CodeElementType.DisplayStatement);
-            DisplayStatement displayStmt3 = (DisplayStatement)display3.CodeElement;
+            var displayStmt3 = display3.CodeElement;
             Assert.IsTrue(displayStmt3.Variables != null && displayStmt3.Variables.Length == 1);
             var srefNoVar1 = displayStmt3.Variables[0].MainSymbolReference;
             Assert.AreEqual(srefNoVar1.Name, "NoVar1");
-            var novar1 = prgSym3.ResolveReference(srefNoVar1, false);
+            var novar1 = prgSym0.ResolveReference(srefNoVar1);
             Assert.IsNotNull(novar1);
             Assert.IsTrue(novar1.Count == 0);
-            //But with looking upward inclosing programs "novar1" is not found as it is not GLOBAL.
-            novar1 = prgSym3.ResolveReference(srefNoVar1, true);
+            novar1 = currentProgram.ResolveReference(srefNoVar1);
             Assert.IsNotNull(novar1);
-            Assert.IsTrue(novar1.Count == 0);
+            Assert.IsTrue(novar1.Count == 1);
+            Assert.IsTrue(novar1.Symbol.Owner == currentProgram);
+            Assert.IsTrue(novar1.Symbol.HasFlag(Symbol.Flags.WORKING_STORAGE));
+            Assert.IsFalse(novar1.Symbol.HasFlag(Symbol.Flags.GLOBAL_STORAGE | Symbol.Flags.LOCAL_STORAGE | Symbol.Flags.Global));
+            Assert.AreEqual("NoVar1", novar1.Symbol.Name);
 
             //------------------------------------------------------------------
             // DISPLAY NoVar2
@@ -1656,20 +1648,23 @@ namespace TypeCobol.Test.Domain
             Symbol symbol4 = (Symbol)data4;
             Assert.IsTrue(symbol4.Kind == Symbol.Kinds.Program);
             ProgramSymbol prgSym4 = (ProgramSymbol)symbol4;
-
-            //Without lookup upward enclosing programs "novar2" cannot be found
+            Assert.IsTrue(prgSym4 == prgSym0);
+            //Check that "novar2" is not visible by nested prg and that it is declared in LOCAL of enclosing prg.
             Assert.IsTrue(display4.CodeElement.Type == CodeElementType.DisplayStatement);
-            DisplayStatement displayStmt4 = (DisplayStatement)display4.CodeElement;
+            var displayStmt4 = display4.CodeElement;
             Assert.IsTrue(displayStmt4.Variables != null && displayStmt4.Variables.Length == 1);
             var srefNoVar2 = displayStmt4.Variables[0].MainSymbolReference;
             Assert.AreEqual(srefNoVar2.Name, "NoVar2");
-            var novar2 = prgSym4.ResolveReference(srefNoVar2, false);
+            var novar2 = prgSym0.ResolveReference(srefNoVar2);
             Assert.IsNotNull(novar2);
             Assert.IsTrue(novar2.Count == 0);
-            //But with looking upward inclosing programs "novar1" is not found as it is not GLOBAL.
-            novar1 = prgSym3.ResolveReference(srefNoVar2, true);
+            novar2 = currentProgram.ResolveReference(srefNoVar2);
             Assert.IsNotNull(novar2);
-            Assert.IsTrue(novar2.Count == 0);
+            Assert.IsTrue(novar2.Count == 1);
+            Assert.IsTrue(novar2.Symbol.Owner == currentProgram);
+            Assert.IsTrue(novar2.Symbol.HasFlag(Symbol.Flags.LOCAL_STORAGE));
+            Assert.IsFalse(novar2.Symbol.HasFlag(Symbol.Flags.GLOBAL_STORAGE | Symbol.Flags.WORKING_STORAGE | Symbol.Flags.Global));
+            Assert.AreEqual("NoVar2", novar2.Symbol.Name);
         }
 
         /// <summary>
@@ -1691,6 +1686,11 @@ namespace TypeCobol.Test.Domain
             //Get the nested program.
             var nestPrgs = mainProgram.GetChildren<NestedProgram>();
             var nestPrg = nestPrgs[0];
+            Assert.IsTrue(nestPrg.SemanticData != null);
+            Assert.IsTrue(nestPrg.SemanticData.SemanticKind == SemanticKinds.Symbol);
+            var nestPrgSymbol = (Symbol) nestPrg.SemanticData;
+            Assert.IsTrue(nestPrgSymbol.Kind == Symbol.Kinds.Program);
+            var nestedProgram = (ProgramSymbol) nestPrgSymbol;
 
             //Get the Procedure Division Node of the Nested Program.
             var procDivs = nestPrg.GetChildren<ProcedureDivision>();
@@ -1722,15 +1722,11 @@ namespace TypeCobol.Test.Domain
             Assert.IsFalse(symbol0.Kind == Symbol.Kinds.Program);
             Assert.IsTrue(symbol0.Kind == Symbol.Kinds.Function);
             FunctionSymbol prgSym0 = (FunctionSymbol)symbol0;
-
-            //Without lookup upward enclosing programs "var0" cannot be found
-            var var0 = prgSym0.ResolveReference(new string[] { "var0" }, false);
-            Assert.IsNotNull(var0);
-            Assert.IsTrue(var0.Count == 0);
-            //But with looking upward inclosing programs "var0" is found as it is in GLOBAL-STORAGE section
-            var0 = prgSym0.ResolveReference(new string[] { "var0" }, true);
+            //Check that "var0" is found in main program in GLOBAL-STORAGE section.
+            var var0 = prgSym0.ResolveReference(new string[] { "var0" });
             Assert.IsNotNull(var0);
             Assert.IsTrue(var0.Count == 1);
+            Assert.IsTrue(var0.Symbol.Owner == currentProgram);
             Assert.IsTrue(var0.Symbol.HasFlag(Symbol.Flags.GLOBAL_STORAGE));
             Assert.IsFalse(var0.Symbol.HasFlag((Symbol.Flags)((ulong)Symbol.Flags.LOCAL_STORAGE | (ulong)Symbol.Flags.WORKING_STORAGE | (ulong)Symbol.Flags.Global)));
             Assert.AreEqual(var0.Symbol.Name, "Var0");
@@ -1746,14 +1742,18 @@ namespace TypeCobol.Test.Domain
             Assert.IsFalse(symbol1.Kind == Symbol.Kinds.Program);
             Assert.IsTrue(symbol1.Kind == Symbol.Kinds.Function);
             FunctionSymbol prgSym1 = (FunctionSymbol)symbol1;
-            //Without lookup upward enclosing programs "var1" cannot be found
-            var var1 = prgSym0.ResolveReference(new string[] { "var1" }, false);
+            Assert.IsTrue(prgSym1 == prgSym0);
+            //Check that "var1" is not visible by procedure but visible by nested prg.
+            var var1 = prgSym0.ResolveReference(new string[] { "var1" });
             Assert.IsNotNull(var1);
             Assert.IsTrue(var1.Count == 0);
-            //With looking upward inclosing programs "var1" is not found has is visibility is not GLOBAL-STORAGE.
-            var1 = prgSym0.ResolveReference(new string[] { "var1" }, true);
+            var1 = nestedProgram.ResolveReference(new string[] { "var1" });
             Assert.IsNotNull(var1);
-            Assert.IsTrue(var1.Count == 0);
+            Assert.IsTrue(var1.Count == 1);
+            Assert.IsTrue(var1.Symbol.Owner == currentProgram);
+            Assert.IsTrue(var1.Symbol.HasFlag(Symbol.Flags.WORKING_STORAGE | Symbol.Flags.Global));
+            Assert.IsFalse(var1.Symbol.HasFlag(Symbol.Flags.GLOBAL_STORAGE | Symbol.Flags.LOCAL_STORAGE));
+            Assert.AreEqual("Var1", var1.Symbol.Name);
 
             //------------------------------------------------------------------
             // DISPLAY Var2
@@ -1766,15 +1766,18 @@ namespace TypeCobol.Test.Domain
             Assert.IsFalse(symbol2.Kind == Symbol.Kinds.Program);
             Assert.IsTrue(symbol2.Kind == Symbol.Kinds.Function);
             FunctionSymbol prgSym2 = (FunctionSymbol)symbol2;
-            //Without lookup upward enclosing programs "var2" cannot be found
-            var var2 = prgSym0.ResolveReference(new string[] { "var2" }, false);
+            Assert.IsTrue(prgSym2 == prgSym0);
+            //Check that "var2" is not visible by procedure but visible by nested prg.
+            var var2 = prgSym0.ResolveReference(new string[] { "var2" });
             Assert.IsNotNull(var2);
             Assert.IsTrue(var2.Count == 0);
-            //With looking upward inclosing programs "var2" is not found has is visibility is not GLOBAL-STORAGE.
-            //even if it's visibility is GLOBAL.
-            var2 = prgSym0.ResolveReference(new string[] { "var2" }, true);
+            var2 = nestedProgram.ResolveReference(new string[] { "var2" });
             Assert.IsNotNull(var2);
-            Assert.IsTrue(var2.Count == 0);
+            Assert.IsTrue(var2.Count == 1);
+            Assert.IsTrue(var2.Symbol.Owner == currentProgram);
+            Assert.IsTrue(var2.Symbol.HasFlag(Symbol.Flags.LOCAL_STORAGE | Symbol.Flags.Global));
+            Assert.IsFalse(var2.Symbol.HasFlag(Symbol.Flags.GLOBAL_STORAGE | Symbol.Flags.WORKING_STORAGE));
+            Assert.AreEqual("Var2", var2.Symbol.Name);
         }
 
         /// <summary>
@@ -1818,7 +1821,7 @@ namespace TypeCobol.Test.Domain
             //-------------------------------------------------
             //Get the variable var1 and its type accessibility.
             //-------------------------------------------------
-            var var1 = nestPrgSym.ResolveReference(new string[] {"var1"}, false);
+            var var1 = nestPrgSym.ResolveReference(new string[] {"var1"});
             Assert.IsTrue(var1.Count == 3);
             foreach (var var1Symbol in var1)
             {
@@ -1840,7 +1843,7 @@ namespace TypeCobol.Test.Domain
             //-------------------------------------------------
             //Get the variable var2 and its type accessibility.
             //-------------------------------------------------
-            var var2 = nestPrgSym.ResolveReference(new string[] { "var2" }, false);
+            var var2 = nestPrgSym.ResolveReference(new string[] { "var2" });
             Assert.IsTrue(var2.Count == 3);
             foreach (var var2Symbol in var2)
             {
@@ -1862,7 +1865,7 @@ namespace TypeCobol.Test.Domain
             //-------------------------------------------------
             //Get the variable var3 and its type accessibility.
             //-------------------------------------------------
-            var var3 = nestPrgSym.ResolveReference(new string[] { "var3" }, false);
+            var var3 = nestPrgSym.ResolveReference(new string[] { "var3" });
             Assert.IsTrue(var3.Count == 1);
             Assert.IsTrue(var3.Symbol.Type == typeOfDaysLocal.Symbol.Type);
             //Check the the type was not accessible
@@ -1978,7 +1981,7 @@ namespace TypeCobol.Test.Domain
             ProgramExpander expander = new ProgramExpander(FailErrorReporter.Instance);
             expander.Expand(currentProgram);
 
-            var vars = currentProgram.ResolveReference(new string[] { "td-var42", "var1" }, false);
+            var vars = currentProgram.ResolveReference(new string[] { "td-var42", "var1" });
             Assert.IsTrue(vars.Count == 1);
         }
 

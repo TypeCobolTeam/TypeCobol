@@ -1069,7 +1069,7 @@ namespace TypeCobol.Compiler.Domain
         /// <returns>The Renamed variable resolved if any, null otherwise</returns>
         private VariableSymbol ResolveRenamedVariable(SymbolReference renamed, Domain<VariableSymbol> currentDomain)
         {
-            Container<VariableSymbol>.Entry candidateRenamed = CurrentScope.ResolveReference(renamed, true);
+            Container<VariableSymbol>.Entry candidateRenamed = CurrentScope.ResolveReference(renamed);
             if (candidateRenamed == null || candidateRenamed.Count == 0)
             {
                 Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,

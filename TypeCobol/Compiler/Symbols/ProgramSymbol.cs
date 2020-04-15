@@ -361,27 +361,25 @@ namespace TypeCobol.Compiler.Symbols
         /// Resolve the given SymbolReference from this scope
         /// </summary>
         /// <param name="symRef">The Symbol Reference to be resolved</param>
-        /// <param name="bRecurseEnglobingPrograms">true to recurse into englobing variables to look for global variable, false otherwise</param>
         /// <returns>The referenced symbols if any</returns>
-        public Container<VariableSymbol>.Entry ResolveReference(SymbolReference symRef, bool bRecurseEnglobingPrograms)
+        public Container<VariableSymbol>.Entry ResolveReference(SymbolReference symRef)
         {
             System.Diagnostics.Debug.Assert(symRef != null);
-            return ResolveReference(SymbolReferenceToPath(symRef), bRecurseEnglobingPrograms);
+            return ResolveReference(SymbolReferenceToPath(symRef));
         }
 
         /// <summary>
         /// Resolve the given Symbol paths from this scope
         /// </summary>
         /// <param name="paths">The qualified path of the symbol reference in COBOL85 order</param>
-        /// <param name="bRecurseEnglobingPrograms">true to recurse into enclobing variables to look for global variable, false otherwise</param>
         /// <returns>The referenced symbols if any</returns>
-        public Container<VariableSymbol>.Entry ResolveReference(string[] paths, bool bRecurseEnglobingPrograms)
+        public Container<VariableSymbol>.Entry ResolveReference(string[] paths)
         {
             if (paths == null || paths.Length == 0 || paths[0] == null)
                 return null;
 
             var results = new Container<VariableSymbol>.Entry(paths[0]);
-            ResolveReference(paths, results, bRecurseEnglobingPrograms, 0);
+            ResolveReference(paths, results, true, 0);
             return results;
         }
 
