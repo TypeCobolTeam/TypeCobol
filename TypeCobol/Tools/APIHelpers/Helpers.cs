@@ -12,6 +12,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scopes;
+using TypeCobol.Compiler.Symbols;
 using TypeCobol.CustomExceptions;
 using TypeCobol.Tools.Options_Config;
 
@@ -39,7 +40,7 @@ namespace TypeCobol.Tools.APIHelpers
             {
                 try
                 {
-                    FileCompiler compiler = parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck }, intrinsicDocumentFormat);
+                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck }, intrinsicDocumentFormat);
                     parser.Parse(path);
 
                     var diagnostics = parser.Results.AllDiagnostics();
@@ -68,6 +69,13 @@ namespace TypeCobol.Tools.APIHelpers
 
                         table.CopyAllTypes(symbols.Types);
                         table.CopyAllFunctions(symbols.Functions);
+
+                        //Flag program as Intrinsic
+                        System.Diagnostics.Debug.Assert(program.SemanticData != null);
+                        System.Diagnostics.Debug.Assert(program.SemanticData.SemanticKind == Compiler.Nodes.SemanticKinds.Symbol);
+                        System.Diagnostics.Debug.Assert(((Symbol) program.SemanticData).Kind == Symbol.Kinds.Program);
+                        var programSymbol = (ProgramSymbol) program.SemanticData;
+                        programSymbol.FlagAsIntrinsic();
                     }
                 }
                 catch (CopyLoadingException copyException)
@@ -266,6 +274,25 @@ namespace TypeCobol.Tools.APIHelpers
             Tuple<SymbolTable, RootSymbolTable> customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load intrinsic
             customSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config, customSymbols.Item1, customSymbols.Item2, DependencyErrorEvent, out usedCopies, out missingCopies); //Load dependencies
             return customSymbols;
+        }
+
+        private static void FlagAsIntrinsic(this ProgramSymbol program)
+        {
+            program.SetFlag(Symbol.Flags.IntrinsicSymbol, true);
+            foreach (var type in program.Types.Where(IsPublic))
+            {
+                type.SetFlag(Symbol.Flags.IntrinsicSymbol, true);
+            }
+            foreach (var function in program.Functions.Where(IsPublic))
+            {
+                function.SetFlag(Symbol.Flags.IntrinsicSymbol, true);
+            }
+            //Nested programs are not supposed to be seen so no need to flag them.
+
+            bool IsPublic(Symbol symbol)
+            {
+                return symbol.HasFlag(Symbol.Flags.Public);
+            }
         }
     }
 

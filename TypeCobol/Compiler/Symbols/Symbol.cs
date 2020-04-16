@@ -82,6 +82,9 @@ namespace TypeCobol.Compiler.Symbols
             CheckedForCycles = 0x01L << 39,
             IsCyclic = 0x01L << 40,
 
+            //For symbols loaded from intrinsic files
+            IntrinsicSymbol = 0x01L << 41,
+
             //Etc...
         }
 
