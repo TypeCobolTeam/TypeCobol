@@ -339,7 +339,7 @@ namespace TypeCobol.Compiler.Symbols
         {
             Symbol currentSymbol = this;
             int i = 0;
-            for (i = 0; i < path.Length; i++)
+            for (i = 0; i < path.Length && currentSymbol != null; i++)
             {
                 string name = currentSymbol.Name;
                 if (!path[i].Equals(name, StringComparison.OrdinalIgnoreCase))

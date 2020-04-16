@@ -187,21 +187,21 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(mm.Count == 3);
             dd = currentProgram.ResolveReference(new string[] { "dd" }, false);
             Assert.IsTrue(dd.Count == 3);
-//            string @dump_today_type = @"  02 YYYY PIC 9(4).
-//  02 MM PIC 9(2).
-//  02 DD PIC 9(2).
-//";
-//            string te_today_string = te_today.ToString();
-//            Assert.AreEqual(dump_today_type, te_today_string);
+            //            string @dump_today_type = @"  02 YYYY PIC 9(4).
+            //  02 MM PIC 9(2).
+            //  02 DD PIC 9(2).
+            //";
+            //            string te_today_string = te_today.ToString();
+            //            Assert.AreEqual(dump_today_type, te_today_string);
 
-//            string dump_today = @"01 today .
-//    02 YYYY PIC 9(4).
-//    02 MM PIC 9(2).
-//    02 DD PIC 9(2).
-//";
+            //            string dump_today = @"01 today .
+            //    02 YYYY PIC 9(4).
+            //    02 MM PIC 9(2).
+            //    02 DD PIC 9(2).
+            //";
 
-//            string today_str = today.Symbol.ToString();
-//            Assert.AreEqual(dump_today, today_str);
+            //            string today_str = today.Symbol.ToString();
+            //            Assert.AreEqual(dump_today, today_str);
         }
 
         [TestMethod]
@@ -211,7 +211,7 @@ namespace TypeCobol.Test.Domain
         {
             string path = Path.Combine(GetTestLocation(), "Parser", "Programs", "TypeCobol", "GlobalStorageVisibility.rdz.tcbl");
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.FreeTextFormat, /*autoRemarks*/
-                false, /*copies*/ null, executionStep:ExecutionStep.SemanticCheck);
+                false, /*copies*/ null, executionStep: ExecutionStep.SemanticCheck);
 
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
@@ -292,8 +292,8 @@ namespace TypeCobol.Test.Domain
             string date1_yyyy_fullname = date1_yyyy.Symbol.FullName;
             Assert.AreEqual("TEST-DATE::groupe::date1::YYYY", date1_yyyy_fullname);
 
-            Assert.AreEqual("YYYY OF today OF TEST-DATE", today_yyyy.Symbol.FullOfName);            
-            Assert.AreEqual("YYYY OF tomorrow OF TEST-DATE", tomorrow_yyyy.Symbol.FullOfName);            
+            Assert.AreEqual("YYYY OF today OF TEST-DATE", today_yyyy.Symbol.FullOfName);
+            Assert.AreEqual("YYYY OF tomorrow OF TEST-DATE", tomorrow_yyyy.Symbol.FullOfName);
             Assert.AreEqual("YYYY OF date1 OF groupe OF TEST-DATE", date1_yyyy.Symbol.FullOfName);
         }
 
@@ -356,7 +356,7 @@ namespace TypeCobol.Test.Domain
 
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
-            
+
             var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
 
             //Get the nested program.
@@ -375,7 +375,7 @@ namespace TypeCobol.Test.Domain
             //Get all TYPEDEF Types
             //----------------------------
             //Lookup the type "typeOfDaysPublic"
-            var typeOfDaysPublic = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPublic" });
+            var typeOfDaysPublic = nestPrgSym.ResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPublic" });
             Assert.IsNotNull(typeOfDaysPublic);
             Assert.IsTrue(typeOfDaysPublic.Count == 1);
             Assert.IsNotNull(typeOfDaysPublic.Symbol.Type);
@@ -384,7 +384,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(typeOfDaysPublic.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
 
             //Lookup the type "typeOfDaysPrivate"
-            var typeOfDaysPrivate = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPrivate" });
+            var typeOfDaysPrivate = nestPrgSym.ResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPrivate" });
             Assert.IsNotNull(typeOfDaysPrivate);
             Assert.IsTrue(typeOfDaysPrivate.Count == 1);
             Assert.IsNotNull(typeOfDaysPrivate.Symbol.Type);
@@ -394,7 +394,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(typeOfDaysPrivate.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
 
             //Lookup the type "typeOfDaysLocal"
-            var typeOfDaysLocal = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysLocal" });
+            var typeOfDaysLocal = nestPrgSym.ResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysLocal" });
             Assert.IsNotNull(typeOfDaysLocal);
             Assert.IsTrue(typeOfDaysLocal.Count == 1);
             Assert.IsNotNull(typeOfDaysLocal.Symbol.Type);
@@ -408,7 +408,7 @@ namespace TypeCobol.Test.Domain
             VariableSymbol[] vars = new VariableSymbol[3];
             for (int i = 1; i < 4; i++)
             {
-                var vari = nestPrgSym.ResolveReference(new string[] { "var" + i }, false);                
+                var vari = nestPrgSym.ResolveReference(new string[] { "var" + i }, false);
                 Assert.IsTrue(vari.Count == (i == 3 ? 1 : 3));
                 vars[i - 1] = vari.Symbol;
                 Assert.IsTrue(vari.Symbol.Type == types[i - 1].Type);
@@ -424,32 +424,32 @@ namespace TypeCobol.Test.Domain
                 Assert.IsTrue(vars[i - 1].Type.Tag == Type.Tags.Picture);
             }
 
-//            string expandedPrgs = @"IDENTIFICATION DIVISION.
-//PROGRAM-ID. TYPEPGM.
-//DATA DIVISION.
+            //            string expandedPrgs = @"IDENTIFICATION DIVISION.
+            //PROGRAM-ID. TYPEPGM.
+            //DATA DIVISION.
 
-//PROCEDURE DIVISION.
-  
-
-//IDENTIFICATION DIVISION.
-//PROGRAM-ID. Tester.
-//DATA DIVISION.
-//WORKING-STORAGE SECTION.
-//01 var1 PIC X(1).
-//01 var1 PIC X(1).
-//01 var1 PIC X(1).
-//01 var2 PIC X(1).
-//01 var2 PIC X(1).
-//01 var2 PIC X(1).
-//01 var3 PIC X(1).
+            //PROCEDURE DIVISION.
 
 
-//PROCEDURE DIVISION.
+            //IDENTIFICATION DIVISION.
+            //PROGRAM-ID. Tester.
+            //DATA DIVISION.
+            //WORKING-STORAGE SECTION.
+            //01 var1 PIC X(1).
+            //01 var1 PIC X(1).
+            //01 var1 PIC X(1).
+            //01 var2 PIC X(1).
+            //01 var2 PIC X(1).
+            //01 var2 PIC X(1).
+            //01 var3 PIC X(1).
 
-//END PROGRAM Tester.
-//END PROGRAM TYPEPGM.";
-//            string dumpPrg = currentProgram.ToString();
-//            Assert.AreEqual(expandedPrgs, dumpPrg);
+
+            //PROCEDURE DIVISION.
+
+            //END PROGRAM Tester.
+            //END PROGRAM TYPEPGM.";
+            //            string dumpPrg = currentProgram.ToString();
+            //            Assert.AreEqual(expandedPrgs, dumpPrg);
         }
 
         /// <summary>
@@ -527,7 +527,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(rc.Count == 1);
             Assert.IsNotNull(rc.Symbol.Type);
             Assert.IsTrue(rc.Symbol.Type.Tag == Type.Tags.Typedef);
-            var pt = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "pt" });
+            var pt = currentProgram.ResolveType(document.Results.RootSymbolTable, new string[] { "pt" });
             Assert.IsTrue(pt.Count == 1);
             Assert.IsTrue(rc.Symbol.Type == pt.Symbol.Type);
 
@@ -536,7 +536,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(arr.Count == 1);
             Assert.IsNotNull(arr.Symbol.Type);
             Assert.IsTrue(arr.Symbol.Type.Tag == Type.Tags.Typedef);
-            var rectarray = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "rectarray" });
+            var rectarray = currentProgram.ResolveType(document.Results.RootSymbolTable, new string[] { "rectarray" });
             Assert.IsTrue(rectarray.Count == 1);
             Assert.IsTrue(arr.Symbol.Type == rectarray.Symbol.Type);
 
@@ -564,14 +564,14 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(Y1.Count == 1);
             Assert.IsNotNull(Y1.Symbol.Type);
             Assert.IsNotNull(y1.Symbol == Y1.Symbol);
-            x2 = currentProgram.ResolveReference(new string[] { "x2" }, false);            
+            x2 = currentProgram.ResolveReference(new string[] { "x2" }, false);
             Assert.IsTrue(x2.Count == 1);
             Assert.IsNotNull(x2.Symbol.Type);
             X2 = currentProgram.ResolveReference(new string[] { "X2" }, false);
             Assert.IsTrue(X2.Count == 1);
             Assert.IsNotNull(X2.Symbol.Type);
             Assert.IsNotNull(x2.Symbol == X2.Symbol);
-            y2 = currentProgram.ResolveReference(new string[] { "y2" }, false);            
+            y2 = currentProgram.ResolveReference(new string[] { "y2" }, false);
             Assert.IsTrue(y2.Count == 1);
             Assert.IsNotNull(y2.Symbol.Type);
             Y2 = currentProgram.ResolveReference(new string[] { "Y2" }, false);
@@ -689,7 +689,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(pt.Count == 1);
             Assert.IsTrue(pt.Symbol.Type.Tag == Type.Tags.Typedef);
             Assert.IsTrue(pt.Symbol.Type.TypeComponent.Tag == Type.Tags.Group);
-            GroupType ptTypeContent = (GroupType) pt.Symbol.Type.TypeComponent;
+            GroupType ptTypeContent = (GroupType)pt.Symbol.Type.TypeComponent;
             foreach (var field in ptTypeContent.Fields)
             {
                 Assert.IsTrue(field.Level == 5);
@@ -699,7 +699,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(rectangle.Count == 1);
             Assert.IsTrue(rectangle.Symbol.Type.Tag == Type.Tags.Typedef);
             Assert.IsTrue(rectangle.Symbol.Type.TypeComponent.Tag == Type.Tags.Group);
-            GroupType rectangleTypeContent = (GroupType) rectangle.Symbol.Type.TypeComponent;
+            GroupType rectangleTypeContent = (GroupType)rectangle.Symbol.Type.TypeComponent;
             foreach (var field in rectangleTypeContent.Fields)
             {
                 Assert.IsTrue(field.Level == 2);
@@ -709,7 +709,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(rectpt.Count == 1);
             Assert.IsTrue(rectpt.Symbol.Type.Tag == Type.Tags.Typedef);
             Assert.IsTrue(rectpt.Symbol.Type.TypeComponent.Tag == Type.Tags.Group);
-            GroupType rectptTypeContent = (GroupType) rectpt.Symbol.Type.TypeComponent;
+            GroupType rectptTypeContent = (GroupType)rectpt.Symbol.Type.TypeComponent;
             foreach (var field in rectptTypeContent.Fields)
             {
                 Assert.IsTrue(field.Level == 5);
@@ -720,12 +720,12 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(rectarray.Count == 1);
             Assert.IsTrue(rectarray.Symbol.Type.Tag == Type.Tags.Typedef);
             Assert.IsTrue(rectarray.Symbol.Type.TypeComponent.Tag == Type.Tags.Group);
-            GroupType rectarrayTypeContent = (GroupType) rectarray.Symbol.Type.TypeComponent;
+            GroupType rectarrayTypeContent = (GroupType)rectarray.Symbol.Type.TypeComponent;
             var aField = rectarrayTypeContent.Fields.Single();
             Assert.IsTrue(aField.Level == 5);
             Assert.IsTrue(aField.Type.Tag == Type.Tags.Array);
             Assert.IsTrue(aField.Type.TypeComponent.Tag == Type.Tags.Group);
-            var rcField = ((GroupType) aField.Type.TypeComponent).Fields.Single();
+            var rcField = ((GroupType)aField.Type.TypeComponent).Fields.Single();
             Assert.IsTrue(rcField.Level == 10);
             Assert.IsTrue(rcField.Type == rectpt.Symbol.Type);
 
@@ -753,7 +753,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(grcarray.Count == 1);
             Assert.IsNotNull(grcarray.Symbol.Type);
             Assert.IsTrue(grcarray.Symbol.Type.Tag == Type.Tags.Group);
-            GroupType grcarrayContent = (GroupType) grcarray.Symbol.Type;
+            GroupType grcarrayContent = (GroupType)grcarray.Symbol.Type;
             var rcField2 = grcarrayContent.Fields.ElementAt(0);
             Assert.IsTrue(rcField2.Level == 5);
             Assert.IsTrue(rcField2.Type == pt.Symbol.Type);
@@ -762,7 +762,7 @@ namespace TypeCobol.Test.Domain
             var grpField = grcarrayContent.Fields.ElementAt(2);
             Assert.IsTrue(grpField.Level == 5);
             Assert.IsTrue(grpField.Type.Tag == Type.Tags.Group);
-            var arrField = ((GroupType) grpField.Type).Fields.Single();
+            var arrField = ((GroupType)grpField.Type).Fields.Single();
             Assert.IsTrue(arrField.Level == 10);
             Assert.IsTrue(arrField.Type == rectarray.Symbol.Type);
 
@@ -913,7 +913,7 @@ namespace TypeCobol.Test.Domain
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
 
             //Get MyVar1 symbol
-            var myvar1 = currentProgram.ResolveReference(new string[] {"myvar1"}, false);
+            var myvar1 = currentProgram.ResolveReference(new string[] { "myvar1" }, false);
             Assert.IsTrue(myvar1.Count == 1);
 
             //Check Errors : Cannot REDEFINES access MyVar1.
@@ -927,14 +927,14 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(myvar2s.Count == 3);
             Assert.IsTrue(myvar2s.Distinct().Count() == 3);
             //Get the MyVar2 with PIC X(9).
-            var myvar2 = myvar2s.FirstOrDefault(s => s.Type.Tag == Type.Tags.Picture && ((PictureType) s.Type).Length == 9);
+            var myvar2 = myvar2s.FirstOrDefault(s => s.Type.Tag == Type.Tags.Picture && ((PictureType)s.Type).Length == 9);
             Assert.IsNotNull(myvar2);
 
             //Check that MyRedifines REDEFINES MyVar2 with PIC x(9)
             var MyRedifines = currentProgram.ResolveReference(new string[] { "myredifines" }, false);
             Assert.IsTrue(MyRedifines.Count == 1);
             Assert.IsTrue(MyRedifines.Symbol.HasFlag(Symbol.Flags.Redefines));
-            RedefinesSymbol sref = (RedefinesSymbol) MyRedifines.Symbol;
+            RedefinesSymbol sref = (RedefinesSymbol)MyRedifines.Symbol;
             Assert.AreEqual(sref.Redefined, myvar2);
 
             //Check that MyRedifines{i} with 2 <= i <= 4 REDEFINES MyVar2 with PIC x(9)
@@ -980,7 +980,7 @@ namespace TypeCobol.Test.Domain
             //Locate Redefines
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
-            var vars = currentProgram.ResolveReference(new string[] {"yy"}, false);
+            var vars = currentProgram.ResolveReference(new string[] { "yy" }, false);
             Assert.IsTrue(vars.Count == 1);
             string yy = vars.Single().ToString();
             Assert.AreEqual(yy, "66 YY RENAMES RX THRU RY." + System.Environment.NewLine);
@@ -999,7 +999,7 @@ namespace TypeCobol.Test.Domain
                 false, /*copies*/ null);
 
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];            
+            var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
 
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Diagnostics.Count == 1);
             Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
@@ -1060,10 +1060,10 @@ namespace TypeCobol.Test.Domain
                 cyclicTypes.Add(i, cyclicType);
                 Assert.IsTrue(checker.Check(cyclicTypes[i]));
             }
-            var root = (RootSymbolTable) program.Owner;
-            var a1 = (TypedefType) root.LookupType("A1").Symbol.Type;
-            var b1 = (TypedefType) root.LookupType("B1").Symbol.Type;
-            var c1 = (TypedefType) root.LookupType("C1").Symbol.Type;
+            var root = (RootSymbolTable)program.Owner;
+            var a1 = (TypedefType)root.LookupType("A1").Symbol.Type;
+            var b1 = (TypedefType)root.LookupType("B1").Symbol.Type;
+            var c1 = (TypedefType)root.LookupType("C1").Symbol.Type;
             Assert.IsTrue(checker.Check(a1, new CompareMessagesErrorReporter(
                 "Circular type reference detected : A1 -> B1 -> C1 -> A1.",
                 "Type \"C1\" is unusable because it depends on cyclic type \"A1\".",
@@ -1098,7 +1098,7 @@ namespace TypeCobol.Test.Domain
             //Check variables
             for (int i = 1; i <= 8; i++)
             {
-                var entry = program.ResolveReference(new[] {"var" + i}, false);
+                var entry = program.ResolveReference(new[] { "var" + i }, false);
                 Assert.IsTrue(entry != null);
                 Assert.IsTrue(entry.Count == 1);
                 var symbol = entry.Symbol;
@@ -1114,7 +1114,7 @@ namespace TypeCobol.Test.Domain
                 var symbol = entry.Symbol;
                 Assert.IsTrue(symbol.Type != null);
                 Assert.IsTrue(symbol.Type.Tag == Type.Tags.Array);
-                var arrayType = (ArrayType) symbol.Type;
+                var arrayType = (ArrayType)symbol.Type;
                 Assert.IsTrue(arrayType.ElementType == cyclicTypes[i]);
             }
 
@@ -1125,7 +1125,7 @@ namespace TypeCobol.Test.Domain
             var group1 = groupEntry.Symbol;
             Assert.IsTrue(group1.Type != null);
             Assert.IsTrue(group1.Type.Tag == Type.Tags.Group);
-            var groupTypeOfGroup1 = (GroupType) group1.Type;
+            var groupTypeOfGroup1 = (GroupType)group1.Type;
             var fields = groupTypeOfGroup1.Fields.ToList();
             Assert.IsTrue(fields.Count == 3);
             var item1 = fields[0];
@@ -1134,7 +1134,7 @@ namespace TypeCobol.Test.Domain
             var item2 = fields[1];
             Assert.IsTrue(item2.Type != null);
             Assert.IsTrue(item2.Type.Tag == Type.Tags.Group);
-            var groupTypeOfItem2 = (GroupType) item2.Type;
+            var groupTypeOfItem2 = (GroupType)item2.Type;
             var subFields = groupTypeOfItem2.Fields.ToList();
             Assert.IsTrue(subFields.Count == 3);
             var subItem1 = subFields[0];
@@ -1154,7 +1154,7 @@ namespace TypeCobol.Test.Domain
             var group2 = groupEntry.Symbol;
             Assert.IsTrue(group2.Type != null);
             Assert.IsTrue(group2.Type.Tag == Type.Tags.Group);
-            var groupTypeOfGroup2 = (GroupType) group2.Type;
+            var groupTypeOfGroup2 = (GroupType)group2.Type;
             fields = groupTypeOfGroup2.Fields.ToList();
             Assert.IsTrue(fields.Count == 2);
             var myVar1 = fields[0];
@@ -1195,9 +1195,9 @@ namespace TypeCobol.Test.Domain
             ISemanticData data = procDiv.SemanticData;
             Assert.IsNotNull(data);
             Assert.IsTrue(data.SemanticKind == SemanticKinds.Symbol);
-            Symbol symbol = (Symbol) data;
+            Symbol symbol = (Symbol)data;
             Assert.IsTrue(symbol.Kind == Symbol.Kinds.Program);
-            ProgramSymbol prgSym = (ProgramSymbol) symbol;
+            ProgramSymbol prgSym = (ProgramSymbol)symbol;
             var var1 = prgSym.ResolveReference(new string[] { "var1" }, false);
             Assert.IsNotNull(var1);
             Assert.IsTrue(var1.Count == 1);
@@ -1209,7 +1209,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(var2.Count == 1);
             Assert.IsTrue(var2.Symbol.HasFlag(Symbol.Flags.LOCAL_STORAGE));
             Assert.IsFalse(var2.Symbol.HasFlag((Symbol.Flags)((ulong)Symbol.Flags.WORKING_STORAGE | (ulong)Symbol.Flags.GLOBAL_STORAGE | (ulong)Symbol.Flags.Global)));
-            Assert.AreEqual(var2.Symbol.Name, "Var2");            
+            Assert.AreEqual(var2.Symbol.Name, "Var2");
         }
 
         /// <summary>
@@ -1484,7 +1484,7 @@ namespace TypeCobol.Test.Domain
             // NoVar1 is not accessible as is it not GLOBAL in the Working of
             // the enclosing program.
             //------------------------------------------------------------------
-            var display4 = displays[4];            
+            var display4 = displays[4];
             ISemanticData data4 = display4.SemanticData;
             Assert.IsNotNull(data4);
             Assert.IsTrue(data4.SemanticKind == SemanticKinds.Symbol);
@@ -1792,7 +1792,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             var currentProgram = document.Results.PrgSymbolTblBuilder.Programs[0];
 
-            var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;            
+            var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
 
             //Get the nested program.
             var nestPrgs = mainProgram.GetChildren<NestedProgram>();
@@ -1807,7 +1807,7 @@ namespace TypeCobol.Test.Domain
             Assert.AreEqual(nestPrgSym.Name, "Tester");
 
             //Lookup the type "typeOfDays"
-            var typeOfDaysPublic = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPublic" });
+            var typeOfDaysPublic = nestPrgSym.ResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPublic" });
             Assert.IsNotNull(typeOfDaysPublic);
             Assert.IsTrue(typeOfDaysPublic.Count == 1);
             Assert.IsNotNull(typeOfDaysPublic.Symbol.Type);
@@ -1818,7 +1818,7 @@ namespace TypeCobol.Test.Domain
             //-------------------------------------------------
             //Get the variable var1 and its type accessibility.
             //-------------------------------------------------
-            var var1 = nestPrgSym.ResolveReference(new string[] {"var1"}, false);
+            var var1 = nestPrgSym.ResolveReference(new string[] { "var1" }, false);
             Assert.IsTrue(var1.Count == 3);
             foreach (var var1Symbol in var1)
             {
@@ -1828,7 +1828,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(nestPrgSym.IsTypeAccessible(typeOfDaysPublic.Symbol));
 
             //Lookup the type "typeOfDaysPrivate"
-            var typeOfDaysPrivate = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPrivate" });
+            var typeOfDaysPrivate = nestPrgSym.ResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysPrivate" });
             Assert.IsNotNull(typeOfDaysPrivate);
             Assert.IsTrue(typeOfDaysPrivate.Count == 1);
             Assert.IsNotNull(typeOfDaysPrivate.Symbol.Type);
@@ -1850,7 +1850,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(nestPrgSym.IsTypeAccessible(typeOfDaysPrivate.Symbol));
 
             //Lookup the type "typeOfDaysLocal"
-            var typeOfDaysLocal = nestPrgSym.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysLocal" });
+            var typeOfDaysLocal = nestPrgSym.ResolveType(document.Results.RootSymbolTable, new string[] { "typeOfDaysLocal" });
             Assert.IsNotNull(typeOfDaysLocal);
             Assert.IsTrue(typeOfDaysLocal.Count == 1);
             Assert.IsNotNull(typeOfDaysLocal.Symbol.Type);
@@ -1886,78 +1886,78 @@ namespace TypeCobol.Test.Domain
             var PGM2 = document.Results.PrgSymbolTblBuilder.Programs[1];
             var PGM3 = document.Results.PrgSymbolTblBuilder.Programs[2];
 
-            var MyPublicProcedure = PGM1.ReverseResolveFunction(document.Results.RootSymbolTable, new string[] { "MyPublicProcedure", "PGM2" });
+            var MyPublicProcedure = PGM1.ResolveScope(document.Results.RootSymbolTable, new string[] { "MyPublicProcedure", "PGM2" });
             Assert.IsNotNull(MyPublicProcedure);
             Assert.AreEqual(1, MyPublicProcedure.Count);
             Assert.AreEqual(MyPublicProcedure.Symbol.Kind, Symbol.Kinds.Function);
             Assert.AreEqual(MyPublicProcedure.Symbol.Owner, PGM2);
-            Assert.IsTrue(PGM1.IsFunctionAccessible(MyPublicProcedure.Symbol));
+            Assert.IsTrue(PGM1.IsFunctionAccessible((FunctionSymbol)MyPublicProcedure.Symbol));
 
-            MyPublicProcedure = PGM1.ReverseResolveFunction(document.Results.RootSymbolTable, new string[] { "MyPublicProcedure", "PGM3" });
+            MyPublicProcedure = PGM1.ResolveScope(document.Results.RootSymbolTable, new string[] { "MyPublicProcedure", "PGM3" });
             Assert.IsNotNull(MyPublicProcedure);
             Assert.AreEqual(1, MyPublicProcedure.Count);
             Assert.AreEqual(MyPublicProcedure.Symbol.Kind, Symbol.Kinds.Function);
             Assert.AreEqual(MyPublicProcedure.Symbol.Owner, PGM3);
-            Assert.IsTrue(PGM1.IsFunctionAccessible(MyPublicProcedure.Symbol));
+            Assert.IsTrue(PGM1.IsFunctionAccessible((FunctionSymbol)MyPublicProcedure.Symbol));
 
-            var Pgm1PrivateValidateDateFormat = PGM1.ReverseResolveFunction(document.Results.RootSymbolTable, new string[] { "Pgm1PrivateValidateDateFormat"});
+            var Pgm1PrivateValidateDateFormat = PGM1.ResolveScope(document.Results.RootSymbolTable, new string[] { "Pgm1PrivateValidateDateFormat" });
             Assert.IsNotNull(Pgm1PrivateValidateDateFormat);
             Assert.AreEqual(1, Pgm1PrivateValidateDateFormat.Count);
             Assert.AreEqual(Pgm1PrivateValidateDateFormat.Symbol.Kind, Symbol.Kinds.Function);
             Assert.AreEqual(Pgm1PrivateValidateDateFormat.Symbol.Owner, PGM1);
-            Assert.IsTrue(PGM1.IsFunctionAccessible(Pgm1PrivateValidateDateFormat.Symbol));
+            Assert.IsTrue(PGM1.IsFunctionAccessible((FunctionSymbol)Pgm1PrivateValidateDateFormat.Symbol));
 
-            Pgm1PrivateValidateDateFormat = PGM1.ReverseResolveFunction(document.Results.RootSymbolTable, new string[] { "Pgm1PrivateValidateDateFormat", "PGM1" });
+            Pgm1PrivateValidateDateFormat = PGM1.ResolveScope(document.Results.RootSymbolTable, new string[] { "Pgm1PrivateValidateDateFormat", "PGM1" });
             Assert.IsNotNull(Pgm1PrivateValidateDateFormat);
             Assert.AreEqual(1, Pgm1PrivateValidateDateFormat.Count);
             Assert.AreEqual(Pgm1PrivateValidateDateFormat.Symbol.Kind, Symbol.Kinds.Function);
             Assert.AreEqual(Pgm1PrivateValidateDateFormat.Symbol.Owner, PGM1);
-            Assert.IsTrue(PGM1.IsFunctionAccessible(Pgm1PrivateValidateDateFormat.Symbol));
+            Assert.IsTrue(PGM1.IsFunctionAccessible((FunctionSymbol)Pgm1PrivateValidateDateFormat.Symbol));
 
-            var Pgm2PrivateValidateDateFormat = PGM1.ReverseResolveFunction(document.Results.RootSymbolTable, new string[] { "Pgm2PrivateValidateDateFormat" });
-            Assert.IsNull(Pgm2PrivateValidateDateFormat);
+            var Pgm2PrivateValidateDateFormat = PGM1.ResolveFunctionAccessible(document.Results.RootSymbolTable, new string[] { "Pgm2PrivateValidateDateFormat" });
+            Assert.IsTrue(Pgm2PrivateValidateDateFormat.Count == 0);
 
-            Pgm2PrivateValidateDateFormat = PGM1.ReverseResolveFunction(document.Results.RootSymbolTable, new string[] { "Pgm2PrivateValidateDateFormat", "PGM2" });
+            Pgm2PrivateValidateDateFormat = PGM1.ResolveScope(document.Results.RootSymbolTable, new string[] { "Pgm2PrivateValidateDateFormat", "PGM2" });
             Assert.IsNotNull(Pgm2PrivateValidateDateFormat);
             Assert.AreEqual(1, Pgm2PrivateValidateDateFormat.Count);
             Assert.AreEqual(Pgm2PrivateValidateDateFormat.Symbol.Kind, Symbol.Kinds.Function);
             Assert.AreEqual(Pgm2PrivateValidateDateFormat.Symbol.Owner, PGM2);
-            Assert.IsFalse(PGM1.IsFunctionAccessible(Pgm2PrivateValidateDateFormat.Symbol));
-            Assert.IsTrue(PGM2.IsFunctionAccessible(Pgm2PrivateValidateDateFormat.Symbol));
+            Assert.IsFalse(PGM1.IsFunctionAccessible((FunctionSymbol)Pgm2PrivateValidateDateFormat.Symbol));
+            Assert.IsTrue(PGM2.IsFunctionAccessible((FunctionSymbol)Pgm2PrivateValidateDateFormat.Symbol));
 
-            var check = PGM1.ReverseResolveFunction(document.Results.RootSymbolTable, new string[] { "check", "PGM1" });
+            var check = PGM1.ResolveScope(document.Results.RootSymbolTable, new string[] { "check", "PGM1" });
             Assert.IsNotNull(check);
             Assert.AreEqual(1, check.Count);
             Assert.AreEqual(check.Symbol.Kind, Symbol.Kinds.Function);
             Assert.AreEqual(check.Symbol.Owner, PGM1);
-            Assert.IsTrue(PGM1.IsFunctionAccessible(check.Symbol));
+            Assert.IsTrue(PGM1.IsFunctionAccessible((FunctionSymbol)check.Symbol));
 
-            check = PGM1.ReverseResolveFunction(document.Results.RootSymbolTable, new string[] { "check", "PGM2" });
+            check = PGM1.ResolveScope(document.Results.RootSymbolTable, new string[] { "check", "PGM2" });
             Assert.IsNotNull(check);
             Assert.AreEqual(1, check.Count);
             Assert.AreEqual(check.Symbol.Kind, Symbol.Kinds.Function);
             Assert.AreEqual(check.Symbol.Owner, PGM2);
-            Assert.IsTrue(PGM1.IsFunctionAccessible(check.Symbol));
+            Assert.IsTrue(PGM1.IsFunctionAccessible((FunctionSymbol)check.Symbol));
 
-            var check2 = PGM1.ReverseResolveFunction(document.Results.RootSymbolTable, new string[] { "check2", "PGM2" });
+            var check2 = PGM1.ResolveScope(document.Results.RootSymbolTable, new string[] { "check2", "PGM2" });
             Assert.IsNotNull(check2);
             Assert.AreEqual(2, check2.Count);
             Assert.AreNotEqual(check2.ElementAt(0), check2.ElementAt(1));
             Assert.AreEqual(check2.ElementAt(0).Kind, Symbol.Kinds.Function);
             Assert.AreEqual(check2.ElementAt(0).Owner, PGM2);
-            Assert.IsTrue(PGM1.IsFunctionAccessible(check2.ElementAt(0)));
+            Assert.IsTrue(PGM1.IsFunctionAccessible((FunctionSymbol)check2.ElementAt(0)));
             Assert.AreEqual(check2.ElementAt(1).Kind, Symbol.Kinds.Function);
             Assert.AreEqual(check2.ElementAt(1).Owner, PGM2);
-            Assert.IsTrue(PGM1.IsFunctionAccessible(check2.ElementAt(1)));
+            Assert.IsTrue(PGM1.IsFunctionAccessible((FunctionSymbol)check2.ElementAt(1)));
 
-            Pgm2PrivateValidateDateFormat = PGM2.ReverseResolveFunction(document.Results.RootSymbolTable, new string[] { "Pgm2PrivateValidateDateFormat", "PGM2" });
+            Pgm2PrivateValidateDateFormat = PGM2.ResolveScope(document.Results.RootSymbolTable, new string[] { "Pgm2PrivateValidateDateFormat", "PGM2" });
             Assert.IsNotNull(Pgm2PrivateValidateDateFormat);
             Assert.AreEqual(1, Pgm2PrivateValidateDateFormat.Count);
             Assert.AreEqual(Pgm2PrivateValidateDateFormat.Symbol.Kind, Symbol.Kinds.Function);
             Assert.AreEqual(Pgm2PrivateValidateDateFormat.Symbol.Owner, PGM2);
-            Assert.IsTrue(PGM2.IsFunctionAccessible(Pgm2PrivateValidateDateFormat.Symbol));
-            Assert.IsFalse(PGM1.IsFunctionAccessible(Pgm2PrivateValidateDateFormat.Symbol));
-            Assert.IsFalse(PGM3.IsFunctionAccessible(Pgm2PrivateValidateDateFormat.Symbol));
+            Assert.IsTrue(PGM2.IsFunctionAccessible((FunctionSymbol)Pgm2PrivateValidateDateFormat.Symbol));
+            Assert.IsFalse(PGM1.IsFunctionAccessible((FunctionSymbol)Pgm2PrivateValidateDateFormat.Symbol));
+            Assert.IsFalse(PGM3.IsFunctionAccessible((FunctionSymbol)Pgm2PrivateValidateDateFormat.Symbol));
         }
 
         /// <summary>
@@ -2000,7 +2000,7 @@ namespace TypeCobol.Test.Domain
             Assert.AreEqual(currentProgram, mainProgram.SemanticData);
 
             //Get the nested program.
-            var nestedPrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[]{"Nested" });
+            var nestedPrgEntry = document.Results.RootSymbolTable.ResolveProgram(new string[] { "Nested" });
             Assert.IsTrue(nestedPrgEntry.Count == 1);
             ProgramSymbol nestedProgram = nestedPrgEntry.Symbol;//Nested
             IList<NestedProgram> nestedPrgs = mainProgram.GetChildren<NestedProgram>();
@@ -2061,7 +2061,7 @@ namespace TypeCobol.Test.Domain
             //---------------------------------------
             //Resolve all types of the MAIN Program.
             //---------------------------------------
-            var POINTMainGblEntry = document.Results.RootSymbolTable.ResolveType(new string[] {"POINTMainGbl", "TypeVisNestedPrgAndProc" });
+            var POINTMainGblEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTMainGbl", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(POINTMainGblEntry.Count == 1);
 
             var POINTMainPrivEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTMainPriv", "TypeVisNestedPrgAndProc" });
@@ -2076,7 +2076,7 @@ namespace TypeCobol.Test.Domain
             //---------------------------------------
             //Resolve all types of the Nested Program.
             //---------------------------------------
-            var typ = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "POINTNestedPriv" });
+            var typ = currentProgram.ResolveType(document.Results.RootSymbolTable, new string[] { "POINTNestedPriv" });
 
             var POINTNestedGblEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedGbl", "Nested" });
             Assert.IsTrue(POINTNestedGblEntry.Count == 1);
@@ -2099,7 +2099,7 @@ namespace TypeCobol.Test.Domain
             //-----------------------------------------
             //Resolve all types of the Nested2 Program.
             //-----------------------------------------
-            var typ2 = currentProgram.ReverseResolveType(document.Results.RootSymbolTable, new string[] { "POINTNestedNestedPriv" });
+            var typ2 = currentProgram.ResolveType(document.Results.RootSymbolTable, new string[] { "POINTNestedNestedPriv" });
 
             var POINTNestedNestedGblEntry = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTNestedNestedGbl", "Nested2" });
             Assert.IsTrue(POINTNestedNestedGblEntry.Count == 1);
@@ -2263,7 +2263,7 @@ namespace TypeCobol.Test.Domain
             //---------------------------------------------
             // TESTING type inside Function
             //---------------------------------------------
-            var POINTFunc = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTFunc"});
+            var POINTFunc = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTFunc" });
             Assert.AreEqual(3, POINTFunc.Count);
             var POINTFuncLocal = document.Results.RootSymbolTable.ResolveType(new string[] { "POINTFunc", "NestedProcLocal" });
             Assert.IsTrue(POINTFuncLocal.Count == 1);
@@ -2418,7 +2418,7 @@ namespace TypeCobol.Test.Domain
             //-------------------------------------------
             // RESOLVE all Functions/Procedures
             //-------------------------------------------
-            var ProcLocal = document.Results.RootSymbolTable.ResolveFunction(new string[] { "ProcLocal" , "TypeVisNestedPrgAndProc" });
+            var ProcLocal = document.Results.RootSymbolTable.ResolveFunction(new string[] { "ProcLocal", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(ProcLocal.Count == 1);
             var ProcPrivate = document.Results.RootSymbolTable.ResolveFunction(new string[] { "ProcPrivate", "TypeVisNestedPrgAndProc" });
             Assert.IsTrue(ProcPrivate.Count == 1);

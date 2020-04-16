@@ -398,7 +398,7 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// Resolve a type.
+        /// Resolve a Scope.
         /// </summary>
         /// <param name="root">The Root Symbol Table</param>
         /// <param name="path">The type's path'</param>
@@ -407,6 +407,32 @@ namespace TypeCobol.Compiler.Symbols
         {
             ProgramSymbol topPrg = (ProgramSymbol)TopParent(Kinds.Program);
             return ResolveSymbol<ScopeSymbol>(path, topPrg, root.LookupScope);
+        }
+
+
+        /// <summary>
+        /// Resolve accessible functions forth this scope.
+        /// </summary>
+        /// <param name="root">The Root Symbol Table</param>
+        /// <param name="path">The type's path'</param>
+        /// <returns>The Set of resolve types</returns>
+        public Container<ScopeSymbol>.Entry ResolveFunctionAccessible(RootSymbolTable root, string[] path)
+        {
+            var candidates = ResolveScope(root, path);
+            if (candidates.Count > 0)
+            {
+                Container<ScopeSymbol>.Entry results = new Container<ScopeSymbol>.Entry(path[0]);
+                foreach (var candidate in candidates)
+                {
+                    if (IsFunctionAccessible((FunctionSymbol)candidate))
+                    {
+                        results.Add(candidate);
+                    }
+                }
+                return results;
+            }
+            return candidates;
+
         }
 
         /// <summary>

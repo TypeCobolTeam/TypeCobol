@@ -9,6 +9,7 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Symbols;
 using TypeCobol.Compiler.Types;
+using static TypeCobol.Compiler.Symbols.Symbol;
 
 namespace TypeCobol.Compiler.Domain
 {
@@ -829,8 +830,25 @@ namespace TypeCobol.Compiler.Domain
 
             //First lookup in the current scope if the typedef symbol exists.
             TypedefSymbol tdSym = null;
-            var entry = programScope.ReverseResolveType(programScope, new string[] { dataDef.Name });
-            if (entry != null)
+            //--------------------------------------------------------------------------------------
+            // The goal here is to determine if a local TypeDef definition already exits.
+            // So we create THE COMPLETE FULL PATH of the type to check it.
+            //--------------------------------------------------------------------------------------
+            ProgramSymbol topPrg = (ProgramSymbol)programScope.TopParent(Kinds.Program);
+            List<string> lpaths = new List<string>();
+            lpaths.Add(dataDef.Name);
+            ProgramSymbol cur = programScope;
+            while (cur != topPrg)
+            {
+                lpaths.Add(cur.Name);
+                cur = (ProgramSymbol)cur.Owner;
+            }
+            lpaths.Add(topPrg.Name);
+            string[] paths = lpaths.ToArray();
+            //--------------------------------------------------------------------------------------
+            var entry = programScope.ResolveSymbol<TypedefSymbol>(paths, topPrg, this.MyRoot.LookupType, true /* we need an exact match */);
+
+            if (entry.Count > 0)
             {
                 System.Diagnostics.Debug.Assert(entry.Count == 1);
                 tdSym = entry.Symbol;
