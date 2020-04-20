@@ -222,7 +222,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Then thenNode)
         {
-            if (thenNode.ChildrenCount == 0)
+            //This check only applies to THEN nodes coming from IF statements.
+            if (thenNode.ChildrenCount == 0 && thenNode.Parent.CodeElement?.Type == CodeElementType.IfStatement)
             {
                 //THEN has no CodeElement, report on Parent IF.
                 DiagnosticUtils.AddError(thenNode.Parent, "Missing statement or NEXT SENTENCE after IF condition.");
