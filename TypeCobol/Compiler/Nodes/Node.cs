@@ -7,6 +7,7 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Symbols;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Tools;
 
@@ -43,6 +44,23 @@ namespace TypeCobol.Compiler.Nodes {
 
         [CanBeNull]
         protected abstract CodeElement InternalCodeElement {  get;}
+
+        /// <summary>
+        /// The Semantic data of this Node which is the Symbol instance associated to it.
+        /// </summary>
+        private Symbol _semanticData;
+        public virtual Symbol SemanticData
+        {
+            get => _semanticData;
+            set
+            {
+                _semanticData = value;
+                if (value != null)
+                {
+                    _semanticData.TargetNode = this;
+                }
+            }
+        }
 
         /// <summary>Parent node (weakly-typed)</summary>
         public Node Parent { get; private set; }
