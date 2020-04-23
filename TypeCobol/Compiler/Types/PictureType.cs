@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace TypeCobol.Compiler.Types
 {
@@ -52,11 +54,11 @@ namespace TypeCobol.Compiler.Types
         public PictureType(PictureValidator validator)
             : base(Type.Tags.Picture)
         {
-            AssignFromValidator(validator);            
+            AssignFromValidator(validator);
         }
 
         /// <summary>
-        /// The Category  of picure type.
+        /// The Category of picture type.
         /// </summary>
         public PictureCategory Category
         {
@@ -132,7 +134,21 @@ namespace TypeCobol.Compiler.Types
         {
             get
             {
-                return ConsumedToken.Text;
+                if (ConsumedToken != null)
+                {
+                    return ConsumedToken.Text;
+                }
+                else if (Sequence != null)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    foreach (var c in Sequence)
+                    {
+                        sb.Append(c);
+                    }
+
+                    return sb.ToString();
+                }
+                else return "???";
             }
         }
 
@@ -193,7 +209,7 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// Is this picture an external Floting point ?
+        /// Is this picture an external Floating point ?
         /// </summary>
         public bool IsExternalFloat
         {
@@ -202,7 +218,7 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// The sequence of charcaters that was calculated by the PictureValidator
+        /// The sequence of characters that was calculated by the PictureValidator
         /// to validate this PICTURE string.
         /// </summary>
         internal PictureValidator.Character[] Sequence
@@ -212,32 +228,15 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// Sets the usage associated to this PICTURE type.
+        /// Indicates whether the usage is compatible with this PictureType.
         /// </summary>
-        public override Type.UsageFormat Usage
-        {
-            get
-            {
-                return base.Usage;
-            }
-            set
-            {
-                bool bNotValid = (value == Type.UsageFormat.Comp1 ||
-                        value == Type.UsageFormat.Comp2 ||
-                        value == Type.UsageFormat.ObjectReference ||
-                        value == Type.UsageFormat.Pointer ||
-                        value == Type.UsageFormat.FunctionPointer ||
-                        value == Type.UsageFormat.ProcedurePointer
-                    );
-                System.Diagnostics.Contracts.Contract.Requires(!bNotValid);
-                System.Diagnostics.Debug.Assert(!bNotValid);
-                if (bNotValid)
-                {
-                    throw new System.ArgumentException("Invalid PICTURE Usage : " + value.ToString());
-                }
-                base.Usage = value;
-            }
-        }
+        public bool IsUsageValid =>
+            !(Usage == UsageFormat.Comp1 ||
+              Usage == UsageFormat.Comp2 ||
+              Usage == UsageFormat.ObjectReference ||
+              Usage == UsageFormat.Pointer ||
+              Usage == UsageFormat.FunctionPointer ||
+              Usage == UsageFormat.ProcedurePointer);
 
         /// <summary>
         /// Get this picture Type Length;
@@ -359,6 +358,24 @@ namespace TypeCobol.Compiler.Types
                 }
                 return Size;
             }
+        }
+
+        public override void Dump(TextWriter tw, int indentLevel)
+        {
+            string s = new string(' ', 2 * indentLevel);
+            tw.Write(s);
+            tw.Write("PIC ");
+            tw.Write(Picture);
+            if (Usage != 0)
+            {
+                tw.Write(' ');
+                base.Dump(tw, 0);
+            }            
+        }
+
+        public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)
+        {
+            return v.VisitPictureType(this, arg);
         }
     }
 }

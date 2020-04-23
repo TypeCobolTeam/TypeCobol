@@ -1,16 +1,22 @@
 ﻿using System;
+using System.IO;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Symbols;
+
+using static TypeCobol.Compiler.Symbols.Symbol;
 
 namespace TypeCobol.Compiler.Types
 {
     /// <summary>
     /// A Cobol Type
     /// </summary>
-    public class Type : ISemanticData
+    public class Type : ISemanticData, ICloneable
     {
         /// <summary>
-        /// Type tags
+        /// Type tags, used to quickly determine the Kind of the type, this Type
+        /// represents based on a Type instance, and not have to use the C# is operator
+        /// for that purpose, so that a static cast can be used if needed, rather
+        /// than a dynamic cast.
         /// </summary>
         public enum Tags
         {
@@ -18,21 +24,15 @@ namespace TypeCobol.Compiler.Types
             Picture,
             Array,
             Pointer,
-            Record,
+            Group,
             Program,
             Function,
             Typedef,
-            Renames
-        }
+            Renames,
 
-        /// <summary>
-        /// Type's flags
-        /// </summary>
-        public enum Flag
-        {
-            Strong = 0x01 << 0,
-            Weak = 0x01 << 1,
-            Strict = 0x01 << 2
+            //TypeCobol Tags
+            Boolean,
+            String,
         }
 
         /// <summary>
@@ -56,7 +56,17 @@ namespace TypeCobol.Compiler.Types
             ObjectReference,
             Pointer,
             ProcedurePointer,
-            FunctionPointer
+            FunctionPointer,
+
+            //Cobol Builtin types usages
+            Omitted,
+            Alphabetic,
+            Numeric,
+            NumericEdited,
+            Alphanumeric,
+            AlphanumericEdited,
+            DBCS,
+            FloatingPoint,
         }
 
         /// <summary>
@@ -80,12 +90,12 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// Types's Flags.
+        /// Type's Flags.
         /// </summary>
-        public Flag Flags
+        public Symbol.Flags Flag
         {
             get;
-            set;
+            internal set;
         }
 
         public virtual UsageFormat Usage
@@ -143,9 +153,116 @@ namespace TypeCobol.Compiler.Types
             }
         }
 
-        public SemanticKinds SemanticKind
+        public SemanticKinds SemanticKind => SemanticKinds.Type;
+
+        /// <summary>
+        /// Set a set of flags to true or false.
+        /// </summary>
+        /// <param name="flag">Flag or flags to set.</param>
+        /// <param name="value">Boolean value indicating whether the flags should be applied or removed.</param>
+        /// <param name="propagate">True to apply flags to child components, false otherwise. True is the default for types.</param>
+        internal virtual void SetFlag(Flags flag, bool value, bool propagate = true)
         {
-            get { return SemanticKinds.Type; }
+            this.Flag = value
+                ? (Flags) ((ulong) this.Flag | (ulong) flag)
+                : (Flags) ((ulong) this.Flag & ~(ulong) flag);
+            if (propagate)
+            {
+                TypeComponent?.SetFlag(flag, value, true);
+            }
+        }
+
+        /// <summary>
+        /// Determines if the given flag is set.
+        /// </summary>
+        /// <param name="flag">The flag to be tested</param>
+        /// <returns>true if yes, false otherwise.</returns>
+        public bool HasFlag(Flags flag)
+        {
+            return ((ulong)this.Flag & (ulong)flag) != 0;
+        }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
+
+        /// <summary>
+        /// TypeComponent for example for Array, Pointer type or TypeDef.
+        /// For an array it is the type of an element of the array.
+        /// For a pointer it is the type of the pointed element.
+        /// For a Typedef it is the type which is defined.
+        /// </summary>
+        public virtual Type TypeComponent => null;
+
+        /// <summary>
+        /// A Type may expand to a Cobol85 if it has a type component.
+        /// Or it is a builtin type.
+        /// </summary>
+        public virtual bool MayExpand => HasFlag(Flags.BuiltinType) || TypeComponent != null;
+
+        public override string ToString()
+        {
+            StringWriter sw  = new StringWriter();
+            Dump(sw, 0);
+            return sw.ToString();
+        }
+
+        /// <summary>
+        /// Dump this type in the given TextWriter instance
+        /// </summary>
+        /// <param name="tw"></param>
+        /// <param name="indentLevel"></param>
+        public virtual void Dump(TextWriter tw, int indentLevel)
+        {
+            string s = new string(' ', 2 * indentLevel);
+            tw.Write(s);
+            tw.Write(Enum.GetName(typeof(UsageFormat), Usage));            
+        }
+
+        public virtual TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)
+        {
+            return v.VisitType(this, arg);
+        }
+
+        /// <summary>
+        /// A visitor for types.  A visitor is used to implement operations
+        /// (or relations) on types. Most common operations on types are
+        /// binary relations of the form : Type x TParameter -> TResult
+        /// </summary>
+        /// <typeparam name="TResult">the return type of the operation implemented by this visitor.
+        /// </typeparam>
+        /// <typeparam name="TParameter">the type of the second argument (the first being the
+        /// type itself) of the operation implemented by this visitor.
+        /// </typeparam>
+        public interface IVisitor<out TResult, in TParameter>
+        {
+            TResult VisitArrayType(ArrayType t, TParameter arg);
+            TResult VisitFunctionType(FunctionType t, TParameter arg);
+            TResult VisitPictureType(PictureType t, TParameter arg);
+            TResult VisitPointerType(PointerType t, TParameter arg);
+            TResult VisitProgramType(ProgramType t, TParameter arg);
+            TResult VisitGroupType(GroupType t, TParameter arg);
+            TResult VisitTypedefType(TypedefType t, TParameter arg);
+            TResult VisitType(Type t, TParameter arg);
+        }
+
+        /// <summary>
+        /// The Abstract Type Visitor Class
+        /// </summary>
+        /// <typeparam name="TResult">Result type of the visitor.</typeparam>
+        /// <typeparam name="TParameter">Parameter type of the visitor.</typeparam>
+        public abstract class AbstractTypeVisitor<TResult, TParameter>  : IVisitor<TResult, TParameter>
+        {
+            public TResult Visit(Type t, TParameter arg) { return t.Accept(this, arg); }
+            public virtual TResult VisitArrayType(ArrayType t, TParameter arg) { return VisitType(t, arg); }
+            public virtual TResult VisitFunctionType(FunctionType t, TParameter arg) { return VisitType(t, arg); }
+            public virtual TResult VisitPictureType(PictureType t, TParameter arg) { return VisitType(t, arg); }
+            public virtual TResult VisitPointerType(PointerType t, TParameter arg) { return VisitType(t, arg); }
+            public virtual TResult VisitProgramType(ProgramType t, TParameter arg) { return VisitType(t, arg); }
+            public virtual TResult VisitGroupType(GroupType t, TParameter arg) { return VisitType(t, arg); }
+            public virtual TResult VisitTypedefType(TypedefType t, TParameter arg) { return VisitType(t, arg); }
+            public abstract TResult VisitType(Type t, TParameter arg);
         }
     }
 }
