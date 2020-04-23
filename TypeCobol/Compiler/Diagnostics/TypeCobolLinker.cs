@@ -285,6 +285,20 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 dataDefinition.TypeDefinition = types[0];
                 dataDefinition.DataType.RestrictionLevel = types[0].DataType.RestrictionLevel;
+
+                //TODO SemanticDomain: link Typedef symbol for TypedVariableSymbol
+                /*
+                System.Diagnostics.Debug.Assert(types[0].SemanticData != null);
+                System.Diagnostics.Debug.Assert(types[0].SemanticData.SemanticKind == SemanticKinds.Symbol);
+                var typedef = types[0].SemanticData as Compiler.Symbols.TypedefSymbol;
+                System.Diagnostics.Debug.Assert(typedef != null);
+                System.Diagnostics.Debug.Assert(dataDefinition.SemanticData != null);
+                System.Diagnostics.Debug.Assert(dataDefinition.SemanticData.SemanticKind == SemanticKinds.Symbol);
+                var typedVariable = dataDefinition.SemanticData as Compiler.Symbols.TypedVariableSymbol;
+                System.Diagnostics.Debug.Assert(typedVariable != null); //KO for this kind of declarations 15 W-TAB-LCC-CLE-DAT  pic X(08) type date.
+                typedVariable.Typedef = typedef;
+                */
+
                 return true;
             }
 

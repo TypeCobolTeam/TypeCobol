@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Symbols;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -590,24 +591,45 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                 }
 
-                //add the found DataDefinition to a dictionary depending on the storage area type
+                //Initialize node caches for DataDef and Symbol.
+                IDictionary<StorageArea, DataDefinition> dataDefinitionStorage;
+                IDictionary<StorageArea, VariableSymbol> symbolStorage;
                 if (isReadStorageArea)
                 {
-                    //need to initialize the dictionaries
+                    //Initialize reads dictionaries
                     if (node.StorageAreaReadsDataDefinition == null)
-                    {
                         node.StorageAreaReadsDataDefinition = new Dictionary<StorageArea, DataDefinition>();
-                    }
-                    node.StorageAreaReadsDataDefinition.Add(storageArea, dataDefinitionFound);
+                    if (node.StorageAreaReadsSymbol == null)
+                        node.StorageAreaReadsSymbol = new Dictionary<StorageArea, VariableSymbol>();
+
+                    //Target read dictionaries
+                    dataDefinitionStorage = node.StorageAreaReadsDataDefinition;
+                    symbolStorage = node.StorageAreaReadsSymbol;
                 }
                 else
                 {
-                    //need to initialize the dictionaries
+                    //Initialize writes dictionaries
                     if (node.StorageAreaWritesDataDefinition == null)
-                    {
                         node.StorageAreaWritesDataDefinition = new Dictionary<StorageArea, DataDefinition>();
-                    }
-                    node.StorageAreaWritesDataDefinition.Add(storageArea, dataDefinitionFound);
+                    if (node.StorageAreaWritesSymbol == null)
+                        node.StorageAreaWritesSymbol = new Dictionary<StorageArea, VariableSymbol>();
+
+                    //Target writes dictionaries
+                    dataDefinitionStorage = node.StorageAreaWritesDataDefinition;
+                    symbolStorage = node.StorageAreaWritesSymbol;
+                }
+
+                //Add DataDefinition found and corresponding VariableSymbol into caches
+                dataDefinitionStorage.Add(storageArea, dataDefinitionFound);
+                if (dataDefinitionFound.ParentTypeDefinition == null)
+                {
+                    var variableSymbol = dataDefinitionFound.SemanticData as VariableSymbol;
+                    System.Diagnostics.Debug.Assert(variableSymbol != null);
+                    symbolStorage.Add(storageArea, variableSymbol);
+                }
+                else
+                {
+                    //TODO SemanticDomain: requires type expansion.
                 }
 
                 return dataDefinitionFound;

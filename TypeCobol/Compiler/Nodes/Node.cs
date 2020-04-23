@@ -884,6 +884,18 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         /// <summary>
+        /// Stores VariableSymbol for each read StorageArea of this Node.
+        /// This dictionary is set and populated only by the CrossChecker.
+        /// </summary>
+        public Dictionary<StorageArea, VariableSymbol> StorageAreaReadsSymbol { get; set; }
+
+        /// <summary>
+        /// Stores VariableSymbol for each written StorageArea of this Node.
+        /// This dictionary is set and populated only by the CrossChecker.
+        /// </summary>
+        public Dictionary<StorageArea, VariableSymbol> StorageAreaWritesSymbol { get; set; }
+
+        /// <summary>
         /// Clone the children of this node by creating a new list of Nodes.
         /// </summary>
         /// <param name="parent"></param>
