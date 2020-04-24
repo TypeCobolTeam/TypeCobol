@@ -88,6 +88,12 @@ namespace TypeCobol.Compiler.Domain
         /// </summary>
         private readonly Stack<FunctionDeclaration> _functionDeclStack = new Stack<FunctionDeclaration>();
 
+        private SectionSymbol CurrentSection
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Creates a new ProgramSymbolTableBuilder.
         /// </summary>
@@ -1214,6 +1220,41 @@ namespace TypeCobol.Compiler.Domain
                 //Handle indexes belonging to this Data Definition
                 HandleIndexes(level1Node, dataDefSym, sectionVariables, null);
             }
+        }
+
+        public override void StartSection(SectionHeader header)
+        {
+            //Create Section symbol and enter it into current scope
+            var section = new SectionSymbol(header.SectionName.Name) {Owner = CurrentScope};
+            CurrentScope.Sections.Enter(section);
+
+            //Update CurrentNode SemanticData
+            System.Diagnostics.Debug.Assert(CurrentNode != null);
+            System.Diagnostics.Debug.Assert(CurrentNode.CodeElement != null);
+            System.Diagnostics.Debug.Assert(CurrentNode.CodeElement.Type == CodeElementType.SectionHeader);
+            CurrentNode.SemanticData = section;
+
+            //Track current section
+            System.Diagnostics.Debug.Assert(CurrentSection == null);
+            CurrentSection = section;
+        }
+
+        public override void EndSection()
+        {
+            System.Diagnostics.Debug.Assert(CurrentSection != null);
+            CurrentSection = null;
+        }
+
+        public override void StartParagraph(ParagraphHeader header)
+        {
+            var paragraph = new ParagraphSymbol(header.ParagraphName.Name);
+            CurrentSection?.AddParagraph(paragraph);
+
+            //Update CurrentNode SemanticData
+            System.Diagnostics.Debug.Assert(CurrentNode != null);
+            System.Diagnostics.Debug.Assert(CurrentNode.CodeElement != null);
+            System.Diagnostics.Debug.Assert(CurrentNode.CodeElement.Type == CodeElementType.ParagraphHeader);
+            CurrentNode.SemanticData = paragraph;
         }
     }
 }

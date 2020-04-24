@@ -22,6 +22,16 @@ namespace TypeCobol.Compiler.Symbols
             protected set;
         }
 
+        /// <summary>
+        /// Enters a paragraph symbol in this Section.
+        /// </summary>
+        /// <param name="p">The paragraph to enter.</param>
+        public virtual void AddParagraph(ParagraphSymbol p)
+        {
+            p.Owner = this;
+            Paragraphs.Enter(p);
+        }
+
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)
         {
             return v.VisitSectionSymbol(this, arg);

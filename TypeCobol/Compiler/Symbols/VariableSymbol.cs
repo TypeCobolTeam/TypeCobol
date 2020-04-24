@@ -36,11 +36,7 @@ namespace TypeCobol.Compiler.Symbols
         public int Level
         {
             get => _level;
-            set
-            {
-                System.Diagnostics.Debug.Assert((value >= 1 && value <= 49) || (value == 77) || (value == 88) || (value == 66));
-                _level = value;
-            }
+            set => _level = value;
         }
 
         /// <summary>

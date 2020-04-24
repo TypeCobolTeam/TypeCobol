@@ -96,7 +96,38 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(PerformProcedure performProcedureNode)
         {
-            SectionOrParagraphUsageChecker.CheckReferenceToParagraphOrSection(performProcedureNode);
+            var performCE = performProcedureNode.CodeElement;
+
+            if (performCE.Procedure != null)
+            {
+                var procedure = SectionOrParagraphUsageChecker.ResolveTargetSectionOrParagraph(performProcedureNode, performCE.Procedure);
+                performCE.Procedure = procedure.Item1;
+                switch (procedure.Item1.Type)
+                {
+                    case SymbolType.SectionName:
+                        performProcedureNode.ProcedureSectionSymbol = (SectionSymbol) procedure.Item2?.SemanticData;
+                        break;
+                    case SymbolType.ParagraphName:
+                        performProcedureNode.ProcedureParagraphSymbol = (ParagraphSymbol) procedure.Item2?.SemanticData;
+                        break;
+                }
+            }
+
+            if (performCE.ThroughProcedure != null)
+            {
+                var throughProcedure = SectionOrParagraphUsageChecker.ResolveTargetSectionOrParagraph(performProcedureNode, performCE.ThroughProcedure);
+                performCE.ThroughProcedure = throughProcedure.Item1;
+                switch (throughProcedure.Item1.Type)
+                {
+                    case SymbolType.SectionName:
+                        performProcedureNode.ThroughProcedureSectionSymbol = (SectionSymbol) throughProcedure.Item2?.SemanticData;
+                        break;
+                    case SymbolType.ParagraphName:
+                        performProcedureNode.ThroughProcedureParagraphSymbol = (ParagraphSymbol) throughProcedure.Item2?.SemanticData;
+                        break;
+                }
+            }
+
             return true;
         }
 
@@ -779,60 +810,82 @@ namespace TypeCobol.Compiler.Diagnostics
 
     class SectionOrParagraphUsageChecker
     {
-        public static void CheckReferenceToParagraphOrSection(PerformProcedure perform)
+        /// <summary>
+        /// Disambiguate between Section or Paragraph reference.
+        /// </summary>
+        /// <param name="callerNode">Node using the paragraph or the reference.</param>
+        /// <param name="target">A non-null Symbol reference to disambiguate.</param>
+        /// <returns>A tuple made of a non-null SymbolReference and a Node when the target has been correctly resolved.
+        /// The returned SymbolReference is non-ambiguous if the type of the target has been determined.</returns>
+        /// <remarks>This method will create appropriate diagnostics on Node if resolution is inconclusive.</remarks>
+        public static (SymbolReference, Node) ResolveTargetSectionOrParagraph(Node callerNode, [NotNull] SymbolReference target)
         {
-            var performCE = perform.CodeElement;
-            SymbolReference symbol;
-            symbol = ResolveProcedureName(perform.SymbolTable, performCE.Procedure as AmbiguousSymbolReference,
-                perform);
-            if (symbol != null) performCE.Procedure = symbol;
-            symbol = ResolveProcedureName(perform.SymbolTable, performCE.ThroughProcedure as AmbiguousSymbolReference,
-                perform);
-            if (symbol != null) performCE.ThroughProcedure = symbol;
-        }
-
-        /// <summary>Disambiguate between section and paragraph names</summary>
-        /// <param name="table">Symbol table used for name resolution</param>
-        /// <param name="symbol">Symbol to disambiguate</param>
-        /// <param name="ce">Original CodeElement ; error diagnostics will be added to it if name resolution fails</param>
-        /// <returns>symbol as a SymbolReference whith a SymbolType properly set</returns>
-        private static SymbolReference ResolveProcedureName(SymbolTable table, SymbolReference symbol, Node node)
-        {
-            if (symbol == null) return null;
-
-            SymbolReference sname = null, pname = null;
-            var sfound = table.GetSection(symbol.Name);
-            if (sfound.Count > 0) sname = new SymbolReference(symbol.NameLiteral, SymbolType.SectionName);
-            var pfound = table.GetParagraph(symbol.Name);
-            if (pfound.Count > 0) pname = new SymbolReference(symbol.NameLiteral, SymbolType.ParagraphName);
-
-            if (pname == null)
+            IList<Section> sections;
+            IList<Paragraph> paragraphs;
+            if (target.IsAmbiguous)
             {
-                if (sname == null)
-                {
-                    DiagnosticUtils.AddError(node, "Symbol " + symbol.Name + " is not referenced", symbol, MessageCode.SemanticTCErrorInParser);
-                }
-                else
-                {
-                    if (sfound.Count > 1)
-                        DiagnosticUtils.AddError(node, "Ambiguous reference to section " + symbol.Name, symbol);
-                    return sname;
-                }
+                //Have to search for both sections and paragraphs in SymbolTable
+                sections = GetSections();
+                paragraphs = GetParagraphs();
             }
             else
             {
-                if (sname == null)
+                switch (target.Type)
                 {
-                    if (pfound.Count > 1)
-                        DiagnosticUtils.AddError(node, "Ambiguous reference to paragraph " + symbol.Name, symbol);
-                    return pname;
+                    case SymbolType.SectionName:
+                        sections = GetSections();
+                        paragraphs = null;
+                        break;
+                    case SymbolType.ParagraphName:
+                        sections = null;
+                        paragraphs = GetParagraphs();
+                        break;
+                    default:
+                        //Invalid SymbolType for a procedure name
+                        return (target, null);
+                }
+            }
+
+            if (paragraphs == null || paragraphs.Count == 0)
+            {
+                if (sections == null || sections.Count == 0)
+                {
+                    DiagnosticUtils.AddError(callerNode, $"Symbol {target.Name} is not referenced", target, MessageCode.SemanticTCErrorInParser);
+                    return (target, null);
+                }
+
+                var nonAmbiguousSymbolReference = new SymbolReference(target.NameLiteral, SymbolType.SectionName);
+                if (sections.Count > 1)
+                {
+                    DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to section {target.Name}", target, MessageCode.SemanticTCErrorInParser);
+                    return (nonAmbiguousSymbolReference, null);
+                }
+
+                return (nonAmbiguousSymbolReference, sections[0]);
+            }
+            else
+            {
+                if (sections == null || sections.Count == 0)
+                {
+                    var nonAmbiguousSymbolReference = new SymbolReference(target.NameLiteral, SymbolType.ParagraphName);
+                    if (paragraphs.Count > 1)
+                    {
+                        DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to paragraph {target.Name}", target, MessageCode.SemanticTCErrorInParser);
+                        return (nonAmbiguousSymbolReference, null);
+                    }
+
+                    return (nonAmbiguousSymbolReference, paragraphs[0]);
                 }
                 else
                 {
-                    DiagnosticUtils.AddError(node, "Ambiguous reference to procedure " + symbol.Name, symbol);
+                    DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to procedure {target.Name}", target, MessageCode.SemanticTCErrorInParser);
+                    return (target, null);
                 }
             }
-            return null;
+
+            IList<Section> GetSections() => callerNode.SymbolTable.GetSection(target.Name);
+
+            IList<Paragraph> GetParagraphs() => callerNode.SymbolTable.GetParagraph(target.Name);
         }
 
         private static void Check<T>(string nodeTypeName, T node, [NotNull] IList<T> found) where T : Node

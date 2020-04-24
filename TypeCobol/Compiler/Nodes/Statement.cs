@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.Nodes {
+﻿using TypeCobol.Compiler.Symbols;
+
+namespace TypeCobol.Compiler.Nodes {
     using System;
     using System.Collections.Generic;
     using TypeCobol.Compiler.CodeElements;
@@ -579,6 +581,11 @@
         }
     public class PerformProcedure: GenericNode<PerformProcedureStatement>, Statement {
 	    public PerformProcedure(PerformProcedureStatement statement): base(statement) { }
+
+            public ParagraphSymbol ProcedureParagraphSymbol { get; internal set; }
+            public ParagraphSymbol ThroughProcedureParagraphSymbol { get; internal set; }
+            public SectionSymbol ProcedureSectionSymbol { get; internal set; }
+            public SectionSymbol ThroughProcedureSectionSymbol { get; internal set; }
 
             public override bool VisitNode(IASTVisitor astVisitor)
             {
