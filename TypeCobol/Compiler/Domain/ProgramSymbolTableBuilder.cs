@@ -847,7 +847,7 @@ namespace TypeCobol.Compiler.Domain
         {
             System.Diagnostics.Debug.Assert(dataDef.CodeElement.Type == CodeElementType.DataConditionEntry);
             VariableSymbol sym = new VariableSymbol(dataDef.Name);
-            sym.Type = BuiltinTypes.BooleanType;
+            sym.Type = BuiltinTypes.DataConditionType;
             DecorateSymbol(dataDef, sym, currentDomain);
             if (typedef == null)
                 CurrentScope.Add(sym);

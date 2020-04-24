@@ -29,6 +29,8 @@ namespace TypeCobol.Compiler.Types
         public static readonly Type DBCSType;
         public static readonly Type FloatingPointType;
 
+        public static readonly Type DataConditionType; //for level-88
+
         public static readonly Type BooleanType;
         public static readonly Type DateType;
         public static readonly Type CurrencyType;
@@ -96,15 +98,15 @@ namespace TypeCobol.Compiler.Types
             FloatingPointType = new Type(Type.Tags.Usage, Type.UsageFormat.FloatingPoint);
             FloatingPointType.SetFlag(Symbol.Flags.BuiltinType, true);
 
+            DataConditionType = new Type(Tags.DataCondition);
+            DataConditionType.SetFlag(Symbol.Flags.BuiltinType, true);
+
             BooleanType = new Type(Type.Tags.Boolean);
             BooleanType.SetFlag(Symbol.Flags.BuiltinType, true);
-
             DateType = BuiltinTypes.CreateDateType(new TypedefSymbol(string.Intern("Date")));
             DateType.SetFlag(Symbol.Flags.BuiltinType, true);
-
             CurrencyType = BuiltinTypes.CreateCurrencyType(new TypedefSymbol(string.Intern("Currency")));
             CurrencyType.SetFlag(Symbol.Flags.BuiltinType, true);
-
             StringType = new Type(Type.Tags.String);
             StringType.SetFlag(Symbol.Flags.BuiltinType, true);
         }

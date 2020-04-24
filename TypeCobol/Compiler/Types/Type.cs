@@ -25,6 +25,7 @@ namespace TypeCobol.Compiler.Types
             Array,
             Pointer,
             Group,
+            DataCondition,
             Program,
             Function,
             Typedef,
