@@ -606,7 +606,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         var specialRegister = storageArea as StorageAreaPropertySpecialRegister;
                         //Unless this is a format 5 set statement, we have an error. So we're checking we're not in the following format  :
                         //set (address of)? identifier(pointer) TO (address of)? identifier | NULL
-                        if (specialRegister?.SpecialRegisterName.TokenType != TokenType.ADDRESS || !specialRegister.IsWrittenTo)
+                        if (specialRegister?.SpecialRegisterName.TokenType != TokenType.ADDRESS)
                         {
                             DiagnosticUtils.AddError(node, "Input variable '" + paramDesc.Name + "' is modified by an instruction", area.SymbolReference);
                         }
