@@ -101,8 +101,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (performCE.Procedure != null)
             {
                 var procedure = SectionOrParagraphUsageChecker.ResolveTargetSectionOrParagraph(performProcedureNode, performCE.Procedure);
-                performCE.Procedure = procedure.Item1;
-                switch (procedure.Item1.Type)
+                switch (procedure.Item1)
                 {
                     case SymbolType.SectionName:
                         performProcedureNode.ProcedureSectionSymbol = (SectionSymbol) procedure.Item2?.SemanticData;
@@ -116,8 +115,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (performCE.ThroughProcedure != null)
             {
                 var throughProcedure = SectionOrParagraphUsageChecker.ResolveTargetSectionOrParagraph(performProcedureNode, performCE.ThroughProcedure);
-                performCE.ThroughProcedure = throughProcedure.Item1;
-                switch (throughProcedure.Item1.Type)
+                switch (throughProcedure.Item1)
                 {
                     case SymbolType.SectionName:
                         performProcedureNode.ThroughProcedureSectionSymbol = (SectionSymbol) throughProcedure.Item2?.SemanticData;
@@ -815,13 +813,14 @@ namespace TypeCobol.Compiler.Diagnostics
         /// </summary>
         /// <param name="callerNode">Node using the paragraph or the reference.</param>
         /// <param name="target">A non-null Symbol reference to disambiguate.</param>
-        /// <returns>A tuple made of a non-null SymbolReference and a Node when the target has been correctly resolved.
-        /// The returned SymbolReference is non-ambiguous if the type of the target has been determined.</returns>
+        /// <returns>A tuple made of a SymbolType and a Node when the target has been correctly resolved.
+        /// The returned SymbolType is non-ambiguous if the type of the target has been determined.</returns>
         /// <remarks>This method will create appropriate diagnostics on Node if resolution is inconclusive.</remarks>
-        public static (SymbolReference, Node) ResolveTargetSectionOrParagraph(Node callerNode, [NotNull] SymbolReference target)
+        public static (SymbolType, Node) ResolveTargetSectionOrParagraph(Node callerNode, [NotNull] SymbolReference target)
         {
             IList<Section> sections;
             IList<Paragraph> paragraphs;
+            var symbolType = target.Type;
             if (target.IsAmbiguous)
             {
                 //Have to search for both sections and paragraphs in SymbolTable
@@ -830,7 +829,7 @@ namespace TypeCobol.Compiler.Diagnostics
             }
             else
             {
-                switch (target.Type)
+                switch (symbolType)
                 {
                     case SymbolType.SectionName:
                         sections = GetSections();
@@ -842,7 +841,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         break;
                     default:
                         //Invalid SymbolType for a procedure name
-                        return (target, null);
+                        return (symbolType, null);
                 }
             }
 
@@ -851,35 +850,35 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (sections == null || sections.Count == 0)
                 {
                     DiagnosticUtils.AddError(callerNode, $"Symbol {target.Name} is not referenced", target, MessageCode.SemanticTCErrorInParser);
-                    return (target, null);
+                    return (symbolType, null);
                 }
 
-                var nonAmbiguousSymbolReference = new SymbolReference(target.NameLiteral, SymbolType.SectionName);
+                symbolType = SymbolType.SectionName;
                 if (sections.Count > 1)
                 {
                     DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to section {target.Name}", target, MessageCode.SemanticTCErrorInParser);
-                    return (nonAmbiguousSymbolReference, null);
+                    return (symbolType, null);
                 }
 
-                return (nonAmbiguousSymbolReference, sections[0]);
+                return (symbolType, sections[0]);
             }
             else
             {
                 if (sections == null || sections.Count == 0)
                 {
-                    var nonAmbiguousSymbolReference = new SymbolReference(target.NameLiteral, SymbolType.ParagraphName);
+                    symbolType = SymbolType.ParagraphName;
                     if (paragraphs.Count > 1)
                     {
                         DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to paragraph {target.Name}", target, MessageCode.SemanticTCErrorInParser);
-                        return (nonAmbiguousSymbolReference, null);
+                        return (symbolType, null);
                     }
 
-                    return (nonAmbiguousSymbolReference, paragraphs[0]);
+                    return (symbolType, paragraphs[0]);
                 }
                 else
                 {
                     DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to procedure {target.Name}", target, MessageCode.SemanticTCErrorInParser);
-                    return (target, null);
+                    return (SymbolType.TO_BE_RESOLVED, null);
                 }
             }
 
