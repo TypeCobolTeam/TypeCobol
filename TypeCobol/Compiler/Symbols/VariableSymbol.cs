@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
@@ -154,39 +153,6 @@ namespace TypeCobol.Compiler.Symbols
             this.Flag |= domain.Owner.Flag & (Symbol.SectionMask | Flags.Global);
             //After expansion, symbol is no longer part of a typedef.
             this.Flag &= ~Symbol.Flags.InsideTypedef;
-        }
-
-        /// <summary>
-        /// Dump this symbol in the given TextWriter instance
-        /// </summary>
-        /// <param name="tw">TextWriter instance</param>
-        /// <param name="indentLevel">Indentation level</param>
-        public override void Dump(TextWriter tw, int indentLevel)
-        {
-            string s = new string(' ', 2 * indentLevel);
-            tw.Write(this.Level.ToString("00"));
-            tw.Write(' ');
-            tw.Write(Name);
-            tw.Write(' ');
-            bool bHasDot = false;
-            if (Type != null)
-            {
-                if (Type.TypeComponent?.Tag == Types.Type.Tags.Group && !HasFlag(Flags.Renames))
-                {
-                    tw.WriteLine(".");
-                    this.Type.Dump(tw, indentLevel + 1);
-                    bHasDot = true;
-                }
-                else
-                {
-                    this.Type.Dump(tw, 0);
-                }                
-            }
-            else
-                tw.Write("???");
-            DumpSymbolFlags(this.Flag, tw);
-            if (!bHasDot)
-                tw.WriteLine('.');
         }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)

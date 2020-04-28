@@ -204,21 +204,10 @@ namespace TypeCobol.Compiler.Types
 
         public override string ToString()
         {
-            StringWriter sw  = new StringWriter();
-            Dump(sw, 0);
+            StringWriter sw = new StringWriter();
+            TextRendererVisitor visitor = new TextRendererVisitor(sw);
+            visitor.Dump(this);
             return sw.ToString();
-        }
-
-        /// <summary>
-        /// Dump this type in the given TextWriter instance
-        /// </summary>
-        /// <param name="tw"></param>
-        /// <param name="indentLevel"></param>
-        public virtual void Dump(TextWriter tw, int indentLevel)
-        {
-            string s = new string(' ', 2 * indentLevel);
-            tw.Write(s);
-            tw.Write(Enum.GetName(typeof(UsageFormat), Usage));            
         }
 
         public virtual TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)

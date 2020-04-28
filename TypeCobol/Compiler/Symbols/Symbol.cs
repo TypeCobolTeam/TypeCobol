@@ -406,45 +406,12 @@ namespace TypeCobol.Compiler.Symbols
             return null;
         }
 
-        /// <summary>
-        /// Dump Symbol tags
-        /// </summary>
-        /// <param name="flag">Flags to dump</param>
-        /// <param name="tw">TextWriter instance</param>
-        internal static void DumpSymbolFlags(Flags flag, TextWriter tw)
-        {
-            if (((ulong)flag & (ulong)Flags.Global) != 0)
-            {
-                tw.Write(" GLOBAL ");
-            }
-            if (((ulong)flag & (ulong)Flags.Public) != 0)
-            {
-                tw.Write(" PUBLIC ");
-            }
-            if (((ulong)flag & (ulong)Flags.Private) != 0)
-            {
-                tw.Write(" PRIVATE ");
-            }
-        }
-
         public override string ToString()
         {
             StringWriter sw = new StringWriter();
-            Dump(sw, 0);
+            TextRendererVisitor visitor = new TextRendererVisitor(sw);
+            visitor.Dump(this);
             return sw.ToString();
-        }
-
-        /// <summary>
-        /// Dump this symbol in the given TextWriter instance
-        /// </summary>
-        /// <param name="tw">TextWriter instance</param>
-        /// <param name="indentLevel">Indentation level</param>
-        public virtual void Dump(TextWriter tw, int indentLevel)
-        {
-            string s = new string(' ', 2 * indentLevel);
-            tw.Write(Name);
-            this.Type?.Dump(tw, 0);
-            DumpSymbolFlags(this.Flag, tw);
         }
 
         public virtual TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)

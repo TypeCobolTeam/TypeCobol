@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using TypeCobol.Compiler.Symbols;
 
 namespace TypeCobol.Compiler.Types
@@ -69,33 +68,6 @@ namespace TypeCobol.Compiler.Types
         /// The returned type.
         /// </summary>
         public Type ReturnType => ReturnSymbol?.Type;
-
-        /// <summary>
-        /// Dump this type in the given TextWriter instance
-        /// </summary>
-        /// <param name="tw"></param>
-        /// <param name="indentLevel"></param>
-        public override void Dump(TextWriter tw, int indentLevel)
-        {
-            string s = new string(' ', 2 * indentLevel);
-            if (Parameters != null)
-            {
-                tw.WriteLine();
-                tw.Write(s);
-                foreach (var p in Parameters)
-                {
-                    if (p.HasFlag(Symbol.Flags.Input))
-                        tw.Write("INPUT ");
-                    else if (p.HasFlag(Symbol.Flags.Output))
-                        tw.Write("OUTPUT ");
-                    else if (p.HasFlag(Symbol.Flags.Inout))
-                        tw.Write("INOUT ");
-                    p.Dump(tw, 0);
-                }
-            }
-            tw.WriteLine();
-            ReturnSymbol?.Dump(tw, indentLevel);
-        }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)
         {

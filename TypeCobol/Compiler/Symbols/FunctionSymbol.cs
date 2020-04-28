@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
@@ -74,33 +73,6 @@ namespace TypeCobol.Compiler.Symbols
         /// Get the function visibility mask for a Procedure.
         /// </summary>
         public override Flags FunctionVisibilityMask => Flags.Private | Flags.Public;
-
-        /// <summary>
-        /// Dump this symbol in the given TextWriter instance
-        /// </summary>
-        /// <param name="tw">TextWriter instance</param>
-        /// <param name="indentLevel">Indentation level</param>
-        public override void Dump(TextWriter tw, int indentLevel)
-        {
-            string s = new string(' ', 2 * indentLevel);
-            tw.Write(s);
-            tw.Write("DECLARE PROCEDURE ");
-            tw.Write(Name);
-            tw.Write(". ");
-            DumpSymbolFlags(Flag, tw);
-            tw.WriteLine();
-            tw.Write(s);
-            tw.Write("PROCEDURE DIVISION");
-            this.Type?.Dump(tw, indentLevel + 1);
-            tw.WriteLine();
-            tw.Write("  ");
-            tw.Write(s);
-            tw.Write('.');
-            tw.WriteLine();
-            tw.Write(s);
-            tw.Write("END-DECLARE");
-            tw.Write(".");
-        }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)
         {
