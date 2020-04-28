@@ -141,20 +141,6 @@ namespace TypeCobol.Compiler.Symbols
             return Owner.LookupParentLevelSymbol(level, true);
         }
 
-        /// <summary>
-        /// Call to normalize an expanded symbol.
-        /// An expanded symbol must inherits section flags from its owner plus its GLOBAL flag.
-        /// </summary>
-        /// <param name="domain">The normalization domain</param>
-        internal virtual void NormalizeExpandedSymbol(Domain<VariableSymbol> domain)
-        {
-            System.Diagnostics.Debug.Assert(domain.Owner != null);
-            this.Flag &= ~Symbol.SectionMask;
-            this.Flag |= domain.Owner.Flag & (Symbol.SectionMask | Flags.Global);
-            //After expansion, symbol is no longer part of a typedef.
-            this.Flag &= ~Symbol.Flags.InsideTypedef;
-        }
-
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)
         {
             return v.VisitVariableSymbol(this, arg);

@@ -38,19 +38,6 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         public VariableSymbol TopRedefined => Redefined != null && Redefined.HasFlag(Flags.Redefines) ? ((RedefinesSymbol) Redefined).TopRedefined : Redefined;
 
-        /// <summary>
-        /// When a RedefinesSymbol is normalized it  Redefined Symbol must change.
-        /// </summary>
-        /// <param name="domain"></param>
-        internal override void NormalizeExpandedSymbol(Domain<VariableSymbol> domain)
-        {
-            base.NormalizeExpandedSymbol(domain);
-            Container<VariableSymbol>.Entry entry = domain.Lookup(Redefined.Name);
-            System.Diagnostics.Debug.Assert(entry != null);
-            System.Diagnostics.Debug.Assert(entry.Count == 1);
-            Redefined = entry.Symbol;            
-        }
-
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)
         {
             return v.VisitRedefinesSymbol(this, arg);

@@ -50,19 +50,6 @@ namespace TypeCobol.Compiler.Symbols
             return Indexed.HasParent(parent);
         }
 
-        /// <summary>
-        /// When an IndexSymbol is normalized it IndexedSymbol must changed.
-        /// </summary>
-        /// <param name="domain"></param>
-        internal override void NormalizeExpandedSymbol(Domain<VariableSymbol> domain)
-        {
-            base.NormalizeExpandedSymbol(domain);
-            Container<VariableSymbol>.Entry entry = domain.Lookup(Indexed.Name);
-            System.Diagnostics.Debug.Assert(entry != null);
-            System.Diagnostics.Debug.Assert(entry.Count == 1);
-            Indexed = entry.Symbol;            
-        }
-
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)
         {
             return v.VisitIndexSymbol(this, arg);
