@@ -818,7 +818,7 @@ namespace TypeCobol.Compiler.Domain
             //We need also a valid CurrentScope to lookup Typedef if one exit, or to create an unresolved Typedef declaration.
             System.Diagnostics.Debug.Assert(CurrentScope != null);
 
-            string[] paths = datSymRef == null ? new [] { dataType.Name } : ScopeSymbol.SymbolReferenceToPath(datSymRef);
+            string[] paths = datSymRef?.AsPath() ?? new[] {dataType.Name};
             var varTypeSym = new TypedVariableSymbol(dataDef.Name, paths);
             DecorateSymbol(dataDef, varTypeSym, currentDomain);
             if (typedef == null)

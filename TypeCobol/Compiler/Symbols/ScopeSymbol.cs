@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Scopes;
+﻿using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -76,35 +73,6 @@ namespace TypeCobol.Compiler.Symbols
         {
             get { return null; }
             protected set { ; }
-        }
-
-        /// <summary>
-        /// Compute the path represented by a Symbol Reference
-        /// </summary>
-        /// <param name="symRef">The Symbol Reference instance</param>
-        /// <returns>The corresponding Path in the COBOL IN|OF ORDER. The paths are return ed in lower cases</returns>
-        public static string[] SymbolReferenceToPath(SymbolReference symRef)
-        {
-            string[] paths = null;
-            IList<SymbolReference> refs = null;
-
-            if (symRef.IsQualifiedReference)
-            {//Path in reverse order DVZF0OS3::EventList --> {EventList, DVZF0OS3}
-                QualifiedSymbolReference qualifiedSymbolReference = symRef as QualifiedSymbolReference;
-                refs = qualifiedSymbolReference.AsList();
-            }
-            else
-            {
-                refs = new List<SymbolReference>() { symRef };
-            }
-
-            paths = new string[refs.Count];
-            for (int i = 0; i < refs.Count; i++)
-            {
-                paths[i] = refs[i].Name;
-            }
-
-            return paths;
         }
     }
 }

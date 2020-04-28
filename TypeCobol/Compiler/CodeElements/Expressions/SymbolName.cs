@@ -165,7 +165,11 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
-
+        /// <summary>
+        /// Compute the path represented by a Symbol Reference
+        /// </summary>
+        /// <returns>The corresponding Path in the COBOL IN|OF ORDER.</returns>
+        public virtual string[] AsPath() => new[] {Name};
 
         private URI _uri;
         public URI URI {
@@ -319,6 +323,8 @@ namespace TypeCobol.Compiler.CodeElements
 			else refs.Add(Tail);
 			return refs;
 		}
+
+        public override string[] AsPath() => AsList().Select(s => s.Name).ToArray();
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
 	        return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
