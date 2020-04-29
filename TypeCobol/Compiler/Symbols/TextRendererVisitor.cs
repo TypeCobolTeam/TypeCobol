@@ -271,6 +271,7 @@ namespace TypeCobol.Compiler.Symbols
         public override object VisitType(Type type, IEnumerable<string> modifiers)
         {
             //Default behavior
+            Output.Write(' ');
             Output.Write(type.Usage);
             return null;
         }
