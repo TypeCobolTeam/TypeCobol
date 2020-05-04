@@ -9,21 +9,12 @@ namespace TypeCobol.Compiler.Types
     public class ProgramType : Type
     {
         /// <summary>
-        /// Constructor
+        /// Empty Constructor
         /// </summary>
         public ProgramType()
             : this(Tags.Program)
         {
-        }
 
-        /// <summary>
-        /// Symbol Constructor
-        /// <param name="prgSym">The Program Symbol</param>
-        /// </summary>
-        public ProgramType(ProgramSymbol prgSym)
-            : this(Tags.Program)
-        {
-            base.Symbol = prgSym;
         }
 
         /// <summary>

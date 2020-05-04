@@ -9,24 +9,6 @@ namespace TypeCobol.Compiler.Types
     public class FunctionType : ProgramType
     {
         /// <summary>
-        /// Empty Constructor.
-        /// </summary>
-        public FunctionType()
-            : base(Tags.Function)
-        {
-        }
-
-        /// <summary>
-        /// Symbol constructor
-        /// </summary>
-        /// <param name="fun"></param>
-        public FunctionType(FunctionSymbol fun)
-            : base(Tags.Function)
-        {
-            base.Symbol = fun;
-        }
-
-        /// <summary>
         /// Full constructor
         /// </summary>
         /// <param name="parameters">Function's parameters</param>

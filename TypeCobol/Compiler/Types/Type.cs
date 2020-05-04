@@ -106,15 +106,6 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// The Symbol associated to this type if any: This for a Program or a Function or a TYPEDEF
-        /// </summary>
-        public Symbol Symbol
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// The length of this type.
         /// </summary>
         public virtual int Length

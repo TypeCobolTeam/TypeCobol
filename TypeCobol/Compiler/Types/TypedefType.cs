@@ -31,6 +31,15 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
+        /// The Symbol associated to this type.
+        /// </summary>
+        public Symbol Symbol
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// The target type of the Typedef.
         /// For instance in the examples:
         /// 01 Type1 typedef strict private pic X.

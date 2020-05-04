@@ -136,7 +136,7 @@ namespace TypeCobol.Compiler.Domain
                 //This is the main program or a stacked program with no parent.
                 //TODO SemanticDomain: test for duplicate and enter program into Root.
                 var stackedProgram = new ProgramSymbol(programIdentification.ProgramName.Name);
-                stackedProgram.Type = new ProgramType(stackedProgram);
+                stackedProgram.Type = new ProgramType();
                 this.CurrentScope = stackedProgram;
                 //Add the new Stacked program.
                 Programs.Add(CurrentScope);
@@ -151,7 +151,7 @@ namespace TypeCobol.Compiler.Domain
                 if (prgEntry == null)
                 {
                     ProgramSymbol nestedProgram = new ProgramSymbol(programIdentification.ProgramName.Name);
-                    nestedProgram.Type = new ProgramType(nestedProgram);
+                    nestedProgram.Type = new ProgramType();
                     //Reenter the program as nested here and change the parent.
                     this.CurrentScope.Programs.Enter(nestedProgram);
                     nestedProgram.Owner = this.CurrentScope;
@@ -647,8 +647,7 @@ namespace TypeCobol.Compiler.Domain
             {
                 //We create the group type
                 GroupType recType = new GroupType(sym);
-                //Store the symbol associated to this Group Type.
-                recType.Symbol = sym;
+                //Set type of the symbol
                 sym.Type = recType;
                 //Set any leading type.
                 if (HasSingleUsageDefinition(dataDef))
