@@ -34,8 +34,8 @@ namespace TypeCobol.Compiler.Types
         /// </summary>
         public VariableSymbol ReturnSymbol
         {
-            get;
-            set;
+            get => base.ReturnVariable;
+            set => base.ReturnVariable = value;
         }
 
         /// <summary>
