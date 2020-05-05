@@ -173,6 +173,9 @@ namespace TypeCobol.Compiler.Domain
                     string.Format(TypeCobolResource.DuplicateProgram, programIdentification.ProgramName.Name));
                 Diagnostics.Add(d);
             }
+
+            //Semantic data on the node
+            CurrentNode.SemanticData = this.CurrentScope;
         }
 
         public override void EndCobolProgram(ProgramEnd end)
@@ -1247,7 +1250,17 @@ namespace TypeCobol.Compiler.Domain
         public override void StartParagraph(ParagraphHeader header)
         {
             var paragraph = new ParagraphSymbol(header.ParagraphName.Name);
-            CurrentSection?.AddParagraph(paragraph);
+            if (CurrentSection != null)
+            {
+                //Attach paragraph to section
+                CurrentSection.AddParagraph(paragraph);
+            }
+            else
+            {
+                //Attach paragraph to program/function
+                paragraph.Owner = CurrentScope;
+                CurrentScope.Paragraphs.Enter(paragraph);
+            }
 
             //Update CurrentNode SemanticData
             System.Diagnostics.Debug.Assert(CurrentNode != null);
