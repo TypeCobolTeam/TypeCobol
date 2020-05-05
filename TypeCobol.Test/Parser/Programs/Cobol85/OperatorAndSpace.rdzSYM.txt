@@ -1,0 +1,112 @@
+﻿--- Program ---
+DVZXMNT0 (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ProgramType, Tag=Program)
+WorkingStorageData:
+  WS-LINE-BREAK (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZXMNT0
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(10)
+  Level: 1
+  GlobalIndex: 0
+  IsFiller: False
+  A (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZXMNT0
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      B (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZXMNT0::A
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(50)
+      Level: 5
+      GlobalIndex: 0
+      IsFiller: False
+  Level: 1
+  GlobalIndex: 0
+  IsFiller: False
+   (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZXMNT0
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(3)
+  Level: 1
+  GlobalIndex: 0
+  IsFiller: False
+  buffer (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZXMNT0
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(50)
+  Level: 1
+  GlobalIndex: 0
+  IsFiller: False
+  result (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZXMNT0
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: 9(1)
+  Level: 1
+  GlobalIndex: 0
+  IsFiller: False
+  float (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZXMNT0
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: 9(5)V(1)9(4)
+  Level: 1
+  GlobalIndex: 0
+  IsFiller: False
+   (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZXMNT0
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      VarGroup (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZXMNT0
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: 9(1)
+      Level: 5
+      GlobalIndex: 0
+      IsFiller: False
+      Redefines:
+        DVZXMNT0::VarGroup-Bis
+      VarGroup-Bis (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: DVZXMNT0
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 5
+      GlobalIndex: 0
+      IsFiller: False
+      Redefines:
+        DVZXMNT0
+      Redefined: DVZXMNT0::VarGroup
+       (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: DVZXMNT0
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 5
+      GlobalIndex: 0
+      IsFiller: False
+      Redefined: DVZXMNT0::VarGroup-Bis
+  Level: 1
+  GlobalIndex: 0
+  IsFiller: False
+IsNested: False
+
