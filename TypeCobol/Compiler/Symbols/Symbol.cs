@@ -408,10 +408,37 @@ namespace TypeCobol.Compiler.Symbols
 
         public override string ToString()
         {
-            StringWriter sw = new StringWriter();
-            TextRendererVisitor visitor = new TextRendererVisitor(sw);
-            visitor.Dump(this);
-            return sw.ToString();
+            var output = new StringWriter();
+            Dump(output, 0);
+            return output.ToString();
+        }
+
+        public virtual void Dump(TextWriter output, int indentLevel)
+        {
+            string indent = new string(' ', 2 * indentLevel);
+            output.Write(indent);
+            output.WriteLine($"{Name} (.NET Type={GetType().Name}, Kind={Kind})");
+            output.Write(indent);
+            output.WriteLine($"Flags: [{string.Join(", ", GetFlagsLabels())}]");
+            if (Owner != null)
+            {
+                output.Write(indent);
+                output.WriteLine($"Owner: {Owner.FullName}");//Write reference
+            }
+
+            if (Type != null)
+            {
+                output.Write(indent);
+                output.WriteLine("Type:");
+                Type.Dump(output, indentLevel + 1);
+            }
+
+            IEnumerable<string> GetFlagsLabels()
+            {
+                foreach (Flags flag in Enum.GetValues(typeof(Flags)))
+                    if (Flag.HasFlag(flag))
+                        yield return flag.ToString();
+            }
         }
 
         public virtual TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)

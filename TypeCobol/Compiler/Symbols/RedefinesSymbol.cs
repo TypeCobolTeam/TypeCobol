@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler.Scopes;
+﻿using System.IO;
+using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -37,6 +38,17 @@ namespace TypeCobol.Compiler.Symbols
         /// Get the Top REDEFINES in case of REDEFINES OF REDEFINES suite.
         /// </summary>
         public VariableSymbol TopRedefined => Redefined != null && Redefined.HasFlag(Flags.Redefines) ? ((RedefinesSymbol) Redefined).TopRedefined : Redefined;
+
+        public override void Dump(TextWriter output, int indentLevel)
+        {
+            base.Dump(output, indentLevel);
+            if (Redefined != null)
+            {
+                string indent = new string(' ', 2 * indentLevel);
+                output.Write(indent);
+                output.WriteLine($"Redefined: {Redefined.FullName}");//Write reference
+            }
+        }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)
         {

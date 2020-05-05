@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler.Scopes;
+﻿using System.IO;
+using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -232,6 +233,14 @@ namespace TypeCobol.Compiler.Symbols
         public virtual bool IsFunctionAccessible(FunctionSymbol funSym)
         {
             return IsSymbolAccessible(funSym, FunctionVisibilityMask);
+        }
+
+        public override void Dump(TextWriter output, int indentLevel)
+        {
+            base.Dump(output, indentLevel);
+            string indent = new string(' ', 2 * indentLevel);
+            output.Write(indent);
+            output.WriteLine($"IsNested: {IsNested}");
         }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)

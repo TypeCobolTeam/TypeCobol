@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler.Symbols;
+﻿using System.IO;
+using TypeCobol.Compiler.Symbols;
 
 namespace TypeCobol.Compiler.Types
 {
@@ -67,6 +68,24 @@ namespace TypeCobol.Compiler.Types
         /// Typedef may always expand.
         /// </summary>
         public override bool MayExpand => true;
+
+        public override void Dump(TextWriter output, int indentLevel)
+        {
+            base.Dump(output, indentLevel);
+            string indent = new string(' ', 2 * indentLevel);
+            if (Symbol != null)
+            {
+                output.Write(indent);
+                output.WriteLine($"Symbol: {Symbol.FullName}");//Write reference
+            }
+
+            if (TargetType != null)
+            {
+                output.Write(indent);
+                output.WriteLine("TargetType:");
+                TargetType.Dump(output, indentLevel + 1);
+            }
+        }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)
         {

@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler.Scopes;
+﻿using System.IO;
+using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Symbols;
 
 using static TypeCobol.Compiler.Symbols.Symbol;
@@ -59,6 +60,29 @@ namespace TypeCobol.Compiler.Types
         /// A Record may always expand to another records because it is related to a new Symbol owner.
         /// </summary>
         public override bool MayExpand => true;
+
+        public override void Dump(TextWriter output, int indentLevel)
+        {
+            base.Dump(output, indentLevel);
+            string indent = new string(' ', 2 * indentLevel);
+            var level = indentLevel + 1;
+            if (LeadingType != null)
+            {
+                output.Write(indent);
+                output.WriteLine("LeadingType:");
+                LeadingType.Dump(output, level);
+            }
+
+            if (Fields != null)
+            {
+                output.Write(indent);
+                output.WriteLine("Fields:");
+                foreach (var field in Fields)
+                {
+                    field.Dump(output, level);
+                }
+            }
+        }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)
         {

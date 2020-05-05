@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using TypeCobol.Compiler.Scopes;
+using System.IO;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -139,6 +139,29 @@ namespace TypeCobol.Compiler.Symbols
                 return null;
 
             return Owner.LookupParentLevelSymbol(level, true);
+        }
+
+        public override void Dump(TextWriter output, int indentLevel)
+        {
+            base.Dump(output, indentLevel);
+            string indent = new string(' ', 2 * indentLevel);
+            output.Write(indent);
+            output.WriteLine("Level: " + Level);
+            output.Write(indent);
+            output.WriteLine("GlobalIndex: " + GlobalIndex);
+            output.Write(indent);
+            output.WriteLine("IsFiller: " + IsFiller);
+            if (Redefines != null)
+            {
+                output.Write(indent);
+                output.WriteLine("Redefines:");
+                indent += "  ";
+                foreach (var redefines in Redefines)
+                {
+                    output.Write(indent);
+                    output.WriteLine(redefines.FullName);//Write reference
+                }
+            }
         }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)

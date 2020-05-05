@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler.Types;
+﻿using System.IO;
+using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -59,6 +60,23 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         public override string TypedName => Typedef != null ? (Name + '.' + Typedef.Name) : Name;
+
+        public override void Dump(TextWriter output, int indentLevel)
+        {
+            base.Dump(output, indentLevel);
+            string indent = new string(' ', 2 * indentLevel);
+            if (TypePaths != null)
+            {
+                output.Write(indent);
+                output.WriteLine($"TypePaths: [{string.Join(", ", TypePaths)}]");
+            }
+
+            if (Typedef != null)
+            {
+                output.Write(indent);
+                output.WriteLine($"Typedef: {Typedef.FullName}");//Write reference
+            }
+        }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)
         {

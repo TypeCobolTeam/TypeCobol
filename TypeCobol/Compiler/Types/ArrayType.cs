@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.Types
+﻿using System.IO;
+
+namespace TypeCobol.Compiler.Types
 {
     /// <summary>
     /// Class that represents an Array Type
@@ -43,6 +45,22 @@
         public override Type TypeComponent => ElementType;
 
         public override bool MayExpand => ElementType != null && ElementType.MayExpand;
+
+        public override void Dump(TextWriter output, int indentLevel)
+        {
+            base.Dump(output, indentLevel);
+            string indent = new string(' ', 2 * indentLevel);
+            output.Write(indent);
+            output.WriteLine($"MinOccur: {MinOccur}");
+            output.Write(indent);
+            output.WriteLine($"MaxOccur: {MaxOccur}");
+            if (ElementType != null)
+            {
+                output.Write(indent);
+                output.WriteLine("ElementType:");
+                ElementType.Dump(output, indentLevel + 1);
+            }
+        }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)
         {

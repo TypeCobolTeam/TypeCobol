@@ -1,5 +1,5 @@
 ﻿using System;
-using TypeCobol.Compiler.Scopes;
+using System.IO;
 using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
@@ -48,6 +48,17 @@ namespace TypeCobol.Compiler.Symbols
             if (parent == null)
                 return false;
             return Indexed.HasParent(parent);
+        }
+
+        public override void Dump(TextWriter output, int indentLevel)
+        {
+            base.Dump(output, indentLevel);
+            if (Indexed != null)
+            {
+                string indent = new string(' ', 2 * indentLevel);
+                output.Write(indent);
+                output.WriteLine($"Indexed: {Indexed.FullName}");//Write reference
+            }
         }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)
