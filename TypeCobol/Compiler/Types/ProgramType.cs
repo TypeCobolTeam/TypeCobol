@@ -49,7 +49,7 @@ namespace TypeCobol.Compiler.Types
         {
             base.Dump(output, indentLevel);
             string indent = new string(' ', 2 * indentLevel);
-            if (Usings != null)
+            if (Usings != null && Usings.Count > 0)
             {
                 output.Write(indent);
                 output.WriteLine($"Usings: [{string.Join(", ", Usings.Select(v => v.FullName))}]");//Write reference

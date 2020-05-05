@@ -151,7 +151,7 @@ namespace TypeCobol.Compiler.Symbols
             output.WriteLine("GlobalIndex: " + GlobalIndex);
             output.Write(indent);
             output.WriteLine("IsFiller: " + IsFiller);
-            if (Redefines != null)
+            if (Redefines != null && Redefines.Count > 0)
             {
                 output.Write(indent);
                 output.WriteLine("Redefines:");

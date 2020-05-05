@@ -92,7 +92,7 @@ namespace TypeCobol.Compiler.Symbols
 
             void DumpDomain<T>(string name, Domain<T> domain) where T : Symbol
             {
-                if (domain != null)
+                if (domain != null && domain.Count > 0)
                 {
                     string indent = new string(' ', 2 * indentLevel);
                     output.Write(indent);

@@ -65,7 +65,7 @@ namespace TypeCobol.Compiler.Symbols
         {
             base.Dump(output, indentLevel);
             string indent = new string(' ', 2 * indentLevel);
-            if (TypePaths != null)
+            if (TypePaths != null && TypePaths.Length > 0)
             {
                 output.Write(indent);
                 output.WriteLine($"TypePaths: [{string.Join(", ", TypePaths)}]");

@@ -73,7 +73,7 @@ namespace TypeCobol.Compiler.Types
                 LeadingType.Dump(output, level);
             }
 
-            if (Fields != null)
+            if (Fields != null && Fields.Count > 0)
             {
                 output.Write(indent);
                 output.WriteLine("Fields:");

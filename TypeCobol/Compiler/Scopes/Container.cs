@@ -171,6 +171,18 @@ namespace TypeCobol.Compiler.Scopes
             _symbolsInOrder = new List<TSymbol>(other._symbolsInOrder);
         }
 
+        /// <summary>
+        /// Total number of entries in this Container.
+        /// An entry may contain several symbols having the same name.
+        /// </summary>
+        public int EntryCount => _symbols.Count;
+
+        /// <summary>
+        /// Total number of symbols in this Container.
+        /// All symbols from all entries are counted.
+        /// </summary>
+        public int SymbolCount => _symbolsInOrder.Count;
+
         public IEnumerator<TSymbol> GetEnumerator()
         {
             return _symbolsInOrder.GetEnumerator();

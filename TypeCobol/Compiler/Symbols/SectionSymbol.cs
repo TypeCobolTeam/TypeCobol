@@ -36,7 +36,7 @@ namespace TypeCobol.Compiler.Symbols
         public override void Dump(TextWriter output, int indentLevel)
         {
             base.Dump(output, indentLevel);
-            if (Paragraphs != null)
+            if (Paragraphs != null && Paragraphs.Count > 0)
             {
                 string indent = new string(' ', 2 * indentLevel);
                 output.Write(indent);

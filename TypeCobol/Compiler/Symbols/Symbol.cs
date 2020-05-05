@@ -418,8 +418,12 @@ namespace TypeCobol.Compiler.Symbols
             string indent = new string(' ', 2 * indentLevel);
             output.Write(indent);
             output.WriteLine($"{Name} (.NET Type={GetType().Name}, Kind={Kind})");
-            output.Write(indent);
-            output.WriteLine($"Flags: [{string.Join(", ", GetFlagsLabels())}]");
+            if (Flag != 0)
+            {
+                output.Write(indent);
+                output.WriteLine($"Flags: [{string.Join(", ", GetFlagsLabels())}]");
+            }
+
             if (Owner != null)
             {
                 output.Write(indent);

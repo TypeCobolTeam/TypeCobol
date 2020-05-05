@@ -20,7 +20,7 @@ namespace TypeCobol.Compiler.Scopes
         /// <summary>
         /// The symbols declared in this domain.
         /// </summary>
-        private Container<TSymbol> _symbols;
+        private Container<TSymbol> _container;
 
         /// <summary>
         /// Instantiates a new empty domain.
@@ -43,15 +43,20 @@ namespace TypeCobol.Compiler.Scopes
             {
                 System.Diagnostics.Debug.Assert(value != null);
                 _owner = value;
-                if (_symbols != null)
+                if (_container != null)
                 {
-                    foreach (var symbol in _symbols)
+                    foreach (var symbol in _container)
                     {
                         symbol.Owner = _owner;
                     }
                 }
             }
         }
+
+        /// <summary>
+        /// Number of symbols currently in this domain.
+        /// </summary>
+        public int Count => _container?.SymbolCount ?? 0;
 
         /// <summary>
         /// Looks up a Symbol in this domain using a name.
@@ -61,7 +66,7 @@ namespace TypeCobol.Compiler.Scopes
         public Container<TSymbol>.Entry Lookup([NotNull] string name)
         {
             System.Diagnostics.Debug.Assert(name != null);
-            if (_symbols != null && _symbols.TryGetValue(name, out var entry))
+            if (_container != null && _container.TryGetValue(name, out var entry))
             {
                 return entry;
             }
@@ -77,12 +82,12 @@ namespace TypeCobol.Compiler.Scopes
         public Container<TSymbol>.Entry Enter([NotNull] TSymbol symbol)
         {
             System.Diagnostics.Debug.Assert(symbol != null);
-            if (_symbols == null)
+            if (_container == null)
             {
-                _symbols = new Container<TSymbol>();
+                _container = new Container<TSymbol>();
             }
 
-            return _symbols.Add(symbol);
+            return _container.Add(symbol);
         }
 
         /// <summary>
@@ -92,7 +97,7 @@ namespace TypeCobol.Compiler.Scopes
         public void Delete([NotNull] TSymbol symbol)
         {
             System.Diagnostics.Debug.Assert(symbol != null);
-            _symbols?.Remove(symbol);
+            _container?.Remove(symbol);
         }
 
         /// <summary>
@@ -101,7 +106,7 @@ namespace TypeCobol.Compiler.Scopes
         /// <returns></returns>
         public IEnumerator<TSymbol> GetEnumerator()
         {
-            return _symbols != null ? _symbols.GetEnumerator() : Enumerable.Empty<TSymbol>().GetEnumerator();
+            return _container != null ? _container.GetEnumerator() : Enumerable.Empty<TSymbol>().GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

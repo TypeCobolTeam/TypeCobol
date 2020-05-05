@@ -205,12 +205,17 @@ namespace TypeCobol.Compiler.Types
             string indent = new string(' ', 2 * indentLevel);
             output.Write(indent);
             output.WriteLine($"(.NET Type={GetType().Name}, Tag={Tag})");
-            output.Write(indent);
-            output.WriteLine($"Flags: [{string.Join(", ", GetFlagsLabels())}]");
-            output.Write(indent);
-            output.WriteLine($"Usage: {Usage}");
-            output.Write(indent);
-            output.WriteLine($"MayExpand: {MayExpand}");
+            if (Flag != 0)
+            {
+                output.Write(indent);
+                output.WriteLine($"Flags: [{string.Join(", ", GetFlagsLabels())}]");
+            }
+
+            if (Usage != UsageFormat.None)
+            {
+                output.Write(indent);
+                output.WriteLine($"Usage: {Usage}");
+            }
 
             IEnumerable<string> GetFlagsLabels()
             {
