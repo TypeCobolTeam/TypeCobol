@@ -103,7 +103,7 @@ WorkingStorageData:
         Picture: X(1)
       Level: 5
       GlobalIndex: 0
-      IsFiller: False
+      IsFiller: True
       Redefined: DVZXMNT0::VarGroup-Bis
   Level: 1
   GlobalIndex: 0
