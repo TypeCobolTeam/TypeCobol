@@ -475,76 +475,68 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Checks if the given DataDefinition instance has a single Usage definition
+        /// Checks if the given DataDefinition instance has a single Usage definition.
         /// </summary>
-        /// <param name="dataDef">The Data Definition to be checked</param>
-        /// <returns>True if it has a single usage definition, false otherwise</returns>
-        private static bool HasSingleUsageDefinition(DataDefinition dataDef)
+        /// <param name="dataDef">The Data Definition to be checked.</param>
+        /// <param name="dataUsage">The DataUsage if it has a single usage definition, None otherwise.</param>
+        /// <returns>True if it has a single usage definition, False otherwise.</returns>
+        private static bool HasSingleUsageDefinition(DataDefinition dataDef, out DataUsage dataUsage)
         {
-            return dataDef.Picture == null && dataDef.Usage != null && dataDef.Usage != DataUsage.None;
-        }
+            if (dataDef.Picture == null && dataDef.Usage.HasValue)
+            {
+                dataUsage = dataDef.Usage.Value;
+                return dataUsage != DataUsage.None;
+            }
 
-        /// <summary>
-        /// Checks if the given DataDefinition instance is only a single Usage definition
-        /// </summary>
-        /// <param name="dataDef">The Data Definition to be checked</param>
-        /// <returns>True if it is a single usage definition, false otherwise</returns>
-        private static bool IsSingleUsageDefinition(DataDefinition dataDef)
-        {
-            return dataDef.ChildrenCount == 0 && HasSingleUsageDefinition(dataDef);
-        }
-
-        /// <summary>
-        /// Checks if the given DataDefinition instance has single picture definition
-        /// </summary>
-        /// <param name="dataDef">The Data Definition to be checked</param>
-        /// <returns>True if it has a single picture definition, false otherwise</returns>
-        private static bool HasSinglePictureDefinition(DataDefinition dataDef)
-        {
-            return dataDef.Picture != null;
-        }
-
-        /// <summary>
-        /// Checks if the given DataDefinition instance is only a single picture definition
-        /// </summary>
-        /// <param name="dataDef">The Data Definition to be checked</param>
-        /// <returns>True if it is a single picture definition, false otherwise</returns>
-        private static bool IsSinglePictureDefinition(DataDefinition dataDef)
-        {
-            return dataDef.ChildrenCount == 0 && HasSinglePictureDefinition(dataDef);
+            dataUsage = DataUsage.None;
+            return false;
         }
 
         /// <summary>
         /// Checks if the given DataDefinition is a Type Definition
         /// </summary>
         /// <param name="dataDef">The Data Definition to be checked</param>
+        /// <param name="entry">The DataTypeDescriptionEntry if the given instance is a Typedef, null otherwise</param>
         /// <returns>true if yes, false otherwise</returns>
-        private static bool IsTypedefDefinition(DataDefinition dataDef)
+        private static bool IsTypedefDefinition(DataDefinition dataDef, out DataTypeDescriptionEntry entry)
         {
-            return dataDef.CodeElement != null &&
-                   dataDef.CodeElement.Type == CodeElementType.DataDescriptionEntry &&
-                   dataDef.CodeElement is DataTypeDescriptionEntry;
+            if (dataDef.CodeElement?.Type == CodeElementType.DataDescriptionEntry && dataDef.CodeElement is DataTypeDescriptionEntry dtde)
+            {
+                entry = dtde;
+                return true;
+            }
+
+            entry = null;
+            return false;
         }
 
         /// <summary>
         /// Determines if the given DataDefinition instance is REDEFINES
         /// </summary>
         /// <param name="dataDef">The DataDefinition instance to be checked</param>
+        /// <param name="entry">The DataRedefinesEntry if the given instance is a REDEFINES, null otherwise</param>
         /// <returns>true if yes, false otherwise</returns>
-        private static bool IsRedefinedDataDefinition(DataDefinition dataDef)
+        private static bool IsRedefinedDataDefinition(DataDefinition dataDef, out DataRedefinesEntry entry)
         {
-            return dataDef.CodeElement != null && dataDef.CodeElement.Type == CodeElementType.DataRedefinesEntry;
+            if (dataDef.CodeElement?.Type == CodeElementType.DataRedefinesEntry)
+            {
+                entry = (DataRedefinesEntry) dataDef.CodeElement;
+                return true;
+            }
+
+            entry = null;
+            return false;
         }
 
         /// <summary>
-        /// Create the Usage type corresponding to a DataDefinition.
+        /// Create the Usage type corresponding to a DataUsage.
         /// </summary>
-        /// <param name="dataDef">The DataDefinition to create the usage type.</param>
+        /// <param name="dataUsage">The DataUsage to create the usage type.</param>
         /// <returns>The usage type</returns>
-        private static Type CreateUsageType(DataDefinition dataDef)
+        private static Type CreateUsageType(DataUsage dataUsage)
         {
-            System.Diagnostics.Debug.Assert(HasSingleUsageDefinition(dataDef));
-            Type.UsageFormat usage = DataUsage2UsageFormat(dataDef.Usage.Value);
+            System.Diagnostics.Debug.Assert(dataUsage != DataUsage.None);
+            Type.UsageFormat usage = DataUsage2UsageFormat(dataUsage);
             Type type = BuiltinTypes.BuiltinUsageType(usage);
             return type;
         }
@@ -562,8 +554,8 @@ namespace TypeCobol.Compiler.Domain
         /// <returns>The Symbol created</returns>
         private VariableSymbol CreateAndAddRedefinesOrVariableSymbol(Type type, DataDefinition dataDef, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
-            VariableSymbol sym = IsRedefinedDataDefinition(dataDef)
-                ? CreateRedefinesSymbol(dataDef, currentDomain)
+            VariableSymbol sym = IsRedefinedDataDefinition(dataDef, out var dataRedefines)
+                ? CreateRedefinesSymbol(dataDef, dataRedefines, currentDomain)
                 : new VariableSymbol(dataDef.Name);
             if (sym != null)
             {
@@ -579,13 +571,13 @@ namespace TypeCobol.Compiler.Domain
         /// Create a Symbol instance for a variable of a single usage type.
         /// </summary>
         /// <param name="dataDef">The DataDefinition instance</param>
+        /// <param name="dataUsage">The DataUsage of the DataDefinition instance</param>
         /// <param name="currentDomain">The current domain of variables being built.</param>
         /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns>The Symbol instance of usage type.</returns>
-        private VariableSymbol CreateUsageSymbol(DataDefinition dataDef, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
+        private VariableSymbol CreateUsageSymbol(DataDefinition dataDef, DataUsage dataUsage, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
-            System.Diagnostics.Debug.Assert(IsSingleUsageDefinition(dataDef));
-            Type type = CreateUsageType(dataDef);
+            Type type = CreateUsageType(dataUsage);
             return CreateAndAddRedefinesOrVariableSymbol(type, dataDef, currentDomain, typedef);
         }
 
@@ -593,12 +585,13 @@ namespace TypeCobol.Compiler.Domain
         /// Create the Picture Type of the Given DataDefinition
         /// </summary>
         /// <param name="dataDef">The DataDefinition to create the Picture Type</param>
+        /// <param name="picture">Picture of the DataDefinition, must be non-null</param>
         /// <returns>The Picture Type</returns>
-        private static PictureType CreatePictureType(DataDefinition dataDef)
+        private static PictureType CreatePictureType(DataDefinition dataDef, AlphanumericValue picture)
         {
-            System.Diagnostics.Debug.Assert(HasSinglePictureDefinition(dataDef));
+            System.Diagnostics.Debug.Assert(picture != null);
             Type.UsageFormat usage = dataDef.Usage.HasValue ? DataUsage2UsageFormat(dataDef.Usage.Value) : Type.UsageFormat.None;
-            PictureValidator pictureValidator = new PictureValidator(dataDef.Picture.Value, dataDef.SignIsSeparate);
+            PictureValidator pictureValidator = new PictureValidator(picture.Value, dataDef.SignIsSeparate);
             PictureType type = new PictureType(pictureValidator);
             //Use permissive Usage setter which allows COMP1 and COMP2
             type.Usage = usage;
@@ -609,13 +602,13 @@ namespace TypeCobol.Compiler.Domain
         /// Create a Symbol instance for a variable of a single picture type.
         /// </summary>
         /// <param name="dataDef">The DataDefinition instance</param>
+        /// <param name="picture">Picture of the DataDefinition, must be non-null</param>
         /// <param name="currentDomain">The current domain of variables being built.</param>
         /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns>The Symbol instance of usage type.</returns>
-        private VariableSymbol CreatePictureSymbol(DataDefinition dataDef, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
+        private VariableSymbol CreatePictureSymbol(DataDefinition dataDef, AlphanumericValue picture, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
-            System.Diagnostics.Debug.Assert(IsSinglePictureDefinition(dataDef));
-            Type type = CreatePictureType(dataDef);
+            Type type = CreatePictureType(dataDef, picture);
             return CreateAndAddRedefinesOrVariableSymbol(type, dataDef, currentDomain, typedef);
         }
 
@@ -642,8 +635,8 @@ namespace TypeCobol.Compiler.Domain
         private VariableSymbol CreateGroupSymbol(DataDefinition dataDef, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
             //We create a group symbol having the group type
-            VariableSymbol sym = IsRedefinedDataDefinition(dataDef)
-                ? CreateRedefinesSymbol(dataDef, currentDomain)
+            VariableSymbol sym = IsRedefinedDataDefinition(dataDef, out var dataRedefines)
+                ? CreateRedefinesSymbol(dataDef, dataRedefines, currentDomain)
                 : new VariableSymbol(dataDef.Name);
 
             if (sym != null)
@@ -653,14 +646,14 @@ namespace TypeCobol.Compiler.Domain
                 //Set type of the symbol
                 sym.Type = recType;
                 //Set any leading type.
-                if (HasSingleUsageDefinition(dataDef))
+                if (HasSingleUsageDefinition(dataDef, out var dataUsage))
                 {
-                    Type leadingType = CreateUsageType(dataDef);
+                    Type leadingType = CreateUsageType(dataUsage);
                     recType.LeadingType = leadingType;
                 }
-                else if (HasSinglePictureDefinition(dataDef))
+                else if (dataDef.Picture != null)
                 {
-                    Type leadingType = CreatePictureType(dataDef);
+                    Type leadingType = CreatePictureType(dataDef, dataDef.Picture);
                     recType.LeadingType = leadingType;
                 }
 
@@ -713,39 +706,27 @@ namespace TypeCobol.Compiler.Domain
         /// Create a type definition
         /// </summary>
         /// <param name="dataDef">The Data Definition to convert</param>
+        /// <param name="entry">The associated DataTypeDescriptionEntry, must be non-null</param>
         /// <param name="currentDomain">The current domain of variables being built.</param>
         /// <returns>The Type definition symbol</returns>
-        private TypedefSymbol CreateTypeDefinition(DataDefinition dataDef, Domain<VariableSymbol> currentDomain)
+        private TypedefSymbol CreateTypeDefinition(DataDefinition dataDef, DataTypeDescriptionEntry entry, Domain<VariableSymbol> currentDomain)
         {
-            if (dataDef.CodeElement.Type == CodeElementType.DataRedefinesEntry)
-            {//Cannot redefine a TypeDef
-                DataRedefinesEntry dataRedefines = (DataRedefinesEntry)dataDef.CodeElement;
-                SymbolReference symRef = dataRedefines.RedefinesDataName;
-
-                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                    symRef.NameLiteral.Token.Column,
-                    symRef.NameLiteral.Token.EndColumn,
-                    symRef.NameLiteral.Token.Line,
-                    string.Format(TypeCobolResource.CannotRedefinedTypedefDecl, symRef.Name));
-                Diagnostics.Add(d);
-                return null;
-            }
+            System.Diagnostics.Debug.Assert(entry != null);
 
             //TODO SemanticDomain: should we check if the type has already been defined here ?
 
             //We create the type definition symbol            
             var tdSym = new TypedefSymbol(dataDef.Name);
             tdSym.Type = new TypedefType(tdSym);
-            DataTypeDescriptionEntry dtde = (DataTypeDescriptionEntry) dataDef.CodeElement;
-            if (dtde.Strict != null && dtde.Strict.Value)
+            if (entry.Strict != null && entry.Strict.Value)
             {
                 tdSym.SetFlag(Symbol.Flags.Strict, true);
             }
-            if (dtde.Strong != null && dtde.Strong.Value)
+            if (entry.Strong != null && entry.Strong.Value)
             {
                 tdSym.SetFlag(Symbol.Flags.Strong, true);
             }
-            SetSymbolAccessModifer(tdSym, dtde.Visibility);
+            SetSymbolAccessModifer(tdSym, entry.Visibility);
             //A Typedef goes in the Types domain of their declaring program.
             //Enter it right now to allow recursive type definition to be possible here.
             //The owner of the type is the top program.
@@ -759,9 +740,9 @@ namespace TypeCobol.Compiler.Domain
             {
                 //Declaration of a TypeDef out of a Program or a Function 
                 Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                    dtde.Column,
-                    dtde.Column,
-                    dtde.Line,
+                    entry.Column,
+                    entry.Column,
+                    entry.Line,
                     string.Format(TypeCobolResource.TypedefDeclaredOutOfProgramOrFunction, dataDef.Name));
                 Diagnostics.Add(d);
                 return null;
@@ -793,34 +774,17 @@ namespace TypeCobol.Compiler.Domain
         /// Create a Symbol whose type is a type defined as a TypeDef
         /// </summary>
         /// <param name="dataDef">The Data Definition to convert</param>
+        /// <param name="userDefinedDataType">The reference to the user-defined type of this DataDefinition.</param>
         /// <param name="currentDomain">The current domain of variables being built.</param>
         /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns>The Created Symbol</returns>
-        private VariableSymbol CreateDataTypeSymbol(DataDefinition dataDef, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
+        private VariableSymbol CreateDataTypeSymbol(DataDefinition dataDef, SymbolReference userDefinedDataType, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
-            if (dataDef.CodeElement.Type == CodeElementType.DataRedefinesEntry)
-            {//Cannot redefine a TypeDef
-                DataRedefinesEntry dataRedefines = (DataRedefinesEntry)dataDef.CodeElement;
-                SymbolReference symRef = dataRedefines.RedefinesDataName;
-
-                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                    symRef.NameLiteral.Token.Column,
-                    symRef.NameLiteral.Token.EndColumn,
-                    symRef.NameLiteral.Token.Line,
-                    string.Format(TypeCobolResource.CannotRedefinesStrictlyTypedVariable, symRef.Name));
-                Diagnostics.Add(d);
-                return null;
-            }
-
-            DataType dataType = dataDef.DataType;
-            System.Diagnostics.Debug.Assert(dataType != null);
-            DataDescriptionEntry entry = dataDef.CodeElement as DataDescriptionEntry;
-            SymbolReference datSymRef = entry.UserDefinedDataType;
-            //System.Diagnostics.Debug.Assert(datSymRef != null);
+            System.Diagnostics.Debug.Assert(userDefinedDataType != null);
             //We need also a valid CurrentScope to lookup Typedef if one exit, or to create an unresolved Typedef declaration.
             System.Diagnostics.Debug.Assert(CurrentScope != null);
 
-            string[] paths = datSymRef?.AsPath() ?? new[] {dataType.Name};
+            string[] paths = userDefinedDataType.AsPath();
             var varTypeSym = new TypedVariableSymbol(dataDef.Name, paths);
             DecorateSymbol(dataDef, varTypeSym, currentDomain);
             if (typedef == null)
@@ -847,7 +811,7 @@ namespace TypeCobol.Compiler.Domain
         /// <returns>The Condition symbol</returns>
         private VariableSymbol CreateConditionSymbol(DataDefinition dataDef, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
-            System.Diagnostics.Debug.Assert(dataDef.CodeElement.Type == CodeElementType.DataConditionEntry);
+            System.Diagnostics.Debug.Assert(dataDef.CodeElement?.Type == CodeElementType.DataConditionEntry);
             VariableSymbol sym = new VariableSymbol(dataDef.Name);
             sym.Type = BuiltinTypes.DataConditionType;
             DecorateSymbol(dataDef, sym, currentDomain);
@@ -861,13 +825,12 @@ namespace TypeCobol.Compiler.Domain
         /// Creates a REDEFINES symbol Not typed, but with the redefined symbol resolved.
         /// </summary>
         /// <param name="dataDef">The DataDefinition which is a DataRedefinesEntry</param>
+        /// <param name="dataRedefines">The associated DataRedefinesEntry, must be non-null</param>
         /// <param name="currentDomain">The current domain of variables being built.</param>
         /// <returns>The symbol which is a RedefinesSymbol not typed if the redefined symbol is resolved, null otherwise</returns>
-        private RedefinesSymbol CreateRedefinesSymbol(DataDefinition dataDef, Domain<VariableSymbol> currentDomain)
+        private RedefinesSymbol CreateRedefinesSymbol(DataDefinition dataDef, DataRedefinesEntry dataRedefines, Domain<VariableSymbol> currentDomain)
         {
-            System.Diagnostics.Debug.Assert(dataDef.CodeElement.Type == CodeElementType.DataRedefinesEntry);
-            //System.Diagnostics.Debug.Assert(parentScope != null);
-            DataRedefinesEntry dataRedefines = (DataRedefinesEntry) dataDef.CodeElement;
+            System.Diagnostics.Debug.Assert(dataRedefines != null);
             SymbolReference symRef = dataRedefines.RedefinesDataName;
             if (currentDomain == null)
             {//Redefines is not supported here
@@ -932,7 +895,7 @@ namespace TypeCobol.Compiler.Domain
                         symRef.NameLiteral.Token.EndColumn,
                         symRef.NameLiteral.Token.Line,
                         string.Format(TypeCobolResource.ErrRedefineWasNotImmediatelyPrec, symRef.Name,
-                            ((DataRedefinesEntry) dataDef.CodeElement).LevelNumber));
+                            dataRedefines.LevelNumber));
                     Diagnostics.Add(d);
                     return null;
                 }
@@ -995,35 +958,29 @@ namespace TypeCobol.Compiler.Domain
                     case CodeElementType.DataDescriptionEntry:
                     case CodeElementType.DataRedefinesEntry:                    
                         {
-                            DataDescriptionEntry entry = dataDef.CodeElement as DataDescriptionEntry;
                             //Special case Typedef
-                            if (IsTypedefDefinition(dataDef) && typedef == null)
+                            //CreateTypeDefinition will call us back with typedef set so we test it to avoid stack overflow !
+                            if (IsTypedefDefinition(dataDef, out var dataTypeDescriptionEntry) && typedef == null)
                             {
-                                sym = CreateTypeDefinition(dataDef, currentDomain);
+                                sym = CreateTypeDefinition(dataDef, dataTypeDescriptionEntry, currentDomain);
                             }
-                            else if (IsSingleUsageDefinition(dataDef))
+                            else if (dataDef.ChildrenCount == 0 && HasSingleUsageDefinition(dataDef, out var dataUsage))
                             {
-                                sym = CreateUsageSymbol(dataDef, currentDomain, typedef);
+                                sym = CreateUsageSymbol(dataDef, dataUsage, currentDomain, typedef);
                             }
-                            else if (IsSinglePictureDefinition(dataDef))
+                            else if (dataDef.ChildrenCount == 0 && dataDef.Picture != null)
                             {
-                                sym = CreatePictureSymbol(dataDef, currentDomain, typedef);
+                                sym = CreatePictureSymbol(dataDef, dataDef.Picture, currentDomain, typedef);
                             }
                             else
                             {
                                 if (!MaybeGroup(dataDef))
-                                {//No Type symbol
-                                    if (dataDef.DataType != null || (entry != null && entry.UserDefinedDataType != null))
+                                {
+                                    //Check for TYPE clause
+                                    var entry = (CommonDataDescriptionAndDataRedefines) dataDef.CodeElement;
+                                    if (entry.UserDefinedDataType != null)
                                     {
-                                        //TypeCobol.Compiler.CodeElements.DataType dataType = dataDef.DataType;
-                                        if (entry != null && entry.UserDefinedDataType != null)
-                                        {
-                                            sym = CreateDataTypeSymbol(dataDef, currentDomain, typedef);
-                                        }
-                                        else
-                                        {
-                                            sym = CreateSymbolWithoutType(dataDef, currentDomain, typedef);
-                                        }
+                                        sym = CreateDataTypeSymbol(dataDef, entry.UserDefinedDataType, currentDomain, typedef);
                                     }
                                     else
                                     {
