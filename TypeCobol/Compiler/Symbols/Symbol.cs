@@ -33,7 +33,7 @@ namespace TypeCobol.Compiler.Symbols
             Public = 0x01 << 0,
             Private = 0x01 << 1,
             External = 0x01 << 2,
-            Global = 0x01 << 3, //Symbol explicitly marked as global
+            Global = 0x01 << 3, //Symbol set as global
             Volatile = 0x01 << 4, //Symbol explicitly marked as volatile
             FILE_SECTION = 0x01 << 5,
             GLOBAL_STORAGE = 0x01 << 6,
