@@ -13,27 +13,25 @@ namespace TypeCobol.Compiler.Types
     public class Type : ISemanticData, ICloneable
     {
         /// <summary>
-        /// Type tags, used to quickly determine the Kind of the type, this Type
-        /// represents based on a Type instance, and not have to use the C# is operator
-        /// for that purpose, so that a static cast can be used if needed, rather
-        /// than a dynamic cast.
+        /// Type tags, used to quickly determine the nature of a Type instance.
+        /// This avoids use of the C# is operator and a static cast can be used if needed,
+        /// instead of a dynamic cast.
         /// </summary>
         public enum Tags
         {
-            Usage,//This is a type which is only defined by its usage.
-            Picture,
+            //Type inheritors
             Array,
-            Pointer,
             Group,
-            DataCondition,
+            Picture,
             Program,
             Function,
             Typedef,
-            Renames,
 
-            //TypeCobol Tags
-            Boolean,
-            String,
+            //Additional tags (those can't be used to downcast !)
+            Usage,         //The type is defined only by its usage
+            DataCondition, //Level-88 data conditions
+            Boolean,       //TypeCobol built-in type Bool
+            String         //TypeCobol built-in type String
         }
 
         /// <summary>
@@ -221,7 +219,6 @@ namespace TypeCobol.Compiler.Types
             TResult VisitArrayType(ArrayType t, TParameter arg);
             TResult VisitFunctionType(FunctionType t, TParameter arg);
             TResult VisitPictureType(PictureType t, TParameter arg);
-            TResult VisitPointerType(PointerType t, TParameter arg);
             TResult VisitProgramType(ProgramType t, TParameter arg);
             TResult VisitGroupType(GroupType t, TParameter arg);
             TResult VisitTypedefType(TypedefType t, TParameter arg);
@@ -239,7 +236,6 @@ namespace TypeCobol.Compiler.Types
             public virtual TResult VisitArrayType(ArrayType t, TParameter arg) { return VisitType(t, arg); }
             public virtual TResult VisitFunctionType(FunctionType t, TParameter arg) { return VisitType(t, arg); }
             public virtual TResult VisitPictureType(PictureType t, TParameter arg) { return VisitType(t, arg); }
-            public virtual TResult VisitPointerType(PointerType t, TParameter arg) { return VisitType(t, arg); }
             public virtual TResult VisitProgramType(ProgramType t, TParameter arg) { return VisitType(t, arg); }
             public virtual TResult VisitGroupType(GroupType t, TParameter arg) { return VisitType(t, arg); }
             public virtual TResult VisitTypedefType(TypedefType t, TParameter arg) { return VisitType(t, arg); }
