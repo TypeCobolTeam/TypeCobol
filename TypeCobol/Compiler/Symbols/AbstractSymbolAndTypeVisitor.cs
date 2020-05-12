@@ -25,7 +25,6 @@ namespace TypeCobol.Compiler.Symbols
         public virtual TResult VisitArrayType(ArrayType t, TParameter s) { return VisitType(t, s); }
         public virtual TResult VisitFunctionType(FunctionType t, TParameter s) { return VisitType(t, s); }
         public virtual TResult VisitPictureType(PictureType t, TParameter s) { return VisitType(t, s); }
-        public virtual TResult VisitPointerType(PointerType t, TParameter s) { return VisitType(t, s); }
         public virtual TResult VisitProgramType(ProgramType t, TParameter s) { return VisitType(t, s); }
         public virtual TResult VisitGroupType(GroupType t, TParameter s) { return VisitType(t, s); }
         public virtual TResult VisitTypedefType(TypedefType t, TParameter s) { return VisitType(t, s); }
