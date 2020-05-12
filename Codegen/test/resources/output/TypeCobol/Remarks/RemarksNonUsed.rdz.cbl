@@ -1,4 +1,5 @@
-﻿000000 IDENTIFICATION DIVISION.
+Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
+000000 IDENTIFICATION DIVISION.
 000000 PROGRAM-ID. RemarksNonUsed.                   
 000000 ENVIRONMENT DIVISION.
       *Remarks Directive with non used copy. Has to be conserve. 

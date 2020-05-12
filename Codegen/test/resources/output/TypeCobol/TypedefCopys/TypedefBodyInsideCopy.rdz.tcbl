@@ -1,4 +1,5 @@
-﻿       identification division.
+Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
+       identification division.
        program-id. MyPGM.
        environment division.
        configuration section.
