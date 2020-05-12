@@ -50,7 +50,7 @@ namespace TypeCobol.Test {
 
 	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex, string[] include, string[] exclude, string[] copiesFolder, string skelPath, int stopAfterAsManyErrors, bool autoRemarks, string expectedResultFile, bool ignoreWarningDiag) { 
 			string[] files = Directory.GetFiles(rootFolder, regex, SearchOption.AllDirectories);
-			bool codegen = true;
+			bool codegen = false;
 			var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 	        string resultFile = "GeneratedResultFile.txt";
 
