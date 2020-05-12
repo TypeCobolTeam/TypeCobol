@@ -7,41 +7,20 @@
        01  TC-PGM2-FctList-Loaded PIC X(02).
            88 TC-PGM2-FctList-IsLoaded      VALUE 'OK'.
 
-       01 TC-PGM2-PntTab.
-           05 TC-PGM2-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program a4ee502d
-      *Which is generated code for PGM2.Proc1
-      *Declared in source file Pgm2Same.tcbl
-           05 TC-PGM2-a4ee502d-Idt   PIC X(08) VALUE 'a4ee502d'.
-           05 TC-PGM2-a4ee502d PROCEDURE-POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program a4ee502d
+      * Which is generated code for PGM2.Proc1
+           08 Fct-a4ee502d-Proc1
+              value 'Fct=a4ee502d-Proc1'.
 
        
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
-       01 TC-A1 PIC X.
+       01 FunctionCode pic X(30).
+       01 arg1 PIC X.
 
       * same name PGM2
-       PROCEDURE DIVISION USING PntTab-Pnt.
+       PROCEDURE DIVISION USING TC-FunctionCode
                           
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
-           PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
-
-           GOBACK.
-
-        FctList-Process-Mode.
-            IF NOT TC-PGM2-FctList-IsLoaded
-              SET TC-PGM2-a4ee502d   TO ENTRY 'a4ee502d'
-              SET TC-PGM2-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-PGM2-PntTab
-
            .
                           
        INIT-LIBRARY.
@@ -74,4 +53,6 @@
       *     input(t: pic x)
            .
        END PROGRAM a4ee502d.
+
+
        END PROGRAM PGM2.

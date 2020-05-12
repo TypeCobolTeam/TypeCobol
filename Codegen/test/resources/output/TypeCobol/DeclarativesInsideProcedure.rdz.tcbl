@@ -20,41 +20,28 @@
        PROGRAM-ID. Callee.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01  TC-Callee-FctList-Loaded PIC X(02).
-           88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
-       01 TC-Callee-PntTab.
-           05 TC-Callee-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program bafc76cb
-      *Which is generated code for Callee.MyProcedure2
-      *Declared in source file DeclarativesInsideProcedure.rdz.tcbl
-           05 TC-Callee-bafc76cb-Idt   PIC X(08) VALUE 'bafc76cb'.
-           05 TC-Callee-bafc76cb PROCEDURE-POINTER.
 
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program bafc76cb
+      * Which is generated code for Callee.MyProcedure2
+           88 Fct-bafc76cb-MyProcedure2
+              value 'Fct=bafc76cb-MyProcedure2'.
 
-       PROCEDURE DIVISION USING PntTab-Pnt.
-                          
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
+       01 arg1 pic X.
+       PROCEDURE DIVISION USING TC-FunctionCode
+                          arg1.
+           PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
-
            GOBACK.
 
-        FctList-Process-Mode.
-            IF NOT TC-Callee-FctList-IsLoaded
-              SET TC-Callee-bafc76cb   TO ENTRY 'bafc76cb'
-
-              SET TC-Callee-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-Callee-PntTab
-
+       FctList-Process-Mode.
+           evaluate true
+              when Fct-bafc76cb-MyProcedure2
+                 call 'bafc76cb' using arg1
+              when other
+                 TODO
+           end-evaluate
            .
                           
        INIT-LIBRARY.
@@ -79,31 +66,14 @@
       *Caller.MyProcedure - Params :
       *     input(myInput: pic X)
                                
-       01 TC-Callee pic X(08) value 'CALLEE'.
+       01 TypeCobol-Generated.
+           05 TC-Callee pic X(08) value 'CALLEE'.
+           05 Callee-Fct-bafc76cb-MyProcedur PIC X(30)
+               value 'Fct=bafc76cb-MyProcedure2'.
 
-       01 TC-Call          PIC X     VALUE 'T'.
-           88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'
-                            X'00' thru 'S'
-                            'U' thru X'FF'.
        LINKAGE SECTION.
       *Caller.MyProcedure - Params :
       *     input(myInput: pic X)
-      *Common to all librairies used by the program.
-       01 TC-Library-PntTab.
-           05 TC-Library-PntNbr          PIC S9(04) COMP.
-           05 TC-Library-Item OCCURS 1000
-                               DEPENDING ON TC-Library-PntNbr
-                               INDEXED   BY TC-Library-Idx.
-              10 TC-Library-Item-Idt      PIC X(08).
-              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
-
-      *To call program bafc76cb in module Callee
-      *Which is generated code for Callee.MyProcedure2
-      *Declared in source file DeclarativesInsideProcedure.rdz.tcbl
-       01 TC-Callee-bafc76cb-Item.
-          05 TC-Callee-bafc76cb-Idt PIC X(08).
-          05 TC-Callee-bafc76cb PROCEDURE-POINTER.
        01 myInput Pic X.
        PROCEDURE DIVISION
              USING BY REFERENCE myInput
@@ -116,46 +86,16 @@
       D    DISPLAY 'Caller'
       D    DEBUG-ITEM '.'.
       DEND DECLARATIVES.
-           PERFORM TC-INITIALIZATIONS
       *      Call Callee::MyProcedure2 Input myInput
-             
-           IF ADDRESS OF TC-Callee-bafc76cb-Item = NULL
-             OR TC-Callee-bafc76cb-Idt not = 'bafc76cb'
-               PERFORM TC-LOAD-POINTERS-Callee
-           END-IF
-      *    Equivalent to call bafc76cb in module Callee
-           CALL TC-Callee-bafc76cb USING
+             CALL 'zcallpgm' using TC-Callee
+                    Callee-Fct-bafc76cb-MyProcedur
                                  myInput
            end-call
                                                     
              .
-      *=================================================================
-       TC-INITIALIZATIONS.
-      *=================================================================
-            IF TC-FirstCall
-                 SET TC-NthCall TO TRUE
-                 SET ADDRESS OF TC-Callee-bafc76cb-Item  TO NULL
-            END-IF
-            .
-      *=================================================================
-       TC-LOAD-POINTERS-Callee.
-      *=================================================================
-            CALL 'ZCALLPGM' USING TC-Callee
-            ADDRESS OF TC-Library-PntTab
-            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
-            UNTIL TC-Library-Idx > TC-Library-PntNbr
-                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'bafc76cb'
-                     SET ADDRESS OF
-                     TC-Callee-bafc76cb-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN OTHER
-                     CONTINUE
-                END-EVALUATE
-            END-PERFORM
-            .
        END PROGRAM b561a4ac.
+
+
       *
       *declare procedure MyProcedure2 public
       *            input myInput pic X.
@@ -179,3 +119,5 @@
              Continue
              .
        END PROGRAM bafc76cb.
+
+

@@ -6,45 +6,22 @@
        01  TC-PGM2-FctList-Loaded PIC X(02).
            88 TC-PGM2-FctList-IsLoaded      VALUE 'OK'.
 
-       01 TC-PGM2-PntTab.
-           05 TC-PGM2-PntNbr         PIC S9(04) COMP VALUE 2.
-      *To call program b49bb8ce
-      *Which is generated code for PGM2.GetTechnicalContext
-      *Declared in source file Pgm2.tcbl
-           05 TC-PGM2-b49bb8ce-Idt   PIC X(08) VALUE 'b49bb8ce'.
-           05 TC-PGM2-b49bb8ce PROCEDURE-POINTER.
-      *To call program a4ee502d
-      *Which is generated code for PGM2.Proc1
-      *Declared in source file Pgm2.tcbl
-           05 TC-PGM2-a4ee502d-Idt   PIC X(08) VALUE 'a4ee502d'.
-           05 TC-PGM2-a4ee502d PROCEDURE-POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program b49bb8ce
+      * Which is generated code for PGM2.GetTechnicalContext
+           08 Fct-b49bb8ce-GetTechnicalContext
+              value 'Fct=b49bb8ce-GetTechnicalContext'.
+      * Function which call program a4ee502d
+      * Which is generated code for PGM2.Proc1
+           08 Fct-a4ee502d-Proc1
+              value 'Fct=a4ee502d-Proc1'.
 
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
-       01 TC-A1 PIC X.
+       01 FunctionCode pic X(30).
+       01 arg1 PIC X.
 
-       PROCEDURE DIVISION USING PntTab-Pnt.
+       PROCEDURE DIVISION USING TC-FunctionCode
                           
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
-           PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
-
-           GOBACK.
-
-        FctList-Process-Mode.
-            IF NOT TC-PGM2-FctList-IsLoaded
-              SET TC-PGM2-b49bb8ce   TO ENTRY 'b49bb8ce'
-              SET TC-PGM2-a4ee502d   TO ENTRY 'a4ee502d'
-              SET TC-PGM2-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-PGM2-PntTab
-
            .
                           
        INIT-LIBRARY.
@@ -72,6 +49,8 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. b49bb8ce IS COMMON.
        END PROGRAM b49bb8ce.
+
+
       *
       *declare procedure Proc1 public
       *    input t pic x.
@@ -90,6 +69,8 @@
       *     input(t: pic x)
            .
        END PROGRAM a4ee502d.
+
+
        END PROGRAM PGM2.
       
        IDENTIFICATION DIVISION.
@@ -100,46 +81,23 @@
        01  TC-STACKED-FctList-Loaded PIC X(02).
            88 TC-STACKED-FctList-IsLoaded      VALUE 'OK'.
 
-       01 TC-STACKED-PntTab.
-           05 TC-STACKED-PntNbr         PIC S9(04) COMP VALUE 2.
-      *To call program c420cf71
-      *Which is generated code for STACKED.Foo
-      *Declared in source file Pgm2.tcbl
-           05 TC-STACKED-c420cf71-Idt   PIC X(08) VALUE 'c420cf71'.
-           05 TC-STACKED-c420cf71 PROCEDURE-POINTER.
-      *To call program b4a83777
-      *Which is generated code for STACKED.FooPgm2
-      *Declared in source file Pgm2.tcbl
-           05 TC-STACKED-b4a83777-Idt   PIC X(08) VALUE 'b4a83777'.
-           05 TC-STACKED-b4a83777 PROCEDURE-POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program c420cf71
+      * Which is generated code for STACKED.Foo
+           08 Fct-c420cf71-Foo
+              value 'Fct=c420cf71-Foo'.
+      * Function which call program b4a83777
+      * Which is generated code for STACKED.FooPgm2
+           08 Fct-b4a83777-FooPgm2
+              value 'Fct=b4a83777-FooPgm2'.
 
        
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
-       01 TC-A1 PIC X.
+       01 FunctionCode pic X(30).
+       01 arg1 PIC X.
 
-       PROCEDURE DIVISION USING PntTab-Pnt.
+       PROCEDURE DIVISION USING TC-FunctionCode
                           
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
-           PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
-
-           GOBACK.
-
-        FctList-Process-Mode.
-            IF NOT TC-STACKED-FctList-IsLoaded
-              SET TC-STACKED-c420cf71   TO ENTRY 'c420cf71'
-              SET TC-STACKED-b4a83777   TO ENTRY 'b4a83777'
-              SET TC-STACKED-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-STACKED-PntTab
-
            .
                           
        PA-ALL-ENTRIES.
@@ -166,40 +124,19 @@
        01  TC-STACKED2-FctList-Loaded PIC X(02).
            88 TC-STACKED2-FctList-IsLoaded      VALUE 'OK'.
 
-       01 TC-STACKED2-PntTab.
-           05 TC-STACKED2-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program f22bfcb0
-      *Which is generated code for STACKED2.Foo
-      *Declared in source file Pgm2.tcbl
-           05 TC-STACKED2-f22bfcb0-Idt   PIC X(08) VALUE 'f22bfcb0'.
-           05 TC-STACKED2-f22bfcb0 PROCEDURE-POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program f22bfcb0
+      * Which is generated code for STACKED2.Foo
+           08 Fct-f22bfcb0-Foo
+              value 'Fct=f22bfcb0-Foo'.
 
        
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
-       01 TC-A1 PIC X.
+       01 FunctionCode pic X(30).
+       01 arg1 PIC X.
 
-       PROCEDURE DIVISION USING PntTab-Pnt.
+       PROCEDURE DIVISION USING TC-FunctionCode
                           
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
-           PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
-
-           GOBACK.
-
-        FctList-Process-Mode.
-            IF NOT TC-STACKED2-FctList-IsLoaded
-              SET TC-STACKED2-f22bfcb0   TO ENTRY 'f22bfcb0'
-              SET TC-STACKED2-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-STACKED2-PntTab
-
            .
                           
        PA-ALL-ENTRIES.
