@@ -1,4 +1,4 @@
-﻿       identification division.
+       identification division.
        program-id. MyPGM.
        data division.
        working-storage section.
@@ -57,3 +57,5 @@
            MOVE Structure TO MyStructure
            .
        END PROGRAM ceae7f96.
+
+

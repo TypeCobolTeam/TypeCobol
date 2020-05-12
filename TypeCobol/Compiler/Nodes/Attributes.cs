@@ -62,7 +62,7 @@ namespace TypeCobol.Compiler.Nodes {
 		    attributes["copyname"] = new LibraryCopyAttribute();
 		    attributes["programname8"] = new ProgramName8Attribute();
             attributes["imports"] = new ProgramImportsAttribute();
-	    }
+        }
 	    private static ContainerAttribute DEFAULT = new ContainerAttribute();
     }
 
@@ -559,7 +559,16 @@ internal class DefinitionsAttribute: Attribute {
 	public NList functions;
 	public NList functionsGeneratedAsNested;
 
-	public override string ToString() {
+    public int MaxArgsCount
+    {
+        get
+        {
+            if (this.functions.Public.Count == 0) return 0;
+            return this.functions.Public.OfType<FunctionDeclaration>().Max(f => f.Profile.Parameters.Count);
+        }
+    }
+
+        public override string ToString() {
 		var str = new System.Text.StringBuilder();
 		str.Append("Types:[");
 		foreach(var item in types) str.Append(item.Name).Append(',');

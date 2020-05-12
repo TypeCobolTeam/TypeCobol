@@ -2,46 +2,32 @@
        PROGRAM-ID. DVZZDATE.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01  TC-DVZZDATE-FctList-Loaded PIC X(02).
-           88 TC-DVZZDATE-FctList-IsLoaded      VALUE 'OK'.
-       01 TC-DVZZDATE-PntTab.
-           05 TC-DVZZDATE-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program b8721d20
-      *Which is generated code for DVZZDATE.currentDateString
-      *Declared in source file Library2.rdz.tcbl
-           05 TC-DVZZDATE-b8721d20-Idt   PIC X(08) VALUE 'b8721d20'.
-           05 TC-DVZZDATE-b8721d20 PROCEDURE-POINTER.
 
                      
        local-STORAGE SECTION.
       *01  dateString    TYPEDEF strict PUBLIC    PIC 9(08).
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program b8721d20
+      * Which is generated code for DVZZDATE.currentDateString
+           88 Fct-b8721d20-currentDateString
+              value 'Fct=b8721d20-currentDateString'.
 
 
       *=================================================================
-       PROCEDURE DIVISION USING PntTab-Pnt.
-                           
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
+       PROCEDURE DIVISION USING TC-FunctionCode
+                           .
+           PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
-
            GOBACK.
 
-        FctList-Process-Mode.
-            IF NOT TC-DVZZDATE-FctList-IsLoaded
-              SET TC-DVZZDATE-b8721d20   TO ENTRY 'b8721d20'
-
-              SET TC-DVZZDATE-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-DVZZDATE-PntTab
-
+       FctList-Process-Mode.
+           evaluate true
+              when Fct-b8721d20-currentDateString
+                 call 'b8721d20'
+              when other
+                 TODO
+           end-evaluate
            .
                                              
       *DECLARE FUNCTION currentDateString PUBLIC
@@ -67,3 +53,5 @@
            display "toto"
            .
        END PROGRAM b8721d20.
+
+

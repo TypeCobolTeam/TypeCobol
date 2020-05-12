@@ -3,42 +3,29 @@
        DATA DIVISION.
                                                              
        WORKING-STORAGE SECTION.
-       01  TC-TCOZCHKP-FctList-Loaded PIC X(02).
-           88 TC-TCOZCHKP-FctList-IsLoaded      VALUE 'OK'.
-       01 TC-TCOZCHKP-PntTab.
-           05 TC-TCOZCHKP-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program b179d81b
-      *Which is generated code for TCOZCHKP.StartCheckpoint
-      *Declared in source file CallPublicProcFromPrivateProc3.rdz.tcbl
-           05 TC-TCOZCHKP-b179d81b-Idt   PIC X(08) VALUE 'b179d81b'.
-           05 TC-TCOZCHKP-b179d81b PROCEDURE-POINTER.
 
        
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program b179d81b
+      * Which is generated code for TCOZCHKP.StartCheckpoint
+           88 Fct-b179d81b-StartCheckpoint
+              value 'Fct=b179d81b-StartCheckpoint'.
 
-       PROCEDURE DIVISION USING PntTab-Pnt.
-                           
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
+       01 arg1 pic X.
+       PROCEDURE DIVISION USING TC-FunctionCode
+                           arg1.
+           PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
-
            GOBACK.
 
-        FctList-Process-Mode.
-            IF NOT TC-TCOZCHKP-FctList-IsLoaded
-              SET TC-TCOZCHKP-b179d81b   TO ENTRY 'b179d81b'
-
-              SET TC-TCOZCHKP-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-TCOZCHKP-PntTab
-
+       FctList-Process-Mode.
+           evaluate true
+              when Fct-b179d81b-StartCheckpoint
+                 call 'b179d81b' using arg1
+              when other
+                 TODO
+           end-evaluate
            .
                                 
       *-----------------------------------------------------------------
@@ -58,6 +45,8 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. b179d81b.
        END PROGRAM b179d81b.
+
+
       *
       *declare procedure testos private.
       *_________________________________________________________________
@@ -67,71 +56,24 @@
        working-storage section.
       *TCOZCHKP.testos  - No Params
                                
-       01 TC-TCOZCHKP pic X(08) value 'TCOZCHKP'.
-
-       01 TC-Call          PIC X     VALUE 'T'.
-           88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'
-                            X'00' thru 'S'
-                            'U' thru X'FF'.
        01 var1 pic X.
+       01 TypeCobol-Generated.
+           05 TC-TCOZCHKP pic X(08) value 'TCOZCHKP'.
+           05 TCOZCHKP-Fct-b179d81b-StartChe PIC X(30)
+               value 'Fct=b179d81b-StartCheckpoint'.
+
        LINKAGE SECTION.
       *TCOZCHKP.testos  - No Params
-      *Common to all librairies used by the program.
-       01 TC-Library-PntTab.
-           05 TC-Library-PntNbr          PIC S9(04) COMP.
-           05 TC-Library-Item OCCURS 1000
-                               DEPENDING ON TC-Library-PntNbr
-                               INDEXED   BY TC-Library-Idx.
-              10 TC-Library-Item-Idt      PIC X(08).
-              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
-
-      *To call program b179d81b in module TCOZCHKP
-      *Which is generated code for TCOZCHKP.StartCheckpoint
-      *Declared in source file CallPublicProcFromPrivateProc3.rdz.tcbl
-       01 TC-TCOZCHKP-b179d81b-Item.
-          05 TC-TCOZCHKP-b179d81b-Idt PIC X(08).
-          05 TC-TCOZCHKP-b179d81b PROCEDURE-POINTER.
        PROCEDURE DIVISION
            .
       *TCOZCHKP.testos  - No Params
-           PERFORM TC-INITIALIZATIONS
       *    call TCOZCHKP::StartCheckpoint input var1
-           
-           IF ADDRESS OF TC-TCOZCHKP-b179d81b-Item = NULL
-             OR TC-TCOZCHKP-b179d81b-Idt not = 'b179d81b'
-               PERFORM TC-LOAD-POINTERS-TCOZCHKP
-           END-IF
-      *    Equivalent to call b179d81b in module TCOZCHKP
-           CALL TC-TCOZCHKP-b179d81b USING
+           CALL 'zcallpgm' using TC-TCOZCHKP
+                    TCOZCHKP-Fct-b179d81b-StartChe
                                  var1
            end-call
                                                     
            .
-      *=================================================================
-       TC-INITIALIZATIONS.
-      *=================================================================
-            IF TC-FirstCall
-                 SET TC-NthCall TO TRUE
-                 SET ADDRESS OF TC-TCOZCHKP-b179d81b-Item  TO NULL
-            END-IF
-            .
-      *=================================================================
-       TC-LOAD-POINTERS-TCOZCHKP.
-      *=================================================================
-            CALL 'ZCALLPGM' USING TC-TCOZCHKP
-            ADDRESS OF TC-Library-PntTab
-            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
-            UNTIL TC-Library-Idx > TC-Library-PntNbr
-                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'b179d81b'
-                     SET ADDRESS OF
-                     TC-TCOZCHKP-b179d81b-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN OTHER
-                     CONTINUE
-                END-EVALUATE
-            END-PERFORM
-            .
        END PROGRAM d58351d5.
+
+

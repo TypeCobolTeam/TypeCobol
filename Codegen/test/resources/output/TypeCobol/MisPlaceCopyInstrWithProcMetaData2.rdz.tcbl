@@ -3,79 +3,22 @@
        PROGRAM-ID. DVZF0OSM.
        data division.
        WORKING-STORAGE SECTION.
-       01 TC-DVZF0OS2 pic X(08) value 'DVZF0OS2'.
-       01 TC-Call          PIC X VALUE 'T'.
-           88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'
-                            X'00' thru 'S'
-                            'U' thru X'FF'.
-
+       01 TypeCobol-Generated.
+           05 TC-DVZF0OS2 pic X(08) value 'DVZF0OS2'.
+           05 DVZF0OS2-Fct-bdb3e928-Foo pic X(30)
+                value 'Fct=bdb3e928-Foo'.
                      
        linkage section.
-      *Common to all librairies used by the program.
-       01 TC-Library-PntTab.
-          05 TC-Library-PntNbr          PIC S9(04) COMP.
-          05 TC-Library-Item OCCURS 1000
-                               DEPENDING ON TC-Library-PntNbr
-                               INDEXED   BY TC-Library-Idx.
-              10 TC-Library-Item-Idt      PIC X(08).
-              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
-
-      *To call program bdb3e928 in module DVZF0OS2
-      *Which is generated code for DVZF0OS2.Foo
-      *Declared in source file MisPlaceCopyInstrWithProcMetaData2.rdz.tc
-      *bl
-       01 TC-DVZF0OS2-bdb3e928-Item.
-          05 TC-DVZF0OS2-bdb3e928-Idt PIC X(08).
-          05 TC-DVZF0OS2-bdb3e928 PROCEDURE-POINTER.
-
-                       
        01 MyGroup.
        COPY Codegen-SecondCopy.
        PROCEDURE DIVISION.
-      *
-           PERFORM TC-INITIALIZATIONS
-
-                          
       *    call DVZF0OS2::Foo
-           
-           IF ADDRESS OF TC-DVZF0OS2-bdb3e928-Item = NULL
-             OR TC-DVZF0OS2-bdb3e928-Idt not = 'bdb3e928'
-               PERFORM TC-LOAD-POINTERS-DVZF0OS2
-           END-IF
-      *    Equivalent to call bdb3e928 in module DVZF0OS2
-           CALL TC-DVZF0OS2-bdb3e928
+           CALL 'zcallpgm' using TC-DVZF0OS2
+                    DVZF0OS2-Fct-bdb3e928-Foo
            end-call
                              
 
            .
-      *=================================================================
-       TC-INITIALIZATIONS.
-      *=================================================================
-            IF TC-FirstCall
-                 SET TC-NthCall TO TRUE
-                 SET ADDRESS OF TC-DVZF0OS2-bdb3e928-Item  TO NULL
-            END-IF
-            .
-      *=================================================================
-        TC-LOAD-POINTERS-DVZF0OS2.
-      *=================================================================
-            CALL 'ZCALLPGM' USING TC-DVZF0OS2
-            ADDRESS OF TC-Library-PntTab
-            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
-            UNTIL TC-Library-Idx > TC-Library-PntNbr
-                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'bdb3e928'
-                     SET ADDRESS OF
-                     TC-DVZF0OS2-bdb3e928-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN OTHER
-                     CONTINUE
-                END-EVALUATE
-            END-PERFORM
-            .
-
        END PROGRAM DVZF0OSM.
 
        ID DIVISION.
@@ -84,42 +27,27 @@
        working-storage section.
        01 var1 .
        COPY Codegen-SecondCopy.
-       01  TC-DVZF0OS2-FctList-Loaded PIC X(02).
-           88 TC-DVZF0OS2-FctList-IsLoaded      VALUE 'OK'.
-       01 TC-DVZF0OS2-PntTab.
-           05 TC-DVZF0OS2-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program bdb3e928
-      *Which is generated code for DVZF0OS2.Foo
-      *Declared in source file MisPlaceCopyInstrWithProcMetaData2.rdz.tc
-      *bl
-           05 TC-DVZF0OS2-bdb3e928-Idt   PIC X(08) VALUE 'bdb3e928'.
-           05 TC-DVZF0OS2-bdb3e928 PROCEDURE-POINTER.
 
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program bdb3e928
+      * Which is generated code for DVZF0OS2.Foo
+           88 Fct-bdb3e928-Foo
+              value 'Fct=bdb3e928-Foo'.
 
-       PROCEDURE DIVISION USING PntTab-Pnt.
-                          
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
+       PROCEDURE DIVISION USING TC-FunctionCode
+                          .
+           PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
-
            GOBACK.
 
-        FctList-Process-Mode.
-            IF NOT TC-DVZF0OS2-FctList-IsLoaded
-              SET TC-DVZF0OS2-bdb3e928   TO ENTRY 'bdb3e928'
-
-              SET TC-DVZF0OS2-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-DVZF0OS2-PntTab
-
+       FctList-Process-Mode.
+           evaluate true
+              when Fct-bdb3e928-Foo
+                 call 'bdb3e928'
+              when other
+                 TODO
+           end-evaluate
            .
                           
       *declare procedure Foo public.
@@ -130,3 +58,5 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. bdb3e928.
        END PROGRAM bdb3e928.
+
+

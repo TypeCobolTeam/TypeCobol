@@ -156,6 +156,8 @@
            END-PERFORM
            GOBACK.
        END PROGRAM b845e622.
+
+
       *
       *DECLARE PROCEDURE DisplayEventList PRIVATE
       *     IN-OUT EventList type EventList.
@@ -201,3 +203,5 @@
            END-PERFORM
            GOBACK.
        END PROGRAM f6fedaee.
+
+

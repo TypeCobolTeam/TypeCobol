@@ -37,6 +37,8 @@
            DISPLAY 'I DO NOTHING'
            .
        END PROGRAM c49a4761.
+
+
       *
       *DECLARE FUNCTION ReturnsZero PRIVATE
       *      RETURNING result PIC 9(04).
@@ -56,6 +58,8 @@
            MOVE 0 TO result.
            .
        END PROGRAM e61a1c43.
+
+
       *
       *DECLARE FUNCTION DoesNothing PRIVATE
       *      INPUT x PIC 9(04).
@@ -75,6 +79,8 @@
            DISPLAY 'I DO NOTHING WITH ' x
            .
        END PROGRAM cd51a7fd.
+
+
       *
       *DECLARE FUNCTION StrangelyReturnsItsInput PRIVATE
       *      INPUT     x      PIC 9(04) comp-3
@@ -104,6 +110,8 @@
              MOVE x TO result
            END-IF.
        END PROGRAM c498f2f1.
+
+
       *
       *declare function UseACopy private
       *         input  x pic X.
@@ -131,3 +139,5 @@
            COPY MyProcedureCopy.
            .
        END PROGRAM e7b552c0.
+
+

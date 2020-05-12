@@ -1,4 +1,4 @@
-﻿      * 4 errors
+      * 4 errors
       * Line 9[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
       * Line 52[12,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
       * Line 57[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
@@ -9,15 +9,6 @@
 
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01  TC-DocCodeG-FctList-Loaded PIC X(02).
-           88 TC-DocCodeG-FctList-IsLoaded      VALUE 'OK'.
-       01 TC-DocCodeG-PntTab.
-           05 TC-DocCodeG-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program fd48569e
-      *Which is generated code for DocCodeGen.MyProc
-      *Declared in source file FormalizedComments.tcbl
-           05 TC-DocCodeG-fd48569e-Idt   PIC X(08) VALUE 'fd48569e'.
-           05 TC-DocCodeG-fd48569e PROCEDURE-POINTER.
 
                      
        LOCAL-STORAGE SECTION.
@@ -42,8 +33,17 @@
       *    03 X PIC 9(4).
       *    03 Y PIC 9(4).
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program fd48569e
+      * Which is generated code for DocCodeGen.MyProc
+           88 Fct-fd48569e-MyProc
+              value 'Fct=fd48569e-MyProc'.
 
+       01 arg1 pic X.
+       01 arg2 pic X.
+       01 arg3 pic X.
+       01 arg4 pic X.
+       01 arg5 pic X.
 
       *<<< My program 
       *   @ Description : description
@@ -57,28 +57,27 @@
       *       - Add BOOL support
       *       - implement a call counter
       *>>>
-       PROCEDURE DIVISION USING PntTab-Pnt.
-                          
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
+       PROCEDURE DIVISION USING TC-FunctionCode
+                          arg1
+                          arg2
+                          arg3
+                          arg4
+                          arg5.
+           PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
-
            GOBACK.
 
-        FctList-Process-Mode.
-            IF NOT TC-DocCodeG-FctList-IsLoaded
-              SET TC-DocCodeG-fd48569e   TO ENTRY 'fd48569e'
-
-              SET TC-DocCodeG-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-DocCodeG-PntTab
-
+       FctList-Process-Mode.
+           evaluate true
+              when Fct-fd48569e-MyProc
+                 call 'fd48569e' using arg1
+                                        arg2
+                                        arg3
+                                        arg4
+                                        arg5
+              when other
+                 TODO
+           end-evaluate
            .
                                                                                                                                                                                                                                                                                                                                                                                                                                   
 
@@ -161,3 +160,5 @@
       *     output(toto: BOOL, bli: pic PPP999PPP)
            CONTINUE.
        END PROGRAM fd48569e.
+
+

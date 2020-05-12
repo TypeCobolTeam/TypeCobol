@@ -16,59 +16,32 @@
        01  TC-PGM1-FctList-Loaded PIC X(02).
            88 TC-PGM1-FctList-IsLoaded      VALUE 'OK'.
 
-       01 TC-PGM1-PntTab.
-           05 TC-PGM1-PntNbr         PIC S9(04) COMP VALUE 4.
-      *To call program a0508f35
-      *Which is generated code for PGM1.check
-      *Declared in source file FunDeclareWithExec.rdz.cbl
-           05 TC-PGM1-a0508f35-Idt   PIC X(08) VALUE 'a0508f35'.
-           05 TC-PGM1-a0508f35 PROCEDURE-POINTER.
-      *To call program efd9419f
-      *Which is generated code for PGM1.check
-      *Declared in source file FunDeclareWithExec.rdz.cbl
-           05 TC-PGM1-efd9419f-Idt   PIC X(08) VALUE 'efd9419f'.
-           05 TC-PGM1-efd9419f PROCEDURE-POINTER.
-      *To call program a02a7aa5
-      *Which is generated code for PGM1.checkName
-      *Declared in source file FunDeclareWithExec.rdz.cbl
-           05 TC-PGM1-a02a7aa5-Idt   PIC X(08) VALUE 'a02a7aa5'.
-           05 TC-PGM1-a02a7aa5 PROCEDURE-POINTER.
-      *To call program f6b6da00
-      *Which is generated code for PersonService.GetPersonByName
-      *Declared in source file FunDeclareWithExec.rdz.cbl
-           05 TC-PGM1-f6b6da00-Idt   PIC X(08) VALUE 'f6b6da00'.
-           05 TC-PGM1-f6b6da00 PROCEDURE-POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program a0508f35
+      * Which is generated code for PGM1.check
+           08 Fct-a0508f35-check
+              value 'Fct=a0508f35-check'.
+      * Function which call program efd9419f
+      * Which is generated code for PGM1.check
+           08 Fct-efd9419f-check
+              value 'Fct=efd9419f-check'.
+      * Function which call program a02a7aa5
+      * Which is generated code for PGM1.checkName
+           08 Fct-a02a7aa5-checkName
+              value 'Fct=a02a7aa5-checkName'.
+      * Function which call program f6b6da00
+      * Which is generated code for PersonService.GetPersonByName
+           08 Fct-f6b6da00-GetPersonByName
+              value 'Fct=f6b6da00-GetPersonByName'.
 
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
-       01 TC-A1 PIC X.
-       01 TC-A2 PIC X.
+       01 FunctionCode pic X(30).
+       01 arg1 PIC X.
+       01 arg2 PIC X.
 
 
-       PROCEDURE DIVISiON USING PntTab-Pnt.
+       PROCEDURE DIVISiON USING TC-FunctionCode
                           
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
-           PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
-
-           GOBACK.
-
-        FctList-Process-Mode.
-            IF NOT TC-PGM1-FctList-IsLoaded
-              SET TC-PGM1-a0508f35   TO ENTRY 'a0508f35'
-              SET TC-PGM1-efd9419f   TO ENTRY 'efd9419f'
-              SET TC-PGM1-a02a7aa5   TO ENTRY 'a02a7aa5'
-              SET TC-PGM1-f6b6da00   TO ENTRY 'f6b6da00'
-              SET TC-PGM1-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-PGM1-PntTab
-
            .
                           
 
@@ -164,6 +137,8 @@
            END-EXEC  
            CONTINUE.
        END PROGRAM cd991005.
+
+
        END PROGRAM PersonService.
 
 
@@ -209,6 +184,8 @@
            END-EXEC  
            CONTINUE.
        END PROGRAM a0508f35.
+
+
       *
       *declare procedure check public
       *   input mydate        TYPE Date
@@ -258,6 +235,8 @@
            END-EXEC  
            CONTINUE.
        END PROGRAM efd9419f.
+
+
       *
       *declare procedure checkName public
       *   input myname        PIC X(15)
@@ -270,78 +249,31 @@
       *PGM1.checkName - Params :
       *     input(myname: pic X(15))
                                
-       01 TC-PersonSe pic X(08) value 'PERSONSE'.
+       01 TypeCobol-Generated.
+           05 TC-PersonSe pic X(08) value 'PERSONSE'.
+           05 PersonSe-Fct-f6b6da00-GetPerso PIC X(30)
+               value 'Fct=f6b6da00-GetPersonByName'.
 
-       01 TC-Call          PIC X     VALUE 'T'.
-           88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'
-                            X'00' thru 'S'
-                            'U' thru X'FF'.
        linkage section.
       *PGM1.checkName - Params :
       *     input(myname: pic X(15))
                        
-      *Common to all librairies used by the program.
-       01 TC-Library-PntTab.
-           05 TC-Library-PntNbr          PIC S9(04) COMP.
-           05 TC-Library-Item OCCURS 1000
-                               DEPENDING ON TC-Library-PntNbr
-                               INDEXED   BY TC-Library-Idx.
-              10 TC-Library-Item-Idt      PIC X(08).
-              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
-
-      *To call program f6b6da00 in module PersonService
-      *Which is generated code for PersonService.GetPersonByName
-      *Declared in source file FunDeclareWithExec.rdz.cbl
-       01 TC-PersonSe-f6b6da00-Item.
-          05 TC-PersonSe-f6b6da00-Idt PIC X(08).
-          05 TC-PersonSe-f6b6da00 PROCEDURE-POINTER.
        01 myname PIC X(15).
        PROCEDURE DIVISION
              USING BY REFERENCE myname
            .
       *PGM1.checkName - Params :
       *     input(myname: pic X(15))
-           PERFORM TC-INITIALIZATIONS
       *    Call PersonService::GetPersonByName input myname
-           
-           IF ADDRESS OF TC-PersonSe-f6b6da00-Item = NULL
-             OR TC-PersonSe-f6b6da00-Idt not = 'f6b6da00'
-               PERFORM TC-LOAD-POINTERS-PersonSe
-           END-IF
-      *    Equivalent to call f6b6da00 in module PersonService
-           CALL TC-PersonSe-f6b6da00 USING
+           CALL 'zcallpgm' using TC-PersonSe
+                    PersonSe-Fct-f6b6da00-GetPerso
                                  myname
            end-call
                                                            
            .
-      *=================================================================
-       TC-INITIALIZATIONS.
-      *=================================================================
-            IF TC-FirstCall
-                 SET TC-NthCall TO TRUE
-                 SET ADDRESS OF TC-PersonSe-f6b6da00-Item  TO NULL
-            END-IF
-            .
-      *=================================================================
-       TC-LOAD-POINTERS-PersonSe.
-      *=================================================================
-            CALL 'ZCALLPGM' USING TC-PersonSe
-            ADDRESS OF TC-Library-PntTab
-            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
-            UNTIL TC-Library-Idx > TC-Library-PntNbr
-                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'f6b6da00'
-                     SET ADDRESS OF
-                     TC-PersonSe-f6b6da00-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN OTHER
-                     CONTINUE
-                END-EVALUATE
-            END-PERFORM
-            .
        END PROGRAM a02a7aa5.
+
+
       *
       *declare procedure GetPersonByName public
       *   input  name  pic x(15).
@@ -360,5 +292,7 @@
       *     input(name: pic x(15))
            CONTINUE.
        END PROGRAM f6b6da00.
+
+
        END PROGRAM PGM1.
 

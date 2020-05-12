@@ -33,67 +33,66 @@
       *01 culture        TYPEDEF strict PUBLIC.
       *    10 lng                    PIC X(02).
       *    10 cty                    PIC X(02).
-       01  TC-DVZZDATE-FctList-Loaded PIC X(02).
-           88 TC-DVZZDATE-FctList-IsLoaded      VALUE 'OK'.
-       01 TC-DVZZDATE-PntTab.
-           05 TC-DVZZDATE-PntNbr         PIC S9(04) COMP VALUE 5.
-      *To call program db42865c
-      *Which is generated code for DVZZDATE.currentDate
-      *Declared in source file Library.rdz.cbl
-           05 TC-DVZZDATE-db42865c-Idt   PIC X(08) VALUE 'db42865c'.
-           05 TC-DVZZDATE-db42865c PROCEDURE-POINTER.
-      *To call program fa5ee5e9
-      *Which is generated code for DVZZDATE.currentDateDB2
-      *Declared in source file Library.rdz.cbl
-           05 TC-DVZZDATE-fa5ee5e9-Idt   PIC X(08) VALUE 'fa5ee5e9'.
-           05 TC-DVZZDATE-fa5ee5e9 PROCEDURE-POINTER.
-      *To call program cf63e86f
-      *Which is generated code for DVZZDATE.currentDateJulian
-      *Declared in source file Library.rdz.cbl
-           05 TC-DVZZDATE-cf63e86f-Idt   PIC X(08) VALUE 'cf63e86f'.
-           05 TC-DVZZDATE-cf63e86f PROCEDURE-POINTER.
-      *To call program cfc290ce
-      *Which is generated code for DVZZDATE.currentDateFreeFormat
-      *Declared in source file Library.rdz.cbl
-           05 TC-DVZZDATE-cfc290ce-Idt   PIC X(08) VALUE 'cfc290ce'.
-           05 TC-DVZZDATE-cfc290ce PROCEDURE-POINTER.
-      *To call program b8721d20
-      *Which is generated code for DVZZDATE.currentDateString
-      *Declared in source file Library.rdz.cbl
-           05 TC-DVZZDATE-b8721d20-Idt   PIC X(08) VALUE 'b8721d20'.
-           05 TC-DVZZDATE-b8721d20 PROCEDURE-POINTER.
 
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program db42865c
+      * Which is generated code for DVZZDATE.currentDate
+           88 Fct-db42865c-currentDate
+              value 'Fct=db42865c-currentDate'.
+      * Function which call program fa5ee5e9
+      * Which is generated code for DVZZDATE.currentDateDB2
+           88 Fct-fa5ee5e9-currentDateDB2
+              value 'Fct=fa5ee5e9-currentDateDB2'.
+      * Function which call program cf63e86f
+      * Which is generated code for DVZZDATE.currentDateJulian
+           88 Fct-cf63e86f-currentDateJulian
+              value 'Fct=cf63e86f-currentDateJulian'.
+      * Function which call program cfc290ce
+      * Which is generated code for DVZZDATE.currentDateFreeFormat
+           88 Fct-cfc290ce-currentDateFreeFormat
+              value 'Fct=cfc290ce-currentDateFreeFormat'.
+      * Function which call program b8721d20
+      * Which is generated code for DVZZDATE.currentDateString
+           88 Fct-b8721d20-currentDateString
+              value 'Fct=b8721d20-currentDateString'.
 
+       01 arg1 pic X.
+       01 arg2 pic X.
+       01 arg3 pic X.
+       01 arg4 pic X.
+       01 arg5 pic X.
 
       *=================================================================
-       PROCEDURE DIVISION USING PntTab-Pnt.
-                          
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
+       PROCEDURE DIVISION USING TC-FunctionCode
+                          arg1
+                          arg2
+                          arg3
+                          arg4
+                          arg5.
+           PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
-
            GOBACK.
 
-        FctList-Process-Mode.
-            IF NOT TC-DVZZDATE-FctList-IsLoaded
-              SET TC-DVZZDATE-db42865c   TO ENTRY 'db42865c'
-              SET TC-DVZZDATE-fa5ee5e9   TO ENTRY 'fa5ee5e9'
-              SET TC-DVZZDATE-cf63e86f   TO ENTRY 'cf63e86f'
-              SET TC-DVZZDATE-cfc290ce   TO ENTRY 'cfc290ce'
-              SET TC-DVZZDATE-b8721d20   TO ENTRY 'b8721d20'
-
-              SET TC-DVZZDATE-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-DVZZDATE-PntTab
-
+       FctList-Process-Mode.
+           evaluate true
+              when Fct-db42865c-currentDate
+                 call 'db42865c'
+              when Fct-fa5ee5e9-currentDateDB2
+                 call 'fa5ee5e9'
+              when Fct-cf63e86f-currentDateJulian
+                 call 'cf63e86f'
+              when Fct-cfc290ce-currentDateFreeFormat
+                 call 'cfc290ce' using arg1
+                                        arg2
+                                        arg3
+                                        arg4
+                                        arg5
+              when Fct-b8721d20-currentDateString
+                 call 'b8721d20'
+              when other
+                 TODO
+           end-evaluate
            .
                           
       *=================================================================
@@ -149,6 +148,8 @@
            ACCEPT Result FROM DATE YYYYMMDD
            .
        END PROGRAM db42865c.
+
+
       *
       *DECLARE FUNCTION currentDateDB2 PUBLIC
       *    RETURNING Result Type dateDB2.
@@ -197,6 +198,8 @@
            
            .
        END PROGRAM fa5ee5e9.
+
+
       *
       *DECLARE FUNCTION currentDateJulian PUBLIC
       * my comment
@@ -236,6 +239,8 @@
            move        W-Dat to Result
            .
        END PROGRAM cf63e86f.
+
+
       *
       *DECLARE FUNCTION currentDateFreeFormat PUBLIC
       *                   INPUT dateType   PIC X(01)
@@ -294,6 +299,8 @@
            continue
            .
        END PROGRAM cfc290ce.
+
+
       *
       *DECLARE FUNCTION currentDateString PUBLIC
       *    RETURNING Result TYPE dateString.
@@ -316,3 +323,5 @@
            ACCEPT Result FROM DATE YYYYMMDD
            .
        END PROGRAM b8721d20.
+
+

@@ -4,14 +4,15 @@
 
        DATA DIVISION.
        Working-STORAGE SECTION.
-       01 TC-Callee pic X(08) value 'CALLEE'.
-       01 TC-MyIntrin pic X(08) value 'MYINTRIN'.
-       01 TC-Call          PIC X VALUE 'T'.
-           88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'
-                            X'00' thru 'S'
-                            'U' thru X'FF'.
-
+       01 TypeCobol-Generated.
+           05 TC-Callee pic X(08) value 'CALLEE'.
+           05 TC-MyIntrin pic X(08) value 'MYINTRIN'.
+           05 Callee-Fct-c6db8d4a-MyPublicPr pic X(30)
+                value 'Fct=c6db8d4a-MyPublicProcedure'.
+           05 Callee-Fct-d3faf219-MySecondPu pic X(30)
+                value 'Fct=d3faf219-MySecondPublicPro'.
+           05 MyIntrin-Fct-f9abcd81-dump pic X(30)
+                value 'Fct=f9abcd81-dump'.
                                
 
       *01  somedate     TYPE Date.
@@ -42,41 +43,8 @@
            02 Site.
              03 SiteName PIC X(8).
                                               
-       LINKAGE SECTION.
-      *Common to all librairies used by the program.
-       01 TC-Library-PntTab.
-          05 TC-Library-PntNbr          PIC S9(04) COMP.
-          05 TC-Library-Item OCCURS 1000
-                               DEPENDING ON TC-Library-PntNbr
-                               INDEXED   BY TC-Library-Idx.
-              10 TC-Library-Item-Idt      PIC X(08).
-              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
-
-      *To call program c6db8d4a in module Callee
-      *Which is generated code for Callee.MyPublicProcedure
-      *Declared in source file Callee.rdz.tcbl
-       01 TC-Callee-c6db8d4a-Item.
-          05 TC-Callee-c6db8d4a-Idt PIC X(08).
-          05 TC-Callee-c6db8d4a PROCEDURE-POINTER.
-      *To call program d3faf219 in module Callee
-      *Which is generated code for Callee.MySecondPublicProcedure
-      *Declared in source file Callee.rdz.tcbl
-       01 TC-Callee-d3faf219-Item.
-          05 TC-Callee-d3faf219-Idt PIC X(08).
-          05 TC-Callee-d3faf219 PROCEDURE-POINTER.
-      *To call program f9abcd81 in module MyIntrinsicFunctions
-      *Which is generated code for MyIntrinsicFunctions.dump
-      *Declared in source file MyIntrinsicFunctions.rdz.tcbl
-       01 TC-MyIntrin-f9abcd81-Item.
-          05 TC-MyIntrin-f9abcd81-Idt PIC X(08).
-          05 TC-MyIntrin-f9abcd81 PROCEDURE-POINTER.
-
 
        PROCEDURE DIVISION.
-      *
-           PERFORM TC-INITIALIZATIONS
-
-                          
       *    move vect2::Coord2d to Vect2b::Coord2d.
            move Coord2d OF vect2 to Coord2d OF Vect2b.
       *    move MyVar::Site::SiteName to mymessage.
@@ -91,26 +59,16 @@
       * OK public procedures declared in "dependencies" file
       *    CALL Callee::MyPublicProcedure
       *             INPUT      somedate
-           
-           IF ADDRESS OF TC-Callee-c6db8d4a-Item = NULL
-             OR TC-Callee-c6db8d4a-Idt not = 'c6db8d4a'
-               PERFORM TC-LOAD-POINTERS-Callee
-           END-IF
-      *    Equivalent to call c6db8d4a in module Callee
-           CALL TC-Callee-c6db8d4a USING
+           CALL 'zcallpgm' using TC-Callee
+                    Callee-Fct-c6db8d4a-MyPublicPr
                                  somedate
            end-call
                                        
 
       *    CALL Callee::MySecondPublicProcedure
       *             INPUT      vect2
-           
-           IF ADDRESS OF TC-Callee-d3faf219-Item = NULL
-             OR TC-Callee-d3faf219-Idt not = 'd3faf219'
-               PERFORM TC-LOAD-POINTERS-Callee
-           END-IF
-      *    Equivalent to call d3faf219 in module Callee
-           CALL TC-Callee-d3faf219 USING
+           CALL 'zcallpgm' using TC-Callee
+                    Callee-Fct-d3faf219-MySecondPu
                                  vect2
            end-call
                                        
@@ -132,82 +90,20 @@
       * __________________________________________________
       *procedure declared as intrinsic in MyIntrinsicFunctions
       *   call dump input mymessage
-          
-           IF ADDRESS OF TC-MyIntrin-f9abcd81-Item = NULL
-             OR TC-MyIntrin-f9abcd81-Idt not = 'f9abcd81'
-               PERFORM TC-LOAD-POINTERS-MyIntrin
-           END-IF
-      *    Equivalent to call f9abcd81 in module MyIntrinsicFunctions
-           CALL TC-MyIntrin-f9abcd81 USING
+          CALL 'zcallpgm' using TC-MyIntrin
+                    MyIntrin-Fct-f9abcd81-dump
                                  mymessage
            end-call
                                    
       
       *procedure declared as intrinsic in MyIntrinsicFunctions
       *   call MyIntrinsicFunctions::dump input mymessage
-          
-           IF ADDRESS OF TC-MyIntrin-f9abcd81-Item = NULL
-             OR TC-MyIntrin-f9abcd81-Idt not = 'f9abcd81'
-               PERFORM TC-LOAD-POINTERS-MyIntrin
-           END-IF
-      *    Equivalent to call f9abcd81 in module MyIntrinsicFunctions
-           CALL TC-MyIntrin-f9abcd81 USING
+          CALL 'zcallpgm' using TC-MyIntrin
+                    MyIntrin-Fct-f9abcd81-dump
                                  mymessage
            end-call
                                                          
         .
-      *=================================================================
-       TC-INITIALIZATIONS.
-      *=================================================================
-            IF TC-FirstCall
-                 SET TC-NthCall TO TRUE
-                 SET ADDRESS OF TC-Callee-c6db8d4a-Item  TO NULL
-                 SET ADDRESS OF TC-Callee-d3faf219-Item  TO NULL
-                 SET ADDRESS OF TC-MyIntrin-f9abcd81-Item  TO NULL
-            END-IF
-            .
-      *=================================================================
-        TC-LOAD-POINTERS-Callee.
-      *=================================================================
-            CALL 'ZCALLPGM' USING TC-Callee
-            ADDRESS OF TC-Library-PntTab
-            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
-            UNTIL TC-Library-Idx > TC-Library-PntNbr
-                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'c6db8d4a'
-                     SET ADDRESS OF
-                     TC-Callee-c6db8d4a-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN 'd3faf219'
-                     SET ADDRESS OF
-                     TC-Callee-d3faf219-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN OTHER
-                     CONTINUE
-                END-EVALUATE
-            END-PERFORM
-            .
-      *=================================================================
-        TC-LOAD-POINTERS-MyIntrin.
-      *=================================================================
-            CALL 'ZCALLPGM' USING TC-MyIntrin
-            ADDRESS OF TC-Library-PntTab
-            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
-            UNTIL TC-Library-Idx > TC-Library-PntNbr
-                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'f9abcd81'
-                     SET ADDRESS OF
-                     TC-MyIntrin-f9abcd81-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN OTHER
-                     CONTINUE
-                END-EVALUATE
-            END-PERFORM
-            .
-
        END PROGRAM PGM2.
 
       *
@@ -231,3 +127,5 @@
       *     input(mydate: DATE)
            CONTINUE.
        END PROGRAM c2c7ee3a.
+
+

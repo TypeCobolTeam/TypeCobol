@@ -28,6 +28,8 @@
                 {
                     _cache = new List<ITextLine>();
                     _cache.Add(new TextLineSnapshot(-1, "END PROGRAM " + ProgramHashName.Head + ".", null));
+                    _cache.Add(new TextLineSnapshot(-1, "", null));
+                    _cache.Add(new TextLineSnapshot(-1, "", null));
                 }
 
                 return _cache;

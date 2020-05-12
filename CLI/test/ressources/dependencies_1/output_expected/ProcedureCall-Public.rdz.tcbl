@@ -4,13 +4,12 @@
 
        DATA DIVISION.
        Working-STORAGE SECTION.
-       01 TC-Callee pic X(08) value 'CALLEE'.
-       01 TC-Call          PIC X VALUE 'T'.
-           88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'
-                            X'00' thru 'S'
-                            'U' thru X'FF'.
-
+       01 TypeCobol-Generated.
+           05 TC-Callee pic X(08) value 'CALLEE'.
+           05 Callee-Fct-ebb060ea-MyPublicPr pic X(30)
+                value 'Fct=ebb060ea-MyPublicProcedure'.
+           05 Callee-Fct-ca0ab46c-check pic X(30)
+                value 'Fct=ca0ab46c-check'.
                                
 
       *01  somedate     TYPE Date.
@@ -34,35 +33,8 @@
            02 Site.
              03 SiteName PIC X(8).
                                                       
-       LINKAGE SECTION.
-      *Common to all librairies used by the program.
-       01 TC-Library-PntTab.
-          05 TC-Library-PntNbr          PIC S9(04) COMP.
-          05 TC-Library-Item OCCURS 1000
-                               DEPENDING ON TC-Library-PntNbr
-                               INDEXED   BY TC-Library-Idx.
-              10 TC-Library-Item-Idt      PIC X(08).
-              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
-
-      *To call program ebb060ea in module Callee
-      *Which is generated code for Callee.MyPublicProcedure
-      *Declared in source file Callee.rdz.tcbl
-       01 TC-Callee-ebb060ea-Item.
-          05 TC-Callee-ebb060ea-Idt PIC X(08).
-          05 TC-Callee-ebb060ea PROCEDURE-POINTER.
-      *To call program ca0ab46c in module Callee
-      *Which is generated code for Callee.check
-      *Declared in source file Callee.rdz.tcbl
-       01 TC-Callee-ca0ab46c-Item.
-          05 TC-Callee-ca0ab46c-Idt PIC X(08).
-          05 TC-Callee-ca0ab46c PROCEDURE-POINTER.
-
 
        PROCEDURE DIVISION.
-      *
-           PERFORM TC-INITIALIZATIONS
-
-                          
 
 
       *MOVE W-TechCtx::Site::SiteName TO someformat.
@@ -85,13 +57,8 @@
       *    CALL Callee::MyPublicProcedure
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           
-           IF ADDRESS OF TC-Callee-ebb060ea-Item = NULL
-             OR TC-Callee-ebb060ea-Idt not = 'ebb060ea'
-               PERFORM TC-LOAD-POINTERS-Callee
-           END-IF
-      *    Equivalent to call ebb060ea in module Callee
-           CALL TC-Callee-ebb060ea USING
+           CALL 'zcallpgm' using TC-Callee
+                    Callee-Fct-ebb060ea-MyPublicPr
                                  somedate
                                  someformat
                     by reference flag-value
@@ -102,13 +69,8 @@
       *    CALL CALLEE::MyPublicProcedure
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           
-           IF ADDRESS OF TC-Callee-ebb060ea-Item = NULL
-             OR TC-Callee-ebb060ea-Idt not = 'ebb060ea'
-               PERFORM TC-LOAD-POINTERS-Callee
-           END-IF
-      *    Equivalent to call ebb060ea in module Callee
-           CALL TC-Callee-ebb060ea USING
+           CALL 'zcallpgm' using TC-Callee
+                    Callee-Fct-ebb060ea-MyPublicPr
                                  somedate
                                  someformat
                     by reference flag-value
@@ -156,50 +118,12 @@
                                          
       *OK 
       *   call Callee::check input somedate
-          
-           IF ADDRESS OF TC-Callee-ca0ab46c-Item = NULL
-             OR TC-Callee-ca0ab46c-Idt not = 'ca0ab46c'
-               PERFORM TC-LOAD-POINTERS-Callee
-           END-IF
-      *    Equivalent to call ca0ab46c in module Callee
-           CALL TC-Callee-ca0ab46c USING
+          CALL 'zcallpgm' using TC-Callee
+                    Callee-Fct-ca0ab46c-check
                                  somedate
            end-call
                                            
         .
-      *=================================================================
-       TC-INITIALIZATIONS.
-      *=================================================================
-            IF TC-FirstCall
-                 SET TC-NthCall TO TRUE
-                 SET ADDRESS OF TC-Callee-ebb060ea-Item  TO NULL
-                 SET ADDRESS OF TC-Callee-ca0ab46c-Item  TO NULL
-            END-IF
-            .
-      *=================================================================
-        TC-LOAD-POINTERS-Callee.
-      *=================================================================
-            CALL 'ZCALLPGM' USING TC-Callee
-            ADDRESS OF TC-Library-PntTab
-            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
-            UNTIL TC-Library-Idx > TC-Library-PntNbr
-                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'ebb060ea'
-                     SET ADDRESS OF
-                     TC-Callee-ebb060ea-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN 'ca0ab46c'
-                     SET ADDRESS OF
-                     TC-Callee-ca0ab46c-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN OTHER
-                     CONTINUE
-                END-EVALUATE
-            END-PERFORM
-            .
-
        END PROGRAM PGM1.
 
       *
@@ -224,6 +148,8 @@
       *     input(mydate: DATE)
            CONTINUE.
        END PROGRAM a0508f35.
+
+
       *
       *DECLARE PROCEDURE Pgm1PrivateValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
@@ -261,3 +187,5 @@
       *     output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
        END PROGRAM fde394fb.
+
+

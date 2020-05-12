@@ -142,6 +142,8 @@
            DISPLAY myType1
            .
        END PROGRAM cd31ff38.
+
+
       *
       *declare procedure MyProc2
       *     input myType2 type DVZDEP1::Type2.
@@ -162,3 +164,5 @@
            DISPLAY myType2
            .
        END PROGRAM a82f46f0.
+
+

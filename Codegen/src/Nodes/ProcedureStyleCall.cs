@@ -72,11 +72,12 @@ namespace TypeCobol.Codegen.Nodes {
     /// </summary>
 	public override IEnumerable<ITextLine> Lines {
 		get {
-			if (_cache == null) {
+            if (_cache == null) {
 				_cache = new List<ITextLine>();
 				var hash = Node.FunctionDeclaration.Hash;
 
                 //Rule: TCCODEGEN-FIXFOR-ALIGN-FUNCALL
+                var indent = new string(' ', 13);
                 TypeCobol.Compiler.Nodes.FunctionDeclaration fun_decl = this.Node.FunctionDeclaration;
                 string callString;
 
@@ -85,54 +86,14 @@ namespace TypeCobol.Codegen.Nodes {
 			    string func_lib_name = Hash.CalculateCobolProgramNameShortcut(fun_decl.Library);
                 if ((fun_decl.CodeElement).Visibility == AccessModifier.Public && fun_decl.GetProgramNode() != this.GetProgramNode())
                 {
-                    if (this.Node.IsNotByExternalPointer || IsNotByExternalPointer)
-                    {
-                        int genIndent = 1;
-                        IsNotByExternalPointer = true;
-                        var ptrCheckGuardTextLine = new TextLineSnapshot(-1, string.Empty, null);
-                        _cache.Add(ptrCheckGuardTextLine);
-
-                        IsNotByExternalPointer = true;
-                        string ptrCheckGuard = string.Format("{0}IF ADDRESS OF TC-{1}-{2}-Item = NULL", new string(' ', genIndent * 4), func_lib_name, hash);
-                        ptrCheckGuardTextLine = new TextLineSnapshot(-1, ptrCheckGuard, null);
-                        _cache.Add(ptrCheckGuardTextLine);
-
-                        IsNotByExternalPointer = true;
-                        ptrCheckGuard = string.Format("{0}  OR TC-{1}-{2}-Idt not = '{3}'", new string(' ', genIndent * 4), func_lib_name, hash, hash);
-                        ptrCheckGuardTextLine = new TextLineSnapshot(-1, ptrCheckGuard, null);
-                        _cache.Add(ptrCheckGuardTextLine);
-                        genIndent++;
-
-                        ptrCheckGuard = string.Format("{0}PERFORM TC-LOAD-POINTERS-{1}", new string(' ', genIndent * 4), func_lib_name);
-                        ptrCheckGuardTextLine = new TextLineSnapshot(-1, ptrCheckGuard, null);
-                        _cache.Add(ptrCheckGuardTextLine);
-                        genIndent--;
-
-                        ptrCheckGuard = string.Format("{0}END-IF", new string(' ', genIndent * 4));
-                        ptrCheckGuardTextLine = new TextLineSnapshot(-1, ptrCheckGuard, null);
-                        _cache.Add(ptrCheckGuardTextLine);
-
-                        callString = string.Format("*{0}Equivalent to call {1} in module {2}", new string(' ', genIndent * 4), hash, fun_decl.Library);
-                        var callTextLine = new TextLineSnapshot(-1, callString, null);
-                        _cache.Add(callTextLine);
-
-                        callString = string.Format("{0}CALL TC-{1}-{2}{3}", new string(' ', genIndent * 4), func_lib_name, hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
-                        callTextLine = new TextLineSnapshot(-1, callString, null);
-                        _cache.Add(callTextLine);
-                    }
-                    else
-                    {
-                        var callTextLine = new TextLineSnapshot(-1, "", null);
-                        _cache.Add(callTextLine);
-
-                        callString = string.Format("*Equivalent to call {0} in module {1}", hash, fun_decl.Library);
-                        callTextLine = new TextLineSnapshot(-1, callString, null);
-                        _cache.Add(callTextLine);
-
-                        callString = string.Format("CALL TC-{0}-{1}{2}", func_lib_name, hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
-                        callTextLine = new TextLineSnapshot(-1, callString, null);
-                        _cache.Add(callTextLine);
-                    }
+                    callString = string.Format("CALL 'zcallpgm' using TC-{0}", func_lib_name);
+                    var callTextLine = new TextLineSnapshot(-1, callString, null);
+                    _cache.Add(callTextLine);
+                    
+                    callString = string.Format("{0}-Fct-{1}-{2}", func_lib_name, hash, fun_decl.ID);
+                    if (callString.Length > 30) callString = callString.Substring(0, 30);
+                    callTextLine = new TextLineSnapshot(-1, indent + callString, null);
+                    _cache.Add(callTextLine);
                 }
                 else
                 {
@@ -141,8 +102,6 @@ namespace TypeCobol.Codegen.Nodes {
                     _cache.Add(callTextLine);
 
                 }
-                //Rule: TCCODEGEN-FIXFOR-ALIGN-FUNCALL
-				var indent = new string(' ', 13);
                 //Hanle Input parameters
                 //Rule: TCCODEGEN-FUNCALL-PARAMS
                 TypeCobol.Compiler.CodeElements.ParameterSharingMode previousSharingMode = (TypeCobol.Compiler.CodeElements.ParameterSharingMode)(-1);

@@ -1,44 +1,31 @@
-﻿      *TypeCobol_Version:TestTypeCobolVersion
+      *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. MainProgram.
        data division.
        working-storage section.
-       01  TC-MainProg-FctList-Loaded PIC X(02).
-           88 TC-MainProg-FctList-IsLoaded      VALUE 'OK'.
-       01 TC-MainProg-PntTab.
-           05 TC-MainProg-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program af117577
-      *Which is generated code for MainProgram.InFct
-      *Declared in source file EvaluateWhenGroupInProc.tcbl
-           05 TC-MainProg-af117577-Idt   PIC X(08) VALUE 'af117577'.
-           05 TC-MainProg-af117577 PROCEDURE-POINTER.
 
        LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program af117577
+      * Which is generated code for MainProgram.InFct
+           88 Fct-af117577-InFct
+              value 'Fct=af117577-InFct'.
 
+       01 arg1 pic X.
       
-       procedure division USING PntTab-Pnt.
-                          
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
+       procedure division USING TC-FunctionCode
+                          arg1.
+           PERFORM INIT-LIBRARY
            PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
-
            GOBACK.
 
-        FctList-Process-Mode.
-            IF NOT TC-MainProg-FctList-IsLoaded
-              SET TC-MainProg-af117577   TO ENTRY 'af117577'
-
-              SET TC-MainProg-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-MainProg-PntTab
-
+       FctList-Process-Mode.
+           evaluate true
+              when Fct-af117577-InFct
+                 call 'af117577' using arg1
+              when other
+                 TODO
+           end-evaluate
            .
                           
        INIT-LIBRARY.
@@ -85,3 +72,5 @@
           WHEN OTHER
            continue.
        END PROGRAM af117577.
+
+

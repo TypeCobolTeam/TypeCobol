@@ -227,18 +227,24 @@
       *     input(ptrFn: function-pointer, ptrPr: procedure-pointer)
            CONTINUE.
        END PROGRAM d03c3701.
+
+
       *
       *DECLARE PROCEDURE ProcedureWithANameOver22Chars PRIVATE.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. eb292c28.
        END PROGRAM eb292c28.
+
+
       *
       *DECLARE PROCEDURE ValidateDateFormat PRIVATE.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. f0da699b.
        END PROGRAM f0da699b.
+
+
       *
       *DECLARE PROCEDURE ValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
@@ -276,6 +282,8 @@
       *     output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
        END PROGRAM df9b9795.
+
+
       *
       *DECLARE PROCEDURE myProc PRIVATE
       *   INPUT  mydate        TYPE Date
@@ -338,3 +346,5 @@
       *     output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
        END PROGRAM e6e45a7d.
+
+
