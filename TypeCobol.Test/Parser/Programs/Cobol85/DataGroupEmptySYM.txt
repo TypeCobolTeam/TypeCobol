@@ -19,7 +19,6 @@ WorkingStorageData:
       Type:
         (.NET Type=Type, Tag=Usage)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
       DATA1 (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]
@@ -28,7 +27,6 @@ WorkingStorageData:
         (.NET Type=PictureType, Tag=Picture)
         Picture: X(1)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
       DATA2 (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]
@@ -37,10 +35,8 @@ WorkingStorageData:
         (.NET Type=PictureType, Tag=Picture)
         Picture: X(1)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   STR2 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -54,10 +50,8 @@ WorkingStorageData:
       Type:
         (.NET Type=Type, Tag=Usage)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   STR3 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -78,13 +72,10 @@ WorkingStorageData:
             (.NET Type=PictureType, Tag=Picture)
             Picture: X(1)
           Level: 10
-          GlobalIndex: 0
           IsFiller: False
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   STR4 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -105,7 +96,6 @@ WorkingStorageData:
             (.NET Type=PictureType, Tag=Picture)
             Picture: X(1)
           Level: 5
-          GlobalIndex: 0
           IsFiller: False
           DATA2 (.NET Type=VariableSymbol, Kind=Variable)
           Flags: [WORKING_STORAGE]
@@ -114,13 +104,10 @@ WorkingStorageData:
             (.NET Type=PictureType, Tag=Picture)
             Picture: X(1)
           Level: 5
-          GlobalIndex: 0
           IsFiller: False
       Level: 4
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   myVar (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -129,7 +116,6 @@ WorkingStorageData:
     (.NET Type=PictureType, Tag=Picture)
     Picture: X(1)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
 IsNested: False
 

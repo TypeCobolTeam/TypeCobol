@@ -26,7 +26,6 @@ WorkingStorageData:
         Usage: Comp5
         Picture: 9(3)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
       MyTab (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]
@@ -39,10 +38,8 @@ WorkingStorageData:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(1)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   MyAmbiguousGroup (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -58,7 +55,6 @@ WorkingStorageData:
         Usage: Comp5
         Picture: 9(3)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
       MyAmbiguousCounter (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]
@@ -68,7 +64,6 @@ WorkingStorageData:
         Usage: Comp5
         Picture: 9(3)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
       MyAmbiguousTab (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]
@@ -81,10 +76,8 @@ WorkingStorageData:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(1)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   MyGroup3 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -100,7 +93,6 @@ WorkingStorageData:
         Usage: Comp5
         Picture: 9(3)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
       MyTab3 (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]
@@ -113,10 +105,8 @@ WorkingStorageData:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(1)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   MyGroup4 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -135,10 +125,8 @@ WorkingStorageData:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(1)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   MyGroup5 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -166,10 +154,8 @@ WorkingStorageData:
                 Usage: Comp5
                 Picture: 9(3)
               Level: 15
-              GlobalIndex: 0
               IsFiller: False
           Level: 10
-          GlobalIndex: 0
           IsFiller: False
           MySubSubGroup52 (.NET Type=VariableSymbol, Kind=Variable)
           Flags: [WORKING_STORAGE]
@@ -185,13 +171,10 @@ WorkingStorageData:
                 Usage: Comp5
                 Picture: 9(3)
               Level: 15
-              GlobalIndex: 0
               IsFiller: False
           Level: 10
-          GlobalIndex: 0
           IsFiller: False
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
       MyTab5 (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]
@@ -204,7 +187,6 @@ WorkingStorageData:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(1)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
       MyTab51 (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]
@@ -217,7 +199,6 @@ WorkingStorageData:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(1)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
       MyTab5 (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]
@@ -230,7 +211,6 @@ WorkingStorageData:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(1)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
       MyTab5 (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]
@@ -243,7 +223,6 @@ WorkingStorageData:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(1)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
       MyTab5 (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]
@@ -256,10 +235,8 @@ WorkingStorageData:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(1)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
 IsNested: False
 

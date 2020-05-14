@@ -54,7 +54,6 @@ GlobalStorageData:
     (.NET Type=PictureType, Tag=Picture)
     Picture: X(1)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
 WorkingStorageData:
   dataMainLocal (.NET Type=VariableSymbol, Kind=Variable)
@@ -64,7 +63,6 @@ WorkingStorageData:
     (.NET Type=PictureType, Tag=Picture)
     Picture: X(1)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   dataMainGlobal (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [Global, WORKING_STORAGE]
@@ -73,7 +71,6 @@ WorkingStorageData:
     (.NET Type=PictureType, Tag=Picture)
     Picture: X(1)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
 Functions:
   procInMain (.NET Type=FunctionSymbol, Kind=Function)
@@ -90,7 +87,6 @@ Functions:
       (.NET Type=PictureType, Tag=Picture)
       Picture: X(1)
     Level: 1
-    GlobalIndex: 0
     IsFiller: False
   LinkageData:
     paramMain (.NET Type=VariableSymbol, Kind=Variable)
@@ -100,7 +96,6 @@ Functions:
       (.NET Type=PictureType, Tag=Picture)
       Picture: X(1)
     Level: 1
-    GlobalIndex: 0
     IsFiller: False
   IsNested: False
 Programs:
@@ -116,7 +111,6 @@ Programs:
       (.NET Type=PictureType, Tag=Picture)
       Picture: X(1)
     Level: 1
-    GlobalIndex: 0
     IsFiller: False
     dataNestedGlobal (.NET Type=VariableSymbol, Kind=Variable)
     Flags: [Global, WORKING_STORAGE]
@@ -125,7 +119,6 @@ Programs:
       (.NET Type=PictureType, Tag=Picture)
       Picture: X(1)
     Level: 1
-    GlobalIndex: 0
     IsFiller: False
   Functions:
     procInNested (.NET Type=FunctionSymbol, Kind=Function)
@@ -142,7 +135,6 @@ Programs:
         (.NET Type=PictureType, Tag=Picture)
         Picture: X(1)
       Level: 1
-      GlobalIndex: 0
       IsFiller: False
     LinkageData:
       paramNested (.NET Type=VariableSymbol, Kind=Variable)
@@ -152,7 +144,6 @@ Programs:
         (.NET Type=PictureType, Tag=Picture)
         Picture: X(1)
       Level: 1
-      GlobalIndex: 0
       IsFiller: False
     IsNested: False
   Programs:
@@ -168,7 +159,6 @@ Programs:
         (.NET Type=PictureType, Tag=Picture)
         Picture: X(1)
       Level: 1
-      GlobalIndex: 0
       IsFiller: False
       dataSubNestedGlobal (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [Global, WORKING_STORAGE]
@@ -177,7 +167,6 @@ Programs:
         (.NET Type=PictureType, Tag=Picture)
         Picture: X(1)
       Level: 1
-      GlobalIndex: 0
       IsFiller: False
     Functions:
       procInSubNested (.NET Type=FunctionSymbol, Kind=Function)
@@ -194,7 +183,6 @@ Programs:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(1)
         Level: 1
-        GlobalIndex: 0
         IsFiller: False
       LinkageData:
         paramSubNested (.NET Type=VariableSymbol, Kind=Variable)
@@ -204,7 +192,6 @@ Programs:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(1)
         Level: 1
-        GlobalIndex: 0
         IsFiller: False
       IsNested: False
     IsNested: True

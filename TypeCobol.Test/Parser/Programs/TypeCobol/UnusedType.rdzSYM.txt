@@ -1,4 +1,4 @@
-﻿--- Diagnostics ---
+--- Diagnostics ---
 Line 19[43,46] <30, Error, Semantics> - Semantic error: Symbol var1.type2.var2.type3.var3 is not referenced OffendingSymbol=[43,46:var3]<UserDefinedWord>
 Line 19[52,55] <30, Error, Semantics> - Semantic error: Symbol var3 is not referenced OffendingSymbol=[52,55:var3]<UserDefinedWord>
 Line 20[24,27] <30, Error, Semantics> - Semantic error: Symbol type3.var3 is not referenced OffendingSymbol=[24,27:var3]<UserDefinedWord>
@@ -33,10 +33,8 @@ Types:
           Flags: [InsideTypedef]
           Picture: X(1)
         Level: 5
-        GlobalIndex: 0
         IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   Type2 (.NET Type=TypedefSymbol, Kind=Typedef)
   Flags: [WORKING_STORAGE, Strict, InsideTypedef]
@@ -60,14 +58,11 @@ Types:
             Flags: [WORKING_STORAGE, HasATypedefType, InsideTypedef]
             Owner: MyPGM::Type2::var2
             Level: 10
-            GlobalIndex: 0
             IsFiller: False
             TypePaths: [Type3]
         Level: 5
-        GlobalIndex: 0
         IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   Type1 (.NET Type=TypedefSymbol, Kind=Typedef)
   Flags: [WORKING_STORAGE, Strict, InsideTypedef]
@@ -91,14 +86,11 @@ Types:
             Flags: [WORKING_STORAGE, HasATypedefType, InsideTypedef]
             Owner: MyPGM::Type1::var1
             Level: 10
-            GlobalIndex: 0
             IsFiller: False
             TypePaths: [type2]
         Level: 5
-        GlobalIndex: 0
         IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
 IsNested: False
 

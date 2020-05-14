@@ -13,7 +13,6 @@ WorkingStorageData:
     (.NET Type=PictureType, Tag=Picture)
     Picture: 9(1)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   X (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -22,7 +21,6 @@ WorkingStorageData:
     (.NET Type=PictureType, Tag=Picture)
     Picture: X(1)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   T-fixed-1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -51,13 +49,10 @@ WorkingStorageData:
                 (.NET Type=PictureType, Tag=Picture)
                 Picture: X(8)
               Level: 10
-              GlobalIndex: 0
               IsFiller: False
         Level: 5
-        GlobalIndex: 0
         IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   T-variable (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -76,10 +71,8 @@ WorkingStorageData:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(8)
         Level: 5
-        GlobalIndex: 0
         IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   T-nobounds (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -94,10 +87,8 @@ WorkingStorageData:
         (.NET Type=PictureType, Tag=Picture)
         Picture: X(8)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
 IsNested: False
 

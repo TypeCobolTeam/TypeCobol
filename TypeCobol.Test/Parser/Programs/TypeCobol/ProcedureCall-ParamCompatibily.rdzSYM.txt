@@ -1,4 +1,4 @@
-﻿--- Diagnostics ---
+--- Diagnostics ---
 Line 35[12,38] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' with picture 9(10) and received 'picAlpha10' with picture X(10)
 Line 39[12,40] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' of usage  and received 'picNum10Comp' of usage Binary
 Line 41[12,41] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' of usage  and received 'picNum10Comp3' of usage PackedDecimal
@@ -32,7 +32,6 @@ LocalStorageData:
     (.NET Type=PictureType, Tag=Picture)
     Picture: X(10)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   picAlpha20 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [LOCAL_STORAGE]
@@ -41,7 +40,6 @@ LocalStorageData:
     (.NET Type=PictureType, Tag=Picture)
     Picture: X(20)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   picNum10 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [LOCAL_STORAGE]
@@ -50,7 +48,6 @@ LocalStorageData:
     (.NET Type=PictureType, Tag=Picture)
     Picture: 9(10)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   picNum10Comp (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [LOCAL_STORAGE]
@@ -60,7 +57,6 @@ LocalStorageData:
     Usage: Comp
     Picture: 9(10)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   picNum10Comp3 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [LOCAL_STORAGE]
@@ -70,7 +66,6 @@ LocalStorageData:
     Usage: Comp3
     Picture: 9(10)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   picNum10Comp5 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [LOCAL_STORAGE]
@@ -80,7 +75,6 @@ LocalStorageData:
     Usage: Comp5
     Picture: 9(10)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   tab (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [LOCAL_STORAGE]
@@ -99,7 +93,6 @@ LocalStorageData:
           (.NET Type=PictureType, Tag=Picture)
           Picture: 9(10)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
       tabAlpha5 (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [LOCAL_STORAGE]
@@ -112,10 +105,8 @@ LocalStorageData:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(10)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   picNum10Sync (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [LOCAL_STORAGE, Sync]
@@ -124,7 +115,6 @@ LocalStorageData:
     (.NET Type=PictureType, Tag=Picture)
     Picture: 9(10)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   picAlpha10Just (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [LOCAL_STORAGE, Justified]
@@ -133,7 +123,6 @@ LocalStorageData:
     (.NET Type=PictureType, Tag=Picture)
     Picture: X(10)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
 Functions:
   proc1 (.NET Type=FunctionSymbol, Kind=Function)
@@ -150,7 +139,6 @@ Functions:
       (.NET Type=PictureType, Tag=Picture)
       Picture: 9(10)
     Level: 1
-    GlobalIndex: 0
     IsFiller: False
   IsNested: False
   proc2 (.NET Type=FunctionSymbol, Kind=Function)
@@ -167,7 +155,6 @@ Functions:
       (.NET Type=PictureType, Tag=Picture)
       Picture: X(10)
     Level: 1
-    GlobalIndex: 0
     IsFiller: False
   IsNested: False
   proc3 (.NET Type=FunctionSymbol, Kind=Function)
@@ -184,7 +171,6 @@ Functions:
       (.NET Type=PictureType, Tag=Picture)
       Picture: 9(10)
     Level: 1
-    GlobalIndex: 0
     IsFiller: False
   IsNested: False
   proc4 (.NET Type=FunctionSymbol, Kind=Function)
@@ -201,7 +187,6 @@ Functions:
       (.NET Type=PictureType, Tag=Picture)
       Picture: X(10)
     Level: 1
-    GlobalIndex: 0
     IsFiller: False
   IsNested: False
 IsNested: False

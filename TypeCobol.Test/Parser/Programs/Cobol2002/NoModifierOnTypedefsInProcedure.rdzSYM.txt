@@ -38,10 +38,8 @@ Functions:
             Flags: [InsideTypedef]
             Picture: X(1)
           Level: 5
-          GlobalIndex: 0
           IsFiller: False
     Level: 1
-    GlobalIndex: 0
     IsFiller: False
     type2 (.NET Type=TypedefSymbol, Kind=Typedef)
     Flags: [Private, WORKING_STORAGE, InsideTypedef]
@@ -62,10 +60,8 @@ Functions:
             Flags: [InsideTypedef]
             Picture: X(1)
           Level: 5
-          GlobalIndex: 0
           IsFiller: False
     Level: 1
-    GlobalIndex: 0
     IsFiller: False
     type3 (.NET Type=TypedefSymbol, Kind=Typedef)
     Flags: [Global, WORKING_STORAGE, InsideTypedef]
@@ -86,10 +82,8 @@ Functions:
             Flags: [InsideTypedef]
             Picture: X(1)
           Level: 5
-          GlobalIndex: 0
           IsFiller: False
     Level: 1
-    GlobalIndex: 0
     IsFiller: False
   IsNested: False
 Programs:
@@ -122,10 +116,8 @@ Programs:
               Flags: [InsideTypedef]
               Picture: X(1)
             Level: 5
-            GlobalIndex: 0
             IsFiller: False
       Level: 1
-      GlobalIndex: 0
       IsFiller: False
       type5 (.NET Type=TypedefSymbol, Kind=Typedef)
       Flags: [Private, WORKING_STORAGE, InsideTypedef]
@@ -146,10 +138,8 @@ Programs:
               Flags: [InsideTypedef]
               Picture: X(1)
             Level: 5
-            GlobalIndex: 0
             IsFiller: False
       Level: 1
-      GlobalIndex: 0
       IsFiller: False
       type6 (.NET Type=TypedefSymbol, Kind=Typedef)
       Flags: [Global, WORKING_STORAGE, InsideTypedef]
@@ -170,10 +160,8 @@ Programs:
               Flags: [InsideTypedef]
               Picture: X(1)
             Level: 5
-            GlobalIndex: 0
             IsFiller: False
       Level: 1
-      GlobalIndex: 0
       IsFiller: False
     IsNested: False
   IsNested: True
@@ -208,10 +196,8 @@ Functions:
             Flags: [InsideTypedef]
             Picture: X(1)
           Level: 5
-          GlobalIndex: 0
           IsFiller: False
     Level: 1
-    GlobalIndex: 0
     IsFiller: False
     type8 (.NET Type=TypedefSymbol, Kind=Typedef)
     Flags: [Private, WORKING_STORAGE, InsideTypedef]
@@ -232,10 +218,8 @@ Functions:
             Flags: [InsideTypedef]
             Picture: X(1)
           Level: 5
-          GlobalIndex: 0
           IsFiller: False
     Level: 1
-    GlobalIndex: 0
     IsFiller: False
     type9 (.NET Type=TypedefSymbol, Kind=Typedef)
     Flags: [Global, WORKING_STORAGE, InsideTypedef]
@@ -256,10 +240,8 @@ Functions:
             Flags: [InsideTypedef]
             Picture: X(1)
           Level: 5
-          GlobalIndex: 0
           IsFiller: False
     Level: 1
-    GlobalIndex: 0
     IsFiller: False
   IsNested: False
 IsNested: False

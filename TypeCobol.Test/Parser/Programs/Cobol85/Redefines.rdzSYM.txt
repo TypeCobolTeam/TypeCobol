@@ -19,10 +19,8 @@ WorkingStorageData:
         (.NET Type=PictureType, Tag=Picture)
         Picture: X(1)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   MyVar2 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -31,7 +29,6 @@ WorkingStorageData:
     (.NET Type=PictureType, Tag=Picture)
     Picture: X(5)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   MyVar2 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -40,7 +37,6 @@ WorkingStorageData:
     (.NET Type=PictureType, Tag=Picture)
     Picture: X(9)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   Redefines:
     RedefinesTest::MyRedifines
@@ -70,13 +66,10 @@ WorkingStorageData:
             (.NET Type=Type, Tag=DataCondition)
             Flags: [BuiltinType]
           Level: 88
-          GlobalIndex: 0
           IsFiller: False
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   Redefined: RedefinesTest::MyVar2
   MyRedifines2 (.NET Type=RedefinesSymbol, Kind=Variable)
@@ -101,13 +94,10 @@ WorkingStorageData:
             (.NET Type=Type, Tag=DataCondition)
             Flags: [BuiltinType]
           Level: 88
-          GlobalIndex: 0
           IsFiller: False
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   Redefined: RedefinesTest::MyVar2
   MyRedifines3 (.NET Type=RedefinesSymbol, Kind=Variable)
@@ -132,13 +122,10 @@ WorkingStorageData:
             (.NET Type=Type, Tag=DataCondition)
             Flags: [BuiltinType]
           Level: 88
-          GlobalIndex: 0
           IsFiller: False
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   Redefined: RedefinesTest::MyVar2
   MyRedifines4 (.NET Type=RedefinesSymbol, Kind=Variable)
@@ -163,13 +150,10 @@ WorkingStorageData:
             (.NET Type=Type, Tag=DataCondition)
             Flags: [BuiltinType]
           Level: 88
-          GlobalIndex: 0
           IsFiller: False
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   Redefined: RedefinesTest::MyVar2
    (.NET Type=RedefinesSymbol, Kind=Variable)
@@ -178,7 +162,6 @@ WorkingStorageData:
   Type:
     (.NET Type=Type, Tag=Usage)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   Redefined: RedefinesTest::MyVar2
    (.NET Type=VariableSymbol, Kind=Variable)
@@ -194,7 +177,6 @@ WorkingStorageData:
         (.NET Type=PictureType, Tag=Picture)
         Picture: X(1)
       Level: 6
-      GlobalIndex: 0
       IsFiller: False
       Redefines:
         RedefinesTest::VarGroup-Bis
@@ -205,7 +187,6 @@ WorkingStorageData:
         (.NET Type=PictureType, Tag=Picture)
         Picture: X(1)
       Level: 6
-      GlobalIndex: 0
       IsFiller: False
       Redefines:
         RedefinesTest::FILTER
@@ -217,11 +198,9 @@ WorkingStorageData:
         (.NET Type=PictureType, Tag=Picture)
         Picture: X(1)
       Level: 6
-      GlobalIndex: 0
       IsFiller: False
       Redefined: RedefinesTest::VarGroup-Bis
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
 IsNested: False
 

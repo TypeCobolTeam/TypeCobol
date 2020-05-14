@@ -36,10 +36,8 @@ Types:
           Flags: [InsideTypedef]
           Picture: X(1)
         Level: 5
-        GlobalIndex: 0
         IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   type2 (.NET Type=TypedefSymbol, Kind=Typedef)
   Flags: [Private, Global, WORKING_STORAGE, InsideTypedef]
@@ -60,10 +58,8 @@ Types:
           Flags: [InsideTypedef]
           Picture: X(1)
         Level: 5
-        GlobalIndex: 0
         IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
 Programs:
   Nested (.NET Type=ProgramSymbol, Kind=Program)
@@ -90,10 +86,8 @@ Programs:
             Flags: [InsideTypedef]
             Picture: X(1)
           Level: 5
-          GlobalIndex: 0
           IsFiller: False
     Level: 1
-    GlobalIndex: 0
     IsFiller: False
     type4 (.NET Type=TypedefSymbol, Kind=Typedef)
     Flags: [Private, Global, WORKING_STORAGE, InsideTypedef]
@@ -114,10 +108,8 @@ Programs:
             Flags: [InsideTypedef]
             Picture: X(1)
           Level: 5
-          GlobalIndex: 0
           IsFiller: False
     Level: 1
-    GlobalIndex: 0
     IsFiller: False
   IsNested: True
 IsNested: False
@@ -146,10 +138,8 @@ Types:
           Flags: [InsideTypedef]
           Picture: X(1)
         Level: 5
-        GlobalIndex: 0
         IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   type6 (.NET Type=TypedefSymbol, Kind=Typedef)
   Flags: [Private, Global, WORKING_STORAGE, InsideTypedef]
@@ -170,10 +160,8 @@ Types:
           Flags: [InsideTypedef]
           Picture: X(1)
         Level: 5
-        GlobalIndex: 0
         IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
 IsNested: False
 

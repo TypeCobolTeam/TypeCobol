@@ -17,15 +17,6 @@ namespace TypeCobol.Compiler.Symbols
         {
         }
 
-        /// <summary>
-        /// The Global index associated to this variable.
-        /// </summary>
-        public int GlobalIndex
-        {
-            get;
-            internal set;
-        }
-
         private int _level;
         /// <summary>
         /// Level of this variable.
@@ -147,8 +138,6 @@ namespace TypeCobol.Compiler.Symbols
             string indent = new string(' ', 2 * indentLevel);
             output.Write(indent);
             output.WriteLine("Level: " + Level);
-            output.Write(indent);
-            output.WriteLine("GlobalIndex: " + GlobalIndex);
             output.Write(indent);
             output.WriteLine("IsFiller: " + IsFiller);
             if (Redefines != null && Redefines.Count > 0)

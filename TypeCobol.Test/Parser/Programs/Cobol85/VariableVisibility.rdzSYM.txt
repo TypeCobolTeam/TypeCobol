@@ -1,4 +1,4 @@
-﻿--- Diagnostics ---
+--- Diagnostics ---
 Line 10[18,29] <30, Error, Semantics> - Semantic error: Symbol dataNested21 is not referenced OffendingSymbol=[18,29:dataNested21]<UserDefinedWord>
 Line 10[34,45] <30, Error, Semantics> - Semantic error: Symbol dataNested22 is not referenced OffendingSymbol=[34,45:dataNested22]<UserDefinedWord>
 Line 12[18,28] <30, Error, Semantics> - Semantic error: Symbol dataNested1 is not referenced OffendingSymbol=[18,28:dataNested1]<UserDefinedWord>
@@ -21,7 +21,6 @@ WorkingStorageData:
     (.NET Type=PictureType, Tag=Picture)
     Picture: X(1)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   dataMain2 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [Global, WORKING_STORAGE]
@@ -30,7 +29,6 @@ WorkingStorageData:
     (.NET Type=PictureType, Tag=Picture)
     Picture: X(1)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
 Programs:
   Nested (.NET Type=ProgramSymbol, Kind=Program)
@@ -45,7 +43,6 @@ Programs:
       (.NET Type=PictureType, Tag=Picture)
       Picture: X(1)
     Level: 1
-    GlobalIndex: 0
     IsFiller: False
     dataNested2 (.NET Type=VariableSymbol, Kind=Variable)
     Flags: [Global, WORKING_STORAGE]
@@ -54,7 +51,6 @@ Programs:
       (.NET Type=PictureType, Tag=Picture)
       Picture: X(1)
     Level: 1
-    GlobalIndex: 0
     IsFiller: False
   Programs:
     Nested2 (.NET Type=ProgramSymbol, Kind=Program)
@@ -69,7 +65,6 @@ Programs:
         (.NET Type=PictureType, Tag=Picture)
         Picture: X(1)
       Level: 1
-      GlobalIndex: 0
       IsFiller: False
       dataNested22 (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [Global, WORKING_STORAGE]
@@ -78,7 +73,6 @@ Programs:
         (.NET Type=PictureType, Tag=Picture)
         Picture: X(1)
       Level: 1
-      GlobalIndex: 0
       IsFiller: False
     IsNested: True
   IsNested: True

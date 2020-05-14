@@ -1,4 +1,4 @@
-﻿--- Diagnostics ---
+--- Diagnostics ---
 Line 14[11,14] <27, Error, Syntax> - Syntax error : Group item var1 cannot have a "PICTURE" OffendingSymbol=[11,14:var1]<UserDefinedWord>
 Line 53[13,16] <27, Error, Syntax> - Syntax error : Group item var2 cannot have a "PICTURE" OffendingSymbol=[13,16:var2]<UserDefinedWord>
 Line 74[11,14] <27, Error, Syntax> - Syntax error : Group item var1 cannot have a "PICTURE" OffendingSymbol=[11,14:var1]<UserDefinedWord>
@@ -29,10 +29,8 @@ WorkingStorageData:
             (.NET Type=PictureType, Tag=Picture)
             Picture: X(1)
           Level: 10
-          GlobalIndex: 0
           IsFiller: False
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
       var4 (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]
@@ -41,10 +39,8 @@ WorkingStorageData:
         (.NET Type=PictureType, Tag=Picture)
         Picture: 9(1)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   var1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -62,10 +58,8 @@ WorkingStorageData:
         (.NET Type=PictureType, Tag=Picture)
         Picture: X(1)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   var1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -85,7 +79,6 @@ WorkingStorageData:
         Usage: Comp
         Picture: X(2)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
       var3 (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]
@@ -95,7 +88,6 @@ WorkingStorageData:
         Usage: Comp
         Picture: 9(1)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
       var4 (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]
@@ -105,10 +97,8 @@ WorkingStorageData:
         Usage: Comp
         Picture: X(2)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   toto (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -128,10 +118,8 @@ WorkingStorageData:
         Flags: [BuiltinType]
         Usage: Comp2
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   toto (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -151,10 +139,8 @@ WorkingStorageData:
         Flags: [BuiltinType]
         Usage: Comp2
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   toto (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -174,10 +160,8 @@ WorkingStorageData:
         Usage: Comp2
         Picture: 9(1)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   var1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -197,10 +181,8 @@ WorkingStorageData:
         Usage: Comp
         Picture: 9(1)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   var1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -220,10 +202,8 @@ WorkingStorageData:
         Usage: Pointer
         Picture: X(1)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   var1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -243,10 +223,8 @@ WorkingStorageData:
         Usage: Pointer
         Picture: X(1)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   var1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -270,13 +248,10 @@ WorkingStorageData:
             (.NET Type=PictureType, Tag=Picture)
             Picture: X(1)
           Level: 10
-          GlobalIndex: 0
           IsFiller: False
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   var1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -302,13 +277,10 @@ WorkingStorageData:
             Usage: Comp
             Picture: X(1)
           Level: 10
-          GlobalIndex: 0
           IsFiller: False
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   var1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -334,7 +306,6 @@ WorkingStorageData:
             Usage: Pointer
             Picture: X(1)
           Level: 10
-          GlobalIndex: 0
           IsFiller: False
           var4 (.NET Type=VariableSymbol, Kind=Variable)
           Flags: [WORKING_STORAGE]
@@ -344,7 +315,6 @@ WorkingStorageData:
             Usage: Pointer
             Picture: 9(1)
           Level: 10
-          GlobalIndex: 0
           IsFiller: False
           var5 (.NET Type=VariableSymbol, Kind=Variable)
           Flags: [WORKING_STORAGE]
@@ -354,13 +324,10 @@ WorkingStorageData:
             Usage: Pointer
             Picture: X(2)
           Level: 10
-          GlobalIndex: 0
           IsFiller: False
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   var1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -384,13 +351,10 @@ WorkingStorageData:
             (.NET Type=PictureType, Tag=Picture)
             Picture: X(1)
           Level: 10
-          GlobalIndex: 0
           IsFiller: False
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   var1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -420,13 +384,10 @@ WorkingStorageData:
             Usage: Comp
             Picture: X(1)
           Level: 10
-          GlobalIndex: 0
           IsFiller: False
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   var1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -456,13 +417,10 @@ WorkingStorageData:
             Usage: Pointer
             Picture: X(1)
           Level: 10
-          GlobalIndex: 0
           IsFiller: False
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   var1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -471,7 +429,6 @@ WorkingStorageData:
     (.NET Type=PictureType, Tag=Picture)
     Picture: X(100)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   Redefines:
     DVZF0OSM::var2
@@ -491,10 +448,8 @@ WorkingStorageData:
         (.NET Type=PictureType, Tag=Picture)
         Picture: X(1)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   Redefined: DVZF0OSM::var1
   var1 (.NET Type=VariableSymbol, Kind=Variable)
@@ -510,7 +465,6 @@ WorkingStorageData:
         (.NET Type=PictureType, Tag=Picture)
         Picture: X(10)
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
       Redefines:
         DVZF0OSM::var1::var3
@@ -530,7 +484,6 @@ WorkingStorageData:
             (.NET Type=PictureType, Tag=Picture)
             Picture: X(1)
           Level: 10
-          GlobalIndex: 0
           IsFiller: False
           var5 (.NET Type=VariableSymbol, Kind=Variable)
           Flags: [WORKING_STORAGE]
@@ -539,14 +492,11 @@ WorkingStorageData:
             (.NET Type=PictureType, Tag=Picture)
             Picture: X(9)
           Level: 10
-          GlobalIndex: 0
           IsFiller: False
       Level: 5
-      GlobalIndex: 0
       IsFiller: False
       Redefined: DVZF0OSM::var1::var2
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
 IsNested: False
 

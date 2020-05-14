@@ -1,4 +1,4 @@
-﻿--- Diagnostics ---
+--- Diagnostics ---
 Line 23[31,47] <27, Error, Syntax> - Syntax error : A Global-Storage Section variable cannot be referenced in another Data Section OffendingSymbol=[31,47:dependOnVarGlobal]<UserDefinedWord>
 
 --- Program ---
@@ -13,7 +13,6 @@ GlobalStorageData:
     (.NET Type=PictureType, Tag=Picture)
     Picture: X(2)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   TEST1-ELT0 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [GLOBAL_STORAGE]
@@ -26,7 +25,6 @@ GlobalStorageData:
       (.NET Type=PictureType, Tag=Picture)
       Picture: X(120)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
 WorkingStorageData:
   dependOnVarWorking (.NET Type=VariableSymbol, Kind=Variable)
@@ -36,7 +34,6 @@ WorkingStorageData:
     (.NET Type=PictureType, Tag=Picture)
     Picture: X(2)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   TEST1-ELT1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -49,7 +46,6 @@ WorkingStorageData:
       (.NET Type=PictureType, Tag=Picture)
       Picture: X(120)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
   TEST2-ELT1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -62,7 +58,6 @@ WorkingStorageData:
       (.NET Type=PictureType, Tag=Picture)
       Picture: X(120)
   Level: 1
-  GlobalIndex: 0
   IsFiller: False
 IsNested: False
 
