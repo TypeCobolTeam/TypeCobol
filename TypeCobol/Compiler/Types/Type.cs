@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Symbols;
 
 using static TypeCobol.Compiler.Symbols.Symbol;
+
 
 namespace TypeCobol.Compiler.Types
 {
@@ -39,33 +41,60 @@ namespace TypeCobol.Compiler.Types
         /// </summary>
         public enum UsageFormat
         {
-            None,           //No associated Usage
-            Binary = 1,
-            Comp,
+            None, //No usage associated
+            Comp, //Synonym of BINARY and also COMP-4
             Comp1,
             Comp2,
-            Comp3,
-            Comp4,
+            Comp3, //Synonym of PackedDecimal
             Comp5,
             Display,
             Display1,
             Index,
             National,
-            PackedDecimal,
             ObjectReference,
             Pointer,
             ProcedurePointer,
-            FunctionPointer,
+            FunctionPointer
+        }
 
-            //Cobol Builtin types usages
-            Omitted,
-            Alphabetic,
-            Numeric,
-            NumericEdited,
-            Alphanumeric,
-            AlphanumericEdited,
-            DBCS,
-            FloatingPoint,
+        /// <summary>
+        /// Convert a data usage to a Type UsageFormat.
+        /// </summary>
+        /// <param name="usage">Data usage.</param>
+        /// <returns>Corresponding instance of UsageFormat.</returns>
+        internal static UsageFormat DataUsage2UsageFormat(DataUsage usage)
+        {
+            switch (usage)
+            {
+                case DataUsage.Binary:
+                    return UsageFormat.Comp;
+                case DataUsage.NativeBinary:
+                    return UsageFormat.Comp5;
+                case DataUsage.PackedDecimal:
+                    return UsageFormat.Comp3;
+                case DataUsage.FloatingPoint:
+                    return UsageFormat.Comp1;
+                case DataUsage.LongFloatingPoint:
+                    return UsageFormat.Comp2;
+                case DataUsage.Display:
+                    return UsageFormat.Display;
+                case DataUsage.DBCS:
+                    return UsageFormat.Display1;
+                case DataUsage.FunctionPointer:
+                    return UsageFormat.FunctionPointer;
+                case DataUsage.Index:
+                    return UsageFormat.Index;
+                case DataUsage.National:
+                    return UsageFormat.National;
+                case DataUsage.ObjectReference:
+                    return UsageFormat.ObjectReference;
+                case DataUsage.Pointer:
+                    return UsageFormat.Pointer;
+                case DataUsage.ProcedurePointer:
+                    return UsageFormat.ProcedurePointer;
+                default:
+                    return UsageFormat.None;
+            }
         }
 
         /// <summary>
@@ -113,11 +142,9 @@ namespace TypeCobol.Compiler.Types
                 switch (Usage)
                 {
                     case UsageFormat.Comp:
-                    case UsageFormat.Comp4:
                     case UsageFormat.Comp5:
                     case UsageFormat.Display1:
                     case UsageFormat.National:
-                    case UsageFormat.Binary:
                         return 2;
                     //Floating-point: Specifies for internal floating -point items (single precision)
                     //(i.e float in java, or C)
@@ -134,7 +161,6 @@ namespace TypeCobol.Compiler.Types
                         return 8;
                     case UsageFormat.Comp3:
                     case UsageFormat.Display:
-                    case UsageFormat.PackedDecimal:
                         return 1;
 
                     default:
