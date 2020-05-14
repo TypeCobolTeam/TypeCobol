@@ -23,7 +23,7 @@ WorkingStorageData:
       Owner: StringStatement::MyGroup
       Type:
         (.NET Type=PictureType, Tag=Picture)
-        Usage: Binary
+        Usage: Comp5
         Picture: 9(3)
       Level: 5
       GlobalIndex: 0
@@ -55,7 +55,7 @@ WorkingStorageData:
       Owner: StringStatement::MyAmbiguousGroup
       Type:
         (.NET Type=PictureType, Tag=Picture)
-        Usage: Binary
+        Usage: Comp5
         Picture: 9(3)
       Level: 5
       GlobalIndex: 0
@@ -65,7 +65,7 @@ WorkingStorageData:
       Owner: StringStatement::MyAmbiguousGroup
       Type:
         (.NET Type=PictureType, Tag=Picture)
-        Usage: Binary
+        Usage: Comp5
         Picture: 9(3)
       Level: 5
       GlobalIndex: 0
@@ -97,7 +97,7 @@ WorkingStorageData:
       Owner: StringStatement::MyGroup3
       Type:
         (.NET Type=PictureType, Tag=Picture)
-        Usage: Binary
+        Usage: Comp5
         Picture: 9(3)
       Level: 5
       GlobalIndex: 0
@@ -163,7 +163,7 @@ WorkingStorageData:
               Owner: StringStatement::MyGroup5::MySubGroup5::MySubSubGroup51
               Type:
                 (.NET Type=PictureType, Tag=Picture)
-                Usage: Binary
+                Usage: Comp5
                 Picture: 9(3)
               Level: 15
               GlobalIndex: 0
@@ -182,7 +182,7 @@ WorkingStorageData:
               Owner: StringStatement::MyGroup5::MySubGroup5::MySubSubGroup52
               Type:
                 (.NET Type=PictureType, Tag=Picture)
-                Usage: Binary
+                Usage: Comp5
                 Picture: 9(3)
               Level: 15
               GlobalIndex: 0

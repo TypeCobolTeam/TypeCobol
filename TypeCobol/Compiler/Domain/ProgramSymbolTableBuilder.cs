@@ -421,60 +421,6 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Convert a data usage to a Type UsageFormat.
-        /// </summary>
-        /// <param name="usage"></param>
-        /// <returns></returns>
-        private static Type.UsageFormat DataUsage2UsageFormat(DataUsage usage)
-        {
-            switch (usage)
-            {
-                case DataUsage.Binary:
-                case DataUsage.NativeBinary:
-                    return Type.UsageFormat.Binary;
-
-                case DataUsage.FloatingPoint:
-                    return Type.UsageFormat.Comp1;
-
-                case DataUsage.Display:
-                    return Type.UsageFormat.Display;
-
-                case DataUsage.FunctionPointer:
-                    return Type.UsageFormat.FunctionPointer;
-
-                case DataUsage.Index:
-                    return Type.UsageFormat.Index;
-
-                case DataUsage.National:
-                    return Type.UsageFormat.National;
-
-                case DataUsage.None:
-                    return Type.UsageFormat.None;
-
-                case DataUsage.ObjectReference:
-                    return Type.UsageFormat.ObjectReference;
-
-                case DataUsage.PackedDecimal:
-                    return Type.UsageFormat.PackedDecimal;
-
-                case DataUsage.Pointer:
-                    return Type.UsageFormat.Pointer;
-
-                case DataUsage.ProcedurePointer:
-                    return Type.UsageFormat.ProcedurePointer;
-
-                case DataUsage.LongFloatingPoint:
-                    return Type.UsageFormat.Comp2;
-
-                case DataUsage.DBCS:
-                    return Type.UsageFormat.Display1;
-
-                default:
-                    return Type.UsageFormat.None;
-            }
-        }
-
-        /// <summary>
         /// Checks if the given DataDefinition instance has a single Usage definition.
         /// </summary>
         /// <param name="dataDef">The Data Definition to be checked.</param>
@@ -536,8 +482,8 @@ namespace TypeCobol.Compiler.Domain
         private static Type CreateUsageType(DataUsage dataUsage)
         {
             System.Diagnostics.Debug.Assert(dataUsage != DataUsage.None);
-            Type.UsageFormat usage = DataUsage2UsageFormat(dataUsage);
-            Type type = BuiltinTypes.BuiltinUsageType(usage);
+            Type.UsageFormat usage = Type.DataUsage2UsageFormat(dataUsage);
+            Type type = Builtins.GetUsageType(usage);
             return type;
         }
 
@@ -590,7 +536,7 @@ namespace TypeCobol.Compiler.Domain
         private static PictureType CreatePictureType(DataDefinition dataDef, AlphanumericValue picture)
         {
             System.Diagnostics.Debug.Assert(picture != null);
-            Type.UsageFormat usage = dataDef.Usage.HasValue ? DataUsage2UsageFormat(dataDef.Usage.Value) : Type.UsageFormat.None;
+            Type.UsageFormat usage = dataDef.Usage.HasValue ? Type.DataUsage2UsageFormat(dataDef.Usage.Value) : Type.UsageFormat.None;
             PictureValidator pictureValidator = new PictureValidator(picture.Value, dataDef.SignIsSeparate);
             PictureType type = new PictureType(pictureValidator);
             //Use permissive Usage setter which allows COMP1 and COMP2
@@ -621,7 +567,7 @@ namespace TypeCobol.Compiler.Domain
         /// <returns>The untyped symbol</returns>
         private VariableSymbol CreateSymbolWithoutType(DataDefinition dataDef, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
-            Type type = BuiltinTypes.BuiltinUsageType(Type.UsageFormat.None);
+            Type type = Builtins.GetUsageType(Type.UsageFormat.None);
             return CreateAndAddRedefinesOrVariableSymbol(type, dataDef, currentDomain, typedef);
         }
 
@@ -813,7 +759,7 @@ namespace TypeCobol.Compiler.Domain
         {
             System.Diagnostics.Debug.Assert(dataDef.CodeElement?.Type == CodeElementType.DataConditionEntry);
             VariableSymbol sym = new VariableSymbol(dataDef.Name);
-            sym.Type = BuiltinTypes.DataConditionType;
+            sym.Type = Builtins.DataConditionType;
             DecorateSymbol(dataDef, sym, currentDomain);
             if (typedef == null)
                 CurrentScope.Add(sym);

@@ -74,14 +74,15 @@ WorkingStorageData:
     (.NET Type=GroupType, Tag=Group)
     LeadingType:
       (.NET Type=Type, Tag=Usage)
-      Usage: Binary
+      Flags: [BuiltinType]
+      Usage: Comp
     Fields:
       var2 (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]
       Owner: DVZF0OSM::var1
       Type:
         (.NET Type=PictureType, Tag=Picture)
-        Usage: Binary
+        Usage: Comp
         Picture: X(2)
       Level: 5
       GlobalIndex: 0
@@ -91,7 +92,7 @@ WorkingStorageData:
       Owner: DVZF0OSM::var1
       Type:
         (.NET Type=PictureType, Tag=Picture)
-        Usage: Binary
+        Usage: Comp
         Picture: 9(1)
       Level: 5
       GlobalIndex: 0
@@ -101,7 +102,7 @@ WorkingStorageData:
       Owner: DVZF0OSM::var1
       Type:
         (.NET Type=PictureType, Tag=Picture)
-        Usage: Binary
+        Usage: Comp
         Picture: X(2)
       Level: 5
       GlobalIndex: 0
@@ -185,14 +186,15 @@ WorkingStorageData:
     (.NET Type=GroupType, Tag=Group)
     LeadingType:
       (.NET Type=Type, Tag=Usage)
-      Usage: Binary
+      Flags: [BuiltinType]
+      Usage: Comp
     Fields:
       var3 (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]
       Owner: DVZF0OSM::var1
       Type:
         (.NET Type=PictureType, Tag=Picture)
-        Usage: Binary
+        Usage: Comp
         Picture: 9(1)
       Level: 5
       GlobalIndex: 0
@@ -289,14 +291,15 @@ WorkingStorageData:
         (.NET Type=GroupType, Tag=Group)
         LeadingType:
           (.NET Type=Type, Tag=Usage)
-          Usage: Binary
+          Flags: [BuiltinType]
+          Usage: Comp
         Fields:
           var3 (.NET Type=VariableSymbol, Kind=Variable)
           Flags: [WORKING_STORAGE]
           Owner: DVZF0OSM::var1::var2
           Type:
             (.NET Type=PictureType, Tag=Picture)
-            Usage: Binary
+            Usage: Comp
             Picture: X(1)
           Level: 10
           GlobalIndex: 0
@@ -396,7 +399,8 @@ WorkingStorageData:
     (.NET Type=GroupType, Tag=Group)
     LeadingType:
       (.NET Type=Type, Tag=Usage)
-      Usage: Binary
+      Flags: [BuiltinType]
+      Usage: Comp
     Fields:
       var2 (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]
@@ -405,14 +409,15 @@ WorkingStorageData:
         (.NET Type=GroupType, Tag=Group)
         LeadingType:
           (.NET Type=Type, Tag=Usage)
-          Usage: Binary
+          Flags: [BuiltinType]
+          Usage: Comp
         Fields:
           var3 (.NET Type=VariableSymbol, Kind=Variable)
           Flags: [WORKING_STORAGE]
           Owner: DVZF0OSM::var1::var2
           Type:
             (.NET Type=PictureType, Tag=Picture)
-            Usage: Binary
+            Usage: Comp
             Picture: X(1)
           Level: 10
           GlobalIndex: 0

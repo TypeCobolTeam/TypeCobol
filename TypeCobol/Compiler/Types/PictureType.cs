@@ -267,9 +267,7 @@ namespace TypeCobol.Compiler.Types
                 }
                 switch (Usage)
                 {
-                    case Type.UsageFormat.Binary:
                     case Type.UsageFormat.Comp:
-                    case Type.UsageFormat.Comp4:
                     case Type.UsageFormat.Comp5:
                         // The Picture must be a numeric Picture.
                         System.Diagnostics.Contracts.Contract.Requires(Category == PictureCategory.Numeric);
@@ -287,7 +285,6 @@ namespace TypeCobol.Compiler.Types
                             return 8;//8 bytes double word.
                         }
                     case Type.UsageFormat.Comp3:
-                    case Type.UsageFormat.PackedDecimal:
                         {
                             //S9(4) COMP - 3 would occupy 2 bytes.
                             //S9(6) COMP - 3 would occupy 3 bytes.

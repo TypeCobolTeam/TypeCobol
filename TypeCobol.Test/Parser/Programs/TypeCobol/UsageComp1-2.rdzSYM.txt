@@ -51,7 +51,7 @@ Functions:
     Owner: DVZF0OSM::KONotCorrectFormat
     Type:
       (.NET Type=PictureType, Tag=Picture)
-      Usage: Binary
+      Usage: Comp
       Picture: S(1)9(6)
     Level: 1
     GlobalIndex: 0
@@ -81,7 +81,7 @@ Functions:
     Owner: DVZF0OSM::KONotCorrectFormat
     Type:
       (.NET Type=PictureType, Tag=Picture)
-      Usage: Binary
+      Usage: Comp5
       Picture: 9(10)
     Level: 1
     GlobalIndex: 0

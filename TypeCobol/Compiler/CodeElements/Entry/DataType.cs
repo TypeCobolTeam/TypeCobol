@@ -186,7 +186,7 @@ namespace TypeCobol.Compiler.CodeElements
                 typeDefinition.Add(CreateData(5, "YYYY", '9', 4, typeDefinition));
                 typeDefinition.Add(CreateData(5, "MM", '9', 2, typeDefinition));
                 typeDefinition.Add(CreateData(5, "DD", '9', 2, typeDefinition));
-                typeDefinition.SemanticData = Compiler.Symbols.BuiltinSymbols.Date;
+                typeDefinition.SemanticData = Compiler.Symbols.Builtins.Date;
             }
             else if (type == DataType.Currency)
             {
@@ -201,17 +201,17 @@ namespace TypeCobol.Compiler.CodeElements
                 dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.PictureCharacterString, 38, 42, tokenLine));
                 dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.PeriodSeparator, 43, 43, tokenLine));
                 typeDefinition = new Nodes.TypeDefinition(dataTypeDescriptionEntry);
-                typeDefinition.SemanticData = Compiler.Symbols.BuiltinSymbols.Currency;
+                typeDefinition.SemanticData = Compiler.Symbols.Builtins.Currency;
             }
             else if (type == DataType.Boolean)
             {
                 typeDefinition = new Nodes.TypeDefinition(dataTypeDescriptionEntry);
-                typeDefinition.SemanticData = Compiler.Symbols.BuiltinSymbols.Boolean;
+                typeDefinition.SemanticData = Compiler.Symbols.Builtins.Boolean;
             }
             else if (type == DataType.String)
             {
                 typeDefinition = new Nodes.TypeDefinition(dataTypeDescriptionEntry);
-                typeDefinition.SemanticData = Compiler.Symbols.BuiltinSymbols.String;
+                typeDefinition.SemanticData = Compiler.Symbols.Builtins.String;
             }
             else
             {

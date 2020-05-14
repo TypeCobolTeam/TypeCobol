@@ -18,7 +18,7 @@ namespace TypeCobol.Compiler.Symbols
             : base(name)
         {
             Kind = Kinds.Index;
-            Type = BuiltinTypes.IndexType;
+            Type = Builtins.IndexType;
         }
 
         /// <summary>
