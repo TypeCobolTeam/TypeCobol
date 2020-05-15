@@ -233,7 +233,7 @@ namespace TypeCobol.Compiler.Symbols
             Output.Write(' ');
             Output.Write(redefines.Name);
             Output.Write(" REDEFINES ");
-            Output.Write(redefines.Redefined.Name);
+            Output.Write(string.Join(".", redefines.RedefinedPath));
             WriteSymbolType(redefines);
             if (_endDeclarationWithDot && !_insideGroupType) Output.Write('.');
             return null;
@@ -410,28 +410,6 @@ namespace TypeCobol.Compiler.Symbols
                 yield return "TO";
                 yield return array.MaxOccur.ToString();
                 yield return "TIMES";
-            }
-        }
-
-        public override object VisitPointerType(PointerType pointer, IEnumerable<string> modifiers)
-        {
-            WriteModifiers(modifiers);
-
-            if (pointer.ElementType != null)
-            {
-                pointer.ElementType.Accept(this, GetPointerModifier());
-            }
-            else
-            {
-                Output.Write(" ???");
-                WriteModifiers(GetPointerModifier());
-            }
-
-            return null;
-
-            IEnumerable<string> GetPointerModifier()
-            {
-                yield return "POINTER";
             }
         }
 

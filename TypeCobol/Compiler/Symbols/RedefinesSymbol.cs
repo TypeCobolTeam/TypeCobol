@@ -17,20 +17,37 @@ namespace TypeCobol.Compiler.Symbols
         /// Constructor
         /// </summary>
         /// <param name="name">Symbol 's name</param>
-        /// <param name="redefined">The redefined Symbol</param>
-        public RedefinesSymbol(string name, VariableSymbol redefined) : base(name)
+        /// <param name="redefinedPath">The redefined Symbol path</param>
+        public RedefinesSymbol(string name, string[] redefinedPath)
+            : base(name)
         {
+            System.Diagnostics.Debug.Assert(redefinedPath != null);
+            System.Diagnostics.Debug.Assert(redefinedPath.Length != 0);
             base.SetFlag(Flags.Redefines, true);
-            Redefined = redefined;
+            RedefinedPath = redefinedPath;
+            Redefined = null;
         }
 
+        /// <summary>
+        /// Reference to the redefined symbol.
+        /// </summary>
+        public string[] RedefinedPath { get; }
+
+        private VariableSymbol _redefined;
         /// <summary>
         /// The redefined symbol
         /// </summary>
         public VariableSymbol Redefined
         {
-            get;
-            internal set;
+            get => _redefined;
+            internal set //TODO this setter should be called by RedefinesChecker and only once for this instance lifetime.
+            {
+                if (value != null)
+                {
+                    _redefined = value;
+                    value.AddRedefines(this);
+                }
+            }
         }
 
         /// <summary>
