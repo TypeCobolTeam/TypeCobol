@@ -430,8 +430,6 @@ WorkingStorageData:
     Picture: X(100)
   Level: 1
   IsFiller: False
-  Redefines:
-    DVZF0OSM::var2
   var2 (.NET Type=RedefinesSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE, Redefines]
   Owner: DVZF0OSM
@@ -451,7 +449,7 @@ WorkingStorageData:
       IsFiller: False
   Level: 1
   IsFiller: False
-  Redefined: DVZF0OSM::var1
+  RedefinedPath: [var1]
   var1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
   Owner: DVZF0OSM
@@ -466,8 +464,6 @@ WorkingStorageData:
         Picture: X(10)
       Level: 5
       IsFiller: False
-      Redefines:
-        DVZF0OSM::var1::var3
       var3 (.NET Type=RedefinesSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE, Redefines]
       Owner: DVZF0OSM::var1
@@ -495,7 +491,7 @@ WorkingStorageData:
           IsFiller: False
       Level: 5
       IsFiller: False
-      Redefined: DVZF0OSM::var1::var2
+      RedefinedPath: [var2]
   Level: 1
   IsFiller: False
 IsNested: False

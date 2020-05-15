@@ -44,11 +44,6 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Add Diagnostics
-        /// </summary>
-        public IList<Diagnostic> Diagnostics { get; }
-
-        /// <summary>
         /// The List of Stacked Program symbol built as a Scope.
         /// The first main program will be the first element of the list, 
         /// followed by remaining stacked programs.
@@ -99,7 +94,6 @@ namespace TypeCobol.Compiler.Domain
         /// </summary>
         public ProgramSymbolTableBuilder()
         {
-            Diagnostics = new List<Diagnostic>();
             Programs = new List<ProgramSymbol>();
         }
 
@@ -130,10 +124,9 @@ namespace TypeCobol.Compiler.Domain
         {
             System.Diagnostics.Debug.Assert(CurrentNode != null);
             System.Diagnostics.Debug.Assert(object.ReferenceEquals(CurrentNode.CodeElement, programIdentification));
-            bool bDuplicate = false;
             if (this.CurrentScope == null)
             {
-                //This is the main program or a stacked program with no parent.
+                //This is the main program or a stacked program.
                 //TODO SemanticDomain: test for duplicate and enter program into Root.
                 var stackedProgram = new ProgramSymbol(programIdentification.ProgramName.Name);
                 stackedProgram.Type = new ProgramType();
@@ -147,31 +140,13 @@ namespace TypeCobol.Compiler.Domain
                 System.Diagnostics.Debug.Assert(CurrentNode.Parent != null);
                 System.Diagnostics.Debug.Assert(CurrentNode.Parent.CodeElement != null);
                 System.Diagnostics.Debug.Assert(CurrentNode.Parent.CodeElement.Type == CodeElementType.ProgramIdentification);
-                var prgEntry = this.CurrentScope.Programs.Lookup(programIdentification.ProgramName.Name);
-                if (prgEntry == null)
-                {
-                    ProgramSymbol nestedProgram = new ProgramSymbol(programIdentification.ProgramName.Name);
-                    nestedProgram.Type = new ProgramType();
-                    //Reenter the program as nested here and change the parent.
-                    this.CurrentScope.Programs.Enter(nestedProgram);
-                    nestedProgram.Owner = this.CurrentScope;
-                    this.CurrentScope = nestedProgram;
-                    //TODO SemanticDomain: store nestedProgram into the root table.
-                }
-                else
-                {
-                    bDuplicate = true;
-                }
-            }
-
-            if (bDuplicate)
-            {
-                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                    programIdentification.Column,
-                    programIdentification.Column,
-                    programIdentification.Line,
-                    string.Format(TypeCobolResource.DuplicateProgram, programIdentification.ProgramName.Name));
-                Diagnostics.Add(d);
+                ProgramSymbol nestedProgram = new ProgramSymbol(programIdentification.ProgramName.Name);
+                nestedProgram.Type = new ProgramType();
+                //Reenter the program as nested here and change the parent.
+                this.CurrentScope.Programs.Enter(nestedProgram);
+                nestedProgram.Owner = this.CurrentScope;
+                this.CurrentScope = nestedProgram;
+                //TODO SemanticDomain: store nestedProgram into the root table.
             }
 
             //Semantic data on the node
@@ -673,26 +648,17 @@ namespace TypeCobol.Compiler.Domain
                 tdSym.SetFlag(Symbol.Flags.Strong, true);
             }
             SetSymbolAccessModifer(tdSym, entry.Visibility);
+            
             //A Typedef goes in the Types domain of their declaring program.
             //Enter it right now to allow recursive type definition to be possible here.
-            //The owner of the type is the top program.
-            if (currentDomain.Owner.Kind == Symbol.Kinds.Program || currentDomain.Owner.Kind == Symbol.Kinds.Function)
-            {
-                tdSym.Owner = currentDomain.Owner;
-                ((ProgramSymbol)currentDomain.Owner).Types.Enter(tdSym);
-                //TODO SemanticDomain: store the type into the root table.
-            }
-            else
-            {
-                //Declaration of a TypeDef out of a Program or a Function 
-                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                    entry.Column,
-                    entry.Column,
-                    entry.Line,
-                    string.Format(TypeCobolResource.TypedefDeclaredOutOfProgramOrFunction, dataDef.Name));
-                Diagnostics.Add(d);
-                return null;
-            }
+            CurrentScope.Types.Enter(tdSym);
+
+            //The owner of the type should also be the CurrentScope but if the typedef is
+            //wrongly declared inside a group this may not be the case.
+            //TypeDefinitionChecker should check that the owner is also the declaring program.
+            tdSym.Owner = currentDomain.Owner;
+            
+            //TODO SemanticDomain: store the type into the root table.
 
             VariableSymbol varSym = DataDefinition2Symbol(dataDef, currentDomain, tdSym);
             //Ignore the variable symbol, but only take the underlying type.
@@ -777,79 +743,9 @@ namespace TypeCobol.Compiler.Domain
         private RedefinesSymbol CreateRedefinesSymbol(DataDefinition dataDef, DataRedefinesEntry dataRedefines, Domain<VariableSymbol> currentDomain)
         {
             System.Diagnostics.Debug.Assert(dataRedefines != null);
+            System.Diagnostics.Debug.Assert(currentDomain != null);
             SymbolReference symRef = dataRedefines.RedefinesDataName;
-            if (currentDomain == null)
-            {//Redefines is not supported here
-                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                    symRef.NameLiteral.Token.Column,
-                    symRef.NameLiteral.Token.EndColumn,
-                    symRef.NameLiteral.Token.Line,
-                    string.Format(TypeCobolResource.ErrRedefinesNotAllowedHere, symRef.Name));
-                Diagnostics.Add(d);
-                return null;
-            }
-
-            //Lookup the redefined symbol in the current domain.
-            var entry = currentDomain.Lookup(symRef.Name);
-            if (entry == null)
-            {//Unknown redefines
-                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                    symRef.NameLiteral.Token.Column,
-                    symRef.NameLiteral.Token.EndColumn,
-                    symRef.NameLiteral.Token.Line,
-                    string.Format(TypeCobolResource.UnknownRedefinesSymbol, symRef.Name));
-                Diagnostics.Add(d);
-                return null;
-            }
-            //Find the Symbol which is the last in the current domain which is not a redefines also.
-            VariableSymbol matchingSymbol = null;
-            List<VariableSymbol> previousRedefines = new List<VariableSymbol>();
-            foreach (var variableSymbol in currentDomain.Reverse())
-            {
-                matchingSymbol = variableSymbol;
-                if (!variableSymbol.HasFlag(Symbol.Flags.Redefines))
-                {
-                    //Ignore all previous redefines
-                    break;
-                }
-                previousRedefines.Add(variableSymbol);
-            }
-
-            VariableSymbol redefined = matchingSymbol != null ? entry.FirstOrDefault(s => s == matchingSymbol) : null;
-            if (entry.Count > 1 && redefined == null)
-            {
-                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                    symRef.NameLiteral.Token.Column,
-                    symRef.NameLiteral.Token.EndColumn,
-                    symRef.NameLiteral.Token.Line,
-                    string.Format(TypeCobolResource.MultipleRedefinesSymbolFound, symRef.Name));
-                Diagnostics.Add(d);
-                return null;
-            }
-            //In fact the redefined must be the last symbol
-            if (redefined == null)
-            {
-                //Check if we are redefining via a REDEFINES
-                if (entry.Count == 1 && entry.Symbol.HasFlag(Symbol.Flags.Redefines) && previousRedefines.Contains(entry.Symbol))
-                {//We are redefining via previous REDEFINES.
-                    redefined = entry.Symbol;
-                }
-                else
-                {
-                    Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                        symRef.NameLiteral.Token.Column,
-                        symRef.NameLiteral.Token.EndColumn,
-                        symRef.NameLiteral.Token.Line,
-                        string.Format(TypeCobolResource.ErrRedefineWasNotImmediatelyPrec, symRef.Name,
-                            dataRedefines.LevelNumber));
-                    Diagnostics.Add(d);
-                    return null;
-                }
-            }
-
-            RedefinesSymbol sym = new RedefinesSymbol(dataDef.Name, redefined);
-            redefined.AddRedefines(sym);
-            return sym;
+            return new RedefinesSymbol(dataDef.Name, symRef.AsPath());
         }
 
         /// <summary>

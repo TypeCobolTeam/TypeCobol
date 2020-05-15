@@ -38,12 +38,6 @@ WorkingStorageData:
     Picture: X(9)
   Level: 1
   IsFiller: False
-  Redefines:
-    RedefinesTest::MyRedifines
-    RedefinesTest::MyRedifines2
-    RedefinesTest::MyRedifines3
-    RedefinesTest::MyRedifines4
-    RedefinesTest
   MyRedifines (.NET Type=RedefinesSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE, Redefines]
   Owner: RedefinesTest
@@ -71,7 +65,7 @@ WorkingStorageData:
       IsFiller: False
   Level: 1
   IsFiller: False
-  Redefined: RedefinesTest::MyVar2
+  RedefinedPath: [MyVar2]
   MyRedifines2 (.NET Type=RedefinesSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE, Redefines]
   Owner: RedefinesTest
@@ -99,7 +93,7 @@ WorkingStorageData:
       IsFiller: False
   Level: 1
   IsFiller: False
-  Redefined: RedefinesTest::MyVar2
+  RedefinedPath: [MyVar2]
   MyRedifines3 (.NET Type=RedefinesSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE, Redefines]
   Owner: RedefinesTest
@@ -127,7 +121,7 @@ WorkingStorageData:
       IsFiller: False
   Level: 1
   IsFiller: False
-  Redefined: RedefinesTest::MyVar2
+  RedefinedPath: [myvar2]
   MyRedifines4 (.NET Type=RedefinesSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE, Redefines]
   Owner: RedefinesTest
@@ -155,7 +149,7 @@ WorkingStorageData:
       IsFiller: False
   Level: 1
   IsFiller: False
-  Redefined: RedefinesTest::MyVar2
+  RedefinedPath: [MyVar2]
    (.NET Type=RedefinesSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE, Redefines]
   Owner: RedefinesTest
@@ -163,7 +157,15 @@ WorkingStorageData:
     (.NET Type=Type, Tag=Usage)
   Level: 1
   IsFiller: False
-  Redefined: RedefinesTest::MyVar2
+  RedefinedPath: [MYVAR2]
+  MyRedifines3 (.NET Type=RedefinesSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE, Redefines]
+  Owner: RedefinesTest
+  Type:
+    (.NET Type=Type, Tag=Usage)
+  Level: 1
+  IsFiller: False
+  RedefinedPath: [MyVar1]
    (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
   Owner: RedefinesTest
@@ -178,8 +180,6 @@ WorkingStorageData:
         Picture: X(1)
       Level: 6
       IsFiller: False
-      Redefines:
-        RedefinesTest::VarGroup-Bis
       VarGroup-Bis (.NET Type=RedefinesSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE, Redefines]
       Owner: RedefinesTest
@@ -188,9 +188,7 @@ WorkingStorageData:
         Picture: X(1)
       Level: 6
       IsFiller: False
-      Redefines:
-        RedefinesTest::FILTER
-      Redefined: RedefinesTest::VarGroup
+      RedefinedPath: [VarGroup]
       FILTER (.NET Type=RedefinesSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE, Redefines]
       Owner: RedefinesTest
@@ -199,7 +197,7 @@ WorkingStorageData:
         Picture: X(1)
       Level: 6
       IsFiller: False
-      Redefined: RedefinesTest::VarGroup-Bis
+      RedefinedPath: [VarGroup-Bis]
   Level: 1
   IsFiller: False
 IsNested: False
