@@ -61,6 +61,7 @@ WorkingStorageData:
     (.NET Type=ArrayType, Tag=Array)
     MinOccur: 1
     MaxOccur: 100
+    DependingOnPath: mysize
     ElementType:
       (.NET Type=GroupType, Tag=Group)
       Fields:

@@ -34,6 +34,15 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
+        /// Path to the VariableSymbol of the DEPENDING ON clause if any.
+        /// </summary>
+        public string[] DependingOnPath
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// The Type of an Element
         /// </summary>
         public Type ElementType
@@ -54,6 +63,13 @@ namespace TypeCobol.Compiler.Types
             output.WriteLine($"MinOccur: {MinOccur}");
             output.Write(indent);
             output.WriteLine($"MaxOccur: {MaxOccur}");
+
+            if (DependingOnPath != null && DependingOnPath.Length > 0)
+            {
+                output.Write(indent);
+                output.WriteLine($"DependingOnPath: {string.Join(", ", DependingOnPath)}");
+            }
+
             if (ElementType != null)
             {
                 output.Write(indent);

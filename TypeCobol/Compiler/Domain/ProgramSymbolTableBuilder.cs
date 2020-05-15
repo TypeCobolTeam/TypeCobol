@@ -848,6 +848,7 @@ namespace TypeCobol.Compiler.Domain
                     ArrayType arrayType = new ArrayType();
                     arrayType.MinOccur = dataDef.MinOccurencesCount;
                     arrayType.MaxOccur = dataDef.MaxOccurencesCount;
+                    arrayType.DependingOnPath = dataDef.OccursDependingOn?.MainSymbolReference?.AsPath();
                     arrayType.ElementType = sym.Type;
                     sym.Type = arrayType;
                 }                
