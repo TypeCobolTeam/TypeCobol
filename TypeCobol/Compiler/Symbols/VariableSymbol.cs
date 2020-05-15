@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -92,29 +91,6 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// All Symbol that redefines this Symbol.
-        /// </summary>
-        public List<VariableSymbol> Redefines
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Add a redefines symbol to this symbol.
-        /// </summary>
-        /// <param name="symbol"></param>
-        public void AddRedefines(VariableSymbol symbol)
-        {
-            System.Diagnostics.Debug.Assert(symbol != null);
-            if (Redefines == null)
-            {
-                Redefines = new List<VariableSymbol>();
-            }
-            Redefines.Add(symbol);
-        }
-
-        /// <summary>
         /// Lookup for the parent having the given Level
         /// </summary>
         /// <param name="level">Target level</param>
@@ -140,17 +116,6 @@ namespace TypeCobol.Compiler.Symbols
             output.WriteLine("Level: " + Level);
             output.Write(indent);
             output.WriteLine("IsFiller: " + IsFiller);
-            if (Redefines != null && Redefines.Count > 0)
-            {
-                output.Write(indent);
-                output.WriteLine("Redefines:");
-                indent += "  ";
-                foreach (var redefines in Redefines)
-                {
-                    output.Write(indent);
-                    output.WriteLine(redefines.FullName);//Write reference
-                }
-            }
         }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)
