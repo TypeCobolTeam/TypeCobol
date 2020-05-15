@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.CupParser.NodeBuilder;
-using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Symbols;
@@ -476,15 +474,14 @@ namespace TypeCobol.Compiler.Domain
         private VariableSymbol CreateAndAddRedefinesOrVariableSymbol(Type type, DataDefinition dataDef, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
             VariableSymbol sym = IsRedefinedDataDefinition(dataDef, out var dataRedefines)
-                ? CreateRedefinesSymbol(dataDef, dataRedefines, currentDomain)
+                ? CreateRedefinesSymbol(dataDef, dataRedefines)
                 : new VariableSymbol(dataDef.Name);
-            if (sym != null)
-            {
-                sym.Type = type;
-                DecorateSymbol(dataDef, sym, currentDomain);
-                if (typedef == null)
-                    CurrentScope.Add(sym);
-            }
+
+            sym.Type = type;
+            DecorateSymbol(dataDef, sym, currentDomain);
+            if (typedef == null)
+                CurrentScope.Add(sym);
+
             return sym;
         }
 
@@ -557,45 +554,42 @@ namespace TypeCobol.Compiler.Domain
         {
             //We create a group symbol having the group type
             VariableSymbol sym = IsRedefinedDataDefinition(dataDef, out var dataRedefines)
-                ? CreateRedefinesSymbol(dataDef, dataRedefines, currentDomain)
+                ? CreateRedefinesSymbol(dataDef, dataRedefines)
                 : new VariableSymbol(dataDef.Name);
 
-            if (sym != null)
+            //We create the group type
+            GroupType recType = new GroupType(sym);
+            //Set type of the symbol
+            sym.Type = recType;
+            //Set any leading type.
+            if (HasSingleUsageDefinition(dataDef, out var dataUsage))
             {
-                //We create the group type
-                GroupType recType = new GroupType(sym);
-                //Set type of the symbol
-                sym.Type = recType;
-                //Set any leading type.
-                if (HasSingleUsageDefinition(dataDef, out var dataUsage))
-                {
-                    Type leadingType = CreateUsageType(dataUsage);
-                    recType.LeadingType = leadingType;
-                }
-                else if (dataDef.Picture != null)
-                {
-                    Type leadingType = CreatePictureType(dataDef, dataDef.Picture);
-                    recType.LeadingType = leadingType;
-                }
+                Type leadingType = CreateUsageType(dataUsage);
+                recType.LeadingType = leadingType;
+            }
+            else if (dataDef.Picture != null)
+            {
+                Type leadingType = CreatePictureType(dataDef, dataDef.Picture);
+                recType.LeadingType = leadingType;
+            }
 
-                DecorateSymbol(dataDef, sym, currentDomain);
-                if (typedef == null)
-                    CurrentScope.Add(sym);
+            DecorateSymbol(dataDef, sym, currentDomain);
+            if (typedef == null)
+                CurrentScope.Add(sym);
 
-                //We build the GroupType fields
-                foreach (var child in dataDef.Children)
+            //We build the GroupType fields
+            foreach (var child in dataDef.Children)
+            {
+                DataDefinition df = (DataDefinition)child;
+                VariableSymbol dfSym = DataDefinition2Symbol(df, recType.Fields, typedef);
+                //if df_sym == null this may be a bad symbol.
+                if (dfSym != null)
                 {
-                    DataDefinition df = (DataDefinition)child;
-                    VariableSymbol dfSym = DataDefinition2Symbol(df, recType.Fields, typedef);
-                    //if df_sym == null this may be a bad symbol.
-                    if (dfSym != null)
-                    {
-                        recType.Fields.Enter(dfSym);
-                        //Important set the Owner before calling HandleIndexes
-                        dfSym.Owner = sym;
-                        //Handle indexes belonging to this Data Definition
-                        HandleIndexes(df, dfSym, recType.Fields, typedef);
-                    }
+                    recType.Fields.Enter(dfSym);
+                    //Important set the Owner before calling HandleIndexes
+                    dfSym.Owner = sym;
+                    //Handle indexes belonging to this Data Definition
+                    HandleIndexes(df, dfSym, recType.Fields, typedef);
                 }
             }
 
@@ -738,12 +732,10 @@ namespace TypeCobol.Compiler.Domain
         /// </summary>
         /// <param name="dataDef">The DataDefinition which is a DataRedefinesEntry</param>
         /// <param name="dataRedefines">The associated DataRedefinesEntry, must be non-null</param>
-        /// <param name="currentDomain">The current domain of variables being built.</param>
         /// <returns>The symbol which is a RedefinesSymbol not typed if the redefined symbol is resolved, null otherwise</returns>
-        private RedefinesSymbol CreateRedefinesSymbol(DataDefinition dataDef, DataRedefinesEntry dataRedefines, Domain<VariableSymbol> currentDomain)
+        private RedefinesSymbol CreateRedefinesSymbol(DataDefinition dataDef, DataRedefinesEntry dataRedefines)
         {
             System.Diagnostics.Debug.Assert(dataRedefines != null);
-            System.Diagnostics.Debug.Assert(currentDomain != null);
             SymbolReference symRef = dataRedefines.RedefinesDataName;
             return new RedefinesSymbol(dataDef.Name, symRef.AsPath());
         }
