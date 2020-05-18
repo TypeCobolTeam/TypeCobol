@@ -79,16 +79,21 @@ WorkingStorageData:
   Flags: [WORKING_STORAGE]
   Owner: Tables
   Type:
-    (.NET Type=GroupType, Tag=Group)
-    Fields:
-      E (.NET Type=VariableSymbol, Kind=Variable)
-      Flags: [WORKING_STORAGE]
-      Owner: Tables::T-nobounds
-      Type:
-        (.NET Type=PictureType, Tag=Picture)
-        Picture: X(8)
-      Level: 5
-      IsFiller: False
+    (.NET Type=ArrayType, Tag=Array)
+    MinOccur: 1
+    MaxOccur: 1
+    DependingOnPath: mysize
+    ElementType:
+      (.NET Type=GroupType, Tag=Group)
+      Fields:
+        E (.NET Type=VariableSymbol, Kind=Variable)
+        Flags: [WORKING_STORAGE]
+        Owner: Tables::T-nobounds
+        Type:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(8)
+        Level: 5
+        IsFiller: False
   Level: 1
   IsFiller: False
 IsNested: False

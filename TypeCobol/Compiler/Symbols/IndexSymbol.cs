@@ -30,26 +30,6 @@ namespace TypeCobol.Compiler.Symbols
         public override string IndexedOfName => Indexed != null && Indexed.Name.Length != 0 ? Name +  " OF " + Indexed.Name  : Name;
         public override string IndexedDotName => Indexed != null && Indexed.Name.Length != 0 ? Indexed.Name + '.' + Name : Name;
 
-        public override Symbol LookupParentOfName(string name)
-        {
-            if (Indexed == null)
-                return base.LookupParentOfName(name);
-            if (Indexed.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
-                return Indexed;
-            return Indexed.LookupParentOfName(name);
-        }
-
-        public override bool HasParent(Symbol parent)
-        {
-            if (Indexed == null)
-                return base.HasParent(parent);
-            if (Indexed == parent)
-                return true;
-            if (parent == null)
-                return false;
-            return Indexed.HasParent(parent);
-        }
-
         public override void Dump(TextWriter output, int indentLevel)
         {
             base.Dump(output, indentLevel);

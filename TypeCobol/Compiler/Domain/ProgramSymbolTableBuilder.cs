@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.CupParser.NodeBuilder;
@@ -586,10 +587,7 @@ namespace TypeCobol.Compiler.Domain
                 if (dfSym != null)
                 {
                     recType.Fields.Enter(dfSym);
-                    //Important set the Owner before calling HandleIndexes
                     dfSym.Owner = sym;
-                    //Handle indexes belonging to this Data Definition
-                    HandleIndexes(df, dfSym, recType.Fields, typedef);
                 }
             }
 
@@ -842,50 +840,39 @@ namespace TypeCobol.Compiler.Domain
             }
 
             if (sym != null)
-            {//Consider an array
-                if (dataDef.MaxOccurencesCount > 1)
-                {//Change the symbol type to an array type.
-                    ArrayType arrayType = new ArrayType();
+            {
+                //Consider an array
+                if (dataDef.IsTableOccurence)
+                {
+                    //Create the ArrayType
+                    ArrayType arrayType = new ArrayType(sym);
                     arrayType.MinOccur = dataDef.MinOccurencesCount;
                     arrayType.MaxOccur = dataDef.MaxOccurencesCount;
                     arrayType.DependingOnPath = dataDef.OccursDependingOn?.MainSymbolReference?.AsPath();
                     arrayType.ElementType = sym.Type;
+                    //Build indexes
+                    foreach (var indexDef in dataDef.Children.OfType<IndexDefinition>())
+                    {
+                        //An index definition symbol
+                        var indexSym = CreateIndexSymbol(indexDef, currentDomain, typedef);
+                        //Attach the Indexed
+                        indexSym.Indexed = sym;
+                        //Add the index in the arrayType.
+                        arrayType.Indexes.Enter(indexSym);
+                        indexSym.Owner = sym;
+                        if (sym.HasFlag(Symbol.Flags.Global))
+                        {
+                            //For a Global Index
+                            indexSym.SetFlag(Symbol.Flags.Global, true);
+                        }
+                    }
+
+                    //Now that the ArrayType is complete, change symbol type
                     sym.Type = arrayType;
                 }                
             }
             
             return sym;
-        }
-
-        /// <summary>
-        /// Handles Indexes associated to a DataDefinition.
-        /// </summary>
-        /// <param name="dataDef">The Indexed Data Definition instance</param>
-        /// <param name="indexedSym">The Indexed Symbol</param>
-        /// <param name="currentDomain">Domain of the indexedSymbol</param>
-        /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
-        private void HandleIndexes(DataDefinition dataDef, VariableSymbol indexedSym, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
-        {
-            foreach (var child in dataDef.Children)
-            {
-                if (child.CodeElement == null && child is IndexDefinition indexDef)
-                {
-                    //An index definition symbol
-                    var indexSym = CreateIndexSymbol(indexDef, currentDomain, typedef);
-                    //Attach the Indexed
-                    indexSym.Owner = indexedSym.Owner;
-                    indexSym.Indexed = indexedSym;
-                    //Add the index in the current domain.
-                    System.Diagnostics.Debug.Assert(currentDomain != null);
-                    currentDomain.Enter(indexSym);
-                    if (indexedSym.HasFlag(Symbol.Flags.Global))
-                    {//For a Global Index
-                        indexSym.SetFlag(Symbol.Flags.Global, true);
-                    }
-
-                    child.SemanticData = indexSym;
-                }
-            }
         }
 
         /// <summary>
@@ -979,41 +966,29 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Store the given data definition symbol in the current DataDivision section
-        /// </summary>
-        /// <param name="dataDefSym"></param>
-        private void StoreDataDivisionSymbol(VariableSymbol dataDefSym)
-        {
-            System.Diagnostics.Debug.Assert(dataDefSym != null);
-            System.Diagnostics.Debug.Assert(CurrentScope != null);
-            System.Diagnostics.Debug.Assert(CurrentDataDivisionSection != null);
-
-            if (dataDefSym.Owner == null) //Because Symbols as TYPEDEF already have their parent.
-                dataDefSym.Owner = CurrentScope;
-
-            if (dataDefSym.Kind != Symbol.Kinds.Typedef) //Typedef are already entered at creation time.
-            {
-                System.Diagnostics.Debug.Assert(CurrentDataDivisionSection.Variables != null);
-                CurrentDataDivisionSection.Variables.Enter(dataDefSym);
-                dataDefSym.SetFlag(CurrentDataDivisionSection.Flag, true);
-            }
-        }
-
-        /// <summary>
         /// Level1 Definition Tracker, This tracker is used to create all DataDefinition symbols.
         /// </summary>
         /// <param name="level1Node">The level 1 definition node</param>
         public override void OnLevel1Definition(DataDefinition level1Node)
         {
             var sectionVariables = CurrentDataDivisionSection.Variables;
+            var sectionFlag = CurrentDataDivisionSection.Flag;
+
             VariableSymbol dataDefSym = DataDefinition2Symbol(level1Node, sectionVariables, null);
             if (dataDefSym != null)
             {
                 //TODO SemanticDomain: we must validate all RENAMES at a 01 Level definition
 
-                StoreDataDivisionSymbol(dataDefSym);
-                //Handle indexes belonging to this Data Definition
-                HandleIndexes(level1Node, dataDefSym, sectionVariables, null);
+                System.Diagnostics.Debug.Assert(CurrentScope != null);
+
+                if (dataDefSym.Owner == null) //Because Symbols as TYPEDEF already have their parent.
+                    dataDefSym.Owner = CurrentScope;
+
+                if (dataDefSym.Kind != Symbol.Kinds.Typedef) //Typedef are already entered at creation time.
+                {
+                    sectionVariables.Enter(dataDefSym);
+                    dataDefSym.SetFlag(sectionFlag, true);
+                }
             }
         }
 
