@@ -225,7 +225,8 @@ namespace TypeCobol.Test {
 
                     
 			    } else {
-                    AppendTextToFiles("\n", timedResultFile, resultFile);
+                    if (!okay)
+                        AppendTextToFiles("\n", timedResultFile, resultFile);
                 }
 			}
             TimeSpan totalTestDuration = parsingSumDuration + codeGenSumDuration;
