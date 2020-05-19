@@ -166,7 +166,7 @@ namespace TypeCobol.Compiler.Domain
 
         public override void StartFileSection(FileSectionHeader header)
         {
-            CurrentDataDivisionSection = new DataDivisionSection(Symbol.Flags.FILE_SECTION, CurrentScope.FileData);
+            CurrentDataDivisionSection = new DataDivisionSection(Symbol.Flags.FILE, CurrentScope.FileData);
         }
 
         public override void EndFileSection()
@@ -944,7 +944,14 @@ namespace TypeCobol.Compiler.Domain
                         if (dataDescEntry.IsGroupUsageNational != null && dataDescEntry.IsGroupUsageNational.Value)
                             sym.SetFlag(Symbol.Flags.GroupUsageNational, true);
                         if (dataDescEntry.SignIsSeparate != null && dataDescEntry.SignIsSeparate.Value)
-                            sym.SetFlag(Symbol.Flags.Sign, true);
+                            sym.SetFlag(Symbol.Flags.SeparateSign, true);
+                        if (dataDescEntry.SignPosition != null)
+                        {
+                            if (dataDescEntry.SignPosition.Value == SignPosition.Leading)
+                                sym.SetFlag(Symbol.Flags.LeadingSign, true);
+                            if (dataDescEntry.SignPosition.Value == SignPosition.Trailing)
+                                sym.SetFlag(Symbol.Flags.TrailingSign, true);
+                        }
                         if (dataDescEntry.IsSynchronized != null && dataDescEntry.IsSynchronized.Value)
                             sym.SetFlag(Symbol.Flags.Sync, true);
                         if (dataDef.CodeElement.Type == CodeElementType.DataDescriptionEntry)
@@ -956,10 +963,7 @@ namespace TypeCobol.Compiler.Domain
                     }
                         break;
                     default:
-                        System.Diagnostics.Debug.Assert(dataDef.CodeElement.Type == CodeElementType.DataDescriptionEntry ||
-                                                        dataDef.CodeElement.Type == CodeElementType.DataRenamesEntry ||
-                                                        dataDef.CodeElement.Type == CodeElementType.DataRedefinesEntry ||
-                                                        dataDef.CodeElement.Type == CodeElementType.DataConditionEntry);
+                        System.Diagnostics.Debug.Fail("Unsupported CodeElement type in DecorateSymbol !");
                         break;
                 }
             }
