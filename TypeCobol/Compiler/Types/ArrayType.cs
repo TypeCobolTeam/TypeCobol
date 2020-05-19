@@ -28,13 +28,19 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// The Maximal Occurence number in the array.
+        /// The Maximal Occurence number in the array, null if the array
+        /// has an unbounded number of occurrences.
         /// </summary>
-        public long MaxOccur
+        public long? MaxOccur
         {
             get;
             set;
         }
+
+        /// <summary>
+        /// Shortcut to test if the array has no max occur.
+        /// </summary>
+        public bool IsUnbounded => !MaxOccur.HasValue;
 
         /// <summary>
         /// Path to the VariableSymbol of the DEPENDING ON clause if any.
@@ -70,7 +76,7 @@ namespace TypeCobol.Compiler.Types
             output.Write(indent);
             output.WriteLine($"MinOccur: {MinOccur}");
             output.Write(indent);
-            output.WriteLine($"MaxOccur: {MaxOccur}");
+            output.WriteLine($"MaxOccur: {(MaxOccur.HasValue ? MaxOccur.Value.ToString() : "Unbounded")}");
 
             if (DependingOnPath != null && DependingOnPath.Length > 0)
             {

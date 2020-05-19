@@ -847,7 +847,7 @@ namespace TypeCobol.Compiler.Domain
                     //Create the ArrayType
                     ArrayType arrayType = new ArrayType(sym);
                     arrayType.MinOccur = dataDef.MinOccurencesCount;
-                    arrayType.MaxOccur = dataDef.MaxOccurencesCount;
+                    arrayType.MaxOccur = dataDef.HasUnboundedNumberOfOccurences ? default(long?) : dataDef.MaxOccurencesCount;
                     arrayType.DependingOnPath = dataDef.OccursDependingOn?.MainSymbolReference?.AsPath();
                     arrayType.ElementType = sym.Type;
                     //Build indexes
