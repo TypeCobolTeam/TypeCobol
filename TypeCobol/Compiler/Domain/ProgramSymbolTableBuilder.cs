@@ -913,9 +913,7 @@ namespace TypeCobol.Compiler.Domain
                                 sym.SetFlag(Symbol.Flags.Global, true);
                             }
                         }
-                        //Propagate other visibility than global
-                        if (currentDomain.Owner.Kind != Symbol.Kinds.Program && currentDomain.Owner.Kind != Symbol.Kinds.Function)
-                            sym.SetFlag(currentDomain.Owner.Flag & Symbol.SymbolVisibilityMask & ~Symbol.Flags.Global, currentDomain.Owner.HasFlag(Symbol.SymbolVisibilityMask & ~Symbol.Flags.Global));
+
                         //Other interesting flags that apply to a symbol.
                         if (dataDescEntry.IsBlankWhenZero != null && dataDescEntry.IsBlankWhenZero.Value)
                             sym.SetFlag(Symbol.Flags.BlankWhenZero, true);
