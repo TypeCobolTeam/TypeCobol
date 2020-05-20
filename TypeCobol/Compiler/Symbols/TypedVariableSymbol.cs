@@ -50,8 +50,6 @@ namespace TypeCobol.Compiler.Symbols
             }
         }
 
-        public override string TypedName => Typedef != null ? (Name + '.' + Typedef.Name) : Name;
-
         public override void Dump(TextWriter output, int indentLevel)
         {
             base.Dump(output, indentLevel);

@@ -146,11 +146,6 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// A Typed name is the name followed by a type, by default is the name..
-        /// </summary>
-        public virtual string TypedName => Name;
-
-        /// <summary>
         /// Name used for an Indexed Name
         /// </summary>
         public virtual string IndexedName => Name;
@@ -193,30 +188,6 @@ namespace TypeCobol.Compiler.Symbols
                 string root = Owner?.FullDotName ?? "";
                 string name = IndexedDotName;
                 return root.Length > 0 ? root + (name.Length > 0 ? ('.' + name) : name) : name;
-            }
-        }
-
-        /// <summary>
-        /// Full typed dotted qualified name
-        /// </summary>
-        public virtual string FullTypedDotName
-        {
-            get
-            {
-                Stack<string> paths = new Stack<string>();
-                paths.Push(IndexedDotName);
-                Symbol owner = Owner;
-                while (owner != null)
-                {
-                    string name = owner.TypedName;
-                    if (name?.Length != 0)
-                    {
-                        paths.Push(name);
-                    }
-                    owner = owner.Owner;
-                }
-
-                return string.Join(".", paths.ToArray());
             }
         }
 
