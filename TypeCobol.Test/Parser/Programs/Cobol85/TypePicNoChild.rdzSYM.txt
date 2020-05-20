@@ -449,7 +449,6 @@ WorkingStorageData:
       IsFiller: False
   Level: 1
   IsFiller: False
-  RedefinedPath: [var1]
   var1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
   Owner: DVZF0OSM
@@ -491,7 +490,6 @@ WorkingStorageData:
           IsFiller: False
       Level: 5
       IsFiller: False
-      RedefinedPath: [var2]
   Level: 1
   IsFiller: False
 IsNested: False

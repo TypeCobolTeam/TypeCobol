@@ -17,28 +17,41 @@ namespace TypeCobol.Compiler.Symbols
         /// Constructor
         /// </summary>
         /// <param name="name">Symbol 's name</param>
-        /// <param name="redefinedPath">The redefined Symbol path</param>
-        public RedefinesSymbol(string name, string[] redefinedPath)
+        public RedefinesSymbol(string name)
             : base(name)
         {
-            System.Diagnostics.Debug.Assert(redefinedPath != null);
-            System.Diagnostics.Debug.Assert(redefinedPath.Length != 0);
             base.SetFlag(Flags.Redefines, true);
-            RedefinedPath = redefinedPath;
+            _redefined = null;
         }
 
+        private VariableSymbol _redefined;
         /// <summary>
-        /// Reference to the redefined symbol.
+        /// Redefined symbol.
         /// </summary>
-        public string[] RedefinedPath { get; }
+        /// <remarks>Should be set only by <see cref="Diagnostics.RedefinesChecker" /></remarks>
+        public VariableSymbol Redefined
+        {
+            get => _redefined;
+            set
+            {
+                if (value != null)
+                {
+                    _redefined = value;
+                    _redefined.AddRedefines(this);
+                }
+            }
+        }
 
         public override void Dump(TextWriter output, int indentLevel)
         {
             base.Dump(output, indentLevel);
             string indent = new string(' ', 2 * indentLevel);
 
-            output.Write(indent);
-            output.WriteLine($"RedefinedPath: [{string.Join(", ", RedefinedPath)}]");
+            if (_redefined != null)
+            {
+                output.Write(indent);
+                output.WriteLine($"Redefined: {Redefined.FullName}");//Write reference
+            }
         }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)

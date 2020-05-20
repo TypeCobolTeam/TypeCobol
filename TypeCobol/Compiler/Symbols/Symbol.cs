@@ -306,55 +306,6 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// Determine if this symbol is matching the given path (à la COBOL qualification)
-        /// </summary>
-        /// <param name="path">The path to match</param>
-        /// <returns>true if yes, false otherwise</returns>
-        public bool IsMatchingPath(string[] path)
-        {
-            Symbol currentSymbol = this;
-            for (int i = 0; i < path.Length; i++)
-            {
-                switch (i)
-                {
-                    case 0:
-                        string name = currentSymbol.Name;
-                        if (!path[i].Equals(name, StringComparison.OrdinalIgnoreCase))
-                            return false;
-                        break;
-                    default:
-                    {
-                        Symbol parent = currentSymbol.LookupParentOfName(path[i]);
-                        if (parent == null)
-                            return false;
-                        currentSymbol = parent;
-                    }
-                        break;
-                }
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// Determine if this symbol is matching the given path strictly
-        /// </summary>
-        /// <param name="path">The path to match</param>
-        /// <returns>true if yes, false otherwise</returns>
-        public bool IsStrictlyMatchingPath(string[] path)
-        {
-            Symbol currentSymbol = this;
-            int i;
-            for (i = 0; i < path.Length; i++)
-            {
-                string name = currentSymbol.Name;
-                if (!path[i].Equals(name, StringComparison.OrdinalIgnoreCase))
-                    return false;
-                currentSymbol = currentSymbol.Owner;
-            }
-            return  i == path.Length && (currentSymbol == null || currentSymbol.Kind == Kinds.Root);
-        }
-
-        /// <summary>
         /// Check if this symbol has the given symbol as parent in the parent hierarchy
         /// </summary>
         /// <param name="parent">The parent to be tested</param>

@@ -474,8 +474,8 @@ namespace TypeCobol.Compiler.Domain
         /// <returns>The Symbol created</returns>
         private VariableSymbol CreateAndAddRedefinesOrVariableSymbol(Type type, DataDefinition dataDef, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
-            VariableSymbol sym = IsRedefinedDataDefinition(dataDef, out var dataRedefines)
-                ? CreateRedefinesSymbol(dataDef, dataRedefines)
+            VariableSymbol sym = IsRedefinedDataDefinition(dataDef, out _)
+                ? new RedefinesSymbol(dataDef.Name)
                 : new VariableSymbol(dataDef.Name);
 
             sym.Type = type;
@@ -554,8 +554,8 @@ namespace TypeCobol.Compiler.Domain
         private VariableSymbol CreateGroupSymbol(DataDefinition dataDef, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
             //We create a group symbol having the group type
-            VariableSymbol sym = IsRedefinedDataDefinition(dataDef, out var dataRedefines)
-                ? CreateRedefinesSymbol(dataDef, dataRedefines)
+            VariableSymbol sym = IsRedefinedDataDefinition(dataDef, out _)
+                ? new RedefinesSymbol(dataDef.Name)
                 : new VariableSymbol(dataDef.Name);
 
             //We create the group type
@@ -678,18 +678,12 @@ namespace TypeCobol.Compiler.Domain
         /// Create a Symbol whose type is a type defined as a TypeDef
         /// </summary>
         /// <param name="dataDef">The Data Definition to convert</param>
-        /// <param name="userDefinedDataType">The reference to the user-defined type of this DataDefinition.</param>
         /// <param name="currentDomain">The current domain of variables being built.</param>
         /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns>The Created Symbol</returns>
-        private VariableSymbol CreateDataTypeSymbol(DataDefinition dataDef, SymbolReference userDefinedDataType, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
+        private VariableSymbol CreateDataTypeSymbol(DataDefinition dataDef, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
-            System.Diagnostics.Debug.Assert(userDefinedDataType != null);
-            //We need also a valid CurrentScope to lookup Typedef if one exit, or to create an unresolved Typedef declaration.
-            System.Diagnostics.Debug.Assert(CurrentScope != null);
-
-            string[] paths = userDefinedDataType.AsPath();
-            var varTypeSym = new TypedVariableSymbol(dataDef.Name, paths);
+            var varTypeSym = new TypedVariableSymbol(dataDef.Name);
             DecorateSymbol(dataDef, varTypeSym, currentDomain);
             if (typedef == null)
                 CurrentScope.Add(varTypeSym);
@@ -723,19 +717,6 @@ namespace TypeCobol.Compiler.Domain
                 CurrentScope.Add(sym);
 
             return sym;
-        }
-
-        /// <summary>
-        /// Creates a REDEFINES symbol Not typed, but with the redefined symbol resolved.
-        /// </summary>
-        /// <param name="dataDef">The DataDefinition which is a DataRedefinesEntry</param>
-        /// <param name="dataRedefines">The associated DataRedefinesEntry, must be non-null</param>
-        /// <returns>The symbol which is a RedefinesSymbol not typed if the redefined symbol is resolved, null otherwise</returns>
-        private RedefinesSymbol CreateRedefinesSymbol(DataDefinition dataDef, DataRedefinesEntry dataRedefines)
-        {
-            System.Diagnostics.Debug.Assert(dataRedefines != null);
-            SymbolReference symRef = dataRedefines.RedefinesDataName;
-            return new RedefinesSymbol(dataDef.Name, symRef.AsPath());
         }
 
         /// <summary>
@@ -812,7 +793,7 @@ namespace TypeCobol.Compiler.Domain
                                     var entry = (CommonDataDescriptionAndDataRedefines) dataDef.CodeElement;
                                     if (entry.UserDefinedDataType != null)
                                     {
-                                        sym = CreateDataTypeSymbol(dataDef, entry.UserDefinedDataType, currentDomain, typedef);
+                                        sym = CreateDataTypeSymbol(dataDef, currentDomain, typedef);
                                     }
                                     else
                                     {
@@ -848,7 +829,6 @@ namespace TypeCobol.Compiler.Domain
                     ArrayType arrayType = new ArrayType(sym);
                     arrayType.MinOccur = dataDef.MinOccurencesCount;
                     arrayType.MaxOccur = dataDef.HasUnboundedNumberOfOccurences ? default(long?) : dataDef.MaxOccurencesCount;
-                    arrayType.DependingOnPath = dataDef.OccursDependingOn?.MainSymbolReference?.AsPath();
                     arrayType.ElementType = sym.Type;
                     //Build indexes
                     foreach (var indexDef in dataDef.Children.OfType<IndexDefinition>())

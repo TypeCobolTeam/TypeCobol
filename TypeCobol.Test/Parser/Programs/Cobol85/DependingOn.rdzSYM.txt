@@ -34,7 +34,6 @@ WorkingStorageData:
         (.NET Type=ArrayType, Tag=Array)
         MinOccur: 1
         MaxOccur: 99
-        DependingOnPath: MyCounter
         ElementType:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(1)
@@ -73,7 +72,6 @@ WorkingStorageData:
         (.NET Type=ArrayType, Tag=Array)
         MinOccur: 1
         MaxOccur: 99
-        DependingOnPath: MyAmbiguousCounter
         ElementType:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(1)
@@ -123,7 +121,6 @@ WorkingStorageData:
         (.NET Type=ArrayType, Tag=Array)
         MinOccur: 1
         MaxOccur: 99
-        DependingOnPath: MyCounter
         ElementType:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(1)
@@ -186,7 +183,6 @@ WorkingStorageData:
         (.NET Type=ArrayType, Tag=Array)
         MinOccur: 1
         MaxOccur: 99
-        DependingOnPath: MyCounter5, MySubSubGroup51
         ElementType:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(1)
@@ -199,7 +195,6 @@ WorkingStorageData:
         (.NET Type=ArrayType, Tag=Array)
         MinOccur: 1
         MaxOccur: 99
-        DependingOnPath: MyCounter5, MySubSubGroup51
         ElementType:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(1)
@@ -212,7 +207,6 @@ WorkingStorageData:
         (.NET Type=ArrayType, Tag=Array)
         MinOccur: 1
         MaxOccur: 99
-        DependingOnPath: MyCounter5, MyGroup5
         ElementType:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(1)
@@ -225,7 +219,6 @@ WorkingStorageData:
         (.NET Type=ArrayType, Tag=Array)
         MinOccur: 1
         MaxOccur: 99
-        DependingOnPath: MyCounter5, MySubGroup5, MyGroup5
         ElementType:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(1)
@@ -238,7 +231,6 @@ WorkingStorageData:
         (.NET Type=ArrayType, Tag=Array)
         MinOccur: 1
         MaxOccur: 99
-        DependingOnPath: MyCounter5, MySubSubGroup51, MySubGroup5, MyGroup5
         ElementType:
           (.NET Type=PictureType, Tag=Picture)
           Picture: X(1)

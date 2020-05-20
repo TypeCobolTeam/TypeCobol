@@ -21,7 +21,6 @@ GlobalStorageData:
     (.NET Type=ArrayType, Tag=Array)
     MinOccur: 1
     MaxOccur: 10
-    DependingOnPath: dependOnVarGlobal
     ElementType:
       (.NET Type=PictureType, Tag=Picture)
       Picture: X(120)
@@ -43,7 +42,6 @@ WorkingStorageData:
     (.NET Type=ArrayType, Tag=Array)
     MinOccur: 1
     MaxOccur: 10
-    DependingOnPath: dependOnVarGlobal
     ElementType:
       (.NET Type=PictureType, Tag=Picture)
       Picture: X(120)
@@ -56,7 +54,6 @@ WorkingStorageData:
     (.NET Type=ArrayType, Tag=Array)
     MinOccur: 1
     MaxOccur: 10
-    DependingOnPath: dependOnVarWorking
     ElementType:
       (.NET Type=PictureType, Tag=Picture)
       Picture: X(120)

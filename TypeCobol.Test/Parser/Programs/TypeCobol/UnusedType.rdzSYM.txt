@@ -59,7 +59,6 @@ Types:
             Owner: MyPGM::Type2::var2
             Level: 10
             IsFiller: False
-            TypePaths: [Type3]
         Level: 5
         IsFiller: False
   Level: 1
@@ -87,7 +86,6 @@ Types:
             Owner: MyPGM::Type1::var1
             Level: 10
             IsFiller: False
-            TypePaths: [type2]
         Level: 5
         IsFiller: False
   Level: 1

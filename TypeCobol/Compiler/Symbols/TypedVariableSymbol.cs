@@ -13,21 +13,12 @@ namespace TypeCobol.Compiler.Symbols
         /// Constructor with an unresolved Type's path
         /// </summary>
         /// <param name="name">Variable's name</param>
-        /// <param name="paths">The unresolved type's path</param>
-        public TypedVariableSymbol(string name, string[] paths)
+        public TypedVariableSymbol(string name)
             : base(name)
         {
-            System.Diagnostics.Debug.Assert(paths != null);
-            System.Diagnostics.Debug.Assert(paths.Length != 0);
-            SetFlag(Flags.HasATypedefType, true);
-            TypePaths = paths;
+            base.SetFlag(Flags.HasATypedefType, true);
             Typedef = null;
         }
-
-        /// <summary>
-        /// If the underlying type is not resolved then this is the path of the type to resolve.
-        /// </summary>
-        public string[] TypePaths { get; }
 
         /// <summary>
         /// The Typedef symbol
@@ -65,9 +56,6 @@ namespace TypeCobol.Compiler.Symbols
         {
             base.Dump(output, indentLevel);
             string indent = new string(' ', 2 * indentLevel);
-
-            output.Write(indent);
-            output.WriteLine($"TypePaths: [{string.Join(", ", TypePaths)}]");
 
             if (Typedef != null)
             {
