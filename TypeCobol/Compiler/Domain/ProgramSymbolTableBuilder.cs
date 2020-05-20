@@ -908,14 +908,14 @@ namespace TypeCobol.Compiler.Domain
                     {
                         sym.Level = 88;
                         if (currentDomain.Owner.Kind != Symbol.Kinds.Program && currentDomain.Owner.Kind != Symbol.Kinds.Function)
-                            sym.SetFlag(currentDomain.Owner.Flag & Symbol.SymbolVisibilityMask , currentDomain.Owner.HasFlag(Symbol.SymbolVisibilityMask));
+                            sym.SetFlag(currentDomain.Owner.Flag & Symbol.Flags.Global , currentDomain.Owner.HasFlag(Symbol.Flags.Global));
                     }
                         break;
                     case CodeElementType.DataRenamesEntry:
                     {
                         sym.Level = 66;
                         if (currentDomain.Owner.Kind != Symbol.Kinds.Program && currentDomain.Owner.Kind != Symbol.Kinds.Function)
-                            sym.SetFlag(currentDomain.Owner.Flag & Symbol.SymbolVisibilityMask, currentDomain.Owner.HasFlag(Symbol.SymbolVisibilityMask));
+                            sym.SetFlag(currentDomain.Owner.Flag & Symbol.Flags.Global, currentDomain.Owner.HasFlag(Symbol.Flags.Global));
                     }
                         break;
                     case CodeElementType.DataDescriptionEntry:
