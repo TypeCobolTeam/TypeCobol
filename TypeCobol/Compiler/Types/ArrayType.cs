@@ -63,6 +63,21 @@ namespace TypeCobol.Compiler.Types
 
         public override bool MayExpand => ElementType != null && ElementType.MayExpand;
 
+        public override bool IsEquivalentTo(Type otherType)
+        {
+            if(otherType==null)
+            {
+                return false;
+            }
+            if(otherType.Tag == Tags.Array)
+            {
+                var arrayType = (ArrayType) otherType;
+                return this.MinOccur == arrayType.MinOccur && this.MaxOccur == arrayType.MaxOccur 
+                    && (this.ElementType == arrayType.ElementType || (this.ElementType?.IsEquivalentTo(arrayType.ElementType) ?? false) );
+            }
+            return false;
+        }
+
         public override void Dump(TextWriter output, int indentLevel)
         {
             base.Dump(output, indentLevel);

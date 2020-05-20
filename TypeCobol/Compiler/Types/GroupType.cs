@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Symbols;
@@ -69,6 +70,34 @@ namespace TypeCobol.Compiler.Types
         {
             get;
             set;
+        }
+
+        public override int Length
+        {
+            get {
+                return Fields.Sum(f => f.Type.Length);
+             }
+        }
+
+        /// <summary>
+        /// 01 group1. => DerivedType can be "pic X(2)"
+        ///   05 var1a pic X.
+        ///   05 var1b pic X.
+        ///   
+        /// 01 group2. => DerivedType can be "pic X(5)" or maybe "pic 9(5)"
+        ///   05 var2 pic 9(5).
+        ///   
+        /// 01 group3 pointer. => DerivedType ?
+        ///   05 var3 pointer.
+        /// 
+        /// TODO also check memory alignment
+        /// </summary>
+        public Tuple<Type, Flags> DerivedType()
+        {
+            //1st version, we always return alphanumeric
+            return new Tuple<Type, Flags>(new PictureType($"X({this.Length})", false), 0);
+            //TODO be more precise
+            return null;
         }
 
         /// <summary>

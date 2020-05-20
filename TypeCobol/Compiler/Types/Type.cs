@@ -139,6 +139,14 @@ namespace TypeCobol.Compiler.Types
         {
             get
             {
+                if(Tag == Tags.Boolean)
+                {
+                    return 1;
+                }
+                else if(Tag == Tags.DataCondition)
+                {
+                    return 0;
+                }
                 switch (Usage)
                 {
                     case UsageFormat.Comp:
@@ -247,6 +255,59 @@ namespace TypeCobol.Compiler.Types
                     if (Flag.HasFlag(flag))
                         yield return flag.ToString();
             }
+        }
+
+        /// <summary>
+        /// Can I move otherType to this ?
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool IsAssignableFrom(Type otherType)
+        {
+            //TODO
+        }
+
+        /// <summary>
+        /// Can I call  otherType to this ?
+        /// We want almost strictly match between type.
+        /// Exceptions : TODO
+        /// 
+        /// 
+        /// This method is not symetric.
+        /// 
+        /// Note : Order of Type/TypeComponent is guaranteed to be always the same:
+        /// Both lines will produce: ArrayType -> GroupType -> Picture)      
+        ///     05 group1 occurs 5 pic X.   88 value1 ...
+        ///     05 group1 pic X occurs 5 .  88 value1 ...
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool IsEquivalentTo(Type otherType)
+        {
+            if (otherType==null)
+            {
+                return false;
+            }
+            /*
+            Array,
+            Group,
+            Picture,
+
+            Usage,         //The type is defined only by its usage
+            DataCondition, //Level-88 data conditions
+            Boolean,       //TypeCobol built-in type Bool
+            */
+            switch(this.Tag)
+            {
+                case Tags.Usage:
+                    return this.Tag == otherType.Tag && this.Usage == otherType.Usage;
+                case Tags.DataCondition:
+                case Tags.Boolean:
+                    return this.Tag == otherType.Tag;
+                default:
+                    System.Diagnostics.Debug.Fail("Root class Type cannot have usage " + this.Tag);
+                    return false;
+            }
+
+            //Don't compare ComponentType because it's always null for this root class
         }
 
         public virtual TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)
