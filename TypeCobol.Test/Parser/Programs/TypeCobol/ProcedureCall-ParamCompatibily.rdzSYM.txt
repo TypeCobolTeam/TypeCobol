@@ -140,7 +140,6 @@ Functions:
       Picture: 9(10)
     Level: 1
     IsFiller: False
-  IsNested: False
   proc2 (.NET Type=FunctionSymbol, Kind=Function)
   Flags: [Private]
   Owner: ProcedureCall-ParamCompatibily
@@ -156,7 +155,6 @@ Functions:
       Picture: X(10)
     Level: 1
     IsFiller: False
-  IsNested: False
   proc3 (.NET Type=FunctionSymbol, Kind=Function)
   Flags: [Private]
   Owner: ProcedureCall-ParamCompatibily
@@ -172,7 +170,6 @@ Functions:
       Picture: 9(10)
     Level: 1
     IsFiller: False
-  IsNested: False
   proc4 (.NET Type=FunctionSymbol, Kind=Function)
   Flags: [Private]
   Owner: ProcedureCall-ParamCompatibily
@@ -188,6 +185,5 @@ Functions:
       Picture: X(10)
     Level: 1
     IsFiller: False
-  IsNested: False
 IsNested: False
 

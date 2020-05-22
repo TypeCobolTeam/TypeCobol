@@ -94,7 +94,6 @@ Functions:
           IsFiller: False
     Level: 1
     IsFiller: False
-  IsNested: False
 Programs:
   Nested (.NET Type=ProgramSymbol, Kind=Program)
   Owner: DVZFSCT0
@@ -172,7 +171,6 @@ Programs:
             IsFiller: False
       Level: 1
       IsFiller: False
-    IsNested: False
   IsNested: True
 IsNested: False
 
@@ -252,6 +250,5 @@ Functions:
           IsFiller: False
     Level: 1
     IsFiller: False
-  IsNested: False
 IsNested: False
 

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.CupParser.NodeBuilder;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scopes;
@@ -50,14 +49,27 @@ namespace TypeCobol.Compiler.Domain
         public List<ProgramSymbol> Programs { get; }
 
         /// <summary>
-        /// The current ProgramSymbol being built as a Scope.
-        /// It is either a Program or a Function.
+        /// The current ProgramSymbol being built.
         /// </summary>
-        private ProgramSymbol CurrentScope
+        private ProgramSymbol CurrentProgram
         {
             get;
             set;
         }
+
+        /// <summary>
+        /// The current FunctionSymbol being built.
+        /// </summary>
+        private FunctionSymbol CurrentFunction
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// The current scope : this is the CurrentFunction if any, otherwise the CurrentProgram.
+        /// </summary>
+        private ScopeSymbol CurrentScope => CurrentFunction ?? (ScopeSymbol) CurrentProgram;
 
         /// <summary>
         /// The current node.
@@ -78,11 +90,18 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Keeps track of visited FunctionDeclaration nodes
+        /// Keeps track of last visited FunctionDeclaration node
         /// </summary>
-        private readonly Stack<FunctionDeclaration> _functionDeclStack = new Stack<FunctionDeclaration>();
-
-        private SectionSymbol CurrentSection
+        private FunctionDeclaration LastFunctionDeclaration
+        {
+            get;
+            set;
+        }
+        
+        /// <summary>
+        /// Current section in the procedure division.
+        /// </summary>
+        private SectionSymbol CurrentProcedureDivisionSection
         {
             get;
             set;
@@ -94,11 +113,6 @@ namespace TypeCobol.Compiler.Domain
         public ProgramSymbolTableBuilder()
         {
             Programs = new List<ProgramSymbol>();
-        }
-
-        public override void OnNode(Node node, Program program)
-        {
-            
         }
 
         /// <summary>
@@ -126,13 +140,13 @@ namespace TypeCobol.Compiler.Domain
 
             //Create the program, its type will be created after collecting parameters and return variable
             var program  = new ProgramSymbol(programIdentification.ProgramName.Name);
-            if (this.CurrentScope == null)
+            if (this.CurrentProgram == null)
             {
                 //This is the main program or a stacked program.
                 //TODO SemanticDomain: test for duplicate and enter program into Root.
 
                 //Add the new Stacked program into our result list.
-                Programs.Add(CurrentScope);
+                Programs.Add(program);
             }
             else
             {
@@ -143,22 +157,22 @@ namespace TypeCobol.Compiler.Domain
                 System.Diagnostics.Debug.Assert(CurrentNode.Parent.CodeElement.Type == CodeElementType.ProgramIdentification);
 
                 //Enter the program as nested here and set the owner.
-                this.CurrentScope.Programs.Enter(program);
-                program.Owner = this.CurrentScope;
+                this.CurrentProgram.Programs.Enter(program);
+                program.Owner = this.CurrentProgram;
             }
 
-            //Set the current scope
-            this.CurrentScope = program;
+            //Set the current program
+            this.CurrentProgram = program;
 
             //Semantic data on the node
-            CurrentNode.SemanticData = this.CurrentScope;
+            CurrentNode.SemanticData = program;
         }
 
         public override void EndCobolProgram(ProgramEnd end)
         {
             //For a stacked program the Owner is its Namespace so this will correctly
-            //reset the CurrentScope to null, for a nested Program, the Owner is the enclosing Program.
-            this.CurrentScope = CurrentScope.Owner as ProgramSymbol;
+            //reset the CurrentProgram to null, for a nested Program, the Owner is the enclosing Program.
+            this.CurrentProgram = CurrentProgram.Owner as ProgramSymbol;
         }
 
         public override void StartDataDivision(DataDivisionHeader header)
@@ -168,7 +182,12 @@ namespace TypeCobol.Compiler.Domain
 
         public override void StartFileSection(FileSectionHeader header)
         {
-            CurrentDataDivisionSection = new DataDivisionSection(Symbol.Flags.FILE, CurrentScope.FileData);
+            //No FILE SECTION in a procedure, look into CurrentProgram
+            if (CurrentFunction == null)
+            {
+                System.Diagnostics.Debug.Assert(CurrentProgram != null);
+                CurrentDataDivisionSection = new DataDivisionSection(Symbol.Flags.FILE, CurrentProgram.FileData);
+            }
         }
 
         public override void EndFileSection()
@@ -178,7 +197,12 @@ namespace TypeCobol.Compiler.Domain
 
         public override void StartGlobalStorageSection(GlobalStorageSectionHeader header)
         {
-            CurrentDataDivisionSection = new DataDivisionSection(Symbol.Flags.GLOBAL_STORAGE, CurrentScope.GlobalStorageData);
+            //No GLOBAL STORAGE SECTION in a procedure, look into CurrentProgram
+            if (CurrentFunction == null)
+            {
+                System.Diagnostics.Debug.Assert(CurrentProgram != null);
+                CurrentDataDivisionSection = new DataDivisionSection(Symbol.Flags.GLOBAL_STORAGE, CurrentProgram.GlobalStorageData);
+            }
         }
 
         public override void EndGlobalStorageSection()
@@ -188,6 +212,7 @@ namespace TypeCobol.Compiler.Domain
 
         public override void StartWorkingStorageSection(WorkingStorageSectionHeader header)
         {
+            System.Diagnostics.Debug.Assert(CurrentScope != null);
             CurrentDataDivisionSection = new DataDivisionSection(Symbol.Flags.WORKING_STORAGE, CurrentScope.WorkingStorageData);
         }
 
@@ -198,6 +223,7 @@ namespace TypeCobol.Compiler.Domain
 
         public override void StartLocalStorageSection(LocalStorageSectionHeader header)
         {
+            System.Diagnostics.Debug.Assert(CurrentScope != null);
             CurrentDataDivisionSection = new DataDivisionSection(Symbol.Flags.LOCAL_STORAGE, CurrentScope.LocalStorageData);
         }
 
@@ -208,6 +234,7 @@ namespace TypeCobol.Compiler.Domain
 
         public override void StartLinkageSection(LinkageSectionHeader header)
         {
+            System.Diagnostics.Debug.Assert(CurrentScope != null);
             CurrentDataDivisionSection = new DataDivisionSection(Symbol.Flags.LINKAGE, CurrentScope.LinkageData);
         }
 
@@ -226,7 +253,7 @@ namespace TypeCobol.Compiler.Domain
             System.Diagnostics.Debug.Assert(p.StorageArea != null);
             System.Diagnostics.Debug.Assert(p.StorageArea.SymbolReference != null);
             string parameterName = p.StorageArea.SymbolReference.Name;
-            var parameterCandidateSymbols = this.CurrentScope.LinkageData.Lookup(parameterName);
+            var parameterCandidateSymbols = this.CurrentProgram.LinkageData.Lookup(parameterName);
             if (parameterCandidateSymbols != null)
             {
                 System.Diagnostics.Debug.Assert(parameterCandidateSymbols.Count == 1);
@@ -271,12 +298,12 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Starting a PROCEDURE DIVISION => Collect all parameters.
+        /// Starting a Program PROCEDURE DIVISION => Collect all parameters.
         /// </summary>
         /// <param name="header"></param>
         public override void StartProcedureDivision(ProcedureDivisionHeader header)
         {
-            System.Diagnostics.Debug.Assert(CurrentScope != null);
+            System.Diagnostics.Debug.Assert(CurrentProgram != null);
 
             //Collect parameters and return variable and create the type for current program
             List<VariableSymbol> usings = new List<VariableSymbol>();
@@ -299,7 +326,7 @@ namespace TypeCobol.Compiler.Domain
                 returnVar = ResolveUsingParameter(retParam);
             }
 
-            CurrentScope.Type = new ScopeType(usings, returnVar);
+            CurrentProgram.Type = new ScopeType(usings, returnVar);
         }
 
         /// <summary>
@@ -311,19 +338,20 @@ namespace TypeCobol.Compiler.Domain
             System.Diagnostics.Debug.Assert(CurrentNode != null);
             System.Diagnostics.Debug.Assert(object.ReferenceEquals(CurrentNode.CodeElement, header));
             FunctionDeclaration funDecl = (FunctionDeclaration) CurrentNode;
-            _functionDeclStack.Push(funDecl);
+            System.Diagnostics.Debug.Assert(LastFunctionDeclaration == null);
+            LastFunctionDeclaration = funDecl;
             //Create a function symbol (the FunctionType will be set at end of declaration)
             FunctionSymbol funSym = new FunctionSymbol(header.FunctionName.Name);
             funDecl.SemanticData = funSym;
-            //Enter the function in the current scope
-            this.CurrentScope.Functions.Enter(funSym);
+            //Enter the function in the current program
+            this.CurrentProgram.Functions.Enter(funSym);
             //TODO SemanticDomain: store function Symbol into the root table.
-            //Its owner is the current scope.
-            funSym.Owner = this.CurrentScope;
+            //Its owner is the current program.
+            funSym.Owner = this.CurrentProgram;
             //What about function visibility.
             SetSymbolAccessModifer(funSym, header.Visibility);
             //The current scope is now the function.
-            this.CurrentScope = funSym;
+            this.CurrentFunction = funSym;
         }
 
         /// <summary>
@@ -343,10 +371,10 @@ namespace TypeCobol.Compiler.Domain
 
         public override void EndFunctionDeclaration(FunctionDeclarationEnd end)
         {
-            System.Diagnostics.Debug.Assert(_functionDeclStack.Count > 0);
-            FunctionDeclaration funDecl = _functionDeclStack.Peek();
-            System.Diagnostics.Debug.Assert(CurrentScope is FunctionSymbol);
-            FunctionSymbol funSym = (FunctionSymbol) CurrentScope;
+            System.Diagnostics.Debug.Assert(LastFunctionDeclaration != null);
+            FunctionDeclaration funDecl = LastFunctionDeclaration;
+            System.Diagnostics.Debug.Assert(CurrentFunction != null);
+            FunctionSymbol funSym = CurrentFunction;
 
             //Collect Function parameters.
             ParametersProfileNode funcProfile = funDecl.Profile;
@@ -384,10 +412,9 @@ namespace TypeCobol.Compiler.Domain
             funSym.Type = new ScopeType(parameters, retVar);
 
             //Pop the Function declaration context
-            _functionDeclStack.Pop();
+            LastFunctionDeclaration = null;
             //Also Pop CurrentScope
-            System.Diagnostics.Debug.Assert(funSym.Owner is ProgramSymbol);
-            CurrentScope = (ProgramSymbol) funSym.Owner;
+            CurrentFunction = null;
         }
 
         /// <summary>
@@ -686,12 +713,12 @@ namespace TypeCobol.Compiler.Domain
 
             //If we have created a TypedVariableSymbol Symbol instance then sure the underlying Program should be completed from the Top Program.
             //This can be an optimization to avoid pur Cobol85 program to be completed, they don't have TYPEDEF.
-            if (!CurrentScope.HasFlag(Symbol.Flags.NeedTypeCompletion))
+            if (!CurrentProgram.HasFlag(Symbol.Flags.NeedTypeCompletion))
             {
-                CurrentScope.SetFlag(Symbol.Flags.NeedTypeCompletion, true);
-                ProgramSymbol toProgram = (ProgramSymbol)CurrentScope.TopParent(Symbol.Kinds.Program);
-                if (toProgram != CurrentScope)
-                    toProgram.SetFlag(Symbol.Flags.NeedTypeCompletion, true);
+                CurrentProgram.SetFlag(Symbol.Flags.NeedTypeCompletion, true);
+                ProgramSymbol topProgram = (ProgramSymbol) CurrentProgram.TopParent(Symbol.Kinds.Program);
+                if (topProgram != CurrentProgram)
+                    topProgram.SetFlag(Symbol.Flags.NeedTypeCompletion, true);
             }
             return varTypeSym;
         }
@@ -949,23 +976,26 @@ namespace TypeCobol.Compiler.Domain
         /// <param name="level1Node">The level 1 definition node</param>
         public override void OnLevel1Definition(DataDefinition level1Node)
         {
-            var sectionVariables = CurrentDataDivisionSection.Variables;
-            var sectionFlag = CurrentDataDivisionSection.Flag;
-
-            VariableSymbol dataDefSym = DataDefinition2Symbol(level1Node, sectionVariables, null);
-            if (dataDefSym != null)
+            if (CurrentDataDivisionSection != null)
             {
-                //TODO SemanticDomain: we must validate all RENAMES at a 01 Level definition
+                var sectionVariables = CurrentDataDivisionSection.Variables;
+                var sectionFlag = CurrentDataDivisionSection.Flag;
 
-                System.Diagnostics.Debug.Assert(CurrentScope != null);
-
-                if (dataDefSym.Owner == null) //Because Symbols as TYPEDEF already have their parent.
-                    dataDefSym.Owner = CurrentScope;
-
-                if (dataDefSym.Kind != Symbol.Kinds.Typedef) //Typedef are already entered at creation time.
+                VariableSymbol dataDefSym = DataDefinition2Symbol(level1Node, sectionVariables, null);
+                if (dataDefSym != null)
                 {
-                    sectionVariables.Enter(dataDefSym);
-                    dataDefSym.SetFlag(sectionFlag, true);
+                    //TODO SemanticDomain: we must validate all RENAMES at a 01 Level definition
+
+                    System.Diagnostics.Debug.Assert(CurrentScope != null);
+
+                    if (dataDefSym.Owner == null) //Because Symbols as TYPEDEF already have their parent.
+                        dataDefSym.Owner = CurrentScope;
+
+                    if (dataDefSym.Kind != Symbol.Kinds.Typedef) //Typedef are already entered at creation time.
+                    {
+                        sectionVariables.Enter(dataDefSym);
+                        dataDefSym.SetFlag(sectionFlag, true);
+                    }
                 }
             }
         }
@@ -973,8 +1003,9 @@ namespace TypeCobol.Compiler.Domain
         public override void StartSection(SectionHeader header)
         {
             //Create Section symbol and enter it into current scope
-            var section = new SectionSymbol(header.SectionName.Name) {Owner = CurrentScope};
+            var section = new SectionSymbol(header.SectionName.Name);
             CurrentScope.Sections.Enter(section);
+            section.Owner = CurrentScope;
 
             //Update CurrentNode SemanticData
             System.Diagnostics.Debug.Assert(CurrentNode != null);
@@ -983,23 +1014,23 @@ namespace TypeCobol.Compiler.Domain
             CurrentNode.SemanticData = section;
 
             //Track current section
-            System.Diagnostics.Debug.Assert(CurrentSection == null);
-            CurrentSection = section;
+            System.Diagnostics.Debug.Assert(CurrentProcedureDivisionSection == null);
+            CurrentProcedureDivisionSection = section;
         }
 
         public override void EndSection()
         {
-            System.Diagnostics.Debug.Assert(CurrentSection != null);
-            CurrentSection = null;
+            System.Diagnostics.Debug.Assert(CurrentProcedureDivisionSection != null);
+            CurrentProcedureDivisionSection = null;
         }
 
         public override void StartParagraph(ParagraphHeader header)
         {
             var paragraph = new ParagraphSymbol(header.ParagraphName.Name);
-            if (CurrentSection != null)
+            if (CurrentProcedureDivisionSection != null)
             {
                 //Attach paragraph to section
-                CurrentSection.AddParagraph(paragraph);
+                CurrentProcedureDivisionSection.AddParagraph(paragraph);
             }
             else
             {

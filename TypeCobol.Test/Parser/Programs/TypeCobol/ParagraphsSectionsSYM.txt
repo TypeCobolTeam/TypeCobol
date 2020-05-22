@@ -82,6 +82,5 @@ Functions:
   Owner: ParagraphsSections
   Type:
     (.NET Type=ScopeType, Tag=Scope)
-  IsNested: False
 IsNested: False
 
