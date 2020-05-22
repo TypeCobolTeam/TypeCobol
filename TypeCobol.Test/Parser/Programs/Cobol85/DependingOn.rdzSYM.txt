@@ -10,7 +10,7 @@ Symbols found: StringStatement::MyGroup5::MySubGroup5::MySubSubGroup51::MyCounte
 --- Program ---
 StringStatement (.NET Type=ProgramSymbol, Kind=Program)
 Type:
-  (.NET Type=ProgramType, Tag=Program)
+  (.NET Type=ScopeType, Tag=Scope)
 WorkingStorageData:
   MyGroup (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]

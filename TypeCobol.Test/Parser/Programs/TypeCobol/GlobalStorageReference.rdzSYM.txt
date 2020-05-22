@@ -4,7 +4,7 @@ Line 23[31,47] <27, Error, Syntax> - Syntax error : A Global-Storage Section var
 --- Program ---
 GlobalStorageTest (.NET Type=ProgramSymbol, Kind=Program)
 Type:
-  (.NET Type=ProgramType, Tag=Program)
+  (.NET Type=ScopeType, Tag=Scope)
 GlobalStorageData:
   dependOnVarGlobal (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [GLOBAL_STORAGE]

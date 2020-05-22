@@ -6,53 +6,41 @@ using TypeCobol.Compiler.Symbols;
 namespace TypeCobol.Compiler.Types
 {
     /// <summary>
-    /// The Type of a Program.
+    /// The Type of either a Program or a Function.
     /// </summary>
-    public class ProgramType : Type
+    public class ScopeType : Type
     {
         /// <summary>
-        /// Empty Constructor
+        /// Builds a new ScopeType.
         /// </summary>
-        public ProgramType()
-            : this(Tags.Program)
+        /// <param name="parameters">Non-null list of parameters.</param>
+        /// <param name="returnVariable">Return variable if any.</param>
+        public ScopeType(List<VariableSymbol> parameters, VariableSymbol returnVariable)
+            : base(Tags.Scope)
         {
-
+            System.Diagnostics.Debug.Assert(parameters != null);
+            Parameters = parameters;
+            ReturnVariable = returnVariable;
         }
 
         /// <summary>
-        /// Constructor
+        /// Parameters variables.
         /// </summary>
-        protected ProgramType(Tags tag)
-            : base(tag)
-        {
-        }
-
-        /// <summary>
-        /// Usings variables from a Linkage section
-        /// </summary>
-        public List<VariableSymbol> Usings
-        {
-            get;
-            set;
-        }
+        public List<VariableSymbol> Parameters { get; }
 
         /// <summary>
         /// The return variable if any.
         /// </summary>
-        public VariableSymbol ReturnVariable
-        {
-            get;
-            set;
-        }
+        public VariableSymbol ReturnVariable { get; }
 
         public override void Dump(TextWriter output, int indentLevel)
         {
             base.Dump(output, indentLevel);
             string indent = new string(' ', 2 * indentLevel);
-            if (Usings != null && Usings.Count > 0)
+            if (Parameters != null && Parameters.Count > 0)
             {
                 output.Write(indent);
-                output.WriteLine($"Usings: [{string.Join(", ", Usings.Select(v => v.FullName))}]");//Write reference
+                output.WriteLine($"Parameters: [{string.Join(", ", Parameters.Select(v => v.FullName))}]");//Write reference
             }
 
             if (ReturnVariable != null)
@@ -64,7 +52,7 @@ namespace TypeCobol.Compiler.Types
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)
         {
-            return v.VisitProgramType(this, arg);
+            return v.VisitScopeType(this, arg);
         }
     }
 }

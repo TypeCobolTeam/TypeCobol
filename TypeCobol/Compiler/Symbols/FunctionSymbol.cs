@@ -20,41 +20,6 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// Function parameters.
-        /// </summary>
-        public List<VariableSymbol> Parameters => FunctionType?.Parameters;
-
-        /// <summary>
-        /// variable symbol
-        /// </summary>
-        public VariableSymbol ReturnSymbol => FunctionType?.ReturnSymbol;
-
-        /// <summary>
-        /// The return type
-        /// </summary>
-        public Type ReturnType => FunctionType?.ReturnType;
-
-        /// <summary>
-        /// The Function's type.
-        /// </summary>
-        public FunctionType FunctionType
-        {
-            get => (FunctionType)base.Type;
-            set => base.Type = value;
-        }
-
-        public override Type Type
-        {
-            get => base.Type;
-            set
-            {
-                //Ensure that this is the type of a function.
-                System.Diagnostics.Debug.Assert(value is FunctionType);
-                this.FunctionType = (FunctionType)value;
-            }
-        }
-
-        /// <summary>
         /// Function are not considered of Nested Programs.
         /// </summary>
         public override bool IsNested => false;

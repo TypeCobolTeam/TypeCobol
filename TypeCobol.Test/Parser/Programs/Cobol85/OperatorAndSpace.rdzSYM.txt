@@ -1,7 +1,7 @@
 --- Program ---
 DVZXMNT0 (.NET Type=ProgramSymbol, Kind=Program)
 Type:
-  (.NET Type=ProgramType, Tag=Program)
+  (.NET Type=ScopeType, Tag=Scope)
 WorkingStorageData:
   WS-LINE-BREAK (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]

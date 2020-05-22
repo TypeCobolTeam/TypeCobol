@@ -4,7 +4,7 @@ Line 27[34,39] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbo
 --- Program ---
 RedefinesTest (.NET Type=ProgramSymbol, Kind=Program)
 Type:
-  (.NET Type=ProgramType, Tag=Program)
+  (.NET Type=ScopeType, Tag=Scope)
 WorkingStorageData:
   MyVar1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]

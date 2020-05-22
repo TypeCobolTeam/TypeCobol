@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using TypeCobol.Compiler.Scopes;
+using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -28,6 +29,16 @@ namespace TypeCobol.Compiler.Symbols
             Paragraphs = new Domain<ParagraphSymbol>(this);
             Functions = new Domain<FunctionSymbol>(this);
             Programs = new Domain<ProgramSymbol>(this);
+        }
+
+        new public ScopeType Type
+        {
+            get
+            {
+                System.Diagnostics.Debug.Assert(base.Type is ScopeType);
+                return (ScopeType) base.Type;
+            }
+            set => base.Type = value;
         }
 
         /// <summary>

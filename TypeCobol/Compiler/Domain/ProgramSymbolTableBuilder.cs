@@ -123,30 +123,32 @@ namespace TypeCobol.Compiler.Domain
         {
             System.Diagnostics.Debug.Assert(CurrentNode != null);
             System.Diagnostics.Debug.Assert(object.ReferenceEquals(CurrentNode.CodeElement, programIdentification));
+
+            //Create the program, its type will be created after collecting parameters and return variable
+            var program  = new ProgramSymbol(programIdentification.ProgramName.Name);
             if (this.CurrentScope == null)
             {
                 //This is the main program or a stacked program.
                 //TODO SemanticDomain: test for duplicate and enter program into Root.
-                var stackedProgram = new ProgramSymbol(programIdentification.ProgramName.Name);
-                stackedProgram.Type = new ProgramType();
-                this.CurrentScope = stackedProgram;
-                //Add the new Stacked program.
+
+                //Add the new Stacked program into our result list.
                 Programs.Add(CurrentScope);
             }
             else
             {
-                //Nested program.
+                //This is a nested program.
+                //TODO SemanticDomain: store nestedProgram into the root table.
                 System.Diagnostics.Debug.Assert(CurrentNode.Parent != null);
                 System.Diagnostics.Debug.Assert(CurrentNode.Parent.CodeElement != null);
                 System.Diagnostics.Debug.Assert(CurrentNode.Parent.CodeElement.Type == CodeElementType.ProgramIdentification);
-                ProgramSymbol nestedProgram = new ProgramSymbol(programIdentification.ProgramName.Name);
-                nestedProgram.Type = new ProgramType();
-                //Reenter the program as nested here and change the parent.
-                this.CurrentScope.Programs.Enter(nestedProgram);
-                nestedProgram.Owner = this.CurrentScope;
-                this.CurrentScope = nestedProgram;
-                //TODO SemanticDomain: store nestedProgram into the root table.
+
+                //Enter the program as nested here and set the owner.
+                this.CurrentScope.Programs.Enter(program);
+                program.Owner = this.CurrentScope;
             }
+
+            //Set the current scope
+            this.CurrentScope = program;
 
             //Semantic data on the node
             CurrentNode.SemanticData = this.CurrentScope;
@@ -275,34 +277,29 @@ namespace TypeCobol.Compiler.Domain
         public override void StartProcedureDivision(ProcedureDivisionHeader header)
         {
             System.Diagnostics.Debug.Assert(CurrentScope != null);
-            System.Diagnostics.Debug.Assert(CurrentScope.Type != null);
-            System.Diagnostics.Debug.Assert(CurrentScope.Type.Tag == Type.Tags.Program);
-            if (CurrentScope.Type != null)
+
+            //Collect parameters and return variable and create the type for current program
+            List<VariableSymbol> usings = new List<VariableSymbol>();
+            IList<CallTargetParameter> usingParams = header.UsingParameters;
+            if (usingParams != null)
             {
-                List<VariableSymbol> usings = new List<VariableSymbol>();
-                IList<CallTargetParameter> usingParams = header.UsingParameters;
-                if (usingParams != null)
+                foreach (var p in usingParams)
                 {
-                    foreach (var p in usingParams)
+                    var parameterSymbol = ResolveUsingParameter(p);
+                    if (parameterSymbol != null)
                     {
-                        var parameterSymbol = ResolveUsingParameter(p);
-                        if (parameterSymbol != null)
-                        {
-                            usings.Add(parameterSymbol);
-                        }
+                        usings.Add(parameterSymbol);
                     }
                 }
-                CallTargetParameter retParam = header.ReturningParameter;
-                VariableSymbol returnVar = null;
-                if (retParam != null)
-                {
-                    returnVar = ResolveUsingParameter(retParam);
-                }
-
-                ProgramType prgType = (ProgramType) CurrentScope.Type;
-                prgType.Usings = usings;
-                prgType.ReturnVariable = returnVar;
             }
+            CallTargetParameter retParam = header.ReturningParameter;
+            VariableSymbol returnVar = null;
+            if (retParam != null)
+            {
+                returnVar = ResolveUsingParameter(retParam);
+            }
+
+            CurrentScope.Type = new ScopeType(usings, returnVar);
         }
 
         /// <summary>
@@ -384,8 +381,7 @@ namespace TypeCobol.Compiler.Domain
 
             //Create the Function type.
             parameters.TrimExcess();
-            Types.FunctionType funType = new Types.FunctionType(parameters, retVar);
-            funSym.Type = funType;
+            funSym.Type = new ScopeType(parameters, retVar);
 
             //Pop the Function declaration context
             _functionDeclStack.Pop();

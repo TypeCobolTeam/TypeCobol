@@ -4,7 +4,7 @@ Line 1[1,21] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 --- Program ---
 Tables (.NET Type=ProgramSymbol, Kind=Program)
 Type:
-  (.NET Type=ProgramType, Tag=Program)
+  (.NET Type=ScopeType, Tag=Scope)
 WorkingStorageData:
   mysize (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]

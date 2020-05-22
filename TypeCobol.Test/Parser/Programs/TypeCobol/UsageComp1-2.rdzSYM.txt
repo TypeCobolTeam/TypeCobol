@@ -7,7 +7,7 @@ Line 13[21,25] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1 a
 --- Program ---
 DVZF0OSM (.NET Type=ProgramSymbol, Kind=Program)
 Type:
-  (.NET Type=ProgramType, Tag=Program)
+  (.NET Type=ScopeType, Tag=Scope)
 WorkingStorageData:
   MyVar1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -32,8 +32,8 @@ Functions:
   Flags: [Private]
   Owner: DVZF0OSM
   Type:
-    (.NET Type=FunctionType, Tag=Function)
-    Usings: [DVZF0OSM::KONotCorrectFormat::var21, DVZF0OSM::KONotCorrectFormat::var22, DVZF0OSM::KONotCorrectFormat::var23, DVZF0OSM::KONotCorrectFormat::var24, DVZF0OSM::KONotCorrectFormat::var25]
+    (.NET Type=ScopeType, Tag=Scope)
+    Parameters: [DVZF0OSM::KONotCorrectFormat::var21, DVZF0OSM::KONotCorrectFormat::var22, DVZF0OSM::KONotCorrectFormat::var23, DVZF0OSM::KONotCorrectFormat::var24, DVZF0OSM::KONotCorrectFormat::var25]
   LinkageData:
     var21 (.NET Type=VariableSymbol, Kind=Variable)
     Flags: [LINKAGE, Input, Parameter]
