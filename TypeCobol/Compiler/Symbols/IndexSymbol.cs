@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using TypeCobol.Compiler.Types;
+﻿using System.IO;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -15,10 +13,9 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="name">The Index name</param>
         public IndexSymbol(string name)
-            : base(name)
+            : base(name, Kinds.Index)
         {
-            Kind = Kinds.Index;
-            Type = Builtins.IndexType;
+            base.Type = Builtins.IndexType;
         }
 
         /// <summary>

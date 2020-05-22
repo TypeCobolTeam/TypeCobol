@@ -9,12 +9,24 @@ namespace TypeCobol.Compiler.Symbols
     public class VariableSymbol : Symbol
     {
         /// <summary>
-        /// Named constructor
+        /// Named constructor, for standard COBOL variables.
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="name">Name of the new variable.</param>
         public VariableSymbol(string name)
             : base(name, Kinds.Variable)
         {
+
+        }
+
+        /// <summary>
+        /// Named constructor, for inheritors.
+        /// </summary>
+        /// <param name="name">Name of the new variable.</param>
+        /// <param name="kind">Variable kind.</param>
+        protected VariableSymbol(string name, Kinds kind)
+            : base(name, kind)
+        {
+
         }
 
         private int _level;

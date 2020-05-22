@@ -98,11 +98,7 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// Getter on type tag.
         /// </summary>
-        public Tags Tag
-        {
-            get;
-            internal set;
-        }
+        public Tags Tag { get; }
 
         /// <summary>
         /// Constructor

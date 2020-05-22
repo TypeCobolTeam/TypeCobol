@@ -18,7 +18,7 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="name">Symbol 's name</param>
         public RedefinesSymbol(string name)
-            : base(name)
+            : base(name) //No specific Kind for Redefines => Kind = Variable
         {
             base.SetFlag(Flags.Redefines, true);
             _redefined = null;

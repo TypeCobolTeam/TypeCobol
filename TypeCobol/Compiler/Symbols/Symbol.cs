@@ -21,7 +21,7 @@ namespace TypeCobol.Compiler.Symbols
             Program,
             Function,
             Typedef,
-            Variable,
+            Variable,//VariableSymbol and its inheritors except Index and Typedef
             Index,
             Section,
             Paragraph
@@ -112,11 +112,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Symbol Kind
         /// </summary>
-        public Kinds Kind
-        {
-            get;
-            protected set;
-        }
+        public Kinds Kind { get; }
 
         /// <summary>
         /// Symbol Flags.

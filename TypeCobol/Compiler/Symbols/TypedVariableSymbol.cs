@@ -14,7 +14,7 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="name">Variable's name</param>
         public TypedVariableSymbol(string name)
-            : base(name)
+            : base(name) //No specific Kind for TypedVariable => Kind = Variable
         {
             base.SetFlag(Flags.HasATypedefType, true);
             Typedef = null;
