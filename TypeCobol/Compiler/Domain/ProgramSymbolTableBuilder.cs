@@ -156,9 +156,8 @@ namespace TypeCobol.Compiler.Domain
                 System.Diagnostics.Debug.Assert(CurrentNode.Parent.CodeElement != null);
                 System.Diagnostics.Debug.Assert(CurrentNode.Parent.CodeElement.Type == CodeElementType.ProgramIdentification);
 
-                //Enter the program as nested here and set the owner.
+                //Enter the program as nested here.
                 this.CurrentProgram.Programs.Enter(program);
-                program.Owner = this.CurrentProgram;
             }
 
             //Set the current program
@@ -346,8 +345,6 @@ namespace TypeCobol.Compiler.Domain
             //Enter the function in the current program
             this.CurrentProgram.Functions.Enter(funSym);
             //TODO SemanticDomain: store function Symbol into the root table.
-            //Its owner is the current program.
-            funSym.Owner = this.CurrentProgram;
             //What about function visibility.
             SetSymbolAccessModifer(funSym, header.Visibility);
             //The current scope is now the function.
@@ -365,7 +362,7 @@ namespace TypeCobol.Compiler.Domain
             
             //Enter the symbol in the linkage section domain
             linkageData.Enter(p);
-            p.Owner = linkageData.Owner;
+
             return p;
         }
 
@@ -610,7 +607,6 @@ namespace TypeCobol.Compiler.Domain
                 if (dfSym != null)
                 {
                     recType.Fields.Enter(dfSym);
-                    dfSym.Owner = sym;
                 }
             }
 
@@ -684,10 +680,21 @@ namespace TypeCobol.Compiler.Domain
             ((TypedefType) tdSym.Type).TargetType = targetType;
             
             //Important if the target Type is a Group Type we must set the owner to the TypedefSymbol.
-            if (targetType != null && targetType.Tag == Type.Tags.Group)
+            //We should do the same if the target Type is an ArrayType because of the Indexes domain.
+            //Note that this is not a valid case because OCCURS is not allowed on 01 levels
+            //and therefore not allowed on typedefs, but the grammar allows it...
+            if (targetType != null)
             {
-                GroupType groupType = (GroupType) targetType;
-                groupType.Fields.Owner = tdSym;
+                if (targetType.Tag == Type.Tags.Group)
+                {
+                    GroupType groupType = (GroupType) targetType;
+                    groupType.Fields.Owner = tdSym;
+                }
+                else if (targetType.Tag == Type.Tags.Array)
+                {
+                    ArrayType arrayType = (ArrayType) targetType;
+                    arrayType.Indexes.Owner = tdSym;
+                }
             }
 
             //Mark all symbol has belonging to a TYPEDEF
@@ -862,10 +869,9 @@ namespace TypeCobol.Compiler.Domain
                         indexSym.Indexed = sym;
                         //Add the index in the arrayType.
                         arrayType.Indexes.Enter(indexSym);
-                        indexSym.Owner = sym;
+                        //Copy Global flag for a Global Index
                         if (sym.HasFlag(Symbol.Flags.Global))
                         {
-                            //For a Global Index
                             indexSym.SetFlag(Symbol.Flags.Global, true);
                         }
                     }
@@ -888,8 +894,7 @@ namespace TypeCobol.Compiler.Domain
         {
             //Set SemanticData for the DataDef
             dataDef.SemanticData = sym;
-            if (sym.Owner == null)
-                sym.Owner = currentDomain.Owner;
+
             //Section flag
             bool inGlobalStorageSection;
             if (CurrentDataDivisionSection != null)
@@ -986,11 +991,6 @@ namespace TypeCobol.Compiler.Domain
                 {
                     //TODO SemanticDomain: we must validate all RENAMES at a 01 Level definition
 
-                    System.Diagnostics.Debug.Assert(CurrentScope != null);
-
-                    if (dataDefSym.Owner == null) //Because Symbols as TYPEDEF already have their parent.
-                        dataDefSym.Owner = CurrentScope;
-
                     if (dataDefSym.Kind != Symbol.Kinds.Typedef) //Typedef are already entered at creation time.
                     {
                         sectionVariables.Enter(dataDefSym);
@@ -1005,7 +1005,6 @@ namespace TypeCobol.Compiler.Domain
             //Create Section symbol and enter it into current scope
             var section = new SectionSymbol(header.SectionName.Name);
             CurrentScope.Sections.Enter(section);
-            section.Owner = CurrentScope;
 
             //Update CurrentNode SemanticData
             System.Diagnostics.Debug.Assert(CurrentNode != null);
@@ -1029,13 +1028,12 @@ namespace TypeCobol.Compiler.Domain
             var paragraph = new ParagraphSymbol(header.ParagraphName.Name);
             if (CurrentProcedureDivisionSection != null)
             {
-                //Attach paragraph to section
-                CurrentProcedureDivisionSection.AddParagraph(paragraph);
+                //Enter paragraph into current section
+                CurrentProcedureDivisionSection.Paragraphs.Enter(paragraph);
             }
             else
             {
-                //Attach paragraph to program/function
-                paragraph.Owner = CurrentScope;
+                //Attach paragraph directly to program/function
                 CurrentScope.Paragraphs.Enter(paragraph);
             }
 

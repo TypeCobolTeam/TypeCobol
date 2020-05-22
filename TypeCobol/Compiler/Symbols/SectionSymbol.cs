@@ -23,16 +23,6 @@ namespace TypeCobol.Compiler.Symbols
             protected set;
         }
 
-        /// <summary>
-        /// Enters a paragraph symbol in this Section.
-        /// </summary>
-        /// <param name="p">The paragraph to enter.</param>
-        public virtual void AddParagraph(ParagraphSymbol p)
-        {
-            p.Owner = this;
-            Paragraphs.Enter(p);
-        }
-
         public override void Dump(TextWriter output, int indentLevel)
         {
             base.Dump(output, indentLevel);
