@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.CupParser.NodeBuilder;
@@ -165,7 +166,7 @@ namespace TypeCobol.Compiler.Domain
 
         public override void StartFileSection(FileSectionHeader header)
         {
-            CurrentDataDivisionSection = new DataDivisionSection(Symbol.Flags.FILE_SECTION, CurrentScope.FileData);
+            CurrentDataDivisionSection = new DataDivisionSection(Symbol.Flags.FILE, CurrentScope.FileData);
         }
 
         public override void EndFileSection()
@@ -473,8 +474,8 @@ namespace TypeCobol.Compiler.Domain
         /// <returns>The Symbol created</returns>
         private VariableSymbol CreateAndAddRedefinesOrVariableSymbol(Type type, DataDefinition dataDef, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
-            VariableSymbol sym = IsRedefinedDataDefinition(dataDef, out var dataRedefines)
-                ? CreateRedefinesSymbol(dataDef, dataRedefines)
+            VariableSymbol sym = IsRedefinedDataDefinition(dataDef, out _)
+                ? new RedefinesSymbol(dataDef.Name)
                 : new VariableSymbol(dataDef.Name);
 
             sym.Type = type;
@@ -553,8 +554,8 @@ namespace TypeCobol.Compiler.Domain
         private VariableSymbol CreateGroupSymbol(DataDefinition dataDef, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
             //We create a group symbol having the group type
-            VariableSymbol sym = IsRedefinedDataDefinition(dataDef, out var dataRedefines)
-                ? CreateRedefinesSymbol(dataDef, dataRedefines)
+            VariableSymbol sym = IsRedefinedDataDefinition(dataDef, out _)
+                ? new RedefinesSymbol(dataDef.Name)
                 : new VariableSymbol(dataDef.Name);
 
             //We create the group type
@@ -586,10 +587,7 @@ namespace TypeCobol.Compiler.Domain
                 if (dfSym != null)
                 {
                     recType.Fields.Enter(dfSym);
-                    //Important set the Owner before calling HandleIndexes
                     dfSym.Owner = sym;
-                    //Handle indexes belonging to this Data Definition
-                    HandleIndexes(df, dfSym, recType.Fields, typedef);
                 }
             }
 
@@ -680,18 +678,12 @@ namespace TypeCobol.Compiler.Domain
         /// Create a Symbol whose type is a type defined as a TypeDef
         /// </summary>
         /// <param name="dataDef">The Data Definition to convert</param>
-        /// <param name="userDefinedDataType">The reference to the user-defined type of this DataDefinition.</param>
         /// <param name="currentDomain">The current domain of variables being built.</param>
         /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns>The Created Symbol</returns>
-        private VariableSymbol CreateDataTypeSymbol(DataDefinition dataDef, SymbolReference userDefinedDataType, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
+        private VariableSymbol CreateDataTypeSymbol(DataDefinition dataDef, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
-            System.Diagnostics.Debug.Assert(userDefinedDataType != null);
-            //We need also a valid CurrentScope to lookup Typedef if one exit, or to create an unresolved Typedef declaration.
-            System.Diagnostics.Debug.Assert(CurrentScope != null);
-
-            string[] paths = userDefinedDataType.AsPath();
-            var varTypeSym = new TypedVariableSymbol(dataDef.Name, paths);
+            var varTypeSym = new TypedVariableSymbol(dataDef.Name);
             DecorateSymbol(dataDef, varTypeSym, currentDomain);
             if (typedef == null)
                 CurrentScope.Add(varTypeSym);
@@ -725,19 +717,6 @@ namespace TypeCobol.Compiler.Domain
                 CurrentScope.Add(sym);
 
             return sym;
-        }
-
-        /// <summary>
-        /// Creates a REDEFINES symbol Not typed, but with the redefined symbol resolved.
-        /// </summary>
-        /// <param name="dataDef">The DataDefinition which is a DataRedefinesEntry</param>
-        /// <param name="dataRedefines">The associated DataRedefinesEntry, must be non-null</param>
-        /// <returns>The symbol which is a RedefinesSymbol not typed if the redefined symbol is resolved, null otherwise</returns>
-        private RedefinesSymbol CreateRedefinesSymbol(DataDefinition dataDef, DataRedefinesEntry dataRedefines)
-        {
-            System.Diagnostics.Debug.Assert(dataRedefines != null);
-            SymbolReference symRef = dataRedefines.RedefinesDataName;
-            return new RedefinesSymbol(dataDef.Name, symRef.AsPath());
         }
 
         /// <summary>
@@ -814,7 +793,7 @@ namespace TypeCobol.Compiler.Domain
                                     var entry = (CommonDataDescriptionAndDataRedefines) dataDef.CodeElement;
                                     if (entry.UserDefinedDataType != null)
                                     {
-                                        sym = CreateDataTypeSymbol(dataDef, entry.UserDefinedDataType, currentDomain, typedef);
+                                        sym = CreateDataTypeSymbol(dataDef, currentDomain, typedef);
                                     }
                                     else
                                     {
@@ -842,49 +821,38 @@ namespace TypeCobol.Compiler.Domain
             }
 
             if (sym != null)
-            {//Consider an array
-                if (dataDef.MaxOccurencesCount > 1)
-                {//Change the symbol type to an array type.
-                    ArrayType arrayType = new ArrayType();
+            {
+                //Consider an array
+                if (dataDef.IsTableOccurence)
+                {
+                    //Create the ArrayType
+                    ArrayType arrayType = new ArrayType(sym);
                     arrayType.MinOccur = dataDef.MinOccurencesCount;
-                    arrayType.MaxOccur = dataDef.MaxOccurencesCount;
+                    arrayType.MaxOccur = dataDef.HasUnboundedNumberOfOccurences ? default(long?) : dataDef.MaxOccurencesCount;
                     arrayType.ElementType = sym.Type;
+                    //Build indexes
+                    foreach (var indexDef in dataDef.Children.OfType<IndexDefinition>())
+                    {
+                        //An index definition symbol
+                        var indexSym = CreateIndexSymbol(indexDef, currentDomain, typedef);
+                        //Attach the Indexed
+                        indexSym.Indexed = sym;
+                        //Add the index in the arrayType.
+                        arrayType.Indexes.Enter(indexSym);
+                        indexSym.Owner = sym;
+                        if (sym.HasFlag(Symbol.Flags.Global))
+                        {
+                            //For a Global Index
+                            indexSym.SetFlag(Symbol.Flags.Global, true);
+                        }
+                    }
+
+                    //Now that the ArrayType is complete, change symbol type
                     sym.Type = arrayType;
                 }                
             }
             
             return sym;
-        }
-
-        /// <summary>
-        /// Handles Indexes associated to a DataDefinition.
-        /// </summary>
-        /// <param name="dataDef">The Indexed Data Definition instance</param>
-        /// <param name="indexedSym">The Indexed Symbol</param>
-        /// <param name="currentDomain">Domain of the indexedSymbol</param>
-        /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
-        private void HandleIndexes(DataDefinition dataDef, VariableSymbol indexedSym, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
-        {
-            foreach (var child in dataDef.Children)
-            {
-                if (child.CodeElement == null && child is IndexDefinition indexDef)
-                {
-                    //An index definition symbol
-                    var indexSym = CreateIndexSymbol(indexDef, currentDomain, typedef);
-                    //Attach the Indexed
-                    indexSym.Owner = indexedSym.Owner;
-                    indexSym.Indexed = indexedSym;
-                    //Add the index in the current domain.
-                    System.Diagnostics.Debug.Assert(currentDomain != null);
-                    currentDomain.Enter(indexSym);
-                    if (indexedSym.HasFlag(Symbol.Flags.Global))
-                    {//For a Global Index
-                        indexSym.SetFlag(Symbol.Flags.Global, true);
-                    }
-
-                    child.SemanticData = indexSym;
-                }
-            }
         }
 
         /// <summary>
@@ -920,14 +888,14 @@ namespace TypeCobol.Compiler.Domain
                     {
                         sym.Level = 88;
                         if (currentDomain.Owner.Kind != Symbol.Kinds.Program && currentDomain.Owner.Kind != Symbol.Kinds.Function)
-                            sym.SetFlag(currentDomain.Owner.Flag & Symbol.SymbolVisibilityMask , currentDomain.Owner.HasFlag(Symbol.SymbolVisibilityMask));
+                            sym.SetFlag(currentDomain.Owner.Flag & Symbol.Flags.Global , currentDomain.Owner.HasFlag(Symbol.Flags.Global));
                     }
                         break;
                     case CodeElementType.DataRenamesEntry:
                     {
                         sym.Level = 66;
                         if (currentDomain.Owner.Kind != Symbol.Kinds.Program && currentDomain.Owner.Kind != Symbol.Kinds.Function)
-                            sym.SetFlag(currentDomain.Owner.Flag & Symbol.SymbolVisibilityMask, currentDomain.Owner.HasFlag(Symbol.SymbolVisibilityMask));
+                            sym.SetFlag(currentDomain.Owner.Flag & Symbol.Flags.Global, currentDomain.Owner.HasFlag(Symbol.Flags.Global));
                     }
                         break;
                     case CodeElementType.DataDescriptionEntry:
@@ -936,6 +904,7 @@ namespace TypeCobol.Compiler.Domain
                         CommonDataDescriptionAndDataRedefines dataDescEntry =
                             (CommonDataDescriptionAndDataRedefines)dataDef.CodeElement;                            
                         sym.Level = dataDescEntry.LevelNumber != null ? (int)dataDescEntry.LevelNumber.Value : 0;
+                        sym.IsFiller = dataDescEntry.IsFiller;
                         if (dataDescEntry.IsGlobal || currentDomain.Owner.HasFlag(Symbol.Flags.Global))
                         {//No Global inside GLOBAL-STORAGE.
                             if (!inGlobalStorageSection)
@@ -955,7 +924,14 @@ namespace TypeCobol.Compiler.Domain
                         if (dataDescEntry.IsGroupUsageNational != null && dataDescEntry.IsGroupUsageNational.Value)
                             sym.SetFlag(Symbol.Flags.GroupUsageNational, true);
                         if (dataDescEntry.SignIsSeparate != null && dataDescEntry.SignIsSeparate.Value)
-                            sym.SetFlag(Symbol.Flags.Sign, true);
+                            sym.SetFlag(Symbol.Flags.SeparateSign, true);
+                        if (dataDescEntry.SignPosition != null)
+                        {
+                            if (dataDescEntry.SignPosition.Value == SignPosition.Leading)
+                                sym.SetFlag(Symbol.Flags.LeadingSign, true);
+                            if (dataDescEntry.SignPosition.Value == SignPosition.Trailing)
+                                sym.SetFlag(Symbol.Flags.TrailingSign, true);
+                        }
                         if (dataDescEntry.IsSynchronized != null && dataDescEntry.IsSynchronized.Value)
                             sym.SetFlag(Symbol.Flags.Sync, true);
                         if (dataDef.CodeElement.Type == CodeElementType.DataDescriptionEntry)
@@ -967,33 +943,9 @@ namespace TypeCobol.Compiler.Domain
                     }
                         break;
                     default:
-                        System.Diagnostics.Debug.Assert(dataDef.CodeElement.Type == CodeElementType.DataDescriptionEntry ||
-                                                        dataDef.CodeElement.Type == CodeElementType.DataRenamesEntry ||
-                                                        dataDef.CodeElement.Type == CodeElementType.DataRedefinesEntry ||
-                                                        dataDef.CodeElement.Type == CodeElementType.DataConditionEntry);
+                        System.Diagnostics.Debug.Fail("Unsupported CodeElement type in DecorateSymbol !");
                         break;
                 }
-            }
-        }
-
-        /// <summary>
-        /// Store the given data definition symbol in the current DataDivision section
-        /// </summary>
-        /// <param name="dataDefSym"></param>
-        private void StoreDataDivisionSymbol(VariableSymbol dataDefSym)
-        {
-            System.Diagnostics.Debug.Assert(dataDefSym != null);
-            System.Diagnostics.Debug.Assert(CurrentScope != null);
-            System.Diagnostics.Debug.Assert(CurrentDataDivisionSection != null);
-
-            if (dataDefSym.Owner == null) //Because Symbols as TYPEDEF already have their parent.
-                dataDefSym.Owner = CurrentScope;
-
-            if (dataDefSym.Kind != Symbol.Kinds.Typedef) //Typedef are already entered at creation time.
-            {
-                System.Diagnostics.Debug.Assert(CurrentDataDivisionSection.Variables != null);
-                CurrentDataDivisionSection.Variables.Enter(dataDefSym);
-                dataDefSym.SetFlag(CurrentDataDivisionSection.Flag, true);
             }
         }
 
@@ -1004,14 +956,23 @@ namespace TypeCobol.Compiler.Domain
         public override void OnLevel1Definition(DataDefinition level1Node)
         {
             var sectionVariables = CurrentDataDivisionSection.Variables;
+            var sectionFlag = CurrentDataDivisionSection.Flag;
+
             VariableSymbol dataDefSym = DataDefinition2Symbol(level1Node, sectionVariables, null);
             if (dataDefSym != null)
             {
                 //TODO SemanticDomain: we must validate all RENAMES at a 01 Level definition
 
-                StoreDataDivisionSymbol(dataDefSym);
-                //Handle indexes belonging to this Data Definition
-                HandleIndexes(level1Node, dataDefSym, sectionVariables, null);
+                System.Diagnostics.Debug.Assert(CurrentScope != null);
+
+                if (dataDefSym.Owner == null) //Because Symbols as TYPEDEF already have their parent.
+                    dataDefSym.Owner = CurrentScope;
+
+                if (dataDefSym.Kind != Symbol.Kinds.Typedef) //Typedef are already entered at creation time.
+                {
+                    sectionVariables.Enter(dataDefSym);
+                    dataDefSym.SetFlag(sectionFlag, true);
+                }
             }
         }
 

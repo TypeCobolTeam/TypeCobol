@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using TypeCobol.Compiler.Scopes;
+using System.IO;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -15,15 +15,6 @@ namespace TypeCobol.Compiler.Symbols
         public VariableSymbol(string name)
             : base(name, Kinds.Variable)
         {
-        }
-
-        /// <summary>
-        /// The Global index associated to this variable.
-        /// </summary>
-        public int GlobalIndex
-        {
-            get;
-            internal set;
         }
 
         private int _level;
@@ -100,19 +91,19 @@ namespace TypeCobol.Compiler.Symbols
             set;
         }
 
-        /// <summary>
-        /// All Symbol that redefines this Symbol.
-        /// </summary>
+        /// <summary>	
+        /// All Symbol that redefines this Symbol.	
+        /// </summary>	
         public List<VariableSymbol> Redefines
         {
             get;
             private set;
         }
 
-        /// <summary>
-        /// Add a redefines symbol to this symbol.
-        /// </summary>
-        /// <param name="symbol"></param>
+        /// <summary>	
+        /// Add a redefines symbol to this symbol.	
+        /// </summary>	
+        /// <param name="symbol"></param>	
         public void AddRedefines(VariableSymbol symbol)
         {
             System.Diagnostics.Debug.Assert(symbol != null);
@@ -121,6 +112,15 @@ namespace TypeCobol.Compiler.Symbols
                 Redefines = new List<VariableSymbol>();
             }
             Redefines.Add(symbol);
+        }
+
+        /// <summary>
+        /// If this variable is an array, VariableSymbol of the DEPENDING ON clause (if any).
+        /// </summary>
+        public VariableSymbol DependingOn
+        {
+            get;
+            set; //TODO perform resolution at appropriate time ?
         }
 
         /// <summary>
@@ -139,6 +139,34 @@ namespace TypeCobol.Compiler.Symbols
                 return null;
 
             return Owner.LookupParentLevelSymbol(level, true);
+        }
+
+        public override void Dump(TextWriter output, int indentLevel)
+        {
+            base.Dump(output, indentLevel);
+            string indent = new string(' ', 2 * indentLevel);
+            output.Write(indent);
+            output.WriteLine("Level: " + Level);
+            output.Write(indent);
+            output.WriteLine("IsFiller: " + IsFiller);
+
+            if (Redefines != null && Redefines.Count > 0)
+            {
+                output.Write(indent);
+                output.WriteLine("Redefines:");
+                indent += "  ";
+                foreach (var redefines in Redefines)
+                {
+                    output.Write(indent);
+                    output.WriteLine(redefines.FullName);//Write reference	
+                }
+            }
+
+            if (DependingOn != null)
+            {
+                output.Write(indent);
+                output.WriteLine($"DependingOn: {DependingOn.FullName}");//Write reference
+            }
         }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)

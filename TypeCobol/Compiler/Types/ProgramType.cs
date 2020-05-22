@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using TypeCobol.Compiler.Symbols;
 
 namespace TypeCobol.Compiler.Types
@@ -41,6 +43,23 @@ namespace TypeCobol.Compiler.Types
         {
             get;
             set;
+        }
+
+        public override void Dump(TextWriter output, int indentLevel)
+        {
+            base.Dump(output, indentLevel);
+            string indent = new string(' ', 2 * indentLevel);
+            if (Usings != null && Usings.Count > 0)
+            {
+                output.Write(indent);
+                output.WriteLine($"Usings: [{string.Join(", ", Usings.Select(v => v.FullName))}]");//Write reference
+            }
+
+            if (ReturnVariable != null)
+            {
+                output.Write(indent);
+                output.WriteLine($"ReturnVariable: {ReturnVariable.FullName}");//Write reference
+            }
         }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)

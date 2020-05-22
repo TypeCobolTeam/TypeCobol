@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Symbols;
 
 using static TypeCobol.Compiler.Symbols.Symbol;
 
@@ -120,7 +120,7 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// Type's Flags.
         /// </summary>
-        public Symbol.Flags Flag
+        public Flags Flag
         {
             get;
             internal set;
@@ -219,10 +219,34 @@ namespace TypeCobol.Compiler.Types
 
         public override string ToString()
         {
-            StringWriter sw = new StringWriter();
-            TextRendererVisitor visitor = new TextRendererVisitor(sw);
-            visitor.Dump(this);
-            return sw.ToString();
+            var output = new StringWriter();
+            Dump(output, 0);
+            return output.ToString();
+        }
+
+        public virtual void Dump(TextWriter output, int indentLevel)
+        {
+            string indent = new string(' ', 2 * indentLevel);
+            output.Write(indent);
+            output.WriteLine($"(.NET Type={GetType().Name}, Tag={Tag})");
+            if (Flag != 0)
+            {
+                output.Write(indent);
+                output.WriteLine($"Flags: [{string.Join(", ", GetFlagsLabels())}]");
+            }
+
+            if (Usage != UsageFormat.None)
+            {
+                output.Write(indent);
+                output.WriteLine($"Usage: {Usage}");
+            }
+
+            IEnumerable<string> GetFlagsLabels()
+            {
+                foreach (Flags flag in Enum.GetValues(typeof(Flags)))
+                    if (Flag.HasFlag(flag))
+                        yield return flag.ToString();
+            }
         }
 
         public virtual TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)

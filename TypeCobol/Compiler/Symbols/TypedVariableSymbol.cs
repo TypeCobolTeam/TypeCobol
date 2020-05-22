@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler.Types;
+﻿using System.IO;
+using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -12,21 +13,12 @@ namespace TypeCobol.Compiler.Symbols
         /// Constructor with an unresolved Type's path
         /// </summary>
         /// <param name="name">Variable's name</param>
-        /// <param name="paths">The unresolved type's path</param>
-        public TypedVariableSymbol(string name, string[] paths)
+        public TypedVariableSymbol(string name)
             : base(name)
         {
-            System.Diagnostics.Debug.Assert(paths != null);
-            System.Diagnostics.Debug.Assert(paths.Length != 0);
-            SetFlag(Flags.HasATypedefType, true);
-            TypePaths = paths;
+            base.SetFlag(Flags.HasATypedefType, true);
             Typedef = null;
         }
-
-        /// <summary>
-        /// If the underlying type is not resolved then this is the path of the type to resolve.
-        /// </summary>
-        public string[] TypePaths { get; }
 
         /// <summary>
         /// The Typedef symbol
@@ -59,6 +51,18 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         public override string TypedName => Typedef != null ? (Name + '.' + Typedef.Name) : Name;
+
+        public override void Dump(TextWriter output, int indentLevel)
+        {
+            base.Dump(output, indentLevel);
+            string indent = new string(' ', 2 * indentLevel);
+
+            if (Typedef != null)
+            {
+                output.Write(indent);
+                output.WriteLine($"Typedef: {Typedef.FullName}");//Write reference
+            }
+        }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)
         {

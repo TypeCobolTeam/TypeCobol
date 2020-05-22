@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace TypeCobol.Compiler.Types
@@ -354,6 +355,14 @@ namespace TypeCobol.Compiler.Types
                 }
                 return Size;
             }
+        }
+
+        public override void Dump(TextWriter output, int indentLevel)
+        {
+            base.Dump(output, indentLevel);
+            string indent = new string(' ', 2 * indentLevel);
+            output.Write(indent);
+            output.WriteLine($"Picture: {Picture}");
         }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)

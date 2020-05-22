@@ -1,5 +1,5 @@
 ﻿using System;
-using TypeCobol.Compiler.Scopes;
+using System.IO;
 using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
@@ -30,24 +30,15 @@ namespace TypeCobol.Compiler.Symbols
         public override string IndexedOfName => Indexed != null && Indexed.Name.Length != 0 ? Name +  " OF " + Indexed.Name  : Name;
         public override string IndexedDotName => Indexed != null && Indexed.Name.Length != 0 ? Indexed.Name + '.' + Name : Name;
 
-        public override Symbol LookupParentOfName(string name)
+        public override void Dump(TextWriter output, int indentLevel)
         {
-            if (Indexed == null)
-                return base.LookupParentOfName(name);
-            if (Indexed.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
-                return Indexed;
-            return Indexed.LookupParentOfName(name);
-        }
-
-        public override bool HasParent(Symbol parent)
-        {
-            if (Indexed == null)
-                return base.HasParent(parent);
-            if (Indexed == parent)
-                return true;
-            if (parent == null)
-                return false;
-            return Indexed.HasParent(parent);
+            base.Dump(output, indentLevel);
+            if (Indexed != null)
+            {
+                string indent = new string(' ', 2 * indentLevel);
+                output.Write(indent);
+                output.WriteLine($"Indexed: {Indexed.FullName}");//Write reference
+            }
         }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)

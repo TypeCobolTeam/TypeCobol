@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler.Scopes;
+﻿using System.IO;
+using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -30,6 +31,22 @@ namespace TypeCobol.Compiler.Symbols
         {
             p.Owner = this;
             Paragraphs.Enter(p);
+        }
+
+        public override void Dump(TextWriter output, int indentLevel)
+        {
+            base.Dump(output, indentLevel);
+            if (Paragraphs != null && Paragraphs.Count > 0)
+            {
+                string indent = new string(' ', 2 * indentLevel);
+                output.Write(indent);
+                output.WriteLine("Paragraphs:");
+                var level = indentLevel + 1;
+                foreach (var paragraph in Paragraphs)
+                {
+                    paragraph.Dump(output, level);
+                }
+            }
         }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)

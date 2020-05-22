@@ -1,0 +1,80 @@
+--- Diagnostics ---
+Line 10[18,29] <30, Error, Semantics> - Semantic error: Symbol dataNested21 is not referenced OffendingSymbol=[18,29:dataNested21]<UserDefinedWord>
+Line 10[34,45] <30, Error, Semantics> - Semantic error: Symbol dataNested22 is not referenced OffendingSymbol=[34,45:dataNested22]<UserDefinedWord>
+Line 12[18,28] <30, Error, Semantics> - Semantic error: Symbol dataNested1 is not referenced OffendingSymbol=[18,28:dataNested1]<UserDefinedWord>
+Line 12[33,43] <30, Error, Semantics> - Semantic error: Symbol dataNested2 is not referenced OffendingSymbol=[33,43:dataNested2]<UserDefinedWord>
+Line 25[18,29] <30, Error, Semantics> - Semantic error: Symbol dataNested21 is not referenced OffendingSymbol=[18,29:dataNested21]<UserDefinedWord>
+Line 25[34,45] <30, Error, Semantics> - Semantic error: Symbol dataNested22 is not referenced OffendingSymbol=[34,45:dataNested22]<UserDefinedWord>
+Line 29[18,26] <30, Error, Semantics> - Semantic error: Symbol dataMain1 is not referenced OffendingSymbol=[18,26:dataMain1]<UserDefinedWord>
+Line 42[18,28] <30, Error, Semantics> - Semantic error: Symbol dataNested1 is not referenced OffendingSymbol=[18,28:dataNested1]<UserDefinedWord>
+Line 44[18,26] <30, Error, Semantics> - Semantic error: Symbol dataMain1 is not referenced OffendingSymbol=[18,26:dataMain1]<UserDefinedWord>
+
+--- Program ---
+MainProgram (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ProgramType, Tag=Program)
+WorkingStorageData:
+  dataMain1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: MainProgram
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(1)
+  Level: 1
+  IsFiller: False
+  dataMain2 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [Global, WORKING_STORAGE]
+  Owner: MainProgram
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(1)
+  Level: 1
+  IsFiller: False
+Programs:
+  Nested (.NET Type=ProgramSymbol, Kind=Program)
+  Owner: MainProgram
+  Type:
+    (.NET Type=ProgramType, Tag=Program)
+  WorkingStorageData:
+    dataNested1 (.NET Type=VariableSymbol, Kind=Variable)
+    Flags: [WORKING_STORAGE]
+    Owner: MainProgram::Nested
+    Type:
+      (.NET Type=PictureType, Tag=Picture)
+      Picture: X(1)
+    Level: 1
+    IsFiller: False
+    dataNested2 (.NET Type=VariableSymbol, Kind=Variable)
+    Flags: [Global, WORKING_STORAGE]
+    Owner: MainProgram::Nested
+    Type:
+      (.NET Type=PictureType, Tag=Picture)
+      Picture: X(1)
+    Level: 1
+    IsFiller: False
+  Programs:
+    Nested2 (.NET Type=ProgramSymbol, Kind=Program)
+    Owner: MainProgram::Nested
+    Type:
+      (.NET Type=ProgramType, Tag=Program)
+    WorkingStorageData:
+      dataNested21 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: MainProgram::Nested::Nested2
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 1
+      IsFiller: False
+      dataNested22 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [Global, WORKING_STORAGE]
+      Owner: MainProgram::Nested::Nested2
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 1
+      IsFiller: False
+    IsNested: True
+  IsNested: True
+IsNested: False
+

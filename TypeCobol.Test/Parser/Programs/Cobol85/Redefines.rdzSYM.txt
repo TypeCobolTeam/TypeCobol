@@ -1,0 +1,196 @@
+--- Diagnostics ---
+Line 27[34,39] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'MyVar1' is not referenced OffendingSymbol=[34,39:MyVar1]<UserDefinedWord>
+
+--- Program ---
+RedefinesTest (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ProgramType, Tag=Program)
+WorkingStorageData:
+  MyVar1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesTest
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      MyVar2 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesTest::MyVar1
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  MyVar2 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesTest
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(5)
+  Level: 1
+  IsFiller: False
+  MyVar2 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesTest
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(9)
+  Level: 1
+  IsFiller: False
+  MyRedifines (.NET Type=RedefinesSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE, Redefines]
+  Owner: RedefinesTest
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      one (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesTest::MyRedifines
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+        Fields:
+          one-1 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: RedefinesTest::MyRedifines::one
+          Type:
+            (.NET Type=Type, Tag=DataCondition)
+            Flags: [BuiltinType]
+          Level: 88
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  MyRedifines2 (.NET Type=RedefinesSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE, Redefines]
+  Owner: RedefinesTest
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      one (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesTest::MyRedifines2
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+        Fields:
+          one-1 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: RedefinesTest::MyRedifines2::one
+          Type:
+            (.NET Type=Type, Tag=DataCondition)
+            Flags: [BuiltinType]
+          Level: 88
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  MyRedifines3 (.NET Type=RedefinesSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE, Redefines]
+  Owner: RedefinesTest
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      one (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesTest::MyRedifines3
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+        Fields:
+          one-1 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: RedefinesTest::MyRedifines3::one
+          Type:
+            (.NET Type=Type, Tag=DataCondition)
+            Flags: [BuiltinType]
+          Level: 88
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  MyRedifines4 (.NET Type=RedefinesSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE, Redefines]
+  Owner: RedefinesTest
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      one (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesTest::MyRedifines4
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+        Fields:
+          one-1 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: RedefinesTest::MyRedifines4::one
+          Type:
+            (.NET Type=Type, Tag=DataCondition)
+            Flags: [BuiltinType]
+          Level: 88
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+   (.NET Type=RedefinesSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE, Redefines]
+  Owner: RedefinesTest
+  Type:
+    (.NET Type=Type, Tag=Usage)
+  Level: 1
+  IsFiller: False
+  MyRedifines3 (.NET Type=RedefinesSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE, Redefines]
+  Owner: RedefinesTest
+  Type:
+    (.NET Type=Type, Tag=Usage)
+  Level: 1
+  IsFiller: False
+   (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: RedefinesTest
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      VarGroup (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: RedefinesTest
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 6
+      IsFiller: False
+      VarGroup-Bis (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesTest
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 6
+      IsFiller: False
+      FILTER (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: RedefinesTest
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 6
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+IsNested: False
+

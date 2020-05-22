@@ -1,0 +1,121 @@
+--- Diagnostics ---
+Line 7[8,14] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[8,14:MyGroup]<UserDefinedWord>
+Line 12[8,14] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[8,14:MyGroup]<UserDefinedWord>
+
+--- Program ---
+TypeCobol (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ProgramType, Tag=Program)
+WorkingStorageData:
+  STR1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: TypeCobol
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      MyGroup (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TypeCobol::STR1
+      Type:
+        (.NET Type=Type, Tag=Usage)
+      Level: 5
+      IsFiller: False
+      DATA1 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TypeCobol::STR1
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 5
+      IsFiller: False
+      DATA2 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TypeCobol::STR1
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  STR2 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: TypeCobol
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      MyGroup (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TypeCobol::STR2
+      Type:
+        (.NET Type=Type, Tag=Usage)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  STR3 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: TypeCobol
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      MyGroup (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TypeCobol::STR3
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        Fields:
+          DATA1 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: TypeCobol::STR3::MyGroup
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Picture: X(1)
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  STR4 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: TypeCobol
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      MyGroup (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TypeCobol::STR4
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        Fields:
+          DATA1 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: TypeCobol::STR4::MyGroup
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Picture: X(1)
+          Level: 5
+          IsFiller: False
+          DATA2 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: TypeCobol::STR4::MyGroup
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Picture: X(1)
+          Level: 5
+          IsFiller: False
+      Level: 4
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  myVar (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: TypeCobol
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(1)
+  Level: 1
+  IsFiller: False
+IsNested: False
+

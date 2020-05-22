@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler.Scopes;
+﻿using System.IO;
+using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -73,6 +74,36 @@ namespace TypeCobol.Compiler.Symbols
         {
             get { return null; }
             protected set { ; }
+        }
+
+        public override void Dump(TextWriter output, int indentLevel)
+        {
+            base.Dump(output, indentLevel);
+            DumpDomain("Types", Types);
+            DumpDomain("FileData", FileData);
+            DumpDomain("GlobalStorageData", GlobalStorageData);
+            DumpDomain("WorkingStorageData", WorkingStorageData);
+            DumpDomain("LocalStorageData", LocalStorageData);
+            DumpDomain("LinkageData", LinkageData);
+            DumpDomain("Sections", Sections);
+            DumpDomain("Paragraphs", Paragraphs);
+            DumpDomain("Functions", Functions);
+            DumpDomain("Programs", Programs);
+
+            void DumpDomain<T>(string name, Domain<T> domain) where T : Symbol
+            {
+                if (domain != null && domain.Count > 0)
+                {
+                    string indent = new string(' ', 2 * indentLevel);
+                    output.Write(indent);
+                    output.WriteLine($"{name}:");
+                    var level = indentLevel + 1;
+                    foreach (var symbol in domain)
+                    {
+                        symbol.Dump(output, level);
+                    }
+                }
+            }
         }
     }
 }

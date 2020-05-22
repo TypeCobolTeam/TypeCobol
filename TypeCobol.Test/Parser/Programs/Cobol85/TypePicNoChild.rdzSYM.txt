@@ -1,0 +1,496 @@
+--- Diagnostics ---
+Line 14[11,14] <27, Error, Syntax> - Syntax error : Group item var1 cannot have a "PICTURE" OffendingSymbol=[11,14:var1]<UserDefinedWord>
+Line 53[13,16] <27, Error, Syntax> - Syntax error : Group item var2 cannot have a "PICTURE" OffendingSymbol=[13,16:var2]<UserDefinedWord>
+Line 74[11,14] <27, Error, Syntax> - Syntax error : Group item var1 cannot have a "PICTURE" OffendingSymbol=[11,14:var1]<UserDefinedWord>
+Line 95[11,14] <27, Error, Syntax> - Syntax error : Group item var2 cannot have a "PICTURE" OffendingSymbol=[11,14:var2]<UserDefinedWord>
+Line 101[14,17] <27, Error, Syntax> - Syntax error : Group item var3 cannot have a "PICTURE" OffendingSymbol=[14,17:var3]<UserDefinedWord>
+
+--- Program ---
+DVZF0OSM (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ProgramType, Tag=Program)
+WorkingStorageData:
+  var1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      var2 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::var1
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        Fields:
+          var3 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: DVZF0OSM::var1::var2
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Picture: X(1)
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+      var4 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::var1
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: 9(1)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  var1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=PictureType, Tag=Picture)
+      Picture: X(1)
+    Fields:
+      var2 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::var1
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  var1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Flags: [BuiltinType]
+      Usage: Comp
+    Fields:
+      var2 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::var1
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Usage: Comp
+        Picture: X(2)
+      Level: 5
+      IsFiller: False
+      var3 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::var1
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Usage: Comp
+        Picture: 9(1)
+      Level: 5
+      IsFiller: False
+      var4 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::var1
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Usage: Comp
+        Picture: X(2)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  toto (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Flags: [BuiltinType]
+      Usage: Comp2
+    Fields:
+      titi (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::toto
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Flags: [BuiltinType]
+        Usage: Comp2
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  toto (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Flags: [BuiltinType]
+      Usage: Comp2
+    Fields:
+      titi (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::toto
+      Type:
+        (.NET Type=Type, Tag=Usage)
+        Flags: [BuiltinType]
+        Usage: Comp2
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  toto (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Flags: [BuiltinType]
+      Usage: Comp2
+    Fields:
+      titi (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::toto
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Usage: Comp2
+        Picture: 9(1)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  var1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Flags: [BuiltinType]
+      Usage: Comp
+    Fields:
+      var3 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::var1
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Usage: Comp
+        Picture: 9(1)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  var1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Flags: [BuiltinType]
+      Usage: Pointer
+    Fields:
+      var2 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::var1
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Usage: Pointer
+        Picture: X(1)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  var1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Flags: [BuiltinType]
+      Usage: Pointer
+    Fields:
+      var2 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::var1
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Usage: Pointer
+        Picture: X(1)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  var1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      var2 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::var1
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+        Fields:
+          var3 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: DVZF0OSM::var1::var2
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Picture: X(1)
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  var1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      var2 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::var1
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=Type, Tag=Usage)
+          Flags: [BuiltinType]
+          Usage: Comp
+        Fields:
+          var3 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: DVZF0OSM::var1::var2
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Usage: Comp
+            Picture: X(1)
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  var1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      var2 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::var1
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=Type, Tag=Usage)
+          Flags: [BuiltinType]
+          Usage: Pointer
+        Fields:
+          var3 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: DVZF0OSM::var1::var2
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Usage: Pointer
+            Picture: X(1)
+          Level: 10
+          IsFiller: False
+          var4 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: DVZF0OSM::var1::var2
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Usage: Pointer
+            Picture: 9(1)
+          Level: 10
+          IsFiller: False
+          var5 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: DVZF0OSM::var1::var2
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Usage: Pointer
+            Picture: X(2)
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  var1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=PictureType, Tag=Picture)
+      Picture: X(1)
+    Fields:
+      var2 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::var1
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        Fields:
+          var3 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: DVZF0OSM::var1::var2
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Picture: X(1)
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  var1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Flags: [BuiltinType]
+      Usage: Comp
+    Fields:
+      var2 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::var1
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=Type, Tag=Usage)
+          Flags: [BuiltinType]
+          Usage: Comp
+        Fields:
+          var3 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: DVZF0OSM::var1::var2
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Usage: Comp
+            Picture: X(1)
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  var1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=Type, Tag=Usage)
+      Flags: [BuiltinType]
+      Usage: Pointer
+    Fields:
+      var2 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::var1
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=Type, Tag=Usage)
+          Flags: [BuiltinType]
+          Usage: Pointer
+        Fields:
+          var3 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: DVZF0OSM::var1::var2
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Usage: Pointer
+            Picture: X(1)
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  var1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(100)
+  Level: 1
+  IsFiller: False
+  var2 (.NET Type=RedefinesSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE, Redefines]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    LeadingType:
+      (.NET Type=PictureType, Tag=Picture)
+      Picture: X(100)
+    Fields:
+      var3 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::var2
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  var1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      var2 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::var1
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(10)
+      Level: 5
+      IsFiller: False
+      var3 (.NET Type=RedefinesSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE, Redefines]
+      Owner: DVZF0OSM::var1
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        LeadingType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(10)
+        Fields:
+          var4 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: DVZF0OSM::var1::var3
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Picture: X(1)
+          Level: 10
+          IsFiller: False
+          var5 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: DVZF0OSM::var1::var3
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Picture: X(9)
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+IsNested: False
+

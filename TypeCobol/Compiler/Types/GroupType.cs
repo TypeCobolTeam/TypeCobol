@@ -1,4 +1,6 @@
-﻿using TypeCobol.Compiler.Scopes;
+﻿using System.IO;
+using System.Linq;
+using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Symbols;
 
 using static TypeCobol.Compiler.Symbols.Symbol;
@@ -6,7 +8,13 @@ using static TypeCobol.Compiler.Symbols.Symbol;
 namespace TypeCobol.Compiler.Types
 {
     /// <summary>
-    /// Class that represents a group type
+    /// Class that represents a group type.
+    /// A GroupType is different from a Cobol group, it is used to represent
+    /// COBOL groups but more generally speaking it is used to represent data descriptions
+    /// having children. It means that an item with data condition(s) is also represented
+    /// using a GroupType.
+    /// Use <see cref="IsElementary"/> property to distinguish between true COBOL groups
+    /// and elementary items having data condition(s).
     /// </summary>
     public class GroupType : Type
     {
@@ -24,6 +32,13 @@ namespace TypeCobol.Compiler.Types
         {
             Fields = new Domain<VariableSymbol>(owner);
         }
+
+        /// <summary>
+        /// Indicates whether this group is elementary.
+        /// A group is still considered as an elementary item if all
+        /// of its children are DataCondition (level-88).
+        /// </summary>
+        public bool IsElementary => Fields.All(f => f.IsCondition);
 
         internal override void SetFlag(Flags flag, bool value, bool propagate = false)
         {
@@ -47,7 +62,8 @@ namespace TypeCobol.Compiler.Types
         ///             X'00' thru 'S'
         ///             'U' thru X'FF'.
         ///
-        /// the leading type is PIC X.
+        /// The leading type of the group is PIC X and the group is also
+        /// considered as elementary item in this case.
         /// </summary>
         public Type LeadingType
         {
@@ -59,6 +75,29 @@ namespace TypeCobol.Compiler.Types
         /// A Record may always expand to another records because it is related to a new Symbol owner.
         /// </summary>
         public override bool MayExpand => true;
+
+        public override void Dump(TextWriter output, int indentLevel)
+        {
+            base.Dump(output, indentLevel);
+            string indent = new string(' ', 2 * indentLevel);
+            var level = indentLevel + 1;
+            if (LeadingType != null)
+            {
+                output.Write(indent);
+                output.WriteLine("LeadingType:");
+                LeadingType.Dump(output, level);
+            }
+
+            if (Fields != null && Fields.Count > 0)
+            {
+                output.Write(indent);
+                output.WriteLine("Fields:");
+                foreach (var field in Fields)
+                {
+                    field.Dump(output, level);
+                }
+            }
+        }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)
         {

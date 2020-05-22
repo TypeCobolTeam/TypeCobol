@@ -1,0 +1,257 @@
+--- Diagnostics ---
+Line 9[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type1' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[19,25:typedef]<TYPEDEF>
+Line 9[10,33] <30, Error, Semantics> - Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a procedure.
+Line 11[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type2' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[19,25:typedef]<TYPEDEF>
+Line 11[10,34] <30, Error, Semantics> - Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a procedure.
+Line 13[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type3' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[19,25:typedef]<TYPEDEF>
+Line 13[13,17] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in function data item. OffendingSymbol=[13,17:type3]<UserDefinedWord>
+Line 29[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type4' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[19,25:typedef]<TYPEDEF>
+Line 29[10,33] <30, Error, Semantics> - Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a procedure.
+Line 31[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type5' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[19,25:typedef]<TYPEDEF>
+Line 31[10,34] <30, Error, Semantics> - Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a procedure.
+Line 33[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type6' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[19,25:typedef]<TYPEDEF>
+Line 33[13,17] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in function data item. OffendingSymbol=[13,17:type6]<UserDefinedWord>
+Line 53[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type7' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[19,25:typedef]<TYPEDEF>
+Line 53[10,33] <30, Error, Semantics> - Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a procedure.
+Line 55[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type8' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[19,25:typedef]<TYPEDEF>
+Line 55[10,34] <30, Error, Semantics> - Semantic error: TYPEDEF with explicit visibility qualifier is not allowed within a procedure.
+Line 57[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'type9' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[19,25:typedef]<TYPEDEF>
+Line 57[13,17] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in function data item. OffendingSymbol=[13,17:type9]<UserDefinedWord>
+
+--- Program ---
+DVZFSCT0 (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ProgramType, Tag=Program)
+Functions:
+  Proc1 (.NET Type=FunctionSymbol, Kind=Function)
+  Owner: DVZFSCT0
+  Type:
+    (.NET Type=FunctionType, Tag=Function)
+  Types:
+    type1 (.NET Type=TypedefSymbol, Kind=Typedef)
+    Flags: [Public, WORKING_STORAGE, InsideTypedef]
+    Owner: DVZFSCT0::Proc1
+    Type:
+      (.NET Type=TypedefType, Tag=Typedef)
+      Flags: [InsideTypedef]
+      Symbol: DVZFSCT0::Proc1::type1
+      TargetType:
+        (.NET Type=GroupType, Tag=Group)
+        Flags: [InsideTypedef]
+        Fields:
+          champ1 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE, InsideTypedef]
+          Owner: DVZFSCT0::Proc1::type1
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Flags: [InsideTypedef]
+            Picture: X(1)
+          Level: 5
+          IsFiller: False
+    Level: 1
+    IsFiller: False
+    type2 (.NET Type=TypedefSymbol, Kind=Typedef)
+    Flags: [Private, WORKING_STORAGE, InsideTypedef]
+    Owner: DVZFSCT0::Proc1
+    Type:
+      (.NET Type=TypedefType, Tag=Typedef)
+      Flags: [InsideTypedef]
+      Symbol: DVZFSCT0::Proc1::type2
+      TargetType:
+        (.NET Type=GroupType, Tag=Group)
+        Flags: [InsideTypedef]
+        Fields:
+          champ1 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE, InsideTypedef]
+          Owner: DVZFSCT0::Proc1::type2
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Flags: [InsideTypedef]
+            Picture: X(1)
+          Level: 5
+          IsFiller: False
+    Level: 1
+    IsFiller: False
+    type3 (.NET Type=TypedefSymbol, Kind=Typedef)
+    Flags: [Global, WORKING_STORAGE, InsideTypedef]
+    Owner: DVZFSCT0::Proc1
+    Type:
+      (.NET Type=TypedefType, Tag=Typedef)
+      Flags: [InsideTypedef]
+      Symbol: DVZFSCT0::Proc1::type3
+      TargetType:
+        (.NET Type=GroupType, Tag=Group)
+        Flags: [InsideTypedef]
+        Fields:
+          champ1 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [Global, WORKING_STORAGE, InsideTypedef]
+          Owner: DVZFSCT0::Proc1::type3
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Flags: [InsideTypedef]
+            Picture: X(1)
+          Level: 5
+          IsFiller: False
+    Level: 1
+    IsFiller: False
+  IsNested: False
+Programs:
+  Nested (.NET Type=ProgramSymbol, Kind=Program)
+  Owner: DVZFSCT0
+  Type:
+    (.NET Type=ProgramType, Tag=Program)
+  Functions:
+    Proc2 (.NET Type=FunctionSymbol, Kind=Function)
+    Owner: DVZFSCT0::Nested
+    Type:
+      (.NET Type=FunctionType, Tag=Function)
+    Types:
+      type4 (.NET Type=TypedefSymbol, Kind=Typedef)
+      Flags: [Public, WORKING_STORAGE, InsideTypedef]
+      Owner: DVZFSCT0::Nested::Proc2
+      Type:
+        (.NET Type=TypedefType, Tag=Typedef)
+        Flags: [InsideTypedef]
+        Symbol: DVZFSCT0::Nested::Proc2::type4
+        TargetType:
+          (.NET Type=GroupType, Tag=Group)
+          Flags: [InsideTypedef]
+          Fields:
+            champ1 (.NET Type=VariableSymbol, Kind=Variable)
+            Flags: [WORKING_STORAGE, InsideTypedef]
+            Owner: DVZFSCT0::Nested::Proc2::type4
+            Type:
+              (.NET Type=PictureType, Tag=Picture)
+              Flags: [InsideTypedef]
+              Picture: X(1)
+            Level: 5
+            IsFiller: False
+      Level: 1
+      IsFiller: False
+      type5 (.NET Type=TypedefSymbol, Kind=Typedef)
+      Flags: [Private, WORKING_STORAGE, InsideTypedef]
+      Owner: DVZFSCT0::Nested::Proc2
+      Type:
+        (.NET Type=TypedefType, Tag=Typedef)
+        Flags: [InsideTypedef]
+        Symbol: DVZFSCT0::Nested::Proc2::type5
+        TargetType:
+          (.NET Type=GroupType, Tag=Group)
+          Flags: [InsideTypedef]
+          Fields:
+            champ1 (.NET Type=VariableSymbol, Kind=Variable)
+            Flags: [WORKING_STORAGE, InsideTypedef]
+            Owner: DVZFSCT0::Nested::Proc2::type5
+            Type:
+              (.NET Type=PictureType, Tag=Picture)
+              Flags: [InsideTypedef]
+              Picture: X(1)
+            Level: 5
+            IsFiller: False
+      Level: 1
+      IsFiller: False
+      type6 (.NET Type=TypedefSymbol, Kind=Typedef)
+      Flags: [Global, WORKING_STORAGE, InsideTypedef]
+      Owner: DVZFSCT0::Nested::Proc2
+      Type:
+        (.NET Type=TypedefType, Tag=Typedef)
+        Flags: [InsideTypedef]
+        Symbol: DVZFSCT0::Nested::Proc2::type6
+        TargetType:
+          (.NET Type=GroupType, Tag=Group)
+          Flags: [InsideTypedef]
+          Fields:
+            champ1 (.NET Type=VariableSymbol, Kind=Variable)
+            Flags: [Global, WORKING_STORAGE, InsideTypedef]
+            Owner: DVZFSCT0::Nested::Proc2::type6
+            Type:
+              (.NET Type=PictureType, Tag=Picture)
+              Flags: [InsideTypedef]
+              Picture: X(1)
+            Level: 5
+            IsFiller: False
+      Level: 1
+      IsFiller: False
+    IsNested: False
+  IsNested: True
+IsNested: False
+
+--- Program ---
+Stacked (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ProgramType, Tag=Program)
+Functions:
+  Proc3 (.NET Type=FunctionSymbol, Kind=Function)
+  Owner: Stacked
+  Type:
+    (.NET Type=FunctionType, Tag=Function)
+  Types:
+    type7 (.NET Type=TypedefSymbol, Kind=Typedef)
+    Flags: [Public, WORKING_STORAGE, InsideTypedef]
+    Owner: Stacked::Proc3
+    Type:
+      (.NET Type=TypedefType, Tag=Typedef)
+      Flags: [InsideTypedef]
+      Symbol: Stacked::Proc3::type7
+      TargetType:
+        (.NET Type=GroupType, Tag=Group)
+        Flags: [InsideTypedef]
+        Fields:
+          champ1 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE, InsideTypedef]
+          Owner: Stacked::Proc3::type7
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Flags: [InsideTypedef]
+            Picture: X(1)
+          Level: 5
+          IsFiller: False
+    Level: 1
+    IsFiller: False
+    type8 (.NET Type=TypedefSymbol, Kind=Typedef)
+    Flags: [Private, WORKING_STORAGE, InsideTypedef]
+    Owner: Stacked::Proc3
+    Type:
+      (.NET Type=TypedefType, Tag=Typedef)
+      Flags: [InsideTypedef]
+      Symbol: Stacked::Proc3::type8
+      TargetType:
+        (.NET Type=GroupType, Tag=Group)
+        Flags: [InsideTypedef]
+        Fields:
+          champ1 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE, InsideTypedef]
+          Owner: Stacked::Proc3::type8
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Flags: [InsideTypedef]
+            Picture: X(1)
+          Level: 5
+          IsFiller: False
+    Level: 1
+    IsFiller: False
+    type9 (.NET Type=TypedefSymbol, Kind=Typedef)
+    Flags: [Global, WORKING_STORAGE, InsideTypedef]
+    Owner: Stacked::Proc3
+    Type:
+      (.NET Type=TypedefType, Tag=Typedef)
+      Flags: [InsideTypedef]
+      Symbol: Stacked::Proc3::type9
+      TargetType:
+        (.NET Type=GroupType, Tag=Group)
+        Flags: [InsideTypedef]
+        Fields:
+          champ1 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [Global, WORKING_STORAGE, InsideTypedef]
+          Owner: Stacked::Proc3::type9
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Flags: [InsideTypedef]
+            Picture: X(1)
+          Level: 5
+          IsFiller: False
+    Level: 1
+    IsFiller: False
+  IsNested: False
+IsNested: False
+

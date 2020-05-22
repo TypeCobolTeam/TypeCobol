@@ -1,4 +1,4 @@
-﻿using TypeCobol.Compiler.Scopes;
+﻿using System.IO;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -17,43 +17,42 @@ namespace TypeCobol.Compiler.Symbols
         /// Constructor
         /// </summary>
         /// <param name="name">Symbol 's name</param>
-        /// <param name="redefinedPath">The redefined Symbol path</param>
-        public RedefinesSymbol(string name, string[] redefinedPath)
+        public RedefinesSymbol(string name)
             : base(name)
         {
-            System.Diagnostics.Debug.Assert(redefinedPath != null);
-            System.Diagnostics.Debug.Assert(redefinedPath.Length != 0);
             base.SetFlag(Flags.Redefines, true);
-            RedefinedPath = redefinedPath;
-            Redefined = null;
+            _redefined = null;
         }
-
-        /// <summary>
-        /// Reference to the redefined symbol.
-        /// </summary>
-        public string[] RedefinedPath { get; }
 
         private VariableSymbol _redefined;
         /// <summary>
-        /// The redefined symbol
+        /// Redefined symbol.
         /// </summary>
+        /// <remarks>Should be set only by <see cref="Diagnostics.RedefinesChecker" /></remarks>
         public VariableSymbol Redefined
         {
             get => _redefined;
-            internal set //TODO this setter should be called by RedefinesChecker and only once for this instance lifetime.
+            set
             {
                 if (value != null)
                 {
                     _redefined = value;
-                    value.AddRedefines(this);
+                    _redefined.AddRedefines(this);
                 }
             }
         }
 
-        /// <summary>
-        /// Get the Top REDEFINES in case of REDEFINES OF REDEFINES suite.
-        /// </summary>
-        public VariableSymbol TopRedefined => Redefined != null && Redefined.HasFlag(Flags.Redefines) ? ((RedefinesSymbol) Redefined).TopRedefined : Redefined;
+        public override void Dump(TextWriter output, int indentLevel)
+        {
+            base.Dump(output, indentLevel);
+            string indent = new string(' ', 2 * indentLevel);
+
+            if (_redefined != null)
+            {
+                output.Write(indent);
+                output.WriteLine($"Redefined: {Redefined.FullName}");//Write reference
+            }
+        }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)
         {

@@ -30,68 +30,70 @@ namespace TypeCobol.Compiler.Symbols
         [Flags]
         public enum Flags : ulong
         {
-            Public = 0x01 << 0,
-            Private = 0x01 << 1,
-            External = 0x01 << 2,
-            Global = 0x01 << 3, //Symbol set as global
-            Volatile = 0x01 << 4, //Symbol explicitly marked as volatile
-            FILE_SECTION = 0x01 << 5,
-            GLOBAL_STORAGE = 0x01 << 6,
-            WORKING_STORAGE = 0x01 << 7,
-            LOCAL_STORAGE = 0x01 << 8,
-            LINKAGE = 0x01 << 9,
-            Input = 0x01 << 10,
-            Output = 0x01 << 11,
-            Inout = 0x01 << 12,
-            ByReference = 0x01 << 13,
-            ByContent = 0x01 << 14,
-            ByValue = 0x01 << 15,
-            Strong = 0x01 << 16,
-            Strict = 0x01 << 17,
-            Weak = 0x01 << 18,
+            Public = 0x01L << 0,
+            Private = 0x01L << 1,
+            External = 0x01L << 2,
+            Global = 0x01L << 3, //Symbol set as global
+            Volatile = 0x01L << 4, //Symbol explicitly marked as volatile
+            FILE = 0x01L << 5,
+            GLOBAL_STORAGE = 0x01L << 6,
+            WORKING_STORAGE = 0x01L << 7,
+            LOCAL_STORAGE = 0x01L << 8,
+            LINKAGE = 0x01L << 9,
+            Input = 0x01L << 10,
+            Output = 0x01L << 11,
+            Inout = 0x01L << 12,
+            ByReference = 0x01L << 13,
+            ByContent = 0x01L << 14,
+            ByValue = 0x01L << 15,
+            Strong = 0x01L << 16,
+            Strict = 0x01L << 17,
+            Weak = 0x01L << 18,
 
             //Some new Symbols Modifiers-----------------------
-            Based = 0x01 << 19,
-            AnyLength = 0x01 << 20,
-            GroupUsageBit = 0x01 << 21,
-            GroupUsageNational = 0x01 << 22,
+            Based = 0x01L << 19,
+            AnyLength = 0x01L << 20,
+            GroupUsageBit = 0x01L << 21,
+            GroupUsageNational = 0x01L << 22,
             //-------------------------------------------------
 
             //Symbols Modifiers that have Type Equality impact
             //along with PICTURE and and USAGE.
-            BlankWhenZero = 0x01 << 23,
-            DynamicLength = 0x01 << 24,
-            Justified = 0x01 << 25,
-            Sign = 0x01 << 26,
-            Sync = 0x01 << 27,
+            BlankWhenZero = 0x01L << 23,
+            DynamicLength = 0x01L << 24,
+            Justified = 0x01L << 25,
+            SeparateSign = 0x01L << 26,
+            LeadingSign = 0x01L << 27,
+            TrailingSign = 0x01L << 28,
+            Sync = 0x01L << 29, //May be SYNC LEFT or SYNC RIGHT
             //-------------------------------------------------
 
-            Conditions = 0x01 << 28,
-            Renames = 0x01 << 29,
-            Redefines = 0x01 << 30,
-            HasATypedefType = 0x01L << 31,//The symbol has a type that comes from a TypeDef.
-            Parameter = 0x01L << 32,//This a parameter variable.
-            Returning = 0x01L << 33,//A Return variable.
-            BuiltinType = 0x01L << 34,//This is a Builtin Type.
-            InsideTypedef = 0x01L << 35,//Flag of any symbol inside a Typedef definition.
-            SymbolExpanded = 0x01L << 36,//Flag of a symbol that have been expanded, used for variables and programs.
-            NeedTypeCompletion = 0x01L << 37,//For a program that need type Completion, a pure COBOL Program does not need type completion (No TYPEDEF).
-            BuiltinSymbol = 0x01L << 38, //This is a Builtin symbol.
+            Conditions = 0x01L << 30,
+            Renames = 0x01L << 31,
+            Redefines = 0x01L << 32,
+            HasATypedefType = 0x01L << 33,//The symbol has a type that comes from a TypeDef.
+            Parameter = 0x01L << 34,//This a parameter variable.
+            Returning = 0x01L << 35,//A Return variable.
+            BuiltinType = 0x01L << 36,//This is a Builtin Type.
+            InsideTypedef = 0x01L << 37,//Flag of any symbol inside a Typedef definition.
+            SymbolExpanded = 0x01L << 38,//Flag of a symbol that have been expanded, used for variables and programs.
+            NeedTypeCompletion = 0x01L << 39,//For a program that need type Completion, a pure COBOL Program does not need type completion (No TYPEDEF).
+            BuiltinSymbol = 0x01L << 40, //This is a Builtin symbol.
 
             //Flags for cyclic typedefs
-            CheckedForCycles = 0x01L << 39,
-            IsCyclic = 0x01L << 40,
+            CheckedForCycles = 0x01L << 41,
+            IsCyclic = 0x01L << 42,
 
             //For symbols loaded from intrinsic files
-            IntrinsicSymbol = 0x01L << 41,
+            IntrinsicSymbol = 0x01L << 43,
 
-            //Etc...
+            //Etc... (Max = 0x01L << 62)
         }
 
         /// <summary>
         /// Variable section mask.
         /// </summary>
-        internal const Flags SectionMask = Flags.GLOBAL_STORAGE | Flags.WORKING_STORAGE | Flags.LINKAGE | Flags.FILE_SECTION | Flags.LOCAL_STORAGE;
+        internal const Flags SectionMask = Flags.GLOBAL_STORAGE | Flags.WORKING_STORAGE | Flags.LINKAGE | Flags.FILE | Flags.LOCAL_STORAGE;
 
         /// <summary>
         /// The Visibility mask that a symbol can take.
@@ -304,55 +306,6 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// Determine if this symbol is matching the given path (à la COBOL qualification)
-        /// </summary>
-        /// <param name="path">The path to match</param>
-        /// <returns>true if yes, false otherwise</returns>
-        public bool IsMatchingPath(string[] path)
-        {
-            Symbol currentSymbol = this;
-            for (int i = 0; i < path.Length; i++)
-            {
-                switch (i)
-                {
-                    case 0:
-                        string name = currentSymbol.Name;
-                        if (!path[i].Equals(name, StringComparison.OrdinalIgnoreCase))
-                            return false;
-                        break;
-                    default:
-                    {
-                        Symbol parent = currentSymbol.LookupParentOfName(path[i]);
-                        if (parent == null)
-                            return false;
-                        currentSymbol = parent;
-                    }
-                        break;
-                }
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// Determine if this symbol is matching the given path strictly
-        /// </summary>
-        /// <param name="path">The path to match</param>
-        /// <returns>true if yes, false otherwise</returns>
-        public bool IsStrictlyMatchingPath(string[] path)
-        {
-            Symbol currentSymbol = this;
-            int i;
-            for (i = 0; i < path.Length; i++)
-            {
-                string name = currentSymbol.Name;
-                if (!path[i].Equals(name, StringComparison.OrdinalIgnoreCase))
-                    return false;
-                currentSymbol = currentSymbol.Owner;
-            }
-            return  i == path.Length && (currentSymbol == null || currentSymbol.Kind == Kinds.Root);
-        }
-
-        /// <summary>
         /// Check if this symbol has the given symbol as parent in the parent hierarchy
         /// </summary>
         /// <param name="parent">The parent to be tested</param>
@@ -408,10 +361,41 @@ namespace TypeCobol.Compiler.Symbols
 
         public override string ToString()
         {
-            StringWriter sw = new StringWriter();
-            TextRendererVisitor visitor = new TextRendererVisitor(sw);
-            visitor.Dump(this);
-            return sw.ToString();
+            var output = new StringWriter();
+            Dump(output, 0);
+            return output.ToString();
+        }
+
+        public virtual void Dump(TextWriter output, int indentLevel)
+        {
+            string indent = new string(' ', 2 * indentLevel);
+            output.Write(indent);
+            output.WriteLine($"{Name} (.NET Type={GetType().Name}, Kind={Kind})");
+            if (Flag != 0)
+            {
+                output.Write(indent);
+                output.WriteLine($"Flags: [{string.Join(", ", GetFlagsLabels())}]");
+            }
+
+            if (Owner != null)
+            {
+                output.Write(indent);
+                output.WriteLine($"Owner: {Owner.FullName}");//Write reference
+            }
+
+            if (Type != null)
+            {
+                output.Write(indent);
+                output.WriteLine("Type:");
+                Type.Dump(output, indentLevel + 1);
+            }
+
+            IEnumerable<string> GetFlagsLabels()
+            {
+                foreach (Flags flag in Enum.GetValues(typeof(Flags)))
+                    if (Flag.HasFlag(flag))
+                        yield return flag.ToString();
+            }
         }
 
         public virtual TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)

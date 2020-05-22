@@ -1,0 +1,94 @@
+--- Diagnostics ---
+Line 19[43,46] <30, Error, Semantics> - Semantic error: Symbol var1.type2.var2.type3.var3 is not referenced OffendingSymbol=[43,46:var3]<UserDefinedWord>
+Line 19[52,55] <30, Error, Semantics> - Semantic error: Symbol var3 is not referenced OffendingSymbol=[52,55:var3]<UserDefinedWord>
+Line 20[24,27] <30, Error, Semantics> - Semantic error: Symbol type3.var3 is not referenced OffendingSymbol=[24,27:var3]<UserDefinedWord>
+Line 20[33,36] <30, Error, Semantics> - Semantic error: Symbol var3 is not referenced OffendingSymbol=[33,36:var3]<UserDefinedWord>
+Line 21[17,20] <30, Error, Semantics> - Semantic error: Symbol var2 is not referenced OffendingSymbol=[17,20:var2]<UserDefinedWord>
+Line 21[26,29] <30, Error, Semantics> - Semantic error: Symbol var2 is not referenced OffendingSymbol=[26,29:var2]<UserDefinedWord>
+Line 22[17,20] <30, Error, Semantics> - Semantic error: Symbol var1 is not referenced OffendingSymbol=[17,20:var1]<UserDefinedWord>
+Line 22[26,29] <30, Error, Semantics> - Semantic error: Symbol var1 is not referenced OffendingSymbol=[26,29:var1]<UserDefinedWord>
+
+--- Program ---
+MyPGM (.NET Type=ProgramSymbol, Kind=Program)
+Flags: [NeedTypeCompletion]
+Type:
+  (.NET Type=ProgramType, Tag=Program)
+Types:
+  Type3 (.NET Type=TypedefSymbol, Kind=Typedef)
+  Flags: [WORKING_STORAGE, Strict, InsideTypedef]
+  Owner: MyPGM
+  Type:
+    (.NET Type=TypedefType, Tag=Typedef)
+    Flags: [InsideTypedef]
+    Symbol: MyPGM::Type3
+    TargetType:
+      (.NET Type=GroupType, Tag=Group)
+      Flags: [InsideTypedef]
+      Fields:
+        var3 (.NET Type=VariableSymbol, Kind=Variable)
+        Flags: [WORKING_STORAGE, InsideTypedef]
+        Owner: MyPGM::Type3
+        Type:
+          (.NET Type=PictureType, Tag=Picture)
+          Flags: [InsideTypedef]
+          Picture: X(1)
+        Level: 5
+        IsFiller: False
+  Level: 1
+  IsFiller: False
+  Type2 (.NET Type=TypedefSymbol, Kind=Typedef)
+  Flags: [WORKING_STORAGE, Strict, InsideTypedef]
+  Owner: MyPGM
+  Type:
+    (.NET Type=TypedefType, Tag=Typedef)
+    Flags: [InsideTypedef]
+    Symbol: MyPGM::Type2
+    TargetType:
+      (.NET Type=GroupType, Tag=Group)
+      Flags: [InsideTypedef]
+      Fields:
+        var2 (.NET Type=VariableSymbol, Kind=Variable)
+        Flags: [WORKING_STORAGE, InsideTypedef]
+        Owner: MyPGM::Type2
+        Type:
+          (.NET Type=GroupType, Tag=Group)
+          Flags: [InsideTypedef]
+          Fields:
+            type3 (.NET Type=TypedVariableSymbol, Kind=Variable)
+            Flags: [WORKING_STORAGE, HasATypedefType, InsideTypedef]
+            Owner: MyPGM::Type2::var2
+            Level: 10
+            IsFiller: False
+        Level: 5
+        IsFiller: False
+  Level: 1
+  IsFiller: False
+  Type1 (.NET Type=TypedefSymbol, Kind=Typedef)
+  Flags: [WORKING_STORAGE, Strict, InsideTypedef]
+  Owner: MyPGM
+  Type:
+    (.NET Type=TypedefType, Tag=Typedef)
+    Flags: [InsideTypedef]
+    Symbol: MyPGM::Type1
+    TargetType:
+      (.NET Type=GroupType, Tag=Group)
+      Flags: [InsideTypedef]
+      Fields:
+        var1 (.NET Type=VariableSymbol, Kind=Variable)
+        Flags: [WORKING_STORAGE, InsideTypedef]
+        Owner: MyPGM::Type1
+        Type:
+          (.NET Type=GroupType, Tag=Group)
+          Flags: [InsideTypedef]
+          Fields:
+            type2 (.NET Type=TypedVariableSymbol, Kind=Variable)
+            Flags: [WORKING_STORAGE, HasATypedefType, InsideTypedef]
+            Owner: MyPGM::Type1::var1
+            Level: 10
+            IsFiller: False
+        Level: 5
+        IsFiller: False
+  Level: 1
+  IsFiller: False
+IsNested: False
+
