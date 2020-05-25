@@ -678,23 +678,12 @@ namespace TypeCobol.Compiler.Domain
             System.Diagnostics.Debug.Assert(tdSym.Type.Tag == Type.Tags.Typedef);
             Type targetType = varSym.Type;
             ((TypedefType) tdSym.Type).TargetType = targetType;
-            
+
             //Important if the target Type is a Group Type we must set the owner to the TypedefSymbol.
-            //We should do the same if the target Type is an ArrayType because of the Indexes domain.
-            //Note that this is not a valid case because OCCURS is not allowed on 01 levels
-            //and therefore not allowed on typedefs, but the grammar allows it...
-            if (targetType != null)
+            if (targetType != null && targetType.Tag == Type.Tags.Group)
             {
-                if (targetType.Tag == Type.Tags.Group)
-                {
-                    GroupType groupType = (GroupType) targetType;
-                    groupType.Fields.Owner = tdSym;
-                }
-                else if (targetType.Tag == Type.Tags.Array)
-                {
-                    ArrayType arrayType = (ArrayType) targetType;
-                    arrayType.Indexes.Owner = tdSym;
-                }
+                GroupType groupType = (GroupType)targetType;
+                groupType.Fields.Owner = tdSym;
             }
 
             //Mark all symbol has belonging to a TYPEDEF
@@ -856,26 +845,26 @@ namespace TypeCobol.Compiler.Domain
                 if (dataDef.IsTableOccurence)
                 {
                     //Create the ArrayType
-                    ArrayType arrayType = new ArrayType(sym);
+                    ArrayType arrayType = new ArrayType();
                     arrayType.MinOccur = dataDef.MinOccurencesCount;
                     arrayType.MaxOccur = dataDef.HasUnboundedNumberOfOccurences ? default(long?) : dataDef.MaxOccurencesCount;
                     arrayType.ElementType = sym.Type;
+                    //Now that the ArrayType is complete, change symbol type
+                    sym.Type = arrayType;
+
                     //Build indexes
                     foreach (var indexDef in dataDef.Children.OfType<IndexDefinition>())
                     {
                         //An index definition symbol
                         var indexSym = CreateIndexSymbol(indexDef, currentDomain, typedef);
-                        //Add the index in the arrayType.
-                        arrayType.Indexes.Enter(indexSym);
+                        //Add the index in the variable.
+                        sym.Indexes.Enter(indexSym);
                         //Copy Global flag for a Global Index
                         if (sym.HasFlag(Symbol.Flags.Global))
                         {
                             indexSym.SetFlag(Symbol.Flags.Global, true);
                         }
                     }
-
-                    //Now that the ArrayType is complete, change symbol type
-                    sym.Type = arrayType;
                 }                
             }
             

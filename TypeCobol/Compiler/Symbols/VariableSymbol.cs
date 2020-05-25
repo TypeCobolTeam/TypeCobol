@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -13,7 +14,7 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="name">Name of the new variable.</param>
         public VariableSymbol(string name)
-            : base(name, Kinds.Variable)
+            : this(name, Kinds.Variable)
         {
 
         }
@@ -26,7 +27,7 @@ namespace TypeCobol.Compiler.Symbols
         protected VariableSymbol(string name, Kinds kind)
             : base(name, kind)
         {
-
+            Indexes = new Domain<IndexSymbol>(this);
         }
 
         private int _level;
@@ -136,6 +137,11 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
+        /// If this variable is an array, contains all indexes of this array.
+        /// </summary>
+        public Domain<IndexSymbol> Indexes { get; }
+
+        /// <summary>
         /// Lookup for the parent having the given Level
         /// </summary>
         /// <param name="level">Target level</param>
@@ -178,6 +184,17 @@ namespace TypeCobol.Compiler.Symbols
             {
                 output.Write(indent);
                 output.WriteLine($"DependingOn: {DependingOn.FullName}");//Write reference
+            }
+
+            if (Indexes.Count > 0)
+            {
+                output.Write(indent);
+                output.WriteLine("Indexes:");
+                var level = indentLevel + 1;
+                foreach (var index in Indexes)
+                {
+                    index.Dump(output, level);
+                }
             }
         }
 

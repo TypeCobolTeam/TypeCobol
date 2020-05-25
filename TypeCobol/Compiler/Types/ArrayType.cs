@@ -1,6 +1,4 @@
 ﻿using System.IO;
-using TypeCobol.Compiler.Scopes;
-using TypeCobol.Compiler.Symbols;
 
 namespace TypeCobol.Compiler.Types
 {
@@ -12,10 +10,10 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// Empty Constructor
         /// </summary>
-        public ArrayType(Symbol owner)
+        public ArrayType()
             : base(Tags.Array)
         {
-            Indexes = new Domain<IndexSymbol>(owner);
+
         }
 
         /// <summary>
@@ -51,11 +49,6 @@ namespace TypeCobol.Compiler.Types
             set;
         }
 
-        /// <summary>
-        /// All indexes of this array.
-        /// </summary>
-        public Domain<IndexSymbol> Indexes { get; }
-
         public override Type TypeComponent => ElementType;
 
         public override bool MayExpand => ElementType != null && ElementType.MayExpand;
@@ -74,17 +67,6 @@ namespace TypeCobol.Compiler.Types
                 output.Write(indent);
                 output.WriteLine("ElementType:");
                 ElementType.Dump(output, indentLevel + 1);
-            }
-
-            if (Indexes.Count > 0)
-            {
-                output.Write(indent);
-                output.WriteLine("Indexes:");
-                var level = indentLevel + 1;
-                foreach (var index in Indexes)
-                {
-                    index.Dump(output, level);
-                }
             }
         }
 
