@@ -12,7 +12,7 @@ Line 44[18,26] <30, Error, Semantics> - Semantic error: Symbol dataMain1 is not 
 --- Program ---
 MainProgram (.NET Type=ProgramSymbol, Kind=Program)
 Type:
-  (.NET Type=ProgramType, Tag=Program)
+  (.NET Type=ScopeType, Tag=Scope)
 WorkingStorageData:
   dataMain1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -34,7 +34,7 @@ Programs:
   Nested (.NET Type=ProgramSymbol, Kind=Program)
   Owner: MainProgram
   Type:
-    (.NET Type=ProgramType, Tag=Program)
+    (.NET Type=ScopeType, Tag=Scope)
   WorkingStorageData:
     dataNested1 (.NET Type=VariableSymbol, Kind=Variable)
     Flags: [WORKING_STORAGE]
@@ -56,7 +56,7 @@ Programs:
     Nested2 (.NET Type=ProgramSymbol, Kind=Program)
     Owner: MainProgram::Nested
     Type:
-      (.NET Type=ProgramType, Tag=Program)
+      (.NET Type=ScopeType, Tag=Scope)
     WorkingStorageData:
       dataNested21 (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]

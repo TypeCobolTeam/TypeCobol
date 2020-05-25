@@ -12,7 +12,7 @@ Line 22[26,29] <30, Error, Semantics> - Semantic error: Symbol var1 is not refer
 MyPGM (.NET Type=ProgramSymbol, Kind=Program)
 Flags: [NeedTypeCompletion]
 Type:
-  (.NET Type=ProgramType, Tag=Program)
+  (.NET Type=ScopeType, Tag=Scope)
 Types:
   Type3 (.NET Type=TypedefSymbol, Kind=Typedef)
   Flags: [WORKING_STORAGE, Strict, InsideTypedef]
@@ -59,7 +59,6 @@ Types:
             Owner: MyPGM::Type2::var2
             Level: 10
             IsFiller: False
-            TypePaths: [Type3]
         Level: 5
         IsFiller: False
   Level: 1
@@ -87,7 +86,6 @@ Types:
             Owner: MyPGM::Type1::var1
             Level: 10
             IsFiller: False
-            TypePaths: [type2]
         Level: 5
         IsFiller: False
   Level: 1

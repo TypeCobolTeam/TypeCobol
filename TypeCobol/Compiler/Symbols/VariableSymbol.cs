@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -8,12 +10,24 @@ namespace TypeCobol.Compiler.Symbols
     public class VariableSymbol : Symbol
     {
         /// <summary>
-        /// Named constructor
+        /// Named constructor, for standard COBOL variables.
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="name">Name of the new variable.</param>
         public VariableSymbol(string name)
-            : base(name, Kinds.Variable)
+            : this(name, Kinds.Variable)
         {
+
+        }
+
+        /// <summary>
+        /// Named constructor, for inheritors.
+        /// </summary>
+        /// <param name="name">Name of the new variable.</param>
+        /// <param name="kind">Variable kind.</param>
+        protected VariableSymbol(string name, Kinds kind)
+            : base(name, kind)
+        {
+            Indexes = new Domain<IndexSymbol>(this);
         }
 
         private int _level;
@@ -90,6 +104,43 @@ namespace TypeCobol.Compiler.Symbols
             set;
         }
 
+        /// <summary>	
+        /// All Symbol that redefines this Symbol.	
+        /// </summary>	
+        public List<VariableSymbol> Redefines
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>	
+        /// Add a redefines symbol to this symbol.	
+        /// </summary>	
+        /// <param name="symbol"></param>	
+        public void AddRedefines(VariableSymbol symbol)
+        {
+            System.Diagnostics.Debug.Assert(symbol != null);
+            if (Redefines == null)
+            {
+                Redefines = new List<VariableSymbol>();
+            }
+            Redefines.Add(symbol);
+        }
+
+        /// <summary>
+        /// If this variable is an array, VariableSymbol of the DEPENDING ON clause (if any).
+        /// </summary>
+        public VariableSymbol DependingOn
+        {
+            get;
+            set; //TODO perform resolution at appropriate time ?
+        }
+
+        /// <summary>
+        /// If this variable is an array, contains all indexes of this array.
+        /// </summary>
+        public Domain<IndexSymbol> Indexes { get; }
+
         /// <summary>
         /// Lookup for the parent having the given Level
         /// </summary>
@@ -116,6 +167,35 @@ namespace TypeCobol.Compiler.Symbols
             output.WriteLine("Level: " + Level);
             output.Write(indent);
             output.WriteLine("IsFiller: " + IsFiller);
+
+            if (Redefines != null && Redefines.Count > 0)
+            {
+                output.Write(indent);
+                output.WriteLine("Redefines:");
+                indent += "  ";
+                foreach (var redefines in Redefines)
+                {
+                    output.Write(indent);
+                    output.WriteLine(redefines.FullName);//Write reference	
+                }
+            }
+
+            if (DependingOn != null)
+            {
+                output.Write(indent);
+                output.WriteLine($"DependingOn: {DependingOn.FullName}");//Write reference
+            }
+
+            if (Indexes.Count > 0)
+            {
+                output.Write(indent);
+                output.WriteLine("Indexes:");
+                var level = indentLevel + 1;
+                foreach (var index in Indexes)
+                {
+                    index.Dump(output, level);
+                }
+            }
         }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)

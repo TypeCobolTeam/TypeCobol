@@ -1,7 +1,7 @@
 --- Program ---
 DVZXMNT0 (.NET Type=ProgramSymbol, Kind=Program)
 Type:
-  (.NET Type=ProgramType, Tag=Program)
+  (.NET Type=ScopeType, Tag=Scope)
 WorkingStorageData:
   WS-LINE-BREAK (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -81,7 +81,6 @@ WorkingStorageData:
         Picture: X(1)
       Level: 5
       IsFiller: False
-      RedefinedPath: [VarGroup]
        (.NET Type=RedefinesSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE, Redefines]
       Owner: DVZXMNT0
@@ -90,7 +89,6 @@ WorkingStorageData:
         Picture: X(1)
       Level: 5
       IsFiller: True
-      RedefinedPath: [VarGroup-Bis]
   Level: 1
   IsFiller: False
 IsNested: False

@@ -1,6 +1,4 @@
 ﻿using System.IO;
-using TypeCobol.Compiler.Scopes;
-using TypeCobol.Compiler.Symbols;
 
 namespace TypeCobol.Compiler.Types
 {
@@ -12,10 +10,10 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// Empty Constructor
         /// </summary>
-        public ArrayType(Symbol owner)
+        public ArrayType()
             : base(Tags.Array)
         {
-            Indexes = new Domain<IndexSymbol>(owner);
+
         }
 
         /// <summary>
@@ -28,22 +26,19 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// The Maximal Occurence number in the array.
+        /// The Maximal Occurence number in the array, null if the array
+        /// has an unbounded number of occurrences.
         /// </summary>
-        public long MaxOccur
+        public long? MaxOccur
         {
             get;
             set;
         }
 
         /// <summary>
-        /// Path to the VariableSymbol of the DEPENDING ON clause if any.
+        /// Shortcut to test if the array has no max occur.
         /// </summary>
-        public string[] DependingOnPath
-        {
-            get;
-            set;
-        }
+        public bool IsUnbounded => !MaxOccur.HasValue;
 
         /// <summary>
         /// The Type of an Element
@@ -53,11 +48,6 @@ namespace TypeCobol.Compiler.Types
             get;
             set;
         }
-
-        /// <summary>
-        /// All indexes of this array.
-        /// </summary>
-        public Domain<IndexSymbol> Indexes { get; }
 
         public override Type TypeComponent => ElementType;
 
@@ -85,30 +75,13 @@ namespace TypeCobol.Compiler.Types
             output.Write(indent);
             output.WriteLine($"MinOccur: {MinOccur}");
             output.Write(indent);
-            output.WriteLine($"MaxOccur: {MaxOccur}");
-
-            if (DependingOnPath != null && DependingOnPath.Length > 0)
-            {
-                output.Write(indent);
-                output.WriteLine($"DependingOnPath: {string.Join(", ", DependingOnPath)}");
-            }
+            output.WriteLine($"MaxOccur: {(MaxOccur.HasValue ? MaxOccur.Value.ToString() : "Unbounded")}");
 
             if (ElementType != null)
             {
                 output.Write(indent);
                 output.WriteLine("ElementType:");
                 ElementType.Dump(output, indentLevel + 1);
-            }
-
-            if (Indexes.Count > 0)
-            {
-                output.Write(indent);
-                output.WriteLine("Indexes:");
-                var level = indentLevel + 1;
-                foreach (var index in Indexes)
-                {
-                    index.Dump(output, level);
-                }
             }
         }
 

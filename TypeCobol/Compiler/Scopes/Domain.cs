@@ -87,17 +87,8 @@ namespace TypeCobol.Compiler.Scopes
                 _container = new Container<TSymbol>();
             }
 
+            symbol.Owner = _owner;
             return _container.Add(symbol);
-        }
-
-        /// <summary>
-        /// Removes a symbol from this domain.
-        /// </summary>
-        /// <param name="symbol">Symbol to remove.</param>
-        public void Delete([NotNull] TSymbol symbol)
-        {
-            System.Diagnostics.Debug.Assert(symbol != null);
-            _container?.Remove(symbol);
         }
 
         /// <summary>

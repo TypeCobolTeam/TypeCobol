@@ -1,4 +1,4 @@
-﻿--- Diagnostics ---
+--- Diagnostics ---
 Line 11[1,3] <27, Error, Syntax> - Syntax error : Paragraph 'P3' already declared
 Line 14[1,11] <27, Error, Syntax> - Syntax error : Section 'S1' already declared
 Line 17[1,3] <27, Error, Syntax> - Syntax error : Paragraph 'P3' already declared
@@ -41,7 +41,7 @@ Line 72[24,25] <30, Error, Semantics> - Semantic error: Symbol P7 is not referen
 --- Program ---
 ParagraphsSections (.NET Type=ProgramSymbol, Kind=Program)
 Type:
-  (.NET Type=ProgramType, Tag=Program)
+  (.NET Type=ScopeType, Tag=Scope)
 Sections:
   S1 (.NET Type=SectionSymbol, Kind=Section)
   Owner: ParagraphsSections
@@ -81,7 +81,6 @@ Functions:
   Flags: [Private]
   Owner: ParagraphsSections
   Type:
-    (.NET Type=FunctionType, Tag=Function)
-  IsNested: False
+    (.NET Type=ScopeType, Tag=Scope)
 IsNested: False
 

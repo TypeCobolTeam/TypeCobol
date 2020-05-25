@@ -89,11 +89,11 @@ namespace TypeCobol.Compiler.Symbols
 
                 Date.Level = 1;
                 GroupType recType = new GroupType(Date);
-                VariableSymbol yyyy = new VariableSymbol("YYYY") { Level = 2, Type = yyyyType, Owner = Date };
+                VariableSymbol yyyy = new VariableSymbol("YYYY") { Level = 2, Type = yyyyType };
                 recType.Fields.Enter(yyyy);
-                VariableSymbol mm = new VariableSymbol("MM") { Level = 2, Type = mmType, Owner = Date };
+                VariableSymbol mm = new VariableSymbol("MM") { Level = 2, Type = mmType };
                 recType.Fields.Enter(mm);
-                VariableSymbol dd = new VariableSymbol("DD") { Level = 2, Type = ddType, Owner = Date };
+                VariableSymbol dd = new VariableSymbol("DD") { Level = 2, Type = ddType };
                 recType.Fields.Enter(dd);
 
                 return recType;

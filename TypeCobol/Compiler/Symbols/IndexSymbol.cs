@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using TypeCobol.Compiler.Types;
-
-namespace TypeCobol.Compiler.Symbols
+﻿namespace TypeCobol.Compiler.Symbols
 {
     /// <summary>
     /// A Symbol that represents an Index.
@@ -15,29 +11,20 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="name">The Index name</param>
         public IndexSymbol(string name)
-            : base(name)
+            : base(name, Kinds.Index)
         {
-            Kind = Kinds.Index;
-            Type = Builtins.IndexType;
+            base.Type = Builtins.IndexType;
         }
 
         /// <summary>
-        /// The Indexed Variable.
+        /// The Indexed Variable, this is the Owner but viewed as a VariableSymbol.
         /// </summary>
-        public VariableSymbol Indexed { get; set; }        
-
-        public override string IndexedName => Indexed != null && Indexed.Name .Length != 0 ? Indexed.Name + "::" + Name : Name;
-        public override string IndexedOfName => Indexed != null && Indexed.Name.Length != 0 ? Name +  " OF " + Indexed.Name  : Name;
-        public override string IndexedDotName => Indexed != null && Indexed.Name.Length != 0 ? Indexed.Name + '.' + Name : Name;
-
-        public override void Dump(TextWriter output, int indentLevel)
+        public VariableSymbol Indexed
         {
-            base.Dump(output, indentLevel);
-            if (Indexed != null)
+            get
             {
-                string indent = new string(' ', 2 * indentLevel);
-                output.Write(indent);
-                output.WriteLine($"Indexed: {Indexed.FullName}");//Write reference
+                System.Diagnostics.Debug.Assert(Owner is VariableSymbol);
+                return (VariableSymbol) Owner;
             }
         }
 

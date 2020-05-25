@@ -21,7 +21,7 @@ namespace TypeCobol.Compiler.Symbols
             Program,
             Function,
             Typedef,
-            Variable,
+            Variable,//VariableSymbol and its inheritors except Index and Typedef
             Index,
             Section,
             Paragraph
@@ -112,11 +112,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Symbol Kind
         /// </summary>
-        public Kinds Kind
-        {
-            get;
-            protected set;
-        }
+        public Kinds Kind { get; }
 
         /// <summary>
         /// Symbol Flags.
@@ -145,80 +141,39 @@ namespace TypeCobol.Compiler.Symbols
             internal set;
         }
 
-        /// <summary>
-        /// A Typed name is the name followed by a type, by default is the name..
-        /// </summary>
-        public virtual string TypedName => Name;
+        private IEnumerable<string> Path
+        {
+            get
+            {
+                if (Owner != null)
+                {
+                    foreach (var part in Owner.Path)
+                    {
+                        yield return part;
+                    }
+                }
 
-        /// <summary>
-        /// Name used for an Indexed Name
-        /// </summary>
-        public virtual string IndexedName => Name;
-        public virtual string IndexedOfName => Name;
-        public virtual string IndexedDotName => Name;
+                if (!string.IsNullOrEmpty(Name))
+                {
+                    yield return Name;
+                }
+            }
+        }
 
         /// <summary>
         /// Full qualified name of this Symbol à la TypeCobol using "::"
         /// </summary>
-        public virtual string FullName
-        {
-            get
-            {
-                string root = Owner?.FullName ?? "";
-                string name = IndexedName;
-                return root.Length > 0 ? root + (name.Length > 0 ? ("::" + name) : name) : name;
-            }
-        }
+        public virtual string FullName => string.Join("::", Path);
 
         /// <summary>
         /// Full qualified name of this Symbol à la COBOL85 using OF
         /// </summary>
-        public virtual string FullOfName
-        {
-            get
-            {
-                string root = Owner?.FullOfName ?? "";
-                string name = IndexedOfName;
-                return root.Length > 0 ? (name.Length > 0 ? (name + " OF ") : name) + root : name;
-            }
-        }
+        public virtual string FullOfName => string.Join(" OF ", Path.Reverse());
 
         /// <summary>
         /// Full dotted qualified name
         /// </summary>
-        public virtual string FullDotName
-        {
-            get
-            {
-                string root = Owner?.FullDotName ?? "";
-                string name = IndexedDotName;
-                return root.Length > 0 ? root + (name.Length > 0 ? ('.' + name) : name) : name;
-            }
-        }
-
-        /// <summary>
-        /// Full typed dotted qualified name
-        /// </summary>
-        public virtual string FullTypedDotName
-        {
-            get
-            {
-                Stack<string> paths = new Stack<string>();
-                paths.Push(IndexedDotName);
-                Symbol owner = Owner;
-                while (owner != null)
-                {
-                    string name = owner.TypedName;
-                    if (name?.Length != 0)
-                    {
-                        paths.Push(name);
-                    }
-                    owner = owner.Owner;
-                }
-
-                return string.Join(".", paths.ToArray());
-            }
-        }
+        public virtual string FullDotName => string.Join(".", Path);
 
         /// <summary>
         /// Type changed event.
@@ -303,55 +258,6 @@ namespace TypeCobol.Compiler.Symbols
             if (Owner != null && Owner.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                 return Owner;
             return Owner?.LookupParentOfName(name);
-        }
-
-        /// <summary>
-        /// Determine if this symbol is matching the given path (à la COBOL qualification)
-        /// </summary>
-        /// <param name="path">The path to match</param>
-        /// <returns>true if yes, false otherwise</returns>
-        public bool IsMatchingPath(string[] path)
-        {
-            Symbol currentSymbol = this;
-            for (int i = 0; i < path.Length; i++)
-            {
-                switch (i)
-                {
-                    case 0:
-                        string name = currentSymbol.Name;
-                        if (!path[i].Equals(name, StringComparison.OrdinalIgnoreCase))
-                            return false;
-                        break;
-                    default:
-                    {
-                        Symbol parent = currentSymbol.LookupParentOfName(path[i]);
-                        if (parent == null)
-                            return false;
-                        currentSymbol = parent;
-                    }
-                        break;
-                }
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// Determine if this symbol is matching the given path strictly
-        /// </summary>
-        /// <param name="path">The path to match</param>
-        /// <returns>true if yes, false otherwise</returns>
-        public bool IsStrictlyMatchingPath(string[] path)
-        {
-            Symbol currentSymbol = this;
-            int i;
-            for (i = 0; i < path.Length; i++)
-            {
-                string name = currentSymbol.Name;
-                if (!path[i].Equals(name, StringComparison.OrdinalIgnoreCase))
-                    return false;
-                currentSymbol = currentSymbol.Owner;
-            }
-            return  i == path.Length && (currentSymbol == null || currentSymbol.Kind == Kinds.Root);
         }
 
         /// <summary>

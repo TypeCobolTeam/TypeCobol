@@ -21,12 +21,12 @@ Line 57[13,17] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in fun
 --- Program ---
 DVZFSCT0 (.NET Type=ProgramSymbol, Kind=Program)
 Type:
-  (.NET Type=ProgramType, Tag=Program)
+  (.NET Type=ScopeType, Tag=Scope)
 Functions:
   Proc1 (.NET Type=FunctionSymbol, Kind=Function)
   Owner: DVZFSCT0
   Type:
-    (.NET Type=FunctionType, Tag=Function)
+    (.NET Type=ScopeType, Tag=Scope)
   Types:
     type1 (.NET Type=TypedefSymbol, Kind=Typedef)
     Flags: [Public, WORKING_STORAGE, InsideTypedef]
@@ -94,17 +94,16 @@ Functions:
           IsFiller: False
     Level: 1
     IsFiller: False
-  IsNested: False
 Programs:
   Nested (.NET Type=ProgramSymbol, Kind=Program)
   Owner: DVZFSCT0
   Type:
-    (.NET Type=ProgramType, Tag=Program)
+    (.NET Type=ScopeType, Tag=Scope)
   Functions:
     Proc2 (.NET Type=FunctionSymbol, Kind=Function)
     Owner: DVZFSCT0::Nested
     Type:
-      (.NET Type=FunctionType, Tag=Function)
+      (.NET Type=ScopeType, Tag=Scope)
     Types:
       type4 (.NET Type=TypedefSymbol, Kind=Typedef)
       Flags: [Public, WORKING_STORAGE, InsideTypedef]
@@ -172,19 +171,18 @@ Programs:
             IsFiller: False
       Level: 1
       IsFiller: False
-    IsNested: False
   IsNested: True
 IsNested: False
 
 --- Program ---
 Stacked (.NET Type=ProgramSymbol, Kind=Program)
 Type:
-  (.NET Type=ProgramType, Tag=Program)
+  (.NET Type=ScopeType, Tag=Scope)
 Functions:
   Proc3 (.NET Type=FunctionSymbol, Kind=Function)
   Owner: Stacked
   Type:
-    (.NET Type=FunctionType, Tag=Function)
+    (.NET Type=ScopeType, Tag=Scope)
   Types:
     type7 (.NET Type=TypedefSymbol, Kind=Typedef)
     Flags: [Public, WORKING_STORAGE, InsideTypedef]
@@ -252,6 +250,5 @@ Functions:
           IsFiller: False
     Level: 1
     IsFiller: False
-  IsNested: False
 IsNested: False
 

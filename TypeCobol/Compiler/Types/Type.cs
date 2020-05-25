@@ -6,7 +6,6 @@ using TypeCobol.Compiler.CodeElements;
 
 using static TypeCobol.Compiler.Symbols.Symbol;
 
-
 namespace TypeCobol.Compiler.Types
 {
     /// <summary>
@@ -25,8 +24,7 @@ namespace TypeCobol.Compiler.Types
             Array,
             Group,
             Picture,
-            Program,
-            Function,
+            Scope,
             Typedef,
 
             //Additional tags (those can't be used to downcast !)
@@ -100,11 +98,7 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// Getter on type tag.
         /// </summary>
-        public Tags Tag
-        {
-            get;
-            internal set;
-        }
+        public Tags Tag { get; }
 
         /// <summary>
         /// Constructor
@@ -328,10 +322,9 @@ namespace TypeCobol.Compiler.Types
         public interface IVisitor<out TResult, in TParameter>
         {
             TResult VisitArrayType(ArrayType t, TParameter arg);
-            TResult VisitFunctionType(FunctionType t, TParameter arg);
-            TResult VisitPictureType(PictureType t, TParameter arg);
-            TResult VisitProgramType(ProgramType t, TParameter arg);
             TResult VisitGroupType(GroupType t, TParameter arg);
+            TResult VisitPictureType(PictureType t, TParameter arg);
+            TResult VisitScopeType(ScopeType t, TParameter arg);
             TResult VisitTypedefType(TypedefType t, TParameter arg);
             TResult VisitType(Type t, TParameter arg);
         }
@@ -344,12 +337,13 @@ namespace TypeCobol.Compiler.Types
         public abstract class AbstractTypeVisitor<TResult, TParameter>  : IVisitor<TResult, TParameter>
         {
             public TResult Visit(Type t, TParameter arg) { return t.Accept(this, arg); }
+
             public virtual TResult VisitArrayType(ArrayType t, TParameter arg) { return VisitType(t, arg); }
-            public virtual TResult VisitFunctionType(FunctionType t, TParameter arg) { return VisitType(t, arg); }
-            public virtual TResult VisitPictureType(PictureType t, TParameter arg) { return VisitType(t, arg); }
-            public virtual TResult VisitProgramType(ProgramType t, TParameter arg) { return VisitType(t, arg); }
             public virtual TResult VisitGroupType(GroupType t, TParameter arg) { return VisitType(t, arg); }
+            public virtual TResult VisitPictureType(PictureType t, TParameter arg) { return VisitType(t, arg); }
+            public virtual TResult VisitScopeType(ScopeType t, TParameter arg) { return VisitType(t, arg); }
             public virtual TResult VisitTypedefType(TypedefType t, TParameter arg) { return VisitType(t, arg); }
+
             public abstract TResult VisitType(Type t, TParameter arg);
         }
     }

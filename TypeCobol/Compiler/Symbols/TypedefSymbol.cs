@@ -10,9 +10,9 @@
         /// </summary>
         /// <param name="name"></param>
         public TypedefSymbol(string name)
-            : base(name)
+            : base(name, Kinds.Typedef)
         {
-            base.Kind = Kinds.Typedef;
+
         }
 
         public override TResult Accept<TResult, TParameter>(IVisitor<TResult, TParameter> v, TParameter arg)

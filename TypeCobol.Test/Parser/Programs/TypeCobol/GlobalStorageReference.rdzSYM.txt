@@ -4,29 +4,7 @@ Line 23[31,47] <27, Error, Syntax> - Syntax error : A Global-Storage Section var
 --- Program ---
 GlobalStorageTest (.NET Type=ProgramSymbol, Kind=Program)
 Type:
-  (.NET Type=ProgramType, Tag=Program)
-GlobalStorageData:
-  dependOnVarGlobal (.NET Type=VariableSymbol, Kind=Variable)
-  Flags: [GLOBAL_STORAGE]
-  Owner: GlobalStorageTest
-  Type:
-    (.NET Type=PictureType, Tag=Picture)
-    Picture: X(2)
-  Level: 1
-  IsFiller: False
-  TEST1-ELT0 (.NET Type=VariableSymbol, Kind=Variable)
-  Flags: [GLOBAL_STORAGE]
-  Owner: GlobalStorageTest
-  Type:
-    (.NET Type=ArrayType, Tag=Array)
-    MinOccur: 1
-    MaxOccur: 10
-    DependingOnPath: dependOnVarGlobal
-    ElementType:
-      (.NET Type=PictureType, Tag=Picture)
-      Picture: X(120)
-  Level: 1
-  IsFiller: False
+  (.NET Type=ScopeType, Tag=Scope)
 WorkingStorageData:
   dependOnVarWorking (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -43,7 +21,6 @@ WorkingStorageData:
     (.NET Type=ArrayType, Tag=Array)
     MinOccur: 1
     MaxOccur: 10
-    DependingOnPath: dependOnVarGlobal
     ElementType:
       (.NET Type=PictureType, Tag=Picture)
       Picture: X(120)
@@ -56,7 +33,27 @@ WorkingStorageData:
     (.NET Type=ArrayType, Tag=Array)
     MinOccur: 1
     MaxOccur: 10
-    DependingOnPath: dependOnVarWorking
+    ElementType:
+      (.NET Type=PictureType, Tag=Picture)
+      Picture: X(120)
+  Level: 1
+  IsFiller: False
+GlobalStorageData:
+  dependOnVarGlobal (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [GLOBAL_STORAGE]
+  Owner: GlobalStorageTest
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(2)
+  Level: 1
+  IsFiller: False
+  TEST1-ELT0 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [GLOBAL_STORAGE]
+  Owner: GlobalStorageTest
+  Type:
+    (.NET Type=ArrayType, Tag=Array)
+    MinOccur: 1
+    MaxOccur: 10
     ElementType:
       (.NET Type=PictureType, Tag=Picture)
       Picture: X(120)

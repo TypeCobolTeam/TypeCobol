@@ -5,7 +5,7 @@ Line 12[8,14] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
 --- Program ---
 TypeCobol (.NET Type=ProgramSymbol, Kind=Program)
 Type:
-  (.NET Type=ProgramType, Tag=Program)
+  (.NET Type=ScopeType, Tag=Scope)
 WorkingStorageData:
   STR1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]

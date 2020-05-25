@@ -9,7 +9,7 @@ Line 37[37,42] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be spec
 --- Program ---
 DVZFSCT0 (.NET Type=ProgramSymbol, Kind=Program)
 Type:
-  (.NET Type=ProgramType, Tag=Program)
+  (.NET Type=ScopeType, Tag=Scope)
 Types:
   type1 (.NET Type=TypedefSymbol, Kind=Typedef)
   Flags: [Public, Global, WORKING_STORAGE, InsideTypedef]
@@ -59,7 +59,7 @@ Programs:
   Nested (.NET Type=ProgramSymbol, Kind=Program)
   Owner: DVZFSCT0
   Type:
-    (.NET Type=ProgramType, Tag=Program)
+    (.NET Type=ScopeType, Tag=Scope)
   Types:
     type3 (.NET Type=TypedefSymbol, Kind=Typedef)
     Flags: [Public, Global, WORKING_STORAGE, InsideTypedef]
@@ -111,7 +111,7 @@ IsNested: False
 --- Program ---
 Stacked (.NET Type=ProgramSymbol, Kind=Program)
 Type:
-  (.NET Type=ProgramType, Tag=Program)
+  (.NET Type=ScopeType, Tag=Scope)
 Types:
   type5 (.NET Type=TypedefSymbol, Kind=Typedef)
   Flags: [Public, Global, WORKING_STORAGE, InsideTypedef]

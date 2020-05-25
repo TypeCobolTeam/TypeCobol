@@ -7,8 +7,6 @@ Line 101[14,17] <27, Error, Syntax> - Syntax error : Group item var3 cannot have
 
 --- Program ---
 DVZF0OSM (.NET Type=ProgramSymbol, Kind=Program)
-Type:
-  (.NET Type=ProgramType, Tag=Program)
 WorkingStorageData:
   var1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -449,7 +447,6 @@ WorkingStorageData:
       IsFiller: False
   Level: 1
   IsFiller: False
-  RedefinedPath: [var1]
   var1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
   Owner: DVZF0OSM
@@ -491,7 +488,6 @@ WorkingStorageData:
           IsFiller: False
       Level: 5
       IsFiller: False
-      RedefinedPath: [var2]
   Level: 1
   IsFiller: False
 IsNested: False

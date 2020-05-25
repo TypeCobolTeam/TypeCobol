@@ -650,11 +650,13 @@ namespace TypeCobol.Compiler.Diagnostics
 
                 //Add DataDefinition found and corresponding VariableSymbol into caches
                 dataDefinitionStorage.Add(storageArea, dataDefinitionFound);
+                var variableSymbol = dataDefinitionFound.SemanticData as VariableSymbol;
+                symbolStorage.Add(storageArea, variableSymbol);//Beware, variableSymbol my be null !
+
+                //SemanticDomain validation : check that the symbol has been built.
                 if (dataDefinitionFound.ParentTypeDefinition == null)
                 {
-                    var variableSymbol = dataDefinitionFound.SemanticData as VariableSymbol;
                     System.Diagnostics.Debug.Assert(variableSymbol != null);
-                    symbolStorage.Add(storageArea, variableSymbol);
                 }
                 else
                 {

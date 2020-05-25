@@ -45,16 +45,7 @@ Line 116[39,57] <30, Error, Semantics> - Semantic error: Symbol dataSubNestedGlo
 --- Program ---
 MainProgram (.NET Type=ProgramSymbol, Kind=Program)
 Type:
-  (.NET Type=ProgramType, Tag=Program)
-GlobalStorageData:
-  dataMainGlobalStorage (.NET Type=VariableSymbol, Kind=Variable)
-  Flags: [GLOBAL_STORAGE]
-  Owner: MainProgram
-  Type:
-    (.NET Type=PictureType, Tag=Picture)
-    Picture: X(1)
-  Level: 1
-  IsFiller: False
+  (.NET Type=ScopeType, Tag=Scope)
 WorkingStorageData:
   dataMainLocal (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
@@ -72,13 +63,22 @@ WorkingStorageData:
     Picture: X(1)
   Level: 1
   IsFiller: False
+GlobalStorageData:
+  dataMainGlobalStorage (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [GLOBAL_STORAGE]
+  Owner: MainProgram
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(1)
+  Level: 1
+  IsFiller: False
 Functions:
   procInMain (.NET Type=FunctionSymbol, Kind=Function)
   Flags: [Private]
   Owner: MainProgram
   Type:
-    (.NET Type=FunctionType, Tag=Function)
-    Usings: [MainProgram::procInMain::paramMain]
+    (.NET Type=ScopeType, Tag=Scope)
+    Parameters: [MainProgram::procInMain::paramMain]
   WorkingStorageData:
     dataProcMain (.NET Type=VariableSymbol, Kind=Variable)
     Flags: [WORKING_STORAGE]
@@ -97,12 +97,11 @@ Functions:
       Picture: X(1)
     Level: 1
     IsFiller: False
-  IsNested: False
 Programs:
   Nested (.NET Type=ProgramSymbol, Kind=Program)
   Owner: MainProgram
   Type:
-    (.NET Type=ProgramType, Tag=Program)
+    (.NET Type=ScopeType, Tag=Scope)
   WorkingStorageData:
     dataNestedLocal (.NET Type=VariableSymbol, Kind=Variable)
     Flags: [WORKING_STORAGE]
@@ -125,8 +124,8 @@ Programs:
     Flags: [Private]
     Owner: MainProgram::Nested
     Type:
-      (.NET Type=FunctionType, Tag=Function)
-      Usings: [MainProgram::Nested::procInNested::paramNested]
+      (.NET Type=ScopeType, Tag=Scope)
+      Parameters: [MainProgram::Nested::procInNested::paramNested]
     WorkingStorageData:
       dataProcNested (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]
@@ -145,12 +144,11 @@ Programs:
         Picture: X(1)
       Level: 1
       IsFiller: False
-    IsNested: False
   Programs:
     SubNested (.NET Type=ProgramSymbol, Kind=Program)
     Owner: MainProgram::Nested
     Type:
-      (.NET Type=ProgramType, Tag=Program)
+      (.NET Type=ScopeType, Tag=Scope)
     WorkingStorageData:
       dataSubNestedLocal (.NET Type=VariableSymbol, Kind=Variable)
       Flags: [WORKING_STORAGE]
@@ -173,8 +171,8 @@ Programs:
       Flags: [Private]
       Owner: MainProgram::Nested::SubNested
       Type:
-        (.NET Type=FunctionType, Tag=Function)
-        Usings: [MainProgram::Nested::SubNested::procInSubNested::paramSubNested]
+        (.NET Type=ScopeType, Tag=Scope)
+        Parameters: [MainProgram::Nested::SubNested::procInSubNested::paramSubNested]
       WorkingStorageData:
         dataProcSubNested (.NET Type=VariableSymbol, Kind=Variable)
         Flags: [WORKING_STORAGE]
@@ -193,7 +191,6 @@ Programs:
           Picture: X(1)
         Level: 1
         IsFiller: False
-      IsNested: False
     IsNested: True
   IsNested: True
 IsNested: False

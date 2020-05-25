@@ -23,7 +23,7 @@ Line 80[12,38] <27, Error, Syntax> - Syntax error : Function 'proc4' expected pa
 --- Program ---
 ProcedureCall-ParamCompatibily (.NET Type=ProgramSymbol, Kind=Program)
 Type:
-  (.NET Type=ProgramType, Tag=Program)
+  (.NET Type=ScopeType, Tag=Scope)
 LocalStorageData:
   picAlpha10 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [LOCAL_STORAGE]
@@ -129,8 +129,8 @@ Functions:
   Flags: [Private]
   Owner: ProcedureCall-ParamCompatibily
   Type:
-    (.NET Type=FunctionType, Tag=Function)
-    Usings: [ProcedureCall-ParamCompatibily::proc1::param1]
+    (.NET Type=ScopeType, Tag=Scope)
+    Parameters: [ProcedureCall-ParamCompatibily::proc1::param1]
   LinkageData:
     param1 (.NET Type=VariableSymbol, Kind=Variable)
     Flags: [LINKAGE, Input, Parameter]
@@ -140,13 +140,12 @@ Functions:
       Picture: 9(10)
     Level: 1
     IsFiller: False
-  IsNested: False
   proc2 (.NET Type=FunctionSymbol, Kind=Function)
   Flags: [Private]
   Owner: ProcedureCall-ParamCompatibily
   Type:
-    (.NET Type=FunctionType, Tag=Function)
-    Usings: [ProcedureCall-ParamCompatibily::proc2::param1]
+    (.NET Type=ScopeType, Tag=Scope)
+    Parameters: [ProcedureCall-ParamCompatibily::proc2::param1]
   LinkageData:
     param1 (.NET Type=VariableSymbol, Kind=Variable)
     Flags: [LINKAGE, Input, Parameter]
@@ -156,13 +155,12 @@ Functions:
       Picture: X(10)
     Level: 1
     IsFiller: False
-  IsNested: False
   proc3 (.NET Type=FunctionSymbol, Kind=Function)
   Flags: [Private]
   Owner: ProcedureCall-ParamCompatibily
   Type:
-    (.NET Type=FunctionType, Tag=Function)
-    Usings: [ProcedureCall-ParamCompatibily::proc3::param1]
+    (.NET Type=ScopeType, Tag=Scope)
+    Parameters: [ProcedureCall-ParamCompatibily::proc3::param1]
   LinkageData:
     param1 (.NET Type=VariableSymbol, Kind=Variable)
     Flags: [LINKAGE, Input, Sync, Parameter]
@@ -172,13 +170,12 @@ Functions:
       Picture: 9(10)
     Level: 1
     IsFiller: False
-  IsNested: False
   proc4 (.NET Type=FunctionSymbol, Kind=Function)
   Flags: [Private]
   Owner: ProcedureCall-ParamCompatibily
   Type:
-    (.NET Type=FunctionType, Tag=Function)
-    Usings: [ProcedureCall-ParamCompatibily::proc4::param1]
+    (.NET Type=ScopeType, Tag=Scope)
+    Parameters: [ProcedureCall-ParamCompatibily::proc4::param1]
   LinkageData:
     param1 (.NET Type=VariableSymbol, Kind=Variable)
     Flags: [LINKAGE, Input, Justified, Parameter]
@@ -188,6 +185,5 @@ Functions:
       Picture: X(10)
     Level: 1
     IsFiller: False
-  IsNested: False
 IsNested: False
 
