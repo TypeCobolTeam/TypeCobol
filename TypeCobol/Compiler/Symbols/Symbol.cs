@@ -141,51 +141,39 @@ namespace TypeCobol.Compiler.Symbols
             internal set;
         }
 
-        /// <summary>
-        /// Name used for an Indexed Name
-        /// </summary>
-        public virtual string IndexedName => Name;
-        public virtual string IndexedOfName => Name;
-        public virtual string IndexedDotName => Name;
+        private IEnumerable<string> Path
+        {
+            get
+            {
+                if (Owner != null)
+                {
+                    foreach (var part in Owner.Path)
+                    {
+                        yield return part;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(Name))
+                {
+                    yield return Name;
+                }
+            }
+        }
 
         /// <summary>
         /// Full qualified name of this Symbol à la TypeCobol using "::"
         /// </summary>
-        public virtual string FullName
-        {
-            get
-            {
-                string root = Owner?.FullName ?? "";
-                string name = IndexedName;
-                return root.Length > 0 ? root + (name.Length > 0 ? ("::" + name) : name) : name;
-            }
-        }
+        public virtual string FullName => string.Join("::", Path);
 
         /// <summary>
         /// Full qualified name of this Symbol à la COBOL85 using OF
         /// </summary>
-        public virtual string FullOfName
-        {
-            get
-            {
-                string root = Owner?.FullOfName ?? "";
-                string name = IndexedOfName;
-                return root.Length > 0 ? (name.Length > 0 ? (name + " OF ") : name) + root : name;
-            }
-        }
+        public virtual string FullOfName => string.Join(" OF ", Path.Reverse());
 
         /// <summary>
         /// Full dotted qualified name
         /// </summary>
-        public virtual string FullDotName
-        {
-            get
-            {
-                string root = Owner?.FullDotName ?? "";
-                string name = IndexedDotName;
-                return root.Length > 0 ? root + (name.Length > 0 ? ('.' + name) : name) : name;
-            }
-        }
+        public virtual string FullDotName => string.Join(".", Path);
 
         /// <summary>
         /// Type changed event.

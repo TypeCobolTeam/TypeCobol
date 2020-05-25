@@ -865,8 +865,6 @@ namespace TypeCobol.Compiler.Domain
                     {
                         //An index definition symbol
                         var indexSym = CreateIndexSymbol(indexDef, currentDomain, typedef);
-                        //Attach the Indexed
-                        indexSym.Indexed = sym;
                         //Add the index in the arrayType.
                         arrayType.Indexes.Enter(indexSym);
                         //Copy Global flag for a Global Index
