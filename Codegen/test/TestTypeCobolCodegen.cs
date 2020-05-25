@@ -693,8 +693,7 @@ namespace TypeCobol.Codegen {
         [TestProperty("Time", "fast")]
         public void DeclarativesInsideProcedure()
         {
-            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "DeclarativesInsideProcedure") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "DeclarativesInsideProcedure") + ".rdz.tcbl", false, "TestTypeCobolVersion");
         }
 
 	    [TestMethod]
