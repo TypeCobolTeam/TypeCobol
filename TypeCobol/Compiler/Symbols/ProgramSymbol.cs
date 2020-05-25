@@ -46,21 +46,6 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         public bool IsNested => Owner != null && Owner.Kind == Kinds.Program;
 
-        /// <summary>
-        /// Get the Variable visibility mask.
-        /// </summary>
-        protected override Flags VariableVisibilityMask => IsNested ? (Flags.Global | Flags.GLOBAL_STORAGE) : 0;
-
-        /// <summary>
-        /// Get the type visibility mask for a Program.
-        /// </summary>
-        protected override Flags TypeVisibilityMask => IsNested ? (Flags.Global | Flags.Private | Flags.Public) : 0;
-
-        /// <summary>
-        /// Get the function visibility mask for a Program.
-        /// </summary>
-        protected override Flags FunctionVisibilityMask => IsNested ? (Flags.Private | Flags.Public) : 0;
-
         public override void Dump(TextWriter output, int indentLevel)
         {
             base.Dump(output, indentLevel);
