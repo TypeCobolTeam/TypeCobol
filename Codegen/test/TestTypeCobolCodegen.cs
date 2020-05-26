@@ -688,6 +688,14 @@ namespace TypeCobol.Codegen {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "DeclarativesWithInstructionsWithin") + ".rdz.tcbl", false, "TestTypeCobolVersion");
         }
 
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void DeclarativesInsideProcedure()
+        {
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "DeclarativesInsideProcedure") + ".rdz.tcbl", false, "TestTypeCobolVersion");
+        }
+
 	    [TestMethod]
 	    [TestCategory("Codegen")]
 	    [TestProperty("Time", "fast")]
