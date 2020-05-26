@@ -253,9 +253,8 @@ namespace TypeCobol.Compiler.Domain
             System.Diagnostics.Debug.Assert(p.StorageArea.SymbolReference != null);
             string parameterName = p.StorageArea.SymbolReference.Name;
             var parameterCandidateSymbols = this.CurrentProgram.LinkageData.Lookup(parameterName);
-            if (parameterCandidateSymbols != null)
+            if (parameterCandidateSymbols != null && parameterCandidateSymbols.Count == 1)
             {
-                System.Diagnostics.Debug.Assert(parameterCandidateSymbols.Count == 1);
                 var parameterSymbol = parameterCandidateSymbols.Symbol;
                 if (p.SharingMode == null)
                     parameterSymbol.SetFlag(Symbol.Flags.ByReference, true);
@@ -630,13 +629,17 @@ namespace TypeCobol.Compiler.Domain
             //We create the type definition symbol            
             var tdSym = new TypedefSymbol(dataDef.Name);
             tdSym.Type = new TypedefType(tdSym);
-            if (entry.Strict != null && entry.Strict.Value)
+            switch (entry.RestrictionLevel)
             {
-                tdSym.SetFlag(Symbol.Flags.Strict, true);
-            }
-            if (entry.Strong != null && entry.Strong.Value)
-            {
-                tdSym.SetFlag(Symbol.Flags.Strong, true);
+                case RestrictionLevel.STRICT:
+                    tdSym.SetFlag(Symbol.Flags.Strict, true);
+                    break;
+                case RestrictionLevel.STRONG:
+                    tdSym.SetFlag(Symbol.Flags.Strong, true);
+                    break;
+                case RestrictionLevel.WEAK:
+                    tdSym.SetFlag(Symbol.Flags.Weak, true);
+                    break;
             }
             SetSymbolAccessModifer(tdSym, entry.Visibility);
             
@@ -687,15 +690,6 @@ namespace TypeCobol.Compiler.Domain
             if (typedef == null)
                 CurrentScope.Add(varTypeSym);
 
-            //If we have created a TypedVariableSymbol Symbol instance then sure the underlying Program should be completed from the Top Program.
-            //This can be an optimization to avoid pur Cobol85 program to be completed, they don't have TYPEDEF.
-            if (!CurrentProgram.HasFlag(Symbol.Flags.NeedTypeCompletion))
-            {
-                CurrentProgram.SetFlag(Symbol.Flags.NeedTypeCompletion, true);
-                ProgramSymbol topProgram = (ProgramSymbol) CurrentProgram.TopParent(Symbol.Kinds.Program);
-                if (topProgram != CurrentProgram)
-                    topProgram.SetFlag(Symbol.Flags.NeedTypeCompletion, true);
-            }
             return varTypeSym;
         }
 
@@ -870,15 +864,9 @@ namespace TypeCobol.Compiler.Domain
             dataDef.SemanticData = sym;
 
             //Section flag
-            bool inGlobalStorageSection;
             if (CurrentDataDivisionSection != null)
             {
                 sym.SetFlag(CurrentDataDivisionSection.Flag, true);
-                inGlobalStorageSection = CurrentDataDivisionSection.Flag == Symbol.Flags.GLOBAL_STORAGE;
-            }
-            else
-            {
-                inGlobalStorageSection = false;
             }
 
             //Global variable ?
@@ -908,12 +896,8 @@ namespace TypeCobol.Compiler.Domain
                         sym.Level = dataDescEntry.LevelNumber != null ? (int)dataDescEntry.LevelNumber.Value : 0;
                         sym.IsFiller = dataDescEntry.IsFiller;
                         if (dataDescEntry.IsGlobal || currentDomain.Owner.HasFlag(Symbol.Flags.Global))
-                        {//No Global inside GLOBAL-STORAGE.
-                            if (!inGlobalStorageSection)
-                            {
-                                //This a global symbol
-                                sym.SetFlag(Symbol.Flags.Global, true);
-                            }
+                        {
+                            sym.SetFlag(Symbol.Flags.Global, true);
                         }
 
                         //Other interesting flags that apply to a symbol.

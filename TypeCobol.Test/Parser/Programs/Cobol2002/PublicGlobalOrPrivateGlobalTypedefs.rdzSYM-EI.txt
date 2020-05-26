@@ -18,7 +18,7 @@ Type:
   (.NET Type=ScopeType, Tag=Scope)
 Types:
   type1 (.NET Type=TypedefSymbol, Kind=Typedef)
-  Flags: [Public, Global, WORKING_STORAGE, InsideTypedef]
+  Flags: [Public, Global, WORKING_STORAGE, Weak, InsideTypedef]
   Owner: DVZFSCT0
   Type:
     (.NET Type=TypedefType, Tag=Typedef)
@@ -40,7 +40,7 @@ Types:
   Level: 1
   IsFiller: False
   type2 (.NET Type=TypedefSymbol, Kind=Typedef)
-  Flags: [Private, Global, WORKING_STORAGE, InsideTypedef]
+  Flags: [Private, Global, WORKING_STORAGE, Weak, InsideTypedef]
   Owner: DVZFSCT0
   Type:
     (.NET Type=TypedefType, Tag=Typedef)
@@ -68,7 +68,7 @@ Programs:
     (.NET Type=ScopeType, Tag=Scope)
   Types:
     type3 (.NET Type=TypedefSymbol, Kind=Typedef)
-    Flags: [Public, Global, WORKING_STORAGE, InsideTypedef]
+    Flags: [Public, Global, WORKING_STORAGE, Weak, InsideTypedef]
     Owner: DVZFSCT0::Nested
     Type:
       (.NET Type=TypedefType, Tag=Typedef)
@@ -90,7 +90,7 @@ Programs:
     Level: 1
     IsFiller: False
     type4 (.NET Type=TypedefSymbol, Kind=Typedef)
-    Flags: [Private, Global, WORKING_STORAGE, InsideTypedef]
+    Flags: [Private, Global, WORKING_STORAGE, Weak, InsideTypedef]
     Owner: DVZFSCT0::Nested
     Type:
       (.NET Type=TypedefType, Tag=Typedef)
@@ -120,7 +120,7 @@ Type:
   (.NET Type=ScopeType, Tag=Scope)
 Types:
   type5 (.NET Type=TypedefSymbol, Kind=Typedef)
-  Flags: [Public, Global, WORKING_STORAGE, InsideTypedef]
+  Flags: [Public, Global, WORKING_STORAGE, Weak, InsideTypedef]
   Owner: Stacked
   Type:
     (.NET Type=TypedefType, Tag=Typedef)
@@ -142,7 +142,7 @@ Types:
   Level: 1
   IsFiller: False
   type6 (.NET Type=TypedefSymbol, Kind=Typedef)
-  Flags: [Private, Global, WORKING_STORAGE, InsideTypedef]
+  Flags: [Private, Global, WORKING_STORAGE, Weak, InsideTypedef]
   Owner: Stacked
   Type:
     (.NET Type=TypedefType, Tag=Typedef)
