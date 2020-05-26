@@ -415,24 +415,6 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Checks if the given DataDefinition instance has a single Usage definition.
-        /// </summary>
-        /// <param name="dataDef">The Data Definition to be checked.</param>
-        /// <param name="dataUsage">The DataUsage if it has a single usage definition, None otherwise.</param>
-        /// <returns>True if it has a single usage definition, False otherwise.</returns>
-        private static bool HasSingleUsageDefinition(DataDefinition dataDef, out DataUsage dataUsage)
-        {
-            if (dataDef.Picture == null && dataDef.Usage.HasValue)
-            {
-                dataUsage = dataDef.Usage.Value;
-                return dataUsage != DataUsage.None;
-            }
-
-            dataUsage = DataUsage.None;
-            return false;
-        }
-
-        /// <summary>
         /// Checks if the given DataDefinition is a Type Definition
         /// </summary>
         /// <param name="dataDef">The Data Definition to be checked</param>
@@ -469,16 +451,14 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Create the Usage type corresponding to a DataUsage.
+        /// Create the Usage type corresponding to a UsageFormat.
         /// </summary>
-        /// <param name="dataUsage">The DataUsage to create the usage type.</param>
-        /// <returns>The usage type</returns>
-        private static Type CreateUsageType(DataUsage dataUsage)
+        /// <param name="usage">The UsageFormat to create the usage type, expected to be different from None.</param>
+        /// <returns>The corresponding usage type.</returns>
+        private static Type CreateUsageType(Type.UsageFormat usage)
         {
-            System.Diagnostics.Debug.Assert(dataUsage != DataUsage.None);
-            Type.UsageFormat usage = Type.DataUsage2UsageFormat(dataUsage);
-            Type type = Builtins.GetUsageType(usage);
-            return type;
+            System.Diagnostics.Debug.Assert(usage != Type.UsageFormat.None);
+            return Builtins.GetUsageType(usage);
         }
 
         /// <summary>
@@ -510,13 +490,13 @@ namespace TypeCobol.Compiler.Domain
         /// Create a Symbol instance for a variable of a single usage type.
         /// </summary>
         /// <param name="dataDef">The DataDefinition instance</param>
-        /// <param name="dataUsage">The DataUsage of the DataDefinition instance</param>
+        /// <param name="usage">The Usage of the DataDefinition instance</param>
         /// <param name="currentDomain">The current domain of variables being built.</param>
         /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns>The Symbol instance of usage type.</returns>
-        private VariableSymbol CreateUsageSymbol(DataDefinition dataDef, DataUsage dataUsage, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
+        private VariableSymbol CreateUsageSymbol(DataDefinition dataDef, Type.UsageFormat usage, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
-            Type type = CreateUsageType(dataUsage);
+            Type type = CreateUsageType(usage);
             return CreateAndAddRedefinesOrVariableSymbol(type, dataDef, currentDomain, typedef);
         }
 
@@ -525,11 +505,11 @@ namespace TypeCobol.Compiler.Domain
         /// </summary>
         /// <param name="dataDef">The DataDefinition to create the Picture Type</param>
         /// <param name="picture">Picture of the DataDefinition, must be non-null</param>
+        /// <param name="usage">Usage of the DataDefinition, may be None to reflect the absence of usage clause</param>
         /// <returns>The Picture Type</returns>
-        private static PictureType CreatePictureType(DataDefinition dataDef, AlphanumericValue picture)
+        private static PictureType CreatePictureType(DataDefinition dataDef, AlphanumericValue picture, Type.UsageFormat usage)
         {
             System.Diagnostics.Debug.Assert(picture != null);
-            Type.UsageFormat usage = dataDef.Usage.HasValue ? Type.DataUsage2UsageFormat(dataDef.Usage.Value) : Type.UsageFormat.None;
             PictureValidator pictureValidator = new PictureValidator(picture.Value, dataDef.SignIsSeparate);
             PictureType type = new PictureType(pictureValidator);
             //Use permissive Usage setter which allows COMP1 and COMP2
@@ -542,12 +522,13 @@ namespace TypeCobol.Compiler.Domain
         /// </summary>
         /// <param name="dataDef">The DataDefinition instance</param>
         /// <param name="picture">Picture of the DataDefinition, must be non-null</param>
+        /// <param name="usage">Usage of the DataDefinition, may be None</param>
         /// <param name="currentDomain">The current domain of variables being built.</param>
         /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns>The Symbol instance of usage type.</returns>
-        private VariableSymbol CreatePictureSymbol(DataDefinition dataDef, AlphanumericValue picture, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
+        private VariableSymbol CreatePictureSymbol(DataDefinition dataDef, AlphanumericValue picture, Type.UsageFormat usage, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
-            Type type = CreatePictureType(dataDef, picture);
+            Type type = CreatePictureType(dataDef, picture, usage);
             return CreateAndAddRedefinesOrVariableSymbol(type, dataDef, currentDomain, typedef);
         }
 
@@ -560,18 +541,19 @@ namespace TypeCobol.Compiler.Domain
         /// <returns>The untyped symbol</returns>
         private VariableSymbol CreateSymbolWithoutType(DataDefinition dataDef, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
-            Type type = Builtins.GetUsageType(Type.UsageFormat.None);
-            return CreateAndAddRedefinesOrVariableSymbol(type, dataDef, currentDomain, typedef);
+            return CreateAndAddRedefinesOrVariableSymbol(Builtins.NoType, dataDef, currentDomain, typedef);
         }
 
         /// <summary>
         /// Create a Group Symbol
         /// </summary>
         /// <param name="dataDef">The DataDefinition instance</param>
+        /// <param name="picture">Picture value of the DataDefinition</param>
+        /// <param name="usage">Usage value of the DataDefinition</param>
         /// <param name="currentDomain">The current domain of variables being built.</param>
         /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns></returns>
-        private VariableSymbol CreateGroupSymbol(DataDefinition dataDef, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
+        private VariableSymbol CreateGroupSymbol(DataDefinition dataDef, AlphanumericValue picture, Type.UsageFormat usage, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
             //We create a group symbol having the group type
             VariableSymbol sym = IsRedefinedDataDefinition(dataDef, out _)
@@ -583,15 +565,13 @@ namespace TypeCobol.Compiler.Domain
             //Set type of the symbol
             sym.Type = recType;
             //Set any leading type.
-            if (HasSingleUsageDefinition(dataDef, out var dataUsage))
+            if (picture != null)
             {
-                Type leadingType = CreateUsageType(dataUsage);
-                recType.LeadingType = leadingType;
+                recType.LeadingType = CreatePictureType(dataDef, picture, usage);
             }
-            else if (dataDef.Picture != null)
+            else if (usage != Type.UsageFormat.None)
             {
-                Type leadingType = CreatePictureType(dataDef, dataDef.Picture);
-                recType.LeadingType = leadingType;
+                recType.LeadingType = CreateUsageType(usage);
             }
 
             DecorateSymbol(dataDef, sym, currentDomain);
@@ -601,7 +581,7 @@ namespace TypeCobol.Compiler.Domain
             //We build the GroupType fields
             foreach (var child in dataDef.Children)
             {
-                DataDefinition df = (DataDefinition)child;
+                DataDefinition df = (DataDefinition) child;
                 VariableSymbol dfSym = DataDefinition2Symbol(df, recType.Fields, typedef);
                 //if df_sym == null this may be a bad symbol.
                 if (dfSym != null)
@@ -790,19 +770,26 @@ namespace TypeCobol.Compiler.Domain
                     case CodeElementType.DataDescriptionEntry:
                     case CodeElementType.DataRedefinesEntry:                    
                         {
+                            //Extract Picture and Usage once to avoid multiple redundant calls
+                            var picture = dataDef.Picture;
+                            var dataUsage = dataDef.Usage;
+                            var usage = dataUsage.HasValue ? Type.DataUsage2UsageFormat(dataUsage.Value) : Type.UsageFormat.None;
+
                             //Special case Typedef
                             //CreateTypeDefinition will call us back with typedef set so we test it to avoid stack overflow !
                             if (IsTypedefDefinition(dataDef, out var dataTypeDescriptionEntry) && typedef == null)
                             {
                                 sym = CreateTypeDefinition(dataDef, dataTypeDescriptionEntry, currentDomain);
                             }
-                            else if (dataDef.ChildrenCount == 0 && HasSingleUsageDefinition(dataDef, out var dataUsage))
+                            else if (dataDef.ChildrenCount == 0 && picture == null && usage != Type.UsageFormat.None)
                             {
-                                sym = CreateUsageSymbol(dataDef, dataUsage, currentDomain, typedef);
+                                //Single usage definition
+                                sym = CreateUsageSymbol(dataDef, usage, currentDomain, typedef);
                             }
-                            else if (dataDef.ChildrenCount == 0 && dataDef.Picture != null)
+                            else if (dataDef.ChildrenCount == 0 && picture != null)
                             {
-                                sym = CreatePictureSymbol(dataDef, dataDef.Picture, currentDomain, typedef);
+                                //Single picture (and possibly usage) definition
+                                sym = CreatePictureSymbol(dataDef, picture, usage, currentDomain, typedef);
                             }
                             else
                             {
@@ -821,7 +808,7 @@ namespace TypeCobol.Compiler.Domain
                                 }
                                 else
                                 {//This is a group Type
-                                    sym = CreateGroupSymbol(dataDef, currentDomain, typedef);
+                                    sym = CreateGroupSymbol(dataDef, picture, usage, currentDomain, typedef);
                                 }
                             }
                         }
