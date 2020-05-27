@@ -389,6 +389,49 @@ namespace TypeCobol.Compiler.Diagnostics
 
             }
 
+            //Check if variable is Sync inside Strict Type definition
+            if (dataDefinition.SemanticData.HasFlag(Symbol.Flags.InsideTypedef) &&
+                dataDefinition.SemanticData.HasFlag(Symbol.Flags.Sync))
+            {
+                //Typedef instruction => check if it's marked Strict
+                if (dataDefinition.SemanticData.Kind == Symbol.Kinds.Typedef && dataDefinition.SemanticData.HasFlag(Symbol.Flags.Strict))
+                {
+                    DiagnosticUtils.AddError(dataDefinition, $"Cannot declare Type definition {dataDefinition.Name} with Sync clause because it is Strict.");
+                }
+                //Variable inside Typedef => check if parent typedef is marked Strict
+                else if (dataDefinition.SemanticData.NearestParent(Symbol.Kinds.Typedef).HasFlag(Symbol.Flags.Strict))
+                {
+                    DiagnosticUtils.AddError(dataDefinition, $"{dataDefinition.Name} cannot be declared with Sync clause because it is part of Strict Type definition {dataDefinition.ParentTypeDefinition?.Name}.");
+                }
+
+            }
+            
+            //Variable is of a user defined Strict Type
+            if (dataDefinition.SemanticData.HasFlag(Symbol.Flags.HasATypedefType) && dataDefinition.DataType.RestrictionLevel == RestrictionLevel.STRICT)
+            {
+                //Sync clause not allowed on variable declaration because its type is Strict
+                if (dataDefinition.SemanticData.HasFlag(Symbol.Flags.Sync))
+                {
+                    DiagnosticUtils.AddError(dataDefinition, $"{dataDefinition.Name} cannot be declared with Sync clause because its Type definition {dataDefinition.DataType.Name} is Strict.");
+                }
+                //Check whether variable is under a sync parent
+                else if (dataDefinition.CodeElement?.LevelNumber?.Value > 1)
+                {
+                    //Retrieve higher parent
+                    Symbol parent = dataDefinition.SemanticData.Owner;
+                    //Iterate through parent variables
+                    while (parent != null && parent.Kind == Symbol.Kinds.Variable)
+                    {
+                        //Check if parent is synchronized
+                        if (parent.HasFlag(Symbol.Flags.Sync))
+                        {
+                            DiagnosticUtils.AddError(dataDefinition, $"{dataDefinition.Name} cannot be declared under parent variable {parent.Name} declared with Sync clause.");
+                        }
+                        //Retrieve higher parent
+                        parent = parent.Owner;
+                    }
+                }
+            }
 
             if (HasChildrenThatDeclareData(dataDefinition))
             {

@@ -175,6 +175,39 @@
                                     OF usestrictType1
                                  THRU strictType1-PART2 
                                     OF usestrictType1.
+
+      *OK SYNC clause is allowed on variable outisde Type def
+       01 SyncVar          pic x(10) sync.
+
+      *KO SYNC clause is not allowed on STRICT Type def
+       01 SyncType TYPEDEF STRICT SYNC.
+	      05 MyVar         pic x(10).
+      *KO SYNC clause is not allowed on variables inside strict Typedef
+          05 SyncVar1      pic x(10) sync.
+    
+       01 MyType TYPEDEF STRICT.
+          05 MyVar2        pic x(10).
+      *KO SYNC clause is not allowed on variables inside strict Typedef
+          05 SyncVar2      pic x(10) sync.
+
+      *KO sync is not allowed on variable of strict Type
+       01 MyTypeVar        type MyType sync.
+
+       01 MyGroup sync.
+        02 MySubGroup2.
+         03 MySubGroup3.
+          04 MySubGroup4.
+      *KO cannot have a variable of strict type under sync parent
+           05 MyTypeVar2    type MyType.
+           05 MySyncVar3    pic X(10).
+
+       01 MyType2 TYPEDEF STRICT.
+          05 MyGroupInTypeDef sync.
+      *KO cannot have a variable of strict type under sync parent
+            10 MyTypeVar3      type MyType.
+            10 MyVar3          pic x(10).
+      *KO sync is not allowed on variable of strict Type
+          05 MyTypeVar4        type MyType sync.
       
        PROCEDURE DIVISION.
       
