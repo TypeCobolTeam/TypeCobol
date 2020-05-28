@@ -272,23 +272,6 @@ namespace TypeCobol.Compiler.Domain
                             break;
                     }
 
-                if (p.PassingDirection != null)
-                    switch (p.PassingDirection.Value)
-                    {
-                        case ParameterPassingDirection.Input:
-                            parameterSymbol.SetFlag(Symbol.Flags.Input, true);
-                            break;
-                        case ParameterPassingDirection.Output:
-                            parameterSymbol.SetFlag(Symbol.Flags.Output, true);
-                            break;
-                        case ParameterPassingDirection.InOut:
-                            parameterSymbol.SetFlag(Symbol.Flags.Inout, true);
-                            break;
-                        case ParameterPassingDirection.Returning:
-                            parameterSymbol.SetFlag(Symbol.Flags.Returning, true);
-                            break;
-                    }
-
                 return parameterSymbol;
             }
 
