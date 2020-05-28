@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Domain;
 using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
@@ -12,18 +7,17 @@ namespace TypeCobol.Compiler.Symbols
     /// Symbol that represents a Namespace. A namespace can only contains 
     /// programs or namespaces.
     /// </summary>
-    public class NamespaceSymbol : AbstractScope
+    public class NamespaceSymbol : ScopeSymbol
     {
         /// <summary>
         /// Named constructor.
         /// </summary>
         /// <param name="name"></param>
-        public NamespaceSymbol(String name)
+        public NamespaceSymbol(string name)
             : base(name, Kinds.Namespace)
         {
-            Types = new Scope<TypedefSymbol>(this);
-            Programs = new Scope < ProgramSymbol >(this);
-            Namespaces = new Scope<NamespaceSymbol>(this);
+            Programs = new Domain< ProgramSymbol >(this);
+            Namespaces = new Domain<NamespaceSymbol>(this);
         }
 
         /// <summary>
@@ -31,12 +25,8 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="name"></param>
         /// <param name="from"></param>
-        public NamespaceSymbol(String name, NamespaceSymbol from) : this(name)
+        public NamespaceSymbol(string name, NamespaceSymbol from) : this(name)
         {
-            foreach (var t in from.Types)
-            {
-                Types.Enter(t);
-            }
             foreach (var p in from.Programs)
             {
                 Programs.Enter(p);
@@ -52,9 +42,9 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="name">Program's name</param>
         /// <returns>The ProgramSymbol</returns>
-        public ProgramSymbol EnterProgram(String name)
+        public ProgramSymbol EnterProgram(string name)
         {
-            Scope<ProgramSymbol>.Entry entry = Programs.Lookup(name);
+            Container<ProgramSymbol>.Entry entry = Programs.Lookup(name);
             if (entry == null) 
             {
                 ProgramSymbol prgSym = new ProgramSymbol(name);
@@ -62,9 +52,9 @@ namespace TypeCobol.Compiler.Symbols
             }
             //Set the owner
             entry.Symbol.Owner = this;
-            //Add it to the all scope domain
+            //Store it into the root symbol table.
             Symbol root = TopParent(Kinds.Root);
-            ((RootSymbolTable)root)?.AddToDomain(entry.Symbol);
+            ((RootSymbolTable)root)?.Store(entry.Symbol);
             return entry.Symbol;
         }
 
@@ -76,56 +66,79 @@ namespace TypeCobol.Compiler.Symbols
         {
             if (prgSym != null)
             {
-                Programs.Remove(prgSym);
-                //Remove it from the all scope domain
+                Programs.Delete(prgSym);
+                //Discard the program from the root symbol table.
                 Symbol root = TopParent(Kinds.Root);
-                ((RootSymbolTable)root)?.RemoveFromDomain(prgSym);
+                ((RootSymbolTable)root)?.Discard(prgSym);
                 prgSym.Owner = null;
             }
         }
 
         /// <summary>
-        /// All Types declared in this namespace
-        /// </summary>
-        public override Scope<TypedefSymbol> Types
-        {
-            get;
-            protected set;
-        }
-
-        /// <summary>
         /// All programs declared in this namespace.
         /// </summary>
-        public override Scope<ProgramSymbol> Programs
+        public override Domain<ProgramSymbol> Programs
         {
             get;
             protected set;
-        }
-
-        public override Scope<TypedefSymbol>.Entry ResolveAccessibleType(RootSymbolTable root, string[] path)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Scope<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path)
-        {
-            throw new NotImplementedException();
         }
 
         /// <summary>
         /// All namespaces declared in this namespace.
         /// </summary>
-        public Scope<NamespaceSymbol> Namespaces
+        public Domain<NamespaceSymbol> Namespaces
         {
             get;
             protected set;
         }
 
+        protected Container<TSymbol>.Entry ResolveSymbol<TSymbol>(string[] path, Func<string, Container<TSymbol>.Entry> lookupSymbol)
+            where TSymbol : Symbol
+        {
+            if (path == null || path.Length == 0 || path[0] == null)
+                return null;
+
+            var name = path[0];
+            var results = new Container<TSymbol>.Entry(name);
+            foreach (var candidate in lookupSymbol(name))
+            {
+                if (candidate.IsMatchingPath(path))
+                {
+                    results.Add(candidate);
+                }
+            }
+
+            return results;
+        }
+
+        public override Container<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path)
+        {
+            throw new InvalidOperationException("Namespace symbol does not contain any type.");
+        }
+
+        public override Container<ScopeSymbol>.Entry ResolveScope(RootSymbolTable root, string[] path)
+        {
+            return ResolveSymbol<ScopeSymbol>(path, root.LookupScope);
+        }
+
         public override TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitNamespaceSymbol(this, arg); }
 
-        public override Scope<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path)
+        internal override void DiscardSymbolsFromRoot()
         {
-            throw new NotImplementedException();
+            var root = TopParent(Kinds.Root) as RootSymbolTable;
+            System.Diagnostics.Debug.Assert(root != null);
+
+            //Discard all programs from root
+            foreach (var program in Programs)
+            {
+                root.Discard(program);
+            }
+
+            //Discard all sub-namespaces from root
+            foreach (var @namespace in Namespaces)
+            {
+                root.Discard(@namespace);
+            }
         }
     }
 }

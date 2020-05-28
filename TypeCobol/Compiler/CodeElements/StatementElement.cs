@@ -94,6 +94,7 @@ namespace TypeCobol.Compiler.CodeElements
         InspectTallyingStatement,
         InvokeStatement,
         JsonGenerateStatement,
+        JsonParseStatement,
         MergeStatement,
         MoveSimpleStatement,
         MoveCorrespondingStatement,

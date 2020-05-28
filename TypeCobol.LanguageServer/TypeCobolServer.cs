@@ -358,7 +358,8 @@ namespace TypeCobol.LanguageServer
                     if (replacementTextStartsWithNewLine &&
                         !(contentChange.range.start.character < originalLastLineText.Length))
                     {
-                        firstLineIndex++;
+                        // do not increment if line is inserted at the end of global text
+                        if (firstLineIndex < lineCount) firstLineIndex++;
                         firstLineChar = 0;
                     }
                     else if (replacementTextStartsWithNewLine)

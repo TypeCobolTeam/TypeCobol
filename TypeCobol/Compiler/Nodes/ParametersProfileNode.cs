@@ -8,7 +8,7 @@ using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.Nodes
 {
-    public class ParametersProfileNode : GenericNode<ParametersProfile>, ParameterList
+    public class ParametersProfileNode : GenericNode<ParametersProfile>, ParameterList, IEquatable<ParametersProfileNode>
     {
         public IList<ParameterDescription> InputParameters { get; set; }
         public IList<ParameterDescription> InoutParameters { get; set; }
@@ -40,43 +40,6 @@ namespace TypeCobol.Compiler.Nodes
         /// <summary>TCRFUN_NO_RETURNING_FOR_PROCEDURES</summary>
         public bool IsProcedure { get { return ReturningParameter == null; } }
 
-
-
-        public override bool Equals(object other)
-        {
-            if (other == null || GetType() != other.GetType()) return false;
-            var o = other as ParametersProfileNode;
-            if (o == null) return false;
-            // instead of doing foreach(var mode in Tools.Reflection.GetValues<Passing.Mode>()) ...,
-            // only iterate over input+output+inout parameters: returning parameter does not have
-            // any impact in conflict between function profiles resolution
-            bool okay = true;
-            okay = AreEqual(InputParameters, o.InputParameters);
-            if (!okay) return false;
-            okay = AreEqual(InoutParameters, o.InoutParameters);
-            if (!okay) return false;
-            okay = AreEqual(OutputParameters, o.OutputParameters);
-            return okay;
-        }
-
-        private static bool AreEqual(IList<ParameterDescription> mine, IList<ParameterDescription> hers)
-        {
-            if (mine.Count != hers.Count) return false;
-            for (int c = 0; c < mine.Count; c++)
-            {
-                if (!mine[c].Equals(hers[c])) return false;
-                if (!mine[c].Equals(hers[c])) return false;
-            }
-            return true;
-        }
-
-        public override int GetHashCode()
-        {
-            int hash = 17;
-            foreach (var p in Parameters) hash = hash * 23 + p.GetHashCode();
-            return hash;
-        }
-
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this) && this.ContinueVisitToChildren(astVisitor, InputParameters, InoutParameters, OutputParameters) && this.ContinueVisitToChildren(astVisitor, ReturningParameter);
@@ -100,7 +63,23 @@ namespace TypeCobol.Compiler.Nodes
             return str.ToString();
         }
 
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as ParametersProfileNode);
+        }
 
+        public bool Equals(ParametersProfileNode parametersProfileNode)
+        {
+            if (Object.ReferenceEquals(this, parametersProfileNode)) return true;
+            if (Object.ReferenceEquals(null, parametersProfileNode)) return false;
+
+            return base.CodeElement.Equals(parametersProfileNode.CodeElement);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.CodeElement.GetHashCode();
+        }
 
         IList<DataType> _icache = null;
         IList<DataType> ParameterList.InputParameters

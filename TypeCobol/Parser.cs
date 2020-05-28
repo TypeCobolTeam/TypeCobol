@@ -12,9 +12,9 @@ using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.CodeModel;
-using Analytics;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.CustomExceptions;
+using TypeCobol.Tools.APIHelpers;
 
 namespace TypeCobol
 {
@@ -28,9 +28,6 @@ namespace TypeCobol
 		public SymbolTable CustomSymbols = null;
         /// <summary>Optional custom root symbol table to use for name and type resolution.</summary>
         public RootSymbolTable CustomRootSymbols = null;
-
-        public string[] Extensions = { ".cbl", ".cpy" };
-		public string[] CopyExtensions = { ".cpy" };
 
 		public Parser() {
 			Inits = new Dictionary<string,bool>();
@@ -59,13 +56,13 @@ namespace TypeCobol
 			var root = new DirectoryInfo(Directory.GetParent(path).FullName);
 			if (format == null) format = GetFormat(path);
             
-            CompilationProject project = new CompilationProject(path, root.FullName, Extensions,
+            CompilationProject project = new CompilationProject(path, root.FullName, Helpers.DEFAULT_EXTENSIONS,
 				format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options, this.CustomRootSymbols);
-            //Add copy folder into sourceFileProvider
-            SourceFileProvider sourceFileProvider = project.SourceFileProvider;
+			//Add copy folder into sourceFileProvider
+			SourceFileProvider sourceFileProvider = project.SourceFileProvider;
 			copies = copies ?? new List<string>();
 			foreach (var folder in copies) {
-				sourceFileProvider.AddLocalDirectoryLibrary(folder, false, CopyExtensions, format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength);
+				sourceFileProvider.AddLocalDirectoryLibrary(folder, false, Helpers.DEFAULT_COPY_EXTENSIONS, format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength);
 			}
 			compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, CustomSymbols, false, project);
             

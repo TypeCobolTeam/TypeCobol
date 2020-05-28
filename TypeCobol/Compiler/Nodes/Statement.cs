@@ -225,6 +225,20 @@
         }
     }
 
+    public class JsonParse : GenericNode<JsonParseStatement>, Statement
+    {
+        public JsonParse(JsonParseStatement statement)
+            : base(statement)
+        {
+
+        }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
+    }
+
     public class Merge: GenericNode<MergeStatement>, Statement {
 	    public Merge(MergeStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)

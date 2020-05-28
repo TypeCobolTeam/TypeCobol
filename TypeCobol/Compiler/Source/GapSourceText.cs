@@ -539,41 +539,6 @@ namespace TypeCobol.Compiler.Source
         }
 
         /// <summary>
-        /// Check if the given source text is equals to this one.
-        /// </summary>
-        /// <param name="text">The source text to be checked for equality</param>
-        /// <returns>true if both the given source text is equals to this one, false otherwise</returns>
-        public override bool Equals(object text)                                         
-        {
-            if (!(text is GapSourceText))
-	            return false;
-            GapSourceText t= (GapSourceText) text; 
-
-            if (length != t.length) 
-	            return false;
-
-            MoveGap(length);
-            t.MoveGap(t.length);
-            return CompareArrays(body, t.body, length);
-        }
-
-        /// <summary>
-        /// Compute a Hash code value
-        /// </summary>
-        /// <returns>The hash code value</returns>
-        //public override int GetHashCode()                                         
-        //{
-        //    int hash;
-        //    int i;
-
-        //    for (hash= 0, i = 0; i < part1len; i++)
-        //        hash= (hash << 1) ^ body[i];
-        //    for (i = part1len + gaplen; i < size; i++)
-        //        hash= (hash << 1) ^ body[i];
-        //    return hash;
-        //}
-
-        /// <summary>
         /// Write the content of this SourceText into a TextWriter
         /// </summary>
         /// <param name="writer">The TextWriter instance</param>

@@ -232,7 +232,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// The Section and Paragraph Domain of this program.
         /// </summary>
-        internal Dictionary<string, Scope<Symbol>.MultiSymbols> SectionsParagraphs
+        internal Dictionary<string, Container<Symbol>> SectionsParagraphs
         {
             get;
             set;
@@ -820,11 +820,9 @@ namespace TypeCobol.Analysis.Cfg
             /// <summary>
             /// ctor
             /// </summary>
-            public CfgSentence()
+            public CfgSentence() : base("<<Sentence>>(" + (SentenceCounter++) + ")", Kinds.Sentence)
             {
                 BlockIndex = -1;
-                Kind = Kinds.Sentence;
-                Name = "<<Sentence>>(" + (SentenceCounter++) + ")";
             }
 
             /// <summary>
@@ -1011,13 +1009,13 @@ namespace TypeCobol.Analysis.Cfg
         {
             System.Diagnostics.Debug.Assert(sym.Kind == Symbol.Kinds.Section || sym.Kind == Symbol.Kinds.Paragraph);
             if (this.CurrentProgramCfgBuilder.SectionsParagraphs == null)
-                this.CurrentProgramCfgBuilder.SectionsParagraphs = new Dictionary<string, Scope<Symbol>.MultiSymbols>(StringComparer.OrdinalIgnoreCase);
+                this.CurrentProgramCfgBuilder.SectionsParagraphs = new Dictionary<string, Container<Symbol>>(StringComparer.OrdinalIgnoreCase);
             string name = sym.Name;
-            Scope<Symbol>.MultiSymbols scope = null;
+            Container<Symbol> scope = null;
             this.CurrentProgramCfgBuilder.SectionsParagraphs.TryGetValue(name, out scope);
             if (scope == null)
             {
-                scope = new Scope<Symbol>.MultiSymbols();
+                scope = new Container<Symbol>();
                 this.CurrentProgramCfgBuilder.SectionsParagraphs[name] = scope;
             }
             scope.Add(sym);
@@ -1054,14 +1052,14 @@ namespace TypeCobol.Analysis.Cfg
         /// </summary>
         /// <param name="symRef">The Symbol Reference instance to a section or a paragraph.</param>
         /// <returns>The scope of symbols found</returns>
-        internal Scope<Symbol>.MultiSymbols ResolveSectionOrParagraphSymbol(SymbolReference symRef)
+        internal Container<Symbol> ResolveSectionOrParagraphSymbol(SymbolReference symRef)
         {
             System.Diagnostics.Debug.Assert(symRef != null);
-            Scope<Symbol>.MultiSymbols results = new Scope<Symbol>.MultiSymbols();
+            Container<Symbol> results = new Container<Symbol>();
 
-            string[] paths = AbstractScope.SymbolReferenceToPath(symRef);
+            string[] paths = ScopeSymbol.SymbolReferenceToPath(symRef);
             string name = paths[0];
-            Scope<Symbol>.MultiSymbols candidates = null;
+            Container<Symbol> candidates = null;
             this.CurrentProgramCfgBuilder.SectionsParagraphs.TryGetValue(name, out candidates);
             if (candidates == null)
                 return results;
@@ -1084,13 +1082,13 @@ namespace TypeCobol.Analysis.Cfg
             /// <param name="name">Section's name</param>
             public CfgSectionSymbol(string name) : base(name)
             {
-                SentencesParagraphs = new Scope<Symbol>(this);
+                SentencesParagraphs = new Domain<Symbol>(this);
             }
 
             /// <summary>
             /// All sentences and paragraphs in this section in the order of appearance.
             /// </summary>
-            public Scope<Symbol> SentencesParagraphs
+            public Domain<Symbol> SentencesParagraphs
             {
                 get;
                 protected set;
@@ -1163,7 +1161,7 @@ namespace TypeCobol.Analysis.Cfg
             /// <summary>
             /// All sentences in this paragraph in the order of appearance
             /// </summary>
-            public Scope<CfgSentence> Sentences
+            public Domain<CfgSentence> Sentences
             {
                 get;
                 protected set;
@@ -1185,7 +1183,7 @@ namespace TypeCobol.Analysis.Cfg
             /// <param name="name">Pargarph's name</param>
             public CfgParagraphSymbol(string name) : base(name)
             {
-                Sentences = new Scope<CfgSentence>(this);
+                Sentences = new Domain<CfgSentence>(this);
             }
             /// <summary>
             /// Set flags
@@ -1318,7 +1316,7 @@ namespace TypeCobol.Analysis.Cfg
         private Symbol CheckSectionOrParagraph(Node node, SymbolReference symRef)
         {
             //Resolve the target Section or Paragraph.
-            Scope<Symbol>.MultiSymbols symbols = ResolveSectionOrParagraphSymbol(symRef);
+            Container<Symbol> symbols = ResolveSectionOrParagraphSymbol(symRef);
 
             if (symbols.Count == 0)
             {
@@ -1340,7 +1338,8 @@ namespace TypeCobol.Analysis.Cfg
                 Diagnostics.Add(d);
                 return null;
             }
-            return symbols.Symbol;
+
+            return symbols[0];
         }
 
         /// <summary>
@@ -1553,7 +1552,7 @@ namespace TypeCobol.Analysis.Cfg
                 this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(first.Value);
 
                 //Make all terminal blocks of the group have the original successor of the block.
-                foreach(var termBlock in group.TerminalBlocks)
+                foreach (var termBlock in group.TerminalBlocks)
                 {
                     if (!termBlock.SuccessorEdges.Contains(succIndex))
                     {
@@ -1564,7 +1563,7 @@ namespace TypeCobol.Analysis.Cfg
                     }
                 }
                 group.SetFlag(BasicBlock<Node, D>.Flags.GroupGrafted, true);
-            }            
+            }
         }
 
         /// <summary>
@@ -1580,8 +1579,8 @@ namespace TypeCobol.Analysis.Cfg
             //Map of block : (Original Block Index, [new Block Index, Successor Edge Index])
             Dictionary<int, int[]> BlockMap = new Dictionary<int, int[]>();
             //Fill the map
-            foreach(var b in group.Group)
-            {                
+            foreach (var b in group.Group)
+            {
                 //Clone a new block.
                 BasicBlock<Node, D> newBlock = (BasicBlock<Node, D>)b.Clone();
                 if (newBlock is BasicBlockForNodeGroup)
@@ -1600,7 +1599,7 @@ namespace TypeCobol.Analysis.Cfg
                 int[] desc = BlockMap[b.Index];
                 BasicBlock<Node, D> newBlock = this.CurrentProgramCfgBuilder.Cfg.AllBlocks[desc[0]];
                 newBlock.SuccessorEdges = new List<int>(b.SuccessorEdges.Count);//new Block will have new successors
-                foreach(var s in b.SuccessorEdges)
+                foreach (var s in b.SuccessorEdges)
                 {
                     BasicBlock<Node, D> succBlock = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges[s];
                     int[] succDesc = null;
@@ -1890,7 +1889,7 @@ namespace TypeCobol.Analysis.Cfg
             /// <param name="branchToNext">True if the CurrentBlock must be linked to the next branch also, false otherwise</param>
             /// <param name="rootBlock">Root block of the multi branch</param>
             /// <param name="nextBlock">The next block for all branches</param>
-            internal void End(bool branchToNext, BasicBlockForNode rootBlock, BasicBlockForNode nextBlock)            
+            internal void End(bool branchToNext, BasicBlockForNode rootBlock, BasicBlockForNode nextBlock)
             {
                 System.Diagnostics.Debug.Assert(Builder != null);
                 System.Diagnostics.Debug.Assert(rootBlock != null);
@@ -1979,9 +1978,9 @@ namespace TypeCobol.Analysis.Cfg
                     accumulator.Add(b);
                 }
                 else foreach (var s in b.SuccessorEdges)
-                {
-                    GetTerminalSuccessorEdges((BasicBlockForNode)Builder.Cfg.SuccessorEdges[s], accumulator, visitedBlockIndex);
-                }
+                    {
+                        GetTerminalSuccessorEdges((BasicBlockForNode)Builder.Cfg.SuccessorEdges[s], accumulator, visitedBlockIndex);
+                    }
             }
 
         }
@@ -2435,7 +2434,7 @@ namespace TypeCobol.Analysis.Cfg
                 var bodyBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
                 searchBlock.SuccessorEdges.Add(this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count);
                 this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(bodyBlock);
-                
+
                 //Push and start the Search context.
                 this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctx);
                 ctx.Start(bodyBlock);
@@ -2578,7 +2577,7 @@ namespace TypeCobol.Analysis.Cfg
                     }
                     else
                     {
-                        ctx.End(branchToNext, nextBlock);                                               
+                        ctx.End(branchToNext, nextBlock);
                     }
                     this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
                     ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();

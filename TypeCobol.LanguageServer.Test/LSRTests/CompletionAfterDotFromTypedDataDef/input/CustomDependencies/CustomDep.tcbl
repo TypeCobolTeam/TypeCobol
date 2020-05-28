@@ -4,8 +4,11 @@
        DATA DIVISION.
        working-storage section.
       
-       01 MyTypeDef TYPEDEF STRICT PUBLIC.
-            05 DATA1 PIC X(20).
+       01 ListObject typedef strict public.
+           05 ListObjectGroupData type ObjectData occurs 200
+                                          indexed by ListIdx.
+       01 ObjectData typedef strict public.
+            05 Data1 PIC X(3).
       
        PROCEDURE DIVISION.
       

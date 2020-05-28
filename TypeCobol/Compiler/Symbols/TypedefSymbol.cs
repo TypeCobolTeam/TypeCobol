@@ -1,10 +1,7 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
@@ -12,27 +9,16 @@ namespace TypeCobol.Compiler.Symbols
     /// <summary>
     /// A Typedef Symbol
     /// </summary>
-    public class TypedefSymbol : VariableSymbol, IDomain<VariableSymbol>
+    public class TypedefSymbol : VariableSymbol
     {
         /// <summary>
         /// Named constructor.
         /// </summary>
         /// <param name="name"></param>
-        public TypedefSymbol(String name)
+        public TypedefSymbol(string name)
             : base(name)
         {
             base.Kind = Kinds.Typedef;
-        }
-
-        /// <summary>
-        /// Add an element to the Domain
-        /// </summary>
-        /// <param name="element">The element to be added to the domain</param>
-        /// <returns>The added element</returns>
-        public VariableSymbol Add(VariableSymbol element)
-        {
-            //Do nothing.
-            return element;
         }
 
         /// <summary>
@@ -40,10 +26,9 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="path">The Symbol's path to get the Scope, the path is in reverse order à la COBOL.</param>
         /// <returns>The Multi Symbol set of all symbol corresponding to the given path.</returns>
-        public Scope<VariableSymbol>.MultiSymbols Get(string[] path)
+        public Container<VariableSymbol>.Entry Get(string[] path)
         {
-            Scope<VariableSymbol>.MultiSymbols results = Get(path, null, null);
-            return results;
+            return Get(path, null, null);
         }
 
         /// <summary>
@@ -55,17 +40,20 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="foundSymbolTypedPaths">The list of typed paths corresponding to symbol found in the return Scope.
         /// This parameter can be set to null if found variables typed paths are not requested</param>
         /// <returns>The Multi Symbol set of all symbol corresponding to the given path.</returns>
-        public Scope<VariableSymbol>.MultiSymbols Get(string[] path, List<Symbol[]> foundSymbolPaths, List<Symbol[]> foundSymbolTypedPaths)
+        public Container<VariableSymbol>.Entry Get(string[] path, List<Symbol[]> foundSymbolPaths, List<Symbol[]> foundSymbolTypedPaths)
         {
+            if (path == null || path.Length == 0 || path[0] == null)
+                return null;
+
             foundSymbolPaths?.Clear();
             foundSymbolTypedPaths?.Clear();
-            Scope<VariableSymbol>.MultiSymbols results = new Scope<VariableSymbol>.MultiSymbols();
-            if (path == null || path.Length == 0)
-                return results;
+
+            string name = path[0];
+            var results = new Container<VariableSymbol>.Entry(name);
 
             DomainLookup lookup = new DomainLookup();
             //Add our parent and ourself to the path variable.
-            LookupContext ctx = new LookupContext(path[0]);
+            LookupContext ctx = new LookupContext(name);
             ctx.Path.AddLast(Owner);
             ctx.Path.AddLast(this);
             ctx.TypedPath.AddLast(Owner);
@@ -163,7 +151,7 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// Typedef Symbol Domian Completer, this a completer of a TypeDef Symbol domain completer
+        /// Typedef Symbol Domain Completer, this a completer of a TypeDef Symbol domain completer
         /// with unresolved Variable having a Typedef type at parsing time.
         /// 
         /// </summary>
@@ -199,8 +187,6 @@ namespace TypeCobol.Compiler.Symbols
             {
                 ctx.Path.AddLast(s);
                 ctx.TypedPath.AddLast(s);
-                //Firt complete symbol
-                s.TypeCompleter();
                 if (s.Typedef != null)
                 {
                     ctx.TypedPath.AddLast(s.Typedef);
@@ -233,7 +219,7 @@ namespace TypeCobol.Compiler.Symbols
 
             public override LookupContext VisitGroupType(Types.GroupType t, LookupContext ctx)
             {
-                foreach (var field in t.Scope)
+                foreach (var field in t.Fields)
                 {
                     field.Accept(this, ctx);
                 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using TypeCobol.Compiler.Scopes;
+﻿using System.Collections.Generic;
 using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
@@ -16,19 +11,19 @@ namespace TypeCobol.Compiler.Symbols
         //--------------------------
         // Type Symbols
         //--------------------------
-        public static TypedefSymbol Omitted;
-        public static TypedefSymbol Alphabetic;
-        public static TypedefSymbol Numeric;
-        public static TypedefSymbol NumericEdited;
-        public static TypedefSymbol Alphanumeric;
-        public static TypedefSymbol AlphanumericEdited;
-        public static TypedefSymbol DBCS;
-        public static TypedefSymbol FloatingPoint;
+        public static readonly TypedefSymbol Omitted;
+        public static readonly TypedefSymbol Alphabetic;
+        public static readonly TypedefSymbol Numeric;
+        public static readonly TypedefSymbol NumericEdited;
+        public static readonly TypedefSymbol Alphanumeric;
+        public static readonly TypedefSymbol AlphanumericEdited;
+        public static readonly TypedefSymbol DBCS;
+        public static readonly TypedefSymbol FloatingPoint;
 
-        public static TypedefSymbol Boolean;
-        public static TypedefSymbol Date;
-        public static TypedefSymbol Currency;
-        public static TypedefSymbol String;
+        public static readonly TypedefSymbol Boolean;
+        public static readonly TypedefSymbol Date;
+        public static readonly TypedefSymbol Currency;
+        public static readonly TypedefSymbol String;
 
         /// <summary>
         /// Static constructor.
@@ -37,47 +32,59 @@ namespace TypeCobol.Compiler.Symbols
         {
             Omitted = new TypedefSymbol(string.Intern("Omitted"));
             Omitted.Type = new TypedefType(Omitted, BuiltinTypes.OmittedType);
+            Omitted.SetFlag(Symbol.Flags.BuiltinSymbol, true);
             Alphabetic = new TypedefSymbol(string.Intern("Alphabetic"));
             Alphabetic.Type = new TypedefType(Alphabetic, BuiltinTypes.AlphabeticType);
+            Alphabetic.SetFlag(Symbol.Flags.BuiltinSymbol, true);
             Numeric = new TypedefSymbol(string.Intern("Numeric"));
             Numeric.Type = new TypedefType(Numeric, BuiltinTypes.NumericType);
+            Numeric.SetFlag(Symbol.Flags.BuiltinSymbol, true);
             NumericEdited = new TypedefSymbol(string.Intern("NumericEdited"));
             NumericEdited.Type = new TypedefType(NumericEdited, BuiltinTypes.NumericEditedType);
+            NumericEdited.SetFlag(Symbol.Flags.BuiltinSymbol, true);
             Alphanumeric = new TypedefSymbol(string.Intern("Alphanumeric"));
             Alphanumeric.Type = new TypedefType(Alphanumeric, BuiltinTypes.AlphanumericType);
+            Alphanumeric.SetFlag(Symbol.Flags.BuiltinSymbol, true);
             AlphanumericEdited = new TypedefSymbol(string.Intern("AlphanumericEdited"));
             AlphanumericEdited.Type = new TypedefType(AlphanumericEdited, BuiltinTypes.AlphanumericEditedType);
+            AlphanumericEdited.SetFlag(Symbol.Flags.BuiltinSymbol, true);
             DBCS = new TypedefSymbol(string.Intern("DBCS"));
             DBCS.Type = new TypedefType(DBCS, BuiltinTypes.DBCSType);
+            DBCS.SetFlag(Symbol.Flags.BuiltinSymbol, true);
             FloatingPoint = new TypedefSymbol(string.Intern("FloatingPoint"));
             FloatingPoint.Type = new TypedefType(FloatingPoint, BuiltinTypes.FloatingPointType);
+            FloatingPoint.SetFlag(Symbol.Flags.BuiltinSymbol, true);
 
             Boolean = new TypedefSymbol(string.Intern("Bool"));
             Boolean.Type = new TypedefType(Boolean, BuiltinTypes.BooleanType);
+            Boolean.SetFlag(Symbol.Flags.BuiltinSymbol, true);
             Date = (TypedefSymbol)BuiltinTypes.DateType.Symbol;
+            Date.SetFlag(Symbol.Flags.BuiltinSymbol, true);
             Currency = (TypedefSymbol)BuiltinTypes.CurrencyType.Symbol;
+            Currency.SetFlag(Symbol.Flags.BuiltinSymbol, true);
             String = new TypedefSymbol(string.Intern("String"));
             String.Type = new TypedefType(String, BuiltinTypes.StringType);
+            String.SetFlag(Symbol.Flags.BuiltinSymbol, true);
         }
 
-        /// <summary>
-        /// Store Builtins Symbol in the given scope
-        /// </summary>
-        internal static void StoreSymbols(Scope<TypedefSymbol> types)
+        public static IEnumerable<TypedefSymbol> All
         {
-            types.Enter(Omitted);
-            types.Enter(Alphabetic);
-            types.Enter(Numeric);
-            types.Enter(NumericEdited);
-            types.Enter(Alphanumeric);
-            types.Enter(AlphanumericEdited);
-            types.Enter(DBCS);
-            types.Enter(FloatingPoint);
+            get
+            {
+                yield return Omitted;
+                yield return Alphabetic;
+                yield return Numeric;
+                yield return NumericEdited;
+                yield return Alphanumeric;
+                yield return AlphanumericEdited;
+                yield return DBCS;
+                yield return FloatingPoint;
 
-            types.Enter(Boolean);
-            types.Enter(Date);
-            types.Enter(Currency);
-            types.Enter(String);
+                yield return Boolean;
+                yield return Date;
+                yield return Currency;
+                yield return String;
+            }
         }
     }
 }

@@ -1,0 +1,67 @@
+--- Diagnostics ---
+Line 2[13,13] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting INTO RuleStack=codeElement>cobol2002Statement>jsonParseStatement,  OffendingSymbol=[13,13+:.]<PeriodSeparator>
+Line 10[25,25] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {symbol, special register, keyword} RuleStack=codeElement>cobol2002Statement>jsonParseStatement,  OffendingSymbol=[25,25+:.]<PeriodSeparator>
+Line 11[27,27] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, national literal, hexadecimal national literal, dbcs literal, IS, OMITTED} RuleStack=codeElement>cobol2002Statement>jsonParseStatement>jsonParseNameMapping,  OffendingSymbol=[27,27+:.]<PeriodSeparator>
+Line 12[30,30] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, national literal, hexadecimal national literal, dbcs literal, IS, OMITTED} RuleStack=codeElement>cobol2002Statement>jsonParseStatement>jsonParseNameMapping,  OffendingSymbol=[30,30+:.]<PeriodSeparator>
+Line 24[29,29] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {symbol, special register, keyword} RuleStack=codeElement>cobol2002Statement>jsonParseStatement,  OffendingSymbol=[29,29+:.]<PeriodSeparator>
+--- Code Elements ---
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [12,12:x]<UserDefinedWord>
+
+[[SentenceEnd]] [13,13+:.]<PeriodSeparator> --> [13,13+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [19,19:y]<UserDefinedWord>
+
+[[SentenceEnd]] [20,20+:.]<PeriodSeparator> --> [20,20+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [21,26:DETAIL]<DETAIL>
+
+[[SentenceEnd]] [27,27+:.]<PeriodSeparator> --> [27,27+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [26,31:DETAIL]<DETAIL>
+
+[[SentenceEnd]] [32,32+:.]<PeriodSeparator> --> [32,32+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [21,24:NAME]<UserDefinedWord>
+
+[[SentenceEnd]] [25,25+:.]<PeriodSeparator> --> [25,25+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [26,26:a]<UserDefinedWord>
+
+[[SentenceEnd]] [27,27+:.]<PeriodSeparator> --> [27,27+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [29,29:a]<UserDefinedWord>
+
+[[SentenceEnd]] [30,30+:.]<PeriodSeparator> --> [30,30+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [36,44:'newName']<AlphanumericLiteral>(',Y,Y){newName}
+
+[[SentenceEnd]] [45,45+:.]<PeriodSeparator> --> [45,45+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [39,47:'newName']<AlphanumericLiteral>(',Y,Y){newName}
+
+[[SentenceEnd]] [48,48+:.]<PeriodSeparator> --> [48,48+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [42,50:'newName']<AlphanumericLiteral>(',Y,Y){newName}
+
+[[SentenceEnd]] [51,51+:.]<PeriodSeparator> --> [51,51+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [42,48:OMITTED]<OMITTED>
+
+[[SentenceEnd]] [49,49+:.]<PeriodSeparator> --> [49,49+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [54,57:'n3']<AlphanumericLiteral>(',Y,Y){n3}
+
+[[SentenceEnd]] [58,58+:.]<PeriodSeparator> --> [58,58+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [21,28:SUPPRESS]<SUPPRESS>
+
+[[SentenceEnd]] [29,29+:.]<PeriodSeparator> --> [29,29+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [30,30:t]<UserDefinedWord>
+
+[[SentenceEnd]] [31,31+:.]<PeriodSeparator> --> [31,31+:.]<PeriodSeparator>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [36,37:t3]<UserDefinedWord>
+
+[[SentenceEnd]] [38,38+:.]<PeriodSeparator> --> [38,38+:.]<PeriodSeparator>
+

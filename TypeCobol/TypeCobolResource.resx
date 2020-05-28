@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CannotRedefinedTypedefDecl" xml:space="preserve">
-    <value>Cannot REDEFINES aTypedef declaration</value>
+    <value>Cannot REDEFINES aTypedef declaration.</value>
   </data>
   <data name="CannotRedefinesAVariableWhoseTypeDefed" xml:space="preserve">
     <value>Cannot REDEFINES a Variable whose type is a Strict TYPEDEF.</value>
@@ -130,10 +130,10 @@
     <value>"REDEFINES" object "{0}" was not immediatly preceding level-{1} data item.</value>
   </data>
   <data name="MultipleRenameSymbolFound" xml:space="preserve">
-    <value>Multiple REDEFINES Symbol found for : "{0}"</value>
+    <value>Multiple REDEFINES Symbol found for : "{0}".</value>
   </data>
   <data name="UnknowRedefinesdSymbol" xml:space="preserve">
-    <value>Unknow REDEFINES Symbol : "{0}"</value>
+    <value>Unknow REDEFINES Symbol : "{0}".</value>
     <comment>level-number--+-------------+--REDEFINES--data-name-2  --- data-name2 is unknown.</comment>
   </data>
   <data name="RenamesNotAGroup" xml:space="preserve">
@@ -143,13 +143,13 @@
     <value>RENAMES object "{0}" not found in the immediatly preceding record description.</value>
   </data>
   <data name="RenamesObjectOrder" xml:space="preserve">
-    <value>RENAMES object "{0}" started before object "{1}"</value>
+    <value>RENAMES object "{0}" started before object "{1}".</value>
   </data>
   <data name="UnableToResolveVariable" xml:space="preserve">
-    <value>Unable to resolve "{0}"</value>
+    <value>Unable to resolve "{0}".</value>
   </data>
   <data name="VariableNotUnique" xml:space="preserve">
-    <value>Variable {0} was not uniquely defined name.</value>
+    <value>Variable "{0}" was not uniquely defined.</value>
   </data>
   <data name="CannotRenamesLevel" xml:space="preserve">
     <value>A Level 66 cannot rename an entry with level {0}.</value>
@@ -161,9 +161,27 @@
     <value>Program with identifier "{0}" is defined multiple times.</value>
   </data>
   <data name="TypeAlreadyDeclared" xml:space="preserve">
-    <value>TYPE'{0}' has already been declared</value>
+    <value>TYPE "{0}" has already been declared.</value>
   </data>
   <data name="TypedefDeclaredOutProgramOrFunction" xml:space="preserve">
-    <value>TYPE '{0}' is not declared within a Program or Procedure scope.</value>
+    <value>TYPE "{0}" is not declared within a Program or Procedure scope.</value>
+  </data>
+  <data name="CyclicTypeDetected" xml:space="preserve">
+    <value>Circular type reference detected : {0}.</value>
+  </data>
+  <data name="LevelExceededDuringRenumber" xml:space="preserve">
+    <value>Variable "{0}" cannot be renumbered to level {1} because it is excessive, only levels below or equal to 49 are allowed.</value>
+  </data>
+  <data name="RenumberingCyclicType" xml:space="preserve">
+    <value>Cannot renumber : type "{0}" is cyclic.</value>
+  </data>
+  <data name="RenumberingNonExpandedVariable" xml:space="preserve">
+    <value>Variable "{0}" cannot be renumbered because it has not been expanded before.</value>
+  </data>
+  <data name="RenumberingUnsafeType" xml:space="preserve">
+    <value>Cannot renumber : type '{0}' must be checked for cycles before attempting to renumber.</value>
+  </data>
+  <data name="DependsOnCyclicType" xml:space="preserve">
+    <value>Type "{0}" is unusable because it depends on cyclic type "{1}".</value>
   </data>
 </root>

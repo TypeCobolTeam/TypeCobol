@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler.Scopes;
-using TypeCobol.Compiler.Types;
-using Type = TypeCobol.Compiler.Types.Type;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -19,7 +13,7 @@ namespace TypeCobol.Compiler.Symbols
         /// Named constructor
         /// </summary>
         /// <param name="name"></param>
-        public VariableSymbol(String name)
+        public VariableSymbol(string name)
             : base(name, Kinds.Variable)
         {
         }
@@ -50,15 +44,6 @@ namespace TypeCobol.Compiler.Symbols
                 System.Diagnostics.Contracts.Contract.Requires((value >= 1 && value <= 49) || (value == 77) || (value == 88) || (value == 66));
                 m_Level = value;
             }
-        }
-
-        /// <summary>
-        /// The Offset of this symbol in its hierachy.
-        /// </summary>
-        public int Offset
-        {
-            get;
-            set;
         }
 
         /// <summary>
@@ -169,7 +154,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Lookup for the parent having the given Level
         /// </summary>
-        /// <param name="level"></param>
+        /// <param name="level">Target level</param>
         /// <param name="inclusive">true if this symbol must be taken in account, false otherwise</param>
         /// <returns>The parent symbol of the level if one exists, null otherwise</returns>
         public override Symbol LookupParentLevelSymbol(int level, bool inclusive)
@@ -179,9 +164,7 @@ namespace TypeCobol.Compiler.Symbols
             if (Owner == null)
                 return null;
             if (Owner.Kind != Kinds.Variable)
-            {
                 return null;
-            }
 
             return Owner.LookupParentLevelSymbol(level, true);
         }
@@ -190,31 +173,12 @@ namespace TypeCobol.Compiler.Symbols
         /// Call to normalize an expanded symbol.
         /// An expanded symbol must ihnerits section flags from its owner plus its GLOBAL flag.
         /// </summary>
-        /// <param name="scope">The normalization scope</param>
-        internal virtual void NormalizeExpandedSymbol(Scope<VariableSymbol> scope)
+        /// <param name="domain">The normalization domain</param>
+        internal virtual void NormalizeExpandedSymbol(Domain<VariableSymbol> domain)
         {
-            System.Diagnostics.Debug.Assert(scope.Owner != null);
+            System.Diagnostics.Debug.Assert(domain.Owner != null);
             this.Flag &= ~Symbol.SectionMask;
-            this.Flag |= scope.Owner.Flag & (Symbol.SectionMask | Flags.Global);
-        }
-
-        private Types.Type MyExpandedType { get; set; }
-        public override Types.Type ExpandedType(ProgramSymbol program)
-        {
-            if (this.Type == null)
-                return null;
-            if (MyExpandedType != null)
-                return MyExpandedType;
-            if (this.Type.MayExpand)
-            {
-                TypedefExpander expander = new TypedefExpander(program);
-                MyExpandedType = this.Type.Accept(expander, this);
-                return MyExpandedType;
-            }
-            else
-            {
-                return MyExpandedType = this.Type;
-            }
+            this.Flag |= domain.Owner.Flag & (Symbol.SectionMask | Flags.Global);
         }
 
         /// <summary>
@@ -232,7 +196,7 @@ namespace TypeCobol.Compiler.Symbols
             bool bHasDot = false;
             if (Type != null)
             {
-                if (Type.TypeComponent?.Tag == Type.Tags.Group && !HasFlag(Flags.Renames))
+                if (Type.TypeComponent?.Tag == Types.Type.Tags.Group && !HasFlag(Flags.Renames))
                 {
                     tw.WriteLine(".");
                     this.Type.Dump(tw, indentLevel + 1);

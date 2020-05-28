@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Analytics;
 using Antlr4.Runtime.Atn;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;
@@ -166,6 +165,11 @@ namespace TypeCobol.Compiler.Scanner
             Token nextToken = null;
             while((nextToken = scanner.GetNextToken()) != null)
             {
+                if (nextToken.TokenType == TokenType.AlphanumericLiteral && (!nextToken.HasOpeningDelimiter || !nextToken.HasClosingDelimiter))
+                {
+                    tokensLine.AddDiagnostic(MessageCode.SyntaxErrorInParser,
+                        tokensLine.Indicator.StartIndex, tokensLine.Indicator.EndIndex, "Literal is not correctly delimited.");
+                }
                 tokensLine.AddToken(nextToken);
             }    
         }
@@ -266,8 +270,9 @@ namespace TypeCobol.Compiler.Scanner
 
             // All the following lines are continuation lines
             // => build a character string representing the complete continuation text along the way
-            for (int i = 1; i < continuationLinesGroup.Count; i++)
+            for (int i = 1, lastContinuationLinesIndex = continuationLinesGroup.Count - 1; i <= lastContinuationLinesIndex; i++)
             {
+                bool isLastLine = i == lastContinuationLinesIndex;
                 TokensLine continuationLine = continuationLinesGroup[i];
                 int startIndex = continuationLine.Source.StartIndex;
                 int lastIndex = continuationLine.Source.EndIndex;
@@ -329,6 +334,70 @@ namespace TypeCobol.Compiler.Scanner
                     // Check if the last token so far is an alphanumeric or national literal
                     if (lastTokenOfConcatenatedLineSoFar.TokenFamily == TokenFamily.AlphanumericLiteral)
                     {
+                        if (!lastTokenOfConcatenatedLineSoFar.HasClosingDelimiter)
+                        {
+                            // check delimiters
+                            const char QUOTE = '\'';
+                            const char DOUBLE_QUOTE = '"';
+                            char startDelimiter = line[startOfContinuationIndex];
+                            bool isBadStartDelimiter = startDelimiter != lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter;
+                            char endDelimiter = QUOTE;  // default value
+                            bool isBadEndDelimiter = false;
+                            if (isLastLine)
+                            {
+                                // check closing delimiter of the last continuation line
+                                string lastLine = continuationLine.SourceText.TrimEnd();
+                                int pos = lastLine.LastIndexOf(startDelimiter);
+                                if (pos > lastLine.IndexOf(startDelimiter))
+                                {
+                                    // delimiter is also present near the end
+                                    lastLine = lastLine.Substring(0, pos + 1);
+                                }
+                                else
+                                {
+                                    // . is present at the end
+                                    pos = lastLine.Length - 1;
+                                    if (lastLine[pos] == '.')
+                                    {
+                                        lastLine = lastLine.Substring(0, pos).TrimEnd();
+                                    }
+                                }
+
+                                endDelimiter = lastLine[lastLine.Length - 1];
+                                isBadEndDelimiter = endDelimiter != lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter;
+                            }
+
+                            if (isBadStartDelimiter || isBadEndDelimiter)
+                            {
+                                if (startDelimiter != QUOTE && startDelimiter != DOUBLE_QUOTE)
+                                {
+                                    // no valid starting delimiter
+                                    continuationLine.AddDiagnostic(MessageCode.SyntaxErrorInParser,
+                                        startOfContinuationIndex, startOfContinuationIndex + 1, 
+                                        "Starting delimiter of the continuation line is missing.");
+                                    offsetForLiteralContinuation = 0;
+                                }
+                                else if (endDelimiter != QUOTE && endDelimiter != DOUBLE_QUOTE)
+                                {
+                                    // no valid closing delimiter
+                                    continuationLine.AddDiagnostic(MessageCode.SyntaxErrorInParser,
+                                        startOfContinuationIndex, startOfContinuationIndex + 1,
+                                        "Closing delimiter of the continuation line is missing.");
+                                    offsetForLiteralContinuation = 0;
+
+                                }
+                                else
+                                {
+                                    // different delimiters between start and end delimiters
+                                    continuationLine.AddDiagnostic(MessageCode.InvalidDelimiterForContinuationLine,
+                                        startOfContinuationIndex, startOfContinuationIndex + 1,
+                                        lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter);
+                                    // Use the first quotation mark to avoid a complete mess while scanning the rest of the line
+                                    offsetForLiteralContinuation = 0;
+                                }
+                            }
+                        }
+
                         //// The continuation of the literal begins with the character immediately following the quotation mark.
                         if (line[startOfContinuationIndex] == lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter)
                         {
@@ -1467,8 +1536,54 @@ namespace TypeCobol.Compiler.Scanner
 
                     if (BeSmartWithLevelNumber) { 
                         // Distinguish the special case of a LevelNumber
-                        if (tokensLine.ScanState.InsideDataDivision && tokensLine.ScanState.AtBeginningOfSentence) {
-                            token.CorrectType(TokenType.LevelNumber);
+                        if (tokensLine.ScanState.InsideDataDivision)
+                        {
+                            if (tokensLine.ScanState.AtBeginningOfSentence || GuessIfCurrentTokenIsLevelNumber())
+                            {
+                                token.CorrectType(TokenType.LevelNumber);
+                            }
+
+                            //This method is here to help recognize LevelNumbers when PeriodSeparator has been forgotten at the end of previous data definition.
+                            bool GuessIfCurrentTokenIsLevelNumber()
+                            {
+                                var lastSignificantToken = tokensLine.ScanState.LastSignificantToken;
+                                var beforeLastSignificantToken = tokensLine.ScanState.BeforeLastSignificantToken;
+
+                                bool currentTokenIsAtBeginningOfNewLine = token.Line > lastSignificantToken.Line;
+                                bool currentTokenIsBeforeAreaB = token.Column < 12;
+
+                                //Either a continuation line or we are still on the same line --> not a LevelNumber
+                                if (!currentTokenIsAtBeginningOfNewLine || tokensLine.HasTokenContinuationFromPreviousLine)
+                                    return false;
+
+                                //Literals can't be written outside of AreaB so it must be a LevelNumber
+                                if (currentTokenIsBeforeAreaB)
+                                    return true;
+
+                                //Try to guess if it is a LevelNumber or Literal depending on previous tokens
+                                bool currentTokenIsExpectedToBeALiteral =
+                                    lastSignificantToken.TokenType == TokenType.OCCURS ||
+                                    lastSignificantToken.TokenType == TokenType.VALUE  ||
+                                    lastSignificantToken.TokenType == TokenType.VALUES ||
+                                    (beforeLastSignificantToken.TokenType == TokenType.VALUE && lastSignificantToken.TokenType == TokenType.IS) ||
+                                    (beforeLastSignificantToken.TokenType == TokenType.VALUES && lastSignificantToken.TokenType == TokenType.ARE);
+                                if (!currentTokenIsExpectedToBeALiteral)
+                                {
+                                    /*
+                                     * Here we still have an ambiguity between multiple consecutive IntegerLiteral and LevelNumber like in this kind of declarations :
+                                     *    01 integers PIC 99.
+                                     *       88 odd  VALUES 01 03 05
+                                     *                      07 09.
+                                     *       88 even VALUES 02 04 06
+                                     *                      08.
+                                     * 07 and 08 are literals but we actually can't distinguish between a following literal and a LevelNumber. We assume the code
+                                     * is syntactically correct more often than not so we choose in that case to consider the token as a Literal.
+                                     */
+                                    return lastSignificantToken.TokenFamily != TokenFamily.NumericLiteral && lastSignificantToken.TokenFamily != TokenFamily.AlphanumericLiteral;
+                                }
+
+                                return false;
+                            }
                         }
                     }
 

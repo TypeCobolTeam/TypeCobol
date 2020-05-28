@@ -161,7 +161,7 @@ namespace TypeCobol.LanguageServer
                                 ? string.Format("{0}::{1} {2}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head, paramWithCase[ParameterDescription.PassingTypes.InOut])
                                 : outputParams != null
                                     ? string.Format("{0}::{1} {2}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head, paramWithCase[ParameterDescription.PassingTypes.Output])
-                                    : proc.Name
+                                    : string.Format("{0}::{1}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head)
                     : inputParams != null
                         ? proc.Name + " " + paramWithCase[ParameterDescription.PassingTypes.Input]
                         : inoutParams != null

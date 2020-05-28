@@ -61,7 +61,7 @@ namespace TypeCobol {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot REDEFINES aTypedef declaration.
+        ///   Looks up a localized string similar to Cannot REDEFINES aTypedef declaration..
         /// </summary>
         public static string CannotRedefinedTypedefDecl {
             get {
@@ -84,6 +84,24 @@ namespace TypeCobol {
         public static string CannotRenamesLevel {
             get {
                 return ResourceManager.GetString("CannotRenamesLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Circular type reference detected : {0}..
+        /// </summary>
+        public static string CyclicTypeDetected {
+            get {
+                return ResourceManager.GetString("CyclicTypeDetected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type &quot;{0}&quot; is unusable because it depends on cyclic type &quot;{1}&quot;..
+        /// </summary>
+        public static string DependsOnCyclicType {
+            get {
+                return ResourceManager.GetString("DependsOnCyclicType", resourceCulture);
             }
         }
         
@@ -115,7 +133,16 @@ namespace TypeCobol {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multiple REDEFINES Symbol found for : &quot;{0}&quot;.
+        ///   Looks up a localized string similar to Variable &quot;{0}&quot; cannot be renumbered to level {1} because it is excessive, only levels below or equal to 49 are allowed..
+        /// </summary>
+        public static string LevelExceededDuringRenumber {
+            get {
+                return ResourceManager.GetString("LevelExceededDuringRenumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multiple REDEFINES Symbol found for : &quot;{0}&quot;..
         /// </summary>
         public static string MultipleRenameSymbolFound {
             get {
@@ -151,7 +178,7 @@ namespace TypeCobol {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to RENAMES object &quot;{0}&quot; started before object &quot;{1}&quot;.
+        ///   Looks up a localized string similar to RENAMES object &quot;{0}&quot; started before object &quot;{1}&quot;..
         /// </summary>
         public static string RenamesObjectOrder {
             get {
@@ -160,7 +187,34 @@ namespace TypeCobol {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to TYPE&apos;{0}&apos; has already been declared.
+        ///   Looks up a localized string similar to Cannot renumber : type &quot;{0}&quot; is cyclic..
+        /// </summary>
+        public static string RenumberingCyclicType {
+            get {
+                return ResourceManager.GetString("RenumberingCyclicType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Variable &quot;{0}&quot; cannot be renumbered because it has not been expanded before..
+        /// </summary>
+        public static string RenumberingNonExpandedVariable {
+            get {
+                return ResourceManager.GetString("RenumberingNonExpandedVariable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot renumber : type &apos;{0}&apos; must be checked for cycles before attempting to renumber..
+        /// </summary>
+        public static string RenumberingUnsafeType {
+            get {
+                return ResourceManager.GetString("RenumberingUnsafeType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TYPE &quot;{0}&quot; has already been declared..
         /// </summary>
         public static string TypeAlreadyDeclared {
             get {
@@ -169,7 +223,7 @@ namespace TypeCobol {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to TYPE &apos;{0}&apos; is not declared within a Program or Procedure scope..
+        ///   Looks up a localized string similar to TYPE &quot;{0}&quot; is not declared within a Program or Procedure scope..
         /// </summary>
         public static string TypedefDeclaredOutProgramOrFunction {
             get {
@@ -178,7 +232,7 @@ namespace TypeCobol {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to resolve &quot;{0}&quot;.
+        ///   Looks up a localized string similar to Unable to resolve &quot;{0}&quot;..
         /// </summary>
         public static string UnableToResolveVariable {
             get {
@@ -187,7 +241,7 @@ namespace TypeCobol {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unknow REDEFINES Symbol : &quot;{0}&quot;.
+        ///   Looks up a localized string similar to Unknow REDEFINES Symbol : &quot;{0}&quot;..
         /// </summary>
         public static string UnknowRedefinesdSymbol {
             get {
@@ -196,7 +250,7 @@ namespace TypeCobol {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Variable {0} was not uniquely defined name..
+        ///   Looks up a localized string similar to Variable &quot;{0}&quot; was not uniquely defined..
         /// </summary>
         public static string VariableNotUnique {
             get {

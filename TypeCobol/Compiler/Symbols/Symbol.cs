@@ -2,14 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Schema;
-using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.Scopes;
-using TypeCobol.Compiler.Types;
-using Type = TypeCobol.Compiler.Types.Type;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -84,9 +77,14 @@ namespace TypeCobol.Compiler.Symbols
             InsideTypedef = 0x01L << 35,//Flag of any symbol inside a Typedef definition
             Declaratives = 0x01L << 36,//Flag to indicate a symbol inside Declaractives context
             ProgramExpanded = 0x01L << 37,//Flag for a program that have been already expanded.
-            NeedTypeCompletion = 0x01L << 38,//For a program that need type Completion, a pure COBOL Program does not need type completion (No TYPEDEF).
-            BuiltinSymbol = 0x01L << 39, //This is a builting symbol.
-            ProgramCompleted = 0x01L << 40, //This Top Program has been completed
+            SymbolExpanded = 0x01L << 38,//Flag of a symbol that have been expanded, used for variables and programs.
+            NeedTypeCompletion = 0x01L << 39,//For a program that need type Completion, a pure COBOL Program does not need type completion (No TYPEDEF).
+            BuiltinSymbol = 0x01L << 40, //This is a builting symbol.
+            ProgramCompleted = 0x01L << 41, //This Top Program has been completed
+
+            //Flags for cyclic typedefs 
+            CheckedForCycles = 0x01L << 42,
+            IsCyclic = 0x01L << 43,
 
             //Etc...
         }
@@ -99,14 +97,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// The Visibility mask that a symbol can take.
         /// </summary>
-        public const Flags SymbolVisibilityMask = Flags.Public | Flags.Private | Flags.Global;
-
-        /// <summary>
-        /// Empty constructor
-        /// </summary>
-        protected Symbol()
-        {
-        }
+        internal const Flags SymbolVisibilityMask = Flags.Public | Flags.Private | Flags.Global;
 
         /// <summary>
         /// Named constructor
@@ -171,7 +162,7 @@ namespace TypeCobol.Compiler.Symbols
         /// Name used for an Indexed Name
         /// </summary>
         public virtual string IndexedName => Name;
-        public virtual string IndexedOFName => Name;
+        public virtual string IndexedOfName => Name;
         public virtual string IndexedDotName => Name;
 
         /// <summary>
@@ -195,7 +186,7 @@ namespace TypeCobol.Compiler.Symbols
             get
             {
                 string root = Owner?.FullOfName ?? "";
-                string name = IndexedOFName;
+                string name = IndexedOfName;
                 return root.Length > 0 ? (name.Length > 0 ? (name + " OF ") : name) + root : name;
             }
         }
@@ -242,11 +233,11 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         public event EventHandler TypeChanged;
 
-        Type m_Type;
+        Types.Type m_Type;
         /// <summary>
         /// Symbol's type
         /// </summary>
-        public virtual Type Type
+        public virtual Types.Type Type
         {
             get => m_Type;
             set
@@ -257,26 +248,6 @@ namespace TypeCobol.Compiler.Symbols
                     TypeChanged?.Invoke(this, null);
                 }
             }
-        }
-
-        /// <summary>
-        /// Get the the expanded type of this type symbol.
-        /// The Expanded Type is the Cobol85 Type in fact.
-        /// <param name="program">The program in which the expanded Type is Computed.</param>
-        /// </summary>
-        public virtual Type ExpandedType(ProgramSymbol program)
-        {
-            return this.Type;
-        }
-
-        /// <summary>
-        /// Complete the Symbol's type associated to this Symbol
-        /// </summary>
-        /// <param name="root">The root symbol table to be used to complete the type</param>
-        /// <returns>true if the type is completed, false otherwise</returns>
-        protected internal virtual bool TypeCompleter(RootSymbolTable root = null)
-        {
-            return true;
         }
 
         /// <summary>
@@ -328,14 +299,6 @@ namespace TypeCobol.Compiler.Symbols
         public virtual object Clone()
         {
             return MemberwiseClone();
-        }
-
-        /// <summary>
-        /// Propagate internal symbol owner to this symbol.
-        /// </summary>
-        public virtual void PropagateOwner()
-        {
-
         }
 
         /// <summary>
@@ -443,9 +406,9 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// Lookup for the parent having t he given Level
+        /// Lookup for the parent having the given Level
         /// </summary>
-        /// <param name="level"></param>
+        /// <param name="level">Target level</param>
         /// <param name="inclusive">true if this symbol must be taken in account, false otherwise</param>
         /// <returns>The parent symbol of the level if one exists, null otherwise</returns>
         public virtual Symbol LookupParentLevelSymbol(int level, bool inclusive)
@@ -454,7 +417,7 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// Dum Symbol tags
+        /// Dump Symbol tags
         /// </summary>
         /// <param name="flag">Flags to dump</param>
         /// <param name="tw">TextWriter instance</param>
@@ -495,22 +458,6 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         public virtual TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitSymbol(this, arg); }
-
-        public class LevelExceed : Exception
-        {
-            /// <summary>
-            /// The symbol which level exceed.
-            /// </summary>
-            public VariableSymbol Symbol
-            {
-                get;
-                private set;
-            }
-            public LevelExceed(VariableSymbol symbol)
-            {
-                this.Symbol = symbol;
-            }
-        }
 
         /// <summary>
         /// A visitor for symbols.  A visitor is used to implement operations
@@ -559,6 +506,5 @@ namespace TypeCobol.Compiler.Symbols
             public virtual TR VisitVariableTypeSymbol(VariableTypeSymbol s, TP arg) { return VisitSymbol(s, arg); }
             public abstract TR VisitSymbol(Symbol s, TP arg);
         }
-
     }
 }

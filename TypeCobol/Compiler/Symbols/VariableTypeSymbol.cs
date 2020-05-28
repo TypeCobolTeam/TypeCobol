@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.CodeElements;
+﻿using System.IO;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Types;
-using Type = TypeCobol.Compiler.Types.Type;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -17,61 +10,72 @@ namespace TypeCobol.Compiler.Symbols
     /// </summary>
     public class VariableTypeSymbol : VariableSymbol
     {
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="name">Variable's name</param>
-        /// <param name="tdSym">The associated TypeDef symbol</param>
-        public VariableTypeSymbol(string name, TypedefSymbol tdSym) : base(name)
-        {
-            System.Diagnostics.Debug.Assert(tdSym != null);
-            SetFlag(Flags.HasATypedefType, true);
-            Typedef = tdSym;
-        }
+        private TypedefSymbol _typedef;
 
         /// <summary>
         /// Constructor with an unresolved Type's path
         /// </summary>
         /// <param name="name">Variable's name</param>
-        /// <param name="path">The unresolved type's path</param>
-        public VariableTypeSymbol(string name, string[] paths) : base(name)
+        /// <param name="paths">The unresolved type's path</param>
+        public VariableTypeSymbol(string name, string[] paths)
+            : base(name)
         {
             System.Diagnostics.Debug.Assert(paths != null);
+            System.Diagnostics.Debug.Assert(paths.Length != 0);
             SetFlag(Flags.HasATypedefType, true);
-            Typedef = null;
             TypePaths = paths;
+            _typedef = null;
         }
 
         /// <summary>
-        /// If the undrlying type is not resolved then this the path of the type to resolved.
+        /// If the underlying type is not resolved then this the path of the type to resolved.
         /// </summary>
-        internal string[] TypePaths
-        {
-            get;
-            set;
-        }
+        public string[] TypePaths { get; }
 
         /// <summary>
-        /// The Type of a variable whose type comes from a TYPEDEF can be set later when
-        /// The TYPEDEF symbol is resolved. 
+        /// Tries to resolve TypedefSymbol of this variable according to its TypePaths.
         /// </summary>
-        public override Types.Type Type
+        private void LinkTypedef()
         {
-            get
+            var declaringProgram = (ProgramSymbol) NearestKind(Kinds.Program, Kinds.Function);
+            if (declaringProgram == null)
             {
-                if (Typedef == null)
-                {
-                    //Try to complete the type.
-                    if (!TypeCompleter())
-                        return base.Type;
-                }
-                if (base.Type == null && Typedef?.Type != null)
-                {
-                    base.Type = Typedef.Type;
-                }
-                return base.Type;
+                //variable has no owner yet
+                return;
             }
-            set => base.Type = value;
+
+            var root = (RootSymbolTable) TopParent(Kinds.Root);
+            System.Diagnostics.Debug.Assert(root != null);
+
+            var entry = declaringProgram.ResolveType(root, TypePaths);
+            if (entry != null && entry.Count == 1)
+            {
+                //Successfully resolved Typedef symbol
+                _typedef = entry.Symbol;
+
+                //Update ElementType in case of Pointer or Array
+                var currentType = base.Type;
+                if (currentType != null)
+                {
+                    switch (currentType.Tag)
+                    {
+                        case Type.Tags.Array:
+                            ArrayType arrayType = (ArrayType)currentType;
+                            arrayType.ElementType = _typedef.Type;
+                            break;
+                        case Type.Tags.Pointer:
+                            PointerType pointerType = (PointerType)currentType;
+                            pointerType.ElementType = _typedef.Type;
+                            break;
+                    }
+                }
+
+                //--------------------------------------------------------------------------------------------
+                //We don't check type accessibility here. I think that the semantic analyzer should do that.
+                //This can be achieved by the following call:
+                //program.IsTypeAccessible(entry.Symbol);
+                //--------------------------------------------------------------------------------------------
+            }
         }
 
         /// <summary>
@@ -79,64 +83,39 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         public TypedefSymbol Typedef
         {
-            get;
-            internal set;
+            get
+            {
+                //Perform lazy typedef resolution
+                if (_typedef == null) LinkTypedef();
+
+                return _typedef;
+            }
         }
 
-        protected internal override bool TypeCompleter(RootSymbolTable root = null)
+        /// <summary>
+        /// The Type of a variable whose type comes from a typedef is only accessible after the typedef has been resolved.
+        /// It is then replaced by a new Type instance during program expansion.
+        /// </summary>
+        public override Types.Type Type
         {
-            if (Typedef != null)
-            {//Variable Type Symbol is already completed
-                return true;
-            }
-            if (TypePaths == null || TypePaths.Length == 0)
+            get
             {
-                return false;
-            }
-            ProgramSymbol program = (ProgramSymbol)NearestKind(Symbol.Kinds.Program, Symbol.Kinds.Function);
-            ProgramSymbol topProgram = (ProgramSymbol)TopParent(Symbol.Kinds.Program);
-            if (!topProgram.HasFlag(Flags.ProgramCompleted))
-                return false;//This program is not completed yet, that is to say it is in construction.
-            root  = root ?? (RootSymbolTable)TopParent(Symbol.Kinds.Root);
-            System.Diagnostics.Debug.Assert(root != null);
-            if (root == null)
-                return false;
-            Scopes.Scope<TypedefSymbol>.Entry entry = program.ResolveType(root, TypePaths);
-            if (entry == null || entry.Count != 1)
-            {//Unknown type or ambiguous types
-                return false;
-            }
-            //--------------------------------------------------------------------------------------------
-            //We don't check type accessibility here. I think that the semantic analyzer should do that.
-            //This can be achieved by the following call:
-            //program.IsTypeAccessible(entry.Symbol);
-            //--------------------------------------------------------------------------------------------
-            Type currentType = base.Type;//The type before completion can be an ArrayType or a PointerType
-            Typedef = entry[0];
-            TypePaths = null;//GC : :-)
-            if (currentType != null)
-            {
-                switch (currentType.Tag)
+                if (Typedef == null)
                 {
-                    case Types.Type.Tags.Array:
-                        {
-                            ArrayType at = (ArrayType)currentType;
-                            at.ElementType = Typedef?.Type;
-                        }
-                        break;
-                    case Types.Type.Tags.Pointer:
-                        {
-                            PointerType at = (PointerType)currentType;
-                            at.ElementType = Typedef?.Type;
-                        }
-                        break;
+                    //Type linking not done yet
+                    return null;
                 }
+
+                if (base.Type == null)
+                {
+                    //Type expansion not done yet 
+                    return Typedef.Type;
+                }
+
+                return base.Type;
             }
-            return true;
         }
 
-
-        //public override string TypedName => Typedef != null && Typedef.Type != null && !Typedef.Type.HasFlag(Flags.BuiltinType) ? (Name + Typedef.Name) : Name;
         public override string TypedName => Typedef != null ? (Name + '.' + Typedef.Name) : Name;
 
         /// <summary>

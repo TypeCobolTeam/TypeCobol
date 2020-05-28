@@ -72,6 +72,7 @@ terminal TypeCobol.Compiler.CodeElements.InitializeStatement InitializeStatement
 terminal TypeCobol.Compiler.CodeElements.InspectStatement InspectStatement;
 terminal TypeCobol.Compiler.CodeElements.InvokeStatement InvokeStatement;
 terminal TypeCobol.Compiler.CodeElements.JsonGenerateStatement JsonGenerateStatement;
+terminal TypeCobol.Compiler.CodeElements.JsonParseStatement JsonParseStatement;
 terminal TypeCobol.Compiler.CodeElements.MergeStatement MergeStatement;
 terminal TypeCobol.Compiler.CodeElements.MoveStatement MoveStatement;
 terminal TypeCobol.Compiler.CodeElements.MultiplyStatement MultiplyStatement;
@@ -232,6 +233,7 @@ non terminal evaluateStatementWithBody;
 non terminal ifStatementWithBody;
 non terminal invokeStatementConditional;
 non terminal jsonGenerateStatementConditional;
+non terminal jsonParseStatementConditional;
 non terminal multiplyStatementConditional;
 non terminal performStatementWithBody;
 non terminal readStatementConditional;
@@ -838,6 +840,8 @@ compoundStatement ::= addStatementConditional:stmt
 		{:  :}
 	|	jsonGenerateStatementConditional:stmt
 		{:  :}
+	|	jsonParseStatementConditional:stmt
+		{:  :}
 	|	divideStatementConditional:stmt
 		{:  :}
 	|	multiplyStatementConditional:stmt
@@ -1029,6 +1033,17 @@ jsonGenerateStatementConditional ::=
 	|	JsonGenerateStatement:stmt exceptionConditions:conds
 		{:  :}
 	|	JsonGenerateStatement:stmt exceptionConditions:conds JsonStatementEnd:end
+		{:  :}
+	;
+
+jsonParseStatementConditional ::=
+		JsonParseStatement:stmt
+		{:  :}
+	|	JsonParseStatement:stmt JsonStatementEnd:end
+		{:  :}
+	|	JsonParseStatement:stmt exceptionConditions:conds
+		{:  :}
+	|	JsonParseStatement:stmt exceptionConditions:conds JsonStatementEnd:end
 		{:  :}
 	;
 

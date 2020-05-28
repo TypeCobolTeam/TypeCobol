@@ -5,7 +5,6 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
-using Analytics;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
@@ -207,6 +206,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             SyntaxTree.Root.SymbolTable = TableOfNamespaces; //Set SymbolTable of SourceFile Node, Limited to NameSpace and Intrinsic scopes
             Dispatcher.StartCobolCompilationUnit();
+        }
+
+        public virtual void EndCobolCompilationUnit()
+        {
+            Dispatcher.EndCobolCompilationUnit();
         }
 
         public virtual void StartCobolProgram(ProgramIdentification programIdentification, LibraryCopyCodeElement libraryCopy)
@@ -767,7 +771,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 CheckIfItsTyped(paramNode, paramNode.CodeElement);
             }
 
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.FunctionDeclared, declaration.FunctionName.ToString(), LogType.TypeCobolUsage);
             Dispatcher.StartFunctionDeclaration(header);
         }
 
@@ -1394,6 +1397,17 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             AttachEndIfExists(end);
             Exit();
             Dispatcher.EndJsonGenerateStatementConditional(end);
+        }
+
+        public virtual void StartJsonParseStatementConditional(TypeCobol.Compiler.CodeElements.JsonParseStatement stmt)
+        {
+            Enter(new JsonParse(stmt), stmt);
+        }
+
+        public virtual void EndJsonParseStatementConditional(TypeCobol.Compiler.CodeElements.JsonStatementEnd end)
+        {
+            AttachEndIfExists(end);
+            Exit();
         }
 
         public virtual void StartMultiplyStatementConditional(TypeCobol.Compiler.CodeElements.MultiplyStatement stmt)

@@ -1,36 +1,62 @@
 --- Diagnostics ---
-Line 8[13,35] <30, Error, Semantics> - Semantic error: Type circular reference detected : ThirdType -> myType
-Line 17[15,20] <30, Error, Semantics> - Semantic error: Variable 'MyVar1' has to be limited to level 47 because of 'myType' maximum estimated children level OffendingSymbol=[15,20:MyVar1]<UserDefinedWord>
-Line 24[13,38] <30, Error, Semantics> - Semantic error: Type circular reference detected : MySendType -> myType
-Line 33[13,28] <30, Error, Semantics> - Semantic error: Type circular reference detected : C1 -> B1 -> A1
-Line 41[13,28] <30, Error, Semantics> - Semantic error: Type circular reference detected : B2 -> A2 -> C2
-Line 54[13,28] <30, Error, Semantics> - Semantic error: Type circular reference detected : A3 -> C3 -> B3
-Line 71[13,28] <30, Error, Semantics> - Semantic error: Type circular reference detected : C4 -> B4 -> A4
-Line 87[13,29] <30, Error, Semantics> - Semantic error: Type circular reference detected : C5 -> B5 -> A5
-Line 94[44,48] <27, Error, Syntax> - Syntax error : Symbol MyVar.A5var.B5Var.C5Var.A5Var is not referenced OffendingSymbol=[44,48:A5Var]<UserDefinedWord>
-Line 95[44,48] <27, Error, Syntax> - Syntax error : Symbol MyVar.A5var.B5Var.C5Var.A5Var is not referenced OffendingSymbol=[44,48:A5Var]<UserDefinedWord>
+Line 16[11,29] <30, Error, Semantics> - Semantic error: Type circular reference detected : Cyclic1
+Line 26[11,29] <30, Error, Semantics> - Semantic error: Type circular reference detected : Cyclic3 -> Cyclic2
+Line 40[11,29] <30, Error, Semantics> - Semantic error: Type circular reference detected : Cyclic6 -> Cyclic5 -> Cyclic4
+Line 44[11,29] <30, Error, Semantics> - Semantic error: Type circular reference detected : Cyclic7 -> Cyclic4
+Line 74[15,20] <30, Error, Semantics> - Semantic error: Variable 'MyVar1' has to be limited to level 45 because of 'Cyclic8' maximum estimated children level OffendingSymbol=[15,20:MyVar1]<UserDefinedWord>
+Line 85[13,28] <30, Error, Semantics> - Semantic error: Type circular reference detected : C1 -> B1 -> A1
+Line 92[13,28] <30, Error, Semantics> - Semantic error: Type circular reference detected : B2 -> A2 -> C2
+Line 111[13,28] <30, Error, Semantics> - Semantic error: Type circular reference detected : C3 -> B3 -> A3
+Line 127[13,29] <30, Error, Semantics> - Semantic error: Type circular reference detected : C4 -> B4 -> A4
+Line 134[47,51] <27, Error, Syntax> - Syntax error : Symbol MyVar.A4var.B4Var.C4Var.A4Var is not referenced OffendingSymbol=[47,51:A4Var]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: CircularRefCheck common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 --- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
-  MyGroup:Alphanumeric
-  MyVar1:myType
-  MyVar2:myType
+  var1:Cyclic1
+  var2:Cyclic2
+  var3:Cyclic3
+  var4:Cyclic4
+  var5:Cyclic5
+  var6:Cyclic6
+  var7:Cyclic7
+  var8:Cyclic8
+  array1:Cyclic1
+  array2:Cyclic2
+  array3:Cyclic3
+  array4:Cyclic4
+  array5:Cyclic5
+  array6:Cyclic6
+  array7:Cyclic7
+  array8:Cyclic8
+  group1:Alphanumeric
+  item1:Alphanumeric
+  item2:Alphanumeric
+  sub-item-1:Alphanumeric
+  sub-item-2:Cyclic8
+  sub-item-3:Alphanumeric
+  item3:Alphanumeric
+  group2:Alphanumeric
+  MyVar1:Cyclic8
+  MyVar2:Cyclic8
 -- TYPES -------
-  ThirdType:ThirdType
-  myType:myType
-  MySendType:MySendType
+  NotCyclic:NotCyclic
+  Cyclic1:Cyclic1
+  Cyclic2:Cyclic2
+  Cyclic3:Cyclic3
+  Cyclic4:Cyclic4
+  Cyclic5:Cyclic5
+  Cyclic6:Cyclic6
+  Cyclic7:Cyclic7
+  Cyclic8:Cyclic8
   A1:A1
   B1:B1
   C1:C1
   C2:C2
   B2:B2
   A2:A2
-  B3:B3
-  C3:C3
-  A3:A3
 -- FUNCTIONS ---
   CheckCircular
   CheckCircular2

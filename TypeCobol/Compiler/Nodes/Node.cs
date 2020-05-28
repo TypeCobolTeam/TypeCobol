@@ -46,7 +46,7 @@ namespace TypeCobol.Compiler.Nodes {
         protected abstract CodeElement InternalCodeElement {  get;}
 
         /// <summary>
-        /// The Semantic data of this Code Element, usually type information.
+        /// The Semantic data of this Node, usually type information.
         /// This is a Weak reference because the data can be hold elsewhere, and it 
         /// can be garbage collected at any moment.
         /// </summary>
@@ -56,13 +56,10 @@ namespace TypeCobol.Compiler.Nodes {
             get => _mySemanticData;
             set
             {
-                lock (this)
+                _mySemanticData = value;
+                if (value != null && value.SemanticKind == SemanticKinds.Symbol)
                 {
-                    _mySemanticData = value;
-                    if (value != null && value.SemanticKind == SemanticKinds.Symbol)
-                    {
-                        ((Symbol) value).TargetNode = this;
-                    }
+                    ((Symbol)value).TargetNode = this;
                 }
             }
         }
@@ -77,11 +74,7 @@ namespace TypeCobol.Compiler.Nodes {
         /// <see cref="Remove" />
         /// methods.
         public IReadOnlyList<Node> Children {
-#if NET40
-            get { return new ReadOnlyList<Node>(children); }
-#else
             get { return children; }
-#endif
         }
 
         /// <summary>
@@ -996,12 +989,7 @@ namespace TypeCobol.Compiler.Nodes {
             // if the performance is better or if it avoids a copy.
             var result = new List<C>();
             foreach (var child in node.Children) result.Add((C) child);
-#if NET40
-            return new ReadOnlyList<C>(result);
-#else
             return result.AsReadOnly();
-#endif
-
         }
     }
 

@@ -155,6 +155,7 @@ namespace TypeCobol.Compiler.Parser
                        AllocatedSize = CobolExpressionsBuilder.CreateArithmeticExpression(context.arithmeticExpression()),
                        AllocatedArea = CobolExpressionsBuilder.CreateStorageArea(context.storageArea2()),
                        Initialized = context.KeywordINITIALIZED != null ? new SyntaxProperty<bool>(true, (Token)context.KeywordINITIALIZED) : null,
+                       LocValue = CobolExpressionsBuilder.CreateIntegerVariable(context.integerVariable1()),
                        ReturningPointer = CobolExpressionsBuilder.CreateStorageArea(context.pointerStorageArea())
                    };
         }
@@ -738,6 +739,29 @@ namespace TypeCobol.Compiler.Parser
                        DataItem = CobolExpressionsBuilder.CreateVariable(context.dataItem),
                        OutputName = CobolWordsBuilder.CreateAlphanumericValue(context.outputName)
                    };
+        }
+
+        /////////////////////////////
+        // JSON PARSE STATEMENT    //
+        /////////////////////////////
+
+        internal JsonParseStatement CreateJsonParseStatement(CodeElementsParser.JsonParseStatementContext context)
+        {
+            return new JsonParseStatement
+            {
+                Source = CobolExpressionsBuilder.CreateStorageArea(context.source),
+                Destination = CobolExpressionsBuilder.CreateVariable(context.destination),
+                NameMappings = context.jsonParseNameMapping().Select(CreateJsonParseNameMapping).ToArray(),
+                ExcludedDataItems = context.excludedDataItem().Select(c => CobolExpressionsBuilder.CreateVariable(c.variable1())).ToArray()
+            };
+        }
+        private JsonParseNameMapping CreateJsonParseNameMapping(CodeElementsParser.JsonParseNameMappingContext context)
+        {
+            return new JsonParseNameMapping
+            {
+                DataItem = CobolExpressionsBuilder.CreateVariable(context.dataItem),
+                InputName = CobolWordsBuilder.CreateAlphanumericValue(context.inputName)
+            };
         }
 
         /////////////////////

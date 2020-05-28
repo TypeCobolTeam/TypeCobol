@@ -184,6 +184,7 @@ namespace TypeCobol.Compiler.Parser
                 if (valueNode == null)
                 {
                     valueNode = context.allFigurativeConstant().notNullTerminatedAlphanumericOrNationalLiteralToken();
+                    if (valueNode == null && optionalALLToken != null) return null;
                 }
                 Token valueToken = ParseTreeUtils.GetFirstToken(valueNode);
                 return new RepeatedCharacterValue(optionalALLToken, valueToken);

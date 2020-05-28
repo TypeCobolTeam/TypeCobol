@@ -166,6 +166,7 @@ terminal TypeCobol.Compiler.CodeElements.InitializeStatement InitializeStatement
 terminal TypeCobol.Compiler.CodeElements.InspectStatement InspectStatement;
 terminal TypeCobol.Compiler.CodeElements.InvokeStatement InvokeStatement;
 terminal TypeCobol.Compiler.CodeElements.JsonGenerateStatement JsonGenerateStatement;
+terminal TypeCobol.Compiler.CodeElements.JsonParseStatement JsonParseStatement;
 terminal TypeCobol.Compiler.CodeElements.MergeStatement MergeStatement;
 terminal TypeCobol.Compiler.CodeElements.MoveStatement MoveStatement;
 terminal TypeCobol.Compiler.CodeElements.MultiplyStatement MultiplyStatement;
@@ -329,6 +330,7 @@ non terminal evaluateStatementWithBody;
 non terminal ifStatementWithBody;
 non terminal invokeStatementConditional;
 non terminal jsonGenerateStatementConditional;
+non terminal jsonParseStatementConditional;
 non terminal multiplyStatementConditional;
 non terminal performStatementWithBody;
 non terminal readStatementConditional;
@@ -361,6 +363,7 @@ non terminal divideStatement;
 non terminal evaluateStatement;
 non terminal invokeStatement;
 non terminal jsonGenerateStatement;
+non terminal jsonParseStatement;
 non terminal multiplyStatement;
 non terminal performStatement;
 non terminal readStatement;
@@ -395,8 +398,8 @@ starts ::= compilationUnit		/* rule for starting analyzing a compilation unit */
 	| StatementEntryPoint statementEntry /* rule for starting analyzing a TypeCobol statement */
 	;
 
-compilationUnit ::= {: my_parser.Builder.StartCobolCompilationUnit(); :} cobolCompilationUnit
-	| {: my_parser.Builder.StartCobolCompilationUnit(); :} /*empty*/
+compilationUnit ::= {: my_parser.Builder.StartCobolCompilationUnit(); :} cobolCompilationUnit {: my_parser.Builder.EndCobolCompilationUnit(); :}
+	| {: my_parser.Builder.StartCobolCompilationUnit(); my_parser.Builder.EndCobolCompilationUnit(); :} /*empty*/
 	;
 
 /* The grammar */
@@ -1055,6 +1058,8 @@ compoundStatement ::= addStatementConditional
 		{:  :}
 	|	jsonGenerateStatementConditional
 		{:  :}
+	|	jsonParseStatementConditional
+		{:  :}
 	|	divideStatementConditional
 		{:  :}
 	|	multiplyStatementConditional
@@ -1310,6 +1315,21 @@ jsonGenerateStatementConditional ::=
 
 jsonGenerateStatement ::= JsonGenerateStatement:stmt
 	{: my_parser.Builder.StartJsonGenerateStatementConditional(stmt); :}
+	;
+
+jsonParseStatementConditional ::=
+		jsonParseStatement
+		{: my_parser.Builder.EndJsonParseStatementConditional(); :}
+	|	jsonParseStatement JsonStatementEnd:end
+		{: my_parser.Builder.EndJsonParseStatementConditional(end); :}
+	|	jsonParseStatement exceptionConditions
+		{: my_parser.Builder.EndJsonParseStatementConditional(); :}
+	|	jsonParseStatement exceptionConditions JsonStatementEnd:end
+		{: my_parser.Builder.EndJsonParseStatementConditional(end); :}
+	;
+
+jsonParseStatement ::= JsonParseStatement:stmt
+	{: my_parser.Builder.StartJsonParseStatementConditional(stmt); :}
 	;
 
 multiplyStatementConditional ::=

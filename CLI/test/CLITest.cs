@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TypeCobol.Server;
 using TypeCobol.Tools.Options_Config;
 
 namespace CLI.Test
@@ -91,20 +87,14 @@ namespace CLI.Test
             CLITestHelper.Test("dependenciesNotLoadedInCorrectOrder_2", ReturnCode.Success);
         }
 
-
-
-
-        
-
-            [TestMethod]
+        [TestMethod]
 #if DOMAIN_CHECKER
-            [Ignore]//Because It will detect TypeDef Circularity two times.
+        [Ignore]//Because It will detect TypeDef Circularity two times.
 #endif
         public void TestCircularTypedef_1()
         {
             CLITestHelper.Test("CircularTypedef_1", ReturnCode.ParsingDiagnostics);
         }
-
 
         [TestMethod]
         public void TestEmptyDependency()
@@ -112,10 +102,8 @@ namespace CLI.Test
             var testFolderName = "empty_dependency_folder";
             Directory.CreateDirectory("ressources" + Path.DirectorySeparatorChar + testFolderName + Path.DirectorySeparatorChar +  "emptyFolder");
 
-            CLITestHelper.ReadConsoleWarnings(testFolderName, ReturnCode.Success);
+            CLITestHelper.ReadConsoleWarnings(testFolderName, ReturnCode.Warning);
         }
-
-
 
         /// <summary>
         /// Test that even with a execToStep>Preprocessor, then the parsing will halt on preprocessor phase because copy are missing
@@ -201,6 +189,7 @@ namespace CLI.Test
         {
             CLITestHelper.Test("outputSignature_1", ReturnCode.Warning);
             CLITestHelper.Test("outputSignature_2", ReturnCode.Success);
+            CLITestHelper.Test("outputSignature_3", ReturnCode.Success);
         }
 
 
@@ -273,6 +262,18 @@ namespace CLI.Test
         public void TestValueClauses()
         {
             CLITestHelper.Test("value_clauses", ReturnCode.Success);
+        }
+
+        /// <summary>
+        /// Test multiple files parsing.
+        /// </summary>
+        [TestMethod]
+        public void TestMassGeneration()
+        {
+            CLITestHelper.Test("mass_generation_all_programs_ok", ReturnCode.Success);
+            CLITestHelper.Test("mass_generation_one_program_is_ko", ReturnCode.ParsingDiagnostics);
+            CLITestHelper.Test("mass_generation_dependent_programs_1", ReturnCode.Success);
+            CLITestHelper.Test("mass_generation_dependent_programs_2", ReturnCode.ParsingDiagnostics);
         }
     }
 

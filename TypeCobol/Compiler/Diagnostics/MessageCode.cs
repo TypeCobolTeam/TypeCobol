@@ -28,7 +28,7 @@ namespace TypeCobol.Compiler.Diagnostics
         InvalidExponentInFloatingPointLiteral = 18,
         InvalidNumberOfCharsInHexaAlphaLiteral = 19,
         InvalidNumberOfCharsInHexaNationalLiteral = 20,
-        InvalidFirstCharForContinuationLine = 21,
+        InvalidDelimiterForContinuationLine = 21,
         InvalidFirstTwoCharsForContinuationLine = 22,
         AreaAOfContinuationLineMustBeBlank = 23,
         HyphenIndicatorNotPermittedInCommenEntries = 24,
@@ -53,5 +53,5 @@ namespace TypeCobol.Compiler.Diagnostics
         ErrorFormalizedCommentMissplaced = 43,
         MultiFormalizedCommentIndicatorMisused = 44,
         Info = 45
-	}
+    }
 }

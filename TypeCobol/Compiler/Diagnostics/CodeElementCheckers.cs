@@ -4,11 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Text;
 using TypeCobol.Tools;
 
 namespace TypeCobol.Compiler.Diagnostics
@@ -27,7 +30,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     DiagnosticUtils.AddError(data,
                         "Data name must be specified for any entry containing the EXTERNAL clause", external);
                 if (data.IsGlobal)
-                    DiagnosticUtils.AddError(data,
+                   DiagnosticUtils.AddError(data,
                         "Data name must be specified for any entry containing the GLOBAL clause", global);
             }
             else
@@ -42,6 +45,19 @@ namespace TypeCobol.Compiler.Diagnostics
                     DiagnosticUtils.AddError(data,
                         "Data must be declared between level 01 to 49, or equals to 66, 77, 88",
                         context?.dataNameDefinition());
+                }
+
+                //Retrieve VALUE token through context
+                var valueToken =
+                    (Token)context?.children.OfType<CodeElementsParser.ValueClauseContext>().SingleOrDefault()?.Start;
+
+                if (valueToken != null)
+                {
+                    //In Cobol reference format check that VALUE clause starts in Area B
+                    if (((CodeElementsLine)valueToken.TokensLine).ColumnsLayout == ColumnsLayout.CobolReferenceFormat &&
+                          DocumentFormat.GetTextAreaTypeInCobolReferenceFormat(valueToken) != TextAreaType.AreaB) {
+                        DiagnosticUtils.AddError(data, "VALUE clause must start in area B", valueToken);
+                    }
                 }
             }
         }

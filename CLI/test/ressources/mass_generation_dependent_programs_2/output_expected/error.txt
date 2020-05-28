@@ -1,0 +1,9 @@
+﻿ReturnCode=ParsingDiagnostics_
+2 errors in "input\DVZZPGM1.tcbl":
+Line 5[8,43] <30, Error, Semantics> - Semantic error: TYPE 'DVZZPGM2.Type1' is not referenced
+Line 7[33,36] <27, Error, Syntax> - Syntax error : Symbol str-message.var1 is not referenced
+3 errors in "input\DVZZPGM2.tcbl":
+Line 6[18,25] <27, Error, Syntax> - Syntax error : no viable alternative at input '01 ... typedef%'
+Line 6[40,40] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader}
+Line 1[8,28] <37, Warning, General> - Warning: "END PROGRAM" is missing.
+No error in "input\DVZZPGM3.tcbl".

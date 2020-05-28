@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Types;
 
@@ -18,7 +14,7 @@ namespace TypeCobol.Compiler.Symbols
         /// Named constructor
         /// </summary>
         /// <param name="name">The Index name</param>
-        public IndexSymbol(String name)
+        public IndexSymbol(string name)
             : base(name)
         {
             Kind = Kinds.Index;
@@ -31,7 +27,7 @@ namespace TypeCobol.Compiler.Symbols
         public VariableSymbol Indexed { get; set; }        
 
         public override string IndexedName => Indexed != null && Indexed.Name .Length != 0 ? Indexed.Name + "::" + Name : Name;
-        public override string IndexedOFName => Indexed != null && Indexed.Name.Length != 0 ? Name +  " OF " + Indexed.Name  : Name;
+        public override string IndexedOfName => Indexed != null && Indexed.Name.Length != 0 ? Name +  " OF " + Indexed.Name  : Name;
         public override string IndexedDotName => Indexed != null && Indexed.Name.Length != 0 ? Indexed.Name + '.' + Name : Name;
 
         public override Symbol LookupParentOfName(string name)
@@ -57,11 +53,11 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// When an IndexSymbol is normalized it IndexedSymbol must changed.
         /// </summary>
-        /// <param name="scope"></param>
-        internal override void NormalizeExpandedSymbol(Scope<VariableSymbol> scope)
+        /// <param name="domain"></param>
+        internal override void NormalizeExpandedSymbol(Domain<VariableSymbol> domain)
         {
-            base.NormalizeExpandedSymbol(scope);
-            Scope<VariableSymbol>.Entry entry = scope.Lookup(Indexed.Name);
+            base.NormalizeExpandedSymbol(domain);
+            Container<VariableSymbol>.Entry entry = domain.Lookup(Indexed.Name);
             System.Diagnostics.Debug.Assert(entry != null);
             System.Diagnostics.Debug.Assert(entry.Count == 1);
             Indexed = entry.Symbol;            

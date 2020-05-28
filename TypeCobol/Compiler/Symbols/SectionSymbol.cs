@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Scopes;
+﻿using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -12,16 +7,16 @@ namespace TypeCobol.Compiler.Symbols
     /// </summary>
     public class SectionSymbol : Symbol
     {
-        public SectionSymbol(String name)
+        public SectionSymbol(string name)
             : base(name, Kinds.Section)
         {
-            Paragraphs = new Scope<ParagraphSymbol>(this);
+            Paragraphs = new Domain<ParagraphSymbol>(this);
         }
 
         /// <summary>
         /// Paragraph scope of the Section.
         /// </summary>
-        public Scope<ParagraphSymbol> Paragraphs
+        public Domain<ParagraphSymbol> Paragraphs
         {
             get;
             protected set;

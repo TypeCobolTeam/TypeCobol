@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
@@ -41,18 +35,18 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         /// <summary>
-        /// Get the Toppest REDEFINES in case of REDEFINES OF REDEFINES suite.
+        /// Get the Top REDEFINES in case of REDEFINES OF REDEFINES suite.
         /// </summary>
-        public VariableSymbol ToppestRedefined => Redefined != null && Redefined.HasFlag(Flags.Redefines) ? ((RedefinesSymbol) Redefined).ToppestRedefined : Redefined;
+        public VariableSymbol TopRedefined => Redefined != null && Redefined.HasFlag(Flags.Redefines) ? ((RedefinesSymbol) Redefined).TopRedefined : Redefined;
 
         /// <summary>
         /// When a RedefinesSymbol is normalized it  Redefined Symbol must change.
         /// </summary>
-        /// <param name="scope"></param>
-        internal override void NormalizeExpandedSymbol(Scope<VariableSymbol> scope)
+        /// <param name="domain"></param>
+        internal override void NormalizeExpandedSymbol(Domain<VariableSymbol> domain)
         {
-            base.NormalizeExpandedSymbol(scope);
-            Scope<VariableSymbol>.Entry entry = scope.Lookup(Redefined.Name);
+            base.NormalizeExpandedSymbol(domain);
+            Container<VariableSymbol>.Entry entry = domain.Lookup(Redefined.Name);
             System.Diagnostics.Debug.Assert(entry != null);
             System.Diagnostics.Debug.Assert(entry.Count == 1);
             Redefined = entry.Symbol;            

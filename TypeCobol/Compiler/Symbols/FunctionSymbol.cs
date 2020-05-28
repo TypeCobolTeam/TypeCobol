@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Types;
-using Type = TypeCobol.Compiler.Types.Type;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -19,7 +13,7 @@ namespace TypeCobol.Compiler.Symbols
         /// Name constructor
         /// </summary>
         /// <param name="name">Function's name</param>
-        public FunctionSymbol(String name) : base(name)
+        public FunctionSymbol(string name) : base(name)
         {
             //Override the Kind here.
             base.Kind = Kinds.Function;
@@ -31,7 +25,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="name">Function's name</param>
         /// <param name="parameters">Function's paramaetrs</param>
         /// <param name="retVar">Function's return variable</param>
-        public FunctionSymbol(String name, List<VariableSymbol> parameters, VariableSymbol retVar)
+        public FunctionSymbol(string name, List<VariableSymbol> parameters, VariableSymbol retVar)
             : this(name, new FunctionType(parameters, retVar))
         {            
         }
@@ -41,7 +35,7 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="name">Function's name</param>
         /// <param name="funType">Function's type</param>
-        public FunctionSymbol(String name, FunctionType funType)
+        public FunctionSymbol(string name, FunctionType funType)
             : base(name)
         {
             this.FunctionType = funType;
@@ -68,15 +62,7 @@ namespace TypeCobol.Compiler.Symbols
         public FunctionType FunctionType
         {
             get => (FunctionType)base.Type;
-            set
-            {
-                //Enter Parameters in the Scope.
-                foreach (var param in value.Parameters)
-                {
-                    LinkageStorageData.EnterIfNotExist(param);
-                }
-                base.Type = value;                
-            }
+            set => base.Type = value;
         }
 
         /// <summary>

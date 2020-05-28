@@ -54,6 +54,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         }
 
+        public virtual void EndCobolCompilationUnit()
+        {
+
+        }
+
         public virtual void EndCobolProgram(ProgramEnd end)
         {
 
@@ -160,6 +165,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         }
 
         public virtual void EndJsonGenerateStatementConditional(JsonStatementEnd end = null)
+        {
+
+        }
+
+        public virtual void EndJsonParseStatementConditional(JsonStatementEnd end = null)
         {
 
         }
@@ -635,6 +645,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         }
 
         public virtual void StartJsonGenerateStatementConditional([NotNull] JsonGenerateStatement stmt)
+        {
+
+        }
+
+        public virtual void StartJsonParseStatementConditional([NotNull] JsonParseStatement stmt)
         {
 
         }

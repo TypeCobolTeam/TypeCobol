@@ -1,0 +1,25 @@
+      *TypeCobol_Version:0.1(alpha)
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Library.
+       data division.
+       working-storage section.                                               
+      %<<<
+        Formalized comment : Type VString
+        line 2
+      %>>>
+       01 VString typedef strict public.
+         05 len   pic S9(4) comp-5.
+         05 buf.
+           07  occurs 32760
+                      depending on len.
+              10 char    pic X.
+       PROCEDURE DIVISION.
+      %<<<
+        Description of procedure myProc
+        @Params:
+           - arg1 description of arg1
+      %>>>
+       declare procedure myProc public
+           input arg1 PIC 999.
+       end-declare.
+       END PROGRAM Library.

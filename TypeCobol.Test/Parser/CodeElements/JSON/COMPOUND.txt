@@ -83,3 +83,35 @@
 
 [[JsonStatementEnd]] [1,8:END-JSON]<END_JSON> --> [1,8:END-JSON]<END_JSON>
 
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [19,19:y]<UserDefinedWord>
+
+[[OnExceptionCondition]] [1,2:ON]<ON> --> [4,12:EXCEPTION]<EXCEPTION>
+
+[[DisplayStatement]] [14,20:display]<DISPLAY> --> [22,28+:"error"]<AlphanumericLiteral>(",Y,Y){error}
+- variables = "error"
+
+[[JsonStatementEnd]] [1,8:END-JSON]<END_JSON> --> [1,8:END-JSON]<END_JSON>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [19,19:y]<UserDefinedWord>
+
+[[NotOnExceptionCondition]] [1,3:NOT]<NOT> --> [5,13:EXCEPTION]<EXCEPTION>
+
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [23,31+:"success"]<AlphanumericLiteral>(",Y,Y){success}
+- variables = "success"
+
+[[JsonStatementEnd]] [1,8:END-JSON]<END_JSON> --> [1,8:END-JSON]<END_JSON>
+
+[[JsonParseStatement]] [1,4:JSON]<JSON> --> [19,19:y]<UserDefinedWord>
+
+[[OnExceptionCondition]] [1,2:ON]<ON> --> [4,12:EXCEPTION]<EXCEPTION>
+
+[[DisplayStatement]] [14,20:display]<DISPLAY> --> [22,28+:"error"]<AlphanumericLiteral>(",Y,Y){error}
+- variables = "error"
+
+[[NotOnExceptionCondition]] [1,3:NOT]<NOT> --> [5,13:EXCEPTION]<EXCEPTION>
+
+[[DisplayStatement]] [15,21:display]<DISPLAY> --> [23,31+:"success"]<AlphanumericLiteral>(",Y,Y){success}
+- variables = "success"
+
+[[JsonStatementEnd]] [1,8:END-JSON]<END_JSON> --> [1,8:END-JSON]<END_JSON>
+

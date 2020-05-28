@@ -1,0 +1,27 @@
+﻿       IDENTIFICATION DIVISION.    
+       PROGRAM-ID. DVZZBCO1.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      
+       01 Person TYPEDEF STRICT PUBLIC.
+           05 longName.
+                10 firstName PIC X(20).
+      
+       01 User TYPEDEF STRICT PUBLIC.
+           05 person    TYPE Person.
+      
+      
+       01 User TYPEDEF STRICT PUBLIC.
+           05 person    TYPE Person.
+      
+       01 user1         TYPE User.
+      
+      
+       PROCEDURE DIVISION.
+      *KO, variable user1::person::longName::firstName must no be 
+         *resolved because declaration of User is duplicate and "user1" 
+         *will not match a type
+           MOVE "John" TO user1::person::longName::firstName
+           .
+      
+       END PROGRAM DVZZBCO1.

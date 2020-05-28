@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Symbols;
+﻿using TypeCobol.Compiler.Symbols;
 using TypeCobol.Compiler.Types;
 using static TypeCobol.Compiler.Types.Type;
-using Type = TypeCobol.Compiler.Types.Type;
 
 namespace TypeCobol.Compiler.Domain.Validator
 {
@@ -18,15 +12,16 @@ namespace TypeCobol.Compiler.Domain.Validator
     ///     - both from and to have been encountered
     ///     - It build the resulting RenamesType.
     /// </summary>
-    public class RenamesValidator : Symbol.AbstractSymbolVisitor<bool, ProgramSymbol>
+    public class RenamesValidator : Symbol.AbstractSymbolVisitor<bool, object>
     {
+        private readonly RenamesSymbol _renamesSymbol;
         private readonly VariableSymbol _from;
         private readonly VariableSymbol _to;
         private readonly GroupType _containerType;
+        private int _index;
 
         public int FromIndex { get; private set; }
         public int ToIndex { get; private set; }
-        private int _index;
         public bool ContainsOccur { get; private set; }
         public Symbol OccurSymbol { get; private set; }
 
@@ -38,19 +33,24 @@ namespace TypeCobol.Compiler.Domain.Validator
         public bool IsValid => !ContainsOccur && FromSeen && ToSeen && FromIndex <= ToIndex;
 
         public bool FromSeen => FromIndex >= 0;
+
         public bool ToSeen => ToIndex >= 0;
 
-        public RenamesValidator(GroupType containerType, VariableSymbol from, VariableSymbol to = null)
+        public RenamesValidator(RenamesSymbol renamesSymbol, GroupType containerType, VariableSymbol from, VariableSymbol to = null)
         {
+            System.Diagnostics.Debug.Assert(renamesSymbol != null);
             System.Diagnostics.Debug.Assert(from != null);
+
+            this._renamesSymbol = renamesSymbol;
             this._containerType = containerType;
             this._from = from;
-            this._to = to??from;
+            this._to = to ?? from;
+
             FromIndex = ToIndex = -1;
             _index = 0;
         }
 
-        public override bool VisitSymbol(Symbol s, ProgramSymbol arg)
+        public override bool VisitSymbol(Symbol s, object arg)
         {
             if (FromSeen && ToSeen)
                 return true;//Stop every thing
@@ -77,9 +77,9 @@ namespace TypeCobol.Compiler.Domain.Validator
                     case Tags.Group:
                     {//Validate each Symbol in the Group
                         GroupType recType = (GroupType) s.Type;
-                        foreach (var field in recType.Scope)
+                        foreach (var field in recType.Fields)
                         {
-                            if (!field.Accept(this, arg))
+                            if (!field.Accept(this, null))
                                 result = false;
                         }
                     }
@@ -92,10 +92,10 @@ namespace TypeCobol.Compiler.Domain.Validator
             {//We can start building the renames type
                 if (this.Type == null)
                 {
-                    this.Type = new RenamesType(null, _containerType, _from, _to);
+                    this.Type = new RenamesType(_renamesSymbol, _containerType, _from, _to);
                 }
 
-                this.Type.Scope.Enter((VariableSymbol)s);
+                this.Type.Fields.Enter((VariableSymbol)s);
             }
             return result;
         }

@@ -13,7 +13,6 @@ using TypeCobol.Compiler.Preprocessor.Generated;
 using TypeCobol.Compiler.Scanner;
 using Antlr4.Runtime.Misc;
 using TypeCobol.Tools;
-using Analytics;
 
 namespace TypeCobol.Compiler.Preprocessor
 {

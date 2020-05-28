@@ -14,6 +14,7 @@ namespace TypeCobol.Server {
     class Server {
         static int Main(string[] argv)
         {
+
             bool help = false;
             bool version = false;
 
@@ -23,7 +24,7 @@ namespace TypeCobol.Server {
             var p = new OptionSet();
 
             //Add custom options for CLI
-            p.Add(string.Format("USAGE\n {0} [OPTIONS]... [PIPENAME]\n VERSION:\n {1} \n DESCRIPTION: \n Run the TypeCObol parser server", PROGNAME, PROGVERSION));
+            p.Add(string.Format("USAGE\n {0} [OPTIONS]... [PIPENAME]\n VERSION:\n {1} \n DESCRIPTION: \n Run the TypeCobol parser server", PROGNAME, PROGVERSION));
             p.Add("h|help", "Output a usage message and exit.", v => help = (v != null));
             p.Add("V|version", "Output the version number of " + PROGNAME + " and exit.", v => version = (v != null));
             p.Add("1|once", "Parse one set of files and exit. DEPRECATED : CLI always uses Once mode so the option is not evaluated.", v => {});
