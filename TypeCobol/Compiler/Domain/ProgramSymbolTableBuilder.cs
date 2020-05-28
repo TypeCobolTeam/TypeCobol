@@ -848,11 +848,28 @@ namespace TypeCobol.Compiler.Domain
 
             //Section flag
             if (CurrentDataDivisionSection != null)
-            {
                 sym.SetFlag(CurrentDataDivisionSection.Flag, true);
-            }
 
-            //Global variable ?
+            //Apply flags read from Node
+            if (dataDef.IsJustified)
+                sym.SetFlag(Symbol.Flags.Justified, true);
+            if (dataDef.IsGroupUsageNational)
+                sym.SetFlag(Symbol.Flags.GroupUsageNational, true);
+            if (dataDef.SignIsSeparate)
+                sym.SetFlag(Symbol.Flags.SeparateSign, true);
+            switch (dataDef.SignPosition)
+            {
+                case SignPosition.Leading:
+                    sym.SetFlag(Symbol.Flags.LeadingSign, true);
+                    break;
+                case SignPosition.Trailing:
+                    sym.SetFlag(Symbol.Flags.TrailingSign, true);
+                    break;
+            }
+            if (dataDef.IsSynchronized)
+                sym.SetFlag(Symbol.Flags.Sync, true);
+
+            //Set level and other flags: Global, BlankWhenZero and External are read from CodeElement
             if (dataDef.CodeElement != null)
             {
                 switch (dataDef.CodeElement.Type)
@@ -860,13 +877,15 @@ namespace TypeCobol.Compiler.Domain
                     case CodeElementType.DataConditionEntry:
                     {
                         sym.Level = 88;
+                        //Does the variable inherits from parent its Global flag ?
                         if (currentDomain.Owner.Kind != Symbol.Kinds.Program && currentDomain.Owner.Kind != Symbol.Kinds.Function)
-                            sym.SetFlag(currentDomain.Owner.Flag & Symbol.Flags.Global , currentDomain.Owner.HasFlag(Symbol.Flags.Global));
+                            sym.SetFlag(currentDomain.Owner.Flag & Symbol.Flags.Global, currentDomain.Owner.HasFlag(Symbol.Flags.Global));
                     }
                         break;
                     case CodeElementType.DataRenamesEntry:
                     {
                         sym.Level = 66;
+                        //Does the variable inherits from parent its Global flag ?
                         if (currentDomain.Owner.Kind != Symbol.Kinds.Program && currentDomain.Owner.Kind != Symbol.Kinds.Function)
                             sym.SetFlag(currentDomain.Owner.Flag & Symbol.Flags.Global, currentDomain.Owner.HasFlag(Symbol.Flags.Global));
                     }
@@ -874,36 +893,24 @@ namespace TypeCobol.Compiler.Domain
                     case CodeElementType.DataDescriptionEntry:
                     case CodeElementType.DataRedefinesEntry:
                     {
-                        CommonDataDescriptionAndDataRedefines dataDescEntry =
-                            (CommonDataDescriptionAndDataRedefines)dataDef.CodeElement;                            
-                        sym.Level = dataDescEntry.LevelNumber != null ? (int)dataDescEntry.LevelNumber.Value : 0;
-                        sym.IsFiller = dataDescEntry.IsFiller;
-                        if (dataDescEntry.IsGlobal || currentDomain.Owner.HasFlag(Symbol.Flags.Global))
+                        var dataDescOrRedefines = (CommonDataDescriptionAndDataRedefines) dataDef.CodeElement;
+                        sym.Level = dataDescOrRedefines.LevelNumber != null ? (int) dataDescOrRedefines.LevelNumber.Value : 0;
+                        sym.IsFiller = dataDescOrRedefines.IsFiller;
+
+                        //Global flag explicitly set or inherited
+                        if (dataDescOrRedefines.IsGlobal || currentDomain.Owner.HasFlag(Symbol.Flags.Global))
                         {
                             sym.SetFlag(Symbol.Flags.Global, true);
                         }
 
-                        //Other interesting flags that apply to a symbol.
-                        if (dataDescEntry.IsBlankWhenZero != null && dataDescEntry.IsBlankWhenZero.Value)
+                        //BlankWhenZero flag
+                        if (dataDescOrRedefines.IsBlankWhenZero != null && dataDescOrRedefines.IsBlankWhenZero.Value)
                             sym.SetFlag(Symbol.Flags.BlankWhenZero, true);
-                        if (dataDescEntry.IsJustified != null && dataDescEntry.IsJustified.Value)
-                            sym.SetFlag(Symbol.Flags.Justified, true);
-                        if (dataDescEntry.IsGroupUsageNational != null && dataDescEntry.IsGroupUsageNational.Value)
-                            sym.SetFlag(Symbol.Flags.GroupUsageNational, true);
-                        if (dataDescEntry.SignIsSeparate != null && dataDescEntry.SignIsSeparate.Value)
-                            sym.SetFlag(Symbol.Flags.SeparateSign, true);
-                        if (dataDescEntry.SignPosition != null)
+
+                        //External flag
+                        if (dataDescOrRedefines.Type == CodeElementType.DataDescriptionEntry)
                         {
-                            if (dataDescEntry.SignPosition.Value == SignPosition.Leading)
-                                sym.SetFlag(Symbol.Flags.LeadingSign, true);
-                            if (dataDescEntry.SignPosition.Value == SignPosition.Trailing)
-                                sym.SetFlag(Symbol.Flags.TrailingSign, true);
-                        }
-                        if (dataDescEntry.IsSynchronized != null && dataDescEntry.IsSynchronized.Value)
-                            sym.SetFlag(Symbol.Flags.Sync, true);
-                        if (dataDef.CodeElement.Type == CodeElementType.DataDescriptionEntry)
-                        {
-                            DataDescriptionEntry dataDesc = (DataDescriptionEntry) dataDef.CodeElement;
+                            DataDescriptionEntry dataDesc = (DataDescriptionEntry) dataDescOrRedefines;
                             if (dataDesc.IsExternal)
                                 sym.SetFlag(Symbol.Flags.External, true);
                         }
