@@ -1421,6 +1421,10 @@ namespace TypeCobol.Analysis.Cfg
                     }
                     StoreProcedureSentenceBlocks(p, throughProcedureSymbol, group, clonedBlockIndexMap);
                 }
+                else
+                {
+                    StoreProcedureSentenceBlocks(p, procedureSymbol, group, clonedBlockIndexMap);
+                }
             }
             else
             {
