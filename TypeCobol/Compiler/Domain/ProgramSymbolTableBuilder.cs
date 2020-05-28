@@ -138,8 +138,12 @@ namespace TypeCobol.Compiler.Domain
             System.Diagnostics.Debug.Assert(CurrentNode != null);
             System.Diagnostics.Debug.Assert(object.ReferenceEquals(CurrentNode.CodeElement, programIdentification));
 
-            //Create the program, its type will be created after collecting parameters and return variable
-            var program  = new ProgramSymbol(programIdentification.ProgramName.Name);
+            //Create the program
+            var program = new ProgramSymbol(programIdentification.ProgramName.Name)
+                          {
+                              //Set empty ScopeType for now, the parameters and return variable will be resolved later
+                              Type = new ScopeType(new List<VariableSymbol>(), null)
+                          };
             if (this.CurrentProgram == null)
             {
                 //This is the main program or a stacked program.
@@ -240,74 +244,6 @@ namespace TypeCobol.Compiler.Domain
         public override void EndLinkageSection()
         {
             CurrentDataDivisionSection = null;
-        }
-
-        /// <summary>
-        /// Resolve in the current program linkage section, the given parameter.
-        /// </summary>
-        /// <param name="p">The parameter to resolve.</param>
-        /// <returns>The resolved variable if any, null otherwise</returns>
-        private VariableSymbol ResolveUsingParameter(CallTargetParameter p)
-        {
-            System.Diagnostics.Debug.Assert(p.StorageArea != null);
-            System.Diagnostics.Debug.Assert(p.StorageArea.SymbolReference != null);
-            string parameterName = p.StorageArea.SymbolReference.Name;
-            var parameterCandidateSymbols = this.CurrentProgram.LinkageData.Lookup(parameterName);
-            if (parameterCandidateSymbols != null && parameterCandidateSymbols.Count == 1)
-            {
-                var parameterSymbol = parameterCandidateSymbols.Symbol;
-                if (p.SharingMode == null)
-                    parameterSymbol.SetFlag(Symbol.Flags.ByReference, true);
-                else
-                    switch (p.SharingMode.Value)
-                    {
-                        case ParameterSharingMode.ByContent:
-                            parameterSymbol.SetFlag(Symbol.Flags.ByContent, true);
-                            break;
-                        case ParameterSharingMode.ByReference:
-                            parameterSymbol.SetFlag(Symbol.Flags.ByReference, true);
-                            break;
-                        case ParameterSharingMode.ByValue:
-                            parameterSymbol.SetFlag(Symbol.Flags.ByValue, true);
-                            break;
-                    }
-
-                return parameterSymbol;
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Starting a Program PROCEDURE DIVISION => Collect all parameters.
-        /// </summary>
-        /// <param name="header"></param>
-        public override void StartProcedureDivision(ProcedureDivisionHeader header)
-        {
-            System.Diagnostics.Debug.Assert(CurrentProgram != null);
-
-            //Collect parameters and return variable and create the type for current program
-            List<VariableSymbol> usings = new List<VariableSymbol>();
-            IList<CallTargetParameter> usingParams = header.UsingParameters;
-            if (usingParams != null)
-            {
-                foreach (var p in usingParams)
-                {
-                    var parameterSymbol = ResolveUsingParameter(p);
-                    if (parameterSymbol != null)
-                    {
-                        usings.Add(parameterSymbol);
-                    }
-                }
-            }
-            CallTargetParameter retParam = header.ReturningParameter;
-            VariableSymbol returnVar = null;
-            if (retParam != null)
-            {
-                returnVar = ResolveUsingParameter(retParam);
-            }
-
-            CurrentProgram.Type = new ScopeType(usings, returnVar);
         }
 
         /// <summary>

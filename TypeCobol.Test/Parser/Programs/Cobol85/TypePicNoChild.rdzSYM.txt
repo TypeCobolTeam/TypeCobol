@@ -7,6 +7,8 @@ Line 101[14,17] <27, Error, Syntax> - Syntax error : Group item var3 cannot have
 
 --- Program ---
 DVZF0OSM (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ScopeType, Tag=Scope)
 WorkingStorageData:
   var1 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
