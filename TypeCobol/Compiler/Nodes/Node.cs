@@ -7,6 +7,7 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Symbols;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Tools;
 
@@ -43,6 +44,23 @@ namespace TypeCobol.Compiler.Nodes {
 
         [CanBeNull]
         protected abstract CodeElement InternalCodeElement {  get;}
+
+        /// <summary>
+        /// The Semantic data of this Node which is the Symbol instance associated to it.
+        /// </summary>
+        private Symbol _semanticData;
+        public virtual Symbol SemanticData
+        {
+            get => _semanticData;
+            set
+            {
+                _semanticData = value;
+                if (value != null)
+                {
+                    _semanticData.TargetNode = this;
+                }
+            }
+        }
 
         /// <summary>Parent node (weakly-typed)</summary>
         public Node Parent { get; private set; }
@@ -864,6 +882,18 @@ namespace TypeCobol.Compiler.Nodes {
 
             return searchedElem;
         }
+
+        /// <summary>
+        /// Stores VariableSymbol for each read StorageArea of this Node.
+        /// This dictionary is set and populated only by the CrossChecker.
+        /// </summary>
+        public Dictionary<StorageArea, VariableSymbol> StorageAreaReadsSymbol { get; set; }
+
+        /// <summary>
+        /// Stores VariableSymbol for each written StorageArea of this Node.
+        /// This dictionary is set and populated only by the CrossChecker.
+        /// </summary>
+        public Dictionary<StorageArea, VariableSymbol> StorageAreaWritesSymbol { get; set; }
 
         /// <summary>
         /// Clone the children of this node by creating a new list of Nodes.
