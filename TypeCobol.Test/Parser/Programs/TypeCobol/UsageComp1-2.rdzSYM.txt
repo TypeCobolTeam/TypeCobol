@@ -1,0 +1,83 @@
+--- Diagnostics ---
+Line 5[11,16] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1 and COMP-2 cannot have a PICTURE OffendingSymbol=[11,16:MyVar1]<UserDefinedWord>
+Line 6[11,16] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1 and COMP-2 cannot have a PICTURE OffendingSymbol=[11,16:MyVar2]<UserDefinedWord>
+Line 12[21,25] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1 and COMP-2 cannot have a PICTURE OffendingSymbol=[21,25:var23]<UserDefinedWord>
+Line 13[21,25] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1 and COMP-2 cannot have a PICTURE OffendingSymbol=[21,25:var24]<UserDefinedWord>
+
+--- Program ---
+DVZF0OSM (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ScopeType, Tag=Scope)
+WorkingStorageData:
+  MyVar1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Usage: Comp1
+    Picture: 9(5)
+  Level: 1
+  IsFiller: False
+  MyVar2 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Usage: Comp2
+    Picture: 9(5)
+  Level: 1
+  IsFiller: False
+Functions:
+  KONotCorrectFormat (.NET Type=FunctionSymbol, Kind=Function)
+  Flags: [Private]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=ScopeType, Tag=Scope)
+    Parameters: [DVZF0OSM::KONotCorrectFormat::var21, DVZF0OSM::KONotCorrectFormat::var22, DVZF0OSM::KONotCorrectFormat::var23, DVZF0OSM::KONotCorrectFormat::var24, DVZF0OSM::KONotCorrectFormat::var25]
+  LinkageData:
+    var21 (.NET Type=VariableSymbol, Kind=Variable)
+    Flags: [LINKAGE, Input, Parameter]
+    Owner: DVZF0OSM::KONotCorrectFormat
+    Type:
+      (.NET Type=PictureType, Tag=Picture)
+      Picture: S(1)9(5)
+    Level: 1
+    IsFiller: False
+    var22 (.NET Type=VariableSymbol, Kind=Variable)
+    Flags: [LINKAGE, Input, Parameter]
+    Owner: DVZF0OSM::KONotCorrectFormat
+    Type:
+      (.NET Type=PictureType, Tag=Picture)
+      Usage: Comp
+      Picture: S(1)9(6)
+    Level: 1
+    IsFiller: False
+    var23 (.NET Type=VariableSymbol, Kind=Variable)
+    Flags: [LINKAGE, Input, Parameter]
+    Owner: DVZF0OSM::KONotCorrectFormat
+    Type:
+      (.NET Type=PictureType, Tag=Picture)
+      Usage: Comp1
+      Picture: S(1)9(7)
+    Level: 1
+    IsFiller: False
+    var24 (.NET Type=VariableSymbol, Kind=Variable)
+    Flags: [LINKAGE, Input, Parameter]
+    Owner: DVZF0OSM::KONotCorrectFormat
+    Type:
+      (.NET Type=PictureType, Tag=Picture)
+      Usage: Comp2
+      Picture: S(1)9(8)
+    Level: 1
+    IsFiller: False
+    var25 (.NET Type=VariableSymbol, Kind=Variable)
+    Flags: [LINKAGE, Input, Parameter]
+    Owner: DVZF0OSM::KONotCorrectFormat
+    Type:
+      (.NET Type=PictureType, Tag=Picture)
+      Usage: Comp5
+      Picture: 9(10)
+    Level: 1
+    IsFiller: False
+IsNested: False
+
