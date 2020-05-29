@@ -10,7 +10,6 @@ Line 22[26,29] <30, Error, Semantics> - Semantic error: Symbol var1 is not refer
 
 --- Program ---
 MyPGM (.NET Type=ProgramSymbol, Kind=Program)
-Flags: [NeedTypeCompletion]
 Type:
   (.NET Type=ScopeType, Tag=Scope)
 Types:

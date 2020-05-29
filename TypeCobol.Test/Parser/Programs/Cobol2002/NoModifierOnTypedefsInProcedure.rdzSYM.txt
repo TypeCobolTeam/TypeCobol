@@ -20,7 +20,7 @@ Functions:
     (.NET Type=ScopeType, Tag=Scope)
   Types:
     type1 (.NET Type=TypedefSymbol, Kind=Typedef)
-    Flags: [Public, WORKING_STORAGE, InsideTypedef]
+    Flags: [Public, WORKING_STORAGE, Weak, InsideTypedef]
     Owner: DVZFSCT0::Proc1
     Type:
       (.NET Type=TypedefType, Tag=Typedef)
@@ -42,7 +42,7 @@ Functions:
     Level: 1
     IsFiller: False
     type2 (.NET Type=TypedefSymbol, Kind=Typedef)
-    Flags: [Private, WORKING_STORAGE, InsideTypedef]
+    Flags: [Private, WORKING_STORAGE, Weak, InsideTypedef]
     Owner: DVZFSCT0::Proc1
     Type:
       (.NET Type=TypedefType, Tag=Typedef)
@@ -64,7 +64,7 @@ Functions:
     Level: 1
     IsFiller: False
     type3 (.NET Type=TypedefSymbol, Kind=Typedef)
-    Flags: [Global, WORKING_STORAGE, InsideTypedef]
+    Flags: [Global, WORKING_STORAGE, Weak, InsideTypedef]
     Owner: DVZFSCT0::Proc1
     Type:
       (.NET Type=TypedefType, Tag=Typedef)
@@ -97,7 +97,7 @@ Programs:
       (.NET Type=ScopeType, Tag=Scope)
     Types:
       type4 (.NET Type=TypedefSymbol, Kind=Typedef)
-      Flags: [Public, WORKING_STORAGE, InsideTypedef]
+      Flags: [Public, WORKING_STORAGE, Weak, InsideTypedef]
       Owner: DVZFSCT0::Nested::Proc2
       Type:
         (.NET Type=TypedefType, Tag=Typedef)
@@ -119,7 +119,7 @@ Programs:
       Level: 1
       IsFiller: False
       type5 (.NET Type=TypedefSymbol, Kind=Typedef)
-      Flags: [Private, WORKING_STORAGE, InsideTypedef]
+      Flags: [Private, WORKING_STORAGE, Weak, InsideTypedef]
       Owner: DVZFSCT0::Nested::Proc2
       Type:
         (.NET Type=TypedefType, Tag=Typedef)
@@ -141,7 +141,7 @@ Programs:
       Level: 1
       IsFiller: False
       type6 (.NET Type=TypedefSymbol, Kind=Typedef)
-      Flags: [Global, WORKING_STORAGE, InsideTypedef]
+      Flags: [Global, WORKING_STORAGE, Weak, InsideTypedef]
       Owner: DVZFSCT0::Nested::Proc2
       Type:
         (.NET Type=TypedefType, Tag=Typedef)
@@ -176,7 +176,7 @@ Functions:
     (.NET Type=ScopeType, Tag=Scope)
   Types:
     type7 (.NET Type=TypedefSymbol, Kind=Typedef)
-    Flags: [Public, WORKING_STORAGE, InsideTypedef]
+    Flags: [Public, WORKING_STORAGE, Weak, InsideTypedef]
     Owner: Stacked::Proc3
     Type:
       (.NET Type=TypedefType, Tag=Typedef)
@@ -198,7 +198,7 @@ Functions:
     Level: 1
     IsFiller: False
     type8 (.NET Type=TypedefSymbol, Kind=Typedef)
-    Flags: [Private, WORKING_STORAGE, InsideTypedef]
+    Flags: [Private, WORKING_STORAGE, Weak, InsideTypedef]
     Owner: Stacked::Proc3
     Type:
       (.NET Type=TypedefType, Tag=Typedef)
@@ -220,7 +220,7 @@ Functions:
     Level: 1
     IsFiller: False
     type9 (.NET Type=TypedefSymbol, Kind=Typedef)
-    Flags: [Global, WORKING_STORAGE, InsideTypedef]
+    Flags: [Global, WORKING_STORAGE, Weak, InsideTypedef]
     Owner: Stacked::Proc3
     Type:
       (.NET Type=TypedefType, Tag=Typedef)

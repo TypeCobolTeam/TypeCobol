@@ -452,11 +452,27 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             DataDescriptionEntry dataDescriptionEntry = dataDescription.CodeElement;
 
-            var levelNumber = dataDescriptionEntry.LevelNumber;
             //Check if the DataDescription is an empty group
-            if (levelNumber != null && dataDescription.IsDataDescriptionGroup && dataDescription.ChildrenCount == 0)
+            if (dataDescriptionEntry.LevelNumber != null && dataDescription.IsDataDescriptionGroup && dataDescription.ChildrenCount == 0)
             {
-                DiagnosticUtils.AddError(dataDescription, "A group item cannot be empty.", dataDescriptionEntry);
+                //Get current node index
+                var nodeIndex = dataDescription.Parent.IndexOf(dataDescription);
+                //Get sibling nodes
+                var siblingNodes = dataDescription.Parent.Children;
+                //Check if next node is inside a copy when this isn't the last node
+                if (siblingNodes.Count > nodeIndex + 1 && siblingNodes[nodeIndex + 1].IsInsideCopy())
+                {
+                    //Get next sibling node
+                    var nextSibling = siblingNodes[nodeIndex + 1];
+                    DiagnosticUtils.AddError(dataDescription, $"Cannot include copy {nextSibling.CodeElement?.FirstCopyDirective.TextName} " +
+                                                              $"under level {dataDescriptionEntry.LevelNumber} " +
+                                                              $"because copy starts at level {((DataDescription)nextSibling).CodeElement.LevelNumber}.", dataDescriptionEntry);
+                }
+                //Last node so this is an empty group item
+                else
+                {
+                    DiagnosticUtils.AddError(dataDescription, "A group item cannot be empty.", dataDescriptionEntry);
+                }
             }
 
             return true;
@@ -614,9 +630,16 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (!isReadStorageArea && node.SymbolTable.CurrentScope == SymbolTable.Scope.Function)
                 {
                     var paramDesc = (dataDefinitionPath?.CurrentDataDefinition ?? dataDefinitionFound) as ParameterDescription;
+                    //Check if we're dealing with an input parameter
                     if (paramDesc?.PassingType == ParameterDescription.PassingTypes.Input)
                     {
-                        DiagnosticUtils.AddError(node, "Input variable '" + paramDesc.Name + "' is modified by an instruction", area.SymbolReference);
+                        var specialRegister = storageArea as StorageAreaPropertySpecialRegister;
+                        //Unless this is a format 5 set statement, we have an error. So we're checking we're not in the following format  :
+                        //set (address of)? identifier(pointer) TO (address of)? identifier | NULL
+                        if (specialRegister?.SpecialRegisterName.TokenType != TokenType.ADDRESS)
+                        {
+                            DiagnosticUtils.AddError(node, "Input variable '" + paramDesc.Name + "' is modified by an instruction", area.SymbolReference);
+                        }
                     }
                 }
 

@@ -58,7 +58,7 @@ namespace TypeCobol.Compiler.Symbols
             //-------------------------------------------------
 
             //Symbols Modifiers that have Type Equality impact
-            //along with PICTURE and and USAGE.
+            //along with PICTURE and USAGE.
             BlankWhenZero = 0x01L << 23,
             DynamicLength = 0x01L << 24,
             Justified = 0x01L << 25,
@@ -68,37 +68,16 @@ namespace TypeCobol.Compiler.Symbols
             Sync = 0x01L << 29, //May be SYNC LEFT or SYNC RIGHT
             //-------------------------------------------------
 
-            Conditions = 0x01L << 30,
-            Renames = 0x01L << 31,
-            Redefines = 0x01L << 32,
-            HasATypedefType = 0x01L << 33,//The symbol has a type that comes from a TypeDef.
-            Parameter = 0x01L << 34,//This a parameter variable.
-            Returning = 0x01L << 35,//A Return variable.
-            BuiltinType = 0x01L << 36,//This is a Builtin Type.
-            InsideTypedef = 0x01L << 37,//Flag of any symbol inside a Typedef definition.
-            SymbolExpanded = 0x01L << 38,//Flag of a symbol that have been expanded, used for variables and programs.
-            NeedTypeCompletion = 0x01L << 39,//For a program that need type Completion, a pure COBOL Program does not need type completion (No TYPEDEF).
-            BuiltinSymbol = 0x01L << 40, //This is a Builtin symbol.
-
-            //Flags for cyclic typedefs
-            CheckedForCycles = 0x01L << 41,
-            IsCyclic = 0x01L << 42,
-
-            //For symbols loaded from intrinsic files
-            IntrinsicSymbol = 0x01L << 43,
-
+            Redefines = 0x01L << 30,
+            HasATypedefType = 0x01L << 31,//The symbol has a type that comes from a TypeDef.
+            Parameter = 0x01L << 32,//This a parameter variable.
+            Returning = 0x01L << 33,//A Return variable.
+            BuiltinType = 0x01L << 34,//This is a Builtin Type.
+            InsideTypedef = 0x01L << 35,//Flag of any symbol inside a Typedef definition.
+            BuiltinSymbol = 0x01L << 36, //This is a Builtin symbol.
+            
             //Etc... (Max = 0x01L << 62)
         }
-
-        /// <summary>
-        /// Variable section mask.
-        /// </summary>
-        internal const Flags SectionMask = Flags.GLOBAL_STORAGE | Flags.WORKING_STORAGE | Flags.LINKAGE | Flags.FILE | Flags.LOCAL_STORAGE;
-
-        /// <summary>
-        /// The Visibility mask that a symbol can take.
-        /// </summary>
-        internal const Flags SymbolVisibilityMask = Flags.Public | Flags.Private | Flags.Global;
 
         /// <summary>
         /// Named constructor
@@ -236,12 +215,6 @@ namespace TypeCobol.Compiler.Symbols
         }
 
         public SemanticKinds SemanticKind => SemanticKinds.Symbol;
-
-        /// <summary>
-        /// Determines if this symbol cans be seen as a Scope.
-        /// </summary>
-        public bool HasScope => Kind == Kinds.Root || Kind == Kinds.Namespace || Kind == Kinds.Program ||
-                                Kind == Kinds.Function;
 
         public virtual object Clone()
         {

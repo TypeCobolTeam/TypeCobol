@@ -5,6 +5,9 @@
        01 Person typedef strict public.
           05 LastName  pic X(80).
           05 FirstName pic X(80).
+          05 CAddress.
+             10 AddressTab occurs 5 indexed by AdrIdx.
+                15 AdressLine    pic X(50).
        01 myPerson type Person.
        01 myName PIC X(20) VALUE "mammouth".
        01 myNbr  PIC 99 VALUE 20.
@@ -21,14 +24,19 @@
            output IsOk Type Bool.
        DATA DIVISION.
        Working-Storage Section.
+       01 personPtr          PIC X(16).
        PROCEDURE DIVISION.
-           move "ppp" TO pperson::LastName
-           move "ppp" TO LastName
+           move "ppp" to pperson::LastName
+           move "ppp" to LastName
            move "ggg" to pname
-           move "hh" to PName
-           move "jj" to firstnAme OF PPErson
-           move 30 to pnbr
-           SET IsOk TO True
+           move "hh"  to PName
+           move "jj"  to firstName of pperson
+           move 30    to pnbr
+           Set IsOk   to true
+      *ok pperson is not modified
+           Set address of pperson to address of personPtr
+      *ko pperson is modified
+           Set pperson::CAddress::AddressTab::AdrIdx    to 1
            .
        END-DECLARE.
       
@@ -75,4 +83,3 @@
                  call Foo input myvar1
            GOBACK.
        END PROGRAM Pgm.
-      

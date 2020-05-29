@@ -138,8 +138,12 @@ namespace TypeCobol.Compiler.Domain
             System.Diagnostics.Debug.Assert(CurrentNode != null);
             System.Diagnostics.Debug.Assert(object.ReferenceEquals(CurrentNode.CodeElement, programIdentification));
 
-            //Create the program, its type will be created after collecting parameters and return variable
-            var program  = new ProgramSymbol(programIdentification.ProgramName.Name);
+            //Create the program
+            var program = new ProgramSymbol(programIdentification.ProgramName.Name)
+                          {
+                              //Set empty ScopeType for now, the parameters and return variable will be resolved later
+                              Type = new ScopeType(new List<VariableSymbol>(), null)
+                          };
             if (this.CurrentProgram == null)
             {
                 //This is the main program or a stacked program.
@@ -243,92 +247,6 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Resolve in the current program linkage section, the given parameter.
-        /// </summary>
-        /// <param name="p">The parameter to resolve.</param>
-        /// <returns>The resolved variable if any, null otherwise</returns>
-        private VariableSymbol ResolveUsingParameter(CallTargetParameter p)
-        {
-            System.Diagnostics.Debug.Assert(p.StorageArea != null);
-            System.Diagnostics.Debug.Assert(p.StorageArea.SymbolReference != null);
-            string parameterName = p.StorageArea.SymbolReference.Name;
-            var parameterCandidateSymbols = this.CurrentProgram.LinkageData.Lookup(parameterName);
-            if (parameterCandidateSymbols != null)
-            {
-                System.Diagnostics.Debug.Assert(parameterCandidateSymbols.Count == 1);
-                var parameterSymbol = parameterCandidateSymbols.Symbol;
-                if (p.SharingMode == null)
-                    parameterSymbol.SetFlag(Symbol.Flags.ByReference, true);
-                else
-                    switch (p.SharingMode.Value)
-                    {
-                        case ParameterSharingMode.ByContent:
-                            parameterSymbol.SetFlag(Symbol.Flags.ByContent, true);
-                            break;
-                        case ParameterSharingMode.ByReference:
-                            parameterSymbol.SetFlag(Symbol.Flags.ByReference, true);
-                            break;
-                        case ParameterSharingMode.ByValue:
-                            parameterSymbol.SetFlag(Symbol.Flags.ByValue, true);
-                            break;
-                    }
-
-                if (p.PassingDirection != null)
-                    switch (p.PassingDirection.Value)
-                    {
-                        case ParameterPassingDirection.Input:
-                            parameterSymbol.SetFlag(Symbol.Flags.Input, true);
-                            break;
-                        case ParameterPassingDirection.Output:
-                            parameterSymbol.SetFlag(Symbol.Flags.Output, true);
-                            break;
-                        case ParameterPassingDirection.InOut:
-                            parameterSymbol.SetFlag(Symbol.Flags.Inout, true);
-                            break;
-                        case ParameterPassingDirection.Returning:
-                            parameterSymbol.SetFlag(Symbol.Flags.Returning, true);
-                            break;
-                    }
-
-                return parameterSymbol;
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Starting a Program PROCEDURE DIVISION => Collect all parameters.
-        /// </summary>
-        /// <param name="header"></param>
-        public override void StartProcedureDivision(ProcedureDivisionHeader header)
-        {
-            System.Diagnostics.Debug.Assert(CurrentProgram != null);
-
-            //Collect parameters and return variable and create the type for current program
-            List<VariableSymbol> usings = new List<VariableSymbol>();
-            IList<CallTargetParameter> usingParams = header.UsingParameters;
-            if (usingParams != null)
-            {
-                foreach (var p in usingParams)
-                {
-                    var parameterSymbol = ResolveUsingParameter(p);
-                    if (parameterSymbol != null)
-                    {
-                        usings.Add(parameterSymbol);
-                    }
-                }
-            }
-            CallTargetParameter retParam = header.ReturningParameter;
-            VariableSymbol returnVar = null;
-            if (retParam != null)
-            {
-                returnVar = ResolveUsingParameter(retParam);
-            }
-
-            CurrentProgram.Type = new ScopeType(usings, returnVar);
-        }
-
-        /// <summary>
         /// Start a Function Declaration
         /// </summary>
         /// <param name="header"></param>
@@ -415,24 +333,6 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Checks if the given DataDefinition instance has a single Usage definition.
-        /// </summary>
-        /// <param name="dataDef">The Data Definition to be checked.</param>
-        /// <param name="dataUsage">The DataUsage if it has a single usage definition, None otherwise.</param>
-        /// <returns>True if it has a single usage definition, False otherwise.</returns>
-        private static bool HasSingleUsageDefinition(DataDefinition dataDef, out DataUsage dataUsage)
-        {
-            if (dataDef.Picture == null && dataDef.Usage.HasValue)
-            {
-                dataUsage = dataDef.Usage.Value;
-                return dataUsage != DataUsage.None;
-            }
-
-            dataUsage = DataUsage.None;
-            return false;
-        }
-
-        /// <summary>
         /// Checks if the given DataDefinition is a Type Definition
         /// </summary>
         /// <param name="dataDef">The Data Definition to be checked</param>
@@ -469,16 +369,14 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Create the Usage type corresponding to a DataUsage.
+        /// Create the Usage type corresponding to a UsageFormat.
         /// </summary>
-        /// <param name="dataUsage">The DataUsage to create the usage type.</param>
-        /// <returns>The usage type</returns>
-        private static Type CreateUsageType(DataUsage dataUsage)
+        /// <param name="usage">The UsageFormat to create the usage type, expected to be different from None.</param>
+        /// <returns>The corresponding usage type.</returns>
+        private static Type CreateUsageType(Type.UsageFormat usage)
         {
-            System.Diagnostics.Debug.Assert(dataUsage != DataUsage.None);
-            Type.UsageFormat usage = Type.DataUsage2UsageFormat(dataUsage);
-            Type type = Builtins.GetUsageType(usage);
-            return type;
+            System.Diagnostics.Debug.Assert(usage != Type.UsageFormat.None);
+            return Builtins.GetUsageType(usage);
         }
 
         /// <summary>
@@ -510,13 +408,13 @@ namespace TypeCobol.Compiler.Domain
         /// Create a Symbol instance for a variable of a single usage type.
         /// </summary>
         /// <param name="dataDef">The DataDefinition instance</param>
-        /// <param name="dataUsage">The DataUsage of the DataDefinition instance</param>
+        /// <param name="usage">The Usage of the DataDefinition instance</param>
         /// <param name="currentDomain">The current domain of variables being built.</param>
         /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns>The Symbol instance of usage type.</returns>
-        private VariableSymbol CreateUsageSymbol(DataDefinition dataDef, DataUsage dataUsage, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
+        private VariableSymbol CreateUsageSymbol(DataDefinition dataDef, Type.UsageFormat usage, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
-            Type type = CreateUsageType(dataUsage);
+            Type type = CreateUsageType(usage);
             return CreateAndAddRedefinesOrVariableSymbol(type, dataDef, currentDomain, typedef);
         }
 
@@ -525,11 +423,11 @@ namespace TypeCobol.Compiler.Domain
         /// </summary>
         /// <param name="dataDef">The DataDefinition to create the Picture Type</param>
         /// <param name="picture">Picture of the DataDefinition, must be non-null</param>
+        /// <param name="usage">Usage of the DataDefinition, may be None to reflect the absence of usage clause</param>
         /// <returns>The Picture Type</returns>
-        private static PictureType CreatePictureType(DataDefinition dataDef, AlphanumericValue picture)
+        private static PictureType CreatePictureType(DataDefinition dataDef, AlphanumericValue picture, Type.UsageFormat usage)
         {
             System.Diagnostics.Debug.Assert(picture != null);
-            Type.UsageFormat usage = dataDef.Usage.HasValue ? Type.DataUsage2UsageFormat(dataDef.Usage.Value) : Type.UsageFormat.None;
             PictureValidator pictureValidator = new PictureValidator(picture.Value, dataDef.SignIsSeparate);
             PictureType type = new PictureType(pictureValidator);
             //Use permissive Usage setter which allows COMP1 and COMP2
@@ -542,12 +440,13 @@ namespace TypeCobol.Compiler.Domain
         /// </summary>
         /// <param name="dataDef">The DataDefinition instance</param>
         /// <param name="picture">Picture of the DataDefinition, must be non-null</param>
+        /// <param name="usage">Usage of the DataDefinition, may be None</param>
         /// <param name="currentDomain">The current domain of variables being built.</param>
         /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns>The Symbol instance of usage type.</returns>
-        private VariableSymbol CreatePictureSymbol(DataDefinition dataDef, AlphanumericValue picture, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
+        private VariableSymbol CreatePictureSymbol(DataDefinition dataDef, AlphanumericValue picture, Type.UsageFormat usage, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
-            Type type = CreatePictureType(dataDef, picture);
+            Type type = CreatePictureType(dataDef, picture, usage);
             return CreateAndAddRedefinesOrVariableSymbol(type, dataDef, currentDomain, typedef);
         }
 
@@ -560,18 +459,19 @@ namespace TypeCobol.Compiler.Domain
         /// <returns>The untyped symbol</returns>
         private VariableSymbol CreateSymbolWithoutType(DataDefinition dataDef, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
-            Type type = Builtins.GetUsageType(Type.UsageFormat.None);
-            return CreateAndAddRedefinesOrVariableSymbol(type, dataDef, currentDomain, typedef);
+            return CreateAndAddRedefinesOrVariableSymbol(Builtins.NoType, dataDef, currentDomain, typedef);
         }
 
         /// <summary>
         /// Create a Group Symbol
         /// </summary>
         /// <param name="dataDef">The DataDefinition instance</param>
+        /// <param name="picture">Picture value of the DataDefinition</param>
+        /// <param name="usage">Usage value of the DataDefinition</param>
         /// <param name="currentDomain">The current domain of variables being built.</param>
         /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns></returns>
-        private VariableSymbol CreateGroupSymbol(DataDefinition dataDef, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
+        private VariableSymbol CreateGroupSymbol(DataDefinition dataDef, AlphanumericValue picture, Type.UsageFormat usage, Domain<VariableSymbol> currentDomain, TypedefSymbol typedef)
         {
             //We create a group symbol having the group type
             VariableSymbol sym = IsRedefinedDataDefinition(dataDef, out _)
@@ -583,15 +483,13 @@ namespace TypeCobol.Compiler.Domain
             //Set type of the symbol
             sym.Type = recType;
             //Set any leading type.
-            if (HasSingleUsageDefinition(dataDef, out var dataUsage))
+            if (picture != null)
             {
-                Type leadingType = CreateUsageType(dataUsage);
-                recType.LeadingType = leadingType;
+                recType.LeadingType = CreatePictureType(dataDef, picture, usage);
             }
-            else if (dataDef.Picture != null)
+            else if (usage != Type.UsageFormat.None)
             {
-                Type leadingType = CreatePictureType(dataDef, dataDef.Picture);
-                recType.LeadingType = leadingType;
+                recType.LeadingType = CreateUsageType(usage);
             }
 
             DecorateSymbol(dataDef, sym, currentDomain);
@@ -601,7 +499,7 @@ namespace TypeCobol.Compiler.Domain
             //We build the GroupType fields
             foreach (var child in dataDef.Children)
             {
-                DataDefinition df = (DataDefinition)child;
+                DataDefinition df = (DataDefinition) child;
                 VariableSymbol dfSym = DataDefinition2Symbol(df, recType.Fields, typedef);
                 //if df_sym == null this may be a bad symbol.
                 if (dfSym != null)
@@ -650,13 +548,17 @@ namespace TypeCobol.Compiler.Domain
             //We create the type definition symbol            
             var tdSym = new TypedefSymbol(dataDef.Name);
             tdSym.Type = new TypedefType(tdSym);
-            if (entry.Strict != null && entry.Strict.Value)
+            switch (entry.RestrictionLevel)
             {
-                tdSym.SetFlag(Symbol.Flags.Strict, true);
-            }
-            if (entry.Strong != null && entry.Strong.Value)
-            {
-                tdSym.SetFlag(Symbol.Flags.Strong, true);
+                case RestrictionLevel.STRICT:
+                    tdSym.SetFlag(Symbol.Flags.Strict, true);
+                    break;
+                case RestrictionLevel.STRONG:
+                    tdSym.SetFlag(Symbol.Flags.Strong, true);
+                    break;
+                case RestrictionLevel.WEAK:
+                    tdSym.SetFlag(Symbol.Flags.Weak, true);
+                    break;
             }
             SetSymbolAccessModifer(tdSym, entry.Visibility);
             
@@ -707,15 +609,6 @@ namespace TypeCobol.Compiler.Domain
             if (typedef == null)
                 CurrentScope.Add(varTypeSym);
 
-            //If we have created a TypedVariableSymbol Symbol instance then sure the underlying Program should be completed from the Top Program.
-            //This can be an optimization to avoid pur Cobol85 program to be completed, they don't have TYPEDEF.
-            if (!CurrentProgram.HasFlag(Symbol.Flags.NeedTypeCompletion))
-            {
-                CurrentProgram.SetFlag(Symbol.Flags.NeedTypeCompletion, true);
-                ProgramSymbol topProgram = (ProgramSymbol) CurrentProgram.TopParent(Symbol.Kinds.Program);
-                if (topProgram != CurrentProgram)
-                    topProgram.SetFlag(Symbol.Flags.NeedTypeCompletion, true);
-            }
             return varTypeSym;
         }
 
@@ -790,19 +683,26 @@ namespace TypeCobol.Compiler.Domain
                     case CodeElementType.DataDescriptionEntry:
                     case CodeElementType.DataRedefinesEntry:                    
                         {
+                            //Extract Picture and Usage once to avoid multiple redundant calls
+                            var picture = dataDef.Picture;
+                            var dataUsage = dataDef.Usage;
+                            var usage = dataUsage.HasValue ? Type.DataUsage2UsageFormat(dataUsage.Value) : Type.UsageFormat.None;
+
                             //Special case Typedef
                             //CreateTypeDefinition will call us back with typedef set so we test it to avoid stack overflow !
                             if (IsTypedefDefinition(dataDef, out var dataTypeDescriptionEntry) && typedef == null)
                             {
                                 sym = CreateTypeDefinition(dataDef, dataTypeDescriptionEntry, currentDomain);
                             }
-                            else if (dataDef.ChildrenCount == 0 && HasSingleUsageDefinition(dataDef, out var dataUsage))
+                            else if (dataDef.ChildrenCount == 0 && picture == null && usage != Type.UsageFormat.None)
                             {
-                                sym = CreateUsageSymbol(dataDef, dataUsage, currentDomain, typedef);
+                                //Single usage definition
+                                sym = CreateUsageSymbol(dataDef, usage, currentDomain, typedef);
                             }
-                            else if (dataDef.ChildrenCount == 0 && dataDef.Picture != null)
+                            else if (dataDef.ChildrenCount == 0 && picture != null)
                             {
-                                sym = CreatePictureSymbol(dataDef, dataDef.Picture, currentDomain, typedef);
+                                //Single picture (and possibly usage) definition
+                                sym = CreatePictureSymbol(dataDef, picture, usage, currentDomain, typedef);
                             }
                             else
                             {
@@ -821,7 +721,7 @@ namespace TypeCobol.Compiler.Domain
                                 }
                                 else
                                 {//This is a group Type
-                                    sym = CreateGroupSymbol(dataDef, currentDomain, typedef);
+                                    sym = CreateGroupSymbol(dataDef, picture, usage, currentDomain, typedef);
                                 }
                             }
                         }
@@ -883,18 +783,29 @@ namespace TypeCobol.Compiler.Domain
             dataDef.SemanticData = sym;
 
             //Section flag
-            bool inGlobalStorageSection;
             if (CurrentDataDivisionSection != null)
-            {
                 sym.SetFlag(CurrentDataDivisionSection.Flag, true);
-                inGlobalStorageSection = CurrentDataDivisionSection.Flag == Symbol.Flags.GLOBAL_STORAGE;
-            }
-            else
-            {
-                inGlobalStorageSection = false;
-            }
 
-            //Global variable ?
+            //Apply flags read from Node
+            if (dataDef.IsJustified)
+                sym.SetFlag(Symbol.Flags.Justified, true);
+            if (dataDef.IsGroupUsageNational)
+                sym.SetFlag(Symbol.Flags.GroupUsageNational, true);
+            if (dataDef.SignIsSeparate)
+                sym.SetFlag(Symbol.Flags.SeparateSign, true);
+            switch (dataDef.SignPosition)
+            {
+                case SignPosition.Leading:
+                    sym.SetFlag(Symbol.Flags.LeadingSign, true);
+                    break;
+                case SignPosition.Trailing:
+                    sym.SetFlag(Symbol.Flags.TrailingSign, true);
+                    break;
+            }
+            if (dataDef.IsSynchronized)
+                sym.SetFlag(Symbol.Flags.Sync, true);
+
+            //Set level and other flags: Global, BlankWhenZero and External are read from CodeElement
             if (dataDef.CodeElement != null)
             {
                 switch (dataDef.CodeElement.Type)
@@ -902,13 +813,15 @@ namespace TypeCobol.Compiler.Domain
                     case CodeElementType.DataConditionEntry:
                     {
                         sym.Level = 88;
+                        //Does the variable inherits from parent its Global flag ?
                         if (currentDomain.Owner.Kind != Symbol.Kinds.Program && currentDomain.Owner.Kind != Symbol.Kinds.Function)
-                            sym.SetFlag(currentDomain.Owner.Flag & Symbol.Flags.Global , currentDomain.Owner.HasFlag(Symbol.Flags.Global));
+                            sym.SetFlag(currentDomain.Owner.Flag & Symbol.Flags.Global, currentDomain.Owner.HasFlag(Symbol.Flags.Global));
                     }
                         break;
                     case CodeElementType.DataRenamesEntry:
                     {
                         sym.Level = 66;
+                        //Does the variable inherits from parent its Global flag ?
                         if (currentDomain.Owner.Kind != Symbol.Kinds.Program && currentDomain.Owner.Kind != Symbol.Kinds.Function)
                             sym.SetFlag(currentDomain.Owner.Flag & Symbol.Flags.Global, currentDomain.Owner.HasFlag(Symbol.Flags.Global));
                     }
@@ -916,40 +829,24 @@ namespace TypeCobol.Compiler.Domain
                     case CodeElementType.DataDescriptionEntry:
                     case CodeElementType.DataRedefinesEntry:
                     {
-                        CommonDataDescriptionAndDataRedefines dataDescEntry =
-                            (CommonDataDescriptionAndDataRedefines)dataDef.CodeElement;                            
-                        sym.Level = dataDescEntry.LevelNumber != null ? (int)dataDescEntry.LevelNumber.Value : 0;
-                        sym.IsFiller = dataDescEntry.IsFiller;
-                        if (dataDescEntry.IsGlobal || currentDomain.Owner.HasFlag(Symbol.Flags.Global))
-                        {//No Global inside GLOBAL-STORAGE.
-                            if (!inGlobalStorageSection)
-                            {
-                                //This a global symbol
-                                sym.SetFlag(Symbol.Flags.Global, true);
-                            }
+                        var dataDescOrRedefines = (CommonDataDescriptionAndDataRedefines) dataDef.CodeElement;
+                        sym.Level = dataDescOrRedefines.LevelNumber != null ? (int) dataDescOrRedefines.LevelNumber.Value : 0;
+                        sym.IsFiller = dataDescOrRedefines.IsFiller;
+
+                        //Global flag explicitly set or inherited
+                        if (dataDescOrRedefines.IsGlobal || currentDomain.Owner.HasFlag(Symbol.Flags.Global))
+                        {
+                            sym.SetFlag(Symbol.Flags.Global, true);
                         }
 
-                        //Other interesting flags that apply to a symbol.
-                        if (dataDescEntry.IsBlankWhenZero != null && dataDescEntry.IsBlankWhenZero.Value)
+                        //BlankWhenZero flag
+                        if (dataDescOrRedefines.IsBlankWhenZero != null && dataDescOrRedefines.IsBlankWhenZero.Value)
                             sym.SetFlag(Symbol.Flags.BlankWhenZero, true);
-                        if (dataDescEntry.IsJustified != null && dataDescEntry.IsJustified.Value)
-                            sym.SetFlag(Symbol.Flags.Justified, true);
-                        if (dataDescEntry.IsGroupUsageNational != null && dataDescEntry.IsGroupUsageNational.Value)
-                            sym.SetFlag(Symbol.Flags.GroupUsageNational, true);
-                        if (dataDescEntry.SignIsSeparate != null && dataDescEntry.SignIsSeparate.Value)
-                            sym.SetFlag(Symbol.Flags.SeparateSign, true);
-                        if (dataDescEntry.SignPosition != null)
+
+                        //External flag
+                        if (dataDescOrRedefines.Type == CodeElementType.DataDescriptionEntry)
                         {
-                            if (dataDescEntry.SignPosition.Value == SignPosition.Leading)
-                                sym.SetFlag(Symbol.Flags.LeadingSign, true);
-                            if (dataDescEntry.SignPosition.Value == SignPosition.Trailing)
-                                sym.SetFlag(Symbol.Flags.TrailingSign, true);
-                        }
-                        if (dataDescEntry.IsSynchronized != null && dataDescEntry.IsSynchronized.Value)
-                            sym.SetFlag(Symbol.Flags.Sync, true);
-                        if (dataDef.CodeElement.Type == CodeElementType.DataDescriptionEntry)
-                        {
-                            DataDescriptionEntry dataDesc = (DataDescriptionEntry) dataDef.CodeElement;
+                            DataDescriptionEntry dataDesc = (DataDescriptionEntry) dataDescOrRedefines;
                             if (dataDesc.IsExternal)
                                 sym.SetFlag(Symbol.Flags.External, true);
                         }
