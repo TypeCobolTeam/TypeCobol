@@ -1,0 +1,73 @@
+﻿digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{A-PARA. Block1|}"
+]
+Block2 [
+label = "{Block2|    PERFORM\l}"
+]
+Block3 [
+label = "{Block3|             DISPLAY 'IN A-PARA'\l}"
+]
+Block4 [
+label = "{Block4|}"
+]
+Block5 [
+label = "{A-PARA. Block5|}"
+]
+Block6 [
+label = "{Block6|    PERFORM C-PARA THRU E-PARA\l}"
+]
+subgraph cluster_1{
+color = blue;
+label = "C-PARA";
+Block14 [
+label = "{C-PARA. Block14|    DISPLAY 'IN C-PARA'\l}"
+]
+Block15 [
+label = "{D-PARA. Block15|    DISPLAY 'IN D-PARA'\l}"
+]
+Block16 [
+label = "{E-PARA. Block16|    DISPLAY 'IN E-PARA'\l}"
+]
+Block14 -> Block15
+Block15 -> Block16
+
+}
+Block6 -> Block14 [style=dashed]
+
+Block7 [
+label = "{Block7|}"
+]
+Block8 [
+label = "{A-PARA. Block8|    ALTER B-PARA TO PROCEED TO E-PARA\l}"
+]
+Block9 [
+label = "{B-PARA. Block9|        GO TO B-PARA\l}"
+]
+Block16 [
+label = "{E-PARA. Block16|    DISPLAY 'IN E-PARA'\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block2 -> Block3
+Block3 -> Block4
+Block4 -> Block5
+Block5 -> Block6
+Block6 -> Block7
+Block7 -> Block8
+Block8 -> Block9
+Block9 -> Block9
+Block9 -> Block16
+
+}

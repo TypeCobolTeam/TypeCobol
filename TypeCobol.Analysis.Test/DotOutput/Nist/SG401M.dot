@@ -1,0 +1,25 @@
+digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{SG401M-CONTROL. Block1|    EXIT\l}"
+]
+Block2 [
+label = "{SG401M-DUMMY. Block2|    DISPLAY \"THIS IS A DUMMY PARAGRAPH\"\l}"
+]
+Block3 [
+label = "{SG401M-DUMMY2. Block3|    DISPLAY \"THIS IS A DUMMY PARAGRAPH TOO!\"\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block2 -> Block3
+
+}

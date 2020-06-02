@@ -24,7 +24,8 @@ namespace TypeCobol.Compiler.Symbols
             Variable,//VariableSymbol and its inheritors except Index and Typedef
             Index,
             Section,
-            Paragraph
+            Paragraph,
+            Sentence
         }
 
         [Flags]
@@ -76,6 +77,8 @@ namespace TypeCobol.Compiler.Symbols
             InsideTypedef = 0x01L << 35,//Flag of any symbol inside a Typedef definition.
             BuiltinSymbol = 0x01L << 36, //This is a Builtin symbol.
             
+            Declaratives = 0x01L << 37,
+
             //Etc... (Max = 0x01L << 62)
         }
 
@@ -100,6 +103,15 @@ namespace TypeCobol.Compiler.Symbols
         {
             get;
             internal set;
+        }
+
+        /// <summary>
+        /// A integer number which can be associated to this Symbol.
+        /// </summary>
+        public int Number
+        {
+            set;
+            get;
         }
 
         /// <summary>
@@ -182,7 +194,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="flag"></param>
         /// <param name="value"></param>
         /// <param name="propagate">true the flags must be propagated, false otherwise</param>
-        internal virtual void SetFlag(Flags flag, bool value, bool propagate = false)
+        protected internal virtual void SetFlag(Flags flag, bool value, bool propagate = false)
         {
             this.Flag = value ? (Flags)((ulong)this.Flag | (ulong)flag)
                               : (Flags)((ulong)this.Flag & ~(ulong)flag);

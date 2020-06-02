@@ -1,0 +1,40 @@
+digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{SM301M-CONTROL. Block1|}"
+]
+Block2 [
+label = "{Block2|PerformProcedureStatement\l}"
+]
+subgraph cluster_1{
+color = blue;
+label = "SM301M-COPY";
+Block6 [
+label = "{SM301M-COPY. Block6|DisplayStatement\l}"
+]
+
+}
+Block2 -> Block6 [style=dashed]
+
+Block3 [
+label = "{Block3|}"
+]
+Block4 [
+label = "{SM301M-CONTROL. Block4|StopStatement\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block2 -> Block3
+Block3 -> Block4
+
+}

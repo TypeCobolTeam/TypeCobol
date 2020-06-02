@@ -1,0 +1,30 @@
+﻿digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{Block1|    PERFORM UNTIL posibility\l}"
+]
+Block2 [
+label = "{Block2|    DISPLAY \"action = \" NO ADVANCING\l      ACCEPT action\l}"
+]
+Block3 [
+label = "{Block3|    DISPLAY \"Right action !\"\l}"
+]
+Block4 [
+label = "{Block4|    STOP RUN\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block1 -> Block3
+Block2 -> Block1
+Block3 -> Block4
+
+}
