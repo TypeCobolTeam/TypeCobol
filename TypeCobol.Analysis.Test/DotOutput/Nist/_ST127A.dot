@@ -1,0 +1,26 @@
+digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{SORT-PARAGRAPH. Block1|MoveStatement\l}"
+]
+Block2 [
+label = "{SORT-PARAGRAPH. Block2|SortStatement\l}"
+]
+Block3 [
+label = "{SORT-PARAGRAPH. Block3|StopStatement\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block2 -> Block3
+
+}

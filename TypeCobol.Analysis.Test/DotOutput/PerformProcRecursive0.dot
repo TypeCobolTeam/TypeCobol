@@ -1,0 +1,86 @@
+﻿digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{Block1|    perform pararec\l}"
+]
+subgraph cluster_1{
+color = blue;
+label = "pararec";
+Block4 [
+label = "{PARAREC. Block4|    add 1 to n\l    display n\l    if n \< 3\l}"
+]
+Block5 [
+label = "{Block5|       display 'before perform'\l}"
+]
+Block6 [
+label = "{Block6|       perform pararec\l}"
+]
+subgraph cluster_2{
+color = blue;
+label = "pararec";
+Block4 [
+label = "{PARAREC. Block4|    add 1 to n\l    display n\l    if n \< 3\l}"
+]
+Block5 [
+label = "{Block5|       display 'before perform'\l}"
+]
+Block6 [
+label = "{Block6|       perform pararec\l}"
+]
+Block6 -> Block4 [style=dashed]
+
+Block7 [
+label = "{Block7|       display 'after peform'\l}"
+]
+Block9 [
+label = "{Block9|    display 'terminate'\l}"
+]
+Block8 [
+label = "{Block8|    else\l       display 'not done'\l}"
+]
+Block4 -> Block5
+Block4 -> Block8
+Block5 -> Block6
+Block6 -> Block7
+Block7 -> Block9
+Block8 -> Block9
+
+}
+Block6 -> Block4 [style=dashed]
+
+Block7 [
+label = "{Block7|       display 'after peform'\l}"
+]
+Block9 [
+label = "{Block9|    display 'terminate'\l}"
+]
+Block8 [
+label = "{Block8|    else\l       display 'not done'\l}"
+]
+Block4 -> Block5
+Block4 -> Block8
+Block5 -> Block6
+Block6 -> Block7
+Block7 -> Block9
+Block8 -> Block9
+
+}
+Block1 -> Block4 [style=dashed]
+
+Block2 [
+label = "{Block2|    goback\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+
+}

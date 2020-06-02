@@ -1,0 +1,25 @@
+digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{TEST-PARAGRAPH. Block1|AddStatement\l}"
+]
+Block2 [
+label = "{TEST-PARAGRAPH. Block2|MoveStatement\l}"
+]
+Block3 [
+label = "{EXIT-IC206. Block3|ExitProgramStatement\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block2 -> Block3
+
+}

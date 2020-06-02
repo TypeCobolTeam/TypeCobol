@@ -1,0 +1,25 @@
+digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{CALL-TEST-001. Block1|    ADD 1 TO DN2\l}"
+]
+Block2 [
+label = "{CALL-TEST-001. Block2|    MOVE DN2 TO DN1\l}"
+]
+Block3 [
+label = "{CALL-EXIT-001. Block3|    EXIT PROGRAM\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block2 -> Block3
+
+}

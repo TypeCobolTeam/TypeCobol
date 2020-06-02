@@ -1,0 +1,17 @@
+digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{CM401M-CONTROL. Block1|StopStatement\l}"
+]
+Block0 -> Block1
+
+}

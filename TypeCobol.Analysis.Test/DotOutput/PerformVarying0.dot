@@ -1,0 +1,26 @@
+﻿digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|    DISPLAY \"n : \" NO ADVANCING\l                                ACCEPT n\l}"
+]
+Block1 [
+label = "{Block1|    PERFORM VARYING counter FROM 1 BY 2 UNTIL counter \> n\l}"
+]
+Block2 [
+label = "{Block2|      DISPLAY counter \" ; \" NO ADVANCING\l}"
+]
+Block3 [
+label = "{Block3|    STOP RUN\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block1 -> Block3
+Block2 -> Block1
+
+}

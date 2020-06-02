@@ -1,0 +1,29 @@
+digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{BUGGING-2. Block1|    USE FOR DEBUGGING ON ALL PROCEDURES. \l}"
+]
+Block2 [
+label = "{Block2|}"
+]
+Block3 [
+label = "{DB301M-CONTROL. Block3|    DISPLAY \"THIS IS A DUMMY PROCEDURE\"\l}"
+]
+Block4 [
+label = "{DB301M-CONTROL. Block4|    STOP RUN\l}"
+]
+Block0 -> Block1
+Block0 -> Block2
+Block2 -> Block3
+Block3 -> Block4
+
+}
