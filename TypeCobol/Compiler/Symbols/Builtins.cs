@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler.Types;
+﻿using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -58,18 +59,22 @@ namespace TypeCobol.Compiler.Symbols
 
             Boolean = new TypedefSymbol(string.Intern("Bool"));
             Boolean.Type = new TypedefType(Boolean, new Type(Type.Tags.Boolean));
+            Boolean.Type.SetFlag(Symbol.Flags.Strong, true, false);
             FlagSymbol(Boolean);
 
             Date = new TypedefSymbol(string.Intern("Date"));
             Date.Type = new TypedefType(Date, CreateDateComponent());
+            Date.Type.SetFlag(Symbol.Flags.Strong, true, false);
             FlagSymbol(Date);
 
             Currency = new TypedefSymbol(string.Intern("Currency"));
             Currency.Type = new TypedefType(Currency, CreateCurrencyComponent());
+            Currency.Type.SetFlag(Symbol.Flags.Strong, true, false);
             FlagSymbol(Currency);
 
             String = new TypedefSymbol(string.Intern("String"));
             String.Type = new TypedefType(String, new Type(Type.Tags.String));
+            String.Type.SetFlag(Symbol.Flags.Strong, true, false);
             FlagSymbol(String);
 
             void FlagType(Type type) => type.SetFlag(Symbol.Flags.BuiltinType, true);

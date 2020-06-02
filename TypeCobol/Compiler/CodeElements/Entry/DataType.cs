@@ -228,7 +228,8 @@ namespace TypeCobol.Compiler.CodeElements
                 Visibility = AccessModifier.Public,
                 LevelNumber = new GeneratedIntegerValue(1),
                 DataName = new SymbolDefinition(new GeneratedAlphanumericValue(type.Name), SymbolType.DataName),
-                DataType = type
+                DataType = type,
+                Strong = new SyntaxProperty<bool>(true, null)
             };
         }
 

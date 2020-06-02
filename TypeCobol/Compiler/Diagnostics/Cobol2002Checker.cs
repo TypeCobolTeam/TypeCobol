@@ -51,14 +51,6 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 #endif
 
-            if (typedef.RestrictionLevel == RestrictionLevel.STRICT) //Manage as a STRICT TYPEDEF
-            {
-                if (typedef.IsSynchronized != null && typedef.IsSynchronized.Value == true)
-                {
-                    DiagnosticUtils.AddError(typedef, "SYNC clause cannot be used with a STRICT type definition", context.cobol2002TypedefClause());
-                }
-            }
-
             if (typedef.RestrictionLevel == RestrictionLevel.STRONG) //Manage as a STRONG TYPEDEF
             {
                 if (typedef.InitialValue != null)
