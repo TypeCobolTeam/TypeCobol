@@ -102,7 +102,6 @@
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
     </Antlr4>
-    <None Include="App.config" />
     <EmbeddedResource Include="Compiler\Diagnostics\Resources\DiagnosticMessages.csv" />
     <None Include="Compiler\CupCommon\CobolWordsDirectiveRules.cup" />
     <None Include="Compiler\CupCommon\CobolWordsRules.cup" />

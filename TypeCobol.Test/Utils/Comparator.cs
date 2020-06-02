@@ -98,6 +98,7 @@ namespace TypeCobol.Test.Utils
                 new RPNName(),
                 new NYName(),
                 new PGMName(),
+                new SYMName(),
                 new MixDiagIntoSourceName(),
                 new MemoryName(),
                 new NodeName(),
@@ -111,6 +112,7 @@ namespace TypeCobol.Test.Utils
                 new EIRPNName(),
                 new EINYName(),
                 new EIPGMName(),
+                new EISYMName(),
                 new EIMixDiagIntoSourceName(),
                 new EIMemoryName(),
                 new EINodeName(),
@@ -398,6 +400,45 @@ namespace TypeCobol.Test.Utils
             string result = ParserUtils.DumpResult(programs, classes, diagnostics);
             if (debug) Console.WriteLine("\"" + paths.SamplePath+ "\" result:\n" + result);
             ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected, expectedResultPath);
+        }
+    }
+
+    internal class SymbolComparator : FilesComparator
+    {
+        public SymbolComparator(Paths path, bool debug = false, bool isEI = false)
+            : base(path, debug, isEI)
+        {
+
+        }
+
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
+        {
+            var diagnostics = compilationUnit.AllDiagnostics();
+            var programs = compilationUnit.ProgramClassDocumentSnapshot.Root.Programs.ToList();
+
+            var builder = new StringBuilder();
+
+            //Write diagnostics
+            if (diagnostics.Count > 0)
+            {
+                builder.AppendLine(ParserUtils.DiagnosticsToString(diagnostics));
+            }
+
+            //Write program symbols
+            if (programs.Count > 0)
+            {
+                foreach (var program in programs)
+                {
+                    builder.AppendLine("--- Program ---");
+                    builder.AppendLine(program.SemanticData?.ToString() ?? "No Semantic Data !");
+                }
+            }
+
+            //TODO Comparison for classes ?
+
+            string result = builder.ToString();
+            if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader, expectedResultPath);
         }
     }
 
@@ -920,6 +961,13 @@ namespace TypeCobol.Test.Utils
         public override string CreateName(string name) { return name + "PGM" + Rextension; }
         public override Type GetComparatorType() { return typeof(ProgramsComparator); }
     }
+
+    internal class SYMName : AbstractNames
+    {
+        public override string CreateName(string name) { return name + "SYM" + Rextension; }
+        public override Type GetComparatorType() { return typeof(SymbolComparator); }
+    }
+
     internal class MixDiagIntoSourceName : AbstractNames
     {
         public override string CreateName(string name) { return name + "Mix" + Rextension; }
@@ -989,11 +1037,19 @@ namespace TypeCobol.Test.Utils
         public override string CreateName(string name) { return name + "NY-EI" + Rextension; }
         public override Type GetComparatorType() { return typeof(NYComparator); }
     }
+
     internal class EIPGMName : AbstractEINames
     {
         public override string CreateName(string name) { return name + "PGM-EI" + Rextension; }
         public override Type GetComparatorType() { return typeof(ProgramsComparator); }
     }
+
+    internal class EISYMName : AbstractEINames
+    {
+        public override string CreateName(string name) { return name + "SYM-EI" + Rextension; }
+        public override Type GetComparatorType() { return typeof(SymbolComparator); }
+    }
+
     internal class EIMixDiagIntoSourceName : AbstractEINames
     {
         public override string CreateName(string name) { return name + "Mix-EI" + Rextension; }

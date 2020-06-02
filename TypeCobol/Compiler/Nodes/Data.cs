@@ -407,53 +407,7 @@ namespace TypeCobol.Compiler.Nodes {
         /// <returns></returns>
         private long GetPhysicalLength()
         {
-            Types.Type.UsageFormat usage = Types.Type.UsageFormat.None;
-            if (Usage != null)
-            {
-                switch (Usage.Value)
-                {
-                    case DataUsage.Binary:
-                    case DataUsage.NativeBinary:
-                        usage = Types.Type.UsageFormat.Binary;
-                        break;
-                    case DataUsage.FloatingPoint:
-                        usage = Types.Type.UsageFormat.Comp1;
-                        break;
-                    case DataUsage.Display:
-                        usage = Types.Type.UsageFormat.Display;
-                        break;
-                    case DataUsage.FunctionPointer:
-                        usage = Types.Type.UsageFormat.FunctionPointer;
-                        break;
-                    case DataUsage.Index:
-                        usage = Types.Type.UsageFormat.Index;
-                        break;
-                    case DataUsage.National:
-                        usage = Types.Type.UsageFormat.National;
-                        break;
-                    case DataUsage.None:
-                        usage = Types.Type.UsageFormat.None;
-                        break;
-                    case DataUsage.ObjectReference:
-                        usage = Types.Type.UsageFormat.ObjectReference;
-                        break;
-                    case DataUsage.PackedDecimal:
-                        usage = Types.Type.UsageFormat.PackedDecimal;
-                        break;
-                    case DataUsage.Pointer:
-                        usage = Types.Type.UsageFormat.Pointer;
-                        break;
-                    case DataUsage.ProcedurePointer:
-                        usage = Types.Type.UsageFormat.ProcedurePointer;
-                        break;
-                    case DataUsage.LongFloatingPoint:
-                        usage = Types.Type.UsageFormat.Comp2;
-                        break;
-                    case DataUsage.DBCS:
-                        usage = Types.Type.UsageFormat.Display1;
-                        break;
-                }
-            }
+            var usage = Usage.HasValue ? Types.Type.DataUsage2UsageFormat(Usage.Value) : Types.Type.UsageFormat.None;
             
             if (Picture == null)
             {

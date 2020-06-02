@@ -18,6 +18,7 @@ using TypeCobol.Compiler.CupParser;
 using TypeCobol.Compiler.CupParser.NodeBuilder;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using TypeCobol.Compiler.Domain;
 using TypeCobolProgramParser = TypeCobol.Compiler.CupParser.TypeCobolProgramParser;
 
 namespace TypeCobol.Compiler.Parser
@@ -65,6 +66,10 @@ namespace TypeCobol.Compiler.Parser
             parser.Builder = builder;
             ParserDiagnostic programClassBuilderError = null;
 
+            //Register a ProgramSymbolTableBuilder as a new listener to build Semantic Domain during parsing.
+            NodeListenerFactory programSymbolTableBuilderFactory = () => new ProgramSymbolTableBuilder();
+            NodeDispatcher.RegisterStaticNodeListenerFactory(programSymbolTableBuilderFactory);
+
             builder.SyntaxTree = new SyntaxTree(); //Initialize SyntaxTree for the current source file
             builder.CustomSymbols = customSymbols;
             builder.Dispatcher = new ProgramClassBuilderNodeDispatcher();
@@ -82,6 +87,8 @@ namespace TypeCobol.Compiler.Parser
                 programClassBuilderError = new ParserDiagnostic(ex.ToString(), null, null, code, ex);
             }
             perfStatsForParserInvocation.OnStopParsing(0, 0);
+
+            NodeDispatcher.RemoveStaticNodeListenerFactory(programSymbolTableBuilderFactory);
 
 #if DEBUG_ANTRL_CUP_TIME
             var t2 = DateTime.UtcNow;
