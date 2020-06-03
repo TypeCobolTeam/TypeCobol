@@ -63,7 +63,7 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
-        /// Memoïzed emitted group to avoid infinite recursion.
+        /// Memorized emitted group to avoid infinite recursion.
         /// </summary>
         internal HashSet<int> EmittedGroupIndices
         {
@@ -72,7 +72,7 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
-        /// Emit a basic block, with also handling recusive BasicBlock Groups that can appear for
+        /// Emit a basic block, with also handling recursive BasicBlock Groups that can appear for
         /// instance for recursive PERFORM.
         /// </summary>
         /// <param name="block">The BasicBlock to emit</param>

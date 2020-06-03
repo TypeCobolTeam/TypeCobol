@@ -12,10 +12,10 @@ namespace TypeCobol.Analysis.Graph
     public class ControlFlowGraph<N, D>
     {
         /// <summary>
-        /// BasicBlock calllback type.
+        /// BasicBlock callback type.
         /// </summary>
         /// <param name="block">The BasicBlock</param>
-        /// <param name="cfg">The Control Flow Graph in wich the basic Block belongs to.</param>
+        /// <param name="cfg">The Control Flow Graph in which the basic Block belongs to.</param>
         /// <returns>true if ok, false otherwise</returns>
         public delegate bool BasicBlockCallback(BasicBlock<N, D> block, ControlFlowGraph<N, D> cfg);
 
@@ -59,7 +59,8 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
-        /// Root blocks. Usually it is a singleton it is the first block in the program, but alos on Exception handlers.
+        /// Root blocks. Usually it has a single item which is the first block in the program.
+        /// But Exception handlers are also stored as root blocks.
         /// </summary>
         public List<BasicBlock<N, D>> RootBlocks
         {
@@ -113,7 +114,7 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
-        /// Intialize the construction of the Control Flow Graph.
+        /// Initialize the construction of the Control Flow Graph.
         /// </summary>
         internal virtual void Initialize()
         {

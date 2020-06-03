@@ -9,7 +9,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// A Basic Block which contains a list of BasicBlocks.
         /// Such Group is used for PERFORM Procedure instruction block,
-        /// to group all BasicBlock of the taget Sentences or Paragraphs.
+        /// to group all BasicBlock of the target Sentences or Paragraphs.
         /// </summary>
         public class BasicBlockForNodeGroup : BasicBlockForNode
         {

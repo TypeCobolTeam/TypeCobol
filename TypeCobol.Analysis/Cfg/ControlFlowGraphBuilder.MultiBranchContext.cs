@@ -139,7 +139,7 @@ namespace TypeCobol.Analysis.Cfg
                     if (!b.HasFlag(BasicBlock<Node, D>.Flags.Ending))
                     {
                         if (b != Builder.Cfg.SuccessorEdges[nbIndex])
-                        {//Don't create recurssion to ourselves
+                        {//Don't create recursion to ourselves
                             b.SuccessorEdges.Add(nbIndex);
                         }
                     }
@@ -154,7 +154,7 @@ namespace TypeCobol.Analysis.Cfg
             }
 
             /// <summary>
-            /// Get all teeminal blocks from the given block.
+            /// Get all terminal blocks from the given block.
             /// </summary>
             /// <param name="b">The starting block</param>
             /// <param name="accumulator">Accumulator of  terminal blocks</param>

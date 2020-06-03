@@ -22,7 +22,7 @@ namespace TypeCobol.Analysis.Cfg
             /// <summary>
             /// Constructor
             /// </summary>
-            /// <param name="name">Pargarph's name</param>
+            /// <param name="name">Paragraph's name</param>
             public CfgParagraphSymbol(string name) : base(name)
             {
                 Sentences = new Domain<CfgSentence>(this);
@@ -30,7 +30,7 @@ namespace TypeCobol.Analysis.Cfg
             /// <summary>
             /// Set flags
             /// </summary>
-            /// <param name="flag">The falg to be set</param>
+            /// <param name="flag">The flag to be set</param>
             /// <param name="value">The value to set</param>
             internal void SetFlag(Symbol.Flags flag, bool value)
             {

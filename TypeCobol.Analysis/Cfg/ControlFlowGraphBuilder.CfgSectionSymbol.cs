@@ -31,7 +31,7 @@ namespace TypeCobol.Analysis.Cfg
             /// <summary>
             /// Set flags
             /// </summary>
-            /// <param name="flag">The falg to be set</param>
+            /// <param name="flag">The flag to be set</param>
             /// <param name="value">The value to set</param>
             internal void SetFlag(Symbol.Flags flag, bool value)
             {

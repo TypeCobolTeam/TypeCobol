@@ -39,7 +39,7 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// The parent rogram Control Flow Builder, for nested Program..
+        /// The parent program Control Flow Builder, for nested Program.
         /// </summary>
         public ControlFlowGraphBuilder<D> ParentProgramCfgBuilder
         {
@@ -50,7 +50,7 @@ namespace TypeCobol.Analysis.Cfg
 
         /// <summary>
         /// All Cfg graphs builder created during the building phase, so it contains Cfg for nested programs and nested procedures,
-        /// but also for stacked proprams.
+        /// but also for stacked programs.
         /// </summary>
         public List<ControlFlowGraphBuilder<D>> AllCfgBuilder
         {
@@ -181,7 +181,7 @@ namespace TypeCobol.Analysis.Cfg
         internal LinkedList<Tuple<NextSentence, BasicBlockForNode, CfgSentence>> PendingNextSentences;
 
         /// <summary>
-        /// All encoutered sentences
+        /// All encountered sentences
         /// </summary>
         internal List<CfgSentence> AllSentences;
 
@@ -207,7 +207,7 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// Called when a Node has been completly parsed.
+        /// Called when a Node has been completely parsed.
         /// </summary>
         /// <param name="node"></param>
         /// <param name="program"></param>
@@ -244,7 +244,7 @@ namespace TypeCobol.Analysis.Cfg
                 case CodeElementType.ExitProgramStatement:
                 case CodeElementType.ExitMethodStatement:
                 case CodeElementType.GobackStatement:
-                //Other statementts
+                //Other statements
                 case CodeElementType.AcceptStatement:
                 case CodeElementType.AddStatement:
                 //case CodeElementType.AlterStatement:
@@ -506,7 +506,7 @@ namespace TypeCobol.Analysis.Cfg
                         break;
                     case CodeElementType.GobackStatement:
                         break;
-                    //Other statementts
+                    //Other statements
                     case CodeElementType.AcceptStatement:
                     case CodeElementType.AddStatement:
                     //case CodeElementType.AlterStatement:
@@ -737,7 +737,7 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// Propagate properties to the given ControlFrowGraphBuilder
+        /// Propagate properties to the given ControlFlowGraphBuilder
         /// </summary>
         /// <param name="currentProgramCfgBuilder">The CFG Builder to propagate properties to</param>
         private void PropagateProperties(ControlFlowGraphBuilder<D> currentProgramCfgBuilder)
@@ -1110,7 +1110,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="p">The procedure node</param>
         /// <param name="procedureSymbol">The procedure symbol</param>
         /// <param name="group">The Group in which to store all blocks.</param>
-        /// <param name="clonedBlockIndexMap">The Map of cloned map indices from the original indices to the new indicess of block</param>
+        /// <param name="clonedBlockIndexMap">The Map of cloned map indices from the original indices to the new indices of block</param>
         private void StoreProcedureSentenceBlocks(PerformProcedure p, Symbol procedureSymbol, BasicBlockForNodeGroup group, Dictionary<int, int> clonedBlockIndexMap)
         {
             IEnumerable<CfgSentence> procedureSentences = YieldSectionOrParagraphSentences(procedureSymbol);
@@ -1145,7 +1145,7 @@ namespace TypeCobol.Analysis.Cfg
         /// Resolve a pending PERFORM procedure
         /// </summary>
         /// <param name="p">The procedure node</param>
-        /// <param name="group">The Basic Block Group asociated to the procedure</param>
+        /// <param name="group">The Basic Block Group associated to the procedure</param>
         /// <returns>True if the PERFORM has been resolved, false otherwise</returns>
         private bool ResolvePendingPERFORMProcedure(PerformProcedure p, BasicBlockForNodeGroup group)
         {
@@ -1205,7 +1205,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="p">The Perform Procedure node source of the call</param>
         /// <param name="group">The Group to be relocated</param>
         /// <param name="clonedBlockIndexMap">The map between the old block indices to their new block indices.</param>
-        /// <returns>true if the relocation is successfull, false if the relocation goes beyond the group limit, 
+        /// <returns>true if the relocation is successful, false if the relocation goes beyond the group limit, 
         /// this often means that de target paragraphs of the PERFORM goes out of the paragraph.</returns>
         private bool RelocateBasicBlockForNodeGroupGraph(PerformProcedure p, BasicBlockForNodeGroup group, Dictionary<int, int> clonedBlockIndexMap)
         {
@@ -1298,7 +1298,7 @@ namespace TypeCobol.Analysis.Cfg
         /// Extend BasicBlockForNodeGroup instance to point to the first block and make all terminal blocks
         /// have for successor the block successor.
         /// </summary>
-        /// <param name="group">The group to be continuted</param>
+        /// <param name="group">The group to be continued</param>
         private void ContinueBasicBlockGroup(BasicBlockForNodeGroup group)
         {
             if (group.Group.Count > 0)
@@ -1658,7 +1658,7 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// Set wheither or not the EVALUATE statement shall be translated using cascading IF-THEN-ELSE, false
+        /// Set whether or not the EVALUATE statement shall be translated using cascading IF-THEN-ELSE, false
         /// otherwise.
         /// </summary>
         public bool UseEvaluateCascade
@@ -1668,7 +1668,7 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// Set wheither or not the SEARCH statement shall be translated using cascading IF-THEN-ELSE, false
+        /// Set whether or not the SEARCH statement shall be translated using cascading IF-THEN-ELSE, false
         /// otherwise.
         /// </summary>
         public bool UseSearchCascade
@@ -1685,7 +1685,7 @@ namespace TypeCobol.Analysis.Cfg
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
             MultiBranchContext ctx = new MultiBranchContext(this.CurrentProgramCfgBuilder, evaluate);
-            //Create a liste of node of contextual When and WhenOther nodes.
+            //Create a list of node of contextual When and WhenOther nodes.
             ctx.ContextualData = new List<Node>();
             if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
             {
@@ -1767,7 +1767,7 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// Enter a WhenOther cndition ode.
+        /// Enter a WhenOther condition ode.
         /// </summary>
         /// <param name="node">The WhenOther node</param>
         protected virtual void EnterWhenOther(WhenOther node)
@@ -1784,7 +1784,7 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// Leave a WhenOther cndition ode.
+        /// Leave a WhenOther condition ode.
         /// </summary>
         /// <param name="node">The WhenOther node</param>
         protected virtual void LeaveWhenOther(WhenOther node)
@@ -1906,7 +1906,7 @@ namespace TypeCobol.Analysis.Cfg
         {
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
             MultiBranchContext ctx = new MultiBranchContext(this.CurrentProgramCfgBuilder, node);
-            //Create a liste of node of contextual When or AtEnd nodes.
+            //Create a list of node of contextual When or AtEnd nodes.
             ctx.ContextualData = new List<Node>();
             if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
             {
@@ -1988,7 +1988,7 @@ namespace TypeCobol.Analysis.Cfg
                         EnterElse(null);
                     }
                     else if (ctx.Branches.Count == 1)
-                    {//We had an At END Condition ==> So the Current basick block is the Search Block
+                    {//We had an At END Condition ==> So the Current basic block is the Search Block
                         this.CurrentProgramCfgBuilder.CurrentBasicBlock = ctx.CurrentBlock;
                     }
                     //Create Whens context
@@ -2080,7 +2080,7 @@ namespace TypeCobol.Analysis.Cfg
                     this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
                     ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
                 }
-                //If we have and AT Condition haandle it
+                //If we have and AT Condition handle it
                 ctx.End(ctx.Branches.Count == 0, ctx.RootBlock, this.CurrentProgramCfgBuilder.CurrentBasicBlock);
             }
             else
@@ -2115,7 +2115,7 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// Leave a When Serach condition node
+        /// Leave a When Search condition node
         /// </summary>
         /// <param name="node">The when search condition node</param>
         protected virtual void LeaveWhenSearch(WhenSearch node)
@@ -2138,7 +2138,7 @@ namespace TypeCobol.Analysis.Cfg
             //Push and start the Perform context.
             this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctx);
             ctx.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
-            //Creare a Perfom standalone instruction block.
+            //Create a Perform standalone instruction block.
             var performBlock = this.CurrentProgramCfgBuilder.CreateBlock(perform, true);
             ctx.AddBranch(performBlock);
             //Add a branch for the Loop Body
@@ -2192,7 +2192,7 @@ namespace TypeCobol.Analysis.Cfg
         /// Test if the a perform loop is an AFTER
         /// </summary>
         /// <param name="perform"></param>
-        /// <returns>true if the PERFORM loop is an AFTER, fals eotherwise</returns>
+        /// <returns>true if the PERFORM loop is an AFTER, false otherwise</returns>
         private static bool IsAfter(Perform perform)
         {
             return perform.CodeElement.TerminationConditionTestTime != null && perform.CodeElement.TerminationConditionTestTime.Value == TerminationConditionTestTime.AfterIteration;
@@ -2211,7 +2211,7 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(ctx.Branches.Count == 2);
             System.Diagnostics.Debug.Assert(ctx.BranchIndices.Count == 2);
 
-            //Firt Get here all terminal blocks of the loop body
+            //First Get here all terminal blocks of the loop body
             List<BasicBlockForNode> terminals = new List<BasicBlockForNode>();
             ctx.GetTerminalSuccessorEdges(ctx.Branches[1], terminals);
 
@@ -2229,7 +2229,7 @@ namespace TypeCobol.Analysis.Cfg
             int transBlockIndex = -1;
             if (!IsNonIterative(perform))
             {   //For an Iterative perform, body transition is the perform instruction
-                //the nextblock is a transition for the perform. 
+                //the next block is a transition for the perform. 
                 ctx.Branches[0].SuccessorEdges.Add(nextBlockIndex);
                 transBlockIndex = performBlockIndex;
             }
@@ -2282,7 +2282,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// Leave a Next Sentence node
         /// </summary>
-        /// <param name="node">the Neext Sentence node</param>
+        /// <param name="node">the Next Sentence node</param>
         protected virtual void LeaveNextSentence(NextSentence node)
         {
 
@@ -2419,7 +2419,7 @@ namespace TypeCobol.Analysis.Cfg
                 MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
                 List<Node> data = (List<Node>)ctx.ContextualData;
                 data.Add(node);
-                //Call StartWhenSearchContionClause with null, this will mean AT END condition.
+                //Call StartWhenSearchConditionClause with null, this will mean AT END condition.
                 StartWhenSearchConditionClause(null);
             }
             else
@@ -2512,7 +2512,7 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// Ennter a Declarative
+        /// Enter a Declarative
         /// </summary>
         /// <param name="node">The Declarative node</param>
         protected virtual void EnterDeclaratives(Declaratives node)

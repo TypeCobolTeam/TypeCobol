@@ -27,7 +27,7 @@ namespace TypeCobol.Analysis.Test
         /// </summary>
         /// <param name="cfg">The Control Flow Graph instance</param>
         /// <param name="expectedDotFile">The expected dot file</param>
-        /// <param name="bFullInstruction">true if full istruction must be displayed, false otherwise</param>
+        /// <param name="bFullInstruction">true if full instruction must be displayed, false otherwise</param>
         public static void GenDotCfgAndCompare(ControlFlowGraph<Node, object> cfg, string testPath, string expectedDotFile, bool bFullInstruction = true)
         {
             //Create a Dot File Generator            

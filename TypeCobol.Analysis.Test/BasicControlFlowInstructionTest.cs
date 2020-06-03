@@ -1027,7 +1027,7 @@ namespace TypeCobol.Analysis.Test
         /// "dot.exe" -Tsvg CGM110.dot -o CGM110.svg
         /// </summary>
         [TestMethod]
-        public void OneThidPartyCGM110()
+        public void OneThirdPartyCGM110()
         {
             string pwd = Directory.GetCurrentDirectory();
             string solutionPath = Directory.GetParent(pwd)?.Parent?.FullName;
@@ -1049,7 +1049,7 @@ namespace TypeCobol.Analysis.Test
         }
 
         /// <summary>
-        /// This test contains a PERFOM instruction to a PARAGRAPH that conatins a GOTO to another
+        /// This test contains a PERFORM instruction to a PARAGRAPH that contains a GOTO to another
         /// Paragraph, there is an Diagnostic which is Raised.
         /// </summary>
         [TestMethod]
@@ -1076,8 +1076,8 @@ namespace TypeCobol.Analysis.Test
         }
 
         /// <summary>
-        /// This test contains a PERFOM instruction to a PARAGRAPH that conatins a GOTO to another
-        /// Paragraph, with Block recusion detction, there is an Diagnostic which is Raised.
+        /// This test contains a PERFORM instruction to a PARAGRAPH that contains a GOTO to another
+        /// Paragraph, with Block recursion detection, there is an Diagnostic which is Raised.
         /// </summary>
         [TestMethod]
         [Ignore] //Result file needs update
