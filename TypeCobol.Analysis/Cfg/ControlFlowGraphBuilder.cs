@@ -221,7 +221,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// The Section and Paragraph Domain of this program.
         /// </summary>
-        internal Dictionary<string, Container<Symbol>.Entry> SectionsParagraphs
+        internal Container<Symbol> SectionsParagraphs
         {
             get;
             set;
@@ -990,22 +990,16 @@ namespace TypeCobol.Analysis.Cfg
         private void EnterSectionOrParagraphSymbol(Symbol sym)
         {
             System.Diagnostics.Debug.Assert(sym.Kind == Symbol.Kinds.Section || sym.Kind == Symbol.Kinds.Paragraph);
+
             if (this.CurrentProgramCfgBuilder.SectionsParagraphs == null)
-                this.CurrentProgramCfgBuilder.SectionsParagraphs = new Dictionary<string, Container<Symbol>.Entry>(StringComparer.OrdinalIgnoreCase);
-            string name = sym.Name;
-            this.CurrentProgramCfgBuilder.SectionsParagraphs.TryGetValue(name, out var scope);
-            if (scope == null)
-            {
-                scope = new Container<Symbol>.Entry(name);
-                this.CurrentProgramCfgBuilder.SectionsParagraphs[name] = scope;
-            }
-            scope.Add(sym);
+                this.CurrentProgramCfgBuilder.SectionsParagraphs = new Container<Symbol>();
+            this.CurrentProgramCfgBuilder.SectionsParagraphs.Add(sym);
+
             if (this.CurrentProgramCfgBuilder.AllSectionsParagraphs == null)
-            {
                 this.CurrentProgramCfgBuilder.AllSectionsParagraphs = new List<Symbol>();
-            }
             sym.Number = this.CurrentProgramCfgBuilder.AllSectionsParagraphs.Count;
             this.CurrentProgramCfgBuilder.AllSectionsParagraphs.Add(sym);
+
             //Special case Section or Paragraph inside a Declarative
             if (this.CurrentProgramCfgBuilder.CurrentDeclarativesContext != null)
             {
