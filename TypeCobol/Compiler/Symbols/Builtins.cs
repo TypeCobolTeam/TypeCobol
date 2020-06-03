@@ -1,5 +1,4 @@
-﻿using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Types;
+﻿using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Symbols
 {

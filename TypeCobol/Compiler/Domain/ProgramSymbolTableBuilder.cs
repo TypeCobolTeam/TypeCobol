@@ -69,7 +69,7 @@ namespace TypeCobol.Compiler.Domain
         /// <summary>
         /// The current scope : this is the CurrentFunction if any, otherwise the CurrentProgram.
         /// </summary>
-        private ScopeSymbol CurrentScope => CurrentFunction ?? (ScopeSymbol) CurrentProgram;
+        private ScopeSymbol CurrentScope => CurrentFunction ?? (ScopeSymbol)CurrentProgram;
 
         /// <summary>
         /// The current node.
@@ -97,7 +97,7 @@ namespace TypeCobol.Compiler.Domain
             get;
             set;
         }
-        
+
         /// <summary>
         /// Current section in the procedure division.
         /// </summary>
@@ -247,74 +247,6 @@ namespace TypeCobol.Compiler.Domain
         }
 
         /// <summary>
-        /// Resolve in the current program linkage section, the given parameter.
-        /// </summary>
-        /// <param name="p">The parameter to resolve.</param>
-        /// <returns>The resolved variable if any, null otherwise</returns>
-        private VariableSymbol ResolveUsingParameter(CallTargetParameter p)
-        {
-            System.Diagnostics.Debug.Assert(p.StorageArea != null);
-            System.Diagnostics.Debug.Assert(p.StorageArea.SymbolReference != null);
-            string parameterName = p.StorageArea.SymbolReference.Name;
-            var parameterCandidateSymbols = this.CurrentProgram.LinkageData.Lookup(parameterName);
-            if (parameterCandidateSymbols != null && parameterCandidateSymbols.Count == 1)
-            {
-                var parameterSymbol = parameterCandidateSymbols.Symbol;
-                if (p.SharingMode == null)
-                    parameterSymbol.SetFlag(Symbol.Flags.ByReference, true);
-                else
-                    switch (p.SharingMode.Value)
-                    {
-                        case ParameterSharingMode.ByContent:
-                            parameterSymbol.SetFlag(Symbol.Flags.ByContent, true);
-                            break;
-                        case ParameterSharingMode.ByReference:
-                            parameterSymbol.SetFlag(Symbol.Flags.ByReference, true);
-                            break;
-                        case ParameterSharingMode.ByValue:
-                            parameterSymbol.SetFlag(Symbol.Flags.ByValue, true);
-                            break;
-                    }
-
-                return parameterSymbol;
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Starting a Program PROCEDURE DIVISION => Collect all parameters.
-        /// </summary>
-        /// <param name="header"></param>
-        public override void StartProcedureDivision(ProcedureDivisionHeader header)
-        {
-            System.Diagnostics.Debug.Assert(CurrentProgram != null);
-
-            //Collect parameters and return variable and create the type for current program
-            List<VariableSymbol> usings = new List<VariableSymbol>();
-            IList<CallTargetParameter> usingParams = header.UsingParameters;
-            if (usingParams != null)
-            {
-                foreach (var p in usingParams)
-                {
-                    var parameterSymbol = ResolveUsingParameter(p);
-                    if (parameterSymbol != null)
-                    {
-                        usings.Add(parameterSymbol);
-                    }
-                }
-            }
-            CallTargetParameter retParam = header.ReturningParameter;
-            VariableSymbol returnVar = null;
-            if (retParam != null)
-            {
-                returnVar = ResolveUsingParameter(retParam);
-            }
-
-            CurrentProgram.Type = new ScopeType(usings, returnVar);
-        }
-
-        /// <summary>
         /// Start a Function Declaration
         /// </summary>
         /// <param name="header"></param>
@@ -322,7 +254,7 @@ namespace TypeCobol.Compiler.Domain
         {
             System.Diagnostics.Debug.Assert(CurrentNode != null);
             System.Diagnostics.Debug.Assert(object.ReferenceEquals(CurrentNode.CodeElement, header));
-            FunctionDeclaration funDecl = (FunctionDeclaration) CurrentNode;
+            FunctionDeclaration funDecl = (FunctionDeclaration)CurrentNode;
             System.Diagnostics.Debug.Assert(LastFunctionDeclaration == null);
             LastFunctionDeclaration = funDecl;
             //Create a function symbol (the FunctionType will be set at end of declaration)
@@ -345,7 +277,7 @@ namespace TypeCobol.Compiler.Domain
         private VariableSymbol FunctionParameter2Symbol(ParameterDescription parameter, Domain<VariableSymbol> linkageData)
         {
             VariableSymbol p = DataDefinition2Symbol(parameter, linkageData, null);
-            
+
             //Enter the symbol in the linkage section domain
             linkageData.Enter(p);
 
@@ -428,7 +360,7 @@ namespace TypeCobol.Compiler.Domain
         {
             if (dataDef.CodeElement?.Type == CodeElementType.DataRedefinesEntry)
             {
-                entry = (DataRedefinesEntry) dataDef.CodeElement;
+                entry = (DataRedefinesEntry)dataDef.CodeElement;
                 return true;
             }
 
@@ -567,7 +499,7 @@ namespace TypeCobol.Compiler.Domain
             //We build the GroupType fields
             foreach (var child in dataDef.Children)
             {
-                DataDefinition df = (DataDefinition) child;
+                DataDefinition df = (DataDefinition)child;
                 VariableSymbol dfSym = DataDefinition2Symbol(df, recType.Fields, typedef);
                 //if df_sym == null this may be a bad symbol.
                 if (dfSym != null)
@@ -629,7 +561,7 @@ namespace TypeCobol.Compiler.Domain
                     break;
             }
             SetSymbolAccessModifer(tdSym, entry.Visibility);
-            
+
             //A Typedef goes in the Types domain of their declaring program.
             //Enter it right now to allow recursive type definition to be possible here.
             CurrentScope.Types.Enter(tdSym);
@@ -638,7 +570,7 @@ namespace TypeCobol.Compiler.Domain
             //wrongly declared inside a group this may not be the case.
             //TypeDefinitionChecker should check that the owner is also the declaring program.
             tdSym.Owner = currentDomain.Owner;
-            
+
             //TODO SemanticDomain: store the type into the root table.
 
             VariableSymbol varSym = DataDefinition2Symbol(dataDef, currentDomain, tdSym);
@@ -647,7 +579,7 @@ namespace TypeCobol.Compiler.Domain
             System.Diagnostics.Debug.Assert(tdSym.Type != null);
             System.Diagnostics.Debug.Assert(tdSym.Type.Tag == Type.Tags.Typedef);
             Type targetType = varSym.Type;
-            ((TypedefType) tdSym.Type).TargetType = targetType;
+            ((TypedefType)tdSym.Type).TargetType = targetType;
 
             //Important if the target Type is a Group Type we must set the owner to the TypedefSymbol.
             if (targetType != null && targetType.Tag == Type.Tags.Group)
@@ -749,7 +681,7 @@ namespace TypeCobol.Compiler.Domain
                 switch (dataDef.CodeElement.Type)
                 {
                     case CodeElementType.DataDescriptionEntry:
-                    case CodeElementType.DataRedefinesEntry:                    
+                    case CodeElementType.DataRedefinesEntry:
                         {
                             //Extract Picture and Usage once to avoid multiple redundant calls
                             var picture = dataDef.Picture;
@@ -777,7 +709,7 @@ namespace TypeCobol.Compiler.Domain
                                 if (!MaybeGroup(dataDef))
                                 {
                                     //Check for TYPE clause
-                                    var entry = (CommonDataDescriptionAndDataRedefines) dataDef.CodeElement;
+                                    var entry = (CommonDataDescriptionAndDataRedefines)dataDef.CodeElement;
                                     if (entry.UserDefinedDataType != null)
                                     {
                                         sym = CreateDataTypeSymbol(dataDef, currentDomain, typedef);
@@ -833,9 +765,9 @@ namespace TypeCobol.Compiler.Domain
                             indexSym.SetFlag(Symbol.Flags.Global, true);
                         }
                     }
-                }                
+                }
             }
-            
+
             return sym;
         }
 
@@ -879,46 +811,46 @@ namespace TypeCobol.Compiler.Domain
                 switch (dataDef.CodeElement.Type)
                 {
                     case CodeElementType.DataConditionEntry:
-                    {
-                        sym.Level = 88;
-                        //Does the variable inherits from parent its Global flag ?
-                        if (currentDomain.Owner.Kind != Symbol.Kinds.Program && currentDomain.Owner.Kind != Symbol.Kinds.Function)
-                            sym.SetFlag(currentDomain.Owner.Flag & Symbol.Flags.Global, currentDomain.Owner.HasFlag(Symbol.Flags.Global));
-                    }
+                        {
+                            sym.Level = 88;
+                            //Does the variable inherits from parent its Global flag ?
+                            if (currentDomain.Owner.Kind != Symbol.Kinds.Program && currentDomain.Owner.Kind != Symbol.Kinds.Function)
+                                sym.SetFlag(currentDomain.Owner.Flag & Symbol.Flags.Global, currentDomain.Owner.HasFlag(Symbol.Flags.Global));
+                        }
                         break;
                     case CodeElementType.DataRenamesEntry:
-                    {
-                        sym.Level = 66;
-                        //Does the variable inherits from parent its Global flag ?
-                        if (currentDomain.Owner.Kind != Symbol.Kinds.Program && currentDomain.Owner.Kind != Symbol.Kinds.Function)
-                            sym.SetFlag(currentDomain.Owner.Flag & Symbol.Flags.Global, currentDomain.Owner.HasFlag(Symbol.Flags.Global));
-                    }
+                        {
+                            sym.Level = 66;
+                            //Does the variable inherits from parent its Global flag ?
+                            if (currentDomain.Owner.Kind != Symbol.Kinds.Program && currentDomain.Owner.Kind != Symbol.Kinds.Function)
+                                sym.SetFlag(currentDomain.Owner.Flag & Symbol.Flags.Global, currentDomain.Owner.HasFlag(Symbol.Flags.Global));
+                        }
                         break;
                     case CodeElementType.DataDescriptionEntry:
                     case CodeElementType.DataRedefinesEntry:
-                    {
-                        var dataDescOrRedefines = (CommonDataDescriptionAndDataRedefines) dataDef.CodeElement;
-                        sym.Level = dataDescOrRedefines.LevelNumber != null ? (int) dataDescOrRedefines.LevelNumber.Value : 0;
-                        sym.IsFiller = dataDescOrRedefines.IsFiller;
-
-                        //Global flag explicitly set or inherited
-                        if (dataDescOrRedefines.IsGlobal || currentDomain.Owner.HasFlag(Symbol.Flags.Global))
                         {
-                            sym.SetFlag(Symbol.Flags.Global, true);
-                        }
+                            var dataDescOrRedefines = (CommonDataDescriptionAndDataRedefines)dataDef.CodeElement;
+                            sym.Level = dataDescOrRedefines.LevelNumber != null ? (int)dataDescOrRedefines.LevelNumber.Value : 0;
+                            sym.IsFiller = dataDescOrRedefines.IsFiller;
 
-                        //BlankWhenZero flag
-                        if (dataDescOrRedefines.IsBlankWhenZero != null && dataDescOrRedefines.IsBlankWhenZero.Value)
-                            sym.SetFlag(Symbol.Flags.BlankWhenZero, true);
+                            //Global flag explicitly set or inherited
+                            if (dataDescOrRedefines.IsGlobal || currentDomain.Owner.HasFlag(Symbol.Flags.Global))
+                            {
+                                sym.SetFlag(Symbol.Flags.Global, true);
+                            }
 
-                        //External flag
-                        if (dataDescOrRedefines.Type == CodeElementType.DataDescriptionEntry)
-                        {
-                            DataDescriptionEntry dataDesc = (DataDescriptionEntry) dataDescOrRedefines;
-                            if (dataDesc.IsExternal)
-                                sym.SetFlag(Symbol.Flags.External, true);
+                            //BlankWhenZero flag
+                            if (dataDescOrRedefines.IsBlankWhenZero != null && dataDescOrRedefines.IsBlankWhenZero.Value)
+                                sym.SetFlag(Symbol.Flags.BlankWhenZero, true);
+
+                            //External flag
+                            if (dataDescOrRedefines.Type == CodeElementType.DataDescriptionEntry)
+                            {
+                                DataDescriptionEntry dataDesc = (DataDescriptionEntry)dataDescOrRedefines;
+                                if (dataDesc.IsExternal)
+                                    sym.SetFlag(Symbol.Flags.External, true);
+                            }
                         }
-                    }
                         break;
                     default:
                         System.Diagnostics.Debug.Fail("Unsupported CodeElement type in DecorateSymbol !");
