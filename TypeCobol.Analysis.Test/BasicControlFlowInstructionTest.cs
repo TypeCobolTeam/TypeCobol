@@ -1027,7 +1027,6 @@ namespace TypeCobol.Analysis.Test
         /// "dot.exe" -Tsvg CGM110.dot -o CGM110.svg
         /// </summary>
         [TestMethod]
-        //[Ignore]//Very big
         public void OneThidPartyCGM110()
         {
             string pwd = Directory.GetCurrentDirectory();
@@ -1054,7 +1053,7 @@ namespace TypeCobol.Analysis.Test
         /// Paragraph, there is an Diagnostic which is Raised.
         /// </summary>
         [TestMethod]
-        [Ignore]
+        [Ignore] //Result file needs update
         public void OneThidPartyIX105A()
         {
             string pwd = Directory.GetCurrentDirectory();
@@ -1068,12 +1067,12 @@ namespace TypeCobol.Analysis.Test
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
             //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IX105A.dot");
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Nist", "IX105A.dot");
 
             Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
             Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
 
-            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath, false);
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath, true);
         }
 
         /// <summary>
@@ -1081,7 +1080,7 @@ namespace TypeCobol.Analysis.Test
         /// Paragraph, with Block recusion detction, there is an Diagnostic which is Raised.
         /// </summary>
         [TestMethod]
-        [Ignore]
+        [Ignore] //Result file needs update
         public void OneThidPartySG102A()
         {
             string pwd = Directory.GetCurrentDirectory();
@@ -1095,12 +1094,12 @@ namespace TypeCobol.Analysis.Test
             var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
                 false, /*copies*/ null);
             //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "SG102A.dot");
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Nist", "SG102A.dot");
 
             Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
             Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
 
-            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath, false);
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath, true);
         }
 
         /// <summary>
@@ -1108,7 +1107,7 @@ namespace TypeCobol.Analysis.Test
         /// This dot files contains full instructions source code
         /// </summary>
         [TestMethod]
-        [Ignore]
+        [Ignore] //Long execution time
         public void GenAllNistSrcDots()
         {
             string pwd = Directory.GetCurrentDirectory();
@@ -1146,7 +1145,7 @@ namespace TypeCobol.Analysis.Test
         /// This dot files contains instructions names only.
         /// </summary>
         [TestMethod]
-        [Ignore]
+        [Ignore] //Long execution time
         public void GenAllNistDots()
         {
             string pwd = Directory.GetCurrentDirectory();
