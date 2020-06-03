@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Symbols;
+﻿using TypeCobol.Compiler.Symbols;
 
 namespace TypeCobol.Compiler.Scopes
 {
@@ -15,70 +10,70 @@ namespace TypeCobol.Compiler.Scopes
         /// <summary>
         /// Type symbols
         /// </summary>
-        Scope<TypedefSymbol> Types
+        Domain<TypedefSymbol> Types
         {
             get;
         }
         /// <summary>
         /// File data symbols
         /// </summary>
-        Scope<VariableSymbol> FileData
+        Domain<VariableSymbol> FileData
         {
             get;
         }
         /// <summary>
         /// GlobalStorageData symbols
         /// </summary>
-        Scope<VariableSymbol> GlobalStorageData
+        Domain<VariableSymbol> GlobalStorageData
         {
             get;
         }
         /// <summary>
         /// WorkingStorageData symbols
         /// </summary>
-        Scope<VariableSymbol> WorkingStorageData
+        Domain<VariableSymbol> WorkingStorageData
         {
             get;
         }
         /// <summary>
         /// LocalStorageData symbols
         /// </summary>
-        Scope<VariableSymbol> LocalStorageData
+        Domain<VariableSymbol> LocalStorageData
         {
             get;
         }
         /// <summary>
-        /// LinkageStorageData symbols
+        /// LinkageData symbols
         /// </summary>
-        Scope<VariableSymbol> LinkageStorageData
+        Domain<VariableSymbol> LinkageData
         {
             get;
         }
         /// <summary>
         /// Sections symbols
         /// </summary>
-        Scope<SectionSymbol> Sections
+        Domain<SectionSymbol> Sections
         {
             get;
         }
         /// <summary>
         /// Paragraphs symbols
         /// </summary>
-        Scope<ParagraphSymbol> Paragraphs
+        Domain<ParagraphSymbol> Paragraphs
         {
             get;
         }
         /// <summary>
         /// Functions symbols
         /// </summary>
-        Scope<FunctionSymbol> Functions
+        Domain<FunctionSymbol> Functions
         {
             get;
         }
         /// <summary>
         /// Functions symbols
         /// </summary>
-        Scope<ProgramSymbol> Programs
+        Domain<ProgramSymbol> Programs
         {
             get;
         }

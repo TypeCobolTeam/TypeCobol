@@ -42,11 +42,11 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// When a RedefinesSymbol is normalized it  Redefined Symbol must change.
         /// </summary>
-        /// <param name="scope"></param>
-        internal override void NormalizeExpandedSymbol(Scope<VariableSymbol> scope)
+        /// <param name="domain"></param>
+        internal override void NormalizeExpandedSymbol(Domain<VariableSymbol> domain)
         {
-            base.NormalizeExpandedSymbol(scope);
-            Domain<VariableSymbol>.Entry entry = scope.Lookup(Redefined.Name);
+            base.NormalizeExpandedSymbol(domain);
+            Container<VariableSymbol>.Entry entry = domain.Lookup(Redefined.Name);
             System.Diagnostics.Debug.Assert(entry != null);
             System.Diagnostics.Debug.Assert(entry.Count == 1);
             Redefined = entry.Symbol;            

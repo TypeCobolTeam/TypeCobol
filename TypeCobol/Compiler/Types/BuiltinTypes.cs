@@ -180,13 +180,13 @@ namespace TypeCobol.Compiler.Types
             symbol.Level = 1;
             GroupType recType = new GroupType(symbol);
             VariableSymbol yyyy = new VariableSymbol("YYYY") { Level = 2, Type = DateYYYYType, Owner = symbol };
-            recType.Scope.Enter(yyyy);
+            recType.Fields.Enter(yyyy);
 
             VariableSymbol mm = new VariableSymbol("MM") { Level = 2, Type = DateMMType, Owner = symbol };
-            recType.Scope.Enter(mm);
+            recType.Fields.Enter(mm);
 
             VariableSymbol dd = new VariableSymbol("DD") { Level = 2, Type = DateDDType, Owner = symbol };
-            recType.Scope.Enter(dd);
+            recType.Fields.Enter(dd);
 
             TypedefType dateType = new TypedefType(symbol, recType);            
             symbol.Type = dateType;

@@ -232,7 +232,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// The Section and Paragraph Domain of this program.
         /// </summary>
-        internal Dictionary<string, Domain<Symbol>> SectionsParagraphs
+        internal Dictionary<string, Container<Symbol>> SectionsParagraphs
         {
             get;
             set;
@@ -1018,13 +1018,13 @@ namespace TypeCobol.Analysis.Cfg
         {
             System.Diagnostics.Debug.Assert(sym.Kind == Symbol.Kinds.Section || sym.Kind == Symbol.Kinds.Paragraph);
             if (this.CurrentProgramCfgBuilder.SectionsParagraphs == null)
-                this.CurrentProgramCfgBuilder.SectionsParagraphs = new Dictionary<string, Domain<Symbol>>(StringComparer.OrdinalIgnoreCase);
+                this.CurrentProgramCfgBuilder.SectionsParagraphs = new Dictionary<string, Container<Symbol>>(StringComparer.OrdinalIgnoreCase);
             string name = sym.Name;
-            Domain<Symbol> scope = null;
+            Container<Symbol> scope = null;
             this.CurrentProgramCfgBuilder.SectionsParagraphs.TryGetValue(name, out scope);
             if (scope == null)
             {
-                scope = new Domain<Symbol>();
+                scope = new Container<Symbol>();
                 this.CurrentProgramCfgBuilder.SectionsParagraphs[name] = scope;
             }
             scope.Add(sym);
@@ -1061,14 +1061,14 @@ namespace TypeCobol.Analysis.Cfg
         /// </summary>
         /// <param name="symRef">The Symbol Reference instance to a section or a paragraph.</param>
         /// <returns>The scope of symbols found</returns>
-        internal Domain<Symbol> ResolveSectionOrParagraphSymbol(SymbolReference symRef)
+        internal Container<Symbol> ResolveSectionOrParagraphSymbol(SymbolReference symRef)
         {
             System.Diagnostics.Debug.Assert(symRef != null);
-            Domain<Symbol> results = new Domain<Symbol>();
+            Container<Symbol> results = new Container<Symbol>();
 
-            string[] paths = AbstractScope.SymbolReferenceToPath(symRef);
+            string[] paths = ScopeSymbol.SymbolReferenceToPath(symRef);
             string name = paths[0];
-            Domain<Symbol> candidates = null;
+            Container<Symbol> candidates = null;
             this.CurrentProgramCfgBuilder.SectionsParagraphs.TryGetValue(name, out candidates);
             if (candidates == null)
                 return results;
@@ -1091,13 +1091,13 @@ namespace TypeCobol.Analysis.Cfg
             /// <param name="name">Section's name</param>
             public CfgSectionSymbol(string name) : base(name)
             {
-                SentencesParagraphs = new Scope<Symbol>(this);
+                SentencesParagraphs = new Domain<Symbol>(this);
             }
 
             /// <summary>
             /// All sentences and paragraphs in this section in the order of appearance.
             /// </summary>
-            public Scope<Symbol> SentencesParagraphs
+            public Domain<Symbol> SentencesParagraphs
             {
                 get;
                 protected set;
@@ -1170,7 +1170,7 @@ namespace TypeCobol.Analysis.Cfg
             /// <summary>
             /// All sentences in this paragraph in the order of appearance
             /// </summary>
-            public Scope<CfgSentence> Sentences
+            public Domain<CfgSentence> Sentences
             {
                 get;
                 protected set;
@@ -1192,7 +1192,7 @@ namespace TypeCobol.Analysis.Cfg
             /// <param name="name">Pargarph's name</param>
             public CfgParagraphSymbol(string name) : base(name)
             {
-                Sentences = new Scope<CfgSentence>(this);
+                Sentences = new Domain<CfgSentence>(this);
             }
             /// <summary>
             /// Set flags
@@ -1325,7 +1325,7 @@ namespace TypeCobol.Analysis.Cfg
         private Symbol CheckSectionOrParagraph(Node node, SymbolReference symRef)
         {
             //Resolve the target Section or Paragraph.
-            Domain<Symbol> symbols = ResolveSectionOrParagraphSymbol(symRef);
+            Container<Symbol> symbols = ResolveSectionOrParagraphSymbol(symRef);
 
             if (symbols.Count == 0)
             {
@@ -1428,6 +1428,10 @@ namespace TypeCobol.Analysis.Cfg
                         StoreProcedureSentenceBlocks(p, subSectionOrParagraph, group, clonedBlockIndexMap);
                     }
                     StoreProcedureSentenceBlocks(p, throughProcedureSymbol, group, clonedBlockIndexMap);
+                }
+                else
+                {
+                    StoreProcedureSentenceBlocks(p, procedureSymbol, group, clonedBlockIndexMap);
                 }
             }
             else

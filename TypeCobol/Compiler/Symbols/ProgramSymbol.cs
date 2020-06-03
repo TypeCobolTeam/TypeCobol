@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Scopes;
@@ -9,124 +8,117 @@ namespace TypeCobol.Compiler.Symbols
     /// <summary>
     /// Represents a Program Symbol
     /// </summary>
-    public class ProgramSymbol : AbstractScope
+    public class ProgramSymbol : ScopeSymbol
     {
+        private readonly Container<VariableSymbol> _variables;
+
         /// <summary>
         /// Named constructor.
         /// </summary>
         /// <param name="name"></param>
         public ProgramSymbol(string name) : base(name, Kinds.Program)
         {
-            Types = new Scope<TypedefSymbol>(this);
-            FileData = new Scope<VariableSymbol>(this);
-            GlobalStorageData = new Scope<VariableSymbol>(this);
-            WorkingStorageData = new Scope<VariableSymbol>(this);
-            LocalStorageData = new Scope<VariableSymbol>(this);
-            LinkageStorageData = new Scope<VariableSymbol>(this);
-            Sections = new Scope<SectionSymbol>(this);
-            Paragraphs = new Scope<ParagraphSymbol>(this);
-            Functions = new Scope<FunctionSymbol>(this);
-            Programs = new Scope<ProgramSymbol>(this);
-            Domain = new Domain<VariableSymbol>();
+            _variables = new Container<VariableSymbol>();
+            Types = new Domain<TypedefSymbol>(this);
+            FileData = new Domain<VariableSymbol>(this);
+            GlobalStorageData = new Domain<VariableSymbol>(this);
+            WorkingStorageData = new Domain<VariableSymbol>(this);
+            LocalStorageData = new Domain<VariableSymbol>(this);
+            LinkageData = new Domain<VariableSymbol>(this);
+            Sections = new Domain<SectionSymbol>(this);
+            Paragraphs = new Domain<ParagraphSymbol>(this);
+            Functions = new Domain<FunctionSymbol>(this);
+            Programs = new Domain<ProgramSymbol>(this);
         }
 
         /// <summary>
-        /// All types of this program.
+        /// All types defined in this program.
         /// </summary>
-        public override Scope<TypedefSymbol> Types
+        public override Domain<TypedefSymbol> Types
         {
             get;
             protected set;
         }
 
         /// <summary>
-        /// File data scope of the program.
+        /// Data of the FILE SECTION of the program.
         /// </summary>
-        public override Scope<VariableSymbol> FileData
+        public override Domain<VariableSymbol> FileData
         {
             get;
             protected set;
         }
 
         /// <summary>
-        /// Global Storage data scope of the program.
+        /// Data of the GLOBAL-STORAGE SECTION of the program.
         /// </summary>
-        public override Scope<VariableSymbol> GlobalStorageData
+        public override Domain<VariableSymbol> GlobalStorageData
         {
             get;
             protected set;
         }
 
         /// <summary>
-        /// Working Storage data scope of the program.
+        /// Data of the WORKING-STORAGE SECTION of the program.
         /// </summary>
-        public override Scope<VariableSymbol> WorkingStorageData
+        public override Domain<VariableSymbol> WorkingStorageData
         {
             get;
             protected set;
         }
 
         /// <summary>
-        /// Working Storage data scope of the program.
+        /// Data of the LOCAL-STORAGE SECTION of the program.
         /// </summary>
-        public override Scope<VariableSymbol> LocalStorageData
+        public override Domain<VariableSymbol> LocalStorageData
         {
             get;
             protected set;
         }
 
         /// <summary>
-        /// Linkage Storage data scope of the program.
+        /// Data of the LINKAGE SECTION of the program.
         /// </summary>
-        public override Scope<VariableSymbol> LinkageStorageData
+        public override Domain<VariableSymbol> LinkageData
         {
             get;
             protected set;
         }
 
         /// <summary>
-        /// Section scope of the program.
+        /// Sections of the program.
         /// </summary>
-        public override Scope<SectionSymbol> Sections
+        public override Domain<SectionSymbol> Sections
         {
             get;
             protected set;
         }
 
         /// <summary>
-        /// Paragraph scope of the program.
+        /// Paragraps of the program.
         /// </summary>
-        public override Scope<ParagraphSymbol> Paragraphs
+        public override Domain<ParagraphSymbol> Paragraphs
         {
             get;
             protected set;
         }
 
         /// <summary>
-        /// Functions scope of the program.
+        /// Functions/Procedures defined in the program.
         /// </summary>
-        public override Scope<FunctionSymbol> Functions
+        public override Domain<FunctionSymbol> Functions
         {
             get;
             protected set;
         }
 
         /// <summary>
-        /// Programs scope of the program.
+        /// Nested Programs defined in the program.
         /// </summary>
-        public override Scope<ProgramSymbol> Programs
+        public override Domain<ProgramSymbol> Programs
         {
             get;
             protected set;
-        }
-
-        /// <summary>
-        /// The Domain of this program.
-        /// </summary>
-        internal Domain<VariableSymbol> Domain
-        {
-            get;
-            set;
         }
 
         /// <summary>
@@ -136,7 +128,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <returns>The ProgramSymbol</returns>
         public ProgramSymbol EnterProgram(string name)
         {
-            Domain<ProgramSymbol>.Entry entry = Programs.Lookup(name);
+            Container<ProgramSymbol>.Entry entry = Programs.Lookup(name);
             if (entry == null)
             {
                 ProgramSymbol prgSym = new ProgramSymbol(name);
@@ -159,57 +151,43 @@ namespace TypeCobol.Compiler.Symbols
             }
         }
 
-        /// <summary>
-        /// Add the given VariableSymbol instance in this Program domain
-        /// </summary>
-        /// <param name="varSym">The Variable Symbol to be added</param>
-        /// <returns>The given VariableSymbol instance.</returns>
-        public VariableSymbol AddToDomain(VariableSymbol varSym)
+        internal override void DiscardSymbolsFromRoot()
         {
-            System.Diagnostics.Debug.Assert(varSym != null);
-            lock (Domain)
-            {
-                //First add it in the Global Domain.
-                Symbol root = TopParent(Kinds.Root);
-                ((RootSymbolTable) root)?.AddToUniverse(varSym);
-                Domain.Add(varSym);
-            }
-            return varSym;
-        }
+            var root = TopParent(Kinds.Root) as RootSymbolTable;
+            System.Diagnostics.Debug.Assert(root != null);
 
-        /// <summary>
-        /// Free the domain associated to this program.
-        /// </summary>
-        internal override void FreeDomain()
-        {
-            RootSymbolTable root = (RootSymbolTable)TopParent(Kinds.Root);
-            if (root != null)
+            //Discard all types, variables, functions and nested programs from root
+            foreach (var type in Types)
             {
-                foreach (var varSym in Domain)
-                {
-                    root.RemoveFromUniverse(varSym);
-                }
+                root.Discard(type);
+            }
+            foreach (var variable in _variables)
+            {
+                root.Discard(variable);
+            }
+            foreach (var function in Functions)
+            {
+                root.Discard(function);
+            }
+            foreach (var nestedProgram in Programs)
+            {
+                root.Discard(nestedProgram);
             }
         }
 
         /// <summary>
-        /// Add the element to this Program's domain.
+        /// Add the variable to this Program.
         /// </summary>
-        /// <param name="element"></param>
-        /// <returns></returns>
-        public VariableSymbol Add(VariableSymbol element)
+        /// <param name="variable">VariableSymbol to add.</param>
+        /// <returns>The given variable is returned.</returns>
+        public void Add(VariableSymbol variable)
         {
-            return AddToDomain(element);
-        }
+            System.Diagnostics.Debug.Assert(variable != null);
 
-        /// <summary>
-        /// Get the Scope of symbol associated to the given symbol name.
-        /// </summary>
-        /// <param name="path">The Symbol's path to get the Scope, the path is in reverse order à la COBOL.</param>
-        /// <returns>The Multi Symbol set of all symbol corresponding to the given path.</returns>
-        public Domain<VariableSymbol>.Entry Get(string[] path)
-        {
-            return ResolveReference(path, true);
+            //First store it in the root table.
+            Symbol root = TopParent(Kinds.Root);
+            ((RootSymbolTable)root)?.Store(variable);
+            _variables.Add(variable);
         }
 
         /// <summary>
@@ -335,13 +313,13 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="bRecurseEnglobingPrograms">true to recurse into englobing variables to look for global variable, false otherwise</param>
         /// <param name="visibilityMask">Visibility Mask</param>
         /// <returns>The referenced symbols if any</returns>
-        private void ResolveReference(string[] paths, Domain<VariableSymbol>.Entry results, bool bRecurseEnglobingPrograms, Symbol.Flags visibilityMask)
+        private void ResolveReference(string[] paths, Container<VariableSymbol>.Entry results, bool bRecurseEnglobingPrograms, Symbol.Flags visibilityMask)
         {
             if (paths == null || paths.Length == 0 || paths[0] == null)
                 return;
 
             string name = paths[0];
-            if (this.Domain.TryGetValue(name, out var candidates))
+            if (this._variables.TryGetValue(name, out var candidates))
             {
                 foreach (var candidate in candidates)
                 {
@@ -385,7 +363,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="symRef">The Symbol Reference to be resolved</param>
         /// <param name="bRecurseEnglobingPrograms">true to recurse into englobing variables to look for global variable, false otherwise</param>
         /// <returns>The referenced symbols if any</returns>
-        public Domain<VariableSymbol>.Entry ResolveReference(SymbolReference symRef, bool bRecurseEnglobingPrograms)
+        public Container<VariableSymbol>.Entry ResolveReference(SymbolReference symRef, bool bRecurseEnglobingPrograms)
         {
             System.Diagnostics.Debug.Assert(symRef != null);
             return ResolveReference(SymbolReferenceToPath(symRef), bRecurseEnglobingPrograms);
@@ -397,12 +375,12 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="paths">The qualified path of the symbol reference in COBOL85 order</param>
         /// <param name="bRecurseEnglobingPrograms">true to recurse into enclobing variables to look for global variable, false otherwise</param>
         /// <returns>The referenced symbols if any</returns>
-        public Domain<VariableSymbol>.Entry ResolveReference(string[] paths, bool bRecurseEnglobingPrograms)
+        public Container<VariableSymbol>.Entry ResolveReference(string[] paths, bool bRecurseEnglobingPrograms)
         {
             if (paths == null || paths.Length == 0 || paths[0] == null)
                 return null;
 
-            var results = new Domain<VariableSymbol>.Entry(paths[0]);
+            var results = new Container<VariableSymbol>.Entry(paths[0]);
             ResolveReference(paths, results, bRecurseEnglobingPrograms, 0);
             return results;
         }
@@ -413,7 +391,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="root">The Root Symbol Table</param>
         /// <param name="path">The type's path'</param>
         /// <returns>The Set of resolve types</returns>
-        public override Domain<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path)
+        public override Container<TypedefSymbol>.Entry ResolveType(RootSymbolTable root, string[] path)
         {
             ProgramSymbol topPrg = (ProgramSymbol)TopParent(Kinds.Program);
             return ResolveSymbol<TypedefSymbol>(path, topPrg, root.LookupType);
@@ -425,10 +403,10 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="root">The Root Symbol Table</param>
         /// <param name="path">The type's path'</param>
         /// <returns>The Set of resolve types</returns>
-        public override Domain<AbstractScope>.Entry ResolveScope(RootSymbolTable root, string[] path)
+        public override Container<ScopeSymbol>.Entry ResolveScope(RootSymbolTable root, string[] path)
         {
             ProgramSymbol topPrg = (ProgramSymbol)TopParent(Kinds.Program);
-            return ResolveSymbol<AbstractScope>(path, topPrg, root.LookupScope);
+            return ResolveSymbol<ScopeSymbol>(path, topPrg, root.LookupScope);
         }
 
         /// <summary>
@@ -438,7 +416,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="section">The section to dump</param>
         /// <param name="tw">TextWriter instance</param>
         /// <param name="indentLevel">indentation level</param>
-        private void DumpSection(string name, Scope<VariableSymbol> section, TextWriter tw, int indentLevel)
+        private void DumpSection(string name, Domain<VariableSymbol> section, TextWriter tw, int indentLevel)
         {
             if (section.Any())
             {
@@ -472,7 +450,7 @@ namespace TypeCobol.Compiler.Symbols
         }
         public void DumpLinkageSection(TextWriter tw, int indentLevel)
         {
-            DumpSection("LINKAGE SECTION.", this.LinkageStorageData, tw, indentLevel);
+            DumpSection("LINKAGE SECTION.", this.LinkageData, tw, indentLevel);
         }
         /// <summary>
         /// Dump the DataDivision

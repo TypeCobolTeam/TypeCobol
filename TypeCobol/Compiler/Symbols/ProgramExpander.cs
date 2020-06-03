@@ -22,17 +22,17 @@ namespace TypeCobol.Compiler.Symbols
             }
 
             /// <summary>
-            /// Expand all variables within a scope.
+            /// Expand all variables within a domain.
             /// </summary>
-            /// <typeparam name="TSymbol">Type of symbols in the scope.</typeparam>
-            /// <param name="scope">Scope to expand.</param>
-            private void ExpandScope<TSymbol>(Scope<TSymbol> scope) 
+            /// <typeparam name="TSymbol">Type of symbols in the domain.</typeparam>
+            /// <param name="domain">Domain to expand.</param>
+            private void ExpandDomain<TSymbol>(Domain<TSymbol> domain) 
                 where TSymbol : Symbol
             {
-                foreach (var symbol in scope)
+                foreach (var symbol in domain)
                 {
                     Symbol newSymbol = symbol.Accept(this, null);
-                    //We don't support symbol renaming with a scope.
+                    //We don't support symbol renaming within a domain.
                     System.Diagnostics.Debug.Assert(newSymbol == symbol);
                 }
             }
@@ -74,17 +74,17 @@ namespace TypeCobol.Compiler.Symbols
                 try
                 {
                     //Check each storage sections
-                    ExpandScope(programToExpand.FileData);
-                    ExpandScope(programToExpand.GlobalStorageData);
-                    ExpandScope(programToExpand.WorkingStorageData);
-                    ExpandScope(programToExpand.LocalStorageData);
-                    ExpandScope(programToExpand.LinkageStorageData);
+                    ExpandDomain(programToExpand.FileData);
+                    ExpandDomain(programToExpand.GlobalStorageData);
+                    ExpandDomain(programToExpand.WorkingStorageData);
+                    ExpandDomain(programToExpand.LocalStorageData);
+                    ExpandDomain(programToExpand.LinkageData);
 
                     //Check each Nested Programs
-                    ExpandScope(programToExpand.Programs);
+                    ExpandDomain(programToExpand.Programs);
 
                     //Check each procedure
-                    ExpandScope(programToExpand.Functions);
+                    ExpandDomain(programToExpand.Functions);
                 }
                 finally
                 {
@@ -182,8 +182,8 @@ namespace TypeCobol.Compiler.Symbols
             public override Type VisitGroupType(GroupType group, Symbol owner)
             {
                 GroupType newType = (GroupType) group.Clone();
-                newType.Scope = new Scope<VariableSymbol>(owner);
-                foreach (var field in group.Scope)
+                newType.Fields = new Domain<VariableSymbol>(owner);
+                foreach (var field in group.Fields)
                 {
                     //Clone only variables that are inside a TYPEDEF
                     bool isInTypedef = field.HasFlag(Symbol.Flags.InsideTypedef);
@@ -194,20 +194,20 @@ namespace TypeCobol.Compiler.Symbols
                     }
 
                     //Normalize the new field
-                    newField.NormalizeExpandedSymbol(newType.Scope);
+                    newField.NormalizeExpandedSymbol(newType.Fields);
                     newField.Accept(_parentExpander._symbolExpander, null);
 
 #if !DOMAIN_CHECKER
                     System.Diagnostics.Debug.Assert(newField.Type != null);
 #endif
 
-                    newType.Scope.Enter(newField);
+                    newType.Fields.Enter(newField);
                     //Set the new owner
                     newField.Owner = owner;
                     if (isInTypedef)
                     {
-                        //Important add to the domain the new field that was cloned.
-                        _parentExpander._currentExpandingProgram.AddToDomain(newField);
+                        //Important : register the new field that was cloned in the current program
+                        _parentExpander._currentExpandingProgram.Add(newField);
                     }
                 }
                 return newType;

@@ -10,13 +10,13 @@ namespace TypeCobol.Compiler.Symbols
         public SectionSymbol(string name)
             : base(name, Kinds.Section)
         {
-            Paragraphs = new Scope<ParagraphSymbol>(this);
+            Paragraphs = new Domain<ParagraphSymbol>(this);
         }
 
         /// <summary>
         /// Paragraph scope of the Section.
         /// </summary>
-        public Scope<ParagraphSymbol> Paragraphs
+        public Domain<ParagraphSymbol> Paragraphs
         {
             get;
             protected set;

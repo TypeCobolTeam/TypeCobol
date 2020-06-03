@@ -192,12 +192,12 @@ namespace TypeCobol.Compiler.Symbols
         /// Call to normalize an expanded symbol.
         /// An expanded symbol must ihnerits section flags from its owner plus its GLOBAL flag.
         /// </summary>
-        /// <param name="scope">The normalization scope</param>
-        internal virtual void NormalizeExpandedSymbol(Scope<VariableSymbol> scope)
+        /// <param name="domain">The normalization domain</param>
+        internal virtual void NormalizeExpandedSymbol(Domain<VariableSymbol> domain)
         {
-            System.Diagnostics.Debug.Assert(scope.Owner != null);
+            System.Diagnostics.Debug.Assert(domain.Owner != null);
             this.Flag &= ~Symbol.SectionMask;
-            this.Flag |= scope.Owner.Flag & (Symbol.SectionMask | Flags.Global);
+            this.Flag |= domain.Owner.Flag & (Symbol.SectionMask | Flags.Global);
         }
 
         /// <summary>

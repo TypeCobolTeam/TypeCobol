@@ -11,6 +11,7 @@ using TypeCobol.Compiler.Report;
 using TypeCobol.Compiler.Symbols;
 using TypeCobol.Compiler.CodeElements;
 using System.Text.RegularExpressions;
+using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Analysis.Report
 {
@@ -90,7 +91,7 @@ namespace TypeCobol.Analysis.Report
 
             public override Dictionary<Symbol, Symbol> VisitGroupType(Compiler.Types.GroupType t, Dictionary<Symbol, Symbol> symbols)
             {
-                foreach (var field in t.Scope)
+                foreach (var field in t.Fields)
                 {
                     field.Accept(this, symbols);
                 }
@@ -265,7 +266,7 @@ namespace TypeCobol.Analysis.Report
                                              //Find the use point of the sending identifier in the DefPoint's Block.
                                              //(2.1.1.1.2.1) Resolve the identifier variable
                                                 SymbolReference symRef = simpleMove.SendingVariable.StorageArea.SymbolReference;
-                                                Compiler.Scopes.Domain<VariableSymbol>.Entry result = program.ResolveReference(symRef, true);
+                                                Container<VariableSymbol>.Entry result = program.ResolveReference(symRef, true);
                                                 System.Diagnostics.Debug.Assert(result != null);
                                                 if (result.Count == 1)
                                                 {//(2.1.1.1.2.2) The sending identifier variable is resolved -> look for its UsePoint instruction in the definition block

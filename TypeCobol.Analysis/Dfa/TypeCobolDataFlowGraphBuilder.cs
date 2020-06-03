@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TypeCobol.Analysis.Graph;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Symbols;
 
 namespace TypeCobol.Analysis.Dfa
@@ -74,7 +75,7 @@ namespace TypeCobol.Analysis.Dfa
             {
                 SymbolReference symRef = storageArea.SymbolReference;
                 //Resolve the Symbol Reference.
-                Compiler.Scopes.Domain<VariableSymbol>.Entry result = _program.ResolveReference(symRef, true);
+                Container<VariableSymbol>.Entry result = _program.ResolveReference(symRef, true);
                 System.Diagnostics.Debug.Assert(result != null);
                 if (result.Count == 1)
                 {//We have found an unique match
