@@ -121,7 +121,7 @@ namespace TypeCobol.Analysis.Graph
                 Writer.WriteLine("arrowtail = \"empty\"");
                 Writer.WriteLine("]");
 
-                //Run DFS on the flow graph, with the emiter callback method.
+                //Run DFS on the flow graph, with the emitter callback method.
                 Cfg.DFS(EmitBasicBlock);
                 Writer.WriteLine(DigraphBuilder.ToString());
                 Writer.WriteLine("}");
