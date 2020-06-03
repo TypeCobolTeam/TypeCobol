@@ -1,11 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TypeCobol.Tools.Options_Config;
 using TypeCobol.Compiler.Parser;
-using TypeCobol.Compiler.Domain;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.Symbols;
 using System.IO;
 using TypeCobol.Analysis.Cfg;
 
