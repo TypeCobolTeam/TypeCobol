@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace TypeCobol.Analysis.Graph
 {
@@ -54,14 +52,12 @@ namespace TypeCobol.Analysis.Graph
         [Flags]
         public enum Flags : uint
         {
-
-            Resolved = 0x01 << 0,       //Flag if this basic block is totally resolved.
-            Ending = 0x01 << 1,         //Flag if this basic block is an ending block.
-            Default = 0x01 << 2,        //Flag if this basic block is  default block for instance a WhenOther block.
-            Declaratives = 0x01 << 3,   //Flag if this basic block is inside a declaratives section.
-            Start = 0x01 << 4,           //Flag for a start node.
-            End = 0x01 << 5,           //Flag for a end node.
-            GroupGrafted = 0x01 << 6,           //Flag a Grafted Group.
+            Ending = 0x01 << 0,         //Flag if this basic block is an ending block.
+            Default = 0x01 << 1,        //Flag if this basic block is  default block for instance a WhenOther block.
+            Declaratives = 0x01 << 2,   //Flag if this basic block is inside a declaratives section.
+            Start = 0x01 << 3,          //Flag for a start node.
+            End = 0x01 << 4,            //Flag for a end node.
+            GroupGrafted = 0x01 << 5,   //Flag a Grafted Group.
         }
 
         /// <summary>
@@ -92,17 +88,6 @@ namespace TypeCobol.Analysis.Graph
         public bool HasFlag(Flags flag)
         {
             return (this.Flag & flag) != 0;
-        }
-
-        /// <summary>
-        /// Determines if this block can be considered as a END block.
-        /// </summary>
-        public bool MaybeEndBlock
-        {
-            get
-            {
-                return HasFlag(Flags.End) || (SuccessorEdges.Count == 0 && Instructions.Count == 0);
-            }
         }
 
         public object Clone()

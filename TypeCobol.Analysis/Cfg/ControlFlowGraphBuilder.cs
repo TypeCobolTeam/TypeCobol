@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using JetBrains.Annotations;
 using TypeCobol.Analysis.Graph;
 using TypeCobol.Compiler.CodeElements;
@@ -179,15 +177,6 @@ namespace TypeCobol.Analysis.Cfg
         /// The current entered node.
         /// </summary>
         private Node CurrentNode
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// The Last exited node.
-        /// </summary>
-        private Node LastExitedNode
         {
             get;
             set;
@@ -2682,22 +2671,6 @@ namespace TypeCobol.Analysis.Cfg
         {
             var element = perform.CodeElement;
             return element.IterationType == null || element.IterationType.Value == PerformIterationType.None;
-        }
-
-        /// <summary>
-        /// Determine if a Perform loop can be skipped that is to say may not be entered.
-        /// </summary>
-        /// <param name="perform">The perform loop to check</param>
-        /// <returns>True if the perform can be skipped, false otherwise</returns>
-        private static bool CanBeSkipped(Perform perform)
-        {
-            var element = perform.CodeElement;
-            if (IsNonIterative(perform))
-                return false;//Non Iterative Perform canot be skipped.
-
-            if (perform.CodeElement.TerminationConditionTestTime != null && perform.CodeElement.TerminationConditionTestTime.Value == TerminationConditionTestTime.AfterIteration)
-                return false;//ATER  cannot be skipped.
-            return true;
         }
 
         /// <summary>

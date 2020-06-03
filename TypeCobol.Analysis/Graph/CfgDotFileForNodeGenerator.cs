@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Analysis.Cfg;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
@@ -16,15 +13,6 @@ namespace TypeCobol.Analysis.Graph
     /// <typeparam name="D"></typeparam>
     public class CfgDotFileForNodeGenerator<D> : CfgDotFileGenerator<Node, D>
     {
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="cfg"></param>
-        public CfgDotFileForNodeGenerator()
-        {
-
-        }
-
         /// <summary>
         /// Constructor
         /// </summary>

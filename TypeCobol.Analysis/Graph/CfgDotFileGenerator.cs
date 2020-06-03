@@ -93,15 +93,6 @@ namespace TypeCobol.Analysis.Graph
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="cfg"></param>
-        public CfgDotFileGenerator()
-        {
-
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
         /// <param name="cfg">The underlying Control Flow Graph</param>
         public CfgDotFileGenerator(ControlFlowGraph<N, D> cfg)
         {

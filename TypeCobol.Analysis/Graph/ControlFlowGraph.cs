@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TypeCobol.Analysis.Graph
 {
@@ -127,23 +124,6 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
-        /// All basic blocks that can be reached via control flow out of the given basic block.
-        /// </summary>
-        /// <param name="basicBlock">The basic block to get the successors</param>
-        /// <returns>The sublist of successors</returns>
-        public List<BasicBlock<N,D>> SuccessorsFor(BasicBlock<N, D> basicBlock)
-        {
-            System.Diagnostics.Contracts.Contract.Requires(basicBlock != null);
-            System.Diagnostics.Contracts.Contract.Assume(basicBlock.SuccessorEdges != null);
-            List<BasicBlock<N, D>> result = new List<BasicBlock<N, D>>();
-            foreach(var n in basicBlock.SuccessorEdges)
-            {
-                result.Add(SuccessorEdges[n]);
-            }
-            return result;
-        }
-
-        /// <summary>
         /// DFS Depth First Search implementation
         /// </summary>
         /// <param name="block">The current block</param>
@@ -185,35 +165,5 @@ namespace TypeCobol.Analysis.Graph
                 DFS(root, callback);
             }
         }
-
-        /// <summary>
-        /// Iterative version of DFS Depth First Search implementation
-        /// </summary>
-        /// <param name="callback">CallBack function</param>
-        public void DFSIterative(BasicBlockCallback callback)
-        {
-            System.Collections.BitArray discovered = new System.Collections.BitArray(AllBlocks.Count);
-            foreach (var root in RootBlocks)
-            {
-                Stack<BasicBlock<N, D>> stack = new Stack<BasicBlock<N, D>>();
-                stack.Push(root);
-                while (stack.Count > 0)
-                {
-                    BasicBlock<N, D> block = stack.Pop();
-                    if (!discovered[block.Index])
-                    {
-                        if (!callback(block, this))
-                        {   //Don't traverse edges
-                            continue;
-                        }
-                        foreach (var edge in block.SuccessorEdges)
-                        {
-                            stack.Push(SuccessorEdges[edge]);
-                        }
-                    }
-                }
-            }
-        }
     }
 }
-
