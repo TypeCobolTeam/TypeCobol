@@ -23,7 +23,14 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cfg\ControlFlowGraphBuilder.BasicBlockForNode.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.BasicBlockForNodeGroup.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.CfgParagraphSymbol.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.CfgSectionSymbol.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.CfgSentence.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.DeclarativesContext.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.MultiBranchContext.cs" />
     <Compile Include="Cfg\DefaultControlFlowGraphBuilder.cs" />
     <Compile Include="Graph\BasicBlock.cs" />
     <Compile Include="Graph\CfgDotFileForNodeGenerator.cs" />
