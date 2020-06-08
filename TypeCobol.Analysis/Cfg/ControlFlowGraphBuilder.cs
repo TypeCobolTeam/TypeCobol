@@ -945,7 +945,7 @@ namespace TypeCobol.Analysis.Cfg
                     this.CurrentProgramCfgBuilder.AllCfgBuilder = new List<ControlFlowGraphBuilder<D>>();
                 }
                 var nestedCfg = CreateFreshControlFlowGraphBuilder(this.CurrentProgramCfgBuilder);
-                PropagateProperties(this.CurrentProgramCfgBuilder);
+                PropagateProperties(nestedCfg);
                 this.CurrentProgramCfgBuilder.AllCfgBuilder.Add(nestedCfg);
                 this.CurrentProgramCfgBuilder = nestedCfg;
                 this.CurrentProgramCfgBuilder.CurrentProgramCfgBuilder = this.CurrentProgramCfgBuilder;
