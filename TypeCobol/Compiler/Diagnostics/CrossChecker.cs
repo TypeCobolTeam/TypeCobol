@@ -937,8 +937,11 @@ namespace TypeCobol.Compiler.Diagnostics
 
         private static void Check<T>(string nodeTypeName, T node, [NotNull] IList<T> found) where T : Node
         {
-            if (found.Count > 1)
+            //Check for duplicate declaration within the same owner
+            if (found.Count(p => p.SemanticData.Owner.Equals(node.SemanticData.Owner)) > 1)
+            {
                 DiagnosticUtils.AddError(node, nodeTypeName + " \'" + node.Name + "\' already declared");
+            }
 
             // a section/paragraph (node) is empty when it has no child or when its child/children is/are an End node
             bool empty = true; // default value

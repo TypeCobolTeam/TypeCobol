@@ -39,4 +39,30 @@
       
            .
        Parag6.
+
+       SEC01 SECTION.
+
+      *KO PAR01 is already declared
+       PAR01.
+           continue
+           .
+       
+       PAR02.
+           continue
+           .
+      *KO PAR01 is already declared
+       PAR01.
+           continue
+           .
+
+       SEC02 SECTION.
+
+       PAR01.
+           continue
+           .
+
+       PAR02.
+           continue
+           .
+
        END PROGRAM TestingPgm.

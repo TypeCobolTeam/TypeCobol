@@ -5,6 +5,8 @@ Line 26[8,14] <37, Warning, General> - Warning: Paragraph 'Parag2' is empty
 Line 34[8,14] <37, Warning, General> - Warning: Paragraph 'Parag4' is empty
 Line 37[8,14] <37, Warning, General> - Warning: Paragraph 'Parag5' is empty
 Line 41[8,14] <37, Warning, General> - Warning: Paragraph 'Parag6' is empty
+Line 46[8,13] <27, Error, Syntax> - Syntax error : Paragraph 'PAR01' already declared
+Line 54[8,13] <27, Error, Syntax> - Syntax error : Paragraph 'PAR01' already declared
 
 --- Program ---
 PROGRAM: TestingPgm common:False initial:False recursive:False
@@ -21,6 +23,8 @@ PROGRAM: TestingPgm common:False initial:False recursive:False
   SectionEmpty
   SectionEmpty2
   Section1
+  SEC01
+  SEC02
 -- PARAGRAPHS --
   INIT-LIBRARY
   Parag1
@@ -29,6 +33,11 @@ PROGRAM: TestingPgm common:False initial:False recursive:False
   Parag4
   Parag5
   Parag6
+  PAR01
+  PAR01
+  PAR01
+  PAR02
+  PAR02
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL
