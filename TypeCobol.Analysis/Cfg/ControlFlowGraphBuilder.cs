@@ -1686,7 +1686,7 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
             MultiBranchContext ctx = new MultiBranchContext(this.CurrentProgramCfgBuilder, evaluate);
             //Create a list of node of contextual When and WhenOther nodes.
-            ctx.ContextualData = new List<Node>();
+            ctx.ConditionNodes = new List<Node>();
             if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
             {
                 this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext>();
@@ -1749,12 +1749,9 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
             MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
-            System.Diagnostics.Debug.Assert(ctx.ContextualData != null);
-            System.Diagnostics.Debug.Assert(ctx.ContextualData is List<Node>);
+            System.Diagnostics.Debug.Assert(ctx.ConditionNodes != null);
 
-            List<Node> data = (List<Node>)ctx.ContextualData;
-            data.Add(node);
-
+            ctx.ConditionNodes.Add(node);
         }
 
         /// <summary>
@@ -1776,11 +1773,9 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
             MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
-            System.Diagnostics.Debug.Assert(ctx.ContextualData != null);
-            System.Diagnostics.Debug.Assert(ctx.ContextualData is List<Node>);
-
-            List<Node> data = (List<Node>)ctx.ContextualData;
-            data.Add(node);
+            System.Diagnostics.Debug.Assert(ctx.ConditionNodes != null);
+            
+            ctx.ConditionNodes.Add(node);
         }
 
         /// <summary>
@@ -1806,12 +1801,11 @@ namespace TypeCobol.Analysis.Cfg
                 System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
                 System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
                 MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
-                System.Diagnostics.Debug.Assert(ctx.ContextualData != null);
-                System.Diagnostics.Debug.Assert(ctx.ContextualData is List<Node>);
+                System.Diagnostics.Debug.Assert(ctx.ConditionNodes != null);
 
                 var whenCondBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
                 //Associate all When Conditions to the block.
-                List<Node> data = (List<Node>)ctx.ContextualData;
+                List<Node> data = ctx.ConditionNodes;
                 foreach (var node in data)
                 {
                     whenCondBlock.Instructions.AddLast(node);
@@ -1843,13 +1837,13 @@ namespace TypeCobol.Analysis.Cfg
 
             //Create Whens context
             MultiBranchContext ctxWhens = new MultiBranchContext(this.CurrentProgramCfgBuilder, null);
-            ctxWhens.ContextualData = new List<Node>();
+            ctxWhens.ConditionNodes = new List<Node>();
             //Push and start the Whens context.
             this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctxWhens);
             ctxWhens.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
 
             //Associate all When Conditions to the block.
-            List<Node> data = (List<Node>)ctx.ContextualData;
+            List<Node> data = ctx.ConditionNodes;
             foreach (var node in data)
             {
                 AddCurrentBlockNode(node);
@@ -1878,13 +1872,12 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
             MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
-            System.Diagnostics.Debug.Assert(ctx.ContextualData != null);
-            System.Diagnostics.Debug.Assert(ctx.ContextualData is List<Node>);
+            System.Diagnostics.Debug.Assert(ctx.ConditionNodes != null);
 
             var whenOtherCondBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
             whenOtherCondBlock.SetFlag(BasicBlock<Node, D>.Flags.Default, true);
             //Associate WhenOther Condition to the block.
-            List<Node> data = (List<Node>)ctx.ContextualData;
+            List<Node> data = ctx.ConditionNodes;
             System.Diagnostics.Debug.Assert(data.Count == 1);//Only one WhenOther clause.
             foreach (var node in data)
             {
@@ -1907,7 +1900,7 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
             MultiBranchContext ctx = new MultiBranchContext(this.CurrentProgramCfgBuilder, node);
             //Create a list of node of contextual When or AtEnd nodes.
-            ctx.ContextualData = new List<Node>();
+            ctx.ConditionNodes = new List<Node>();
             if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
             {
                 this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext>();
@@ -1958,8 +1951,7 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
             MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
-            System.Diagnostics.Debug.Assert(ctx.ContextualData != null);
-            System.Diagnostics.Debug.Assert(ctx.ContextualData is List<Node>);
+            System.Diagnostics.Debug.Assert(ctx.ConditionNodes != null);
 
             if (UseSearchCascade)
             {
@@ -1969,7 +1961,7 @@ namespace TypeCobol.Analysis.Cfg
                     //This is like a default condition.
                     whenCondBlock.SetFlag(BasicBlock<Node, D>.Flags.Default, true);
                     //Associate all When SearchConditions to the block.
-                    List<Node> data = (List<Node>)ctx.ContextualData;
+                    List<Node> data = ctx.ConditionNodes;
                     foreach (var node in data)
                     {
                         whenCondBlock.Instructions.AddLast(node);
@@ -1993,7 +1985,7 @@ namespace TypeCobol.Analysis.Cfg
                     }
                     //Create Whens context
                     MultiBranchContext ctxWhens = new MultiBranchContext(this.CurrentProgramCfgBuilder, null);
-                    ctxWhens.ContextualData = new List<Node>();
+                    ctxWhens.ConditionNodes = new List<Node>();
                     ctxWhens.RootBlock = ctx.RootBlock;
                     ctxWhens.RootBlockSuccessorIndex = ctx.RootBlockSuccessorIndex;
                     //Push and start the Whens context.
@@ -2001,7 +1993,7 @@ namespace TypeCobol.Analysis.Cfg
                     ctxWhens.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
 
                     //Associate all When Conditions to the block.
-                    List<Node> data = (List<Node>)ctx.ContextualData;
+                    List<Node> data = ctx.ConditionNodes;
                     foreach (var node in data)
                     {
                         AddCurrentBlockNode(node);
@@ -2024,7 +2016,7 @@ namespace TypeCobol.Analysis.Cfg
                     whenCondBlock.SetFlag(BasicBlock<Node, D>.Flags.Default, true);
                 }
                 //Associate all When SearchConditions to the block.
-                List<Node> data = (List<Node>)ctx.ContextualData;
+                List<Node> data = ctx.ConditionNodes;
                 foreach (var node in data)
                 {
                     whenCondBlock.Instructions.AddLast(node);
@@ -2107,11 +2099,9 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
             MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
-            System.Diagnostics.Debug.Assert(ctx.ContextualData != null);
-            System.Diagnostics.Debug.Assert(ctx.ContextualData is List<Node>);
+            System.Diagnostics.Debug.Assert(ctx.ConditionNodes != null);
 
-            List<Node> data = (List<Node>)ctx.ContextualData;
-            data.Add(node);
+            ctx.ConditionNodes.Add(node);
         }
 
         /// <summary>
@@ -2417,8 +2407,7 @@ namespace TypeCobol.Analysis.Cfg
                 this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek().Instruction.CodeElement.Type == CodeElementType.SearchStatement)
             {//So in this case just think that it is a null condition
                 MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
-                List<Node> data = (List<Node>)ctx.ContextualData;
-                data.Add(node);
+                ctx.ConditionNodes.Add(node);
                 //Call StartWhenSearchConditionClause with null, this will mean AT END condition.
                 StartWhenSearchConditionClause(null);
             }

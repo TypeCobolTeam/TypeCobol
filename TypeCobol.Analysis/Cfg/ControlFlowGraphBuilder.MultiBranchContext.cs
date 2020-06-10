@@ -42,9 +42,10 @@ namespace TypeCobol.Analysis.Cfg
             internal Node Instruction;
 
             /// <summary>
-            /// Any contextual Data.
+            /// List to hold When, WhenOther, WhenSearch and AtEnd nodes
+            /// encountered in Evaluate or Search statements.
             /// </summary>
-            internal object ContextualData;
+            internal List<Node> ConditionNodes;
 
             /// <summary>
             /// Constructor
