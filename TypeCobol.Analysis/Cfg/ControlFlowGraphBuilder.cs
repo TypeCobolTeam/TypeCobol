@@ -1020,8 +1020,8 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="p">The procedure node</param>
         /// <param name="procedureSymbol">The procedure symbol</param>
         /// <param name="group">The Group in which to store all blocks.</param>
-        /// <param name="clonedBlockIndexMap">The Map of cloned map indices from the original indices to the new indices of block</param>
-        private void StoreProcedureSentenceBlocks(PerformProcedure p, Symbol procedureSymbol, BasicBlockForNodeGroup group, Dictionary<int, int> clonedBlockIndexMap)
+        /// <param name="storedBlockIndices">Set of indices of blocks already stored</param>
+        private void StoreProcedureSentenceBlocks(PerformProcedure p, Symbol procedureSymbol, BasicBlockForNodeGroup group, HashSet<int> storedBlockIndices)
         {
             IEnumerable<CfgSentence> procedureSentences = YieldSectionOrParagraphSentences(procedureSymbol);
             foreach (var sentence in procedureSentences)
@@ -1032,9 +1032,9 @@ namespace TypeCobol.Analysis.Cfg
                 foreach (var block in sentence.AllBlocks)
                 {//We must clone each block of the sequence and add them to the group.                    
                     //System.Diagnostics.Debug.Assert(!clonedBlockIndexMap.ContainsKey(block.Index));
-                    if (!clonedBlockIndexMap.ContainsKey(block.Index))
+                    if (!storedBlockIndices.Contains(block.Index))
                     {//If this block has been already add, this mean there are recursive GOTOs
-                        clonedBlockIndexMap[block.Index] = block.Index;
+                        storedBlockIndices.Add(block.Index);
                         group.AddBlock(block);
                     }
                     else
@@ -1065,7 +1065,7 @@ namespace TypeCobol.Analysis.Cfg
             Symbol procedureSymbol = CheckSectionOrParagraph(p, procedure);
             if (procedureSymbol == null)
                 return false;
-            Dictionary<int, int> clonedBlockIndexMap = new Dictionary<int, int>();
+            HashSet<int> storedBlocks = new HashSet<int>();
             if (throughProcedure != null)
             {
                 Symbol throughProcedureSymbol = CheckSectionOrParagraph(p, throughProcedure);
@@ -1083,26 +1083,26 @@ namespace TypeCobol.Analysis.Cfg
                         Diagnostics.Add(d);
                         return false;
                     }
-                    StoreProcedureSentenceBlocks(p, procedureSymbol, group, clonedBlockIndexMap);
+                    StoreProcedureSentenceBlocks(p, procedureSymbol, group, storedBlocks);
                     //Store all sentences or paragraphs between.
                     for (int i = procedureSymbol.Number + 1; i < throughProcedureSymbol.Number; i++)
                     {
                         Symbol subSectionOrParagraph = this.CurrentProgramCfgBuilder.AllSectionsParagraphs[i];
-                        StoreProcedureSentenceBlocks(p, subSectionOrParagraph, group, clonedBlockIndexMap);
+                        StoreProcedureSentenceBlocks(p, subSectionOrParagraph, group, storedBlocks);
                     }
-                    StoreProcedureSentenceBlocks(p, throughProcedureSymbol, group, clonedBlockIndexMap);
+                    StoreProcedureSentenceBlocks(p, throughProcedureSymbol, group, storedBlocks);
                 }
                 else
                 {
-                    StoreProcedureSentenceBlocks(p, procedureSymbol, group, clonedBlockIndexMap);
+                    StoreProcedureSentenceBlocks(p, procedureSymbol, group, storedBlocks);
                 }
             }
             else
             {
-                StoreProcedureSentenceBlocks(p, procedureSymbol, group, clonedBlockIndexMap);
+                StoreProcedureSentenceBlocks(p, procedureSymbol, group, storedBlocks);
             }
             //Now Clone the Graph.
-            if (!RelocateBasicBlockForNodeGroupGraph(p, group, clonedBlockIndexMap))
+            if (!RelocateBasicBlockForNodeGroupGraph(p, group, storedBlocks))
             {
                 return false;
             }
@@ -1114,28 +1114,26 @@ namespace TypeCobol.Analysis.Cfg
         /// </summary>
         /// <param name="p">The Perform Procedure node source of the call</param>
         /// <param name="group">The Group to be relocated</param>
-        /// <param name="clonedBlockIndexMap">The map between the old block indices to their new block indices.</param>
+        /// <param name="storedBlockIndices">The set of all block indices contained in the group.</param>
         /// <returns>true if the relocation is successful, false if the relocation goes beyond the group limit, 
         /// this often means that de target paragraphs of the PERFORM goes out of the paragraph.</returns>
-        private bool RelocateBasicBlockForNodeGroupGraph(PerformProcedure p, BasicBlockForNodeGroup group, Dictionary<int, int> clonedBlockIndexMap)
+        private bool RelocateBasicBlockForNodeGroupGraph(PerformProcedure p, BasicBlockForNodeGroup group, HashSet<int> storedBlockIndices)
         {
             //New successor edge map.
-            Dictionary<int, int> clonedEdgeIndexMap = new Dictionary<int, int>();
+            Dictionary<int, int> newEdgeIndexMap = new Dictionary<int, int>();
             foreach (var b in group.Group)
             {
                 List<int> successors = b.SuccessorEdges;
                 b.SuccessorEdges = new List<int>();
                 foreach (var edge in successors)
                 {
-                    int newEdge = -1;
-                    if (!clonedEdgeIndexMap.TryGetValue(edge, out newEdge))
+                    if (!newEdgeIndexMap.TryGetValue(edge, out int newEdge))
                     {
                         var block = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges[edge];
-                        int cloneBlockIndex = 0;
-                        if (!clonedBlockIndexMap.TryGetValue(block.Index, out cloneBlockIndex))
+                        if (!storedBlockIndices.Contains(block.Index))
                         {
                             if (b != group.Group.Last.Value)
-                            {//Hum this Group is not the last group and it goes beyond the group limit ==> we don't support that.
+                            {//Hum this block is not the last of the group and its successor is outside of the group ==> we don't support that.
                                 Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
                                     p.CodeElement.Column,
                                     p.CodeElement.Column,
@@ -1151,10 +1149,9 @@ namespace TypeCobol.Analysis.Cfg
                                 continue;
                             }
                         }
-                        var clonedBlock = this.CurrentProgramCfgBuilder.Cfg.AllBlocks[cloneBlockIndex];
                         newEdge = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
-                        this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(clonedBlock);
-                        clonedEdgeIndexMap[edge] = newEdge;
+                        this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(block);
+                        newEdgeIndexMap[edge] = newEdge;
                     }
                     b.SuccessorEdges.Add(newEdge);
                 }
