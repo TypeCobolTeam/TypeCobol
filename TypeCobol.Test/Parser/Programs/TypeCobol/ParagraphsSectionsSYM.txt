@@ -1,6 +1,6 @@
 --- Diagnostics ---
-Line 14[1,11] <27, Error, Syntax> - Syntax error : Section 'S1' already declared
-Line 32[1,11] <27, Error, Syntax> - Syntax error : Section 'S1' already declared
+Line 14[1,11] <37, Warning, General> - Warning: Section 'S1' already declared
+Line 32[1,11] <37, Warning, General> - Warning: Section 'S1' already declared
 Line 37[13,14] <30, Error, Semantics> - Semantic error: Symbol P0 is not referenced OffendingSymbol=[13,14:P0]<UserDefinedWord>
 Line 40[13,14] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph P3 OffendingSymbol=[13,14:P3]<UserDefinedWord>
 Line 41[13,14] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph P4 OffendingSymbol=[13,14:P4]<UserDefinedWord>

@@ -932,15 +932,24 @@ namespace TypeCobol.Compiler.Diagnostics
 
             IList<Section> GetSections() => callerNode.SymbolTable.GetSection(target.Name);
 
-            IList<Paragraph> GetParagraphs() => callerNode.SymbolTable.GetParagraph(target.Name);
+            IList<Paragraph> GetParagraphs() => callerNode.SymbolTable.GetParagraph(target);
         }
 
         private static void Check<T>(string nodeTypeName, T node, [NotNull] IList<T> found) where T : Node
         {
             //Check for duplicate declaration within the same owner
-            if (found.Count(p => p.SemanticData.Owner.Equals(node.SemanticData.Owner)) > 1)
+            if (found.Count(p => p.SemanticData.Owner == node.SemanticData.Owner) > 1)
             {
-                DiagnosticUtils.AddError(node, nodeTypeName + " \'" + node.Name + "\' already declared");
+                //Paragraphs can't have the same name within the same section
+                if (node is Paragraph)
+                {
+                    DiagnosticUtils.AddError(node, $"{nodeTypeName} \'{node.Name}\' already declared");
+                }
+                //Sections are allowed to be declared with the same name, but perform on them is impossible
+                else
+                {
+                    DiagnosticUtils.AddError(node, $"{nodeTypeName} \'{node.Name}\' already declared", MessageCode.Warning);
+                }
             }
 
             // a section/paragraph (node) is empty when it has no child or when its child/children is/are an End node
@@ -978,7 +987,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public static void CheckParagraph(Paragraph paragraph)
         {
-            Check("Paragraph", paragraph, paragraph.SymbolTable.GetParagraph(paragraph.Name));
+            Check("Paragraph", paragraph, paragraph.SymbolTable.GetParagraphs(p => p.Name == paragraph.Name).ToList());
         }
     }
 
