@@ -12,9 +12,9 @@ namespace TypeCobol.Analysis.Cfg
         internal class MultiBranchContext
         {
             /// <summary>
-            /// Current Block before multi branches
+            /// Origin block before multi branches
             /// </summary>
-            internal BasicBlockForNode CurrentBlock;
+            internal BasicBlockForNode OriginBlock;
             /// <summary>
             /// List of multi branch blocks
             /// </summary>
@@ -63,10 +63,10 @@ namespace TypeCobol.Analysis.Cfg
             /// <summary>
             /// Start multi branching
             /// </summary>
-            /// <param name="CurrentBlock"></param>
-            internal void Start(BasicBlockForNode currentBlock)
+            /// <param name="originBlock"></param>
+            internal void Start(BasicBlockForNode originBlock)
             {
-                this.CurrentBlock = currentBlock;
+                this.OriginBlock = originBlock;
             }
 
             /// <summary>
@@ -76,7 +76,7 @@ namespace TypeCobol.Analysis.Cfg
             /// <param name="nextBlock">The next block for all branches</param>
             internal void End(bool branchToNext, BasicBlockForNode nextBlock)
             {
-                End(branchToNext, CurrentBlock, nextBlock);
+                End(branchToNext, OriginBlock, nextBlock);
             }
             /// <summary>
             /// End the multi branching.

@@ -1989,7 +1989,7 @@ namespace TypeCobol.Analysis.Cfg
                     }
                     else if (ctx.Branches.Count == 1)
                     {//We had an At END Condition ==> So the Current basic block is the Search Block
-                        this.CurrentProgramCfgBuilder.CurrentBasicBlock = ctx.CurrentBlock;
+                        this.CurrentProgramCfgBuilder.CurrentBasicBlock = ctx.OriginBlock;
                     }
                     //Create Whens context
                     MultiBranchContext ctxWhens = new MultiBranchContext(this.CurrentProgramCfgBuilder, null);
@@ -2071,7 +2071,7 @@ namespace TypeCobol.Analysis.Cfg
                             rootNodeIndex = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
                             this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(ctx.RootBlock);
                         }
-                        ctx.CurrentBlock.SuccessorEdges.Add(rootNodeIndex);
+                        ctx.OriginBlock.SuccessorEdges.Add(rootNodeIndex);
                     }
                     else
                     {

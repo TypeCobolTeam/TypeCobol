@@ -12,7 +12,7 @@ namespace TypeCobol.Analysis.Cfg
             /// <summary>
             /// Current Block before all declaratives sections and paragraphs.
             /// </summary>
-            internal BasicBlockForNode CurrentBlock;
+            private BasicBlockForNode _originBlock;
 
             /// <summary>
             /// All sections inside this Declaratives.
@@ -35,13 +35,14 @@ namespace TypeCobol.Analysis.Cfg
             }
 
             /// <summary>
-            /// 
+            /// Starts a newly created DeclarativesContext.
             /// </summary>
-            /// <param name="currentBlock"></param>
-            internal void Start(BasicBlockForNode currentBlock)
+            /// <param name="originBlock">The starting block for this context.</param>
+            internal void Start(BasicBlockForNode originBlock)
             {
-                CurrentBlock = currentBlock;
+                _originBlock = originBlock;
             }
+
             internal void AddSection(CfgSectionSymbol section)
             {
                 Sections.AddLast(section);
@@ -54,13 +55,13 @@ namespace TypeCobol.Analysis.Cfg
             internal void End(BasicBlockForNode nextBlock)
             {
                 System.Diagnostics.Debug.Assert(Builder != null);
-                System.Diagnostics.Debug.Assert(CurrentBlock != null);
+                System.Diagnostics.Debug.Assert(_originBlock != null);
                 System.Diagnostics.Debug.Assert(nextBlock != null);
 
-                //First Current block is linked to the next block.
+                //First, origin block is linked to the next block.
                 int nbIndex = Builder.Cfg.SuccessorEdges.Count;
                 Builder.Cfg.SuccessorEdges.Add(nextBlock);
-                CurrentBlock.SuccessorEdges.Add(nbIndex);
+                _originBlock.SuccessorEdges.Add(nbIndex);
 
                 //For each section, link the current block to the first block of the section.
                 bool bFirstsection = true;
@@ -75,17 +76,17 @@ namespace TypeCobol.Analysis.Cfg
                         {
                             var block = sentence.Block;
                             if (bFirstsection)
-                            {//The first block of the first section, should have been already linked to the Current Block.
-                                System.Diagnostics.Debug.Assert(CurrentBlock.SuccessorEdges.Contains(sentence.BlockIndex));
-                                if (!CurrentBlock.SuccessorEdges.Contains(sentence.BlockIndex))
+                            {//The first block of the first section, should have been already linked to the origin Block.
+                                System.Diagnostics.Debug.Assert(_originBlock.SuccessorEdges.Contains(sentence.BlockIndex));
+                                if (!_originBlock.SuccessorEdges.Contains(sentence.BlockIndex))
                                 {
-                                    CurrentBlock.SuccessorEdges.Add(sentence.BlockIndex);
+                                    _originBlock.SuccessorEdges.Add(sentence.BlockIndex);
                                 }
                                 bFirstsection = false;
                             }
                             else
                             {
-                                CurrentBlock.SuccessorEdges.Add(sentence.BlockIndex);
+                                _originBlock.SuccessorEdges.Add(sentence.BlockIndex);
                             }
                         }
                         break;//We only need the first sentence.
