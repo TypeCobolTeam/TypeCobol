@@ -79,15 +79,6 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// The Current Program symbol being built as a Scope
         /// </summary>
-        public Program Program
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// The Current Program symbol being built as a Scope
-        /// </summary>
         private Program CurrentProgram
         {
             get;
@@ -186,12 +177,6 @@ namespace TypeCobol.Analysis.Cfg
         internal List<CfgSentence> AllSentences;
 
         public IList<Diagnostic> Diagnostics { get; private set; }
-        /// <summary>
-        /// Empty constructor.
-        /// </summary>
-        public ControlFlowGraphBuilder() : this(null)
-        {
-        }
 
         /// <summary>
         /// Constructor
@@ -204,15 +189,6 @@ namespace TypeCobol.Analysis.Cfg
             this.UseEvaluateCascade = true;
             this.UseSearchCascade = true;
             Mode = CfgMode.Normal;
-        }
-
-        /// <summary>
-        /// Called when a Node has been completely parsed.
-        /// </summary>
-        /// <param name="node"></param>
-        /// <param name="program"></param>
-        public override void OnNode(Node node, Program program)
-        {
         }
 
         /// <summary>
@@ -591,65 +567,6 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// Start of a Compilation Unit
-        /// </summary>
-        public override void StartCobolCompilationUnit()
-        {
-        }
-
-        /// <summary>
-        /// Start a Program.
-        /// </summary>
-        /// <param name="programIdentification"></param>
-        /// <param name="libraryCopy"></param>
-        public override void StartCobolProgram(ProgramIdentification programIdentification, LibraryCopyCodeElement libraryCopy)
-        {
-        }
-
-        public override void EndCobolProgram(TypeCobol.Compiler.CodeElements.ProgramEnd end)
-        {
-        }
-
-        /// <summary>
-        /// Start a Function Declaration
-        /// </summary>
-        /// <param name="header"></param>
-        public override void StartFunctionDeclaration(FunctionDeclarationHeader header)
-        {
-        }
-
-        public override void EndFunctionDeclaration(FunctionDeclarationEnd end)
-        {
-        }
-
-        /// <summary>
-        /// Starting a PROCEDURE DIVISION => Collect all parameters.
-        /// </summary>
-        /// <param name="header"></param>
-        public override void StartProcedureDivision(ProcedureDivisionHeader header)
-        {
-        }
-
-        public override void EndProcedureDivision()
-        {
-        }
-
-        /// <summary>
-        /// Start a Paragraph
-        /// </summary>
-        /// <param name="header">The Paragraph header code element</param>
-        public override void StartParagraph([NotNull] ParagraphHeader header)
-        {
-        }
-
-        /// <summary>
-        /// End a paragraph
-        /// </summary>
-        public override void EndParagraph()
-        {
-        }
-
-        /// <summary>
         /// Link this sentence to the current section or paragraph if any.
         /// </summary>
         /// <param name="block">The block to link</param>
@@ -701,13 +618,6 @@ namespace TypeCobol.Analysis.Cfg
             this.CurrentProgramCfgBuilder.CurrentBasicBlock = block;
             //Link this Sentence to its section or paragraph if any.
             this.CurrentProgramCfgBuilder.LinkBlockSentenceToCurrentSectionParagraph(this.CurrentProgramCfgBuilder.CurrentSentence);
-        }
-
-        /// <summary>
-        /// Start a sentence: In fact in Cobol a basic block is a sentence.
-        /// </summary>
-        public override void StartSentence()
-        {
         }
 
         /// <summary>
@@ -1858,11 +1768,6 @@ namespace TypeCobol.Analysis.Cfg
             data.Clear();
         }
 
-        public override void EndWhenConditionClause()
-        {
-
-        }
-
         /// <summary>
         /// Here is when we can capture the beginning of a set of WhenOtherClause so we can start a new Basic Block. 
         /// </summary>
@@ -2625,7 +2530,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <returns>The fresh Control Flow Graph Builder</returns>
         protected virtual ControlFlowGraphBuilder<D> CreateFreshControlFlowGraphBuilder(ControlFlowGraphBuilder<D> parentCfgBuilder = null)
         {
-            return new ControlFlowGraphBuilder<D>();
+            return new ControlFlowGraphBuilder<D>(parentCfgBuilder);
         }
 
         /// <summary>
