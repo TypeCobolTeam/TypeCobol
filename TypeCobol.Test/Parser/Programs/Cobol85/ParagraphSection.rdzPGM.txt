@@ -1,12 +1,26 @@
 --- Diagnostics ---
-Line 15[8,28] <37, Warning, General> - Warning: Section 'SectionEmpty' is empty
-Line 17[8,29] <37, Warning, General> - Warning: Section 'SectionEmpty2' is empty
-Line 26[8,14] <37, Warning, General> - Warning: Paragraph 'Parag2' is empty
-Line 34[8,14] <37, Warning, General> - Warning: Paragraph 'Parag4' is empty
-Line 37[8,14] <37, Warning, General> - Warning: Paragraph 'Parag5' is empty
-Line 41[8,14] <37, Warning, General> - Warning: Paragraph 'Parag6' is empty
-Line 46[8,13] <27, Error, Syntax> - Syntax error : Paragraph 'PAR01' already declared
-Line 54[8,13] <27, Error, Syntax> - Syntax error : Paragraph 'PAR01' already declared
+Line 19[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR05 OffendingSymbol=[20,24:PAR05]<UserDefinedWord>
+Line 28[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR04 OffendingSymbol=[20,24:PAR04]<UserDefinedWord>
+Line 36[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR05 OffendingSymbol=[20,24:PAR05]<UserDefinedWord>
+Line 45[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR04 OffendingSymbol=[20,24:PAR04]<UserDefinedWord>
+Line 57[8,13] <27, Error, Syntax> - Syntax error : Paragraph 'PAR05' already declared in procedure-division
+Line 61[8,13] <27, Error, Syntax> - Syntax error : Paragraph 'PAR05' already declared in procedure-division
+Line 67[8,28] <37, Warning, General> - Warning: Section 'SectionEmpty' is empty
+Line 69[8,29] <37, Warning, General> - Warning: Section 'SectionEmpty2' is empty
+Line 78[8,14] <37, Warning, General> - Warning: Paragraph 'Parag2' is empty
+Line 86[8,14] <37, Warning, General> - Warning: Paragraph 'Parag4' is empty
+Line 89[8,14] <37, Warning, General> - Warning: Paragraph 'Parag5' is empty
+Line 93[8,14] <37, Warning, General> - Warning: Paragraph 'Parag6' is empty
+Line 98[8,13] <27, Error, Syntax> - Syntax error : Paragraph 'PAR01' already declared in SEC01
+Line 110[8,13] <27, Error, Syntax> - Syntax error : Paragraph 'PAR01' already declared in SEC01
+Line 133[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph SEC01.PAR01 OffendingSymbol=[20,24:PAR01]<UserDefinedWord>
+Line 136[20,24] <30, Error, Semantics> - Semantic error: Symbol SEC01.PAR02 is not referenced OffendingSymbol=[20,24:PAR02]<UserDefinedWord>
+Line 139[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR03 OffendingSymbol=[20,24:PAR03]<UserDefinedWord>
+Line 150[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph SEC01.PAR01 OffendingSymbol=[20,24:PAR01]<UserDefinedWord>
+Line 153[20,24] <30, Error, Semantics> - Semantic error: Symbol SEC01.PAR02 is not referenced OffendingSymbol=[20,24:PAR02]<UserDefinedWord>
+Line 156[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR03 OffendingSymbol=[20,24:PAR03]<UserDefinedWord>
+Line 165[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR03 OffendingSymbol=[20,24:PAR03]<UserDefinedWord>
+Line 167[31,35] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR04 OffendingSymbol=[31,35:PAR04]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: TestingPgm common:False initial:False recursive:False
@@ -25,7 +39,17 @@ PROGRAM: TestingPgm common:False initial:False recursive:False
   Section1
   SEC01
   SEC02
+  SEC03
 -- PARAGRAPHS --
+  TEST-PERFORM-PROCEDURE-DIVISION
+  PAR01
+  PAR01
+  PAR01
+  PAR01
+  PAR03
+  PAR03
+  PAR05
+  PAR05
   INIT-LIBRARY
   Parag1
   Parag2
@@ -33,11 +57,11 @@ PROGRAM: TestingPgm common:False initial:False recursive:False
   Parag4
   Parag5
   Parag6
-  PAR01
-  PAR01
-  PAR01
+  PAR04
+  PAR04
   PAR02
-  PAR02
+  TEST-PERFORM-SEC02
+  TEST-PERFORM-SEC03
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL

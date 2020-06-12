@@ -737,19 +737,15 @@ namespace TypeCobol.Compiler.CodeModel
         public IList<Paragraph> GetParagraph(SymbolReference parRef)
         {
             //Retrieve all paragraphs having the same name as parRef
-            if (Paragraphs.TryGetValue(parRef.Name, out var values))
+            if (Paragraphs.TryGetValue(parRef.NameLiteral.Value, out var values))
             {
                 //Check if paragraph is qualified to filter the list
                 if (parRef.IsQualifiedReference)
                 {
                     //Get section name
-                    var sectionName = ((QualifiedSymbolReference)parRef).Head.Name;
-                    //Check if there are any sections named sectionName
-                    if (Sections.TryGetValue(sectionName, out var sections))
-                    {
-                        //Return all paragraphs declared in a section named sectionName
-                        return values.Where(p => sections.Contains(p.Parent)).ToList(); //.ToList so the caller cannot modify our stored list
-                    }
+                    var sectionName = ((QualifiedSymbolReference)parRef).Tail.Name;
+                    //Return all paragraphs declared in a section named sectionName
+                    return values.Where(p => p.Parent.Name.Equals(sectionName, StringComparison.OrdinalIgnoreCase)).ToList();
                 }
                 //Otherwise return complete list
                 else
