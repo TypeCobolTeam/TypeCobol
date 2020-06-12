@@ -4,6 +4,7 @@ using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using System.IO;
+using System.Runtime.CompilerServices;
 using TypeCobol.Analysis.Cfg;
 
 namespace TypeCobol.Analysis.Test
@@ -14,8 +15,18 @@ namespace TypeCobol.Analysis.Test
     [TestClass]
     public class BasicControlFlowInstructionTest
     {
-        private NodeListenerFactory _cfgBuilderNodeListenerFactory;
+        private const string BASIC_TESTS_DIR = "BasicCfgInstrs";
+        private const string DOT_OUTPUT = "DotOutput";
 
+        private static string GetThirdPartyDirectoryPath()
+        {
+            string currentDir = Directory.GetCurrentDirectory();
+            string solutionDir = Path.GetDirectoryName(Path.GetDirectoryName(currentDir));
+            Assert.IsNotNull(solutionDir);
+            return Path.Combine(solutionDir, "TypeCobol.Test", "ThirdParty");
+        }
+
+        private NodeListenerFactory _cfgBuilderNodeListenerFactory;
         private DefaultControlFlowGraphBuilder _cfgBuilder;
 
         [TestInitialize]
@@ -41,14 +52,13 @@ namespace TypeCobol.Analysis.Test
 
         /// <summary>
         /// This is a simple test to ensure that given a Cobol program,
-        /// all staked and nested program are captured.
+        /// all stacked and nested program are captured.
         /// </summary>
         [TestMethod]
         public void MixedStackedNestedPgms()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "MixedStackedNestedPgms.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
+            string path = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "MixedStackedNestedPgms.cbl");
+            Parser.Parse(path, DocumentFormat.RDZReferenceFormat);
             //Here we have the main program, followed by stacked programs.
             //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
             //var currentProgram = Builder.Programs[0];
@@ -69,14 +79,13 @@ namespace TypeCobol.Analysis.Test
 
         /// <summary>
         /// This is a simple test to ensure that given a Cobol program,
-        /// all staked and nested program are captured.
+        /// all stacked and nested program are captured.
         /// </summary>
         [TestMethod]
         public void MixedStackedNestedProcsPgms()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "MixedStackedNestedProcsPgms.tcbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
+            string path = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "MixedStackedNestedProcsPgms.tcbl");
+            Parser.Parse(path, DocumentFormat.RDZReferenceFormat);
             //Here we have the main program, followed by stacked programs.
             //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
             //var currentProgram = Builder.Programs[0];
@@ -157,615 +166,176 @@ namespace TypeCobol.Analysis.Test
             Assert.IsTrue(_cfgBuilder.AllCfgBuilder[7].AllCfgBuilder[0].Cfg.ProgramNode.Name.Equals("StackedNestedProc1"));
         }
 
-        [TestMethod]
-        public void IfThen0()
+        /// <summary>
+        /// This is a template method for a simple test on a source file
+        /// containing a single program.
+        /// </summary>
+        /// <remarks>
+        /// All parameters are optional, by default :
+        /// - input is BasicCfgInstrs\[CallerMethod].cbl
+        /// - expected is DotOutput\[CallerMethod].dot
+        /// - fullInstruction is True
+        /// </remarks>
+        /// <param name="inputDirectoryPath">Full path to the directory containing the input source file.</param>
+        /// <param name="inputFileName">Name of the input source file without extension.</param>
+        /// <param name="inputExtension">Extension of the input source file including the '.'.</param>
+        /// <param name="expectedDirectoryPath">Full path to the directory containing the expected result file.</param>
+        /// <param name="expectedFileName">Name of the expected result file without extension.</param>
+        /// <param name="expectedExtension">Extension of the expected result file including the '.'.</param>
+        /// <param name="fullInstruction">True to use full instruction during dot generation.</param>
+        private void TestTemplate(
+            string inputDirectoryPath = null,
+            [CallerMemberName] string inputFileName = null,
+            string inputExtension = ".cbl",
+            string expectedDirectoryPath = null,
+            [CallerMemberName] string expectedFileName = null,
+            string expectedExtension = ".dot",
+            bool fullInstruction = true)
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThen0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThen0.dot");
+            inputDirectoryPath = inputDirectoryPath ?? Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR);
+            string inputFilePath = Path.Combine(inputDirectoryPath, inputFileName + inputExtension);
+            Assert.IsTrue(File.Exists(inputFilePath), $"Input file '{inputFilePath}' does not exist.");
 
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
+            expectedDirectoryPath = expectedDirectoryPath ?? Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT);
+            string expectedFilePath = Path.Combine(expectedDirectoryPath, expectedFileName + expectedExtension);
+            Assert.IsTrue(File.Exists(expectedFilePath), $"Expected results file '{expectedFilePath}' does not exist.");
 
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
-        [TestMethod]
-        public void IfThenAfter0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenAfter0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenAfter0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
-
-        [TestMethod]
-        public void IfThenElse0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenElse0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElse0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
+            Parser.Parse(inputFilePath, DocumentFormat.RDZReferenceFormat);
+            Assert.IsTrue(_cfgBuilder?.AllCfgBuilder?.Count == 1, "No CFG built or wrong number of graphs.");
+            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, inputFilePath, expectedFilePath, fullInstruction);
         }
 
         [TestMethod]
-        public void IfThenNextSentence0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenNextSentence0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenNextSentence0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void IfThen0() => TestTemplate();
 
         [TestMethod]
-        public void IfThenElseNextSentence1()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenElseNextSentence1.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElseNextSentence1.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void IfThenAfter0() => TestTemplate();
 
         [TestMethod]
-        public void IfThenElseNextSentence2()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenElseNextSentence2.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElseNextSentence2.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void IfThenElse0() => TestTemplate();
 
         [TestMethod]
-        public void IfThenElseNextSentence0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenElseNextSentence0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElseNextSentence0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void IfThenNextSentence0() => TestTemplate();
 
         [TestMethod]
-        public void IfThenNested0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenNested0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenNested0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void IfThenElseNextSentence1() => TestTemplate();
 
         [TestMethod]
-        public void IfThenNested1()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenNested1.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenNested1.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void IfThenElseNextSentence2() => TestTemplate();
 
         [TestMethod]
-        public void IfThenNested2()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenNested2.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenNested2.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void IfThenElseNextSentence0() => TestTemplate();
 
         [TestMethod]
-        public void IfThenElseNested0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenElseNested0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElseNested0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void IfThenNested0() => TestTemplate();
 
         [TestMethod]
-        public void IfThenElseNested1()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenElseNested1.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElseNested1.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
-        
-        [TestMethod]
-        public void IfThenElseCascade0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThenElseCascade0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElseCascade0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
-
+        public void IfThenNested1() => TestTemplate();
 
         [TestMethod]
-        public void SimpleGotoPara0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "SimpleGotoPara0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "SimpleGotoPara0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void IfThenNested2() => TestTemplate();
 
         [TestMethod]
-        public void ComplexGotoPara0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "ComplexGotoPara0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "ComplexGotoPara0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void IfThenElseNested0() => TestTemplate();
 
         [TestMethod]
-        public void Evaluate0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "Evaluate0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Evaluate0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void IfThenElseNested1() => TestTemplate();
 
         [TestMethod]
-        public void EvaluateNoOther0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "EvaluateNoOther0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "EvaluateNoOther0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void IfThenElseCascade0() => TestTemplate();
 
         [TestMethod]
-        public void EvaluateMultiWhen0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "EvaluateMultiWhen0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "EvaluateMultiWhen0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void SimpleGotoPara0() => TestTemplate();
 
         [TestMethod]
-        public void Alter0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "Alter0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Alter0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void ComplexGotoPara0() => TestTemplate();
 
         [TestMethod]
-        public void Alter1()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "Alter1.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Alter1.dot");
+        public void Evaluate0() => TestTemplate();
 
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
+        [TestMethod]
+        public void EvaluateNoOther0() => TestTemplate();
 
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        [TestMethod]
+        public void EvaluateNoOther1() => TestTemplate();
+
+        [TestMethod]
+        public void EvaluateMultiWhen0() => TestTemplate();
+
+        [TestMethod]
+        public void Alter0() => TestTemplate();
+
+        [TestMethod]
+        public void Alter1() => TestTemplate();
 
         /// <summary>
         /// This ALTER test include qualified paragraph names.
         /// </summary>
         [TestMethod]
-        public void Alter2()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "Alter2.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Alter2.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void Alter2() => TestTemplate();
 
         [TestMethod]
-        public void GoBack0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "GoBack0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "GoBack0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void GoBack0() => TestTemplate();
 
         [TestMethod]
-        public void GoBack1()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "GoBack1.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "GoBack1.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void GoBack1() => TestTemplate();
 
         [TestMethod]
-        public void Perform0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "Perform0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Perform0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void Perform0() => TestTemplate();
 
         [TestMethod]
-        public void PerformUntil0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformUntil0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformUntil0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void PerformUntil0() => TestTemplate();
 
         [TestMethod]
-        public void PerformUntil1()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformUntil1.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformUntil1.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
-        
-        [TestMethod]
-        public void PerformTime0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformTime0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformTime0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void PerformUntil1() => TestTemplate();
 
         [TestMethod]
-        public void PerformVarying0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformVarying0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformVarying0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void PerformTime0() => TestTemplate();
 
         [TestMethod]
-        public void PerformProcedure0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcedure0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcedure0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void PerformVarying0() => TestTemplate();
 
         [TestMethod]
-        public void PerformProcedure1()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcedure1.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcedure1.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void PerformProcedure0() => TestTemplate();
 
         [TestMethod]
-        public void PerformNested0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformNested0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformNested0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void PerformProcedure1() => TestTemplate();
 
         [TestMethod]
-        public void Search0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "Search0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Search0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void PerformNested0() => TestTemplate();
 
         [TestMethod]
-        public void SearchNextSentence0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "SearchNextSentence0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "SearchNextSentence0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void Search0() => TestTemplate();
 
         [TestMethod]
-        public void SearchCond0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "SearchCond0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "SearchCond0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void SearchNextSentence0() => TestTemplate();
 
         [TestMethod]
-        public void Declaratives0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "Declaratives0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Declaratives0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void SearchCond0() => TestTemplate();
 
         [TestMethod]
-        public void Declaratives1()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "Declaratives1.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Declaratives1.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void Declaratives0() => TestTemplate();
 
         [TestMethod]
-        public void PerformThru0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformThru0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformThru0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void Declaratives1() => TestTemplate();
 
         [TestMethod]
-        public void PerformThru1()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformThru1.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformThru1.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void PerformThru0() => TestTemplate();
 
         [TestMethod]
-        public void MixPerformEvaluateIf0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "MixPerformEvaluateIf0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "MixPerformEvaluateIf0.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        public void PerformThru1() => TestTemplate();
 
         [TestMethod]
-        public void PerformProcRecursive0()
-        {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcRecursive0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcRecursive0.dot");
+        public void MixPerformEvaluateIf0() => TestTemplate();
 
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath);
-        }
+        [TestMethod]
+        public void PerformProcRecursive0() => TestTemplate();
 
         [TestMethod]
         public void CfgInNestedPrg0()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "CfgInNestedPrg0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
+            string path = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInNestedPrg0.cbl");
+            Parser.Parse(path, DocumentFormat.RDZReferenceFormat);
 
             //Here we have the main program, followed by stacked programs.
             //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
@@ -785,16 +355,15 @@ namespace TypeCobol.Analysis.Test
             Assert.IsNull(_cfgBuilder.AllCfgBuilder[5].ParentProgramCfgBuilder);
 
             //We have taken the same CFG than for IfThenElseCascade0    
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElseCascade0.dot");
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[2].Cfg, path, expectedPath);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "IfThenElseCascade0.dot");
+            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[2].Cfg, path, expectedPath, true);
         }
 
         [TestMethod]
         public void CfgInNestedPrg1()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "CfgInNestedPrg1.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
+            string path = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInNestedPrg1.cbl");
+            Parser.Parse(path, DocumentFormat.RDZReferenceFormat);
 
             //Here we have the main program, followed by stacked programs.
             //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
@@ -814,16 +383,15 @@ namespace TypeCobol.Analysis.Test
             Assert.IsNull(_cfgBuilder.AllCfgBuilder[5].ParentProgramCfgBuilder);
 
             //We have taken the same CFG than for PerformProcedure0  
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcedure0.dot");
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[3].Cfg, path, expectedPath);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "PerformProcedure0.dot");
+            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[3].Cfg, path, expectedPath, true);
         }
 
         [TestMethod]
         public void CfgInNestedPrg2()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "CfgInNestedPrg2.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
+            string path = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInNestedPrg2.cbl");
+            Parser.Parse(path, DocumentFormat.RDZReferenceFormat);
 
             //Here we have the main program, followed by stacked programs.
             //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
@@ -843,17 +411,15 @@ namespace TypeCobol.Analysis.Test
             Assert.IsNull(_cfgBuilder.AllCfgBuilder[5].ParentProgramCfgBuilder);
 
             //We have taken the same CFG than for MixPerformEvaluateIf0  
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "MixPerformEvaluateIf0.dot");
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[1].Cfg, path, expectedPath);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "MixPerformEvaluateIf0.dot");
+            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[1].Cfg, path, expectedPath, true);
         }
-
 
         [TestMethod]
         public void CfgInStackedPrg0()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "CfgInStackedPrg0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
+            string path = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInStackedPrg0.cbl");
+            Parser.Parse(path, DocumentFormat.RDZReferenceFormat);
 
             //Here we have the main program, followed by stacked programs.
             //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
@@ -873,17 +439,15 @@ namespace TypeCobol.Analysis.Test
             Assert.IsNull(_cfgBuilder.AllCfgBuilder[5].ParentProgramCfgBuilder);
 
             //We have taken the same CFG than for PerformProcedure0  
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcedure0.dot");
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[4].Cfg, path, expectedPath);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "PerformProcedure0.dot");
+            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[4].Cfg, path, expectedPath, true);
         }
-
 
         [TestMethod]
         public void CfgInStackedPrg1()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "CfgInStackedPrg1.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
+            string path = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInStackedPrg1.cbl");
+            Parser.Parse(path, DocumentFormat.RDZReferenceFormat);
 
             //Here we have the main program, followed by stacked programs.
             //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
@@ -903,16 +467,15 @@ namespace TypeCobol.Analysis.Test
             Assert.IsNull(_cfgBuilder.AllCfgBuilder[5].ParentProgramCfgBuilder);
 
             //We have taken the same CFG than for MixPerformEvaluateIf0  
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "MixPerformEvaluateIf0.dot");
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[5].Cfg, path, expectedPath);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "MixPerformEvaluateIf0.dot");
+            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[5].Cfg, path, expectedPath, true);
         }
 
         [TestMethod]
         public void CfgInProcedure0()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "CfgInProcedure0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
+            string path = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInProcedure0.cbl");
+            Parser.Parse(path, DocumentFormat.RDZReferenceFormat);
 
             //Here we have the main program, followed by stacked programs.
             //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
@@ -933,16 +496,15 @@ namespace TypeCobol.Analysis.Test
             Assert.IsTrue(_cfgBuilder.AllCfgBuilder[1].Cfg.ProgramNode.Name.Equals("Proc0"));
 
             //We have taken the same CFG than for IfThenElseCascade0  
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElseCascade0.dot");
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[1].Cfg, path, expectedPath);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "IfThenElseCascade0.dot");
+            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[1].Cfg, path, expectedPath, true);
         }
 
         [TestMethod]
         public void CfgInProcedure1()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "CfgInProcedure1.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
+            string path = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInProcedure1.cbl");
+            Parser.Parse(path, DocumentFormat.RDZReferenceFormat);
 
             //Here we have the main program, followed by stacked programs.
             //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
@@ -963,17 +525,15 @@ namespace TypeCobol.Analysis.Test
             Assert.IsTrue(_cfgBuilder.AllCfgBuilder[2].Cfg.ProgramNode.Name.Equals("Proc1"));
 
             //We have taken the same CFG than for ComplexGotoPara0  
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "ComplexGotoPara0.dot");
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[2].Cfg, path, expectedPath);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "ComplexGotoPara0.dot");
+            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[2].Cfg, path, expectedPath, true);
         }
-
 
         [TestMethod]
         public void CfgInNestedProcedure0()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "CfgInNestedProcedure0.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
+            string path = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInNestedProcedure0.cbl");
+            Parser.Parse(path, DocumentFormat.RDZReferenceFormat);
 
             //Nested0
             Assert.IsTrue(_cfgBuilder.AllCfgBuilder[3].ParentProgramCfgBuilder == _cfgBuilder);
@@ -1009,16 +569,16 @@ namespace TypeCobol.Analysis.Test
             Assert.IsTrue(_cfgBuilder.AllCfgBuilder[5].AllCfgBuilder[0].Cfg.ProgramNode.Name.Equals("NestedProc2"));
 
             //We have taken the same CFG than for ComplexGotoPara0  
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "ComplexGotoPara0.dot");
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[3].AllCfgBuilder[0].Cfg, path, expectedPath);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "ComplexGotoPara0.dot");
+            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[3].AllCfgBuilder[0].Cfg, path, expectedPath, true);
 
             //We have taken the same CFG than for IfThenElseCascade0  
-            expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "IfThenElseCascade0.dot");
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[4].AllCfgBuilder[0].Cfg, path, expectedPath);
+            expectedPath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "IfThenElseCascade0.dot");
+            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[4].AllCfgBuilder[0].Cfg, path, expectedPath, true);
 
             //We have taken the same CFG than for PerformThru1  
-            expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformThru1.dot");
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[5].AllCfgBuilder[0].Cfg, path, expectedPath);
+            expectedPath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "PerformThru1.dot");
+            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[5].AllCfgBuilder[0].Cfg, path, expectedPath, true);
         }
 
         /// <summary>
@@ -1028,23 +588,11 @@ namespace TypeCobol.Analysis.Test
         [TestMethod]
         public void OneThirdPartyCGM110()
         {
-            string pwd = Directory.GetCurrentDirectory();
-            string solutionPath = Directory.GetParent(pwd)?.Parent?.FullName;
-            DirectoryInfo solDir = new DirectoryInfo(solutionPath);
-            DirectoryInfo rootSolDir = solDir.Parent;
-
-            string samples = @"ThirdParty" + Path.DirectorySeparatorChar + "CNAF" + Path.DirectorySeparatorChar + "Batch";
-
-            string path = Path.Combine(solDir.FullName, "TypeCobol.Test", samples, "CGM110.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "CGM110.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath, false);
+            string cnafBatch = Path.Combine(GetThirdPartyDirectoryPath(), "CNAF", "Batch");
+            TestTemplate(cnafBatch,
+                inputFileName: "CGM110",    //file name is different from test method here
+                expectedFileName: "CGM110", //file name is different from test method here
+                fullInstruction: false);
         }
 
         /// <summary>
@@ -1052,26 +600,12 @@ namespace TypeCobol.Analysis.Test
         /// Paragraph, there is an Diagnostic which is Raised.
         /// </summary>
         [TestMethod]
-        [Ignore] //Result file needs update
         public void OneThirdPartyIX105A()
         {
-            string pwd = Directory.GetCurrentDirectory();
-            string solutionPath = Directory.GetParent(pwd)?.Parent?.FullName;
-            DirectoryInfo solDir = new DirectoryInfo(solutionPath);
-            DirectoryInfo rootSolDir = solDir.Parent;
-
-            string samples = @"ThirdParty" + Path.DirectorySeparatorChar + "Nist";
-
-            string path = Path.Combine(solDir.FullName, "TypeCobol.Test", samples, "IX105A.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Nist", "IX105A.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath, true);
+            string nist = Path.Combine(GetThirdPartyDirectoryPath(), "Nist");
+            TestTemplate(nist,
+                inputFileName: "IX105A",     //file name is different from test method here
+                expectedFileName: "IX105A"); //file name is different from test method here
         }
 
         /// <summary>
@@ -1079,60 +613,31 @@ namespace TypeCobol.Analysis.Test
         /// Paragraph, with Block recursion detection, there is an Diagnostic which is Raised.
         /// </summary>
         [TestMethod]
-        [Ignore] //Result file needs update
         public void OneThirdPartySG102A()
         {
-            string pwd = Directory.GetCurrentDirectory();
-            string solutionPath = Directory.GetParent(pwd)?.Parent?.FullName;
-            DirectoryInfo solDir = new DirectoryInfo(solutionPath);
-            DirectoryInfo rootSolDir = solDir.Parent;
-
-            string samples = @"ThirdParty" + Path.DirectorySeparatorChar + "Nist";
-
-            string path = Path.Combine(solDir.FullName, "TypeCobol.Test", samples, "SG102A.cbl");
-            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                false, /*copies*/ null);
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Nist", "SG102A.dot");
-
-            Assert.IsTrue(_cfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-            CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.Cfg, path, expectedPath, true);
+            string nist = Path.Combine(GetThirdPartyDirectoryPath(), "Nist");
+            TestTemplate(nist,
+                inputFileName: "SG102A",     //file name is different from test method here
+                expectedFileName: "SG102A"); //file name is different from test method here
         }
 
-        /// <summary>
-        /// This Test is only used to generate all .dot files corresponding to the Nist source samples.
-        /// This dot files contains full instructions source code
-        /// </summary>
-        [TestMethod]
-        [Ignore] //Long execution time
-        public void GenAllNistSrcDots()
+        private void GenAllNistDots(bool fullInstruction)
         {
-            string pwd = Directory.GetCurrentDirectory();
-            string solutionPath = Directory.GetParent(pwd)?.Parent?.FullName;
-            DirectoryInfo solDir = new DirectoryInfo(solutionPath);
-            DirectoryInfo rootSolDir = solDir.Parent;
-
-            string samples = @"ThirdParty" + Path.DirectorySeparatorChar + "Nist";
-
-            string path = Path.Combine(solDir.FullName, "TypeCobol.Test", samples);
+            string path = Path.Combine(GetThirdPartyDirectoryPath(), "Nist");
             string[] files = Directory.GetFiles(path, "*.cbl", SearchOption.AllDirectories);
-            foreach(string f in files)
+            foreach (string f in files)
             {
-                string dotFile = f.Substring(0, f.LastIndexOf('.')) + ".dot";
-                FileInfo fofi = new FileInfo(dotFile);
-                string dotName = fofi.Name;
+                string dotFile = Path.GetFileNameWithoutExtension(f) + ".dot";
+                string dotName = (fullInstruction ? string.Empty : "_") + dotFile;
 
-                Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Nist"));
-                string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Nist", dotName);
+                var nistOutput = Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "Nist"));
+                string dotFilePath = Path.Combine(nistOutput.FullName, dotName);
 
-                var document = TypeCobol.Parser.Parse(f, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                    false, /*copies*/ null);
+                Parser.Parse(f, DocumentFormat.RDZReferenceFormat);
 
                 Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
 
-                CfgTestUtils.GenDotCfgFile(_cfgBuilder.Cfg, expectedPath);
+                CfgTestUtils.GenDotCfgFile(_cfgBuilder.Cfg, dotFilePath, fullInstruction);
 
                 TestCleanup();
                 TestInitialize();
@@ -1145,36 +650,14 @@ namespace TypeCobol.Analysis.Test
         /// </summary>
         [TestMethod]
         [Ignore] //Long execution time
-        public void GenAllNistDots()
-        {
-            string pwd = Directory.GetCurrentDirectory();
-            string solutionPath = Directory.GetParent(pwd)?.Parent?.FullName;
-            DirectoryInfo solDir = new DirectoryInfo(solutionPath);
-            DirectoryInfo rootSolDir = solDir.Parent;
+        public void GenAllNistDots() => GenAllNistDots(false);
 
-            string samples = @"ThirdParty" + Path.DirectorySeparatorChar + "Nist";
-
-            string path = Path.Combine(solDir.FullName, "TypeCobol.Test", samples);
-            string[] files = Directory.GetFiles(path, "*.cbl", SearchOption.AllDirectories);
-            foreach (string f in files)
-            {
-                string dotFile = f.Substring(0, f.LastIndexOf('.')) + ".dot";
-                FileInfo fofi = new FileInfo(dotFile);
-                string dotName = "_" + fofi.Name;
-
-                Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Nist"));
-                string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "Nist", dotName);
-
-                var document = TypeCobol.Parser.Parse(f, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
-                    false, /*copies*/ null);
-
-                Assert.IsNotNull(_cfgBuilder.AllCfgBuilder);
-
-                CfgTestUtils.GenDotCfgFile(_cfgBuilder.Cfg, expectedPath, false);
-
-                TestCleanup();
-                TestInitialize();
-            }
-        }
+        /// <summary>
+        /// This Test is only used to generate all .dot files corresponding to the Nist source samples.
+        /// This dot files contains full instructions source code
+        /// </summary>
+        [TestMethod]
+        [Ignore] //Long execution time
+        public void GenAllNistSrcDots() => GenAllNistDots(true);
     }
 }

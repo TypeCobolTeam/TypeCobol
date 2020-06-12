@@ -12,7 +12,7 @@ namespace TypeCobol.Analysis.Test
         /// <param name="cfg">The CFG to generate the dot file</param>
         /// <param name="dotFilePath">The Dot File to be generated.</param>
         /// <param name="bFullInstructions">true if full instruction source code must be generated, false if only instruction names.</param>
-        public static void GenDotCfgFile(ControlFlowGraph<Node, object> cfg, string dotFilePath, bool bFullInstructions = true)
+        public static void GenDotCfgFile(ControlFlowGraph<Node, object> cfg, string dotFilePath, bool bFullInstructions)
         {
             //Create a Dot File Generator            
             CfgDotFileForNodeGenerator<object> dotGen = new CfgDotFileForNodeGenerator<object>(cfg)
@@ -30,7 +30,7 @@ namespace TypeCobol.Analysis.Test
         /// <param name="testPath">Path of the original Cobol/TypeCobol source file.</param>
         /// <param name="expectedDotFile">The expected dot file.</param>
         /// <param name="bFullInstruction">true if full instruction must be displayed, false otherwise</param>
-        public static void GenDotCfgAndCompare(ControlFlowGraph<Node, object> cfg, string testPath, string expectedDotFile, bool bFullInstruction = true)
+        public static void GenDotCfgAndCompare(ControlFlowGraph<Node, object> cfg, string testPath, string expectedDotFile, bool bFullInstruction)
         {
             //Create a Dot File Generator            
             CfgDotFileForNodeGenerator<object> dotGen = new CfgDotFileForNodeGenerator<object>(cfg)
