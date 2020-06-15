@@ -33,6 +33,9 @@
     <None Include="**\*.dot">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="**\*.diag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Compile Include="BasicControlFlowInstructionTest.cs" />
     <Compile Include="CfgTestUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

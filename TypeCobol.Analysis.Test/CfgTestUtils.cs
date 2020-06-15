@@ -1,11 +1,50 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Text;
 using TypeCobol.Analysis.Graph;
+using TypeCobol.Compiler;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Test;
+using TypeCobol.Test.Utils;
 
 namespace TypeCobol.Analysis.Test
 {
     internal static class CfgTestUtils
     {
+        /// <summary>
+        /// Perform parsing of the supplied Cobol or TypeCobol source file
+        /// and compare actual diagnostics to expected diagnostics.
+        /// </summary>
+        /// <param name="sourceFilePath">Full path to the source file.</param>
+        /// <param name="expectedDiagnosticsFilePath">Full path to the diagnostic file.</param>
+        /// <returns>An instance of <see cref="CompilationUnit"/> containing all parsing results</returns>
+        public static CompilationUnit ParseCompareDiagnostics(string sourceFilePath, string expectedDiagnosticsFilePath)
+        {
+            var parser = Parser.Parse(sourceFilePath, DocumentFormat.RDZReferenceFormat);
+            var results = parser.Results;
+            var diagnostics = results.AllDiagnostics();
+            if (diagnostics.Count > 0)
+            {
+                string diagnosticsText = ParserUtils.DiagnosticsToString(diagnostics);
+                if (File.Exists(expectedDiagnosticsFilePath))
+                {
+                    string expectedResult = File.ReadAllText(expectedDiagnosticsFilePath);
+                    TestUtils.compareLines(sourceFilePath, diagnosticsText, expectedResult, expectedDiagnosticsFilePath);
+                }
+                else
+                {
+                    //Found diagnostics while parsing but no diagnostic file.
+                    StringBuilder errorMessage = new StringBuilder();
+                    errorMessage.AppendLine($"Found diagnostics while parsing '{sourceFilePath}' but diagnostics file is missing.");
+                    errorMessage.AppendLine($"Expected diagnostic file path was '{expectedDiagnosticsFilePath ?? "NULL"}'.");
+                    errorMessage.Append(diagnosticsText);
+                    throw new Exception(errorMessage.ToString());
+                }
+            }
+
+            return results;
+        }
+
         /// <summary>
         /// Generates a Dot CFG file
         /// </summary>
@@ -43,7 +82,7 @@ namespace TypeCobol.Analysis.Test
             // compare with expected result
             string result = writer.ToString();
             string expected = File.ReadAllText(expectedDotFile);
-            TypeCobol.Test.TestUtils.compareLines(testPath, result, expected, expectedDotFile);
+            TestUtils.compareLines(testPath, result, expected, expectedDotFile);
         }
     }
 }

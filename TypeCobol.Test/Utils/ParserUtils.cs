@@ -18,7 +18,7 @@ using String = System.String;
 
 namespace TypeCobol.Test.Utils
 {
-    internal static class ParserUtils
+    public static class ParserUtils
     {
         public static CompilationDocument ScanCobolFile(string relativePath, string textName, DocumentFormat documentFormat)
         {
