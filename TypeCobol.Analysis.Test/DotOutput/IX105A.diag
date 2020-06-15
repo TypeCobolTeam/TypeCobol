@@ -1,0 +1,32 @@
+--- Diagnostics ---
+Line 1[8,19] <37, Warning, General> - Warning: "END PROGRAM" is missing.
+Line 339[12,15] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN OffendingSymbol=[12,15:STOP]<STOP>
+Line 346[12,38] <37, Warning, General> - Warning: "end-if" is missing
+Line 350[12,37] <37, Warning, General> - Warning: "end-if" is missing
+Line 355[12,38] <37, Warning, General> - Warning: "end-if" is missing
+Line 381[12,50] <37, Warning, General> - Warning: "end-if" is missing
+Line 388[12,45] <37, Warning, General> - Warning: "end-if" is missing
+Line 393[13,46] <37, Warning, General> - Warning: "end-if" is missing
+Line 401[12,37] <37, Warning, General> - Warning: "end-if" is missing
+Line 421[12,47] <37, Warning, General> - Warning: "end-if" is missing
+Line 423[12,46] <37, Warning, General> - Warning: "end-if" is missing
+Line 436[12,47] <37, Warning, General> - Warning: "end-if" is missing
+Line 437[12,42] <37, Warning, General> - Warning: "end-if" is missing
+Line 461[12,37] <37, Warning, General> - Warning: "end-if" is missing
+Line 507[12,40] <37, Warning, General> - Warning: "end-if" is missing
+Line 511[12,33] <37, Warning, General> - Warning: "end-if" is missing
+Line 546[12,42] <37, Warning, General> - Warning: "end-if" is missing
+Line 573[12,46] <37, Warning, General> - Warning: "end-if" is missing
+Line 578[12,36] <37, Warning, General> - Warning: "end-if" is missing
+Line 606[12,37] <37, Warning, General> - Warning: "end-if" is missing
+Line 651[12,40] <37, Warning, General> - Warning: "end-if" is missing
+Line 655[12,33] <37, Warning, General> - Warning: "end-if" is missing
+Line 686[12,42] <37, Warning, General> - Warning: "end-if" is missing
+Line 711[12,42] <37, Warning, General> - Warning: "end-if" is missing
+Line 716[15,39] <37, Warning, General> - Warning: "end-if" is missing
+Line 746[12,37] <37, Warning, General> - Warning: "end-if" is missing
+Line 794[12,39] <37, Warning, General> - Warning: "end-if" is missing
+Line 801[12,42] <37, Warning, General> - Warning: "end-if" is missing
+Line 829[12,42] <37, Warning, General> - Warning: "end-if" is missing
+Line 854[12,42] <37, Warning, General> - Warning: "end-if" is missing
+Line 859[15,39] <37, Warning, General> - Warning: "end-if" is missing
