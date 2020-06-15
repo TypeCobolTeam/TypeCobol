@@ -16,7 +16,6 @@ namespace TypeCobol.Analysis.Test
     public class BasicControlFlowInstructionTest
     {
         private const string BASIC_TESTS_DIR = "BasicCfgInstrs";
-        private const string DOT_OUTPUT = "DotOutput";
 
         private static string GetThirdPartyDirectoryPath()
         {
@@ -57,8 +56,9 @@ namespace TypeCobol.Analysis.Test
         [TestMethod]
         public void MixedStackedNestedPgms()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "MixedStackedNestedPgms.cbl");
-            string expectedDiagnosticsFilePath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "MixedStackedNestedPgms.diag");
+            string test = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "MixedStackedNestedPgms");
+            string path = test + ".cbl";
+            string expectedDiagnosticsFilePath = test + ".diag";
             CfgTestUtils.ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
 
             //Here we have the main program, followed by stacked programs.
@@ -86,8 +86,9 @@ namespace TypeCobol.Analysis.Test
         [TestMethod]
         public void MixedStackedNestedProcsPgms()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "MixedStackedNestedProcsPgms.tcbl");
-            string expectedDiagnosticsFilePath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "MixedStackedNestedProcsPgms.diag");
+            string test = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "MixedStackedNestedProcsPgms");
+            string path = test + ".tcbl";
+            string expectedDiagnosticsFilePath = test + ".diag";
             CfgTestUtils.ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
 
             //Here we have the main program, followed by stacked programs.
@@ -204,16 +205,15 @@ namespace TypeCobol.Analysis.Test
             string expectedResultExtension = ".dot",
             bool fullInstruction = true)
         {
-            inputDirectoryPath = inputDirectoryPath ?? Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR);
-            string inputFilePath = Path.Combine(inputDirectoryPath, inputFileName + inputExtension);
+            string baseDir = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR);
+
+            string inputFilePath = Path.Combine(inputDirectoryPath ?? baseDir, inputFileName + inputExtension);
             Assert.IsTrue(File.Exists(inputFilePath), $"Input file '{inputFilePath}' does not exist.");
 
-            expectedDiagnosticsDirectoryPath = expectedDiagnosticsDirectoryPath ?? Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT);
-            string expectedDiagnosticsFilePath = Path.Combine(expectedDiagnosticsDirectoryPath, expectedDiagnosticsFileName + expectedDiagnosticsExtension);
+            string expectedDiagnosticsFilePath = Path.Combine(expectedDiagnosticsDirectoryPath ?? baseDir, expectedDiagnosticsFileName + expectedDiagnosticsExtension);
             //No diag file when there is no diagnostics during parsing, so we don't check file existence here.
 
-            expectedResultDirectoryPath = expectedResultDirectoryPath ?? Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT);
-            string expectedResultFilePath = Path.Combine(expectedResultDirectoryPath, expectedResultFileName + expectedResultExtension);
+            string expectedResultFilePath = Path.Combine(expectedResultDirectoryPath ?? baseDir, expectedResultFileName + expectedResultExtension);
             Assert.IsTrue(File.Exists(expectedResultFilePath), $"Expected results file '{expectedResultFilePath}' does not exist.");
 
             CfgTestUtils.ParseCompareDiagnostics(inputFilePath, expectedDiagnosticsFilePath);
@@ -350,8 +350,9 @@ namespace TypeCobol.Analysis.Test
         [TestMethod]
         public void CfgInNestedPrg0()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInNestedPrg0.cbl");
-            string expectedDiagnosticsFilePath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "CfgInNestedPrg0.diag");
+            string test = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInNestedPrg0");
+            string path = test + ".cbl";
+            string expectedDiagnosticsFilePath = test + ".diag";
             CfgTestUtils.ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
 
             //Here we have the main program, followed by stacked programs.
@@ -372,15 +373,16 @@ namespace TypeCobol.Analysis.Test
             Assert.IsNull(_cfgBuilder.AllCfgBuilder[5].ParentProgramCfgBuilder);
 
             //We have taken the same CFG than for IfThenElseCascade0
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "IfThenElseCascade0.dot");
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "IfThenElseCascade0.dot");
             CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[2].Cfg, path, expectedPath, true);
         }
 
         [TestMethod]
         public void CfgInNestedPrg1()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInNestedPrg1.cbl");
-            string expectedDiagnosticsFilePath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "CfgInNestedPrg1.diag");
+            string test = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInNestedPrg1");
+            string path = test + ".cbl";
+            string expectedDiagnosticsFilePath = test + ".diag";
             CfgTestUtils.ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
 
             //Here we have the main program, followed by stacked programs.
@@ -401,15 +403,16 @@ namespace TypeCobol.Analysis.Test
             Assert.IsNull(_cfgBuilder.AllCfgBuilder[5].ParentProgramCfgBuilder);
 
             //We have taken the same CFG than for PerformProcedure0  
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "PerformProcedure0.dot");
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "PerformProcedure0.dot");
             CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[3].Cfg, path, expectedPath, true);
         }
 
         [TestMethod]
         public void CfgInNestedPrg2()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInNestedPrg2.cbl");
-            string expectedDiagnosticsFilePath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "CfgInNestedPrg2.diag");
+            string test = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInNestedPrg2");
+            string path = test + ".cbl";
+            string expectedDiagnosticsFilePath = test + ".diag";
             CfgTestUtils.ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
 
             //Here we have the main program, followed by stacked programs.
@@ -430,15 +433,16 @@ namespace TypeCobol.Analysis.Test
             Assert.IsNull(_cfgBuilder.AllCfgBuilder[5].ParentProgramCfgBuilder);
 
             //We have taken the same CFG than for MixPerformEvaluateIf0  
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "MixPerformEvaluateIf0.dot");
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "MixPerformEvaluateIf0.dot");
             CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[1].Cfg, path, expectedPath, true);
         }
 
         [TestMethod]
         public void CfgInStackedPrg0()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInStackedPrg0.cbl");
-            string expectedDiagnosticsFilePath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "CfgInStackedPrg0.diag");
+            string test = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInStackedPrg0");
+            string path = test + ".cbl";
+            string expectedDiagnosticsFilePath = test + ".diag";
             CfgTestUtils.ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
 
             //Here we have the main program, followed by stacked programs.
@@ -459,15 +463,16 @@ namespace TypeCobol.Analysis.Test
             Assert.IsNull(_cfgBuilder.AllCfgBuilder[5].ParentProgramCfgBuilder);
 
             //We have taken the same CFG than for PerformProcedure0  
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "PerformProcedure0.dot");
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "PerformProcedure0.dot");
             CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[4].Cfg, path, expectedPath, true);
         }
 
         [TestMethod]
         public void CfgInStackedPrg1()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInStackedPrg1.cbl");
-            string expectedDiagnosticsFilePath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "CfgInStackedPrg1.diag");
+            string test = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInStackedPrg1");
+            string path = test + ".cbl";
+            string expectedDiagnosticsFilePath = test + ".diag";
             CfgTestUtils.ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
 
             //Here we have the main program, followed by stacked programs.
@@ -488,15 +493,16 @@ namespace TypeCobol.Analysis.Test
             Assert.IsNull(_cfgBuilder.AllCfgBuilder[5].ParentProgramCfgBuilder);
 
             //We have taken the same CFG than for MixPerformEvaluateIf0  
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "MixPerformEvaluateIf0.dot");
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "MixPerformEvaluateIf0.dot");
             CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[5].Cfg, path, expectedPath, true);
         }
 
         [TestMethod]
         public void CfgInProcedure0()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInProcedure0.cbl");
-            string expectedDiagnosticsFilePath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "CfgInProcedure0.diag");
+            string test = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInProcedure0");
+            string path = test + ".cbl";
+            string expectedDiagnosticsFilePath = test + ".diag";
             CfgTestUtils.ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
 
             //Here we have the main program, followed by stacked programs.
@@ -518,15 +524,16 @@ namespace TypeCobol.Analysis.Test
             Assert.IsTrue(_cfgBuilder.AllCfgBuilder[1].Cfg.ProgramNode.Name.Equals("Proc0"));
 
             //We have taken the same CFG than for IfThenElseCascade0  
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "IfThenElseCascade0.dot");
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "IfThenElseCascade0.dot");
             CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[1].Cfg, path, expectedPath, true);
         }
 
         [TestMethod]
         public void CfgInProcedure1()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInProcedure1.cbl");
-            string expectedDiagnosticsFilePath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "CfgInProcedure1.diag");
+            string test = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInProcedure1");
+            string path = test + ".cbl";
+            string expectedDiagnosticsFilePath = test + ".diag";
             CfgTestUtils.ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
 
             //Here we have the main program, followed by stacked programs.
@@ -548,15 +555,16 @@ namespace TypeCobol.Analysis.Test
             Assert.IsTrue(_cfgBuilder.AllCfgBuilder[2].Cfg.ProgramNode.Name.Equals("Proc1"));
 
             //We have taken the same CFG than for ComplexGotoPara0  
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "ComplexGotoPara0.dot");
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "ComplexGotoPara0.dot");
             CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[2].Cfg, path, expectedPath, true);
         }
 
         [TestMethod]
         public void CfgInNestedProcedure0()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInNestedProcedure0.cbl");
-            string expectedDiagnosticsFilePath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "CfgInNestedProcedure0.diag");
+            string test = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "CfgInNestedProcedure0");
+            string path = test + ".cbl";
+            string expectedDiagnosticsFilePath = test + ".diag";
             CfgTestUtils.ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
 
             //Nested0
@@ -593,15 +601,15 @@ namespace TypeCobol.Analysis.Test
             Assert.IsTrue(_cfgBuilder.AllCfgBuilder[5].AllCfgBuilder[0].Cfg.ProgramNode.Name.Equals("NestedProc2"));
 
             //We have taken the same CFG than for ComplexGotoPara0  
-            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "ComplexGotoPara0.dot");
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "ComplexGotoPara0.dot");
             CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[3].AllCfgBuilder[0].Cfg, path, expectedPath, true);
 
             //We have taken the same CFG than for IfThenElseCascade0  
-            expectedPath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "IfThenElseCascade0.dot");
+            expectedPath = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "IfThenElseCascade0.dot");
             CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[4].AllCfgBuilder[0].Cfg, path, expectedPath, true);
 
             //We have taken the same CFG than for PerformThru1  
-            expectedPath = Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "PerformThru1.dot");
+            expectedPath = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "PerformThru1.dot");
             CfgTestUtils.GenDotCfgAndCompare(_cfgBuilder.AllCfgBuilder[5].AllCfgBuilder[0].Cfg, path, expectedPath, true);
         }
 
@@ -657,7 +665,7 @@ namespace TypeCobol.Analysis.Test
                 string dotFile = Path.GetFileNameWithoutExtension(f) + ".dot";
                 string dotName = (fullInstruction ? string.Empty : "_") + dotFile;
 
-                var nistOutput = Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), DOT_OUTPUT, "Nist"));
+                var nistOutput = Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "Nist"));
                 string dotFilePath = Path.Combine(nistOutput.FullName, dotName);
 
                 Parser.Parse(f, DocumentFormat.RDZReferenceFormat);
