@@ -35,7 +35,7 @@
        PARA-G.
        DISPLAY 'IN PARA-G '.
       
-       STOP RUN.
+       GOBACK.
       
        END-DECLARE.
       

@@ -14,7 +14,7 @@
       
              DISPLAY 'PARA NAME IS  FIRST-PARA'
       
-             STOP RUN.
+             GOBACK.
       
        FIRST-PARA.
       

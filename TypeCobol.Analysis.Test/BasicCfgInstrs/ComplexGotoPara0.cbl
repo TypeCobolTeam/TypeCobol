@@ -29,6 +29,6 @@
        PARA-G.
        DISPLAY 'IN PARA-G '.
       
-       STOP RUN.
+       GOBACK.
        END PROGRAM GOTOCplx.
       

@@ -19,7 +19,7 @@ Block3 [
 label = "{Block3|    DISPLAY \"Right action !\"\l}"
 ]
 Block4 [
-label = "{Block4|    STOP RUN\l}"
+label = "{Block4|    GOBACK\l}"
 ]
 Block0 -> Block1
 Block1 -> Block2

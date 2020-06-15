@@ -102,7 +102,7 @@
              end-evaluate
            perform affichage
            end-perform.
-           close VUE stop run.
+           close VUE goback.
        affichage.
              write tabind
              read  tabind.

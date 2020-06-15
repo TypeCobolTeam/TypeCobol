@@ -11,7 +11,7 @@
               DISPLAY 'BEGIN MAIN PARAGRAPH HERE'.
               GO TO PARA-1.
               DISPLAY 'A VALUE ', A.
-              STOP RUN.
+              GOBACK.
          PARA-1.
               COMPUTE A = B + C.
        END PROGRAM GOTO0.

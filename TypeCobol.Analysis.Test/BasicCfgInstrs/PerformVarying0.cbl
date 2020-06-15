@@ -11,6 +11,6 @@
            PERFORM VARYING counter FROM 1 BY 2 UNTIL counter > n
              DISPLAY counter " ; " NO ADVANCING
            END-PERFORM
-           STOP RUN.
+           GOBACK.
        END PROGRAM PERFORMVRA.
       

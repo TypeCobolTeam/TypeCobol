@@ -10,7 +10,7 @@
            ALTER B-PARA TO PROCEED TO E-PARA.
        B-PARA. GO TO B-PARA.
            DISPLAY 'IN B-PARA'.
-           STOP RUN.
+           GOBACK.
       
        C-PARA.
            DISPLAY 'IN C-PARA'.

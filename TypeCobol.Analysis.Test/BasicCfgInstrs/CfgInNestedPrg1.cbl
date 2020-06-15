@@ -33,7 +33,7 @@
            PERFORM A-STARTUP
            PERFORM B-PROCESS
            PERFORM C-CLEANUP
-           STOP RUN.
+           GOBACK.
        A-STARTUP.
            OPEN INPUT USER-FILE.
        B-PROCESS.

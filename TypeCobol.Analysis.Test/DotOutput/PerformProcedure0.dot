@@ -119,7 +119,7 @@ label = "{C-CLEANUP. Block24|    CLOSE USER-FILE\l}"
 Block6 -> Block24 [style=dashed]
 
 Block7 [
-label = "{Block7|    STOP RUN\l}"
+label = "{Block7|    GOBACK\l}"
 ]
 Block0 -> Block1
 Block1 -> Block2

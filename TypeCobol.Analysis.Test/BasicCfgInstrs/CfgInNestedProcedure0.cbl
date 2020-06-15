@@ -42,7 +42,7 @@
        PARA-G.
        DISPLAY 'IN PARA-G '.
       
-       STOP RUN.
+       GOBACK.
       
        END-DECLARE.
        END PROGRAM Nested0.
@@ -95,7 +95,7 @@
       
              DISPLAY 'PARA NAME IS  FIRST-PARA'
       
-             STOP RUN.
+             GOBACK.
       
        FIRST-PARA.
       

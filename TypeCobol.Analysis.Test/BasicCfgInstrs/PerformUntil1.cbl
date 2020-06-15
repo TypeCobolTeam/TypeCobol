@@ -11,6 +11,6 @@
              ACCEPT action
            END-PERFORM
            DISPLAY "Saisie correcte !".
-           STOP RUN.
+           GOBACK.
        END PROGRAM PERFORM0.
       

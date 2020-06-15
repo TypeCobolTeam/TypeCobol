@@ -16,7 +16,7 @@ Block2 [
 label = "{Block2|      DISPLAY phrase\l}"
 ]
 Block3 [
-label = "{Block3|    STOP RUN\l}"
+label = "{Block3|    GOBACK\l}"
 ]
 Block0 -> Block1
 Block1 -> Block2

@@ -11,6 +11,6 @@
            PERFORM c TIMES
              DISPLAY phrase
            END-PERFORM
-           STOP RUN.
+           GOBACK.
        END PROGRAM PERFORM0.
       

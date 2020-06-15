@@ -11,5 +11,5 @@
              ACCEPT action
            END-PERFORM
            DISPLAY "Right action !".
-           STOP RUN.
+           GOBACK.
        END PROGRAM PERFORM0.
