@@ -12,7 +12,6 @@ using Antlr4.Runtime;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Symbols;
-using String = System.String;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -24,7 +23,9 @@ namespace TypeCobol.Compiler.Diagnostics
         }
 
         private readonly TypeCobolOptions _compilerOptions;
-        private Node _currentNodeScope;
+
+        //Holds a reference to the last section node visited as to know in which current section we are
+        private Node _currentSection;
 
         private Node CurrentNode { get; set; }
 
@@ -102,7 +103,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (performCE.Procedure != null)
             {
-                var procedure = SectionOrParagraphUsageChecker.ResolveTargetSectionOrParagraph(performProcedureNode, performCE.Procedure, _currentNodeScope);
+                var procedure = SectionOrParagraphUsageChecker.ResolveTargetSectionOrParagraph(performProcedureNode, performCE.Procedure, _currentSection);
                 switch (procedure.Item1)
                 {
                     case SymbolType.SectionName:
@@ -116,7 +117,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (performCE.ThroughProcedure != null)
             {
-                var throughProcedure = SectionOrParagraphUsageChecker.ResolveTargetSectionOrParagraph(performProcedureNode, performCE.ThroughProcedure, _currentNodeScope);
+                var throughProcedure = SectionOrParagraphUsageChecker.ResolveTargetSectionOrParagraph(performProcedureNode, performCE.ThroughProcedure, _currentSection);
                 switch (throughProcedure.Item1)
                 {
                     case SymbolType.SectionName:
@@ -140,8 +141,8 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(ProcedureDivision procedureDivision)
         {
             LibraryChecker.CheckLibrary(procedureDivision);
-            //Save current scope node for paragraph resolution
-            _currentNodeScope = procedureDivision;
+            //initializing the current section to null
+            _currentSection = null;
             ProcedureDivisionHeader ce = procedureDivision.CodeElement as ProcedureDivisionHeader;
             if (ce?.FormalizedCommentDocumentation != null && procedureDivision.Parent is FunctionDeclaration)
             {
@@ -155,7 +156,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(Section section)
         {
             //Save current scope node for paragraph resolution
-            _currentNodeScope = section;
+            _currentSection = section;
             SectionOrParagraphUsageChecker.CheckSection(section);
             return true;
         }
@@ -867,11 +868,11 @@ namespace TypeCobol.Compiler.Diagnostics
         /// </summary>
         /// <param name="callerNode">Node using the paragraph or the reference.</param>
         /// <param name="target">A non-null Symbol reference to disambiguate.</param>
-        /// /// <param name="scopeNode">The node scope in which the perform statement is declared</param>
+        /// /// <param name="currentSection">The node scope in which the perform statement is declared</param>
         /// <returns>A tuple made of a SymbolType and a Node when the target has been correctly resolved.
         /// The returned SymbolType is non-ambiguous if the type of the target has been determined.</returns>
         /// <remarks>This method will create appropriate diagnostics on Node if resolution is inconclusive.</remarks>
-        public static (SymbolType, Node) ResolveTargetSectionOrParagraph(Node callerNode, [NotNull] SymbolReference target, Node scopeNode)
+        public static (SymbolType, Node) ResolveTargetSectionOrParagraph(Node callerNode, [NotNull] SymbolReference target, Node currentSection)
         {
             IList<Section> sections;
             IList<Paragraph> paragraphs;
@@ -940,10 +941,10 @@ namespace TypeCobol.Compiler.Diagnostics
                         {
                             IEnumerable<Paragraph> matchingParagraphs = null;
                             //Perform statement is declared in a section scope
-                            if (scopeNode.SemanticData.Kind == Symbol.Kinds.Section)
+                            if (currentSection != null)
                             {
                                 //we're filtering out all paragraphs not declared in section scopeNode
-                                matchingParagraphs = paragraphs.Where(p => p.Parent == scopeNode);
+                                matchingParagraphs = paragraphs.Where(p => p.Parent == currentSection);
                             }
                             //Perform statement directly declared in the PROCEDURE DIVISION
                             else
@@ -975,7 +976,7 @@ namespace TypeCobol.Compiler.Diagnostics
             IList<Paragraph> GetParagraphs() => callerNode.SymbolTable.GetParagraph(target);
         }
 
-        private static void CheckIsEmpty<T>(string nodeTypeName, T node) where T : Node
+        private static void CheckIsNotEmpty<T>(string nodeTypeName, T node) where T : Node
         {
             // a section/paragraph (node) is empty when it has no child or when its child/children is/are an End node
             bool empty = true; // default value
@@ -1023,7 +1024,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (paragraphs.Count > 0)
                 DiagnosticUtils.AddError(section, $"Section {section.Name} is also declared as a paragraph", MessageCode.SemanticTCErrorInParser);
 
-            CheckIsEmpty("Section", section);
+            CheckIsNotEmpty("Section", section);
         }
 
         public static void CheckParagraph(Paragraph paragraph)
@@ -1035,7 +1036,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (paragraphs.Count > 1)
             {
                 //Get the name of the scope to display in diagnostic message
-                var scope = paragraph.Parent.Name.Equals(String.Empty) ? paragraph.Parent.ID : paragraph.Parent.Name ;
+                var scope = string.IsNullOrEmpty(paragraph.Parent.Name) ? paragraph.Parent.ID : paragraph.Parent.Name ;
                 DiagnosticUtils.AddError(paragraph, $"Paragraph \'{paragraph.Name}\' already declared in {scope}");
             }
 
@@ -1046,7 +1047,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if(sections.Count > 0)
                 DiagnosticUtils.AddError(paragraph, $"Paragraph {paragraph.Name} is also declared as a section", MessageCode.SemanticTCErrorInParser);
 
-            CheckIsEmpty("Paragraph", paragraph);
+            CheckIsNotEmpty("Paragraph", paragraph);
         }
     }
 
