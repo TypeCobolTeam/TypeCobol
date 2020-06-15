@@ -27,6 +27,15 @@
       *KO ambiguous reference between SEC01.PAR04 and SEC02.PAR04
            Perform PAR04.
 
+      *KO ambiguous reference between section SEC05 and paragraph SEC06.SEC05
+           Perform SEC05.
+
+      *OK name SEC05 is qualified
+           Perform SEC05 OF SEC06.
+
+      *KO ambiguous reference to SEC07 defined multiple times
+           Perform SEC07.
+
       *** Testing perform statements in a parapraph of procedure division
        TEST-PERFORM-PROCEDURE-DIVISION.
       *OK PAR02 is uniquely defined in SEC02
@@ -162,11 +171,52 @@
        SEC03 SECTION.
        TEST-PERFORM-SEC03.
       *KO can't resolve between SEC01.PAR04 and SEC02.PAR04
-           Perform PAR03.
+           Perform PAR04.
       *KO can't resolve between SEC01.PAR04 and SEC02.PAR04
            Perform PAR02 thru PAR04
       *OK PAR02 is uniquely defined and PAR04 is qualified
            Perform PAR02 thru PAR04 OF SEC01
            .
+
+      *KO SEC04 already declared as paragraph
+       SEC04 SECTION.
+      *KO SEC04 already declared as section
+       SEC04.
+           continue
+           .
+
+      *KO section SEC05 already declared as a paragraph
+       SEC05 SECTION.
+       PAR06. 
+            continue
+            .
+      *KO ambiguous reference between section SEC05 and paragraph SEC06.SEC05
+           Perform SEC05.
+
+       SEC06 SECTION.
+      *KO ambiguous reference between section SEC05 and paragraph SEC06.SEC05
+           Perform SEC05.
+      *OK name SEC05 is qualified
+           Perform SEC05 OF SEC06.
+      *KO paragraph SEC05 is already declared as a section
+       SEC05. 
+            continue
+            .
+       PAR07.
+      *KO ambiguous reference to SEC07 defined multiple times
+            Perform SEC07.
+            .
+
+      *Warning SEC07 declared more than once
+       SEC07 SECTION.
+       PAR07.
+            continue
+            .
+
+      *Warning SEC07 declared more than once
+       SEC07 SECTION.
+       PAR08.
+            continue
+            .
 
        END PROGRAM TestingPgm.

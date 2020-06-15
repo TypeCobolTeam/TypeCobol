@@ -1,5 +1,7 @@
 --- Diagnostics ---
 Line 14[1,11] <37, Warning, General> - Warning: Section 'S1' already declared
+Line 25[1,3] <30, Error, Semantics> - Semantic error: Paragraph P5 is also declared as a section
+Line 28[1,11] <30, Error, Semantics> - Semantic error: Section P5 is also declared as a paragraph
 Line 32[1,11] <37, Warning, General> - Warning: Section 'S1' already declared
 Line 37[13,14] <30, Error, Semantics> - Semantic error: Symbol P0 is not referenced OffendingSymbol=[13,14:P0]<UserDefinedWord>
 Line 40[13,14] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph P3 OffendingSymbol=[13,14:P3]<UserDefinedWord>

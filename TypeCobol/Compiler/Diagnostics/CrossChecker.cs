@@ -1016,12 +1016,19 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(section, $"Section \'{section.Name}\' already declared", MessageCode.Warning);
             }
 
+            //Check if any paragraphs also have that name
+            var paragraphs = section.SymbolTable.GetParagraphs(p => p.Name.Equals(section.Name, StringComparison.OrdinalIgnoreCase)).ToList();
+            
+            //A section cannot have the same name as a paragraph
+            if (paragraphs.Count > 0)
+                DiagnosticUtils.AddError(section, $"Section {section.Name} is also declared as a paragraph", MessageCode.SemanticTCErrorInParser);
+
             CheckIsEmpty("Section", section);
         }
 
         public static void CheckParagraph(Paragraph paragraph)
         {
-            //Get all paragraphs with the same name as and having the same section name
+            //Get all paragraphs with the same name and having the same section name
             var paragraphs = paragraph.SymbolTable.GetParagraphs(p => p.Name.Equals(paragraph.Name, StringComparison.OrdinalIgnoreCase) && p.SemanticData.Owner == paragraph.SemanticData.Owner).ToList();
 
             //Paragraphs can't have the same name within the same section
@@ -1031,6 +1038,13 @@ namespace TypeCobol.Compiler.Diagnostics
                 var scope = paragraph.Parent.Name.Equals(String.Empty) ? paragraph.Parent.ID : paragraph.Parent.Name ;
                 DiagnosticUtils.AddError(paragraph, $"Paragraph \'{paragraph.Name}\' already declared in {scope}");
             }
+
+            //Get all the sections with the same name as paragraph
+            var sections = paragraph.SymbolTable.GetSection(paragraph.Name);
+
+            //A paragraph cannot have the same name as a section
+            if(sections.Count > 0)
+                DiagnosticUtils.AddError(paragraph, $"Paragraph {paragraph.Name} is also declared as a section", MessageCode.SemanticTCErrorInParser);
 
             CheckIsEmpty("Paragraph", paragraph);
         }
