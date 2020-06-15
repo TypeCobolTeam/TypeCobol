@@ -34,7 +34,7 @@ Block10 [
 label = "{PARA-G. Block10|DISPLAY 'IN PARA-G '\l}"
 ]
 Block11 [
-label = "{PARA-G. Block11|STOP RUN\l}"
+label = "{PARA-G. Block11|GOBACK\l}"
 ]
 Block0 -> Block1
 Block1 -> Block4
