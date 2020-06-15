@@ -940,7 +940,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         {
                             IEnumerable<Paragraph> matchingParagraphs = null;
                             //Perform statement is declared in a section scope
-                            if (scopeNode is Section)
+                            if (scopeNode.SemanticData.Kind == Symbol.Kinds.Section)
                             {
                                 //we're filtering out all paragraphs not declared in section scopeNode
                                 matchingParagraphs = paragraphs.Where(p => p.Parent == scopeNode);
