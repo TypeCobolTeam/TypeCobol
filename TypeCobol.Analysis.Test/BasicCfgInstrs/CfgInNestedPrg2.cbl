@@ -97,14 +97,14 @@
        END PROGRAM StackedNestedPgms.
       
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. Stacke0.
+       PROGRAM-ID. Stacked0.
        PROCEDURE DIVISION.
            GOBACK.
-       END PROGRAM Stacke0.
+       END PROGRAM Stacked0.
       
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. Stacke1.
+       PROGRAM-ID. Stacked1.
        PROCEDURE DIVISION.
            GOBACK.
-       END PROGRAM Stacke1.
+       END PROGRAM Stacked1.
       
