@@ -298,10 +298,10 @@ namespace TypeCobol.Analysis.Cfg
                         this.CurrentProgramCfgBuilder.EnterDeclaratives((Declaratives)node);
                         break;
                     case CodeElementType.SectionHeader:
-                        this.CurrentProgramCfgBuilder.EnterSection((Section)node);
+                        this.CurrentProgramCfgBuilder.EnterSection((Compiler.Nodes.Section)node);
                         break;
                     case CodeElementType.ParagraphHeader:
-                        this.CurrentProgramCfgBuilder.EnterParagraph((Paragraph)node);
+                        this.CurrentProgramCfgBuilder.EnterParagraph((Compiler.Nodes.Paragraph)node);
                         break;
                     //Decision
                     case CodeElementType.IfStatement:
@@ -442,10 +442,10 @@ namespace TypeCobol.Analysis.Cfg
                         this.CurrentProgramCfgBuilder.LeaveDeclaratives((Declaratives)node);
                         break;
                     case CodeElementType.SectionHeader:
-                        this.CurrentProgramCfgBuilder.LeaveSection((Section)node);
+                        this.CurrentProgramCfgBuilder.LeaveSection((Compiler.Nodes.Section)node);
                         break;
                     case CodeElementType.ParagraphHeader:
-                        this.CurrentProgramCfgBuilder.LeaveParagraph((Paragraph)node);
+                        this.CurrentProgramCfgBuilder.LeaveParagraph((Compiler.Nodes.Paragraph)node);
                         break;
                     //Decision
                     case CodeElementType.IfStatement:
@@ -844,7 +844,7 @@ namespace TypeCobol.Analysis.Cfg
         /// Enter a section declaration
         /// </summary>
         /// <param name="section"></param>
-        protected virtual void EnterSection(Section section)
+        protected virtual void EnterSection(Compiler.Nodes.Section section)
         {
             string name = section.Name;
             CfgSectionSymbol sym = new CfgSectionSymbol(name);
@@ -861,7 +861,7 @@ namespace TypeCobol.Analysis.Cfg
         /// /Leave a section declaration.
         /// </summary>
         /// <param name="section"></param>
-        protected virtual void LeaveSection(Section section)
+        protected virtual void LeaveSection(Compiler.Nodes.Section section)
         {
             this.CurrentProgramCfgBuilder.CurrentSection = null;
             //Current sentence is also null now
@@ -872,7 +872,7 @@ namespace TypeCobol.Analysis.Cfg
         /// Enter a paragraph
         /// </summary>
         /// <param name="p">The paragraph to be entered</param>
-        protected virtual void EnterParagraph(Paragraph p)
+        protected virtual void EnterParagraph(Compiler.Nodes.Paragraph p)
         {
             string name = p.Name;
             CfgParagraphSymbol sym = new CfgParagraphSymbol(name);
@@ -890,7 +890,7 @@ namespace TypeCobol.Analysis.Cfg
         /// Leave a paragraph
         /// </summary>
         /// <param name="p">The paragraph to be left</param>
-        protected virtual void LeaveParagraph(Paragraph p)
+        protected virtual void LeaveParagraph(Compiler.Nodes.Paragraph p)
         {
             this.CurrentProgramCfgBuilder.CurrentParagraph = null;
             //Current sentence is also null now
