@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using TypeCobol.Analysis.Graph;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.CupParser.NodeBuilder;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.Scopes;
-using TypeCobol.Compiler.Symbols;
 
 namespace TypeCobol.Analysis.Cfg
 {
@@ -47,7 +44,6 @@ namespace TypeCobol.Analysis.Cfg
             private set;
         }
 
-
         /// <summary>
         /// All Cfg graphs builder created during the building phase, so it contains Cfg for nested programs and nested procedures,
         /// but also for stacked programs.
@@ -77,7 +73,7 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// The Current Program symbol being built as a Scope
+        /// The Current Program node.
         /// </summary>
         private Program CurrentProgram
         {
@@ -104,18 +100,18 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// The current section symbol.
+        /// The current section.
         /// </summary>
-        internal CfgSectionSymbol CurrentSection
+        private Section CurrentSection
         {
             get;
             set;
         }
 
         /// <summary>
-        /// The current paragraph symbol.
+        /// The current paragraph.
         /// </summary>
-        internal CfgParagraphSymbol CurrentParagraph
+        private Paragraph CurrentParagraph
         {
             get;
             set;
@@ -124,25 +120,16 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// The current Sentence in the current Paragraph.
         /// </summary>
-        internal CfgSentence CurrentSentence
+        private Sentence CurrentSentence
         {
             get;
             set;
         }
 
         /// <summary>
-        /// The Section and Paragraph Domain of this program.
+        /// List of all Sections and Paragraphs encountered in order.
         /// </summary>
-        internal Container<Symbol> SectionsParagraphs
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Ordered list of all Sections an Paragraphs encountered in order.
-        /// </summary>
-        internal List<Symbol> AllSectionsParagraphs
+        private List<Procedure> AllProcedures
         {
             get;
             set;
@@ -152,10 +139,12 @@ namespace TypeCobol.Analysis.Cfg
         /// All pending Goto instructions that will be handled at the end of the Procedure Division.
         /// </summary>
         protected LinkedList<Tuple<Goto, BasicBlockForNode>> PendingGOTOs;
+
         /// <summary>
         /// All encountered PERFORM procedure instructions
         /// </summary>
         protected LinkedList<Tuple<PerformProcedure, BasicBlockForNodeGroup>> PendingPERFORMProcedures;
+
         /// <summary>
         /// Pending ALTER instructions that will be handled at the end of the Procedure Division.
         /// </summary>
@@ -169,12 +158,12 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// All pending Next Sentence instructions that will be handled at the end of the Procedure Division.
         /// </summary>
-        internal LinkedList<Tuple<NextSentence, BasicBlockForNode, CfgSentence>> PendingNextSentences;
+        private LinkedList<Tuple<NextSentence, BasicBlockForNode, Sentence>> PendingNextSentences;
 
         /// <summary>
         /// All encountered sentences
         /// </summary>
-        internal List<CfgSentence> AllSentences;
+        private List<Sentence> AllSentences;
 
         public IList<Diagnostic> Diagnostics { get; private set; }
 
@@ -189,6 +178,7 @@ namespace TypeCobol.Analysis.Cfg
             this.UseEvaluateCascade = true;
             this.UseSearchCascade = true;
             Mode = CfgMode.Normal;
+            this.AllProcedures = new List<Procedure>();
         }
 
         /// <summary>
@@ -559,9 +549,6 @@ namespace TypeCobol.Analysis.Cfg
                     case CodeElementType.NotOnSizeErrorCondition:
                         this.CurrentProgramCfgBuilder.LeaveExceptionCondition(node);
                         break;
-                    default:
-                        break;
-
                 }
             }
         }
@@ -569,22 +556,18 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// Link this sentence to the current section or paragraph if any.
         /// </summary>
-        /// <param name="block">The block to link</param>
-        private void LinkBlockSentenceToCurrentSectionParagraph(CfgSentence block)
+        /// <param name="sentence">The sentence to link.</param>
+        private void LinkBlockSentenceToCurrentSectionParagraph(Sentence sentence)
         {
-            Symbol curSecOrPara = ((Symbol)this.CurrentProgramCfgBuilder.CurrentParagraph) ?? this.CurrentProgramCfgBuilder.CurrentSection;
-            if (curSecOrPara != null)
+            var currentProcedure = (Procedure) this.CurrentProgramCfgBuilder.CurrentParagraph ??
+                                   this.CurrentProgramCfgBuilder.CurrentSection;
+
+            if (currentProcedure != null)
             {
-                if (curSecOrPara.Kind == Symbol.Kinds.Section)
-                {
-                    this.CurrentProgramCfgBuilder.CurrentSection.SentencesParagraphs.Enter(block);
-                }
-                else
-                {
-                    this.CurrentProgramCfgBuilder.CurrentParagraph.Sentences.Enter(block);
-                }
-                //Give to this block the name of its paragraph as tag.
-                block.Block.Tag = curSecOrPara.Name;
+                currentProcedure.AddSentence(sentence);
+                
+                //Give to this block the name of its paragraph/section as tag.
+                sentence.FirstBlock.Tag = currentProcedure.Name;
             }
         }
 
@@ -593,31 +576,26 @@ namespace TypeCobol.Analysis.Cfg
         /// </summary>
         private void StartBlockSentence()
         {
-            this.CurrentProgramCfgBuilder.CurrentSentence = new CfgSentence();
             if (this.CurrentProgramCfgBuilder.AllSentences == null)
-            {
-                this.CurrentProgramCfgBuilder.AllSentences = new List<CfgSentence>();
-            }
-            this.CurrentProgramCfgBuilder.CurrentSentence.Number = this.CurrentProgramCfgBuilder.AllSentences.Count;
-            this.CurrentProgramCfgBuilder.AllSentences.Add(this.CurrentProgramCfgBuilder.CurrentSentence);
+                this.CurrentProgramCfgBuilder.AllSentences = new List<Sentence>();
 
-            if (this.CurrentProgramCfgBuilder.CurrentDeclarativesContext != null)
-            {
-                this.CurrentProgramCfgBuilder.CurrentSentence.SetFlag(Symbol.Flags.Declaratives, true);
-            }
-
-            var block = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
-            this.CurrentProgramCfgBuilder.CurrentSentence.Block = block;
-
+            int number = this.CurrentProgramCfgBuilder.AllSentences.Count;
+            var firstBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, false);
+            int? firstBlockIndex = null;
             if (this.CurrentProgramCfgBuilder.CurrentBasicBlock != null)
             {
-                this.CurrentProgramCfgBuilder.CurrentSentence.BlockIndex = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
-                this.CurrentProgramCfgBuilder.CurrentBasicBlock.SuccessorEdges.Add(this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count);
-                this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(block);
+                firstBlockIndex = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
+                this.CurrentProgramCfgBuilder.CurrentBasicBlock.SuccessorEdges.Add(firstBlockIndex.Value);
+                this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(firstBlock);
             }
-            this.CurrentProgramCfgBuilder.CurrentBasicBlock = block;
+            Sentence sentence = new Sentence(number, firstBlock, firstBlockIndex);
+            this.CurrentProgramCfgBuilder.AllSentences.Add(sentence);
+
+            this.CurrentProgramCfgBuilder.CurrentSentence = sentence;
+            this.CurrentProgramCfgBuilder.CurrentBasicBlock = firstBlock;
+
             //Link this Sentence to its section or paragraph if any.
-            this.CurrentProgramCfgBuilder.LinkBlockSentenceToCurrentSectionParagraph(this.CurrentProgramCfgBuilder.CurrentSentence);
+            this.CurrentProgramCfgBuilder.LinkBlockSentenceToCurrentSectionParagraph(sentence);
         }
 
         /// <summary>
@@ -744,117 +722,31 @@ namespace TypeCobol.Analysis.Cfg
             this.CurrentProgramCfgBuilder = this.CurrentProgramCfgBuilder.ParentProgramCfgBuilder;
         }
 
-
-        /// <summary>
-        /// Enter in the domain a section or a paragraph symbol.
-        /// </summary>
-        /// <param name="sym">The symbol to enter.</param>
-        private void EnterSectionOrParagraphSymbol(Symbol sym)
-        {
-            System.Diagnostics.Debug.Assert(sym.Kind == Symbol.Kinds.Section || sym.Kind == Symbol.Kinds.Paragraph);
-
-            if (this.CurrentProgramCfgBuilder.SectionsParagraphs == null)
-                this.CurrentProgramCfgBuilder.SectionsParagraphs = new Container<Symbol>();
-            this.CurrentProgramCfgBuilder.SectionsParagraphs.Add(sym);
-
-            if (this.CurrentProgramCfgBuilder.AllSectionsParagraphs == null)
-                this.CurrentProgramCfgBuilder.AllSectionsParagraphs = new List<Symbol>();
-            sym.Number = this.CurrentProgramCfgBuilder.AllSectionsParagraphs.Count;
-            this.CurrentProgramCfgBuilder.AllSectionsParagraphs.Add(sym);
-
-            //Special case Section or Paragraph inside a Declarative
-            if (this.CurrentProgramCfgBuilder.CurrentDeclarativesContext != null)
-            {
-                switch (sym.Kind)
-                {
-                    case Symbol.Kinds.Paragraph:
-                        {
-                            CfgParagraphSymbol cfgPara = (CfgParagraphSymbol)sym;
-                            cfgPara.SetFlag(Symbol.Flags.Declaratives, true);
-                        }
-                        break;
-                    case Symbol.Kinds.Section:
-                        {
-                            CfgSectionSymbol cfgSymbol = (CfgSectionSymbol)sym;
-                            cfgSymbol.SetFlag(Symbol.Flags.Declaratives, true);
-                            this.CurrentProgramCfgBuilder.CurrentDeclarativesContext.AddSection(cfgSymbol);
-                        }
-                        break;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Resolve a section or a paragraph symbol reference
-        /// </summary>
-        /// <param name="symRef">The Symbol Reference instance to a section or a paragraph.</param>
-        /// <returns>The scope of symbols found</returns>
-        internal Container<Symbol>.Entry ResolveSectionOrParagraphSymbol(SymbolReference symRef)
-        {
-            System.Diagnostics.Debug.Assert(symRef != null);
-            string[] paths = AsPath(symRef);
-            string name = paths[0];
-            Container<Symbol>.Entry results = new Container<Symbol>.Entry(name);
-            this.CurrentProgramCfgBuilder.SectionsParagraphs.TryGetValue(name, out var candidates);
-            if (candidates == null)
-                return results;
-            foreach (var candidate in candidates)
-            {
-                if (IsMatchingPath(candidate, paths))
-                    results.Add(candidate);
-            }
-            return results;
-
-            string[] AsPath(SymbolReference symbolReference)
-            {
-                if (symbolReference.IsQualifiedReference)
-                {
-                    var qualifiedSymbolReference = (QualifiedSymbolReference) symbolReference;
-                    return qualifiedSymbolReference.AsList().Select(s => s.Name).ToArray();
-                }
-                return new[] { symbolReference.Name };
-            }
-
-            bool IsMatchingPath(Symbol symbol, string[] path)
-            {
-                Symbol currentSymbol = symbol;
-                for (int i = 0; i < path.Length; i++)
-                {
-                    switch (i)
-                    {
-                        case 0:
-                            if (!path[i].Equals(currentSymbol.Name, StringComparison.OrdinalIgnoreCase))
-                                return false;
-                            break;
-                        default:
-                        {
-                            Symbol parent = currentSymbol.LookupParentOfName(path[i]);
-                            if (parent == null)
-                                return false;
-                            currentSymbol = parent;
-                        }
-                            break;
-                    }
-                }
-                return true;
-            }
-        }
-
         /// <summary>
         /// Enter a section declaration
         /// </summary>
         /// <param name="section"></param>
         protected virtual void EnterSection(Compiler.Nodes.Section section)
         {
+            int number = this.CurrentProgramCfgBuilder.AllProcedures.Count;
             string name = section.Name;
-            CfgSectionSymbol sym = new CfgSectionSymbol(name);
-            this.CurrentProgramCfgBuilder.EnterSectionOrParagraphSymbol(sym);
+            Section cfgSection = new Section(number, name);
+
+            this.CurrentProgramCfgBuilder.AllProcedures.Add(cfgSection);
+            IndexProcedure(cfgSection);
+
             //The new current section.
-            this.CurrentProgramCfgBuilder.CurrentSection = sym;
+            this.CurrentProgramCfgBuilder.CurrentSection = cfgSection;
             //No more Paragraph
             this.CurrentProgramCfgBuilder.CurrentParagraph = null;
             //Reset any current sentence
             this.CurrentProgramCfgBuilder.CurrentSentence = null;
+
+            //Add section to current DeclarativesContext if any
+            if (this.CurrentProgramCfgBuilder.CurrentDeclarativesContext != null)
+            {
+                this.CurrentProgramCfgBuilder.CurrentDeclarativesContext.AddSection(cfgSection);
+            }
         }
 
         /// <summary>
@@ -871,17 +763,21 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// Enter a paragraph
         /// </summary>
-        /// <param name="p">The paragraph to be entered</param>
-        protected virtual void EnterParagraph(Compiler.Nodes.Paragraph p)
+        /// <param name="paragraph">The paragraph to be entered</param>
+        protected virtual void EnterParagraph(Compiler.Nodes.Paragraph paragraph)
         {
-            string name = p.Name;
-            CfgParagraphSymbol sym = new CfgParagraphSymbol(name);
-            this.CurrentProgramCfgBuilder.EnterSectionOrParagraphSymbol(sym);
-            if (CurrentSection != null)
-            {//Add the paragraph to the current section if any.
-                this.CurrentProgramCfgBuilder.CurrentSection.SentencesParagraphs.Enter(sym);
-            }
-            this.CurrentProgramCfgBuilder.CurrentParagraph = sym;
+            int number = this.CurrentProgramCfgBuilder.AllProcedures.Count;
+            string name = paragraph.Name;
+            System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentSection != null);
+            Section parentSection = this.CurrentProgramCfgBuilder.CurrentSection;
+            Paragraph cfgParagraph = new Paragraph(number, name, parentSection);
+            //Note that Paragraph constructor adds the newly created paragraph into its parent section.
+
+            this.CurrentProgramCfgBuilder.AllProcedures.Add(cfgParagraph);
+            IndexProcedure(cfgParagraph);
+
+            //Set current paragraph
+            this.CurrentProgramCfgBuilder.CurrentParagraph = cfgParagraph;
             //Current sentence is also null now
             this.CurrentProgramCfgBuilder.CurrentSentence = null;
         }
@@ -917,12 +813,14 @@ namespace TypeCobol.Analysis.Cfg
                 foreach (var next in this.CurrentProgramCfgBuilder.PendingNextSentences)
                 {
                     BasicBlockForNode block = next.Item2;
-                    CfgSentence sentence = next.Item3;
+                    Sentence sentence = next.Item3;
                     if (sentence.Number < this.CurrentProgramCfgBuilder.AllSentences.Count - 1)
                     {
-                        CfgSentence nextSentence = AllSentences[sentence.Number + 1];
-                        System.Diagnostics.Debug.Assert(!block.SuccessorEdges.Contains(nextSentence.BlockIndex));
-                        block.SuccessorEdges.Add(nextSentence.BlockIndex);
+                        Sentence nextSentence = AllSentences[sentence.Number + 1];
+                        System.Diagnostics.Debug.Assert(nextSentence.FirstBlockIndex.HasValue);
+                        int blockIndex = nextSentence.FirstBlockIndex.Value;
+                        System.Diagnostics.Debug.Assert(!block.SuccessorEdges.Contains(blockIndex));
+                        block.SuccessorEdges.Add(blockIndex);
                     }
                 }
                 this.CurrentProgramCfgBuilder.PendingNextSentences = null;
@@ -961,14 +859,14 @@ namespace TypeCobol.Analysis.Cfg
                                     target = new SymbolReference[1];
                                 }
                                 target[0] = simpleGoto.ProcedureName;
-                                ResolveGoto(@goto, block, target, true);
+                                ResolveGoto(@goto, block, target);
                             }
                             break;
                         case StatementType.GotoConditionalStatement:
                             {
                                 GotoConditionalStatement condGoto = (GotoConditionalStatement)@goto.CodeElement;
                                 target = condGoto.ProcedureNames;
-                                ResolveGoto(@goto, block, target, false);
+                                ResolveGoto(@goto, block, target);
                             }
                             break;
                     }
@@ -979,18 +877,34 @@ namespace TypeCobol.Analysis.Cfg
             }
         }
 
+        #region Section/Paragraph resolution
+
+        //TODO move into separate class to be used both by CFG and CrossChecker
+
+        private readonly Dictionary<string, List<Procedure>> _procedures = new Dictionary<string, List<Procedure>>(StringComparer.OrdinalIgnoreCase);
+
+        private void IndexProcedure(Procedure procedure)
+        {
+            if (!_procedures.TryGetValue(procedure.Name, out var list))
+            {
+                list = new List<Procedure>();
+                _procedures.Add(procedure.Name, list);
+            }
+            list.Add(procedure);
+        }
+
         /// <summary>
         /// Check that a Section or a Paragraph is resolvable
         /// </summary>
         /// <param name="node">A reference node for the check, used as position.</param>
         /// <param name="symRef">The Symbol Reference to the Section os Paragraph</param>
-        /// <returns>The Symbol of the section or Paragraph if resolved, null otherwise.</returns>
-        private Symbol CheckSectionOrParagraph(Node node, SymbolReference symRef)
+        /// <returns>The Section or Paragraph if resolved, null otherwise.</returns>
+        private Procedure CheckSectionOrParagraph(Node node, SymbolReference symRef)
         {
             //Resolve the target Section or Paragraph.
-            Container<Symbol>.Entry symbols = ResolveSectionOrParagraphSymbol(symRef);
+            List<Procedure> procedures = ResolveProcedure();
 
-            if (symbols.Count == 0)
+            if (procedures.Count == 0)
             {
                 Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
                     node.CodeElement.Column,
@@ -1000,7 +914,8 @@ namespace TypeCobol.Analysis.Cfg
                 Diagnostics.Add(d);
                 return null;
             }
-            if (symbols.Count > 1)
+
+            if (procedures.Count > 1)
             {
                 Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
                     node.CodeElement.Column,
@@ -1011,25 +926,75 @@ namespace TypeCobol.Analysis.Cfg
                 return null;
             }
 
-            return symbols.Symbol;
+            return procedures[0];
+
+            List<Procedure> ResolveProcedure()
+            {
+                string[] path = SymbolRefAsPath();
+                string name = path[0];
+
+                List<Procedure> results = new List<Procedure>();
+                if (_procedures.TryGetValue(name, out var candidates))
+                {
+                    foreach (var candidate in candidates)
+                    {
+                        if (IsMatchingPath(candidate))
+                        {
+                            results.Add(candidate);
+                        }
+                    }
+                }
+                return results;
+
+                string[] SymbolRefAsPath()
+                {
+                    if (symRef.IsQualifiedReference)
+                    {
+                        var qualifiedSymbolReference = (QualifiedSymbolReference) symRef;
+                        return qualifiedSymbolReference.AsList().Select(s => s.Name).ToArray();
+                    }
+                    return new[] { symRef.Name };
+                }
+
+                bool IsMatchingPath(Procedure procedure)
+                {
+                    switch (path.Length)
+                    {
+                        case 1:
+                            //Section or paragraph referenced with a non-qualified SymbolReference
+                            return Match(procedure.Name, path[0]);
+                        case 2:
+                            //Paragraph within a section referenced with a qualified SymbolReference
+                            return Match(procedure.Name, path[0])
+                                && procedure is Paragraph paragraph
+                                && Match(paragraph.ParentSection.Name, path[1]);
+                        default:
+                            System.Diagnostics.Debug.Fail("Invalid SymbolReference for a Procedure !");
+                            return false;
+                    }
+
+                    bool Match(string actual, string expected) => string.Equals(actual, expected, StringComparison.OrdinalIgnoreCase);
+                }
+            }
         }
+
+        #endregion
 
         /// <summary>
         /// Store all procedure's sentence blocks in a group.
         /// </summary>
         /// <param name="p">The procedure node</param>
-        /// <param name="procedureSymbol">The procedure symbol</param>
+        /// <param name="procedure">The procedure in CFG</param>
         /// <param name="group">The Group in which to store all blocks.</param>
         /// <param name="storedBlockIndices">Set of indices of blocks already stored</param>
-        private void StoreProcedureSentenceBlocks(PerformProcedure p, Symbol procedureSymbol, BasicBlockForNodeGroup group, HashSet<int> storedBlockIndices)
+        private void StoreProcedureSentenceBlocks(PerformProcedure p, Procedure procedure, BasicBlockForNodeGroup group, HashSet<int> storedBlockIndices)
         {
-            IEnumerable<CfgSentence> procedureSentences = YieldSectionOrParagraphSentences(procedureSymbol);
-            foreach (var sentence in procedureSentences)
+            foreach (var sentence in procedure)
             {
                 //A Sentence has at least one block
-                System.Diagnostics.Debug.Assert(sentence.AllBlocks != null);
-                System.Diagnostics.Debug.Assert(sentence.AllBlocks.First.Value == sentence.Block);
-                foreach (var block in sentence.AllBlocks)
+                System.Diagnostics.Debug.Assert(sentence.Blocks != null);
+                System.Diagnostics.Debug.Assert(sentence.Blocks.First() == sentence.FirstBlock);
+                foreach (var block in sentence.Blocks)
                 {//We must clone each block of the sequence and add them to the group.                    
                     //System.Diagnostics.Debug.Assert(!clonedBlockIndexMap.ContainsKey(block.Index));
                     if (!storedBlockIndices.Contains(block.Index))
@@ -1045,7 +1010,7 @@ namespace TypeCobol.Analysis.Cfg
                             p.CodeElement.Column,
                             p.CodeElement.Column,
                             p.CodeElement.Line,
-                            string.Format(Resource.RecursiveBlockOnPerformProcedure, procedureSymbol.ToString(), strBlock));
+                            string.Format(Resource.RecursiveBlockOnPerformProcedure, procedure.Name, strBlock));
                         Diagnostics.Add(d);
                     }
                 }
@@ -1059,47 +1024,47 @@ namespace TypeCobol.Analysis.Cfg
         /// <returns>True if the PERFORM has been resolved, false otherwise</returns>
         private bool ResolvePendingPERFORMProcedure(PerformProcedure p, BasicBlockForNodeGroup group)
         {
-            SymbolReference procedure = p.CodeElement.Procedure;
-            SymbolReference throughProcedure = p.CodeElement.ThroughProcedure;
+            SymbolReference procedureReference = p.CodeElement.Procedure;
+            SymbolReference throughProcedureReference = p.CodeElement.ThroughProcedure;
 
-            Symbol procedureSymbol = CheckSectionOrParagraph(p, procedure);
-            if (procedureSymbol == null)
+            Procedure procedure = CheckSectionOrParagraph(p, procedureReference);
+            if (procedure == null)
                 return false;
             HashSet<int> storedBlocks = new HashSet<int>();
-            if (throughProcedure != null)
+            if (throughProcedureReference != null)
             {
-                Symbol throughProcedureSymbol = CheckSectionOrParagraph(p, throughProcedure);
-                if (throughProcedureSymbol == null)
+                Procedure throughProcedure = CheckSectionOrParagraph(p, throughProcedureReference);
+                if (throughProcedure == null)
                     return false;
-                if (throughProcedureSymbol != procedureSymbol)
+                if (throughProcedure != procedure)
                 {
-                    if (procedureSymbol.Number > throughProcedureSymbol.Number)
+                    if (procedure.Number > throughProcedure.Number)
                     {// the second procedure name is before the first one.
                         Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
                             p.CodeElement.Column,
                             p.CodeElement.Column,
                             p.CodeElement.Line,
-                            string.Format(Resource.BadPerformProcedureThru, procedure.ToString(), throughProcedure.ToString()));
+                            string.Format(Resource.BadPerformProcedureThru, procedure.Name, throughProcedure.Name));
                         Diagnostics.Add(d);
                         return false;
                     }
-                    StoreProcedureSentenceBlocks(p, procedureSymbol, group, storedBlocks);
+                    StoreProcedureSentenceBlocks(p, procedure, group, storedBlocks);
                     //Store all sentences or paragraphs between.
-                    for (int i = procedureSymbol.Number + 1; i < throughProcedureSymbol.Number; i++)
+                    for (int i = procedure.Number + 1; i < throughProcedure.Number; i++)
                     {
-                        Symbol subSectionOrParagraph = this.CurrentProgramCfgBuilder.AllSectionsParagraphs[i];
+                        Procedure subSectionOrParagraph = this.CurrentProgramCfgBuilder.AllProcedures[i];
                         StoreProcedureSentenceBlocks(p, subSectionOrParagraph, group, storedBlocks);
                     }
-                    StoreProcedureSentenceBlocks(p, throughProcedureSymbol, group, storedBlocks);
+                    StoreProcedureSentenceBlocks(p, throughProcedure, group, storedBlocks);
                 }
                 else
                 {
-                    StoreProcedureSentenceBlocks(p, procedureSymbol, group, storedBlocks);
+                    StoreProcedureSentenceBlocks(p, procedure, group, storedBlocks);
                 }
             }
             else
             {
-                StoreProcedureSentenceBlocks(p, procedureSymbol, group, storedBlocks);
+                StoreProcedureSentenceBlocks(p, procedure, group, storedBlocks);
             }
             //Now Clone the Graph.
             if (!RelocateBasicBlockForNodeGroupGraph(p, group, storedBlocks))
@@ -1317,76 +1282,18 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// Resolve all sentences targeted by the given symbol reference.
-        /// </summary>
-        /// <param name="target">The target section or paragraph
-        /// <paramref name="symbol"/>The Symbol which resolved to the target
-        /// <returns>The Enumeration of sentences associated to the target, null otherwise</returns>
-        private IEnumerable<CfgSentence> ResolveSectionOrParagraphSentences(Node node, SymbolReference target, out Symbol symbol)
-        {
-            symbol = CheckSectionOrParagraph(node, target);
-            return YieldSectionOrParagraphSentences(symbol);
-        }
-
-        /// <summary>
-        /// Yield the all sentences associated to a Symbol which is a Section or a Paragraph.
-        /// </summary>
-        /// <param name="sectionOrParagraphSymbol">The Section or Paragraph symbol</param>
-        /// <returns>The Enumeration of sentences associated to the symbol, null otherwise</returns>
-        private IEnumerable<CfgSentence> YieldSectionOrParagraphSentences(Symbol sectionOrParagraphSymbol)
-        {
-            if (sectionOrParagraphSymbol != null)
-            {
-                if (sectionOrParagraphSymbol.Kind == Symbol.Kinds.Paragraph)
-                {
-                    CfgParagraphSymbol cfgParaSymbol = (CfgParagraphSymbol)sectionOrParagraphSymbol;
-                    foreach (var sentence in cfgParaSymbol.Sentences)
-                    {
-                        yield return sentence;
-                    }
-                }
-                else
-                {//This is a section.  
-                    CfgSectionSymbol cfgSection = (CfgSectionSymbol)sectionOrParagraphSymbol;
-                    foreach (var part in cfgSection.SentencesParagraphs)
-                    {
-                        System.Diagnostics.Debug.Assert(part.Kind == Symbol.Kinds.Sentence || part.Kind == Symbol.Kinds.Paragraph);
-                        if (part.Kind == Symbol.Kinds.Paragraph)
-                        {
-                            CfgParagraphSymbol cfgParaSymbol = (CfgParagraphSymbol)part;
-                            foreach (var sentence in cfgParaSymbol.Sentences)
-                            {
-                                yield return sentence;
-                            }
-                        }
-                        else
-                        {
-                            CfgSentence sentence = (CfgSentence)part;
-                            yield return sentence;
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Resolve a Goto from a block
         /// </summary>
         /// <param name="goto">The target goto</param>
         /// <param name="block">The source block</param>
-        /// <param name="target">The target sections or paragraphs
-        /// </param>
-        /// <param name="v">True for a simple Goto</param>
-        /// <returns>true if all targets have been resolved, false otherwise.</returns>
-        private bool ResolveGoto(Goto @goto, BasicBlockForNode block, SymbolReference[] target, bool simpleGoto)
+        /// <param name="target">The target sections or paragraphs</param>
+        private void ResolveGoto(Goto @goto, BasicBlockForNode block, SymbolReference[] target)
         {
-            HashSet<Symbol> targetSymbols = new HashSet<Symbol>();
+            HashSet<Procedure> targetProcedures = new HashSet<Procedure>();
             foreach (var sref in target)
             {
-                bool bHasOne = false;
-                Symbol targetSymbol = null;
-                IEnumerable<CfgSentence> sentences = ResolveSectionOrParagraphSentences(@goto, sref, out targetSymbol);
-                if (targetSymbol == null)
+                Procedure targetProcedure = CheckSectionOrParagraph(@goto, sref);
+                if (targetProcedure == null)
                 {
                     Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
                         @goto.CodeElement.Column,
@@ -1396,25 +1303,23 @@ namespace TypeCobol.Analysis.Cfg
                     Diagnostics.Add(d);
                     continue;
                 }
-                if (!targetSymbols.Contains(targetSymbol))
+
+                if (!targetProcedures.Contains(targetProcedure))
                 {
-                    targetSymbols.Add(targetSymbol);
-                    foreach (var targetSentence in sentences)
+                    targetProcedures.Add(targetProcedure);
+
+                    //Link block to target
+                    int? targetBlockIndex = targetProcedure.FirstOrDefault()?.FirstBlockIndex;
+                    if (targetBlockIndex.HasValue)
                     {
-                        if (!block.SuccessorEdges.Contains(targetSentence.BlockIndex))
+                        if (!block.SuccessorEdges.Contains(targetBlockIndex.Value))
                         {
-                            block.SuccessorEdges.Add(targetSentence.BlockIndex);
+                            block.SuccessorEdges.Add(targetBlockIndex.Value);
                         }
-                        bHasOne = true;
-                        break;
                     }
-                    if (!bHasOne)
-                        return false;
                 }
             }
-            return true;
         }
-
 
         /// <summary>
         /// Enter a Goto Instruction.
@@ -1422,8 +1327,6 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="node">The Goto instruction node</param>
         protected virtual void EnterGoto(Goto node)
         {
-            GotoStatement gotoStmt = node.CodeElement;
-
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
             if (this.CurrentProgramCfgBuilder.PendingGOTOs == null)
             {
@@ -1493,8 +1396,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// The Current Declarative context if any.
         /// </summary>
-        internal DeclarativesContext CurrentDeclarativesContext;
-
+        private DeclarativesContext CurrentDeclarativesContext;
 
         /// <summary>
         /// Enter a If instruction
@@ -2158,10 +2060,10 @@ namespace TypeCobol.Analysis.Cfg
 
                 if (this.CurrentProgramCfgBuilder.PendingNextSentences == null)
                 {
-                    this.CurrentProgramCfgBuilder.PendingNextSentences = new LinkedList<Tuple<NextSentence, BasicBlockForNode, CfgSentence>>();
+                    this.CurrentProgramCfgBuilder.PendingNextSentences = new LinkedList<Tuple<NextSentence, BasicBlockForNode, Sentence>>();
                 }
                 //Track pending Next Sentences.
-                Tuple<NextSentence, BasicBlockForNode, CfgSentence> item = new Tuple<NextSentence, BasicBlockForNode, CfgSentence>(
+                Tuple<NextSentence, BasicBlockForNode, Sentence> item = new Tuple<NextSentence, BasicBlockForNode, Sentence>(
                     node, this.CurrentProgramCfgBuilder.CurrentBasicBlock, this.CurrentProgramCfgBuilder.CurrentSentence
                     );
                 this.CurrentProgramCfgBuilder.PendingNextSentences.AddLast(item);
@@ -2211,28 +2113,26 @@ namespace TypeCobol.Analysis.Cfg
                     AlterGotoInstruction[] gotos = alter.CodeElement.AlterGotoInstructions;
                     foreach (AlterGotoInstruction alterGoto in gotos)
                     {
-                        SymbolReference alterProc = alterGoto.AlteredProcedure;
-                        SymbolReference targetProc = alterGoto.NewTargetProcedure;
+                        SymbolReference alterProcReference = alterGoto.AlteredProcedure;
+                        SymbolReference targetProcReference = alterGoto.NewTargetProcedure;
+                        
                         //So lookup the paragraph
-                        Symbol alterProcSymbol = CheckSectionOrParagraph(alter, alterProc);
-                        if (alterProcSymbol == null)
+                        Procedure alterProc = CheckSectionOrParagraph(alter, alterProcReference);
+                        if (alterProc == null)
                             continue;
 
                         //So also Resolve the target.
-                        Symbol targetProcSymbol = CheckSectionOrParagraph(alter, targetProc);
-                        if (targetProcSymbol == null)
+                        Procedure targetProc = CheckSectionOrParagraph(alter, targetProcReference);
+                        if (targetProc == null)
                             continue;
 
-                        Symbol resolveAlterProcSymbol = null;
-                        IEnumerable<CfgSentence> sectionOrPara = this.CurrentProgramCfgBuilder.ResolveSectionOrParagraphSentences(alter, alterProc, out resolveAlterProcSymbol);
-                        System.Diagnostics.Debug.Assert(resolveAlterProcSymbol == alterProcSymbol);
                         //So Look for the first Goto Instruction
-                        foreach (var sb in sectionOrPara)
+                        foreach (var sb in alterProc)
                         {
                             bool bResolved = false;
-                            if (sb.Block != null && sb.Block.Instructions != null && sb.Block.Instructions.Count > 0)
+                            if (sb.FirstBlock != null && sb.FirstBlock.Instructions != null && sb.FirstBlock.Instructions.Count > 0)
                             {//The first instruction must be a GOTO Instruction.
-                                Node first = sb.Block.Instructions.First.Value;
+                                Node first = sb.FirstBlock.Instructions.First.Value;
                                 if (first.CodeElement != null && first.CodeElement.Type == CodeElementType.GotoStatement)
                                 {//StatementType.GotoSimpleStatement
                                     Goto @goto = (Goto)first;
@@ -2241,13 +2141,13 @@ namespace TypeCobol.Analysis.Cfg
                                         if (this.CurrentProgramCfgBuilder.PendingAlteredGOTOS == null)
                                             this.CurrentProgramCfgBuilder.PendingAlteredGOTOS = new Dictionary<Goto, HashSet<SymbolReference>>();
 
-                                        HashSet<SymbolReference> targetSymbols = null;
-                                        if (!this.CurrentProgramCfgBuilder.PendingAlteredGOTOS.TryGetValue(@goto, out targetSymbols))
+                                        if (!this.CurrentProgramCfgBuilder.PendingAlteredGOTOS.TryGetValue(@goto, out var targetSymbols))
                                         {
                                             targetSymbols = new HashSet<SymbolReference>();
-                                            this.CurrentProgramCfgBuilder.PendingAlteredGOTOS[@goto] = targetSymbols;
+                                            this.CurrentProgramCfgBuilder.PendingAlteredGOTOS.Add(@goto, targetSymbols);
                                         }
-                                        targetSymbols.Add(targetProc);
+
+                                        targetSymbols.Add(targetProcReference);
                                         bResolved = true;
                                     }
                                 }
@@ -2478,9 +2378,9 @@ namespace TypeCobol.Analysis.Cfg
                 this.CurrentProgramCfgBuilder.Cfg.BlockFor[node] = block;
                 block.Instructions.AddLast(node);
             }
-            if (addToCurrentSentence && this.CurrentProgramCfgBuilder.CurrentSentence != null)
+            if (addToCurrentSentence)
             {
-                this.CurrentProgramCfgBuilder.CurrentSentence.AddBlock(block);
+                this.CurrentProgramCfgBuilder.CurrentSentence?.AddBlock(block);
             }
             if (CurrentDeclarativesContext != null)
             {//This block is created in the context of a Declaratives.
@@ -2561,12 +2461,15 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(Cfg != null);
             Cfg.ProcedureNode = procDiv;
             Cfg.Initialize();
+
             //Create a Root Section
-            CfgSectionSymbol sym = new CfgSectionSymbol(ROOT_SECTION_NAME);
-            EnterSectionOrParagraphSymbol(sym);
+            System.Diagnostics.Debug.Assert(AllProcedures.Count == 0);
+            Section rootSection = new Section(0, ROOT_SECTION_NAME);
+            AllProcedures.Add(rootSection);
+
             //The new current section.
-            CurrentSection = sym;
-            //Create a starting Section
+            CurrentSection = rootSection;
+            //Create a starting sentence
             StartBlockSentence();
             //Make the starting block of the Root section a root block.            
             Cfg.BlockFor[procDiv] = CurrentBasicBlock;

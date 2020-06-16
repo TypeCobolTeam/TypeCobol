@@ -23,6 +23,12 @@
             {
                 Name = name;
             }
+
+            /// <summary>
+            /// Add a sentence to this procedure.
+            /// </summary>
+            /// <param name="sentence">The sentence to be added.</param>
+            public abstract void AddSentence(Sentence sentence);
         }
     }
 }
