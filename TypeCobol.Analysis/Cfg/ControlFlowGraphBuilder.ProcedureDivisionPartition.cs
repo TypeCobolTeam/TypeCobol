@@ -7,19 +7,19 @@ namespace TypeCobol.Analysis.Cfg
     {
         /// <summary>
         /// Base class for Procedure and Sentence.
-        /// A ProcedureDivisionPartition holds statements and has a number
+        /// A ProcedureDivisionRegion holds statements and has a number
         /// which identifies its order of appearance in the ProcedureDivision.
         /// </summary>
         /// <remarks>As a convenience, it is also an IEnumerable of Sentence.
         /// A sentence would only return itself and a Procedure would return its own sentences</remarks>
-        private abstract class ProcedureDivisionPartition : IEnumerable<Sentence>
+        private abstract class ProcedureDivisionRegion : IEnumerable<Sentence>
         {
             /// <summary>
             /// Order number of appearance in the ProcedureDivision of a program or function.
             /// </summary>
             public int Number { get; }
 
-            protected ProcedureDivisionPartition(int number)
+            protected ProcedureDivisionRegion(int number)
             {
                 Number = number;
             }
