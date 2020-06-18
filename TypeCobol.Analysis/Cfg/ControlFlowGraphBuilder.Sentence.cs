@@ -7,7 +7,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// A Cobol sentence used by CFG, a sentence is made of one or several basic blocks.
         /// </summary>
-        private class Sentence : ProcedureDivisionPartition
+        private class Sentence : ProcedureDivisionRegion
         {
             private readonly LinkedList<BasicBlockForNode> _blocks;
 

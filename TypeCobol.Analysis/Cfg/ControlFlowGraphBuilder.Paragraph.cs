@@ -6,7 +6,7 @@ namespace TypeCobol.Analysis.Cfg
     {
         /// <summary>
         /// A Paragraph used by a CFG, it contains sentences.
-        /// Also in CFG, paragraph always have a parent section.
+        /// Also in CFG, paragraphs always have a parent section.
         /// </summary>
         private class Paragraph : Procedure
         {

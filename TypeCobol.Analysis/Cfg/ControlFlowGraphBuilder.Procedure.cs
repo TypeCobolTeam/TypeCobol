@@ -6,7 +6,7 @@
         /// Base class for Paragraphs and Sections.
         /// A procedure is a target of a GOTO or PERFORM, it has a name and holds sentences.
         /// </summary>
-        private abstract class Procedure : ProcedureDivisionPartition
+        private abstract class Procedure : ProcedureDivisionRegion
         {
             /// <summary>
             /// Name of the procedure.

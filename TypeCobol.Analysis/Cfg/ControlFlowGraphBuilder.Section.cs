@@ -9,7 +9,7 @@ namespace TypeCobol.Analysis.Cfg
         /// </summary>
         private class Section : Procedure
         {
-            private List<ProcedureDivisionPartition> _partitions;
+            private List<ProcedureDivisionRegion> _regions;
 
             /// <summary>
             /// Constructor.
@@ -19,38 +19,38 @@ namespace TypeCobol.Analysis.Cfg
             public Section(int number, string name)
                 : base(number, name)
             {
-                _partitions = null;
+                _regions = null;
             }
 
-            private void AddPartition(ProcedureDivisionPartition partition)
+            private void AddRegion(ProcedureDivisionRegion region)
             {
-                if (_partitions == null)
+                if (_regions == null)
                 {
-                    _partitions = new List<ProcedureDivisionPartition>();
+                    _regions = new List<ProcedureDivisionRegion>();
                 }
-                _partitions.Add(partition);
+                _regions.Add(region);
             }
 
             /// <summary>
             /// Add a sentence to this section.
             /// </summary>
             /// <param name="sentence">The sentence to be added.</param>
-            public override void AddSentence(Sentence sentence) => AddPartition(sentence);
+            public override void AddSentence(Sentence sentence) => AddRegion(sentence);
 
             /// <summary>
             /// Add a paragraph to this section.
             /// </summary>
             /// <param name="paragraph">The paragraph to be added.</param>
-            public void AddParagraph(Paragraph paragraph) => AddPartition(paragraph);
+            public void AddParagraph(Paragraph paragraph) => AddRegion(paragraph);
 
             public override IEnumerator<Sentence> GetEnumerator()
             {
-                if (_partitions != null)
+                if (_regions != null)
                 {
-                    //Iterate over all sentences of all parts.
-                    foreach (var partition in _partitions)
+                    //Iterate over all sentences of all regions.
+                    foreach (var region in _regions)
                     {
-                        foreach (var sentence in partition)
+                        foreach (var sentence in region)
                         {
                             yield return sentence;
                         }
