@@ -24,7 +24,7 @@ namespace TypeCobol.Compiler.Parser
         void OnNode(Node node, Program program);
     }
 
-    public class NodeDispatcher : INodeListener
+    public static class NodeDispatcher
     {
         /// <summary>
         /// List of Static NodeListener Factories
@@ -71,49 +71,9 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        /// <summary>
-        /// Notifies listeners about the creation of a new CodeElement.
-        /// </summary>
-        public void OnNode(Node node, Program program)
+        public static IEnumerable<INodeListener> CreateListeners()
         {
-            System.Diagnostics.Debug.Assert(_listeners != null);
-            foreach (var listener in _listeners)
-            {
-                listener.OnNode(node, program);
-            }
-        }
-
-        private IList<INodeListener> _listeners;
-
-        /// <summary>
-        /// Add a listener
-        /// </summary>
-        /// <param name="listener">The listener to be added</param>
-        protected virtual void AddListener(INodeListener listener)
-        {
-            System.Diagnostics.Debug.Assert(_listeners != null);
-            _listeners.Add(listener);
-        }
-
-        /// <summary>
-        /// Adds to listeners one instance of each type implementing CodeElementListener interface
-        /// and defined in namespace TypeCobol.Compiler.Diagnostics.
-        /// </summary>
-        internal void CreateListeners()
-        {
-            //Do nothing if listeners already exist
-            if (_listeners != null)
-            {
-                return;
-            }
-
-            _listeners = new List<INodeListener>();
-
-            //Return if no _NodeListenerFactories exist
-            if (_NodeListenerFactories == null)
-            {
-                return;
-            }
+            if (_NodeListenerFactories == null) yield break;
 
             lock (_NodeListenerFactoriesLockObject)
             {
@@ -123,7 +83,7 @@ namespace TypeCobol.Compiler.Parser
                     INodeListener listener = factory();
                     if (listener != null)
                     {
-                        AddListener(listener);
+                        yield return listener;
                     }
                 }
             }
