@@ -12,7 +12,7 @@ using TypeCobol.Compiler.Parser;
 
 namespace TypeCobol.Compiler.Report
 {
-    public class CopyMoveInitializeReport : AbstractReport, NodeListener 
+    public class CopyMoveInitializeReport : AbstractReport, INodeListener 
     {
         /// <summary>
         /// The list of all MoveStatement and InitializeStatement Nodes

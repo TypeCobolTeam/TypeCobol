@@ -12,7 +12,7 @@ using TypeCobol.Compiler.Parser;
 
 namespace TypeCobol.Compiler.Report
 {
-    public class ZCallPgmReport : AbstractReport, NodeListener
+    public class ZCallPgmReport : AbstractReport, INodeListener
     {
         /// <summary>
         /// The list of all ZCALLXXX we need to detect

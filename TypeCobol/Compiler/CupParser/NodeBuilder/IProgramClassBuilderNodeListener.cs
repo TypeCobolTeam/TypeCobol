@@ -6,7 +6,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
     /// <summary>
     /// A Node Listener that can also dispatch Program Class Builder events.
     /// </summary>
-    public interface IProgramClassBuilderNodeListener : NodeListener, IProgramClassBuilder
+    public interface IProgramClassBuilderNodeListener : INodeListener, IProgramClassBuilder
     {
         /// <summary>
         /// Called when a node is entered.

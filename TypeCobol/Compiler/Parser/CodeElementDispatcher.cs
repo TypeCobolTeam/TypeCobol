@@ -7,12 +7,12 @@ namespace TypeCobol.Compiler.Parser
     /// <summary>
     /// A delegate for Factories used to create Node Listener
     /// </summary>
-    public delegate NodeListener NodeListenerFactory();
+    public delegate INodeListener NodeListenerFactory();
 
     /// <summary>
     /// Node Listener with a parsing context
     /// </summary>
-    public interface NodeListener
+    public interface INodeListener
     {
         /// <summary>
         /// Called when a CodeElement is created during ProgramClassParserStep,
@@ -24,7 +24,7 @@ namespace TypeCobol.Compiler.Parser
         void OnNode(Node node, Program program);
     }
 
-    public class NodeDispatcher : NodeListener
+    public class NodeDispatcher : INodeListener
     {
         /// <summary>
         /// List of Static NodeListener Factories
@@ -83,13 +83,13 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        private IList<NodeListener> _listeners;
+        private IList<INodeListener> _listeners;
 
         /// <summary>
         /// Add a listener
         /// </summary>
         /// <param name="listener">The listener to be added</param>
-        protected virtual void AddListener(NodeListener listener)
+        protected virtual void AddListener(INodeListener listener)
         {
             System.Diagnostics.Debug.Assert(_listeners != null);
             _listeners.Add(listener);
@@ -107,7 +107,7 @@ namespace TypeCobol.Compiler.Parser
                 return;
             }
 
-            _listeners = new List<NodeListener>();
+            _listeners = new List<INodeListener>();
 
             //Return if no _NodeListenerFactories exist
             if (_NodeListenerFactories == null)
@@ -120,7 +120,7 @@ namespace TypeCobol.Compiler.Parser
                 foreach (NodeListenerFactory factory in _NodeListenerFactories)
                 {
                     //Allocate listeners from static factories.
-                    NodeListener listener = factory();
+                    INodeListener listener = factory();
                     if (listener != null)
                     {
                         AddListener(listener);

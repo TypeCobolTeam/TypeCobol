@@ -26,7 +26,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// So that we can build a specific list, and avoid dynamic type checking at dispatch time.
         /// </summary>
         /// <param name="listener">The listener to be added</param>
-        protected override void AddListener(NodeListener listener)
+        protected override void AddListener(INodeListener listener)
         {
             base.AddListener(listener);
             if (listener is ProgramClassBuilderNodeListener nodeListener)
