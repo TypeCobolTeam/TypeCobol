@@ -75,14 +75,7 @@ namespace TypeCobol.Compiler.Parser
             builder.Dispatcher = new ProgramClassBuilderNodeDispatcher();
             foreach (var listener in NodeDispatcher.CreateListeners())
             {
-                if (listener is IProgramClassBuilderNodeListener completeListener)
-                {
-                    builder.Dispatcher.AddListener(completeListener);
-                }
-                else
-                {
-                    builder.Dispatcher.AddSimpleListener(listener);
-                }
+                builder.Dispatcher.AddListener(listener);
             }
 
             // Try to parse a Cobol program or class, with cup w are also building the The Syntax Tree Node

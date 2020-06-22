@@ -1,28 +1,12 @@
 ﻿using System.Collections.Generic;
-using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.CupParser.NodeBuilder;
 
 namespace TypeCobol.Compiler.Parser
 {
     /// <summary>
     /// A delegate for Factories used to create Node Listener
     /// </summary>
-    public delegate INodeListener NodeListenerFactory();
-
-    /// <summary>
-    /// Node Listener with a parsing context
-    /// </summary>
-    public interface INodeListener
-    {
-        /// <summary>
-        /// Called when a CodeElement is created during ProgramClassParserStep,
-        /// if the CodeElement type equals one of those returned by GetCodeElements.
-        /// </summary>
-        /// <param name="node"></param>
-        /// <param name="program">Current scope program</param>
-        /// <param name="ce">CodeElement created</param>
-        void OnNode(Node node, Program program);
-    }
+    public delegate IProgramClassBuilderNodeListener NodeListenerFactory();
 
     public static class NodeDispatcher
     {
@@ -71,7 +55,7 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        public static IEnumerable<INodeListener> CreateListeners()
+        public static IEnumerable<IProgramClassBuilderNodeListener> CreateListeners()
         {
             if (_NodeListenerFactories == null) yield break;
 
@@ -80,7 +64,7 @@ namespace TypeCobol.Compiler.Parser
                 foreach (NodeListenerFactory factory in _NodeListenerFactories)
                 {
                     //Allocate listeners from static factories.
-                    INodeListener listener = factory();
+                    IProgramClassBuilderNodeListener listener = factory();
                     if (listener != null)
                     {
                         yield return listener;

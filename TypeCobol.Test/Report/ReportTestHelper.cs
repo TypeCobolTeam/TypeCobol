@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.CupParser.NodeBuilder;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Report;
@@ -36,7 +37,7 @@ namespace TypeCobol.Test.Report
         /// <typeparam name="T">The Type of the IReport instance to be instantiated.</typeparam>
         /// <returns>Return true if the report has been generated and compared, false otherwise</returns>
         public static ReturnCode ParseWithNodeListenerReportCompare<T>(string fileName, string reportFileName)
-            where T : IReport, INodeListener, new()
+            where T : IReport, IProgramClassBuilderNodeListener, new()
         {
             T report = default;
             NodeListenerFactory factory = () => report = new T();

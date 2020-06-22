@@ -27,27 +27,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// <param name="listener">A non-null instance of IProgramClassBuilderNodeListener.</param>
         public void AddListener([NotNull] IProgramClassBuilderNodeListener listener) => _listeners.Add(listener);
 
-        #region Compatibility
-
-        private class SimpleListenerWrapper : ProgramClassBuilderNodeListener
-        {
-            private readonly Parser.INodeListener _simpleListener;
-
-            public SimpleListenerWrapper(Parser.INodeListener simpleListener)
-            {
-                _simpleListener = simpleListener;
-            }
-
-            public override void OnNode(Node node, Program program)
-            {
-                _simpleListener.OnNode(node, program);
-            }
-        }
-
-        public void AddSimpleListener([NotNull] Parser.INodeListener simpleListener) => AddListener(new SimpleListenerWrapper(simpleListener));
-
-        #endregion
-
         public virtual void OnNode(Node node, Program program)
         {
             foreach (var listener in _listeners) listener.OnNode(node, program);

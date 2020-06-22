@@ -1,18 +1,25 @@
-﻿using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.Parser;
+﻿using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
     /// <summary>
     /// A Node Listener that can also dispatch Program Class Builder events.
     /// </summary>
-    public interface IProgramClassBuilderNodeListener : INodeListener, IProgramClassBuilder
+    public interface IProgramClassBuilderNodeListener : IProgramClassBuilder
     {
         /// <summary>
         /// Called when a node is entered.
         /// </summary>
         /// <param name="node">The entered node.</param>
         void Enter(Node node);
+
+        /// <summary>
+        /// Called when a Node is fully built but before exiting.
+        /// </summary>
+        /// <param name="node">The built node.</param>
+        /// <param name="program">The owner program of the node.</param>
+        void OnNode(Node node, Program program);
 
         /// <summary>
         /// Called when a node is exited.
