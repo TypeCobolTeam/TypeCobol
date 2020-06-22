@@ -229,9 +229,9 @@ namespace TypeCobol.Server
             }
         }
 
-        private List<AbstractReport> InitializeReports()
+        private Dictionary<string, IReport> InitializeReports()
         {
-            List<AbstractReport> reports = new List<AbstractReport>();
+            var reports = new Dictionary<string, IReport>();
             if (_configuration.ExecToStep >= ExecutionStep.CrossCheck)
             {
                 if (!string.IsNullOrEmpty(_configuration.ReportCopyMoveInitializeFilePath))
@@ -239,8 +239,8 @@ namespace TypeCobol.Server
                     Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(
                         () =>
                         {
-                            var report = new CopyMoveInitializeReport(_configuration.ReportCopyMoveInitializeFilePath);
-                            reports.Add(report);
+                            var report = new CopyMoveInitializeReport();
+                            reports.Add(_configuration.ReportCopyMoveInitializeFilePath, report);
                             return report;
                         });
 
@@ -251,8 +251,8 @@ namespace TypeCobol.Server
                     Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(
                         () =>
                         {
-                            var report = new ZCallPgmReport(_configuration.ReportZCallFilePath);
-                            reports.Add(report);
+                            var report = new ZCallPgmReport();
+                            reports.Add(_configuration.ReportZCallFilePath, report);
                             return report;
                         });
 
@@ -318,19 +318,23 @@ namespace TypeCobol.Server
             generationExceptions.Add(generationException);
         }
 
-        private void CreateReports(string inputFilePath, IEnumerable<AbstractReport> reports)
+        private void CreateReports(string inputFilePath, Dictionary<string, IReport> reports)
         {
             foreach (var report in reports)
             {
+                string filePath = report.Key;
                 try
                 {
-                    report.Report();
-                    Console.WriteLine($"Succeed to emit report '{report.Filepath}'");
+                    using (var writer = File.CreateText(filePath))
+                    {
+                        report.Value.Report(writer);
+                    }
+                    Console.WriteLine($"Succeed to emit report '{filePath}'");
                 }
                 catch (Exception exception)
                 {
                     Console.Error.WriteLine(exception.Message);
-                    var generationException = new GenerationException(exception.Message, report.Filepath, exception);
+                    var generationException = new GenerationException(exception.Message, filePath, exception);
                     StoreGenerationException(inputFilePath, generationException);
                 }
             }
@@ -426,7 +430,7 @@ namespace TypeCobol.Server
         private ReturnCode AddErrorsAndComputeReturnCode()
         {
             /*
-             * Here we start with a Sucesss return code, then we check all diagnostics from
+             * Here we start with a Success return code, then we check all diagnostics from
              * lowest to highest priority.
              */
 
@@ -507,7 +511,7 @@ namespace TypeCobol.Server
                 UpdateReturnCode(_intrinsicsDiagnostics.Select(dee => dee.Diagnostic).ToList());
             }
 
-            //Always retrun MissingCopy when there is at least one missing copy because it could help the developer to correct several parsing errors at once
+            //Always return MissingCopy when there is at least one missing copy because it could help the developer to correct several parsing errors at once
             if (_missingCopies.Count > 0)
             {
                 returnCode = ReturnCode.MissingCopy;

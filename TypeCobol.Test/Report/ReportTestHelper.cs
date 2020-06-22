@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
@@ -29,28 +28,18 @@ namespace TypeCobol.Test.Report
             NoReportFile,//No Report file generated.
         };
 
-
         /// <summary>
-        /// Parse an file using a NodeListener and IReport instance and compare the resulting report.
+        /// Parse a file using an INodeListener and IReport instance and compare the resulting report.
         /// </summary>
         /// <param name="fileName">The file name to parse</param>
         /// <param name="reportFileName">The file that contains the expected report</param>
-        /// <param name="reportType">The Type of the IReport instance to be instantiated.</param>
+        /// <typeparam name="T">The Type of the IReport instance to be instantiated.</typeparam>
         /// <returns>Return true if the report has been generated and compared, false otherwise</returns>
-        public static ReturnCode ParseWithNodeListenerReportCompare(string fileName, string reportFileName, Type reportType)
+        public static ReturnCode ParseWithNodeListenerReportCompare<T>(string fileName, string reportFileName)
+            where T : IReport, INodeListener, new()
         {
-            Assert.IsTrue(Tools.Reflection.IsTypeOf(reportType, typeof(IReport)));
-            IReport report = null;//Variable to receive the created report instance.     
-
-            NodeListenerFactory factory = () =>
-            {
-                object obj = Activator.CreateInstance(reportType, args: Path.GetFullPath(reportFileName));
-                Assert.IsTrue(obj is INodeListener);
-                INodeListener nodeListener = (INodeListener) obj;
-                Assert.IsTrue(nodeListener is IReport);
-                report = (IReport) nodeListener;
-                return nodeListener;
-            };
+            T report = default;
+            NodeListenerFactory factory = () => report = new T();
 
             //Register the Node Listener Factory
             NodeDispatcher.RegisterStaticNodeListenerFactory(factory);
@@ -91,7 +80,7 @@ namespace TypeCobol.Test.Report
                 }
                 else
                 {
-                   return ReturnCode.ParserDiagnosticsErrors;
+                    return ReturnCode.ParserDiagnosticsErrors;
                 }
             }
             finally
