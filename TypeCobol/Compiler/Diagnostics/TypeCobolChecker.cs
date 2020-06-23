@@ -621,7 +621,6 @@ namespace TypeCobol.Compiler.Diagnostics
             CheckNoLinkageItemIsAParameter(functionDeclaration.Get<LinkageSection>("linkage"), header.Profile);
 
             CheckParameters(header.Profile, functionDeclaration);
-            CheckNoPerform(functionDeclaration.SymbolTable.EnclosingScope, functionDeclaration);
 
             var headerNameURI = new URI(header.Name);
             var functions = functionDeclaration.SymbolTable.GetFunction(headerNameURI, functionDeclaration.Profile);
@@ -780,31 +779,6 @@ namespace TypeCobol.Compiler.Diagnostics
         private static void AddErrorAlreadyParameter([NotNull] Node node, [NotNull] string parameterName)
         {
             DiagnosticUtils.AddError(node, parameterName + " is already a parameter.");
-        }
-
-        private static void CheckNoPerform(SymbolTable table, [NotNull] Node node)
-        {
-            if (node is PerformProcedure)
-            {
-                var perform = (PerformProcedureStatement) node.CodeElement;
-                CheckNotInTable(table, perform.Procedure, node);
-                CheckNotInTable(table, perform.ThroughProcedure, node);
-            }
-
-            foreach (var child in node.Children) CheckNoPerform(table, child);
-        }
-
-        private static void CheckNotInTable(SymbolTable table, SymbolReference symbol, Node node)
-        {
-            if (symbol == null) return;
-            string message = "TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM";
-            var found = table.GetSection(symbol.Name);
-            if (found.Count > 0) DiagnosticUtils.AddError(node, message, symbol);
-            else
-            {
-                var paragraphFounds = table.GetParagraph(symbol, null);
-                if (paragraphFounds.Count > 0) DiagnosticUtils.AddError(node, message, symbol);
-            }
         }
     }
 
