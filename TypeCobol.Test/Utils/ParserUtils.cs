@@ -30,7 +30,7 @@ namespace TypeCobol.Test.Utils
 
             CompilationProject project = new CompilationProject("test",
                 localDirectory.FullName, new string[] { ".cbl", ".cpy" },
-                documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, new TypeCobolOptions());
+                documentFormat, new TypeCobolOptions(), null);
 
             FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, true, project);
             compiler.CompileOnce();
@@ -52,7 +52,7 @@ namespace TypeCobol.Test.Utils
             CompilationProject project = new CompilationProject("test",
                 //First use *.cpy as tests will use file WITH extension for program but without extension for copy inside programs => small perf gain
                 localDirectory.FullName, new string[] { ".cpy", ".cbl" },
-                documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, options);
+                documentFormat, options, null);
             FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, options, null, false, project);
             compiler.CompileOnce();
 
@@ -67,8 +67,7 @@ namespace TypeCobol.Test.Utils
 
             var typeCobolOptions = new TypeCobolOptions();
             var project = new CompilationProject("Empty project", ".", new[] { ".cbl", ".cpy" },
-                DocumentFormat.FreeTextFormat.Encoding, DocumentFormat.FreeTextFormat.EndOfLineDelimiter,
-                DocumentFormat.FreeTextFormat.FixedLineLength, DocumentFormat.FreeTextFormat.ColumnsLayout, typeCobolOptions);
+                DocumentFormat.FreeTextFormat, typeCobolOptions, null);
 
             var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, typeCobolOptions, false, project);
             compiler.CompileOnce();

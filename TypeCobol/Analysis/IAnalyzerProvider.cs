@@ -15,9 +15,8 @@ namespace TypeCobol.Analysis
         /// </summary>
         /// <param name="options">Current TypeCobol compilation options.</param>
         /// <param name="textSourceInfo">Current source file being compiled.</param>
-        /// <returns>A non-null array of syntax-driven analyzers.</returns>
+        /// <returns>An array of syntax-driven analyzers.</returns>
         /// <remarks>Called each time a file is being parsed. See <see cref="ProgramClassParserStep.CupParseProgramOrClass"/> method.</remarks>
-        [NotNull]
         ISyntaxDrivenAnalyzer[] CreateSyntaxDrivenAnalyzers([NotNull] TypeCobolOptions options, [NotNull] TextSourceInfo textSourceInfo);
     }
 }

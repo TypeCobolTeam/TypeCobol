@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using JetBrains.Annotations;
+using TypeCobol.Analysis;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Preprocessor;
@@ -20,26 +21,20 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Create a new Cobol compilation project in a local directory
         /// </summary>
-        public CompilationProject(string projectName, string rootDirectory, string[] fileExtensions, DocumentFormat documentFormat, TypeCobolOptions compilationOptions) : this(projectName, rootDirectory, fileExtensions, documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, compilationOptions)
-        {
-            
-        }
-        /// <summary>
-        /// Create a new Cobol compilation project in a local directory
-        /// </summary>
-        public CompilationProject(string projectName, string rootDirectory, string[] fileExtensions, Encoding encoding, EndOfLineDelimiter endOfLineDelimiter, int fixedLineLength, ColumnsLayout columnsLayout, TypeCobolOptions compilationOptions)
+        public CompilationProject(string projectName, string rootDirectory, string[] fileExtensions, DocumentFormat documentFormat, TypeCobolOptions compilationOptions, IAnalyzerProvider analyzerProvider)
         {
             Name = projectName;
             RootDirectory = rootDirectory;
             SourceFileProvider = new SourceFileProvider();
-            rootDirectoryLibrary = SourceFileProvider.AddLocalDirectoryLibrary(rootDirectory, false, fileExtensions, encoding, endOfLineDelimiter, fixedLineLength);
 
-            Encoding = encoding;
-            EndOfLineDelimiter = endOfLineDelimiter;
-            FixedLineLength = fixedLineLength;
-            ColumnsLayout = columnsLayout;
+            Encoding = documentFormat.Encoding;
+            EndOfLineDelimiter = documentFormat.EndOfLineDelimiter;
+            FixedLineLength = documentFormat.FixedLineLength;
+            ColumnsLayout = documentFormat.ColumnsLayout;
             CompilationOptions = compilationOptions;
+            AnalyzerProvider = analyzerProvider;
 
+            rootDirectoryLibrary = SourceFileProvider.AddLocalDirectoryLibrary(rootDirectory, false, fileExtensions, Encoding, EndOfLineDelimiter, FixedLineLength);
             CobolFiles = new Dictionary<string, CobolFile>();
             CobolTextReferences = new Dictionary<string, CobolFile>();
             CobolProgramCalls = new Dictionary<string, CobolFile>();
@@ -90,6 +85,7 @@ namespace TypeCobol.Compiler
         public int FixedLineLength { get; private set; }
         public ColumnsLayout ColumnsLayout { get; private set; }
         public TypeCobolOptions CompilationOptions { get; private set; }
+        public IAnalyzerProvider AnalyzerProvider { get; private set; }
 
         // -- Files manipulation --
 
