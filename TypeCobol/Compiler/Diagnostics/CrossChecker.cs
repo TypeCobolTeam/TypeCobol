@@ -25,7 +25,7 @@ namespace TypeCobol.Compiler.Diagnostics
         private readonly TypeCobolOptions _compilerOptions;
 
         //Holds a reference to the last section node visited as to know in which current section we are
-        private Node _currentSection;
+        private Section _currentSection;
 
         private Node CurrentNode { get; set; }
 
@@ -872,7 +872,7 @@ namespace TypeCobol.Compiler.Diagnostics
         /// <returns>A tuple made of a SymbolType and a Node when the target has been correctly resolved.
         /// The returned SymbolType is non-ambiguous if the type of the target has been determined.</returns>
         /// <remarks>This method will create appropriate diagnostics on Node if resolution is inconclusive.</remarks>
-        public static (SymbolType, Node) ResolveTargetSectionOrParagraph(Node callerNode, [NotNull] SymbolReference target, Node currentSection)
+        public static (SymbolType, Node) ResolveTargetSectionOrParagraph(Node callerNode, [NotNull] SymbolReference target, Section currentSection)
         {
             IList<Section> sections;
             IList<Paragraph> paragraphs;
@@ -928,36 +928,10 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     //We set the symbol type to paragraph
                     symbolType = SymbolType.ParagraphName;
-                    //Now we enter the tricky part if we have more than one paragraph with the same name
+                    
                     if (paragraphs.Count > 1)
                     {
-                        //If the name is qualified, no need to check further => it's an error
-                        if (target.IsQualifiedReference)
-                        {
-                            DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to paragraph {target.Name}", target, MessageCode.SemanticTCErrorInParser);
-                        }
-                        //Otherwise we need to check the existing declarations within the scope in which the perform statement is declared
-                        else
-                        {
-                            IEnumerable<Paragraph> matchingParagraphs = null;
-                            //Perform statement is declared in a section scope
-                            if (currentSection != null)
-                            {
-                                //we're filtering out all paragraphs not declared in section scopeNode
-                                matchingParagraphs = paragraphs.Where(p => p.Parent == currentSection);
-                            }
-                            //Perform statement directly declared in the PROCEDURE DIVISION
-                            else
-                            {
-                                //we're filtering out all paragraphs that have a section
-                                matchingParagraphs = paragraphs.Where(p => p.Parent.SemanticData.Kind != Symbol.Kinds.Section);
-                            }
-                            //matchingParagraphs = 0 => no paragraph matches the name in the given scope (scopeNode), as we have more than one paragraph with that name in other scopes resolution is ambiguous
-                            //matchingParagraphs > 1 => multiple paragraphs match the given name in the given scope (scopeNode), resolution is ambiguous
-                            if (matchingParagraphs.Count() != 1)
-                                DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to paragraph {target.Name}", target, MessageCode.SemanticTCErrorInParser);
-                        }
-                            
+                        DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to paragraph {target.Name}", target, MessageCode.SemanticTCErrorInParser);
                         return (symbolType, null);
                     }
 
@@ -973,7 +947,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
             IList<Section> GetSections() => callerNode.SymbolTable.GetSection(target.Name);
 
-            IList<Paragraph> GetParagraphs() => callerNode.SymbolTable.GetParagraph(target);
+            IList<Paragraph> GetParagraphs() => callerNode.SymbolTable.GetParagraph(target, currentSection);
         }
 
         private static void CheckIsNotEmpty<T>(string nodeTypeName, T node) where T : Node

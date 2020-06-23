@@ -734,24 +734,49 @@ namespace TypeCobol.Compiler.CodeModel
             Add(Paragraphs, paragraph);
         }
 
-        public IList<Paragraph> GetParagraph(SymbolReference parRef)
+        public IList<Paragraph> GetParagraph(SymbolReference symbolRef, Section sectionNode)
         {
-            //Retrieve all paragraphs having the same name as parRef
-            if (Paragraphs.TryGetValue(parRef.NameLiteral.Value, out var values))
+            //First extract expected paragraph and section names from symbol ref
+            string paragraphName, parentSectionName;
+            if (symbolRef.IsQualifiedReference)
             {
-                //Check if paragraph is qualified to filter the list
-                if (parRef.IsQualifiedReference)
+                //If paragraph is qualified we get a paragraph and a section name
+                var qualifiedSymbolReference = (QualifiedSymbolReference) symbolRef;
+                paragraphName = qualifiedSymbolReference.NameLiteral.Value;
+                parentSectionName = qualifiedSymbolReference.Tail.Name;
+            }
+            else
+            {
+                //Otherwise expected parent section is null
+                paragraphName = symbolRef.Name;
+                parentSectionName = null;
+            }
+
+            //Retrieve all paragraphs with matching name, then apply additional filters
+            if (Paragraphs.TryGetValue(paragraphName, out var candidates))
+            {
+                if (parentSectionName != null)
                 {
-                    //Get section name
-                    var sectionName = ((QualifiedSymbolReference)parRef).Tail.Name;
-                    //Return all paragraphs declared in a section named sectionName
-                    return values.Where(p => p.Parent.Name.Equals(sectionName, StringComparison.OrdinalIgnoreCase)).ToList();
+                    //We're looking for a paragraph inside a specific section, so we keep only paragraphs whose parent section matches
+                    return candidates.FindAll(p => p.Parent.Name.Equals(parentSectionName, StringComparison.OrdinalIgnoreCase));
                 }
-                //Otherwise return complete list
+
+                //Priority is given to paragraphs located in the same section as the caller node
+                Predicate<Paragraph> matchParentSection;
+                if (sectionNode != null)
+                {
+                    //Match paragraphs located inside the given section node
+                    matchParentSection = p => p.Parent == sectionNode;
+                }
                 else
                 {
-                    return values.ToList();  //.ToList so the caller cannot modify our stored list
+                    //Match paragraphs located directly in the PROCEDURE DIVISION
+                    matchParentSection = p => p.Parent.CodeElement.Type == CodeElementType.ProcedureDivisionHeader;
                 }
+
+                //If we get results in the same section, we return them. Otherwise, just return candidates with correct name.
+                var inSameSection = candidates.FindAll(matchParentSection);
+                return inSameSection.Count > 0 ? inSameSection : candidates.ToList();
             }
 
             return EmptyParagraphList;

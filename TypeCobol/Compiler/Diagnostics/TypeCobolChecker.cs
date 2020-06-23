@@ -802,7 +802,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (found.Count > 0) DiagnosticUtils.AddError(node, message, symbol);
             else
             {
-                var paragraphFounds = table.GetParagraph(symbol);
+                var paragraphFounds = table.GetParagraph(symbol, null);
                 if (paragraphFounds.Count > 0) DiagnosticUtils.AddError(node, message, symbol);
             }
         }
