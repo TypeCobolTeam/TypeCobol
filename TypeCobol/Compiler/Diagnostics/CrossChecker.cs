@@ -1011,14 +1011,14 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 //Get the name of the scope to display in diagnostic message
                 var scope = string.IsNullOrEmpty(paragraph.Parent.Name) ? paragraph.Parent.ID : paragraph.Parent.Name ;
-                DiagnosticUtils.AddError(paragraph, $"Paragraph \'{paragraph.Name}\' already declared in {scope}");
+                DiagnosticUtils.AddError(paragraph, $"Paragraph \'{paragraph.Name}\' already declared in {scope}", MessageCode.Warning);
             }
 
             //Get all the sections with the same name as paragraph
             var sections = paragraph.SymbolTable.GetSection(paragraph.Name);
 
             //A paragraph cannot have the same name as a section
-            if(sections.Count > 0)
+            if (sections.Count > 0)
                 DiagnosticUtils.AddError(paragraph, $"Paragraph {paragraph.Name} is also declared as a section", MessageCode.SemanticTCErrorInParser);
 
             CheckIsNotEmpty("Paragraph", paragraph);

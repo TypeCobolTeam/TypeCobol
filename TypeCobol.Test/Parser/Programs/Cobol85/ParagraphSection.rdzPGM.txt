@@ -5,16 +5,16 @@ Line 31[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to p
 Line 37[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to section SEC07 OffendingSymbol=[20,24:SEC07]<UserDefinedWord>
 Line 45[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR05 OffendingSymbol=[20,24:PAR05]<UserDefinedWord>
 Line 54[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR04 OffendingSymbol=[20,24:PAR04]<UserDefinedWord>
-Line 66[8,13] <27, Error, Syntax> - Syntax error : Paragraph 'PAR05' already declared in procedure-division
-Line 70[8,13] <27, Error, Syntax> - Syntax error : Paragraph 'PAR05' already declared in procedure-division
+Line 66[8,13] <37, Warning, General> - Warning: Paragraph 'PAR05' already declared in procedure-division
+Line 70[8,13] <37, Warning, General> - Warning: Paragraph 'PAR05' already declared in procedure-division
 Line 76[8,28] <37, Warning, General> - Warning: Section 'SectionEmpty' is empty
 Line 78[8,29] <37, Warning, General> - Warning: Section 'SectionEmpty2' is empty
 Line 87[8,14] <37, Warning, General> - Warning: Paragraph 'Parag2' is empty
 Line 95[8,14] <37, Warning, General> - Warning: Paragraph 'Parag4' is empty
 Line 98[8,14] <37, Warning, General> - Warning: Paragraph 'Parag5' is empty
 Line 102[8,14] <37, Warning, General> - Warning: Paragraph 'Parag6' is empty
-Line 107[8,13] <27, Error, Syntax> - Syntax error : Paragraph 'PAR01' already declared in SEC01
-Line 119[8,13] <27, Error, Syntax> - Syntax error : Paragraph 'PAR01' already declared in SEC01
+Line 107[8,13] <37, Warning, General> - Warning: Paragraph 'PAR01' already declared in SEC01
+Line 119[8,13] <37, Warning, General> - Warning: Paragraph 'PAR01' already declared in SEC01
 Line 142[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph SEC01.PAR01 OffendingSymbol=[20,24:PAR01]<UserDefinedWord>
 Line 145[20,24] <30, Error, Semantics> - Semantic error: Symbol SEC01.PAR02 is not referenced OffendingSymbol=[20,24:PAR02]<UserDefinedWord>
 Line 148[20,24] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph PAR03 OffendingSymbol=[20,24:PAR03]<UserDefinedWord>
