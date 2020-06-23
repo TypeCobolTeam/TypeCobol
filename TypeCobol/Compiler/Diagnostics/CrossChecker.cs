@@ -996,7 +996,13 @@ namespace TypeCobol.Compiler.Diagnostics
             
             //A section cannot have the same name as a paragraph
             if (paragraphs.Count > 0)
+            {
                 DiagnosticUtils.AddError(section, $"Section {section.Name} is also declared as a paragraph", MessageCode.SemanticTCErrorInParser);
+                foreach (var paragraph in paragraphs)
+                {
+                    DiagnosticUtils.AddError(paragraph, $"Paragraph {paragraph.Name} is also declared as a section", MessageCode.SemanticTCErrorInParser);
+                }
+            }
 
             CheckIsNotEmpty("Section", section);
         }
@@ -1013,13 +1019,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 var scope = string.IsNullOrEmpty(paragraph.Parent.Name) ? paragraph.Parent.ID : paragraph.Parent.Name ;
                 DiagnosticUtils.AddError(paragraph, $"Paragraph \'{paragraph.Name}\' already declared in {scope}", MessageCode.Warning);
             }
-
-            //Get all the sections with the same name as paragraph
-            var sections = paragraph.SymbolTable.GetSection(paragraph.Name);
-
-            //A paragraph cannot have the same name as a section
-            if (sections.Count > 0)
-                DiagnosticUtils.AddError(paragraph, $"Paragraph {paragraph.Name} is also declared as a section", MessageCode.SemanticTCErrorInParser);
 
             CheckIsNotEmpty("Paragraph", paragraph);
         }
