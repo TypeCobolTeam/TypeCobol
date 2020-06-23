@@ -19,6 +19,7 @@ namespace TypeCobol.Compiler
     public class CompilationUnit : CompilationDocument
     {
         private readonly IAnalyzerProvider _analyzerProvider;
+        private readonly Dictionary<string, object> _analyzerResults;
 
         /// <summary>
         /// Initializes a new compilation document from a list of text lines.
@@ -34,6 +35,7 @@ namespace TypeCobol.Compiler
             PerfStatsForProgramCrossCheck = new PerfStatsForParsingStep(CompilationStep.ProgramCrossCheck);
 
             _analyzerProvider = analyzerProvider;
+            _analyzerResults = new Dictionary<string, object>();
         }
 
         /// <summary>
@@ -154,6 +156,28 @@ namespace TypeCobol.Compiler
         }
 
         /// <summary>
+        /// Attempt to retrieve the result for specific analyzer identified by its id.
+        /// </summary>
+        /// <typeparam name="TResult">Desired type of result.</typeparam>
+        /// <param name="analyzerIdentifier">Unique string identifier of the analyzer.</param>
+        /// <param name="result">The result of the analyzer if found, default(TResult) otherwise.</param>
+        /// <returns>True if the result has been found, False otherwise.</returns>
+        public bool TryGetAnalyzerResult<TResult>(string analyzerIdentifier, out TResult result)
+        {
+            lock (lockObjectForAnalyzerResults)
+            {
+                if (_analyzerResults.TryGetValue(analyzerIdentifier, out var untypedResult) && untypedResult is TResult typedResult)
+                {
+                    result = typedResult;
+                    return true;
+                }
+
+                result = default;
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Creates a new snapshot of the document viewed as complete Cobol Program or Class.
         /// Thread-safe : this method can be called from any thread.
         /// </summary>
@@ -244,6 +268,18 @@ namespace TypeCobol.Compiler
                     // Capture the produced results
                     TemporaryProgramClassDocumentSnapshot = new TemporarySemanticDocument(codeElementsDocument, new DocumentVersion<ICodeElementsLine>(this), codeElementsDocument.Lines,  root, newDiagnostics, nodeCodeElementLinkers,
                         typedVariablesOutsideTypedef, typeThatNeedTypeLinking);
+
+                    //Capture the syntax-driven analyzers results
+                    if (customAnalyzers != null)
+                    {
+                        lock (lockObjectForAnalyzerResults)
+                        {
+                            foreach (var customAnalyzer in customAnalyzers)
+                            {
+                                _analyzerResults.Add(customAnalyzer.Identifier, customAnalyzer.GetResult());
+                            }
+                        }
+                    }
 
                     // Stop perf measurement
                     PerfStatsForTemporarySemantic.OnStopRefreshParsingStep();
@@ -363,6 +399,7 @@ namespace TypeCobol.Compiler
         protected readonly object lockObjectForCodeElementsDocumentSnapshot = new object();
         protected readonly object lockObjectForTemporarySemanticDocument = new object();
         protected readonly object lockObjectForProgramClassDocumentSnapshot = new object();
+        protected readonly object lockObjectForAnalyzerResults = new object();
 
         #endregion
     }

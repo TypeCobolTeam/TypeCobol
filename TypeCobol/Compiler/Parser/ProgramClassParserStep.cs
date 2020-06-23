@@ -68,16 +68,23 @@ namespace TypeCobol.Compiler.Parser
             parser.Builder = builder;
             ParserDiagnostic programClassBuilderError = null;
 
-            //Register a ProgramSymbolTableBuilder as a new listener to build Semantic Domain during parsing.
-            NodeListenerFactory programSymbolTableBuilderFactory = () => new ProgramSymbolTableBuilder();
-            NodeDispatcher.RegisterStaticNodeListenerFactory(programSymbolTableBuilderFactory);
-
             builder.SyntaxTree = new SyntaxTree(); //Initialize SyntaxTree for the current source file
             builder.CustomSymbols = customSymbols;
             builder.Dispatcher = new ProgramClassBuilderNodeDispatcher();
+            //Add mandatory ProgramSymbolTableBuilder
+            builder.Dispatcher.AddListener(new ProgramSymbolTableBuilder());
+            //TODO compatibility with NodeDispatcher
             foreach (var listener in NodeDispatcher.CreateListeners())
             {
                 builder.Dispatcher.AddListener(listener);
+            }
+            //Add custom additional analyzers
+            if (customAnalyzers != null)
+            {
+                foreach (var customAnalyzer in customAnalyzers)
+                {
+                    builder.Dispatcher.AddListener(customAnalyzer);
+                }
             }
 
             // Try to parse a Cobol program or class, with cup w are also building the The Syntax Tree Node
@@ -93,7 +100,6 @@ namespace TypeCobol.Compiler.Parser
             }
             perfStatsForParserInvocation.OnStopParsing(0, 0);
 
-            NodeDispatcher.RemoveStaticNodeListenerFactory(programSymbolTableBuilderFactory);
 
 #if DEBUG_ANTRL_CUP_TIME
             var t2 = DateTime.UtcNow;
