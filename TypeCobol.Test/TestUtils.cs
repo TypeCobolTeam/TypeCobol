@@ -31,7 +31,7 @@ namespace TypeCobol.Test
         {
             StringBuilder errors = new StringBuilder();
 
-            //Set to true to automaticaly replace content in ExpectedResult File
+            //Set to true to automatically replace content in ExpectedResult File
             bool autoReplace = false;
 
             if (testName == string.Empty && result == string.Empty && expectedResult == string.Empty &&
