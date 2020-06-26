@@ -40,11 +40,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// The parent program Control Flow Builder, for nested Program.
         /// </summary>
-        public ControlFlowGraphBuilder<D> ParentProgramCfgBuilder
-        {
-            get;
-            private set;
-        }
+        private ControlFlowGraphBuilder<D> ParentProgramCfgBuilder { get; }
 
         /// <summary>
         /// All Cfg graphs builder created during the building phase, so it contains Cfg for nested programs and nested procedures,
@@ -53,7 +49,7 @@ namespace TypeCobol.Analysis.Cfg
         public List<ControlFlowGraphBuilder<D>> AllCfgBuilder
         {
             get;
-            internal set;
+            private set;
         }
 
         /// <summary>
@@ -642,10 +638,10 @@ namespace TypeCobol.Analysis.Cfg
         {
             if (this.CurrentProgram == null)
             {//This is the main program or a stacked program with no parent.           
+                if (AllCfgBuilder == null)
+                    AllCfgBuilder = new List<ControlFlowGraphBuilder<D>>();
                 if (CurrentProgramCfgBuilder == null)
                 {//The Main program
-                    if (AllCfgBuilder == null)
-                        AllCfgBuilder = new List<ControlFlowGraphBuilder<D>>();
                     this.AllCfgBuilder.Add(this);
                     this.CurrentProgramCfgBuilder = this;
                 }
@@ -654,11 +650,10 @@ namespace TypeCobol.Analysis.Cfg
                     //New Control Flow Graph
                     this.CurrentProgramCfgBuilder = CreateFreshControlFlowGraphBuilder();
                     PropagateProperties(this.CurrentProgramCfgBuilder);
-                    if (AllCfgBuilder == null)
-                        AllCfgBuilder = new List<ControlFlowGraphBuilder<D>>();
                     this.AllCfgBuilder.Add(this.CurrentProgramCfgBuilder);
                     this.CurrentProgramCfgBuilder.CurrentProgramCfgBuilder = this.CurrentProgramCfgBuilder;
                 }
+                this.CurrentProgramCfgBuilder.InitializeCfg(program);
             }
             else
             {//Nested program.
@@ -667,13 +662,18 @@ namespace TypeCobol.Analysis.Cfg
                 {
                     this.CurrentProgramCfgBuilder.AllCfgBuilder = new List<ControlFlowGraphBuilder<D>>();
                 }
+
                 var nestedCfg = CreateFreshControlFlowGraphBuilder(this.CurrentProgramCfgBuilder);
                 PropagateProperties(nestedCfg);
+                nestedCfg.InitializeCfg(program);
+
                 this.CurrentProgramCfgBuilder.AllCfgBuilder.Add(nestedCfg);
+                this.CurrentProgramCfgBuilder.Cfg.AddNestedGraph(nestedCfg.Cfg);
+
                 this.CurrentProgramCfgBuilder = nestedCfg;
                 this.CurrentProgramCfgBuilder.CurrentProgramCfgBuilder = this.CurrentProgramCfgBuilder;
             }
-            this.CurrentProgramCfgBuilder.InitializeCfg(program);
+            
             this.CurrentProgram = program;
         }
 
@@ -706,11 +706,15 @@ namespace TypeCobol.Analysis.Cfg
             {
                 this.CurrentProgramCfgBuilder.AllCfgBuilder = new List<ControlFlowGraphBuilder<D>>();
             }
+
             var nestedCfg = CreateFreshControlFlowGraphBuilder(this.CurrentProgramCfgBuilder);
             PropagateProperties(nestedCfg);
+            nestedCfg.InitializeCfg(funDecl);
+
             this.CurrentProgramCfgBuilder.AllCfgBuilder.Add(nestedCfg);
+            this.CurrentProgramCfgBuilder.Cfg.AddNestedGraph(nestedCfg.Cfg);
+
             this.CurrentProgramCfgBuilder = nestedCfg;
-            this.CurrentProgramCfgBuilder.InitializeCfg(funDecl);
             this.CurrentProgramCfgBuilder.CurrentProgramCfgBuilder = this.CurrentProgramCfgBuilder;
         }
 
@@ -2377,8 +2381,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="program">The target program of the Cfg</param>
         protected virtual void InitializeCfg(Program program)
         {
-            Cfg = new ControlFlowGraph<Node, D>();
-            Cfg.ProgramNode = program;
+            Cfg = new ControlFlowGraph<Node, D>(program, ParentProgramCfgBuilder?.Cfg);
         }
 
         /// <summary>
@@ -2387,8 +2390,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="funDecl">The target function declaration of the Cfg</param>
         protected virtual void InitializeCfg(FunctionDeclaration funDecl)
         {
-            Cfg = new ControlFlowGraph<Node, D>();
-            Cfg.ProgramNode = funDecl;
+            Cfg = new ControlFlowGraph<Node, D>(funDecl, ParentProgramCfgBuilder?.Cfg);
         }
 
         public static readonly string ROOT_SECTION_NAME = "<< RootSection >>";
@@ -2400,8 +2402,7 @@ namespace TypeCobol.Analysis.Cfg
         protected virtual void StartCfg(ProcedureDivision procDiv)
         {
             System.Diagnostics.Debug.Assert(Cfg != null);
-            Cfg.ProcedureNode = procDiv;
-            Cfg.Initialize();
+            Cfg.Initialize(procDiv);
 
             //Create a Root Section
             System.Diagnostics.Debug.Assert(AllProcedures.Count == 0);

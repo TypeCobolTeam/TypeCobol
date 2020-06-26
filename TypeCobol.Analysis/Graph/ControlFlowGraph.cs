@@ -34,7 +34,7 @@ namespace TypeCobol.Analysis.Graph
         public Flags Flag
         {
             get;
-            internal set;
+            private set;
         }
 
         /// <summary>
@@ -44,8 +44,8 @@ namespace TypeCobol.Analysis.Graph
         /// <param name="value"></param>
         internal virtual void SetFlag(Flags flag, bool value)
         {
-            this.Flag = value ? (Flags)(this.Flag | flag)
-                              : (Flags)(this.Flag & ~flag);
+            this.Flag = value ? this.Flag | flag
+                              : this.Flag & ~flag;
         }
 
         /// <summary>
@@ -62,66 +62,79 @@ namespace TypeCobol.Analysis.Graph
         /// Root blocks. Usually it has a single item which is the first block in the program.
         /// But Exception handlers are also stored as root blocks.
         /// </summary>
-        public List<BasicBlock<N, D>> RootBlocks
-        {
-            get;
-            internal set;
-        }
+        public List<BasicBlock<N, D>> RootBlocks { get; private set; }
 
         /// <summary>
         /// All blocks. A list of basic blocks in the graph.
         /// </summary>
-        public List<BasicBlock<N, D>> AllBlocks
-        {
-            get;
-            internal set;
-        }
+        public List<BasicBlock<N, D>> AllBlocks { get; private set; }
 
         /// <summary>
         /// A map from Node to corresponding basic block.
         /// </summary>
-        public Dictionary<N, BasicBlock<N,D>> BlockFor
-        {
-            get;
-            internal set;
-        }
+        public Dictionary<N, BasicBlock<N,D>> BlockFor { get; private set; }
 
         /// <summary>
         /// The list of all Successor edges. The successor list for each basic block is a sublist of this list
         /// </summary>
-        public List<BasicBlock<N, D>> SuccessorEdges
-        {
-            get;
-            internal set;
-        }
+        public List<BasicBlock<N, D>> SuccessorEdges { get; private set; }
 
         /// <summary>
-        /// The Node of the program for which this control Flow Graph has been created.
+        /// The parent graph of this graph.
         /// </summary>
-        public N ProgramNode
-        {
-            get;
-            internal set;
-        }
+        public ControlFlowGraph<N, D> ParentGraph { get; }
 
         /// <summary>
-        /// The Node of the procedure for which this control Flow Graph has been created.
+        /// The collection of nested graphs of this graph.
         /// </summary>
-        public N ProcedureNode
+        public List<ControlFlowGraph<N, D>> NestedGraphs { get; private set; }
+
+        /// <summary>
+        /// The Node of the program or function for which this control Flow Graph has been created.
+        /// </summary>
+        public N ProgramOrFunctionNode { get; }
+
+        /// <summary>
+        /// The Node of the procedure division containing the statements represented by this graph.
+        /// </summary>
+        public N ProcedureDivisionNode { get; private set; }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="programOrFunctionNode">The program of function node of the graph.</param>
+        /// <param name="parentGraph">The parent graph if any.</param>
+        internal ControlFlowGraph(N programOrFunctionNode, ControlFlowGraph<N, D> parentGraph)
         {
-            get;
-            internal set;
+            ProgramOrFunctionNode = programOrFunctionNode;
+            ParentGraph = parentGraph;
         }
 
         /// <summary>
         /// Initialize the construction of the Control Flow Graph.
         /// </summary>
-        internal virtual void Initialize()
+        internal virtual void Initialize(N procedureDivisionNode)
         {
-            BlockFor = new Dictionary<N, BasicBlock<N, D>>();
-            AllBlocks = new List<BasicBlock<N, D>>();
+            ProcedureDivisionNode = procedureDivisionNode;
             RootBlocks = new List<BasicBlock<N, D>>();
+            AllBlocks = new List<BasicBlock<N, D>>();
+            BlockFor = new Dictionary<N, BasicBlock<N, D>>();
             SuccessorEdges = new List<BasicBlock<N, D>>();
+        }
+
+        /// <summary>
+        /// Add a child graph to this graph.
+        /// </summary>
+        /// <param name="nestedGraph">New nested graph.</param>
+        /// <remarks>Nested graph's parent must be this instance.</remarks>
+        internal void AddNestedGraph(ControlFlowGraph<N, D> nestedGraph)
+        {
+            System.Diagnostics.Debug.Assert(nestedGraph.ParentGraph == this);
+            if (NestedGraphs == null)
+            {
+                NestedGraphs = new List<ControlFlowGraph<N, D>>();
+            }
+            NestedGraphs.Add(nestedGraph);
         }
 
         /// <summary>
