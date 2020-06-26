@@ -8,6 +8,8 @@ using TypeCobol.Compiler.CupParser.NodeBuilder;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Nodes;
 
+using SectionNode = TypeCobol.Compiler.Nodes.Section;
+
 namespace TypeCobol.Analysis.Cfg
 {
     /// <summary>
@@ -82,9 +84,9 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// The current entered node.
+        /// The current section node.
         /// </summary>
-        private Node CurrentNode
+        private SectionNode CurrentSectionNode
         {
             get;
             set;
@@ -138,17 +140,17 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// All pending Goto instructions that will be handled at the end of the Procedure Division.
         /// </summary>
-        protected LinkedList<Tuple<Goto, BasicBlockForNode>> PendingGOTOs;
+        protected LinkedList<Tuple<Goto, SectionNode, BasicBlockForNode>> PendingGOTOs;
 
         /// <summary>
         /// All encountered PERFORM procedure instructions
         /// </summary>
-        protected LinkedList<Tuple<PerformProcedure, BasicBlockForNodeGroup>> PendingPERFORMProcedures;
+        protected LinkedList<Tuple<PerformProcedure, SectionNode, BasicBlockForNodeGroup>> PendingPERFORMProcedures;
 
         /// <summary>
         /// Pending ALTER instructions that will be handled at the end of the Procedure Division.
         /// </summary>
-        protected LinkedList<Tuple<Alter, BasicBlockForNode>> PendingALTERs;
+        protected LinkedList<Tuple<Alter, SectionNode>> PendingALTERs;
 
         /// <summary>
         /// More Symbol Reference associated to altered GOTO statement.
@@ -268,7 +270,6 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="node">The entered node.</param>
         public override void Enter(Node node)
         {
-            CurrentNode = node;
             if (IsStatement(node))
                 this.CurrentProgramCfgBuilder.CheckStartSentence(node);
             if (node.CodeElement != null)
@@ -288,7 +289,7 @@ namespace TypeCobol.Analysis.Cfg
                         this.CurrentProgramCfgBuilder.EnterDeclaratives((Declaratives)node);
                         break;
                     case CodeElementType.SectionHeader:
-                        this.CurrentProgramCfgBuilder.EnterSection((Compiler.Nodes.Section)node);
+                        this.CurrentProgramCfgBuilder.EnterSection((SectionNode)node);
                         break;
                     case CodeElementType.ParagraphHeader:
                         this.CurrentProgramCfgBuilder.EnterParagraph((Compiler.Nodes.Paragraph)node);
@@ -432,7 +433,7 @@ namespace TypeCobol.Analysis.Cfg
                         this.CurrentProgramCfgBuilder.LeaveDeclaratives((Declaratives)node);
                         break;
                     case CodeElementType.SectionHeader:
-                        this.CurrentProgramCfgBuilder.LeaveSection((Compiler.Nodes.Section)node);
+                        this.CurrentProgramCfgBuilder.LeaveSection((SectionNode)node);
                         break;
                     case CodeElementType.ParagraphHeader:
                         this.CurrentProgramCfgBuilder.LeaveParagraph((Compiler.Nodes.Paragraph)node);
@@ -726,17 +727,18 @@ namespace TypeCobol.Analysis.Cfg
         /// Enter a section declaration
         /// </summary>
         /// <param name="section"></param>
-        protected virtual void EnterSection(Compiler.Nodes.Section section)
+        protected virtual void EnterSection(SectionNode section)
         {
             int number = this.CurrentProgramCfgBuilder.AllProcedures.Count;
             string name = section.Name;
             Section cfgSection = new Section(number, name);
 
             this.CurrentProgramCfgBuilder.AllProcedures.Add(cfgSection);
-            IndexProcedure(cfgSection);
+            _nodeToProcedure.Add(section, cfgSection);
 
             //The new current section.
             this.CurrentProgramCfgBuilder.CurrentSection = cfgSection;
+            this.CurrentProgramCfgBuilder.CurrentSectionNode = section;
             //No more Paragraph
             this.CurrentProgramCfgBuilder.CurrentParagraph = null;
             //Reset any current sentence
@@ -753,9 +755,10 @@ namespace TypeCobol.Analysis.Cfg
         /// /Leave a section declaration.
         /// </summary>
         /// <param name="section"></param>
-        protected virtual void LeaveSection(Compiler.Nodes.Section section)
+        protected virtual void LeaveSection(SectionNode section)
         {
             this.CurrentProgramCfgBuilder.CurrentSection = null;
+            this.CurrentProgramCfgBuilder.CurrentSectionNode = null;
             //Current sentence is also null now
             this.CurrentProgramCfgBuilder.CurrentSentence = null;
         }
@@ -774,7 +777,7 @@ namespace TypeCobol.Analysis.Cfg
             //Note that Paragraph constructor adds the newly created paragraph into its parent section.
 
             this.CurrentProgramCfgBuilder.AllProcedures.Add(cfgParagraph);
-            IndexProcedure(cfgParagraph);
+            _nodeToProcedure.Add(paragraph, cfgParagraph);
 
             //Set current paragraph
             this.CurrentProgramCfgBuilder.CurrentParagraph = cfgParagraph;
@@ -838,7 +841,8 @@ namespace TypeCobol.Analysis.Cfg
                 foreach (var item in this.CurrentProgramCfgBuilder.PendingGOTOs)
                 {
                     Goto @goto = item.Item1;
-                    BasicBlockForNode block = item.Item2;
+                    SectionNode sectionNode = item.Item2;
+                    BasicBlockForNode block = item.Item3;
                     SymbolReference[] target = null;
                     switch (@goto.CodeElement.StatementType)
                     {
@@ -859,14 +863,14 @@ namespace TypeCobol.Analysis.Cfg
                                     target = new SymbolReference[1];
                                 }
                                 target[0] = simpleGoto.ProcedureName;
-                                ResolveGoto(@goto, block, target);
+                                ResolveGoto(@goto, sectionNode, block, target);
                             }
                             break;
                         case StatementType.GotoConditionalStatement:
                             {
                                 GotoConditionalStatement condGoto = (GotoConditionalStatement)@goto.CodeElement;
                                 target = condGoto.ProcedureNames;
-                                ResolveGoto(@goto, block, target);
+                                ResolveGoto(@goto, sectionNode, block, target);
                             }
                             break;
                     }
@@ -879,101 +883,44 @@ namespace TypeCobol.Analysis.Cfg
 
         #region Section/Paragraph resolution
 
-        //TODO move into separate class to be used both by CFG and CrossChecker
-
-        private readonly Dictionary<string, List<Procedure>> _procedures = new Dictionary<string, List<Procedure>>(StringComparer.OrdinalIgnoreCase);
-
-        private void IndexProcedure(Procedure procedure)
-        {
-            if (!_procedures.TryGetValue(procedure.Name, out var list))
-            {
-                list = new List<Procedure>();
-                _procedures.Add(procedure.Name, list);
-            }
-            list.Add(procedure);
-        }
+        private readonly Dictionary<Node, Procedure> _nodeToProcedure = new Dictionary<Node, Procedure>();
 
         /// <summary>
-        /// Check that a Section or a Paragraph is resolvable
+        /// Resolve a Procedure identified by a SymbolReference.
         /// </summary>
-        /// <param name="node">A reference node for the check, used as position.</param>
-        /// <param name="symRef">The Symbol Reference to the Section os Paragraph</param>
-        /// <returns>The Section or Paragraph if resolved, null otherwise.</returns>
-        private Procedure CheckSectionOrParagraph(Node node, SymbolReference symRef)
+        /// <param name="node">The node using the target procedure.</param>
+        /// <param name="sectionNode">The section node in which the caller node appears.</param>
+        /// <param name="symRef">The SymbolReference to resolve.</param>
+        /// <returns>An instance of Procedure or null if no matching procedure has been found.</returns>
+        private Procedure ResolveProcedure(Node node, SectionNode sectionNode, SymbolReference symRef)
         {
-            //Resolve the target Section or Paragraph.
-            List<Procedure> procedures = ResolveProcedure();
+            var candidates = node.SymbolTable.GetSectionOrParagraph(symRef, sectionNode);
+            var section = GetUnique(candidates.Item1);
+            var paragraph = GetUnique(candidates.Item2);
 
-            if (procedures.Count == 0)
+            Node procedureNode = null;
+            if (section == null)
             {
-                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                    node.CodeElement.Column,
-                    node.CodeElement.Column,
-                    node.CodeElement.Line,
-                    string.Format(Resource.UnknownSectionOrParagraph, symRef.ToString()));
-                Diagnostics.Add(d);
-                return null;
+                procedureNode = paragraph;
+            }
+            else if (paragraph == null)
+            {
+                procedureNode = section;
             }
 
-            if (procedures.Count > 1)
+            if (procedureNode == null) return null;
+
+            System.Diagnostics.Debug.Assert(_nodeToProcedure.ContainsKey(procedureNode));
+            return _nodeToProcedure[procedureNode];
+
+            T GetUnique<T>(IList<T> list) where T : Node
             {
-                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                    node.CodeElement.Column,
-                    node.CodeElement.Column,
-                    node.CodeElement.Line,
-                    string.Format(Resource.AmbiguousSectionOrParagraph, symRef.ToString()));
-                Diagnostics.Add(d);
-                return null;
-            }
-
-            return procedures[0];
-
-            List<Procedure> ResolveProcedure()
-            {
-                string[] path = SymbolRefAsPath();
-                string name = path[0];
-
-                List<Procedure> results = new List<Procedure>();
-                if (_procedures.TryGetValue(name, out var candidates))
+                switch (list?.Count)
                 {
-                    foreach (var candidate in candidates)
-                    {
-                        if (IsMatchingPath(candidate))
-                        {
-                            results.Add(candidate);
-                        }
-                    }
-                }
-                return results;
-
-                string[] SymbolRefAsPath()
-                {
-                    if (symRef.IsQualifiedReference)
-                    {
-                        var qualifiedSymbolReference = (QualifiedSymbolReference) symRef;
-                        return qualifiedSymbolReference.AsList().Select(s => s.Name).ToArray();
-                    }
-                    return new[] { symRef.Name };
-                }
-
-                bool IsMatchingPath(Procedure procedure)
-                {
-                    switch (path.Length)
-                    {
-                        case 1:
-                            //Section or paragraph referenced with a non-qualified SymbolReference
-                            return Match(procedure.Name, path[0]);
-                        case 2:
-                            //Paragraph within a section referenced with a qualified SymbolReference
-                            return Match(procedure.Name, path[0])
-                                && procedure is Paragraph paragraph
-                                && Match(paragraph.ParentSection.Name, path[1]);
-                        default:
-                            System.Diagnostics.Debug.Fail("Invalid SymbolReference for a Procedure !");
-                            return false;
-                    }
-
-                    bool Match(string actual, string expected) => string.Equals(actual, expected, StringComparison.OrdinalIgnoreCase);
+                    case 1:
+                        return list[0];
+                    default:
+                        return null;
                 }
             }
         }
@@ -1020,20 +967,21 @@ namespace TypeCobol.Analysis.Cfg
         /// Resolve a pending PERFORM procedure
         /// </summary>
         /// <param name="p">The procedure node</param>
+        /// <param name="sectionNode">The section in which the PERFORM node appears</param>
         /// <param name="group">The Basic Block Group associated to the procedure</param>
         /// <returns>True if the PERFORM has been resolved, false otherwise</returns>
-        private bool ResolvePendingPERFORMProcedure(PerformProcedure p, BasicBlockForNodeGroup group)
+        private bool ResolvePendingPERFORMProcedure(PerformProcedure p, SectionNode sectionNode, BasicBlockForNodeGroup group)
         {
             SymbolReference procedureReference = p.CodeElement.Procedure;
             SymbolReference throughProcedureReference = p.CodeElement.ThroughProcedure;
 
-            Procedure procedure = CheckSectionOrParagraph(p, procedureReference);
+            Procedure procedure = ResolveProcedure(p, sectionNode, procedureReference);
             if (procedure == null)
                 return false;
             HashSet<int> storedBlocks = new HashSet<int>();
             if (throughProcedureReference != null)
             {
-                Procedure throughProcedure = CheckSectionOrParagraph(p, throughProcedureReference);
+                Procedure throughProcedure = ResolveProcedure(p, sectionNode, throughProcedureReference);
                 if (throughProcedure == null)
                     return false;
                 if (throughProcedure != procedure)
@@ -1134,15 +1082,15 @@ namespace TypeCobol.Analysis.Cfg
                 foreach (var item in this.CurrentProgramCfgBuilder.PendingPERFORMProcedures)
                 {
                     PerformProcedure p = item.Item1;
-                    BasicBlockForNodeGroup group = item.Item2;
-                    ResolvePendingPERFORMProcedure(p, group);
+                    SectionNode sectionNode = item.Item2;
+                    BasicBlockForNodeGroup group = item.Item3;
+                    ResolvePendingPERFORMProcedure(p, sectionNode, group);
                 }
                 if (Mode == CfgMode.Extended)
                 {
                     foreach (var item in this.CurrentProgramCfgBuilder.PendingPERFORMProcedures)
                     {
-                        PerformProcedure p = item.Item1;
-                        BasicBlockForNodeGroup group = item.Item2;
+                        BasicBlockForNodeGroup group = item.Item3;
                         GraftBasicBlockGroup(group);
                     }
                 }
@@ -1285,26 +1233,16 @@ namespace TypeCobol.Analysis.Cfg
         /// Resolve a Goto from a block
         /// </summary>
         /// <param name="goto">The target goto</param>
+        /// <param name="sectionNode">The section in which the goto appears</param>
         /// <param name="block">The source block</param>
         /// <param name="target">The target sections or paragraphs</param>
-        private void ResolveGoto(Goto @goto, BasicBlockForNode block, SymbolReference[] target)
+        private void ResolveGoto(Goto @goto, SectionNode sectionNode, BasicBlockForNode block, SymbolReference[] target)
         {
             HashSet<Procedure> targetProcedures = new HashSet<Procedure>();
             foreach (var sref in target)
             {
-                Procedure targetProcedure = CheckSectionOrParagraph(@goto, sref);
-                if (targetProcedure == null)
-                {
-                    Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                        @goto.CodeElement.Column,
-                        @goto.CodeElement.Column,
-                        @goto.CodeElement.Line,
-                        string.Format(Resource.UnknownSectionOrParagraph, sref.ToString()));
-                    Diagnostics.Add(d);
-                    continue;
-                }
-
-                if (!targetProcedures.Contains(targetProcedure))
+                Procedure targetProcedure = ResolveProcedure(@goto, sectionNode, sref);
+                if (targetProcedure != null && !targetProcedures.Contains(targetProcedure))
                 {
                     targetProcedures.Add(targetProcedure);
 
@@ -1330,9 +1268,9 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
             if (this.CurrentProgramCfgBuilder.PendingGOTOs == null)
             {
-                this.CurrentProgramCfgBuilder.PendingGOTOs = new LinkedList<Tuple<Goto, BasicBlockForNode>>();
+                this.CurrentProgramCfgBuilder.PendingGOTOs = new LinkedList<Tuple<Goto, SectionNode, BasicBlockForNode>>();
             }
-            Tuple<Goto, BasicBlockForNode> item = new Tuple<Goto, BasicBlockForNode>(node, this.CurrentProgramCfgBuilder.CurrentBasicBlock);
+            var item = new Tuple<Goto, SectionNode, BasicBlockForNode>(node, this.CurrentProgramCfgBuilder.CurrentSectionNode, this.CurrentProgramCfgBuilder.CurrentBasicBlock);
             this.CurrentProgramCfgBuilder.PendingGOTOs.AddLast(item);
 
             this.CurrentProgramCfgBuilder.CurrentBasicBlock.Instructions.AddLast(node);
@@ -2110,6 +2048,7 @@ namespace TypeCobol.Analysis.Cfg
                 foreach (var item in this.CurrentProgramCfgBuilder.PendingALTERs)
                 {
                     Alter alter = item.Item1;
+                    SectionNode sectionNode = item.Item2;
                     AlterGotoInstruction[] gotos = alter.CodeElement.AlterGotoInstructions;
                     foreach (AlterGotoInstruction alterGoto in gotos)
                     {
@@ -2117,12 +2056,12 @@ namespace TypeCobol.Analysis.Cfg
                         SymbolReference targetProcReference = alterGoto.NewTargetProcedure;
                         
                         //So lookup the paragraph
-                        Procedure alterProc = CheckSectionOrParagraph(alter, alterProcReference);
+                        Procedure alterProc = ResolveProcedure(alter, sectionNode, alterProcReference);
                         if (alterProc == null)
                             continue;
 
                         //So also Resolve the target.
-                        Procedure targetProc = CheckSectionOrParagraph(alter, targetProcReference);
+                        Procedure targetProc = ResolveProcedure(alter, sectionNode, targetProcReference);
                         if (targetProc == null)
                             continue;
 
@@ -2177,9 +2116,9 @@ namespace TypeCobol.Analysis.Cfg
             System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.CurrentBasicBlock != null);
             if (this.CurrentProgramCfgBuilder.PendingALTERs == null)
             {
-                this.CurrentProgramCfgBuilder.PendingALTERs = new LinkedList<Tuple<Alter, BasicBlockForNode>>();
+                this.CurrentProgramCfgBuilder.PendingALTERs = new LinkedList<Tuple<Alter, SectionNode>>();
             }
-            Tuple<Alter, BasicBlockForNode> item = new Tuple<Alter, BasicBlockForNode>(node, this.CurrentProgramCfgBuilder.CurrentBasicBlock);
+            var item = new Tuple<Alter, SectionNode>(node, this.CurrentProgramCfgBuilder.CurrentSectionNode);
             this.CurrentProgramCfgBuilder.PendingALTERs.AddLast(item);
 
             this.CurrentProgramCfgBuilder.CurrentBasicBlock.Instructions.AddLast(node);
@@ -2289,9 +2228,11 @@ namespace TypeCobol.Analysis.Cfg
             //Add the Group to the Pending PERFORMS to be handled at the end of the PROCEDURE DIVISION.
             if (this.CurrentProgramCfgBuilder.PendingPERFORMProcedures == null)
             {
-                this.CurrentProgramCfgBuilder.PendingPERFORMProcedures = new LinkedList<Tuple<PerformProcedure, BasicBlockForNodeGroup>>();
+                this.CurrentProgramCfgBuilder.PendingPERFORMProcedures = new LinkedList<Tuple<PerformProcedure, SectionNode, BasicBlockForNodeGroup>>();
             }
-            this.CurrentProgramCfgBuilder.PendingPERFORMProcedures.AddLast(new Tuple<PerformProcedure, BasicBlockForNodeGroup>(node, group));
+
+            var item = new Tuple<PerformProcedure, SectionNode, BasicBlockForNodeGroup>(node, this.CurrentProgramCfgBuilder.CurrentSectionNode, group);
+            this.CurrentProgramCfgBuilder.PendingPERFORMProcedures.AddLast(item);
         }
 
         /// <summary>
@@ -2469,6 +2410,7 @@ namespace TypeCobol.Analysis.Cfg
 
             //The new current section.
             CurrentSection = rootSection;
+            CurrentSectionNode = null;
             //Create a starting sentence
             StartBlockSentence();
             //Make the starting block of the Root section a root block.            
