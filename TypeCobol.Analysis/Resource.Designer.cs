@@ -61,15 +61,6 @@ namespace TypeCobol.Analysis {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ambiguous Section or Paragraph reference : &apos;{0}&apos;.
-        /// </summary>
-        internal static string AmbiguousSectionOrParagraph {
-            get {
-                return ResourceManager.GetString("AmbiguousSectionOrParagraph", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Bad ALTER instruction with No sibling altered Goto..
         /// </summary>
         internal static string BadAlterIntrWithNoSiblingGotoInstr {
@@ -102,15 +93,6 @@ namespace TypeCobol.Analysis {
         internal static string RecursiveBlockOnPerformProcedure {
             get {
                 return ResourceManager.GetString("RecursiveBlockOnPerformProcedure", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown Section of Paragraph target : &apos;{0}&apos;.
-        /// </summary>
-        internal static string UnknownSectionOrParagraph {
-            get {
-                return ResourceManager.GetString("UnknownSectionOrParagraph", resourceCulture);
             }
         }
     }
