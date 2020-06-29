@@ -215,6 +215,7 @@ namespace TypeCobol.Analysis.Cfg
                 //Other statements
                 case CodeElementType.AcceptStatement:
                 case CodeElementType.AddStatement:
+                case CodeElementType.AllocateStatement:
                 //case CodeElementType.AlterStatement:
                 case CodeElementType.CallStatement:
                 case CodeElementType.CancelStatement:
@@ -230,12 +231,15 @@ namespace TypeCobol.Analysis.Cfg
                 //case CodeElementType.ExitMethodStatement:
                 //case CodeElementType.ExitProgramStatement:
                 //case CodeElementType.ExitStatement:
+                case CodeElementType.FreeStatement:
                 //case CodeElementType.GobackStatement:
                 //case CodeElementType.GotoStatement:
                 //case CodeElementType.IfStatement:
                 case CodeElementType.InitializeStatement:
                 case CodeElementType.InspectStatement:
                 case CodeElementType.InvokeStatement:
+                case CodeElementType.JsonGenerateStatement:
+                case CodeElementType.JsonParseStatement:
                 case CodeElementType.MergeStatement:
                 case CodeElementType.MoveStatement:
                 case CodeElementType.MultiplyStatement:
@@ -259,6 +263,7 @@ namespace TypeCobol.Analysis.Cfg
                 case CodeElementType.WriteStatement:
                 case CodeElementType.XmlGenerateStatement:
                 case CodeElementType.XmlParseStatement:
+                case CodeElementType.ProcedureStyleCall:
                     return true;
             }
             return false;
@@ -330,6 +335,7 @@ namespace TypeCobol.Analysis.Cfg
                     //Other statements
                     case CodeElementType.AcceptStatement:
                     case CodeElementType.AddStatement:
+                    case CodeElementType.AllocateStatement:
                     //case CodeElementType.AlterStatement:
                     case CodeElementType.CallStatement:
                     case CodeElementType.CancelStatement:
@@ -345,12 +351,15 @@ namespace TypeCobol.Analysis.Cfg
                     //case CodeElementType.ExitMethodStatement:
                     //case CodeElementType.ExitProgramStatement:
                     //case CodeElementType.ExitStatement:
+                    case CodeElementType.FreeStatement:
                     //case CodeElementType.GobackStatement:
                     //case CodeElementType.GotoStatement:
                     //case CodeElementType.IfStatement:
                     case CodeElementType.InitializeStatement:
                     case CodeElementType.InspectStatement:
                     case CodeElementType.InvokeStatement:
+                    case CodeElementType.JsonGenerateStatement:
+                    case CodeElementType.JsonParseStatement:
                     case CodeElementType.MergeStatement:
                     case CodeElementType.MoveStatement:
                     case CodeElementType.MultiplyStatement:
@@ -372,6 +381,7 @@ namespace TypeCobol.Analysis.Cfg
                     case CodeElementType.WriteStatement:
                     case CodeElementType.XmlGenerateStatement:
                     case CodeElementType.XmlParseStatement:
+                    case CodeElementType.ProcedureStyleCall:
                         this.CurrentProgramCfgBuilder.EnterStatement(node);
                         break;
                     case CodeElementType.SearchStatement:
@@ -476,6 +486,7 @@ namespace TypeCobol.Analysis.Cfg
                     //Other statements
                     case CodeElementType.AcceptStatement:
                     case CodeElementType.AddStatement:
+                    case CodeElementType.AllocateStatement:
                     //case CodeElementType.AlterStatement:
                     case CodeElementType.CallStatement:
                     case CodeElementType.CancelStatement:
@@ -491,12 +502,15 @@ namespace TypeCobol.Analysis.Cfg
                     //case CodeElementType.ExitMethodStatement:
                     //case CodeElementType.ExitProgramStatement:
                     //case CodeElementType.ExitStatement:
+                    case CodeElementType.FreeStatement:
                     //case CodeElementType.GobackStatement:
                     //case CodeElementType.GotoStatement:
                     //case CodeElementType.IfStatement:
                     case CodeElementType.InitializeStatement:
                     case CodeElementType.InspectStatement:
                     case CodeElementType.InvokeStatement:
+                    case CodeElementType.JsonGenerateStatement:
+                    case CodeElementType.JsonParseStatement:
                     case CodeElementType.MergeStatement:
                     case CodeElementType.MoveStatement:
                     case CodeElementType.MultiplyStatement:
@@ -518,6 +532,7 @@ namespace TypeCobol.Analysis.Cfg
                     case CodeElementType.WriteStatement:
                     case CodeElementType.XmlGenerateStatement:
                     case CodeElementType.XmlParseStatement:
+                    case CodeElementType.ProcedureStyleCall:
                         this.CurrentProgramCfgBuilder.LeaveStatement(node);
                         break;
                     case CodeElementType.SearchStatement:
