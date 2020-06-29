@@ -31,11 +31,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// Set the CFG Mode
         /// </summary>
-        public CfgMode Mode
-        {
-            get;
-            set;
-        }
+        public CfgMode Mode { get; }
 
         /// <summary>
         /// The parent program Control Flow Builder, for nested Program.
@@ -166,17 +162,34 @@ namespace TypeCobol.Analysis.Cfg
         public IList<Diagnostic> Diagnostics { get; private set; }
 
         /// <summary>
-        /// Constructor
+        /// Initial constructor. Allows to configure CFG building.
         /// </summary>
-        /// <param name="parentCfgBuilder">Parent Control Flow Builder for a nested program</param>
-        public ControlFlowGraphBuilder(ControlFlowGraphBuilder<D> parentCfgBuilder = null)
+        /// <param name="mode">CFG building mode.</param>
+        /// <param name="useEvaluateCascade">True to convert EVALUATE statements into cascaded-IFs.</param>
+        /// <param name="useSearchCascade">True to convert SEARCH statements into cascaded-IFs.</param>
+        protected ControlFlowGraphBuilder(CfgMode mode, bool useEvaluateCascade, bool useSearchCascade)
         {
-            this.ParentProgramCfgBuilder = parentCfgBuilder;
             this.Diagnostics = new List<Diagnostic>();
-            this.UseEvaluateCascade = true;
-            this.UseSearchCascade = true;
-            Mode = CfgMode.Normal;
             this.AllProcedures = new List<Procedure>();
+            this.ParentProgramCfgBuilder = null;
+            this.Mode = mode;
+            this.UseEvaluateCascade = useEvaluateCascade;
+            this.UseSearchCascade = useSearchCascade;
+        }
+
+        /// <summary>
+        /// Constructor using a parent builder.
+        /// </summary>
+        /// <param name="parentCfgBuilder">Non-null instance of builder.</param>
+        private ControlFlowGraphBuilder(ControlFlowGraphBuilder<D> parentCfgBuilder)
+        {
+            this.Diagnostics = new List<Diagnostic>();
+            this.AllProcedures = new List<Procedure>();
+            this.ParentProgramCfgBuilder = parentCfgBuilder;
+            //Propagate properties from parent.
+            this.Mode = parentCfgBuilder.Mode;
+            this.UseEvaluateCascade = parentCfgBuilder.UseEvaluateCascade;
+            this.UseSearchCascade = parentCfgBuilder.UseSearchCascade;
         }
 
         /// <summary>
@@ -622,15 +635,6 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// Propagate properties to the given ControlFlowGraphBuilder
-        /// </summary>
-        /// <param name="currentProgramCfgBuilder">The CFG Builder to propagate properties to</param>
-        private void PropagateProperties(ControlFlowGraphBuilder<D> currentProgramCfgBuilder)
-        {
-            currentProgramCfgBuilder.Mode = Mode;
-        }
-
-        /// <summary>
         /// Enter a program.
         /// </summary>
         /// <param name="program"></param>
@@ -648,8 +652,7 @@ namespace TypeCobol.Analysis.Cfg
                 else
                 {//Stacked Program.         
                     //New Control Flow Graph
-                    this.CurrentProgramCfgBuilder = CreateFreshControlFlowGraphBuilder();
-                    PropagateProperties(this.CurrentProgramCfgBuilder);
+                    this.CurrentProgramCfgBuilder = new ControlFlowGraphBuilder<D>(Mode, UseEvaluateCascade, UseSearchCascade); 
                     this.AllCfgBuilder.Add(this.CurrentProgramCfgBuilder);
                     this.CurrentProgramCfgBuilder.CurrentProgramCfgBuilder = this.CurrentProgramCfgBuilder;
                 }
@@ -663,8 +666,7 @@ namespace TypeCobol.Analysis.Cfg
                     this.CurrentProgramCfgBuilder.AllCfgBuilder = new List<ControlFlowGraphBuilder<D>>();
                 }
 
-                var nestedCfg = CreateFreshControlFlowGraphBuilder(this.CurrentProgramCfgBuilder);
-                PropagateProperties(nestedCfg);
+                var nestedCfg = new ControlFlowGraphBuilder<D>(this.CurrentProgramCfgBuilder);
                 nestedCfg.InitializeCfg(program);
 
                 this.CurrentProgramCfgBuilder.AllCfgBuilder.Add(nestedCfg);
@@ -707,8 +709,7 @@ namespace TypeCobol.Analysis.Cfg
                 this.CurrentProgramCfgBuilder.AllCfgBuilder = new List<ControlFlowGraphBuilder<D>>();
             }
 
-            var nestedCfg = CreateFreshControlFlowGraphBuilder(this.CurrentProgramCfgBuilder);
-            PropagateProperties(nestedCfg);
+            var nestedCfg = new ControlFlowGraphBuilder<D>(this.CurrentProgramCfgBuilder);
             nestedCfg.InitializeCfg(funDecl);
 
             this.CurrentProgramCfgBuilder.AllCfgBuilder.Add(nestedCfg);
@@ -1412,21 +1413,13 @@ namespace TypeCobol.Analysis.Cfg
         /// Set whether or not the EVALUATE statement shall be translated using cascading IF-THEN-ELSE, false
         /// otherwise.
         /// </summary>
-        public bool UseEvaluateCascade
-        {
-            get;
-            set;
-        }
+        public bool UseEvaluateCascade { get; }
 
         /// <summary>
         /// Set whether or not the SEARCH statement shall be translated using cascading IF-THEN-ELSE, false
         /// otherwise.
         /// </summary>
-        public bool UseSearchCascade
-        {
-            get;
-            set;
-        }
+        public bool UseSearchCascade { get; }
 
         /// <summary>
         /// Enter an Evaluate statement
@@ -2364,15 +2357,6 @@ namespace TypeCobol.Analysis.Cfg
                 block.SetFlag(BasicBlock<Node, D>.Flags.Declaratives, true);
             }
             return block;
-        }
-
-        /// <summary>
-        /// Create a Fresh Control Flow Graph Builder.
-        /// </summary>
-        /// <returns>The fresh Control Flow Graph Builder</returns>
-        protected virtual ControlFlowGraphBuilder<D> CreateFreshControlFlowGraphBuilder(ControlFlowGraphBuilder<D> parentCfgBuilder = null)
-        {
-            return new ControlFlowGraphBuilder<D>(parentCfgBuilder);
         }
 
         /// <summary>
