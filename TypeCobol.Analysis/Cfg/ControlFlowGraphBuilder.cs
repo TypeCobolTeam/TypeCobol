@@ -2428,9 +2428,9 @@ namespace TypeCobol.Analysis.Cfg
             CurrentSectionNode = null;
             //Create a starting sentence
             StartBlockSentence();
-            //Make the starting block of the Root section a root block.            
+            //Make the starting block of the Root section the root block.            
+            Cfg.RootBlock = CurrentBasicBlock;
             Cfg.BlockFor[procDiv] = CurrentBasicBlock;
-            Cfg.RootBlocks.Add(CurrentBasicBlock);
             CurrentBasicBlock.SetFlag(BasicBlock<Node, D>.Flags.Start, true);
         }
 

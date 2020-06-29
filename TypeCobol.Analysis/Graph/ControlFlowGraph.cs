@@ -59,10 +59,9 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
-        /// Root blocks. Usually it has a single item which is the first block in the program.
-        /// But Exception handlers are also stored as root blocks.
+        /// Root block of this graph. This is the first block accessed in the program.
         /// </summary>
-        public List<BasicBlock<N, D>> RootBlocks
+        public BasicBlock<N, D> RootBlock
         {
             get;
             internal set;
@@ -120,7 +119,6 @@ namespace TypeCobol.Analysis.Graph
         {
             BlockFor = new Dictionary<N, BasicBlock<N, D>>();
             AllBlocks = new List<BasicBlock<N, D>>();
-            RootBlocks = new List<BasicBlock<N, D>>();
             SuccessorEdges = new List<BasicBlock<N, D>>();
         }
 
@@ -130,7 +128,7 @@ namespace TypeCobol.Analysis.Graph
         /// <param name="block">The current block</param>
         /// <param name="discovered">Array of already discovered nodes</param>
         /// <param name="callback">CallBack function</param>
-        internal void DFS(BasicBlock<N, D> block, System.Collections.BitArray discovered, BasicBlockCallback callback)
+        private void DFS(BasicBlock<N, D> block, System.Collections.BitArray discovered, BasicBlockCallback callback)
         {
             discovered[block.Index] = true;
             if (!callback(block, this))
@@ -147,12 +145,12 @@ namespace TypeCobol.Analysis.Graph
         /// <summary>
         /// DFS Depth First Search implementation
         /// </summary>
-        /// <param name="rootBlock">The root block.</param>
+        /// <param name="startBlock">The start block.</param>
         /// <param name="callback">CallBack function</param>
-        public void DFS(BasicBlock<N, D> rootBlock, BasicBlockCallback callback)
+        public void DFS(BasicBlock<N, D> startBlock, BasicBlockCallback callback)
         {
             System.Collections.BitArray discovered = new System.Collections.BitArray(AllBlocks.Count);
-            DFS(rootBlock, discovered, callback);
+            DFS(startBlock, discovered, callback);
         }
 
         /// <summary>
@@ -161,10 +159,7 @@ namespace TypeCobol.Analysis.Graph
         /// <param name="callback">CallBack function</param>
         public void DFS(BasicBlockCallback callback)
         {
-            foreach(var root in RootBlocks)
-            { 
-                DFS(root, callback);
-            }
+            DFS(RootBlock, callback);
         }
     }
 }
