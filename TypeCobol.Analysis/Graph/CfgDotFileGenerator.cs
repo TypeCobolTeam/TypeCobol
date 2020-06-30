@@ -9,7 +9,7 @@ namespace TypeCobol.Analysis.Graph
     /// </summary>
     /// <typeparam name="N"></typeparam>
     /// <typeparam name="D"></typeparam>
-    public class CfgDotFileGenerator<N, D> : AbstractReport, ICfgFileGenerator<N, D>
+    public class CfgDotFileGenerator<N, D> : ICfgFileGenerator<N, D>, IReport
     {
         /// <summary>
         /// The underlying Control Flow Graph
@@ -62,7 +62,7 @@ namespace TypeCobol.Analysis.Graph
         /// <param name="cfg"></param>
         protected virtual bool EmitBasicBlock(BasicBlock<N, D> block, ControlFlowGraph<N, D> cfg)
         {
-            Writer.WriteLine(string.Format("Block{0} [", block.Index));
+            Writer.WriteLine($"Block{block.Index} [");
             Writer.Write("label = \"{");
             Writer.Write(BlockName(block));
             Writer.Write("|");
@@ -84,7 +84,7 @@ namespace TypeCobol.Analysis.Graph
             foreach(var edge in block.SuccessorEdges)
             {
                 System.Diagnostics.Debug.Assert(edge >= 0 && edge < cfg.SuccessorEdges.Count);
-                DigraphBuilder.AppendLine(string.Format("Block{0} -> Block{1}", block.Index, cfg.SuccessorEdges[edge].Index));
+                DigraphBuilder.AppendLine($"Block{block.Index} -> Block{cfg.SuccessorEdges[edge].Index}");
             }
 
             return true;
@@ -129,7 +129,7 @@ namespace TypeCobol.Analysis.Graph
             Writer.Flush();            
         }
 
-        public override void Report(TextWriter writer)
+        public void Report(TextWriter writer)
         {
             Generate(writer, Cfg);
         }

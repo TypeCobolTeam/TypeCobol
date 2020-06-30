@@ -6,21 +6,15 @@
     public class DefaultControlFlowGraphBuilder : ControlFlowGraphBuilder<object>
     {
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="parentCfgBuilder">Parent Control Flow Builder for a nested program</param>
-        public DefaultControlFlowGraphBuilder(ControlFlowGraphBuilder<object> parentCfgBuilder = null) : base(parentCfgBuilder)
+        /// <param name="mode">CFG building mode.</param>
+        /// <param name="useEvaluateCascade">True to convert EVALUATE statements into cascaded-IFs.</param>
+        /// <param name="useSearchCascade">True to convert SEARCH statements into cascaded-IFs.</param>
+        public DefaultControlFlowGraphBuilder(CfgMode mode = CfgMode.Normal, bool useEvaluateCascade = true, bool useSearchCascade = true)
+            : base(mode, useEvaluateCascade, useSearchCascade)
         {
 
-        }
-
-        /// <summary>
-        /// Create a Fresh Control Flow Graph Builder.
-        /// </summary>
-        /// <returns>The fresh Control Flow Graph Builder</returns>
-        protected override ControlFlowGraphBuilder<object> CreateFreshControlFlowGraphBuilder(ControlFlowGraphBuilder<object> parentCfgBuilder = null)            
-        {
-            return new DefaultControlFlowGraphBuilder(parentCfgBuilder);
         }
     }
 }

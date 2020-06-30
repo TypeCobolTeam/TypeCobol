@@ -45,6 +45,16 @@ namespace TypeCobol.Analysis.Test
             return results;
         }
 
+        private static void GenDotCfg(ControlFlowGraph<Node, object> cfg, TextWriter writer, bool fullInstruction)
+        {
+            //Create a Dot File Generator            
+            CfgDotFileForNodeGenerator<object> dotGen = new CfgDotFileForNodeGenerator<object>(cfg)
+                                                        {
+                                                            FullInstruction = fullInstruction,
+                                                        };
+            dotGen.Report(writer);
+        }
+
         /// <summary>
         /// Generates a Dot CFG file
         /// </summary>
@@ -53,13 +63,10 @@ namespace TypeCobol.Analysis.Test
         /// <param name="bFullInstructions">true if full instruction source code must be generated, false if only instruction names.</param>
         public static void GenDotCfgFile(ControlFlowGraph<Node, object> cfg, string dotFilePath, bool bFullInstructions)
         {
-            //Create a Dot File Generator            
-            CfgDotFileForNodeGenerator<object> dotGen = new CfgDotFileForNodeGenerator<object>(cfg)
-                                                        {
-                                                            FullInstruction = bFullInstructions,
-                                                            Filepath = dotFilePath
-                                                        };
-            dotGen.Report();
+            using (var writer = File.CreateText(dotFilePath))
+            {
+                GenDotCfg(cfg, writer, bFullInstructions);
+            }
         }
 
         /// <summary>
@@ -71,13 +78,8 @@ namespace TypeCobol.Analysis.Test
         /// <param name="bFullInstruction">true if full instruction must be displayed, false otherwise</param>
         public static void GenDotCfgAndCompare(ControlFlowGraph<Node, object> cfg, string testPath, string expectedDotFile, bool bFullInstruction)
         {
-            //Create a Dot File Generator            
-            CfgDotFileForNodeGenerator<object> dotGen = new CfgDotFileForNodeGenerator<object>(cfg)
-                                                        {
-                                                            FullInstruction = bFullInstruction
-                                                        };
             StringWriter writer = new StringWriter();
-            dotGen.Report(writer);
+            GenDotCfg(cfg, writer, bFullInstruction);
 
             // compare with expected result
             string result = writer.ToString();
