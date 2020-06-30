@@ -18,20 +18,11 @@ namespace TypeCobol.Analysis.Cfg
     public partial class ControlFlowGraphBuilder<D> : ProgramClassBuilderNodeListener
     {
         /// <summary>
-        /// CFG Modes.
-        /// Normal: is the normal mode, Paragraph blocs target by a PERFORM are not expanded.
-        /// Extended: Paragraph blocs target by a PERFORM are expanded.
+        /// Control how the blocks targeted by a PERFORM are handled.
+        /// True : blocks are cloned each time a perform uses them, False we keep reference to a block group
+        /// without extending it.
         /// </summary>
-        public enum CfgMode
-        {
-            Normal,
-            Extended,
-        }
-
-        /// <summary>
-        /// Set the CFG Mode
-        /// </summary>
-        public CfgMode Mode { get; }
+        public bool ExtendPerformTargets { get; }
 
         /// <summary>
         /// The parent program Control Flow Builder, for nested Program.
@@ -123,11 +114,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// List of all Sections and Paragraphs encountered in order.
         /// </summary>
-        private List<Procedure> AllProcedures
-        {
-            get;
-            set;
-        }
+        private List<Procedure> AllProcedures { get; }
 
         /// <summary>
         /// All pending Goto instructions that will be handled at the end of the Procedure Division.
@@ -164,15 +151,15 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// Initial constructor. Allows to configure CFG building.
         /// </summary>
-        /// <param name="mode">CFG building mode.</param>
+        /// <param name="extendPerformTargets">True to extend the blocks targeted by PERFORM statements.</param>
         /// <param name="useEvaluateCascade">True to convert EVALUATE statements into cascaded-IFs.</param>
         /// <param name="useSearchCascade">True to convert SEARCH statements into cascaded-IFs.</param>
-        protected ControlFlowGraphBuilder(CfgMode mode, bool useEvaluateCascade, bool useSearchCascade)
+        protected ControlFlowGraphBuilder(bool extendPerformTargets, bool useEvaluateCascade, bool useSearchCascade)
         {
             this.Diagnostics = new List<Diagnostic>();
             this.AllProcedures = new List<Procedure>();
             this.ParentProgramCfgBuilder = null;
-            this.Mode = mode;
+            this.ExtendPerformTargets = extendPerformTargets;
             this.UseEvaluateCascade = useEvaluateCascade;
             this.UseSearchCascade = useSearchCascade;
         }
@@ -187,7 +174,7 @@ namespace TypeCobol.Analysis.Cfg
             this.AllProcedures = new List<Procedure>();
             this.ParentProgramCfgBuilder = parentCfgBuilder;
             //Propagate properties from parent.
-            this.Mode = parentCfgBuilder.Mode;
+            this.ExtendPerformTargets = parentCfgBuilder.ExtendPerformTargets;
             this.UseEvaluateCascade = parentCfgBuilder.UseEvaluateCascade;
             this.UseSearchCascade = parentCfgBuilder.UseSearchCascade;
         }
@@ -667,7 +654,7 @@ namespace TypeCobol.Analysis.Cfg
                 else
                 {//Stacked Program.         
                     //New Control Flow Graph
-                    this.CurrentProgramCfgBuilder = new ControlFlowGraphBuilder<D>(Mode, UseEvaluateCascade, UseSearchCascade); 
+                    this.CurrentProgramCfgBuilder = new ControlFlowGraphBuilder<D>(ExtendPerformTargets, UseEvaluateCascade, UseSearchCascade); 
                     this.AllCfgBuilder.Add(this.CurrentProgramCfgBuilder);
                     this.CurrentProgramCfgBuilder.CurrentProgramCfgBuilder = this.CurrentProgramCfgBuilder;
                 }
@@ -1106,7 +1093,7 @@ namespace TypeCobol.Analysis.Cfg
                     BasicBlockForNodeGroup group = item.Item3;
                     ResolvePendingPERFORMProcedure(p, sectionNode, group);
                 }
-                if (Mode == CfgMode.Extended)
+                if (ExtendPerformTargets)
                 {
                     foreach (var item in this.CurrentProgramCfgBuilder.PendingPERFORMProcedures)
                     {
