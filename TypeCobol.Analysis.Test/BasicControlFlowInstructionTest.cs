@@ -1,10 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using TypeCobol.Analysis.Cfg;
 using TypeCobol.Analysis.Graph;
@@ -27,13 +28,202 @@ namespace TypeCobol.Analysis.Test
             return Path.Combine(solutionDir, "TypeCobol.Test", "ThirdParty");
         }
 
+        #region Some helper methods
+
+        private static void AssertIsStacked(ControlFlowGraph<Node, object> graph, string expectedName)
+        {
+            Assert.IsNull(graph.ParentGraph);
+            Assert.IsTrue(graph.ProgramOrFunctionNode is Program);
+            Assert.AreEqual(expectedName, graph.ProgramOrFunctionNode.Name);
+        }
+
+        private static void AssertIsNested(ControlFlowGraph<Node, object> graph, ControlFlowGraph<Node, object> expectedParentGraph, string expectedName)
+        {
+            Assert.IsNotNull(graph.ParentGraph);
+            Assert.AreEqual(expectedParentGraph, graph.ParentGraph);
+            Assert.IsTrue(graph.ProgramOrFunctionNode is Program);
+            Assert.AreEqual(expectedName, graph.ProgramOrFunctionNode.Name);
+        }
+
+        private static void AssertIsProcedure(ControlFlowGraph<Node, object> graph, ControlFlowGraph<Node, object> expectedParentGraph, string expectedName)
+        {
+            Assert.IsNotNull(graph.ParentGraph);
+            Assert.AreEqual(expectedParentGraph, graph.ParentGraph);
+            Assert.IsTrue(graph.ProgramOrFunctionNode is FunctionDeclaration);
+            Assert.AreEqual(expectedName, graph.ProgramOrFunctionNode.Name);
+            AssertHasNoNested(graph);
+        }
+
+        private static void AssertHasNoNested(ControlFlowGraph<Node, object> graph)
+        {
+            Assert.IsNull(graph.NestedGraphs);
+        }
+
+        private static IList<ControlFlowGraph<Node, object>> AssertHasNested(ControlFlowGraph<Node, object> graph, int expectedNestedCount)
+        {
+            Assert.IsNotNull(graph.NestedGraphs);
+            Assert.AreEqual(expectedNestedCount, graph.NestedGraphs.Count);
+            return graph.NestedGraphs;
+        }
+
+        private static Dictionary<string, ControlFlowGraph<Node, object>> CheckSimpleStructure(ControlFlowGraphBuilder<object> cfgBuilder)
+        {
+            var allGraphs = new Dictionary<string, ControlFlowGraph<Node, object>>();
+
+            /*
+             * StackedNestedPgms
+             *   Nested0
+             *   Nested1
+             *   Nested2
+             * Stacked0
+             * Stacked1
+             */
+
+            var graphs = cfgBuilder.Graphs;
+            Assert.IsNotNull(graphs);
+            Assert.IsTrue(graphs.Count == 3);
+
+            string name = "StackedNestedPgms";
+            var stackedNestedPgms = graphs[0];
+            allGraphs.Add(name, stackedNestedPgms);
+            AssertIsStacked(stackedNestedPgms, name);
+            var nestedInMain = AssertHasNested(stackedNestedPgms, 3);
+
+            name = "Nested0";
+            var nested0 = nestedInMain[0];
+            allGraphs.Add(name, nested0);
+            AssertIsNested(nested0, stackedNestedPgms, name);
+            AssertHasNoNested(nested0);
+
+            name = "Nested1";
+            var nested1 = nestedInMain[1];
+            allGraphs.Add(name, nested1);
+            AssertIsNested(nested1, stackedNestedPgms, name);
+            AssertHasNoNested(nested1);
+
+            name = "Nested2";
+            var nested2 = nestedInMain[2];
+            allGraphs.Add(name, nested2);
+            AssertIsNested(nested2, stackedNestedPgms, name);
+            AssertHasNoNested(nested2);
+
+            name = "Stacked0";
+            var stacked0 = graphs[1];
+            allGraphs.Add(name, stacked0);
+            AssertIsStacked(stacked0, name);
+            AssertHasNoNested(stacked0);
+
+            name = "Stacked1";
+            var stacked1 = graphs[2];
+            allGraphs.Add(name, stacked1);
+            AssertIsStacked(stacked1, name);
+            AssertHasNoNested(stacked1);
+
+            return allGraphs;
+        }
+
+        private static Dictionary<string, ControlFlowGraph<Node, object>> CheckComplexStructure(ControlFlowGraphBuilder<object> cfgBuilder)
+        {
+            var allGraphs = new Dictionary<string, ControlFlowGraph<Node, object>>();
+
+            /*
+             * StackedNestedPgms
+             *   Proc0
+             *   Proc1
+             *   Nested0
+             *     NestedProc0
+             *   Nested1
+             *     NestedProc1
+             *   Nested2
+             *     NestedProc2
+             * Stacked0
+             *   StackedNestedProc0
+             * Stacked1
+             *   StackedNestedProc1
+             */
+
+            var graphs = cfgBuilder.Graphs;
+            Assert.IsNotNull(graphs);
+            Assert.IsTrue(graphs.Count == 3);
+
+            string name = "StackedNestedPgms";
+            var stackedNestedPgms = graphs[0];
+            allGraphs.Add(name, stackedNestedPgms);
+            AssertIsStacked(stackedNestedPgms, name);
+            var nestedInMain = AssertHasNested(stackedNestedPgms, 5);
+
+            name = "Proc0";
+            var proc0 = nestedInMain[0];
+            allGraphs.Add(name, proc0);
+            AssertIsProcedure(proc0, stackedNestedPgms, name);
+
+            name = "Proc1";
+            var proc1 = nestedInMain[1];
+            allGraphs.Add(name, proc1);
+            AssertIsProcedure(proc1, stackedNestedPgms, name);
+
+            name = "Nested0";
+            var nested0 = nestedInMain[2];
+            allGraphs.Add(name, nested0);
+            AssertIsNested(nested0, stackedNestedPgms, name);
+            var nestedInNested0 = AssertHasNested(nested0, 1);
+
+            name = "NestedProc0";
+            var nestedProc0 = nestedInNested0[0];
+            allGraphs.Add(name, nestedProc0);
+            AssertIsProcedure(nestedProc0, nested0, name);
+
+            name = "Nested1";
+            var nested1 = nestedInMain[3];
+            allGraphs.Add(name, nested1);
+            AssertIsNested(nested1, stackedNestedPgms, name);
+            var nestedInNested1 = AssertHasNested(nested1, 1);
+
+            name = "NestedProc1";
+            var nestedProc1 = nestedInNested1[0];
+            allGraphs.Add(name, nestedProc1);
+            AssertIsProcedure(nestedProc1, nested1, name);
+
+            name = "Nested2";
+            var nested2 = nestedInMain[4];
+            allGraphs.Add(name, nested2);
+            AssertIsNested(nested2, stackedNestedPgms, name);
+            var nestedInNested2 = AssertHasNested(nested2, 1);
+
+            name = "NestedProc2";
+            var nestedProc2 = nestedInNested2[0];
+            allGraphs.Add(name, nestedProc2);
+            AssertIsProcedure(nestedProc2, nested2, name);
+
+            name = "Stacked0";
+            var stacked0 = graphs[1];
+            allGraphs.Add(name, stacked0);
+            AssertIsStacked(stacked0, name);
+            var nestedInStacked0 = AssertHasNested(stacked0, 1);
+
+            name = "StackedNestedProc0";
+            var stackedNestedProc0 = nestedInStacked0[0];
+            allGraphs.Add(name, stackedNestedProc0);
+            AssertIsProcedure(stackedNestedProc0, stacked0, name);
+
+            name = "Stacked1";
+            var stacked1 = graphs[2];
+            allGraphs.Add(name, stacked1);
+            AssertIsStacked(stacked1, name);
+            var nestedInStacked1 = AssertHasNested(stacked1, 1);
+
+            name = "StackedNestedProc1";
+            var stackedNestedProc1 = nestedInStacked1[0];
+            allGraphs.Add(name, stackedNestedProc1);
+            AssertIsProcedure(stackedNestedProc1, stacked1, name);
+
+            return allGraphs;
+        }
+
+        #endregion
+
         private NodeListenerFactory _cfgBuilderNodeListenerFactory;
         private DefaultControlFlowGraphBuilder _cfgBuilder;
-
-        private ControlFlowGraph<Node, object>[] AllGraphs()
-        {
-            return _cfgBuilder?.AllCfgBuilder?.Select(b => b.Cfg).ToArray();
-        }
 
         [TestInitialize]
         public void TestInitialize()
@@ -68,22 +258,7 @@ namespace TypeCobol.Analysis.Test
             string expectedDiagnosticsFilePath = test + ".diag";
             CfgTestUtils.ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
 
-            //Here we have the main program, followed by stacked programs.
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
-            //var currentProgram = Builder.Programs[0];
-            //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
-            var results = AllGraphs();
-            Assert.IsNotNull(results);
-            //In this case we have first the Main program cfg, followed by the nested programs cfg builders of the main program, followed by stacked program cfg builders.
-            //Stack programs cfg builders have no parent cfg builders.
-            Assert.IsTrue(results.Length == 6);
-            Assert.IsTrue(results[0] == _cfgBuilder.Cfg);
-            Assert.IsNull(results[0].ParentGraph);
-            Assert.IsTrue(results[1].ParentGraph == results[0]);
-            Assert.IsTrue(results[2].ParentGraph == results[0]);
-            Assert.IsTrue(results[3].ParentGraph == results[0]);
-            Assert.IsNull(results[4].ParentGraph);
-            Assert.IsNull(results[5].ParentGraph);
+            CheckSimpleStructure(_cfgBuilder);
         }
 
         /// <summary>
@@ -98,74 +273,7 @@ namespace TypeCobol.Analysis.Test
             string expectedDiagnosticsFilePath = test + ".diag";
             CfgTestUtils.ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
 
-            //Here we have the main program, followed by stacked programs.
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
-            //var currentProgram = Builder.Programs[0];
-            //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
-            var results = AllGraphs();
-            Assert.IsNotNull(results);
-            //In this case we have first the Main program cfg, followed by the nested functions and programs cfg builders of the main program, followed by stacked program cfg builders.
-            //Stack programs cfg builders have no parent cfg builders.
-            Assert.IsTrue(results.Length == 8);
-            Assert.IsTrue(results[0] == _cfgBuilder.Cfg);
-            Assert.IsNull(results[0].ParentGraph);
-
-            //Proc0
-            Assert.IsTrue(results[1].ParentGraph == results[0]);
-            Assert.IsTrue(results[1].ProgramOrFunctionNode is FunctionDeclaration);
-            Assert.IsTrue(results[1].ProgramOrFunctionNode.Name.Equals("Proc0"));
-
-            //Proc1
-            Assert.IsTrue(results[2].ParentGraph == results[0]);
-            Assert.IsTrue(results[2].ProgramOrFunctionNode is FunctionDeclaration);
-            Assert.IsTrue(results[2].ProgramOrFunctionNode.Name.Equals("Proc1"));
-
-            //Nested0
-            Assert.IsTrue(results[3].ParentGraph == results[0]);
-            Assert.IsTrue(results[3].ProgramOrFunctionNode is Program);
-            Assert.IsTrue(results[3].ProgramOrFunctionNode.Name.Equals("Nested0"));
-            Assert.IsNotNull(results[3].NestedGraphs);
-            Assert.IsTrue(results[3].NestedGraphs.Count == 1);
-            Assert.IsTrue(results[3].NestedGraphs[0].ProgramOrFunctionNode is FunctionDeclaration);
-            Assert.IsTrue(results[3].NestedGraphs[0].ProgramOrFunctionNode.Name.Equals("NestedProc0"));
-
-            //Nested1
-            Assert.IsTrue(results[4].ParentGraph == results[0]);
-            Assert.IsTrue(results[4].ProgramOrFunctionNode is Program);
-            Assert.IsTrue(results[4].ProgramOrFunctionNode.Name.Equals("Nested1"));
-            Assert.IsNotNull(results[4].NestedGraphs);
-            Assert.IsTrue(results[4].NestedGraphs.Count == 1);
-            Assert.IsTrue(results[4].NestedGraphs[0].ProgramOrFunctionNode is FunctionDeclaration);
-            Assert.IsTrue(results[4].NestedGraphs[0].ProgramOrFunctionNode.Name.Equals("NestedProc1"));
-
-            //Nested2
-            Assert.IsTrue(results[5].ParentGraph == results[0]);
-            Assert.IsTrue(results[5].ProgramOrFunctionNode is Program);
-            Assert.IsTrue(results[5].ProgramOrFunctionNode.Name.Equals("Nested2"));
-            Assert.IsNotNull(results[5].NestedGraphs);
-            Assert.IsTrue(results[5].NestedGraphs.Count == 1);
-            Assert.IsTrue(results[5].NestedGraphs[0].ProgramOrFunctionNode is FunctionDeclaration);
-            Assert.IsTrue(results[5].NestedGraphs[0].ProgramOrFunctionNode.Name.Equals("NestedProc2"));
-
-            //Stacked0
-            Assert.IsNull(results[6].ParentGraph);
-            Assert.IsTrue(results[6].ProgramOrFunctionNode is Program);
-            Assert.IsTrue(results[6].ProgramOrFunctionNode.Name.Equals("Stacked0"));
-            Assert.IsNotNull(results[6].NestedGraphs);
-            Assert.IsTrue(results[6].NestedGraphs.Count == 1);
-            //StackedNestedProc0
-            Assert.IsNotNull(results[6].NestedGraphs[0].ProgramOrFunctionNode is FunctionDeclaration);
-            Assert.IsTrue(results[6].NestedGraphs[0].ProgramOrFunctionNode.Name.Equals("StackedNestedProc0"));
-
-            //Stacked1
-            Assert.IsNull(results[7].ParentGraph);
-            Assert.IsTrue(results[7].ProgramOrFunctionNode is Program);
-            Assert.IsTrue(results[7].ProgramOrFunctionNode.Name.Equals("Stacked1"));
-            Assert.IsNotNull(results[7].NestedGraphs);
-            Assert.IsTrue(results[7].NestedGraphs.Count == 1);
-            //StackedNestedProc1
-            Assert.IsNotNull(results[7].NestedGraphs[0].ProgramOrFunctionNode is FunctionDeclaration);
-            Assert.IsTrue(results[7].NestedGraphs[0].ProgramOrFunctionNode.Name.Equals("StackedNestedProc1"));
+            CheckComplexStructure(_cfgBuilder);
         }
 
         /// <summary>
@@ -214,11 +322,13 @@ namespace TypeCobol.Analysis.Test
             Assert.IsTrue(File.Exists(expectedResultFilePath), $"Expected results file '{expectedResultFilePath}' does not exist.");
 
             CfgTestUtils.ParseCompareDiagnostics(inputFilePath, expectedDiagnosticsFilePath);
-            var results = AllGraphs();
+            var results = _cfgBuilder.Graphs;
             Assert.IsNotNull(results);
-            Assert.IsTrue(results.Length == 1); //single program
+            Assert.IsTrue(results.Count == 1); //single program
             var cfg = results[0];
-            Assert.IsNull(cfg.NestedGraphs); //no nested pgms
+            Assert.IsNull(cfg.ParentGraph);
+            Assert.IsTrue(cfg.ProgramOrFunctionNode is Program);
+            Assert.IsNull(cfg.NestedGraphs);
             CfgTestUtils.GenDotCfgAndCompare(cfg, inputFilePath, expectedResultFilePath, fullInstruction);
         }
 
@@ -356,26 +466,11 @@ namespace TypeCobol.Analysis.Test
             string expectedDiagnosticsFilePath = test + ".diag";
             CfgTestUtils.ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
 
-            //Here we have the main program, followed by stacked programs.
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
-            //var currentProgram = Builder.Programs[0];
-            //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
-            var results = AllGraphs();
-            Assert.IsNotNull(results);
-            //In this case we have first the Main program cfg, followed by the nested programs cfg builders of the main program, followed by stacked program cfg builders.
-            //Stack programs cfg builders have no parent cfg builders.
-            Assert.IsTrue(results.Length == 6);
-            Assert.IsTrue(results[0] == _cfgBuilder.Cfg);
-            Assert.IsNull(results[0].ParentGraph);
-            Assert.IsTrue(results[1].ParentGraph == results[0]);
-            Assert.IsTrue(results[2].ParentGraph == results[0]);
-            Assert.IsTrue(results[3].ParentGraph == results[0]);
-            Assert.IsNull(results[4].ParentGraph);
-            Assert.IsNull(results[5].ParentGraph);
+            var results = CheckSimpleStructure(_cfgBuilder);
 
             //We have taken the same CFG than for IfThenElseCascade0
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "IfThenElseCascade0.dot");
-            CfgTestUtils.GenDotCfgAndCompare(results[2], path, expectedPath, true);
+            CfgTestUtils.GenDotCfgAndCompare(results["Nested1"], path, expectedPath, true);
         }
 
         [TestMethod]
@@ -386,26 +481,11 @@ namespace TypeCobol.Analysis.Test
             string expectedDiagnosticsFilePath = test + ".diag";
             CfgTestUtils.ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
 
-            //Here we have the main program, followed by stacked programs.
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
-            //var currentProgram = Builder.Programs[0];
-            //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
-            var results = AllGraphs();
-            Assert.IsNotNull(results);
-            //In this case we have first the Main program cfg, followed by the nested programs cfg builders of the main program, followed by stacked program cfg builders.
-            //Stack programs cfg builders have no parent cfg builders.
-            Assert.IsTrue(results.Length == 6);
-            Assert.IsTrue(results[0] == _cfgBuilder.Cfg);
-            Assert.IsNull(results[0].ParentGraph);
-            Assert.IsTrue(results[1].ParentGraph == results[0]);
-            Assert.IsTrue(results[2].ParentGraph == results[0]);
-            Assert.IsTrue(results[3].ParentGraph == results[0]);
-            Assert.IsNull(results[4].ParentGraph);
-            Assert.IsNull(results[5].ParentGraph);
+            var results = CheckSimpleStructure(_cfgBuilder);
 
             //We have taken the same CFG than for PerformProcedure0  
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "PerformProcedure0.dot");
-            CfgTestUtils.GenDotCfgAndCompare(results[3], path, expectedPath, true);
+            CfgTestUtils.GenDotCfgAndCompare(results["Nested2"], path, expectedPath, true);
         }
 
         [TestMethod]
@@ -416,26 +496,11 @@ namespace TypeCobol.Analysis.Test
             string expectedDiagnosticsFilePath = test + ".diag";
             CfgTestUtils.ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
 
-            //Here we have the main program, followed by stacked programs.
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
-            //var currentProgram = Builder.Programs[0];
-            //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
-            var results = AllGraphs();
-            Assert.IsNotNull(results);
-            //In this case we have first the Main program cfg, followed by the nested programs cfg builders of the main program, followed by stacked program cfg builders.
-            //Stack programs cfg builders have no parent cfg builders.
-            Assert.IsTrue(results.Length == 6);
-            Assert.IsTrue(results[0] == _cfgBuilder.Cfg);
-            Assert.IsNull(results[0].ParentGraph);
-            Assert.IsTrue(results[1].ParentGraph == results[0]);
-            Assert.IsTrue(results[2].ParentGraph == results[0]);
-            Assert.IsTrue(results[3].ParentGraph == results[0]);
-            Assert.IsNull(results[4].ParentGraph);
-            Assert.IsNull(results[5].ParentGraph);
+            var results = CheckSimpleStructure(_cfgBuilder);
 
             //We have taken the same CFG than for MixPerformEvaluateIf0  
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "MixPerformEvaluateIf0.dot");
-            CfgTestUtils.GenDotCfgAndCompare(results[1], path, expectedPath, true);
+            CfgTestUtils.GenDotCfgAndCompare(results["Nested0"], path, expectedPath, true);
         }
 
         [TestMethod]
@@ -446,26 +511,11 @@ namespace TypeCobol.Analysis.Test
             string expectedDiagnosticsFilePath = test + ".diag";
             CfgTestUtils.ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
 
-            //Here we have the main program, followed by stacked programs.
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
-            //var currentProgram = Builder.Programs[0];
-            //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
-            var results = AllGraphs();
-            Assert.IsNotNull(results);
-            //In this case we have first the Main program cfg, followed by the nested programs cfg builders of the main program, followed by stacked program cfg builders.
-            //Stack programs cfg builders have no parent cfg builders.
-            Assert.IsTrue(results.Length == 6);
-            Assert.IsTrue(results[0] == _cfgBuilder.Cfg);
-            Assert.IsNull(results[0].ParentGraph);
-            Assert.IsTrue(results[1].ParentGraph == results[0]);
-            Assert.IsTrue(results[2].ParentGraph == results[0]);
-            Assert.IsTrue(results[3].ParentGraph == results[0]);
-            Assert.IsNull(results[4].ParentGraph);
-            Assert.IsNull(results[5].ParentGraph);
+            var results = CheckSimpleStructure(_cfgBuilder);
 
             //We have taken the same CFG than for PerformProcedure0  
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "PerformProcedure0.dot");
-            CfgTestUtils.GenDotCfgAndCompare(results[4], path, expectedPath, true);
+            CfgTestUtils.GenDotCfgAndCompare(results["Stacked0"], path, expectedPath, true);
         }
 
         [TestMethod]
@@ -476,26 +526,11 @@ namespace TypeCobol.Analysis.Test
             string expectedDiagnosticsFilePath = test + ".diag";
             CfgTestUtils.ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
 
-            //Here we have the main program, followed by stacked programs.
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
-            //var currentProgram = Builder.Programs[0];
-            //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
-            var results = AllGraphs();
-            Assert.IsNotNull(results);
-            //In this case we have first the Main program cfg, followed by the nested programs cfg builders of the main program, followed by stacked program cfg builders.
-            //Stack programs cfg builders have no parent cfg builders.
-            Assert.IsTrue(results.Length == 6);
-            Assert.IsTrue(results[0] == _cfgBuilder.Cfg);
-            Assert.IsNull(results[0].ParentGraph);
-            Assert.IsTrue(results[1].ParentGraph == results[0]);
-            Assert.IsTrue(results[2].ParentGraph == results[0]);
-            Assert.IsTrue(results[3].ParentGraph == results[0]);
-            Assert.IsNull(results[4].ParentGraph);
-            Assert.IsNull(results[5].ParentGraph);
+            var results = CheckSimpleStructure(_cfgBuilder);
 
             //We have taken the same CFG than for MixPerformEvaluateIf0  
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "MixPerformEvaluateIf0.dot");
-            CfgTestUtils.GenDotCfgAndCompare(results[5], path, expectedPath, true);
+            CfgTestUtils.GenDotCfgAndCompare(results["Stacked1"], path, expectedPath, true);
         }
 
         [TestMethod]
@@ -506,26 +541,11 @@ namespace TypeCobol.Analysis.Test
             string expectedDiagnosticsFilePath = test + ".diag";
             CfgTestUtils.ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
 
-            //Here we have the main program, followed by stacked programs.
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
-            //var currentProgram = Builder.Programs[0];
-            //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
-            var results = AllGraphs();
-            Assert.IsNotNull(results);
-            //In this case we have first the Main program cfg, followed by the nested functions and programs cfg builders of the main program, followed by stacked program cfg builders.
-            //Stack programs cfg builders have no parent cfg builders.
-            Assert.IsTrue(results.Length == 8);
-            Assert.IsTrue(results[0] == _cfgBuilder.Cfg);
-            Assert.IsNull(results[0].ParentGraph);
-
-            //Proc0
-            Assert.IsTrue(results[1].ParentGraph == results[0]);
-            Assert.IsTrue(results[1].ProgramOrFunctionNode is FunctionDeclaration);
-            Assert.IsTrue(results[1].ProgramOrFunctionNode.Name.Equals("Proc0"));
+            var results = CheckComplexStructure(_cfgBuilder);
 
             //We have taken the same CFG than for IfThenElseCascade0  
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "IfThenElseCascade0.dot");
-            CfgTestUtils.GenDotCfgAndCompare(results[1], path, expectedPath, true);
+            CfgTestUtils.GenDotCfgAndCompare(results["Proc0"], path, expectedPath, true);
         }
 
         [TestMethod]
@@ -536,26 +556,11 @@ namespace TypeCobol.Analysis.Test
             string expectedDiagnosticsFilePath = test + ".diag";
             CfgTestUtils.ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
 
-            //Here we have the main program, followed by stacked programs.
-            //Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 3);
-            //var currentProgram = Builder.Programs[0];
-            //var mainProgram = document.Results.ProgramClassDocumentSnapshot.Root.MainProgram;
-            var results = AllGraphs();
-            Assert.IsNotNull(results);
-            //In this case we have first the Main program cfg, followed by the nested functions and programs cfg builders of the main program, followed by stacked program cfg builders.
-            //Stack programs cfg builders have no parent cfg builders.
-            Assert.IsTrue(results.Length == 8);
-            Assert.IsTrue(results[0] == _cfgBuilder.Cfg);
-            Assert.IsNull(results[0].ParentGraph);
-
-            //Proc1
-            Assert.IsTrue(results[2].ParentGraph == results[0]);
-            Assert.IsTrue(results[2].ProgramOrFunctionNode is FunctionDeclaration);
-            Assert.IsTrue(results[2].ProgramOrFunctionNode.Name.Equals("Proc1"));
+            var results = CheckComplexStructure(_cfgBuilder);
 
             //We have taken the same CFG than for ComplexGotoPara0  
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "ComplexGotoPara0.dot");
-            CfgTestUtils.GenDotCfgAndCompare(results[2], path, expectedPath, true);
+            CfgTestUtils.GenDotCfgAndCompare(results["Proc1"], path, expectedPath, true);
         }
 
         [TestMethod]
@@ -565,46 +570,20 @@ namespace TypeCobol.Analysis.Test
             string path = test + ".cbl";
             string expectedDiagnosticsFilePath = test + ".diag";
             CfgTestUtils.ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
-            var results = AllGraphs();
 
-            //Nested0
-            Assert.IsTrue(results[3].ParentGraph == results[0]);
-            Assert.IsTrue(results[3].ProgramOrFunctionNode is Program);
-            Assert.IsTrue(results[3].ProgramOrFunctionNode.Name.Equals("Nested0"));
-            Assert.IsNotNull(results[3].NestedGraphs);
-            Assert.IsTrue(results[3].NestedGraphs.Count == 1);
-            Assert.IsTrue(results[3].NestedGraphs[0].ProgramOrFunctionNode is FunctionDeclaration);
-            Assert.IsTrue(results[3].NestedGraphs[0].ProgramOrFunctionNode.Name.Equals("NestedProc0"));
-
-            //Nested1
-            Assert.IsTrue(results[4].ParentGraph == results[0]);
-            Assert.IsTrue(results[4].ProgramOrFunctionNode is Program);
-            Assert.IsTrue(results[4].ProgramOrFunctionNode.Name.Equals("Nested1"));
-            Assert.IsNotNull(results[4].NestedGraphs);
-            Assert.IsTrue(results[4].NestedGraphs.Count == 1);
-            Assert.IsTrue(results[4].NestedGraphs[0].ProgramOrFunctionNode is FunctionDeclaration);
-            Assert.IsTrue(results[4].NestedGraphs[0].ProgramOrFunctionNode.Name.Equals("NestedProc1"));
-
-            //Nested2
-            Assert.IsTrue(results[5].ParentGraph == results[0]);
-            Assert.IsTrue(results[5].ProgramOrFunctionNode is Program);
-            Assert.IsTrue(results[5].ProgramOrFunctionNode.Name.Equals("Nested2"));
-            Assert.IsNotNull(results[5].NestedGraphs);
-            Assert.IsTrue(results[5].NestedGraphs.Count == 1);
-            Assert.IsTrue(results[5].NestedGraphs[0].ProgramOrFunctionNode is FunctionDeclaration);
-            Assert.IsTrue(results[5].NestedGraphs[0].ProgramOrFunctionNode.Name.Equals("NestedProc2"));
+            var results = CheckComplexStructure(_cfgBuilder);
 
             //We have taken the same CFG than for ComplexGotoPara0  
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "ComplexGotoPara0.dot");
-            CfgTestUtils.GenDotCfgAndCompare(results[3].NestedGraphs[0], path, expectedPath, true);
+            CfgTestUtils.GenDotCfgAndCompare(results["NestedProc0"], path, expectedPath, true);
 
             //We have taken the same CFG than for IfThenElseCascade0  
             expectedPath = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "IfThenElseCascade0.dot");
-            CfgTestUtils.GenDotCfgAndCompare(results[4].NestedGraphs[0], path, expectedPath, true);
+            CfgTestUtils.GenDotCfgAndCompare(results["NestedProc1"], path, expectedPath, true);
 
             //We have taken the same CFG than for PerformThru1  
             expectedPath = Path.Combine(Directory.GetCurrentDirectory(), BASIC_TESTS_DIR, "PerformThru1.dot");
-            CfgTestUtils.GenDotCfgAndCompare(results[5].NestedGraphs[0], path, expectedPath, true);
+            CfgTestUtils.GenDotCfgAndCompare(results["NestedProc2"], path, expectedPath, true);
         }
 
         /// <summary>
@@ -663,11 +642,11 @@ namespace TypeCobol.Analysis.Test
                 string dotFilePath = Path.Combine(nistOutput.FullName, dotName);
 
                 Parser.Parse(f, DocumentFormat.RDZReferenceFormat);
-                var results = AllGraphs();
+                var results = _cfgBuilder.Graphs;
 
                 Assert.IsNotNull(results);
-                Assert.IsTrue(results.Length > 0);
-                CfgTestUtils.GenDotCfgFile(results[0], dotFilePath, fullInstruction);
+                Assert.IsTrue(results.Count > 0);
+                CfgTestUtils.GenDotCfgFile(results[0], dotFilePath, fullInstruction);//Generate only main
 
                 TestCleanup();
                 TestInitialize();
