@@ -73,11 +73,7 @@ namespace TypeCobol.Compiler.Parser
             builder.Dispatcher = new ProgramClassBuilderNodeDispatcher();
             //Add mandatory ProgramSymbolTableBuilder
             builder.Dispatcher.AddListener(new ProgramSymbolTableBuilder());
-            //TODO compatibility with NodeDispatcher
-            foreach (var listener in NodeDispatcher.CreateListeners())
-            {
-                builder.Dispatcher.AddListener(listener);
-            }
+
             //Add custom additional analyzers
             if (customAnalyzers != null)
             {
@@ -119,6 +115,15 @@ namespace TypeCobol.Compiler.Parser
             nodeCodeElementLinkers = builder.NodeCodeElementLinkers;
             typedVariablesOutsideTypedef = builder.TypedVariablesOutsideTypedef;
             typeThatNeedTypeLinking = builder.TypeThatNeedTypeLinking;
+
+            //Collect analyzer diagnostics
+            if (customAnalyzers != null)
+            {
+                foreach (var customAnalyzer in customAnalyzers)
+                {
+                    diagnostics.AddRange(customAnalyzer.Diagnostics);
+                }
+            }
 
             if (programClassBuilderError != null)
             {

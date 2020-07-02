@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Timers;
 using Analytics;
+using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
@@ -439,8 +440,11 @@ namespace TypeCobol.LanguageServer
 
             var typeCobolOptions = new TypeCobolOptions(Configuration);
 
-            //TODO MILLETFL configure analyzerProvider
-            CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format, typeCobolOptions, null);
+            //Configure CFG/DFA analyzer
+            var analyzerProvider = new AnalyzerProvider();
+            analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgDfaAnalyzer("cfg-dfa", Configuration.CfgBuildingMode));
+
+            CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format, typeCobolOptions, analyzerProvider);
 
             if (Configuration.CopyFolders != null && Configuration.CopyFolders.Count > 0)
             {

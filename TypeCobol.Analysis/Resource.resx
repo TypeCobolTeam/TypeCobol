@@ -124,7 +124,7 @@
     <value>PERFORM '{0}' THRU '{1}':  '{1}'  is declared before '{0}'</value>
   </data>
   <data name="BasicBlockGroupGoesBeyondTheLimit" xml:space="preserve">
-    <value>Inside group '{0}' there is a branch '{0}' outside the group.</value>
+    <value>Inside group '{0}' there is a branch '{1}' outside the group.</value>
   </data>
   <data name="RecursiveBlockOnPerformProcedure" xml:space="preserve">
     <value>A Recursive block has been encountered while analysing PERFORM instruction to '{0}' : {1}</value>

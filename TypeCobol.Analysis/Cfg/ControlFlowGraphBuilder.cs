@@ -15,7 +15,7 @@ namespace TypeCobol.Analysis.Cfg
     /// <summary>
     /// The Control Flow Graph Builder for a TypeCobol Program.
     /// </summary>
-    public partial class ControlFlowGraphBuilder<D> : ProgramClassBuilderNodeListener
+    public partial class ControlFlowGraphBuilder<D> : SyntaxDrivenAnalyzerBase
     {
         /// <summary>
         /// Control how the blocks targeted by a PERFORM are handled.
@@ -33,15 +33,15 @@ namespace TypeCobol.Analysis.Cfg
         /// All graphs built for a source file (CFG for main program and
         /// CFG for stacked programs if any).
         /// </summary>
-        public IList<ControlFlowGraph<Node, D>> Graphs { get; }
+        private IList<ControlFlowGraph<Node, D>> Graphs { get; }
 
         /// <summary>
         /// The current Program Cfg being built.
         /// </summary>
-        public ControlFlowGraphBuilder<D> CurrentProgramCfgBuilder
+        private ControlFlowGraphBuilder<D> CurrentProgramCfgBuilder
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
@@ -142,18 +142,23 @@ namespace TypeCobol.Analysis.Cfg
         /// </summary>
         private List<Sentence> AllSentences;
 
-        public IList<Diagnostic> Diagnostics { get; private set; }
+        /// <summary>
+        /// Delegate to add a new Diagnostic to the root collection of diagnostics.
+        /// </summary>
+        new private Action<Diagnostic> AddDiagnostic;
 
         /// <summary>
         /// Initial constructor. Allows to configure CFG building.
         /// </summary>
+        /// <param name="identifier">String identifier of this analyzer-builder.</param>
         /// <param name="extendPerformTargets">True to extend the blocks targeted by PERFORM statements.</param>
         /// <param name="useEvaluateCascade">True to convert EVALUATE statements into cascaded-IFs.</param>
         /// <param name="useSearchCascade">True to convert SEARCH statements into cascaded-IFs.</param>
-        protected ControlFlowGraphBuilder(bool extendPerformTargets, bool useEvaluateCascade, bool useSearchCascade)
+        protected ControlFlowGraphBuilder(string identifier, bool extendPerformTargets, bool useEvaluateCascade, bool useSearchCascade)
+            : base(identifier)
         {
             this.Graphs = new List<ControlFlowGraph<Node, D>>();
-            this.Diagnostics = new List<Diagnostic>();
+            this.AddDiagnostic = base.AddDiagnostic;
             this.AllProcedures = new List<Procedure>();
             this.ParentProgramCfgBuilder = null;
             this.ExtendPerformTargets = extendPerformTargets;
@@ -167,15 +172,23 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="builder">Either the main builder or a parent builder.</param>
         /// <param name="asParent">Supplied builder must be registered as parent of the new one.</param>
         private ControlFlowGraphBuilder(ControlFlowGraphBuilder<D> builder, bool asParent)
+            : base(null) // Identifier of a child CFG builder won't be used so it's ok to pass null.
         {
             this.Graphs = builder.Graphs;
-            this.Diagnostics = builder.Diagnostics;
+            this.AddDiagnostic = builder.AddDiagnostic;
             this.AllProcedures = new List<Procedure>();
             this.ParentProgramCfgBuilder = asParent ? builder : null;
             this.ExtendPerformTargets = builder.ExtendPerformTargets;
             this.UseEvaluateCascade = builder.UseEvaluateCascade;
             this.UseSearchCascade = builder.UseSearchCascade;
         }
+
+        /// <summary>
+        /// As an analyzer, the root CFG builder returns all graphs
+        /// built for a source file.
+        /// </summary>
+        /// <returns>A non-null IList of ControlFlowGraph.</returns>
+        public override object GetResult() => Graphs;
 
         /// <summary>
         /// Determines if the given Node is a statement.
@@ -951,7 +964,7 @@ namespace TypeCobol.Analysis.Cfg
                             p.CodeElement.Column,
                             p.CodeElement.Line,
                             string.Format(Resource.RecursiveBlockOnPerformProcedure, procedure.Name, strBlock));
-                        Diagnostics.Add(d);
+                        AddDiagnostic(d);
                     }
                 }
             }
@@ -986,7 +999,7 @@ namespace TypeCobol.Analysis.Cfg
                             p.CodeElement.Column,
                             p.CodeElement.Line,
                             string.Format(Resource.BadPerformProcedureThru, procedure.Name, throughProcedure.Name));
-                        Diagnostics.Add(d);
+                        AddDiagnostic(d);
                         return false;
                     }
                     StoreProcedureSentenceBlocks(p, procedure, group, storedBlocks);
@@ -1045,7 +1058,7 @@ namespace TypeCobol.Analysis.Cfg
                                     p.CodeElement.Column,
                                     p.CodeElement.Line,
                                     string.Format(Resource.BasicBlockGroupGoesBeyondTheLimit, ((BasicBlockForNode)block).Tag != null ? ((BasicBlockForNode)block).Tag.ToString() : "???", block.Index));
-                                Diagnostics.Add(d);
+                                AddDiagnostic(d);
                                 //So in this case in order to not break the graph and to see the target branch that went out, add it as well....
                                 b.SuccessorEdges.Add(edge);
                                 continue;
@@ -2051,40 +2064,40 @@ namespace TypeCobol.Analysis.Cfg
                             continue;
 
                         //So Look for the first Goto Instruction
-                        foreach (var sb in alterProc)
+                        //The first instruction of the altered procedure must be a GOTO instruction (without DEPENDING ON)
+                        bool targetGotoResolved = false;
+                        var instructions = alterProc.FirstOrDefault()?.FirstBlock?.Instructions;
+                        if (instructions != null && instructions.Count > 0)
                         {
-                            bool bResolved = false;
-                            if (sb.FirstBlock != null && sb.FirstBlock.Instructions != null && sb.FirstBlock.Instructions.Count > 0)
-                            {//The first instruction must be a GOTO Instruction.
-                                Node first = sb.FirstBlock.Instructions.First.Value;
-                                if (first.CodeElement != null && first.CodeElement.Type == CodeElementType.GotoStatement)
-                                {//StatementType.GotoSimpleStatement
-                                    Goto @goto = (Goto)first;
-                                    if (@goto.CodeElement.StatementType == StatementType.GotoSimpleStatement)
+                            Node firstInstruction = instructions.First.Value;
+                            if (firstInstruction.CodeElement?.Type == CodeElementType.GotoStatement)
+                            {
+                                Goto @goto = (Goto) firstInstruction;
+                                if (@goto.CodeElement.StatementType == StatementType.GotoSimpleStatement)
+                                {
+                                    if (this.CurrentProgramCfgBuilder.PendingAlteredGOTOS == null)
+                                        this.CurrentProgramCfgBuilder.PendingAlteredGOTOS = new Dictionary<Goto, HashSet<SymbolReference>>();
+
+                                    if (!this.CurrentProgramCfgBuilder.PendingAlteredGOTOS.TryGetValue(@goto, out var targetSymbols))
                                     {
-                                        if (this.CurrentProgramCfgBuilder.PendingAlteredGOTOS == null)
-                                            this.CurrentProgramCfgBuilder.PendingAlteredGOTOS = new Dictionary<Goto, HashSet<SymbolReference>>();
-
-                                        if (!this.CurrentProgramCfgBuilder.PendingAlteredGOTOS.TryGetValue(@goto, out var targetSymbols))
-                                        {
-                                            targetSymbols = new HashSet<SymbolReference>();
-                                            this.CurrentProgramCfgBuilder.PendingAlteredGOTOS.Add(@goto, targetSymbols);
-                                        }
-
-                                        targetSymbols.Add(targetProcReference);
-                                        bResolved = true;
+                                        targetSymbols = new HashSet<SymbolReference>();
+                                        this.CurrentProgramCfgBuilder.PendingAlteredGOTOS.Add(@goto, targetSymbols);
                                     }
+
+                                    targetSymbols.Add(targetProcReference);
+                                    targetGotoResolved = true;
                                 }
                             }
-                            if (!bResolved)
-                            {
-                                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                                    alter.CodeElement.Column,
-                                    alter.CodeElement.Column,
-                                    alter.CodeElement.Line,
-                                    Resource.BadAlterIntrWithNoSiblingGotoInstr);
-                                Diagnostics.Add(d);
-                            }
+                        }
+
+                        if (!targetGotoResolved)
+                        {
+                            Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                                alter.CodeElement.Column,
+                                alter.CodeElement.Column,
+                                alter.CodeElement.Line,
+                                Resource.BadAlterIntrWithNoSiblingGotoInstr);
+                            AddDiagnostic(d);
                         }
                     }
                 }

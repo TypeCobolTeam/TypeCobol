@@ -24,16 +24,327 @@ Line 380[12,16] <37, Warning, General> - Warning: ALTER should not be used
 Line 397[12,16] <37, Warning, General> - Warning: ALTER should not be used
 Line 407[12,40] <37, Warning, General> - Warning: "end-if" is missing
 Line 411[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 426[12,12] <30, Error, Semantics> - Semantic error: Inside group 'TEST-5A' there is a branch '537' outside the group.
 Line 427[12,33] <37, Warning, General> - Warning: "end-if" is missing
 Line 448[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 449[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7A' : Block[384] { 
+    GO TO TEST-7B
+}
+
+Line 449[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7A' : Block[385] { 
+}
+
+Line 449[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7B' : Block[386] { 
+    ALTER TEST-7A TO PROCEED TO TEST-7C
+}
+
+Line 449[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7C' : Block[387] { 
+    ADD 3 TO SEG-CALC
+}
+
+Line 449[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7C' : Block[388] { 
+    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)
+}
+
+Line 449[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7C' : Block[389] { 
+    ADD 2 TO RANGE-SUB
+}
+
+Line 449[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7D' : Block[390] { 
+    SUBTRACT 1 FROM SEG-CALC
+}
+
+Line 449[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7D' : Block[391] { 
+    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)
+}
+
+Line 449[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7D' : Block[392] { 
+    ADD 2 TO RANGE-SUB
+}
+
+Line 449[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7D' : Block[393] { 
+}
+
+Line 449[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7D' : Block[394] { 
+    PERFORM TEST-7B
+}
+
+Line 449[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7D' : Block[395] { 
+}
+
+Line 450[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7A' : Block[384] { 
+    GO TO TEST-7B
+}
+
+Line 450[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7A' : Block[385] { 
+}
+
+Line 450[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7B' : Block[386] { 
+    ALTER TEST-7A TO PROCEED TO TEST-7C
+}
+
+Line 450[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7C' : Block[387] { 
+    ADD 3 TO SEG-CALC
+}
+
+Line 450[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7C' : Block[388] { 
+    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)
+}
+
+Line 450[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7C' : Block[389] { 
+    ADD 2 TO RANGE-SUB
+}
+
+Line 450[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7D' : Block[390] { 
+    SUBTRACT 1 FROM SEG-CALC
+}
+
+Line 450[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7D' : Block[391] { 
+    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)
+}
+
+Line 450[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7D' : Block[392] { 
+    ADD 2 TO RANGE-SUB
+}
+
+Line 450[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7D' : Block[393] { 
+}
+
+Line 450[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7D' : Block[394] { 
+    PERFORM TEST-7B
+}
+
+Line 450[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-7D' : Block[395] { 
+}
+
 Line 451[12,33] <37, Warning, General> - Warning: "end-if" is missing
 Line 470[12,16] <37, Warning, General> - Warning: ALTER should not be used
 Line 485[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 495[12,12] <30, Error, Semantics> - Semantic error: Inside group 'TEST-3-WRITE' there is a branch '421' outside the group.
+Line 495[12,12] <30, Error, Semantics> - Semantic error: Inside group 'TEST-3-WRITE' there is a branch '421' outside the group.
 Line 496[12,16] <37, Warning, General> - Warning: ALTER should not be used
 Line 497[12,16] <37, Warning, General> - Warning: ALTER should not be used
+Line 498[12,12] <30, Error, Semantics> - Semantic error: Inside group 'TEST-3-WRITE' there is a branch '421' outside the group.
+Line 498[12,12] <30, Error, Semantics> - Semantic error: Inside group 'TEST-3-WRITE' there is a branch '421' outside the group.
 Line 514[12,33] <37, Warning, General> - Warning: "end-if" is missing
 Line 526[12,33] <37, Warning, General> - Warning: "end-if" is missing
 Line 539[12,33] <37, Warning, General> - Warning: "end-if" is missing
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6B' : Block[234] { 
+    GO TO TEST-6E
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6B' : Block[235] { 
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6C' : Block[236] { 
+    SUBTRACT 9 FROM SEG-CALC
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6C' : Block[237] { 
+    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6C' : Block[238] { 
+    ADD 2 TO RANGE-SUB
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6D' : Block[239] { 
+    ALTER TEST-6B TO PROCEED TO TEST-6F
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6E' : Block[240] { 
+    SUBTRACT SEG-CALC FROM SEG-CALC
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6E' : Block[241] { 
+    MOVE 0 TO RANGE-X (RANGE-SUB)
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6E' : Block[242] { 
+    ADD 2 TO RANGE-SUB
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6E' : Block[243] { 
+    GO TO TEST-6-2
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6E' : Block[244] { 
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[245] { 
+    MOVE SPACE TO COMPUTED-RANGE
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[246] { 
+    MOVE 4 TO SEG-CALC
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[247] { 
+    MOVE "-" TO RANGE-X (2) RANGE-X (4)
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[248] { 
+    MOVE 4 TO RANGE-X (1)
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[249] { 
+    MOVE 3 TO RANGE-SUB
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[250] { 
+    ALTER TEST-1A TO PROCEED TO TEST-1C
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[251] { 
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[252] { 
+    PERFORM TEST-1
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[253] { 
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[254] { 
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[255] { 
+    PERFORM TEST-1
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[256] { 
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[257] { 
+    IF SEG-CALC EQUAL TO 2
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[258] { 
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[259] { 
+        PERFORM PASS
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[260] { 
+        GO TO TEST-1-WRITE
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[261] { 
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[262] { 
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[263] { 
+    MOVE COMPUTED-RANGE TO COMPUTED-A
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[264] { 
+    MOVE "4-0-2" TO CORRECT-A
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[265] { 
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[266] { 
+    PERFORM FAIL
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[267] { 
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[268] { 
+    GO TO TEST-1-WRITE
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'SEG-TEST-1' : Block[269] { 
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-1-DELETE' : Block[270] { 
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-1-DELETE' : Block[271] { 
+    PERFORM DE-LETE
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-1-DELETE' : Block[272] { 
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-1-WRITE' : Block[273] { 
+    MOVE "SEG-TEST-1" TO PAR-NAME
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-1-WRITE' : Block[274] { 
+    MOVE "SEGMENTATION" TO FEATURE
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-1-WRITE' : Block[275] { 
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-1-WRITE' : Block[276] { 
+    PERFORM PRINT-DETAIL
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-1-WRITE' : Block[277] { 
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-1-WRITE' : Block[278] { 
+    GO TO SEG-TEST-2
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-1-WRITE' : Block[279] { 
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'PARA-8' : Block[280] { 
+    GO TO SEG-TEST8
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'PARA-8' : Block[281] { 
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6F' : Block[282] { 
+    ADD 9 TO SEG-CALC
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6F' : Block[283] { 
+    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6F' : Block[284] { 
+    ADD 2 TO RANGE-SUB
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6G' : Block[285] { 
+    ALTER TEST-6B TO PROCEED TO TEST-6-8
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6G' : Block[286] { 
+    GO TO TEST-6-2
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6G' : Block[287] { 
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6H' : Block[288] { 
+    SUBTRACT 1 FROM SEG-CALC
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6H' : Block[289] { 
+    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6H' : Block[290] { 
+    ADD 2 TO RANGE-SUB
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: A Recursive block has been encountered while analysing PERFORM instruction to 'TEST-6I' : Block[291] { 
+    EXIT
+}
+
+Line 559[12,12] <30, Error, Semantics> - Semantic error: Inside group 'SEG-TEST-2' there is a branch '195' outside the group.
+Line 559[12,12] <30, Error, Semantics> - Semantic error: Inside group 'SEG-TEST-8' there is a branch '517' outside the group.
+Line 559[12,12] <30, Error, Semantics> - Semantic error: Inside group 'PARA-85' there is a branch '527' outside the group.
 Line 560[12,33] <37, Warning, General> - Warning: "end-if" is missing
 Line 576[12,16] <37, Warning, General> - Warning: ALTER should not be used
 Line 578[12,33] <37, Warning, General> - Warning: "end-if" is missing
