@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BadAlterIntrWithNoSiblingGotoInstr" xml:space="preserve">
-    <value>Bad ALTER instruction with No sibling altered Goto.</value>
+    <value>Bad ALTER instruction: could not locate corresponding altered GO TO.</value>
   </data>
   <data name="BadPerformProcedureThru" xml:space="preserve">
     <value>PERFORM '{0}' THRU '{1}': '{1}' is declared before '{0}'.</value>

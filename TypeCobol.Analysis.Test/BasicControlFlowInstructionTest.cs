@@ -366,6 +366,9 @@ namespace TypeCobol.Analysis.Test
         public void Alter2() => TestTemplate();
 
         [TestMethod]
+        public void Alter3() => TestTemplate();
+
+        [TestMethod]
         public void GoBack0() => TestTemplate();
 
         [TestMethod]

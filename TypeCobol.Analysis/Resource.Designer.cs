@@ -61,7 +61,7 @@ namespace TypeCobol.Analysis {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Bad ALTER instruction with No sibling altered Goto..
+        ///   Looks up a localized string similar to Bad ALTER instruction: could not locate corresponding altered GO TO..
         /// </summary>
         internal static string BadAlterIntrWithNoSiblingGotoInstr {
             get {
