@@ -79,7 +79,7 @@ namespace TypeCobol.Analysis {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Inside group &apos;{0}&apos; there is a branch &apos;{1}&apos; outside the group..
+        ///   Looks up a localized string similar to Statement &apos;{0}&apos; located at line {1}, column {2} prevents this PERFORM statement to reach its exit..
         /// </summary>
         internal static string BasicBlockGroupGoesBeyondTheLimit {
             get {

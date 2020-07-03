@@ -1052,21 +1052,27 @@ namespace TypeCobol.Analysis.Cfg
                         if (!storedBlockIndices.Contains(block.Index))
                         {
                             if (b != group.Group.Last.Value)
-                            {//Hum this block is not the last of the group and its successor is outside of the group ==> we don't support that.
+                            {
+                                //Hum this block is not the last of the group and its successor is outside of the group ==> we don't support that.
+                                Node offendingInstruction = b.Instructions.Last.Value;
+                                System.Diagnostics.Debug.Assert(offendingInstruction != null);
+                                System.Diagnostics.Debug.Assert(offendingInstruction.CodeElement != null);
+                                string offendingStatement = offendingInstruction.CodeElement.SourceText;
+                                int offendingLine = offendingInstruction.CodeElement.Line;
+                                int offendingColumn = offendingInstruction.CodeElement.Column;
                                 Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
                                     p.CodeElement.Column,
                                     p.CodeElement.Column,
                                     p.CodeElement.Line,
-                                    string.Format(Resource.BasicBlockGroupGoesBeyondTheLimit, ((BasicBlockForNode)block).Tag != null ? ((BasicBlockForNode)block).Tag.ToString() : "???", block.Index));
+                                    string.Format(Resource.BasicBlockGroupGoesBeyondTheLimit, offendingStatement, offendingLine, offendingColumn));
                                 AddDiagnostic(d);
+
                                 //So in this case in order to not break the graph and to see the target branch that went out, add it as well....
                                 b.SuccessorEdges.Add(edge);
-                                continue;
                             }
-                            else
-                            {//Don't add the continuation edge
-                                continue;
-                            }
+
+                            //Don't add the continuation edge for the last block
+                            continue;
                         }
                         newEdge = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
                         this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(block);

@@ -393,6 +393,9 @@ namespace TypeCobol.Analysis.Test
         public void PerformProcedure1() => TestTemplate();
 
         [TestMethod]
+        public void PerformGoesOutOfBounds0() => TestTemplate();
+
+        [TestMethod]
         public void PerformNested0() => TestTemplate();
 
         [TestMethod]
