@@ -121,7 +121,7 @@
     <value>Bad ALTER instruction with No sibling altered Goto.</value>
   </data>
   <data name="BadPerformProcedureThru" xml:space="preserve">
-    <value>PERFORM '{0}' THRU '{1}':  '{1}'  is declared before '{0}'</value>
+    <value>PERFORM '{0}' THRU '{1}': '{1}' is declared before '{0}'.</value>
   </data>
   <data name="BasicBlockGroupGoesBeyondTheLimit" xml:space="preserve">
     <value>Statement '{0}' located at line {1}, column {2} prevents this PERFORM statement to reach its exit.</value>

@@ -70,7 +70,7 @@ namespace TypeCobol.Analysis {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PERFORM &apos;{0}&apos; THRU &apos;{1}&apos;:  &apos;{1}&apos;  is declared before &apos;{0}&apos;.
+        ///   Looks up a localized string similar to PERFORM &apos;{0}&apos; THRU &apos;{1}&apos;: &apos;{1}&apos; is declared before &apos;{0}&apos;..
         /// </summary>
         internal static string BadPerformProcedureThru {
             get {
