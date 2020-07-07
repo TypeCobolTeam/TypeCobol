@@ -56,6 +56,19 @@ namespace TypeCobol.Analysis.Test
                         throw new Exception(errorMessage.ToString());
                     }
                 }
+                else
+                {
+                    if (File.Exists(expectedDiagnosticsFilePath))
+                    {
+                        //Expected diagnostics but none found during parsing.
+                        StringBuilder errorMessage = new StringBuilder();
+                        errorMessage.AppendLine($"Expected diagnostics but none were found during parsing of '{sourceFilePath}'.");
+                        errorMessage.AppendLine($"Expected diagnostic file path was '{expectedDiagnosticsFilePath}'.");
+                        throw new Exception(errorMessage.ToString());
+                    }
+
+                    //file doesn't exist and no diagnostics : OK
+                }
             }
 
             if (results.TryGetAnalyzerResult(CFG_ANALYZER_IDENTIFIER, out IList<ControlFlowGraph<Node, object>> graphs))

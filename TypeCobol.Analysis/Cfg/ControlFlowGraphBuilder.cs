@@ -135,7 +135,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// All pending Next Sentence instructions that will be handled at the end of the Procedure Division.
         /// </summary>
-        private LinkedList<Tuple<NextSentence, BasicBlockForNode, Sentence>> PendingNextSentences;
+        private LinkedList<Tuple<BasicBlockForNode, Sentence>> PendingNextSentences;
 
         /// <summary>
         /// All encountered sentences
@@ -821,8 +821,8 @@ namespace TypeCobol.Analysis.Cfg
             {
                 foreach (var next in this.CurrentProgramCfgBuilder.PendingNextSentences)
                 {
-                    BasicBlockForNode block = next.Item2;
-                    Sentence sentence = next.Item3;
+                    BasicBlockForNode block = next.Item1;
+                    Sentence sentence = next.Item2;
                     if (sentence.Number < this.CurrentProgramCfgBuilder.AllSentences.Count - 1)
                     {
                         Sentence nextSentence = AllSentences[sentence.Number + 1];
@@ -934,98 +934,73 @@ namespace TypeCobol.Analysis.Cfg
         #endregion
 
         /// <summary>
-        /// Store all procedure's sentence blocks in a group.
-        /// </summary>
-        /// <param name="p">The procedure node</param>
-        /// <param name="procedure">The procedure in CFG</param>
-        /// <param name="group">The Group in which to store all blocks.</param>
-        /// <param name="storedBlockIndices">Set of indices of blocks already stored</param>
-        private void StoreProcedureSentenceBlocks(PerformProcedure p, Procedure procedure, BasicBlockForNodeGroup group, HashSet<int> storedBlockIndices)
-        {
-            foreach (var sentence in procedure)
-            {
-                //A Sentence has at least one block
-                System.Diagnostics.Debug.Assert(sentence.Blocks != null);
-                System.Diagnostics.Debug.Assert(sentence.Blocks.First() == sentence.FirstBlock);
-                foreach (var block in sentence.Blocks)
-                {//We must clone each block of the sequence and add them to the group.                    
-                    //System.Diagnostics.Debug.Assert(!clonedBlockIndexMap.ContainsKey(block.Index));
-                    if (!storedBlockIndices.Contains(block.Index))
-                    {//If this block has been already add, this mean there are recursive GOTOs
-                        storedBlockIndices.Add(block.Index);
-                        group.AddBlock(block);
-                    }
-                    else
-                    {//Recursive blocks detection.
-                        block.FullInstruction = true;
-                        string strBlock = block.ToString();
-                        Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                            p.CodeElement.Column,
-                            p.CodeElement.Column,
-                            p.CodeElement.Line,
-                            string.Format(Resource.RecursiveBlockOnPerformProcedure, procedure.Name, strBlock));
-                        AddDiagnostic(d);
-                    }
-                }
-            }
-        }
-        /// <summary>
         /// Resolve a pending PERFORM procedure
         /// </summary>
         /// <param name="p">The procedure node</param>
         /// <param name="sectionNode">The section in which the PERFORM node appears</param>
         /// <param name="group">The Basic Block Group associated to the procedure</param>
         /// <returns>True if the PERFORM has been resolved, false otherwise</returns>
-        private bool ResolvePendingPERFORMProcedure(PerformProcedure p, SectionNode sectionNode, BasicBlockForNodeGroup group)
+        private void ResolvePendingPERFORMProcedure(PerformProcedure p, SectionNode sectionNode, BasicBlockForNodeGroup group)
         {
             SymbolReference procedureReference = p.CodeElement.Procedure;
             SymbolReference throughProcedureReference = p.CodeElement.ThroughProcedure;
 
             Procedure procedure = ResolveProcedure(p, sectionNode, procedureReference);
             if (procedure == null)
-                return false;
+                return;
+
             HashSet<int> storedBlocks = new HashSet<int>();
             if (throughProcedureReference != null)
             {
                 Procedure throughProcedure = ResolveProcedure(p, sectionNode, throughProcedureReference);
                 if (throughProcedure == null)
-                    return false;
-                if (throughProcedure != procedure)
+                    return;
+
+                if (procedure.Number > throughProcedure.Number)
                 {
-                    if (procedure.Number > throughProcedure.Number)
-                    {// the second procedure name is before the first one.
-                        Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                            p.CodeElement.Column,
-                            p.CodeElement.Column,
-                            p.CodeElement.Line,
-                            string.Format(Resource.BadPerformProcedureThru, procedure.Name, throughProcedure.Name));
-                        AddDiagnostic(d);
-                        return false;
-                    }
-                    StoreProcedureSentenceBlocks(p, procedure, group, storedBlocks);
-                    //Store all sentences or paragraphs between.
-                    for (int i = procedure.Number + 1; i < throughProcedure.Number; i++)
-                    {
-                        Procedure subSectionOrParagraph = this.CurrentProgramCfgBuilder.AllProcedures[i];
-                        StoreProcedureSentenceBlocks(p, subSectionOrParagraph, group, storedBlocks);
-                    }
-                    StoreProcedureSentenceBlocks(p, throughProcedure, group, storedBlocks);
+                    // the second procedure name is declared before the first one.
+                    Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                        p.CodeElement.Column,
+                        p.CodeElement.Column,
+                        p.CodeElement.Line,
+                        string.Format(Resource.BadPerformProcedureThru, procedure.Name, throughProcedure.Name));
+                    AddDiagnostic(d);
+                    return;
                 }
-                else
+
+                //Accumulate sentences located between the two procedures
+                List<Sentence> sentences = new List<Sentence>();
+                int currentProcedureNumber = procedure.Number;
+                while (currentProcedureNumber <= throughProcedure.Number)
                 {
-                    StoreProcedureSentenceBlocks(p, procedure, group, storedBlocks);
+                    var currentProcedure = this.CurrentProgramCfgBuilder.AllProcedures[currentProcedureNumber];
+                    currentProcedure.AccumulateSentencesThrough(sentences, throughProcedure, out var lastProcedure);
+                    currentProcedureNumber = lastProcedure.Number + 1;
                 }
+
+                //Store sentences into the group
+                StoreSentences(sentences);
             }
             else
             {
-                StoreProcedureSentenceBlocks(p, procedure, group, storedBlocks);
+                //Store all sentences from the procedure into the group
+                StoreSentences(procedure);
             }
-            //Now Clone the Graph.
-            if (!RelocateBasicBlockForNodeGroupGraph(p, group, storedBlocks))
+
+            //And finally clone the Graph.
+            RelocateBasicBlockForNodeGroupGraph(p, @group, storedBlocks);
+
+            void StoreSentences(IEnumerable<Sentence> sentences)
             {
-                return false;
+                foreach (var sentence in sentences)
+                {
+                    foreach (var block in sentence.Blocks)
+                    {
+                        group.AddBlock(block);
+                        storedBlocks.Add(block.Index);
+                    }
+                }
             }
-            return true;
         }
 
         /// <summary>
@@ -1036,52 +1011,57 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="storedBlockIndices">The set of all block indices contained in the group.</param>
         /// <returns>true if the relocation is successful, false if the relocation goes beyond the group limit, 
         /// this often means that de target paragraphs of the PERFORM goes out of the paragraph.</returns>
-        private bool RelocateBasicBlockForNodeGroupGraph(PerformProcedure p, BasicBlockForNodeGroup group, HashSet<int> storedBlockIndices)
+        private void RelocateBasicBlockForNodeGroupGraph(PerformProcedure p, BasicBlockForNodeGroup group, HashSet<int> storedBlockIndices)
         {
             //New successor edge map.
             Dictionary<int, int> newEdgeIndexMap = new Dictionary<int, int>();
-            foreach (var b in group.Group)
+            foreach (var block in group.Group)
             {
-                List<int> successors = b.SuccessorEdges;
-                b.SuccessorEdges = new List<int>();
+                bool blockGoesBeyondGroupLimit = false;
+                List<int> successors = block.SuccessorEdges;
+                block.SuccessorEdges = new List<int>();
                 foreach (var edge in successors)
                 {
                     if (!newEdgeIndexMap.TryGetValue(edge, out int newEdge))
                     {
-                        var block = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges[edge];
-                        if (!storedBlockIndices.Contains(block.Index))
+                        var successor = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges[edge];
+                        if (!storedBlockIndices.Contains(successor.Index))
                         {
-                            if (b != group.Group.Last.Value)
+                            if (block != group.Group.Last.Value)
                             {
-                                //Hum this block is not the last of the group and its successor is outside of the group ==> we don't support that.
-                                Node offendingInstruction = b.Instructions.Last.Value;
-                                System.Diagnostics.Debug.Assert(offendingInstruction != null);
-                                System.Diagnostics.Debug.Assert(offendingInstruction.CodeElement != null);
-                                string offendingStatement = offendingInstruction.CodeElement.SourceText;
-                                int offendingLine = offendingInstruction.CodeElement.Line;
-                                int offendingColumn = offendingInstruction.CodeElement.Column;
-                                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                                    p.CodeElement.Column,
-                                    p.CodeElement.Column,
-                                    p.CodeElement.Line,
-                                    string.Format(Resource.BasicBlockGroupGoesBeyondTheLimit, offendingStatement, offendingLine, offendingColumn));
-                                AddDiagnostic(d);
+                                //This block has at least one successor located outside of the group
+                                //and it is not the last block in the group, so we must report a Diagnostic
+                                blockGoesBeyondGroupLimit = true;
 
-                                //So in this case in order to not break the graph and to see the target branch that went out, add it as well....
-                                b.SuccessorEdges.Add(edge);
+                                //In order to not break the graph and to see the target branch that went out, add it as well....
+                                block.SuccessorEdges.Add(edge);
                             }
 
-                            //Don't add the continuation edge for the last block
                             continue;
                         }
                         newEdge = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
-                        this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(block);
+                        this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(successor);
                         newEdgeIndexMap[edge] = newEdge;
                     }
-                    b.SuccessorEdges.Add(newEdge);
+                    block.SuccessorEdges.Add(newEdge);
+                }
+
+                if (blockGoesBeyondGroupLimit)
+                {
+                    Node offendingInstruction = block.Instructions.Last.Value;
+                    System.Diagnostics.Debug.Assert(offendingInstruction != null);
+                    System.Diagnostics.Debug.Assert(offendingInstruction.CodeElement != null);
+                    string offendingStatement = offendingInstruction.CodeElement.SourceText;
+                    int offendingLine = offendingInstruction.CodeElement.Line;
+                    int offendingColumn = offendingInstruction.CodeElement.Column;
+                    Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                        p.CodeElement.Column,
+                        p.CodeElement.Column,
+                        p.CodeElement.Line,
+                        string.Format(Resource.BasicBlockGroupGoesBeyondTheLimit, offendingStatement, offendingLine, offendingColumn));
+                    AddDiagnostic(d);
                 }
             }
-            return true;
         }
 
         /// <summary>
@@ -1106,6 +1086,8 @@ namespace TypeCobol.Analysis.Cfg
                         GraftBasicBlockGroup(group);
                     }
                 }
+
+                this.CurrentProgramCfgBuilder.PendingPERFORMProcedures = null;
             }
         }
 
@@ -2002,11 +1984,11 @@ namespace TypeCobol.Analysis.Cfg
 
                 if (this.CurrentProgramCfgBuilder.PendingNextSentences == null)
                 {
-                    this.CurrentProgramCfgBuilder.PendingNextSentences = new LinkedList<Tuple<NextSentence, BasicBlockForNode, Sentence>>();
+                    this.CurrentProgramCfgBuilder.PendingNextSentences = new LinkedList<Tuple<BasicBlockForNode, Sentence>>();
                 }
                 //Track pending Next Sentences.
-                Tuple<NextSentence, BasicBlockForNode, Sentence> item = new Tuple<NextSentence, BasicBlockForNode, Sentence>(
-                    node, this.CurrentProgramCfgBuilder.CurrentBasicBlock, this.CurrentProgramCfgBuilder.CurrentSentence
+                Tuple<BasicBlockForNode, Sentence> item = new Tuple<BasicBlockForNode, Sentence>(
+                    this.CurrentProgramCfgBuilder.CurrentBasicBlock, this.CurrentProgramCfgBuilder.CurrentSentence
                     );
                 this.CurrentProgramCfgBuilder.PendingNextSentences.AddLast(item);
 

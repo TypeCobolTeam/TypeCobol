@@ -86,14 +86,5 @@ namespace TypeCobol.Analysis {
                 return ResourceManager.GetString("BasicBlockGroupGoesBeyondTheLimit", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A Recursive block has been encountered while analysing PERFORM instruction to &apos;{0}&apos; : {1}.
-        /// </summary>
-        internal static string RecursiveBlockOnPerformProcedure {
-            get {
-                return ResourceManager.GetString("RecursiveBlockOnPerformProcedure", resourceCulture);
-            }
-        }
     }
 }

@@ -31,7 +31,7 @@
     <Compile Include="Cfg\ControlFlowGraphBuilder.MultiBranchContext.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.Paragraph.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.Procedure.cs" />
-    <Compile Include="Cfg\ControlFlowGraphBuilder.ProcedureDivisionPartition.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.ProcedureDivisionRegion.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.Section.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.Sentence.cs" />
     <Compile Include="Cfg\DefaultControlFlowGraphBuilder.cs" />
