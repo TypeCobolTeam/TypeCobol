@@ -19,12 +19,12 @@ label = "{Block2|    PERFORM A-STARTUP\l}"
 subgraph cluster_1{
 color = blue;
 label = "A-STARTUP";
-Block9 [
-label = "{A-STARTUP. Block9|    OPEN INPUT USER-FILE\l}"
+Block25 [
+label = "{A-STARTUP. Block25|    OPEN INPUT USER-FILE\l}"
 ]
 
 }
-Block2 -> Block9 [style=dashed]
+Block2 -> Block25 [style=dashed]
 
 Block3 [
 label = "{Block3|}"
@@ -35,72 +35,72 @@ label = "{Block4|    PERFORM B-PROCESS\l}"
 subgraph cluster_2{
 color = blue;
 label = "B-PROCESS";
-Block10 [
-label = "{B-PROCESS. Block10|    READ USER-FILE\l}"
+Block26 [
+label = "{B-PROCESS. Block26|    READ USER-FILE\l}"
 ]
-Block11 [
-label = "{Block11|        AT END\l           MOVE \"Y\" TO EOF-SEEN\l}"
+Block27 [
+label = "{Block27|        AT END\l           MOVE \"Y\" TO EOF-SEEN\l}"
 ]
-Block12 [
-label = "{Block12|}"
+Block28 [
+label = "{Block28|}"
 ]
-Block13 [
-label = "{B-PROCESS. Block13|}"
+Block29 [
+label = "{B-PROCESS. Block29|}"
 ]
-Block14 [
-label = "{Block14|    PERFORM B-LOOP          UNTIL EOF-SEEN = \"Y\"\l}"
+Block30 [
+label = "{Block30|    PERFORM B-LOOP          UNTIL EOF-SEEN = \"Y\"\l}"
 ]
 subgraph cluster_4{
 color = blue;
 label = "B-LOOP";
-Block16 [
-label = "{B-LOOP. Block16|    DISPLAY \"THE ID IS \" USER-ID\l}"
+Block33 [
+label = "{B-LOOP. Block33|    DISPLAY \"THE ID IS \" USER-ID\l}"
 ]
-Block17 [
-label = "{B-LOOP. Block17|    DISPLAY \"THE NAME IS \" USER-NAME\l}"
+Block34 [
+label = "{B-LOOP. Block34|    DISPLAY \"THE NAME IS \" USER-NAME\l}"
 ]
-Block18 [
-label = "{B-LOOP. Block18|    DISPLAY \" \"\l}"
+Block35 [
+label = "{B-LOOP. Block35|    DISPLAY \" \"\l}"
 ]
-Block19 [
-label = "{B-LOOP. Block19|    DISPLAY \"ENTER TO CONTINUE\"\l}"
+Block36 [
+label = "{B-LOOP. Block36|    DISPLAY \"ENTER TO CONTINUE\"\l}"
 ]
-Block20 [
-label = "{B-LOOP. Block20|    ACCEPT ANSWER\l}"
+Block37 [
+label = "{B-LOOP. Block37|    ACCEPT ANSWER\l}"
 ]
-Block21 [
-label = "{B-LOOP. Block21|    READ USER-FILE\l}"
+Block38 [
+label = "{B-LOOP. Block38|    READ USER-FILE\l}"
 ]
-Block22 [
-label = "{Block22|        AT END\l           MOVE \"Y\" TO EOF-SEEN\l}"
+Block39 [
+label = "{Block39|        AT END\l           MOVE \"Y\" TO EOF-SEEN\l}"
 ]
-Block23 [
-label = "{Block23|}"
+Block40 [
+label = "{Block40|}"
 ]
-Block16 -> Block17
-Block17 -> Block18
-Block18 -> Block19
-Block19 -> Block20
-Block20 -> Block21
-Block21 -> Block22
-Block21 -> Block23
-Block22 -> Block23
+Block33 -> Block34
+Block34 -> Block35
+Block35 -> Block36
+Block36 -> Block37
+Block37 -> Block38
+Block38 -> Block39
+Block38 -> Block40
+Block39 -> Block40
 
 }
-Block14 -> Block16 [style=dashed]
+Block30 -> Block33 [style=dashed]
 
-Block15 [
-label = "{Block15|}"
+Block31 [
+label = "{Block31|}"
 ]
-Block10 -> Block11
-Block10 -> Block12
-Block11 -> Block12
-Block12 -> Block13
-Block13 -> Block14
-Block14 -> Block15
+Block26 -> Block27
+Block26 -> Block28
+Block27 -> Block28
+Block28 -> Block29
+Block29 -> Block30
+Block30 -> Block31
 
 }
-Block4 -> Block10 [style=dashed]
+Block4 -> Block26 [style=dashed]
 
 Block5 [
 label = "{Block5|}"
@@ -111,12 +111,12 @@ label = "{Block6|    PERFORM C-CLEANUP\l}"
 subgraph cluster_3{
 color = blue;
 label = "C-CLEANUP";
-Block24 [
-label = "{C-CLEANUP. Block24|    CLOSE USER-FILE\l}"
+Block32 [
+label = "{C-CLEANUP. Block32|    CLOSE USER-FILE\l}"
 ]
 
 }
-Block6 -> Block24 [style=dashed]
+Block6 -> Block32 [style=dashed]
 
 Block7 [
 label = "{Block7|    GOBACK\l}"

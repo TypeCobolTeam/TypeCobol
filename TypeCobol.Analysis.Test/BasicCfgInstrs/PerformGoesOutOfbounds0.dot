@@ -16,16 +16,16 @@ label = "{Block1|    perform a\l}"
 subgraph cluster_1{
 color = blue;
 label = "a";
-Block4 [
-label = "{A. Block4|    display 'a'\l    go to b\l}"
+Block7 [
+label = "{A. Block7|    display 'a'\l    go to b\l}"
 ]
 Block6 [
 label = "{B. Block6|    display 'b'\l}"
 ]
-Block4 -> Block6
+Block7 -> Block6
 
 }
-Block1 -> Block4 [style=dashed]
+Block1 -> Block7 [style=dashed]
 
 Block2 [
 label = "{Block2|    goback\l}"

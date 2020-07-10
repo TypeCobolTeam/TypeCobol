@@ -939,7 +939,6 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="p">The procedure node</param>
         /// <param name="sectionNode">The section in which the PERFORM node appears</param>
         /// <param name="group">The Basic Block Group associated to the procedure</param>
-        /// <returns>True if the PERFORM has been resolved, false otherwise</returns>
         private void ResolvePendingPERFORMProcedure(PerformProcedure p, SectionNode sectionNode, BasicBlockForNodeGroup group)
         {
             SymbolReference procedureReference = p.CodeElement.Procedure;
@@ -949,7 +948,7 @@ namespace TypeCobol.Analysis.Cfg
             if (procedure == null)
                 return;
 
-            HashSet<int> storedBlocks = new HashSet<int>();
+            var clonedBlocksIndexMap = new Dictionary<int, int>();
             if (throughProcedureReference != null)
             {
                 Procedure throughProcedure = ResolveProcedure(p, sectionNode, throughProcedureReference);
@@ -988,7 +987,7 @@ namespace TypeCobol.Analysis.Cfg
             }
 
             //And finally clone the Graph.
-            RelocateBasicBlockForNodeGroupGraph(p, @group, storedBlocks);
+            RelocateBasicBlockForNodeGroupGraph(p, group, clonedBlocksIndexMap);
 
             void StoreSentences(IEnumerable<Sentence> sentences)
             {
@@ -996,8 +995,17 @@ namespace TypeCobol.Analysis.Cfg
                 {
                     foreach (var block in sentence.Blocks)
                     {
-                        group.AddBlock(block);
-                        storedBlocks.Add(block.Index);
+                        System.Diagnostics.Debug.Assert(!clonedBlocksIndexMap.ContainsKey(block.Index));
+
+                        //Each block is cloned before being entered in the group
+                        //because each group is tied to a specific PERFORM.
+                        var clonedBlock = (BasicBlockForNode) block.Clone();
+                        group.AddBlock(clonedBlock);
+                        clonedBlock.Index = this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Count;
+                        this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Add(clonedBlock);
+
+                        //Keep track of relationship between original block and cloned block
+                        clonedBlocksIndexMap.Add(block.Index, clonedBlock.Index);
                     }
                 }
             }
@@ -1008,47 +1016,48 @@ namespace TypeCobol.Analysis.Cfg
         /// </summary>
         /// <param name="p">The Perform Procedure node source of the call</param>
         /// <param name="group">The Group to be relocated</param>
-        /// <param name="storedBlockIndices">The set of all block indices contained in the group.</param>
-        /// <returns>true if the relocation is successful, false if the relocation goes beyond the group limit, 
-        /// this often means that de target paragraphs of the PERFORM goes out of the paragraph.</returns>
-        private void RelocateBasicBlockForNodeGroupGraph(PerformProcedure p, BasicBlockForNodeGroup group, HashSet<int> storedBlockIndices)
+        /// <param name="clonedBlocksIndexMap">Map of blocks in the group.
+        /// key is the index of the original block, value is the index of the corresponding cloned block.</param>
+        private void RelocateBasicBlockForNodeGroupGraph(PerformProcedure p, BasicBlockForNodeGroup group, Dictionary<int, int> clonedBlocksIndexMap)
         {
-            //New successor edge map.
-            Dictionary<int, int> newEdgeIndexMap = new Dictionary<int, int>();
-            foreach (var block in group.Group)
+            //New successor edges map.
+            Dictionary<int, int> clonedEdgesIndexMap = new Dictionary<int, int>();
+            foreach (var clonedBlock in group.Group)
             {
                 bool blockGoesBeyondGroupLimit = false;
-                List<int> successors = block.SuccessorEdges;
-                block.SuccessorEdges = new List<int>();
+                List<int> successors = clonedBlock.SuccessorEdges;//List of original successors
+                clonedBlock.SuccessorEdges = new List<int>();
                 foreach (var edge in successors)
                 {
-                    if (!newEdgeIndexMap.TryGetValue(edge, out int newEdge))
+                    if (!clonedEdgesIndexMap.TryGetValue(edge, out int clonedEdge))
                     {
                         var successor = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges[edge];
-                        if (!storedBlockIndices.Contains(successor.Index))
+                        if (!clonedBlocksIndexMap.TryGetValue(successor.Index, out var clonedSuccessorIndex))
                         {
-                            if (block != group.Group.Last.Value)
+                            if (clonedBlock != group.Group.Last.Value)
                             {
                                 //This block has at least one successor located outside of the group
                                 //and it is not the last block in the group, so we must report a Diagnostic
                                 blockGoesBeyondGroupLimit = true;
 
                                 //In order to not break the graph and to see the target branch that went out, add it as well....
-                                block.SuccessorEdges.Add(edge);
+                                clonedBlock.SuccessorEdges.Add(edge);
                             }
 
                             continue;
                         }
-                        newEdge = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
-                        this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(successor);
-                        newEdgeIndexMap[edge] = newEdge;
+
+                        var clonedSuccessor = this.CurrentProgramCfgBuilder.Cfg.AllBlocks[clonedSuccessorIndex];
+                        clonedEdge = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
+                        this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(clonedSuccessor);
+                        clonedEdgesIndexMap[edge] = clonedEdge;
                     }
-                    block.SuccessorEdges.Add(newEdge);
+                    clonedBlock.SuccessorEdges.Add(clonedEdge);
                 }
 
                 if (blockGoesBeyondGroupLimit)
                 {
-                    Node offendingInstruction = block.Instructions.Last.Value;
+                    Node offendingInstruction = clonedBlock.Instructions.Last.Value;
                     System.Diagnostics.Debug.Assert(offendingInstruction != null);
                     System.Diagnostics.Debug.Assert(offendingInstruction.CodeElement != null);
                     string offendingStatement = offendingInstruction.CodeElement.SourceText;

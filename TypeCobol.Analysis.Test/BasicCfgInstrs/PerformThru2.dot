@@ -16,16 +16,16 @@ label = "{Block1|    PERFORM A THRU B\l}"
 subgraph cluster_1{
 color = blue;
 label = "A";
-Block12 [
-label = "{A. Block12|    display \"A\"\l}"
+Block16 [
+label = "{A. Block16|    display \"A\"\l}"
 ]
-Block13 [
-label = "{B. Block13|    display \"B\"\l}"
+Block17 [
+label = "{B. Block17|    display \"B\"\l}"
 ]
-Block12 -> Block13
+Block16 -> Block17
 
 }
-Block1 -> Block12 [style=dashed]
+Block1 -> Block16 [style=dashed]
 
 Block2 [
 label = "{Block2|}"
@@ -47,16 +47,16 @@ label = "{Block5|    PERFORM S1 THRU S2\l}"
 subgraph cluster_3{
 color = blue;
 label = "S1";
-Block14 [
-label = "{S1. Block14|    display \"S1\"\l}"
+Block18 [
+label = "{S1. Block18|    display \"S1\"\l}"
 ]
-Block15 [
-label = "{S2. Block15|    display \"S2\"\l}"
+Block19 [
+label = "{S2. Block19|    display \"S2\"\l}"
 ]
-Block14 -> Block15
+Block18 -> Block19
 
 }
-Block5 -> Block14 [style=dashed]
+Block5 -> Block18 [style=dashed]
 
 Block6 [
 label = "{Block6|}"

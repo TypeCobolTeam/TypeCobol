@@ -31,20 +31,20 @@ label = "{Block6|    PERFORM C-PARA THRU E-PARA\l}"
 subgraph cluster_1{
 color = blue;
 label = "C-PARA";
-Block14 [
-label = "{C-PARA. Block14|    DISPLAY 'IN C-PARA'\l}"
+Block17 [
+label = "{C-PARA. Block17|    DISPLAY 'IN C-PARA'\l}"
 ]
-Block15 [
-label = "{D-PARA. Block15|    DISPLAY 'IN D-PARA'\l}"
+Block18 [
+label = "{D-PARA. Block18|    DISPLAY 'IN D-PARA'\l}"
 ]
-Block16 [
-label = "{E-PARA. Block16|    DISPLAY 'IN E-PARA'\l}"
+Block19 [
+label = "{E-PARA. Block19|    DISPLAY 'IN E-PARA'\l}"
 ]
-Block14 -> Block15
-Block15 -> Block16
+Block17 -> Block18
+Block18 -> Block19
 
 }
-Block6 -> Block14 [style=dashed]
+Block6 -> Block17 [style=dashed]
 
 Block7 [
 label = "{Block7|}"
