@@ -1063,7 +1063,7 @@ namespace TypeCobol.Analysis.Cfg
                     string offendingStatement = offendingInstruction.CodeElement.SourceText;
                     int offendingLine = offendingInstruction.CodeElement.Line;
                     int offendingColumn = offendingInstruction.CodeElement.Column;
-                    Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                    Diagnostic d = new Diagnostic(MessageCode.Warning,
                         p.CodeElement.Column,
                         p.CodeElement.Column,
                         p.CodeElement.Line,

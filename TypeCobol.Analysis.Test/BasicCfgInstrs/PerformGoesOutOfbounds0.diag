@@ -1,2 +1,2 @@
 --- Diagnostics ---
-Line 4[12,12] <30, Error, Semantics> - Semantic error: Statement '    go to b' located at line 10, column 12 prevents this PERFORM statement to reach its exit.
+Line 4[12,12] <37, Warning, General> - Warning: Statement '    go to b' located at line 10, column 12 prevents this PERFORM statement to reach its exit.
