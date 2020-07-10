@@ -1,0 +1,184 @@
+﻿digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{Block1|    PERFORM B  THRU B\l}"
+]
+subgraph cluster_1{
+color = blue;
+label = "B";
+Block23 [
+label = "{B. Block23|    display 'B'\l}"
+]
+
+}
+Block1 -> Block23 [style=dashed]
+
+Block2 [
+label = "{Block2|}"
+]
+Block3 [
+label = "{Block3|    PERFORM S2 THRU S2\l}"
+]
+subgraph cluster_2{
+color = blue;
+label = "C";
+Block24 [
+label = "{C. Block24|    display 'C'\l}"
+]
+Block25 [
+label = "{D. Block25|    display 'D'\l}"
+]
+Block24 -> Block25
+
+}
+Block3 -> Block24 [style=dashed]
+
+Block4 [
+label = "{Block4|}"
+]
+Block5 [
+label = "{Block5|    PERFORM S1 THRU C\l}"
+]
+subgraph cluster_3{
+color = blue;
+label = "A";
+Block26 [
+label = "{A. Block26|    display 'A'\l}"
+]
+Block27 [
+label = "{B. Block27|    display 'B'\l}"
+]
+Block28 [
+label = "{C. Block28|    display 'C'\l}"
+]
+Block26 -> Block27
+Block27 -> Block28
+
+}
+Block5 -> Block26 [style=dashed]
+
+Block6 [
+label = "{Block6|}"
+]
+Block7 [
+label = "{Block7|    PERFORM B  THRU S2\l}"
+]
+subgraph cluster_4{
+color = blue;
+label = "B";
+Block29 [
+label = "{B. Block29|    display 'B'\l}"
+]
+Block30 [
+label = "{C. Block30|    display 'C'\l}"
+]
+Block31 [
+label = "{D. Block31|    display 'D'\l}"
+]
+Block29 -> Block30
+Block30 -> Block31
+
+}
+Block7 -> Block29 [style=dashed]
+
+Block8 [
+label = "{Block8|}"
+]
+Block9 [
+label = "{Block9|    PERFORM S0 THRU S1\l}"
+]
+subgraph cluster_5{
+color = blue;
+label = "S0";
+Block32 [
+label = "{S0. Block32|    display 'no paragraphs in this section'\l}"
+]
+Block33 [
+label = "{A. Block33|    display 'A'\l}"
+]
+Block34 [
+label = "{B. Block34|    display 'B'\l}"
+]
+Block32 -> Block33
+Block33 -> Block34
+
+}
+Block9 -> Block32 [style=dashed]
+
+Block10 [
+label = "{Block10|}"
+]
+Block11 [
+label = "{Block11|    PERFORM D  THRU E\l}"
+]
+subgraph cluster_6{
+color = blue;
+label = "D";
+Block35 [
+label = "{D. Block35|    display 'D'\l}"
+]
+Block36 [
+label = "{S3. Block36|    display 'in section S3'\l}"
+]
+Block37 [
+label = "{E. Block37|    display 'E'\l}"
+]
+Block35 -> Block36
+Block36 -> Block37
+
+}
+Block11 -> Block35 [style=dashed]
+
+Block12 [
+label = "{Block12|}"
+]
+Block13 [
+label = "{Block13|    PERFORM D  THRU S3\l}"
+]
+subgraph cluster_7{
+color = blue;
+label = "D";
+Block38 [
+label = "{D. Block38|    display 'D'\l}"
+]
+Block39 [
+label = "{S3. Block39|    display 'in section S3'\l}"
+]
+Block40 [
+label = "{E. Block40|    display 'E'\l}"
+]
+Block38 -> Block39
+Block39 -> Block40
+
+}
+Block13 -> Block38 [style=dashed]
+
+Block14 [
+label = "{Block14|    GOBACK\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block2 -> Block3
+Block3 -> Block4
+Block4 -> Block5
+Block5 -> Block6
+Block6 -> Block7
+Block7 -> Block8
+Block8 -> Block9
+Block9 -> Block10
+Block10 -> Block11
+Block11 -> Block12
+Block12 -> Block13
+Block13 -> Block14
+
+}

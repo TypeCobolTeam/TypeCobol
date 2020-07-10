@@ -426,6 +426,12 @@ namespace TypeCobol.Analysis.Test
         public void PerformThru2() => TestTemplate();
 
         [TestMethod]
+        public void PerformThru3() => TestTemplate();
+
+        [TestMethod]
+        public void PerformThru4() => TestTemplate();
+
+        [TestMethod]
         public void MixPerformEvaluateIf0() => TestTemplate();
 
         [TestMethod]
