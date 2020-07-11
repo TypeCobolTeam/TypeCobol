@@ -25,8 +25,11 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
               when Fct-b179d81b-StartCheckpoint
                  call 'b179d81b' using arg1
               when other
-                 TODO
+                 Perform Handle-Error
            end-evaluate
+           .
+       Handle-Error.
+           continue
            .
                                 
       *-----------------------------------------------------------------

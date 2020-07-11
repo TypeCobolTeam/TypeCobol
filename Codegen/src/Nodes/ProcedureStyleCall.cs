@@ -86,8 +86,12 @@ namespace TypeCobol.Codegen.Nodes {
 			    string func_lib_name = Hash.CalculateCobolProgramNameShortcut(fun_decl.Library);
                 if ((fun_decl.CodeElement).Visibility == AccessModifier.Public && fun_decl.GetProgramNode() != this.GetProgramNode())
                 {
+#if EUROINFO_RULES
                     callString = string.Format("CALL 'zcallpgm' using TC-{0}", func_lib_name);
-                    var callTextLine = new TextLineSnapshot(-1, callString, null);
+#else
+                    callString = string.Format("CALL TC-{0}{1}", func_lib_name, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
+#endif
+                        var callTextLine = new TextLineSnapshot(-1, callString, null);
                     _cache.Add(callTextLine);
                     
                     callString = string.Format("{0}-Fct-{1}-{2}", func_lib_name, hash, fun_decl.ID);
@@ -100,7 +104,6 @@ namespace TypeCobol.Codegen.Nodes {
                     callString = string.Format("CALL '{0}'{1}", hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
                     var callTextLine = new TextLineSnapshot(-1, callString, null);
                     _cache.Add(callTextLine);
-
                 }
                 //Hanle Input parameters
                 //Rule: TCCODEGEN-FUNCALL-PARAMS

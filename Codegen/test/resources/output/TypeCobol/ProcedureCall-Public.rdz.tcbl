@@ -221,8 +221,11 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
                                         arg3
                                         arg4
               when other
-                 TODO
+                 Perform Handle-Error
            end-evaluate
+           .
+       Handle-Error.
+           continue
            .
                           
        
@@ -280,8 +283,11 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
                  call 'd2b57642' using arg1
                                         arg2
               when other
-                 TODO
+                 Perform Handle-Error
            end-evaluate
+           .
+       Handle-Error.
+           continue
            .
                           
        

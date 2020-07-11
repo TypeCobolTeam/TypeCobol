@@ -1,0 +1,2 @@
+ReturnCode=Success_
+No error in "input\CallPublicProcFromPrivateProc.rdz.tcbl".

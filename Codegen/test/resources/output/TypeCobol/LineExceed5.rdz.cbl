@@ -25,8 +25,11 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
               when Fct-f1c0385c-StartCheckpoint
                  call 'f1c0385c' using arg1
               when other
-                 TODO
+                 Perform Handle-Error
            end-evaluate
+           .
+       Handle-Error.
+           continue
            .
                                 
       *-----------------------------------------------------------------
@@ -60,8 +63,11 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
               when Fct-f73481e6-CheckContract
                  call 'f73481e6' using arg1
               when other
-                 TODO
+                 Perform Handle-Error
            end-evaluate
+           .
+       Handle-Error.
+           continue
            .
                                 
       *-----------------------------------------------------------------

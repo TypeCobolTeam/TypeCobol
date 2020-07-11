@@ -1,0 +1,107 @@
+Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
+      *Declaratives and no paragraph under procedure division
+      *Debug is NOT active
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM1.
+
+       DATA DIVISION.
+       Working-STORAGE SECTION.
+       01 TypeCobol-Generated.
+           05 TC-Callee pic X(08) value 'CALLEE'.
+           05 Callee-Fct-ca0ab46c-check pic X(30)
+                value 'Fct=ca0ab46c-check'.
+                               
+
+      *01  somedate     TYPE Date.
+       01 somedate.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+                                  
+
+       PROCEDURE DIVISION.
+      DDECLARATIVES.
+      DDECLARATION SECTION.
+      D    USE FOR DEBUGGING ON ALL PROCEDURES.
+      DEND DECLARATIVES.
+
+      *declare procedure check private
+      *   input mydate        TYPE Date
+      *  .
+
+
+      *    call Callee::check input somedate
+           CALL TC-Callee USING
+                    Callee-Fct-ca0ab46c-check
+                                 somedate
+           end-call
+                                            
+           .
+
+
+      *Callee contains public procedure
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Callee.
+       DATA DIVISION.
+                                                           
+       WORKING-STORAGE SECTION.
+
+       
+       LINKAGE SECTION.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program ca0ab46c
+      * Which is generated code for Callee.check
+           88 Fct-ca0ab46c-check
+              value 'Fct=ca0ab46c-check'.
+
+       01 arg1 pic X.
+       PROCEDURE DIVISION USING TC-FunctionCode
+                          arg1.
+           PERFORM INIT-LIBRARY
+           PERFORM FctList-Process-Mode
+           GOBACK.
+
+       FctList-Process-Mode.
+           evaluate true
+              when Fct-ca0ab46c-check
+                 call 'ca0ab46c' using arg1
+              when other
+                 Perform Handle-Error
+           end-evaluate
+           .
+       Handle-Error.
+           continue
+           .
+                          
+       
+      *declare procedure check public
+      *   input mydate        TYPE Date
+      *  .
+       INIT-LIBRARY.
+          exit
+          .
+       END PROGRAM Callee.
+
+
+       END PROGRAM PGM1.
+
+      *
+      *declare procedure check public
+      *   input mydate        TYPE Date
+      *  .
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ca0ab46c.
+       END PROGRAM ca0ab46c.
+
+
+      *
+      *declare procedure check private
+      *   input mydate        TYPE Date
+      *  .
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. a0508f35.
+       END PROGRAM a0508f35.
+
+

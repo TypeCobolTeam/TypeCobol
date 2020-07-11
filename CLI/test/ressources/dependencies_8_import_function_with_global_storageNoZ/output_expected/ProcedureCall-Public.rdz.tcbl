@@ -1,0 +1,248 @@
+Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
+      *TypeCobol_Version:0.1(alpha)
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM1.
+       DATA DIVISION.
+      *GLOBAL-STORAGE SECTION.
+      *01 G-Date TYPE DATE.
+      *01 G-Bool TYPE BOOL.
+
+       WORKING-STORAGE SECTION.
+       01 TypeCobol-Generated.
+           05 TC-Callee pic X(08) value 'CALLEE'.
+           05 Callee-Fct-a78211ce-DoNothing pic X(30)
+                value 'Fct=a78211ce-DoNothing'.
+                               
+      *01 P-Date TYPE DATE.
+       01 P-Date.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+                           
+       LINKAGE SECTION.
+
+       01 TC-GlobalData.
+
+      *01 G-Date TYPE DATE.
+       02 G-Date.
+           03 YYYY PIC 9(4).
+           03 MM PIC 9(2).
+           03 DD PIC 9(2).
+
+      *01 G-Bool TYPE BOOL.
+       02  G-Bool-value PIC X VALUE LOW-VALUE.
+           88  G-Bool       VALUE 'T'.
+           88  G-Bool-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+
+
+
+       PROCEDURE DIVISION.
+
+                          
+           MOVE P-Date TO G-Date.
+      *    CALL Callee::DoNothing.
+           CALL TC-Callee
+                    Callee-Fct-a78211ce-DoNothing
+           end-call
+                                 .
+           CONTINUE.
+
+      *DECLARE PROCEDURE MyProcedureUsingNothing.
+
+      *DECLARE PROCEDURE MyProcedureUsingGlobalStorage.
+
+      *DECLARE PROCEDURE MyProcedureImportProc.
+
+      *DECLARE PROCEDURE MyProcedureUsingGlobalStorageAndImportProc.
+       END PROGRAM PGM1.
+
+      *
+      *DECLARE PROCEDURE MyProcedureUsingNothing.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. dc113db8.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *PGM1.MyProcedureUsingNothing  - No Params
+                               
+      *01 P-Bool TYPE BOOL.
+       01  P-Bool-value PIC X VALUE LOW-VALUE.
+           88  P-Bool       VALUE 'T'.
+           88  P-Bool-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                           
+       PROCEDURE DIVISION
+           .
+      *PGM1.MyProcedureUsingNothing  - No Params
+           CONTINUE.
+       END PROGRAM dc113db8.
+
+
+      *
+      *DECLARE PROCEDURE MyProcedureUsingGlobalStorage.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. bf501b85.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *PGM1.MyProcedureUsingGlobalStorage  - No Params
+                               
+      *01 P-Bool TYPE BOOL.
+       01  P-Bool-value PIC X VALUE LOW-VALUE.
+           88  P-Bool       VALUE 'T'.
+           88  P-Bool-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                           
+       LINKAGE SECTION.
+      *PGM1.MyProcedureUsingGlobalStorage  - No Params
+       01 TC-GlobalData.
+
+      *01 G-Date TYPE DATE.
+       02 G-Date.
+           03 YYYY PIC 9(4).
+           03 MM PIC 9(2).
+           03 DD PIC 9(2).
+
+      *01 G-Bool TYPE BOOL.
+       02  G-Bool-value PIC X VALUE LOW-VALUE.
+           88  G-Bool       VALUE 'T'.
+           88  G-Bool-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+
+
+       PROCEDURE DIVISION
+           .
+      *PGM1.MyProcedureUsingGlobalStorage  - No Params
+      * Get the data from the global storage section
+           CALL 'fecb93f5' USING
+               by reference address of TC-GlobalData
+           end-call
+      *    MOVE G-Bool TO P-Bool.
+           MOVE G-Bool-value TO P-Bool-value.
+           CONTINUE.
+       END PROGRAM bf501b85.
+
+
+      *
+      *DECLARE PROCEDURE MyProcedureImportProc.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. bd627c4b.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *PGM1.MyProcedureImportProc  - No Params
+                               
+      *01 P-Bool TYPE BOOL.
+       01  P-Bool-value PIC X VALUE LOW-VALUE.
+           88  P-Bool       VALUE 'T'.
+           88  P-Bool-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                           
+       01 TypeCobol-Generated.
+           05 TC-Callee pic X(08) value 'CALLEE'.
+           05 Callee-Fct-a78211ce-DoNothing PIC X(30)
+               value 'Fct=a78211ce-DoNothing'.
+
+       LINKAGE SECTION.
+      *PGM1.MyProcedureImportProc  - No Params
+       PROCEDURE DIVISION
+           .
+      *PGM1.MyProcedureImportProc  - No Params
+      *    CALL Callee::DoNothing.
+           CALL TC-Callee
+                    Callee-Fct-a78211ce-DoNothing
+           end-call
+                                 .
+           CONTINUE.
+       END PROGRAM bd627c4b.
+
+
+      *
+      *DECLARE PROCEDURE MyProcedureUsingGlobalStorageAndImportProc.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. bd34ecc2.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *PGM1.MyProcedureUsingGlobalStorageAndImportProc  - No Params
+                               
+      *01 P-Bool TYPE BOOL.
+       01  P-Bool-value PIC X VALUE LOW-VALUE.
+           88  P-Bool       VALUE 'T'.
+           88  P-Bool-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                           
+       01 TypeCobol-Generated.
+           05 TC-Callee pic X(08) value 'CALLEE'.
+           05 Callee-Fct-a78211ce-DoNothing PIC X(30)
+               value 'Fct=a78211ce-DoNothing'.
+
+       LINKAGE SECTION.
+      *PGM1.MyProcedureUsingGlobalStorageAndImportProc  - No Params
+       01 TC-GlobalData.
+
+      *01 G-Date TYPE DATE.
+       02 G-Date.
+           03 YYYY PIC 9(4).
+           03 MM PIC 9(2).
+           03 DD PIC 9(2).
+
+      *01 G-Bool TYPE BOOL.
+       02  G-Bool-value PIC X VALUE LOW-VALUE.
+           88  G-Bool       VALUE 'T'.
+           88  G-Bool-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+
+
+       PROCEDURE DIVISION
+           .
+      *PGM1.MyProcedureUsingGlobalStorageAndImportProc  - No Params
+      *    MOVE G-Bool TO P-Bool.
+           MOVE G-Bool-value TO P-Bool-value.
+      *    CALL Callee::DoNothing.
+           CALL TC-Callee
+                    Callee-Fct-a78211ce-DoNothing
+           end-call
+                                 .
+           CONTINUE.
+       END PROGRAM bd34ecc2.
+
+
+      *
+      * Global Storage Section variables
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. fecb93f5.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 PIC X(8) value ':TC:GBLS'.
+       01 TC-GlobalData.
+                              
+      *01 G-Date TYPE DATE.
+       02 G-Date.
+           03 YYYY PIC 9(4).
+           03 MM PIC 9(2).
+           03 DD PIC 9(2).
+                           
+      *01 G-Bool TYPE BOOL.
+       02  G-Bool-value PIC X VALUE LOW-VALUE.
+           88  G-Bool       VALUE 'T'.
+           88  G-Bool-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                           
+
+       LINKAGE SECTION.
+       01 GlobalPointer pointer.
+       PROCEDURE DIVISION USING BY REFERENCE GlobalPointer.
+           set GlobalPointer to address of TC-GlobalData
+           .
+       END PROGRAM fecb93f5.

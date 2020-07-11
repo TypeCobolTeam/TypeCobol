@@ -1,0 +1,136 @@
+      * 2 errors
+      * Line 5[38,46] <37, Warning, General> - Warning: Debugging mode is active
+      * Line 24[38,46] <37, Warning, General> - Warning: Debugging mode is active
+Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM1.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370 WITH DEBUGGING MODE.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       LINKAGE SECTION.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program e3685b69
+      * Which is generated code for PGM1.StartCheckpoint
+           88 Fct-e3685b69-StartCheckpoint
+              value 'Fct=e3685b69-StartCheckpoint'.
+
+       PROCEDURE DIVISION USING TC-FunctionCode
+                               
+      DDECLARATIVES.
+      DDECLARATION SECTION.
+      D    USE FOR DEBUGGING ON ALL PROCEDURES.
+      DEND DECLARATIVES. 
+      *-----------------------------------------------------------------
+      *declare procedure StartCheckpoint public.
+       .
+           PERFORM INIT-LIBRARY
+           PERFORM FctList-Process-Mode
+           GOBACK.
+
+       FctList-Process-Mode.
+           evaluate true
+              when Fct-e3685b69-StartCheckpoint
+                 call 'e3685b69'
+              when other
+                 Perform Handle-Error
+           end-evaluate
+           .
+       Handle-Error.
+           continue
+           .
+       INIT-LIBRARY.
+           exit.
+       FOO.
+           exit.
+       END PROGRAM PGM1.
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MyPGM.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370 WITH DEBUGGING MODE.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       LINKAGE SECTION.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program bfc74757
+      * Which is generated code for MyPGM.testos
+           88 Fct-bfc74757-testos
+              value 'Fct=bfc74757-testos'.
+
+       PROCEDURE DIVISION USING TC-FunctionCode
+                                
+      DDECLARATIVES.
+      DDECLARATION SECTION.
+      D    USE FOR DEBUGGING ON ALL PROCEDURES.
+      DEND DECLARATIVES.
+      *declare procedure testos public.
+       .
+           PERFORM INIT-LIBRARY
+           PERFORM FctList-Process-Mode
+           GOBACK.
+
+       FctList-Process-Mode.
+           evaluate true
+              when Fct-bfc74757-testos
+                 call 'bfc74757'
+              when other
+                 Perform Handle-Error
+           end-evaluate
+           .
+       Handle-Error.
+           continue
+           .
+       INIT-LIBRARY.
+      *    call testos.
+           CALL 'bfc74757'
+           end-call
+                      .
+       FOO.
+           exit.
+       END PROGRAM MyPGM.
+      *
+      *declare procedure StartCheckpoint public.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. e3685b69.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370 WITH DEBUGGING MODE.
+       END PROGRAM e3685b69.
+
+
+      *
+      *declare procedure testos public.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. bfc74757.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370 WITH DEBUGGING MODE.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *PGM1.testos  - No Params
+       01 TypeCobol-Generated.
+           05 TC-PGM1 pic X(08) value 'PGM1'.
+           05 PGM1-Fct-e3685b69-StartCheckpo PIC X(30)
+               value 'Fct=e3685b69-StartCheckpoint'.
+
+       LINKAGE SECTION.
+      *PGM1.testos  - No Params
+       PROCEDURE DIVISION
+           .
+      *PGM1.testos  - No Params
+      *    call PGM1::StartCheckpoint
+           CALL TC-PGM1
+                    PGM1-Fct-e3685b69-StartCheckpo
+           end-call
+                                     
+           .
+       END PROGRAM bfc74757.
+
+

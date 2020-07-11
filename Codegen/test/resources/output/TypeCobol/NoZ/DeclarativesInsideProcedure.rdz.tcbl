@@ -1,0 +1,127 @@
+      * 1 errors
+      * Line 6[30,38] <37, Warning, General> - Warning: Debugging mode is active
+Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
+      *TypeCobol_Version:TestTypeCobolVersion
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Caller.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+                        WITH DEBUGGING MODE
+                        .
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       PROCEDURE DIVISION.
+
+      *declare procedure MyProcedure private
+      *            input myInput Pic X.
+       END PROGRAM Caller.
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Callee.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       LINKAGE SECTION.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program bafc76cb
+      * Which is generated code for Callee.MyProcedure2
+           88 Fct-bafc76cb-MyProcedure2
+              value 'Fct=bafc76cb-MyProcedure2'.
+
+       01 arg1 pic X.
+       PROCEDURE DIVISION USING TC-FunctionCode
+                          arg1.
+           PERFORM INIT-LIBRARY
+           PERFORM FctList-Process-Mode
+           GOBACK.
+
+       FctList-Process-Mode.
+           evaluate true
+              when Fct-bafc76cb-MyProcedure2
+                 call 'bafc76cb' using arg1
+              when other
+                 Perform Handle-Error
+           end-evaluate
+           .
+       Handle-Error.
+           continue
+           .
+                          
+       INIT-LIBRARY.
+          CONTINUE
+          .
+      *declare procedure MyProcedure2 public
+      *            input myInput pic X.
+       END PROGRAM Callee.
+      *
+      *declare procedure MyProcedure private
+      *            input myInput Pic X.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. b561a4ac.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+                        WITH DEBUGGING MODE
+                        .
+       data division.
+       Working-storage section.
+      *Caller.MyProcedure - Params :
+      *     input(myInput: pic X)
+                               
+       01 TypeCobol-Generated.
+           05 TC-Callee pic X(08) value 'CALLEE'.
+           05 Callee-Fct-bafc76cb-MyProcedur PIC X(30)
+               value 'Fct=bafc76cb-MyProcedure2'.
+
+       LINKAGE SECTION.
+      *Caller.MyProcedure - Params :
+      *     input(myInput: pic X)
+       01 myInput Pic X.
+       PROCEDURE DIVISION
+             USING BY REFERENCE myInput
+           .
+      *Caller.MyProcedure - Params :
+      *     input(myInput: pic X)
+      DDECLARATIVES.
+      DREADY-TRACE SECTION.
+      D    USE FOR DEBUGGING ON ALL PROCEDURES.
+      D    DISPLAY 'Caller'
+      D    DEBUG-ITEM '.'.
+      DEND DECLARATIVES.
+      *      Call Callee::MyProcedure2 Input myInput
+             CALL TC-Callee USING
+                    Callee-Fct-bafc76cb-MyProcedur
+                                 myInput
+           end-call
+                                                    
+             .
+       END PROGRAM b561a4ac.
+
+
+      *
+      *declare procedure MyProcedure2 public
+      *            input myInput pic X.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. bafc76cb.
+       data division.
+       Working-storage section.
+      *Caller.MyProcedure2 - Params :
+      *     input(myInput: pic X)
+                               
+       LINKAGE SECTION.
+      *Caller.MyProcedure2 - Params :
+      *     input(myInput: pic X)
+       01 myInput pic X.
+       PROCEDURE DIVISION
+             USING BY REFERENCE myInput
+           .
+      *Caller.MyProcedure2 - Params :
+      *     input(myInput: pic X)
+             Continue
+             .
+       END PROGRAM bafc76cb.
+
+

@@ -52,7 +52,11 @@ namespace CLI.Test
         [TestMethod]
         public void TestGenerate_NestedProcedure()
         {
+#if EUROINFO_RULES
             CLITestHelper.Test("generate_nestedProc", ReturnCode.Success);
+#else
+            CLITestHelper.Test("generate_nestedProcNoZ", ReturnCode.Success);
+#endif
         }
 
         /// <summary>
@@ -69,16 +73,22 @@ namespace CLI.Test
         /// </summary>
         [TestMethod]
         public void TestDependencies() {
+            CLITestHelper.ReadConsole("dependencies_4", ReturnCode.DependenciesError);            //No dependencies found
+            CLITestHelper.Test("dependencies_6", ReturnCode.Success);
+            CLITestHelper.Test("dependency_with_copy_loading", ReturnCode.Success);
+#if EUROINFO_RULES
             CLITestHelper.Test("dependencies_1", ReturnCode.Success);
             CLITestHelper.Test("dependencies_2", ReturnCode.Success);
             CLITestHelper.Test("dependencies_3", ReturnCode.ParsingDiagnostics);
-            CLITestHelper.ReadConsole("dependencies_4", ReturnCode.DependenciesError);            //No dependencies found
             CLITestHelper.Test("dependencies_5", ReturnCode.Success);
-            CLITestHelper.Test("dependencies_6", ReturnCode.Success);
-            CLITestHelper.Test("dependency_with_copy_loading", ReturnCode.Success);
             CLITestHelper.Test("dependencies_8_import_function_with_global_storage", ReturnCode.Success);
-#if EUROINFO_RULES
             CLITestHelper.Test("ei_dependencies_1", ReturnCode.ParsingDiagnostics);
+#else
+            CLITestHelper.Test("dependencies_1NoZ", ReturnCode.Success);
+            CLITestHelper.Test("dependencies_2NoZ", ReturnCode.Success);
+            CLITestHelper.Test("dependencies_3NoZ", ReturnCode.ParsingDiagnostics);
+            CLITestHelper.Test("dependencies_5NoZ", ReturnCode.Success);
+            CLITestHelper.Test("dependencies_8_import_function_with_global_storageNoZ", ReturnCode.Success);
 #endif
         }
 
@@ -97,7 +107,11 @@ namespace CLI.Test
         [TestMethod]
         public void TestDpendenciesNotLoadedInCorrectOrder() {
             CLITestHelper.Test("dependenciesNotLoadedInCorrectOrder", ReturnCode.ParsingDiagnostics);
+#if EUROINFO_RULES
             CLITestHelper.Test("dependenciesNotLoadedInCorrectOrder_2", ReturnCode.Success);
+#else
+            CLITestHelper.Test("dependenciesNotLoadedInCorrectOrder_2NoZ", ReturnCode.Success);
+#endif
         }
 
         [TestMethod]

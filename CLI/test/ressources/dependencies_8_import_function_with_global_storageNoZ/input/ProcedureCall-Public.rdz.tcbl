@@ -1,0 +1,52 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM1.
+       DATA DIVISION.
+       GLOBAL-STORAGE SECTION.
+       01 G-Date TYPE DATE.
+       01 G-Bool TYPE BOOL.
+
+       WORKING-STORAGE SECTION.
+       01 P-Date TYPE DATE.
+
+       PROCEDURE DIVISION.
+           MOVE P-Date TO G-Date.
+           CALL Callee::DoNothing.
+           CONTINUE.
+
+       DECLARE PROCEDURE MyProcedureUsingNothing.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 P-Bool TYPE BOOL.
+       PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE MyProcedureUsingGlobalStorage.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 P-Bool TYPE BOOL.
+       PROCEDURE DIVISION.
+           MOVE G-Bool TO P-Bool.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE MyProcedureImportProc.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 P-Bool TYPE BOOL.
+       PROCEDURE DIVISION.
+           CALL Callee::DoNothing.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE MyProcedureUsingGlobalStorageAndImportProc.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 P-Bool TYPE BOOL.
+       PROCEDURE DIVISION.
+           MOVE G-Bool TO P-Bool.
+           CALL Callee::DoNothing.
+           CONTINUE.
+       END-DECLARE.
+       END PROGRAM PGM1.
+

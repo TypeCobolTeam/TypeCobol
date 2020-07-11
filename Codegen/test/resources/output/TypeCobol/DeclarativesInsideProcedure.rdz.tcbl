@@ -41,8 +41,11 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
               when Fct-bafc76cb-MyProcedure2
                  call 'bafc76cb' using arg1
               when other
-                 TODO
+                 Perform Handle-Error
            end-evaluate
+           .
+       Handle-Error.
+           continue
            .
                           
        INIT-LIBRARY.

@@ -66,8 +66,11 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
               when Fct-ca0ab46c-check
                  call 'ca0ab46c' using arg1
               when other
-                 TODO
+                 Perform Handle-Error
            end-evaluate
+           .
+       Handle-Error.
+           continue
            .
                           
        

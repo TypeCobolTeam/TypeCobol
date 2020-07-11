@@ -76,8 +76,11 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
                  call 'ea2e07d4' using arg1
                                         arg2
               when other
-                 TODO
+                 Perform Handle-Error
            end-evaluate
+           .
+       Handle-Error.
+           continue
            .
                           
        INIT-LIBRARY.

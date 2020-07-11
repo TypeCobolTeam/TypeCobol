@@ -23,6 +23,11 @@ namespace TypeCobol.Codegen {
             ParseGenerateCompare(path, ParseConfig(skeletonPath), autoRemarks);
         }
 
+        public static void ParseGenerateCompare(string inpath, string outpath, string skeletonPath, bool autoRemarks = false)
+        {
+            ParseGenerateCompare(inpath, outpath, ParseConfig(skeletonPath), autoRemarks);
+        }
+
         /// <summary>
         /// Parse and generate using DocumentFormat.RDZReferenceFormat by default, because it's our only real target 
         /// for now and we don't have specifications for FreeFormat.
@@ -34,7 +39,31 @@ namespace TypeCobol.Codegen {
         public static void ParseGenerateCompare(string path, List<Skeleton> skeletons = null, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null) {
             ParseGenerateCompare(path, skeletons, DocumentFormat.RDZReferenceFormat, typeCobolVersion, autoRemarks, copies);
         }
-        public static void ParseGenerateCompare(string path, List<Skeleton> skeletons, DocumentFormat format, string typeCobolVersion, bool autoRemarks = false, IList<string> copies = null, MemoryStream lmStream = null) {
+
+        /// <summary>
+        /// Parse and generate using DocumentFormat.RDZReferenceFormat by default, because it's our only real target 
+        /// for now and we don't have specifications for FreeFormat.
+        /// </summary>
+        /// <param name="inpath"></param>
+        /// <param name="outpath"></param>
+        /// <param name="skeletons"></param>
+        /// <param name="autoRemarks"></param>
+        /// <param name="copies"></param>        
+        public static void ParseGenerateCompare(string inpath, string outpath, List<Skeleton> skeletons = null, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null)
+        {
+            ParseGenerateCompare(inpath, outpath, skeletons, DocumentFormat.RDZReferenceFormat, typeCobolVersion, autoRemarks, copies);
+        }
+
+        public static void ParseGenerateCompare(string path, List<Skeleton> skeletons, DocumentFormat format,
+            string typeCobolVersion, bool autoRemarks = false, IList<string> copies = null,
+            MemoryStream lmStream = null)
+        {
+            ParseGenerateCompare(path, path, skeletons, format,
+                typeCobolVersion, autoRemarks, copies,
+                lmStream);
+        }
+
+        public static void ParseGenerateCompare(string path, string outpath, List<Skeleton> skeletons, DocumentFormat format, string typeCobolVersion, bool autoRemarks = false, IList<string> copies = null, MemoryStream lmStream = null) {
             var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), format, autoRemarks, copies);
             var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
             var writer = new StringWriter();
@@ -64,15 +93,15 @@ namespace TypeCobol.Codegen {
             }
 
             // compare with expected result
-            string expected = File.ReadAllText(Path.Combine(ROOT, OUTPUT, path), format.Encoding);
-            TypeCobol.Test.TestUtils.compareLines(path, writer.ToString(), expected, PlatformUtils.GetPathForProjectFile(Path.Combine(ROOT, OUTPUT, path), "Codegen\\Test"));
+            string expected = File.ReadAllText(Path.Combine(ROOT, OUTPUT, outpath), format.Encoding);
+            TypeCobol.Test.TestUtils.compareLines(path, writer.ToString(), expected, PlatformUtils.GetPathForProjectFile(Path.Combine(ROOT, OUTPUT, outpath), "Codegen\\Test"));
 
             if (lmStream != null)
             {
                 //compare with expected line mapping
                 string lm = System.Text.ASCIIEncoding.Default.GetString(lmStream.ToArray());
-                string expectedLm = File.ReadAllText(Path.Combine(ROOT, OUTPUT, path + ML_SUFFIX), format.Encoding);
-                TypeCobol.Test.TestUtils.compareLines(path + ML_SUFFIX, lm, expectedLm, PlatformUtils.GetPathForProjectFile(Path.Combine(ROOT, OUTPUT, path + ML_SUFFIX), "Codegen\\Test"));
+                string expectedLm = File.ReadAllText(Path.Combine(ROOT, OUTPUT, outpath + ML_SUFFIX), format.Encoding);
+                TypeCobol.Test.TestUtils.compareLines(path + ML_SUFFIX, lm, expectedLm, PlatformUtils.GetPathForProjectFile(Path.Combine(ROOT, OUTPUT, outpath + ML_SUFFIX), "Codegen\\Test"));
             }
         }
 

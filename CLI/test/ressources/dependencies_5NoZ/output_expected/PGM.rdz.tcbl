@@ -1,0 +1,45 @@
+Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
+      *TypeCobol_Version:0.1(alpha)
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM.
+
+       DATA DIVISION.
+       Working-STORAGE SECTION.
+       01 TypeCobol-Generated.
+           05 TC-IRLLBIRL pic X(08) value 'IRLLBIRL'.
+           05 IRLLBIRL-Fct-abf66ff1-ToSpan pic X(30)
+                value 'Fct=abf66ff1-ToSpan'.
+                               
+       01 MyPicVar PIC X(10).
+      *01 IRLTest TYPE IRLLBIRL::Irl.
+       01 IRLTest.
+           02 IsinCode PIC X(12).
+           02 IrlQty.
+             03 Dec.
+               04 I PIC X(02).
+                                     
+       01 MyGroup.
+      * 05 IRLQty TYPE IRLLBIRL::Qty.
+        05 IRLQty.
+           06 Dec.
+             07 I PIC X(02).
+                                     
+      *01 SpanArrayVar TYPE IRLLBIRL::SpannArray.
+       01 SpanArrayVar.
+           02 span.
+                                                 
+       01 AlphaNum PIC X(01).
+
+       PROCEDURE DIVISION.
+      *MOVE MyPicVar TO IRLTest::IrlQty::Dec::I.
+       MOVE MyPicVar TO I OF Dec OF IrlQty OF IRLTest.
+      *MOVE MyGroup::IRLQty::Dec::I TO MyPicVar.
+       MOVE I OF Dec OF IRLQty OF MyGroup TO MyPicVar.
+      *CALL IRLLBIRL::ToSpan INPUT AlphaNum OUTPUT SpanArrayVar::span.
+       CALL TC-IRLLBIRL USING
+                    IRLLBIRL-Fct-abf66ff1-ToSpan
+                                 AlphaNum
+                    by reference span IN SpanArrayVar
+           end-call
+                                                                     .
+       END PROGRAM PGM.

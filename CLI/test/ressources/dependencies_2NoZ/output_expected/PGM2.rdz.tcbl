@@ -1,0 +1,132 @@
+Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
+      *TypeCobol_Version:0.1(alpha)
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM2.
+
+       DATA DIVISION.
+       Working-STORAGE SECTION.
+       01 TypeCobol-Generated.
+           05 TC-Callee pic X(08) value 'CALLEE'.
+           05 TC-MyIntrin pic X(08) value 'MYINTRIN'.
+           05 Callee-Fct-c6db8d4a-MyPublicPr pic X(30)
+                value 'Fct=c6db8d4a-MyPublicProcedure'.
+           05 Callee-Fct-d3faf219-MySecondPu pic X(30)
+                value 'Fct=d3faf219-MySecondPublicPro'.
+           05 MyIntrin-Fct-f9abcd81-dump pic X(30)
+                value 'Fct=f9abcd81-dump'.
+                               
+
+      *01  somedate     TYPE Date.
+       01 somedate.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+                                  
+       01  mymessage      PIC X(80).
+      *01  vect2        TYPE Vect2.
+       01 vect2.
+           02 Coord2d.
+             03 X PIC 9.
+             03 Y PIC 9.
+           02 Coord3d.
+             03 Z PIC 9.
+                                   
+      *01  vect2b       TYPE Vect2.
+       01 vect2b.
+           02 Coord2d.
+             03 X PIC 9.
+             03 Y PIC 9.
+           02 Coord3d.
+             03 Z PIC 9.
+                                   
+      *01  MyVar        TYPE TechnicalContext.
+       01 MyVar.
+           02 Site.
+             03 SiteName PIC X(8).
+                                              
+
+       PROCEDURE DIVISION.
+      *    move vect2::Coord2d to Vect2b::Coord2d.
+           move Coord2d OF vect2 to Coord2d OF Vect2b.
+      *    move MyVar::Site::SiteName to mymessage.
+           move SiteName OF Site OF MyVar to mymessage.
+           .
+      *declare procedure check private
+      *   input mydate        TYPE Date.
+
+
+       TRAITEMENT.
+      * __________________________________________________
+      * OK public procedures declared in "dependencies" file
+      *    CALL Callee::MyPublicProcedure
+      *             INPUT      somedate
+           CALL TC-Callee USING
+                    Callee-Fct-c6db8d4a-MyPublicPr
+                                 somedate
+           end-call
+                                       
+
+      *    CALL Callee::MySecondPublicProcedure
+      *             INPUT      vect2
+           CALL TC-Callee USING
+                    Callee-Fct-d3faf219-MySecondPu
+                                 vect2
+           end-call
+                                       
+      * __________________________________________________
+      *procedure declared in this program
+      *    CALL PGM2::check INPUT      somedate
+           CALL 'c2c7ee3a' USING
+                                 somedate
+           end-call
+                                               
+
+      *procedure declared in this program
+      *   CALL check         INPUT      somedate
+          CALL 'c2c7ee3a' USING
+                                 somedate
+           end-call
+                                                
+
+      * __________________________________________________
+      *procedure declared as intrinsic in MyIntrinsicFunctions
+      *   call dump input mymessage
+          CALL TC-MyIntrin USING
+                    MyIntrin-Fct-f9abcd81-dump
+                                 mymessage
+           end-call
+                                   
+      
+      *procedure declared as intrinsic in MyIntrinsicFunctions
+      *   call MyIntrinsicFunctions::dump input mymessage
+          CALL TC-MyIntrin USING
+                    MyIntrin-Fct-f9abcd81-dump
+                                 mymessage
+           end-call
+                                                         
+        .
+       END PROGRAM PGM2.
+
+      *
+      *declare procedure check private
+      *   input mydate        TYPE Date.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. c2c7ee3a.
+       DATA DIVISION.
+       LINKAGE SECTION.
+      *PGM2.check - Params :
+      *     input(mydate: DATE)
+       01 mydate.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+       PROCEDURE DIVISION
+             USING BY REFERENCE mydate
+           .
+      *PGM2.check - Params :
+      *     input(mydate: DATE)
+           CONTINUE.
+       END PROGRAM c2c7ee3a.
+
+

@@ -1,0 +1,60 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM1.
+
+       DATA DIVISION.
+       Working-STORAGE SECTION.
+
+       01  mydate1     TYPE Date.
+       01  myname1      PIC X(15).
+
+       PROCEDURE DIVISiON.
+
+       declare procedure check public
+          input mydate        TYPE Date
+         .
+       data division.
+       working-storage section.
+       linkage section.
+       PROCEDURE DIVISION.
+           Call PersonService::GetPersonById input mydate
+           .
+       END-DECLARE.
+
+       declare procedure checkName private
+          input myname        PIC X(15)
+         .
+       data division.
+       working-storage section.
+       linkage section.
+       PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       INIT-LIBRARY.
+           EXIT.
+
+       TRAITEMENT.
+      *OK  call check of PGM1
+           call check input mydate1
+           .
+
+      *PersonService contains public procedure
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PersonService.
+       PROCEDURE DIVISION.       
+       declare procedure GetPersonById public
+          input  personId  type date.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       
+       declare procedure GetPersonByName private
+          input  name  pic x(15).
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       END PROGRAM PersonService.
+
+
+       END PROGRAM PGM1.
+

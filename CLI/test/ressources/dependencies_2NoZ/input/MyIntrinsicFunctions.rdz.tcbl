@@ -1,0 +1,28 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MyIntrinsicFunctions.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       01 Vect2 TYPEDEF strict PUBLIC.
+        11 Coord2d.
+          15 X PIC 9.
+          12 Y PIC 9.
+        05 Coord3d.
+          10 Z PIC 9.
+
+       01 TechnicalContext TYPEDEF STRICT PUBLIC. 
+            05 Site TYPE SITE.
+
+       01 SITE TYPEDEF STRICT PUBLIC.
+            05 SiteName PIC X(8).
+
+       PROCEDURE DIVISION.
+       
+       declare procedure dump public
+          input mymessage pic X(80)
+         .
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       END PROGRAM MyIntrinsicFunctions.

@@ -1,0 +1,83 @@
+Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOZCHKP.
+       DATA DIVISION.
+                                                             
+       WORKING-STORAGE SECTION.
+
+       
+       LINKAGE SECTION.
+       01 TC-FunctionCode pic X(30).
+      * Function which call program b179d81b
+      * Which is generated code for TCOZCHKP.StartCheckpoint
+           88 Fct-b179d81b-StartCheckpoint
+              value 'Fct=b179d81b-StartCheckpoint'.
+
+       01 arg1 pic X.
+       PROCEDURE DIVISION USING TC-FunctionCode
+                           arg1.
+           PERFORM INIT-LIBRARY
+           PERFORM FctList-Process-Mode
+           GOBACK.
+
+       FctList-Process-Mode.
+           evaluate true
+              when Fct-b179d81b-StartCheckpoint
+                 call 'b179d81b' using arg1
+              when other
+                 Perform Handle-Error
+           end-evaluate
+           .
+       Handle-Error.
+           continue
+           .
+                                
+      *-----------------------------------------------------------------
+      *declare procedure StartCheckpoint public
+      *        input param1 pic X.
+       END PROGRAM TCOZCHKP.
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZZOSM5.
+       PROCEDURE DIVISION.      
+      *declare procedure testos private.
+       END PROGRAM DVZZOSM5.
+      *
+      *declare procedure StartCheckpoint public
+      *        input param1 pic X.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. b179d81b.
+       END PROGRAM b179d81b.
+
+
+      *
+      *declare procedure testos private.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. d58351d5.
+       data division.
+       working-storage section.
+      *TCOZCHKP.testos  - No Params
+                               
+       01 var1 pic X.
+       01 TypeCobol-Generated.
+           05 TC-TCOZCHKP pic X(08) value 'TCOZCHKP'.
+           05 TCOZCHKP-Fct-b179d81b-StartChe PIC X(30)
+               value 'Fct=b179d81b-StartCheckpoint'.
+
+       LINKAGE SECTION.
+      *TCOZCHKP.testos  - No Params
+       PROCEDURE DIVISION
+           .
+      *TCOZCHKP.testos  - No Params
+      *    call TCOZCHKP::StartCheckpoint input var1
+           CALL TC-TCOZCHKP USING
+                    TCOZCHKP-Fct-b179d81b-StartChe
+                                 var1
+           end-call
+                                                    
+           .
+       END PROGRAM d58351d5.
+
+

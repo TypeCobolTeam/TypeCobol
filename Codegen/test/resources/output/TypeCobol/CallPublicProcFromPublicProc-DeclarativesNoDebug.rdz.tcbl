@@ -24,8 +24,11 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
               when Fct-e3685b69-StartCheckpoint
                  call 'e3685b69'
               when other
-                 TODO
+                 Perform Handle-Error
            end-evaluate
+           .
+       Handle-Error.
+           continue
            .
                                
       DDECLARATIVES.
@@ -65,8 +68,11 @@ Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
               when Fct-bfc74757-testos
                  call 'bfc74757'
               when other
-                 TODO
+                 Perform Handle-Error
            end-evaluate
+           .
+       Handle-Error.
+           continue
            .
                                 
       DDECLARATIVES.

@@ -1,0 +1,27 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. IRLLBIRL.
+       AUTHOR. REYDELPA.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  Irl TYPEDEF STRICT PUBLIC.
+         05 IsinCode PIC X(12).
+         05 IrlQty TYPE Qty.
+      
+       01 Qty TYPEDEF STRICT PUBLIC.
+          05 Dec TYPE TTTLBDEC::Dec.
+       01 Span TYPEDEF STRICT PUBLIC.
+       01 SpannArray TYPEDEF STRICT PUBLIC.
+            05 span TYPE Span.
+       LINKAGE SECTION.
+       PROCEDURE DIVISION.
+       declare procedure ToSpan public
+           input input1 PIC X(1)
+           output output1 type Span
+           .
+       end-declare.
+      
+       END PROGRAM IRLLBIRL.
+      

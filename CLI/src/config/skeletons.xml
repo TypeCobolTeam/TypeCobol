@@ -243,12 +243,15 @@
         }
         }
         entries += "       when other\n";
-        entries += "          TODO\n";
+        entries += "          Perform Handle-Error\n";
         entries += "    end-evaluate";
         }
 FctList-Process-Mode.
     evaluate true
 @entries
+    .
+Handle-Error.
+    continue
       </pattern>
 
     </patterns>
@@ -397,11 +400,14 @@ FctList-Process-Mode.
         }
         }
         @items += "    when other\n";
-        @items += "       TODO\n";
+        @items += "       Perform Handle-Error\n";
         @items += "  end-evaluate\n";
         }
         }
         @items
+    .
+Handle-Error.
+    continue
       </pattern>
     </patterns>
   </skeleton>

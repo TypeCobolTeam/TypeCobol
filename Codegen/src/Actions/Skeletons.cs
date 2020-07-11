@@ -740,12 +740,15 @@ namespace TypeCobol.Codegen.Actions
         }
         }
         entries += "       when other\n";
-        entries += "          TODO\n";
+        entries += "          Perform Handle-Error\n";
         entries += "    end-evaluate";
         @SelfResult.Append(@"
 FctList-Process-Mode.
     evaluate true
-");@SelfResult.Append($@"{@entries}");@SelfResult.Append(@"");
+");@SelfResult.Append($@"{@entries}");@SelfResult.Append(@"
+    .
+Handle-Error.
+    continue");
                                                                                 TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, "ProcedureDivisionCalleeWithoutExternal", @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR", "program.procedure-division.sentence-([0-9]+).begin", null, false);
                                                                                 if (@SelfAction != null)
                                                                                 {
