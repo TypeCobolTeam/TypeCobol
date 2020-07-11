@@ -334,9 +334,10 @@ namespace TypeCobol.Analysis.Cfg
                 case CodeElementType.ExitProgramStatement:
                 case CodeElementType.ExitMethodStatement:
                 case CodeElementType.GobackStatement:
-                //Other statementts
+                //Other statements
                 case CodeElementType.AcceptStatement:
                 case CodeElementType.AddStatement:
+                case CodeElementType.AllocateStatement:
                 //case CodeElementType.AlterStatement:
                 case CodeElementType.CallStatement:
                 case CodeElementType.CancelStatement:
@@ -352,12 +353,15 @@ namespace TypeCobol.Analysis.Cfg
                 //case CodeElementType.ExitMethodStatement:
                 //case CodeElementType.ExitProgramStatement:
                 //case CodeElementType.ExitStatement:
+                case CodeElementType.FreeStatement:
                 //case CodeElementType.GobackStatement:
                 //case CodeElementType.GotoStatement:
                 //case CodeElementType.IfStatement:
                 case CodeElementType.InitializeStatement:
                 case CodeElementType.InspectStatement:
                 case CodeElementType.InvokeStatement:
+                case CodeElementType.JsonGenerateStatement:
+                case CodeElementType.JsonParseStatement:
                 case CodeElementType.MergeStatement:
                 case CodeElementType.MoveStatement:
                 case CodeElementType.MultiplyStatement:
@@ -381,6 +385,7 @@ namespace TypeCobol.Analysis.Cfg
                 case CodeElementType.WriteStatement:
                 case CodeElementType.XmlGenerateStatement:
                 case CodeElementType.XmlParseStatement:
+                case CodeElementType.ProcedureStyleCall:
                     return true;
             }
             return false;
@@ -457,6 +462,7 @@ namespace TypeCobol.Analysis.Cfg
                     //Other statements
                     case CodeElementType.AcceptStatement:
                     case CodeElementType.AddStatement:
+                    case CodeElementType.AllocateStatement:
                     //case CodeElementType.AlterStatement:
                     case CodeElementType.CallStatement:
                     case CodeElementType.CancelStatement:
@@ -472,12 +478,15 @@ namespace TypeCobol.Analysis.Cfg
                     //case CodeElementType.ExitMethodStatement:
                     //case CodeElementType.ExitProgramStatement:
                     //case CodeElementType.ExitStatement:
+                    case CodeElementType.FreeStatement:
                     //case CodeElementType.GobackStatement:
                     //case CodeElementType.GotoStatement:
                     //case CodeElementType.IfStatement:
                     case CodeElementType.InitializeStatement:
                     case CodeElementType.InspectStatement:
                     case CodeElementType.InvokeStatement:
+                    case CodeElementType.JsonGenerateStatement:
+                    case CodeElementType.JsonParseStatement:
                     case CodeElementType.MergeStatement:
                     case CodeElementType.MoveStatement:
                     case CodeElementType.MultiplyStatement:
@@ -499,6 +508,7 @@ namespace TypeCobol.Analysis.Cfg
                     case CodeElementType.WriteStatement:
                     case CodeElementType.XmlGenerateStatement:
                     case CodeElementType.XmlParseStatement:
+                    case CodeElementType.ProcedureStyleCall:
                         this.CurrentProgramCfgBuilder.EnterStatement(node);
                         break;
                     case CodeElementType.SearchStatement:
@@ -608,6 +618,7 @@ namespace TypeCobol.Analysis.Cfg
                     //Other statementts
                     case CodeElementType.AcceptStatement:
                     case CodeElementType.AddStatement:
+                    case CodeElementType.AllocateStatement:
                     //case CodeElementType.AlterStatement:
                     case CodeElementType.CallStatement:
                     case CodeElementType.CancelStatement:
@@ -623,12 +634,15 @@ namespace TypeCobol.Analysis.Cfg
                     //case CodeElementType.ExitMethodStatement:
                     //case CodeElementType.ExitProgramStatement:
                     //case CodeElementType.ExitStatement:
+                    case CodeElementType.FreeStatement:
                     //case CodeElementType.GobackStatement:
                     //case CodeElementType.GotoStatement:
                     //case CodeElementType.IfStatement:
                     case CodeElementType.InitializeStatement:
                     case CodeElementType.InspectStatement:
                     case CodeElementType.InvokeStatement:
+                    case CodeElementType.JsonGenerateStatement:
+                    case CodeElementType.JsonParseStatement:
                     case CodeElementType.MergeStatement:
                     case CodeElementType.MoveStatement:
                     case CodeElementType.MultiplyStatement:
@@ -650,6 +664,7 @@ namespace TypeCobol.Analysis.Cfg
                     case CodeElementType.WriteStatement:
                     case CodeElementType.XmlGenerateStatement:
                     case CodeElementType.XmlParseStatement:
+                    case CodeElementType.ProcedureStyleCall:
                         this.CurrentProgramCfgBuilder.LeaveStatement(node);
                         break;
                     case CodeElementType.SearchStatement:
@@ -1358,9 +1373,10 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="procedureSymbol">The procedure symbol</param>
         /// <param name="group">The Group in which to store all blocks.</param>
         /// <param name="clonedBlockIndexMap">The Map of cloned map indices from the original indices to the new indicess of block</param>
-        private void StoreProcedureSentenceBlocks(PerformProcedure p, Symbol procedureSymbol, BasicBlockForNodeGroup group, Dictionary<int, int> clonedBlockIndexMap)
+        /// <param name="ctx">Cfg Yielding Sentences Context</param>
+        private void StoreProcedureSentenceBlocks(PerformProcedure p, Symbol procedureSymbol, BasicBlockForNodeGroup group, Dictionary<int, int> clonedBlockIndexMap, CfgYieldSentencesContext ctx = null)
         {
-            IEnumerable<CfgSentence> procedureSentences = YieldSectionOrParagraphSentences(procedureSymbol);
+            IEnumerable<CfgSentence> procedureSentences = YieldSectionOrParagraphSentences(procedureSymbol, ctx);
             foreach (var sentence in procedureSentences)
             {
                 //A Sentence has at least one block
@@ -1371,8 +1387,11 @@ namespace TypeCobol.Analysis.Cfg
                     //System.Diagnostics.Debug.Assert(!clonedBlockIndexMap.ContainsKey(block.Index));
                     if (!clonedBlockIndexMap.ContainsKey(block.Index))
                     {//If this block has been already add, this mean there are recursive GOTOs
-                        clonedBlockIndexMap[block.Index] = block.Index;
-                        group.AddBlock(block);
+                        BasicBlockForNode clonedBlock = (BasicBlockForNode)block.Clone();
+                        group.AddBlock(clonedBlock);
+                        clonedBlock.Index = this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Count;
+                        this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Add(clonedBlock);
+                        clonedBlockIndexMap[block.Index] = clonedBlock.Index;
                     }
                     else
                     {//Recursive blocks detection.
@@ -1420,12 +1439,14 @@ namespace TypeCobol.Analysis.Cfg
                         Diagnostics.Add(d);
                         return false;
                     }
-                    StoreProcedureSentenceBlocks(p, procedureSymbol, group, clonedBlockIndexMap);
+                    CfgYieldSentencesContext ctx = new CfgYieldSentencesContext();
+                    ctx.StoppingProcedureSymbol = throughProcedureSymbol;
+                    StoreProcedureSentenceBlocks(p, procedureSymbol, group, clonedBlockIndexMap, ctx);
                     //Store all sentences or paragraphs between.
-                    for (int i = procedureSymbol.Number + 1; i < throughProcedureSymbol.Number; i++)
+                    for (int i = ctx.LastProcedureSymbol.Number + 1; i < throughProcedureSymbol.Number; i = ctx.LastProcedureSymbol.Number + 1)
                     {
                         Symbol subSectionOrParagraph = this.CurrentProgramCfgBuilder.AllSectionsParagraphs[i];
-                        StoreProcedureSentenceBlocks(p, subSectionOrParagraph, group, clonedBlockIndexMap);
+                        StoreProcedureSentenceBlocks(p, subSectionOrParagraph, group, clonedBlockIndexMap, ctx);
                     }
                     StoreProcedureSentenceBlocks(p, throughProcedureSymbol, group, clonedBlockIndexMap);
                 }
@@ -1687,12 +1708,35 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
+        /// Context for Yielding Sentences inside Section and Paragraph.
+        /// </summary>
+        private class CfgYieldSentencesContext
+        {
+            /// <summary>
+            /// The Last Procedure Symbol Reached
+            /// </summary>
+            internal Symbol LastProcedureSymbol
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
+            /// The Stopping Procedure Symbol exclusively.
+            /// </summary>
+            internal Symbol StoppingProcedureSymbol { get; set; }
+        }
+
+        /// <summary>
         /// Yield the all sentences associated to a Symbol which is a Section or a Paragraph.
         /// </summary>
         /// <param name="sectionOrParagraphSymbol">The Section or Paragraph symbol</param>
+        /// <param name="ctx">Cfg Yielding Sentences Context</param>
         /// <returns>The Enumeration of sentences associated to the symbol, null otherwise</returns>
-        private IEnumerable<CfgSentence> YieldSectionOrParagraphSentences(Symbol sectionOrParagraphSymbol)
+        private IEnumerable<CfgSentence> YieldSectionOrParagraphSentences(Symbol sectionOrParagraphSymbol, CfgYieldSentencesContext ctx = null)
         {
+            if (ctx != null)
+                ctx.LastProcedureSymbol = sectionOrParagraphSymbol;
             if (sectionOrParagraphSymbol != null)
             {
                 if (sectionOrParagraphSymbol.Kind == Symbol.Kinds.Paragraph)
@@ -1708,10 +1752,14 @@ namespace TypeCobol.Analysis.Cfg
                     CfgSectionSymbol cfgSection = (CfgSectionSymbol)sectionOrParagraphSymbol;
                     foreach (var part in cfgSection.SentencesParagraphs)
                     {
+                        if (ctx != null && part == ctx.StoppingProcedureSymbol)
+                            yield break;
                         System.Diagnostics.Debug.Assert(part.Kind == Symbol.Kinds.Sentence || part.Kind == Symbol.Kinds.Paragraph);
                         if (part.Kind == Symbol.Kinds.Paragraph)
                         {
                             CfgParagraphSymbol cfgParaSymbol = (CfgParagraphSymbol)part;
+                            if (ctx != null)
+                                ctx.LastProcedureSymbol = cfgParaSymbol;
                             foreach (var sentence in cfgParaSymbol.Sentences)
                             {
                                 yield return sentence;

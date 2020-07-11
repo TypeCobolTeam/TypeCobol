@@ -70,16 +70,16 @@ label = "{Block19|PERFORM COMP-FOOT-CALC  VARYING IDX FROM +1 BY +1  UNTIL IDX \
 subgraph cluster_1{
 color = blue;
 label = "COMP-FOOT-CALC";
-Block23 [
-label = "{COMP-FOOT-CALC. Block23|MOVE NUM TO NBJ\l}"
+Block27 [
+label = "{COMP-FOOT-CALC. Block27|MOVE NUM TO NBJ\l}"
 ]
-Block24 [
-label = "{COMP-FOOT-CALC. Block24|MOVE NBJ TO NUM\l}"
+Block28 [
+label = "{COMP-FOOT-CALC. Block28|MOVE NBJ TO NUM\l}"
 ]
-Block23 -> Block24
+Block27 -> Block28
 
 }
-Block19 -> Block23 [style=dashed]
+Block19 -> Block27 [style=dashed]
 
 Block20 [
 label = "{Block20|}"
