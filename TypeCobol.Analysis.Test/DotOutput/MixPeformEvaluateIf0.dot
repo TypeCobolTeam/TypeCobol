@@ -22,12 +22,12 @@ label = "{Block3|    perform affichage\l}"
 subgraph cluster_1{
 color = blue;
 label = "affichage";
-Block59 [
-label = "{AFFICHAGE. Block59|      write tabind\l      read  tabind\l}"
+Block60 [
+label = "{AFFICHAGE. Block60|      write tabind\l      read  tabind\l}"
 ]
 
 }
-Block3 -> Block59 [style=dashed]
+Block3 -> Block60 [style=dashed]
 
 Block4 [
 label = "{Block4|}"
@@ -65,12 +65,12 @@ label = "{Block54|    perform affichage\l}"
 subgraph cluster_2{
 color = blue;
 label = "affichage";
-Block59 [
-label = "{AFFICHAGE. Block59|      write tabind\l      read  tabind\l}"
+Block61 [
+label = "{AFFICHAGE. Block61|      write tabind\l      read  tabind\l}"
 ]
 
 }
-Block54 -> Block59 [style=dashed]
+Block54 -> Block61 [style=dashed]
 
 Block55 [
 label = "{Block55|}"

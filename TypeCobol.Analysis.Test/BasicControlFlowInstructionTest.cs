@@ -1025,6 +1025,21 @@ namespace TypeCobol.Analysis.Test
             CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.AllCfgBuilder[5].AllCfgBuilder[0].Cfg, path, expectedPath);
         }
 
+        [TestMethod]
+        public void PerfomMixedSectionParagraph()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerfomMixedSectionParagraph.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerfomMixedSectionParagraph.dot");
+
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath);
+        }
+
         /// <summary>
         /// "dot.exe" -Tpng CGM110.dot -o CGM110.png
         /// "dot.exe" -Tsvg CGM110.dot -o CGM110.svg
