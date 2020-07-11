@@ -1022,10 +1022,10 @@ namespace TypeCobol.Analysis.Test
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerfomMixedSectionParagraph.dot");
 
-            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
-            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+            Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
 
-            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath);
+            CfgTestUtils.GenDotCfgAndCompare(ctx.CfgBuilder.Cfg, path, expectedPath);
         }
 
         /// <summary>
