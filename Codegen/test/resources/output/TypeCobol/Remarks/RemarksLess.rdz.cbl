@@ -1,4 +1,3 @@
-Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
 000000 IDENTIFICATION DIVISION.
 000000 PROGRAM-ID. RemarksLess. 
       *REMARKS. COPY=(

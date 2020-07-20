@@ -1,4 +1,3 @@
-Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        CBL ARITH(EXTEND)
        CBL NOLIST
       *CONTROL LIST

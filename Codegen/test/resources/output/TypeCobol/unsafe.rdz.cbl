@@ -1,7 +1,6 @@
       * 2 errors
       * Line 36[12,51] <29, Warning, Semantics> - Warning: Useless UNSAFE with non strongly typed receiver.
       * Line 37[12,51] <29, Warning, Semantics> - Warning: Useless UNSAFE with non strongly typed receiver.
-Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        IDENTIFICATION DIVISION.
        PROGRAM-ID.   Test-UNSAFE.
        

@@ -273,9 +273,6 @@ namespace TypeCobol.Codegen
                 throw new GenerationException("Unable to generate because of error diagnostics", compilationUnit.TextSourceInfo.Name, null, false, false);
             }
 
-            //Write special preamble to avoid unwanted build and deploy of this simplified Codegen
-            Destination.AppendLine("Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !");
-
             var stopwatch = Stopwatch.StartNew();
 
             // STEP 0: Initialize the global values.

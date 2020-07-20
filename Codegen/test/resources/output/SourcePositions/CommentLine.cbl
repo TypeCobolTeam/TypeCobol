@@ -1,4 +1,3 @@
-Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        IDENTIFICATION DIVISION.
        PROGRAM-ID. CommentLine.
 000000* This is a comment line

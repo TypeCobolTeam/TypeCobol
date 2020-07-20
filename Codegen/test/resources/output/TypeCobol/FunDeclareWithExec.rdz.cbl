@@ -1,6 +1,5 @@
       * 1 errors
       * Line 78[8,18] <37, Warning, General> - Warning: Paragraph 'TRAITEMENT' is empty
-Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
 

@@ -1,4 +1,3 @@
-Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       *TypeCobol_Version:0.1(alpha)
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZZPGM3.

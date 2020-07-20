@@ -1,4 +1,3 @@
-Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
 000000 IDENTIFICATION DIVISION.
 000000* Test to check if COPY are not expanded when code is generated
 000000 PROGRAM-ID.   CopyNotExpanded.

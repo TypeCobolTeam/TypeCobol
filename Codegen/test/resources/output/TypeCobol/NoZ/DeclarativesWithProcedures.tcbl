@@ -1,6 +1,5 @@
       * 1 errors
       * Line 6[28,36] <37, Warning, General> - Warning: Debugging mode is active
-Simplified Codegen for reference only. DO NOT ATTEMPT TO BUILD, DO NOT DEPLOY !
       *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZF0OSM.
