@@ -816,6 +816,8 @@ namespace TypeCobol.Compiler.Domain
                         //Does the variable inherits from parent its Global flag ?
                         if (currentDomain.Owner.Kind != Symbol.Kinds.Program && currentDomain.Owner.Kind != Symbol.Kinds.Function)
                             sym.SetFlag(currentDomain.Owner.Flag & Symbol.Flags.Global, currentDomain.Owner.HasFlag(Symbol.Flags.Global));
+                        //Store Contition Values.
+                        sym.Value = ((DataConditionEntry)dataDef.CodeElement).ConditionValues;
                     }
                         break;
                     case CodeElementType.DataRenamesEntry:
@@ -830,6 +832,7 @@ namespace TypeCobol.Compiler.Domain
                     case CodeElementType.DataRedefinesEntry:
                     {
                         var dataDescOrRedefines = (CommonDataDescriptionAndDataRedefines) dataDef.CodeElement;
+                        sym.Value = dataDescOrRedefines.InitialValue;
                         sym.Level = dataDescOrRedefines.LevelNumber != null ? (int) dataDescOrRedefines.LevelNumber.Value : 0;
                         sym.IsFiller = dataDescOrRedefines.IsFiller;
 

@@ -283,7 +283,11 @@ namespace TypeCobol.Analysis.Cfg
         public override void Enter(Node node)
         {
             if (IsStatement(node))
+            {
+                if (!this.CurrentProgramCfgBuilder.Cfg.IsInProcedure)
+                    return; //Not In Procedure DIVISION
                 this.CurrentProgramCfgBuilder.CheckStartSentence(node);
+            }
             if (node.CodeElement != null)
             {
                 switch (node.CodeElement.Type)
@@ -1089,10 +1093,11 @@ namespace TypeCobol.Analysis.Cfg
                 }
                 if (ExtendPerformTargets)
                 {
+                    HashSet<int> globallyDiagnosedGroupIndex = new HashSet<int>();
                     foreach (var item in this.CurrentProgramCfgBuilder.PendingPERFORMProcedures)
                     {
                         BasicBlockForNodeGroup group = item.Item3;
-                        GraftBasicBlockGroup(group);
+                        GraftBasicBlockGroup(group, globallyDiagnosedGroupIndex);
                     }
                 }
 
@@ -1155,10 +1160,34 @@ namespace TypeCobol.Analysis.Cfg
         /// Graft the content of a Basic Block group by duplicating all its blocks and connecting all blocks to the CFG continuation.
         /// </summary>
         /// <param name="group">The group to be grafted</param>
-        private void GraftBasicBlockGroup(BasicBlockForNodeGroup group)
+        /// <param name="globallyDiagnosedGroupIndex">Set of already diagnostic</param>
+        /// <param name="visitedGroupIndex">Set of Visited Group Index to avoid infinite recursion</param>
+        private void GraftBasicBlockGroup(BasicBlockForNodeGroup group, HashSet<int> globallyDiagnosedGroupIndex, HashSet<int> visitedGroupIndex = null)
         {
             if (group.Group.Count == 0)
                 return;
+            if (visitedGroupIndex == null)
+            {
+                visitedGroupIndex = new HashSet<int>();
+            }
+            else if (visitedGroupIndex.Contains(group.GroupIndex))
+            {
+                if (!globallyDiagnosedGroupIndex.Contains(group.GroupIndex))
+                {
+                    globallyDiagnosedGroupIndex.Add(group.GroupIndex);
+                    var firstGroup = group.Group.FirstOrDefault(b =>
+                        b.Instructions.Count > 0 && b.Instructions.Any(i => i.CodeElement != null));
+                    //we must emit an error here and return.                
+                    Diagnostic d = new Diagnostic(MessageCode.ControlFlowGraphDiagnostic,
+                        firstGroup.Instructions.First.Value.CodeElement.Column,
+                        firstGroup.Instructions.First.Value.CodeElement.Column,
+                        firstGroup.Instructions.First.Value.CodeElement.Line,
+                        string.Format(Resource.RecursiveBasicBlockGroupInstructions, group.ToString()));
+                    AddDiagnostic(d);
+                }
+                return;
+            }
+            visitedGroupIndex.Add(group.GroupIndex);//Now visited
             //The new group to build.
             LinkedList<BasicBlock<Node, D>> newGroup = new LinkedList<BasicBlock<Node, D>>();
             //Map of block : (Original Block Index, [new Block Index, Successor Edge Index])
@@ -1171,7 +1200,7 @@ namespace TypeCobol.Analysis.Cfg
                 if (newBlock is BasicBlockForNodeGroup)
                 {//We are Cloning a Group ==> recursion
                     BasicBlockForNodeGroup newBG = (BasicBlockForNodeGroup)newBlock;
-                    GraftBasicBlockGroup(newBG);
+                    GraftBasicBlockGroup(newBG, globallyDiagnosedGroupIndex, visitedGroupIndex);
                 }
                 newBlock.Index = this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Count;
                 this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Add(newBlock);

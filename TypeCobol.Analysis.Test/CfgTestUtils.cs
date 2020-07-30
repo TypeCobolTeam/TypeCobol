@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using TypeCobol.Analysis.Dfa;
 using TypeCobol.Analysis.Graph;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Symbols;
 using TypeCobol.Test;
 using TypeCobol.Test.Utils;
 
@@ -13,13 +15,29 @@ namespace TypeCobol.Analysis.Test
     internal static class CfgTestUtils
     {
         private const string CFG_ANALYZER_IDENTIFIER = "cfg-basic-tests";
+        private const string CFG_FOR_DFA_ANALYZER_IDENTIFIER = "cfg-for-dfa-tests";
 
         private static readonly AnalyzerProvider _AnalyzerProvider;
+        private static readonly AnalyzerProvider _AnalyzerForDfaProvider;
 
         static CfgTestUtils()
         {
             _AnalyzerProvider = new AnalyzerProvider();
-            _AnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgDfaAnalyzer(CFG_ANALYZER_IDENTIFIER, CfgBuildingMode.Standard));
+            _AnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CFG_ANALYZER_IDENTIFIER, CfgBuildingMode.Standard));
+            _AnalyzerForDfaProvider = new AnalyzerProvider();
+            _AnalyzerForDfaProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CFG_FOR_DFA_ANALYZER_IDENTIFIER, CfgBuildingMode.WithDfa));
+        }
+
+        /// <summary>
+        /// Perform parsing of the supplied Cobol or TypeCobol source file and build Cfgs to be built for a Dfa analysis.
+        /// </summary>
+        /// <param name="sourceFilePath">Full path to the source file.</param>
+        /// <param name="expectedDiagnosticsFilePath">Full path to the diagnostic file, pass null to skip
+        /// diagnostic comparison</param>
+        /// <returns>List of CFG built for the source file.</returns>
+        public static IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> ParseCompareDiagnosticsForDfa(string sourceFilePath, string expectedDiagnosticsFilePath = null)
+        {
+            return ParseCompareDiagnostics< DfaBasicBlockInfo<Symbol> >(_AnalyzerForDfaProvider, CFG_FOR_DFA_ANALYZER_IDENTIFIER, sourceFilePath, expectedDiagnosticsFilePath);
         }
 
         /// <summary>
@@ -30,9 +48,25 @@ namespace TypeCobol.Analysis.Test
         /// <param name="expectedDiagnosticsFilePath">Full path to the diagnostic file, pass null to skip
         /// diagnostic comparison</param>
         /// <returns>List of CFG built for the source file.</returns>
-        public static IList<ControlFlowGraph<Node, object>> ParseCompareDiagnostics(string sourceFilePath, string expectedDiagnosticsFilePath = null)
+        public static IList<ControlFlowGraph<Node, object>> ParseCompareDiagnostics(string sourceFilePath,
+            string expectedDiagnosticsFilePath = null)
         {
-            var parser = Parser.Parse(sourceFilePath, DocumentFormat.RDZReferenceFormat, analyzerProvider: _AnalyzerProvider);
+            return ParseCompareDiagnostics<object>(_AnalyzerProvider, CFG_ANALYZER_IDENTIFIER, sourceFilePath, expectedDiagnosticsFilePath);
+        }
+
+        /// <summary>
+        /// Perform parsing of the supplied Cobol or TypeCobol source file
+        /// and compare actual diagnostics to expected diagnostics.
+        /// </summary>
+        /// <param name="analyzerProvider">The Analyzer Provider to be used</param>
+        /// <param name="identifier">Identifier of the CFG to query as result</param>
+        /// <param name="sourceFilePath">Full path to the source file.</param>
+        /// <param name="expectedDiagnosticsFilePath">Full path to the diagnostic file, pass null to skip
+        /// diagnostic comparison</param>
+        /// <returns>List of CFG built for the source file.</returns>
+        public static IList<ControlFlowGraph<Node, D>> ParseCompareDiagnostics<D>(AnalyzerProvider analyzerProvider, string identifier, string sourceFilePath, string expectedDiagnosticsFilePath = null)
+        {
+            var parser = Parser.Parse(sourceFilePath, DocumentFormat.RDZReferenceFormat, analyzerProvider: analyzerProvider);
             var results = parser.Results;
 
             if (expectedDiagnosticsFilePath != null)
@@ -71,7 +105,7 @@ namespace TypeCobol.Analysis.Test
                 }
             }
 
-            if (results.TryGetAnalyzerResult(CFG_ANALYZER_IDENTIFIER, out IList<ControlFlowGraph<Node, object>> graphs))
+            if (results.TryGetAnalyzerResult(identifier, out IList<ControlFlowGraph<Node, D>> graphs))
             {
                 return graphs;
             }
@@ -79,10 +113,10 @@ namespace TypeCobol.Analysis.Test
             throw new Exception($"No Control Flow Graph generated for file '{sourceFilePath}'.");
         }
 
-        private static void GenDotCfg(ControlFlowGraph<Node, object> cfg, TextWriter writer, bool fullInstruction)
+        private static void GenDotCfg<D>(ControlFlowGraph<Node, D> cfg, TextWriter writer, bool fullInstruction)
         {
             //Create a Dot File Generator            
-            CfgDotFileForNodeGenerator<object> dotGen = new CfgDotFileForNodeGenerator<object>(cfg)
+            CfgDotFileForNodeGenerator<D> dotGen = new CfgDotFileForNodeGenerator<D>(cfg)
                                                         {
                                                             FullInstruction = fullInstruction,
                                                         };
@@ -95,7 +129,7 @@ namespace TypeCobol.Analysis.Test
         /// <param name="cfg">The CFG to generate the dot file</param>
         /// <param name="dotFilePath">The Dot File to be generated.</param>
         /// <param name="bFullInstructions">true if full instruction source code must be generated, false if only instruction names.</param>
-        public static void GenDotCfgFile(ControlFlowGraph<Node, object> cfg, string dotFilePath, bool bFullInstructions)
+        public static void GenDotCfgFile<D>(ControlFlowGraph<Node, D> cfg, string dotFilePath, bool bFullInstructions)
         {
             using (var writer = File.CreateText(dotFilePath))
             {
@@ -110,7 +144,7 @@ namespace TypeCobol.Analysis.Test
         /// <param name="testPath">Path of the original Cobol/TypeCobol source file.</param>
         /// <param name="expectedDotFile">The expected dot file.</param>
         /// <param name="bFullInstruction">true if full instruction must be displayed, false otherwise</param>
-        public static void GenDotCfgAndCompare(ControlFlowGraph<Node, object> cfg, string testPath, string expectedDotFile, bool bFullInstruction)
+        public static void GenDotCfgAndCompare<D>(ControlFlowGraph<Node, D> cfg, string testPath, string expectedDotFile, bool bFullInstruction)
         {
             StringWriter writer = new StringWriter();
             GenDotCfg(cfg, writer, bFullInstruction);

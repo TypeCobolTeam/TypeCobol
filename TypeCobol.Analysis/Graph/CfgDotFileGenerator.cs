@@ -1,11 +1,12 @@
 ﻿using System.IO;
 using System.Text;
+using TypeCobol.Compiler;
 using TypeCobol.Compiler.Report;
 
 namespace TypeCobol.Analysis.Graph
 {
     /// <summary>
-    /// Graphviz Dot file generator for a Control Flow Graph
+    /// GraphViz Dot file generator for a Control Flow Graph
     /// </summary>
     /// <typeparam name="N"></typeparam>
     /// <typeparam name="D"></typeparam>
@@ -129,7 +130,7 @@ namespace TypeCobol.Analysis.Graph
             Writer.Flush();            
         }
 
-        public void Report(TextWriter writer)
+        public void Report(TextWriter writer, CompilationUnit unit = null)
         {
             Generate(writer, Cfg);
         }

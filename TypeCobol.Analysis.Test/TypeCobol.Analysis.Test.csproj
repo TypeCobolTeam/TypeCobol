@@ -36,8 +36,19 @@
     <None Include="**\*.diag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="**\*.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Compile Include="BasicCfgProgramTest.cs" />
     <Compile Include="BasicControlFlowInstructionTest.cs" />
+    <Compile Include="BitSetTest.cs" />
+    <Compile Include="CfgDfaBuildingTests.cs" />
     <Compile Include="CfgTestUtils.cs" />
+    <Compile Include="DfaBuildUseAndDefListTest.cs" />
+    <Compile Include="DfaCallPgmReport.cs" />
+    <Compile Include="DfaGenAndKillSetTest.cs" />
+    <Compile Include="DfaInOutSetsTest.cs" />
+    <Compile Include="DfaUseDefSetTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -54,6 +65,7 @@
       <Name>TypeCobol</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

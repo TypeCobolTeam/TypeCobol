@@ -11,6 +11,7 @@ namespace TypeCobol.Compiler.Report
         /// Emit the Report in the given TextWriter
         /// </summary>
         /// <param name="writer">Output TextWriter</param>
-        void Report(TextWriter writer);
+        /// <param name="unit">The compilation unit for which to create a Report</param>
+        void Report(TextWriter writer, CompilationUnit unit = null);
     }
 }

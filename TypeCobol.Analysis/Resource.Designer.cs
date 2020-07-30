@@ -86,5 +86,14 @@ namespace TypeCobol.Analysis {
                 return ResourceManager.GetString("BasicBlockGroupGoesBeyondTheLimit", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recursive Basic Block Group with the following instruction : {0}.
+        /// </summary>
+        internal static string RecursiveBasicBlockGroupInstructions {
+            get {
+                return ResourceManager.GetString("RecursiveBasicBlockGroupInstructions", resourceCulture);
+            }
+        }
     }
 }
