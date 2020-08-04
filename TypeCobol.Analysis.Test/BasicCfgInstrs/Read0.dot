@@ -1,0 +1,68 @@
+﻿digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{Block1|    PERFORM SMPL-READ\l}"
+]
+subgraph cluster_1{
+color = blue;
+label = "SMPL-READ";
+Block12 [
+label = "{SMPL-READ. Block12|    DISPLAY 'FILE READING....'\l    READ FILE1 NEXT RECORD                 INTO WS-FS-RCD\l}"
+]
+Block13 [
+label = "{Block13|    AT END\l      SET EOF-SW         TO TRUE\l}"
+]
+Block14 [
+label = "{Block14|}"
+]
+Block15 [
+label = "{Block15|    NOT AT END\l}"
+]
+Block16 [
+label = "{Block16|      PERFORM DISPLAY-RECORD\l}"
+]
+subgraph cluster_2{
+color = blue;
+label = "DISPLAY-RECORD";
+Block19 [
+label = "{DISPLAY-RECORD. Block19|    DISPLAY WS-FS-RCD\l}"
+]
+
+}
+Block16 -> Block19 [style=dashed]
+
+Block17 [
+label = "{Block17|}"
+]
+Block18 [
+label = "{Block18|}"
+]
+Block12 -> Block13
+Block12 -> Block14
+Block13 -> Block14
+Block14 -> Block15
+Block14 -> Block18
+Block15 -> Block16
+Block16 -> Block17
+Block17 -> Block18
+
+}
+Block1 -> Block12 [style=dashed]
+
+Block2 [
+label = "{Block2|    GOBACK\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+
+}

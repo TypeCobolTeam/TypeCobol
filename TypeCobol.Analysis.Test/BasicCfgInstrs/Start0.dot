@@ -1,0 +1,90 @@
+﻿digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{Block1|    PERFORM SMPL-START\l}"
+]
+subgraph cluster_1{
+color = blue;
+label = "SMPL-START";
+Block16 [
+label = "{SMPL-START. Block16|    DISPLAY 'FILE BROWSING...'\l    OPEN INPUT FILE1\l    START FILE1 KEY EQUAL STD-NO\l}"
+]
+Block17 [
+label = "{Block17|       INVALID KEY\l}"
+]
+Block18 [
+label = "{Block18|         PERFORM NOT-FOUND\l}"
+]
+subgraph cluster_2{
+color = blue;
+label = "NOT-FOUND";
+Block26 [
+label = "{NOT-FOUND. Block26|    DISPLAY \"STUDENT DETAILS NOT FOUND\"\l}"
+]
+
+}
+Block18 -> Block26 [style=dashed]
+
+Block19 [
+label = "{Block19|}"
+]
+Block20 [
+label = "{Block20|}"
+]
+Block21 [
+label = "{Block21|       NOT INVALID KEY\l}"
+]
+Block22 [
+label = "{Block22|         PERFORM FOUND\l}"
+]
+subgraph cluster_3{
+color = blue;
+label = "FOUND";
+Block27 [
+label = "{FOUND. Block27|    DISPLAY \"STUDENT DETAILS FOUND\"\l}"
+]
+
+}
+Block22 -> Block27 [style=dashed]
+
+Block23 [
+label = "{Block23|}"
+]
+Block24 [
+label = "{Block24|}"
+]
+Block25 [
+label = "{SMPL-START. Block25|    CLOSE FILE1\l    DISPLAY STD-REC\l}"
+]
+Block16 -> Block17
+Block16 -> Block20
+Block17 -> Block18
+Block18 -> Block19
+Block19 -> Block20
+Block20 -> Block21
+Block20 -> Block24
+Block21 -> Block22
+Block22 -> Block23
+Block23 -> Block24
+Block24 -> Block25
+
+}
+Block1 -> Block16 [style=dashed]
+
+Block2 [
+label = "{Block2|    GOBACK\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+
+}

@@ -1,0 +1,90 @@
+﻿digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{Block1|    PERFORM SMPL-UNSTRING\l}"
+]
+subgraph cluster_1{
+color = blue;
+label = "SMPL-UNSTRING";
+Block16 [
+label = "{SMPL-UNSTRING. Block16|    DISPLAY 'UNSTRING EXAMPLE....'\l    UNSTRING WS-DATA DELIMITED BY \",\"        INTO  WS-OUTPUT-DATA1, WS-OUTPUT-DATA2\l}"
+]
+Block17 [
+label = "{Block17|      ON OVERFLOW\l}"
+]
+Block18 [
+label = "{Block18|         PERFORM ERROR-OCCURED\l}"
+]
+subgraph cluster_2{
+color = blue;
+label = "ERROR-OCCURED";
+Block26 [
+label = "{ERROR-OCCURED. Block26|    DISPLAY \"ERROR OCCURED\"\l}"
+]
+
+}
+Block18 -> Block26 [style=dashed]
+
+Block19 [
+label = "{Block19|}"
+]
+Block20 [
+label = "{Block20|}"
+]
+Block21 [
+label = "{Block21|      NOT ON OVERFLOW\l}"
+]
+Block22 [
+label = "{Block22|         PERFORM NO-ERROR\l}"
+]
+subgraph cluster_3{
+color = blue;
+label = "NO-ERROR";
+Block27 [
+label = "{NO-ERROR. Block27|    DISPLAY \"NO ERROR\"\l}"
+]
+
+}
+Block22 -> Block27 [style=dashed]
+
+Block23 [
+label = "{Block23|}"
+]
+Block24 [
+label = "{Block24|}"
+]
+Block25 [
+label = "{SMPL-UNSTRING. Block25|    DISPLAY 'DATA1 AFTER UNSTRING FUNCTION : ' WS-OUTPUT-DATA1\l    DISPLAY 'DATA2 AFTER UNSTRING FUNCTION : ' WS-OUTPUT-DATA2\l}"
+]
+Block16 -> Block17
+Block16 -> Block20
+Block17 -> Block18
+Block18 -> Block19
+Block19 -> Block20
+Block20 -> Block21
+Block20 -> Block24
+Block21 -> Block22
+Block22 -> Block23
+Block23 -> Block24
+Block24 -> Block25
+
+}
+Block1 -> Block16 [style=dashed]
+
+Block2 [
+label = "{Block2|    GOBACK\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+
+}
