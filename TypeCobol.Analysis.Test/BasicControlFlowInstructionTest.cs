@@ -485,6 +485,27 @@ namespace TypeCobol.Analysis.Test
         public void NotRecursePerform1() => TestTemplate();
 
         [TestMethod]
+        public void Read0() => TestTemplate();
+
+        [TestMethod]
+        public void SearchPerform0() => TestTemplate();
+
+        [TestMethod]
+        public void SearchPerform1() => TestTemplate();
+
+        [TestMethod]
+        public void Start0() => TestTemplate();
+
+        [TestMethod]
+        public void String0() => TestTemplate();
+
+        [TestMethod]
+        public void Unstring0() => TestTemplate();
+
+        [TestMethod]
+        public void Write0() => TestTemplate();
+
+        [TestMethod]
         public void CfgInNestedPrg0()
         {
             string test = Path.Combine(BasicCfgInstrs, "CfgInNestedPrg0");
