@@ -1036,12 +1036,7 @@ namespace TypeCobol.Compiler.CodeModel
             var argumentType = argumentTypeInfo.TypeDefinition;
             if (argumentType == null)
             {
-                var argumentTypes = GetType(argumentTypeInfo.DataType);
-                if (argumentTypes.Count > 1)
-                {
-                    return false;
-                }
-                argumentType = argumentTypes.FirstOrDefault();
+                return parameterType == null && parameter.DataType == argumentTypeInfo.DataType;
             }
 
             return parameterType == argumentType;
