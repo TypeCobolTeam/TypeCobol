@@ -573,6 +573,32 @@ namespace TypeCobol.Analysis.Cfg
                         this.CurrentProgramCfgBuilder.LeaveExceptionCondition(node);
                         break;
                 }
+
+#if DEBUG
+                //Check current MultiBranchContext if any: the corresponding instruction must be amongst parents of the exited node.
+                var currentMultiBranchContext = this.CurrentProgramCfgBuilder.MultiBranchContextStack?.Count > 0
+                    ? this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek()
+                    : null;
+                if (currentMultiBranchContext != null)
+                {
+                    System.Diagnostics.Debug.Assert(currentMultiBranchContext.Instruction != node);
+                    if (currentMultiBranchContext.Instruction != null) //Maybe null for when contexts
+                    {
+                        bool foundInParents = false;
+                        var parent = node.Parent;
+                        while (parent != null)
+                        {
+                            if (currentMultiBranchContext.Instruction == parent)
+                            {
+                                foundInParents = true;
+                                break;
+                            }
+                            parent = parent.Parent;
+                        }
+                        System.Diagnostics.Debug.Assert(foundInParents);
+                    }
+                }
+#endif
             }
         }
 
