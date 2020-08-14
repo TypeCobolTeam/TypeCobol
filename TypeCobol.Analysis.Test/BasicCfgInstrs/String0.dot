@@ -16,70 +16,65 @@ label = "{Block1|    PERFORM SMPL-STRING\l}"
 subgraph cluster_1{
 color = blue;
 label = "SMPL-STRING";
+Block15 [
+label = "{SMPL-STRING. Block15|    DISPLAY 'STRING EXAMPLE....'\l    STRING WS-DATA, WS-DATA1 DELIMITED BY SPACE        INTO WS-OUTPUT-DATA\l}"
+]
 Block16 [
-label = "{SMPL-STRING. Block16|    DISPLAY 'STRING EXAMPLE....'\l    STRING WS-DATA, WS-DATA1 DELIMITED BY SPACE        INTO WS-OUTPUT-DATA\l}"
+label = "{Block16|      ON OVERFLOW\l}"
 ]
 Block17 [
-label = "{Block17|      ON OVERFLOW\l}"
-]
-Block18 [
-label = "{Block18|         PERFORM ERROR-OCCURED\l}"
+label = "{Block17|         PERFORM ERROR-OCCURED\l}"
 ]
 subgraph cluster_2{
 color = blue;
 label = "ERROR-OCCURED";
-Block26 [
-label = "{ERROR-OCCURED. Block26|    DISPLAY \"ERROR OCCURED\"\l}"
+Block24 [
+label = "{ERROR-OCCURED. Block24|    DISPLAY \"ERROR OCCURED\"\l}"
 ]
 
 }
-Block18 -> Block26 [style=dashed]
+Block17 -> Block24 [style=dashed]
 
-Block19 [
-label = "{Block19|}"
-]
-Block20 [
-label = "{Block20|}"
-]
-Block21 [
-label = "{Block21|      NOT ON OVERFLOW\l}"
+Block18 [
+label = "{Block18|}"
 ]
 Block22 [
-label = "{Block22|         PERFORM NO-ERROR\l}"
+label = "{Block22|}"
+]
+Block23 [
+label = "{SMPL-STRING. Block23|    DISPLAY 'DATA AFTER STRING FUNCTION : ' WS-OUTPUT-DATA\l}"
+]
+Block19 [
+label = "{Block19|      NOT ON OVERFLOW\l}"
+]
+Block20 [
+label = "{Block20|         PERFORM NO-ERROR\l}"
 ]
 subgraph cluster_3{
 color = blue;
 label = "NO-ERROR";
-Block27 [
-label = "{NO-ERROR. Block27|    DISPLAY \"NO ERROR\"\l}"
+Block25 [
+label = "{NO-ERROR. Block25|    DISPLAY \"NO ERROR\"\l}"
 ]
 
 }
-Block22 -> Block27 [style=dashed]
+Block20 -> Block25 [style=dashed]
 
-Block23 [
-label = "{Block23|}"
+Block21 [
+label = "{Block21|}"
 ]
-Block24 [
-label = "{Block24|}"
-]
-Block25 [
-label = "{SMPL-STRING. Block25|    DISPLAY 'DATA AFTER STRING FUNCTION : ' WS-OUTPUT-DATA\l}"
-]
+Block15 -> Block16
+Block15 -> Block19
 Block16 -> Block17
-Block16 -> Block20
 Block17 -> Block18
-Block18 -> Block19
+Block18 -> Block22
+Block22 -> Block23
 Block19 -> Block20
 Block20 -> Block21
-Block20 -> Block24
 Block21 -> Block22
-Block22 -> Block23
-Block23 -> Block24
-Block24 -> Block25
 
 }
-Block1 -> Block16 [style=dashed]
+Block1 -> Block15 [style=dashed]
 
 Block2 [
 label = "{Block2|    GOBACK\l}"

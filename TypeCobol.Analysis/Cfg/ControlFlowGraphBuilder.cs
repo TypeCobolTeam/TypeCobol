@@ -2175,17 +2175,28 @@ namespace TypeCobol.Analysis.Cfg
             }
             else
             {
-                MultiBranchContext ctx = new MultiBranchContext(this.CurrentProgramCfgBuilder, node);
-                if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
+                //Current multi-branch context
+                var currentCtx = this.CurrentProgramCfgBuilder.MultiBranchContextStack?.Count > 0
+                    ? this.CurrentProgramCfgBuilder.MultiBranchContextStack?.Peek()
+                    : null;
+                
+                //Create or reuse the context
+                if (currentCtx == null || currentCtx.Instruction != node.Parent)
                 {
-                    this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext>();
+                    currentCtx = new MultiBranchContext(this.CurrentProgramCfgBuilder, node.Parent);
+                    if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
+                    {
+                        this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext>();
+                    }
+                    //Push and start the Exception condition context.
+                    this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(currentCtx);
+                    currentCtx.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
                 }
-                //Push and start the Exception condition context.
-                this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctx);
-                ctx.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
+
                 //So the current block is now the the exception condition
                 var excCondBlock = this.CurrentProgramCfgBuilder.CreateBlock(node, true);
-                ctx.AddBranch(excCondBlock);
+                currentCtx.AddBranch(excCondBlock);
+
                 //The new Current Block is the Exception condition block
                 this.CurrentProgramCfgBuilder.CurrentBasicBlock = excCondBlock;
             }
@@ -2197,27 +2208,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="node">The exception condition to be leave</param>
         protected virtual void LeaveExceptionCondition(Node node)
         {
-            //Special case AT END in a SEARCH Instruction
-            if (node.CodeElement.Type == CodeElementType.AtEndCondition &&
-                this.CurrentProgramCfgBuilder.MultiBranchContextStack != null &&
-                this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0 &&
-                this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek().Instruction.CodeElement.Type == CodeElementType.SearchStatement)
-            {//Nothing todo.                
-            }
-            else
-            {
-                System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
-                System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
-                MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
-                System.Diagnostics.Debug.Assert(ctx.Branches != null);
-                System.Diagnostics.Debug.Assert(ctx.Branches.Count > 0);
-
-                bool branchToNext = true;
-                //The next block.
-                var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
-                ctx.End(branchToNext, nextBlock);
-                this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
-            }
+            
         }
 
         /// <summary>
@@ -2306,7 +2297,81 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="node">The Statement node to be leaves</param>
         protected virtual void LeaveStatement(Node node)
         {
+            if (this.CurrentProgramCfgBuilder.MultiBranchContextStack?.Count > 0)
+            {
+                MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
+                System.Diagnostics.Debug.Assert(ctx.Branches != null);
+                System.Diagnostics.Debug.Assert(ctx.Branches.Count > 0);
 
+                if (ctx.Instruction == node)
+                {
+                    //We are leaving a Node with an open multi-branch context, it must be ended
+                    this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
+
+                    //collect exception condition branches by mutually exclusive pairs
+                    var seen = new HashSet<CodeElementType>();
+                    var expected = new HashSet<CodeElementType>();
+                    foreach (var branch in ctx.Branches)
+                    {
+                        System.Diagnostics.Debug.Assert(branch.Instructions.Count > 0);
+                        System.Diagnostics.Debug.Assert(branch.Instructions.First.Value != null);
+                        System.Diagnostics.Debug.Assert(branch.Instructions.First.Value.CodeElement != null);
+                        var branchType = branch.Instructions.First.Value.CodeElement.Type;
+                        switch (branchType)
+                        {
+                            case CodeElementType.AtEndCondition:
+                                Expect(CodeElementType.NotAtEndCondition);
+                                break;
+                            case CodeElementType.NotAtEndCondition:
+                                Expect(CodeElementType.AtEndCondition);
+                                break;
+                            case CodeElementType.AtEndOfPageCondition:
+                                Expect(CodeElementType.NotAtEndOfPageCondition);
+                                break;
+                            case CodeElementType.NotAtEndOfPageCondition:
+                                Expect(CodeElementType.AtEndOfPageCondition);
+                                break;
+                            case CodeElementType.OnExceptionCondition:
+                                Expect(CodeElementType.NotOnExceptionCondition);
+                                break;
+                            case CodeElementType.NotOnExceptionCondition:
+                                Expect(CodeElementType.OnExceptionCondition);
+                                break;
+                            case CodeElementType.OnOverflowCondition:
+                                Expect(CodeElementType.NotOnOverflowCondition);
+                                break;
+                            case CodeElementType.NotOnOverflowCondition:
+                                Expect(CodeElementType.OnOverflowCondition);
+                                break;
+                            case CodeElementType.InvalidKeyCondition:
+                                Expect(CodeElementType.NotInvalidKeyCondition);
+                                break;
+                            case CodeElementType.NotInvalidKeyCondition:
+                                Expect(CodeElementType.InvalidKeyCondition);
+                                break;
+                            case CodeElementType.OnSizeErrorCondition:
+                                Expect(CodeElementType.NotOnSizeErrorCondition);
+                                break;
+                            case CodeElementType.NotOnSizeErrorCondition:
+                                Expect(CodeElementType.OnSizeErrorCondition);
+                                break;
+                        }
+
+                        void Expect(CodeElementType conditionType)
+                        {
+                            seen.Add(branchType);
+                            expected.Add(conditionType);
+                        }
+                    }
+
+                    bool branchToNext = seen.Count == 0 /*no exception condition*/ || expected.Except(seen).Any() /*mutually exclusive exception conditions*/;
+
+                    //The next block.
+                    var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
+                    ctx.End(branchToNext, nextBlock);
+                    this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
+                }
+            }
         }
 
         /// <summary>

@@ -16,48 +16,43 @@ label = "{Block1|    PERFORM SMPL-READ\l}"
 subgraph cluster_1{
 color = blue;
 label = "SMPL-READ";
+Block11 [
+label = "{SMPL-READ. Block11|    DISPLAY 'FILE READING....'\l    READ FILE1 NEXT RECORD                 INTO WS-FS-RCD\l}"
+]
 Block12 [
-label = "{SMPL-READ. Block12|    DISPLAY 'FILE READING....'\l    READ FILE1 NEXT RECORD                 INTO WS-FS-RCD\l}"
-]
-Block13 [
-label = "{Block13|    AT END\l      SET EOF-SW         TO TRUE\l}"
-]
-Block14 [
-label = "{Block14|}"
-]
-Block15 [
-label = "{Block15|    NOT AT END\l}"
+label = "{Block12|    AT END\l      SET EOF-SW         TO TRUE\l}"
 ]
 Block16 [
-label = "{Block16|      PERFORM DISPLAY-RECORD\l}"
+label = "{Block16|}"
+]
+Block13 [
+label = "{Block13|    NOT AT END\l}"
+]
+Block14 [
+label = "{Block14|      PERFORM DISPLAY-RECORD\l}"
 ]
 subgraph cluster_2{
 color = blue;
 label = "DISPLAY-RECORD";
-Block19 [
-label = "{DISPLAY-RECORD. Block19|    DISPLAY WS-FS-RCD\l}"
+Block17 [
+label = "{DISPLAY-RECORD. Block17|    DISPLAY WS-FS-RCD\l}"
 ]
 
 }
-Block16 -> Block19 [style=dashed]
+Block14 -> Block17 [style=dashed]
 
-Block17 [
-label = "{Block17|}"
+Block15 [
+label = "{Block15|}"
 ]
-Block18 [
-label = "{Block18|}"
-]
-Block12 -> Block13
-Block12 -> Block14
+Block11 -> Block12
+Block11 -> Block13
+Block12 -> Block16
 Block13 -> Block14
 Block14 -> Block15
-Block14 -> Block18
 Block15 -> Block16
-Block16 -> Block17
-Block17 -> Block18
 
 }
-Block1 -> Block12 [style=dashed]
+Block1 -> Block11 [style=dashed]
 
 Block2 [
 label = "{Block2|    GOBACK\l}"
