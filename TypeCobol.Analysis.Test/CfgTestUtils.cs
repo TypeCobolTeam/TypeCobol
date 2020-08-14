@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Analysis.Graph;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Nodes;
@@ -16,10 +17,19 @@ namespace TypeCobol.Analysis.Test
 
         private static readonly AnalyzerProvider _AnalyzerProvider;
 
+        public static string BasicTestsDir;
+        public static string ThirdPartyDir;
+
         static CfgTestUtils()
         {
             _AnalyzerProvider = new AnalyzerProvider();
             _AnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgDfaAnalyzer(CFG_ANALYZER_IDENTIFIER, CfgBuildingMode.Standard));
+
+            string currentDir = Directory.GetCurrentDirectory();
+            string solutionDir = Path.GetDirectoryName(Path.GetDirectoryName(currentDir));
+            Assert.IsNotNull(solutionDir);
+            BasicTestsDir = Path.Combine(solutionDir, "TypeCobol.Analysis.Test", "BasicCfgInstrs");
+            ThirdPartyDir = Path.Combine(solutionDir, "TypeCobol.Test", "ThirdParty");
         }
 
         /// <summary>

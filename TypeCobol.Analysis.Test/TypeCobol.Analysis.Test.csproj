@@ -24,18 +24,10 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="**\*.cbl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="**\*.tcbl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="**\*.dot">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="**\*.diag">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="**\*.cbl" />
+    <None Include="**\*.tcbl" />
+    <None Include="**\*.dot" />
+    <None Include="**\*.diag" />
     <Compile Include="BasicControlFlowInstructionTest.cs" />
     <Compile Include="CfgTestUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
