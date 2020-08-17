@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TypeCobol.Compiler;
 using TypeCobol.Compiler.Symbols;
 using System.IO;
 using TypeCobol.Analysis.Dfa;
 using TypeCobol.Analysis.Graph;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
+
+using static TypeCobol.Analysis.Test.CfgTestUtils;
 
 namespace TypeCobol.Analysis.Test
 {
@@ -19,7 +20,7 @@ namespace TypeCobol.Analysis.Test
         /// <summary>
         /// This test check the GEN set of the sample SampleGotos0.cbl according to its corresponding
         /// dot graph.
-        /// 
+        /// </summary>
         //digraph Cfg {
         //    node[
         //    shape = "record"
@@ -66,22 +67,21 @@ namespace TypeCobol.Analysis.Test
         //            Block7->Block10
         //            Block9->Block10
         //}
-        /// </summary>
         [TestMethod]
         public void IN_OUT_SETS_SampleGotos0()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicDfaSamples", "SampleGotos0.cbl");
-            IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfg = CfgTestUtils.ParseCompareDiagnosticsForDfa(path);
+            string path = Path.Combine(BasicDfaSamples, "SampleGotos0.cbl");
+            IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfg = ParseCompareDiagnosticsForDfa(path);
 
             Assert.IsTrue(cfg.Count == 1);
             //Resolve variable I
-            QualifiedName qi = new TypeCobol.Compiler.CodeElements.Expressions.URI("I");
+            QualifiedName qi = new URI("I");
             var namesI = cfg[0].ProcedureDivisionNode.SymbolTable.GetVariablesExplicitWithQualifiedName(qi);
             Assert.AreEqual(1, namesI.Count);
             Symbol I = namesI[0].Value.SemanticData;
 
             //Resolve variable J
-            QualifiedName qj = new TypeCobol.Compiler.CodeElements.Expressions.URI("J");
+            QualifiedName qj = new URI("J");
             var namesJ = cfg[0].ProcedureDivisionNode.SymbolTable.GetVariablesExplicitWithQualifiedName(qj);
             Assert.AreEqual(1, namesJ.Count);
             Symbol J = namesJ[0].Value.SemanticData;
@@ -96,7 +96,7 @@ namespace TypeCobol.Analysis.Test
             // d(2) : ADD 1 TO J
             // d(3) : MOVE 1 TO I
             // d(4) : ADD 1 TO J
-            // d(5) : SUBSTRACT 4 FROM J
+            // d(5) : SUBTRACT 4 FROM J
             //-----------------------------------
             // Block(0)
             //-----------------------------------

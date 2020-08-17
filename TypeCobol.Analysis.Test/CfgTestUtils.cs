@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Analysis.Dfa;
 using TypeCobol.Analysis.Graph;
 using TypeCobol.Compiler;
@@ -20,12 +21,30 @@ namespace TypeCobol.Analysis.Test
         private static readonly AnalyzerProvider _AnalyzerProvider;
         private static readonly AnalyzerProvider _AnalyzerForDfaProvider;
 
+        public static readonly string ThirdPartyDir;
+        //Project dirs
+        public static readonly string BasicCfgInstrs;
+        public static readonly string BasicCfgPrograms;
+        public static readonly string BasicDfaSamples;
+        public static readonly string CfgDfaBuildTests;
+        public static readonly string Report;
+
         static CfgTestUtils()
         {
             _AnalyzerProvider = new AnalyzerProvider();
             _AnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CFG_ANALYZER_IDENTIFIER, CfgBuildingMode.Standard));
             _AnalyzerForDfaProvider = new AnalyzerProvider();
             _AnalyzerForDfaProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CFG_FOR_DFA_ANALYZER_IDENTIFIER, CfgBuildingMode.WithDfa));
+
+            string currentDir = Directory.GetCurrentDirectory();
+            string solutionDir = Path.GetDirectoryName(Path.GetDirectoryName(currentDir));
+            Assert.IsNotNull(solutionDir);
+            ThirdPartyDir = Path.Combine(solutionDir, "TypeCobol.Test", "ThirdParty");
+            BasicCfgInstrs = Path.Combine(solutionDir, "TypeCobol.Analysis.Test", "BasicCfgInstrs");
+            BasicCfgPrograms = Path.Combine(solutionDir, "TypeCobol.Analysis.Test", "BasicCfgPrograms");
+            BasicDfaSamples = Path.Combine(solutionDir, "TypeCobol.Analysis.Test", "BasicDfaSamples");
+            CfgDfaBuildTests = Path.Combine(solutionDir, "TypeCobol.Analysis.Test", "CfgDfaBuildTests");
+            Report = Path.Combine(solutionDir, "TypeCobol.Analysis.Test", "Report");
         }
 
         /// <summary>

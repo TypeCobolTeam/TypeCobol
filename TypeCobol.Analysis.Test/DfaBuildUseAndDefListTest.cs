@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TypeCobol.Compiler;
 using TypeCobol.Compiler.Symbols;
 using System.IO;
 using TypeCobol.Analysis.Dfa;
 using TypeCobol.Analysis.Graph;
-using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
+
+using static TypeCobol.Analysis.Test.CfgTestUtils;
 
 namespace TypeCobol.Analysis.Test
 {
@@ -19,8 +19,8 @@ namespace TypeCobol.Analysis.Test
         [TestMethod]
         public void IfThenTest()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "IfThen0.cbl");
-            IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfg = CfgTestUtils.ParseCompareDiagnosticsForDfa(path);
+            string path = Path.Combine(BasicCfgInstrs, "IfThen0.cbl");
+            IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfg = ParseCompareDiagnosticsForDfa(path);
             Assert.IsTrue(cfg.Count == 1);
 
             DefaultDataFlowGraphBuilder dfaBuilder = new DefaultDataFlowGraphBuilder(cfg[0]);
@@ -36,8 +36,8 @@ namespace TypeCobol.Analysis.Test
         [TestMethod]
         public void SearchCond0()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "SearchCond0.cbl");
-            IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfg = CfgTestUtils.ParseCompareDiagnosticsForDfa(path);
+            string path = Path.Combine(BasicCfgInstrs, "SearchCond0.cbl");
+            IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfg = ParseCompareDiagnosticsForDfa(path);
             Assert.IsTrue(cfg.Count == 1);
 
             DefaultDataFlowGraphBuilder dfaBuilder = new DefaultDataFlowGraphBuilder(cfg[0]);
@@ -58,8 +58,8 @@ namespace TypeCobol.Analysis.Test
         [TestMethod]
         public void MixPeformEvaluateIf0()
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "MixPerformEvaluateIf0.cbl");
-            IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfgs = CfgTestUtils.ParseCompareDiagnosticsForDfa(path);
+            string path = Path.Combine(BasicCfgInstrs, "MixPerformEvaluateIf0.cbl");
+            IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfgs = ParseCompareDiagnosticsForDfa(path);
             Assert.IsTrue(cfgs.Count == 1);
 
             DefaultDataFlowGraphBuilder dfaBuilder = new DefaultDataFlowGraphBuilder(cfgs[0]);

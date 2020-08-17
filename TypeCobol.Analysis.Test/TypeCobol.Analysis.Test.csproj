@@ -24,21 +24,11 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="**\*.cbl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="**\*.tcbl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="**\*.dot">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="**\*.diag">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="**\*.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="**\*.cbl" />
+    <None Include="**\*.tcbl" />
+    <None Include="**\*.dot" />
+    <None Include="**\*.diag" />
+    <None Include="**\*.csv" />
     <Compile Include="BasicCfgProgramTest.cs" />
     <Compile Include="BasicControlFlowInstructionTest.cs" />
     <Compile Include="BitSetTest.cs" />
