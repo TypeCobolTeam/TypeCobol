@@ -14,13 +14,49 @@
       *      10 Ligne OCCURS 10
       *               ASCENDING KEY IS Obj
       *               INDEXED BY IdxA.
-      *         15 Obj PIC X(12).
+      *         15 Obj  PIC X(12).
+      *         15 Flag Type Bool.
+       LINKAGE SECTION.
+
+       01 TC-GlobalData.
+
+
+      *01 GlobalTab Type TypeA.
+       02 GlobalTab.
+           03 Contenu.
+             04 Ligne OCCURS 10
+                      ASCENDING KEY IS Obj
+                      INDEXED BY a14c7288IdxA.
+               05 Obj PIC X(12).
+              05  Flag-value PIC X VALUE LOW-VALUE.
+                  88  Flag       VALUE 'T'.
+                  88  Flag-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
+
+
 
        PROCEDURE DIVISION.
 
        INIT-LIBRARY.
+      * Get the data from the global storage section
+           CALL 'b8131d02' USING
+               by reference address of TC-GlobalData
+           end-call
+
+                    
            CONTINUE.
 
+       MAIN.
+      *    SET GlobalTab::IdxA TO 1
+           SET a14c7288IdxA TO 1
+      *    SET GlobalTab::Flag(GlobalTab::IdxA) TO false
+           SET Flag-false OF GlobalTab(a14c7288IdxA) TO TRUE
+      *    SET GlobalTab::Flag(IdxA) TO false
+           SET Flag-false OF GlobalTab(a14c7288IdxA) TO TRUE
+           GOBACK
+           .
+           
       *DECLARE PROCEDURE DisplayTable.
 
        END PROGRAM TCOZDR03.
@@ -42,6 +78,11 @@
                       ASCENDING KEY IS Obj
                       INDEXED BY a14c7288IdxA.
                05 Obj PIC X(12).
+              05  Flag-value PIC X VALUE LOW-VALUE.
+                  88  Flag       VALUE 'T'.
+                  88  Flag-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
 
 
        PROCEDURE DIVISION
@@ -78,6 +119,11 @@
                       ASCENDING KEY IS Obj
                       INDEXED BY a14c7288IdxA.
                05 Obj PIC X(12).
+              05  Flag-value PIC X VALUE LOW-VALUE.
+                  88  Flag       VALUE 'T'.
+                  88  Flag-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
                                
 
        LINKAGE SECTION.
