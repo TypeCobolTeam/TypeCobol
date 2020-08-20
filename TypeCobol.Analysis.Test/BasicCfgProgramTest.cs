@@ -41,11 +41,6 @@ namespace TypeCobol.Analysis.Test
 
             string expectedPath = Path.Combine(BasicCfgInstrs, "DetectPerformProcRecursiveException.dot");
             GenDotCfgAndCompare(cfgs[0], path, expectedPath, true);
-
-            //Assert.IsTrue(ctx.CfgDfaBuilder.Diagnostics[0].Message.Contains(TypeCobol.Analysis.Resource.RecursiveBasicBlockGroupInstructions.Substring(0, 
-            //    TypeCobol.Analysis.Resource.RecursiveBasicBlockGroupInstructions.LastIndexOf(':'))));
-
-            GenDotCfgAndCompare(cfgs[0], path, expectedPath, true);
         }
     }
 }

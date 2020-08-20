@@ -1,12 +1,10 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TypeCobol.Analysis.Test
 {
     [TestClass]
     public class BitSetTest
     {
-
         [TestMethod]
         [TestCategory("BitSet")]
         public void BitSetNotTest()
@@ -143,6 +141,5 @@ namespace TypeCobol.Analysis.Test
             Assert.AreEqual(bs3.NextSetBit(119), 412);
             Assert.AreEqual(bs3.NextSetBit(413), -1);
         }
-
     }
 }

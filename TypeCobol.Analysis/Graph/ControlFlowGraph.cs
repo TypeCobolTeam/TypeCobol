@@ -153,9 +153,10 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
-        /// Determine if this Cfg is entered in its Procedure.
+        /// Determine if this Cfg has already been initialized
+        /// (i.e. encountered a PROCEDURE DIVISION node while building).
         /// </summary>
-        public bool IsInProcedure => ProcedureDivisionNode != null;
+        public bool IsInitialized => ProcedureDivisionNode != null;
 
         /// <summary>
         /// All basic blocks that can be reached via control flow out of the given basic block.
