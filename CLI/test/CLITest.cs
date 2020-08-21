@@ -94,9 +94,15 @@ namespace CLI.Test
         /// Tests with a dependency that depends on a dependency which is loaded after itself.
         /// </summary>
         [TestMethod]
-        public void TestDpendenciesNotLoadedInCorrectOrder() {
+        public void TestDependenciesNotLoadedInCorrectOrder() {
             CLITestHelper.Test("dependenciesNotLoadedInCorrectOrder", ReturnCode.ParsingDiagnostics);
             CLITestHelper.Test("dependenciesNotLoadedInCorrectOrder_2", ReturnCode.Success);
+        }
+
+        [TestMethod]
+        public void TestDependenciesSignatureOverload()
+        {
+            CLITestHelper.Test("dependenciesSignatureOverload", ReturnCode.Success);
         }
 
         [TestMethod]
