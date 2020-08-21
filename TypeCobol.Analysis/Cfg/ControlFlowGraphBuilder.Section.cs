@@ -57,6 +57,28 @@ namespace TypeCobol.Analysis.Cfg
                     }
                 }
             }
+
+            public override void AccumulateSentencesThrough(List<Sentence> sentences, Procedure end, out Procedure last)
+            {
+                last = null;
+                if (_regions != null)
+                {
+                    foreach (var region in _regions)
+                    {
+                        region.AccumulateSentencesThrough(sentences, end, out last);
+                        if (region == end)
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                if (last == null)
+                {
+                    //Empty section or made only of sentences
+                    last = this;
+                }
+            }
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Analysis.Graph;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Nodes;
@@ -11,38 +13,80 @@ namespace TypeCobol.Analysis.Test
 {
     internal static class CfgTestUtils
     {
+        private const string CFG_ANALYZER_IDENTIFIER = "cfg-basic-tests";
+
+        private static readonly AnalyzerProvider _AnalyzerProvider;
+
+        public static string BasicTestsDir;
+        public static string ThirdPartyDir;
+
+        static CfgTestUtils()
+        {
+            _AnalyzerProvider = new AnalyzerProvider();
+            _AnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgDfaAnalyzer(CFG_ANALYZER_IDENTIFIER, CfgBuildingMode.Standard));
+
+            string currentDir = Directory.GetCurrentDirectory();
+            string solutionDir = Path.GetDirectoryName(Path.GetDirectoryName(currentDir));
+            Assert.IsNotNull(solutionDir);
+            BasicTestsDir = Path.Combine(solutionDir, "TypeCobol.Analysis.Test", "BasicCfgInstrs");
+            ThirdPartyDir = Path.Combine(solutionDir, "TypeCobol.Test", "ThirdParty");
+        }
+
         /// <summary>
         /// Perform parsing of the supplied Cobol or TypeCobol source file
         /// and compare actual diagnostics to expected diagnostics.
         /// </summary>
         /// <param name="sourceFilePath">Full path to the source file.</param>
-        /// <param name="expectedDiagnosticsFilePath">Full path to the diagnostic file.</param>
-        /// <returns>An instance of <see cref="CompilationUnit"/> containing all parsing results</returns>
-        public static CompilationUnit ParseCompareDiagnostics(string sourceFilePath, string expectedDiagnosticsFilePath)
+        /// <param name="expectedDiagnosticsFilePath">Full path to the diagnostic file, pass null to skip
+        /// diagnostic comparison</param>
+        /// <returns>List of CFG built for the source file.</returns>
+        public static IList<ControlFlowGraph<Node, object>> ParseCompareDiagnostics(string sourceFilePath, string expectedDiagnosticsFilePath = null)
         {
-            var parser = Parser.Parse(sourceFilePath, DocumentFormat.RDZReferenceFormat);
+            var parser = Parser.Parse(sourceFilePath, DocumentFormat.RDZReferenceFormat, analyzerProvider: _AnalyzerProvider);
             var results = parser.Results;
-            var diagnostics = results.AllDiagnostics();
-            if (diagnostics.Count > 0)
+
+            if (expectedDiagnosticsFilePath != null)
             {
-                string diagnosticsText = ParserUtils.DiagnosticsToString(diagnostics);
-                if (File.Exists(expectedDiagnosticsFilePath))
+                var diagnostics = results.AllDiagnostics();
+                if (diagnostics.Count > 0)
                 {
-                    string expectedResult = File.ReadAllText(expectedDiagnosticsFilePath);
-                    TestUtils.compareLines(sourceFilePath, diagnosticsText, expectedResult, expectedDiagnosticsFilePath);
+                    string diagnosticsText = ParserUtils.DiagnosticsToString(diagnostics);
+                    if (File.Exists(expectedDiagnosticsFilePath))
+                    {
+                        string expectedResult = File.ReadAllText(expectedDiagnosticsFilePath);
+                        TestUtils.compareLines(sourceFilePath, diagnosticsText, expectedResult, expectedDiagnosticsFilePath);
+                    }
+                    else
+                    {
+                        //Found diagnostics while parsing but no diagnostic file.
+                        StringBuilder errorMessage = new StringBuilder();
+                        errorMessage.AppendLine($"Found diagnostics while parsing '{sourceFilePath}' but diagnostics file is missing.");
+                        errorMessage.AppendLine($"Expected diagnostic file path was '{expectedDiagnosticsFilePath}'.");
+                        errorMessage.Append(diagnosticsText);
+                        throw new Exception(errorMessage.ToString());
+                    }
                 }
                 else
                 {
-                    //Found diagnostics while parsing but no diagnostic file.
-                    StringBuilder errorMessage = new StringBuilder();
-                    errorMessage.AppendLine($"Found diagnostics while parsing '{sourceFilePath}' but diagnostics file is missing.");
-                    errorMessage.AppendLine($"Expected diagnostic file path was '{expectedDiagnosticsFilePath ?? "NULL"}'.");
-                    errorMessage.Append(diagnosticsText);
-                    throw new Exception(errorMessage.ToString());
+                    if (File.Exists(expectedDiagnosticsFilePath))
+                    {
+                        //Expected diagnostics but none found during parsing.
+                        StringBuilder errorMessage = new StringBuilder();
+                        errorMessage.AppendLine($"Expected diagnostics but none were found during parsing of '{sourceFilePath}'.");
+                        errorMessage.AppendLine($"Expected diagnostic file path was '{expectedDiagnosticsFilePath}'.");
+                        throw new Exception(errorMessage.ToString());
+                    }
+
+                    //file doesn't exist and no diagnostics : OK
                 }
             }
 
-            return results;
+            if (results.TryGetAnalyzerResult(CFG_ANALYZER_IDENTIFIER, out IList<ControlFlowGraph<Node, object>> graphs))
+            {
+                return graphs;
+            }
+
+            throw new Exception($"No Control Flow Graph generated for file '{sourceFilePath}'.");
         }
 
         private static void GenDotCfg(ControlFlowGraph<Node, object> cfg, TextWriter writer, bool fullInstruction)

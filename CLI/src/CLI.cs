@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TypeCobol.Analysis;
 using TypeCobol.CLI.CustomExceptions;
 using TypeCobol.Codegen;
 using TypeCobol.Compiler;
@@ -107,8 +108,9 @@ namespace TypeCobol.Server
             //Load intrinsics and dependencies, it will build the root symbol table
             var rootSymbolTable = LoadIntrinsicsAndDependencies();
 
-            //Add report listeners
-            var reports = InitializeReports();
+            //Add analyzers
+            var analyzerProvider = new AnalyzerProvider();
+            var reports = RegisterAnalyzers(analyzerProvider);
 
             //Normalize TypeCobolOptions, the parser does not need to go beyond SemanticCheck for the first phase
             var typeCobolOptions = new TypeCobolOptions(_configuration);
@@ -121,7 +123,7 @@ namespace TypeCobol.Server
             foreach (var inputFilePath in _configuration.InputFiles)
             {
                 var parser = new Parser(rootSymbolTable);
-                parser.Init(inputFilePath, typeCobolOptions, _configuration.Format, _configuration.CopyFolders);
+                parser.Init(inputFilePath, typeCobolOptions, _configuration.Format, _configuration.CopyFolders, analyzerProvider);
                 parser.Parse(inputFilePath);
 
                 //Collect results : parsing results, used and missing copies
@@ -229,15 +231,20 @@ namespace TypeCobol.Server
             }
         }
 
-        private Dictionary<string, IReport> InitializeReports()
+        private Dictionary<string, IReport> RegisterAnalyzers(AnalyzerProvider analyzerProvider)
         {
             var reports = new Dictionary<string, IReport>();
             if (_configuration.ExecToStep >= ExecutionStep.CrossCheck)
             {
+                //CFG/DFA
+                analyzerProvider.AddActivator(
+                    (o, t) =>
+                        CfgDfaAnalyzerFactory.CreateCfgDfaAnalyzer("cfg-dfa", _configuration.CfgBuildingMode));
+
                 if (!string.IsNullOrEmpty(_configuration.ReportCopyMoveInitializeFilePath))
                 {
-                    Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(
-                        () =>
+                    analyzerProvider.AddActivator(
+                        (o, t) =>
                         {
                             var report = new CopyMoveInitializeReport();
                             reports.Add(_configuration.ReportCopyMoveInitializeFilePath, report);
@@ -248,8 +255,8 @@ namespace TypeCobol.Server
 
                 if (!string.IsNullOrEmpty(_configuration.ReportZCallFilePath))
                 {
-                    Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(
-                        () =>
+                    analyzerProvider.AddActivator(
+                        (o, t) =>
                         {
                             var report = new ZCallPgmReport();
                             reports.Add(_configuration.ReportZCallFilePath, report);

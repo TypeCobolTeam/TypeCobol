@@ -23,6 +23,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CfgDfaAnalyzerFactory.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.BasicBlockForNode.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.BasicBlockForNodeGroup.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.cs" />
@@ -30,7 +31,7 @@
     <Compile Include="Cfg\ControlFlowGraphBuilder.MultiBranchContext.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.Paragraph.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.Procedure.cs" />
-    <Compile Include="Cfg\ControlFlowGraphBuilder.ProcedureDivisionPartition.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.ProcedureDivisionRegion.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.Section.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.Sentence.cs" />
     <Compile Include="Cfg\DefaultControlFlowGraphBuilder.cs" />

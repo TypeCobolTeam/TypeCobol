@@ -61,7 +61,7 @@ namespace TypeCobol.Analysis {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Bad ALTER instruction with No sibling altered Goto..
+        ///   Looks up a localized string similar to Bad ALTER instruction: could not locate corresponding altered GO TO..
         /// </summary>
         internal static string BadAlterIntrWithNoSiblingGotoInstr {
             get {
@@ -70,7 +70,7 @@ namespace TypeCobol.Analysis {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PERFORM &apos;{0}&apos; THRU &apos;{1}&apos;:  &apos;{1}&apos;  is declared before &apos;{0}&apos;.
+        ///   Looks up a localized string similar to PERFORM &apos;{0}&apos; THRU &apos;{1}&apos;: &apos;{1}&apos; is declared before &apos;{0}&apos;..
         /// </summary>
         internal static string BadPerformProcedureThru {
             get {
@@ -79,20 +79,11 @@ namespace TypeCobol.Analysis {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Inside group &apos;{0}&apos; there is a branch &apos;{0}&apos; outside the group..
+        ///   Looks up a localized string similar to Statement &apos;{0}&apos; located at line {1}, column {2} prevents this PERFORM statement to reach its exit..
         /// </summary>
         internal static string BasicBlockGroupGoesBeyondTheLimit {
             get {
                 return ResourceManager.GetString("BasicBlockGroupGoesBeyondTheLimit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A Recursive block has been encountered while analysing PERFORM instruction to &apos;{0}&apos; : {1}.
-        /// </summary>
-        internal static string RecursiveBlockOnPerformProcedure {
-            get {
-                return ResourceManager.GetString("RecursiveBlockOnPerformProcedure", resourceCulture);
             }
         }
     }

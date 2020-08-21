@@ -57,6 +57,13 @@ namespace TypeCobol.Analysis.Cfg
                     }
                 }
             }
+
+            public override void AccumulateSentencesThrough(List<Sentence> sentences, Procedure end, out Procedure last)
+            {
+                if (_sentences != null)
+                    sentences.AddRange(_sentences);
+                last = this;
+            }
         }
     }
 }

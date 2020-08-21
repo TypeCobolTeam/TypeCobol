@@ -1,0 +1,63 @@
+﻿digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{Block1|    PERFORM SMPL-WRITE\l}"
+]
+subgraph cluster_1{
+color = blue;
+label = "SMPL-WRITE";
+Block11 [
+label = "{SMPL-WRITE. Block11|    DISPLAY 'FILE WRITING....'\l    OPEN OUTPUT FILE2\l    WRITE STD-REC2 FROM WS-FS-RCD\l}"
+]
+Block12 [
+label = "{Block12|    NOT INVALID KEY\l      DISPLAY \"Record is Ok\"\l}"
+]
+Block16 [
+label = "{Block16|    CLOSE FILE2\l}"
+]
+Block13 [
+label = "{Block13|    INVALID KEY\l}"
+]
+Block14 [
+label = "{Block14|      PERFORM INVALIDKEY\l}"
+]
+subgraph cluster_2{
+color = blue;
+label = "INVALIDKEY";
+Block17 [
+label = "{INVALIDKEY. Block17|    DISPLAY \"INVALID KEY\"\l}"
+]
+
+}
+Block14 -> Block17 [style=dashed]
+
+Block15 [
+label = "{Block15|}"
+]
+Block11 -> Block12
+Block11 -> Block13
+Block12 -> Block16
+Block13 -> Block14
+Block14 -> Block15
+Block15 -> Block16
+
+}
+Block1 -> Block11 [style=dashed]
+
+Block2 [
+label = "{Block2|    GOBACK\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+
+}

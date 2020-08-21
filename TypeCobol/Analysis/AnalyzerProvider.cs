@@ -17,7 +17,10 @@ namespace TypeCobol.Analysis
 
         public virtual ISyntaxDrivenAnalyzer[] CreateSyntaxDrivenAnalyzers(TypeCobolOptions options, TextSourceInfo textSourceInfo)
         {
-            return _sdaActivators?.Select(sdaActivator => sdaActivator(options, textSourceInfo)).ToArray();
+            return _sdaActivators?
+                .Select(sdaActivator => sdaActivator(options, textSourceInfo))
+                .Where(sda => sda != null)
+                .ToArray();
         }
 
         /// <summary>

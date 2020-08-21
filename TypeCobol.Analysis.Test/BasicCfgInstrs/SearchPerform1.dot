@@ -1,0 +1,90 @@
+﻿digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{Block1|    PERFORM SMPL-SEARCHALL\l}"
+]
+subgraph cluster_1{
+color = blue;
+label = "SMPL-SEARCHALL";
+Block16 [
+label = "{SMPL-SEARCHALL. Block16|    DISPLAY 'SEARCH ALL EXAMPLE....'\l    SET SEQ TO 1\l}"
+]
+Block17 [
+label = "{Block17|    SEARCH ALL NAMES\l}"
+]
+Block18 [
+label = "{Block18|       WHEN STUDENT-NAME (STD-IDX) = IN-STD-NAME\l}"
+]
+Block22 [
+label = "{Block22|}"
+]
+Block23 [
+label = "{Block23|          PERFORM FOUND\l}"
+]
+subgraph cluster_3{
+color = blue;
+label = "FOUND";
+Block27 [
+label = "{FOUND. Block27|    DISPLAY \"STUDENT DETAILS FOUND\"\l}"
+]
+
+}
+Block23 -> Block27 [style=dashed]
+
+Block24 [
+label = "{Block24|}"
+]
+Block25 [
+label = "{Block25|}"
+]
+Block19 [
+label = "{Block19|       AT END\l}"
+]
+Block20 [
+label = "{Block20|          PERFORM NOT-FOUND\l}"
+]
+subgraph cluster_2{
+color = blue;
+label = "NOT-FOUND";
+Block26 [
+label = "{NOT-FOUND. Block26|    DISPLAY \"STUDENT DETAILS NOT FOUND\"\l}"
+]
+
+}
+Block20 -> Block26 [style=dashed]
+
+Block21 [
+label = "{Block21|}"
+]
+Block16 -> Block17
+Block17 -> Block18
+Block17 -> Block19
+Block18 -> Block22
+Block18 -> Block17
+Block22 -> Block23
+Block23 -> Block24
+Block24 -> Block25
+Block19 -> Block20
+Block20 -> Block21
+Block21 -> Block25
+
+}
+Block1 -> Block16 [style=dashed]
+
+Block2 [
+label = "{Block2|    GOBACK\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+
+}

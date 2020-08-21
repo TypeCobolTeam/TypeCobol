@@ -269,14 +269,14 @@ namespace TypeCobol.Compiler
                     TemporaryProgramClassDocumentSnapshot = new TemporarySemanticDocument(codeElementsDocument, new DocumentVersion<ICodeElementsLine>(this), codeElementsDocument.Lines,  root, newDiagnostics, nodeCodeElementLinkers,
                         typedVariablesOutsideTypedef, typeThatNeedTypeLinking);
 
-                    //Capture the syntax-driven analyzers results
+                    //Capture the syntax-driven analyzers results, the diagnostics are already collected
                     if (customAnalyzers != null)
                     {
                         lock (lockObjectForAnalyzerResults)
                         {
                             foreach (var customAnalyzer in customAnalyzers)
                             {
-                                _analyzerResults.Add(customAnalyzer.Identifier, customAnalyzer.GetResult());
+                                _analyzerResults[customAnalyzer.Identifier] = customAnalyzer.GetResult();
                             }
                         }
                     }

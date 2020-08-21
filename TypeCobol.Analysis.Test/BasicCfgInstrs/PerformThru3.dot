@@ -1,0 +1,62 @@
+﻿digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{Block1|    PERFORM S2\l}"
+]
+subgraph cluster_1{
+color = blue;
+label = "C";
+Block10 [
+label = "{C. Block10|    display 'C'\l}"
+]
+Block11 [
+label = "{D. Block11|    display 'D'\l}"
+]
+Block10 -> Block11
+
+}
+Block1 -> Block10 [style=dashed]
+
+Block2 [
+label = "{Block2|}"
+]
+Block3 [
+label = "{Block3|    PERFORM S1 THRU C\l}"
+]
+subgraph cluster_2{
+color = blue;
+label = "A";
+Block12 [
+label = "{A. Block12|    display 'A'\l}"
+]
+Block13 [
+label = "{B. Block13|    display 'B'\l}"
+]
+Block14 [
+label = "{C. Block14|    display 'C'\l}"
+]
+Block12 -> Block13
+Block13 -> Block14
+
+}
+Block3 -> Block12 [style=dashed]
+
+Block4 [
+label = "{Block4|    GOBACK\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block2 -> Block3
+Block3 -> Block4
+
+}

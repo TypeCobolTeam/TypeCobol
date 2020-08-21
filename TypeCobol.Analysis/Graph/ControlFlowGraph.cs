@@ -111,6 +111,12 @@ namespace TypeCobol.Analysis.Graph
         {
             ProgramOrFunctionNode = programOrFunctionNode;
             ParentGraph = parentGraph;
+            if (parentGraph != null)
+            {
+                if (parentGraph.NestedGraphs == null)
+                    parentGraph.NestedGraphs = new List<ControlFlowGraph<N, D>>();
+                parentGraph.NestedGraphs.Add(this);
+            }
         }
 
         /// <summary>
@@ -123,21 +129,6 @@ namespace TypeCobol.Analysis.Graph
             AllBlocks = new List<BasicBlock<N, D>>();
             BlockFor = new Dictionary<N, BasicBlock<N, D>>();
             SuccessorEdges = new List<BasicBlock<N, D>>();
-        }
-
-        /// <summary>
-        /// Add a child graph to this graph.
-        /// </summary>
-        /// <param name="nestedGraph">New nested graph.</param>
-        /// <remarks>Nested graph's parent must be this instance.</remarks>
-        internal void AddNestedGraph(ControlFlowGraph<N, D> nestedGraph)
-        {
-            System.Diagnostics.Debug.Assert(nestedGraph.ParentGraph == this);
-            if (NestedGraphs == null)
-            {
-                NestedGraphs = new List<ControlFlowGraph<N, D>>();
-            }
-            NestedGraphs.Add(nestedGraph);
         }
 
         /// <summary>

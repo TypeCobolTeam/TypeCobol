@@ -52,6 +52,12 @@ namespace TypeCobol.Analysis.Cfg
             {
                 yield return this;
             }
+
+            public override void AccumulateSentencesThrough(List<Sentence> sentences, Procedure end, out Procedure last)
+            {
+                sentences.Add(this);
+                last = null;
+            }
         }
     }
 }

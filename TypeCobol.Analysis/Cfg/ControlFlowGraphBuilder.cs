@@ -15,7 +15,7 @@ namespace TypeCobol.Analysis.Cfg
     /// <summary>
     /// The Control Flow Graph Builder for a TypeCobol Program.
     /// </summary>
-    public partial class ControlFlowGraphBuilder<D> : ProgramClassBuilderNodeListener
+    public partial class ControlFlowGraphBuilder<D> : SyntaxDrivenAnalyzerBase
     {
         /// <summary>
         /// Control how the blocks targeted by a PERFORM are handled.
@@ -30,31 +30,27 @@ namespace TypeCobol.Analysis.Cfg
         private ControlFlowGraphBuilder<D> ParentProgramCfgBuilder { get; }
 
         /// <summary>
-        /// All Cfg graphs builder created during the building phase, so it contains Cfg for nested programs and nested procedures,
-        /// but also for stacked programs.
+        /// All graphs built for a source file (CFG for main program and
+        /// CFG for stacked programs if any).
         /// </summary>
-        public List<ControlFlowGraphBuilder<D>> AllCfgBuilder
-        {
-            get;
-            private set;
-        }
+        private IList<ControlFlowGraph<Node, D>> Graphs { get; }
 
         /// <summary>
         /// The current Program Cfg being built.
         /// </summary>
-        public ControlFlowGraphBuilder<D> CurrentProgramCfgBuilder
+        private ControlFlowGraphBuilder<D> CurrentProgramCfgBuilder
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
         /// The Control Flow Graph Build for the main Program
         /// </summary>
-        public ControlFlowGraph<Node, D> Cfg
+        private ControlFlowGraph<Node, D> Cfg
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
@@ -139,24 +135,30 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// All pending Next Sentence instructions that will be handled at the end of the Procedure Division.
         /// </summary>
-        private LinkedList<Tuple<NextSentence, BasicBlockForNode, Sentence>> PendingNextSentences;
+        private LinkedList<Tuple<BasicBlockForNode, Sentence>> PendingNextSentences;
 
         /// <summary>
         /// All encountered sentences
         /// </summary>
         private List<Sentence> AllSentences;
 
-        public IList<Diagnostic> Diagnostics { get; private set; }
+        /// <summary>
+        /// Delegate to add a new Diagnostic to the root collection of diagnostics.
+        /// </summary>
+        new private Action<Diagnostic> AddDiagnostic;
 
         /// <summary>
         /// Initial constructor. Allows to configure CFG building.
         /// </summary>
+        /// <param name="identifier">String identifier of this analyzer-builder.</param>
         /// <param name="extendPerformTargets">True to extend the blocks targeted by PERFORM statements.</param>
         /// <param name="useEvaluateCascade">True to convert EVALUATE statements into cascaded-IFs.</param>
         /// <param name="useSearchCascade">True to convert SEARCH statements into cascaded-IFs.</param>
-        protected ControlFlowGraphBuilder(bool extendPerformTargets, bool useEvaluateCascade, bool useSearchCascade)
+        protected ControlFlowGraphBuilder(string identifier, bool extendPerformTargets, bool useEvaluateCascade, bool useSearchCascade)
+            : base(identifier)
         {
-            this.Diagnostics = new List<Diagnostic>();
+            this.Graphs = new List<ControlFlowGraph<Node, D>>();
+            this.AddDiagnostic = base.AddDiagnostic;
             this.AllProcedures = new List<Procedure>();
             this.ParentProgramCfgBuilder = null;
             this.ExtendPerformTargets = extendPerformTargets;
@@ -165,19 +167,28 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// Constructor using a parent builder.
+        /// Secondary constructor, for builders made by a builder itself.
         /// </summary>
-        /// <param name="parentCfgBuilder">Non-null instance of builder.</param>
-        private ControlFlowGraphBuilder(ControlFlowGraphBuilder<D> parentCfgBuilder)
+        /// <param name="builder">Either the main builder or a parent builder.</param>
+        /// <param name="asParent">Supplied builder must be registered as parent of the new one.</param>
+        private ControlFlowGraphBuilder(ControlFlowGraphBuilder<D> builder, bool asParent)
+            : base(null) // Identifier of a child CFG builder won't be used so it's ok to pass null.
         {
-            this.Diagnostics = new List<Diagnostic>();
+            this.Graphs = builder.Graphs;
+            this.AddDiagnostic = builder.AddDiagnostic;
             this.AllProcedures = new List<Procedure>();
-            this.ParentProgramCfgBuilder = parentCfgBuilder;
-            //Propagate properties from parent.
-            this.ExtendPerformTargets = parentCfgBuilder.ExtendPerformTargets;
-            this.UseEvaluateCascade = parentCfgBuilder.UseEvaluateCascade;
-            this.UseSearchCascade = parentCfgBuilder.UseSearchCascade;
+            this.ParentProgramCfgBuilder = asParent ? builder : null;
+            this.ExtendPerformTargets = builder.ExtendPerformTargets;
+            this.UseEvaluateCascade = builder.UseEvaluateCascade;
+            this.UseSearchCascade = builder.UseSearchCascade;
         }
+
+        /// <summary>
+        /// As an analyzer, the root CFG builder returns all graphs
+        /// built for a source file.
+        /// </summary>
+        /// <returns>A non-null IList of ControlFlowGraph.</returns>
+        public override object GetResult() => Graphs;
 
         /// <summary>
         /// Determines if the given Node is a statement.
@@ -562,6 +573,32 @@ namespace TypeCobol.Analysis.Cfg
                         this.CurrentProgramCfgBuilder.LeaveExceptionCondition(node);
                         break;
                 }
+
+#if DEBUG
+                //Check current MultiBranchContext if any: the corresponding instruction must be amongst parents of the exited node.
+                var currentMultiBranchContext = this.CurrentProgramCfgBuilder.MultiBranchContextStack?.Count > 0
+                    ? this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek()
+                    : null;
+                if (currentMultiBranchContext != null)
+                {
+                    System.Diagnostics.Debug.Assert(currentMultiBranchContext.Instruction != node);
+                    if (currentMultiBranchContext.Instruction != null) //Maybe null for when contexts
+                    {
+                        bool foundInParents = false;
+                        var parent = node.Parent;
+                        while (parent != null)
+                        {
+                            if (currentMultiBranchContext.Instruction == parent)
+                            {
+                                foundInParents = true;
+                                break;
+                            }
+                            parent = parent.Parent;
+                        }
+                        System.Diagnostics.Debug.Assert(foundInParents);
+                    }
+                }
+#endif
             }
         }
 
@@ -643,39 +680,26 @@ namespace TypeCobol.Analysis.Cfg
         protected virtual void EnterProgram(Program program)
         {
             if (this.CurrentProgram == null)
-            {//This is the main program or a stacked program with no parent.           
-                if (AllCfgBuilder == null)
-                    AllCfgBuilder = new List<ControlFlowGraphBuilder<D>>();
+            {
+                //This is the main program or a stacked program with no parent.           
                 if (CurrentProgramCfgBuilder == null)
-                {//The Main program
-                    this.AllCfgBuilder.Add(this);
+                {
+                    //The Main program
                     this.CurrentProgramCfgBuilder = this;
                 }
                 else
-                {//Stacked Program.         
+                {
+                    //Stacked Program.         
                     //New Control Flow Graph
-                    this.CurrentProgramCfgBuilder = new ControlFlowGraphBuilder<D>(ExtendPerformTargets, UseEvaluateCascade, UseSearchCascade); 
-                    this.AllCfgBuilder.Add(this.CurrentProgramCfgBuilder);
+                    this.CurrentProgramCfgBuilder = new ControlFlowGraphBuilder<D>(this.CurrentProgramCfgBuilder, false);
                     this.CurrentProgramCfgBuilder.CurrentProgramCfgBuilder = this.CurrentProgramCfgBuilder;
                 }
-                this.CurrentProgramCfgBuilder.InitializeCfg(program);
+                this.CurrentProgramCfgBuilder.Cfg = new ControlFlowGraph<Node, D>(program, null);
             }
             else
-            {//Nested program.
-             //New Control Flow Graph
-                if (this.CurrentProgramCfgBuilder.AllCfgBuilder == null)
-                {
-                    this.CurrentProgramCfgBuilder.AllCfgBuilder = new List<ControlFlowGraphBuilder<D>>();
-                }
-
-                var nestedCfg = new ControlFlowGraphBuilder<D>(this.CurrentProgramCfgBuilder);
-                nestedCfg.InitializeCfg(program);
-
-                this.CurrentProgramCfgBuilder.AllCfgBuilder.Add(nestedCfg);
-                this.CurrentProgramCfgBuilder.Cfg.AddNestedGraph(nestedCfg.Cfg);
-
-                this.CurrentProgramCfgBuilder = nestedCfg;
-                this.CurrentProgramCfgBuilder.CurrentProgramCfgBuilder = this.CurrentProgramCfgBuilder;
+            {
+                //Nested program.
+                EnterNestedProgramOrFunction(program);
             }
             
             this.CurrentProgram = program;
@@ -691,6 +715,7 @@ namespace TypeCobol.Analysis.Cfg
             if (this.CurrentProgramCfgBuilder.ParentProgramCfgBuilder == null)
             {//We are leaving the main program or the stacked program.
                 this.CurrentProgram = null;
+                this.Graphs.Add(this.CurrentProgramCfgBuilder.Cfg);
             }
             else
             {//Nested program get the parent control Flow Builder.
@@ -705,20 +730,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="funDecl">Function declaration entered</param>
         protected virtual void EnterFunction(FunctionDeclaration funDecl)
         {
-            System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder != null);
-            if (this.CurrentProgramCfgBuilder.AllCfgBuilder == null)
-            {
-                this.CurrentProgramCfgBuilder.AllCfgBuilder = new List<ControlFlowGraphBuilder<D>>();
-            }
-
-            var nestedCfg = new ControlFlowGraphBuilder<D>(this.CurrentProgramCfgBuilder);
-            nestedCfg.InitializeCfg(funDecl);
-
-            this.CurrentProgramCfgBuilder.AllCfgBuilder.Add(nestedCfg);
-            this.CurrentProgramCfgBuilder.Cfg.AddNestedGraph(nestedCfg.Cfg);
-
-            this.CurrentProgramCfgBuilder = nestedCfg;
-            this.CurrentProgramCfgBuilder.CurrentProgramCfgBuilder = this.CurrentProgramCfgBuilder;
+            EnterNestedProgramOrFunction(funDecl);
         }
 
         /// <summary>
@@ -728,6 +740,19 @@ namespace TypeCobol.Analysis.Cfg
         protected virtual void LeaveFunction(FunctionDeclaration funDecl)
         {
             this.CurrentProgramCfgBuilder = this.CurrentProgramCfgBuilder.ParentProgramCfgBuilder;
+        }
+
+        private void EnterNestedProgramOrFunction(Node programOrFunctionNode)
+        {
+            System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder != null);
+            var parentBuilder = this.CurrentProgramCfgBuilder;
+            var parentGraph = parentBuilder.Cfg;
+            this.CurrentProgramCfgBuilder = new ControlFlowGraphBuilder<D>(parentBuilder, true)
+                                            {
+                                                Cfg = new ControlFlowGraph<Node, D>(programOrFunctionNode, parentGraph)
+                                            };
+
+            this.CurrentProgramCfgBuilder.CurrentProgramCfgBuilder = this.CurrentProgramCfgBuilder;
         }
 
         /// <summary>
@@ -822,8 +847,8 @@ namespace TypeCobol.Analysis.Cfg
             {
                 foreach (var next in this.CurrentProgramCfgBuilder.PendingNextSentences)
                 {
-                    BasicBlockForNode block = next.Item2;
-                    Sentence sentence = next.Item3;
+                    BasicBlockForNode block = next.Item1;
+                    Sentence sentence = next.Item2;
                     if (sentence.Number < this.CurrentProgramCfgBuilder.AllSentences.Count - 1)
                     {
                         Sentence nextSentence = AllSentences[sentence.Number + 1];
@@ -935,98 +960,81 @@ namespace TypeCobol.Analysis.Cfg
         #endregion
 
         /// <summary>
-        /// Store all procedure's sentence blocks in a group.
-        /// </summary>
-        /// <param name="p">The procedure node</param>
-        /// <param name="procedure">The procedure in CFG</param>
-        /// <param name="group">The Group in which to store all blocks.</param>
-        /// <param name="storedBlockIndices">Set of indices of blocks already stored</param>
-        private void StoreProcedureSentenceBlocks(PerformProcedure p, Procedure procedure, BasicBlockForNodeGroup group, HashSet<int> storedBlockIndices)
-        {
-            foreach (var sentence in procedure)
-            {
-                //A Sentence has at least one block
-                System.Diagnostics.Debug.Assert(sentence.Blocks != null);
-                System.Diagnostics.Debug.Assert(sentence.Blocks.First() == sentence.FirstBlock);
-                foreach (var block in sentence.Blocks)
-                {//We must clone each block of the sequence and add them to the group.                    
-                    //System.Diagnostics.Debug.Assert(!clonedBlockIndexMap.ContainsKey(block.Index));
-                    if (!storedBlockIndices.Contains(block.Index))
-                    {//If this block has been already add, this mean there are recursive GOTOs
-                        storedBlockIndices.Add(block.Index);
-                        group.AddBlock(block);
-                    }
-                    else
-                    {//Recursive blocks detection.
-                        block.FullInstruction = true;
-                        string strBlock = block.ToString();
-                        Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                            p.CodeElement.Column,
-                            p.CodeElement.Column,
-                            p.CodeElement.Line,
-                            string.Format(Resource.RecursiveBlockOnPerformProcedure, procedure.Name, strBlock));
-                        Diagnostics.Add(d);
-                    }
-                }
-            }
-        }
-        /// <summary>
         /// Resolve a pending PERFORM procedure
         /// </summary>
         /// <param name="p">The procedure node</param>
         /// <param name="sectionNode">The section in which the PERFORM node appears</param>
         /// <param name="group">The Basic Block Group associated to the procedure</param>
-        /// <returns>True if the PERFORM has been resolved, false otherwise</returns>
-        private bool ResolvePendingPERFORMProcedure(PerformProcedure p, SectionNode sectionNode, BasicBlockForNodeGroup group)
+        private void ResolvePendingPERFORMProcedure(PerformProcedure p, SectionNode sectionNode, BasicBlockForNodeGroup group)
         {
             SymbolReference procedureReference = p.CodeElement.Procedure;
             SymbolReference throughProcedureReference = p.CodeElement.ThroughProcedure;
 
             Procedure procedure = ResolveProcedure(p, sectionNode, procedureReference);
             if (procedure == null)
-                return false;
-            HashSet<int> storedBlocks = new HashSet<int>();
+                return;
+
+            var clonedBlocksIndexMap = new Dictionary<int, int>();
             if (throughProcedureReference != null)
             {
                 Procedure throughProcedure = ResolveProcedure(p, sectionNode, throughProcedureReference);
                 if (throughProcedure == null)
-                    return false;
-                if (throughProcedure != procedure)
+                    return;
+
+                if (procedure.Number > throughProcedure.Number)
                 {
-                    if (procedure.Number > throughProcedure.Number)
-                    {// the second procedure name is before the first one.
-                        Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                            p.CodeElement.Column,
-                            p.CodeElement.Column,
-                            p.CodeElement.Line,
-                            string.Format(Resource.BadPerformProcedureThru, procedure.Name, throughProcedure.Name));
-                        Diagnostics.Add(d);
-                        return false;
-                    }
-                    StoreProcedureSentenceBlocks(p, procedure, group, storedBlocks);
-                    //Store all sentences or paragraphs between.
-                    for (int i = procedure.Number + 1; i < throughProcedure.Number; i++)
-                    {
-                        Procedure subSectionOrParagraph = this.CurrentProgramCfgBuilder.AllProcedures[i];
-                        StoreProcedureSentenceBlocks(p, subSectionOrParagraph, group, storedBlocks);
-                    }
-                    StoreProcedureSentenceBlocks(p, throughProcedure, group, storedBlocks);
+                    // the second procedure name is declared before the first one.
+                    Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                        p.CodeElement.Column,
+                        p.CodeElement.Column,
+                        p.CodeElement.Line,
+                        string.Format(Resource.BadPerformProcedureThru, procedure.Name, throughProcedure.Name));
+                    AddDiagnostic(d);
+                    return;
                 }
-                else
+
+                //Accumulate sentences located between the two procedures
+                List<Sentence> sentences = new List<Sentence>();
+                int currentProcedureNumber = procedure.Number;
+                while (currentProcedureNumber <= throughProcedure.Number)
                 {
-                    StoreProcedureSentenceBlocks(p, procedure, group, storedBlocks);
+                    var currentProcedure = this.CurrentProgramCfgBuilder.AllProcedures[currentProcedureNumber];
+                    currentProcedure.AccumulateSentencesThrough(sentences, throughProcedure, out var lastProcedure);
+                    currentProcedureNumber = lastProcedure.Number + 1;
                 }
+
+                //Store sentences into the group
+                StoreSentences(sentences);
             }
             else
             {
-                StoreProcedureSentenceBlocks(p, procedure, group, storedBlocks);
+                //Store all sentences from the procedure into the group
+                StoreSentences(procedure);
             }
-            //Now Clone the Graph.
-            if (!RelocateBasicBlockForNodeGroupGraph(p, group, storedBlocks))
+
+            //And finally clone the Graph.
+            RelocateBasicBlockForNodeGroupGraph(p, group, clonedBlocksIndexMap);
+
+            void StoreSentences(IEnumerable<Sentence> sentences)
             {
-                return false;
+                foreach (var sentence in sentences)
+                {
+                    foreach (var block in sentence.Blocks)
+                    {
+                        System.Diagnostics.Debug.Assert(!clonedBlocksIndexMap.ContainsKey(block.Index));
+
+                        //Each block is cloned before being entered in the group
+                        //because each group is tied to a specific PERFORM.
+                        var clonedBlock = (BasicBlockForNode) block.Clone();
+                        group.AddBlock(clonedBlock);
+                        clonedBlock.Index = this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Count;
+                        this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Add(clonedBlock);
+
+                        //Keep track of relationship between original block and cloned block
+                        clonedBlocksIndexMap.Add(block.Index, clonedBlock.Index);
+                    }
+                }
             }
-            return true;
         }
 
         /// <summary>
@@ -1034,49 +1042,61 @@ namespace TypeCobol.Analysis.Cfg
         /// </summary>
         /// <param name="p">The Perform Procedure node source of the call</param>
         /// <param name="group">The Group to be relocated</param>
-        /// <param name="storedBlockIndices">The set of all block indices contained in the group.</param>
-        /// <returns>true if the relocation is successful, false if the relocation goes beyond the group limit, 
-        /// this often means that de target paragraphs of the PERFORM goes out of the paragraph.</returns>
-        private bool RelocateBasicBlockForNodeGroupGraph(PerformProcedure p, BasicBlockForNodeGroup group, HashSet<int> storedBlockIndices)
+        /// <param name="clonedBlocksIndexMap">Map of blocks in the group.
+        /// key is the index of the original block, value is the index of the corresponding cloned block.</param>
+        private void RelocateBasicBlockForNodeGroupGraph(PerformProcedure p, BasicBlockForNodeGroup group, Dictionary<int, int> clonedBlocksIndexMap)
         {
-            //New successor edge map.
-            Dictionary<int, int> newEdgeIndexMap = new Dictionary<int, int>();
-            foreach (var b in group.Group)
+            //New successor edges map.
+            Dictionary<int, int> clonedEdgesIndexMap = new Dictionary<int, int>();
+            foreach (var clonedBlock in group.Group)
             {
-                List<int> successors = b.SuccessorEdges;
-                b.SuccessorEdges = new List<int>();
+                bool blockGoesBeyondGroupLimit = false;
+                List<int> successors = clonedBlock.SuccessorEdges;//List of original successors
+                clonedBlock.SuccessorEdges = new List<int>();
                 foreach (var edge in successors)
                 {
-                    if (!newEdgeIndexMap.TryGetValue(edge, out int newEdge))
+                    if (!clonedEdgesIndexMap.TryGetValue(edge, out int clonedEdge))
                     {
-                        var block = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges[edge];
-                        if (!storedBlockIndices.Contains(block.Index))
+                        var successor = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges[edge];
+                        if (!clonedBlocksIndexMap.TryGetValue(successor.Index, out var clonedSuccessorIndex))
                         {
-                            if (b != group.Group.Last.Value)
-                            {//Hum this block is not the last of the group and its successor is outside of the group ==> we don't support that.
-                                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                                    p.CodeElement.Column,
-                                    p.CodeElement.Column,
-                                    p.CodeElement.Line,
-                                    string.Format(Resource.BasicBlockGroupGoesBeyondTheLimit, ((BasicBlockForNode)block).Tag != null ? ((BasicBlockForNode)block).Tag.ToString() : "???", block.Index));
-                                Diagnostics.Add(d);
-                                //So in this case in order to not break the graph and to see the target branch that went out, add it as well....
-                                b.SuccessorEdges.Add(edge);
-                                continue;
+                            if (clonedBlock != group.Group.Last.Value)
+                            {
+                                //This block has at least one successor located outside of the group
+                                //and it is not the last block in the group, so we must report a Diagnostic
+                                blockGoesBeyondGroupLimit = true;
+
+                                //In order to not break the graph and to see the target branch that went out, add it as well....
+                                clonedBlock.SuccessorEdges.Add(edge);
                             }
-                            else
-                            {//Don't add the continuation edge
-                                continue;
-                            }
+
+                            continue;
                         }
-                        newEdge = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
-                        this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(block);
-                        newEdgeIndexMap[edge] = newEdge;
+
+                        var clonedSuccessor = this.CurrentProgramCfgBuilder.Cfg.AllBlocks[clonedSuccessorIndex];
+                        clonedEdge = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
+                        this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(clonedSuccessor);
+                        clonedEdgesIndexMap[edge] = clonedEdge;
                     }
-                    b.SuccessorEdges.Add(newEdge);
+                    clonedBlock.SuccessorEdges.Add(clonedEdge);
+                }
+
+                if (blockGoesBeyondGroupLimit)
+                {
+                    Node offendingInstruction = clonedBlock.Instructions.Last.Value;
+                    System.Diagnostics.Debug.Assert(offendingInstruction != null);
+                    System.Diagnostics.Debug.Assert(offendingInstruction.CodeElement != null);
+                    string offendingStatement = offendingInstruction.CodeElement.SourceText;
+                    int offendingLine = offendingInstruction.CodeElement.Line;
+                    int offendingColumn = offendingInstruction.CodeElement.Column;
+                    Diagnostic d = new Diagnostic(MessageCode.Warning,
+                        p.CodeElement.Column,
+                        p.CodeElement.Column,
+                        p.CodeElement.Line,
+                        string.Format(Resource.BasicBlockGroupGoesBeyondTheLimit, offendingStatement, offendingLine, offendingColumn));
+                    AddDiagnostic(d);
                 }
             }
-            return true;
         }
 
         /// <summary>
@@ -1101,6 +1121,8 @@ namespace TypeCobol.Analysis.Cfg
                         GraftBasicBlockGroup(group);
                     }
                 }
+
+                this.CurrentProgramCfgBuilder.PendingPERFORMProcedures = null;
             }
         }
 
@@ -1997,11 +2019,11 @@ namespace TypeCobol.Analysis.Cfg
 
                 if (this.CurrentProgramCfgBuilder.PendingNextSentences == null)
                 {
-                    this.CurrentProgramCfgBuilder.PendingNextSentences = new LinkedList<Tuple<NextSentence, BasicBlockForNode, Sentence>>();
+                    this.CurrentProgramCfgBuilder.PendingNextSentences = new LinkedList<Tuple<BasicBlockForNode, Sentence>>();
                 }
                 //Track pending Next Sentences.
-                Tuple<NextSentence, BasicBlockForNode, Sentence> item = new Tuple<NextSentence, BasicBlockForNode, Sentence>(
-                    node, this.CurrentProgramCfgBuilder.CurrentBasicBlock, this.CurrentProgramCfgBuilder.CurrentSentence
+                Tuple<BasicBlockForNode, Sentence> item = new Tuple<BasicBlockForNode, Sentence>(
+                    this.CurrentProgramCfgBuilder.CurrentBasicBlock, this.CurrentProgramCfgBuilder.CurrentSentence
                     );
                 this.CurrentProgramCfgBuilder.PendingNextSentences.AddLast(item);
 
@@ -2065,40 +2087,40 @@ namespace TypeCobol.Analysis.Cfg
                             continue;
 
                         //So Look for the first Goto Instruction
-                        foreach (var sb in alterProc)
+                        //The first instruction of the altered procedure must be a GOTO instruction (without DEPENDING ON)
+                        bool targetGotoResolved = false;
+                        var instructions = alterProc.FirstOrDefault()?.FirstBlock?.Instructions;
+                        if (instructions != null && instructions.Count > 0)
                         {
-                            bool bResolved = false;
-                            if (sb.FirstBlock != null && sb.FirstBlock.Instructions != null && sb.FirstBlock.Instructions.Count > 0)
-                            {//The first instruction must be a GOTO Instruction.
-                                Node first = sb.FirstBlock.Instructions.First.Value;
-                                if (first.CodeElement != null && first.CodeElement.Type == CodeElementType.GotoStatement)
-                                {//StatementType.GotoSimpleStatement
-                                    Goto @goto = (Goto)first;
-                                    if (@goto.CodeElement.StatementType == StatementType.GotoSimpleStatement)
+                            Node firstInstruction = instructions.First.Value;
+                            if (firstInstruction.CodeElement?.Type == CodeElementType.GotoStatement)
+                            {
+                                Goto @goto = (Goto) firstInstruction;
+                                if (@goto.CodeElement.StatementType == StatementType.GotoSimpleStatement)
+                                {
+                                    if (this.CurrentProgramCfgBuilder.PendingAlteredGOTOS == null)
+                                        this.CurrentProgramCfgBuilder.PendingAlteredGOTOS = new Dictionary<Goto, HashSet<SymbolReference>>();
+
+                                    if (!this.CurrentProgramCfgBuilder.PendingAlteredGOTOS.TryGetValue(@goto, out var targetSymbols))
                                     {
-                                        if (this.CurrentProgramCfgBuilder.PendingAlteredGOTOS == null)
-                                            this.CurrentProgramCfgBuilder.PendingAlteredGOTOS = new Dictionary<Goto, HashSet<SymbolReference>>();
-
-                                        if (!this.CurrentProgramCfgBuilder.PendingAlteredGOTOS.TryGetValue(@goto, out var targetSymbols))
-                                        {
-                                            targetSymbols = new HashSet<SymbolReference>();
-                                            this.CurrentProgramCfgBuilder.PendingAlteredGOTOS.Add(@goto, targetSymbols);
-                                        }
-
-                                        targetSymbols.Add(targetProcReference);
-                                        bResolved = true;
+                                        targetSymbols = new HashSet<SymbolReference>();
+                                        this.CurrentProgramCfgBuilder.PendingAlteredGOTOS.Add(@goto, targetSymbols);
                                     }
+
+                                    targetSymbols.Add(targetProcReference);
+                                    targetGotoResolved = true;
                                 }
                             }
-                            if (!bResolved)
-                            {
-                                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                                    alter.CodeElement.Column,
-                                    alter.CodeElement.Column,
-                                    alter.CodeElement.Line,
-                                    Resource.BadAlterIntrWithNoSiblingGotoInstr);
-                                Diagnostics.Add(d);
-                            }
+                        }
+
+                        if (!targetGotoResolved)
+                        {
+                            Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                                alter.CodeElement.Column,
+                                alter.CodeElement.Column,
+                                alter.CodeElement.Line,
+                                Resource.BadAlterIntrWithNoSiblingGotoInstr);
+                            AddDiagnostic(d);
                         }
                     }
                 }
@@ -2153,17 +2175,28 @@ namespace TypeCobol.Analysis.Cfg
             }
             else
             {
-                MultiBranchContext ctx = new MultiBranchContext(this.CurrentProgramCfgBuilder, node);
-                if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
+                //Current multi-branch context
+                var currentCtx = this.CurrentProgramCfgBuilder.MultiBranchContextStack?.Count > 0
+                    ? this.CurrentProgramCfgBuilder.MultiBranchContextStack?.Peek()
+                    : null;
+                
+                //Create or reuse the context
+                if (currentCtx == null || currentCtx.Instruction != node.Parent)
                 {
-                    this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext>();
+                    currentCtx = new MultiBranchContext(this.CurrentProgramCfgBuilder, node.Parent);
+                    if (this.CurrentProgramCfgBuilder.MultiBranchContextStack == null)
+                    {
+                        this.CurrentProgramCfgBuilder.MultiBranchContextStack = new Stack<MultiBranchContext>();
+                    }
+                    //Push and start the Exception condition context.
+                    this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(currentCtx);
+                    currentCtx.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
                 }
-                //Push and start the Exception condition context.
-                this.CurrentProgramCfgBuilder.MultiBranchContextStack.Push(ctx);
-                ctx.Start(this.CurrentProgramCfgBuilder.CurrentBasicBlock);
+
                 //So the current block is now the the exception condition
                 var excCondBlock = this.CurrentProgramCfgBuilder.CreateBlock(node, true);
-                ctx.AddBranch(excCondBlock);
+                currentCtx.AddBranch(excCondBlock);
+
                 //The new Current Block is the Exception condition block
                 this.CurrentProgramCfgBuilder.CurrentBasicBlock = excCondBlock;
             }
@@ -2175,27 +2208,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="node">The exception condition to be leave</param>
         protected virtual void LeaveExceptionCondition(Node node)
         {
-            //Special case AT END in a SEARCH Instruction
-            if (node.CodeElement.Type == CodeElementType.AtEndCondition &&
-                this.CurrentProgramCfgBuilder.MultiBranchContextStack != null &&
-                this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0 &&
-                this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek().Instruction.CodeElement.Type == CodeElementType.SearchStatement)
-            {//Nothing todo.                
-            }
-            else
-            {
-                System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack != null);
-                System.Diagnostics.Debug.Assert(this.CurrentProgramCfgBuilder.MultiBranchContextStack.Count > 0);
-                MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
-                System.Diagnostics.Debug.Assert(ctx.Branches != null);
-                System.Diagnostics.Debug.Assert(ctx.Branches.Count > 0);
-
-                bool branchToNext = true;
-                //The next block.
-                var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
-                ctx.End(branchToNext, nextBlock);
-                this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
-            }
+            
         }
 
         /// <summary>
@@ -2284,7 +2297,81 @@ namespace TypeCobol.Analysis.Cfg
         /// <param name="node">The Statement node to be leaves</param>
         protected virtual void LeaveStatement(Node node)
         {
+            if (this.CurrentProgramCfgBuilder.MultiBranchContextStack?.Count > 0)
+            {
+                MultiBranchContext ctx = this.CurrentProgramCfgBuilder.MultiBranchContextStack.Peek();
+                System.Diagnostics.Debug.Assert(ctx.Branches != null);
+                System.Diagnostics.Debug.Assert(ctx.Branches.Count > 0);
 
+                if (ctx.Instruction == node)
+                {
+                    //We are leaving a Node with an open multi-branch context, it must be ended
+                    this.CurrentProgramCfgBuilder.MultiBranchContextStack.Pop();
+
+                    //collect exception condition branches by mutually exclusive pairs
+                    var seen = new HashSet<CodeElementType>();
+                    var expected = new HashSet<CodeElementType>();
+                    foreach (var branch in ctx.Branches)
+                    {
+                        System.Diagnostics.Debug.Assert(branch.Instructions.Count > 0);
+                        System.Diagnostics.Debug.Assert(branch.Instructions.First.Value != null);
+                        System.Diagnostics.Debug.Assert(branch.Instructions.First.Value.CodeElement != null);
+                        var branchType = branch.Instructions.First.Value.CodeElement.Type;
+                        switch (branchType)
+                        {
+                            case CodeElementType.AtEndCondition:
+                                Expect(CodeElementType.NotAtEndCondition);
+                                break;
+                            case CodeElementType.NotAtEndCondition:
+                                Expect(CodeElementType.AtEndCondition);
+                                break;
+                            case CodeElementType.AtEndOfPageCondition:
+                                Expect(CodeElementType.NotAtEndOfPageCondition);
+                                break;
+                            case CodeElementType.NotAtEndOfPageCondition:
+                                Expect(CodeElementType.AtEndOfPageCondition);
+                                break;
+                            case CodeElementType.OnExceptionCondition:
+                                Expect(CodeElementType.NotOnExceptionCondition);
+                                break;
+                            case CodeElementType.NotOnExceptionCondition:
+                                Expect(CodeElementType.OnExceptionCondition);
+                                break;
+                            case CodeElementType.OnOverflowCondition:
+                                Expect(CodeElementType.NotOnOverflowCondition);
+                                break;
+                            case CodeElementType.NotOnOverflowCondition:
+                                Expect(CodeElementType.OnOverflowCondition);
+                                break;
+                            case CodeElementType.InvalidKeyCondition:
+                                Expect(CodeElementType.NotInvalidKeyCondition);
+                                break;
+                            case CodeElementType.NotInvalidKeyCondition:
+                                Expect(CodeElementType.InvalidKeyCondition);
+                                break;
+                            case CodeElementType.OnSizeErrorCondition:
+                                Expect(CodeElementType.NotOnSizeErrorCondition);
+                                break;
+                            case CodeElementType.NotOnSizeErrorCondition:
+                                Expect(CodeElementType.OnSizeErrorCondition);
+                                break;
+                        }
+
+                        void Expect(CodeElementType conditionType)
+                        {
+                            seen.Add(branchType);
+                            expected.Add(conditionType);
+                        }
+                    }
+
+                    bool branchToNext = seen.Count == 0 /*no exception condition*/ || expected.Except(seen).Any() /*mutually exclusive exception conditions*/;
+
+                    //The next block.
+                    var nextBlock = this.CurrentProgramCfgBuilder.CreateBlock(null, true);
+                    ctx.End(branchToNext, nextBlock);
+                    this.CurrentProgramCfgBuilder.CurrentBasicBlock = nextBlock;
+                }
+            }
         }
 
         /// <summary>
@@ -2359,24 +2446,6 @@ namespace TypeCobol.Analysis.Cfg
                 block.SetFlag(BasicBlock<Node, D>.Flags.Declaratives, true);
             }
             return block;
-        }
-
-        /// <summary>
-        /// Initialize the Cfg by a Program.
-        /// </summary>
-        /// <param name="program">The target program of the Cfg</param>
-        protected virtual void InitializeCfg(Program program)
-        {
-            Cfg = new ControlFlowGraph<Node, D>(program, ParentProgramCfgBuilder?.Cfg);
-        }
-
-        /// <summary>
-        /// Initialize the Cfg by a Function.
-        /// </summary>
-        /// <param name="funDecl">The target function declaration of the Cfg</param>
-        protected virtual void InitializeCfg(FunctionDeclaration funDecl)
-        {
-            Cfg = new ControlFlowGraph<Node, D>(funDecl, ParentProgramCfgBuilder?.Cfg);
         }
 
         public static readonly string ROOT_SECTION_NAME = "<< RootSection >>";
