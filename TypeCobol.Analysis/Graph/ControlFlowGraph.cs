@@ -95,11 +95,7 @@ namespace TypeCobol.Analysis.Graph
         /// <summary>
         /// The list of all Predecessor edges. The predecessor list for each basic block is a sublist of this list
         /// </summary>
-        public List<BasicBlock<N, D>> PredecessorEdges
-        {
-            get;
-            internal set;
-        }
+        public List<BasicBlock<N, D>> PredecessorEdges { get; private set; }
 
         /// <summary>
         /// The parent graph of this graph.
@@ -159,81 +155,7 @@ namespace TypeCobol.Analysis.Graph
         public bool IsInitialized => ProcedureDivisionNode != null;
 
         /// <summary>
-        /// All basic blocks that can be reached via control flow out of the given basic block.
-        /// </summary>
-        /// <param name="basicBlock">The basic block to get the successors</param>
-        /// <returns>The sublist of successors</returns>
-        public List<BasicBlock<N, D>> SuccessorsFor(BasicBlock<N, D> basicBlock)
-        {
-            System.Diagnostics.Contracts.Contract.Requires(basicBlock != null);
-            System.Diagnostics.Contracts.Contract.Assume(basicBlock.SuccessorEdges != null);
-            List<BasicBlock<N, D>> result = new List<BasicBlock<N, D>>();
-            foreach (var n in basicBlock.SuccessorEdges)
-            {
-                result.Add(SuccessorEdges[n]);
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Set up the Precessor Edges list from the start block.
-        /// </summary>
-        public void SetupPredecessorEdgesFromStart()
-        {
-            if (AllBlocks.Count > 0)
-                SetupPredecessorEdgesFromRoot(AllBlocks[0]);
-        }
-        /// <summary>
-        /// Set up the Precessor Edges list from a root block.
-        /// </summary>
-        /// <param name="root">The Root block</param>
-        public void SetupPredecessorEdgesFromRoot(BasicBlock<N, D> root)
-        {
-            if (this.PredecessorEdges != null || this.SuccessorEdges == null)
-                return;
-            this.TerminalsBlocks = new LinkedList<BasicBlock<N, D>>();
-            this.PredecessorEdges = new List<BasicBlock<N, D>>(this.SuccessorEdges.Count);
-            System.Collections.BitArray discovered = new System.Collections.BitArray(AllBlocks.Count);
-            Stack<BasicBlock<N, D>> stack = new Stack<BasicBlock<N, D>>();
-            stack.Push(root);
-            while (stack.Count > 0)
-            {
-                BasicBlock<N, D> block = stack.Pop();
-                if (discovered.Get(block.Index))
-                    continue;
-                discovered.Set(block.Index, true);
-                if (block.PredecessorEdges == null)
-                {
-                    block.PredecessorEdges = new List<int>(0);
-                }
-                if (block.SuccessorEdges.Count == 0)
-                {
-                    TerminalsBlocks.AddLast(block);
-                }
-                else
-                {
-                    int predIndex = -1;
-                    foreach (int successor in block.SuccessorEdges)
-                    {
-                        BasicBlock<N, D> successorBlock = SuccessorEdges[successor];
-                        stack.Push(successorBlock);
-                        if (successorBlock.PredecessorEdges == null)
-                        {
-                            successorBlock.PredecessorEdges = new List<int>();
-                        }
-                        if (predIndex == -1)
-                        {
-                            predIndex = this.PredecessorEdges.Count;
-                            this.PredecessorEdges.Add(block);
-                        }
-                        successorBlock.PredecessorEdges.Add(predIndex);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Set up the Precessor Edges list, and do it for all blocks.
+        /// Set up the Predecessor Edges list, and do it for all blocks.
         /// </summary>
         public void SetupPredecessorEdges()
         {

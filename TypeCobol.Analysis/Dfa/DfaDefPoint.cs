@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TypeCobol.Analysis.Dfa
+﻿namespace TypeCobol.Analysis.Dfa
 {
     /// <summary>
     /// Generic class representing a Definition Point.
@@ -21,6 +15,7 @@ namespace TypeCobol.Analysis.Dfa
             get;
             set;
         }
+
         /// <summary>
         /// The Instruction
         /// </summary>
@@ -47,6 +42,7 @@ namespace TypeCobol.Analysis.Dfa
             get;
             set;
         }
+
         /// <summary>
         /// Index of the Owner basic Block
         /// </summary>
