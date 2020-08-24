@@ -47,12 +47,6 @@ label = "{Block28|}"
 Block29 [
 label = "{B-PROCESS. Block29|}"
 ]
-Block30 [
-label = "{Block30|    PERFORM B-LOOP          UNTIL EOF-SEEN = \"Y\"\l}"
-]
-subgraph cluster_4{
-color = blue;
-label = "B-LOOP";
 Block41 [
 label = "{B-LOOP. Block41|    DISPLAY \"THE ID IS \" USER-ID\l}"
 ]
@@ -77,6 +71,17 @@ label = "{Block47|        AT END\l           MOVE \"Y\" TO EOF-SEEN\l}"
 Block48 [
 label = "{Block48|}"
 ]
+Block30 [
+label = "{Block30|    PERFORM B-LOOP          WITH TEST AFTER UNTIL EOF-SEEN = \"Y\"\l}"
+]
+Block31 [
+label = "{Block31|}"
+]
+Block26 -> Block27
+Block26 -> Block28
+Block27 -> Block28
+Block28 -> Block29
+Block29 -> Block41
 Block41 -> Block42
 Block42 -> Block43
 Block43 -> Block44
@@ -86,19 +91,8 @@ Block46 -> Block47
 Block46 -> Block48
 Block47 -> Block48
 Block48 -> Block30
-
-}
-Block30 -> Block41 [style=dashed]
-
-Block31 [
-label = "{Block31|}"
-]
-Block26 -> Block27
-Block26 -> Block28
-Block27 -> Block28
-Block28 -> Block29
-Block29 -> Block30
 Block30 -> Block31
+Block30 -> Block41
 
 }
 Block4 -> Block26 [style=dashed]

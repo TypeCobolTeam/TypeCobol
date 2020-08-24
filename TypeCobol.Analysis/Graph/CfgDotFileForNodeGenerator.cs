@@ -84,18 +84,35 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
-        /// Emit a basic block, with also handling recusive BasicBlock Groups that can appear for
+        /// Emit a basic block, with also handling recursive BasicBlock Groups that can appear for
         /// instance for recursive PERFORM.
         /// </summary>
         /// <param name="block">The BasicBlock to emit</param>
+        /// <param name="adjacentEdge">Edge from which to access to the block</param>
+        /// <param name="adjacentBlock">The adjacent block that access to the Block by the edge</param>
         /// <param name="cfg">The target Control Flow Graph that contains the Basic Block</param>
         /// <returns>true</returns>
-        protected override bool EmitBasicBlock(BasicBlock<Node, D> block, ControlFlowGraph<Node, D> cfg)
+        protected override bool EmitBasicBlock(BasicBlock<Node, D> block, int adjacentEdge, BasicBlock<Node, D> adjacentBlock, ControlFlowGraph<Node, D> cfg)
         {
-            bool bResult = base.EmitBasicBlock(block, cfg);
+            if (block is ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup bg)
+            {
+                if (bg.IsIterativeGroup && adjacentEdge == bg.EntryIndexInSuccessors && !bg.IsAfterIterativeGroup)
+                {//Don't follow the iteration edge
+                    return false;
+                }
+                if (bg.IsIterativeGroup && adjacentEdge == bg.EntryIndexInSuccessors && bg.IsAfterIterativeGroup)
+                { //For an AFTER iteration group - Draw/Traverse only once the Group
+                  //So if the Group has been already entered don't redraw it
+                    if (EmittedGroupIndices != null && EmittedGroupIndices.Contains(bg.GroupIndex))
+                        return false;
+                }
+            }
+            bool bResult = base.EmitBasicBlock(block, adjacentEdge, adjacentBlock, cfg);
             if ((block is ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup) && ! block.HasFlag(BasicBlock<Node, D>.Flags.GroupGrafted))
             {
                 ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup group = (ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup)block;
+                if (group.IsIterativeGroup && group.IsExplicitIterativeGroup)
+                    return bResult;
                 if (EmittedGroupIndices == null)
                 {
                     EmittedGroupIndices = new HashSet<int>();
@@ -117,20 +134,21 @@ namespace TypeCobol.Analysis.Graph
                         cfgDot.DigraphBuilder = new StringBuilder();
                         //Emit block starting at the first block.
                         LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
-                        cfg.DFS(first.Value, (b, g) => cfgDot.EmitBasicBlock(b, g));
+                        cfg.DFS(first.Value, (b, e, p, g) => cfgDot.EmitBasicBlock(b, e, p, g));
                         sw.WriteLine(cfgDot.DigraphBuilder.ToString());
                     }
                     sw.WriteLine('}');
                 }
                 //Create dashed link to the group
                 if (group.Group.Count > 0)
-                {
-                    sw.WriteLine(string.Format("Block{0} -> Block{1} [style=dashed]", block.Index, group.Group.First.Value.Index));
+                {   //For an  iterative group an plein arrow is drawn to indicate the target group
+                    sw.WriteLine(string.Format("Block{0} -> Block{1} {2}", block.Index, group.Group.First.Value.Index, group.IsExplicitIterativeGroup ? "" : "[style=dashed]"));
                 }
                 else
                 {
-                    sw.WriteLine(string.Format("Block{0} -> \"\" [style=dashed]", block.Index));
+                    sw.WriteLine(string.Format("Block{0} -> \"\" {1}", block.Index, group.IsExplicitIterativeGroup ? "" : "[style=dashed]"));
                 }
+
                 sw.Flush();
                 this.Writer.WriteLine(sw.ToString());
             }

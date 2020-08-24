@@ -17,10 +17,12 @@ namespace TypeCobol.Analysis.Graph
         /// <summary>
         /// BasicBlock calllback type.
         /// </summary>
-        /// <param name="block">The BasicBlock</param>
+        /// <param name="block">The accessed BasicBlock</param>
+        /// <param name="edge">Edge from which to access to the block</param>
+        /// <param name="adjacentBlock">The adjacent block that access to the Block by the edge</param>
         /// <param name="cfg">The Control Flow Graph in wich the basic Block belongs to.</param>
         /// <returns>true if ok, false otherwise</returns>
-        public delegate bool BasicBlockCallback(BasicBlock<N, D> block, ControlFlowGraph<N, D> cfg);
+        public delegate bool BasicBlockCallback(BasicBlock<N, D> block, int edge, BasicBlock<N, D> adjacentBlock, ControlFlowGraph<N, D> cfg);
 
         /// <summary>
         /// Flag on a Cfg.
@@ -116,7 +118,7 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
-        /// Intialize the construction of the Control Flow Graph.
+        /// Initialize the construction of the Control Flow Graph.
         /// </summary>
         internal virtual void Initialize()
         {
@@ -147,18 +149,20 @@ namespace TypeCobol.Analysis.Graph
         /// DFS Depth First Search implementation
         /// </summary>
         /// <param name="block">The current block</param>
+        /// <param name="edgePredToBlock">Edge of the next block to the block</param>
+        /// <param name="predBlock">The predecessor Block</param>
         /// <param name="discovered">Array of already discovered nodes</param>
         /// <param name="callback">CallBack function</param>
-        internal void DFS(BasicBlock<N, D> block, System.Collections.BitArray discovered, BasicBlockCallback callback)
+        internal void DFS(BasicBlock<N, D> block, int edgePredToBlock, BasicBlock<N, D> predBlock, System.Collections.BitArray discovered, BasicBlockCallback callback)
         {
             discovered[block.Index] = true;
-            if (!callback(block, this))
+            if (!callback(block, edgePredToBlock, predBlock, this))
                 return;//Means stop
             foreach (var edge in block.SuccessorEdges)
             {
                 if (!discovered[SuccessorEdges[edge].Index])
                 {
-                    DFS(SuccessorEdges[edge], discovered, callback);
+                    DFS(SuccessorEdges[edge], edge, block, discovered, callback);
                 }
             }
         }
@@ -171,7 +175,7 @@ namespace TypeCobol.Analysis.Graph
         public void DFS(BasicBlock<N, D> rootBlock, BasicBlockCallback callback)
         {
             System.Collections.BitArray discovered = new System.Collections.BitArray(AllBlocks.Count);
-            DFS(rootBlock, discovered, callback);
+            DFS(rootBlock, -1, null, discovered, callback);
         }
 
         /// <summary>
@@ -195,20 +199,23 @@ namespace TypeCobol.Analysis.Graph
             System.Collections.BitArray discovered = new System.Collections.BitArray(AllBlocks.Count);
             foreach (var root in RootBlocks)
             {
-                Stack<BasicBlock<N, D>> stack = new Stack<BasicBlock<N, D>>();
-                stack.Push(root);
+                Stack<Tuple<BasicBlock<N, D>, int, BasicBlock<N, D>>> stack = new Stack<Tuple<BasicBlock<N, D>, int, BasicBlock<N, D>>>();
+                stack.Push(new Tuple<BasicBlock<N, D>, int, BasicBlock<N, D>>(root, -1, null));
                 while (stack.Count > 0)
                 {
-                    BasicBlock<N, D> block = stack.Pop();
+                    Tuple < BasicBlock<N, D>, int, BasicBlock< N, D >> data = stack.Pop();
+                    BasicBlock<N, D> block = data.Item1;
+                    int predEdge = data.Item2;
+                    BasicBlock<N, D> predBlock = data.Item3;
                     if (!discovered[block.Index])
                     {
-                        if (!callback(block, this))
+                        if (!callback(block, predEdge, predBlock, this))
                         {   //Don't traverse edges
                             continue;
                         }
                         foreach (var edge in block.SuccessorEdges)
                         {
-                            stack.Push(SuccessorEdges[edge]);
+                            stack.Push(new Tuple<BasicBlock<N, D>, int, BasicBlock<N, D>>(SuccessorEdges[edge], edge, block));
                         }
                     }
                 }

@@ -11,7 +11,7 @@ Block0 [
 label = "{START|}"
 ]
 Block1 [
-label = "{Block1|    perform pararec\l}"
+label = "{Block1|    perform pararec varying n from 1 by 1 until n \> 3\l}"
 ]
 subgraph cluster_1{
 color = blue;
@@ -22,8 +22,20 @@ label = "{PARAREC. Block10|    add 1 to n\l    display n\l    if n \< 3\l}"
 Block11 [
 label = "{Block11|       display 'before perform'\l}"
 ]
+Block21 [
+label = "{PARAREC. Block21|    add 1 to n\l    display n\l    if n \< 3\l}"
+]
+Block22 [
+label = "{Block22|       display 'before perform'\l}"
+]
+Block24 [
+label = "{Block24|    else\l       display 'not done'\l}"
+]
+Block25 [
+label = "{Block25|    display 'terminate'\l}"
+]
 Block12 [
-label = "{Block12|       perform pararec\l}"
+label = "{Block12|       perform pararec test after varying n from 1 by 1 until n \>\l}"
 ]
 subgraph cluster_2{
 color = blue;
@@ -34,17 +46,6 @@ label = "{PARAREC. Block21|    add 1 to n\l    display n\l    if n \< 3\l}"
 Block22 [
 label = "{Block22|       display 'before perform'\l}"
 ]
-Block12 [
-label = "{Block12|       perform pararec\l}"
-]
-Block12 -> Block21 [style=dashed]
-
-Block13 [
-label = "{Block13|       display 'after peform'\l}"
-]
-Block15 [
-label = "{Block15|    display 'terminate'\l}"
-]
 Block24 [
 label = "{Block24|    else\l       display 'not done'\l}"
 ]
@@ -53,10 +54,9 @@ label = "{Block25|    display 'terminate'\l}"
 ]
 Block21 -> Block22
 Block21 -> Block24
-Block22 -> Block12
-Block12 -> Block13
-Block13 -> Block15
+Block22 -> Block21
 Block24 -> Block25
+Block25 -> Block12
 
 }
 Block12 -> Block21 [style=dashed]
@@ -72,9 +72,15 @@ label = "{Block14|    else\l       display 'not done'\l}"
 ]
 Block10 -> Block11
 Block10 -> Block14
-Block11 -> Block12
+Block11 -> Block21
+Block21 -> Block22
+Block21 -> Block24
+Block22 -> Block21
+Block24 -> Block25
+Block25 -> Block12
 Block12 -> Block13
 Block13 -> Block15
+Block15 -> Block1
 Block14 -> Block15
 
 }

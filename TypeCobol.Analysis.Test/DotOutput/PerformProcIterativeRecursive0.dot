@@ -11,7 +11,7 @@ Block0 [
 label = "{START|}"
 ]
 Block1 [
-label = "{Block1|    perform pararec\l}"
+label = "{Block1|    perform pararec varying n from 1 by 1 until n \> 3\l}"
 ]
 subgraph cluster_1{
 color = blue;
@@ -23,7 +23,7 @@ Block11 [
 label = "{Block11|       display 'before perform'\l}"
 ]
 Block12 [
-label = "{Block12|       perform pararec\l}"
+label = "{Block12|       perform pararec  varying n from 1 by 1 until n \> 5\l}"
 ]
 subgraph cluster_2{
 color = blue;
@@ -35,7 +35,7 @@ Block22 [
 label = "{Block22|       display 'before perform'\l}"
 ]
 Block12 [
-label = "{Block12|       perform pararec\l}"
+label = "{Block12|       perform pararec  varying n from 1 by 1 until n \> 5\l}"
 ]
 Block12 -> Block21 [style=dashed]
 
@@ -56,7 +56,9 @@ Block21 -> Block24
 Block22 -> Block12
 Block12 -> Block13
 Block13 -> Block15
+Block15 -> Block1
 Block24 -> Block25
+Block25 -> Block12
 
 }
 Block12 -> Block21 [style=dashed]
@@ -75,6 +77,7 @@ Block10 -> Block14
 Block11 -> Block12
 Block12 -> Block13
 Block13 -> Block15
+Block15 -> Block1
 Block14 -> Block15
 
 }
