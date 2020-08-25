@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />  
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <Import Project="..\TypeCobol\Common.props" />
   <PropertyGroup>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -42,6 +42,7 @@
     <Compile Include="Graph\ControlFlowGraph.cs" />
     <Compile Include="Graph\CfgDotFileGenerator.cs" />
     <Compile Include="Graph\ICfgFileGenerator.cs" />
+    <Compile Include="Graph\ICfgTransform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Report\ZCallPgmReport.cs" />
     <Compile Include="Resource.Designer.cs">
@@ -49,7 +50,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
-	<Compile Include="Util\BitSet.cs" />
+    <Compile Include="Util\BitSet.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TypeCobol\TypeCobol.csproj">

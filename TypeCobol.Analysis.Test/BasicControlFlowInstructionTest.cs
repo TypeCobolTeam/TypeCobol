@@ -18,6 +18,7 @@ namespace TypeCobol.Analysis.Test
     public class BasicControlFlowInstructionTest
     {
         public static CfgDfaTestContext ctx = null;
+
         [TestInitialize]
         public void TestInitialize()
         {
@@ -603,6 +604,53 @@ namespace TypeCobol.Analysis.Test
         }
 
         [TestMethod]
+        public void PerformProcedure2()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcedure2.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcedure2.dot");
+
+            Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(ctx.CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void PerformProcedureExplicit0()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcedure0.cbl");
+            ctx._Mode = CfgDfaContext.Mode.CfgExplicit;
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcedureExplicit0.dot");
+
+            Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(ctx.CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void PerformProcedureExplicit2()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcedure2.cbl");
+            ctx._Mode = CfgDfaContext.Mode.CfgExplicit;
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcedureExplicit2.dot");
+
+            Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(ctx.CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
         public void PerformNested0()
         {
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformNested0.cbl");
@@ -745,6 +793,207 @@ namespace TypeCobol.Analysis.Test
                 false, /*copies*/ null);
             Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
             string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcRecursive0.dot");
+
+            Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(ctx.CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void PerformProcIterativeRecursive0()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcIterativeRecursive0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcIterativeRecursive0.dot");
+
+            Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(ctx.CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void PerformProcIterativeRecursiveExplicit0()
+        {
+            ctx._Mode = CfgDfaContext.Mode.CfgExplicit;
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcIterativeRecursive0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcIterativeRecursiveExplicit0.dot");
+
+            Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(ctx.CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void PerformProcIterativeAfterRecursive0()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcIterativeAfterRecursive0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcIterativeAfterRecursive0.dot");
+
+            Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(ctx.CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void PerformProcIterativeAfterRecursive1()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcIterativeAfterRecursive1.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcIterativeAfterRecursive1.dot");
+
+            Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(ctx.CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void PerformProcIterativeAfterRecursive2()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcIterativeAfterRecursive2.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcIterativeAfterRecursive2.dot");
+
+            Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(ctx.CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void PerformProcIterativeAfterRecursiveExtended0()
+        {
+            ctx._Mode = CfgDfaContext.Mode.CfgExpand;
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcIterativeAfterRecursive0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcIterativeAfterRecursiveExtended0.dot");
+
+            Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(ctx.CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void PerformProcIterativeAfterRecursiveExtended1()
+        {
+            ctx._Mode = CfgDfaContext.Mode.CfgExpand;
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcIterativeAfterRecursive1.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcIterativeAfterRecursiveExtended1.dot");
+
+            Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(ctx.CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void PerformProcIterativeAfterRecursiveExtended2()
+        {
+            ctx._Mode = CfgDfaContext.Mode.CfgExpand;
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcIterativeAfterRecursive2.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcIterativeAfterRecursiveExtended2.dot");
+
+            Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(ctx.CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void PerformProcProcRecursive0()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcProcRecursive0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcProcRecursive0.dot");
+
+            Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(ctx.CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void PerformProcProcProcRecursive0()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcProcProcRecursive0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcProcProcRecursive0.dot");
+
+            Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(ctx.CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void PerformProc4Recursive0()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProc4Recursive0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProc4Recursive0.dot");
+
+            Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(ctx.CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void PerformProcProcProcRecursiveExtended0()
+        {
+            ctx._Mode = CfgDfaContext.Mode.CfgExpand;
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProcProcProcRecursive0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProcProcProcRecursiveExtended0.dot");
+
+            Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(ctx.CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void PerformProc4RecursiveExtended0()
+        {
+            ctx._Mode = CfgDfaContext.Mode.CfgExpand;
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformProc4Recursive0.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformProc4RecursiveExtended0.dot");
 
             Assert.IsTrue(ctx.CfgBuilder.AllCfgBuilder.Count == 1);
             Assert.IsNotNull(ctx.CfgBuilder.AllCfgBuilder);

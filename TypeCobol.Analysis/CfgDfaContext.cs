@@ -40,13 +40,14 @@ namespace TypeCobol.Analysis
             None = 0,//No Cfg or Dfa only Program Symol Table Builder
             Cfg,    //Only building Cfg in normale mode without block expansion
             CfgExpand,  //Only building Cfg with block expansion 
+            CfgExplicit,  //Iteration link are explicitly created. 
             Dfa         //Dfa mode
         }
 
         /// <summary>
         /// Testing mode
         /// </summary>
-        private Mode _Mode
+        public Mode _Mode
         {
             get;
             set;
@@ -71,11 +72,14 @@ namespace TypeCobol.Analysis
             {
                 case Mode.Cfg:
                 case Mode.CfgExpand:
+                case Mode.CfgExplicit:
                     //Alocate a static Default Control Flow Graph Builder
                     CfgBuilderNodeListenerFactory = () =>
                     {
                         CfgBuilder = new DefaultControlFlowGraphBuilder<object>();
-                        CfgBuilder.Mode = _Mode == Mode.Cfg ? ControlFlowGraphBuilder<object>.CfgMode.Normal : ControlFlowGraphBuilder<object>.CfgMode.Extended;
+                        CfgBuilder.Mode = _Mode == Mode.Cfg 
+                            ? ControlFlowGraphBuilder<object>.CfgMode.Normal 
+                            : (_Mode == Mode.CfgExplicit ?  ControlFlowGraphBuilder<object>.CfgMode.Explicit : ControlFlowGraphBuilder<object>.CfgMode.Extended) ;
                         return CfgBuilder;
                     };
                     break;

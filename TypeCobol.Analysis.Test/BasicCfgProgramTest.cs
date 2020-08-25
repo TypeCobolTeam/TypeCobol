@@ -49,7 +49,7 @@ namespace TypeCobol.Analysis.Test
         }
 
         /// <summary>
-        /// In DFA Extend mode a recursive PERFORM PROCEDURE will emit a recusion diagnostics.
+        /// In DFA Extend mode a recursive PERFORM PROCEDURE will emit a recursion diagnostics.
         /// </summary>
         [TestMethod]
         public void DetectPerformProcRecursiveException()

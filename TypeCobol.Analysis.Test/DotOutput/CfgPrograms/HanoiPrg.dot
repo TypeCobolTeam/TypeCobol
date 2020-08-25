@@ -16,17 +16,17 @@ label = "{BEGIN-PROGRAM. Block1|}"
 Block2 [
 label = "{Block2|    PERFORM GET-DISKS\l}"
 ]
-Block43 [
-label = "{GET-DISKS. Block43|    DISPLAY \"How many disks to solve for? \" NO ADVANCING\l    ACCEPT CN\l}"
+Block25 [
+label = "{GET-DISKS. Block25|    DISPLAY \"How many disks to solve for? \" NO ADVANCING\l    ACCEPT CN\l}"
 ]
-Block44 [
-label = "{GET-DISKS. Block44|    IF CN \< 1 OR CN \> 9\l}"
+Block26 [
+label = "{GET-DISKS. Block26|    IF CN \< 1 OR CN \> 9\l}"
 ]
-Block45 [
-label = "{Block45|        DISPLAY \"Invalid number of disks (1 \<= N \<= 9).\"\l        EXIT PROGRAM\l}"
+Block27 [
+label = "{Block27|        DISPLAY \"Invalid number of disks (1 \<= N \<= 9).\"\l        EXIT PROGRAM\l}"
 ]
-Block47 [
-label = "{Block47|}"
+Block29 [
+label = "{Block29|}"
 ]
 Block3 [
 label = "{Block3|    MOVE 1 TO ESP\l    MOVE CURRENT-FRAME TO STACK-FRAME (ESP)\l}"
@@ -34,20 +34,26 @@ label = "{Block3|    MOVE 1 TO ESP\l    MOVE CURRENT-FRAME TO STACK-FRAME (ESP)\
 Block4 [
 label = "{Block4|    PERFORM DO-HANOI            UNTIL ESP = ZERO\l}"
 ]
-Block48 [
-label = "{DO-HANOI. Block48|    MOVE STACK-FRAME (ESP) TO CURRENT-FRAME\l    SUBTRACT 1 FROM ESP\l    IF CPROC = 0\l}"
+Block5 [
+label = "{Block5|}"
 ]
-Block49 [
-label = "{Block49|        IF CN = 1\l}"
+Block6 [
+label = "{BEGIN-PROGRAM. Block6|    STOP RUN\l}"
 ]
-Block50 [
-label = "{Block50|}"
+Block30 [
+label = "{DO-HANOI. Block30|    MOVE STACK-FRAME (ESP) TO CURRENT-FRAME\l    SUBTRACT 1 FROM ESP\l    IF CPROC = 0\l}"
 ]
-Block52 [
-label = "{Block52|            PERFORM MOVE-DISK\l}"
+Block31 [
+label = "{Block31|        IF CN = 1\l}"
 ]
-Block51 [
-label = "{MOVE-DISK. Block51|        DISPLAY CFROM          \"--\> \"          CTO\l}"
+Block32 [
+label = "{Block32|}"
+]
+Block33 [
+label = "{Block33|            PERFORM MOVE-DISK\l}"
+]
+Block43 [
+label = "{MOVE-DISK. Block43|        DISPLAY CFROM          \"--\> \"          CTO\l}"
 ]
 Block34 [
 label = "{Block34|}"
@@ -58,59 +64,46 @@ label = "{Block36|}"
 Block40 [
 label = "{Block40|}"
 ]
-Block5 [
-label = "{Block5|}"
+Block35 [
+label = "{Block35|        ELSE\l            MOVE CN TO TN\l            MOVE CFROM TO TFROM\l            MOVE CUSING TO TUSING\l            MOVE CTO TO TTO\l            MOVE 1 TO TPROC\l            ADD 1 TO ESP\l            MOVE TMP-FRAME TO STACK-FRAME (ESP)\l            MOVE CN TO TN\l            SUBTRACT 1 FROM TN\l            MOVE CFROM TO TFROM\l            MOVE CTO TO TUSING\l            MOVE CUSING TO TTO\l            MOVE 0 TO TPROC\l            ADD 1 TO ESP\l            MOVE TMP-FRAME TO STACK-FRAME (ESP)\l}"
 ]
-Block6 [
-label = "{BEGIN-PROGRAM. Block6|    STOP RUN\l}"
+Block37 [
+label = "{Block37|    ELSE\l}"
 ]
-Block54 [
-label = "{Block54|        ELSE\l            MOVE CN TO TN\l            MOVE CFROM TO TFROM\l            MOVE CUSING TO TUSING\l            MOVE CTO TO TTO\l            MOVE 1 TO TPROC\l            ADD 1 TO ESP\l            MOVE TMP-FRAME TO STACK-FRAME (ESP)\l            MOVE CN TO TN\l            SUBTRACT 1 FROM TN\l            MOVE CFROM TO TFROM\l            MOVE CTO TO TUSING\l            MOVE CUSING TO TTO\l            MOVE 0 TO TPROC\l            ADD 1 TO ESP\l            MOVE TMP-FRAME TO STACK-FRAME (ESP)\l}"
+Block38 [
+label = "{Block38|        PERFORM MOVE-DISK\l}"
 ]
-Block55 [
-label = "{Block55|}"
-]
-Block60 [
-label = "{Block60|}"
-]
-Block56 [
-label = "{Block56|    ELSE\l}"
-]
-Block58 [
-label = "{Block58|        PERFORM MOVE-DISK\l}"
-]
-Block57 [
-label = "{MOVE-DISK. Block57|        DISPLAY CFROM          \"--\> \"          CTO\l}"
+Block44 [
+label = "{MOVE-DISK. Block44|        DISPLAY CFROM          \"--\> \"          CTO\l}"
 ]
 Block39 [
 label = "{Block39|        MOVE 0 TO TPROC\l        MOVE CTO TO TTO\l        MOVE CFROM TO TUSING\l        MOVE CUSING TO TFROM\l        MOVE CN TO TN\l        SUBTRACT 1 FROM TN\l        ADD 1 TO ESP\l        MOVE TMP-FRAME TO STACK-FRAME (ESP)\l}"
 ]
 Block0 -> Block1
 Block1 -> Block2
-Block2 -> Block43
-Block43 -> Block44
-Block44 -> Block45
-Block44 -> Block47
-Block47 -> Block3
+Block2 -> Block25
+Block25 -> Block26
+Block26 -> Block27
+Block26 -> Block29
+Block29 -> Block3
 Block3 -> Block4
-Block4 -> Block48
-Block48 -> Block49
-Block48 -> Block56
-Block49 -> Block50
-Block49 -> Block54
-Block50 -> Block52
-Block52 -> Block51
-Block51 -> Block34
+Block4 -> Block5
+Block4 -> Block30
+Block5 -> Block6
+Block30 -> Block31
+Block30 -> Block37
+Block31 -> Block32
+Block31 -> Block35
+Block32 -> Block33
+Block33 -> Block43
+Block43 -> Block34
 Block34 -> Block36
 Block36 -> Block40
-Block40 -> Block5
-Block5 -> Block6
-Block54 -> Block55
-Block55 -> Block60
-Block60 -> Block5
-Block56 -> Block58
-Block58 -> Block57
-Block57 -> Block39
+Block40 -> Block4
+Block35 -> Block36
+Block37 -> Block38
+Block38 -> Block44
+Block44 -> Block39
 Block39 -> Block40
 
 }

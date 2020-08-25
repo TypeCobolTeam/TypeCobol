@@ -89,14 +89,31 @@ namespace TypeCobol.Analysis.Graph
         /// instance for recursive PERFORM.
         /// </summary>
         /// <param name="block">The BasicBlock to emit</param>
+        /// <param name="adjacentEdge">Edge from which to access to the block</param>
+        /// <param name="adjacentBlock">The adjacent block that access to the Block by the edge</param>
         /// <param name="cfg">The target Control Flow Graph that contains the Basic Block</param>
         /// <returns>true</returns>
-        protected override bool EmitBasicBlock(BasicBlock<Node, D> block, ControlFlowGraph<Node, D> cfg)
+        protected override bool EmitBasicBlock(BasicBlock<Node, D> block, int adjacentEdge, BasicBlock<Node, D> adjacentBlock, ControlFlowGraph<Node, D> cfg)
         {
-            bool bResult = base.EmitBasicBlock(block, cfg);
+            if (block is ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup bg)
+            {
+                if (bg.IsIterativeGroup && adjacentEdge == bg.EntryIndexInSuccessors && !bg.IsAfterIterativeGroup)
+                {//Don't follow the iteration edge
+                    return false;
+                }
+                if (bg.IsIterativeGroup && adjacentEdge == bg.EntryIndexInSuccessors && bg.IsAfterIterativeGroup)
+                { //For an AFTER iteration group - Draw/Traverse only once the Group
+                  //So if the Group has been already entered don't redraw it
+                    if (EmittedGroupIndices != null && EmittedGroupIndices.Contains(bg.GroupIndex))
+                        return false;
+                }
+            }
+            bool bResult = base.EmitBasicBlock(block, adjacentEdge, adjacentBlock, cfg);
             if ((block is ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup) && ! block.HasFlag(BasicBlock<Node, D>.Flags.GroupGrafted))
             {
                 ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup group = (ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup)block;
+                if (group.IsIterativeGroup && group.IsExplicitIterativeGroup)
+                    return bResult;
                 if (EmittedGroupIndices == null)
                 {
                     EmittedGroupIndices = new HashSet<int>();
@@ -121,9 +138,9 @@ namespace TypeCobol.Analysis.Graph
                         //Emit block starting at the first block.
                         LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
                         if (Inverse)
-                            cfg.DFSInverse(first.Value, (b, g) => cfgDot.EmitBasicBlock(b, g));
+                            cfg.DFSInverse(first.Value, (b, e, a, g) => cfgDot.EmitBasicBlock(b, e, a, g));
                         else
-                            cfg.DFS(first.Value, (b, g) => cfgDot.EmitBasicBlock(b, g));
+                            cfg.DFS(first.Value, (b, e, a, g) => cfgDot.EmitBasicBlock(b, e, a, g));
                         sw.WriteLine(cfgDot.DigraphBuilder.ToString());
                     }
                     sw.WriteLine('}');
@@ -132,13 +149,13 @@ namespace TypeCobol.Analysis.Graph
                 if (group.Group.Count > 0)
                 {
                     if (Inverse)
-                        sw.WriteLine(string.Format("Block{1} -> Block{0} [style=dashed]", block.Index, group.Group.First.Value.Index));
+                        sw.WriteLine(string.Format("Block{1} -> Block{0} {2}", block.Index, group.Group.First.Value.Index, group.IsExplicitIterativeGroup ? "" : "[style=dashed]"));
                     else
-                        sw.WriteLine(string.Format("Block{0} -> Block{1} [style=dashed]", block.Index, group.Group.First.Value.Index));
+                        sw.WriteLine(string.Format("Block{0} -> Block{1} {2}", block.Index, group.Group.First.Value.Index, group.IsExplicitIterativeGroup ? "" : "[style=dashed]"));
                 }
                 else
                 {
-                    sw.WriteLine(string.Format("Block{0} -> \"\" [style=dashed]", block.Index));
+                    sw.WriteLine(string.Format("Block{0} -> \"\" {1}", block.Index, group.IsExplicitIterativeGroup ? "" : "[style=dashed]"));
                 }
                 sw.Flush();
                 this.Writer.WriteLine(sw.ToString());

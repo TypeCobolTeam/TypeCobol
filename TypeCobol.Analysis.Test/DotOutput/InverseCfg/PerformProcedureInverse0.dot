@@ -131,7 +131,7 @@ label = "{Block31|}"
 Block30 [
 label = "{Block30|    PERFORM B-LOOP          UNTIL EOF-SEEN = \"Y\"\l}"
 ]
-Block33 -> Block30 [style=dashed]
+Block41 -> Block30 [style=dashed]
 
 Block29 [
 label = "{B-PROCESS. Block29|}"
@@ -144,6 +144,30 @@ label = "{B-PROCESS. Block26|    READ USER-FILE\l}"
 ]
 Block27 [
 label = "{Block27|        AT END\l           MOVE \"Y\" TO EOF-SEEN\l}"
+]
+Block48 [
+label = "{Block48|}"
+]
+Block46 [
+label = "{B-LOOP. Block46|    READ USER-FILE\l}"
+]
+Block45 [
+label = "{B-LOOP. Block45|    ACCEPT ANSWER\l}"
+]
+Block44 [
+label = "{B-LOOP. Block44|    DISPLAY \"ENTER TO CONTINUE\"\l}"
+]
+Block43 [
+label = "{B-LOOP. Block43|    DISPLAY \" \"\l}"
+]
+Block42 [
+label = "{B-LOOP. Block42|    DISPLAY \"THE NAME IS \" USER-NAME\l}"
+]
+Block41 [
+label = "{B-LOOP. Block41|    DISPLAY \"THE ID IS \" USER-ID\l}"
+]
+Block47 [
+label = "{Block47|        AT END\l           MOVE \"Y\" TO EOF-SEEN\l}"
 ]
 Block32 [
 label = "{C-CLEANUP. Block32|    CLOSE USER-FILE\l}"
@@ -199,10 +223,19 @@ Block11 -> Block10
 Block22 -> Block21
 Block31 -> Block30
 Block30 -> Block29
+Block30 -> Block48
 Block29 -> Block28
 Block28 -> Block26
 Block28 -> Block27
 Block27 -> Block26
+Block48 -> Block46
+Block48 -> Block47
+Block46 -> Block45
+Block45 -> Block44
+Block44 -> Block43
+Block43 -> Block42
+Block42 -> Block41
+Block47 -> Block46
 Block40 -> Block38
 Block40 -> Block39
 Block38 -> Block37

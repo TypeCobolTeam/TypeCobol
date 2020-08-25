@@ -407,7 +407,7 @@ namespace TypeCobol.Analysis.Dfa
                             b.Data.In.Copy(newIn);
                         }
                         newIn.Clear();
-                        //OUT(b) = IN(b) - KILL(b) U GEN(b)
+                        //OUT(b) = (IN(b) - KILL(b)) U GEN(b)
                         BitSet live = b.Data.Kill != null ? b.Data.In.Difference(b.Data.Kill) : b.Data.In.Clone();
                         if (b.Data.Gen != null)
                         {
