@@ -1,7 +1,7 @@
 ﻿ObjectName=PGM00000;Line=16;Column=12;Path=ProcCall.PROGRAM_NAME<-"PGM00000";SourceText=call 'zcallpgm' using PROGRAM_NAME PARAMETER_1 PARAMETER_2
-ObjectName=PGM00001;Line=21;Column=12;Path=ProcCall.PROGRAM_NAME<-ProcCall.PROGRAM_NAME.pgm1<-"PGM00001";SourceText=call 'zCaLlpgm' using by reference PROGRAM_NAME
-ObjectName=PGM00002;Line=24;Column=12;Path=ProcCall.PROGRAM_NAME<-ProcCall.PROGRAM_NAME.pgm2<-"PGM00002";SourceText=call 'zCaLlpgF' using PROGRAM_NAME
-ObjectName=PGM00003;Line=28;Column=12;Path=ProcCall.PROGRAM_NAME<-ProcCall.PROGRAM_NAME.pgm3<-"PGM00003";SourceText=call 'zcallpgr' using PROGRAM_NAME PARAMETER_1 PARAMETER_2
+ObjectName=PGM00001;Line=21;Column=12;Path=ProcCall.PROGRAM_NAME<-"PGM00001"<-ProcCall.PROGRAM_NAME.pgm1<-"true";SourceText=call 'zCaLlpgm' using by reference PROGRAM_NAME
+ObjectName=PGM00002;Line=24;Column=12;Path=ProcCall.PROGRAM_NAME<-"PGM00002"<-ProcCall.PROGRAM_NAME.pgm2<-"true";SourceText=call 'zCaLlpgF' using PROGRAM_NAME
+ObjectName=PGM00003;Line=28;Column=12;Path=ProcCall.PROGRAM_NAME<-"PGM00003"<-ProcCall.PROGRAM_NAME.pgm3<-"true";SourceText=call 'zcallpgr' using PROGRAM_NAME PARAMETER_1 PARAMETER_2
 ObjectName=PGM00004;Line=33;Column=12;Path=ProcCall.PROGRAM_NAME<-"PGM00004";SourceText=call 'zCaLlpgt' using by reference PROGRAM_NAME
 ObjectName=PGMTMP;Line=36;Column=12;Path=ProcCall.PROGRAM_NAME<-ProcCall.PGM_NAME_TMP<-"PGMTMP";SourceText=call 'zCaLlpgx' using by reference PROGRAM_NAME
 ObjectName=PGMTMP;Line=38;Column=12;Path=ProcCall.PGM_NAME_TMP<-"PGMTMP";SourceText=call 'zCaLlsrv' using by reference PGM_NAME_TMP

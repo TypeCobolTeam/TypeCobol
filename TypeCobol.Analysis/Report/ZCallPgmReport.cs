@@ -218,7 +218,14 @@ namespace TypeCobol.Analysis.Report
                 if (vo.Value != null)
                 {
                     string value = vo.Value.ToString();
-                    yield return new Tuple<string, string>(value, $"{variable}<-\"{value}\"");
+                    if (vo.Variable.IsCondition)
+                    {
+                        yield return new Tuple<string, string>(value, $"\"{value}\"<-{variable}<-\"true\"");
+                    }
+                    else
+                    {
+                        yield return new Tuple<string, string>(value, $"{variable}<-\"{value}\"");
+                    }
                 }
                 else
                 {
