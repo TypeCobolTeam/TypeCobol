@@ -203,20 +203,6 @@ namespace TypeCobol.Analysis.Report
 
         /// <summary>
         /// Compute a List of definition paths for a UsePoint.
-        /// The Algorithm works like that:
-        /// (1) If the UsePoint has no associated UseDef set then tries to see if variable has an initial value.
-        /// (2) The UsePoint has a UseDef set.
-        /// (2.1) For each Definition Point of the UseDef set
-        /// (2.1.1) Only take in account those DefinitionPoints associated to a MOVE or a SET instruction.
-        /// (2.1.1.1.1)If the MoveStatement is a SimpleMoveStatement and the sending variable is a Literal alphabetic value
-        ///     then append a definition path with this value.
-        /// (2.1.1.1.2)If the MoveStatement is a SimpleMoveStatement and the sending variable is an Identifier.
-        ///             then (2.1.1.1.2.1) Resolve the sending identifier in the current program
-        ///             (2.1.1.1.2.2) The sending identifier variable is resolved -> look for its UsePoint instruction in the definition block
-        ///             (2.1.1.1.2.3) The UsePoint of the sending identifier is found then recurse to compute its definition paths
-        /// (2.1.1.2) a Set Statement
-        ///     (2.1.1.2.1) The Set instruction is Condition variable set
-        ///     (2.1.1.2.2) The values are the values of the level 88 variable
         /// </summary>
         /// <param name="dfaBuilder">The current DataFlow Builder</param>
         /// <param name="up">The Use Point instance</param>
