@@ -345,7 +345,7 @@ namespace TypeCobol.Analysis.Dfa
             InitializeInOutSetsComputation();
 
             //Compute Predecessors
-            this.Cfg.SetupPredecessorEdges();
+            this.Cfg.SetupPredecessorEdgesFromRoot();
 
             BitSet newIn = new BitSet(DefList.Count);
             bool bChange = true;
@@ -355,10 +355,13 @@ namespace TypeCobol.Analysis.Dfa
                 foreach (var b in Cfg.AllBlocks)
                 {
                     // IN(b) = U OUT(p)  where p belongs to Predecessor(b)
-                    foreach (var p in b.PredecessorEdges)
+                    if (b.PredecessorEdges != null)
                     {
-                        var a = Cfg.PredecessorEdges[p];
-                        newIn.Or(a.Data.Out);
+                        foreach (var p in b.PredecessorEdges)
+                        {
+                            var a = Cfg.PredecessorEdges[p];
+                            newIn.Or(a.Data.Out);
+                        }
                     }
 
                     if (!newIn.Equals(b.Data.In))

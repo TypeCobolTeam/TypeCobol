@@ -76,7 +76,7 @@ namespace TypeCobol.Analysis.Test
             Assert.IsTrue(cfg.Count == 1);
 
             //Try to compute predecessor edges.
-            cfg[0].SetupPredecessorEdges();
+            cfg[0].SetupPredecessorEdgesFromRoot();
 
             //Test Empty Cfg Generated.
             string expectedPath = Path.Combine(CfgTestUtils.CfgDfaBuildTests, "EmptyCfg.dot");
