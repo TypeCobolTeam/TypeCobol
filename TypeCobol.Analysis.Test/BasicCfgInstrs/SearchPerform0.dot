@@ -34,12 +34,12 @@ label = "{Block23|          PERFORM FAILED\l}"
 subgraph cluster_3{
 color = blue;
 label = "FAILED";
-Block27 [
-label = "{FAILED. Block27|    DISPLAY \"STUDENT FAILED\"\l}"
+Block29 [
+label = "{FAILED. Block29|    DISPLAY \"STUDENT FAILED\"\l}"
 ]
 
 }
-Block23 -> Block27 [style=dashed]
+Block23 -> Block29 [style=dashed]
 
 Block24 [
 label = "{Block24|}"
@@ -56,12 +56,12 @@ label = "{Block20|          PERFORM PASSED\l}"
 subgraph cluster_2{
 color = blue;
 label = "PASSED";
-Block26 [
-label = "{PASSED. Block26|    DISPLAY \"STUDENT PASSED\"\l}"
+Block28 [
+label = "{PASSED. Block28|    DISPLAY \"STUDENT PASSED\"\l}"
 ]
 
 }
-Block20 -> Block26 [style=dashed]
+Block20 -> Block28 [style=dashed]
 
 Block21 [
 label = "{Block21|}"

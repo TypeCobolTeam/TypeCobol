@@ -148,6 +148,15 @@ namespace TypeCobol.Analysis.Cfg
         new private Action<Diagnostic> AddDiagnostic;
 
         /// <summary>
+        /// Flag to indicate if this CFG uses PERFORM PROCEDURE instructions having an AFTER clause.
+        /// </summary>
+        private bool HasAfterPerformProcedures
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Initial constructor. Allows to configure CFG building.
         /// </summary>
         /// <param name="identifier">String identifier of this analyzer-builder.</param>
@@ -962,11 +971,15 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// Resolve a pending PERFORM procedure
         /// </summary>
-        /// <param name="p">The procedure node</param>
-        /// <param name="sectionNode">The section in which the PERFORM node appears</param>
-        /// <param name="group">The Basic Block Group associated to the procedure</param>
-        private void ResolvePendingPERFORMProcedure(PerformProcedure p, SectionNode sectionNode, BasicBlockForNodeGroup group)
+        /// <param name="perform">A Tuple made of the PerformProcedure node, the section in which the PERFORM appears
+        /// and the Basic Block Group associated to the Perform Procedure.</param>
+        /// <param name="clonedPerforms">List of new PERFORMs cloned during the resolve process.</param>
+        private void ResolvePendingPERFORMProcedure(Tuple<PerformProcedure, SectionNode, BasicBlockForNodeGroup> perform, List<Tuple<PerformProcedure, SectionNode, BasicBlockForNodeGroup>> clonedPerforms)
         {
+            PerformProcedure p = perform.Item1;
+            SectionNode sectionNode = perform.Item2;
+            BasicBlockForNodeGroup group = perform.Item3;
+
             SymbolReference procedureReference = p.CodeElement.Procedure;
             SymbolReference throughProcedureReference = p.CodeElement.ThroughProcedure;
 
@@ -1012,7 +1025,7 @@ namespace TypeCobol.Analysis.Cfg
                 StoreSentences(procedure);
             }
 
-            //And finally clone the Graph.
+            //And finally relocate the Graph.
             RelocateBasicBlockForNodeGroupGraph(p, group, clonedBlocksIndexMap);
 
             void StoreSentences(IEnumerable<Sentence> sentences)
@@ -1023,6 +1036,45 @@ namespace TypeCobol.Analysis.Cfg
                     {
                         System.Diagnostics.Debug.Assert(!clonedBlocksIndexMap.ContainsKey(block.Index));
 
+                        //The target of the current perform being resolved may contain another perform...
+                        bool isPerform = false;
+                        if (block is BasicBlockForNodeGroup group0)
+                        {
+                            isPerform = true; //To avoid a second dynamic cast
+
+                            //Is there a recursion in the graph ?
+                            var recursiveBlock = clonedPerforms
+                                .Select(t => t.Item3)
+                                .FirstOrDefault(g => g.GroupIndex == group0.GroupIndex);
+                            if (recursiveBlock != null)
+                            {
+                                //Stop the traversal for this block and link to the existing block
+                                clonedBlocksIndexMap.Add(block.Index, recursiveBlock.Index);
+                                group.AddBlock(recursiveBlock);
+
+                                //Flag the block and report Recursivity diagnostic
+                                if (!recursiveBlock.HasFlag(BasicBlock<Node, D>.Flags.Recursive))
+                                {
+                                    recursiveBlock.SetFlag(BasicBlock<Node, D>.Flags.Recursive, true);
+                                    string performTarget = throughProcedureReference != null
+                                        ? $"{procedureReference} THRU {throughProcedureReference}"
+                                        : procedureReference.ToString();
+                                    Node offendingInstruction = recursiveBlock.Instructions.Last.Value;
+                                    System.Diagnostics.Debug.Assert(offendingInstruction != null);
+                                    System.Diagnostics.Debug.Assert(offendingInstruction.CodeElement != null);
+                                    string offendingStatement = offendingInstruction.CodeElement.SourceText;
+                                    Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                                        p.CodeElement.Column,
+                                        p.CodeElement.Column,
+                                        p.CodeElement.Line,
+                                        string.Format(Resource.RecursiveBlockOnPerformProcedure, performTarget, offendingStatement));
+                                    AddDiagnostic(d);
+                                }
+                                
+                                continue;
+                            }
+                        }
+
                         //Each block is cloned before being entered in the group
                         //because each group is tied to a specific PERFORM.
                         var clonedBlock = (BasicBlockForNode) block.Clone();
@@ -1032,6 +1084,18 @@ namespace TypeCobol.Analysis.Cfg
 
                         //Keep track of relationship between original block and cloned block
                         clonedBlocksIndexMap.Add(block.Index, clonedBlock.Index);
+
+                        //If we have cloned a group its corresponding procedure should also be resolved during second-pass
+                        if (isPerform)
+                        {
+                            var clonedGroup = (BasicBlockForNodeGroup) clonedBlock;
+                            clonedGroup.Group = new LinkedList<BasicBlock<Node, D>>();
+                            clonedGroup.TerminalBlocks = null;
+
+                            var originalPerform = this.CurrentProgramCfgBuilder.PendingPERFORMProcedures
+                                .Single(t => t.Item3 == block);
+                            clonedPerforms.Add(new Tuple<PerformProcedure, SectionNode, BasicBlockForNodeGroup>(originalPerform.Item1, originalPerform.Item2, clonedGroup));
+                        }
                     }
                 }
             }
@@ -1081,7 +1145,7 @@ namespace TypeCobol.Analysis.Cfg
                     clonedBlock.SuccessorEdges.Add(clonedEdge);
                 }
 
-                if (blockGoesBeyondGroupLimit)
+                if (blockGoesBeyondGroupLimit && !clonedBlock.HasFlag(BasicBlock<Node, D>.Flags.Recursive))
                 {
                     Node offendingInstruction = clonedBlock.Instructions.Last.Value;
                     System.Diagnostics.Debug.Assert(offendingInstruction != null);
@@ -1106,20 +1170,39 @@ namespace TypeCobol.Analysis.Cfg
         {
             if (this.CurrentProgramCfgBuilder.PendingPERFORMProcedures != null)
             {
+                var clonedPerforms = new List<Tuple<PerformProcedure, SectionNode, BasicBlockForNodeGroup>>();
+
+                //First pass: resolve targets of PERFORMs, some new groups may be created during this
                 foreach (var item in this.CurrentProgramCfgBuilder.PendingPERFORMProcedures)
                 {
-                    PerformProcedure p = item.Item1;
-                    SectionNode sectionNode = item.Item2;
-                    BasicBlockForNodeGroup group = item.Item3;
-                    ResolvePendingPERFORMProcedure(p, sectionNode, group);
+                    ResolvePendingPERFORMProcedure(item, clonedPerforms);
                 }
-                if (ExtendPerformTargets)
+
+                //Second pass: resolve cloned groups created during first pass
+                for (int i = 0; i < clonedPerforms.Count; i++)
                 {
-                    foreach (var item in this.CurrentProgramCfgBuilder.PendingPERFORMProcedures)
-                    {
-                        BasicBlockForNodeGroup group = item.Item3;
-                        GraftBasicBlockGroup(group);
-                    }
+                    //We are using a regular for instead of foreach because new groups may also be created during this second pass.
+                    //New groups/performs to resolve are added at tail and all are processed during this second pass
+                    ResolvePendingPERFORMProcedure(clonedPerforms[i], clonedPerforms);
+                }
+
+                //Index groups by their GroupIndex, keep only the final instance of each group after all resolve have been done
+                var groupOrder = new Dictionary<int, BasicBlockForNodeGroup>();
+                foreach (var item in this.CurrentProgramCfgBuilder.PendingPERFORMProcedures)
+                {
+                    BasicBlockForNodeGroup group = item.Item3;
+                    groupOrder[group.GroupIndex] = group;
+                }
+                foreach (var item in clonedPerforms)
+                {
+                    BasicBlockForNodeGroup group = item.Item3;
+                    groupOrder[group.GroupIndex] = group;
+                }
+
+                //Extend groups according to the current building mode
+                foreach (var group in groupOrder.Values)
+                {
+                    ExtendGroup(group);
                 }
 
                 this.CurrentProgramCfgBuilder.PendingPERFORMProcedures = null;
@@ -1127,13 +1210,63 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
+        /// Extend the given group to be grafted or linked to the continuation graph.
+        /// </summary>
+        /// <param name="group">Target group.</param>
+        private void ExtendGroup(BasicBlockForNodeGroup group)
+        {
+            //Now we must handle Iterative Perform Procedure.
+            if (group.IsIterativeGroup)
+            {
+                //Compute Terminal Edges of the basic Group.
+                ComputeBasicBlockGroupTerminalBlocks(group);
+
+                //Make the group as a successor and keep corresponding index.
+                group.EntryIndexInSuccessors = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
+                this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(group);
+
+                //Make all terminal blocks of the group have the group block as successor -> iterative loop.
+                foreach (var termBlock in group.TerminalBlocks)
+                {
+                    if (!termBlock.SuccessorEdges.Contains(group.EntryIndexInSuccessors))
+                    {
+                        if (!termBlock.HasFlag(BasicBlock<Node, D>.Flags.Ending))
+                        {
+                            termBlock.SuccessorEdges.Add(group.EntryIndexInSuccessors);
+                        }
+                    }
+                }
+
+                //also make the first block of the group if any the next block to create a real branch of the PERFORM instruction block.
+                if (group.Group.Count > 0 && group.IsExplicitIterativeGroup)
+                {   
+                    LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
+                    int firstIndex = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
+                    group.SuccessorEdges.Add(firstIndex);
+                    this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(first.Value);
+                }
+
+                //In Extended mode graft the group (handled by the dot generator)
+                if (this.ExtendPerformTargets)
+                {
+                    group.SetFlag(BasicBlock<Node, D>.Flags.GroupGrafted, true);
+                }
+            }
+            else if (this.ExtendPerformTargets)
+            {
+                //A Non Iterative Perform ==> Graft it directly in extended mode
+                ComputeBasicBlockGroupTerminalBlocks(group);
+                ContinueBasicBlockGroup(group);
+            }
+        }
+
+        /// <summary>
         /// Compute the terminal blocks associated to Group
-        /// 
         /// </summary>
         /// <param name="group">The group to compute the terminal blocks</param>
         private void ComputeBasicBlockGroupTerminalBlocks(BasicBlockForNodeGroup group)
         {
-            if (group.Group.Count > 0)
+            if (group.Group.Count > 0 && group.TerminalBlocks == null)
             {
                 LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
                 MultiBranchContext ctx = new MultiBranchContext(this.CurrentProgramCfgBuilder, null);
@@ -1178,61 +1311,21 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// Graft the content of a Basic Block group by duplicating all its blocks and connecting all blocks to the CFG continuation.
+        /// Rewrite CFG to fix edges on PERFORMs with test after clause.
+        /// The edge going from the previous block to the PERFORM is replaced with
+        /// an edge going from the previous block to the first block of the PERFORM
+        /// body to materialize the fact that the content of the PERFORM is executed
+        /// at least once before any test.
         /// </summary>
-        /// <param name="group">The group to be grafted</param>
-        private void GraftBasicBlockGroup(BasicBlockForNodeGroup group)
+        private void HandlePerformsWithTestAfter()
         {
-            if (group.Group.Count == 0)
-                return;
-            //The new group to build.
-            LinkedList<BasicBlock<Node, D>> newGroup = new LinkedList<BasicBlock<Node, D>>();
-            //Map of block : (Original Block Index, [new Block Index, Successor Edge Index])
-            Dictionary<int, int[]> BlockMap = new Dictionary<int, int[]>();
-            //Fill the map
-            foreach (var b in group.Group)
+            if (this.CurrentProgramCfgBuilder.HasAfterPerformProcedures)
             {
-                //Clone a new block.
-                BasicBlock<Node, D> newBlock = (BasicBlock<Node, D>)b.Clone();
-                if (newBlock is BasicBlockForNodeGroup)
-                {//We are Cloning a Group ==> recursion
-                    BasicBlockForNodeGroup newBG = (BasicBlockForNodeGroup)newBlock;
-                    GraftBasicBlockGroup(newBG);
-                }
-                newBlock.Index = this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Count;
-                this.CurrentProgramCfgBuilder.Cfg.AllBlocks.Add(newBlock);
-                BlockMap[b.Index] = new int[2] { newBlock.Index, -1 };
-                newGroup.AddLast(newBlock);
+                //Transform graph to replace edge in performs with test after.
+                //Transformation is directly applied to the graph, no new instance created.
+                ICfgTransform<Node, D> transform = new CfgAfterIterativePerformProcedureTransformer();
+                transform.Transform(this.CurrentProgramCfgBuilder.Cfg);
             }
-            //Handle successors
-            foreach (var b in group.Group)
-            {
-                int[] desc = BlockMap[b.Index];
-                BasicBlock<Node, D> newBlock = this.CurrentProgramCfgBuilder.Cfg.AllBlocks[desc[0]];
-                newBlock.SuccessorEdges = new List<int>(b.SuccessorEdges.Count);//new Block will have new successors
-                foreach (var s in b.SuccessorEdges)
-                {
-                    BasicBlock<Node, D> succBlock = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges[s];
-                    int[] succDesc = null;
-                    if (!BlockMap.TryGetValue(succBlock.Index, out succDesc))
-                    {//Successor block is not in our scope ==> just add it
-                        newBlock.SuccessorEdges.Add(s);
-                    }
-                    else
-                    {
-                        if (succDesc[1] == -1)
-                        {//Create a successor entry
-                            succDesc[1] = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
-                            BasicBlock<Node, D> newSuccBlock = this.CurrentProgramCfgBuilder.Cfg.AllBlocks[succDesc[0]];
-                            this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(newSuccBlock);
-                        }
-                        newBlock.SuccessorEdges.Add(succDesc[1]);
-                    }
-                }
-            }
-            group.Group = newGroup;
-            ComputeBasicBlockGroupTerminalBlocks(group);
-            ContinueBasicBlockGroup(group);
         }
 
         /// <summary>
@@ -1254,6 +1347,8 @@ namespace TypeCobol.Analysis.Cfg
             ResolvePendingGOTOs();
             //Resolve Pending PERFORMs Procedure
             ResolvePendingPERFORMProcedures();
+            //Handle Iterative Perform Procedure Having an AFTER clause
+            HandlePerformsWithTestAfter();
 
             this.CurrentProgramCfgBuilder.EndCfg(procDiv);
         }
@@ -1900,7 +1995,7 @@ namespace TypeCobol.Analysis.Cfg
 
             int bodyBlockIndex = -1;
             int performBlockIndex = -1;
-            if (IsAfter(perform))
+            if (IsAfter(perform.CodeElement))
             {
                 bodyBlockIndex = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
                 this.CurrentProgramCfgBuilder.CurrentBasicBlock.SuccessorEdges.Add(this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count);
@@ -1931,25 +2026,20 @@ namespace TypeCobol.Analysis.Cfg
         }
 
         /// <summary>
-        /// Determine if a Perform is iterative or not.
+        /// Determine whether a Perform is iterative or not.
         /// </summary>
-        /// <param name="perform">The Perform instruction to be checked</param>
-        /// <returns>true if the Perform is iterative, false otherwise</returns>
-        private static bool IsNonIterative(Perform perform)
-        {
-            var element = perform.CodeElement;
-            return element.IterationType == null || element.IterationType.Value == PerformIterationType.None;
-        }
+        /// <param name="perform">The Perform CodeElement to test.</param>
+        /// <returns>true if the Perform is iterative, false otherwise.</returns>
+        private static bool IsIterative(PerformStatement perform) =>
+            perform.IterationType != null && perform.IterationType.Value != PerformIterationType.None;
 
         /// <summary>
-        /// Test if the a perform loop is an AFTER
+        /// Determine whether a Perform uses the TEST AFTER clause or not.
         /// </summary>
-        /// <param name="perform"></param>
-        /// <returns>true if the PERFORM loop is an AFTER, false otherwise</returns>
-        private static bool IsAfter(Perform perform)
-        {
-            return perform.CodeElement.TerminationConditionTestTime != null && perform.CodeElement.TerminationConditionTestTime.Value == TerminationConditionTestTime.AfterIteration;
-        }
+        /// <param name="perform">The Perform CodeElement to test.</param>
+        /// <returns>true if the Perform uses TEST AFTER, false if the Perform uses TEST BEFORE.</returns>
+        private static bool IsAfter(PerformStatement perform) =>
+            perform.TerminationConditionTestTime != null && perform.TerminationConditionTestTime.Value == TerminationConditionTestTime.AfterIteration;
 
         /// <summary>
         /// Leave a Perform which is a loop.
@@ -1980,7 +2070,7 @@ namespace TypeCobol.Analysis.Cfg
 
 
             int transBlockIndex = -1;
-            if (!IsNonIterative(perform))
+            if (IsIterative(perform.CodeElement))
             {   //For an Iterative perform, body transition is the perform instruction
                 //the next block is a transition for the perform. 
                 ctx.Branches[0].SuccessorEdges.Add(nextBlockIndex);
@@ -2227,6 +2317,19 @@ namespace TypeCobol.Analysis.Cfg
             int edgeIndex = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
             this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(group);
             this.CurrentProgramCfgBuilder.CurrentBasicBlock.SuccessorEdges.Add(edgeIndex);
+
+            //Check nature of PERFORM
+            if (IsIterative(node.CodeElement))
+            {
+                //Iterative PERFORM
+                group.IsIterativeGroup = true;
+                group.IsExplicitIterativeGroup = this.ExtendPerformTargets;
+                if (IsAfter(node.CodeElement))
+                {
+                    group.IsAfterIterativeGroup = true;
+                    this.CurrentProgramCfgBuilder.HasAfterPerformProcedures = true;
+                }
+            }
 
             //Create a next Current Block.
             BasicBlockForNode nextBlock = CreateBlock(null, true);

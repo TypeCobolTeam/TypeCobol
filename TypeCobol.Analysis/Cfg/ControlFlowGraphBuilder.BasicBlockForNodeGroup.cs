@@ -35,11 +35,50 @@ namespace TypeCobol.Analysis.Cfg
             }
 
             /// <summary>
+            /// This is the Index Entry in the Successors array, in to which this Group is stored
+            /// as successor of the Predecessor block. Used for iterative PERFORM procedure.
+            /// </summary>
+            internal int EntryIndexInSuccessors
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
+            /// Is this group for an iterative instruction.
+            /// </summary>
+            internal bool IsIterativeGroup
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
+            /// Is this group for iterative instruction with an AFTER clause.
+            /// </summary>
+            internal bool IsAfterIterativeGroup
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
+            /// An explicit Iterative Group will be directly linked to its corresponding group of
+            /// instruction, a dot graph will not show the enclosing section or paragraph in a cluster rectangle.
+            /// </summary>
+            internal bool IsExplicitIterativeGroup
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
             /// Constructor.
             /// </summary>
             public BasicBlockForNodeGroup()
             {
                 Group = new LinkedList<BasicBlock<Node, D>>();
+                EntryIndexInSuccessors = -1;
             }
 
             /// <summary>

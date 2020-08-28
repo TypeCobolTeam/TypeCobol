@@ -126,4 +126,7 @@
   <data name="BasicBlockGroupGoesBeyondTheLimit" xml:space="preserve">
     <value>Statement '{0}' located at line {1}, column {2} prevents this PERFORM statement to reach its exit.</value>
   </data>
+  <data name="RecursiveBlockOnPerformProcedure" xml:space="preserve">
+    <value>A recursive loop has been encountered while analyzing 'PERFORM {0}', recursive instruction is '{1}'.</value>
+  </data>
 </root>

@@ -386,6 +386,9 @@ namespace TypeCobol.Analysis.Test
         public void PerformProcedure1() => TestTemplate();
 
         [TestMethod]
+        public void PerformProcedure2() => TestTemplate();
+
+        [TestMethod]
         public void PerformGoesOutOfBounds0() => TestTemplate();
 
         [TestMethod]
@@ -425,7 +428,16 @@ namespace TypeCobol.Analysis.Test
         public void MixPerformEvaluateIf0() => TestTemplate();
 
         [TestMethod]
-        public void PerformProcRecursive0() => TestTemplate();
+        public void PerformProc1Recursive0() => TestTemplate();
+
+        [TestMethod]
+        public void PerformProc2Recursive0() => TestTemplate();
+
+        [TestMethod]
+        public void PerformProc3Recursive0() => TestTemplate();
+
+        [TestMethod]
+        public void PerformProc4Recursive0() => TestTemplate();
 
         [TestMethod]
         public void Read0() => TestTemplate();
@@ -447,6 +459,18 @@ namespace TypeCobol.Analysis.Test
 
         [TestMethod]
         public void Write0() => TestTemplate();
+
+        [TestMethod]
+        public void PerformProcIterativeAfterRecursive0() => TestTemplate();
+
+        [TestMethod]
+        public void PerformProcIterativeAfterRecursive1() => TestTemplate();
+
+        [TestMethod]
+        public void PerformProcIterativeAfterRecursive2() => TestTemplate();
+
+        [TestMethod]
+        public void PerformProcIterativeRecursive0() => TestTemplate();
 
         [TestMethod]
         public void CfgInNestedPrg0()

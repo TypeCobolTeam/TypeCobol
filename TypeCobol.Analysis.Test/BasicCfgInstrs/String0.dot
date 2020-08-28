@@ -28,12 +28,12 @@ label = "{Block17|         PERFORM ERROR-OCCURED\l}"
 subgraph cluster_2{
 color = blue;
 label = "ERROR-OCCURED";
-Block24 [
-label = "{ERROR-OCCURED. Block24|    DISPLAY \"ERROR OCCURED\"\l}"
+Block26 [
+label = "{ERROR-OCCURED. Block26|    DISPLAY \"ERROR OCCURED\"\l}"
 ]
 
 }
-Block17 -> Block24 [style=dashed]
+Block17 -> Block26 [style=dashed]
 
 Block18 [
 label = "{Block18|}"
@@ -53,12 +53,12 @@ label = "{Block20|         PERFORM NO-ERROR\l}"
 subgraph cluster_3{
 color = blue;
 label = "NO-ERROR";
-Block25 [
-label = "{NO-ERROR. Block25|    DISPLAY \"NO ERROR\"\l}"
+Block27 [
+label = "{NO-ERROR. Block27|    DISPLAY \"NO ERROR\"\l}"
 ]
 
 }
-Block20 -> Block25 [style=dashed]
+Block20 -> Block27 [style=dashed]
 
 Block21 [
 label = "{Block21|}"

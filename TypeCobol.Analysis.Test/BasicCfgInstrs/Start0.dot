@@ -28,12 +28,12 @@ label = "{Block17|         PERFORM NOT-FOUND\l}"
 subgraph cluster_2{
 color = blue;
 label = "NOT-FOUND";
-Block24 [
-label = "{NOT-FOUND. Block24|    DISPLAY \"STUDENT DETAILS NOT FOUND\"\l}"
+Block26 [
+label = "{NOT-FOUND. Block26|    DISPLAY \"STUDENT DETAILS NOT FOUND\"\l}"
 ]
 
 }
-Block17 -> Block24 [style=dashed]
+Block17 -> Block26 [style=dashed]
 
 Block18 [
 label = "{Block18|}"
@@ -53,12 +53,12 @@ label = "{Block20|         PERFORM FOUND\l}"
 subgraph cluster_3{
 color = blue;
 label = "FOUND";
-Block25 [
-label = "{FOUND. Block25|    DISPLAY \"STUDENT DETAILS FOUND\"\l}"
+Block27 [
+label = "{FOUND. Block27|    DISPLAY \"STUDENT DETAILS FOUND\"\l}"
 ]
 
 }
-Block20 -> Block25 [style=dashed]
+Block20 -> Block27 [style=dashed]
 
 Block21 [
 label = "{Block21|}"

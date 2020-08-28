@@ -1,0 +1,5 @@
+--- Diagnostics ---
+Line 20[15,15] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM pararec3', recursive instruction is '       perform pararec2'.
+Line 28[15,15] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM pararec', recursive instruction is '       perform pararec2'.
+Line 28[15,15] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM pararec', recursive instruction is '       perform pararec3'.
+Line 39[15,15] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM pararec2', recursive instruction is '       perform pararec'.

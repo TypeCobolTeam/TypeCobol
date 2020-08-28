@@ -34,12 +34,12 @@ label = "{Block14|      PERFORM INVALIDKEY\l}"
 subgraph cluster_2{
 color = blue;
 label = "INVALIDKEY";
-Block17 [
-label = "{INVALIDKEY. Block17|    DISPLAY \"INVALID KEY\"\l}"
+Block18 [
+label = "{INVALIDKEY. Block18|    DISPLAY \"INVALID KEY\"\l}"
 ]
 
 }
-Block14 -> Block17 [style=dashed]
+Block14 -> Block18 [style=dashed]
 
 Block15 [
 label = "{Block15|}"

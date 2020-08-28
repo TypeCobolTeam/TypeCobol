@@ -2,7 +2,19 @@
 Line 1[8,19] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 339[12,15] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN OffendingSymbol=[12,15:STOP]<STOP>
 Line 346[12,38] <37, Warning, General> - Warning: "end-if" is missing
+Line 350[40,40] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM WRITE-LINE', recursive instruction is '                                       PERFORM WRT-LN 2 TIMES'.
+Line 350[40,40] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM WRITE-LINE', recursive instruction is '                                       PERFORM WRT-LN 2 TIMES'.
+Line 350[40,40] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM WRITE-LINE', recursive instruction is '                                       PERFORM WRT-LN 3 TIMES'.
+Line 350[40,40] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM WRITE-LINE', recursive instruction is '                                       PERFORM WRT-LN 3 TIMES'.
+Line 350[40,40] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM WRITE-LINE', recursive instruction is '                                       PERFORM WRT-LN'.
+Line 350[40,40] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM WRITE-LINE', recursive instruction is '                                       PERFORM WRT-LN'.
+Line 350[40,40] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM WRITE-LINE', recursive instruction is '                                         PERFORM WRT-LN'.
+Line 350[40,40] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM WRITE-LINE', recursive instruction is '    PERFORM WRT-LN'.
 Line 350[12,37] <37, Warning, General> - Warning: "end-if" is missing
+Line 351[15,15] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX', recursive instruction is '                                   PERFORM WRITE-LINE 2 TIMES'.
+Line 351[15,15] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX', recursive instruction is '                                      PERFORM WRITE-LINE'.
+Line 351[15,15] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX', recursive instruction is '                                     PERFORM WRITE-LINE 2 TIMES'.
+Line 352[22,22] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM BAIL-OUT THRU BAIL-OUT-EX', recursive instruction is '                                   PERFORM WRITE-LINE 2 TIMES'.
 Line 355[12,38] <37, Warning, General> - Warning: "end-if" is missing
 Line 381[12,50] <37, Warning, General> - Warning: "end-if" is missing
 Line 388[12,45] <37, Warning, General> - Warning: "end-if" is missing
@@ -19,6 +31,10 @@ Line 458[12,12] <37, Warning, General> - Warning: Statement '       GO TO WRITE-
 Line 459[12,12] <37, Warning, General> - Warning: Statement '       GO TO WRITE-TEST-GF-01-FAIL' located at line 485, column 15 prevents this PERFORM statement to reach its exit.
 Line 460[12,12] <37, Warning, General> - Warning: Statement '       GO TO WRITE-TEST-GF-01-FAIL' located at line 478, column 15 prevents this PERFORM statement to reach its exit.
 Line 461[12,37] <37, Warning, General> - Warning: "end-if" is missing
+Line 493[12,12] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM PRINT-DETAIL', recursive instruction is '                                        PERFORM WRITE-LINE'.
+Line 493[12,12] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM PRINT-DETAIL', recursive instruction is '                                PERFORM WRITE-LINE'.
+Line 493[12,12] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM PRINT-DETAIL', recursive instruction is '       PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX'.
+Line 493[12,12] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM PRINT-DETAIL', recursive instruction is '              PERFORM BAIL-OUT THRU BAIL-OUT-EX'.
 Line 507[12,40] <37, Warning, General> - Warning: "end-if" is missing
 Line 511[12,33] <37, Warning, General> - Warning: "end-if" is missing
 Line 546[12,42] <37, Warning, General> - Warning: "end-if" is missing

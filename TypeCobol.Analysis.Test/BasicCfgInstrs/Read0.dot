@@ -34,12 +34,12 @@ label = "{Block14|      PERFORM DISPLAY-RECORD\l}"
 subgraph cluster_2{
 color = blue;
 label = "DISPLAY-RECORD";
-Block17 [
-label = "{DISPLAY-RECORD. Block17|    DISPLAY WS-FS-RCD\l}"
+Block18 [
+label = "{DISPLAY-RECORD. Block18|    DISPLAY WS-FS-RCD\l}"
 ]
 
 }
-Block14 -> Block17 [style=dashed]
+Block14 -> Block18 [style=dashed]
 
 Block15 [
 label = "{Block15|}"
