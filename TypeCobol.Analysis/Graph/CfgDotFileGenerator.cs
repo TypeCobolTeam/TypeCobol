@@ -59,9 +59,12 @@ namespace TypeCobol.Analysis.Graph
         /// <summary>
         /// Call back function for emitting a BasicBlock.
         /// </summary>
-        /// <param name="block"></param>
-        /// <param name="cfg"></param>
-        protected virtual bool EmitBasicBlock(BasicBlock<N, D> block, ControlFlowGraph<N, D> cfg)
+        /// <param name="block">Current block</param>
+        /// <param name="incomingEdge">Incoming edge</param>
+        /// <param name="previousBlock">Previous block</param>
+        /// <param name="cfg">Current graph being traversed</param>
+        /// <returns></returns>
+        protected virtual bool EmitBasicBlock(BasicBlock<N, D> block, int incomingEdge, BasicBlock<N, D> previousBlock, ControlFlowGraph<N, D> cfg)
         {
             Writer.WriteLine($"Block{block.Index} [");
             Writer.Write("label = \"{");
