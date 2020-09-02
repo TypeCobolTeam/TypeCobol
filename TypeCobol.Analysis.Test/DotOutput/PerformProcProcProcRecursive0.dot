@@ -46,17 +46,6 @@ label = "{PARAREC. Block65|    add 1 to n\l    display n\l    if n \< 3\l}"
 Block66 [
 label = "{Block66|       display 'before perform pararec2 in pararec'\l}"
 ]
-Block26 [
-label = "{Block26|       perform pararec2\l}"
-]
-Block26 -> Block55 [style=dashed]
-
-Block27 [
-label = "{Block27|       display 'after peform pararec2 in pararec'\l}"
-]
-Block31 [
-label = "{Block31|    display 'terminate in pararec'\l}"
-]
 Block68 [
 label = "{Block68|    else\l       display 'not done in pararec'\l}"
 ]
@@ -84,17 +73,6 @@ label = "{PARAREC2. Block71|    add 1 to n\l    display n\l    if n \< 3\l}"
 Block72 [
 label = "{Block72|       display 'before perform pararec in pararec2'\l}"
 ]
-Block34 [
-label = "{Block34|       perform pararec\l}"
-]
-Block34 -> Block65 [style=dashed]
-
-Block35 [
-label = "{Block35|       display 'after peform pararec in pararec2'\l}"
-]
-Block37 [
-label = "{Block37|    display 'terminate in pararec2'\l}"
-]
 Block74 [
 label = "{Block74|    else\l       display 'not done in pararec2'\l}"
 ]
@@ -104,8 +82,6 @@ label = "{Block75|    display 'terminate in pararec2'\l}"
 Block71 -> Block72
 Block71 -> Block74
 Block72 -> Block34
-Block34 -> Block35
-Block35 -> Block37
 Block74 -> Block75
 
 }
@@ -136,11 +112,12 @@ Block29 -> Block60 [style=dashed]
 Block30 [
 label = "{Block30|}"
 ]
+Block31 [
+label = "{Block31|    display 'terminate in pararec'\l}"
+]
 Block65 -> Block66
 Block65 -> Block68
 Block66 -> Block26
-Block26 -> Block27
-Block27 -> Block31
 Block68 -> Block29
 Block29 -> Block30
 Block30 -> Block31
@@ -173,19 +150,8 @@ Block26 -> Block55 [style=dashed]
 Block27 [
 label = "{Block27|       display 'after peform pararec2 in pararec'\l}"
 ]
-Block31 [
-label = "{Block31|    display 'terminate in pararec'\l}"
-]
 Block28 [
 label = "{Block28|    else\l       display 'not done in pararec'\l}"
-]
-Block29 [
-label = "{Block29|       perform pararec3\l}"
-]
-Block29 -> Block60 [style=dashed]
-
-Block30 [
-label = "{Block30|}"
 ]
 Block24 -> Block25
 Block24 -> Block28
@@ -193,8 +159,6 @@ Block25 -> Block26
 Block26 -> Block27
 Block27 -> Block31
 Block28 -> Block29
-Block29 -> Block30
-Block30 -> Block31
 
 }
 Block1 -> Block24 [style=dashed]

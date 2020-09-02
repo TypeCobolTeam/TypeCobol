@@ -34,17 +34,6 @@ label = "{PARAREC. Block21|    add 1 to n\l    display n\l    if n \< 3\l}"
 Block22 [
 label = "{Block22|       display 'before perform'\l}"
 ]
-Block12 [
-label = "{Block12|       perform pararec\l}"
-]
-Block12 -> Block21 [style=dashed]
-
-Block13 [
-label = "{Block13|       display 'after peform'\l}"
-]
-Block15 [
-label = "{Block15|    display 'terminate'\l}"
-]
 Block24 [
 label = "{Block24|    else\l       display 'not done'\l}"
 ]
@@ -54,8 +43,6 @@ label = "{Block25|    display 'terminate'\l}"
 Block21 -> Block22
 Block21 -> Block24
 Block22 -> Block12
-Block12 -> Block13
-Block13 -> Block15
 Block24 -> Block25
 
 }

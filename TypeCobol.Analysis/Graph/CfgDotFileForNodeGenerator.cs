@@ -16,13 +16,13 @@ namespace TypeCobol.Analysis.Graph
     /// <typeparam name="D"></typeparam>
     public class CfgDotFileForNodeGenerator<D> : CfgDotFileGenerator<Node, D>
     {
+        private HashSet<int> _encounteredNodeIndices;
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="cfg"></param>
-        public CfgDotFileForNodeGenerator()
+        public CfgDotFileForNodeGenerator() : this(null)
         {
-
         }
 
         /// <summary>
@@ -31,6 +31,17 @@ namespace TypeCobol.Analysis.Graph
         /// <param name="cfg">The underlying Control Flow Graph</param>
         public CfgDotFileForNodeGenerator(ControlFlowGraph<Node, D> cfg) : base (cfg)
         {
+            _encounteredNodeIndices = new HashSet<int>();
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="cfg">The underlying Control Flow Graph</param>
+        /// <param name="encounteredNodes">S</param>
+        private CfgDotFileForNodeGenerator(ControlFlowGraph<Node, D> cfg, HashSet<int> encounteredNodeIndices) : base(cfg)
+        {
+            _encounteredNodeIndices = encounteredNodeIndices;
         }
 
         /// <summary>
@@ -75,15 +86,6 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
-        /// Memoïzed emitted group to avoid infinite recursion.
-        /// </summary>
-        internal HashSet<int> EmittedGroupIndices
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Emit a basic block, with also handling recursive BasicBlock Groups that can appear for
         /// instance for recursive PERFORM.
         /// </summary>
@@ -94,59 +96,44 @@ namespace TypeCobol.Analysis.Graph
         /// <returns>true</returns>
         protected override bool EmitBasicBlock(BasicBlock<Node, D> block, int adjacentEdge, BasicBlock<Node, D> adjacentBlock, ControlFlowGraph<Node, D> cfg)
         {
-            if (block is ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup bg)
-            {
-                if (bg.IsIterativeGroup && adjacentEdge == bg.EntryIndexInSuccessors && !bg.IsAfterIterativeGroup)
-                {//Don't follow the iteration edge
-                    return false;
-                }
-                if (bg.IsIterativeGroup && adjacentEdge == bg.EntryIndexInSuccessors && bg.IsAfterIterativeGroup)
-                { //For an AFTER iteration group - Draw/Traverse only once the Group
-                  //So if the Group has been already entered don't redraw it
-                    if (EmittedGroupIndices != null && EmittedGroupIndices.Contains(bg.GroupIndex))
-                        return false;
-                }
-            }
+            if (_encounteredNodeIndices.Contains(block.Index))
+                return false;
+            _encounteredNodeIndices.Add(block.Index);
             bool bResult = base.EmitBasicBlock(block, adjacentEdge, adjacentBlock, cfg);
             if ((block is ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup) && ! block.HasFlag(BasicBlock<Node, D>.Flags.GroupGrafted))
             {
                 ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup group = (ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup)block;
                 if (group.IsIterativeGroup && group.IsExplicitIterativeGroup)
                     return bResult;
-                if (EmittedGroupIndices == null)
-                {
-                    EmittedGroupIndices = new HashSet<int>();
-                }
                 StringWriter sw = new StringWriter();
-                if (!EmittedGroupIndices.Contains(group.GroupIndex))
+                sw.WriteLine("subgraph cluster_" + group.GroupIndex + '{');
+                sw.WriteLine("color = blue;");
+                if (group.Group.Count > 0)
                 {
-                    EmittedGroupIndices.Add(group.GroupIndex);
-                    //we are emitting a sub graph.
-                    sw.WriteLine("subgraph cluster_" + group.GroupIndex + '{');
-                    sw.WriteLine("color = blue;");
-                    if (group.Group.Count > 0)
-                    {
-                        sw.WriteLine(string.Format("label = \"{0}\";", ((ControlFlowGraphBuilder<D>.BasicBlockForNode)group.Group.First.Value).Tag));
-                        CfgDotFileForNodeGenerator<D> cfgDot = new CfgDotFileForNodeGenerator<D>(cfg);
-                        cfgDot.EmittedGroupIndices = EmittedGroupIndices;
-                        cfgDot.FullInstruction = this.FullInstruction;
-                        cfgDot.Writer = sw;
-                        cfgDot.DigraphBuilder = new StringBuilder();
-                        //Emit block starting at the first block.
-                        LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
-                        cfg.DFS(first.Value, (b, e, p, g) => cfgDot.EmitBasicBlock(b, e, p, g));
-                        sw.WriteLine(cfgDot.DigraphBuilder.ToString());
-                    }
-                    sw.WriteLine('}');
+                    sw.WriteLine(string.Format("label = \"{0}\";",
+                        ((ControlFlowGraphBuilder<D>.BasicBlockForNode) group.Group.First.Value).Tag));
+                    CfgDotFileForNodeGenerator<D> cfgDot = new CfgDotFileForNodeGenerator<D>(cfg, _encounteredNodeIndices);
+                    cfgDot.FullInstruction = this.FullInstruction;
+                    cfgDot.Writer = sw;
+                    cfgDot.DigraphBuilder = new StringBuilder();
+                    //Emit block starting at the first block.
+                    LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
+                    cfg.DFS(first.Value, (b, e, p, g) => cfgDot.EmitBasicBlock(b, e, p, g));
+                    sw.WriteLine(cfgDot.DigraphBuilder.ToString());
                 }
+
+                sw.WriteLine('}');
                 //Create dashed link to the group
                 if (group.Group.Count > 0)
-                {   //For an  iterative group an plein arrow is drawn to indicate the target group
-                    sw.WriteLine(string.Format("Block{0} -> Block{1} {2}", block.Index, group.Group.First.Value.Index, group.IsExplicitIterativeGroup ? "" : "[style=dashed]"));
+                {
+                    //For an  iterative group an plein arrow is drawn to indicate the target group
+                    sw.WriteLine(string.Format("Block{0} -> Block{1} {2}", block.Index,
+                        group.Group.First.Value.Index, group.IsExplicitIterativeGroup ? "" : "[style=dashed]"));
                 }
                 else
                 {
-                    sw.WriteLine(string.Format("Block{0} -> \"\" {1}", block.Index, group.IsExplicitIterativeGroup ? "" : "[style=dashed]"));
+                    sw.WriteLine(string.Format("Block{0} -> \"\" {1}", block.Index,
+                        group.IsExplicitIterativeGroup ? "" : "[style=dashed]"));
                 }
 
                 sw.Flush();

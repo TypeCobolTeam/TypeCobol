@@ -827,6 +827,7 @@ namespace TypeCobol.Analysis.Test
             Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
 
             CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath);
+            CfgBuilder.Cfg.DebugDump();
         }
 
         [TestMethod]
