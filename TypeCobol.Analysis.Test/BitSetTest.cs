@@ -141,5 +141,28 @@ namespace TypeCobol.Analysis.Test
             Assert.AreEqual(bs3.NextSetBit(119), 412);
             Assert.AreEqual(bs3.NextSetBit(413), -1);
         }
+
+        [TestMethod]
+        [TestCategory("BitSet")]
+        public void BitSetXorTest1()
+        {
+            Util.BitSet bs1 = new Util.BitSet(256);
+            bs1.Set(10);
+            bs1.Set(67);
+            bs1.Set(211);
+
+            Util.BitSet bs2 = new Util.BitSet(256);
+            bs2.Set(18);
+            bs2.Set(67);
+            bs2.Set(118);
+
+            bs2.Xor(bs1);
+
+            Assert.AreEqual(bs2.NextSetBit(0), 10);
+            Assert.AreEqual(bs2.NextSetBit(11), 18);
+            Assert.AreEqual(bs2.NextSetBit(19), 118);
+            Assert.AreEqual(bs2.NextSetBit(119), 211);
+            Assert.AreEqual(bs2.NextSetBit(212), -1);
+        }
     }
 }
