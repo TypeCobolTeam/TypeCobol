@@ -9,10 +9,8 @@ using TypeCobol.Analysis.Graph;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.CupParser.NodeBuilder;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Report;
-using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Symbols;
 
 namespace TypeCobol.Analysis.Report
@@ -191,7 +189,7 @@ namespace TypeCobol.Analysis.Report
             //Report Call Use Points.            
             foreach (DfaUsePoint<Node, Symbol> up in CallUsePoints)
             {
-                List < Tuple<string, string> > defPaths = ComputeUsePointDefPaths(dfaBuilder, program, up);
+                List < Tuple<string, string> > defPaths = ComputeUsePointDefPaths(dfaBuilder, up);
                 if (defPaths.Count > 0)
                 {
                     foreach (var path in defPaths)
@@ -205,139 +203,42 @@ namespace TypeCobol.Analysis.Report
 
         /// <summary>
         /// Compute a List of definition paths for a UsePoint.
-        /// The Algorithm works like that:
-        /// (1) If the UsePoint has no associated UseDef set then tries to see if variable has an initial value.
-        /// (2) The UsePoint has a UseDef set.
-        /// (2.1) For each Definition Point of the UseDef set
-        /// (2.1.1) Only take in account those DefinitionPoints associated to a MOVE or a SET instruction.
-        /// (2.1.1.1.1)If the MoveStatement is a SimpleMoveStatement and the sending variable is a Literal alphabetic value
-        ///     then append a definition path with this value.
-        /// (2.1.1.1.2)If the MoveStatement is a SimpleMoveStatement and the sending variable is an Identifier.
-        ///             then (2.1.1.1.2.1) Resolve the sending identifier in the current program
-        ///             (2.1.1.1.2.2) The sending identifier variable is resolved -> look for its UsePoint instruction in the definition block
-        ///             (2.1.1.1.2.3) The UsePoint of the sending identifier is found then recurse to compute its definition paths
-        /// (2.1.1.2) a Set Statement
-        ///     (2.1.1.2.1) The Set instruction is Condition variable set
-        ///     (2.1.1.2.2) The values are the values of the level 88 variable
         /// </summary>
         /// <param name="dfaBuilder">The current DataFlow Builder</param>
-        /// <param name="program">The Current Program</param>
         /// <param name="up">The Use Point instance</param>
-        /// <returns>a List of Tuple(VariablName, Definition Path)</VariablName></returns>
-        private List<Tuple<string, string>> ComputeUsePointDefPaths(DefaultDataFlowGraphBuilder dfaBuilder, ProgramSymbol program, DfaUsePoint<Node, Symbol> up)
+        /// <returns></returns>
+        private List<Tuple<string, string>> ComputeUsePointDefPaths(DefaultDataFlowGraphBuilder dfaBuilder, DfaUsePoint<Node, Symbol> up)
         {
-            List<Tuple<string, string>> paths = new List<Tuple<string, string>>();
-            if (up.UseDef == null || up.UseDef.Cardinality() == 0)
-            {//(1)
-             //No Definitions ==> try to see if the variable has an Initial Value
-                VariableSymbol varSym = up.Variable as VariableSymbol;
-                if (varSym.Value != null && varSym.Value is TypeCobol.Compiler.CodeElements.Value)
+            var valueOrigin = ValueOrigin.ComputeFrom(up, dfaBuilder);
+            return AsPaths(valueOrigin).ToList();
+
+            IEnumerable<Tuple<string, string>> AsPaths(ValueOrigin vo)
+            {
+                string variable = vo.Variable.FullDotName;
+                if (vo.Value != null)
                 {
-                    TypeCobol.Compiler.CodeElements.Value value = (TypeCobol.Compiler.CodeElements.Value)varSym.Value;
-                    string name = value.ToString();
-                    paths.Add(new Tuple<string, string>(name, string.Format(@"{0}<-""{1}""", up.Variable.FullDotName, name)));
+                    string value = vo.Value.ToString();
+                    if (vo.Variable.IsCondition)
+                    {
+                        yield return new Tuple<string, string>(value, $"\"{value}\"<-{variable}<-\"true\"");
+                    }
+                    else
+                    {
+                        yield return new Tuple<string, string>(value, $"{variable}<-\"{value}\"");
+                    }
                 }
-            }
-            else
-            {//(2)
-                int nextDef = -1;
-                while ((nextDef = up.UseDef.NextSetBit(nextDef + 1)) >= 0)
-                {//(2.1)
-                    System.Text.StringBuilder path = new StringBuilder();
-                    DfaDefPoint<Node, Symbol> def = dfaBuilder.DefList[nextDef];
-                    switch (def.Instruction.CodeElement.Type)
-                    {//(2.1.1)Only move or set statements are interresting
-                        case CodeElementType.MoveStatement:
-                            {//(2.1.1.1)So we can detect only if the source of the move is a literal string or an identifier.
-                                MoveStatement move = (MoveStatement)def.Instruction.CodeElement;
-                                switch (move.StatementType)
-                                {
-                                    case StatementType.MoveSimpleStatement:
-                                        {
-                                            MoveSimpleStatement simpleMove = (MoveSimpleStatement)move;
-                                            if (simpleMove.SendingVariable.IsLiteral && simpleMove.SendingVariable.AlphanumericValue != null)
-                                            {//(2.1.1.1.1)A Literal alphabetic value
-                                                string name = simpleMove.SendingVariable.AlphanumericValue.Value.ToString();
-                                                path.Append(string.Format(@"{0}<-""{1}""", up.Variable.FullDotName, name));
-                                                paths.Add(new Tuple<string, string>(name, path.ToString()));
-                                            }
-                                            else if (!simpleMove.SendingVariable.IsLiteral &&
-                                                simpleMove.SendingVariable.StorageArea != null &&
-                                                simpleMove.SendingVariable.StorageArea.SymbolReference != null)
-                                            {//(2.1.1.1.2)An Identifier --> Recurse     
-                                             //Find the use point of the sending identifier in the DefPoint's Block.
-                                             //(2.1.1.1.2.1) Resolve the identifier variable
-                                                SymbolReference symRef = simpleMove.SendingVariable.StorageArea.SymbolReference;
-                                                List<KeyValuePair<DataDefinitionPath, DataDefinition>> results = program.TargetNode.SymbolTable.GetVariablesExplicitWithQualifiedName(symRef.URI);
-                                                System.Diagnostics.Debug.Assert(results != null);
-                                                if (results.Count == 1)
-                                                {//(2.1.1.1.2.2) The sending identifier variable is resolved -> look for its UsePoint instruction in the definition block
-                                                    Symbol sendingVariable = results[0].Value.SemanticData;
-                                                    Graph.BasicBlock<Node, DfaBasicBlockInfo<Symbol>> upBlock = dfaBuilder.Cfg.AllBlocks[def.BlockIndex];
-                                                    DfaBasicBlockInfo<Symbol> upBlockData = upBlock.Data;
-                                                    for (int i = upBlockData.UseListFirstIndex; i < upBlockData.UseListFirstIndex + upBlockData.UseCount; i++)
-                                                    {
-                                                        if (dfaBuilder.UseList[i].Instruction == def.Instruction && dfaBuilder.UseList[i].Variable == sendingVariable)
-                                                        {   //(2.1.1.1.2.3) The UsePoint of the sending identifier is found then recurse compute its definition paths
-                                                            System.Text.StringBuilder newSB = new StringBuilder();
-                                                            List<Tuple<string, string>> newPtahs = ComputeUsePointDefPaths(dfaBuilder, program, dfaBuilder.UseList[i]);
-                                                            foreach (var item in newPtahs)
-                                                            {
-                                                                paths.Add(new Tuple<string, string>(item.Item1, string.Format(@"{0}<-{1}", up.Variable.FullDotName, item.Item2)));
-                                                            }
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        break;
-                                    case StatementType.MoveCorrespondingStatement:
-                                        {
-                                        }
-                                        break;
-                                }
-                            }
-                            break;
-                        case CodeElementType.SetStatement:
-                            {//(2.1.1.2) a Set Statement
-                                SetStatement set = (SetStatement)def.Instruction.CodeElement;
-                                switch (set.StatementType)
-                                {
-                                    case StatementType.SetStatementForConditions://This a level 88 variable set.
-                                        {   //(2.1.1.2.1) The Set instruction is Condition variable set
-                                            //Use reflection to get sending value, because the class SetStatementForConditions is Internal to TypeCobol
-                                            System.Reflection.PropertyInfo info = set.GetType().GetProperty("SendingValue");
-                                            if (info != null)
-                                            {
-                                                object ovalue = info.GetValue(set);
-                                                if (ovalue != null)
-                                                { 
-                                                    BooleanValue bvalue = (BooleanValue)ovalue;
-                                                    //Only set if the SendingValue is true: It should always be the case in COBOL, but not in TypeCobol
-                                                    VariableSymbol parent = (VariableSymbol)def.Variable;
-                                                    System.Diagnostics.Debug.Assert(def.UserData != null);
-                                                    VariableSymbol sym = (VariableSymbol)def.UserData;
-                                                    if (sym.Value != null && sym.Value is TypeCobol.Compiler.CodeElements.Value[])
-                                                    {//(2.1.1.2.2) The values are the values of the level 88 variable
-                                                        TypeCobol.Compiler.CodeElements.Value[] values = (TypeCobol.Compiler.CodeElements.Value[])sym.Value;
-                                                        foreach (var value in values)
-                                                        {
-                                                            path.Append(string.Format(@"{0}<-""{1}""", sym.FullDotName, "true"));
-                                                            paths.Add(new Tuple<string, string>(value.AlphanumericValue.ToString(), path.ToString()));
-                                                        }
-                                                    }                                                    
-                                                }
-                                            }
-                                        }
-                                        break;
-                                }
-                            }
-                            break;
+                else
+                {
+                    System.Diagnostics.Debug.Assert(vo.Origins != null);
+                    foreach (var voOrigin in vo.Origins)
+                    {
+                        foreach (var path in AsPaths(voOrigin))
+                        {
+                            yield return new Tuple<string, string>(path.Item1, $"{variable}<-{path.Item2}");
+                        }
                     }
                 }
             }
-            return paths;
         }
 
         /// <summary>

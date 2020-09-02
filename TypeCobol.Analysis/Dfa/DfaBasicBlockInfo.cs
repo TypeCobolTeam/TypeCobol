@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace TypeCobol.Analysis.Dfa
 {
@@ -21,6 +17,7 @@ namespace TypeCobol.Analysis.Dfa
             get;
             internal set;
         }
+
         /// <summary>
         /// Killed definitions bit set: The Kill set represents those variables defined outside the basic block
         /// which also have definitions inside the block.
@@ -111,23 +108,6 @@ namespace TypeCobol.Analysis.Dfa
             Kill = new Util.BitSet(cardinality);
             In = new Util.BitSet(cardinality);
             Out = new Util.BitSet(cardinality);
-        }
-
-
-        /// <summary>
-        /// Copy constructor
-        /// </summary>
-        /// <param name="other">Instance to copy from</param>
-        public DfaBasicBlockInfo(DfaBasicBlockInfo<V> other)
-        {
-            Gen = other.Gen?.Clone();
-            Kill = other.Kill?.Clone();
-            In = other.In?.Clone();
-            Out = other.Out?.Clone();
-            UseListFirstIndex = other.UseListFirstIndex;
-            UseCount = other.UseCount;
-            DefListFirstIndex = other.DefListFirstIndex;
-            DefCount = other.DefCount;
         }
     }
 }

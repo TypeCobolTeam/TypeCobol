@@ -816,7 +816,7 @@ namespace TypeCobol.Compiler.Domain
                         //Does the variable inherits from parent its Global flag ?
                         if (currentDomain.Owner.Kind != Symbol.Kinds.Program && currentDomain.Owner.Kind != Symbol.Kinds.Function)
                             sym.SetFlag(currentDomain.Owner.Flag & Symbol.Flags.Global, currentDomain.Owner.HasFlag(Symbol.Flags.Global));
-                        //Store Contition Values.
+                        //Store Condition Values.
                         sym.Value = ((DataConditionEntry)dataDef.CodeElement).ConditionValues;
                     }
                         break;

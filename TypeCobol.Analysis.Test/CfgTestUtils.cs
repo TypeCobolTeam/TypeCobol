@@ -6,8 +6,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Analysis.Dfa;
 using TypeCobol.Analysis.Graph;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Symbols;
+using TypeCobol.Compiler.Text;
 using TypeCobol.Test;
 using TypeCobol.Test.Utils;
 
@@ -15,12 +17,11 @@ namespace TypeCobol.Analysis.Test
 {
     internal static class CfgTestUtils
     {
-        private const string CFG_ANALYZER_IDENTIFIER = "cfg-basic-tests";
-        private const string CFG_FOR_DFA_ANALYZER_IDENTIFIER = "cfg-for-dfa-tests";
+        private const string CFG_ANALYZER_IDENTIFIER = "cfg-test-utils";
 
-        private static readonly AnalyzerProvider _AnalyzerProvider;
-        private static readonly AnalyzerProvider _AnalyzerForDfaProvider;
+        private static readonly Dictionary<CfgBuildingMode, AnalyzerProvider> _AnalyzerProviders;
 
+        //From TypeCobol.Test
         public static readonly string ThirdPartyDir;
         //Project dirs
         public static readonly string BasicCfgInstrs;
@@ -31,10 +32,10 @@ namespace TypeCobol.Analysis.Test
 
         static CfgTestUtils()
         {
-            _AnalyzerProvider = new AnalyzerProvider();
-            _AnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CFG_ANALYZER_IDENTIFIER, CfgBuildingMode.Standard));
-            _AnalyzerForDfaProvider = new AnalyzerProvider();
-            _AnalyzerForDfaProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CFG_FOR_DFA_ANALYZER_IDENTIFIER, CfgBuildingMode.WithDfa));
+            _AnalyzerProviders = new Dictionary<CfgBuildingMode, AnalyzerProvider>();
+            AddAnalyzerProvider(CfgBuildingMode.Standard);
+            AddAnalyzerProvider(CfgBuildingMode.Extended);
+            AddAnalyzerProvider(CfgBuildingMode.WithDfa);
 
             string currentDir = Directory.GetCurrentDirectory();
             string solutionDir = Path.GetDirectoryName(Path.GetDirectoryName(currentDir));
@@ -45,10 +46,17 @@ namespace TypeCobol.Analysis.Test
             BasicDfaSamples = Path.Combine(solutionDir, "TypeCobol.Analysis.Test", "BasicDfaSamples");
             CfgDfaBuildTests = Path.Combine(solutionDir, "TypeCobol.Analysis.Test", "CfgDfaBuildTests");
             Report = Path.Combine(solutionDir, "TypeCobol.Analysis.Test", "Report");
+
+            void AddAnalyzerProvider(CfgBuildingMode mode)
+            {
+                var analyzerProvider = new AnalyzerProvider();
+                analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CFG_ANALYZER_IDENTIFIER, mode));
+                _AnalyzerProviders.Add(mode, analyzerProvider);
+            }
         }
 
         /// <summary>
-        /// Perform parsing of the supplied Cobol or TypeCobol source file and build Cfgs to be built for a Dfa analysis.
+        /// Perform parsing of the supplied Cobol or TypeCobol source file and build CFGs to be built for a DFA analysis.
         /// </summary>
         /// <param name="sourceFilePath">Full path to the source file.</param>
         /// <param name="expectedDiagnosticsFilePath">Full path to the diagnostic file, pass null to skip
@@ -56,7 +64,7 @@ namespace TypeCobol.Analysis.Test
         /// <returns>List of CFG built for the source file.</returns>
         public static IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> ParseCompareDiagnosticsForDfa(string sourceFilePath, string expectedDiagnosticsFilePath = null)
         {
-            return ParseCompareDiagnostics< DfaBasicBlockInfo<Symbol> >(_AnalyzerForDfaProvider, CFG_FOR_DFA_ANALYZER_IDENTIFIER, sourceFilePath, expectedDiagnosticsFilePath);
+            return ParseCompareDiagnostics<DfaBasicBlockInfo<Symbol>>(sourceFilePath, CfgBuildingMode.WithDfa, expectedDiagnosticsFilePath);
         }
 
         /// <summary>
@@ -67,24 +75,40 @@ namespace TypeCobol.Analysis.Test
         /// <param name="expectedDiagnosticsFilePath">Full path to the diagnostic file, pass null to skip
         /// diagnostic comparison</param>
         /// <returns>List of CFG built for the source file.</returns>
-        public static IList<ControlFlowGraph<Node, object>> ParseCompareDiagnostics(string sourceFilePath,
-            string expectedDiagnosticsFilePath = null)
+        public static IList<ControlFlowGraph<Node, object>> ParseCompareDiagnostics(string sourceFilePath, string expectedDiagnosticsFilePath = null)
         {
-            return ParseCompareDiagnostics<object>(_AnalyzerProvider, CFG_ANALYZER_IDENTIFIER, sourceFilePath, expectedDiagnosticsFilePath);
+            return ParseCompareDiagnostics<object>(sourceFilePath, CfgBuildingMode.Standard, expectedDiagnosticsFilePath);
         }
 
         /// <summary>
         /// Perform parsing of the supplied Cobol or TypeCobol source file
         /// and compare actual diagnostics to expected diagnostics.
         /// </summary>
-        /// <param name="analyzerProvider">The Analyzer Provider to be used</param>
-        /// <param name="identifier">Identifier of the CFG to query as result</param>
+        /// <typeparam name="D">Type of basic block data used.</typeparam>
         /// <param name="sourceFilePath">Full path to the source file.</param>
+        /// <param name="mode">CFG building mode, default is Standard mode.</param>
         /// <param name="expectedDiagnosticsFilePath">Full path to the diagnostic file, pass null to skip
-        /// diagnostic comparison</param>
+        /// diagnostic comparison.</param>
+        /// <param name="customActivators">Additional activators to add custom analyzers to be used while parsing.</param>
         /// <returns>List of CFG built for the source file.</returns>
-        public static IList<ControlFlowGraph<Node, D>> ParseCompareDiagnostics<D>(AnalyzerProvider analyzerProvider, string identifier, string sourceFilePath, string expectedDiagnosticsFilePath = null)
+        public static IList<ControlFlowGraph<Node, D>> ParseCompareDiagnostics<D>(string sourceFilePath,
+            CfgBuildingMode mode,
+            string expectedDiagnosticsFilePath = null,
+            params Func<TypeCobolOptions, TextSourceInfo, ISyntaxDrivenAnalyzer>[] customActivators)
         {
+            if (!_AnalyzerProviders.TryGetValue(mode, out var analyzerProvider))
+            {
+                throw new NotSupportedException($"Unsupported CFG building mode: '{mode}' !");
+            }
+
+            if (customActivators != null)
+            {
+                foreach (var activator in customActivators)
+                {
+                    analyzerProvider.AddActivator(activator);
+                }
+            }
+
             var parser = Parser.Parse(sourceFilePath, DocumentFormat.RDZReferenceFormat, analyzerProvider: analyzerProvider);
             var results = parser.Results;
 
@@ -124,7 +148,7 @@ namespace TypeCobol.Analysis.Test
                 }
             }
 
-            if (results.TryGetAnalyzerResult(identifier, out IList<ControlFlowGraph<Node, D>> graphs))
+            if (results.TryGetAnalyzerResult(CFG_ANALYZER_IDENTIFIER, out IList<ControlFlowGraph<Node, D>> graphs))
             {
                 return graphs;
             }

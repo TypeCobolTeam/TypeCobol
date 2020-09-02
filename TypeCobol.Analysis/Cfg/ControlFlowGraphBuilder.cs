@@ -284,7 +284,7 @@ namespace TypeCobol.Analysis.Cfg
         {
             if (IsStatement(node))
             {
-                if (!this.CurrentProgramCfgBuilder.Cfg.IsInProcedure)
+                if (!this.CurrentProgramCfgBuilder.Cfg.IsInitialized)
                     return; //Not In Procedure DIVISION
                 this.CurrentProgramCfgBuilder.CheckStartSentence(node);
             }

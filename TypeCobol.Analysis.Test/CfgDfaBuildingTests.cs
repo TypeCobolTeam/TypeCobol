@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler.Symbols;
 using System.IO;
@@ -7,14 +6,16 @@ using TypeCobol.Analysis.Dfa;
 using TypeCobol.Analysis.Graph;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.CupParser.NodeBuilder;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Text;
 
 using static TypeCobol.Analysis.Test.CfgTestUtils;
 
 namespace TypeCobol.Analysis.Test
 {
     /// <summary>
-    /// These are simple tests to validate Cfg/Dfa constructions with miscelaneous bugs.
+    /// These are simple tests to validate Cfg/Dfa constructions with miscellaneous bugs.
     /// </summary>
     [TestClass]
     public class CfgDfaBuildTests
@@ -39,7 +40,7 @@ namespace TypeCobol.Analysis.Test
             {
                 return null;
             }
-        };
+        }
 
         /// <summary>
         /// Test that EXEC SQL statement outside a PROCEDURE DIVISION does not generate basic blocks.
@@ -48,24 +49,16 @@ namespace TypeCobol.Analysis.Test
         [TestCategory("CfgDfaBuildTest")]
         public void ExecSqlOutsideProc()
         {
-            AnalyzerProvider analyzerForDfaProvider = new AnalyzerProvider();
-            string cfg_identifier = "CFG EXEC SQL OUT OF PROC DIV";
-            analyzerForDfaProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(cfg_identifier, CfgBuildingMode.Standard));
             ExecNodeListener listener = null;
-            analyzerForDfaProvider.AddActivator((o, t) => listener = new ExecNodeListener());
+            ISyntaxDrivenAnalyzer CreateExecNodeListener(TypeCobolOptions o, TextSourceInfo t) => listener = new ExecNodeListener();
 
             string path = Path.Combine(CfgTestUtils.CfgDfaBuildTests, "ExecSqlOutsideProc.cbl");
-            string msg = null;
-            try
-            {
-                IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfg = ParseCompareDiagnostics< DfaBasicBlockInfo<Symbol> >(analyzerForDfaProvider, cfg_identifier, path);
-                Assert.IsTrue(cfg.Count == 1);
-            }
-            catch (Exception e)
-            {
-                msg = e.Message;
-            }
-            Assert.AreEqual(msg, $"No Control Flow Graph generated for file '{path}'.");
+            var graphs = ParseCompareDiagnostics<DfaBasicBlockInfo<Symbol>>(path, CfgBuildingMode.WithDfa, null, CreateExecNodeListener);
+            Assert.IsTrue(graphs.Count == 1);
+
+            //Check generated graph has not been initialized
+            Assert.IsFalse(graphs[0].IsInitialized);
+
             //Check that Exec SQL has been detected
             Assert.IsNotNull(listener);
             Assert.IsTrue(listener.ExecSqlSeen);
@@ -83,7 +76,7 @@ namespace TypeCobol.Analysis.Test
             Assert.IsTrue(cfg.Count == 1);
 
             //Try to compute predecessor edges.
-            cfg[0].SetupPredecessorEdges();
+            cfg[0].SetupPredecessorEdgesFromRoot();
 
             //Test Empty Cfg Generated.
             string expectedPath = Path.Combine(CfgTestUtils.CfgDfaBuildTests, "EmptyCfg.dot");

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TypeCobol.Compiler.Symbols;
 using System.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Analysis.Dfa;
 using TypeCobol.Analysis.Graph;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Symbols;
 
 using static TypeCobol.Analysis.Test.CfgTestUtils;
 
@@ -56,7 +56,7 @@ namespace TypeCobol.Analysis.Test
         }
 
         [TestMethod]
-        public void MixPeformEvaluateIf0()
+        public void MixPerformEvaluateIf0()
         {
             string path = Path.Combine(BasicCfgInstrs, "MixPerformEvaluateIf0.cbl");
             IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfgs = ParseCompareDiagnosticsForDfa(path);
