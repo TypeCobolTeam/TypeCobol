@@ -93,11 +93,17 @@
     <None Include="BasicCfgInstrs\MixPeformEvaluateIf0.cbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="BasicCfgInstrs\NotRecursePerform2.cbl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="BasicCfgInstrs\PerfomMixedSectionParagraph.cbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="BasicCfgInstrs\Perform0.cbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="BasicCfgInstrs\PerformIdentity.cbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="BasicCfgInstrs\PerformNested0.cbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -122,6 +128,18 @@
     </None>
     <None Include="BasicCfgInstrs\PerformProcProcProcRecursive0.cbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="BasicCfgInstrs\NotRecursePerform.cbl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DotOutput\NotRecursePerform.dot">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DotOutput\NotRecursePerform2.dot">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DotOutput\PerformIdentity.dot">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="DotOutput\PerformProc4Recursive0.dot">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

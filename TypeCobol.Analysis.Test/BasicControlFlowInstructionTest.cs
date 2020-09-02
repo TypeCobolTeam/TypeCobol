@@ -680,6 +680,51 @@ namespace TypeCobol.Analysis.Test
         }
 
         [TestMethod]
+        public void NotRecursePerform()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "NotRecursePerform.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "NotRecursePerform.dot");
+
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void PerformIdentity()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformIdentity.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "PerformIdentity.dot");
+
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
+        public void NotRecursePerform2()
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "NotRecursePerform2.cbl");
+            var document = TypeCobol.Parser.Parse(path, /*format*/ DocumentFormat.RDZReferenceFormat, /*autoRemarks*/
+                false, /*copies*/ null);
+            Assert.IsTrue(document.Results.PrgSymbolTblBuilder.Programs.Count == 1);
+            string expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "DotOutput", "NotRecursePerform2.dot");
+
+            Assert.IsTrue(CfgBuilder.AllCfgBuilder.Count == 1);
+            Assert.IsNotNull(CfgBuilder.AllCfgBuilder);
+
+            CfgTestUtils.GenDotCfgAndCompare(CfgBuilder.Cfg, path, expectedPath);
+        }
+
+        [TestMethod]
         public void PerformNested0()
         {
             string path = Path.Combine(Directory.GetCurrentDirectory(), "BasicCfgInstrs", "PerformNested0.cbl");
