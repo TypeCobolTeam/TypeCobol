@@ -19,8 +19,8 @@ namespace TypeCobol.Analysis.Test
             while(next < 128)
             {
                 int newNext = bs1.NextSetBit(next);
-                Assert.AreEqual(newNext % 2, 1);
-                Assert.AreEqual(newNext, next + 1);
+                Assert.AreEqual(1, newNext % 2);
+                Assert.AreEqual(next + 1, newNext);
                 next = newNext + 1;
             }
             bs1.Not();
@@ -28,8 +28,8 @@ namespace TypeCobol.Analysis.Test
             while (next <= 126)
             {
                 int newNext = bs1.NextSetBit(next);
-                Assert.AreEqual(newNext % 2, 0);
-                Assert.AreEqual(newNext, next == 0 ? 0 : next + 1);
+                Assert.AreEqual(0, newNext % 2);
+                Assert.AreEqual(next == 0 ? 0 : next + 1, newNext);
                 next = newNext + 1;
             }
         }
@@ -48,11 +48,11 @@ namespace TypeCobol.Analysis.Test
 
             Util.BitSet bs3 = bs1.Union(bs2);
 
-            Assert.AreEqual(bs3.NextSetBit(0), 10);
-            Assert.AreEqual(bs3.NextSetBit(11), 18);
-            Assert.AreEqual(bs3.NextSetBit(19), 67);
-            Assert.AreEqual(bs3.NextSetBit(69), 118);
-            Assert.AreEqual(bs3.NextSetBit(119), -1);
+            Assert.AreEqual(10, bs3.NextSetBit(0));
+            Assert.AreEqual(18, bs3.NextSetBit(11));
+            Assert.AreEqual(67, bs3.NextSetBit(19));
+            Assert.AreEqual(118, bs3.NextSetBit(68));
+            Assert.AreEqual(-1, bs3.NextSetBit(119));
         }
 
         [TestMethod]
@@ -72,8 +72,8 @@ namespace TypeCobol.Analysis.Test
 
             Util.BitSet bs3 = bs1.Intersection(bs2);
 
-            Assert.AreEqual(bs3.NextSetBit(0), 67);
-            Assert.AreEqual(bs3.NextSetBit(68), -1);
+            Assert.AreEqual(67, bs3.NextSetBit(0));
+            Assert.AreEqual(-1, bs3.NextSetBit(68));
         }
 
         [TestMethod]
@@ -93,8 +93,8 @@ namespace TypeCobol.Analysis.Test
 
             Util.BitSet bs3 = bs2.Intersection(bs1);
 
-            Assert.AreEqual(bs3.NextSetBit(0), 67);
-            Assert.AreEqual(bs3.NextSetBit(68), -1);
+            Assert.AreEqual(67, bs3.NextSetBit(0));
+            Assert.AreEqual(-1, bs3.NextSetBit(68));
         }
 
         [TestMethod]
@@ -114,9 +114,9 @@ namespace TypeCobol.Analysis.Test
 
             Util.BitSet bs3 = bs1.Difference(bs2);
 
-            Assert.AreEqual(bs3.NextSetBit(0), 10);
-            Assert.AreEqual(bs3.NextSetBit(11), 211);
-            Assert.AreEqual(bs3.NextSetBit(212), -1);
+            Assert.AreEqual(10, bs3.NextSetBit(0));
+            Assert.AreEqual(211, bs3.NextSetBit(11));
+            Assert.AreEqual(-1, bs3.NextSetBit(212));
         }
 
         [TestMethod]
@@ -136,10 +136,10 @@ namespace TypeCobol.Analysis.Test
 
             Util.BitSet bs3 = bs2.Difference(bs1);
 
-            Assert.AreEqual(bs3.NextSetBit(0), 18);
-            Assert.AreEqual(bs3.NextSetBit(19), 118);
-            Assert.AreEqual(bs3.NextSetBit(119), 412);
-            Assert.AreEqual(bs3.NextSetBit(413), -1);
+            Assert.AreEqual(18, bs3.NextSetBit(0));
+            Assert.AreEqual(118, bs3.NextSetBit(19));
+            Assert.AreEqual(412, bs3.NextSetBit(119));
+            Assert.AreEqual(-1, bs3.NextSetBit(413));
         }
 
         [TestMethod]
@@ -158,11 +158,11 @@ namespace TypeCobol.Analysis.Test
 
             bs2.Xor(bs1);
 
-            Assert.AreEqual(bs2.NextSetBit(0), 10);
-            Assert.AreEqual(bs2.NextSetBit(11), 18);
-            Assert.AreEqual(bs2.NextSetBit(19), 118);
-            Assert.AreEqual(bs2.NextSetBit(119), 211);
-            Assert.AreEqual(bs2.NextSetBit(212), -1);
+            Assert.AreEqual(10, bs2.NextSetBit(0));
+            Assert.AreEqual(18, bs2.NextSetBit(11));
+            Assert.AreEqual(118, bs2.NextSetBit(19));
+            Assert.AreEqual(211, bs2.NextSetBit(119));
+            Assert.AreEqual(-1, bs2.NextSetBit(212));
         }
     }
 }
