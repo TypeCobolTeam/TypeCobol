@@ -304,7 +304,7 @@
     /// set condition-names to true
     ///          List<Identifier> ConditionIdentifiers //identifier
     /// </summary>
-    internal class SetStatementForConditions : SetStatement
+    public class SetStatementForConditions : SetStatement
     {
         public SetStatementForConditions() : base(StatementType.SetStatementForConditions) { }
 
