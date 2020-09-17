@@ -13,12 +13,28 @@ namespace TypeCobol.Analysis.Graph
     /// <typeparam name="D"></typeparam>
     public class CfgDotFileForNodeGenerator<D> : CfgDotFileGenerator<Node, D>
     {
+        private readonly HashSet<int> _encounteredBlocks;
+
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="cfg">The underlying Control Flow Graph</param>
-        public CfgDotFileForNodeGenerator(ControlFlowGraph<Node, D> cfg) : base (cfg)
+        public CfgDotFileForNodeGenerator(ControlFlowGraph<Node, D> cfg)
+            : this(cfg, new HashSet<int>())
         {
+            
+        }
+
+        /// <summary>
+        /// Private constructor. Allows to share the encountered blocks set
+        /// between instances of the generator.
+        /// </summary>
+        /// <param name="cfg">Current CFG to generate.</param>
+        /// <param name="encounteredBlocks">Hashset of indices of already encountered blocks.</param>
+        private CfgDotFileForNodeGenerator(ControlFlowGraph<Node, D> cfg, HashSet<int> encounteredBlocks)
+            : base(cfg)
+        {
+            _encounteredBlocks = encounteredBlocks;
         }
 
         /// <summary>
@@ -63,15 +79,6 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
-        /// Memorized emitted group to avoid infinite recursion.
-        /// </summary>
-        internal HashSet<int> EmittedGroupIndices
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Emit a basic block, with also handling recursive BasicBlock Groups that can appear for
         /// instance for recursive PERFORM.
         /// </summary>
@@ -82,59 +89,40 @@ namespace TypeCobol.Analysis.Graph
         /// <returns>true</returns>
         protected override bool EmitBasicBlock(BasicBlock<Node, D> block, int incomingEdge, BasicBlock<Node, D> previousBlock, ControlFlowGraph<Node, D> cfg)
         {
-            var group = block as ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup;
-            if (group != null)
+            if (_encounteredBlocks.Contains(block.Index))
             {
-                if (group.IsIterativeGroup && incomingEdge == group.EntryIndexInSuccessors)
-                {
-                    if (group.IsAfterIterativeGroup)
-                    {
-                        //For an AFTER iteration group - Draw/Traverse only once the Group
-                        //So if the Group has been already entered don't redraw it
-                        if (EmittedGroupIndices != null && EmittedGroupIndices.Contains(group.GroupIndex))
-                            return false;
-                    }
-                    else
-                    {
-                        //Don't follow the iteration edge
-                        return false;
-                    }
-                }
+                return false;
             }
 
+            _encounteredBlocks.Add(block.Index);
+
             bool bResult = base.EmitBasicBlock(block, incomingEdge, previousBlock, cfg);
-            if (group != null && !block.HasFlag(BasicBlock<Node, D>.Flags.GroupGrafted))
+            if (block is ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup group && !group.HasFlag(BasicBlock<Node, D>.Flags.GroupGrafted))
             {
                 if (group.IsIterativeGroup && group.IsExplicitIterativeGroup)
                 {
                     return bResult;
                 }
-                if (EmittedGroupIndices == null)
-                {
-                    EmittedGroupIndices = new HashSet<int>();
-                }
+
                 StringWriter sw = new StringWriter();
-                if (!EmittedGroupIndices.Contains(group.GroupIndex))
+                
+                //we are emitting a sub graph.
+                sw.WriteLine("subgraph cluster_" + group.GroupIndex + '{');
+                sw.WriteLine("color = blue;");
+                if (group.Group.Count > 0)
                 {
-                    EmittedGroupIndices.Add(group.GroupIndex);
-                    //we are emitting a sub graph.
-                    sw.WriteLine("subgraph cluster_" + group.GroupIndex + '{');
-                    sw.WriteLine("color = blue;");
-                    if (group.Group.Count > 0)
-                    {
-                        sw.WriteLine(string.Format("label = \"{0}\";", ((ControlFlowGraphBuilder<D>.BasicBlockForNode)group.Group.First.Value).Tag));
-                        CfgDotFileForNodeGenerator<D> cfgDot = new CfgDotFileForNodeGenerator<D>(cfg);
-                        cfgDot.EmittedGroupIndices = EmittedGroupIndices;
-                        cfgDot.FullInstruction = this.FullInstruction;
-                        cfgDot.Writer = sw;
-                        cfgDot.DigraphBuilder = new StringBuilder();
-                        //Emit block starting at the first block.
-                        LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
-                        cfg.DFS(first.Value, cfgDot.EmitBasicBlock);
-                        sw.WriteLine(cfgDot.DigraphBuilder.ToString());
-                    }
-                    sw.WriteLine('}');
+                    sw.WriteLine($"label = \"{((ControlFlowGraphBuilder<D>.BasicBlockForNode) group.Group.First.Value).Tag}\";");
+                    CfgDotFileForNodeGenerator<D> cfgDot = new CfgDotFileForNodeGenerator<D>(cfg, _encounteredBlocks);
+                    cfgDot.FullInstruction = this.FullInstruction;
+                    cfgDot.Writer = sw;
+                    cfgDot.DigraphBuilder = new StringBuilder();
+                    //Emit block starting at the first block.
+                    LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
+                    cfg.DFS(first.Value, cfgDot.EmitBasicBlock);
+                    sw.WriteLine(cfgDot.DigraphBuilder.ToString());
                 }
+                sw.WriteLine('}');
+
                 //Create dashed link to the group
                 if (group.Group.Count > 0)
                 {
@@ -144,6 +132,7 @@ namespace TypeCobol.Analysis.Graph
                 {
                     sw.WriteLine(string.Format("Block{0} -> \"\" [style=dashed]", block.Index));
                 }
+
                 sw.Flush();
                 this.Writer.WriteLine(sw.ToString());
             }
