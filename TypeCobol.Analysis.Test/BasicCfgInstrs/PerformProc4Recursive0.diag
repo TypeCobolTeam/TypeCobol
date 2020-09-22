@@ -1,8 +1,4 @@
 --- Diagnostics ---
-Line 23[15,15] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM pararec4', recursive instruction is '       perform pararec3 test after varying n from 1 by 1 until n'.
-Line 23[15,15] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM pararec4', recursive instruction is '       perform pararec4 varying n from 1 by 1 until n > 5'.
 Line 31[15,15] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM pararec', recursive instruction is '       perform pararec2'.
-Line 31[15,15] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM pararec', recursive instruction is '       perform pararec3'.
-Line 31[15,15] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM pararec', recursive instruction is '       perform pararec4'.
-Line 42[15,15] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM pararec2', recursive instruction is '       perform pararec'.
-Line 53[15,15] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM pararec3', recursive instruction is '       perform pararec2'.
+Line 57[15,15] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM pararec4', recursive instruction is '       perform pararec4 varying n from 1 by 1 until n > 5'.
+Line 57[15,15] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM pararec4', recursive instruction is '       perform pararec3 test after varying n from 1 by 1 until n'.

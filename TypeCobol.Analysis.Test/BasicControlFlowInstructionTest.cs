@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
@@ -476,6 +475,15 @@ namespace TypeCobol.Analysis.Test
 
         [TestMethod]
         public void PerformProcIterativeRecursive0() => TestTemplate();
+
+        [TestMethod]
+        public void PerformIdentity() => TestTemplate();
+
+        [TestMethod]
+        public void NotRecursePerform0() => TestTemplate();
+
+        [TestMethod]
+        public void NotRecursePerform1() => TestTemplate();
 
         [TestMethod]
         public void CfgInNestedPrg0()

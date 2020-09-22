@@ -1,0 +1,162 @@
+﻿digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{MAIN. Block1|}"
+]
+Block2 [
+label = "{Block2|    PERFORM a\l}"
+]
+subgraph cluster_1{
+color = blue;
+label = "a";
+Block26 [
+label = "{A. Block26|}"
+]
+Block27 [
+label = "{Block27|    PERFORM b\l}"
+]
+subgraph cluster_2{
+color = blue;
+label = "b";
+Block48 [
+label = "{B. Block48|}"
+]
+Block32 [
+label = "{Block32|    PERFORM c\l}"
+]
+subgraph cluster_4{
+color = blue;
+label = "c";
+Block52 [
+label = "{C. Block52|}"
+]
+Block38 [
+label = "{Block38|    PERFORM d\l}"
+]
+subgraph cluster_5{
+color = blue;
+label = "d";
+Block56 [
+label = "{D. Block56|}"
+]
+Block41 [
+label = "{Block41|    PERFORM g\l}"
+]
+subgraph cluster_6{
+color = blue;
+label = "g";
+Block58 [
+label = "{G. Block58|    DISPLAY \"end\"\l}"
+]
+
+}
+Block41 -> Block58 [style=dashed]
+
+Block42 [
+label = "{Block42|}"
+]
+Block56 -> Block41
+Block41 -> Block42
+
+}
+Block38 -> Block56 [style=dashed]
+
+Block39 [
+label = "{Block39|}"
+]
+Block52 -> Block38
+Block38 -> Block39
+
+}
+Block32 -> Block52 [style=dashed]
+
+Block33 [
+label = "{Block33|}"
+]
+Block48 -> Block32
+Block32 -> Block33
+
+}
+Block27 -> Block48 [style=dashed]
+
+Block28 [
+label = "{Block28|}"
+]
+Block29 [
+label = "{Block29|    PERFORM e\l}"
+]
+subgraph cluster_3{
+color = blue;
+label = "e";
+Block50 [
+label = "{E. Block50|}"
+]
+Block35 [
+label = "{Block35|    PERFORM f\l}"
+]
+subgraph cluster_7{
+color = blue;
+label = "f";
+Block54 [
+label = "{F. Block54|}"
+]
+Block45 [
+label = "{Block45|    PERFORM g\l}"
+]
+subgraph cluster_8{
+color = blue;
+label = "g";
+Block59 [
+label = "{G. Block59|    DISPLAY \"end\"\l}"
+]
+
+}
+Block45 -> Block59 [style=dashed]
+
+Block46 [
+label = "{Block46|}"
+]
+Block54 -> Block45
+Block45 -> Block46
+
+}
+Block35 -> Block54 [style=dashed]
+
+Block36 [
+label = "{Block36|}"
+]
+Block50 -> Block35
+Block35 -> Block36
+
+}
+Block29 -> Block50 [style=dashed]
+
+Block30 [
+label = "{Block30|}"
+]
+Block26 -> Block27
+Block27 -> Block28
+Block28 -> Block29
+Block29 -> Block30
+
+}
+Block2 -> Block26 [style=dashed]
+
+Block3 [
+label = "{Block3|    GOBACK\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block2 -> Block3
+
+}

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TypeCobol.Analysis.Graph;
@@ -1043,34 +1044,39 @@ namespace TypeCobol.Analysis.Cfg
                             isPerform = true; //To avoid a second dynamic cast
 
                             //Is there a recursion in the graph ?
-                            var recursiveBlock = clonedPerforms
+                            if (group.RecursivityGroupSet.Get(group0.GroupIndex) && !group0.HasFlag(BasicBlock<Node, D>.Flags.Recursive))
+                            {
+                                //Flag and report recursivity diagnostic
+                                group0.SetFlag(BasicBlock<Node, D>.Flags.Recursive, true);
+                                string performTarget = throughProcedureReference != null
+                                    ? $"{procedureReference} THRU {throughProcedureReference}"
+                                    : procedureReference.ToString();
+                                Node offendingInstruction = group0.Instructions.Last.Value;
+                                System.Diagnostics.Debug.Assert(offendingInstruction != null);
+                                System.Diagnostics.Debug.Assert(offendingInstruction.CodeElement != null);
+                                string offendingStatement = offendingInstruction.CodeElement.SourceText;
+                                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
+                                    p.CodeElement.Column,
+                                    p.CodeElement.Column,
+                                    p.CodeElement.Line,
+                                    string.Format(Resource.RecursiveBlockOnPerformProcedure, performTarget, offendingStatement));
+                                AddDiagnostic(d);
+                            }
+
+                            var clonedGroup0 = clonedPerforms
                                 .Select(t => t.Item3)
-                                .FirstOrDefault(g => g.GroupIndex == group0.GroupIndex);
-                            if (recursiveBlock != null)
+                                .SingleOrDefault(g => g.GroupIndex == group0.GroupIndex);
+                            if (clonedGroup0 != null)
                             {
                                 //Stop the traversal for this block and link to the existing block
-                                clonedBlocksIndexMap.Add(block.Index, recursiveBlock.Index);
-                                group.AddBlock(recursiveBlock);
+                                clonedBlocksIndexMap.Add(block.Index, clonedGroup0.Index);
+                                continue;
+                            }
 
-                                //Flag the block and report Recursivity diagnostic
-                                if (!recursiveBlock.HasFlag(BasicBlock<Node, D>.Flags.Recursive))
-                                {
-                                    recursiveBlock.SetFlag(BasicBlock<Node, D>.Flags.Recursive, true);
-                                    string performTarget = throughProcedureReference != null
-                                        ? $"{procedureReference} THRU {throughProcedureReference}"
-                                        : procedureReference.ToString();
-                                    Node offendingInstruction = recursiveBlock.Instructions.Last.Value;
-                                    System.Diagnostics.Debug.Assert(offendingInstruction != null);
-                                    System.Diagnostics.Debug.Assert(offendingInstruction.CodeElement != null);
-                                    string offendingStatement = offendingInstruction.CodeElement.SourceText;
-                                    Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                                        p.CodeElement.Column,
-                                        p.CodeElement.Column,
-                                        p.CodeElement.Line,
-                                        string.Format(Resource.RecursiveBlockOnPerformProcedure, performTarget, offendingStatement));
-                                    AddDiagnostic(d);
-                                }
-                                
+                            if (group.GroupIndex == group0.GroupIndex)
+                            {
+                                //Identity group, don't duplicate it.
+                                clonedBlocksIndexMap[block.Index] = block.Index;
                                 continue;
                             }
                         }
@@ -1091,6 +1097,9 @@ namespace TypeCobol.Analysis.Cfg
                             var clonedGroup = (BasicBlockForNodeGroup) clonedBlock;
                             clonedGroup.Group = new LinkedList<BasicBlock<Node, D>>();
                             clonedGroup.TerminalBlocks = null;
+
+                            group.RecursivityGroupSet.Set(clonedGroup.GroupIndex, true);
+                            clonedGroup.RecursivityGroupSet = new BitArray(group.RecursivityGroupSet);
 
                             var originalPerform = this.CurrentProgramCfgBuilder.PendingPERFORMProcedures
                                 .Single(t => t.Item3 == block);
@@ -1145,7 +1154,7 @@ namespace TypeCobol.Analysis.Cfg
                     clonedBlock.SuccessorEdges.Add(clonedEdge);
                 }
 
-                if (blockGoesBeyondGroupLimit && !clonedBlock.HasFlag(BasicBlock<Node, D>.Flags.Recursive))
+                if (blockGoesBeyondGroupLimit)
                 {
                     Node offendingInstruction = clonedBlock.Instructions.Last.Value;
                     System.Diagnostics.Debug.Assert(offendingInstruction != null);
@@ -1175,6 +1184,8 @@ namespace TypeCobol.Analysis.Cfg
                 //First pass: resolve targets of PERFORMs, some new groups may be created during this
                 foreach (var item in this.CurrentProgramCfgBuilder.PendingPERFORMProcedures)
                 {
+                    item.Item3.RecursivityGroupSet = new BitArray(GroupCounter + 1);
+                    item.Item3.RecursivityGroupSet.Set(item.Item3.GroupIndex, true);
                     ResolvePendingPERFORMProcedure(item, clonedPerforms);
                 }
 
@@ -1192,11 +1203,13 @@ namespace TypeCobol.Analysis.Cfg
                 {
                     BasicBlockForNodeGroup group = item.Item3;
                     groupOrder[group.GroupIndex] = group;
+                    group.RecursivityGroupSet = null;
                 }
                 foreach (var item in clonedPerforms)
                 {
                     BasicBlockForNodeGroup group = item.Item3;
                     groupOrder[group.GroupIndex] = group;
+                    group.RecursivityGroupSet = null;
                 }
 
                 //Extend groups according to the current building mode

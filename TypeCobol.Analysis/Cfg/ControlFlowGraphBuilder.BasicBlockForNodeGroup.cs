@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using TypeCobol.Analysis.Graph;
 using TypeCobol.Compiler.Nodes;
 
@@ -67,6 +68,17 @@ namespace TypeCobol.Analysis.Cfg
             /// instruction, a dot graph will not show the enclosing section or paragraph in a cluster rectangle.
             /// </summary>
             internal bool IsExplicitIterativeGroup
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
+            /// To detect recursivity on PERFORM Procedure calls.
+            /// This is a bit array of GroupIndex encountered during the workflow
+            /// call of other PERFORM.
+            /// </summary>
+            internal BitArray RecursivityGroupSet
             {
                 get;
                 set;
