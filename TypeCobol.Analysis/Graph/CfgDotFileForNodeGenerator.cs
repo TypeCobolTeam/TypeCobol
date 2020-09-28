@@ -99,11 +99,6 @@ namespace TypeCobol.Analysis.Graph
             bool bResult = base.EmitBasicBlock(block, incomingEdge, previousBlock, cfg);
             if (block is ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup group && !group.HasFlag(BasicBlock<Node, D>.Flags.GroupGrafted))
             {
-                if (group.IsIterativeGroup && group.IsExplicitIterativeGroup)
-                {
-                    return bResult;
-                }
-
                 StringWriter sw = new StringWriter();
                 
                 //we are emitting a sub graph.
@@ -126,11 +121,11 @@ namespace TypeCobol.Analysis.Graph
                 //Create dashed link to the group
                 if (group.Group.Count > 0)
                 {
-                    sw.WriteLine(string.Format("Block{0} -> Block{1} [style=dashed]", block.Index, group.Group.First.Value.Index));
+                    sw.WriteLine("Block{0} -> Block{1} [style=dashed]", block.Index, group.Group.First.Value.Index);
                 }
                 else
                 {
-                    sw.WriteLine(string.Format("Block{0} -> \"\" [style=dashed]", block.Index));
+                    sw.WriteLine("Block{0} -> \"\" [style=dashed]", block.Index);
                 }
 
                 sw.Flush();

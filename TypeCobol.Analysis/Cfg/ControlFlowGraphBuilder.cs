@@ -1250,19 +1250,19 @@ namespace TypeCobol.Analysis.Cfg
                     }
                 }
 
-                //also make the first block of the group if any the next block to create a real branch of the PERFORM instruction block.
-                if (group.Group.Count > 0 && group.IsExplicitIterativeGroup)
-                {   
-                    LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
-                    int firstIndex = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
-                    group.SuccessorEdges.Add(firstIndex);
-                    this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(first.Value);
-                }
-
                 //In Extended mode graft the group (handled by the dot generator)
                 if (this.ExtendPerformTargets)
                 {
                     group.SetFlag(BasicBlock<Node, D>.Flags.GroupGrafted, true);
+                    
+                    //also make the first block of the group if any the next block to create a real branch of the PERFORM instruction block.
+                    if (group.Group.Count > 0)
+                    {
+                        LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
+                        int firstIndex = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
+                        group.SuccessorEdges.Add(firstIndex);
+                        this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(first.Value);
+                    }
                 }
             }
             else if (this.ExtendPerformTargets)
@@ -2336,7 +2336,6 @@ namespace TypeCobol.Analysis.Cfg
             {
                 //Iterative PERFORM
                 group.IsIterativeGroup = true;
-                group.IsExplicitIterativeGroup = this.ExtendPerformTargets;
                 if (IsAfter(node.CodeElement))
                 {
                     group.IsAfterIterativeGroup = true;

@@ -64,16 +64,6 @@ namespace TypeCobol.Analysis.Cfg
             }
 
             /// <summary>
-            /// An explicit Iterative Group will be directly linked to its corresponding group of
-            /// instruction, a dot graph will not show the enclosing section or paragraph in a cluster rectangle.
-            /// </summary>
-            internal bool IsExplicitIterativeGroup
-            {
-                get;
-                set;
-            }
-
-            /// <summary>
             /// To detect recursivity on PERFORM Procedure calls.
             /// This is a bit array of GroupIndex encountered during the workflow
             /// call of other PERFORM.
