@@ -54,20 +54,38 @@
            SET Flag-false OF GlobalTab(a14c7288IdxA) TO TRUE
       *    SET GlobalTab::Flag(IdxA) TO false
            SET Flag-false OF GlobalTab(a14c7288IdxA) TO TRUE
+      *    CALL DisplayTable INPUT GlobalTab::Flag(GlobalTab::IdxA)
+           CALL 'aff15808' USING
+                                 Flag-value IN GlobalTab(a14c7288IdxA)
+           end-call
+                                                                   
+      *    CALL DisplayTable INPUT GlobalTab::Flag(IdxA)
+           CALL 'aff15808' USING
+                                 Flag-value IN GlobalTab(a14c7288IdxA)
+           end-call
+                                                        
            GOBACK
            .
            
-      *DECLARE PROCEDURE DisplayTable.
+      *DECLARE PROCEDURE DisplayTable
+      *        INPUT myBool Type Bool.
 
        END PROGRAM TCOZDR03.
       *
-      *DECLARE PROCEDURE DisplayTable.
+      *DECLARE PROCEDURE DisplayTable
+      *        INPUT myBool Type Bool.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c8f713a3.
+       PROGRAM-ID. aff15808.
        DATA DIVISION.
        LINKAGE SECTION.
-      *TCOZDR03.DisplayTable  - No Params
+      *TCOZDR03.DisplayTable - Params :
+      *     input(myBool: BOOL)
+       01 myBool-value PIC X     VALUE LOW-VALUE.
+           88 myBool       VALUE 'T'.
+           88 myBool-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
        01 TC-GlobalData.
 
 
@@ -86,8 +104,10 @@
 
 
        PROCEDURE DIVISION
+             USING BY REFERENCE myBool-value
            .
-      *TCOZDR03.DisplayTable  - No Params
+      *TCOZDR03.DisplayTable - Params :
+      *     input(myBool: BOOL)
       * Get the data from the global storage section
            CALL 'b8131d02' USING
                by reference address of TC-GlobalData
@@ -100,7 +120,7 @@
              DISPLAY 'Test' Obj OF GlobalTab(a14c7288IdxA)
            END-PERFORM
            .
-       END PROGRAM c8f713a3.
+       END PROGRAM aff15808.
       *
       * Global Storage Section variables
       *_________________________________________________________________

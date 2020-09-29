@@ -25,10 +25,13 @@
            SET GlobalTab::IdxA TO 1
            SET GlobalTab::Flag(GlobalTab::IdxA) TO false
            SET GlobalTab::Flag(IdxA) TO false
+           CALL DisplayTable INPUT GlobalTab::Flag(GlobalTab::IdxA)
+           CALL DisplayTable INPUT GlobalTab::Flag(IdxA)
            GOBACK
            .
            
-       DECLARE PROCEDURE DisplayTable.
+       DECLARE PROCEDURE DisplayTable
+               INPUT myBool Type Bool.
        DATA DIVISION.
        PROCEDURE DIVISION.
            PERFORM VARYING GlobalTab::IdxA FROM 1 BY 1
