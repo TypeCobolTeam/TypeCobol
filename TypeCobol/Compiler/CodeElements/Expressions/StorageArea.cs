@@ -143,13 +143,31 @@ namespace TypeCobol.Compiler.CodeElements
 			return ToString(false);
 		}
 
+        /// <summary>
+        /// For indexes, stores the computed hash of the corresponding IndexDefinition
+        /// Used by Codegen only.
+        /// </summary>
+        public string Hash { get; set; }
+
         public string ToString(bool onlySubscript)
         {
             var str = new System.Text.StringBuilder();
             if (SymbolReference != null)
             {
-                if(!onlySubscript)
-                    str.Append(SymbolReference.Name);
+                if (!onlySubscript)
+                {
+                    if (Hash != null)
+                    {
+                        var symbolReference = SymbolReference.IsQualifiedReference
+                            ? ((QualifiedSymbolReference) SymbolReference).First
+                            : SymbolReference;
+                        str.Append(Hash + symbolReference.Name);
+                    }
+                    else
+                    {
+                        str.Append(SymbolReference.Name);
+                    }
+                }
                 if (Subscripts.Count > 0)
                 {
                     str.Append('(');
