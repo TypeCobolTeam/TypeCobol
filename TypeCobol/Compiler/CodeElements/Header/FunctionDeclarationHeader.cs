@@ -75,47 +75,53 @@ namespace TypeCobol.Compiler.CodeElements {
 	    Procedure = 2,
     }
 
-    public interface ParameterList {
-	    IList<DataType> InputParameters { get; }
-	    IList<DataType> InoutParameters { get; }
-	    IList<DataType> OutputParameters { get; }
-	    DataType ReturningParameter { get; }
+    public class TypeInfo
+    {
+        public DataType DataType { get; set; }
+        public TypeDefinition TypeDefinition { get; set; }
     }
 
+    public interface IProfile
+    {
+        IList<TypeInfo> Inputs { get; }
+        IList<TypeInfo> Inouts { get; }
+        IList<TypeInfo> Outputs { get; }
+        TypeInfo Returning { get; }
+    }
 
     public static class ParameterListHelper
     {
         /// <summary>
-        /// Get the signature of the ParameterList as string.
+        /// Get the signature of the profile as string.
         /// This string is intended to be displayed to the user.
         /// </summary>
         /// <returns></returns>
-        public static string GetSignature([NotNull] this ParameterList parameterList)
+        public static string GetSignature([NotNull] this IProfile profile)
         {
             var str = new System.Text.StringBuilder();
 
-            if (parameterList.InputParameters.Count > 0)
+            if (profile.Inputs.Count > 0)
             {
                 str.Append("input(");
-                foreach (var p in parameterList.InputParameters) str.Append(p).Append(", ");
+                foreach (var p in profile.Inputs) str.Append(p.DataType.Name).Append(", ");
                 str.Length -= 2;
                 str.Append(")");
             }
-            if (parameterList.InoutParameters.Count > 0)
+            if (profile.Inouts.Count > 0)
             {
                 str.Append(" in-out(");
-                foreach (var p in parameterList.InoutParameters) str.Append(p).Append(", ");
+                foreach (var p in profile.Inouts) str.Append(p.DataType.Name).Append(", ");
                 str.Length -= 2;
                 str.Append(")");
             }
-            if (parameterList.OutputParameters.Count > 0)
+            if (profile.Outputs.Count > 0)
             {
                 str.Append(" output(");
-                foreach (var p in parameterList.OutputParameters) str.Append(p).Append(", ");
+                foreach (var p in profile.Outputs) str.Append(p.DataType.Name).Append(", ");
                 str.Length -= 2;
                 str.Append(")");
             }
-            if (parameterList.ReturningParameter != null) str.Append(" : ").Append(parameterList.ReturningParameter);
+            if (profile.Returning != null) str.Append(" : ").Append(profile.Returning.DataType.Name);
             return str.ToString();
         }
 
@@ -204,7 +210,7 @@ namespace TypeCobol.Compiler.CodeElements {
         }
     }
 
-    public class ParametersProfile: CodeElement, ParameterList, IVisitable, IEquatable<ParametersProfile>
+    public class ParametersProfile: CodeElement, IVisitable, IEquatable<ParametersProfile>
     {
 	    public IList<ParameterDescriptionEntry> InputParameters { get; set; }
 	    public IList<ParameterDescriptionEntry> InoutParameters { get; set; }
@@ -297,45 +303,6 @@ namespace TypeCobol.Compiler.CodeElements {
             str.Append(')');
             return str.ToString();
         }
-
-
-
-	    IList<DataType> _icache = null;
-	    IList<DataType> ParameterList.InputParameters {
-		    get {
-			    if (_icache != null) return _icache;
-			    _icache = new List<DataType>();
-			    foreach(var parameter in this.InputParameters)
-				    _icache.Add(parameter.DataType);
-			    return _icache;
-		    }
-	    }
-	    IList<DataType> _ycache = null;
-	    IList<DataType> ParameterList.InoutParameters {
-		    get {
-			    if (_ycache != null) return _ycache;
-			    _ycache = new List<DataType>();
-			    foreach(var parameter in this.InoutParameters)
-				    _ycache.Add(parameter.DataType);
-			    return _ycache;
-		    }
-	    }
-	    IList<DataType> _ocache = null;
-	    IList<DataType> ParameterList.OutputParameters {
-		    get {
-			    if (_ocache != null) return _ocache;
-			    _ocache = new List<DataType>();
-			    foreach(var parameter in this.OutputParameters)
-				    _ocache.Add(parameter.DataType);
-			    return _ocache;
-		    }
-	    }
-	    DataType ParameterList.ReturningParameter {
-		    get {
-			    if (this.ReturningParameter == null) return null;
-			    return this.ReturningParameter.DataType;
-		    }
-	    }
     }
 
     public class Passing {

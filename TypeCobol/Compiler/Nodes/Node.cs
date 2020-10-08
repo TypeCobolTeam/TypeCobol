@@ -987,7 +987,7 @@ namespace TypeCobol.Compiler.Nodes {
     public class SourceFile : GenericNode<CodeElement> {
         public SourceFile() : base(null)
         {
-            GeneratedCobolHashes = new Dictionary<string, string>();
+            GeneratedCobolHashes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -995,9 +995,10 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         /// <summary>
-        /// Dictionary of hashes and signatures for the different function and procedure. Allows to avoid duplicates. 
+        /// Dictionary of hashes and signatures for the different function and procedure. Allows to avoid duplicates.
+        /// Key is the  qualified name of function/procedure/index, Value is the corresponding index.
         /// </summary>
-        public Dictionary<string, string> GeneratedCobolHashes { get; set; }
+        public Dictionary<string, string> GeneratedCobolHashes { get; }
 
         public IEnumerable<Program> Programs {
             get

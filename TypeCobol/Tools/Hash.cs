@@ -69,15 +69,20 @@ namespace TypeCobol.Tools
             if(result.Length < size)
                 result += hash.Substring(0, size - result.Length);
 
-            if(node != null)
+            if (node?.Root != null)
             {
-                var RootNode = (SourceFile)node.Root;
-                if (RootNode != null && RootNode.GeneratedCobolHashes.Any(v => v.Key == result && v.Value != text))
+                var existingNameForComputedHash = node.Root.GeneratedCobolHashes.SingleOrDefault(p => p.Value == result).Key;
+                if (existingNameForComputedHash == null)
+                {
+                    //No conflict, add the new hash
+                    node.Root.GeneratedCobolHashes.Add(text, result);
+                }
+                else if (existingNameForComputedHash != text)
+                {
+                    //Hash conflict, same hash has been computed for two different names !
                     DiagnosticUtils.AddError(node, "Duplicated hash detected. Please contact TypeCobol support team.", MessageCode.ImplementationError);
-                else if (RootNode != null && !RootNode.GeneratedCobolHashes.Any(v => v.Key == result))
-                    RootNode.GeneratedCobolHashes.Add(result, text);
+                }
             }
-           
 
             return result;
         }

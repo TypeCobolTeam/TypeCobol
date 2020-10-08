@@ -152,6 +152,7 @@ namespace TypeCobol.Codegen.Nodes {
             if (imports.HasPublicProcedures)
             {
                 Node whereToGenerate;
+                int insertIndex = 0;
 
                 //Generate a PERFORM, this must be the first instruction unless we have a Paragraph or a section
                 var firstChildOfPDiv = procedureDivision.Children.First();
@@ -173,11 +174,13 @@ namespace TypeCobol.Codegen.Nodes {
                 }
                 else
                 {
+                    //Special case for declaratives : PERFORM must be generated after them
+                    if (firstChildOfPDiv is Declaratives) insertIndex = 1;
                     whereToGenerate = procedureDivision;
                 }
 
                 //After #655, TC-Initializations is not used
-                whereToGenerate.Add(new GeneratedNode2("    PERFORM TC-INITIALIZATIONS", true), 0);
+                whereToGenerate.Add(new GeneratedNode2("    PERFORM TC-INITIALIZATIONS", true), insertIndex);
 
                 //Generate "TC-Initializations" paragraph
                 procedureDivision.Add(
