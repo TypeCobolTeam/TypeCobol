@@ -14,3 +14,12 @@
 000002   02 :PREFIX:-TOTO.
 000003   02 TOTO-:TAG:.
 000004   02 TO-:PREFIX:-TO.
+000001 REPLACE ==:tag:== BY ==var==.
+000002 01 :tag::tag: PIC X.
+000003 01 S:tag::tag: PIC X.
+000004 01 :tag:M:tag: PIC X.
+000005 01 :tag::tag:E PIC X.
+000006 01 S:tag:M:tag: PIC X.
+000007 01 :tag:M:tag:E PIC X.
+000008 01 S:tag::tag:E PIC X.
+000009 01 S:tag:M:tag:E PIC X.

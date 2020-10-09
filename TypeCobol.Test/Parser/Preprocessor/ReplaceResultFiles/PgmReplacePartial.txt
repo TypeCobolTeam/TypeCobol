@@ -47,3 +47,51 @@
 [10,11:05]<IntegerLiteral>{5}
 [13,26:TO-TEST-TO]<UserDefinedWord>
 [27,27+:.]<PeriodSeparator>
+-- Line 18 --
+[8,9:01]<IntegerLiteral>{1}
+[11,20:varvar]<UserDefinedWord>
+[22,24:PIC]<PIC>
+[26,26:X]<PictureCharacterString>
+[27,27+:.]<PeriodSeparator>
+-- Line 19 --
+[8,9:01]<IntegerLiteral>{1}
+[11,21:Svarvar]<UserDefinedWord>
+[23,25:PIC]<PIC>
+[27,27:X]<PictureCharacterString>
+[28,28+:.]<PeriodSeparator>
+-- Line 20 --
+[8,9:01]<IntegerLiteral>{1}
+[11,21:varMvar]<UserDefinedWord>
+[23,25:PIC]<PIC>
+[27,27:X]<PictureCharacterString>
+[28,28+:.]<PeriodSeparator>
+-- Line 21 --
+[8,9:01]<IntegerLiteral>{1}
+[11,21:varvarE]<UserDefinedWord>
+[23,25:PIC]<PIC>
+[27,27:X]<PictureCharacterString>
+[28,28+:.]<PeriodSeparator>
+-- Line 22 --
+[8,9:01]<IntegerLiteral>{1}
+[11,22:SvarMvar]<UserDefinedWord>
+[24,26:PIC]<PIC>
+[28,28:X]<PictureCharacterString>
+[29,29+:.]<PeriodSeparator>
+-- Line 23 --
+[8,9:01]<IntegerLiteral>{1}
+[11,22:varMvarE]<UserDefinedWord>
+[24,26:PIC]<PIC>
+[28,28:X]<PictureCharacterString>
+[29,29+:.]<PeriodSeparator>
+-- Line 24 --
+[8,9:01]<IntegerLiteral>{1}
+[11,22:SvarvarE]<UserDefinedWord>
+[24,26:PIC]<PIC>
+[28,28:X]<PictureCharacterString>
+[29,29+:.]<PeriodSeparator>
+-- Line 25 --
+[8,9:01]<IntegerLiteral>{1}
+[11,23:SvarMvarE]<UserDefinedWord>
+[25,27:PIC]<PIC>
+[29,29:X]<PictureCharacterString>
+[30,30+:.]<PeriodSeparator>
