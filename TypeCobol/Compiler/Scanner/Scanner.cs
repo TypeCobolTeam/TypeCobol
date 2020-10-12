@@ -3,16 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Antlr4.Runtime.Atn;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
-using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Text;
-using String = System.String;
 
 namespace TypeCobol.Compiler.Scanner
 {
@@ -1563,8 +1559,10 @@ namespace TypeCobol.Compiler.Scanner
                                 //Try to guess if it is a LevelNumber or Literal depending on previous tokens
                                 bool currentTokenIsExpectedToBeALiteral =
                                     lastSignificantToken.TokenType == TokenType.OCCURS ||
-                                    lastSignificantToken.TokenType == TokenType.VALUE  ||
+                                    lastSignificantToken.TokenType == TokenType.VALUE ||
                                     lastSignificantToken.TokenType == TokenType.VALUES ||
+                                    lastSignificantToken.TokenType == TokenType.THRU ||
+                                    lastSignificantToken.TokenType == TokenType.THROUGH ||
                                     (beforeLastSignificantToken.TokenType == TokenType.VALUE && lastSignificantToken.TokenType == TokenType.IS) ||
                                     (beforeLastSignificantToken.TokenType == TokenType.VALUES && lastSignificantToken.TokenType == TokenType.ARE);
                                 if (!currentTokenIsExpectedToBeALiteral)
