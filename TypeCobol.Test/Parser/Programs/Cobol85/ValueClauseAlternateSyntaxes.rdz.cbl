@@ -1,0 +1,15 @@
+﻿       identification division.
+       program-id. DVZZMFT3.
+       data division.
+       working-storage section.
+       01 var1 PIC X.
+      *These variants are not compliant with language specs
+      *But still are accepted by IBM compiler.
+          88 case1 VALUE ARE 'A' 'B'.
+          88 case2 VALUES IS 'C' 'D'.
+          88 case3 VALUE ARE 'E'.
+          88 case4 VALUES IS 'F'.
+       procedure division.
+           goback
+           .
+       end program DVZZMFT3.
