@@ -100,36 +100,41 @@ namespace TypeCobol.Analysis.Graph
             if (block is ControlFlowGraphBuilder<D>.BasicBlockForNodeGroup group && !group.HasFlag(BasicBlock<Node, D>.Flags.GroupGrafted))
             {
                 StringWriter sw = new StringWriter();
-                
-                //we are emitting a sub graph.
-                sw.WriteLine("subgraph cluster_" + group.GroupIndex + '{');
-                sw.WriteLine("color = blue;");
                 if (group.Group.Count > 0)
                 {
-                    sw.WriteLine($"label = \"{((ControlFlowGraphBuilder<D>.BasicBlockForNode) group.Group.First.Value).Tag}\";");
+                    //Generate blocks and edges for subgraph
                     CfgDotFileForNodeGenerator<D> cfgDot = new CfgDotFileForNodeGenerator<D>(cfg, _encounteredBlocks);
                     cfgDot.FullInstruction = this.FullInstruction;
-                    cfgDot.Writer = sw;
-                    cfgDot.DigraphBuilder = new StringBuilder();
-                    //Emit block starting at the first block.
+                    cfgDot.BlocksBuilder = new StringBuilder();
+                    cfgDot.EdgesBuilder = new StringBuilder();
                     LinkedListNode<BasicBlock<Node, D>> first = group.Group.First;
                     cfg.DFS(first.Value, cfgDot.EmitBasicBlock);
-                    sw.WriteLine(cfgDot.DigraphBuilder.ToString());
-                }
-                sw.WriteLine('}');
+                    string blocks = cfgDot.BlocksBuilder.ToString();
+                    string edges = cfgDot.EdgesBuilder.ToString();
 
-                //Create dashed link to the group
-                if (group.Group.Count > 0)
-                {
+                    if (!string.IsNullOrWhiteSpace(blocks))
+                    {
+                        //Write subgraph
+                        sw.WriteLine("subgraph cluster_" + group.GroupIndex + '{');
+                        sw.WriteLine("color = blue;");
+                        sw.WriteLine($"label = \"{((ControlFlowGraphBuilder<D>.BasicBlockForNode) first.Value).Tag}\";");
+                        sw.Write(blocks);
+                        sw.WriteLine(edges);
+                        sw.WriteLine('}');
+                    }
+
+                    //Create dashed link to the group
                     sw.WriteLine("Block{0} -> Block{1} [style=dashed]", block.Index, group.Group.First.Value.Index);
                 }
                 else
                 {
+                    //Group is empty, create link to an empty block
                     sw.WriteLine("Block{0} -> \"\" [style=dashed]", block.Index);
                 }
-
                 sw.Flush();
-                this.Writer.WriteLine(sw.ToString());
+
+                //Include subgraph into parent graph
+                this.BlocksBuilder.AppendLine(sw.ToString());
             }
 
             return bResult;

@@ -37,11 +37,6 @@ label = "{Block25|    display 'terminate'\l}"
 Block12 [
 label = "{Block12|       perform pararec test after varying n from 1 by 1 until n\>5\l}"
 ]
-subgraph cluster_2{
-color = blue;
-label = "pararec";
-
-}
 Block12 -> Block21 [style=dashed]
 
 Block13 [

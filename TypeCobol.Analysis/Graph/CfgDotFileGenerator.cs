@@ -14,25 +14,17 @@ namespace TypeCobol.Analysis.Graph
         /// <summary>
         /// The underlying Control Flow Graph
         /// </summary>
-        public ControlFlowGraph<N, D> Cfg
-        {
-            get;
-            set;
-        }
+        public ControlFlowGraph<N, D> Cfg { get; set; }
 
         /// <summary>
-        /// The Current Writer.
+        /// The blocks buffer
         /// </summary>
-        protected TextWriter Writer
-        {
-            get;
-            set;
-        }
+        protected StringBuilder BlocksBuilder;
 
         /// <summary>
-        /// The Digraph buffer
+        /// The edges buffer
         /// </summary>
-        protected StringBuilder DigraphBuilder;
+        protected StringBuilder EdgesBuilder;
 
         /// <summary>
         /// Get the string representing an instruction.
@@ -65,29 +57,27 @@ namespace TypeCobol.Analysis.Graph
         /// <returns></returns>
         protected virtual bool EmitBasicBlock(BasicBlock<N, D> block, int incomingEdge, BasicBlock<N, D> previousBlock, ControlFlowGraph<N, D> cfg)
         {
-            Writer.WriteLine($"Block{block.Index} [");
-            Writer.Write("label = \"{");
-            Writer.Write(BlockName(block));
-            Writer.Write("|");
+            //Write block to blocks buffer
+            BlocksBuilder.AppendLine($"Block{block.Index} [");
+            BlocksBuilder.Append("label = \"{");
+            BlocksBuilder.Append(BlockName(block));
+            BlocksBuilder.Append("|");
 
             //Print all instructions inside the block.
-            foreach(var i in block.Instructions)
+            foreach (var i in block.Instructions)
             {
-                Writer.Write(InstructionToString(i));
-                Writer.Write("\\l");
+                BlocksBuilder.Append(InstructionToString(i));
+                BlocksBuilder.Append("\\l");
             }
-            Writer.WriteLine("}\"");
-            //if (block.MaybeEndBlock)
-            //{
-            //    Writer.WriteLine("shape = \"Msquare\"");
-            //}
-            Writer.WriteLine("]");
 
-            //Emit the digraph
-            foreach(var edge in block.SuccessorEdges)
+            BlocksBuilder.AppendLine("}\"");
+            BlocksBuilder.AppendLine("]");
+
+            //Write edges to edges buffer
+            foreach (var edge in block.SuccessorEdges)
             {
                 System.Diagnostics.Debug.Assert(edge >= 0 && edge < cfg.SuccessorEdges.Count);
-                DigraphBuilder.AppendLine($"Block{block.Index} -> Block{cfg.SuccessorEdges[edge].Index}");
+                EdgesBuilder.AppendLine($"Block{block.Index} -> Block{cfg.SuccessorEdges[edge].Index}");
             }
 
             return true;
@@ -104,32 +94,36 @@ namespace TypeCobol.Analysis.Graph
 
         public void Generate(TextWriter writer, ControlFlowGraph<N, D> cfg)
         {
-            //Set the current writer
-            this.Writer = writer;
             this.Cfg = cfg;
             if (Cfg != null)
             {
-                DigraphBuilder = new StringBuilder();
-                Writer.WriteLine("digraph Cfg {");
+                BlocksBuilder = new StringBuilder();
+                EdgesBuilder = new StringBuilder();
+                writer.WriteLine("digraph Cfg {");
                 if (cfg.HasFlag(ControlFlowGraph<N, D>.Flags.Compound))
                 {
-                    Writer.WriteLine("compound=true;");
+                    writer.WriteLine("compound=true;");
                 }
-                Writer.WriteLine("node [");
-                Writer.WriteLine("shape = \"record\"");
-                Writer.WriteLine("]");
-                Writer.WriteLine("");
 
-                Writer.WriteLine("edge [");
-                Writer.WriteLine("arrowtail = \"empty\"");
-                Writer.WriteLine("]");
+                //node properties
+                writer.WriteLine("node [");
+                writer.WriteLine("shape = \"record\"");
+                writer.WriteLine("]");
+                writer.WriteLine("");
+
+                //edges properties
+                writer.WriteLine("edge [");
+                writer.WriteLine("arrowtail = \"empty\"");
+                writer.WriteLine("]");
 
                 //Run DFS on the flow graph, with the emitter callback method.
                 Cfg.DFS(EmitBasicBlock);
-                Writer.WriteLine(DigraphBuilder.ToString());
-                Writer.WriteLine("}");
+                writer.Write(BlocksBuilder.ToString());
+                writer.WriteLine(EdgesBuilder.ToString());
+                writer.WriteLine("}");
             }
-            Writer.Flush();            
+
+            writer.Flush();
         }
 
         public void Report(TextWriter writer)
@@ -169,4 +163,3 @@ namespace TypeCobol.Analysis.Graph
         }
     }
 }
-

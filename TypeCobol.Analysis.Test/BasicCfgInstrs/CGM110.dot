@@ -189,9 +189,6 @@ label = "{S3000-PROCESS-ROUTINE. Block4887|}"
 Block1889 [
 label = "{Block1889|PerformProcedureStatement\l}"
 ]
-subgraph cluster_8{
-color = blue;
-}
 Block1889 -> "" [style=dashed]
 
 Block1890 [
@@ -206,9 +203,6 @@ label = "{Block1892|}"
 Block1893 [
 label = "{Block1893|PerformProcedureStatement\l}"
 ]
-subgraph cluster_9{
-color = blue;
-}
 Block1893 -> "" [style=dashed]
 
 Block1894 [
@@ -461,9 +455,6 @@ label = "{Block5941|}"
 Block2745 [
 label = "{Block2745|PerformProcedureStatement\l}"
 ]
-subgraph cluster_107{
-color = blue;
-}
 Block2745 -> "" [style=dashed]
 
 Block2746 [
@@ -11197,9 +11188,6 @@ label = "{S9500-WRAP-UP. Block1860|}"
 Block1861 [
 label = "{Block1861|PerformProcedureStatement\l}"
 ]
-subgraph cluster_13{
-color = blue;
-}
 Block1861 -> "" [style=dashed]
 
 Block1862 [
@@ -11362,9 +11350,6 @@ label = "{S3000-PROCESS-ROUTINE. Block28|}"
 Block29 [
 label = "{Block29|PerformProcedureStatement\l}"
 ]
-subgraph cluster_8{
-color = blue;
-}
 Block29 -> "" [style=dashed]
 
 Block30 [
@@ -11379,9 +11364,6 @@ label = "{Block32|}"
 Block33 [
 label = "{Block33|PerformProcedureStatement\l}"
 ]
-subgraph cluster_9{
-color = blue;
-}
 Block33 -> "" [style=dashed]
 
 Block34 [
@@ -11570,9 +11552,6 @@ label = "{S9500-WRAP-UP. Block53|}"
 Block54 [
 label = "{Block54|PerformProcedureStatement\l}"
 ]
-subgraph cluster_13{
-color = blue;
-}
 Block54 -> "" [style=dashed]
 
 Block55 [

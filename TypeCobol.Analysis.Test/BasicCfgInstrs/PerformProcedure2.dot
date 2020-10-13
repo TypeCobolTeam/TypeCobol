@@ -74,11 +74,6 @@ label = "{Block48|}"
 Block30 [
 label = "{Block30|    PERFORM B-LOOP          WITH TEST AFTER UNTIL EOF-SEEN = \"Y\"\l}"
 ]
-subgraph cluster_4{
-color = blue;
-label = "B-LOOP";
-
-}
 Block30 -> Block41 [style=dashed]
 
 Block31 [
