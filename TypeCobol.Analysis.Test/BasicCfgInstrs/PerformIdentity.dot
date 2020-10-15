@@ -22,7 +22,6 @@ label = "main";
 Block5 [
 label = "{MAIN. Block5|}"
 ]
-Block5 -> Block2
 
 }
 Block2 -> Block5 [style=dashed]
@@ -32,6 +31,7 @@ label = "{Block3|    GOBACK\l}"
 ]
 Block0 -> Block1
 Block1 -> Block2
+Block5 -> Block2
 Block2 -> Block3
 
 }

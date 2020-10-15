@@ -39,7 +39,6 @@
     <Compile Include="Graph\BasicBlock.cs" />
     <Compile Include="Graph\CfgDotFileForNodeGenerator.cs" />
     <Compile Include="Graph\ControlFlowGraph.cs" />
-    <Compile Include="Graph\CfgDotFileGenerator.cs" />
     <Compile Include="Graph\ICfgFileGenerator.cs" />
     <Compile Include="Graph\ICfgTransform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

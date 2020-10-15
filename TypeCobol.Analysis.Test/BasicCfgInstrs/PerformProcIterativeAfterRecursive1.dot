@@ -48,6 +48,14 @@ label = "{Block15|    display 'terminate'\l}"
 Block14 [
 label = "{Block14|    else\l       display 'not done'\l}"
 ]
+
+}
+Block1 -> Block10 [style=dashed]
+
+Block2 [
+label = "{Block2|    goback\l}"
+]
+Block0 -> Block1
 Block10 -> Block11
 Block10 -> Block14
 Block11 -> Block21
@@ -60,14 +68,6 @@ Block12 -> Block13
 Block13 -> Block15
 Block15 -> Block1
 Block14 -> Block15
-
-}
-Block1 -> Block10 [style=dashed]
-
-Block2 [
-label = "{Block2|    goback\l}"
-]
-Block0 -> Block1
 Block1 -> Block2
 
 }

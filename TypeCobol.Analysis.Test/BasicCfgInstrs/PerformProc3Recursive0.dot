@@ -79,10 +79,6 @@ label = "{Block74|    else\l       display 'not done in pararec2'\l}"
 Block75 [
 label = "{Block75|    display 'terminate in pararec2'\l}"
 ]
-Block71 -> Block72
-Block71 -> Block74
-Block72 -> Block34
-Block74 -> Block75
 
 }
 Block40 -> Block71 [style=dashed]
@@ -99,12 +95,6 @@ label = "{Block63|    else\l       display 'not done in pararec3'\l}"
 Block64 [
 label = "{Block64|    display 'terminate in pararec3'\l}"
 ]
-Block60 -> Block61
-Block60 -> Block63
-Block61 -> Block40
-Block40 -> Block41
-Block41 -> Block43
-Block63 -> Block64
 
 }
 Block29 -> Block60 [style=dashed]
@@ -115,12 +105,6 @@ label = "{Block30|}"
 Block31 [
 label = "{Block31|    display 'terminate in pararec'\l}"
 ]
-Block65 -> Block66
-Block65 -> Block68
-Block66 -> Block26
-Block68 -> Block29
-Block29 -> Block30
-Block30 -> Block31
 
 }
 Block34 -> Block65 [style=dashed]
@@ -137,12 +121,6 @@ label = "{Block58|    else\l       display 'not done in pararec2'\l}"
 Block59 [
 label = "{Block59|    display 'terminate in pararec2'\l}"
 ]
-Block55 -> Block56
-Block55 -> Block58
-Block56 -> Block34
-Block34 -> Block35
-Block35 -> Block37
-Block58 -> Block59
 
 }
 Block26 -> Block55 [style=dashed]
@@ -153,12 +131,6 @@ label = "{Block27|       display 'after perform pararec2 in pararec'\l}"
 Block28 [
 label = "{Block28|    else\l       display 'not done in pararec'\l}"
 ]
-Block24 -> Block25
-Block24 -> Block28
-Block25 -> Block26
-Block26 -> Block27
-Block27 -> Block31
-Block28 -> Block29
 
 }
 Block1 -> Block24 [style=dashed]
@@ -167,6 +139,34 @@ Block2 [
 label = "{Block2|    goback\l}"
 ]
 Block0 -> Block1
+Block24 -> Block25
+Block24 -> Block28
+Block25 -> Block26
+Block55 -> Block56
+Block55 -> Block58
+Block56 -> Block34
+Block65 -> Block66
+Block65 -> Block68
+Block66 -> Block26
+Block68 -> Block29
+Block60 -> Block61
+Block60 -> Block63
+Block61 -> Block40
+Block71 -> Block72
+Block71 -> Block74
+Block72 -> Block34
+Block74 -> Block75
+Block40 -> Block41
+Block41 -> Block43
+Block63 -> Block64
+Block29 -> Block30
+Block30 -> Block31
+Block34 -> Block35
+Block35 -> Block37
+Block58 -> Block59
+Block26 -> Block27
+Block27 -> Block31
+Block28 -> Block29
 Block1 -> Block2
 
 }

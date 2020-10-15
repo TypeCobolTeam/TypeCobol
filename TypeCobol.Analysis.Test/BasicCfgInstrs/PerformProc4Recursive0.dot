@@ -79,10 +79,6 @@ label = "{Block132|    else\l       display 'not done in pararec2'\l}"
 Block133 [
 label = "{Block133|    display 'terminate in pararec2'\l}"
 ]
-Block129 -> Block130
-Block129 -> Block132
-Block130 -> Block56
-Block132 -> Block133
 
 }
 Block62 -> Block129 [style=dashed]
@@ -111,11 +107,6 @@ label = "{Block114|    else\l       display 'not done in pararec3'\l}"
 Block115 [
 label = "{Block115|    display 'terminate in pararec3'\l}"
 ]
-Block111 -> Block112
-Block111 -> Block114
-Block112 -> Block62
-Block114 -> Block115
-Block115 -> Block48
 
 }
 Block48 -> Block111 [style=dashed]
@@ -141,10 +132,6 @@ label = "{Block117|       display 'before perform pararec3 in pararec4'\l}"
 Block119 [
 label = "{Block119|    else\l       display 'Try recurse in pararec4'\l}"
 ]
-Block116 -> Block117
-Block116 -> Block119
-Block117 -> Block111
-Block119 -> Block51
 
 }
 Block51 -> Block116 [style=dashed]
@@ -158,18 +145,6 @@ label = "{Block103|    else\l       display 'not done in pararec3'\l}"
 Block104 [
 label = "{Block104|    display 'terminate in pararec3'\l}"
 ]
-Block100 -> Block101
-Block100 -> Block103
-Block101 -> Block62
-Block62 -> Block63
-Block63 -> Block65
-Block65 -> Block48
-Block48 -> Block49
-Block49 -> Block53
-Block53 -> Block51
-Block51 -> Block52
-Block52 -> Block53
-Block103 -> Block104
 
 }
 Block41 -> Block100 [style=dashed]
@@ -192,10 +167,6 @@ label = "{Block106|       display 'before perform pararec3 in pararec4'\l}"
 Block108 [
 label = "{Block108|    else\l       display 'Try recurse in pararec4'\l}"
 ]
-Block105 -> Block106
-Block105 -> Block108
-Block106 -> Block111
-Block108 -> Block51
 
 }
 Block43 -> Block105 [style=dashed]
@@ -206,14 +177,6 @@ label = "{Block44|}"
 Block45 [
 label = "{Block45|    display 'terminate in pararec'\l}"
 ]
-Block122 -> Block123
-Block122 -> Block125
-Block123 -> Block38
-Block125 -> Block41
-Block41 -> Block42
-Block42 -> Block43
-Block43 -> Block44
-Block44 -> Block45
 
 }
 Block56 -> Block122 [style=dashed]
@@ -230,12 +193,6 @@ label = "{Block98|    else\l       display 'not done in pararec2'\l}"
 Block99 [
 label = "{Block99|    display 'terminate in pararec2'\l}"
 ]
-Block95 -> Block96
-Block95 -> Block98
-Block96 -> Block56
-Block56 -> Block57
-Block57 -> Block59
-Block98 -> Block99
 
 }
 Block38 -> Block95 [style=dashed]
@@ -246,12 +203,6 @@ label = "{Block39|       display 'after perform pararec2 in pararec'\l}"
 Block40 [
 label = "{Block40|    else\l       display 'not done in pararec perform pararec3'\l}"
 ]
-Block36 -> Block37
-Block36 -> Block40
-Block37 -> Block38
-Block38 -> Block39
-Block39 -> Block45
-Block40 -> Block41
 
 }
 Block1 -> Block36 [style=dashed]
@@ -274,10 +225,6 @@ label = "{Block47|       display 'before perform pararec3 in pararec4'\l}"
 Block50 [
 label = "{Block50|    else\l       display 'Try recurse in pararec4'\l}"
 ]
-Block46 -> Block47
-Block46 -> Block50
-Block47 -> Block111
-Block50 -> Block51
 
 }
 Block3 -> Block46 [style=dashed]
@@ -286,8 +233,61 @@ Block4 [
 label = "{Block4|    goback\l}"
 ]
 Block0 -> Block1
+Block36 -> Block37
+Block36 -> Block40
+Block37 -> Block38
+Block95 -> Block96
+Block95 -> Block98
+Block96 -> Block56
+Block122 -> Block123
+Block122 -> Block125
+Block123 -> Block38
+Block125 -> Block41
+Block100 -> Block101
+Block100 -> Block103
+Block101 -> Block62
+Block129 -> Block130
+Block129 -> Block132
+Block130 -> Block56
+Block132 -> Block133
+Block62 -> Block63
+Block63 -> Block65
+Block65 -> Block48
+Block111 -> Block112
+Block111 -> Block114
+Block112 -> Block62
+Block114 -> Block115
+Block115 -> Block48
+Block48 -> Block49
+Block49 -> Block53
+Block53 -> Block51
+Block116 -> Block117
+Block116 -> Block119
+Block117 -> Block111
+Block119 -> Block51
+Block51 -> Block52
+Block52 -> Block53
+Block103 -> Block104
+Block41 -> Block42
+Block42 -> Block43
+Block105 -> Block106
+Block105 -> Block108
+Block106 -> Block111
+Block108 -> Block51
+Block43 -> Block44
+Block44 -> Block45
+Block56 -> Block57
+Block57 -> Block59
+Block98 -> Block99
+Block38 -> Block39
+Block39 -> Block45
+Block40 -> Block41
 Block1 -> Block2
 Block2 -> Block3
+Block46 -> Block47
+Block46 -> Block50
+Block47 -> Block111
+Block50 -> Block51
 Block3 -> Block4
 
 }

@@ -22,7 +22,6 @@ label = "{A. Block7|    display 'a'\l    go to b\l}"
 Block6 [
 label = "{B. Block6|    display 'b'\l}"
 ]
-Block7 -> Block6
 
 }
 Block1 -> Block7 [style=dashed]
@@ -31,6 +30,7 @@ Block2 [
 label = "{Block2|    goback\l}"
 ]
 Block0 -> Block1
+Block7 -> Block6
 Block1 -> Block2
 
 }

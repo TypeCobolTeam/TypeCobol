@@ -52,10 +52,6 @@ label = "{Block41|    else\l       display 'not done'\l}"
 Block42 [
 label = "{Block42|    display 'terminate'\l}"
 ]
-Block38 -> Block39
-Block38 -> Block41
-Block39 -> Block18
-Block41 -> Block42
 
 }
 Block24 -> Block38 [style=dashed]
@@ -72,12 +68,6 @@ label = "{Block36|    else\l       display 'not done'\l}"
 Block37 [
 label = "{Block37|    display 'terminate'\l}"
 ]
-Block33 -> Block34
-Block33 -> Block36
-Block34 -> Block24
-Block24 -> Block25
-Block25 -> Block27
-Block36 -> Block37
 
 }
 Block18 -> Block33 [style=dashed]
@@ -91,12 +81,6 @@ label = "{Block21|    display 'terminate'\l}"
 Block20 [
 label = "{Block20|    else\l       display 'not done'\l}"
 ]
-Block16 -> Block17
-Block16 -> Block20
-Block17 -> Block18
-Block18 -> Block19
-Block19 -> Block21
-Block20 -> Block21
 
 }
 Block1 -> Block16 [style=dashed]
@@ -105,6 +89,22 @@ Block2 [
 label = "{Block2|    goback\l}"
 ]
 Block0 -> Block1
+Block16 -> Block17
+Block16 -> Block20
+Block17 -> Block18
+Block33 -> Block34
+Block33 -> Block36
+Block34 -> Block24
+Block38 -> Block39
+Block38 -> Block41
+Block39 -> Block18
+Block41 -> Block42
+Block24 -> Block25
+Block25 -> Block27
+Block36 -> Block37
+Block18 -> Block19
+Block19 -> Block21
+Block20 -> Block21
 Block1 -> Block2
 
 }

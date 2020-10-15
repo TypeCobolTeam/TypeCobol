@@ -76,8 +76,6 @@ label = "{COMP-FOOT-CALC. Block27|MOVE NUM TO NBJ\l}"
 Block28 [
 label = "{COMP-FOOT-CALC. Block28|MOVE NBJ TO NUM\l}"
 ]
-Block27 -> Block28
-Block28 -> Block19
 
 }
 Block19 -> Block27 [style=dashed]
@@ -119,6 +117,8 @@ Block15 -> Block16
 Block16 -> Block17
 Block17 -> Block18
 Block18 -> Block19
+Block27 -> Block28
+Block28 -> Block19
 Block19 -> Block20
 Block20 -> Block21
 Block21 -> Block25

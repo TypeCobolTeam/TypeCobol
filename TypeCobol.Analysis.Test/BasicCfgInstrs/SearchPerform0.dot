@@ -1,4 +1,4 @@
-﻿digraph Cfg {
+digraph Cfg {
 compound=true;
 node [
 shape = "record"
@@ -66,6 +66,14 @@ Block20 -> Block28 [style=dashed]
 Block21 [
 label = "{Block21|}"
 ]
+
+}
+Block1 -> Block16 [style=dashed]
+
+Block2 [
+label = "{Block2|    GOBACK\l}"
+]
+Block0 -> Block1
 Block16 -> Block17
 Block17 -> Block18
 Block17 -> Block19
@@ -77,14 +85,6 @@ Block24 -> Block25
 Block19 -> Block20
 Block20 -> Block21
 Block21 -> Block25
-
-}
-Block1 -> Block16 [style=dashed]
-
-Block2 [
-label = "{Block2|    GOBACK\l}"
-]
-Block0 -> Block1
 Block1 -> Block2
 
 }

@@ -77,15 +77,6 @@ label = "{Block47|        AT END\l           MOVE \"Y\" TO EOF-SEEN\l}"
 Block48 [
 label = "{Block48|}"
 ]
-Block41 -> Block42
-Block42 -> Block43
-Block43 -> Block44
-Block44 -> Block45
-Block45 -> Block46
-Block46 -> Block47
-Block46 -> Block48
-Block47 -> Block48
-Block48 -> Block30
 
 }
 Block30 -> Block41 [style=dashed]
@@ -93,12 +84,6 @@ Block30 -> Block41 [style=dashed]
 Block31 [
 label = "{Block31|}"
 ]
-Block26 -> Block27
-Block26 -> Block28
-Block27 -> Block28
-Block28 -> Block29
-Block29 -> Block30
-Block30 -> Block31
 
 }
 Block4 -> Block26 [style=dashed]
@@ -126,6 +111,21 @@ Block0 -> Block1
 Block1 -> Block2
 Block2 -> Block3
 Block3 -> Block4
+Block26 -> Block27
+Block26 -> Block28
+Block27 -> Block28
+Block28 -> Block29
+Block29 -> Block30
+Block41 -> Block42
+Block42 -> Block43
+Block43 -> Block44
+Block44 -> Block45
+Block45 -> Block46
+Block46 -> Block47
+Block46 -> Block48
+Block47 -> Block48
+Block48 -> Block30
+Block30 -> Block31
 Block4 -> Block5
 Block5 -> Block6
 Block6 -> Block7
