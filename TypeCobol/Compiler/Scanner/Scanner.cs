@@ -1557,14 +1557,23 @@ namespace TypeCobol.Compiler.Scanner
                                     return true;
 
                                 //Try to guess if it is a LevelNumber or Literal depending on previous tokens
-                                bool currentTokenIsExpectedToBeALiteral =
-                                    lastSignificantToken.TokenType == TokenType.OCCURS ||
-                                    lastSignificantToken.TokenType == TokenType.VALUE ||
-                                    lastSignificantToken.TokenType == TokenType.VALUES ||
-                                    lastSignificantToken.TokenType == TokenType.THRU ||
-                                    lastSignificantToken.TokenType == TokenType.THROUGH ||
-                                    (beforeLastSignificantToken.TokenType == TokenType.VALUE && lastSignificantToken.TokenType == TokenType.IS) ||
-                                    (beforeLastSignificantToken.TokenType == TokenType.VALUES && lastSignificantToken.TokenType == TokenType.ARE);
+                                bool currentTokenIsExpectedToBeALiteral = false;
+                                switch (lastSignificantToken.TokenType)
+                                {
+                                    case TokenType.OCCURS:
+                                    case TokenType.VALUE:
+                                    case TokenType.VALUES:
+                                    case TokenType.THROUGH:
+                                    case TokenType.THRU:
+                                        currentTokenIsExpectedToBeALiteral = true;
+                                        break;
+                                    case TokenType.IS:
+                                    case TokenType.ARE:
+                                        currentTokenIsExpectedToBeALiteral =
+                                            beforeLastSignificantToken.TokenType == TokenType.VALUE ||
+                                            beforeLastSignificantToken.TokenType == TokenType.VALUES;
+                                        break;
+                                }
                                 if (!currentTokenIsExpectedToBeALiteral)
                                 {
                                     /*
