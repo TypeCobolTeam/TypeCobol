@@ -9,11 +9,11 @@ namespace TypeCobol.Analysis.Dfa
     /// <summary>
     /// Data Flow Graph Builder for Data Flow Analysis, a Cobol E-I Specialization.
     /// </summary>
-    public class DefaultDataFlowGraphBuilder : DataFlowGraphBuilder<Node, Symbol>
+    public class DefaultDataFlowGraphBuilder : DataFlowGraphBuilder<Node, VariableSymbol>
     {
-        private static HashSet<Symbol> GetSymbols(Dictionary<StorageArea, VariableSymbol> symbolDictionary)
+        private static HashSet<VariableSymbol> GetSymbols(Dictionary<StorageArea, VariableSymbol> symbolDictionary)
         {
-            var result = new HashSet<Symbol>();
+            var result = new HashSet<VariableSymbol>();
             if (symbolDictionary != null)
             {
                 foreach (var p in symbolDictionary)
@@ -29,7 +29,7 @@ namespace TypeCobol.Analysis.Dfa
         /// Constructor
         /// </summary>
         /// <param name="cfg"></param>
-        public DefaultDataFlowGraphBuilder(ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>> cfg)
+        public DefaultDataFlowGraphBuilder(ControlFlowGraph<Node, DfaBasicBlockInfo<VariableSymbol>> cfg)
             : base(cfg)
         {
 
@@ -40,7 +40,7 @@ namespace TypeCobol.Analysis.Dfa
         /// </summary>
         /// <param name="node">The node</param>
         /// <returns>The set of used variables</returns>
-        public override HashSet<Symbol> GetUseVariables(Node node)
+        public override HashSet<VariableSymbol> GetUseVariables(Node node)
         {
             System.Diagnostics.Debug.Assert(node != null);
             return GetSymbols(node.StorageAreaReadsSymbol);
@@ -50,8 +50,8 @@ namespace TypeCobol.Analysis.Dfa
         /// Get Defined Variables for a given node
         /// </summary>
         /// <param name="node">The node</param>
-        /// <returns>The set of defined variable</returns>
-        public override HashSet<Symbol> GetDefVariables(Node node)
+        /// <returns>The set of defined variables</returns>
+        public override HashSet<VariableSymbol> GetDefVariables(Node node)
         {
             System.Diagnostics.Debug.Assert(node != null);
             return GetSymbols(node.StorageAreaWritesSymbol);

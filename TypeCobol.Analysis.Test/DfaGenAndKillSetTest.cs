@@ -71,7 +71,7 @@ namespace TypeCobol.Analysis.Test
         public void GEN_SampleGotos0()
         {
             string path = Path.Combine(BasicDfaSamples, "SampleGotos0.cbl");
-            IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfg = ParseCompareDiagnosticsForDfa(path);
+            var cfg = ParseCompareDiagnosticsForDfa(path);
 
             Assert.IsTrue(cfg.Count == 1);
 
@@ -150,7 +150,7 @@ namespace TypeCobol.Analysis.Test
         public void KILL_SampleGotos0()
         {
             string path = Path.Combine(BasicDfaSamples, "SampleGotos0.cbl");
-            IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfg = ParseCompareDiagnosticsForDfa(path);
+            var cfg = ParseCompareDiagnosticsForDfa(path);
 
             Assert.IsTrue(cfg.Count == 1);
 

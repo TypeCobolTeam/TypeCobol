@@ -24,7 +24,7 @@ namespace TypeCobol.Analysis
                 case CfgBuildingMode.Extended:
                     return new DefaultControlFlowGraphBuilder<object>(identifier, true);
                 case CfgBuildingMode.WithDfa:
-                    return new DefaultControlFlowGraphBuilder<DfaBasicBlockInfo<Symbol>>(identifier, true);
+                    return new DefaultControlFlowGraphBuilder<DfaBasicBlockInfo<VariableSymbol>>(identifier, true);
             }
 
             return null;

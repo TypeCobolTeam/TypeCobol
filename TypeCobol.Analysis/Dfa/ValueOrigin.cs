@@ -31,11 +31,11 @@ namespace TypeCobol.Analysis.Dfa
         /// <param name="start">UsePoint to start the analysis.</param>
         /// <param name="dfaBuilder">Data Flow Graph builder.</param>
         /// <returns>New instance of ValueOrigin for the variable of the given UsePoint.</returns>
-        public static ValueOrigin ComputeFrom(DfaUsePoint<Node, Symbol> start, DataFlowGraphBuilder<Node, Symbol> dfaBuilder)
+        public static ValueOrigin ComputeFrom(DfaUsePoint<Node, VariableSymbol> start, DataFlowGraphBuilder<Node, VariableSymbol> dfaBuilder)
         {
             System.Diagnostics.Debug.Assert(start != null);
             System.Diagnostics.Debug.Assert(dfaBuilder != null);
-            var variable = start.Variable as VariableSymbol;
+            var variable = start.Variable;
             System.Diagnostics.Debug.Assert(variable != null);
 
             if (start.UseDef == null || start.UseDef.Cardinality() == 0)
@@ -62,7 +62,7 @@ namespace TypeCobol.Analysis.Dfa
             while ((nextDef = start.UseDef.NextSetBit(nextDef + 1)) >= 0)
             {
                 //(2.1)
-                DfaDefPoint<Node, Symbol> defPoint = dfaBuilder.DefList[nextDef];
+                var defPoint = dfaBuilder.DefList[nextDef];
                 switch (defPoint.Instruction.CodeElement.Type)
                 {
                     //(2.1.1) These are the currently supported statements

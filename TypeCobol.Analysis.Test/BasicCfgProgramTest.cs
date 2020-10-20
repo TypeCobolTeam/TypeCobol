@@ -21,7 +21,7 @@ namespace TypeCobol.Analysis.Test
         public void HanoiPrgCfgExtended()
         {
             string path = Path.Combine(BasicCfgPrograms, "HanoiPrg.cbl");
-            IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfgs = ParseCompareDiagnosticsForDfa(path);
+            var cfgs = ParseCompareDiagnosticsForDfa(path);
             Assert.IsTrue(cfgs.Count == 1);
 
             string expectedPath = Path.Combine(BasicCfgPrograms, "HanoiPrg.dot");
@@ -36,7 +36,7 @@ namespace TypeCobol.Analysis.Test
         {
             string path = Path.Combine(BasicCfgInstrs, "PerformProcRecursive0.cbl");
             string diag = Path.Combine(BasicCfgInstrs, "DetectPerformProcRecursiveException.diag");
-            IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfgs = ParseCompareDiagnosticsForDfa(path, diag);
+            var cfgs = ParseCompareDiagnosticsForDfa(path, diag);
             Assert.IsTrue(cfgs.Count == 1);
 
             string expectedPath = Path.Combine(BasicCfgInstrs, "DetectPerformProcRecursiveException.dot");

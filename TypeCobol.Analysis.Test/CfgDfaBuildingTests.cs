@@ -57,7 +57,7 @@ namespace TypeCobol.Analysis.Test
             ISyntaxDrivenAnalyzer CreateExecNodeListener(TypeCobolOptions o, TextSourceInfo t) => listener = new ExecNodeListener();
 
             string path = Path.Combine(CfgTestUtils.CfgDfaBuildTests, "ExecSqlOutsideProc.cbl");
-            var graphs = ParseCompareDiagnostics<DfaBasicBlockInfo<Symbol>>(path, CfgBuildingMode.WithDfa, null, CreateExecNodeListener);
+            var graphs = ParseCompareDiagnostics<DfaBasicBlockInfo<VariableSymbol>>(path, CfgBuildingMode.WithDfa, null, CreateExecNodeListener);
             Assert.IsTrue(graphs.Count == 1);
 
             //Check generated graph has not been initialized
@@ -76,7 +76,7 @@ namespace TypeCobol.Analysis.Test
         public void PrgWithNoProcDiv()
         {
             string path = Path.Combine(CfgTestUtils.CfgDfaBuildTests, "PrgWithNoProcDiv.cbl");
-            IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfg = ParseCompareDiagnosticsForDfa(path);
+            var cfg = ParseCompareDiagnosticsForDfa(path);
             Assert.IsTrue(cfg.Count == 1);
 
             //Try to compute predecessor edges.

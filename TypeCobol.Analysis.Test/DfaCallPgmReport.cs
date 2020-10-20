@@ -1,12 +1,7 @@
-﻿using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
-using TypeCobol.Compiler.Symbols;
 using System.IO;
-using TypeCobol.Analysis.Dfa;
-using TypeCobol.Analysis.Graph;
 using TypeCobol.Analysis.Report;
-using TypeCobol.Compiler.Nodes;
 
 using static TypeCobol.Analysis.Test.CfgTestUtils;
 
@@ -22,7 +17,7 @@ namespace TypeCobol.Analysis.Test
         public void InBulkCallPgmReportTest()
         {
             string path = Path.Combine(CfgTestUtils.Report, "InBulkCallPgm.cbl");
-            IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfgs = ParseCompareDiagnosticsForDfa(path);
+            var cfgs = ParseCompareDiagnosticsForDfa(path);
             Assert.IsTrue(cfgs.Count == 1);
 
             //Create the report file.
@@ -42,7 +37,7 @@ namespace TypeCobol.Analysis.Test
         public void InBulkCallPgm88SetReportTest()
         {
             string path = Path.Combine(CfgTestUtils.Report, "InBulkCallPgm88Set.cbl");
-            IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfgs = ParseCompareDiagnosticsForDfa(path);
+            var cfgs = ParseCompareDiagnosticsForDfa(path);
             Assert.IsTrue(cfgs.Count == 1);
 
             //Create the report file.

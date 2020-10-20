@@ -40,55 +40,57 @@ namespace TypeCobol.Analysis.Report
         /// <summary>
         /// All Control Flow Graphs for DFA Basic Block Information
         /// </summary>
-        private IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> _allCfgs;
+        private IList<ControlFlowGraph<Node, DfaBasicBlockInfo<VariableSymbol>>> _allCfgs;
 
         /// <summary>
         /// The list of all Use Point CallStatement Nodes
         /// </summary>
-        private List<DfaUsePoint<Node, Symbol>> _callUsePoints;
+        private List<DfaUsePoint<Node, VariableSymbol>> _callUsePoints;
 
         /// <summary>
         /// Internal Writer.
         /// </summary>
         private TextWriter _writer;
-
+        
         /// <summary>
         /// Visitor to Collect all level 88 symbols.
         /// </summary>
-        class Level88SymbolCollector : AbstractSymbolAndTypeVisitor<Dictionary<Symbol, Symbol>, Dictionary<Symbol, Symbol>>
+        class Level88SymbolCollector : AbstractSymbolAndTypeVisitor<Dictionary<VariableSymbol, VariableSymbol>, Dictionary<VariableSymbol, VariableSymbol>>
         {
-            Symbol ParentSymbol;
+            VariableSymbol ParentSymbol;
             /// <summary>
             /// Constructor
             /// </summary>
-            /// <param name="parentSymbol">The Parent symnol being collected</param>
-            public Level88SymbolCollector(Symbol parentSymbol)
+            /// <param name="parentSymbol">The Parent symbol being collected</param>
+            public Level88SymbolCollector(VariableSymbol parentSymbol)
             {
                 ParentSymbol = parentSymbol;
             }
-            public override Dictionary<Symbol, Symbol> VisitSymbol(Symbol s, Dictionary<Symbol, Symbol> symbols)
+
+            public override Dictionary<VariableSymbol, VariableSymbol> VisitSymbol(Symbol s, Dictionary<VariableSymbol, VariableSymbol> symbols)
             {
                 s.Type?.Accept(this, symbols);
                 return symbols;
             }
 
-            public override Dictionary<Symbol, Symbol> VisitType(Compiler.Types.Type t, Dictionary<Symbol, Symbol> symbols)
+            public override Dictionary<VariableSymbol, VariableSymbol> VisitType(Compiler.Types.Type t, Dictionary<VariableSymbol, VariableSymbol> symbols)
             {
                 t.TypeComponent?.Accept(this, symbols);
                 return symbols;
             }
 
-            public override Dictionary<Symbol, Symbol> VisitVariableSymbol(VariableSymbol s, Dictionary<Symbol, Symbol> symbols)
+            public override Dictionary<VariableSymbol, VariableSymbol> VisitVariableSymbol(VariableSymbol s, Dictionary<VariableSymbol, VariableSymbol> symbols)
             {
                 if (s.Level == 88)
                 {
                     symbols[s] = ParentSymbol;
                     return symbols;
                 }
-                else return VisitSymbol(s, symbols);
+
+                return VisitSymbol(s, symbols);
             }
 
-            public override Dictionary<Symbol, Symbol> VisitGroupType(Compiler.Types.GroupType t, Dictionary<Symbol, Symbol> symbols)
+            public override Dictionary<VariableSymbol, VariableSymbol> VisitGroupType(Compiler.Types.GroupType t, Dictionary<VariableSymbol, VariableSymbol> symbols)
             {
                 foreach (var field in t.Fields)
                 {
@@ -101,14 +103,14 @@ namespace TypeCobol.Analysis.Report
         /// <summary>
         /// Level 88 Symbol to their parent symbol map.
         /// </summary>
-        private Dictionary<Symbol, Symbol> Level88SymbolParentSymbolMap;
+        private Dictionary<VariableSymbol, VariableSymbol> Level88SymbolParentSymbolMap;
 
         /// <summary>
         /// Callback method when a Use Point is encountered
         /// </summary>
         /// <param name="dfaBuilder">The Dfa Builder</param>
         /// <param name="up">The use Point</param>
-        private void OnCallUsePoint(DataFlowGraphBuilder<Node, Symbol> dfaBuilder, DfaUsePoint<Node, Symbol> up)
+        private void OnCallUsePoint(DataFlowGraphBuilder<Node, VariableSymbol> dfaBuilder, DfaUsePoint<Node, VariableSymbol> up)
         {
             switch (up.Instruction.CodeElement.Type)
             {
@@ -129,7 +131,7 @@ namespace TypeCobol.Analysis.Report
                                         //Compute the Map of Level88 variable to their parent..
                                         if (Level88SymbolParentSymbolMap == null)
                                         {
-                                            Level88SymbolParentSymbolMap = new Dictionary<Symbol, Symbol>();
+                                            Level88SymbolParentSymbolMap = new Dictionary<VariableSymbol, VariableSymbol>();
                                         }
                                         Level88SymbolCollector l88c = new Level88SymbolCollector(up.Variable);
                                         up.Variable.Accept(l88c, Level88SymbolParentSymbolMap);
@@ -150,11 +152,10 @@ namespace TypeCobol.Analysis.Report
         /// </summary>
         /// <param name="dfaBuilder">The Dfa Builder</param>
         /// <param name="dp">The Def Point</param>
-        private void OnDefPoint(DataFlowGraphBuilder<Node, Symbol> dfaBuilder, DfaDefPoint<Node, Symbol> dp)
+        private void OnDefPoint(DataFlowGraphBuilder<Node, VariableSymbol> dfaBuilder, DfaDefPoint<Node, VariableSymbol> dp)
         {
-            VariableSymbol sym = (VariableSymbol)dp.Variable;
-            Symbol parent = null;
-            if (sym.Level == 88 && sym.Value != null && Level88SymbolParentSymbolMap != null && Level88SymbolParentSymbolMap.TryGetValue(sym, out parent))
+            VariableSymbol sym = dp.Variable;
+            if (sym.Level == 88 && sym.Value != null && Level88SymbolParentSymbolMap != null && Level88SymbolParentSymbolMap.TryGetValue(sym, out var parent))
             {//Now say that it is the parent variable which is the target of the definition.
                 dp.Variable = parent;
                 dp.UserData = sym;
@@ -166,7 +167,7 @@ namespace TypeCobol.Analysis.Report
         /// </summary>
         /// <param name="cfg">The Control Flow Graph instance</param>
         /// <returns>true</returns>
-        private void ReportCfgCallUsePoint(ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>> cfg)
+        private void ReportCfgCallUsePoint(ControlFlowGraph<Node, DfaBasicBlockInfo<VariableSymbol>> cfg)
         {
             //Check that a semantic data has been associated to this node.
             System.Diagnostics.Debug.Assert(cfg.ProgramOrFunctionNode != null);
@@ -184,7 +185,7 @@ namespace TypeCobol.Analysis.Report
             dfaBuilder.OnDefPointEvent += OnDefPoint;
             dfaBuilder.ComputeUseDefSet();
             //Report Call Use Points.            
-            foreach (DfaUsePoint<Node, Symbol> up in _callUsePoints)
+            foreach (var up in _callUsePoints)
             {
                 List < Tuple<string, string> > defPaths = ComputeUsePointDefPaths(dfaBuilder, up);
                 if (defPaths.Count > 0)
@@ -203,7 +204,7 @@ namespace TypeCobol.Analysis.Report
         /// <param name="dfaBuilder">The current DataFlow Builder</param>
         /// <param name="up">The Use Point instance</param>
         /// <returns></returns>
-        private List<Tuple<string, string>> ComputeUsePointDefPaths(DefaultDataFlowGraphBuilder dfaBuilder, DfaUsePoint<Node, Symbol> up)
+        private List<Tuple<string, string>> ComputeUsePointDefPaths(DefaultDataFlowGraphBuilder dfaBuilder, DfaUsePoint<Node, VariableSymbol> up)
         {
             var valueOrigin = ValueOrigin.ComputeFrom(up, dfaBuilder);
             return AsPaths(valueOrigin).ToList();
@@ -242,7 +243,7 @@ namespace TypeCobol.Analysis.Report
         /// </summary>
         /// <param name="up">The Call Use Point to be reported</param>
         /// <param name="path">The Path to called Program</param>
-        private void ReportUsePoint(DfaUsePoint<Node, Symbol> up, Tuple<string, string> path)
+        private void ReportUsePoint(DfaUsePoint<Node, VariableSymbol> up, Tuple<string, string> path)
         {
             var name = path.Item1;
             string sourceText = up.Instruction.CodeElement.SourceText.Replace('\r', ' ').Replace('\n', ' ').Trim();
@@ -270,27 +271,27 @@ namespace TypeCobol.Analysis.Report
         /// Used in unit tests.
         /// </summary>
         /// <param name="cfgs">All Control Flow Graphs DFA to be reported for ZCall Pgm</param>
-        public ZCallPgmReport(IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfgs)
+        public ZCallPgmReport(IList<ControlFlowGraph<Node, DfaBasicBlockInfo<VariableSymbol>>> cfgs)
         {
             _analyzerId = null;
             _allCfgs = cfgs;
         }
 
-        public void Report(TextWriter writer, CompilationUnit unit)
+        public void Report(TextWriter writer, CompilationUnit unit = null)
         {
             //override graphs with results from analyzer
             if (unit != null
                 &&
                 _analyzerId != null
                 &&
-                unit.TryGetAnalyzerResult(_analyzerId, out IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfgs))
+                unit.TryGetAnalyzerResult(_analyzerId, out IList<ControlFlowGraph<Node, DfaBasicBlockInfo<VariableSymbol>>> cfgs))
             {
                 _allCfgs = cfgs;
             }
 
             if (_allCfgs != null)
             {
-                _callUsePoints = new List<DfaUsePoint<Node, Symbol>>();
+                _callUsePoints = new List<DfaUsePoint<Node, VariableSymbol>>();
 
                 _writer = writer;
                 foreach (var cfg in _allCfgs)

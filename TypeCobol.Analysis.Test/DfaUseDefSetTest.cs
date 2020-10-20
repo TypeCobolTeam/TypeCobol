@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler.Symbols;
 using System.IO;
 using TypeCobol.Analysis.Dfa;
-using TypeCobol.Analysis.Graph;
 using TypeCobol.Compiler.CodeElements.Expressions;
-using TypeCobol.Compiler.Nodes;
 
 using static TypeCobol.Analysis.Test.CfgTestUtils;
 
@@ -71,7 +68,7 @@ namespace TypeCobol.Analysis.Test
         public void USE_DEF_SET_SampleGotos0()
         {
             string path = Path.Combine(BasicDfaSamples, "SampleGotos0.cbl");
-            IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfg = ParseCompareDiagnosticsForDfa(path);
+            var cfg = ParseCompareDiagnosticsForDfa(path);
             Assert.IsTrue(cfg.Count == 1);
 
             DefaultDataFlowGraphBuilder dfaBuilder = new DefaultDataFlowGraphBuilder(cfg[0]);
@@ -91,13 +88,21 @@ namespace TypeCobol.Analysis.Test
             QualifiedName qi = new URI("I");
             var namesI = cfg[0].ProcedureDivisionNode.SymbolTable.GetVariablesExplicitWithQualifiedName(qi);
             Assert.AreEqual(1, namesI.Count);
-            Symbol I = namesI[0].Value.SemanticData;
+            Assert.IsNotNull(namesI[0]);
+            Assert.IsNotNull(namesI[0].Value);
+            Assert.IsNotNull(namesI[0].Value.SemanticData);
+            Assert.IsTrue(namesI[0].Value.SemanticData is VariableSymbol);
+            var I = (VariableSymbol) namesI[0].Value.SemanticData;
 
             //Resolve variable J
             QualifiedName qj = new URI("J");
             var namesJ = cfg[0].ProcedureDivisionNode.SymbolTable.GetVariablesExplicitWithQualifiedName(qj);
             Assert.AreEqual(1, namesJ.Count);
-            Symbol J = namesJ[0].Value.SemanticData;
+            Assert.IsNotNull(namesJ[0]);
+            Assert.IsNotNull(namesJ[0].Value);
+            Assert.IsNotNull(namesJ[0].Value.SemanticData);
+            Assert.IsTrue(namesJ[0].Value.SemanticData is VariableSymbol);
+            var J = (VariableSymbol) namesJ[0].Value.SemanticData;
 
             //Check Var I definitions
             Assert.AreEqual("{0, 3}", dfaBuilder.VariableDefMap[I].ToString());

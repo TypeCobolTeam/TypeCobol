@@ -20,7 +20,7 @@ namespace TypeCobol.Analysis.Test
         public void IfThenTest()
         {
             string path = Path.Combine(BasicCfgInstrs, "IfThen0.cbl");
-            IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfg = ParseCompareDiagnosticsForDfa(path);
+            var cfg = ParseCompareDiagnosticsForDfa(path);
             Assert.IsTrue(cfg.Count == 1);
 
             DefaultDataFlowGraphBuilder dfaBuilder = new DefaultDataFlowGraphBuilder(cfg[0]);
@@ -37,7 +37,7 @@ namespace TypeCobol.Analysis.Test
         public void SearchCond0()
         {
             string path = Path.Combine(BasicCfgInstrs, "SearchCond0.cbl");
-            IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfg = ParseCompareDiagnosticsForDfa(path);
+            var cfg = ParseCompareDiagnosticsForDfa(path);
             Assert.IsTrue(cfg.Count == 1);
 
             DefaultDataFlowGraphBuilder dfaBuilder = new DefaultDataFlowGraphBuilder(cfg[0]);
@@ -59,7 +59,7 @@ namespace TypeCobol.Analysis.Test
         public void MixPerformEvaluateIf0()
         {
             string path = Path.Combine(BasicCfgInstrs, "MixPerformEvaluateIf0.cbl");
-            IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfgs = ParseCompareDiagnosticsForDfa(path);
+            var cfgs = ParseCompareDiagnosticsForDfa(path);
             Assert.IsTrue(cfgs.Count == 1);
 
             DefaultDataFlowGraphBuilder dfaBuilder = new DefaultDataFlowGraphBuilder(cfgs[0]);

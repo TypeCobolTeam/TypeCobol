@@ -62,9 +62,9 @@ namespace TypeCobol.Analysis.Test
         /// <param name="expectedDiagnosticsFilePath">Full path to the diagnostic file, pass null to skip
         /// diagnostic comparison</param>
         /// <returns>List of CFG built for the source file.</returns>
-        public static IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> ParseCompareDiagnosticsForDfa(string sourceFilePath, string expectedDiagnosticsFilePath = null)
+        public static IList<ControlFlowGraph<Node, DfaBasicBlockInfo<VariableSymbol>>> ParseCompareDiagnosticsForDfa(string sourceFilePath, string expectedDiagnosticsFilePath = null)
         {
-            return ParseCompareDiagnostics<DfaBasicBlockInfo<Symbol>>(sourceFilePath, CfgBuildingMode.WithDfa, expectedDiagnosticsFilePath);
+            return ParseCompareDiagnostics<DfaBasicBlockInfo<VariableSymbol>>(sourceFilePath, CfgBuildingMode.WithDfa, expectedDiagnosticsFilePath);
         }
 
         /// <summary>
@@ -160,9 +160,9 @@ namespace TypeCobol.Analysis.Test
         {
             //Create a Dot File Generator            
             CfgDotFileForNodeGenerator<D> dotGen = new CfgDotFileForNodeGenerator<D>(cfg)
-                                                        {
-                                                            FullInstruction = fullInstruction,
-                                                        };
+                                                   {
+                                                       FullInstruction = fullInstruction,
+                                                   };
             dotGen.Report(writer);
         }
 
