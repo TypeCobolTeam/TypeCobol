@@ -237,9 +237,8 @@ namespace TypeCobol.Server
             if (_configuration.ExecToStep >= ExecutionStep.CrossCheck)
             {
                 //CFG/DFA
-                analyzerProvider.AddActivator(
-                    (o, t) =>
-                        CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgDfaAnalyzerFactory.CfgDfaIdentifier, _configuration.CfgBuildingMode));
+                const string cfgDfaId = "cfg-dfa";
+                analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(cfgDfaId, _configuration.CfgBuildingMode));
 
                 if (!string.IsNullOrEmpty(_configuration.ReportCopyMoveInitializeFilePath))
                 {
@@ -267,7 +266,7 @@ namespace TypeCobol.Server
                     }
                     else
                     {
-                        var report = new TypeCobol.Analysis.Report.ZCallPgmReport();
+                        var report = new TypeCobol.Analysis.Report.ZCallPgmReport(cfgDfaId);
                         reports.Add(_configuration.ReportZCallFilePath, report);
                     }
                 }

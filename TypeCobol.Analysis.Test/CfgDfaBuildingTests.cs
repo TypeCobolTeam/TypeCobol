@@ -21,19 +21,23 @@ namespace TypeCobol.Analysis.Test
     public class CfgDfaBuildTests
     {
         /// <summary>
-        /// Class to listen that and ExecSqlStatement has been seen.
+        /// Check if an ExecSqlStatement has been seen or not in a program.
         /// </summary>
         class ExecNodeListener : SyntaxDrivenAnalyzerBase
         {
             internal bool ExecSqlSeen;
-			internal ExecNodeListener() : base("CfgBuildTest.ExecNodeListener")
+
+            internal ExecNodeListener()
+                : base("CfgBuildTest.ExecNodeListener")
             {
                 ExecSqlSeen = false;
             }
+
             public override void OnNode(Node node, Program program)
             {
-				if (node?.CodeElement != null && node.CodeElement.Type == Compiler.CodeElements.CodeElementType.ExecStatement)
-					ExecSqlSeen = true;
+                if (node?.CodeElement != null &&
+                    node.CodeElement.Type == Compiler.CodeElements.CodeElementType.ExecStatement)
+                    ExecSqlSeen = true;
             }
 
             public override object GetResult()

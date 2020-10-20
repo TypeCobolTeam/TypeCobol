@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using TypeCobol.Analysis.Dfa;
 using TypeCobol.Analysis.Graph;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Report;
 using TypeCobol.Compiler.Symbols;
@@ -23,35 +21,36 @@ namespace TypeCobol.Analysis.Report
         /// <summary>
         /// The list of all ZCALLXXX we need to detect
         /// </summary>
-        public List<string> AlternativeCallList = new List<string>()
-        {
-            "zcallpgm",
-            "zcallpgf",
-            "zcallpgg",
-            "zcallpgr",
-            "zcallpgt",
-            "zcallpgx",
-            "zcallsrv",
-        };
+        private static string[] _AlternativeCallList = new string[]
+                                                       {
+                                                           "zcallpgm",
+                                                           "zcallpgf",
+                                                           "zcallpgg",
+                                                           "zcallpgr",
+                                                           "zcallpgt",
+                                                           "zcallpgx",
+                                                           "zcallsrv",
+                                                       };
 
         /// <summary>
-        /// The list of all Use Point CallStatement Nodes
+        /// Analyzer identifier to use to retrieve graphs if not directly supplied in constructor
         /// </summary>
-        public List<DfaUsePoint<Node, Symbol>> CallUsePoints { get; private set; }
+        private readonly string _analyzerId;
 
         /// <summary>
         /// All Control Flow Graphs for DFA Basic Block Information
         /// </summary>
-        public IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> AllCfgs
-        {
-            get;
-            private set;
-        }
+        private IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> _allCfgs;
+
+        /// <summary>
+        /// The list of all Use Point CallStatement Nodes
+        /// </summary>
+        private List<DfaUsePoint<Node, Symbol>> _callUsePoints;
 
         /// <summary>
         /// Internal Writer.
         /// </summary>
-        private TextWriter Writer { get; set; }
+        private TextWriter _writer;
 
         /// <summary>
         /// Visitor to Collect all level 88 symbols.
@@ -99,7 +98,6 @@ namespace TypeCobol.Analysis.Report
             }
         }
 
-
         /// <summary>
         /// Level 88 Symbol to their parent symbol map.
         /// </summary>
@@ -110,7 +108,7 @@ namespace TypeCobol.Analysis.Report
         /// </summary>
         /// <param name="dfaBuilder">The Dfa Builder</param>
         /// <param name="up">The use Point</param>
-        void OnCallUsePoint(DataFlowGraphBuilder<Node, Symbol> dfaBuilder, DfaUsePoint<Node, Symbol> up)
+        private void OnCallUsePoint(DataFlowGraphBuilder<Node, Symbol> dfaBuilder, DfaUsePoint<Node, Symbol> up)
         {
             switch (up.Instruction.CodeElement.Type)
             {
@@ -121,11 +119,11 @@ namespace TypeCobol.Analysis.Report
                         if (up.Variable.Name.Equals(pgmVar, StringComparison.InvariantCultureIgnoreCase))
                         {
                             var target = up.Instruction.CodeElement.CallSites.First().CallTarget;
-                            foreach (var callStyle in AlternativeCallList)
+                            foreach (var callStyle in _AlternativeCallList)
                             {
                                 if (target != null && target.ToString().Equals(callStyle, StringComparison.OrdinalIgnoreCase))
                                 {
-                                    CallUsePoints.Add(up);
+                                    _callUsePoints.Add(up);
                                     if (up.Variable.Type.Tag == Compiler.Types.Type.Tags.Group)
                                     {
                                         //Compute the Map of Level88 variable to their parent..
@@ -168,7 +166,7 @@ namespace TypeCobol.Analysis.Report
         /// </summary>
         /// <param name="cfg">The Control Flow Graph instance</param>
         /// <returns>true</returns>
-        private bool ReportCfgCallUsePoint(ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>> cfg)
+        private void ReportCfgCallUsePoint(ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>> cfg)
         {
             //Check that a semantic data has been associated to this node.
             System.Diagnostics.Debug.Assert(cfg.ProgramOrFunctionNode != null);
@@ -176,18 +174,17 @@ namespace TypeCobol.Analysis.Report
             System.Diagnostics.Debug.Assert(cfg.ProgramOrFunctionNode.SemanticData.SemanticKind == SemanticKinds.Symbol);
 
             //The semantic data must be a ProgramSymbol or a FunctionSymbol
-            System.Diagnostics.Debug.Assert(((Symbol)cfg.ProgramOrFunctionNode.SemanticData).Kind == Symbol.Kinds.Program ||
-                                            ((Symbol)cfg.ProgramOrFunctionNode.SemanticData).Kind == Symbol.Kinds.Function);
+            System.Diagnostics.Debug.Assert(cfg.ProgramOrFunctionNode.SemanticData.Kind == Symbol.Kinds.Program ||
+                                            cfg.ProgramOrFunctionNode.SemanticData.Kind == Symbol.Kinds.Function);
 
-            ProgramSymbol program = (ProgramSymbol)cfg.ProgramOrFunctionNode.SemanticData;
 
-            CallUsePoints.Clear();
+            _callUsePoints.Clear();
             DefaultDataFlowGraphBuilder dfaBuilder = new DefaultDataFlowGraphBuilder(cfg);
             dfaBuilder.OnUsePointEvent += OnCallUsePoint;
             dfaBuilder.OnDefPointEvent += OnDefPoint;
             dfaBuilder.ComputeUseDefSet();
             //Report Call Use Points.            
-            foreach (DfaUsePoint<Node, Symbol> up in CallUsePoints)
+            foreach (DfaUsePoint<Node, Symbol> up in _callUsePoints)
             {
                 List < Tuple<string, string> > defPaths = ComputeUsePointDefPaths(dfaBuilder, up);
                 if (defPaths.Count > 0)
@@ -198,7 +195,6 @@ namespace TypeCobol.Analysis.Report
                     }
                 }
             }
-            return true;
         }
 
         /// <summary>
@@ -256,44 +252,48 @@ namespace TypeCobol.Analysis.Report
             //Remove all unneeded space
             sourceText = Regex.Replace(sourceText, @"\s+", " ");
 
-            Writer.WriteLine(
-                string.Format("ObjectName={0};Line={1};Column={2};Path={3};SourceText={4}",
-                    name, line, column, path.Item2, sourceText));
-
+            _writer.WriteLine($"ObjectName={name};Line={line};Column={column};Path={path.Item2};SourceText={sourceText}");
         }
 
         /// <summary>
-        /// Empty constructor
+        /// Builds a ZCallPgmReport based on an analyzer.
         /// </summary>
-        public ZCallPgmReport() : this(null)
+        /// <param name="analyzerId">Unique id of the analyzer to be used to get graphs.</param>
+        public ZCallPgmReport(string analyzerId)
         {
+            _analyzerId = analyzerId;
+            _allCfgs = null;
         }
 
         /// <summary>
-        /// Constructor this the list of cfg/dfa graphs to be reported.
+        /// Builds a ZCallPgmReport based on a list of cfg/dfa graphs to be reported.
+        /// Used in unit tests.
         /// </summary>
         /// <param name="cfgs">All Control Flow Graphs DFA to be reported for ZCall Pgm</param>
         public ZCallPgmReport(IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfgs)
         {
-            AllCfgs = cfgs;
+            _analyzerId = null;
+            _allCfgs = cfgs;
         }
 
         public void Report(TextWriter writer, CompilationUnit unit = null)
         {
-            if (unit != null)
+            //override graphs with results from analyzer
+            if (unit != null
+                &&
+                _analyzerId != null
+                &&
+                unit.TryGetAnalyzerResult(_analyzerId, out IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfgs))
             {
-                if (!unit.TryGetAnalyzerResult<IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>>>(
-                    CfgDfaAnalyzerFactory.CfgDfaIdentifier, out IList<ControlFlowGraph<Node, DfaBasicBlockInfo<Symbol>>> cfgs))
-                    return;
-                AllCfgs = cfgs;
+                _allCfgs = cfgs;
             }
 
-            if (AllCfgs != null)
+            if (_allCfgs != null)
             {
-                CallUsePoints = new List<DfaUsePoint<Node, Symbol>>();
+                _callUsePoints = new List<DfaUsePoint<Node, Symbol>>();
 
-                this.Writer = writer;
-                foreach (var cfg in AllCfgs)
+                _writer = writer;
+                foreach (var cfg in _allCfgs)
                 {
                     ReportCfgCallUsePoint(cfg);
                 }

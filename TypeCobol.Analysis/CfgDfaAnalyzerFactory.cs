@@ -10,11 +10,6 @@ namespace TypeCobol.Analysis
     public static class CfgDfaAnalyzerFactory
     {
         /// <summary>
-        /// Unique identifier of CFG/DFA Analyzers
-        /// </summary>
-        public static readonly string CfgDfaIdentifier = "cfg-dfa";
-
-        /// <summary>
         /// Create the appropriate CFG analyzer for the supplied CFG building mode.
         /// </summary>
         /// <param name="identifier">Identifier of the analyzer.</param>
