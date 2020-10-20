@@ -78,13 +78,11 @@ namespace TypeCobol.Analysis.Test
             QualifiedName qi = new TypeCobol.Compiler.CodeElements.Expressions.URI("I");
             var namesI = cfg[0].ProcedureDivisionNode.SymbolTable.GetVariablesExplicitWithQualifiedName(qi);
             Assert.AreEqual(1, namesI.Count);
-            Symbol I = namesI[0].Value.SemanticData;
-            
+
             //Resolve variable J
             QualifiedName qj = new TypeCobol.Compiler.CodeElements.Expressions.URI("J");
             var namesJ = cfg[0].ProcedureDivisionNode.SymbolTable.GetVariablesExplicitWithQualifiedName(qj);
             Assert.AreEqual(1, namesJ.Count);
-            Symbol J = namesJ[0].Value.SemanticData;
 
             DefaultDataFlowGraphBuilder dfaBuilder = new DefaultDataFlowGraphBuilder(cfg[0]);
             dfaBuilder.ComputeInOutSet();

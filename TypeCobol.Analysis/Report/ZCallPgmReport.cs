@@ -293,7 +293,7 @@ namespace TypeCobol.Analysis.Report
             _allCfgs = cfgs;
         }
 
-        public void Report(TextWriter writer, CompilationUnit unit = null)
+        public void Report(TextWriter writer, CompilationUnit unit)
         {
             //override graphs with results from analyzer
             if (unit != null

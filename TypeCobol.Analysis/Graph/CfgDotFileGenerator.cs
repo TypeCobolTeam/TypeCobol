@@ -130,7 +130,7 @@ namespace TypeCobol.Analysis.Graph
             Writer.Flush();            
         }
 
-        public void Report(TextWriter writer, CompilationUnit unit = null)
+        public void Report(TextWriter writer, CompilationUnit unit)
         {
             Generate(writer, Cfg);
         }
