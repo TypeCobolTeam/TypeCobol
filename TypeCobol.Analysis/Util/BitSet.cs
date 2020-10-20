@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 /* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -14,9 +15,6 @@
 //--------------------------------------------------------------------------------------------------------------
 namespace TypeCobol.Analysis.Util
 {
-    using System;
-    using System.Text;
-
     public class BitSet
     {
         private static readonly ulong[] EmptyBits = new ulong[0];

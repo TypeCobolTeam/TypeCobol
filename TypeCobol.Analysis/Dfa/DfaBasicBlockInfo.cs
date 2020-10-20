@@ -9,7 +9,7 @@ namespace TypeCobol.Analysis.Dfa
     public class DfaBasicBlockInfo<V>
     {
         /// <summary>
-        /// Generated definitions bit set: The set of locally available defintions in b.
+        /// Generated definitions bit set: The set of locally available definitions in b.
         /// This is a set of data which is created to identify which data definitions are made within a basic block.
         /// </summary>
         public Util.BitSet Gen

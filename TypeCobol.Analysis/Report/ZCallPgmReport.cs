@@ -21,16 +21,16 @@ namespace TypeCobol.Analysis.Report
         /// <summary>
         /// The list of all ZCALLXXX we need to detect
         /// </summary>
-        private static string[] _AlternativeCallList = new string[]
-                                                       {
-                                                           "zcallpgm",
-                                                           "zcallpgf",
-                                                           "zcallpgg",
-                                                           "zcallpgr",
-                                                           "zcallpgt",
-                                                           "zcallpgx",
-                                                           "zcallsrv",
-                                                       };
+        private static readonly string[] _AlternativeCallList = new string[]
+                                                                {
+                                                                    "zcallpgm",
+                                                                    "zcallpgf",
+                                                                    "zcallpgg",
+                                                                    "zcallpgr",
+                                                                    "zcallpgt",
+                                                                    "zcallpgx",
+                                                                    "zcallsrv",
+                                                                };
 
         /// <summary>
         /// Analyzer identifier to use to retrieve graphs if not directly supplied in constructor
@@ -276,7 +276,7 @@ namespace TypeCobol.Analysis.Report
             _allCfgs = cfgs;
         }
 
-        public void Report(TextWriter writer, CompilationUnit unit = null)
+        public void Report(TextWriter writer, CompilationUnit unit)
         {
             //override graphs with results from analyzer
             if (unit != null

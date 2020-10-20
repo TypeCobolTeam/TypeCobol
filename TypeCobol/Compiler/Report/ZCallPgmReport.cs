@@ -91,7 +91,7 @@ namespace TypeCobol.Compiler.Report
         /// <returns>A List of Call nodes.</returns>
         public override object GetResult() => _calls;
 
-        public void Report(TextWriter writer, CompilationUnit unit = null)
+        public void Report(TextWriter writer, CompilationUnit unit)
         {
             foreach (Call call in _calls)
             {

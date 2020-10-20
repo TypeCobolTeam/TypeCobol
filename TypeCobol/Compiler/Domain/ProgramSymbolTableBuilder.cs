@@ -817,7 +817,7 @@ namespace TypeCobol.Compiler.Domain
                         if (currentDomain.Owner.Kind != Symbol.Kinds.Program && currentDomain.Owner.Kind != Symbol.Kinds.Function)
                             sym.SetFlag(currentDomain.Owner.Flag & Symbol.Flags.Global, currentDomain.Owner.HasFlag(Symbol.Flags.Global));
                         //Store Condition Values.
-                        sym.Value = ((DataConditionEntry)dataDef.CodeElement).ConditionValues;
+                        sym.Value = ((DataConditionEntry) dataDef.CodeElement).ConditionValues;
                     }
                         break;
                     case CodeElementType.DataRenamesEntry:
