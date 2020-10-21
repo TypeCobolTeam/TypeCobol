@@ -211,9 +211,17 @@ namespace TypeCobol.Analysis.Report
 
             IEnumerable<Tuple<string, string>> AsPaths(ValueOrigin vo)
             {
+                if (vo == null)
+                {
+                    //For an uninitialized variable, the ValueOrigin is null.
+                    yield return new Tuple<string, string>(null, null);
+                    yield break;
+                }
+
                 string variable = vo.Variable.FullDotName;
                 if (vo.Value != null)
                 {
+                    System.Diagnostics.Debug.Assert(vo.Origins == null);
                     string value = vo.Value.ToString();
                     if (vo.Variable.IsCondition)
                     {
