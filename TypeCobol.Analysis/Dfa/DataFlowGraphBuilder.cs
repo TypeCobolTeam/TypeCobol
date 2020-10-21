@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TypeCobol.Analysis.Graph;
 using TypeCobol.Analysis.Util;
 
@@ -75,28 +76,14 @@ namespace TypeCobol.Analysis.Dfa
         public abstract HashSet<V> GetDefVariables(N node);
 
         /// <summary>
-        /// On Use Point Delegate
-        /// </summary>
-        /// <param name="dfaBuilder">The Dfa Builder in which the Use Point is seen</param>
-        /// <param name="usePoint">The Use point</param>
-        public delegate void OnUsePoint(DataFlowGraphBuilder<N, V> dfaBuilder, DfaUsePoint<N, V> usePoint);
-
-        /// <summary>
         /// On Use Point Event
         /// </summary>
-        public event OnUsePoint OnUsePointEvent;
-
-        /// <summary>
-        /// On Def Point Delegate
-        /// </summary>
-        /// <param name="dfaBuilder">The Dfa Builder in which the Def Point is seen</param>
-        /// <param name="defPoint">The Def Point</param>
-        public delegate void OnDefPoint(DataFlowGraphBuilder<N, V> dfaBuilder, DfaDefPoint<N, V> defPoint);
+        public event EventHandler<DfaUsePoint<N, V>> UsePointCreated;
 
         /// <summary>
         /// On Def Point Event
         /// </summary>
-        public event OnDefPoint OnDefPointEvent;
+        public event EventHandler<DfaDefPoint<N, V>> DefPointCreated;
 
         /// <summary>
         /// Compute the Use List
@@ -134,7 +121,7 @@ namespace TypeCobol.Analysis.Dfa
                                 UseList.Add(up);
 
                                 //Dispatch to Listeners
-                                OnUsePointEvent?.Invoke(this, up);
+                                UsePointCreated?.Invoke(this, up);
                             }
                             block.Data.UseCount += uses.Count;
                         }
@@ -181,7 +168,7 @@ namespace TypeCobol.Analysis.Dfa
                                 DefList.Add(dp);
 
                                 //Dispatch to Listeners
-                                OnDefPointEvent?.Invoke(this, dp);
+                                DefPointCreated?.Invoke(this, dp);
                             }
                             block.Data.DefCount += defs.Count;
                         }

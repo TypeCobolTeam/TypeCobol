@@ -108,9 +108,9 @@ namespace TypeCobol.Analysis.Report
         /// <summary>
         /// Callback method when a Use Point is encountered
         /// </summary>
-        /// <param name="dfaBuilder">The Dfa Builder</param>
+        /// <param name="sender">The sender is the Dfa Builder</param>
         /// <param name="up">The use Point</param>
-        private void OnCallUsePoint(DataFlowGraphBuilder<Node, VariableSymbol> dfaBuilder, DfaUsePoint<Node, VariableSymbol> up)
+        private void OnUsePointCreated(object sender, DfaUsePoint<Node, VariableSymbol> up)
         {
             switch (up.Instruction.CodeElement.Type)
             {
@@ -150,9 +150,9 @@ namespace TypeCobol.Analysis.Report
         /// then we deceive DFA algorithm to think that the target variable of the DefPoint is the CALL variable
         /// thus we change the target variable of the DefPoint.
         /// </summary>
-        /// <param name="dfaBuilder">The Dfa Builder</param>
+        /// <param name="sender">The sender is the Dfa Builder</param>
         /// <param name="dp">The Def Point</param>
-        private void OnDefPoint(DataFlowGraphBuilder<Node, VariableSymbol> dfaBuilder, DfaDefPoint<Node, VariableSymbol> dp)
+        private void OnDefPointCreated(object sender, DfaDefPoint<Node, VariableSymbol> dp)
         {
             VariableSymbol sym = dp.Variable;
             if (sym.Level == 88 && sym.Value != null && Level88SymbolParentSymbolMap != null && Level88SymbolParentSymbolMap.TryGetValue(sym, out var parent))
@@ -181,8 +181,8 @@ namespace TypeCobol.Analysis.Report
 
             _callUsePoints.Clear();
             DefaultDataFlowGraphBuilder dfaBuilder = new DefaultDataFlowGraphBuilder(cfg);
-            dfaBuilder.OnUsePointEvent += OnCallUsePoint;
-            dfaBuilder.OnDefPointEvent += OnDefPoint;
+            dfaBuilder.UsePointCreated += OnUsePointCreated;
+            dfaBuilder.DefPointCreated += OnDefPointCreated;
             dfaBuilder.ComputeUseDefSet();
             //Report Call Use Points.            
             foreach (var up in _callUsePoints)
