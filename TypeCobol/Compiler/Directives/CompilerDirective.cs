@@ -89,6 +89,11 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public MultilineTokensGroupSelection ConsumedTokens { get; internal set; }
 
+        /// <summary>
+        /// Does this CopyDirective use Group of tokens.
+        /// </summary>
+        public bool HasGroupToken { get; set; }
+
         public void AddDiagnostic(Diagnostic diagnostic)
         {
             if (Diagnostics == null) Diagnostics = new List<Diagnostic>();

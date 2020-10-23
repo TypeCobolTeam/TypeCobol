@@ -185,6 +185,7 @@ namespace TypeCobol.Compiler
             if (isCopyFile)
             {
                 CompilationResultsForCopy = new CompilationDocument(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, scanState, copyTextNameVariations);
+                CompilationResultsForCopy.IsForCopy = true;
                 CompilationResultsForCopy.CustomSymbols = customSymbols;
             }
             else

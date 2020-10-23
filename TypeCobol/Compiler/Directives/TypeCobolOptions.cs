@@ -32,6 +32,14 @@ namespace TypeCobol.Compiler.Directives
             get { return _useEuroInformationLegacyReplacingSyntax; }
             set { _useEuroInformationLegacyReplacingSyntax = value; }
         }
+        /// <summary>
+        /// Are these Options used for parsing a Copy.
+        /// </summary>
+        public bool AreForCopyParsing
+        {
+            get;
+            set;
+        }
 
 #if EUROINFO_RULES
         private bool _useEuroInformationLegacyReplacingSyntax = true;

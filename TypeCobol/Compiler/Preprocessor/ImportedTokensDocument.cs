@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Preprocessor
 {
@@ -44,9 +47,10 @@ namespace TypeCobol.Compiler.Preprocessor
         /// Iterator over the tokens contained in this imported document after
         /// - REPLACING directive processing if necessary
         /// </summary>
-        public ITokensLinesIterator GetProcessedTokensIterator()
+        public ITokensLinesIterator GetProcessedTokensIterator(bool forceAllowWhitespaceTokens)
         {
-            ITokensLinesIterator sourceIterator = ProcessedTokensDocument.GetProcessedTokensIterator(SourceDocument.TextSourceInfo, SourceDocument.Lines, this.CompilerOptions);
+            bool allowWhitespaceTokens = (forceAllowWhitespaceTokens || HasReplacingDirective && CopyDirective.HasGroupToken);
+            ITokensLinesIterator sourceIterator = ProcessedTokensDocument.GetProcessedTokensIterator(SourceDocument.TextSourceInfo, SourceDocument.Lines, this.CompilerOptions, allowWhitespaceTokens);
             if (HasReplacingDirective
 #if EUROINFO_RULES
                 || (this.CompilerOptions.UseEuroInformationLegacyReplacingSyntax && (this. CopyDirective.RemoveFirst01Level || CopyDirective.InsertSuffixChar))
@@ -54,7 +58,56 @@ namespace TypeCobol.Compiler.Preprocessor
                 )
             {
                 ITokensLinesIterator replaceIterator = new ReplaceTokensLinesIterator(sourceIterator, CopyDirective, CompilerOptions);
-                return replaceIterator;
+                if (CopyDirective.HasGroupToken)
+                {
+                    //Compute the Scanning State
+                    TypeCobol.Compiler.Scanner.MultilineScanState state = null;
+                    TypeCobol.Compiler.Parser.CodeElementsLine cel = SourceDocument.Lines.Count > 0 ? ((TypeCobol.Compiler.Parser.CodeElementsLine)SourceDocument.Lines[0]) : null;
+                    state = cel?.InitialScanState;
+
+                    //Create a Preprocessed text fragment
+                    StringBuilder sb = new StringBuilder();
+                    Token t;
+                    bool bFirst = true;
+                    int line = -1;
+                    ITokensLine tokenLine = null;
+                    while ((t = replaceIterator.NextToken()) != Token.END_OF_FILE)
+                    {
+                        if (bFirst)
+                        {
+                            tokenLine = t.TokensLine;
+                            line = t.Line;
+                        }
+                        if ((tokenLine != t.TokensLine /*|| line != t.Line*/) || bFirst)
+                        {
+                            if (!bFirst)
+                                sb.Append(Environment.NewLine);
+                            sb.Append(new string(' ', Math.Max(0, t.Column - 1)));
+                        }
+                        bFirst = false;
+                        line = t.Line;
+                        tokenLine = t.TokensLine;
+                        sb.Append(t.Text);
+                    }
+                    string preprocessedFRagment = sb.ToString();
+
+                    //Now reparse the preprocessed fragment
+                    ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(SourceDocument.TextSourceInfo.Name, DocumentFormat.RDZReferenceFormat.Encoding, DocumentFormat.RDZReferenceFormat.ColumnsLayout, preprocessedFRagment);
+                    TypeCobolOptions tcOptions = new TypeCobolOptions();                    
+                    tcOptions.AreForCopyParsing = true;//Doing that any "::" will be treated as two tokens
+                    FileCompiler fileCompiler = new FileCompiler(initialTextDocumentLines, null, null, new TypeCobolOptions(), null, false, null);
+                    fileCompiler.CompilationResultsForProgram.InitialScanStateForCopy = state;
+                    fileCompiler.CompilationResultsForProgram.UpdateTokensLines();
+
+                    //Create a new token iterator over rescanned source code
+                    ImmutableList<CodeElementsLine>.Builder cblTextLines = (ImmutableList<CodeElementsLine>.Builder)fileCompiler.CompilationResultsForProgram.CobolTextLines;
+                    TokensLinesIterator iter = new TokensLinesIterator(SourceDocument.TextSourceInfo.Name, cblTextLines, null, Token.CHANNEL_SourceTokens);
+                    return iter;
+                }
+                else
+                {
+                    return replaceIterator;
+                }
             }
             else
             {

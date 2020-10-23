@@ -959,11 +959,15 @@ namespace TypeCobol.Compiler.Scanner
                 case ':':
                     // -- TypeCobol specific syntax --
                     // QualifiedNameSeparator => qualifierName::qualifiedName
-                    if (currentIndex < lastIndex && line[currentIndex + 1] == ':')
+                    if (currentIndex < lastIndex && line[currentIndex + 1] == ':' && (this.compilerOptions == null || !this.compilerOptions.AreForCopyParsing))
                     {
-                        // consume two :: chars
-                        currentIndex += 2;
-                        return new Token(TokenType.QualifiedNameSeparator, startIndex, startIndex + 1, tokensLine);
+                        // consume two :: chars in token1 and token2
+                        var token1 = ScanOneChar(startIndex, TokenType.ColonSeparator);
+                        var token2 = ScanOneChar(startIndex + 1, TokenType.ColonSeparator);
+                        GroupToken group = new GroupToken(TokenType.QualifiedNameSeparator, startIndex, startIndex + 1, tokensLine);
+                        group.AddToken(token1);
+                        group.AddToken(token2);
+                        return group;
                     }
                     // --
                     // The COPY statement with REPLACING phrase can be used to replace parts of words. 
@@ -1144,10 +1148,10 @@ namespace TypeCobol.Compiler.Scanner
                             }
 
                             delimiterToken = new Token(TokenType.PseudoTextDelimiter, startIndex, startIndex + 1, usesVirtualSpaceAtEndOfLine, tokensLine);
-                            if (!(followingChar == ' ' || followingChar == ',' || followingChar == ';' || followingChar == '.'))
-                            {
-                                tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterPseudoTextDelimiter, delimiterToken);
-                            }
+                            //if (!(followingChar == ' ' || followingChar == ',' || followingChar == ';' || followingChar == '.'))
+                            //{
+                            //    tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterPseudoTextDelimiter, delimiterToken);
+                            //}
                         }
                         return delimiterToken;
                     }

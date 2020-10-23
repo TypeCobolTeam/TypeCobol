@@ -50,15 +50,17 @@ namespace TypeCobol.Compiler.Preprocessor
 
         // Previous snapshot position
         private object snapshotPosition;
+        private bool AllowWhitespaceTokens;
 
         /// <summary>
         /// Set the initial position of the iterator with startToken.
         /// </summary>
-        public CopyTokensLinesIterator(string sourceFileName, IReadOnlyList<IProcessedTokensLine> tokensLines, int channelFilter)
+        public CopyTokensLinesIterator(string sourceFileName, IReadOnlyList<IProcessedTokensLine> tokensLines, int channelFilter, bool allowWhitespaceTokens)
         {
             this.sourceFileName = sourceFileName;
             this.tokensLines = tokensLines;
             this.channelFilter = channelFilter;
+            this.AllowWhitespaceTokens = allowWhitespaceTokens;
 
             // Start just before the first token in the document
             Reset();
@@ -303,7 +305,9 @@ namespace TypeCobol.Compiler.Preprocessor
                 }
                 // Check if the next token found matches the filter criteria or is a COPY compiler directive or is a REPLACE directive
                 Token nextTokenCandidate = currentLine.TokensWithCompilerDirectives[currentPosition.TokenIndexInLine];
-                if (nextTokenCandidate.Channel == channelFilter || nextTokenCandidate.TokenType == TokenType.COPY_IMPORT_DIRECTIVE || nextTokenCandidate.TokenType == TokenType.REPLACE_DIRECTIVE)
+                if (nextTokenCandidate.Channel == channelFilter || 
+                    (this.AllowWhitespaceTokens && nextTokenCandidate.Channel == Token.CHANNEL_WhitespaceAndComments) ||
+                    nextTokenCandidate.TokenType == TokenType.COPY_IMPORT_DIRECTIVE || nextTokenCandidate.TokenType == TokenType.REPLACE_DIRECTIVE)
                 {
                     currentTokenInMainDocument = nextTokenCandidate;
                 }
@@ -317,7 +321,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 ImportedTokensDocument importedDocument = currentLine.ImportedDocuments[compilerDirective];
                 if (importedDocument != null)
                 {
-                    ITokensLinesIterator importedDocumentIterator = importedDocument.GetProcessedTokensIterator();
+                    ITokensLinesIterator importedDocumentIterator = importedDocument.GetProcessedTokensIterator(this.AllowWhitespaceTokens);
                     Token nextTokenCandidate = importedDocumentIterator.NextToken();
 
                     // No suitable next token found in the imported document

@@ -157,13 +157,24 @@ namespace TypeCobol.Compiler.CupPreprocessor
                 Token replacementToken = null;
                 Token[] replacementTokens = null;
 
+                bool bReported = false;
                 foreach (Tuple<List<Token>,List<Token>> copyReplacingOperands in replacingOperands)
                 {
                     // Get relevant tokens
                     List<Token> relevantTokens = copyReplacingOperands.Item1;
                     List<Token> replaceTokens = copyReplacingOperands.Item2;
-                    BuildReplaceOperation(copy.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens,
-                        ref replacementToken, ref replacementTokens, false, relevantTokens);
+                    if (!BuildReplaceOperation(copy.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens,
+                        ref replacementToken, ref replacementTokens, false, relevantTokens))
+                    {
+                        if (!bReported)
+                        {
+                            Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, qualifiedTextName.TextName.Column,
+                                qualifiedTextName.TextName.EndColumn,
+                                  qualifiedTextName.TextName.Line, "\"REPLACE\" Empty Comparison Pseudo Text.");
+                            CompilerDirective.AddDiagnostic(error);
+                            bReported = true;
+                        }
+                    }
 
                     BuildReplaceOperation(copy.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens,
                         ref replacementToken, ref replacementTokens, true, replaceTokens);
@@ -172,13 +183,42 @@ namespace TypeCobol.Compiler.CupPreprocessor
             }
         }
 
-        private static void BuildReplaceOperation(IList<ReplaceOperation> replaceOperations, ref Token comparisonToken, ref Token[] followingComparisonTokens, ref Token replacementToken, ref Token[] replacementTokens, bool replaceTokens, List<Token> operandTokens)
+        /// <summary>
+        /// Flat a list by extracting tokens in a GroupToken
+        /// </summary>
+        /// <param name="list">The list to be flattened</param>
+        /// <returns>The Flattened list</returns>
+        private List<Token> FlatList(List<Token> list)
+        {
+            if (list == null || list.Count == 0)
+                return list;
+            if(list.Exists(t => t is GroupToken))
+            {
+                this.CompilerDirective.HasGroupToken = true;
+                List<Token> flatList = new List<Token>();
+                foreach(Token t in list)
+                {
+                    if (t is GroupToken gt)
+                    {
+                        flatList.AddRange(gt.Group);
+                    }
+                    else
+                    {
+                        flatList.Add(t);
+                    }                   
+                }
+                return flatList;
+            }
+            return list;
+        }
+        private bool BuildReplaceOperation(IList<ReplaceOperation> replaceOperations, ref Token comparisonToken, ref Token[] followingComparisonTokens, ref Token replacementToken, ref Token[] replacementTokens, bool replaceTokens, List<Token> operandTokens)
         {
             // Comparison tokens
             if (!replaceTokens)
             {
                 if (operandTokens != null && operandTokens.Count > 0)
                 {
+                    operandTokens = FlatList(operandTokens);
                     comparisonToken = (Token)operandTokens[0];
                     if (operandTokens.Count > 1)
                     {
@@ -189,12 +229,17 @@ namespace TypeCobol.Compiler.CupPreprocessor
                         }
                     }
                 }
+                else
+                {//It cannot be empty
+                    return false;
+                }
             }
             // Replacement tokens
             else
             {
                 if (operandTokens != null && operandTokens.Count > 0)
                 {
+                    operandTokens = FlatList(operandTokens);
                     if (followingComparisonTokens == null && operandTokens.Count == 1)
                     {
                         replacementToken = (Token)operandTokens[0];
@@ -241,6 +286,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
                 replacementToken = null;
                 replacementTokens = null;
             }
+            return true;
         }
 
         public virtual void StartDeleteCompilerStatement()
@@ -376,8 +422,16 @@ namespace TypeCobol.Compiler.CupPreprocessor
                     // Get relevant tokens
                     List<Token> relevantTokens = copyReplacingOperands.Item1;
                     List<Token> replaceTokens = copyReplacingOperands.Item2;
-                    BuildReplaceOperation(replaceDirective.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens,
-                        ref replacementToken, ref replacementTokens, false, relevantTokens);
+                    bool bReported = false;
+                    if (!BuildReplaceOperation(replaceDirective.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens,
+                        ref replacementToken, ref replacementTokens, false, relevantTokens))
+                    {
+                        Diagnostic error = new Diagnostic(MessageCode.Warning, replaceTokn.Column,
+                            replaceTokn.EndColumn,
+                              replaceTokn.Line, "\"REPLACE\" Empty Pseudo Text Delimiter");
+                        CompilerDirective.AddDiagnostic(error);
+                        bReported = true;
+                    }
 
                     BuildReplaceOperation(replaceDirective.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens,
                         ref replacementToken, ref replacementTokens, true, replaceTokens);
