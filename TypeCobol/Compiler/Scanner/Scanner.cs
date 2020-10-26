@@ -247,6 +247,7 @@ namespace TypeCobol.Compiler.Scanner
             TextArea[] textAreasForOriginalLinesInConcatenatedLine = new TextArea[continuationLinesGroup.Count];
             int[] startIndexForTextAreasInOriginalLines = new int[continuationLinesGroup.Count];
             int[] offsetForLiteralContinuationInOriginalLines = new int[continuationLinesGroup.Count];
+            var scanState = initialScanState;
 
             // Initialize the continuation text with the complete source text of the first line
             TokensLine firstLine = continuationLinesGroup[0];
@@ -259,20 +260,34 @@ namespace TypeCobol.Compiler.Scanner
             {
                 concatenatedLine = String.Empty;
                 Scanner.ScanTokensLine(firstLine, initialScanState, compilerOptions, copyTextNameVariations);
+                scanState = firstLine.ScanState;
             }
             textAreasForOriginalLinesInConcatenatedLine[0] = new TextArea(TextAreaType.Source, 0, concatenatedLine.Length -1);
             startIndexForTextAreasInOriginalLines[0] = firstLine.Source.StartIndex;
             offsetForLiteralContinuationInOriginalLines[0] = 0;
 
-            // All the following lines are continuation lines
+            // Find the index of the last ContinuationLine in the group
+            int lastContinuationLineIndex;
+            for (lastContinuationLineIndex = continuationLinesGroup.Count - 1; lastContinuationLineIndex >= 0 && continuationLinesGroup[lastContinuationLineIndex].Type != CobolTextLineType.Continuation; lastContinuationLineIndex--) { }
+
+            // Iterate over the continuation lines (some blank lines or comment lines may come in-between)
             // => build a character string representing the complete continuation text along the way
-            for (int i = 1, lastContinuationLinesIndex = continuationLinesGroup.Count - 1; i <= lastContinuationLinesIndex; i++)
+            int i;
+            for (i = 1; i <= lastContinuationLineIndex; i++)
             {
-                bool isLastLine = i == lastContinuationLinesIndex;
+                bool isLastLine = i == lastContinuationLineIndex;
                 TokensLine continuationLine = continuationLinesGroup[i];
                 int startIndex = continuationLine.Source.StartIndex;
                 int lastIndex = continuationLine.Source.EndIndex;
                 string line = continuationLine.Text;
+
+                // Not a continuation line
+                if (continuationLine.Type != CobolTextLineType.Continuation)
+                {
+                    Scanner.ScanTokensLine(continuationLine, scanState, compilerOptions, copyTextNameVariations);
+                    scanState = continuationLine.ScanState;
+                    continue;
+                }
 
                 // 1. Match and remove all blank characters at the beginning of the continuation line
                 int startOfContinuationIndex = startIndex;
@@ -281,19 +296,10 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     Token whitespaceToken = new Token(TokenType.SpaceSeparator, startIndex, startOfContinuationIndex - 1, continuationLine);
                     continuationLine.SourceTokens.Add(whitespaceToken);
-                    startIndex = startOfContinuationIndex;
                 }
-                if (startOfContinuationIndex <= lastIndex)
+                if (startOfContinuationIndex < 4)
                 {
-                    if (startOfContinuationIndex < 4)
-                    {
-                        continuationLine.AddDiagnostic(MessageCode.AreaAOfContinuationLineMustBeBlank, startOfContinuationIndex, startOfContinuationIndex);
-                    }
-                }
-                else
-                {
-                    // Nothing but spaces on the continuation line
-                    continue;
+                    continuationLine.AddDiagnostic(MessageCode.AreaAOfContinuationLineMustBeBlank, startOfContinuationIndex, startOfContinuationIndex);
                 }
 
                 // p55: Continuation of alphanumeric and national literals
@@ -450,15 +456,24 @@ namespace TypeCobol.Compiler.Scanner
                 concatenatedLine += line.Substring(startIndexOfContinuationStringInContinuationLine, lengthOfContinuationStringInContinuationLine);
             }
 
+            // Scan remaining lines of the group
+            for (; i < continuationLinesGroup.Count; i++)
+            {
+                var continuationLine = continuationLinesGroup[i];
+                Scanner.ScanTokensLine(continuationLine, scanState, compilerOptions, copyTextNameVariations);
+                scanState = continuationLine.ScanState;
+            }
+
             // Scan the complete continuation text as a whole
             TokensLine virtualContinuationTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstLine.LineIndex, concatenatedLine);
             Scanner.ScanTokensLine(virtualContinuationTokensLine, initialScanState, compilerOptions, copyTextNameVariations);
+            scanState = initialScanState;
 
             // Then attribute each token and diagnostic to its corresponding tokens line
-            MultilineScanState scanState = initialScanState;
-            for (int i = 0; i < continuationLinesGroup.Count; i++)
+            for (i = 0; i < continuationLinesGroup.Count; i++)
             {
                 TokensLine originalLine = continuationLinesGroup[i];
+                if (i > 0 && originalLine.Type != CobolTextLineType.Continuation) continue;
                 originalLine.InitializeScanState(scanState);
 
                 TextArea textAreaForOriginalLine = textAreasForOriginalLinesInConcatenatedLine[i];
