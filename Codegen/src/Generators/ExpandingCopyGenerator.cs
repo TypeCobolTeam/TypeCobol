@@ -441,7 +441,7 @@ namespace TypeCobol.Codegen.Generators
 
             // Create a token iterator on top of pre-processed tokens lines
             Compiler.Scanner.ITokensLinesIterator tokensIterator = Compiler.Preprocessor.ProcessedTokensDocument.GetProcessedTokensIterator(
-                compilationUnit.TextSourceInfo, processedTokensDocument.Lines, compilationUnit.CompilerOptions, false);
+                compilationUnit.TextSourceInfo, processedTokensDocument.Lines, compilationUnit.CompilerOptions, null);
 
             var stopwatch = Stopwatch.StartNew();
 

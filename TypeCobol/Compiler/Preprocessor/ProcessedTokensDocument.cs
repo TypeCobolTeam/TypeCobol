@@ -54,7 +54,7 @@ namespace TypeCobol.Compiler.Preprocessor
         {
             get
             {
-                return GetProcessedTokensIterator(TextSourceInfo, Lines,  CompilerOptions, false);
+                return GetProcessedTokensIterator(TextSourceInfo, Lines,  CompilerOptions, null);
             }
         }
 
@@ -80,11 +80,11 @@ namespace TypeCobol.Compiler.Preprocessor
         /// <param name="textSourceInfo"></param>
         /// <param name="lines"></param>
         /// <param name="compilerOptions"></param>
-        /// <param name="allowWhitespaceTokens">This parameters is used to force whitspaces tokens to be also returned.</param>
+        /// <param name="tokenFilterCallback">Token filter callback.</param>
         /// <returns></returns>
-        public static ITokensLinesIterator GetProcessedTokensIterator(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<IProcessedTokensLine> lines, TypeCobolOptions compilerOptions, bool allowWhitespaceTokens)
+        public static ITokensLinesIterator GetProcessedTokensIterator(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<IProcessedTokensLine> lines, TypeCobolOptions compilerOptions, Func<Token, bool> tokenFilterCallback)
         {
-            ITokensLinesIterator copyIterator = new CopyTokensLinesIterator(textSourceInfo.Name, lines, Token.CHANNEL_SourceTokens, allowWhitespaceTokens);
+            ITokensLinesIterator copyIterator = new CopyTokensLinesIterator(textSourceInfo.Name, lines, Token.CHANNEL_SourceTokens, tokenFilterCallback);
             ITokensLinesIterator replaceIterator = new ReplaceTokensLinesIterator(copyIterator, compilerOptions);
             return replaceIterator;
         }

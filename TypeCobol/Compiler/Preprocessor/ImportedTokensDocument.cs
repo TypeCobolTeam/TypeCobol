@@ -44,13 +44,34 @@ namespace TypeCobol.Compiler.Preprocessor
         private TypeCobolOptions CompilerOptions;
 
         /// <summary>
+        /// Whitespace Accumulator list.
+        /// </summary>
+        private List<Token> Whitespaces = new List<Token>();
+        /// <summary>
+        /// Whitespace accumulator method
+        /// </summary>
+        /// <param name="token">The token to be tested as a whitespace</param>
+        /// <returns>false if the token is a whitespace, true otherwise.</returns>
+        private bool WhitespaceAccumulator(Token token)
+        {
+            if (token.Channel == Token.CHANNEL_WhitespaceAndComments)
+            {
+                Whitespaces.Add(token);
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
         /// Iterator over the tokens contained in this imported document after
         /// - REPLACING directive processing if necessary
         /// </summary>
-        public ITokensLinesIterator GetProcessedTokensIterator(bool forceAllowWhitespaceTokens)
+        public ITokensLinesIterator GetProcessedTokensIterator(Func<Token, bool> tokenFilterCallback)
         {
-            bool allowWhitespaceTokens = (forceAllowWhitespaceTokens || HasReplacingDirective && CopyDirective.HasGroupToken);
-            ITokensLinesIterator sourceIterator = ProcessedTokensDocument.GetProcessedTokensIterator(SourceDocument.TextSourceInfo, SourceDocument.Lines, this.CompilerOptions, allowWhitespaceTokens);
+            Func<Token, bool> tokFilterCallBack = tokenFilterCallback != null 
+                ? tokenFilterCallback 
+                : (HasReplacingDirective && CopyDirective.HasGroupToken ? (t => WhitespaceAccumulator(t)) : (Func<Token, bool>)null);
+            ITokensLinesIterator sourceIterator = ProcessedTokensDocument.GetProcessedTokensIterator(SourceDocument.TextSourceInfo, SourceDocument.Lines, this.CompilerOptions, tokFilterCallBack);
             if (HasReplacingDirective
 #if EUROINFO_RULES
                 || (this.CompilerOptions.UseEuroInformationLegacyReplacingSyntax && (this. CopyDirective.RemoveFirst01Level || CopyDirective.InsertSuffixChar))
@@ -67,27 +88,30 @@ namespace TypeCobol.Compiler.Preprocessor
 
                     //Create a Preprocessed text fragment
                     StringBuilder sb = new StringBuilder();
-                    Token t;
+                    Token tok;
                     bool bFirst = true;
-                    int line = -1;
                     ITokensLine tokenLine = null;
-                    while ((t = replaceIterator.NextToken()) != Token.END_OF_FILE)
+                    Whitespaces.Clear();
+                    while ((tok = replaceIterator.NextToken()) != Token.END_OF_FILE)
                     {
-                        if (bFirst)
+                        Whitespaces.Add(tok);
+                        foreach (var t in Whitespaces)
                         {
+                            if (bFirst)
+                            {
+                                tokenLine = t.TokensLine;
+                            }
+                            if ((tokenLine != t.TokensLine) || bFirst)
+                            {
+                                if (!bFirst)
+                                    sb.Append(Environment.NewLine);
+                                sb.Append(new string(' ', Math.Max(0, t.Column - 1)));
+                            }
+                            bFirst = false;
                             tokenLine = t.TokensLine;
-                            line = t.Line;
+                            sb.Append(t.Text);
                         }
-                        if ((tokenLine != t.TokensLine /*|| line != t.Line*/) || bFirst)
-                        {
-                            if (!bFirst)
-                                sb.Append(Environment.NewLine);
-                            sb.Append(new string(' ', Math.Max(0, t.Column - 1)));
-                        }
-                        bFirst = false;
-                        line = t.Line;
-                        tokenLine = t.TokensLine;
-                        sb.Append(t.Text);
+                        Whitespaces.Clear();
                     }
                     string preprocessedFRagment = sb.ToString();
 
