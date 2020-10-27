@@ -456,14 +456,6 @@ namespace TypeCobol.Compiler.Scanner
                 concatenatedLine += line.Substring(startIndexOfContinuationStringInContinuationLine, lengthOfContinuationStringInContinuationLine);
             }
 
-            // Scan remaining lines of the group
-            for (; i < continuationLinesGroup.Count; i++)
-            {
-                var continuationLine = continuationLinesGroup[i];
-                Scanner.ScanTokensLine(continuationLine, scanState, compilerOptions, copyTextNameVariations);
-                scanState = continuationLine.ScanState;
-            }
-
             // Scan the complete continuation text as a whole
             TokensLine virtualContinuationTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstLine.LineIndex, concatenatedLine);
             Scanner.ScanTokensLine(virtualContinuationTokensLine, initialScanState, compilerOptions, copyTextNameVariations);
@@ -551,6 +543,14 @@ namespace TypeCobol.Compiler.Scanner
                 }
 
                 scanState = originalLine.ScanState;
+            }
+
+            // Scan remaining lines of the group
+            for (i = lastContinuationLineIndex + 1; i < continuationLinesGroup.Count; i++)
+            {
+                var continuationLine = continuationLinesGroup[i];
+                Scanner.ScanTokensLine(continuationLine, scanState, compilerOptions, copyTextNameVariations);
+                scanState = continuationLine.ScanState;
             }
         }
 
