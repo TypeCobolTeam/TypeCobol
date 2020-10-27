@@ -786,6 +786,17 @@ namespace TypeCobol.Codegen {
                 null, new List<string>() { copies });
         }
 
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void CopyReplace4Colon6()
+        {
+            string dir = System.IO.Directory.GetCurrentDirectory();
+            string copies = Path.Combine(dir, "resources", "input", "TypeCobol", "CopyReplace4Colon");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CopyReplace4Colon", "CopyReplace4Colon6") + ".rdz.cbl", false,
+                null, new List<string>() { copies });
+        }
+
         /// <summary>
         /// This test is for the issue https://github.com/TypeCobolTeam/TypeCobol/issues/1490
         /// </summary>
