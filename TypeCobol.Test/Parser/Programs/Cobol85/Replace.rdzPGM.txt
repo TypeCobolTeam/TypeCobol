@@ -1,0 +1,27 @@
+--- Program ---
+PROGRAM: TCOMFL02 common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  var-name1:Alphanumeric
+  name2-var:Alphanumeric
+  var-name3:Alphanumeric
+  name4varname4:Alphanumeric
+  var-name5:Alphanumeric
+  name6-var:Alphanumeric
+  var-name7:Alphanumeric
+  name8varname8:Alphanumeric
+  var-name9:Alphanumeric
+  name10-var:Alphanumeric
+  var-name11:Alphanumeric
+  name12varname12:Alphanumeric
+  var-name13:Alphanumeric
+  name14-var:Alphanumeric
+  var-name15:Alphanumeric
+  name16varname16:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

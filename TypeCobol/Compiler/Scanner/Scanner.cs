@@ -2298,16 +2298,24 @@ namespace TypeCobol.Compiler.Scanner
             // minimum length
             if(startIndex + 2 > lastIndex) return false;
 
-            // match all legal cobol word chars
+            // match leading spaces if any
             int index = startIndex + 1;
+            for (; index <= lastIndex && line[index] == ' '; index++)
+            { }
+
+            // match all legal cobol word chars
             for (; index <= lastIndex && CobolChar.IsCobolWordChar(line[index]); index++) 
             { }
 
             // no legal cobol word chars found 
             if (index == startIndex + 1 && !CobolChar.IsCobolWordChar(line[index])) return false;
 
+            //match trailing spaces if any
+            for (; index <= lastIndex && line[index] == ' '; index++)
+            { }
+
             // next character must be ':'
-            if(line.Length > index && line[index] == ':')
+            if (line.Length > index && line[index] == ':')
             {
                 patternEndIndex = index;
                 return true;
