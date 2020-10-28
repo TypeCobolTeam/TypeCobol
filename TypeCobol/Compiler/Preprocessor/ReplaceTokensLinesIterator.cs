@@ -264,10 +264,13 @@ namespace TypeCobol.Compiler.Preprocessor
                     {
                         if (currentPosition.ReplaceOperations != null)
                         {
-                            foreach (ReplaceOperation replaceOperation in currentPosition.ReplaceOperations)
+                            for(int i = 0; i < currentPosition.ReplaceOperations.Count; i++)
                             {
+                                ReplaceOperation replaceOperation = currentPosition.ReplaceOperations[i];
                                 status = TryAndReplace(nextToken, replaceOperation);
-                                if (status.replacedToken != null) return status.replacedToken;
+                                if (status.replacedToken != null)
+                                    return ApplyRemainingReplaces(i + 1, status, currentPosition.ReplaceOperations);
+                                    //return status.replacedToken;
                                 if (status.tryAgain)
                                 {
                                     nextToken = sourceIterator.NextToken();
@@ -282,6 +285,31 @@ namespace TypeCobol.Compiler.Preprocessor
                 currentPosition.CurrentToken = nextToken;
                 return nextToken;
             }
+        }
+
+        /// <summary>
+        /// Try to apply all remaining replacements on a token.
+        /// </summary>
+        /// <param name="start">The start position in the replacement</param>
+        /// <param name="prevStatus">The previous replacement status</param>
+        /// <param name="replaceOperations">The replacements</param>
+        /// <returns>The last Token that matches replacement.</returns>
+        private Token ApplyRemainingReplaces(int start, ReplaceStatus prevStatus, IList<ReplaceOperation> replaceOperations)
+        {
+            Token lastReplacedToken = prevStatus.replacedToken;
+            for(int i = start; i < replaceOperations.Count; i++)
+            {
+                ReplaceStatus status;
+                ReplaceOperation replaceOperation = replaceOperations[i];
+                status = TryAndReplace(lastReplacedToken, replaceOperation);
+                if (status.replacedToken != null)
+                {
+                    lastReplacedToken = status.replacedToken;
+                }
+                if (status.tryAgain)
+                    sourceIterator.ReturnToLastPositionSnapshot();
+            }
+            return lastReplacedToken;
         }
 
         private class ReplaceStatus

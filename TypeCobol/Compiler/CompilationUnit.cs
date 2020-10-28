@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.CupParser;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Preprocessor;
+using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler
@@ -223,6 +225,21 @@ namespace TypeCobol.Compiler
 
                     List<DataDefinition> typedVariablesOutsideTypedef = new List<DataDefinition>();
                     List<TypeDefinition> typeThatNeedTypeLinking = new List<TypeDefinition>();
+
+
+                    CodeElementTokenizer scanner = new CodeElementTokenizer((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines);
+                    while(scanner.MoveNext())
+                    {
+                        var s = scanner.Current;
+                        TypeCobol.Compiler.CodeElements.CodeElement ce = (TypeCobol.Compiler.CodeElements.CodeElement)s.value;
+                        if (ce != null)
+                        {
+                            foreach (var t in ce.ConsumedTokens)
+                            {
+                                System.Diagnostics.Trace.WriteLine("[" + t.Text + "][" + t.TokenType.ToString() + "]");
+                            }
+                        }
+                    }
 
                     //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
                     ProgramClassParserStep.CupParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, perfStatsForParserInvocation, out root, out newDiagnostics, out nodeCodeElementLinkers,

@@ -959,7 +959,10 @@ namespace TypeCobol.Compiler.Scanner
                 case ':':
                     // -- TypeCobol specific syntax --
                     // QualifiedNameSeparator => qualifierName::qualifiedName
-                    if (currentIndex < lastIndex && line[currentIndex + 1] == ':')
+                    //if (currentIndex < lastIndex && line[currentIndex + 1] == ':')
+                    if (!currentState.InsidePseudoText //No QualifiedNameSeparator allowed in pseudoText
+                        && (this.compilerOptions != null && !this.compilerOptions.AreForCopyParsing) //No QualifiedNameSeparator allowed in COPY 
+                        && currentIndex < lastIndex && line[currentIndex + 1] == ':')
                     {
                         // consume two :: chars
                         currentIndex += 2;
@@ -969,7 +972,7 @@ namespace TypeCobol.Compiler.Scanner
                     // The COPY statement with REPLACING phrase can be used to replace parts of words. 
                     // By inserting a dummy operand delimited by colons into the program text, the compiler will replace the dummy operand with the desired text. 
                     int patternEndIndex;
-                    if (CheckForPartialCobolWordPattern(startIndex, out patternEndIndex))
+                    if (CheckForPartialCobolWordPattern(currentState, startIndex, out patternEndIndex))
                     {
                         return ScanPartialCobolWord(startIndex, patternEndIndex);
                     }
@@ -1144,10 +1147,6 @@ namespace TypeCobol.Compiler.Scanner
                             }
 
                             delimiterToken = new Token(TokenType.PseudoTextDelimiter, startIndex, startIndex + 1, usesVirtualSpaceAtEndOfLine, tokensLine);
-                            if (!(followingChar == ' ' || followingChar == ',' || followingChar == ';' || followingChar == '.'))
-                            {
-                                tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterPseudoTextDelimiter, delimiterToken);
-                            }
                         }
                         return delimiterToken;
                     }
@@ -1890,7 +1889,8 @@ namespace TypeCobol.Compiler.Scanner
             // representations.
             // ... p202 -> p204 : more rules to check that a picture string is valid ...
 
-            
+
+            MultilineScanState currentState = tokensLine.ScanState;
             // consume any char until a separator space, separator comma (+space), separator semicolon (+space), or separator period (+space) is encountered
             for (; currentIndex < lastIndex && line[currentIndex] != ' ' ; currentIndex++) { }
             int endIndex = currentIndex;
@@ -1926,7 +1926,7 @@ namespace TypeCobol.Compiler.Scanner
                 var picToken = new Token(TokenType.PictureCharacterString, startIndex, endIndex, tokensLine);
                 var patternEndIndex = endIndex;
                 var replaceStartIndex = line.Substring(startIndex).IndexOf(":", StringComparison.Ordinal) + startIndex;
-                if (replaceStartIndex > picToken.StartIndex && picToken.EndColumn > replaceStartIndex && CheckForPartialCobolWordPattern(replaceStartIndex, out patternEndIndex)) 
+                if (replaceStartIndex > picToken.StartIndex && picToken.EndColumn > replaceStartIndex && CheckForPartialCobolWordPattern(currentState, replaceStartIndex, out patternEndIndex)) 
                 { //Check if there is cobol partial word inside the picture declaration. 
                     picToken.TokenType = TokenType.PartialCobolWord; //Match the whole PictureCharecterString token as a partial cobol word. 
                     picToken.PreviousTokenType = TokenType.PictureCharacterString; //Save that the token was previously a picture character string token
@@ -2040,6 +2040,7 @@ namespace TypeCobol.Compiler.Scanner
 
             // p45: Table 4. Separators
 
+            MultilineScanState currentState = tokensLine.ScanState;
             // consume any char until a separator char is encountered
             for (; currentIndex <= lastIndex && !CobolChar.IsCobolWordSeparator(line[currentIndex]); currentIndex++) { }
             int endIndex = (currentIndex == lastIndex && !CobolChar.IsCobolWordSeparator(line[currentIndex])) ? lastIndex : currentIndex - 1;
@@ -2049,7 +2050,7 @@ namespace TypeCobol.Compiler.Scanner
             if(endIndex + 3 <= lastIndex && line[endIndex + 1] == ':')
             {
                 int patternEndIndex;
-                if(CheckForPartialCobolWordPattern(endIndex + 1, out patternEndIndex))
+                if(CheckForPartialCobolWordPattern(currentState, endIndex + 1, out patternEndIndex))
                 {
                     return ScanPartialCobolWord(startIndex, patternEndIndex);
                 }
@@ -2291,7 +2292,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Look for pattern ':' (cobol word chars)+ ':'
         /// </summary>
-        private bool CheckForPartialCobolWordPattern(int startIndex, out int patternEndIndex)
+        private bool CheckForPartialCobolWordPattern(MultilineScanState currentState, int startIndex, out int patternEndIndex)
         {
             patternEndIndex = -1;
 
@@ -2304,10 +2305,18 @@ namespace TypeCobol.Compiler.Scanner
             { }
 
             // no legal cobol word chars found 
-            if (index == startIndex + 1 && !CobolChar.IsCobolWordChar(line[index])) return false;
+            //if (index == startIndex + 1 && !CobolChar.IsCobolWordChar(line[index])) return false;
+            if (index == startIndex + 1 && !CobolChar.IsCobolWordChar(line[index]))
+            {
+                //Empty partialCobolWord are only allowed inside pseudo text and copy
+                if (!(currentState.InsidePseudoText || (this.compilerOptions != null && this.compilerOptions.AreForCopyParsing)))
+                {
+                    return false;
+                }
+            }
 
             // next character must be ':'
-            if(line.Length > index && line[index] == ':')
+            if (line.Length > index && line[index] == ':')
             {
                 patternEndIndex = index;
                 return true;
@@ -2321,6 +2330,7 @@ namespace TypeCobol.Compiler.Scanner
         // :PREFIX:-NAME or NAME-:SUFFIX: or :TAG:
         private Token ScanPartialCobolWord(int startIndex, int patternEndIndex)
         {
+            MultilineScanState currentState = tokensLine.ScanState;
             int endIndex = patternEndIndex;
             while (endIndex < lastIndex)
             {
@@ -2338,7 +2348,7 @@ namespace TypeCobol.Compiler.Scanner
                 if (searchIndex + 3 <= lastIndex && line[searchIndex + 1] == ':')
                 {
                     int otherPatternEndIndex;
-                    if (CheckForPartialCobolWordPattern(searchIndex + 1, out otherPatternEndIndex))
+                    if (CheckForPartialCobolWordPattern(currentState, searchIndex + 1, out otherPatternEndIndex))
                     {
                         endIndex = otherPatternEndIndex;
                     }

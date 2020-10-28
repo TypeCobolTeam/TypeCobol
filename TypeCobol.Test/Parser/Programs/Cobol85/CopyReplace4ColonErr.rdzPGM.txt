@@ -1,0 +1,18 @@
+﻿--- Diagnostics ---
+Line 7[25,31] <27, Error, Syntax> - Syntax error : "REPLACE" Empty Comparison Pseudo Text.
+Line 7[20,55] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: YxxxENT
+Line 7[12,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[12,17:xxxENT]<UserDefinedWord>
+Line 9[24,40] <30, Error, Semantics> - Semantic error: Symbol xxxENT-FCT01-Var1 is not referenced OffendingSymbol=[24,40:xxxENT-FCT01-Var1]<UserDefinedWord>
+
+--- Program ---
+PROGRAM: CPYRPL4C common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  xxxENT:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
