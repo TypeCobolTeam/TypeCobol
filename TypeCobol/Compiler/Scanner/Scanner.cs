@@ -1135,6 +1135,7 @@ namespace TypeCobol.Compiler.Scanner
                         {
                             // get the immediately following char
                             char followingChar;
+                            char followingChar2 = '\0';
                             bool usesVirtualSpaceAtEndOfLine = false;
                             if(currentIndex > lastIndex)
                             {
@@ -1144,9 +1145,17 @@ namespace TypeCobol.Compiler.Scanner
                             else
                             {
                                 followingChar = line[currentIndex];
+                                followingChar2 = (currentIndex + 1) < line.Length ? line[currentIndex + 1]: '\0';
                             }
 
                             delimiterToken = new Token(TokenType.PseudoTextDelimiter, startIndex, startIndex + 1, usesVirtualSpaceAtEndOfLine, tokensLine);
+                            if (!(followingChar == ' ' || followingChar == ',' || followingChar == ';' || followingChar == '.'))
+                            {
+                                if (followingChar != '=' || followingChar2 != '=')
+                                {//If not an empty placeholder this is an error.
+                                    tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterPseudoTextDelimiter, delimiterToken);
+                                }
+                            }
                         }
                         return delimiterToken;
                     }
