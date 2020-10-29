@@ -226,21 +226,6 @@ namespace TypeCobol.Compiler
                     List<DataDefinition> typedVariablesOutsideTypedef = new List<DataDefinition>();
                     List<TypeDefinition> typeThatNeedTypeLinking = new List<TypeDefinition>();
 
-
-                    CodeElementTokenizer scanner = new CodeElementTokenizer((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines);
-                    while(scanner.MoveNext())
-                    {
-                        var s = scanner.Current;
-                        TypeCobol.Compiler.CodeElements.CodeElement ce = (TypeCobol.Compiler.CodeElements.CodeElement)s.value;
-                        if (ce != null)
-                        {
-                            foreach (var t in ce.ConsumedTokens)
-                            {
-                                System.Diagnostics.Trace.WriteLine("[" + t.Text + "][" + t.TokenType.ToString() + "]");
-                            }
-                        }
-                    }
-
                     //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
                     ProgramClassParserStep.CupParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, perfStatsForParserInvocation, out root, out newDiagnostics, out nodeCodeElementLinkers,
                         out typedVariablesOutsideTypedef,
