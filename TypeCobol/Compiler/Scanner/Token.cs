@@ -392,6 +392,16 @@ namespace TypeCobol.Compiler.Scanner
             get { return -1; }
         }
 
+        /// <summary>
+        /// Determine if this token belong to a family that is textually comparable.
+        /// </summary>
+        /// <returns>true if yes, false otherwise</returns>
+        private bool IsFamilyComparable()
+        {
+            return TokenFamily == TokenFamily.AlphanumericLiteral || TokenFamily == TokenFamily.NumericLiteral ||
+                                 TokenFamily == TokenFamily.Symbol || TokenFamily == TokenFamily.SyntaxLiteral;
+        }
+
         // Common token for End of file
         public static Token END_OF_FILE = new Token(TokenType.EndOfFile, 0, -1, TypeCobol.Compiler.Scanner.TokensLine.CreateVirtualLineForInsertedToken(-1, String.Empty));
 
@@ -403,7 +413,8 @@ namespace TypeCobol.Compiler.Scanner
         public bool CompareForReplace(Token comparisonToken)
         {
              // 1. First compare the token type                 
-            if(this.TokenType != comparisonToken.TokenType)
+            if(this.TokenType != comparisonToken.TokenType && 
+                !(this.TokenFamily == comparisonToken.TokenFamily && IsFamilyComparable()))
             {
                 return false;
             }
@@ -425,8 +436,7 @@ namespace TypeCobol.Compiler.Scanner
             //    - SyntaxLiteral
             //    - Symbol
             //    => compare Token text
-            else if (TokenFamily == TokenFamily.AlphanumericLiteral || TokenFamily == TokenFamily.NumericLiteral ||
-                     TokenFamily == TokenFamily.Symbol || TokenFamily == TokenFamily.SyntaxLiteral)
+            else if (IsFamilyComparable())
             {
                 return Text.Equals(comparisonToken.Text, StringComparison.OrdinalIgnoreCase);
             }

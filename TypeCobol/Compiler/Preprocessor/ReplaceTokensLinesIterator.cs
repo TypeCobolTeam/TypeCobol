@@ -321,9 +321,10 @@ namespace TypeCobol.Compiler.Preprocessor
 
             if (replaceOperation != null && TryMatchReplaceOperation(nextToken, replaceOperation, out originalMatchingTokens))
             {
-                status.replacedToken = CreateReplacedTokens(nextToken, replaceOperation, originalMatchingTokens);
+                status.replacedToken = CreateReplacedTokens(nextToken, replaceOperation, originalMatchingTokens);                
                 if (status.replacedToken != null)
                 {
+                    UnifyTokenType(nextToken, status.replacedToken);
                     // REPLACE pattern matched => return the first replaced token
                     currentPosition.CurrentToken = status.replacedToken;
                 }
@@ -501,6 +502,19 @@ namespace TypeCobol.Compiler.Preprocessor
                     {
                         return null;
                     }
+            }
+        }
+
+        /// <summary>
+        /// Unify the Token type of both tokens
+        /// </summary>
+        /// <param name="from">The original Token</param>
+        /// <param name="to">The target Token</param>
+        private static void UnifyTokenType(Token from, Token to)
+        {
+            if (from.TokenType == TokenType.LevelNumber && to.TokenType == TokenType.IntegerLiteral)
+            { //Choose Prefer LevelNumber to IntegerLiteral
+                to.TokenType = from.TokenType;
             }
         }
 
