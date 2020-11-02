@@ -66,7 +66,7 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Issue #315
         /// </summary>
-        public MultilineScanState InitialScanStateForCopy
+        private MultilineScanState InitialScanStateForCopy
         {
             get;
             set;

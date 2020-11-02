@@ -1,12 +1,12 @@
-﻿--- Diagnostics ---
-Line 5[8,44] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: YDVZOSM
-Line 7[8,45] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: YDVZOSM
-Line 10[24,32] <30, Error, Semantics> - Semantic error: Symbol MDVZOSM-A is not referenced OffendingSymbol=[24,32:MDVZOSM-A]<UserDefinedWord>
-Line 11[24,29] <30, Error, Semantics> - Semantic error: Symbol Foo-A2 is not referenced OffendingSymbol=[24,29:Foo-A2]<UserDefinedWord>
-
---- Program ---
+﻿--- Program ---
 PROGRAM: DVZS0OSM common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  MDVZOSM-A:Alphanumeric
+  MDVZOSM-A-Var0:Alphanumeric
+  Foo-A2:Alphanumeric
+  Foo-A2-Var0:Alphanumeric
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL
