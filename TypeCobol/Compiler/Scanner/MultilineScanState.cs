@@ -117,7 +117,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Initialize scanner state
         /// </summary>
-        public MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions, 
+        public MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions,
                 bool insideFormalizedComment, bool insideMultilineComments, bool insideParamsField,
                 bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals)
         {
@@ -138,21 +138,29 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public MultilineScanState Clone()
         {
-            MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, InsideSymbolicCharacterDefinitions,
-                InsideFormalizedComment, InsideMultilineComments, InsideParamsField, 
-                DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
-            if (LastSignificantToken != null) clone.LastSignificantToken = LastSignificantToken;
-            if (BeforeLastSignificantToken != null) clone.BeforeLastSignificantToken = BeforeLastSignificantToken;
-            if (SymbolicCharacters != null)
+            return new MultilineScanState(this);
+        }
+
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="from">Copy from this state</param>
+        public MultilineScanState(MultilineScanState from) :
+            this(from.InsideDataDivision, from.InsideProcedureDivision, from.InsidePseudoText, from.InsideSymbolicCharacterDefinitions,
+                from.InsideFormalizedComment, from.InsideMultilineComments, from.InsideParamsField,
+                from.DecimalPointIsComma, from.WithDebuggingMode, from.EncodingForAlphanumericLiterals)
+        {
+            if (from.LastSignificantToken != null) LastSignificantToken = from.LastSignificantToken;
+            if (from.BeforeLastSignificantToken != null) BeforeLastSignificantToken = from.BeforeLastSignificantToken;
+            if (from.SymbolicCharacters != null)
             {
-                clone.SymbolicCharacters = new List<string>(SymbolicCharacters);
+                SymbolicCharacters = new List<string>(from.SymbolicCharacters);
             }
 #if EUROINFO_RULES
-            clone.InsideRemarksDirective = InsideRemarksDirective;
-            clone.InsideRemarksParentheses = InsideRemarksParentheses;
-            clone.LeavingRemarksDirective = LeavingRemarksDirective;
+            InsideRemarksDirective = from.InsideRemarksDirective;
+            InsideRemarksParentheses = from.InsideRemarksParentheses;
+            LeavingRemarksDirective = from.LeavingRemarksDirective;
 #endif
-            return clone;
         }
 
         /// <summary>
@@ -371,7 +379,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// True after (EXEC | EXECUTE) (SQL | SQLIMS)
         /// </summary>
-        public bool AfterExecSql
+        public virtual bool AfterExecSql
         {
             get
             {
@@ -385,17 +393,17 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// True after (EXEC | EXECUTE)
         /// </summary>
-        public bool AfterExec
+        public virtual bool AfterExec
         {
             get { return LastSignificantToken != null && (LastSignificantToken.TokenType == TokenType.EXEC || LastSignificantToken.TokenType == TokenType.EXECUTE); }
         }
 
-        public bool AfterExecTranslatorName
+        public virtual bool AfterExecTranslatorName
         {
             get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.ExecTranslatorName; }
         }
 
-        public bool AfterExecStatementText
+        public virtual bool AfterExecStatementText
         {
             get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.ExecStatementText; }
         }
@@ -403,7 +411,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// True after (PIC | PICTURE) IS?
         /// </summary>
-        public bool AfterPicture
+        public virtual bool AfterPicture
         {
             get
             {
@@ -418,7 +426,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// True after (AUTHOR | INSTALLATION | DATE_WRITTEN | DATE_COMPILED | SECURITY)
         /// </summary>
-        public bool AfterCommentEntryKeyword
+        public virtual bool AfterCommentEntryKeyword
         {
             get
             {
@@ -434,7 +442,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// True after (AUTHOR | INSTALLATION | DATE_WRITTEN | DATE_COMPILED | SECURITY) PeriodSeparator
         /// </summary>
-        public bool AfterCommentEntryKeywordPeriod
+        public virtual bool AfterCommentEntryKeywordPeriod
         {
             get
             {
@@ -448,12 +456,12 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
-        public bool AfterCommentEntry
+        public virtual bool AfterCommentEntry
         {
             get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.CommentEntry; }
         }
 
-        public bool AfterFUNCTION
+        public virtual bool AfterFUNCTION
         {
             get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.FUNCTION; }
         }
@@ -461,7 +469,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// True at the beggining of a parse section, or after PeriodSeparator, or after END-EXEC
         /// </summary>
-        public bool AtBeginningOfSentence
+        public virtual bool AtBeginningOfSentence
         {
             get
             {

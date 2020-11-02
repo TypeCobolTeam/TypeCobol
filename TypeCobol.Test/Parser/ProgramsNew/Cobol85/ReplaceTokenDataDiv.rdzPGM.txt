@@ -1,0 +1,14 @@
+﻿--- Program ---
+PROGRAM: TCOZCHKP common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  var1:Alphanumeric:(.NET Type=PictureType, Tag=Picture)
+Picture: X(900)
+
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

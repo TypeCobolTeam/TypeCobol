@@ -100,7 +100,7 @@ namespace TypeCobol.Test
             report.AppendLine("- " + (compiler?.CobolTextLines.Count ?? stats.Line) + " lines");
             report.AppendLine("- " + (compiler?.CodeElementsDocumentSnapshot.CodeElements.Count() ?? stats.TotalCodeElements) + " code elements");
 
-            report.AppendLine(" Iteration : " + stats.IterationNumber); 
+            report.AppendLine(" Iteration : " + stats.IterationNumber);
 
             if (compiler != null)
             {
@@ -150,7 +150,7 @@ namespace TypeCobol.Test
             }
         }
 
-        
+
 
         private static string FormatPercentage(float averageTime, float totalTime)
         {

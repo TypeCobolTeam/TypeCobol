@@ -11,12 +11,14 @@ using TypeCobol.Test.Parser.Scanner;
 using TypeCobol.Test.Parser.Text;
 using TypeCobol.Test.Utils;
 
-namespace TypeCobol.Test {
+namespace TypeCobol.Test
+{
 
     [TestClass]
     public class TestCollection
     {
         static readonly string root = PlatformUtils.GetPathForProjectFile("Parser" + Path.DirectorySeparatorChar + "Programs");
+        static readonly string rootNew = PlatformUtils.GetPathForProjectFile("Parser" + Path.DirectorySeparatorChar + "ProgramsNew");
 
         [TestMethod]
         [TestProperty("Time", "fast")]
@@ -126,7 +128,8 @@ namespace TypeCobol.Test {
         [TestMethod]
         [TestCategory("Parsing")]
         [TestProperty("Time", "fast")]
-        public void CheckCodeElements() {
+        public void CheckCodeElements()
+        {
             // Test the recognition of potentially ambiguous CodeElements which begin with the same first Token
             TestCodeElements.Check_DISPLAYCodeElements();
 
@@ -137,10 +140,52 @@ namespace TypeCobol.Test {
         [TestMethod]
         [TestCategory("Parsing")]
         [TestProperty("Time", "fast")]
-        public void CheckToken() {
+        public void CheckToken()
+        {
             TestTokenSource.Check_CobolCharStream();
             TestTokenSource.Check_CobolTokenSource();
             TestTokenSource.Check_CobolTokenSource_WithStartToken();
+        }
+
+        /// <summary>
+        /// Common Parser Cobol 85
+        /// </summary>
+        /// <param name="root">Root directory of tests files</param>
+        /// <param name="dumpSymTypes">true if full symbol type must be dumped, false otherwise</param>
+        private void CommonCheckParserCobol85(string root, bool dumpSymTypes)
+        {
+            var errors = new System.Collections.Generic.List<Exception>();
+            int nbOfTests = 0;
+            string[] extensions = { ".cbl", ".pgm" };
+            string[] compilerExtensions = extensions.Concat(new[] { ".cpy" }).ToArray();
+
+            foreach (string directory in Directory.GetDirectories(root))
+            {
+                var dirname = Path.GetFileName(directory);
+
+                Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
+                var folderTester = new FolderTester(root, root, directory, extensions, compilerExtensions);
+                try
+                {
+                    folderTester.Test(dumpSymTypes);
+                }
+                catch (Exception ex)
+                {
+                    errors.Add(ex);
+                }
+                nbOfTests += folderTester.GetTestCount();
+                Console.WriteLine();
+            }
+
+            Console.Write("Number of tests: " + nbOfTests + "\n");
+            Assert.IsTrue(nbOfTests > 0, "No tests found");
+
+            if (errors.Count > 0)
+            {
+                var str = new System.Text.StringBuilder();
+                foreach (var ex in errors) str.Append(ex.Message);
+                throw new Exception(str.ToString());
+            }
         }
 
         [TestMethod]
@@ -148,36 +193,15 @@ namespace TypeCobol.Test {
         [TestProperty("Time", "fast")]
         public void CheckParserCobol85()
         {
-			var errors = new System.Collections.Generic.List<Exception>();
-			int nbOfTests = 0;
-            string[] extensions = { ".cbl", ".pgm" };
-            string[] compilerExtensions = extensions.Concat(new[] { ".cpy" }).ToArray();
+            CommonCheckParserCobol85(root, false);
+        }
 
-            foreach (string directory in Directory.GetDirectories(root)) {
-                var dirname = Path.GetFileName(directory);
-
-			    Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-				var folderTester = new FolderTester(root, root, directory, extensions, compilerExtensions);
-                try
-                {
-                    folderTester.Test();
-                }
-                catch (Exception ex)
-                {
-                    errors.Add(ex);
-                }
-				nbOfTests += folderTester.GetTestCount();
-				Console.WriteLine();
-			}
-
-            Console.Write("Number of tests: " + nbOfTests + "\n");
-            Assert.IsTrue(nbOfTests > 0, "No tests found");
-
-			if (errors.Count > 0) {
-				var str = new System.Text.StringBuilder();
-				foreach(var ex in errors) str.Append(ex.Message);
-				throw new Exception(str.ToString());
-			}
+        [TestMethod]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "fast")]
+        public void CheckParserCobol85Ex()
+        {
+            CommonCheckParserCobol85(rootNew, true);
         }
 
         /// <summary>
@@ -261,28 +285,28 @@ namespace TypeCobol.Test {
 
             var compileResult = ParserUtils.ParseCobolFile(fileName, null, folder, ExecutionStep.Scanner);
             //Verify that the option hasn't change during processing and that compilation process didn't go further than defined step
-            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.Scanner 
-                && compileResult.TokensLines.Count == 0 
-                && compileResult.ProcessedTokensDocumentSnapshot != null 
-                && compileResult.CodeElementsDocumentSnapshot != null 
+            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.Scanner
+                && compileResult.TokensLines.Count == 0
+                && compileResult.ProcessedTokensDocumentSnapshot != null
+                && compileResult.CodeElementsDocumentSnapshot != null
                 && compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("Scanner Step failed");
 
             compileResult = ParserUtils.ParseCobolFile(fileName, null, folder, ExecutionStep.Preprocessor);
-            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.Preprocessor 
-                && compileResult.ProcessedTokensDocumentSnapshot == null 
-                && compileResult.CodeElementsDocumentSnapshot != null 
+            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.Preprocessor
+                && compileResult.ProcessedTokensDocumentSnapshot == null
+                && compileResult.CodeElementsDocumentSnapshot != null
                 && compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("Preprocessor Step failed");
 
             compileResult = ParserUtils.ParseCobolFile(fileName, null, folder, ExecutionStep.SyntaxCheck);
-            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.SyntaxCheck 
-                && compileResult.CodeElementsDocumentSnapshot == null 
+            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.SyntaxCheck
+                && compileResult.CodeElementsDocumentSnapshot == null
                 && compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("SyntaxCheck Step failed");
 
             compileResult = ParserUtils.ParseCobolFile(fileName, null, folder, ExecutionStep.SemanticCheck);
-            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.SemanticCheck 
+            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.SemanticCheck
                 && !compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("SemanticCheck Step failed");
         }

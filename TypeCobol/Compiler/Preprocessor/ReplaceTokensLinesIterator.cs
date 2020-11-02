@@ -451,7 +451,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     // TO DO use Replace(String, String, StringComparison) overload, available in .NET 5
                     // TO DO : find a way to transfer the scanner context the of original token to the call below
                     Diagnostic error = null;
-                    Token generatedToken = Scanner.Scanner.ScanIsolatedTokenInDefaultContext(tokenText, out error);
+                    Token generatedToken = Scanner.Scanner.ScanIsolatedTokenInDefaultContext(originalToken.ScanStateSnapshot, tokenText, out error);
                     // TO DO : find a way to report the error above ...
 
                     if (originalToken.PreviousTokenType != null) //In case orignal token was previously an other type of token reset it back to it's orignal type. 

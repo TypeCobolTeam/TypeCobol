@@ -10,6 +10,7 @@ using TypeCobol.Compiler.Nodes;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.CodeModel
 {
@@ -172,7 +173,7 @@ namespace TypeCobol.Compiler.CodeModel
         private void AddVariableUnderTypeDefinition([NotNull] DataDefinition data)
         {
             //TypeDefinition must NOT be added to DataTypeEntries, only its children
-            Debug.Assert(!(data is TypeDefinition)); 
+            Debug.Assert(!(data is TypeDefinition));
 
             //Add symbol to the dictionary
             Add(this.DataTypeEntries, data);
@@ -198,7 +199,7 @@ namespace TypeCobol.Compiler.CodeModel
             {
                 if (currentTable.CurrentScope == Scope.Namespace || currentTable.CurrentScope == Scope.Intrinsic)
                     throw new NotSupportedException(); //There is no variable stored in those scopes
-             
+
                 var dataToSeek = currentTable.DataEntries.Values.SelectMany(t => t);
                 var results = dataToSeek.AsQueryable().Where(predicate);
                 foundedVariables.AddRange(results);
@@ -238,7 +239,7 @@ namespace TypeCobol.Compiler.CodeModel
                 currentTable = currentTable.EnclosingScope;
 
             }
-            
+
             return foundedVariables;
         }
 
@@ -246,7 +247,7 @@ namespace TypeCobol.Compiler.CodeModel
         {
             if (Regex.Match(variable.DataType.Name, @"\b" + dataType.Name + @"\b", RegexOptions.IgnoreCase).Success) //TODO: need to evolve this check with type comparison not just text..
             {
-                if(!foundedVariables.Any(v => v == variable))
+                if (!foundedVariables.Any(v => v == variable))
                     foundedVariables.Add(variable);
                 return;
             }
@@ -439,7 +440,7 @@ namespace TypeCobol.Compiler.CodeModel
                 nameIndex--;
                 if (nameIndex < 0)
                 { //We reached the end of the name : it's a complete match
-                    
+
                     //we are on a variable
                     found.Add(headDataDefinition);
 
@@ -454,7 +455,7 @@ namespace TypeCobol.Compiler.CodeModel
             {
                 //Go deeper to check the rest of the QualifiedName 'name'
                 MatchVariableOutsideType(found, headDataDefinition, name, nameIndex, parent);
-            }         
+            }
 
             //If we reach here, it means we are on a DataDefinition with no parent
             //==> End of treatment, there is no match
@@ -474,19 +475,22 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="dataDefinitionPath"></param>
         /// <param name="typeDefContext">TypeDefinition context to force the algorithm to only work inside the typedef scope</param>
         private static void MatchVariable(List<KeyValuePair<DataDefinitionPath, DataDefinition>> foundedVariables, in DataDefinition headDataDefinition, in QualifiedName name,
-            int nameIndex, in DataDefinition currentDataDefinition, DataDefinitionPath dataDefinitionPath, TypeDefinition typeDefContext, SymbolTable symbolTable) {
+            int nameIndex, in DataDefinition currentDataDefinition, DataDefinitionPath dataDefinitionPath, TypeDefinition typeDefContext, SymbolTable symbolTable)
+        {
 
             var currentTypeDef = currentDataDefinition as TypeDefinition;
 
             //Name match ?
             if (currentTypeDef == null && //Do not try to match a TYPEDEF name
-                name[nameIndex].Equals(currentDataDefinition.Name, StringComparison.OrdinalIgnoreCase)) {
+                name[nameIndex].Equals(currentDataDefinition.Name, StringComparison.OrdinalIgnoreCase))
+            {
 
                 nameIndex--;
-                if (nameIndex < 0) { //We reached the end of the name : it's a complete match
+                if (nameIndex < 0)
+                { //We reached the end of the name : it's a complete match
 
                     var parentTypeDef = currentDataDefinition.ParentTypeDefinition;
-                    
+
                     if ((parentTypeDef != null && parentTypeDef != typeDefContext))
                     //Ok we found out that we are in a typedef. BUT if TypeDefContext is set and different that the context, we can check deeper inside parentTypeDef. 
                     {
@@ -516,11 +520,11 @@ namespace TypeCobol.Compiler.CodeModel
             if (currentDataDefinition.Parent is DataDefinition parent)
             {
                 //Go deeper to check the rest of the QualifiedName 'name'
-                MatchVariable(foundedVariables, headDataDefinition, name, nameIndex, parent, dataDefinitionPath, typeDefContext, symbolTable); 
+                MatchVariable(foundedVariables, headDataDefinition, name, nameIndex, parent, dataDefinitionPath, typeDefContext, symbolTable);
                 return;
             }
 
-            
+
             if (currentTypeDef != null) //We've found that we are currently onto a typedef. 
             {
                 IEnumerable<DataDefinition> references = GetTypeReferences(symbolTable, currentTypeDef); //Let's get typeReferences (built by TypeCobolLinker phase)
@@ -611,7 +615,8 @@ namespace TypeCobol.Compiler.CodeModel
             //Get Custom Types from Intrinsic table 
             var intrinsicTable = this.GetTableFromScope(Scope.Intrinsic);
             var variablesUnderTypeDefinition = GetVariablesUnderTypeDefinition(name, intrinsicTable);
-            if (variablesUnderTypeDefinition != null) {
+            if (variablesUnderTypeDefinition != null)
+            {
                 foundDataDef.AddRange(variablesUnderTypeDefinition);
             }
 
@@ -741,7 +746,7 @@ namespace TypeCobol.Compiler.CodeModel
             if (symbolRef.IsQualifiedReference)
             {
                 //If paragraph is qualified we get a paragraph and a section name
-                var qualifiedSymbolReference = (QualifiedSymbolReference) symbolRef;
+                var qualifiedSymbolReference = (QualifiedSymbolReference)symbolRef;
                 paragraphName = qualifiedSymbolReference.NameLiteral.Value;
                 parentSectionName = qualifiedSymbolReference.Tail.Name;
             }
@@ -838,7 +843,7 @@ namespace TypeCobol.Compiler.CodeModel
 
             foreach (var dataChild in data.Children)
             {
-                var childDataDefinition = (DataDefinition) dataChild;
+                var childDataDefinition = (DataDefinition)dataChild;
 
                 Add(DataTypeEntries, childDataDefinition);
 
@@ -943,7 +948,7 @@ namespace TypeCobol.Compiler.CodeModel
                     var programTypes = GetPublicTypes(program.SymbolTable.GetTableFromScope(Scope.Program).Types);
 
                     //Check if there is a type that correspond to the given name (head)
-                    var typeList =  GetFromTable(name.Head, programTypes);
+                    var typeList = GetFromTable(name.Head, programTypes);
                     if (typeList.Count > 0) types.AddRange(typeList);
                 }
 
@@ -1024,7 +1029,7 @@ namespace TypeCobol.Compiler.CodeModel
         public List<FunctionDeclaration> GetFunction(QualifiedName name, IProfile profile = null, string nameSpace = null)
         {
             var found = GetFunction(name, nameSpace);
-            
+
             if (profile != null)
             {
                 var filtered = new List<FunctionDeclaration>();
@@ -1241,7 +1246,13 @@ namespace TypeCobol.Compiler.CodeModel
             return this.ToString(false);
         }
 
-        public string ToString(bool verbose)
+        /// <summary>
+        /// Get the String representation of this Symbol Table
+        /// </summary>
+        /// <param name="verbose">Verbose mode</param>
+        /// <param name="dumpSymTyps">true if any associated symbol's type must be add to the returned string, false otherwise.</param>
+        /// <returns>The String representation of this Symbol table</returns>
+        public string ToString(bool verbose, bool dumpSymTyps = false)
         {
             var str = new StringBuilder();
             if (verbose && (DataEntries.Count > 0 || Types.Count > 0))
@@ -1250,47 +1261,71 @@ namespace TypeCobol.Compiler.CodeModel
             {
                 str.AppendLine("-- DATA --------");
                 foreach (var line in DataEntries)
-                foreach (var item in line.Value)
-                    Dump(str, item, new string(' ', 2));
+                    foreach (var item in line.Value)
+                        Dump(str, item, new string(' ', 2), dumpSymTyps);
             }
             if (Sections.Count > 0)
             {
                 str.AppendLine("-- SECTIONS ----");
                 foreach (var line in Sections)
-                foreach (var item in line.Value)
-                    Dump(str, item, new string(' ', 2));
+                    foreach (var item in line.Value)
+                        Dump(str, item, new string(' ', 2), dumpSymTyps);
             }
             if (Paragraphs.Count > 0)
             {
                 str.AppendLine("-- PARAGRAPHS --");
                 foreach (var line in Paragraphs)
-                foreach (var item in line.Value)
-                    Dump(str, item, new string(' ', 2));
+                    foreach (var item in line.Value)
+                        Dump(str, item, new string(' ', 2), dumpSymTyps);
             }
             if (Types.Count > 0)
             {
                 str.AppendLine("-- TYPES -------");
                 foreach (var line in Types)
-                foreach (var item in line.Value)
-                    Dump(str, item, new string(' ', 2));
+                    foreach (var item in line.Value)
+                        Dump(str, item, new string(' ', 2), dumpSymTyps);
             }
             if (Functions.Count > 0)
             {
                 str.AppendLine("-- FUNCTIONS ---");
                 foreach (var line in Functions)
-                foreach (var item in line.Value)
-                    Dump(str, item, new string(' ', 2));
+                    foreach (var item in line.Value)
+                        Dump(str, item, new string(' ', 2), dumpSymTyps);
             }
             if (verbose && EnclosingScope != null)
                 str.Append(EnclosingScope.ToString(verbose));
             return str.ToString().TrimEnd(Environment.NewLine.ToCharArray());
         }
 
-        private static void Dump(StringBuilder str, Node symbol, string indent = null)
+        private static void Dump(StringBuilder str, Node symbol, bool dumpSymTyps = false)
+        {
+            Dump(str, symbol, null, dumpSymTyps);
+        }
+
+        /// <summary>
+        /// Dump a Node
+        /// </summary>
+        /// <param name="str">StringBuilder instance into which to dump the node</param>
+        /// <param name="symbol">The Node instance to be dumped</param>
+        /// <param name="indent">Indentation level</param>
+        /// <param name="dumpSymTyps">true if any associated symbol's type must be add to the returned string, false otherwise.</param>
+        private static void Dump(StringBuilder str, Node symbol, string indent, bool dumpSymTyps = false)
         {
             str.Append(indent);
             str.Append(symbol.Name);
-            if (symbol is DataDefinition) str.Append(':').Append(((DataDefinition) symbol).DataType);
+            if (symbol is DataDefinition)
+            {
+                DataDefinition dataDef = (DataDefinition)symbol;
+                str.Append(':').Append(dataDef.DataType);
+                if (dumpSymTyps && dataDef.SemanticData != null)
+                {
+                    var sym = dataDef.SemanticData;
+                    if (sym.Type != null)
+                    {
+                        str.Append(':').Append(sym.Type.ToString());
+                    }
+                }
+            }
             var fun = symbol as FunctionDeclaration;
             if (fun != null)
             {
@@ -1298,22 +1333,22 @@ namespace TypeCobol.Compiler.CodeModel
                 foreach (var p in fun.Profile.InputParameters)
                 {
                     str.Append("        in: ");
-                    Dump(str, p);
+                    Dump(str, p, dumpSymTyps);
                 }
                 foreach (var p in fun.Profile.OutputParameters)
                 {
                     str.Append("       out: ");
-                    Dump(str, p);
+                    Dump(str, p, dumpSymTyps);
                 }
                 foreach (var p in fun.Profile.InoutParameters)
                 {
                     str.Append("     inout: ");
-                    Dump(str, p);
+                    Dump(str, p, dumpSymTyps);
                 }
                 if (fun.Profile.ReturningParameter != null)
                 {
                     str.Append("    return: ");
-                    Dump(str, fun.Profile.ReturningParameter);
+                    Dump(str, fun.Profile.ReturningParameter, dumpSymTyps);
                 }
                 if (fun.Profile.ReturningParameter == null && fun.Profile.Parameters.Count == 0) str.AppendLine();
             }
@@ -1350,7 +1385,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="Types"></param>
         public void CopyAllTypes(IDictionary<string, List<TypeDefinition>> Types)
         {
-            foreach (var type in Types.SelectMany(elem=>elem.Value))
+            foreach (var type in Types.SelectMany(elem => elem.Value))
             {
                 this.AddType(type);
                 AddDataDefinitionsUnderType(type);
@@ -1368,7 +1403,8 @@ namespace TypeCobol.Compiler.CodeModel
                 foreach (var function in functions.Value)
                 {
                     if (accessModifier == null  //If no AccessModifier given, add all the functions
-                        || (function.CodeElement).Visibility == accessModifier) {
+                        || (function.CodeElement).Visibility == accessModifier)
+                    {
                         this.AddFunction(function); //Add function depending on the specified AccessModifier
                     }
                 }
@@ -1460,7 +1496,7 @@ namespace TypeCobol.Compiler.CodeModel
             this.CurrentDataDefinition = currentDataDefinition;
 
             //Check that our Typed CurrentDataDefinition is linked to a parent with the same type
-            System.Diagnostics.Debug.Assert(this.Parent == null 
+            System.Diagnostics.Debug.Assert(this.Parent == null
                                             || this.Parent.CurrentDataDefinition.ParentTypeDefinition == this.CurrentDataDefinition.TypeDefinition);
         }
 
@@ -1469,7 +1505,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// 
         /// </summary>
         /// <returns>Null if this the head</returns>
-        [CanBeNull] 
+        [CanBeNull]
         public DataDefinitionPath Parent { get; }
 
         [NotNull]

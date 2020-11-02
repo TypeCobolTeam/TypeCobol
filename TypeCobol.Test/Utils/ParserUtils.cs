@@ -150,7 +150,15 @@ namespace TypeCobol.Test.Utils
             }
         }
 
-        internal static string DumpResult(IEnumerable<Program> programs, IEnumerable<TypeCobol.Compiler.Nodes.Class> classes, IList<Diagnostic> diagnostics)
+        /// <summary>
+        /// Dump a set of Program nodes and Class nodes.
+        /// </summary>
+        /// <param name="programs">The set of program nodes</param>
+        /// <param name="classes">The set of Class nodes</param>
+        /// <param name="diagnostics">Any diagnostics</param>
+        /// <param name="dumpSymTyps">true if any associated symbol's type must be add to the returned string, false otherwise.</param>
+        /// <returns>The String representation of the dump</returns>
+        internal static string DumpResult(IEnumerable<Program> programs, IEnumerable<TypeCobol.Compiler.Nodes.Class> classes, IList<Diagnostic> diagnostics, bool dumpSymTyps = false)
         {
             StringBuilder builder = new StringBuilder();
             if (diagnostics != null && diagnostics.Count > 0)
@@ -162,7 +170,7 @@ namespace TypeCobol.Test.Utils
                 foreach (var program in programs)
                 {
                     builder.AppendLine("--- Program ---");
-                    Dump(builder, program);
+                    Dump(builder, program, dumpSymTyps);
                 }
             }
             if (classes != null)
@@ -176,12 +184,19 @@ namespace TypeCobol.Test.Utils
             return builder.ToString();
         }
 
-        internal static StringBuilder Dump(StringBuilder str, TypeCobol.Compiler.CodeModel.Program program)
+        /// <summary>
+        /// Dump a Program node
+        /// </summary>
+        /// <param name="str">The StringBuilder instance into which to dump the program node</param>
+        /// <param name="program">The program node to be dumped</param>
+        /// <param name="dumpSymTyps">true if any associated symbol's type must be add to the returned string, false otherwise.</param>
+        /// <returns>The StringBuilder instance</returns>
+        internal static StringBuilder Dump(StringBuilder str, TypeCobol.Compiler.CodeModel.Program program, bool dumpSymTyps = false)
         {
             str.Append("PROGRAM: ");
             Dump(str, program.Identification);
             str.AppendLine();
-            str.AppendLine(program.SymbolTable.ToString(true));
+            str.AppendLine(program.SymbolTable.ToString(true, dumpSymTyps));
             return str;
         }
 
