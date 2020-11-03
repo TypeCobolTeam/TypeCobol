@@ -54,14 +54,6 @@ namespace TypeCobol.Compiler
         public List<RemarksDirective.TextNameVariation> CopyTextNamesVariations { get; set; }
 
         public List<CopyDirective> MissingCopies { get; set; }
-        /// <summary>
-        /// Is this Compilation Document for a Copy.
-        /// </summary>
-        internal bool IsForCopy
-        {
-            get;
-            set;
-        }
 
         /// <summary>
         /// Issue #315
@@ -194,6 +186,8 @@ namespace TypeCobol.Compiler
             PerfStatsForPreprocessor = new PerfStatsForParsingStep(CompilationStep.Preprocessor);
 
             InitialScanStateForCopy = scanState;
+            if (scanState != null)
+                InitialScanStateForCopy.InsideCopy = true;
         }
 
         /// <summary>
@@ -488,34 +482,15 @@ namespace TypeCobol.Compiler
                 // Apply text changes to the compilation document
                 if (scanAllDocumentLines)
                 {
-                    bool saveOpt = CompilerOptions.AreForCopyParsing;
-                    try
-                    {
-                        CompilerOptions.AreForCopyParsing = this.IsForCopy;
-                        ScannerStep.ScanDocument(TextSourceInfo, compilationDocumentLines, CompilerOptions, CopyTextNamesVariations, InitialScanStateForCopy);
-                    }
-                    finally
-                    {
-                        CompilerOptions.AreForCopyParsing = saveOpt;
-                    }
+                    ScannerStep.ScanDocument(TextSourceInfo, compilationDocumentLines, CompilerOptions, CopyTextNamesVariations, InitialScanStateForCopy);
                     // Notify all listeners that the whole document has changed.
                     EventHandler wholeDocumentChanged = WholeDocumentChanged; // avoid race condition
                     wholeDocumentChanged?.Invoke(this, EventArgs.Empty);
                 }
                 else
                 {
-                    bool saveOpt = CompilerOptions.AreForCopyParsing;
                     IList<DocumentChange<ITokensLine>> documentChanges = null;
-                    try
-                    {
-                        CompilerOptions.AreForCopyParsing = IsForCopy;
-                        documentChanges = ScannerStep.ScanTextLinesChanges(TextSourceInfo, compilationDocumentLines, textLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, CopyTextNamesVariations, InitialScanStateForCopy);
-                    }
-                    finally
-                    {
-                        CompilerOptions.AreForCopyParsing = saveOpt;
-                    }
-
+                    documentChanges = ScannerStep.ScanTextLinesChanges(TextSourceInfo, compilationDocumentLines, textLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, CopyTextNamesVariations, InitialScanStateForCopy);
                     // Create a new version of the document to track these changes
                     currentTokensLinesVersion.changes = documentChanges;
                     currentTokensLinesVersion.next = new DocumentVersion<ITokensLine>(currentTokensLinesVersion);

@@ -961,7 +961,7 @@ namespace TypeCobol.Compiler.Scanner
                     // QualifiedNameSeparator => qualifierName::qualifiedName
                     //if (currentIndex < lastIndex && line[currentIndex + 1] == ':')
                     if (!currentState.InsidePseudoText //No QualifiedNameSeparator allowed in pseudoText
-                        && (this.compilerOptions != null && !this.compilerOptions.AreForCopyParsing) //No QualifiedNameSeparator allowed in COPY 
+                        && (this.compilerOptions != null && !currentState.InsideCopy) //No QualifiedNameSeparator allowed in COPY 
                         && currentIndex < lastIndex && line[currentIndex + 1] == ':')
                     {
                         // consume two :: chars
@@ -1151,10 +1151,7 @@ namespace TypeCobol.Compiler.Scanner
                             delimiterToken = new Token(TokenType.PseudoTextDelimiter, startIndex, startIndex + 1, usesVirtualSpaceAtEndOfLine, tokensLine);
                             if (!(followingChar == ' ' || followingChar == ',' || followingChar == ';' || followingChar == '.'))
                             {
-                                if (followingChar != '=' || followingChar2 != '=')
-                                {//If not an empty placeholder this is an error.
-                                    tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterPseudoTextDelimiter, delimiterToken);
-                                }
+                                tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterPseudoTextDelimiter, delimiterToken);
                             }
                         }
                         return delimiterToken;
@@ -2315,7 +2312,7 @@ namespace TypeCobol.Compiler.Scanner
             if (index == startIndex + 1 && !CobolChar.IsCobolWordChar(line[index]))
             {
                 //Empty partialCobolWord are only allowed inside pseudo text and copy
-                if (!(currentState.InsidePseudoText || (this.compilerOptions != null && this.compilerOptions.AreForCopyParsing)))
+                if (!(currentState.InsidePseudoText || (this.compilerOptions != null && currentState.InsideCopy)))
                 {
                     return false;
                 }
