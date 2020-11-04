@@ -226,16 +226,16 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Scan a group of continuation lines when no previous scan state object is available
         /// </summary>
-        public static void ScanFirstLineContinuationGroup(IList<TokensLine> continuationLinesGroup, bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
+        public static void ScanFirstLineContinuationGroup(IList<TokensLine> continuationLinesGroup, bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals, ColumnsLayout format, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
             MultilineScanState initialScanState = new MultilineScanState(insideDataDivision, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals);
-            ScanTokensLineContinuationGroup(continuationLinesGroup, initialScanState, compilerOptions, copyTextNameVariations);
+            ScanTokensLineContinuationGroup(continuationLinesGroup, initialScanState, format, compilerOptions, copyTextNameVariations);
         }
 
         /// <summary>
         /// Scan a group of continuation lines
         /// </summary>
-        public static void ScanTokensLineContinuationGroup(IList<TokensLine> continuationLinesGroup, MultilineScanState initialScanState, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
+        public static void ScanTokensLineContinuationGroup(IList<TokensLine> continuationLinesGroup, MultilineScanState initialScanState, ColumnsLayout format, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
             // p54: Continuation lines
             // Any sentence, entry, clause, or phrase that requires more than one line can be
@@ -272,6 +272,7 @@ namespace TypeCobol.Compiler.Scanner
 
             // Iterate over the continuation lines (some blank lines or comment lines may come in-between)
             // => build a character string representing the complete continuation text along the way
+            int previousLastIndex = concatenatedLine.Length + 6;
             int i;
             for (i = 1; i <= lastContinuationLineIndex; i++)
             {
@@ -338,6 +339,14 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         if (!lastTokenOfConcatenatedLineSoFar.HasClosingDelimiter)
                         {
+                            // In CobolReferenceFormat, add remaining spaces at the end of the original line into the AlphanumericLiteral
+                            // Does not apply to FreeTextFormat as lines do not have maximum length
+                            if (format == ColumnsLayout.CobolReferenceFormat)
+                            {
+                                string padding = new string(' ', 71 - previousLastIndex);
+                                concatenatedLine += padding;
+                            }
+
                             // check delimiters
                             const char QUOTE = '\'';
                             const char DOUBLE_QUOTE = '"';
@@ -454,6 +463,7 @@ namespace TypeCobol.Compiler.Scanner
                 offsetForLiteralContinuationInOriginalLines[i] = offsetForLiteralContinuation;
 
                 concatenatedLine += line.Substring(startIndexOfContinuationStringInContinuationLine, lengthOfContinuationStringInContinuationLine);
+                previousLastIndex = lastIndex;
             }
 
             // Scan the complete continuation text as a whole
