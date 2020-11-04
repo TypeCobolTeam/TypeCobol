@@ -1,6 +1,6 @@
 ﻿--- Code Elements ---
-[[ProgramIdentification]] [2,15:IDENTIFICATION]<IDENTIFICATION> --> [17,17+:.]<PeriodSeparator>
-- ProgramName = PGM
+[[ProgramIdentification]] [2,15:IDENTIFICATION]<IDENTIFICATION> --> [22,22+:.]<PeriodSeparator>
+- ProgramName = TCOMFL01
 - IsInitial = False
 - IsRecursive = False
 - IsCommon = False
@@ -17,7 +17,7 @@
 
 [[WorkingStorageSectionHeader]] [2,16:WORKING-STORAGE]<WORKING_STORAGE> --> [25,25+:.]<PeriodSeparator>
 
-[[DataDescriptionEntry]] [2,3:01]<LevelNumber>{1} --> [13,13+:.]<PeriodSeparator>
+[[DataDescriptionEntry]] [2,3:01]<LevelNumber>{1} --> [12,12+:.]<PeriodSeparator>
 
 [[DataDescriptionEntry]] [6,7:05]<LevelNumber>{5} --> [59,59+:.]<PeriodSeparator>
 
@@ -25,5 +25,16 @@
 
 [[ProcedureDivisionHeader]] [2,10:PROCEDURE]<PROCEDURE> --> [20,20+:.]<PeriodSeparator>
 
+[[DisplayStatement]] [6,12:DISPLAY]<DISPLAY> --> [14,17:VAR1]<UserDefinedWord>
+- variables = VAR1
+
+[[DisplayStatement]] [6,12:DISPLAY]<DISPLAY> --> [14,17:VAR2]<UserDefinedWord>
+- variables = VAR2
+
+[[GobackStatement]] [6,11:GOBACK]<GOBACK> --> [6,11:GOBACK]<GOBACK>
+
 [[SentenceEnd]] [6,6+:.]<PeriodSeparator> --> [6,6+:.]<PeriodSeparator>
+
+[[ProgramEnd]] [2,4:END]<END> --> [22,22+:.]<PeriodSeparator>
+- ProgramName = TCOMFL01
 
