@@ -188,6 +188,7 @@ namespace TypeCobol.Compiler.Scanner
                         if (LastSignificantToken.TokenType == TokenType.DATA)
                         {
                             InsideDataDivision = true;
+                            InsideProcedureDivision = false;
                         }
                         // Register the start of the PROCEDURE DIVISION and end of DATA DIVISION
                         else if (LastSignificantToken.TokenType == TokenType.PROCEDURE)

@@ -547,10 +547,10 @@ namespace TypeCobol.Compiler.Scanner
         /// - encodingForAlphanumericLiterals = IBM 1147
         /// - default compiler options
         /// </summary>
-        public static Token ScanIsolatedTokenInDefaultContext(string tokenText, out Diagnostic error)
+        public static Token ScanIsolatedTokenInGivenScanOrDefaultContext(MultilineScanState scanContext,  string tokenText, out Diagnostic error)
         {
             TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
-            tempTokensLine.InitializeScanState(new MultilineScanState(true, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
+            tempTokensLine.InitializeScanState(scanContext ?? new MultilineScanState(true, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
 
             Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions(), false);
             Token candidateToken = tempScanner.GetNextToken();
