@@ -1135,7 +1135,6 @@ namespace TypeCobol.Compiler.Scanner
                         {
                             // get the immediately following char
                             char followingChar;
-                            char followingChar2 = '\0';
                             bool usesVirtualSpaceAtEndOfLine = false;
                             if(currentIndex > lastIndex)
                             {
@@ -1145,7 +1144,6 @@ namespace TypeCobol.Compiler.Scanner
                             else
                             {
                                 followingChar = line[currentIndex];
-                                followingChar2 = (currentIndex + 1) < line.Length ? line[currentIndex + 1]: '\0';
                             }
 
                             delimiterToken = new Token(TokenType.PseudoTextDelimiter, startIndex, startIndex + 1, usesVirtualSpaceAtEndOfLine, tokensLine);
@@ -2312,7 +2310,7 @@ namespace TypeCobol.Compiler.Scanner
             if (index == startIndex + 1 && !CobolChar.IsCobolWordChar(line[index]))
             {
                 //Empty partialCobolWord are only allowed inside pseudo text and copy
-                if (!(currentState.InsidePseudoText || (this.compilerOptions != null && currentState.InsideCopy)))
+                if (!(currentState.InsidePseudoText || currentState.InsideCopy))
                 {
                     return false;
                 }
