@@ -1930,6 +1930,7 @@ namespace TypeCobol.Compiler.Scanner
                 { //Check if there is cobol partial word inside the picture declaration. 
                     picToken.TokenType = TokenType.PartialCobolWord; //Match the whole PictureCharecterString token as a partial cobol word. 
                     picToken.PreviousTokenType = TokenType.PictureCharacterString; //Save that the token was previously a picture character string token
+                    picToken.ScanStateSnapshot = tokensLine.ScanState.Clone();
                     return picToken;
                 }
                 else
@@ -2349,7 +2350,9 @@ namespace TypeCobol.Compiler.Scanner
             // Consume the entire the partial Cobol word
             currentIndex = endIndex + 1;
 
-            return new Token(TokenType.PartialCobolWord, startIndex, endIndex, tokensLine);
-        }        
+            Token t = new Token(TokenType.PartialCobolWord, startIndex, endIndex, tokensLine);
+            t.ScanStateSnapshot = tokensLine.ScanState.Clone();
+            return t;
+        }
     }
 }

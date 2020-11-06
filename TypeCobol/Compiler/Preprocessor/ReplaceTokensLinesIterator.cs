@@ -516,8 +516,12 @@ namespace TypeCobol.Compiler.Preprocessor
         /// <returns>The Scan state in any, null otherwise</returns>
         private static MultilineScanState FigureOutScanState(Token token)
         {
-            return token != null && token.TokensLine is TypeCobol.Compiler.Parser.CodeElementsLine cel
-                            && cel.ScanState != null ? cel.ScanState : null;
+            if (token != null)
+            {
+                return token.ScanStateSnapshot ?? (token.TokensLine is TypeCobol.Compiler.Parser.CodeElementsLine cel
+                            && cel.ScanState != null ? cel.ScanState : null);
+            }
+            return null;
         }
 
         /// <summary>

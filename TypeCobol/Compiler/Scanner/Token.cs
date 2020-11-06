@@ -295,8 +295,13 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public LiteralTokenValue LiteralValue { get; set; }
 
+        /// <summary>
+        /// ScanState associated to this token if any, null otherwise.
+        /// </summary>
+        public MultilineScanState ScanStateSnapshot { get; set; }
+
         // --- Ambiguous tokens resolved after having been created ---
-        
+
         internal void CorrectType(TokenType tokenType)
         {
             // Copy token type and family from the continuation token
