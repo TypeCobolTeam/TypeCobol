@@ -510,7 +510,7 @@ namespace TypeCobol.Compiler.Scanner
                     }
                     else
                     {
-                        //The token starts ont the next line
+                        //The token starts on the next line
                         AdvanceToNextContinuationLine();
                         TryAddTokenToCurrentLine();
                     }
@@ -531,19 +531,35 @@ namespace TypeCobol.Compiler.Scanner
 
                     void SplitToken()
                     {
+                        // First, create a continued token on the current line
+                        bool isContinuedOnNextLine = true;
+                        CreateAndAddFirstContinuationToken();
+
                         // The token may be split across 2 or more lines
-                        while (token.StopIndex > textAreaForOriginalLine.EndIndex)
+                        // So keep creating continuation tokens until the end of the token is reached
+                        do
                         {
-                            CreateAndAddContinuationToken();
                             AdvanceToNextContinuationLine();
+                            isContinuedOnNextLine = token.StopIndex > textAreaForOriginalLine.EndIndex;
+                            CreateAndAddFollowingContinuationToken();
                         }
-                        CreateAndAddContinuationToken();
+                        while (isContinuedOnNextLine);
 
-                        void CreateAndAddContinuationToken()
+                        void CreateAndAddFirstContinuationToken()
                         {
-                            bool isContinuationFromPreviousLine = token.StartIndex < textAreaForOriginalLine.StartIndex;
-                            bool isContinuedOnNextLine = token.StopIndex > textAreaForOriginalLine.EndIndex;
+                            CreateAndAddContinuationToken(false);
 
+                            // Copy diagnostics on the first line only
+                            foreach (Diagnostic diag in virtualContinuationTokensLine.GetDiagnosticsForToken(token))
+                            {
+                                originalLine.AddDiagnostic((MessageCode)diag.Info.Code, token, diag.MessageArgs);
+                            }
+                        }
+
+                        void CreateAndAddFollowingContinuationToken() => CreateAndAddContinuationToken(true);
+
+                        void CreateAndAddContinuationToken(bool isContinuationFromPreviousLine)
+                        {
                             int startIndexInOriginalLine;
                             if (isContinuationFromPreviousLine)
                             {
@@ -571,26 +587,13 @@ namespace TypeCobol.Compiler.Scanner
                             ContinuationToken continuationToken = new ContinuationToken(token, startIndexInOriginalLine, stopIndexInOriginalLine,
                                 originalLine, isContinuationFromPreviousLine, isContinuedOnNextLine);
                             originalLine.AddToken(continuationToken);
-
-                            // Copy diagnostics on the first line only
-                            if (!isContinuationFromPreviousLine)
-                            {
-                                foreach (Diagnostic diag in virtualContinuationTokensLine.GetDiagnosticsForToken(token))
-                                {
-                                    originalLine.AddDiagnostic((MessageCode)diag.Info.Code, token, diag.MessageArgs);
-                                }
-                            }
                         }
                     }
 
                     void AdvanceToNextContinuationLine()
                     {
                         // Advance index until a new ContinuationLine is found
-                        do
-                        {
-                            i++;
-                        }
-                        while (continuationLinesGroup[i].Type != CobolTextLineType.Continuation);
+                        do { i++; } while (continuationLinesGroup[i].Type != CobolTextLineType.Continuation);
                         InitLine();
                     }
                 }
