@@ -41,7 +41,6 @@ namespace TypeCobol
 			return DocumentFormat.FreeUTF8Format;//TODO autodetect
 		}
 
-        //TODO MILLETFL update all usages to add analyzerProvider when required
 		public void Init([NotNull] string path, TypeCobolOptions options, DocumentFormat format = null, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null) {
 			FileCompiler compiler;
 			if (Compilers.TryGetValue(path, out compiler)) return;

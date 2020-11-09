@@ -53,51 +53,37 @@ label = "{Block30|    PERFORM B-LOOP          UNTIL EOF-SEEN = \"Y\"\l}"
 subgraph cluster_4{
 color = blue;
 label = "B-LOOP";
-Block33 [
-label = "{B-LOOP. Block33|    DISPLAY \"THE ID IS \" USER-ID\l}"
+Block41 [
+label = "{B-LOOP. Block41|    DISPLAY \"THE ID IS \" USER-ID\l}"
 ]
-Block34 [
-label = "{B-LOOP. Block34|    DISPLAY \"THE NAME IS \" USER-NAME\l}"
+Block42 [
+label = "{B-LOOP. Block42|    DISPLAY \"THE NAME IS \" USER-NAME\l}"
 ]
-Block35 [
-label = "{B-LOOP. Block35|    DISPLAY \" \"\l}"
+Block43 [
+label = "{B-LOOP. Block43|    DISPLAY \" \"\l}"
 ]
-Block36 [
-label = "{B-LOOP. Block36|    DISPLAY \"ENTER TO CONTINUE\"\l}"
+Block44 [
+label = "{B-LOOP. Block44|    DISPLAY \"ENTER TO CONTINUE\"\l}"
 ]
-Block37 [
-label = "{B-LOOP. Block37|    ACCEPT ANSWER\l}"
+Block45 [
+label = "{B-LOOP. Block45|    ACCEPT ANSWER\l}"
 ]
-Block38 [
-label = "{B-LOOP. Block38|    READ USER-FILE\l}"
+Block46 [
+label = "{B-LOOP. Block46|    READ USER-FILE\l}"
 ]
-Block39 [
-label = "{Block39|        AT END\l           MOVE \"Y\" TO EOF-SEEN\l}"
+Block47 [
+label = "{Block47|        AT END\l           MOVE \"Y\" TO EOF-SEEN\l}"
 ]
-Block40 [
-label = "{Block40|}"
+Block48 [
+label = "{Block48|}"
 ]
-Block33 -> Block34
-Block34 -> Block35
-Block35 -> Block36
-Block36 -> Block37
-Block37 -> Block38
-Block38 -> Block39
-Block38 -> Block40
-Block39 -> Block40
 
 }
-Block30 -> Block33 [style=dashed]
+Block30 -> Block41 [style=dashed]
 
 Block31 [
 label = "{Block31|}"
 ]
-Block26 -> Block27
-Block26 -> Block28
-Block27 -> Block28
-Block28 -> Block29
-Block29 -> Block30
-Block30 -> Block31
 
 }
 Block4 -> Block26 [style=dashed]
@@ -125,6 +111,21 @@ Block0 -> Block1
 Block1 -> Block2
 Block2 -> Block3
 Block3 -> Block4
+Block26 -> Block27
+Block26 -> Block28
+Block27 -> Block28
+Block28 -> Block29
+Block29 -> Block30
+Block41 -> Block42
+Block42 -> Block43
+Block43 -> Block44
+Block44 -> Block45
+Block45 -> Block46
+Block46 -> Block47
+Block46 -> Block48
+Block47 -> Block48
+Block48 -> Block30
+Block30 -> Block31
 Block4 -> Block5
 Block5 -> Block6
 Block6 -> Block7

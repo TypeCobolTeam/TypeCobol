@@ -1,4 +1,4 @@
-﻿digraph Cfg {
+digraph Cfg {
 compound=true;
 node [
 shape = "record"
@@ -28,12 +28,12 @@ label = "{Block17|         PERFORM NOT-FOUND\l}"
 subgraph cluster_2{
 color = blue;
 label = "NOT-FOUND";
-Block24 [
-label = "{NOT-FOUND. Block24|    DISPLAY \"STUDENT DETAILS NOT FOUND\"\l}"
+Block26 [
+label = "{NOT-FOUND. Block26|    DISPLAY \"STUDENT DETAILS NOT FOUND\"\l}"
 ]
 
 }
-Block17 -> Block24 [style=dashed]
+Block17 -> Block26 [style=dashed]
 
 Block18 [
 label = "{Block18|}"
@@ -53,16 +53,24 @@ label = "{Block20|         PERFORM FOUND\l}"
 subgraph cluster_3{
 color = blue;
 label = "FOUND";
-Block25 [
-label = "{FOUND. Block25|    DISPLAY \"STUDENT DETAILS FOUND\"\l}"
+Block27 [
+label = "{FOUND. Block27|    DISPLAY \"STUDENT DETAILS FOUND\"\l}"
 ]
 
 }
-Block20 -> Block25 [style=dashed]
+Block20 -> Block27 [style=dashed]
 
 Block21 [
 label = "{Block21|}"
 ]
+
+}
+Block1 -> Block15 [style=dashed]
+
+Block2 [
+label = "{Block2|    GOBACK\l}"
+]
+Block0 -> Block1
 Block15 -> Block16
 Block15 -> Block19
 Block16 -> Block17
@@ -72,14 +80,6 @@ Block22 -> Block23
 Block19 -> Block20
 Block20 -> Block21
 Block21 -> Block22
-
-}
-Block1 -> Block15 [style=dashed]
-
-Block2 [
-label = "{Block2|    GOBACK\l}"
-]
-Block0 -> Block1
 Block1 -> Block2
 
 }

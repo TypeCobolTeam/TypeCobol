@@ -13,11 +13,22 @@
            display n
            if n < 3
               display 'before perform'
-              perform pararec
-              display 'after peform'
+              perform pararec2
+              display 'after perform'
            else
               display 'not done'
            end-if
            display 'terminate'.
+       pararec2.
+           add 1 to n
+           display n
+           if n < 3
+              display 'before perform'
+              perform pararec
+              display 'after perform'
+           else
+              display 'not done'
+           end-if
+           display 'terminate'.           
        END PROGRAM perfrecur.
-      
+       

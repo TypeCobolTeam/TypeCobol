@@ -28,8 +28,6 @@ label = "{SECOND-PARA. Block9|      DISPLAY 'PARA NAME IS  SECOND-PARA'\l}"
 Block10 [
 label = "{THIRD-PARA. Block10|      DISPLAY 'PARA NAME IS  THIRD-PARA'\l}"
 ]
-Block8 -> Block9
-Block9 -> Block10
 
 }
 Block2 -> Block8 [style=dashed]
@@ -39,6 +37,8 @@ label = "{Block3|      DISPLAY 'DOING PERFORM THRU'\l      DISPLAY 'PARA NAME IS
 ]
 Block0 -> Block1
 Block1 -> Block2
+Block8 -> Block9
+Block9 -> Block10
 Block2 -> Block3
 
 }

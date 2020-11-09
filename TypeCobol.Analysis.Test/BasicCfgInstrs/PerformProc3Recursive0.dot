@@ -1,0 +1,172 @@
+﻿digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{Block1|    perform pararec\l}"
+]
+subgraph cluster_1{
+color = blue;
+label = "pararec";
+Block24 [
+label = "{PARAREC. Block24|    add 1 to n\l    display n\l    if n \< 3\l}"
+]
+Block25 [
+label = "{Block25|       display 'before perform pararec2 in pararec'\l}"
+]
+Block26 [
+label = "{Block26|       perform pararec2\l}"
+]
+subgraph cluster_2{
+color = blue;
+label = "pararec2";
+Block55 [
+label = "{PARAREC2. Block55|    add 1 to n\l    display n\l    if n \< 3\l}"
+]
+Block56 [
+label = "{Block56|       display 'before perform pararec in pararec2'\l}"
+]
+Block34 [
+label = "{Block34|       perform pararec\l}"
+]
+subgraph cluster_4{
+color = blue;
+label = "pararec";
+Block65 [
+label = "{PARAREC. Block65|    add 1 to n\l    display n\l    if n \< 3\l}"
+]
+Block66 [
+label = "{Block66|       display 'before perform pararec2 in pararec'\l}"
+]
+Block68 [
+label = "{Block68|    else\l       display 'not done in pararec'\l}"
+]
+Block29 [
+label = "{Block29|       perform pararec3\l}"
+]
+subgraph cluster_3{
+color = blue;
+label = "pararec3";
+Block60 [
+label = "{PARAREC3. Block60|    add 1 to n\l    display n\l    if n \< 3\l}"
+]
+Block61 [
+label = "{Block61|       display 'before perform pararec2 in pararec3'\l}"
+]
+Block40 [
+label = "{Block40|       perform pararec2\l}"
+]
+subgraph cluster_5{
+color = blue;
+label = "pararec2";
+Block71 [
+label = "{PARAREC2. Block71|    add 1 to n\l    display n\l    if n \< 3\l}"
+]
+Block72 [
+label = "{Block72|       display 'before perform pararec in pararec2'\l}"
+]
+Block74 [
+label = "{Block74|    else\l       display 'not done in pararec2'\l}"
+]
+Block75 [
+label = "{Block75|    display 'terminate in pararec2'\l}"
+]
+
+}
+Block40 -> Block71 [style=dashed]
+
+Block41 [
+label = "{Block41|       display 'after perform pararec2 in pararec3'\l}"
+]
+Block43 [
+label = "{Block43|    display 'terminate in pararec3'\l}"
+]
+Block63 [
+label = "{Block63|    else\l       display 'not done in pararec3'\l}"
+]
+Block64 [
+label = "{Block64|    display 'terminate in pararec3'\l}"
+]
+
+}
+Block29 -> Block60 [style=dashed]
+
+Block30 [
+label = "{Block30|}"
+]
+Block31 [
+label = "{Block31|    display 'terminate in pararec'\l}"
+]
+
+}
+Block34 -> Block65 [style=dashed]
+
+Block35 [
+label = "{Block35|       display 'after perform pararec in pararec2'\l}"
+]
+Block37 [
+label = "{Block37|    display 'terminate in pararec2'\l}"
+]
+Block58 [
+label = "{Block58|    else\l       display 'not done in pararec2'\l}"
+]
+Block59 [
+label = "{Block59|    display 'terminate in pararec2'\l}"
+]
+
+}
+Block26 -> Block55 [style=dashed]
+
+Block27 [
+label = "{Block27|       display 'after perform pararec2 in pararec'\l}"
+]
+Block28 [
+label = "{Block28|    else\l       display 'not done in pararec'\l}"
+]
+
+}
+Block1 -> Block24 [style=dashed]
+
+Block2 [
+label = "{Block2|    goback\l}"
+]
+Block0 -> Block1
+Block24 -> Block25
+Block24 -> Block28
+Block25 -> Block26
+Block55 -> Block56
+Block55 -> Block58
+Block56 -> Block34
+Block65 -> Block66
+Block65 -> Block68
+Block66 -> Block26
+Block68 -> Block29
+Block60 -> Block61
+Block60 -> Block63
+Block61 -> Block40
+Block71 -> Block72
+Block71 -> Block74
+Block72 -> Block34
+Block74 -> Block75
+Block40 -> Block41
+Block41 -> Block43
+Block63 -> Block64
+Block29 -> Block30
+Block30 -> Block31
+Block34 -> Block35
+Block35 -> Block37
+Block58 -> Block59
+Block26 -> Block27
+Block27 -> Block31
+Block28 -> Block29
+Block1 -> Block2
+
+}

@@ -213,7 +213,7 @@ namespace TypeCobol.Analysis.Test
         [TestMethod]
         public void MixedStackedNestedPgms()
         {
-            string test = Path.Combine(BasicTestsDir, "MixedStackedNestedPgms");
+            string test = Path.Combine(BasicCfgInstrs, "MixedStackedNestedPgms");
             string path = test + ".cbl";
             string expectedDiagnosticsFilePath = test + ".diag";
             var graphs = ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
@@ -227,7 +227,7 @@ namespace TypeCobol.Analysis.Test
         [TestMethod]
         public void MixedStackedNestedProcsPgms()
         {
-            string test = Path.Combine(BasicTestsDir, "MixedStackedNestedProcsPgms");
+            string test = Path.Combine(BasicCfgInstrs, "MixedStackedNestedProcsPgms");
             string path = test + ".tcbl";
             string expectedDiagnosticsFilePath = test + ".diag";
             var graphs = ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
@@ -244,6 +244,7 @@ namespace TypeCobol.Analysis.Test
         /// - input is BasicCfgInstrs\[CallerMethod].cbl
         /// - expected diagnostics is DotOutput\[CallerMethod].diag
         /// - expected result is DotOutput\[CallerMethod].dot
+        /// - CFG building mode is Standard
         /// - fullInstruction is True
         /// </remarks>
         /// <param name="inputDirectoryPath">Full path to the directory containing the input source file.</param>
@@ -255,6 +256,7 @@ namespace TypeCobol.Analysis.Test
         /// <param name="expectedResultDirectoryPath">Full path to the directory containing the expected result file.</param>
         /// <param name="expectedResultFileName">Name of the expected result file without extension.</param>
         /// <param name="expectedResultExtension">Extension of the expected result file including the '.'.</param>
+        /// <param name="mode">CFG Building mode.</param>
         /// <param name="fullInstruction">True to use full instruction during dot generation.</param>
         private void TestTemplate(
             string inputDirectoryPath = null,
@@ -266,18 +268,20 @@ namespace TypeCobol.Analysis.Test
             string expectedResultDirectoryPath = null,
             [CallerMemberName] string expectedResultFileName = null,
             string expectedResultExtension = ".dot",
+            CfgBuildingMode mode = CfgBuildingMode.Standard,
             bool fullInstruction = true)
         {
-            string inputFilePath = Path.Combine(inputDirectoryPath ?? BasicTestsDir, inputFileName + inputExtension);
+            string inputFilePath = Path.Combine(inputDirectoryPath ?? BasicCfgInstrs, inputFileName + inputExtension);
             Assert.IsTrue(File.Exists(inputFilePath), $"Input file '{inputFilePath}' does not exist.");
 
-            string expectedDiagnosticsFilePath = Path.Combine(expectedDiagnosticsDirectoryPath ?? BasicTestsDir, expectedDiagnosticsFileName + expectedDiagnosticsExtension);
+            string expectedDiagnosticsFilePath = Path.Combine(expectedDiagnosticsDirectoryPath ?? BasicCfgInstrs, expectedDiagnosticsFileName + expectedDiagnosticsExtension);
             //No diag file when there is no diagnostics during parsing, so we don't check file existence here.
 
-            string expectedResultFilePath = Path.Combine(expectedResultDirectoryPath ?? BasicTestsDir, expectedResultFileName + expectedResultExtension);
+            string expectedResultFilePath = Path.Combine(expectedResultDirectoryPath ?? BasicCfgInstrs, expectedResultFileName + expectedResultExtension);
             Assert.IsTrue(File.Exists(expectedResultFilePath), $"Expected results file '{expectedResultFilePath}' does not exist.");
 
-            var graphs = ParseCompareDiagnostics(inputFilePath, expectedDiagnosticsFilePath);
+            //var graphs = ParseCompareDiagnostics(inputFilePath, expectedDiagnosticsFilePath);
+            var graphs = ParseCompareDiagnostics<object>(inputFilePath, mode, expectedDiagnosticsFilePath);
             Assert.IsTrue(graphs.Count == 1); //single program
             var cfg = graphs[0];
             Assert.IsNull(cfg.ParentGraph);
@@ -386,6 +390,9 @@ namespace TypeCobol.Analysis.Test
         public void PerformProcedure1() => TestTemplate();
 
         [TestMethod]
+        public void PerformProcedure2() => TestTemplate();
+
+        [TestMethod]
         public void PerformGoesOutOfBounds0() => TestTemplate();
 
         [TestMethod]
@@ -425,7 +432,16 @@ namespace TypeCobol.Analysis.Test
         public void MixPerformEvaluateIf0() => TestTemplate();
 
         [TestMethod]
-        public void PerformProcRecursive0() => TestTemplate();
+        public void PerformProc1Recursive0() => TestTemplate();
+
+        [TestMethod]
+        public void PerformProc2Recursive0() => TestTemplate();
+
+        [TestMethod]
+        public void PerformProc3Recursive0() => TestTemplate();
+
+        [TestMethod]
+        public void PerformProc4Recursive0() => TestTemplate();
 
         [TestMethod]
         public void Read0() => TestTemplate();
@@ -449,122 +465,143 @@ namespace TypeCobol.Analysis.Test
         public void Write0() => TestTemplate();
 
         [TestMethod]
+        public void PerformProcIterativeAfterRecursive0() => TestTemplate();
+
+        [TestMethod]
+        public void PerformProcIterativeAfterRecursive1() => TestTemplate();
+
+        [TestMethod]
+        public void PerformProcIterativeAfterRecursive2() => TestTemplate();
+
+        [TestMethod]
+        public void PerformProcIterativeRecursive0() => TestTemplate();
+
+        [TestMethod]
+        public void PerformIdentity() => TestTemplate();
+
+        [TestMethod]
+        public void NotRecursePerform0() => TestTemplate();
+
+        [TestMethod]
+        public void NotRecursePerform1() => TestTemplate();
+
+        [TestMethod]
         public void CfgInNestedPrg0()
         {
-            string test = Path.Combine(BasicTestsDir, "CfgInNestedPrg0");
+            string test = Path.Combine(BasicCfgInstrs, "CfgInNestedPrg0");
             string path = test + ".cbl";
             string expectedDiagnosticsFilePath = test + ".diag";
             var graphs = ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
             var results = CheckSimpleStructure(graphs);
 
             //We have taken the same CFG than for IfThenElseCascade0
-            string expectedPath = Path.Combine(BasicTestsDir, "IfThenElseCascade0.dot");
+            string expectedPath = Path.Combine(BasicCfgInstrs, "IfThenElseCascade0.dot");
             GenDotCfgAndCompare(results["Nested1"], path, expectedPath, true);
         }
 
         [TestMethod]
         public void CfgInNestedPrg1()
         {
-            string test = Path.Combine(BasicTestsDir, "CfgInNestedPrg1");
+            string test = Path.Combine(BasicCfgInstrs, "CfgInNestedPrg1");
             string path = test + ".cbl";
             string expectedDiagnosticsFilePath = test + ".diag";
             var graphs = ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
             var results = CheckSimpleStructure(graphs);
 
             //We have taken the same CFG than for PerformProcedure0  
-            string expectedPath = Path.Combine(BasicTestsDir, "PerformProcedure0.dot");
+            string expectedPath = Path.Combine(BasicCfgInstrs, "PerformProcedure0.dot");
             GenDotCfgAndCompare(results["Nested2"], path, expectedPath, true);
         }
 
         [TestMethod]
         public void CfgInNestedPrg2()
         {
-            string test = Path.Combine(BasicTestsDir, "CfgInNestedPrg2");
+            string test = Path.Combine(BasicCfgInstrs, "CfgInNestedPrg2");
             string path = test + ".cbl";
             string expectedDiagnosticsFilePath = test + ".diag";
             var graphs = ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
             var results = CheckSimpleStructure(graphs);
 
             //We have taken the same CFG than for MixPerformEvaluateIf0  
-            string expectedPath = Path.Combine(BasicTestsDir, "MixPerformEvaluateIf0.dot");
+            string expectedPath = Path.Combine(BasicCfgInstrs, "MixPerformEvaluateIf0.dot");
             GenDotCfgAndCompare(results["Nested0"], path, expectedPath, true);
         }
 
         [TestMethod]
         public void CfgInStackedPrg0()
         {
-            string test = Path.Combine(BasicTestsDir, "CfgInStackedPrg0");
+            string test = Path.Combine(BasicCfgInstrs, "CfgInStackedPrg0");
             string path = test + ".cbl";
             string expectedDiagnosticsFilePath = test + ".diag";
             var graphs = ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
             var results = CheckSimpleStructure(graphs);
 
             //We have taken the same CFG than for PerformProcedure0  
-            string expectedPath = Path.Combine(BasicTestsDir, "PerformProcedure0.dot");
+            string expectedPath = Path.Combine(BasicCfgInstrs, "PerformProcedure0.dot");
             GenDotCfgAndCompare(results["Stacked0"], path, expectedPath, true);
         }
 
         [TestMethod]
         public void CfgInStackedPrg1()
         {
-            string test = Path.Combine(BasicTestsDir, "CfgInStackedPrg1");
+            string test = Path.Combine(BasicCfgInstrs, "CfgInStackedPrg1");
             string path = test + ".cbl";
             string expectedDiagnosticsFilePath = test + ".diag";
             var graphs = ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
             var results = CheckSimpleStructure(graphs);
 
             //We have taken the same CFG than for MixPerformEvaluateIf0  
-            string expectedPath = Path.Combine(BasicTestsDir, "MixPerformEvaluateIf0.dot");
+            string expectedPath = Path.Combine(BasicCfgInstrs, "MixPerformEvaluateIf0.dot");
             GenDotCfgAndCompare(results["Stacked1"], path, expectedPath, true);
         }
 
         [TestMethod]
         public void CfgInProcedure0()
         {
-            string test = Path.Combine(BasicTestsDir, "CfgInProcedure0");
+            string test = Path.Combine(BasicCfgInstrs, "CfgInProcedure0");
             string path = test + ".cbl";
             string expectedDiagnosticsFilePath = test + ".diag";
             var graphs = ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
             var results = CheckComplexStructure(graphs);
 
             //We have taken the same CFG than for IfThenElseCascade0  
-            string expectedPath = Path.Combine(BasicTestsDir, "IfThenElseCascade0.dot");
+            string expectedPath = Path.Combine(BasicCfgInstrs, "IfThenElseCascade0.dot");
             GenDotCfgAndCompare(results["Proc0"], path, expectedPath, true);
         }
 
         [TestMethod]
         public void CfgInProcedure1()
         {
-            string test = Path.Combine(BasicTestsDir, "CfgInProcedure1");
+            string test = Path.Combine(BasicCfgInstrs, "CfgInProcedure1");
             string path = test + ".cbl";
             string expectedDiagnosticsFilePath = test + ".diag";
             var graphs = ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
             var results = CheckComplexStructure(graphs);
 
             //We have taken the same CFG than for ComplexGotoPara0  
-            string expectedPath = Path.Combine(BasicTestsDir, "ComplexGotoPara0.dot");
+            string expectedPath = Path.Combine(BasicCfgInstrs, "ComplexGotoPara0.dot");
             GenDotCfgAndCompare(results["Proc1"], path, expectedPath, true);
         }
 
         [TestMethod]
         public void CfgInNestedProcedure0()
         {
-            string test = Path.Combine(BasicTestsDir, "CfgInNestedProcedure0");
+            string test = Path.Combine(BasicCfgInstrs, "CfgInNestedProcedure0");
             string path = test + ".cbl";
             string expectedDiagnosticsFilePath = test + ".diag";
             var graphs = ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
             var results = CheckComplexStructure(graphs);
 
             //We have taken the same CFG than for ComplexGotoPara0  
-            string expectedPath = Path.Combine(BasicTestsDir, "ComplexGotoPara0.dot");
+            string expectedPath = Path.Combine(BasicCfgInstrs, "ComplexGotoPara0.dot");
             GenDotCfgAndCompare(results["NestedProc0"], path, expectedPath, true);
 
             //We have taken the same CFG than for IfThenElseCascade0  
-            expectedPath = Path.Combine(BasicTestsDir, "IfThenElseCascade0.dot");
+            expectedPath = Path.Combine(BasicCfgInstrs, "IfThenElseCascade0.dot");
             GenDotCfgAndCompare(results["NestedProc1"], path, expectedPath, true);
 
             //We have taken the same CFG than for PerformThru1  
-            expectedPath = Path.Combine(BasicTestsDir, "PerformThru1.dot");
+            expectedPath = Path.Combine(BasicCfgInstrs, "PerformThru1.dot");
             GenDotCfgAndCompare(results["NestedProc2"], path, expectedPath, true);
         }
 
@@ -644,5 +681,41 @@ namespace TypeCobol.Analysis.Test
         [TestMethod]
         [Ignore] //Long execution time
         public void GenAllNistSrcDots() => GenAllNistDots(true);
+
+        //Extended format
+        [TestMethod]
+        public void ExtendedPerformProc3Recursive0()
+        {
+            const string baseName = "PerformProc3Recursive0";
+            TestTemplate(inputFileName: baseName, expectedDiagnosticsFileName: baseName, mode: CfgBuildingMode.Extended);
+        }
+
+        [TestMethod]
+        public void ExtendedPerformProc4Recursive0()
+        {
+            const string baseName = "PerformProc4Recursive0";
+            TestTemplate(inputFileName:baseName, expectedDiagnosticsFileName:baseName, mode:CfgBuildingMode.Extended);
+        }
+
+        [TestMethod]
+        public void ExtendedPerformProcIterativeAfterRecursive0()
+        {
+            const string baseName = "PerformProcIterativeAfterRecursive0";
+            TestTemplate(inputFileName: baseName, expectedDiagnosticsFileName: baseName, mode: CfgBuildingMode.Extended);
+        }
+
+        [TestMethod]
+        public void ExtendedPerformProcIterativeAfterRecursive1()
+        {
+            const string baseName = "PerformProcIterativeAfterRecursive1";
+            TestTemplate(inputFileName: baseName, expectedDiagnosticsFileName: baseName, mode: CfgBuildingMode.Extended);
+        }
+
+        [TestMethod]
+        public void ExtendedPerformProcIterativeAfterRecursive2()
+        {
+            const string baseName = "PerformProcIterativeAfterRecursive2";
+            TestTemplate(inputFileName: baseName, expectedDiagnosticsFileName: baseName, mode: CfgBuildingMode.Extended);
+        }
     }
 }

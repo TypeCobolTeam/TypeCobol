@@ -1,4 +1,4 @@
-﻿digraph Cfg {
+digraph Cfg {
 compound=true;
 node [
 shape = "record"
@@ -34,22 +34,16 @@ label = "{Block14|      PERFORM DISPLAY-RECORD\l}"
 subgraph cluster_2{
 color = blue;
 label = "DISPLAY-RECORD";
-Block17 [
-label = "{DISPLAY-RECORD. Block17|    DISPLAY WS-FS-RCD\l}"
+Block18 [
+label = "{DISPLAY-RECORD. Block18|    DISPLAY WS-FS-RCD\l}"
 ]
 
 }
-Block14 -> Block17 [style=dashed]
+Block14 -> Block18 [style=dashed]
 
 Block15 [
 label = "{Block15|}"
 ]
-Block11 -> Block12
-Block11 -> Block13
-Block12 -> Block16
-Block13 -> Block14
-Block14 -> Block15
-Block15 -> Block16
 
 }
 Block1 -> Block11 [style=dashed]
@@ -58,6 +52,12 @@ Block2 [
 label = "{Block2|    GOBACK\l}"
 ]
 Block0 -> Block1
+Block11 -> Block12
+Block11 -> Block13
+Block12 -> Block16
+Block13 -> Block14
+Block14 -> Block15
+Block15 -> Block16
 Block1 -> Block2
 
 }
