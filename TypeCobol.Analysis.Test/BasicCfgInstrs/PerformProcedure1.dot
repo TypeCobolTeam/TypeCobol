@@ -32,9 +32,6 @@ label = "{Block3|}"
 Block4 [
 label = "{Block4|    PERFORM B-PROCESS\l}"
 ]
-subgraph cluster_2{
-color = blue;
-}
 Block4 -> "" [style=dashed]
 
 Block5 [

@@ -67,6 +67,7 @@ namespace TypeCobol.Analysis.Graph
             Start = 0x01 << 3,          //Flag for a start node.
             End = 0x01 << 4,            //Flag for a end node.
             GroupGrafted = 0x01 << 5,   //Flag a Grafted Group.
+            Recursive = 0x01 << 6       //Flag a recursive block
         }
 
         /// <summary>

@@ -3183,7 +3183,7 @@ valueClause:
 // p240: ... more details - Rules for condition-name entries ...
 
 valueClauseForCondition:
-	((VALUE IS?) | (VALUES ARE?)) (value1 | valuesRange)+; 
+	(VALUE | VALUES) (IS | ARE)? (value1 | valuesRange)+; 
 
 valuesRange: 
 	startValue=value1 (THROUGH | THRU) endValue=value1;

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using JetBrains.Annotations;
-using TypeCobol.Compiler.CodeElements.Expressions;
-using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 
@@ -145,13 +143,31 @@ namespace TypeCobol.Compiler.CodeElements
 			return ToString(false);
 		}
 
+        /// <summary>
+        /// For indexes, stores the computed hash of the corresponding IndexDefinition
+        /// Used by Codegen only.
+        /// </summary>
+        public string Hash { get; set; }
+
         public string ToString(bool onlySubscript)
         {
             var str = new System.Text.StringBuilder();
             if (SymbolReference != null)
             {
-                if(!onlySubscript)
-                    str.Append(SymbolReference.Name);
+                if (!onlySubscript)
+                {
+                    if (Hash != null)
+                    {
+                        var symbolReference = SymbolReference.IsQualifiedReference
+                            ? ((QualifiedSymbolReference) SymbolReference).First
+                            : SymbolReference;
+                        str.Append(Hash + symbolReference.Name);
+                    }
+                    else
+                    {
+                        str.Append(SymbolReference.Name);
+                    }
+                }
                 if (Subscripts.Count > 0)
                 {
                     str.Append('(');
@@ -417,14 +433,9 @@ namespace TypeCobol.Compiler.CodeElements
         public abstract Token FunctionNameToken { get; }
 	    public virtual CallSiteParameter[] Arguments { get; private set; }
 
-        public virtual ParameterList AsProfile(Node node)
+        public virtual IProfile BuildProfile(Node node)
         {
-            //Need to be updated in a near future
-            var profile = new FunctionCallParameterList
-            {
-                InputParameters = FunctionCallParameterList.CreateParameters(Arguments.ToList(), node),
-            };
-            return profile;
+            return ArgumentsProfile.Create(node, Arguments, null, null);
         }
      
         public virtual bool NeedDeclaration {
@@ -437,68 +448,68 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
 
-	    public class FunctionCallParameterList: ParameterList {
-		    private IList<DataType> inputs = new List<DataType>();
-		    public IList<DataType> InputParameters {
-			    get { return inputs; }
-			    set { inputs = value; }
-		    }
-		    private IList<DataType> inouts = new List<DataType>();
-		    public IList<DataType> InoutParameters {
-			    get { return inouts; }
-			    set { inouts = value; }
-		    }
-		    private IList<DataType> outputs = new List<DataType>();
-		    public IList<DataType> OutputParameters {
-			    get { return outputs; }
-			    set { outputs = value; }
-		    }
+	    protected class ArgumentsProfile : IProfile
+        {
+            private static readonly TypeInfo _Unknown = new TypeInfo() { DataType = DataType.Unknown };
+            private static readonly TypeInfo _Omitted = new TypeInfo() { DataType = DataType.Omitted };
+            private static readonly TypeInfo _Numeric = new TypeInfo() { DataType = DataType.Numeric };
+            private static readonly TypeInfo _Alphanumeric = new TypeInfo() { DataType = DataType.Alphanumeric };
 
-	        public FunctionCallParameterList() {
-	            ReturningParameter = null;
-	        }
+            public static ArgumentsProfile Create(Node node, IEnumerable<CallSiteParameter> inputParameters, IEnumerable<CallSiteParameter> inoutParameters, IEnumerable<CallSiteParameter> outputParameters)
+            {
+                var inputs = inputParameters?.Select(Convert).ToList();
+                var inouts = inoutParameters?.Select(Convert).ToList();
+                var outputs = outputParameters?.Select(Convert).ToList();
+                //NOTE : Returning parameter for functions is not supported yet
+                return new ArgumentsProfile(inputs, inouts, outputs, null);
 
-	        public DataType ReturningParameter { get; set; }
-
-	        internal static IList<DataType> CreateParameters([NotNull] List<CallSiteParameter> parameters, Node node) {
-			    var results = new List<DataType>();
-			    foreach(var parameter in parameters) results.Add(CreateParameter(parameter, node));
-			    return results;
-		    }
-		    internal static DataType CreateParameter([NotNull] CallSiteParameter p,Node node) {
-		        if (p.IsOmitted) {
-		            return DataType.Omitted;
-		        }
-
-                DataType type = null;
-                var parameter = p.StorageAreaOrValue;
-		        if (parameter != null)
-		        {
-                    if (parameter.IsLiteral)
+                TypeInfo Convert(CallSiteParameter parameter)
+                {
+                    if (parameter.IsOmitted)
                     {
-                        if (parameter.NumericValue != null)
-                            type = DataType.Numeric;
-                        else
-                        if (parameter.AlphanumericValue != null)
-                            type = DataType.Alphanumeric;
-                        else type = DataType.Unknown;
+                        return _Omitted;
                     }
-		            else
-		            {
-                        if (node != null)
-		                {
-		                    var found = node.GetDataDefinitionFromStorageAreaDictionary(parameter.StorageArea);
-		                    var data = found as DataDescription;
-		                    type = data == null ? DataType.Unknown : data.DataType;
-		                }
 
-		                if (type == null) type = DataType.Unknown;
-		            }
-		            return type;
+                    var variable = parameter.StorageAreaOrValue;
+                    if (variable != null)
+                    {
+                        if (variable.IsLiteral)
+                        {
+                            if (variable.NumericValue != null)
+                            {
+                                return _Numeric;
+                            }
+                            if (variable.AlphanumericValue != null)
+                            {
+                                return _Alphanumeric;
+                            }
+                        }
+                        else
+                        {
+                            if (node?.GetDataDefinitionFromStorageAreaDictionary(variable.StorageArea) is DataDescription data)
+                            {
+                                return new TypeInfo() {DataType = data.DataType, TypeDefinition = data.TypeDefinition};
+                            }
+                        }
+                    }
+
+                    return _Unknown;
                 }
-		        return DataType.Unknown;
-		    }
-	    }
+            }
+
+            public IList<TypeInfo> Inputs { get; }
+            public IList<TypeInfo> Inouts { get; }
+            public IList<TypeInfo> Outputs { get; }
+            public TypeInfo Returning { get; }
+
+            private ArgumentsProfile(IList<TypeInfo> inputs, IList<TypeInfo> inouts, IList<TypeInfo> outputs, TypeInfo returning)
+            {
+                Inputs = inputs ?? new List<TypeInfo>();
+                Inouts = inouts ?? new List<TypeInfo>();
+                Outputs = outputs ?? new List<TypeInfo>();
+                Returning = returning;
+            }
+        }
     }
 
 	/// <summary>Call to an intrinsic function</summary>
@@ -586,16 +597,9 @@ namespace TypeCobol.Compiler.CodeElements
 
         public override string Namespace { get { return (ProcedureName as QualifiedSymbolReference) == null ? null : ((QualifiedSymbolReference) ProcedureName).Tail.Name; } }
 
-        public override ParameterList AsProfile(Node node)
-	    {
-	        var profile = new FunctionCallParameterList
-	        {
-	            InputParameters = FunctionCallParameterList.CreateParameters(InputParameters, node),
-	            InoutParameters = FunctionCallParameterList.CreateParameters(InoutParameters, node),
-	            OutputParameters = FunctionCallParameterList.CreateParameters(OutputParameters, node),
-	            ReturningParameter = null
-	        };
-	        return profile;
+        public override IProfile BuildProfile(Node node)
+        {
+            return ArgumentsProfile.Create(node, InputParameters, InoutParameters, OutputParameters);
         }
 		
 

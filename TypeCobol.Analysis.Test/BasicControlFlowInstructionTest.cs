@@ -244,6 +244,7 @@ namespace TypeCobol.Analysis.Test
         /// - input is BasicCfgInstrs\[CallerMethod].cbl
         /// - expected diagnostics is DotOutput\[CallerMethod].diag
         /// - expected result is DotOutput\[CallerMethod].dot
+        /// - CFG building mode is Standard
         /// - fullInstruction is True
         /// </remarks>
         /// <param name="inputDirectoryPath">Full path to the directory containing the input source file.</param>
@@ -255,6 +256,7 @@ namespace TypeCobol.Analysis.Test
         /// <param name="expectedResultDirectoryPath">Full path to the directory containing the expected result file.</param>
         /// <param name="expectedResultFileName">Name of the expected result file without extension.</param>
         /// <param name="expectedResultExtension">Extension of the expected result file including the '.'.</param>
+        /// <param name="mode">CFG Building mode.</param>
         /// <param name="fullInstruction">True to use full instruction during dot generation.</param>
         private void TestTemplate(
             string inputDirectoryPath = null,
@@ -266,6 +268,7 @@ namespace TypeCobol.Analysis.Test
             string expectedResultDirectoryPath = null,
             [CallerMemberName] string expectedResultFileName = null,
             string expectedResultExtension = ".dot",
+            CfgBuildingMode mode = CfgBuildingMode.Standard,
             bool fullInstruction = true)
         {
             string inputFilePath = Path.Combine(inputDirectoryPath ?? BasicCfgInstrs, inputFileName + inputExtension);
@@ -277,7 +280,7 @@ namespace TypeCobol.Analysis.Test
             string expectedResultFilePath = Path.Combine(expectedResultDirectoryPath ?? BasicCfgInstrs, expectedResultFileName + expectedResultExtension);
             Assert.IsTrue(File.Exists(expectedResultFilePath), $"Expected results file '{expectedResultFilePath}' does not exist.");
 
-            var graphs = ParseCompareDiagnostics(inputFilePath, expectedDiagnosticsFilePath);
+            var graphs = ParseCompareDiagnostics<object>(inputFilePath, mode, expectedDiagnosticsFilePath);
             Assert.IsTrue(graphs.Count == 1); //single program
             var cfg = graphs[0];
             Assert.IsNull(cfg.ParentGraph);
@@ -386,6 +389,9 @@ namespace TypeCobol.Analysis.Test
         public void PerformProcedure1() => TestTemplate();
 
         [TestMethod]
+        public void PerformProcedure2() => TestTemplate();
+
+        [TestMethod]
         public void PerformGoesOutOfBounds0() => TestTemplate();
 
         [TestMethod]
@@ -425,7 +431,16 @@ namespace TypeCobol.Analysis.Test
         public void MixPerformEvaluateIf0() => TestTemplate();
 
         [TestMethod]
-        public void PerformProcRecursive0() => TestTemplate();
+        public void PerformProc1Recursive0() => TestTemplate();
+
+        [TestMethod]
+        public void PerformProc2Recursive0() => TestTemplate();
+
+        [TestMethod]
+        public void PerformProc3Recursive0() => TestTemplate();
+
+        [TestMethod]
+        public void PerformProc4Recursive0() => TestTemplate();
 
         [TestMethod]
         public void Read0() => TestTemplate();
@@ -447,6 +462,27 @@ namespace TypeCobol.Analysis.Test
 
         [TestMethod]
         public void Write0() => TestTemplate();
+
+        [TestMethod]
+        public void PerformProcIterativeAfterRecursive0() => TestTemplate();
+
+        [TestMethod]
+        public void PerformProcIterativeAfterRecursive1() => TestTemplate();
+
+        [TestMethod]
+        public void PerformProcIterativeAfterRecursive2() => TestTemplate();
+
+        [TestMethod]
+        public void PerformProcIterativeRecursive0() => TestTemplate();
+
+        [TestMethod]
+        public void PerformIdentity() => TestTemplate();
+
+        [TestMethod]
+        public void NotRecursePerform0() => TestTemplate();
+
+        [TestMethod]
+        public void NotRecursePerform1() => TestTemplate();
 
         [TestMethod]
         public void CfgInNestedPrg0()
@@ -644,5 +680,48 @@ namespace TypeCobol.Analysis.Test
         [TestMethod]
         [Ignore] //Long execution time
         public void GenAllNistSrcDots() => GenAllNistDots(true);
+
+        //Extended format
+        [TestMethod]
+        public void ExtendedPerformProc1Recursive0()
+        {
+            const string baseName = "PerformProc1Recursive0";
+            TestTemplate(inputFileName: baseName, expectedDiagnosticsFileName: baseName, mode: CfgBuildingMode.Extended);
+        }
+
+        [TestMethod]
+        public void ExtendedPerformProc3Recursive0()
+        {
+            const string baseName = "PerformProc3Recursive0";
+            TestTemplate(inputFileName: baseName, expectedDiagnosticsFileName: baseName, mode: CfgBuildingMode.Extended);
+        }
+
+        [TestMethod]
+        public void ExtendedPerformProc4Recursive0()
+        {
+            const string baseName = "PerformProc4Recursive0";
+            TestTemplate(inputFileName:baseName, expectedDiagnosticsFileName:baseName, mode:CfgBuildingMode.Extended);
+        }
+
+        [TestMethod]
+        public void ExtendedPerformProcIterativeAfterRecursive0()
+        {
+            const string baseName = "PerformProcIterativeAfterRecursive0";
+            TestTemplate(inputFileName: baseName, expectedDiagnosticsFileName: baseName, mode: CfgBuildingMode.Extended);
+        }
+
+        [TestMethod]
+        public void ExtendedPerformProcIterativeAfterRecursive1()
+        {
+            const string baseName = "PerformProcIterativeAfterRecursive1";
+            TestTemplate(inputFileName: baseName, expectedDiagnosticsFileName: baseName, mode: CfgBuildingMode.Extended);
+        }
+
+        [TestMethod]
+        public void ExtendedPerformProcIterativeAfterRecursive2()
+        {
+            const string baseName = "PerformProcIterativeAfterRecursive2";
+            TestTemplate(inputFileName: baseName, expectedDiagnosticsFileName: baseName, mode: CfgBuildingMode.Extended);
+        }
     }
 }

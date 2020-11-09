@@ -26,6 +26,7 @@
     <Compile Include="CfgDfaAnalyzerFactory.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.BasicBlockForNode.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.BasicBlockForNodeGroup.cs" />
+    <Compile Include="Cfg\ControlFlowGraphBuilder.CfgAfterIterativePerformProcedureTransformer.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.DeclarativesContext.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.MultiBranchContext.cs" />
@@ -44,8 +45,8 @@
     <Compile Include="Graph\BasicBlock.cs" />
     <Compile Include="Graph\CfgDotFileForNodeGenerator.cs" />
     <Compile Include="Graph\ControlFlowGraph.cs" />
-    <Compile Include="Graph\CfgDotFileGenerator.cs" />
     <Compile Include="Graph\ICfgFileGenerator.cs" />
+    <Compile Include="Graph\ICfgTransform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Report\ZCallPgmReport.cs" />
     <Compile Include="Resource.Designer.cs">

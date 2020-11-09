@@ -141,8 +141,26 @@ namespace TypeCobol.Codegen.Nodes {
                     _cache.Add(callTextLine);
 
                 }
+
+                //Find and set computed hash (if any) to each DataOrConditionStorageArea used by the CALL node
+                var hashes = Node.Root.GeneratedCobolHashes;
+                if (Node.QualifiedStorageAreas != null)
+                {
+                    foreach (var qualifiedStorageArea in Node.QualifiedStorageAreas)
+                    {
+                        if (qualifiedStorageArea.Value != null
+                            &&
+                            hashes.TryGetValue(qualifiedStorageArea.Value.ToString("."), out var indexHash)
+                            &&
+                            qualifiedStorageArea.Key is DataOrConditionStorageArea dataOrConditionStorageArea)
+                        {
+                            dataOrConditionStorageArea.Hash = indexHash;
+                        }
+                    }
+                }
+
                 //Rule: TCCODEGEN-FIXFOR-ALIGN-FUNCALL
-				var indent = new string(' ', 13);
+                var indent = new string(' ', 13);
                 //Hanle Input parameters
                 //Rule: TCCODEGEN-FUNCALL-PARAMS
                 TypeCobol.Compiler.CodeElements.ParameterSharingMode previousSharingMode = (TypeCobol.Compiler.CodeElements.ParameterSharingMode)(-1);

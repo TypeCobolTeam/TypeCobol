@@ -40,554 +40,814 @@ label = "{Block560|    PERFORM  HEAD-ROUTINE THRU COLUMN-NAMES-ROUTINE\l}"
 subgraph cluster_2{
 color = blue;
 label = "HEAD-ROUTINE";
-Block732 [
-label = "{HEAD-ROUTINE. Block732|    MOVE CCVS-H-1 TO DUMMY-RECORD\l}"
+Block1472 [
+label = "{HEAD-ROUTINE. Block1472|    MOVE CCVS-H-1 TO DUMMY-RECORD\l}"
 ]
-Block733 [
-label = "{HEAD-ROUTINE. Block733|}"
+Block1473 [
+label = "{HEAD-ROUTINE. Block1473|}"
 ]
-Block734 [
-label = "{Block734|                                   PERFORM WRITE-LINE 2 TIMES\l}"
+Block607 [
+label = "{Block607|                                   PERFORM WRITE-LINE 2 TIMES\l}"
 ]
 subgraph cluster_8{
 color = blue;
 label = "WRITE-LINE";
-Block866 [
-label = "{WRITE-LINE. Block866|    ADD 1 TO RECORD-COUNT\l}"
+Block1581 [
+label = "{WRITE-LINE. Block1581|    ADD 1 TO RECORD-COUNT\l}"
 ]
-Block867 [
-label = "{WRITE-LINE. Block867|    IF RECORD-COUNT GREATER 50\l}"
+Block1582 [
+label = "{WRITE-LINE. Block1582|    IF RECORD-COUNT GREATER 50\l}"
 ]
-Block868 [
-label = "{Block868|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+Block1583 [
+label = "{Block1583|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
 ]
-Block869 [
-label = "{Block869|                                      PERFORM WRT-LN\l}"
+Block680 [
+label = "{Block680|                                      PERFORM WRT-LN\l}"
 ]
 subgraph cluster_21{
 color = blue;
 label = "WRT-LN";
-Block1035 [
-label = "{WRT-LN. Block1035|    WRITE    DUMMY-RECORD AFTER ADVANCING 1 LINES\l}"
+Block1698 [
+label = "{WRT-LN. Block1698|    WRITE    DUMMY-RECORD AFTER ADVANCING 1 LINES\l}"
 ]
-Block1036 [
-label = "{WRT-LN. Block1036|    MOVE SPACE TO DUMMY-RECORD\l}"
+Block1699 [
+label = "{WRT-LN. Block1699|    MOVE SPACE TO DUMMY-RECORD\l}"
 ]
-Block1035 -> Block1036
 
 }
-Block869 -> Block1035 [style=dashed]
+Block680 -> Block1698 [style=dashed]
 
-Block870 [
-label = "{Block870|        MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
+Block681 [
+label = "{Block681|        MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
 ]
-Block871 [
-label = "{Block871|                                      PERFORM WRT-LN 2 TIMES\l}"
+Block682 [
+label = "{Block682|                                      PERFORM WRT-LN 2 TIMES\l}"
 ]
 subgraph cluster_22{
 color = blue;
 label = "WRT-LN";
-Block1037 [
-label = "{WRT-LN. Block1037|    WRITE    DUMMY-RECORD AFTER ADVANCING 1 LINES\l}"
+Block1700 [
+label = "{WRT-LN. Block1700|    WRITE    DUMMY-RECORD AFTER ADVANCING 1 LINES\l}"
 ]
-Block1038 [
-label = "{WRT-LN. Block1038|    MOVE SPACE TO DUMMY-RECORD\l}"
+Block1701 [
+label = "{WRT-LN. Block1701|    MOVE SPACE TO DUMMY-RECORD\l}"
 ]
-Block1037 -> Block1038
 
 }
-Block871 -> Block1037 [style=dashed]
+Block682 -> Block1700 [style=dashed]
 
-Block872 [
-label = "{Block872|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
+Block683 [
+label = "{Block683|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 ]
-Block873 [
-label = "{Block873|                                         PERFORM WRT-LN\l}"
+Block684 [
+label = "{Block684|                                         PERFORM WRT-LN\l}"
 ]
 subgraph cluster_23{
 color = blue;
 label = "WRT-LN";
-Block1039 [
-label = "{WRT-LN. Block1039|    WRITE    DUMMY-RECORD AFTER ADVANCING 1 LINES\l}"
+Block1702 [
+label = "{WRT-LN. Block1702|    WRITE    DUMMY-RECORD AFTER ADVANCING 1 LINES\l}"
 ]
-Block1040 [
-label = "{WRT-LN. Block1040|    MOVE SPACE TO DUMMY-RECORD\l}"
+Block1703 [
+label = "{WRT-LN. Block1703|    MOVE SPACE TO DUMMY-RECORD\l}"
 ]
-Block1039 -> Block1040
 
 }
-Block873 -> Block1039 [style=dashed]
+Block684 -> Block1702 [style=dashed]
 
-Block874 [
-label = "{Block874|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
+Block685 [
+label = "{Block685|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
 ]
-Block875 [
-label = "{Block875|}"
+Block686 [
+label = "{Block686|}"
 ]
-Block876 [
-label = "{WRITE-LINE. Block876|}"
+Block687 [
+label = "{WRITE-LINE. Block687|}"
 ]
-Block877 [
-label = "{Block877|    PERFORM WRT-LN\l}"
+Block688 [
+label = "{Block688|    PERFORM WRT-LN\l}"
 ]
 subgraph cluster_24{
 color = blue;
 label = "WRT-LN";
-Block1041 [
-label = "{WRT-LN. Block1041|    WRITE    DUMMY-RECORD AFTER ADVANCING 1 LINES\l}"
+Block1704 [
+label = "{WRT-LN. Block1704|    WRITE    DUMMY-RECORD AFTER ADVANCING 1 LINES\l}"
 ]
-Block1042 [
-label = "{WRT-LN. Block1042|    MOVE SPACE TO DUMMY-RECORD\l}"
+Block1705 [
+label = "{WRT-LN. Block1705|    MOVE SPACE TO DUMMY-RECORD\l}"
 ]
-Block1041 -> Block1042
 
 }
-Block877 -> Block1041 [style=dashed]
+Block688 -> Block1704 [style=dashed]
 
-Block878 [
-label = "{Block878|}"
+Block689 [
+label = "{Block689|}"
 ]
-Block866 -> Block867
-Block867 -> Block868
-Block867 -> Block875
-Block868 -> Block869
-Block869 -> Block870
-Block870 -> Block871
-Block871 -> Block872
-Block872 -> Block873
-Block873 -> Block874
-Block874 -> Block875
-Block875 -> Block876
-Block876 -> Block877
-Block877 -> Block878
+Block690 [
+label = "{WRT-LN. Block690|    WRITE    DUMMY-RECORD AFTER ADVANCING 1 LINES\l}"
+]
+Block691 [
+label = "{WRT-LN. Block691|    MOVE SPACE TO DUMMY-RECORD\l}"
+]
+Block692 [
+label = "{BLANK-LINE-PRINT. Block692|}"
+]
+Block693 [
+label = "{Block693|    PERFORM WRT-LN\l}"
+]
+subgraph cluster_25{
+color = blue;
+label = "WRT-LN";
+Block1706 [
+label = "{WRT-LN. Block1706|    WRITE    DUMMY-RECORD AFTER ADVANCING 1 LINES\l}"
+]
+Block1707 [
+label = "{WRT-LN. Block1707|    MOVE SPACE TO DUMMY-RECORD\l}"
+]
 
 }
-Block734 -> Block866 [style=dashed]
+Block693 -> Block1706 [style=dashed]
 
-Block735 [
-label = "{Block735|}"
+Block694 [
+label = "{Block694|}"
 ]
-Block736 [
-label = "{HEAD-ROUTINE. Block736|    MOVE CCVS-H-2 TO DUMMY-RECORD\l}"
+Block695 [
+label = "{FAIL-ROUTINE. Block695|    IF COMPUTED-X NOT EQUAL TO SPACE\l}"
 ]
-Block737 [
-label = "{HEAD-ROUTINE. Block737|}"
+Block696 [
+label = "{Block696|                                     GO TO FAIL-ROUTINE-WRITE\l}"
 ]
-Block738 [
-label = "{Block738|                                   PERFORM WRITE-LINE 5 TIMES\l}"
+Block710 [
+label = "{FAIL-ROUTINE-WRITE. Block710|    MOVE TEST-COMPUTED TO PRINT-REC\l}"
+]
+Block711 [
+label = "{Block711|                                    PERFORM WRITE-LINE\l}"
+]
+subgraph cluster_27{
+color = blue;
+label = "WRITE-LINE";
+Block1717 [
+label = "{WRITE-LINE. Block1717|    ADD 1 TO RECORD-COUNT\l}"
+]
+Block1718 [
+label = "{WRITE-LINE. Block1718|    IF RECORD-COUNT GREATER 50\l}"
+]
+Block1719 [
+label = "{Block1719|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+]
+Block1723 [
+label = "{Block1723|}"
+]
+Block1724 [
+label = "{WRITE-LINE. Block1724|}"
+]
+
+}
+Block711 -> Block1717 [style=dashed]
+
+Block712 [
+label = "{Block712|    MOVE TEST-CORRECT TO PRINT-REC\l}"
+]
+Block713 [
+label = "{Block713|                                   PERFORM WRITE-LINE 2 TIMES\l}"
+]
+subgraph cluster_28{
+color = blue;
+label = "WRITE-LINE";
+Block1726 [
+label = "{WRITE-LINE. Block1726|    ADD 1 TO RECORD-COUNT\l}"
+]
+Block1727 [
+label = "{WRITE-LINE. Block1727|    IF RECORD-COUNT GREATER 50\l}"
+]
+Block1728 [
+label = "{Block1728|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+]
+Block1732 [
+label = "{Block1732|}"
+]
+Block1733 [
+label = "{WRITE-LINE. Block1733|}"
+]
+
+}
+Block713 -> Block1726 [style=dashed]
+
+Block714 [
+label = "{Block714|}"
+]
+Block715 [
+label = "{FAIL-ROUTINE-EX. Block715|                 EXIT\l}"
+]
+Block716 [
+label = "{BAIL-OUT. Block716|    IF COMPUTED-A NOT EQUAL TO SPACE\l}"
+]
+Block717 [
+label = "{Block717|                                     GO TO BAIL-OUT-WRITE\l}"
+]
+Block724 [
+label = "{BAIL-OUT-WRITE. Block724|    MOVE CORRECT-A TO XXCORRECT\l}"
+]
+Block725 [
+label = "{BAIL-OUT-WRITE. Block725|                                 MOVE COMPUTED-A TO XXCOMPUTED\l}"
+]
+Block726 [
+label = "{BAIL-OUT-WRITE. Block726|    MOVE XXINFO TO DUMMY-RECORD\l}"
+]
+Block727 [
+label = "{BAIL-OUT-WRITE. Block727|}"
+]
+Block728 [
+label = "{Block728|                                 PERFORM WRITE-LINE 2 TIMES\l}"
+]
+subgraph cluster_29{
+color = blue;
+label = "WRITE-LINE";
+Block1735 [
+label = "{WRITE-LINE. Block1735|    ADD 1 TO RECORD-COUNT\l}"
+]
+Block1736 [
+label = "{WRITE-LINE. Block1736|    IF RECORD-COUNT GREATER 50\l}"
+]
+Block1737 [
+label = "{Block1737|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+]
+Block1741 [
+label = "{Block1741|}"
+]
+Block1742 [
+label = "{WRITE-LINE. Block1742|}"
+]
+
+}
+Block728 -> Block1735 [style=dashed]
+
+Block729 [
+label = "{Block729|}"
+]
+Block730 [
+label = "{BAIL-OUT-EX. Block730|             EXIT\l}"
+]
+Block731 [
+label = "{CCVS1-EXIT. Block731|    EXIT\l}"
+]
+Block719 [
+label = "{Block719|}"
+]
+Block720 [
+label = "{BAIL-OUT. Block720|    IF CORRECT-A EQUAL TO SPACE\l}"
+]
+Block721 [
+label = "{Block721|                                GO TO BAIL-OUT-EX\l}"
+]
+Block723 [
+label = "{Block723|}"
+]
+Block698 [
+label = "{Block698|}"
+]
+Block699 [
+label = "{FAIL-ROUTINE. Block699|    IF CORRECT-X NOT EQUAL TO SPACE\l}"
+]
+Block700 [
+label = "{Block700|                                    GO TO FAIL-ROUTINE-WRITE\l}"
+]
+Block702 [
+label = "{Block702|}"
+]
+Block703 [
+label = "{FAIL-ROUTINE. Block703|    MOVE \"NO FURTHER INFORMATION, SEE PROGRAM.\" TO INFO-TEXT\l}"
+]
+Block704 [
+label = "{FAIL-ROUTINE. Block704|    MOVE XXINFO TO DUMMY-RECORD\l}"
+]
+Block705 [
+label = "{FAIL-ROUTINE. Block705|}"
+]
+Block706 [
+label = "{Block706|                                 PERFORM WRITE-LINE 2 TIMES\l}"
+]
+subgraph cluster_26{
+color = blue;
+label = "WRITE-LINE";
+Block1708 [
+label = "{WRITE-LINE. Block1708|    ADD 1 TO RECORD-COUNT\l}"
+]
+Block1709 [
+label = "{WRITE-LINE. Block1709|    IF RECORD-COUNT GREATER 50\l}"
+]
+Block1710 [
+label = "{Block1710|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+]
+Block1714 [
+label = "{Block1714|}"
+]
+Block1715 [
+label = "{WRITE-LINE. Block1715|}"
+]
+
+}
+Block706 -> Block1708 [style=dashed]
+
+Block707 [
+label = "{Block707|}"
+]
+Block708 [
+label = "{FAIL-ROUTINE. Block708|    GO TO FAIL-ROUTINE-EX\l}"
+]
+Block1587 [
+label = "{Block1587|}"
+]
+Block1588 [
+label = "{WRITE-LINE. Block1588|}"
+]
+
+}
+Block607 -> Block1581 [style=dashed]
+
+Block608 [
+label = "{Block608|}"
+]
+Block609 [
+label = "{HEAD-ROUTINE. Block609|    MOVE CCVS-H-2 TO DUMMY-RECORD\l}"
+]
+Block610 [
+label = "{HEAD-ROUTINE. Block610|}"
+]
+Block611 [
+label = "{Block611|                                   PERFORM WRITE-LINE 5 TIMES\l}"
 ]
 subgraph cluster_9{
 color = blue;
 label = "WRITE-LINE";
-Block879 [
-label = "{WRITE-LINE. Block879|    ADD 1 TO RECORD-COUNT\l}"
+Block1590 [
+label = "{WRITE-LINE. Block1590|    ADD 1 TO RECORD-COUNT\l}"
 ]
-Block880 [
-label = "{WRITE-LINE. Block880|    IF RECORD-COUNT GREATER 50\l}"
+Block1591 [
+label = "{WRITE-LINE. Block1591|    IF RECORD-COUNT GREATER 50\l}"
 ]
-Block881 [
-label = "{Block881|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+Block1592 [
+label = "{Block1592|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
 ]
-Block882 [
-label = "{Block882|                                      PERFORM WRT-LN\l}"
+Block1596 [
+label = "{Block1596|}"
 ]
-Block882 -> Block1035 [style=dashed]
-
-Block883 [
-label = "{Block883|        MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
+Block1597 [
+label = "{WRITE-LINE. Block1597|}"
 ]
-Block884 [
-label = "{Block884|                                      PERFORM WRT-LN 2 TIMES\l}"
-]
-Block884 -> Block1037 [style=dashed]
-
-Block885 [
-label = "{Block885|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
-]
-Block886 [
-label = "{Block886|                                         PERFORM WRT-LN\l}"
-]
-Block886 -> Block1039 [style=dashed]
-
-Block887 [
-label = "{Block887|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
-]
-Block888 [
-label = "{Block888|}"
-]
-Block889 [
-label = "{WRITE-LINE. Block889|}"
-]
-Block890 [
-label = "{Block890|    PERFORM WRT-LN\l}"
-]
-Block890 -> Block1041 [style=dashed]
-
-Block891 [
-label = "{Block891|}"
-]
-Block879 -> Block880
-Block880 -> Block881
-Block880 -> Block888
-Block881 -> Block882
-Block882 -> Block883
-Block883 -> Block884
-Block884 -> Block885
-Block885 -> Block886
-Block886 -> Block887
-Block887 -> Block888
-Block888 -> Block889
-Block889 -> Block890
-Block890 -> Block891
 
 }
-Block738 -> Block879 [style=dashed]
+Block611 -> Block1590 [style=dashed]
 
-Block739 [
-label = "{Block739|}"
+Block612 [
+label = "{Block612|}"
 ]
-Block740 [
-label = "{HEAD-ROUTINE. Block740|    MOVE CCVS-H-3 TO DUMMY-RECORD\l}"
+Block613 [
+label = "{HEAD-ROUTINE. Block613|    MOVE CCVS-H-3 TO DUMMY-RECORD\l}"
 ]
-Block741 [
-label = "{HEAD-ROUTINE. Block741|}"
+Block614 [
+label = "{HEAD-ROUTINE. Block614|}"
 ]
-Block742 [
-label = "{Block742|                                   PERFORM WRITE-LINE 3 TIMES\l}"
+Block615 [
+label = "{Block615|                                   PERFORM WRITE-LINE 3 TIMES\l}"
 ]
 subgraph cluster_10{
 color = blue;
 label = "WRITE-LINE";
-Block892 [
-label = "{WRITE-LINE. Block892|    ADD 1 TO RECORD-COUNT\l}"
+Block1599 [
+label = "{WRITE-LINE. Block1599|    ADD 1 TO RECORD-COUNT\l}"
 ]
-Block893 [
-label = "{WRITE-LINE. Block893|    IF RECORD-COUNT GREATER 50\l}"
+Block1600 [
+label = "{WRITE-LINE. Block1600|    IF RECORD-COUNT GREATER 50\l}"
 ]
-Block894 [
-label = "{Block894|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+Block1601 [
+label = "{Block1601|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
 ]
-Block895 [
-label = "{Block895|                                      PERFORM WRT-LN\l}"
+Block1605 [
+label = "{Block1605|}"
 ]
-Block895 -> Block1035 [style=dashed]
-
-Block896 [
-label = "{Block896|        MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
+Block1606 [
+label = "{WRITE-LINE. Block1606|}"
 ]
-Block897 [
-label = "{Block897|                                      PERFORM WRT-LN 2 TIMES\l}"
-]
-Block897 -> Block1037 [style=dashed]
-
-Block898 [
-label = "{Block898|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
-]
-Block899 [
-label = "{Block899|                                         PERFORM WRT-LN\l}"
-]
-Block899 -> Block1039 [style=dashed]
-
-Block900 [
-label = "{Block900|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
-]
-Block901 [
-label = "{Block901|}"
-]
-Block902 [
-label = "{WRITE-LINE. Block902|}"
-]
-Block903 [
-label = "{Block903|    PERFORM WRT-LN\l}"
-]
-Block903 -> Block1041 [style=dashed]
-
-Block904 [
-label = "{Block904|}"
-]
-Block892 -> Block893
-Block893 -> Block894
-Block893 -> Block901
-Block894 -> Block895
-Block895 -> Block896
-Block896 -> Block897
-Block897 -> Block898
-Block898 -> Block899
-Block899 -> Block900
-Block900 -> Block901
-Block901 -> Block902
-Block902 -> Block903
-Block903 -> Block904
 
 }
-Block742 -> Block892 [style=dashed]
+Block615 -> Block1599 [style=dashed]
 
-Block743 [
-label = "{Block743|}"
+Block616 [
+label = "{Block616|}"
 ]
-Block744 [
-label = "{COLUMN-NAMES-ROUTINE. Block744|    MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+Block617 [
+label = "{COLUMN-NAMES-ROUTINE. Block617|    MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
 ]
-Block745 [
-label = "{COLUMN-NAMES-ROUTINE. Block745|}"
+Block618 [
+label = "{COLUMN-NAMES-ROUTINE. Block618|}"
 ]
-Block746 [
-label = "{Block746|                                   PERFORM WRITE-LINE\l}"
+Block619 [
+label = "{Block619|                                   PERFORM WRITE-LINE\l}"
 ]
 subgraph cluster_11{
 color = blue;
 label = "WRITE-LINE";
-Block905 [
-label = "{WRITE-LINE. Block905|    ADD 1 TO RECORD-COUNT\l}"
+Block1608 [
+label = "{WRITE-LINE. Block1608|    ADD 1 TO RECORD-COUNT\l}"
 ]
-Block906 [
-label = "{WRITE-LINE. Block906|    IF RECORD-COUNT GREATER 50\l}"
+Block1609 [
+label = "{WRITE-LINE. Block1609|    IF RECORD-COUNT GREATER 50\l}"
 ]
-Block907 [
-label = "{Block907|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+Block1610 [
+label = "{Block1610|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
 ]
-Block908 [
-label = "{Block908|                                      PERFORM WRT-LN\l}"
+Block1614 [
+label = "{Block1614|}"
 ]
-Block908 -> Block1035 [style=dashed]
-
-Block909 [
-label = "{Block909|        MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
+Block1615 [
+label = "{WRITE-LINE. Block1615|}"
 ]
-Block910 [
-label = "{Block910|                                      PERFORM WRT-LN 2 TIMES\l}"
-]
-Block910 -> Block1037 [style=dashed]
-
-Block911 [
-label = "{Block911|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
-]
-Block912 [
-label = "{Block912|                                         PERFORM WRT-LN\l}"
-]
-Block912 -> Block1039 [style=dashed]
-
-Block913 [
-label = "{Block913|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
-]
-Block914 [
-label = "{Block914|}"
-]
-Block915 [
-label = "{WRITE-LINE. Block915|}"
-]
-Block916 [
-label = "{Block916|    PERFORM WRT-LN\l}"
-]
-Block916 -> Block1041 [style=dashed]
-
-Block917 [
-label = "{Block917|}"
-]
-Block905 -> Block906
-Block906 -> Block907
-Block906 -> Block914
-Block907 -> Block908
-Block908 -> Block909
-Block909 -> Block910
-Block910 -> Block911
-Block911 -> Block912
-Block912 -> Block913
-Block913 -> Block914
-Block914 -> Block915
-Block915 -> Block916
-Block916 -> Block917
 
 }
-Block746 -> Block905 [style=dashed]
+Block619 -> Block1608 [style=dashed]
 
-Block747 [
-label = "{Block747|}"
+Block620 [
+label = "{Block620|}"
 ]
-Block748 [
-label = "{COLUMN-NAMES-ROUTINE. Block748|    MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
+Block621 [
+label = "{COLUMN-NAMES-ROUTINE. Block621|    MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
 ]
-Block749 [
-label = "{COLUMN-NAMES-ROUTINE. Block749|}"
+Block622 [
+label = "{COLUMN-NAMES-ROUTINE. Block622|}"
 ]
-Block750 [
-label = "{Block750|                                   PERFORM WRITE-LINE 2 TIMES\l}"
+Block623 [
+label = "{Block623|                                   PERFORM WRITE-LINE 2 TIMES\l}"
 ]
 subgraph cluster_12{
 color = blue;
 label = "WRITE-LINE";
-Block918 [
-label = "{WRITE-LINE. Block918|    ADD 1 TO RECORD-COUNT\l}"
+Block1617 [
+label = "{WRITE-LINE. Block1617|    ADD 1 TO RECORD-COUNT\l}"
 ]
-Block919 [
-label = "{WRITE-LINE. Block919|    IF RECORD-COUNT GREATER 50\l}"
+Block1618 [
+label = "{WRITE-LINE. Block1618|    IF RECORD-COUNT GREATER 50\l}"
 ]
-Block920 [
-label = "{Block920|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+Block1619 [
+label = "{Block1619|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
 ]
-Block921 [
-label = "{Block921|                                      PERFORM WRT-LN\l}"
+Block1623 [
+label = "{Block1623|}"
 ]
-Block921 -> Block1035 [style=dashed]
-
-Block922 [
-label = "{Block922|        MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
+Block1624 [
+label = "{WRITE-LINE. Block1624|}"
 ]
-Block923 [
-label = "{Block923|                                      PERFORM WRT-LN 2 TIMES\l}"
-]
-Block923 -> Block1037 [style=dashed]
-
-Block924 [
-label = "{Block924|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
-]
-Block925 [
-label = "{Block925|                                         PERFORM WRT-LN\l}"
-]
-Block925 -> Block1039 [style=dashed]
-
-Block926 [
-label = "{Block926|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
-]
-Block927 [
-label = "{Block927|}"
-]
-Block928 [
-label = "{WRITE-LINE. Block928|}"
-]
-Block929 [
-label = "{Block929|    PERFORM WRT-LN\l}"
-]
-Block929 -> Block1041 [style=dashed]
-
-Block930 [
-label = "{Block930|}"
-]
-Block918 -> Block919
-Block919 -> Block920
-Block919 -> Block927
-Block920 -> Block921
-Block921 -> Block922
-Block922 -> Block923
-Block923 -> Block924
-Block924 -> Block925
-Block925 -> Block926
-Block926 -> Block927
-Block927 -> Block928
-Block928 -> Block929
-Block929 -> Block930
 
 }
-Block750 -> Block918 [style=dashed]
+Block623 -> Block1617 [style=dashed]
 
-Block751 [
-label = "{Block751|}"
+Block624 [
+label = "{Block624|}"
 ]
-Block752 [
-label = "{COLUMN-NAMES-ROUTINE. Block752|    MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
+Block625 [
+label = "{COLUMN-NAMES-ROUTINE. Block625|    MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 ]
-Block753 [
-label = "{COLUMN-NAMES-ROUTINE. Block753|}"
+Block626 [
+label = "{COLUMN-NAMES-ROUTINE. Block626|}"
 ]
-Block754 [
-label = "{Block754|                                      PERFORM WRITE-LINE\l}"
+Block627 [
+label = "{Block627|                                      PERFORM WRITE-LINE\l}"
 ]
 subgraph cluster_13{
 color = blue;
 label = "WRITE-LINE";
-Block931 [
-label = "{WRITE-LINE. Block931|    ADD 1 TO RECORD-COUNT\l}"
+Block1626 [
+label = "{WRITE-LINE. Block1626|    ADD 1 TO RECORD-COUNT\l}"
 ]
-Block932 [
-label = "{WRITE-LINE. Block932|    IF RECORD-COUNT GREATER 50\l}"
+Block1627 [
+label = "{WRITE-LINE. Block1627|    IF RECORD-COUNT GREATER 50\l}"
 ]
-Block933 [
-label = "{Block933|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+Block1628 [
+label = "{Block1628|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
 ]
-Block934 [
-label = "{Block934|                                      PERFORM WRT-LN\l}"
+Block1632 [
+label = "{Block1632|}"
 ]
-Block934 -> Block1035 [style=dashed]
-
-Block935 [
-label = "{Block935|        MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
+Block1633 [
+label = "{WRITE-LINE. Block1633|}"
 ]
-Block936 [
-label = "{Block936|                                      PERFORM WRT-LN 2 TIMES\l}"
-]
-Block936 -> Block1037 [style=dashed]
-
-Block937 [
-label = "{Block937|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
-]
-Block938 [
-label = "{Block938|                                         PERFORM WRT-LN\l}"
-]
-Block938 -> Block1039 [style=dashed]
-
-Block939 [
-label = "{Block939|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
-]
-Block940 [
-label = "{Block940|}"
-]
-Block941 [
-label = "{WRITE-LINE. Block941|}"
-]
-Block942 [
-label = "{Block942|    PERFORM WRT-LN\l}"
-]
-Block942 -> Block1041 [style=dashed]
-
-Block943 [
-label = "{Block943|}"
-]
-Block931 -> Block932
-Block932 -> Block933
-Block932 -> Block940
-Block933 -> Block934
-Block934 -> Block935
-Block935 -> Block936
-Block936 -> Block937
-Block937 -> Block938
-Block938 -> Block939
-Block939 -> Block940
-Block940 -> Block941
-Block941 -> Block942
-Block942 -> Block943
 
 }
-Block754 -> Block931 [style=dashed]
+Block627 -> Block1626 [style=dashed]
 
-Block755 [
-label = "{Block755|}"
+Block628 [
+label = "{Block628|}"
 ]
-Block732 -> Block733
-Block733 -> Block734
-Block734 -> Block735
-Block735 -> Block736
-Block736 -> Block737
-Block737 -> Block738
-Block738 -> Block739
-Block739 -> Block740
-Block740 -> Block741
-Block741 -> Block742
-Block742 -> Block743
-Block743 -> Block744
-Block744 -> Block745
-Block745 -> Block746
-Block746 -> Block747
-Block747 -> Block748
-Block748 -> Block749
-Block749 -> Block750
-Block750 -> Block751
-Block751 -> Block752
-Block752 -> Block753
-Block753 -> Block754
-Block754 -> Block755
+Block629 [
+label = "{END-ROUTINE. Block629|    MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
+]
+Block630 [
+label = "{END-ROUTINE. Block630|}"
+]
+Block631 [
+label = "{Block631|                                      PERFORM WRITE-LINE 5 TIMES\l}"
+]
+subgraph cluster_14{
+color = blue;
+label = "WRITE-LINE";
+Block1635 [
+label = "{WRITE-LINE. Block1635|    ADD 1 TO RECORD-COUNT\l}"
+]
+Block1636 [
+label = "{WRITE-LINE. Block1636|    IF RECORD-COUNT GREATER 50\l}"
+]
+Block1637 [
+label = "{Block1637|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+]
+Block1641 [
+label = "{Block1641|}"
+]
+Block1642 [
+label = "{WRITE-LINE. Block1642|}"
+]
 
 }
-Block560 -> Block732 [style=dashed]
+Block631 -> Block1635 [style=dashed]
+
+Block632 [
+label = "{Block632|}"
+]
+Block633 [
+label = "{END-RTN-EXIT. Block633|    MOVE CCVS-E-1 TO DUMMY-RECORD\l}"
+]
+Block634 [
+label = "{END-RTN-EXIT. Block634|}"
+]
+Block635 [
+label = "{Block635|                                   PERFORM WRITE-LINE 2 TIMES\l}"
+]
+subgraph cluster_15{
+color = blue;
+label = "WRITE-LINE";
+Block1644 [
+label = "{WRITE-LINE. Block1644|    ADD 1 TO RECORD-COUNT\l}"
+]
+Block1645 [
+label = "{WRITE-LINE. Block1645|    IF RECORD-COUNT GREATER 50\l}"
+]
+Block1646 [
+label = "{Block1646|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+]
+Block1650 [
+label = "{Block1650|}"
+]
+Block1651 [
+label = "{WRITE-LINE. Block1651|}"
+]
+
+}
+Block635 -> Block1644 [style=dashed]
+
+Block636 [
+label = "{Block636|}"
+]
+Block637 [
+label = "{END-ROUTINE-1. Block637|     ADD ERROR-COUNTER TO ERROR-HOLD\l                                     ADD INSPECT-COUNTER TO       ERROR-HOLD\l}"
+]
+Block638 [
+label = "{END-ROUTINE-1. Block638|                 ADD DELETE-CNT TO ERROR-HOLD\l}"
+]
+Block639 [
+label = "{END-ROUTINE-1. Block639|     ADD PASS-COUNTER TO ERROR-HOLD\l}"
+]
+Block640 [
+label = "{END-ROUTINE-1. Block640|     MOVE PASS-COUNTER TO CCVS-E-4-1\l}"
+]
+Block641 [
+label = "{END-ROUTINE-1. Block641|     MOVE ERROR-HOLD TO CCVS-E-4-2\l}"
+]
+Block642 [
+label = "{END-ROUTINE-1. Block642|     MOVE CCVS-E-4 TO CCVS-E-2-2\l}"
+]
+Block643 [
+label = "{END-ROUTINE-1. Block643|     MOVE CCVS-E-2 TO DUMMY-RECORD\l}"
+]
+Block644 [
+label = "{Block644|                                   PERFORM WRITE-LINE\l}"
+]
+subgraph cluster_16{
+color = blue;
+label = "WRITE-LINE";
+Block1653 [
+label = "{WRITE-LINE. Block1653|    ADD 1 TO RECORD-COUNT\l}"
+]
+Block1654 [
+label = "{WRITE-LINE. Block1654|    IF RECORD-COUNT GREATER 50\l}"
+]
+Block1655 [
+label = "{Block1655|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+]
+Block1659 [
+label = "{Block1659|}"
+]
+Block1660 [
+label = "{WRITE-LINE. Block1660|}"
+]
+
+}
+Block644 -> Block1653 [style=dashed]
+
+Block645 [
+label = "{Block645|}"
+]
+Block646 [
+label = "{END-ROUTINE-12. Block646|     MOVE \"TEST(S) FAILED\" TO ENDER-DESC\l}"
+]
+Block647 [
+label = "{END-ROUTINE-12. Block647|    IF       ERROR-COUNTER IS EQUAL TO ZERO\l}"
+]
+Block648 [
+label = "{Block648|        MOVE \"NO \" TO ERROR-TOTAL\l}"
+]
+Block650 [
+label = "{Block650|}"
+]
+Block651 [
+label = "{END-ROUTINE-12. Block651|    MOVE     CCVS-E-2 TO DUMMY-RECORD\l}"
+]
+Block652 [
+label = "{END-ROUTINE-12. Block652|}"
+]
+Block653 [
+label = "{Block653|    PERFORM WRITE-LINE\l}"
+]
+subgraph cluster_17{
+color = blue;
+label = "WRITE-LINE";
+Block1662 [
+label = "{WRITE-LINE. Block1662|    ADD 1 TO RECORD-COUNT\l}"
+]
+Block1663 [
+label = "{WRITE-LINE. Block1663|    IF RECORD-COUNT GREATER 50\l}"
+]
+Block1664 [
+label = "{Block1664|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+]
+Block1668 [
+label = "{Block1668|}"
+]
+Block1669 [
+label = "{WRITE-LINE. Block1669|}"
+]
+
+}
+Block653 -> Block1662 [style=dashed]
+
+Block654 [
+label = "{Block654|}"
+]
+Block655 [
+label = "{END-ROUTINE-13. Block655|    IF DELETE-CNT IS EQUAL TO ZERO\l}"
+]
+Block656 [
+label = "{Block656|        MOVE \"NO \" TO ERROR-TOTAL\l}"
+]
+Block658 [
+label = "{Block658|}"
+]
+Block659 [
+label = "{END-ROUTINE-13. Block659|    MOVE \"TEST(S) DELETED     \" TO ENDER-DESC\l}"
+]
+Block660 [
+label = "{END-ROUTINE-13. Block660|    MOVE CCVS-E-2 TO DUMMY-RECORD\l}"
+]
+Block661 [
+label = "{END-ROUTINE-13. Block661|}"
+]
+Block662 [
+label = "{Block662|                                   PERFORM WRITE-LINE\l}"
+]
+subgraph cluster_18{
+color = blue;
+label = "WRITE-LINE";
+Block1671 [
+label = "{WRITE-LINE. Block1671|    ADD 1 TO RECORD-COUNT\l}"
+]
+Block1672 [
+label = "{WRITE-LINE. Block1672|    IF RECORD-COUNT GREATER 50\l}"
+]
+Block1673 [
+label = "{Block1673|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+]
+Block1677 [
+label = "{Block1677|}"
+]
+Block1678 [
+label = "{WRITE-LINE. Block1678|}"
+]
+
+}
+Block662 -> Block1671 [style=dashed]
+
+Block663 [
+label = "{Block663|}"
+]
+Block664 [
+label = "{END-ROUTINE-13. Block664|     IF   INSPECT-COUNTER EQUAL TO ZERO\l}"
+]
+Block665 [
+label = "{Block665|         MOVE \"NO \" TO ERROR-TOTAL\l}"
+]
+Block667 [
+label = "{Block667|}"
+]
+Block668 [
+label = "{END-ROUTINE-13. Block668|     MOVE \"TEST(S) REQUIRE INSPECTION\" TO ENDER-DESC\l}"
+]
+Block669 [
+label = "{END-ROUTINE-13. Block669|     MOVE CCVS-E-2 TO DUMMY-RECORD\l}"
+]
+Block670 [
+label = "{END-ROUTINE-13. Block670|}"
+]
+Block671 [
+label = "{Block671|                                    PERFORM WRITE-LINE\l}"
+]
+subgraph cluster_19{
+color = blue;
+label = "WRITE-LINE";
+Block1680 [
+label = "{WRITE-LINE. Block1680|    ADD 1 TO RECORD-COUNT\l}"
+]
+Block1681 [
+label = "{WRITE-LINE. Block1681|    IF RECORD-COUNT GREATER 50\l}"
+]
+Block1682 [
+label = "{Block1682|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+]
+Block1686 [
+label = "{Block1686|}"
+]
+Block1687 [
+label = "{WRITE-LINE. Block1687|}"
+]
+
+}
+Block671 -> Block1680 [style=dashed]
+
+Block672 [
+label = "{Block672|}"
+]
+Block673 [
+label = "{END-ROUTINE-13. Block673|    MOVE CCVS-E-3 TO DUMMY-RECORD\l}"
+]
+Block674 [
+label = "{END-ROUTINE-13. Block674|}"
+]
+Block675 [
+label = "{Block675|                                   PERFORM WRITE-LINE\l}"
+]
+subgraph cluster_20{
+color = blue;
+label = "WRITE-LINE";
+Block1689 [
+label = "{WRITE-LINE. Block1689|    ADD 1 TO RECORD-COUNT\l}"
+]
+Block1690 [
+label = "{WRITE-LINE. Block1690|    IF RECORD-COUNT GREATER 50\l}"
+]
+Block1691 [
+label = "{Block1691|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+]
+Block1695 [
+label = "{Block1695|}"
+]
+Block1696 [
+label = "{WRITE-LINE. Block1696|}"
+]
+
+}
+Block675 -> Block1689 [style=dashed]
+
+Block676 [
+label = "{Block676|}"
+]
+Block677 [
+label = "{WRITE-LINE. Block677|    ADD 1 TO RECORD-COUNT\l}"
+]
+Block678 [
+label = "{WRITE-LINE. Block678|    IF RECORD-COUNT GREATER 50\l}"
+]
+Block679 [
+label = "{Block679|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+]
+Block666 [
+label = "{Block666|     ELSE\l          MOVE INSPECT-COUNTER TO ERROR-TOTAL\l}"
+]
+Block657 [
+label = "{Block657|                                   ELSE\l        MOVE DELETE-CNT TO ERROR-TOTAL\l}"
+]
+Block649 [
+label = "{Block649|        ELSE\l        MOVE ERROR-COUNTER TO ERROR-TOTAL\l}"
+]
+
+}
+Block560 -> Block1472 [style=dashed]
 
 Block561 [
 label = "{Block561|}"
@@ -595,17 +855,6 @@ label = "{Block561|}"
 Block562 [
 label = "{OPEN-FILES. Block562|    GO TO CCVS1-EXIT\l}"
 ]
-Block731 [
-label = "{CCVS1-EXIT. Block731|    EXIT\l}"
-]
-Block555 -> Block556
-Block556 -> Block557
-Block557 -> Block558
-Block558 -> Block559
-Block559 -> Block560
-Block560 -> Block561
-Block561 -> Block562
-Block562 -> Block731
 
 }
 Block2 -> Block555 [style=dashed]
@@ -643,81 +892,67 @@ label = "{Block252|    PERFORM TEST-1\l}"
 subgraph cluster_38{
 color = blue;
 label = "TEST-1A";
-Block1171 [
-label = "{TEST-1A. Block1171|    GO TO TEST-1D\l}"
+Block1072 [
+label = "{TEST-1A. Block1072|    GO TO TEST-1D\l}"
 ]
-Block1182 [
-label = "{TEST-1D. Block1182|    EXIT\l}"
+Block1082 [
+label = "{TEST-1D. Block1082|    EXIT\l}"
 ]
-Block1173 [
-label = "{TEST-1B. Block1173|    ADD 2 TO SEG-CALC\l}"
+Block1074 [
+label = "{TEST-1B. Block1074|    ADD 2 TO SEG-CALC\l}"
 ]
-Block1174 [
-label = "{TEST-1B. Block1174|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
+Block1075 [
+label = "{TEST-1B. Block1075|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
 ]
-Block1175 [
-label = "{TEST-1B. Block1175|    ADD 2 TO RANGE-SUB\l}"
+Block1076 [
+label = "{TEST-1B. Block1076|    ADD 2 TO RANGE-SUB\l}"
 ]
-Block1176 [
-label = "{TEST-1B. Block1176|    GO TO TEST-1D\l}"
+Block1077 [
+label = "{TEST-1B. Block1077|    GO TO TEST-1D\l}"
 ]
-Block1178 [
-label = "{TEST-1C. Block1178|    ALTER PARA-1-22 TO PROCEED TO PARA-2-22\l}"
+Block1079 [
+label = "{TEST-1C. Block1079|    ALTER PARA-1-22 TO PROCEED TO PARA-2-22\l}"
 ]
-Block1179 [
-label = "{TEST-1C. Block1179|}"
+Block1080 [
+label = "{TEST-1C. Block1080|}"
 ]
-Block1180 [
-label = "{Block1180|    PERFORM TEST22\l}"
+Block1020 [
+label = "{Block1020|    PERFORM TEST22\l}"
 ]
 subgraph cluster_30{
 color = blue;
 label = "PARA-1-22";
-Block1097 [
-label = "{PARA-1-22. Block1097|    GO TO PARA-3-22\l}"
+Block1744 [
+label = "{PARA-1-22. Block1744|    GO TO PARA-3-22\l}"
 ]
-Block1103 [
-label = "{PARA-3-22. Block1103|    EXIT\l}"
+Block1750 [
+label = "{PARA-3-22. Block1750|    EXIT\l}"
 ]
-Block1099 [
-label = "{PARA-2-22. Block1099|    MOVE 0 TO SEG-CALC\l}"
+Block1746 [
+label = "{PARA-2-22. Block1746|    MOVE 0 TO SEG-CALC\l}"
 ]
-Block1100 [
-label = "{PARA-2-22. Block1100|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
+Block1747 [
+label = "{PARA-2-22. Block1747|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
 ]
-Block1101 [
-label = "{PARA-2-22. Block1101|    ADD 2 TO RANGE-SUB\l}"
+Block1748 [
+label = "{PARA-2-22. Block1748|    ADD 2 TO RANGE-SUB\l}"
 ]
-Block1102 [
-label = "{PARA-2-22. Block1102|    ALTER TEST-1A TO PROCEED TO TEST-1B\l}"
+Block1749 [
+label = "{PARA-2-22. Block1749|    ALTER TEST-1A TO PROCEED TO TEST-1B\l}"
 ]
-Block1097 -> Block1103
-Block1097 -> Block1099
-Block1099 -> Block1100
-Block1100 -> Block1101
-Block1101 -> Block1102
-Block1102 -> Block1103
 
 }
-Block1180 -> Block1097 [style=dashed]
+Block1020 -> Block1744 [style=dashed]
 
-Block1181 [
-label = "{Block1181|}"
+Block1021 [
+label = "{Block1021|}"
 ]
-Block1171 -> Block1182
-Block1171 -> Block1173
-Block1171 -> Block1178
-Block1173 -> Block1174
-Block1174 -> Block1175
-Block1175 -> Block1176
-Block1176 -> Block1182
-Block1178 -> Block1179
-Block1179 -> Block1180
-Block1180 -> Block1181
-Block1181 -> Block1182
+Block1022 [
+label = "{TEST-1D. Block1022|    EXIT\l}"
+]
 
 }
-Block252 -> Block1171 [style=dashed]
+Block252 -> Block1072 [style=dashed]
 
 Block253 [
 label = "{Block253|}"
@@ -731,52 +966,33 @@ label = "{Block255|    PERFORM TEST-1\l}"
 subgraph cluster_39{
 color = blue;
 label = "TEST-1A";
-Block1183 [
-label = "{TEST-1A. Block1183|    GO TO TEST-1D\l}"
+Block1083 [
+label = "{TEST-1A. Block1083|    GO TO TEST-1D\l}"
 ]
-Block1194 [
-label = "{TEST-1D. Block1194|    EXIT\l}"
+Block1093 [
+label = "{TEST-1D. Block1093|    EXIT\l}"
 ]
-Block1185 [
-label = "{TEST-1B. Block1185|    ADD 2 TO SEG-CALC\l}"
+Block1085 [
+label = "{TEST-1B. Block1085|    ADD 2 TO SEG-CALC\l}"
 ]
-Block1186 [
-label = "{TEST-1B. Block1186|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
+Block1086 [
+label = "{TEST-1B. Block1086|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
 ]
-Block1187 [
-label = "{TEST-1B. Block1187|    ADD 2 TO RANGE-SUB\l}"
+Block1087 [
+label = "{TEST-1B. Block1087|    ADD 2 TO RANGE-SUB\l}"
 ]
-Block1188 [
-label = "{TEST-1B. Block1188|    GO TO TEST-1D\l}"
+Block1088 [
+label = "{TEST-1B. Block1088|    GO TO TEST-1D\l}"
 ]
-Block1190 [
-label = "{TEST-1C. Block1190|    ALTER PARA-1-22 TO PROCEED TO PARA-2-22\l}"
+Block1090 [
+label = "{TEST-1C. Block1090|    ALTER PARA-1-22 TO PROCEED TO PARA-2-22\l}"
 ]
-Block1191 [
-label = "{TEST-1C. Block1191|}"
+Block1091 [
+label = "{TEST-1C. Block1091|}"
 ]
-Block1192 [
-label = "{Block1192|    PERFORM TEST22\l}"
-]
-Block1192 -> Block1097 [style=dashed]
-
-Block1193 [
-label = "{Block1193|}"
-]
-Block1183 -> Block1194
-Block1183 -> Block1185
-Block1183 -> Block1190
-Block1185 -> Block1186
-Block1186 -> Block1187
-Block1187 -> Block1188
-Block1188 -> Block1194
-Block1190 -> Block1191
-Block1191 -> Block1192
-Block1192 -> Block1193
-Block1193 -> Block1194
 
 }
-Block255 -> Block1183 [style=dashed]
+Block255 -> Block1083 [style=dashed]
 
 Block256 [
 label = "{Block256|}"
@@ -793,16 +1009,15 @@ label = "{Block259|        PERFORM PASS\l}"
 subgraph cluster_40{
 color = blue;
 label = "PASS";
-Block1195 [
-label = "{PASS. Block1195|       MOVE \"PASS \" TO P-OR-F\l}"
+Block1094 [
+label = "{PASS. Block1094|       MOVE \"PASS \" TO P-OR-F\l}"
 ]
-Block1196 [
-label = "{PASS. Block1196|                                ADD 1 TO PASS-COUNTER\l}"
+Block1095 [
+label = "{PASS. Block1095|                                ADD 1 TO PASS-COUNTER\l}"
 ]
-Block1195 -> Block1196
 
 }
-Block259 -> Block1195 [style=dashed]
+Block259 -> Block1094 [style=dashed]
 
 Block260 [
 label = "{Block260|        GO TO TEST-1-WRITE\l}"
@@ -822,649 +1037,208 @@ label = "{Block276|    PERFORM PRINT-DETAIL\l}"
 subgraph cluster_43{
 color = blue;
 label = "PRINT-DETAIL";
-Block1202 [
-label = "{PRINT-DETAIL. Block1202|    IF REC-CT NOT EQUAL TO ZERO\l}"
+Block1101 [
+label = "{PRINT-DETAIL. Block1101|    IF REC-CT NOT EQUAL TO ZERO\l}"
 ]
-Block1203 [
-label = "{Block1203|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
+Block1102 [
+label = "{Block1102|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
 ]
-Block1204 [
-label = "{Block1204|}"
+Block1103 [
+label = "{Block1103|}"
 ]
-Block1205 [
-label = "{PRINT-DETAIL. Block1205|    MOVE     TEST-RESULTS TO PRINT-REC\l}"
+Block1104 [
+label = "{PRINT-DETAIL. Block1104|    MOVE     TEST-RESULTS TO PRINT-REC\l}"
 ]
-Block1206 [
-label = "{PRINT-DETAIL. Block1206|}"
+Block1105 [
+label = "{PRINT-DETAIL. Block1105|}"
 ]
-Block1207 [
-label = "{Block1207|                                        PERFORM WRITE-LINE\l}"
+Block586 [
+label = "{Block586|                                        PERFORM WRITE-LINE\l}"
 ]
 subgraph cluster_4{
 color = blue;
 label = "WRITE-LINE";
-Block804 [
-label = "{WRITE-LINE. Block804|    ADD 1 TO RECORD-COUNT\l}"
+Block1531 [
+label = "{WRITE-LINE. Block1531|    ADD 1 TO RECORD-COUNT\l}"
 ]
-Block805 [
-label = "{WRITE-LINE. Block805|    IF RECORD-COUNT GREATER 50\l}"
+Block1532 [
+label = "{WRITE-LINE. Block1532|    IF RECORD-COUNT GREATER 50\l}"
 ]
-Block806 [
-label = "{Block806|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+Block1533 [
+label = "{Block1533|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
 ]
-Block807 [
-label = "{Block807|                                      PERFORM WRT-LN\l}"
+Block1537 [
+label = "{Block1537|}"
 ]
-Block807 -> Block1035 [style=dashed]
-
-Block808 [
-label = "{Block808|        MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
+Block1538 [
+label = "{WRITE-LINE. Block1538|}"
 ]
-Block809 [
-label = "{Block809|                                      PERFORM WRT-LN 2 TIMES\l}"
-]
-Block809 -> Block1037 [style=dashed]
-
-Block810 [
-label = "{Block810|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
-]
-Block811 [
-label = "{Block811|                                         PERFORM WRT-LN\l}"
-]
-Block811 -> Block1039 [style=dashed]
-
-Block812 [
-label = "{Block812|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
-]
-Block813 [
-label = "{Block813|}"
-]
-Block814 [
-label = "{WRITE-LINE. Block814|}"
-]
-Block815 [
-label = "{Block815|    PERFORM WRT-LN\l}"
-]
-Block815 -> Block1041 [style=dashed]
-
-Block816 [
-label = "{Block816|}"
-]
-Block804 -> Block805
-Block805 -> Block806
-Block805 -> Block813
-Block806 -> Block807
-Block807 -> Block808
-Block808 -> Block809
-Block809 -> Block810
-Block810 -> Block811
-Block811 -> Block812
-Block812 -> Block813
-Block813 -> Block814
-Block814 -> Block815
-Block815 -> Block816
 
 }
-Block1207 -> Block804 [style=dashed]
+Block586 -> Block1531 [style=dashed]
 
-Block1208 [
-label = "{Block1208|}"
+Block587 [
+label = "{Block587|}"
 ]
-Block1209 [
-label = "{PRINT-DETAIL. Block1209|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
+Block588 [
+label = "{PRINT-DETAIL. Block588|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
 ]
-Block1210 [
-label = "{Block1210|}"
+Block589 [
+label = "{Block589|}"
 ]
-Block1211 [
-label = "{Block1211|                                PERFORM WRITE-LINE\l}"
+Block590 [
+label = "{Block590|                                PERFORM WRITE-LINE\l}"
 ]
 subgraph cluster_5{
 color = blue;
 label = "WRITE-LINE";
-Block817 [
-label = "{WRITE-LINE. Block817|    ADD 1 TO RECORD-COUNT\l}"
+Block1540 [
+label = "{WRITE-LINE. Block1540|    ADD 1 TO RECORD-COUNT\l}"
 ]
-Block818 [
-label = "{WRITE-LINE. Block818|    IF RECORD-COUNT GREATER 50\l}"
+Block1541 [
+label = "{WRITE-LINE. Block1541|    IF RECORD-COUNT GREATER 50\l}"
 ]
-Block819 [
-label = "{Block819|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+Block1542 [
+label = "{Block1542|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
 ]
-Block820 [
-label = "{Block820|                                      PERFORM WRT-LN\l}"
+Block1546 [
+label = "{Block1546|}"
 ]
-Block820 -> Block1035 [style=dashed]
-
-Block821 [
-label = "{Block821|        MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
+Block1547 [
+label = "{WRITE-LINE. Block1547|}"
 ]
-Block822 [
-label = "{Block822|                                      PERFORM WRT-LN 2 TIMES\l}"
-]
-Block822 -> Block1037 [style=dashed]
-
-Block823 [
-label = "{Block823|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
-]
-Block824 [
-label = "{Block824|                                         PERFORM WRT-LN\l}"
-]
-Block824 -> Block1039 [style=dashed]
-
-Block825 [
-label = "{Block825|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
-]
-Block826 [
-label = "{Block826|}"
-]
-Block827 [
-label = "{WRITE-LINE. Block827|}"
-]
-Block828 [
-label = "{Block828|    PERFORM WRT-LN\l}"
-]
-Block828 -> Block1041 [style=dashed]
-
-Block829 [
-label = "{Block829|}"
-]
-Block817 -> Block818
-Block818 -> Block819
-Block818 -> Block826
-Block819 -> Block820
-Block820 -> Block821
-Block821 -> Block822
-Block822 -> Block823
-Block823 -> Block824
-Block824 -> Block825
-Block825 -> Block826
-Block826 -> Block827
-Block827 -> Block828
-Block828 -> Block829
 
 }
-Block1211 -> Block817 [style=dashed]
+Block590 -> Block1540 [style=dashed]
 
-Block1212 [
-label = "{Block1212|}"
+Block591 [
+label = "{Block591|}"
 ]
-Block1213 [
-label = "{Block1213|       PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX\l}"
+Block592 [
+label = "{Block592|       PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX\l}"
 ]
 subgraph cluster_6{
 color = blue;
 label = "FAIL-ROUTINE";
-Block830 [
-label = "{FAIL-ROUTINE. Block830|    IF COMPUTED-X NOT EQUAL TO SPACE\l}"
+Block1549 [
+label = "{FAIL-ROUTINE. Block1549|    IF COMPUTED-X NOT EQUAL TO SPACE\l}"
 ]
-Block831 [
-label = "{Block831|                                     GO TO FAIL-ROUTINE-WRITE\l}"
+Block1550 [
+label = "{Block1550|                                     GO TO FAIL-ROUTINE-WRITE\l}"
 ]
-Block845 [
-label = "{FAIL-ROUTINE-WRITE. Block845|    MOVE TEST-COMPUTED TO PRINT-REC\l}"
+Block1563 [
+label = "{FAIL-ROUTINE-WRITE. Block1563|    MOVE TEST-COMPUTED TO PRINT-REC\l}"
 ]
-Block846 [
-label = "{Block846|                                    PERFORM WRITE-LINE\l}"
+Block1552 [
+label = "{Block1552|}"
 ]
-subgraph cluster_27{
-color = blue;
-label = "WRITE-LINE";
-Block1058 [
-label = "{WRITE-LINE. Block1058|    ADD 1 TO RECORD-COUNT\l}"
+Block1553 [
+label = "{FAIL-ROUTINE. Block1553|    IF CORRECT-X NOT EQUAL TO SPACE\l}"
 ]
-Block1059 [
-label = "{WRITE-LINE. Block1059|    IF RECORD-COUNT GREATER 50\l}"
+Block1554 [
+label = "{Block1554|                                    GO TO FAIL-ROUTINE-WRITE\l}"
 ]
-Block1060 [
-label = "{Block1060|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+Block1556 [
+label = "{Block1556|}"
 ]
-Block1061 [
-label = "{Block1061|                                      PERFORM WRT-LN\l}"
+Block1557 [
+label = "{FAIL-ROUTINE. Block1557|    MOVE \"NO FURTHER INFORMATION, SEE PROGRAM.\" TO INFO-TEXT\l}"
 ]
-Block1061 -> Block1035 [style=dashed]
-
-Block1062 [
-label = "{Block1062|        MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
+Block1558 [
+label = "{FAIL-ROUTINE. Block1558|    MOVE XXINFO TO DUMMY-RECORD\l}"
 ]
-Block1063 [
-label = "{Block1063|                                      PERFORM WRT-LN 2 TIMES\l}"
+Block1559 [
+label = "{FAIL-ROUTINE. Block1559|}"
 ]
-Block1063 -> Block1037 [style=dashed]
-
-Block1064 [
-label = "{Block1064|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
-]
-Block1065 [
-label = "{Block1065|                                         PERFORM WRT-LN\l}"
-]
-Block1065 -> Block1039 [style=dashed]
-
-Block1066 [
-label = "{Block1066|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
-]
-Block1067 [
-label = "{Block1067|}"
-]
-Block1068 [
-label = "{WRITE-LINE. Block1068|}"
-]
-Block1069 [
-label = "{Block1069|    PERFORM WRT-LN\l}"
-]
-Block1069 -> Block1041 [style=dashed]
-
-Block1070 [
-label = "{Block1070|}"
-]
-Block1058 -> Block1059
-Block1059 -> Block1060
-Block1059 -> Block1067
-Block1060 -> Block1061
-Block1061 -> Block1062
-Block1062 -> Block1063
-Block1063 -> Block1064
-Block1064 -> Block1065
-Block1065 -> Block1066
-Block1066 -> Block1067
-Block1067 -> Block1068
-Block1068 -> Block1069
-Block1069 -> Block1070
 
 }
-Block846 -> Block1058 [style=dashed]
+Block592 -> Block1549 [style=dashed]
 
-Block847 [
-label = "{Block847|    MOVE TEST-CORRECT TO PRINT-REC\l}"
+Block593 [
+label = "{Block593|}"
 ]
-Block848 [
-label = "{Block848|                                   PERFORM WRITE-LINE 2 TIMES\l}"
+Block597 [
+label = "{Block597|}"
 ]
-subgraph cluster_28{
-color = blue;
-label = "WRITE-LINE";
-Block1071 [
-label = "{WRITE-LINE. Block1071|    ADD 1 TO RECORD-COUNT\l}"
+Block598 [
+label = "{PRINT-DETAIL. Block598|    MOVE SPACE TO P-OR-F\l}"
 ]
-Block1072 [
-label = "{WRITE-LINE. Block1072|    IF RECORD-COUNT GREATER 50\l}"
+Block599 [
+label = "{PRINT-DETAIL. Block599|                          MOVE SPACE TO COMPUTED-X\l}"
 ]
-Block1073 [
-label = "{Block1073|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+Block600 [
+label = "{PRINT-DETAIL. Block600|    MOVE SPACE TO CORRECT-X\l}"
 ]
-Block1074 [
-label = "{Block1074|                                      PERFORM WRT-LN\l}"
+Block601 [
+label = "{PRINT-DETAIL. Block601|    IF     REC-CT EQUAL TO ZERO\l}"
 ]
-Block1074 -> Block1035 [style=dashed]
-
-Block1075 [
-label = "{Block1075|        MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
+Block602 [
+label = "{Block602|                                 MOVE SPACE TO PAR-NAME\l}"
 ]
-Block1076 [
-label = "{Block1076|                                      PERFORM WRT-LN 2 TIMES\l}"
+Block603 [
+label = "{Block603|}"
 ]
-Block1076 -> Block1037 [style=dashed]
-
-Block1077 [
-label = "{Block1077|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
+Block604 [
+label = "{PRINT-DETAIL. Block604|    MOVE     SPACE TO RE-MARK\l}"
 ]
-Block1078 [
-label = "{Block1078|                                         PERFORM WRT-LN\l}"
+Block605 [
+label = "{HEAD-ROUTINE. Block605|    MOVE CCVS-H-1 TO DUMMY-RECORD\l}"
 ]
-Block1078 -> Block1039 [style=dashed]
-
-Block1079 [
-label = "{Block1079|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
+Block606 [
+label = "{HEAD-ROUTINE. Block606|}"
 ]
-Block1080 [
-label = "{Block1080|}"
+Block594 [
+label = "{Block594|         ELSE\l}"
 ]
-Block1081 [
-label = "{WRITE-LINE. Block1081|}"
-]
-Block1082 [
-label = "{Block1082|    PERFORM WRT-LN\l}"
-]
-Block1082 -> Block1041 [style=dashed]
-
-Block1083 [
-label = "{Block1083|}"
-]
-Block1071 -> Block1072
-Block1072 -> Block1073
-Block1072 -> Block1080
-Block1073 -> Block1074
-Block1074 -> Block1075
-Block1075 -> Block1076
-Block1076 -> Block1077
-Block1077 -> Block1078
-Block1078 -> Block1079
-Block1079 -> Block1080
-Block1080 -> Block1081
-Block1081 -> Block1082
-Block1082 -> Block1083
-
-}
-Block848 -> Block1071 [style=dashed]
-
-Block849 [
-label = "{Block849|}"
-]
-Block850 [
-label = "{FAIL-ROUTINE-EX. Block850|                 EXIT\l}"
-]
-Block833 [
-label = "{Block833|}"
-]
-Block834 [
-label = "{FAIL-ROUTINE. Block834|    IF CORRECT-X NOT EQUAL TO SPACE\l}"
-]
-Block835 [
-label = "{Block835|                                    GO TO FAIL-ROUTINE-WRITE\l}"
-]
-Block837 [
-label = "{Block837|}"
-]
-Block838 [
-label = "{FAIL-ROUTINE. Block838|    MOVE \"NO FURTHER INFORMATION, SEE PROGRAM.\" TO INFO-TEXT\l}"
-]
-Block839 [
-label = "{FAIL-ROUTINE. Block839|    MOVE XXINFO TO DUMMY-RECORD\l}"
-]
-Block840 [
-label = "{FAIL-ROUTINE. Block840|}"
-]
-Block841 [
-label = "{Block841|                                 PERFORM WRITE-LINE 2 TIMES\l}"
-]
-subgraph cluster_26{
-color = blue;
-label = "WRITE-LINE";
-Block1045 [
-label = "{WRITE-LINE. Block1045|    ADD 1 TO RECORD-COUNT\l}"
-]
-Block1046 [
-label = "{WRITE-LINE. Block1046|    IF RECORD-COUNT GREATER 50\l}"
-]
-Block1047 [
-label = "{Block1047|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
-]
-Block1048 [
-label = "{Block1048|                                      PERFORM WRT-LN\l}"
-]
-Block1048 -> Block1035 [style=dashed]
-
-Block1049 [
-label = "{Block1049|        MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
-]
-Block1050 [
-label = "{Block1050|                                      PERFORM WRT-LN 2 TIMES\l}"
-]
-Block1050 -> Block1037 [style=dashed]
-
-Block1051 [
-label = "{Block1051|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
-]
-Block1052 [
-label = "{Block1052|                                         PERFORM WRT-LN\l}"
-]
-Block1052 -> Block1039 [style=dashed]
-
-Block1053 [
-label = "{Block1053|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
-]
-Block1054 [
-label = "{Block1054|}"
-]
-Block1055 [
-label = "{WRITE-LINE. Block1055|}"
-]
-Block1056 [
-label = "{Block1056|    PERFORM WRT-LN\l}"
-]
-Block1056 -> Block1041 [style=dashed]
-
-Block1057 [
-label = "{Block1057|}"
-]
-Block1045 -> Block1046
-Block1046 -> Block1047
-Block1046 -> Block1054
-Block1047 -> Block1048
-Block1048 -> Block1049
-Block1049 -> Block1050
-Block1050 -> Block1051
-Block1051 -> Block1052
-Block1052 -> Block1053
-Block1053 -> Block1054
-Block1054 -> Block1055
-Block1055 -> Block1056
-Block1056 -> Block1057
-
-}
-Block841 -> Block1045 [style=dashed]
-
-Block842 [
-label = "{Block842|}"
-]
-Block843 [
-label = "{FAIL-ROUTINE. Block843|    GO TO FAIL-ROUTINE-EX\l}"
-]
-Block830 -> Block831
-Block830 -> Block833
-Block831 -> Block845
-Block845 -> Block846
-Block846 -> Block847
-Block847 -> Block848
-Block848 -> Block849
-Block849 -> Block850
-Block833 -> Block834
-Block834 -> Block835
-Block834 -> Block837
-Block835 -> Block845
-Block837 -> Block838
-Block838 -> Block839
-Block839 -> Block840
-Block840 -> Block841
-Block841 -> Block842
-Block842 -> Block843
-Block843 -> Block850
-
-}
-Block1213 -> Block830 [style=dashed]
-
-Block1214 [
-label = "{Block1214|}"
-]
-Block1218 [
-label = "{Block1218|}"
-]
-Block1219 [
-label = "{PRINT-DETAIL. Block1219|    MOVE SPACE TO P-OR-F\l}"
-]
-Block1220 [
-label = "{PRINT-DETAIL. Block1220|                          MOVE SPACE TO COMPUTED-X\l}"
-]
-Block1221 [
-label = "{PRINT-DETAIL. Block1221|    MOVE SPACE TO CORRECT-X\l}"
-]
-Block1222 [
-label = "{PRINT-DETAIL. Block1222|    IF     REC-CT EQUAL TO ZERO\l}"
-]
-Block1223 [
-label = "{Block1223|                                 MOVE SPACE TO PAR-NAME\l}"
-]
-Block1224 [
-label = "{Block1224|}"
-]
-Block1225 [
-label = "{PRINT-DETAIL. Block1225|    MOVE     SPACE TO RE-MARK\l}"
-]
-Block1215 [
-label = "{Block1215|         ELSE\l}"
-]
-Block1216 [
-label = "{Block1216|              PERFORM BAIL-OUT THRU BAIL-OUT-EX\l}"
+Block595 [
+label = "{Block595|              PERFORM BAIL-OUT THRU BAIL-OUT-EX\l}"
 ]
 subgraph cluster_7{
 color = blue;
 label = "BAIL-OUT";
-Block851 [
-label = "{BAIL-OUT. Block851|    IF COMPUTED-A NOT EQUAL TO SPACE\l}"
+Block1567 [
+label = "{BAIL-OUT. Block1567|    IF COMPUTED-A NOT EQUAL TO SPACE\l}"
 ]
-Block852 [
-label = "{Block852|                                     GO TO BAIL-OUT-WRITE\l}"
+Block1568 [
+label = "{Block1568|                                     GO TO BAIL-OUT-WRITE\l}"
 ]
-Block859 [
-label = "{BAIL-OUT-WRITE. Block859|    MOVE CORRECT-A TO XXCORRECT\l}"
+Block1575 [
+label = "{BAIL-OUT-WRITE. Block1575|    MOVE CORRECT-A TO XXCORRECT\l}"
 ]
-Block860 [
-label = "{BAIL-OUT-WRITE. Block860|                                 MOVE COMPUTED-A TO XXCOMPUTED\l}"
+Block1576 [
+label = "{BAIL-OUT-WRITE. Block1576|                                 MOVE COMPUTED-A TO XXCOMPUTED\l}"
 ]
-Block861 [
-label = "{BAIL-OUT-WRITE. Block861|    MOVE XXINFO TO DUMMY-RECORD\l}"
+Block1577 [
+label = "{BAIL-OUT-WRITE. Block1577|    MOVE XXINFO TO DUMMY-RECORD\l}"
 ]
-Block862 [
-label = "{BAIL-OUT-WRITE. Block862|}"
+Block1578 [
+label = "{BAIL-OUT-WRITE. Block1578|}"
 ]
-Block863 [
-label = "{Block863|                                 PERFORM WRITE-LINE 2 TIMES\l}"
+Block1570 [
+label = "{Block1570|}"
 ]
-subgraph cluster_29{
-color = blue;
-label = "WRITE-LINE";
-Block1084 [
-label = "{WRITE-LINE. Block1084|    ADD 1 TO RECORD-COUNT\l}"
+Block1571 [
+label = "{BAIL-OUT. Block1571|    IF CORRECT-A EQUAL TO SPACE\l}"
 ]
-Block1085 [
-label = "{WRITE-LINE. Block1085|    IF RECORD-COUNT GREATER 50\l}"
+Block1572 [
+label = "{Block1572|                                GO TO BAIL-OUT-EX\l}"
 ]
-Block1086 [
-label = "{Block1086|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
+Block1580 [
+label = "{BAIL-OUT-EX. Block1580|             EXIT\l}"
 ]
-Block1087 [
-label = "{Block1087|                                      PERFORM WRT-LN\l}"
+Block1574 [
+label = "{Block1574|}"
 ]
-Block1087 -> Block1035 [style=dashed]
-
-Block1088 [
-label = "{Block1088|        MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
-]
-Block1089 [
-label = "{Block1089|                                      PERFORM WRT-LN 2 TIMES\l}"
-]
-Block1089 -> Block1037 [style=dashed]
-
-Block1090 [
-label = "{Block1090|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
-]
-Block1091 [
-label = "{Block1091|                                         PERFORM WRT-LN\l}"
-]
-Block1091 -> Block1039 [style=dashed]
-
-Block1092 [
-label = "{Block1092|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
-]
-Block1093 [
-label = "{Block1093|}"
-]
-Block1094 [
-label = "{WRITE-LINE. Block1094|}"
-]
-Block1095 [
-label = "{Block1095|    PERFORM WRT-LN\l}"
-]
-Block1095 -> Block1041 [style=dashed]
-
-Block1096 [
-label = "{Block1096|}"
-]
-Block1084 -> Block1085
-Block1085 -> Block1086
-Block1085 -> Block1093
-Block1086 -> Block1087
-Block1087 -> Block1088
-Block1088 -> Block1089
-Block1089 -> Block1090
-Block1090 -> Block1091
-Block1091 -> Block1092
-Block1092 -> Block1093
-Block1093 -> Block1094
-Block1094 -> Block1095
-Block1095 -> Block1096
 
 }
-Block863 -> Block1084 [style=dashed]
+Block595 -> Block1567 [style=dashed]
 
-Block864 [
-label = "{Block864|}"
+Block596 [
+label = "{Block596|}"
 ]
-Block865 [
-label = "{BAIL-OUT-EX. Block865|             EXIT\l}"
-]
-Block854 [
-label = "{Block854|}"
-]
-Block855 [
-label = "{BAIL-OUT. Block855|    IF CORRECT-A EQUAL TO SPACE\l}"
-]
-Block856 [
-label = "{Block856|                                GO TO BAIL-OUT-EX\l}"
-]
-Block858 [
-label = "{Block858|}"
-]
-Block851 -> Block852
-Block851 -> Block854
-Block852 -> Block859
-Block859 -> Block860
-Block860 -> Block861
-Block861 -> Block862
-Block862 -> Block863
-Block863 -> Block864
-Block864 -> Block865
-Block854 -> Block855
-Block855 -> Block856
-Block855 -> Block858
-Block856 -> Block865
-Block858 -> Block859
 
 }
-Block1216 -> Block851 [style=dashed]
-
-Block1217 [
-label = "{Block1217|}"
-]
-Block1202 -> Block1203
-Block1202 -> Block1204
-Block1203 -> Block1204
-Block1204 -> Block1205
-Block1205 -> Block1206
-Block1206 -> Block1207
-Block1207 -> Block1208
-Block1208 -> Block1209
-Block1209 -> Block1210
-Block1209 -> Block1215
-Block1210 -> Block1211
-Block1211 -> Block1212
-Block1212 -> Block1213
-Block1213 -> Block1214
-Block1214 -> Block1218
-Block1218 -> Block1219
-Block1219 -> Block1220
-Block1220 -> Block1221
-Block1221 -> Block1222
-Block1222 -> Block1223
-Block1222 -> Block1224
-Block1223 -> Block1224
-Block1224 -> Block1225
-Block1215 -> Block1216
-Block1216 -> Block1217
-Block1217 -> Block1218
-
-}
-Block276 -> Block1202 [style=dashed]
+Block276 -> Block1101 [style=dashed]
 
 Block277 [
 label = "{Block277|}"
@@ -1499,52 +1273,30 @@ label = "{Block202|    PERFORM TEST-1\l}"
 subgraph cluster_31{
 color = blue;
 label = "TEST-1A";
-Block1104 [
-label = "{TEST-1A. Block1104|    GO TO TEST-1D\l}"
+Block1011 [
+label = "{TEST-1A. Block1011|    GO TO TEST-1D\l}"
 ]
-Block1115 [
-label = "{TEST-1D. Block1115|    EXIT\l}"
+Block1013 [
+label = "{TEST-1B. Block1013|    ADD 2 TO SEG-CALC\l}"
 ]
-Block1106 [
-label = "{TEST-1B. Block1106|    ADD 2 TO SEG-CALC\l}"
+Block1014 [
+label = "{TEST-1B. Block1014|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
 ]
-Block1107 [
-label = "{TEST-1B. Block1107|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
+Block1015 [
+label = "{TEST-1B. Block1015|    ADD 2 TO RANGE-SUB\l}"
 ]
-Block1108 [
-label = "{TEST-1B. Block1108|    ADD 2 TO RANGE-SUB\l}"
+Block1016 [
+label = "{TEST-1B. Block1016|    GO TO TEST-1D\l}"
 ]
-Block1109 [
-label = "{TEST-1B. Block1109|    GO TO TEST-1D\l}"
+Block1018 [
+label = "{TEST-1C. Block1018|    ALTER PARA-1-22 TO PROCEED TO PARA-2-22\l}"
 ]
-Block1111 [
-label = "{TEST-1C. Block1111|    ALTER PARA-1-22 TO PROCEED TO PARA-2-22\l}"
+Block1019 [
+label = "{TEST-1C. Block1019|}"
 ]
-Block1112 [
-label = "{TEST-1C. Block1112|}"
-]
-Block1113 [
-label = "{Block1113|    PERFORM TEST22\l}"
-]
-Block1113 -> Block1097 [style=dashed]
-
-Block1114 [
-label = "{Block1114|}"
-]
-Block1104 -> Block1115
-Block1104 -> Block1106
-Block1104 -> Block1111
-Block1106 -> Block1107
-Block1107 -> Block1108
-Block1108 -> Block1109
-Block1109 -> Block1115
-Block1111 -> Block1112
-Block1112 -> Block1113
-Block1113 -> Block1114
-Block1114 -> Block1115
 
 }
-Block202 -> Block1104 [style=dashed]
+Block202 -> Block1011 [style=dashed]
 
 Block203 [
 label = "{Block203|}"
@@ -1561,52 +1313,33 @@ label = "{Block206|    PERFORM TEST-1\l}"
 subgraph cluster_32{
 color = blue;
 label = "TEST-1A";
-Block1116 [
-label = "{TEST-1A. Block1116|    GO TO TEST-1D\l}"
+Block1023 [
+label = "{TEST-1A. Block1023|    GO TO TEST-1D\l}"
 ]
-Block1127 [
-label = "{TEST-1D. Block1127|    EXIT\l}"
+Block1033 [
+label = "{TEST-1D. Block1033|    EXIT\l}"
 ]
-Block1118 [
-label = "{TEST-1B. Block1118|    ADD 2 TO SEG-CALC\l}"
+Block1025 [
+label = "{TEST-1B. Block1025|    ADD 2 TO SEG-CALC\l}"
 ]
-Block1119 [
-label = "{TEST-1B. Block1119|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
+Block1026 [
+label = "{TEST-1B. Block1026|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
 ]
-Block1120 [
-label = "{TEST-1B. Block1120|    ADD 2 TO RANGE-SUB\l}"
+Block1027 [
+label = "{TEST-1B. Block1027|    ADD 2 TO RANGE-SUB\l}"
 ]
-Block1121 [
-label = "{TEST-1B. Block1121|    GO TO TEST-1D\l}"
+Block1028 [
+label = "{TEST-1B. Block1028|    GO TO TEST-1D\l}"
 ]
-Block1123 [
-label = "{TEST-1C. Block1123|    ALTER PARA-1-22 TO PROCEED TO PARA-2-22\l}"
+Block1030 [
+label = "{TEST-1C. Block1030|    ALTER PARA-1-22 TO PROCEED TO PARA-2-22\l}"
 ]
-Block1124 [
-label = "{TEST-1C. Block1124|}"
+Block1031 [
+label = "{TEST-1C. Block1031|}"
 ]
-Block1125 [
-label = "{Block1125|    PERFORM TEST22\l}"
-]
-Block1125 -> Block1097 [style=dashed]
-
-Block1126 [
-label = "{Block1126|}"
-]
-Block1116 -> Block1127
-Block1116 -> Block1118
-Block1116 -> Block1123
-Block1118 -> Block1119
-Block1119 -> Block1120
-Block1120 -> Block1121
-Block1121 -> Block1127
-Block1123 -> Block1124
-Block1124 -> Block1125
-Block1125 -> Block1126
-Block1126 -> Block1127
 
 }
-Block206 -> Block1116 [style=dashed]
+Block206 -> Block1023 [style=dashed]
 
 Block207 [
 label = "{Block207|}"
@@ -1620,52 +1353,33 @@ label = "{Block209|    PERFORM TEST-1\l}"
 subgraph cluster_33{
 color = blue;
 label = "TEST-1A";
-Block1128 [
-label = "{TEST-1A. Block1128|    GO TO TEST-1D\l}"
+Block1034 [
+label = "{TEST-1A. Block1034|    GO TO TEST-1D\l}"
 ]
-Block1139 [
-label = "{TEST-1D. Block1139|    EXIT\l}"
+Block1044 [
+label = "{TEST-1D. Block1044|    EXIT\l}"
 ]
-Block1130 [
-label = "{TEST-1B. Block1130|    ADD 2 TO SEG-CALC\l}"
+Block1036 [
+label = "{TEST-1B. Block1036|    ADD 2 TO SEG-CALC\l}"
 ]
-Block1131 [
-label = "{TEST-1B. Block1131|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
+Block1037 [
+label = "{TEST-1B. Block1037|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
 ]
-Block1132 [
-label = "{TEST-1B. Block1132|    ADD 2 TO RANGE-SUB\l}"
+Block1038 [
+label = "{TEST-1B. Block1038|    ADD 2 TO RANGE-SUB\l}"
 ]
-Block1133 [
-label = "{TEST-1B. Block1133|    GO TO TEST-1D\l}"
+Block1039 [
+label = "{TEST-1B. Block1039|    GO TO TEST-1D\l}"
 ]
-Block1135 [
-label = "{TEST-1C. Block1135|    ALTER PARA-1-22 TO PROCEED TO PARA-2-22\l}"
+Block1041 [
+label = "{TEST-1C. Block1041|    ALTER PARA-1-22 TO PROCEED TO PARA-2-22\l}"
 ]
-Block1136 [
-label = "{TEST-1C. Block1136|}"
+Block1042 [
+label = "{TEST-1C. Block1042|}"
 ]
-Block1137 [
-label = "{Block1137|    PERFORM TEST22\l}"
-]
-Block1137 -> Block1097 [style=dashed]
-
-Block1138 [
-label = "{Block1138|}"
-]
-Block1128 -> Block1139
-Block1128 -> Block1130
-Block1128 -> Block1135
-Block1130 -> Block1131
-Block1131 -> Block1132
-Block1132 -> Block1133
-Block1133 -> Block1139
-Block1135 -> Block1136
-Block1136 -> Block1137
-Block1137 -> Block1138
-Block1138 -> Block1139
 
 }
-Block209 -> Block1128 [style=dashed]
+Block209 -> Block1034 [style=dashed]
 
 Block210 [
 label = "{Block210|}"
@@ -1682,16 +1396,15 @@ label = "{Block213|        PERFORM PASS\l}"
 subgraph cluster_34{
 color = blue;
 label = "PASS";
-Block1140 [
-label = "{PASS. Block1140|       MOVE \"PASS \" TO P-OR-F\l}"
+Block1045 [
+label = "{PASS. Block1045|       MOVE \"PASS \" TO P-OR-F\l}"
 ]
-Block1141 [
-label = "{PASS. Block1141|                                ADD 1 TO PASS-COUNTER\l}"
+Block1046 [
+label = "{PASS. Block1046|                                ADD 1 TO PASS-COUNTER\l}"
 ]
-Block1140 -> Block1141
 
 }
-Block213 -> Block1140 [style=dashed]
+Block213 -> Block1045 [style=dashed]
 
 Block214 [
 label = "{Block214|        GO TO TEST-2-WRITE\l}"
@@ -1708,115 +1421,24 @@ label = "{Block229|    PERFORM PRINT-DETAIL\l}"
 subgraph cluster_37{
 color = blue;
 label = "PRINT-DETAIL";
-Block1147 [
-label = "{PRINT-DETAIL. Block1147|    IF REC-CT NOT EQUAL TO ZERO\l}"
+Block1052 [
+label = "{PRINT-DETAIL. Block1052|    IF REC-CT NOT EQUAL TO ZERO\l}"
 ]
-Block1148 [
-label = "{Block1148|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
+Block1053 [
+label = "{Block1053|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
 ]
-Block1149 [
-label = "{Block1149|}"
+Block1054 [
+label = "{Block1054|}"
 ]
-Block1150 [
-label = "{PRINT-DETAIL. Block1150|    MOVE     TEST-RESULTS TO PRINT-REC\l}"
+Block1055 [
+label = "{PRINT-DETAIL. Block1055|    MOVE     TEST-RESULTS TO PRINT-REC\l}"
 ]
-Block1151 [
-label = "{PRINT-DETAIL. Block1151|}"
+Block1056 [
+label = "{PRINT-DETAIL. Block1056|}"
 ]
-Block1152 [
-label = "{Block1152|                                        PERFORM WRITE-LINE\l}"
-]
-Block1152 -> Block804 [style=dashed]
-
-Block1153 [
-label = "{Block1153|}"
-]
-Block1154 [
-label = "{PRINT-DETAIL. Block1154|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
-]
-Block1155 [
-label = "{Block1155|}"
-]
-Block1156 [
-label = "{Block1156|                                PERFORM WRITE-LINE\l}"
-]
-Block1156 -> Block817 [style=dashed]
-
-Block1157 [
-label = "{Block1157|}"
-]
-Block1158 [
-label = "{Block1158|       PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX\l}"
-]
-Block1158 -> Block830 [style=dashed]
-
-Block1159 [
-label = "{Block1159|}"
-]
-Block1163 [
-label = "{Block1163|}"
-]
-Block1164 [
-label = "{PRINT-DETAIL. Block1164|    MOVE SPACE TO P-OR-F\l}"
-]
-Block1165 [
-label = "{PRINT-DETAIL. Block1165|                          MOVE SPACE TO COMPUTED-X\l}"
-]
-Block1166 [
-label = "{PRINT-DETAIL. Block1166|    MOVE SPACE TO CORRECT-X\l}"
-]
-Block1167 [
-label = "{PRINT-DETAIL. Block1167|    IF     REC-CT EQUAL TO ZERO\l}"
-]
-Block1168 [
-label = "{Block1168|                                 MOVE SPACE TO PAR-NAME\l}"
-]
-Block1169 [
-label = "{Block1169|}"
-]
-Block1170 [
-label = "{PRINT-DETAIL. Block1170|    MOVE     SPACE TO RE-MARK\l}"
-]
-Block1160 [
-label = "{Block1160|         ELSE\l}"
-]
-Block1161 [
-label = "{Block1161|              PERFORM BAIL-OUT THRU BAIL-OUT-EX\l}"
-]
-Block1161 -> Block851 [style=dashed]
-
-Block1162 [
-label = "{Block1162|}"
-]
-Block1147 -> Block1148
-Block1147 -> Block1149
-Block1148 -> Block1149
-Block1149 -> Block1150
-Block1150 -> Block1151
-Block1151 -> Block1152
-Block1152 -> Block1153
-Block1153 -> Block1154
-Block1154 -> Block1155
-Block1154 -> Block1160
-Block1155 -> Block1156
-Block1156 -> Block1157
-Block1157 -> Block1158
-Block1158 -> Block1159
-Block1159 -> Block1163
-Block1163 -> Block1164
-Block1164 -> Block1165
-Block1165 -> Block1166
-Block1166 -> Block1167
-Block1167 -> Block1168
-Block1167 -> Block1169
-Block1168 -> Block1169
-Block1169 -> Block1170
-Block1160 -> Block1161
-Block1161 -> Block1162
-Block1162 -> Block1163
 
 }
-Block229 -> Block1147 [style=dashed]
+Block229 -> Block1052 [style=dashed]
 
 Block230 [
 label = "{Block230|}"
@@ -1848,76 +1470,73 @@ label = "{Block406|    PERFORM  TEST-3\l}"
 subgraph cluster_57{
 color = blue;
 label = "TEST-3X";
-Block1339 [
-label = "{TEST-3X. Block1339|    GO TO TEST-3D\l}"
+Block1224 [
+label = "{TEST-3X. Block1224|    GO TO TEST-3D\l}"
 ]
-Block1359 [
-label = "{TEST-3D. Block1359|    IF SEG-CALC EQUAL TO 2\l}"
+Block1244 [
+label = "{TEST-3D. Block1244|    IF SEG-CALC EQUAL TO 2\l}"
 ]
-Block1360 [
-label = "{Block1360|                           GO TO TEST-3EXIT\l}"
+Block1245 [
+label = "{Block1245|                           GO TO TEST-3EXIT\l}"
 ]
-Block1368 [
-label = "{TEST-3EXIT. Block1368|    EXIT\l}"
+Block1253 [
+label = "{TEST-3EXIT. Block1253|    EXIT\l}"
 ]
-Block1362 [
-label = "{Block1362|}"
+Block1247 [
+label = "{Block1247|}"
 ]
-Block1363 [
-label = "{TEST-3D. Block1363|}"
+Block1248 [
+label = "{TEST-3D. Block1248|}"
 ]
-Block1364 [
-label = "{Block1364|    PERFORM TEST-3C\l}"
+Block1249 [
+label = "{Block1249|    PERFORM TEST-3C\l}"
 ]
 subgraph cluster_64{
 color = blue;
 label = "TEST-3C";
-Block1431 [
-label = "{TEST-3C. Block1431|    ADD 2 TO SEG-CALC\l}"
+Block1764 [
+label = "{TEST-3C. Block1764|    ADD 2 TO SEG-CALC\l}"
 ]
-Block1432 [
-label = "{TEST-3C. Block1432|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
+Block1765 [
+label = "{TEST-3C. Block1765|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
 ]
-Block1433 [
-label = "{TEST-3C. Block1433|    ADD 2 TO RANGE-SUB\l}"
+Block1766 [
+label = "{TEST-3C. Block1766|    ADD 2 TO RANGE-SUB\l}"
 ]
-Block1431 -> Block1432
-Block1432 -> Block1433
 
 }
-Block1364 -> Block1431 [style=dashed]
+Block1249 -> Block1764 [style=dashed]
 
-Block1365 [
-label = "{Block1365|}"
+Block1250 [
+label = "{Block1250|}"
 ]
-Block1366 [
-label = "{TEST-3D. Block1366|    GO TO TEST-3B\l}"
+Block1251 [
+label = "{TEST-3D. Block1251|    GO TO TEST-3B\l}"
 ]
-Block1343 [
-label = "{TEST-3B. Block1343|    IF SEG-CALC EQUAL TO 6\l}"
+Block1228 [
+label = "{TEST-3B. Block1228|    IF SEG-CALC EQUAL TO 6\l}"
 ]
-Block1344 [
-label = "{Block1344|}"
+Block1229 [
+label = "{Block1229|}"
 ]
-Block1345 [
-label = "{Block1345|        PERFORM PASS\l}"
+Block1230 [
+label = "{Block1230|        PERFORM PASS\l}"
 ]
 subgraph cluster_62{
 color = blue;
 label = "PASS";
-Block1427 [
-label = "{PASS. Block1427|       MOVE \"PASS \" TO P-OR-F\l}"
+Block1760 [
+label = "{PASS. Block1760|       MOVE \"PASS \" TO P-OR-F\l}"
 ]
-Block1428 [
-label = "{PASS. Block1428|                                ADD 1 TO PASS-COUNTER\l}"
+Block1761 [
+label = "{PASS. Block1761|                                ADD 1 TO PASS-COUNTER\l}"
 ]
-Block1427 -> Block1428
 
 }
-Block1345 -> Block1427 [style=dashed]
+Block1230 -> Block1760 [style=dashed]
 
-Block1346 [
-label = "{Block1346|        GO TO TEST-3-WRITE\l}"
+Block1231 [
+label = "{Block1231|        GO TO TEST-3-WRITE\l}"
 ]
 Block421 [
 label = "{TEST-3-WRITE. Block421|    MOVE \"SEG-TEST-3\" TO PAR-NAME\l}"
@@ -1931,115 +1550,24 @@ label = "{Block423|    PERFORM PRINT-DETAIL\l}"
 subgraph cluster_61{
 color = blue;
 label = "PRINT-DETAIL";
-Block1403 [
-label = "{PRINT-DETAIL. Block1403|    IF REC-CT NOT EQUAL TO ZERO\l}"
+Block1285 [
+label = "{PRINT-DETAIL. Block1285|    IF REC-CT NOT EQUAL TO ZERO\l}"
 ]
-Block1404 [
-label = "{Block1404|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
+Block1286 [
+label = "{Block1286|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
 ]
-Block1405 [
-label = "{Block1405|}"
+Block1287 [
+label = "{Block1287|}"
 ]
-Block1406 [
-label = "{PRINT-DETAIL. Block1406|    MOVE     TEST-RESULTS TO PRINT-REC\l}"
+Block1288 [
+label = "{PRINT-DETAIL. Block1288|    MOVE     TEST-RESULTS TO PRINT-REC\l}"
 ]
-Block1407 [
-label = "{PRINT-DETAIL. Block1407|}"
+Block1289 [
+label = "{PRINT-DETAIL. Block1289|}"
 ]
-Block1408 [
-label = "{Block1408|                                        PERFORM WRITE-LINE\l}"
-]
-Block1408 -> Block804 [style=dashed]
-
-Block1409 [
-label = "{Block1409|}"
-]
-Block1410 [
-label = "{PRINT-DETAIL. Block1410|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
-]
-Block1411 [
-label = "{Block1411|}"
-]
-Block1412 [
-label = "{Block1412|                                PERFORM WRITE-LINE\l}"
-]
-Block1412 -> Block817 [style=dashed]
-
-Block1413 [
-label = "{Block1413|}"
-]
-Block1414 [
-label = "{Block1414|       PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX\l}"
-]
-Block1414 -> Block830 [style=dashed]
-
-Block1415 [
-label = "{Block1415|}"
-]
-Block1419 [
-label = "{Block1419|}"
-]
-Block1420 [
-label = "{PRINT-DETAIL. Block1420|    MOVE SPACE TO P-OR-F\l}"
-]
-Block1421 [
-label = "{PRINT-DETAIL. Block1421|                          MOVE SPACE TO COMPUTED-X\l}"
-]
-Block1422 [
-label = "{PRINT-DETAIL. Block1422|    MOVE SPACE TO CORRECT-X\l}"
-]
-Block1423 [
-label = "{PRINT-DETAIL. Block1423|    IF     REC-CT EQUAL TO ZERO\l}"
-]
-Block1424 [
-label = "{Block1424|                                 MOVE SPACE TO PAR-NAME\l}"
-]
-Block1425 [
-label = "{Block1425|}"
-]
-Block1426 [
-label = "{PRINT-DETAIL. Block1426|    MOVE     SPACE TO RE-MARK\l}"
-]
-Block1416 [
-label = "{Block1416|         ELSE\l}"
-]
-Block1417 [
-label = "{Block1417|              PERFORM BAIL-OUT THRU BAIL-OUT-EX\l}"
-]
-Block1417 -> Block851 [style=dashed]
-
-Block1418 [
-label = "{Block1418|}"
-]
-Block1403 -> Block1404
-Block1403 -> Block1405
-Block1404 -> Block1405
-Block1405 -> Block1406
-Block1406 -> Block1407
-Block1407 -> Block1408
-Block1408 -> Block1409
-Block1409 -> Block1410
-Block1410 -> Block1411
-Block1410 -> Block1416
-Block1411 -> Block1412
-Block1412 -> Block1413
-Block1413 -> Block1414
-Block1414 -> Block1415
-Block1415 -> Block1419
-Block1419 -> Block1420
-Block1420 -> Block1421
-Block1421 -> Block1422
-Block1422 -> Block1423
-Block1423 -> Block1424
-Block1423 -> Block1425
-Block1424 -> Block1425
-Block1425 -> Block1426
-Block1416 -> Block1417
-Block1417 -> Block1418
-Block1418 -> Block1419
 
 }
-Block423 -> Block1403 [style=dashed]
+Block423 -> Block1285 [style=dashed]
 
 Block424 [
 label = "{Block424|}"
@@ -2071,54 +1599,42 @@ label = "{Block463|    PERFORM TEST-4\l}"
 subgraph cluster_65{
 color = blue;
 label = "TEST-4A";
-Block1434 [
-label = "{TEST-4A. Block1434|    GO TO TEST-4C\l}"
+Block1312 [
+label = "{TEST-4A. Block1312|    GO TO TEST-4C\l}"
 ]
-Block1445 [
-label = "{TEST-4C. Block1445|    ALTER TEST-4A TO PROCEED TO TEST-4B\l}"
+Block1323 [
+label = "{TEST-4C. Block1323|    ALTER TEST-4A TO PROCEED TO TEST-4B\l}"
 ]
-Block1446 [
-label = "{TEST-4C. Block1446|    GO TO TEST-4B\l}"
+Block1324 [
+label = "{TEST-4C. Block1324|    GO TO TEST-4B\l}"
 ]
-Block1436 [
-label = "{TEST-4B. Block1436|    SUBTRACT 1 FROM SEG-CALC\l}"
+Block1314 [
+label = "{TEST-4B. Block1314|    SUBTRACT 1 FROM SEG-CALC\l}"
 ]
-Block1437 [
-label = "{TEST-4B. Block1437|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
+Block1315 [
+label = "{TEST-4B. Block1315|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
 ]
-Block1438 [
-label = "{TEST-4B. Block1438|    ADD 2 TO RANGE-SUB\l}"
+Block1316 [
+label = "{TEST-4B. Block1316|    ADD 2 TO RANGE-SUB\l}"
 ]
-Block1439 [
-label = "{TEST-4B. Block1439|    IF SEG-CALC IS GREATER THAN 0\l}"
+Block1317 [
+label = "{TEST-4B. Block1317|    IF SEG-CALC IS GREATER THAN 0\l}"
 ]
-Block1440 [
-label = "{Block1440|        GO TO TEST-4A\l}"
+Block1318 [
+label = "{Block1318|        GO TO TEST-4A\l}"
 ]
-Block1442 [
-label = "{Block1442|}"
+Block1320 [
+label = "{Block1320|}"
 ]
-Block1443 [
-label = "{TEST-4B. Block1443|    GO TO TEST-4D\l}"
+Block1321 [
+label = "{TEST-4B. Block1321|    GO TO TEST-4D\l}"
 ]
-Block1448 [
-label = "{TEST-4D. Block1448|    EXIT\l}"
+Block1326 [
+label = "{TEST-4D. Block1326|    EXIT\l}"
 ]
-Block1434 -> Block1445
-Block1434 -> Block1436
-Block1445 -> Block1446
-Block1446 -> Block1436
-Block1436 -> Block1437
-Block1437 -> Block1438
-Block1438 -> Block1439
-Block1439 -> Block1440
-Block1439 -> Block1442
-Block1440 -> Block1434
-Block1442 -> Block1443
-Block1443 -> Block1448
 
 }
-Block463 -> Block1434 [style=dashed]
+Block463 -> Block1312 [style=dashed]
 
 Block464 [
 label = "{Block464|}"
@@ -2135,16 +1651,15 @@ label = "{Block467|        PERFORM PASS\l}"
 subgraph cluster_66{
 color = blue;
 label = "PASS";
-Block1449 [
-label = "{PASS. Block1449|       MOVE \"PASS \" TO P-OR-F\l}"
+Block1327 [
+label = "{PASS. Block1327|       MOVE \"PASS \" TO P-OR-F\l}"
 ]
-Block1450 [
-label = "{PASS. Block1450|                                ADD 1 TO PASS-COUNTER\l}"
+Block1328 [
+label = "{PASS. Block1328|                                ADD 1 TO PASS-COUNTER\l}"
 ]
-Block1449 -> Block1450
 
 }
-Block467 -> Block1449 [style=dashed]
+Block467 -> Block1327 [style=dashed]
 
 Block468 [
 label = "{Block468|        GO TO TEST-4-WRITE\l}"
@@ -2161,115 +1676,24 @@ label = "{Block483|    PERFORM PRINT-DETAIL\l}"
 subgraph cluster_69{
 color = blue;
 label = "PRINT-DETAIL";
-Block1456 [
-label = "{PRINT-DETAIL. Block1456|    IF REC-CT NOT EQUAL TO ZERO\l}"
+Block1334 [
+label = "{PRINT-DETAIL. Block1334|    IF REC-CT NOT EQUAL TO ZERO\l}"
 ]
-Block1457 [
-label = "{Block1457|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
+Block1335 [
+label = "{Block1335|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
 ]
-Block1458 [
-label = "{Block1458|}"
+Block1336 [
+label = "{Block1336|}"
 ]
-Block1459 [
-label = "{PRINT-DETAIL. Block1459|    MOVE     TEST-RESULTS TO PRINT-REC\l}"
+Block1337 [
+label = "{PRINT-DETAIL. Block1337|    MOVE     TEST-RESULTS TO PRINT-REC\l}"
 ]
-Block1460 [
-label = "{PRINT-DETAIL. Block1460|}"
+Block1338 [
+label = "{PRINT-DETAIL. Block1338|}"
 ]
-Block1461 [
-label = "{Block1461|                                        PERFORM WRITE-LINE\l}"
-]
-Block1461 -> Block804 [style=dashed]
-
-Block1462 [
-label = "{Block1462|}"
-]
-Block1463 [
-label = "{PRINT-DETAIL. Block1463|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
-]
-Block1464 [
-label = "{Block1464|}"
-]
-Block1465 [
-label = "{Block1465|                                PERFORM WRITE-LINE\l}"
-]
-Block1465 -> Block817 [style=dashed]
-
-Block1466 [
-label = "{Block1466|}"
-]
-Block1467 [
-label = "{Block1467|       PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX\l}"
-]
-Block1467 -> Block830 [style=dashed]
-
-Block1468 [
-label = "{Block1468|}"
-]
-Block1472 [
-label = "{Block1472|}"
-]
-Block1473 [
-label = "{PRINT-DETAIL. Block1473|    MOVE SPACE TO P-OR-F\l}"
-]
-Block1474 [
-label = "{PRINT-DETAIL. Block1474|                          MOVE SPACE TO COMPUTED-X\l}"
-]
-Block1475 [
-label = "{PRINT-DETAIL. Block1475|    MOVE SPACE TO CORRECT-X\l}"
-]
-Block1476 [
-label = "{PRINT-DETAIL. Block1476|    IF     REC-CT EQUAL TO ZERO\l}"
-]
-Block1477 [
-label = "{Block1477|                                 MOVE SPACE TO PAR-NAME\l}"
-]
-Block1478 [
-label = "{Block1478|}"
-]
-Block1479 [
-label = "{PRINT-DETAIL. Block1479|    MOVE     SPACE TO RE-MARK\l}"
-]
-Block1469 [
-label = "{Block1469|         ELSE\l}"
-]
-Block1470 [
-label = "{Block1470|              PERFORM BAIL-OUT THRU BAIL-OUT-EX\l}"
-]
-Block1470 -> Block851 [style=dashed]
-
-Block1471 [
-label = "{Block1471|}"
-]
-Block1456 -> Block1457
-Block1456 -> Block1458
-Block1457 -> Block1458
-Block1458 -> Block1459
-Block1459 -> Block1460
-Block1460 -> Block1461
-Block1461 -> Block1462
-Block1462 -> Block1463
-Block1463 -> Block1464
-Block1463 -> Block1469
-Block1464 -> Block1465
-Block1465 -> Block1466
-Block1466 -> Block1467
-Block1467 -> Block1468
-Block1468 -> Block1472
-Block1472 -> Block1473
-Block1473 -> Block1474
-Block1474 -> Block1475
-Block1475 -> Block1476
-Block1476 -> Block1477
-Block1476 -> Block1478
-Block1477 -> Block1478
-Block1478 -> Block1479
-Block1469 -> Block1470
-Block1470 -> Block1471
-Block1471 -> Block1472
 
 }
-Block483 -> Block1456 [style=dashed]
+Block483 -> Block1334 [style=dashed]
 
 Block484 [
 label = "{Block484|}"
@@ -2301,76 +1725,61 @@ label = "{Block320|    PERFORM TEST-5\l}"
 subgraph cluster_44{
 color = blue;
 label = "TEST-5A";
-Block1226 [
-label = "{TEST-5A. Block1226|    GO TO TEST-5B\l}"
+Block1121 [
+label = "{TEST-5A. Block1121|    GO TO TEST-5B\l}"
 ]
-Block1228 [
-label = "{TEST-5B. Block1228|    ALTER SEG-5A TO PROCEED TO SEG-5B\l}"
+Block1123 [
+label = "{TEST-5B. Block1123|    ALTER SEG-5A TO PROCEED TO SEG-5B\l}"
 ]
-Block1229 [
-label = "{TEST-5B. Block1229|    ALTER TEST-5A TO PROCEED TO TEST-5C\l}"
+Block1124 [
+label = "{TEST-5B. Block1124|    ALTER TEST-5A TO PROCEED TO TEST-5C\l}"
 ]
-Block1230 [
-label = "{TEST-5B. Block1230|}"
+Block1125 [
+label = "{TEST-5B. Block1125|}"
 ]
-Block1231 [
-label = "{Block1231|    PERFORM SEG-99A THROUGH SEG-99C\l}"
+Block1126 [
+label = "{Block1126|    PERFORM SEG-99A THROUGH SEG-99C\l}"
 ]
 subgraph cluster_78{
 color = blue;
 label = "SEG-99A";
-Block1598 [
-label = "{SEG-99A. Block1598|    GO TO SEG-99B\l}"
+Block1751 [
+label = "{SEG-99A. Block1751|    GO TO SEG-99B\l}"
 ]
-Block1600 [
-label = "{SEG-99B. Block1600|    ALTER SEG-99A TO PROCEED TO SEG-99C\l}"
+Block1753 [
+label = "{SEG-99B. Block1753|    ALTER SEG-99A TO PROCEED TO SEG-99C\l}"
 ]
-Block1601 [
-label = "{SEG-99B. Block1601|    ALTER TEST-5A TO PROCEED TO TEST-5B\l}"
+Block1754 [
+label = "{SEG-99B. Block1754|    ALTER TEST-5A TO PROCEED TO TEST-5B\l}"
 ]
-Block1602 [
-label = "{SEG-99B. Block1602|    ADD 1 TO SEG-CALC\l}"
+Block1755 [
+label = "{SEG-99B. Block1755|    ADD 1 TO SEG-CALC\l}"
 ]
-Block1603 [
-label = "{SEG-99B. Block1603|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
+Block1756 [
+label = "{SEG-99B. Block1756|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
 ]
-Block1604 [
-label = "{SEG-99B. Block1604|    ADD 2 TO RANGE-SUB\l}"
+Block1757 [
+label = "{SEG-99B. Block1757|    ADD 2 TO RANGE-SUB\l}"
 ]
-Block1605 [
-label = "{SEG-99C. Block1605|    EXIT\l}"
+Block1758 [
+label = "{SEG-99C. Block1758|    EXIT\l}"
 ]
-Block1598 -> Block1600
-Block1598 -> Block1605
-Block1600 -> Block1601
-Block1601 -> Block1602
-Block1602 -> Block1603
-Block1603 -> Block1604
-Block1604 -> Block1605
 
 }
-Block1231 -> Block1598 [style=dashed]
+Block1126 -> Block1751 [style=dashed]
 
-Block1232 [
-label = "{Block1232|}"
+Block1127 [
+label = "{Block1127|}"
 ]
-Block1233 [
-label = "{TEST-5B. Block1233|    GO TO TEST-5A\l}"
+Block1128 [
+label = "{TEST-5B. Block1128|    GO TO TEST-5A\l}"
 ]
-Block1235 [
-label = "{TEST-5C. Block1235|    EXIT\l}"
+Block1130 [
+label = "{TEST-5C. Block1130|    EXIT\l}"
 ]
-Block1226 -> Block1228
-Block1226 -> Block1235
-Block1228 -> Block1229
-Block1229 -> Block1230
-Block1230 -> Block1231
-Block1231 -> Block1232
-Block1232 -> Block1233
-Block1233 -> Block1226
 
 }
-Block320 -> Block1226 [style=dashed]
+Block320 -> Block1121 [style=dashed]
 
 Block321 [
 label = "{Block321|}"
@@ -2393,16 +1802,15 @@ label = "{Block336|    PERFORM FAIL\l}"
 subgraph cluster_47{
 color = blue;
 label = "FAIL";
-Block1246 [
-label = "{FAIL. Block1246|       MOVE \"FAIL*\" TO P-OR-F\l}"
+Block1140 [
+label = "{FAIL. Block1140|       MOVE \"FAIL*\" TO P-OR-F\l}"
 ]
-Block1247 [
-label = "{FAIL. Block1247|                                ADD 1 TO ERROR-COUNTER\l}"
+Block1141 [
+label = "{FAIL. Block1141|                                ADD 1 TO ERROR-COUNTER\l}"
 ]
-Block1246 -> Block1247
 
 }
-Block336 -> Block1246 [style=dashed]
+Block336 -> Block1140 [style=dashed]
 
 Block337 [
 label = "{Block337|}"
@@ -2422,115 +1830,24 @@ label = "{Block345|    PERFORM PRINT-DETAIL\l}"
 subgraph cluster_49{
 color = blue;
 label = "PRINT-DETAIL";
-Block1251 [
-label = "{PRINT-DETAIL. Block1251|    IF REC-CT NOT EQUAL TO ZERO\l}"
+Block1145 [
+label = "{PRINT-DETAIL. Block1145|    IF REC-CT NOT EQUAL TO ZERO\l}"
 ]
-Block1252 [
-label = "{Block1252|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
+Block1146 [
+label = "{Block1146|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
 ]
-Block1253 [
-label = "{Block1253|}"
+Block1147 [
+label = "{Block1147|}"
 ]
-Block1254 [
-label = "{PRINT-DETAIL. Block1254|    MOVE     TEST-RESULTS TO PRINT-REC\l}"
+Block1148 [
+label = "{PRINT-DETAIL. Block1148|    MOVE     TEST-RESULTS TO PRINT-REC\l}"
 ]
-Block1255 [
-label = "{PRINT-DETAIL. Block1255|}"
+Block1149 [
+label = "{PRINT-DETAIL. Block1149|}"
 ]
-Block1256 [
-label = "{Block1256|                                        PERFORM WRITE-LINE\l}"
-]
-Block1256 -> Block804 [style=dashed]
-
-Block1257 [
-label = "{Block1257|}"
-]
-Block1258 [
-label = "{PRINT-DETAIL. Block1258|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
-]
-Block1259 [
-label = "{Block1259|}"
-]
-Block1260 [
-label = "{Block1260|                                PERFORM WRITE-LINE\l}"
-]
-Block1260 -> Block817 [style=dashed]
-
-Block1261 [
-label = "{Block1261|}"
-]
-Block1262 [
-label = "{Block1262|       PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX\l}"
-]
-Block1262 -> Block830 [style=dashed]
-
-Block1263 [
-label = "{Block1263|}"
-]
-Block1267 [
-label = "{Block1267|}"
-]
-Block1268 [
-label = "{PRINT-DETAIL. Block1268|    MOVE SPACE TO P-OR-F\l}"
-]
-Block1269 [
-label = "{PRINT-DETAIL. Block1269|                          MOVE SPACE TO COMPUTED-X\l}"
-]
-Block1270 [
-label = "{PRINT-DETAIL. Block1270|    MOVE SPACE TO CORRECT-X\l}"
-]
-Block1271 [
-label = "{PRINT-DETAIL. Block1271|    IF     REC-CT EQUAL TO ZERO\l}"
-]
-Block1272 [
-label = "{Block1272|                                 MOVE SPACE TO PAR-NAME\l}"
-]
-Block1273 [
-label = "{Block1273|}"
-]
-Block1274 [
-label = "{PRINT-DETAIL. Block1274|    MOVE     SPACE TO RE-MARK\l}"
-]
-Block1264 [
-label = "{Block1264|         ELSE\l}"
-]
-Block1265 [
-label = "{Block1265|              PERFORM BAIL-OUT THRU BAIL-OUT-EX\l}"
-]
-Block1265 -> Block851 [style=dashed]
-
-Block1266 [
-label = "{Block1266|}"
-]
-Block1251 -> Block1252
-Block1251 -> Block1253
-Block1252 -> Block1253
-Block1253 -> Block1254
-Block1254 -> Block1255
-Block1255 -> Block1256
-Block1256 -> Block1257
-Block1257 -> Block1258
-Block1258 -> Block1259
-Block1258 -> Block1264
-Block1259 -> Block1260
-Block1260 -> Block1261
-Block1261 -> Block1262
-Block1262 -> Block1263
-Block1263 -> Block1267
-Block1267 -> Block1268
-Block1268 -> Block1269
-Block1269 -> Block1270
-Block1270 -> Block1271
-Block1271 -> Block1272
-Block1271 -> Block1273
-Block1272 -> Block1273
-Block1273 -> Block1274
-Block1264 -> Block1265
-Block1265 -> Block1266
-Block1266 -> Block1267
 
 }
-Block345 -> Block1251 [style=dashed]
+Block345 -> Block1145 [style=dashed]
 
 Block346 [
 label = "{Block346|}"
@@ -2562,75 +1879,57 @@ label = "{Block493|    PERFORM TEST-6A THRU TEST-6I\l}"
 subgraph cluster_70{
 color = blue;
 label = "TEST-6A";
-Block1480 [
-label = "{TEST-6A. Block1480|    ALTER TEST-6B TO PROCEED TO TEST-6D\l}"
+Block1354 [
+label = "{TEST-6A. Block1354|    ALTER TEST-6B TO PROCEED TO TEST-6D\l}"
 ]
-Block1481 [
-label = "{TEST-6B. Block1481|    GO TO TEST-6E\l}"
+Block1355 [
+label = "{TEST-6B. Block1355|    GO TO TEST-6E\l}"
 ]
-Block1487 [
-label = "{TEST-6E. Block1487|    SUBTRACT SEG-CALC FROM SEG-CALC\l}"
+Block1361 [
+label = "{TEST-6E. Block1361|    SUBTRACT SEG-CALC FROM SEG-CALC\l}"
 ]
-Block1488 [
-label = "{TEST-6E. Block1488|    MOVE 0 TO RANGE-X (RANGE-SUB)\l}"
+Block1362 [
+label = "{TEST-6E. Block1362|    MOVE 0 TO RANGE-X (RANGE-SUB)\l}"
 ]
-Block1489 [
-label = "{TEST-6E. Block1489|    ADD 2 TO RANGE-SUB\l}"
+Block1363 [
+label = "{TEST-6E. Block1363|    ADD 2 TO RANGE-SUB\l}"
 ]
-Block1490 [
-label = "{TEST-6E. Block1490|    GO TO TEST-6-2\l}"
+Block1364 [
+label = "{TEST-6E. Block1364|    GO TO TEST-6-2\l}"
 ]
-Block1486 [
-label = "{TEST-6D. Block1486|    ALTER TEST-6B TO PROCEED TO TEST-6F\l}"
+Block1360 [
+label = "{TEST-6D. Block1360|    ALTER TEST-6B TO PROCEED TO TEST-6F\l}"
 ]
-Block1529 [
-label = "{TEST-6F. Block1529|    ADD 9 TO SEG-CALC\l}"
+Block1403 [
+label = "{TEST-6F. Block1403|    ADD 9 TO SEG-CALC\l}"
 ]
-Block1530 [
-label = "{TEST-6F. Block1530|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
+Block1404 [
+label = "{TEST-6F. Block1404|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
 ]
-Block1531 [
-label = "{TEST-6F. Block1531|    ADD 2 TO RANGE-SUB\l}"
+Block1405 [
+label = "{TEST-6F. Block1405|    ADD 2 TO RANGE-SUB\l}"
 ]
-Block1532 [
-label = "{TEST-6G. Block1532|    ALTER TEST-6B TO PROCEED TO TEST-6-8\l}"
+Block1406 [
+label = "{TEST-6G. Block1406|    ALTER TEST-6B TO PROCEED TO TEST-6-8\l}"
 ]
-Block1533 [
-label = "{TEST-6G. Block1533|    GO TO TEST-6-2\l}"
+Block1407 [
+label = "{TEST-6G. Block1407|    GO TO TEST-6-2\l}"
 ]
-Block1535 [
-label = "{TEST-6H. Block1535|    SUBTRACT 1 FROM SEG-CALC\l}"
+Block1409 [
+label = "{TEST-6H. Block1409|    SUBTRACT 1 FROM SEG-CALC\l}"
 ]
-Block1536 [
-label = "{TEST-6H. Block1536|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
+Block1410 [
+label = "{TEST-6H. Block1410|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
 ]
-Block1537 [
-label = "{TEST-6H. Block1537|    ADD 2 TO RANGE-SUB\l}"
+Block1411 [
+label = "{TEST-6H. Block1411|    ADD 2 TO RANGE-SUB\l}"
 ]
-Block1538 [
-label = "{TEST-6I. Block1538|    EXIT\l}"
+Block1412 [
+label = "{TEST-6I. Block1412|    EXIT\l}"
 ]
-Block1480 -> Block1481
-Block1481 -> Block1487
-Block1481 -> Block1486
-Block1481 -> Block1529
-Block1481 -> Block1535
-Block1487 -> Block1488
-Block1488 -> Block1489
-Block1489 -> Block1490
-Block1490 -> Block1481
-Block1486 -> Block1487
-Block1529 -> Block1530
-Block1530 -> Block1531
-Block1531 -> Block1532
-Block1532 -> Block1533
-Block1533 -> Block1481
-Block1535 -> Block1536
-Block1536 -> Block1537
-Block1537 -> Block1538
 
 }
-Block493 -> Block1480 [style=dashed]
+Block493 -> Block1354 [style=dashed]
 
 Block494 [
 label = "{Block494|}"
@@ -2647,16 +1946,15 @@ label = "{Block497|        PERFORM PASS\l}"
 subgraph cluster_71{
 color = blue;
 label = "PASS";
-Block1539 [
-label = "{PASS. Block1539|       MOVE \"PASS \" TO P-OR-F\l}"
+Block1413 [
+label = "{PASS. Block1413|       MOVE \"PASS \" TO P-OR-F\l}"
 ]
-Block1540 [
-label = "{PASS. Block1540|                                ADD 1 TO PASS-COUNTER\l}"
+Block1414 [
+label = "{PASS. Block1414|                                ADD 1 TO PASS-COUNTER\l}"
 ]
-Block1539 -> Block1540
 
 }
-Block497 -> Block1539 [style=dashed]
+Block497 -> Block1413 [style=dashed]
 
 Block498 [
 label = "{Block498|        GO TO TEST-6-WRITE\l}"
@@ -2673,115 +1971,24 @@ label = "{Block513|    PERFORM PRINT-DETAIL\l}"
 subgraph cluster_74{
 color = blue;
 label = "PRINT-DETAIL";
-Block1546 [
-label = "{PRINT-DETAIL. Block1546|    IF REC-CT NOT EQUAL TO ZERO\l}"
+Block1420 [
+label = "{PRINT-DETAIL. Block1420|    IF REC-CT NOT EQUAL TO ZERO\l}"
 ]
-Block1547 [
-label = "{Block1547|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
+Block1421 [
+label = "{Block1421|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
 ]
-Block1548 [
-label = "{Block1548|}"
+Block1422 [
+label = "{Block1422|}"
 ]
-Block1549 [
-label = "{PRINT-DETAIL. Block1549|    MOVE     TEST-RESULTS TO PRINT-REC\l}"
+Block1423 [
+label = "{PRINT-DETAIL. Block1423|    MOVE     TEST-RESULTS TO PRINT-REC\l}"
 ]
-Block1550 [
-label = "{PRINT-DETAIL. Block1550|}"
+Block1424 [
+label = "{PRINT-DETAIL. Block1424|}"
 ]
-Block1551 [
-label = "{Block1551|                                        PERFORM WRITE-LINE\l}"
-]
-Block1551 -> Block804 [style=dashed]
-
-Block1552 [
-label = "{Block1552|}"
-]
-Block1553 [
-label = "{PRINT-DETAIL. Block1553|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
-]
-Block1554 [
-label = "{Block1554|}"
-]
-Block1555 [
-label = "{Block1555|                                PERFORM WRITE-LINE\l}"
-]
-Block1555 -> Block817 [style=dashed]
-
-Block1556 [
-label = "{Block1556|}"
-]
-Block1557 [
-label = "{Block1557|       PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX\l}"
-]
-Block1557 -> Block830 [style=dashed]
-
-Block1558 [
-label = "{Block1558|}"
-]
-Block1562 [
-label = "{Block1562|}"
-]
-Block1563 [
-label = "{PRINT-DETAIL. Block1563|    MOVE SPACE TO P-OR-F\l}"
-]
-Block1564 [
-label = "{PRINT-DETAIL. Block1564|                          MOVE SPACE TO COMPUTED-X\l}"
-]
-Block1565 [
-label = "{PRINT-DETAIL. Block1565|    MOVE SPACE TO CORRECT-X\l}"
-]
-Block1566 [
-label = "{PRINT-DETAIL. Block1566|    IF     REC-CT EQUAL TO ZERO\l}"
-]
-Block1567 [
-label = "{Block1567|                                 MOVE SPACE TO PAR-NAME\l}"
-]
-Block1568 [
-label = "{Block1568|}"
-]
-Block1569 [
-label = "{PRINT-DETAIL. Block1569|    MOVE     SPACE TO RE-MARK\l}"
-]
-Block1559 [
-label = "{Block1559|         ELSE\l}"
-]
-Block1560 [
-label = "{Block1560|              PERFORM BAIL-OUT THRU BAIL-OUT-EX\l}"
-]
-Block1560 -> Block851 [style=dashed]
-
-Block1561 [
-label = "{Block1561|}"
-]
-Block1546 -> Block1547
-Block1546 -> Block1548
-Block1547 -> Block1548
-Block1548 -> Block1549
-Block1549 -> Block1550
-Block1550 -> Block1551
-Block1551 -> Block1552
-Block1552 -> Block1553
-Block1553 -> Block1554
-Block1553 -> Block1559
-Block1554 -> Block1555
-Block1555 -> Block1556
-Block1556 -> Block1557
-Block1557 -> Block1558
-Block1558 -> Block1562
-Block1562 -> Block1563
-Block1563 -> Block1564
-Block1564 -> Block1565
-Block1565 -> Block1566
-Block1566 -> Block1567
-Block1566 -> Block1568
-Block1567 -> Block1568
-Block1568 -> Block1569
-Block1559 -> Block1560
-Block1560 -> Block1561
-Block1561 -> Block1562
 
 }
-Block513 -> Block1546 [style=dashed]
+Block513 -> Block1420 [style=dashed]
 
 Block514 [
 label = "{Block514|}"
@@ -2816,77 +2023,61 @@ label = "{Block356|    PERFORM TEST-7-1 THRU TEST-7-4\l}"
 subgraph cluster_50{
 color = blue;
 label = "TEST-7A";
-Block1275 [
-label = "{TEST-7A. Block1275|    GO TO TEST-7B\l}"
+Block1165 [
+label = "{TEST-7A. Block1165|    GO TO TEST-7B\l}"
 ]
-Block1277 [
-label = "{TEST-7B. Block1277|    ALTER TEST-7A TO PROCEED TO TEST-7C\l}"
+Block1167 [
+label = "{TEST-7B. Block1167|    ALTER TEST-7A TO PROCEED TO TEST-7C\l}"
 ]
-Block1278 [
-label = "{TEST-7C. Block1278|    ADD 3 TO SEG-CALC\l}"
+Block1168 [
+label = "{TEST-7C. Block1168|    ADD 3 TO SEG-CALC\l}"
 ]
-Block1279 [
-label = "{TEST-7C. Block1279|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
+Block1169 [
+label = "{TEST-7C. Block1169|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
 ]
-Block1280 [
-label = "{TEST-7C. Block1280|    ADD 2 TO RANGE-SUB\l}"
+Block1170 [
+label = "{TEST-7C. Block1170|    ADD 2 TO RANGE-SUB\l}"
 ]
-Block1281 [
-label = "{TEST-7D. Block1281|    SUBTRACT 1 FROM SEG-CALC\l}"
+Block1171 [
+label = "{TEST-7D. Block1171|    SUBTRACT 1 FROM SEG-CALC\l}"
 ]
-Block1282 [
-label = "{TEST-7D. Block1282|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
+Block1172 [
+label = "{TEST-7D. Block1172|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
 ]
-Block1283 [
-label = "{TEST-7D. Block1283|    ADD 2 TO RANGE-SUB\l}"
+Block1173 [
+label = "{TEST-7D. Block1173|    ADD 2 TO RANGE-SUB\l}"
 ]
-Block1284 [
-label = "{TEST-7D. Block1284|}"
+Block1174 [
+label = "{TEST-7D. Block1174|}"
 ]
-Block1285 [
-label = "{Block1285|    PERFORM TEST-7B\l}"
+Block1175 [
+label = "{Block1175|    PERFORM TEST-7B\l}"
 ]
 subgraph cluster_56{
 color = blue;
 label = "TEST-7B";
-Block1338 [
-label = "{TEST-7B. Block1338|    ALTER TEST-7A TO PROCEED TO TEST-7C\l}"
+Block1759 [
+label = "{TEST-7B. Block1759|    ALTER TEST-7A TO PROCEED TO TEST-7C\l}"
 ]
 
 }
-Block1285 -> Block1338 [style=dashed]
+Block1175 -> Block1759 [style=dashed]
 
-Block1286 [
-label = "{Block1286|}"
+Block1176 [
+label = "{Block1176|}"
 ]
-Block1287 [
-label = "{TEST-7E. Block1287|    GO TO TEST-7F\l}"
+Block1177 [
+label = "{TEST-7E. Block1177|    GO TO TEST-7F\l}"
 ]
-Block1289 [
-label = "{TEST-7F. Block1289|    ALTER TEST-7E TO PROCEED TO TEST-7G\l}"
+Block1179 [
+label = "{TEST-7F. Block1179|    ALTER TEST-7E TO PROCEED TO TEST-7G\l}"
 ]
-Block1290 [
-label = "{TEST-7G. Block1290|    EXIT\l}"
+Block1180 [
+label = "{TEST-7G. Block1180|    EXIT\l}"
 ]
-Block1275 -> Block1277
-Block1275 -> Block1281
-Block1275 -> Block1278
-Block1277 -> Block1278
-Block1278 -> Block1279
-Block1279 -> Block1280
-Block1280 -> Block1281
-Block1281 -> Block1282
-Block1282 -> Block1283
-Block1283 -> Block1284
-Block1284 -> Block1285
-Block1285 -> Block1286
-Block1286 -> Block1287
-Block1287 -> Block1289
-Block1287 -> Block1290
-Block1289 -> Block1290
 
 }
-Block356 -> Block1275 [style=dashed]
+Block356 -> Block1165 [style=dashed]
 
 Block357 [
 label = "{Block357|}"
@@ -2900,69 +2091,36 @@ label = "{Block359|    PERFORM TEST-7-1 THRU TEST-7-4\l}"
 subgraph cluster_51{
 color = blue;
 label = "TEST-7A";
-Block1291 [
-label = "{TEST-7A. Block1291|    GO TO TEST-7B\l}"
+Block1181 [
+label = "{TEST-7A. Block1181|    GO TO TEST-7B\l}"
 ]
-Block1293 [
-label = "{TEST-7B. Block1293|    ALTER TEST-7A TO PROCEED TO TEST-7C\l}"
+Block1183 [
+label = "{TEST-7B. Block1183|    ALTER TEST-7A TO PROCEED TO TEST-7C\l}"
 ]
-Block1294 [
-label = "{TEST-7C. Block1294|    ADD 3 TO SEG-CALC\l}"
+Block1184 [
+label = "{TEST-7C. Block1184|    ADD 3 TO SEG-CALC\l}"
 ]
-Block1295 [
-label = "{TEST-7C. Block1295|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
+Block1185 [
+label = "{TEST-7C. Block1185|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
 ]
-Block1296 [
-label = "{TEST-7C. Block1296|    ADD 2 TO RANGE-SUB\l}"
+Block1186 [
+label = "{TEST-7C. Block1186|    ADD 2 TO RANGE-SUB\l}"
 ]
-Block1297 [
-label = "{TEST-7D. Block1297|    SUBTRACT 1 FROM SEG-CALC\l}"
+Block1187 [
+label = "{TEST-7D. Block1187|    SUBTRACT 1 FROM SEG-CALC\l}"
 ]
-Block1298 [
-label = "{TEST-7D. Block1298|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
+Block1188 [
+label = "{TEST-7D. Block1188|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
 ]
-Block1299 [
-label = "{TEST-7D. Block1299|    ADD 2 TO RANGE-SUB\l}"
+Block1189 [
+label = "{TEST-7D. Block1189|    ADD 2 TO RANGE-SUB\l}"
 ]
-Block1300 [
-label = "{TEST-7D. Block1300|}"
+Block1190 [
+label = "{TEST-7D. Block1190|}"
 ]
-Block1301 [
-label = "{Block1301|    PERFORM TEST-7B\l}"
-]
-Block1301 -> Block1338 [style=dashed]
-
-Block1302 [
-label = "{Block1302|}"
-]
-Block1303 [
-label = "{TEST-7E. Block1303|    GO TO TEST-7F\l}"
-]
-Block1305 [
-label = "{TEST-7F. Block1305|    ALTER TEST-7E TO PROCEED TO TEST-7G\l}"
-]
-Block1306 [
-label = "{TEST-7G. Block1306|    EXIT\l}"
-]
-Block1291 -> Block1293
-Block1291 -> Block1297
-Block1291 -> Block1294
-Block1293 -> Block1294
-Block1294 -> Block1295
-Block1295 -> Block1296
-Block1296 -> Block1297
-Block1297 -> Block1298
-Block1298 -> Block1299
-Block1299 -> Block1300
-Block1300 -> Block1301
-Block1301 -> Block1302
-Block1302 -> Block1303
-Block1303 -> Block1305
-Block1303 -> Block1306
-Block1305 -> Block1306
 
 }
-Block359 -> Block1291 [style=dashed]
+Block359 -> Block1181 [style=dashed]
 
 Block360 [
 label = "{Block360|}"
@@ -2979,16 +2137,15 @@ label = "{Block363|        PERFORM PASS\l}"
 subgraph cluster_52{
 color = blue;
 label = "PASS";
-Block1307 [
-label = "{PASS. Block1307|       MOVE \"PASS \" TO P-OR-F\l}"
+Block1196 [
+label = "{PASS. Block1196|       MOVE \"PASS \" TO P-OR-F\l}"
 ]
-Block1308 [
-label = "{PASS. Block1308|                                ADD 1 TO PASS-COUNTER\l}"
+Block1197 [
+label = "{PASS. Block1197|                                ADD 1 TO PASS-COUNTER\l}"
 ]
-Block1307 -> Block1308
 
 }
-Block363 -> Block1307 [style=dashed]
+Block363 -> Block1196 [style=dashed]
 
 Block364 [
 label = "{Block364|        GO TO TEST-7-WRITE\l}"
@@ -3005,115 +2162,24 @@ label = "{Block379|    PERFORM PRINT-DETAIL\l}"
 subgraph cluster_55{
 color = blue;
 label = "PRINT-DETAIL";
-Block1314 [
-label = "{PRINT-DETAIL. Block1314|    IF REC-CT NOT EQUAL TO ZERO\l}"
+Block1203 [
+label = "{PRINT-DETAIL. Block1203|    IF REC-CT NOT EQUAL TO ZERO\l}"
 ]
-Block1315 [
-label = "{Block1315|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
+Block1204 [
+label = "{Block1204|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
 ]
-Block1316 [
-label = "{Block1316|}"
+Block1205 [
+label = "{Block1205|}"
 ]
-Block1317 [
-label = "{PRINT-DETAIL. Block1317|    MOVE     TEST-RESULTS TO PRINT-REC\l}"
+Block1206 [
+label = "{PRINT-DETAIL. Block1206|    MOVE     TEST-RESULTS TO PRINT-REC\l}"
 ]
-Block1318 [
-label = "{PRINT-DETAIL. Block1318|}"
+Block1207 [
+label = "{PRINT-DETAIL. Block1207|}"
 ]
-Block1319 [
-label = "{Block1319|                                        PERFORM WRITE-LINE\l}"
-]
-Block1319 -> Block804 [style=dashed]
-
-Block1320 [
-label = "{Block1320|}"
-]
-Block1321 [
-label = "{PRINT-DETAIL. Block1321|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
-]
-Block1322 [
-label = "{Block1322|}"
-]
-Block1323 [
-label = "{Block1323|                                PERFORM WRITE-LINE\l}"
-]
-Block1323 -> Block817 [style=dashed]
-
-Block1324 [
-label = "{Block1324|}"
-]
-Block1325 [
-label = "{Block1325|       PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX\l}"
-]
-Block1325 -> Block830 [style=dashed]
-
-Block1326 [
-label = "{Block1326|}"
-]
-Block1330 [
-label = "{Block1330|}"
-]
-Block1331 [
-label = "{PRINT-DETAIL. Block1331|    MOVE SPACE TO P-OR-F\l}"
-]
-Block1332 [
-label = "{PRINT-DETAIL. Block1332|                          MOVE SPACE TO COMPUTED-X\l}"
-]
-Block1333 [
-label = "{PRINT-DETAIL. Block1333|    MOVE SPACE TO CORRECT-X\l}"
-]
-Block1334 [
-label = "{PRINT-DETAIL. Block1334|    IF     REC-CT EQUAL TO ZERO\l}"
-]
-Block1335 [
-label = "{Block1335|                                 MOVE SPACE TO PAR-NAME\l}"
-]
-Block1336 [
-label = "{Block1336|}"
-]
-Block1337 [
-label = "{PRINT-DETAIL. Block1337|    MOVE     SPACE TO RE-MARK\l}"
-]
-Block1327 [
-label = "{Block1327|         ELSE\l}"
-]
-Block1328 [
-label = "{Block1328|              PERFORM BAIL-OUT THRU BAIL-OUT-EX\l}"
-]
-Block1328 -> Block851 [style=dashed]
-
-Block1329 [
-label = "{Block1329|}"
-]
-Block1314 -> Block1315
-Block1314 -> Block1316
-Block1315 -> Block1316
-Block1316 -> Block1317
-Block1317 -> Block1318
-Block1318 -> Block1319
-Block1319 -> Block1320
-Block1320 -> Block1321
-Block1321 -> Block1322
-Block1321 -> Block1327
-Block1322 -> Block1323
-Block1323 -> Block1324
-Block1324 -> Block1325
-Block1325 -> Block1326
-Block1326 -> Block1330
-Block1330 -> Block1331
-Block1331 -> Block1332
-Block1332 -> Block1333
-Block1333 -> Block1334
-Block1334 -> Block1335
-Block1334 -> Block1336
-Block1335 -> Block1336
-Block1336 -> Block1337
-Block1327 -> Block1328
-Block1328 -> Block1329
-Block1329 -> Block1330
 
 }
-Block379 -> Block1314 [style=dashed]
+Block379 -> Block1203 [style=dashed]
 
 Block380 [
 label = "{Block380|}"
@@ -3145,16 +2211,15 @@ label = "{Block521|        PERFORM FAIL\l}"
 subgraph cluster_75{
 color = blue;
 label = "FAIL";
-Block1570 [
-label = "{FAIL. Block1570|       MOVE \"FAIL*\" TO P-OR-F\l}"
+Block1440 [
+label = "{FAIL. Block1440|       MOVE \"FAIL*\" TO P-OR-F\l}"
 ]
-Block1571 [
-label = "{FAIL. Block1571|                                ADD 1 TO ERROR-COUNTER\l}"
+Block1441 [
+label = "{FAIL. Block1441|                                ADD 1 TO ERROR-COUNTER\l}"
 ]
-Block1570 -> Block1571
 
 }
-Block521 -> Block1570 [style=dashed]
+Block521 -> Block1440 [style=dashed]
 
 Block522 [
 label = "{Block522|        GO TO TEST-8-WRITE\l}"
@@ -3174,115 +2239,24 @@ label = "{Block533|    PERFORM PRINT-DETAIL\l}"
 subgraph cluster_77{
 color = blue;
 label = "PRINT-DETAIL";
-Block1574 [
-label = "{PRINT-DETAIL. Block1574|    IF REC-CT NOT EQUAL TO ZERO\l}"
+Block1444 [
+label = "{PRINT-DETAIL. Block1444|    IF REC-CT NOT EQUAL TO ZERO\l}"
 ]
-Block1575 [
-label = "{Block1575|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
+Block1445 [
+label = "{Block1445|            MOVE \".\" TO PARDOT-X\l            MOVE REC-CT TO DOTVALUE\l}"
 ]
-Block1576 [
-label = "{Block1576|}"
+Block1446 [
+label = "{Block1446|}"
 ]
-Block1577 [
-label = "{PRINT-DETAIL. Block1577|    MOVE     TEST-RESULTS TO PRINT-REC\l}"
+Block1447 [
+label = "{PRINT-DETAIL. Block1447|    MOVE     TEST-RESULTS TO PRINT-REC\l}"
 ]
-Block1578 [
-label = "{PRINT-DETAIL. Block1578|}"
+Block1448 [
+label = "{PRINT-DETAIL. Block1448|}"
 ]
-Block1579 [
-label = "{Block1579|                                        PERFORM WRITE-LINE\l}"
-]
-Block1579 -> Block804 [style=dashed]
-
-Block1580 [
-label = "{Block1580|}"
-]
-Block1581 [
-label = "{PRINT-DETAIL. Block1581|    IF P-OR-F EQUAL TO \"FAIL*\"\l}"
-]
-Block1582 [
-label = "{Block1582|}"
-]
-Block1583 [
-label = "{Block1583|                                PERFORM WRITE-LINE\l}"
-]
-Block1583 -> Block817 [style=dashed]
-
-Block1584 [
-label = "{Block1584|}"
-]
-Block1585 [
-label = "{Block1585|       PERFORM FAIL-ROUTINE THRU FAIL-ROUTINE-EX\l}"
-]
-Block1585 -> Block830 [style=dashed]
-
-Block1586 [
-label = "{Block1586|}"
-]
-Block1590 [
-label = "{Block1590|}"
-]
-Block1591 [
-label = "{PRINT-DETAIL. Block1591|    MOVE SPACE TO P-OR-F\l}"
-]
-Block1592 [
-label = "{PRINT-DETAIL. Block1592|                          MOVE SPACE TO COMPUTED-X\l}"
-]
-Block1593 [
-label = "{PRINT-DETAIL. Block1593|    MOVE SPACE TO CORRECT-X\l}"
-]
-Block1594 [
-label = "{PRINT-DETAIL. Block1594|    IF     REC-CT EQUAL TO ZERO\l}"
-]
-Block1595 [
-label = "{Block1595|                                 MOVE SPACE TO PAR-NAME\l}"
-]
-Block1596 [
-label = "{Block1596|}"
-]
-Block1597 [
-label = "{PRINT-DETAIL. Block1597|    MOVE     SPACE TO RE-MARK\l}"
-]
-Block1587 [
-label = "{Block1587|         ELSE\l}"
-]
-Block1588 [
-label = "{Block1588|              PERFORM BAIL-OUT THRU BAIL-OUT-EX\l}"
-]
-Block1588 -> Block851 [style=dashed]
-
-Block1589 [
-label = "{Block1589|}"
-]
-Block1574 -> Block1575
-Block1574 -> Block1576
-Block1575 -> Block1576
-Block1576 -> Block1577
-Block1577 -> Block1578
-Block1578 -> Block1579
-Block1579 -> Block1580
-Block1580 -> Block1581
-Block1581 -> Block1582
-Block1581 -> Block1587
-Block1582 -> Block1583
-Block1583 -> Block1584
-Block1584 -> Block1585
-Block1585 -> Block1586
-Block1586 -> Block1590
-Block1590 -> Block1591
-Block1591 -> Block1592
-Block1592 -> Block1593
-Block1593 -> Block1594
-Block1594 -> Block1595
-Block1594 -> Block1596
-Block1595 -> Block1596
-Block1596 -> Block1597
-Block1587 -> Block1588
-Block1588 -> Block1589
-Block1589 -> Block1590
 
 }
-Block533 -> Block1574 [style=dashed]
+Block533 -> Block1444 [style=dashed]
 
 Block534 [
 label = "{Block534|}"
@@ -3299,672 +2273,15 @@ label = "{Block16|    PERFORM END-ROUTINE THRU END-ROUTINE-13\l}"
 subgraph cluster_3{
 color = blue;
 label = "END-ROUTINE";
-Block756 [
-label = "{END-ROUTINE. Block756|    MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
+Block750 [
+label = "{END-ROUTINE. Block750|    MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
 ]
-Block757 [
-label = "{END-ROUTINE. Block757|}"
+Block751 [
+label = "{END-ROUTINE. Block751|}"
 ]
-Block758 [
-label = "{Block758|                                      PERFORM WRITE-LINE 5 TIMES\l}"
-]
-subgraph cluster_14{
-color = blue;
-label = "WRITE-LINE";
-Block944 [
-label = "{WRITE-LINE. Block944|    ADD 1 TO RECORD-COUNT\l}"
-]
-Block945 [
-label = "{WRITE-LINE. Block945|    IF RECORD-COUNT GREATER 50\l}"
-]
-Block946 [
-label = "{Block946|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
-]
-Block947 [
-label = "{Block947|                                      PERFORM WRT-LN\l}"
-]
-Block947 -> Block1035 [style=dashed]
-
-Block948 [
-label = "{Block948|        MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
-]
-Block949 [
-label = "{Block949|                                      PERFORM WRT-LN 2 TIMES\l}"
-]
-Block949 -> Block1037 [style=dashed]
-
-Block950 [
-label = "{Block950|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
-]
-Block951 [
-label = "{Block951|                                         PERFORM WRT-LN\l}"
-]
-Block951 -> Block1039 [style=dashed]
-
-Block952 [
-label = "{Block952|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
-]
-Block953 [
-label = "{Block953|}"
-]
-Block954 [
-label = "{WRITE-LINE. Block954|}"
-]
-Block955 [
-label = "{Block955|    PERFORM WRT-LN\l}"
-]
-Block955 -> Block1041 [style=dashed]
-
-Block956 [
-label = "{Block956|}"
-]
-Block944 -> Block945
-Block945 -> Block946
-Block945 -> Block953
-Block946 -> Block947
-Block947 -> Block948
-Block948 -> Block949
-Block949 -> Block950
-Block950 -> Block951
-Block951 -> Block952
-Block952 -> Block953
-Block953 -> Block954
-Block954 -> Block955
-Block955 -> Block956
 
 }
-Block758 -> Block944 [style=dashed]
-
-Block759 [
-label = "{Block759|}"
-]
-Block760 [
-label = "{END-RTN-EXIT. Block760|    MOVE CCVS-E-1 TO DUMMY-RECORD\l}"
-]
-Block761 [
-label = "{END-RTN-EXIT. Block761|}"
-]
-Block762 [
-label = "{Block762|                                   PERFORM WRITE-LINE 2 TIMES\l}"
-]
-subgraph cluster_15{
-color = blue;
-label = "WRITE-LINE";
-Block957 [
-label = "{WRITE-LINE. Block957|    ADD 1 TO RECORD-COUNT\l}"
-]
-Block958 [
-label = "{WRITE-LINE. Block958|    IF RECORD-COUNT GREATER 50\l}"
-]
-Block959 [
-label = "{Block959|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
-]
-Block960 [
-label = "{Block960|                                      PERFORM WRT-LN\l}"
-]
-Block960 -> Block1035 [style=dashed]
-
-Block961 [
-label = "{Block961|        MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
-]
-Block962 [
-label = "{Block962|                                      PERFORM WRT-LN 2 TIMES\l}"
-]
-Block962 -> Block1037 [style=dashed]
-
-Block963 [
-label = "{Block963|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
-]
-Block964 [
-label = "{Block964|                                         PERFORM WRT-LN\l}"
-]
-Block964 -> Block1039 [style=dashed]
-
-Block965 [
-label = "{Block965|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
-]
-Block966 [
-label = "{Block966|}"
-]
-Block967 [
-label = "{WRITE-LINE. Block967|}"
-]
-Block968 [
-label = "{Block968|    PERFORM WRT-LN\l}"
-]
-Block968 -> Block1041 [style=dashed]
-
-Block969 [
-label = "{Block969|}"
-]
-Block957 -> Block958
-Block958 -> Block959
-Block958 -> Block966
-Block959 -> Block960
-Block960 -> Block961
-Block961 -> Block962
-Block962 -> Block963
-Block963 -> Block964
-Block964 -> Block965
-Block965 -> Block966
-Block966 -> Block967
-Block967 -> Block968
-Block968 -> Block969
-
-}
-Block762 -> Block957 [style=dashed]
-
-Block763 [
-label = "{Block763|}"
-]
-Block764 [
-label = "{END-ROUTINE-1. Block764|     ADD ERROR-COUNTER TO ERROR-HOLD\l                                     ADD INSPECT-COUNTER TO       ERROR-HOLD\l}"
-]
-Block765 [
-label = "{END-ROUTINE-1. Block765|                 ADD DELETE-CNT TO ERROR-HOLD\l}"
-]
-Block766 [
-label = "{END-ROUTINE-1. Block766|     ADD PASS-COUNTER TO ERROR-HOLD\l}"
-]
-Block767 [
-label = "{END-ROUTINE-1. Block767|     MOVE PASS-COUNTER TO CCVS-E-4-1\l}"
-]
-Block768 [
-label = "{END-ROUTINE-1. Block768|     MOVE ERROR-HOLD TO CCVS-E-4-2\l}"
-]
-Block769 [
-label = "{END-ROUTINE-1. Block769|     MOVE CCVS-E-4 TO CCVS-E-2-2\l}"
-]
-Block770 [
-label = "{END-ROUTINE-1. Block770|     MOVE CCVS-E-2 TO DUMMY-RECORD\l}"
-]
-Block771 [
-label = "{Block771|                                   PERFORM WRITE-LINE\l}"
-]
-subgraph cluster_16{
-color = blue;
-label = "WRITE-LINE";
-Block970 [
-label = "{WRITE-LINE. Block970|    ADD 1 TO RECORD-COUNT\l}"
-]
-Block971 [
-label = "{WRITE-LINE. Block971|    IF RECORD-COUNT GREATER 50\l}"
-]
-Block972 [
-label = "{Block972|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
-]
-Block973 [
-label = "{Block973|                                      PERFORM WRT-LN\l}"
-]
-Block973 -> Block1035 [style=dashed]
-
-Block974 [
-label = "{Block974|        MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
-]
-Block975 [
-label = "{Block975|                                      PERFORM WRT-LN 2 TIMES\l}"
-]
-Block975 -> Block1037 [style=dashed]
-
-Block976 [
-label = "{Block976|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
-]
-Block977 [
-label = "{Block977|                                         PERFORM WRT-LN\l}"
-]
-Block977 -> Block1039 [style=dashed]
-
-Block978 [
-label = "{Block978|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
-]
-Block979 [
-label = "{Block979|}"
-]
-Block980 [
-label = "{WRITE-LINE. Block980|}"
-]
-Block981 [
-label = "{Block981|    PERFORM WRT-LN\l}"
-]
-Block981 -> Block1041 [style=dashed]
-
-Block982 [
-label = "{Block982|}"
-]
-Block970 -> Block971
-Block971 -> Block972
-Block971 -> Block979
-Block972 -> Block973
-Block973 -> Block974
-Block974 -> Block975
-Block975 -> Block976
-Block976 -> Block977
-Block977 -> Block978
-Block978 -> Block979
-Block979 -> Block980
-Block980 -> Block981
-Block981 -> Block982
-
-}
-Block771 -> Block970 [style=dashed]
-
-Block772 [
-label = "{Block772|}"
-]
-Block773 [
-label = "{END-ROUTINE-12. Block773|     MOVE \"TEST(S) FAILED\" TO ENDER-DESC\l}"
-]
-Block774 [
-label = "{END-ROUTINE-12. Block774|    IF       ERROR-COUNTER IS EQUAL TO ZERO\l}"
-]
-Block775 [
-label = "{Block775|        MOVE \"NO \" TO ERROR-TOTAL\l}"
-]
-Block777 [
-label = "{Block777|}"
-]
-Block778 [
-label = "{END-ROUTINE-12. Block778|    MOVE     CCVS-E-2 TO DUMMY-RECORD\l}"
-]
-Block779 [
-label = "{END-ROUTINE-12. Block779|}"
-]
-Block780 [
-label = "{Block780|    PERFORM WRITE-LINE\l}"
-]
-subgraph cluster_17{
-color = blue;
-label = "WRITE-LINE";
-Block983 [
-label = "{WRITE-LINE. Block983|    ADD 1 TO RECORD-COUNT\l}"
-]
-Block984 [
-label = "{WRITE-LINE. Block984|    IF RECORD-COUNT GREATER 50\l}"
-]
-Block985 [
-label = "{Block985|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
-]
-Block986 [
-label = "{Block986|                                      PERFORM WRT-LN\l}"
-]
-Block986 -> Block1035 [style=dashed]
-
-Block987 [
-label = "{Block987|        MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
-]
-Block988 [
-label = "{Block988|                                      PERFORM WRT-LN 2 TIMES\l}"
-]
-Block988 -> Block1037 [style=dashed]
-
-Block989 [
-label = "{Block989|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
-]
-Block990 [
-label = "{Block990|                                         PERFORM WRT-LN\l}"
-]
-Block990 -> Block1039 [style=dashed]
-
-Block991 [
-label = "{Block991|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
-]
-Block992 [
-label = "{Block992|}"
-]
-Block993 [
-label = "{WRITE-LINE. Block993|}"
-]
-Block994 [
-label = "{Block994|    PERFORM WRT-LN\l}"
-]
-Block994 -> Block1041 [style=dashed]
-
-Block995 [
-label = "{Block995|}"
-]
-Block983 -> Block984
-Block984 -> Block985
-Block984 -> Block992
-Block985 -> Block986
-Block986 -> Block987
-Block987 -> Block988
-Block988 -> Block989
-Block989 -> Block990
-Block990 -> Block991
-Block991 -> Block992
-Block992 -> Block993
-Block993 -> Block994
-Block994 -> Block995
-
-}
-Block780 -> Block983 [style=dashed]
-
-Block781 [
-label = "{Block781|}"
-]
-Block782 [
-label = "{END-ROUTINE-13. Block782|    IF DELETE-CNT IS EQUAL TO ZERO\l}"
-]
-Block783 [
-label = "{Block783|        MOVE \"NO \" TO ERROR-TOTAL\l}"
-]
-Block785 [
-label = "{Block785|}"
-]
-Block786 [
-label = "{END-ROUTINE-13. Block786|    MOVE \"TEST(S) DELETED     \" TO ENDER-DESC\l}"
-]
-Block787 [
-label = "{END-ROUTINE-13. Block787|    MOVE CCVS-E-2 TO DUMMY-RECORD\l}"
-]
-Block788 [
-label = "{END-ROUTINE-13. Block788|}"
-]
-Block789 [
-label = "{Block789|                                   PERFORM WRITE-LINE\l}"
-]
-subgraph cluster_18{
-color = blue;
-label = "WRITE-LINE";
-Block996 [
-label = "{WRITE-LINE. Block996|    ADD 1 TO RECORD-COUNT\l}"
-]
-Block997 [
-label = "{WRITE-LINE. Block997|    IF RECORD-COUNT GREATER 50\l}"
-]
-Block998 [
-label = "{Block998|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
-]
-Block999 [
-label = "{Block999|                                      PERFORM WRT-LN\l}"
-]
-Block999 -> Block1035 [style=dashed]
-
-Block1000 [
-label = "{Block1000|        MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
-]
-Block1001 [
-label = "{Block1001|                                      PERFORM WRT-LN 2 TIMES\l}"
-]
-Block1001 -> Block1037 [style=dashed]
-
-Block1002 [
-label = "{Block1002|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
-]
-Block1003 [
-label = "{Block1003|                                         PERFORM WRT-LN\l}"
-]
-Block1003 -> Block1039 [style=dashed]
-
-Block1004 [
-label = "{Block1004|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
-]
-Block1005 [
-label = "{Block1005|}"
-]
-Block1006 [
-label = "{WRITE-LINE. Block1006|}"
-]
-Block1007 [
-label = "{Block1007|    PERFORM WRT-LN\l}"
-]
-Block1007 -> Block1041 [style=dashed]
-
-Block1008 [
-label = "{Block1008|}"
-]
-Block996 -> Block997
-Block997 -> Block998
-Block997 -> Block1005
-Block998 -> Block999
-Block999 -> Block1000
-Block1000 -> Block1001
-Block1001 -> Block1002
-Block1002 -> Block1003
-Block1003 -> Block1004
-Block1004 -> Block1005
-Block1005 -> Block1006
-Block1006 -> Block1007
-Block1007 -> Block1008
-
-}
-Block789 -> Block996 [style=dashed]
-
-Block790 [
-label = "{Block790|}"
-]
-Block791 [
-label = "{END-ROUTINE-13. Block791|     IF   INSPECT-COUNTER EQUAL TO ZERO\l}"
-]
-Block792 [
-label = "{Block792|         MOVE \"NO \" TO ERROR-TOTAL\l}"
-]
-Block794 [
-label = "{Block794|}"
-]
-Block795 [
-label = "{END-ROUTINE-13. Block795|     MOVE \"TEST(S) REQUIRE INSPECTION\" TO ENDER-DESC\l}"
-]
-Block796 [
-label = "{END-ROUTINE-13. Block796|     MOVE CCVS-E-2 TO DUMMY-RECORD\l}"
-]
-Block797 [
-label = "{END-ROUTINE-13. Block797|}"
-]
-Block798 [
-label = "{Block798|                                    PERFORM WRITE-LINE\l}"
-]
-subgraph cluster_19{
-color = blue;
-label = "WRITE-LINE";
-Block1009 [
-label = "{WRITE-LINE. Block1009|    ADD 1 TO RECORD-COUNT\l}"
-]
-Block1010 [
-label = "{WRITE-LINE. Block1010|    IF RECORD-COUNT GREATER 50\l}"
-]
-Block1011 [
-label = "{Block1011|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
-]
-Block1012 [
-label = "{Block1012|                                      PERFORM WRT-LN\l}"
-]
-Block1012 -> Block1035 [style=dashed]
-
-Block1013 [
-label = "{Block1013|        MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
-]
-Block1014 [
-label = "{Block1014|                                      PERFORM WRT-LN 2 TIMES\l}"
-]
-Block1014 -> Block1037 [style=dashed]
-
-Block1015 [
-label = "{Block1015|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
-]
-Block1016 [
-label = "{Block1016|                                         PERFORM WRT-LN\l}"
-]
-Block1016 -> Block1039 [style=dashed]
-
-Block1017 [
-label = "{Block1017|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
-]
-Block1018 [
-label = "{Block1018|}"
-]
-Block1019 [
-label = "{WRITE-LINE. Block1019|}"
-]
-Block1020 [
-label = "{Block1020|    PERFORM WRT-LN\l}"
-]
-Block1020 -> Block1041 [style=dashed]
-
-Block1021 [
-label = "{Block1021|}"
-]
-Block1009 -> Block1010
-Block1010 -> Block1011
-Block1010 -> Block1018
-Block1011 -> Block1012
-Block1012 -> Block1013
-Block1013 -> Block1014
-Block1014 -> Block1015
-Block1015 -> Block1016
-Block1016 -> Block1017
-Block1017 -> Block1018
-Block1018 -> Block1019
-Block1019 -> Block1020
-Block1020 -> Block1021
-
-}
-Block798 -> Block1009 [style=dashed]
-
-Block799 [
-label = "{Block799|}"
-]
-Block800 [
-label = "{END-ROUTINE-13. Block800|    MOVE CCVS-E-3 TO DUMMY-RECORD\l}"
-]
-Block801 [
-label = "{END-ROUTINE-13. Block801|}"
-]
-Block802 [
-label = "{Block802|                                   PERFORM WRITE-LINE\l}"
-]
-subgraph cluster_20{
-color = blue;
-label = "WRITE-LINE";
-Block1022 [
-label = "{WRITE-LINE. Block1022|    ADD 1 TO RECORD-COUNT\l}"
-]
-Block1023 [
-label = "{WRITE-LINE. Block1023|    IF RECORD-COUNT GREATER 50\l}"
-]
-Block1024 [
-label = "{Block1024|        MOVE DUMMY-RECORD TO DUMMY-HOLD\l        MOVE SPACE TO DUMMY-RECORD\l        WRITE DUMMY-RECORD AFTER ADVANCING PAGE\l        MOVE CCVS-C-1 TO DUMMY-RECORD\l}"
-]
-Block1025 [
-label = "{Block1025|                                      PERFORM WRT-LN\l}"
-]
-Block1025 -> Block1035 [style=dashed]
-
-Block1026 [
-label = "{Block1026|        MOVE CCVS-C-2 TO DUMMY-RECORD\l}"
-]
-Block1027 [
-label = "{Block1027|                                      PERFORM WRT-LN 2 TIMES\l}"
-]
-Block1027 -> Block1037 [style=dashed]
-
-Block1028 [
-label = "{Block1028|        MOVE HYPHEN-LINE TO DUMMY-RECORD\l}"
-]
-Block1029 [
-label = "{Block1029|                                         PERFORM WRT-LN\l}"
-]
-Block1029 -> Block1039 [style=dashed]
-
-Block1030 [
-label = "{Block1030|        MOVE DUMMY-HOLD TO DUMMY-RECORD\l        MOVE ZERO TO RECORD-COUNT\l}"
-]
-Block1031 [
-label = "{Block1031|}"
-]
-Block1032 [
-label = "{WRITE-LINE. Block1032|}"
-]
-Block1033 [
-label = "{Block1033|    PERFORM WRT-LN\l}"
-]
-Block1033 -> Block1041 [style=dashed]
-
-Block1034 [
-label = "{Block1034|}"
-]
-Block1022 -> Block1023
-Block1023 -> Block1024
-Block1023 -> Block1031
-Block1024 -> Block1025
-Block1025 -> Block1026
-Block1026 -> Block1027
-Block1027 -> Block1028
-Block1028 -> Block1029
-Block1029 -> Block1030
-Block1030 -> Block1031
-Block1031 -> Block1032
-Block1032 -> Block1033
-Block1033 -> Block1034
-
-}
-Block802 -> Block1022 [style=dashed]
-
-Block803 [
-label = "{Block803|}"
-]
-Block793 [
-label = "{Block793|     ELSE\l          MOVE INSPECT-COUNTER TO ERROR-TOTAL\l}"
-]
-Block784 [
-label = "{Block784|                                   ELSE\l        MOVE DELETE-CNT TO ERROR-TOTAL\l}"
-]
-Block776 [
-label = "{Block776|        ELSE\l        MOVE ERROR-COUNTER TO ERROR-TOTAL\l}"
-]
-Block756 -> Block757
-Block757 -> Block758
-Block758 -> Block759
-Block759 -> Block760
-Block760 -> Block761
-Block761 -> Block762
-Block762 -> Block763
-Block763 -> Block764
-Block764 -> Block765
-Block765 -> Block766
-Block766 -> Block767
-Block767 -> Block768
-Block768 -> Block769
-Block769 -> Block770
-Block770 -> Block771
-Block771 -> Block772
-Block772 -> Block773
-Block773 -> Block774
-Block774 -> Block775
-Block774 -> Block776
-Block775 -> Block777
-Block777 -> Block778
-Block778 -> Block779
-Block779 -> Block780
-Block780 -> Block781
-Block781 -> Block782
-Block782 -> Block783
-Block782 -> Block784
-Block783 -> Block785
-Block785 -> Block786
-Block786 -> Block787
-Block787 -> Block788
-Block788 -> Block789
-Block789 -> Block790
-Block790 -> Block791
-Block791 -> Block792
-Block791 -> Block793
-Block792 -> Block794
-Block794 -> Block795
-Block795 -> Block796
-Block796 -> Block797
-Block797 -> Block798
-Block798 -> Block799
-Block799 -> Block800
-Block800 -> Block801
-Block801 -> Block802
-Block802 -> Block803
-Block793 -> Block794
-Block784 -> Block785
-Block776 -> Block777
-
-}
-Block16 -> Block756 [style=dashed]
+Block16 -> Block750 [style=dashed]
 
 Block17 [
 label = "{Block17|}"
@@ -3990,16 +2307,15 @@ label = "{Block528|    PERFORM PASS\l}"
 subgraph cluster_76{
 color = blue;
 label = "PASS";
-Block1572 [
-label = "{PASS. Block1572|       MOVE \"PASS \" TO P-OR-F\l}"
+Block1442 [
+label = "{PASS. Block1442|       MOVE \"PASS \" TO P-OR-F\l}"
 ]
-Block1573 [
-label = "{PASS. Block1573|                                ADD 1 TO PASS-COUNTER\l}"
+Block1443 [
+label = "{PASS. Block1443|                                ADD 1 TO PASS-COUNTER\l}"
 ]
-Block1572 -> Block1573
 
 }
-Block528 -> Block1572 [style=dashed]
+Block528 -> Block1442 [style=dashed]
 
 Block529 [
 label = "{Block529|}"
@@ -4022,16 +2338,15 @@ label = "{Block370|    PERFORM FAIL\l}"
 subgraph cluster_53{
 color = blue;
 label = "FAIL";
-Block1309 [
-label = "{FAIL. Block1309|       MOVE \"FAIL*\" TO P-OR-F\l}"
+Block1198 [
+label = "{FAIL. Block1198|       MOVE \"FAIL*\" TO P-OR-F\l}"
 ]
-Block1310 [
-label = "{FAIL. Block1310|                                ADD 1 TO ERROR-COUNTER\l}"
+Block1199 [
+label = "{FAIL. Block1199|                                ADD 1 TO ERROR-COUNTER\l}"
 ]
-Block1309 -> Block1310
 
 }
-Block370 -> Block1309 [style=dashed]
+Block370 -> Block1198 [style=dashed]
 
 Block371 [
 label = "{Block371|}"
@@ -4057,16 +2372,15 @@ label = "{Block504|    PERFORM FAIL\l}"
 subgraph cluster_72{
 color = blue;
 label = "FAIL";
-Block1541 [
-label = "{FAIL. Block1541|       MOVE \"FAIL*\" TO P-OR-F\l}"
+Block1415 [
+label = "{FAIL. Block1415|       MOVE \"FAIL*\" TO P-OR-F\l}"
 ]
-Block1542 [
-label = "{FAIL. Block1542|                                ADD 1 TO ERROR-COUNTER\l}"
+Block1416 [
+label = "{FAIL. Block1416|                                ADD 1 TO ERROR-COUNTER\l}"
 ]
-Block1541 -> Block1542
 
 }
-Block504 -> Block1541 [style=dashed]
+Block504 -> Block1415 [style=dashed]
 
 Block505 [
 label = "{Block505|}"
@@ -4083,98 +2397,18 @@ label = "{Block325|    PERFORM TEST-5B THRU TEST-5C\l}"
 subgraph cluster_45{
 color = blue;
 label = "TEST-5B";
-Block1236 [
-label = "{TEST-5B. Block1236|    ALTER SEG-5A TO PROCEED TO SEG-5B\l}"
+Block1131 [
+label = "{TEST-5B. Block1131|    ALTER SEG-5A TO PROCEED TO SEG-5B\l}"
 ]
-Block1237 [
-label = "{TEST-5B. Block1237|    ALTER TEST-5A TO PROCEED TO TEST-5C\l}"
+Block1132 [
+label = "{TEST-5B. Block1132|    ALTER TEST-5A TO PROCEED TO TEST-5C\l}"
 ]
-Block1238 [
-label = "{TEST-5B. Block1238|}"
+Block1133 [
+label = "{TEST-5B. Block1133|}"
 ]
-Block1239 [
-label = "{Block1239|    PERFORM SEG-99A THROUGH SEG-99C\l}"
-]
-Block1239 -> Block1598 [style=dashed]
-
-Block1240 [
-label = "{Block1240|}"
-]
-Block1241 [
-label = "{TEST-5B. Block1241|    GO TO TEST-5A\l}"
-]
-Block537 [
-label = "{TEST-5A. Block537|    GO TO TEST-5B\l}"
-]
-Block539 [
-label = "{TEST-5B. Block539|    ALTER SEG-5A TO PROCEED TO SEG-5B\l}"
-]
-Block540 [
-label = "{TEST-5B. Block540|    ALTER TEST-5A TO PROCEED TO TEST-5C\l}"
-]
-Block541 [
-label = "{TEST-5B. Block541|}"
-]
-Block542 [
-label = "{Block542|    PERFORM SEG-99A THROUGH SEG-99C\l}"
-]
-Block542 -> Block1598 [style=dashed]
-
-Block543 [
-label = "{Block543|}"
-]
-Block544 [
-label = "{TEST-5B. Block544|    GO TO TEST-5A\l}"
-]
-Block546 [
-label = "{TEST-5C. Block546|    EXIT\l}"
-]
-Block547 [
-label = "{SEG-99A. Block547|    GO TO SEG-99B\l}"
-]
-Block549 [
-label = "{SEG-99B. Block549|    ALTER SEG-99A TO PROCEED TO SEG-99C\l}"
-]
-Block550 [
-label = "{SEG-99B. Block550|    ALTER TEST-5A TO PROCEED TO TEST-5B\l}"
-]
-Block551 [
-label = "{SEG-99B. Block551|    ADD 1 TO SEG-CALC\l}"
-]
-Block552 [
-label = "{SEG-99B. Block552|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
-]
-Block553 [
-label = "{SEG-99B. Block553|    ADD 2 TO RANGE-SUB\l}"
-]
-Block554 [
-label = "{SEG-99C. Block554|    EXIT\l}"
-]
-Block1236 -> Block1237
-Block1237 -> Block1238
-Block1238 -> Block1239
-Block1239 -> Block1240
-Block1240 -> Block1241
-Block1241 -> Block537
-Block537 -> Block539
-Block537 -> Block546
-Block539 -> Block540
-Block540 -> Block541
-Block541 -> Block542
-Block542 -> Block543
-Block543 -> Block544
-Block544 -> Block537
-Block546 -> Block547
-Block547 -> Block549
-Block547 -> Block554
-Block549 -> Block550
-Block550 -> Block551
-Block551 -> Block552
-Block552 -> Block553
-Block553 -> Block554
 
 }
-Block325 -> Block1236 [style=dashed]
+Block325 -> Block1131 [style=dashed]
 
 Block326 [
 label = "{Block326|}"
@@ -4191,16 +2425,15 @@ label = "{Block329|        PERFORM PASS\l}"
 subgraph cluster_46{
 color = blue;
 label = "PASS";
-Block1244 [
-label = "{PASS. Block1244|       MOVE \"PASS \" TO P-OR-F\l}"
+Block1138 [
+label = "{PASS. Block1138|       MOVE \"PASS \" TO P-OR-F\l}"
 ]
-Block1245 [
-label = "{PASS. Block1245|                                ADD 1 TO PASS-COUNTER\l}"
+Block1139 [
+label = "{PASS. Block1139|                                ADD 1 TO PASS-COUNTER\l}"
 ]
-Block1244 -> Block1245
 
 }
-Block329 -> Block1244 [style=dashed]
+Block329 -> Block1138 [style=dashed]
 
 Block330 [
 label = "{Block330|        GO TO TEST-5-WRITE\l}"
@@ -4226,16 +2459,15 @@ label = "{Block474|    PERFORM FAIL\l}"
 subgraph cluster_67{
 color = blue;
 label = "FAIL";
-Block1451 [
-label = "{FAIL. Block1451|       MOVE \"FAIL*\" TO P-OR-F\l}"
+Block1329 [
+label = "{FAIL. Block1329|       MOVE \"FAIL*\" TO P-OR-F\l}"
 ]
-Block1452 [
-label = "{FAIL. Block1452|                                ADD 1 TO ERROR-COUNTER\l}"
+Block1330 [
+label = "{FAIL. Block1330|                                ADD 1 TO ERROR-COUNTER\l}"
 ]
-Block1451 -> Block1452
 
 }
-Block474 -> Block1451 [style=dashed]
+Block474 -> Block1329 [style=dashed]
 
 Block475 [
 label = "{Block475|}"
@@ -4243,205 +2475,43 @@ label = "{Block475|}"
 Block476 [
 label = "{SEG-TEST-4. Block476|    GO TO TEST-4-WRITE\l}"
 ]
-Block1348 [
-label = "{Block1348|}"
+Block1233 [
+label = "{Block1233|}"
 ]
-Block1349 [
-label = "{TEST-3B. Block1349|    MOVE COMPUTED-RANGE TO COMPUTED-A\l}"
+Block1234 [
+label = "{TEST-3B. Block1234|    MOVE COMPUTED-RANGE TO COMPUTED-A\l}"
 ]
-Block1350 [
-label = "{TEST-3B. Block1350|    MOVE \"2-4-6\" TO CORRECT-A\l}"
+Block1235 [
+label = "{TEST-3B. Block1235|    MOVE \"2-4-6\" TO CORRECT-A\l}"
 ]
-Block1351 [
-label = "{TEST-3B. Block1351|}"
+Block1236 [
+label = "{TEST-3B. Block1236|}"
 ]
-Block1352 [
-label = "{Block1352|    PERFORM FAIL\l}"
+Block1237 [
+label = "{Block1237|    PERFORM FAIL\l}"
 ]
 subgraph cluster_63{
 color = blue;
 label = "FAIL";
-Block1429 [
-label = "{FAIL. Block1429|       MOVE \"FAIL*\" TO P-OR-F\l}"
+Block1762 [
+label = "{FAIL. Block1762|       MOVE \"FAIL*\" TO P-OR-F\l}"
 ]
-Block1430 [
-label = "{FAIL. Block1430|                                ADD 1 TO ERROR-COUNTER\l}"
+Block1763 [
+label = "{FAIL. Block1763|                                ADD 1 TO ERROR-COUNTER\l}"
 ]
-Block1429 -> Block1430
 
 }
-Block1352 -> Block1429 [style=dashed]
+Block1237 -> Block1762 [style=dashed]
 
-Block1353 [
-label = "{Block1353|}"
+Block1238 [
+label = "{Block1238|}"
 ]
-Block1354 [
-label = "{TEST-3B. Block1354|    GO TO TEST-3-WRITE\l}"
+Block1239 [
+label = "{TEST-3B. Block1239|    GO TO TEST-3-WRITE\l}"
 ]
-Block1339 -> Block1359
-Block1339 -> Block1343
-Block1359 -> Block1360
-Block1359 -> Block1362
-Block1360 -> Block1368
-Block1362 -> Block1363
-Block1363 -> Block1364
-Block1364 -> Block1365
-Block1365 -> Block1366
-Block1366 -> Block1343
-Block1343 -> Block1344
-Block1343 -> Block1348
-Block1344 -> Block1345
-Block1345 -> Block1346
-Block1346 -> Block421
-Block421 -> Block422
-Block422 -> Block423
-Block423 -> Block424
-Block424 -> Block425
-Block425 -> Block457
-Block457 -> Block458
-Block458 -> Block459
-Block459 -> Block460
-Block460 -> Block461
-Block461 -> Block462
-Block462 -> Block463
-Block463 -> Block464
-Block464 -> Block465
-Block465 -> Block466
-Block465 -> Block470
-Block466 -> Block467
-Block467 -> Block468
-Block468 -> Block481
-Block481 -> Block482
-Block482 -> Block483
-Block483 -> Block484
-Block484 -> Block485
-Block485 -> Block314
-Block314 -> Block315
-Block315 -> Block316
-Block316 -> Block317
-Block317 -> Block318
-Block318 -> Block319
-Block319 -> Block320
-Block320 -> Block321
-Block321 -> Block322
-Block322 -> Block333
-Block322 -> Block324
-Block333 -> Block334
-Block334 -> Block335
-Block335 -> Block336
-Block336 -> Block337
-Block337 -> Block338
-Block338 -> Block343
-Block343 -> Block344
-Block344 -> Block345
-Block345 -> Block346
-Block346 -> Block347
-Block347 -> Block487
-Block487 -> Block488
-Block488 -> Block489
-Block489 -> Block490
-Block490 -> Block491
-Block491 -> Block492
-Block492 -> Block493
-Block493 -> Block494
-Block494 -> Block495
-Block495 -> Block496
-Block495 -> Block500
-Block496 -> Block497
-Block497 -> Block498
-Block498 -> Block511
-Block511 -> Block512
-Block512 -> Block513
-Block513 -> Block514
-Block514 -> Block515
-Block515 -> Block349
-Block349 -> Block350
-Block350 -> Block351
-Block351 -> Block352
-Block352 -> Block353
-Block353 -> Block354
-Block354 -> Block355
-Block355 -> Block356
-Block356 -> Block357
-Block357 -> Block358
-Block358 -> Block359
-Block359 -> Block360
-Block360 -> Block361
-Block361 -> Block362
-Block361 -> Block366
-Block362 -> Block363
-Block363 -> Block364
-Block364 -> Block377
-Block377 -> Block378
-Block378 -> Block379
-Block379 -> Block380
-Block380 -> Block381
-Block381 -> Block382
-Block382 -> Block280
-Block280 -> Block517
-Block280 -> Block527
-Block517 -> Block518
-Block518 -> Block519
-Block519 -> Block520
-Block519 -> Block524
-Block520 -> Block521
-Block521 -> Block522
-Block522 -> Block530
-Block530 -> Block531
-Block531 -> Block532
-Block532 -> Block533
-Block533 -> Block534
-Block534 -> Block535
-Block535 -> Block15
-Block15 -> Block16
-Block16 -> Block17
-Block17 -> Block18
-Block18 -> Block19
-Block524 -> Block525
-Block525 -> Block280
-Block527 -> Block528
-Block528 -> Block529
-Block529 -> Block530
-Block366 -> Block367
-Block367 -> Block368
-Block368 -> Block369
-Block369 -> Block370
-Block370 -> Block371
-Block371 -> Block372
-Block372 -> Block377
-Block500 -> Block501
-Block501 -> Block502
-Block502 -> Block503
-Block503 -> Block504
-Block504 -> Block505
-Block505 -> Block506
-Block506 -> Block511
-Block324 -> Block325
-Block325 -> Block326
-Block326 -> Block327
-Block327 -> Block328
-Block327 -> Block332
-Block328 -> Block329
-Block329 -> Block330
-Block330 -> Block343
-Block332 -> Block333
-Block470 -> Block471
-Block471 -> Block472
-Block472 -> Block473
-Block473 -> Block474
-Block474 -> Block475
-Block475 -> Block476
-Block476 -> Block481
-Block1348 -> Block1349
-Block1349 -> Block1350
-Block1350 -> Block1351
-Block1351 -> Block1352
-Block1352 -> Block1353
-Block1353 -> Block1354
-Block1354 -> Block421
 
 }
-Block406 -> Block1339 [style=dashed]
+Block406 -> Block1224 [style=dashed]
 
 Block407 [
 label = "{Block407|}"
@@ -4461,693 +2531,54 @@ label = "{Block411|    PERFORM TEST-3A THRU TEST-3EXIT\l}"
 subgraph cluster_58{
 color = blue;
 label = "TEST-3A";
-Block1369 [
-label = "{TEST-3A. Block1369|    GO TO TEST-3B\l}"
+Block1254 [
+label = "{TEST-3A. Block1254|    GO TO TEST-3B\l}"
 ]
-Block1371 [
-label = "{TEST-3B. Block1371|    IF SEG-CALC EQUAL TO 6\l}"
+Block1256 [
+label = "{TEST-3B. Block1256|    IF SEG-CALC EQUAL TO 6\l}"
 ]
-Block1372 [
-label = "{Block1372|}"
+Block1257 [
+label = "{Block1257|}"
 ]
-Block1373 [
-label = "{Block1373|        PERFORM PASS\l}"
+Block1260 [
+label = "{Block1260|}"
 ]
-Block1373 -> Block1427 [style=dashed]
-
-Block1374 [
-label = "{Block1374|        GO TO TEST-3-WRITE\l}"
+Block1261 [
+label = "{TEST-3B. Block1261|    MOVE COMPUTED-RANGE TO COMPUTED-A\l}"
 ]
-Block421 [
-label = "{TEST-3-WRITE. Block421|    MOVE \"SEG-TEST-3\" TO PAR-NAME\l}"
+Block1262 [
+label = "{TEST-3B. Block1262|    MOVE \"2-4-6\" TO CORRECT-A\l}"
 ]
-Block422 [
-label = "{TEST-3-WRITE. Block422|}"
+Block1263 [
+label = "{TEST-3B. Block1263|}"
 ]
-Block423 [
-label = "{Block423|    PERFORM PRINT-DETAIL\l}"
+Block1267 [
+label = "{TEST-3C. Block1267|    ADD 2 TO SEG-CALC\l}"
 ]
-Block423 -> Block1403 [style=dashed]
-
-Block424 [
-label = "{Block424|}"
+Block1268 [
+label = "{TEST-3C. Block1268|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
 ]
-Block425 [
-label = "{TEST-3-WRITE. Block425|    GO TO SEG-TEST-4\l}"
+Block1269 [
+label = "{TEST-3C. Block1269|    ADD 2 TO RANGE-SUB\l}"
 ]
-Block457 [
-label = "{SEG-TEST-4. Block457|    MOVE SPACE TO COMPUTED-RANGE\l}"
+Block1270 [
+label = "{TEST-3D. Block1270|    IF SEG-CALC EQUAL TO 2\l}"
 ]
-Block458 [
-label = "{SEG-TEST-4. Block458|    MOVE 3 TO RANGE-SUB\l}"
+Block1271 [
+label = "{Block1271|                           GO TO TEST-3EXIT\l}"
 ]
-Block459 [
-label = "{SEG-TEST-4. Block459|    MOVE 3 TO SEG-CALC\l}"
+Block1278 [
+label = "{TEST-3EXIT. Block1278|    EXIT\l}"
 ]
-Block460 [
-label = "{SEG-TEST-4. Block460|    MOVE 3 TO RANGE-X (1)\l}"
+Block1273 [
+label = "{Block1273|}"
 ]
-Block461 [
-label = "{SEG-TEST-4. Block461|    MOVE \"-\" TO RANGE-X (2) RANGE-X (4) RANGE-X (6)\l}"
+Block1274 [
+label = "{TEST-3D. Block1274|}"
 ]
-Block462 [
-label = "{SEG-TEST-4. Block462|}"
-]
-Block463 [
-label = "{Block463|    PERFORM TEST-4\l}"
-]
-Block463 -> Block1434 [style=dashed]
-
-Block464 [
-label = "{Block464|}"
-]
-Block465 [
-label = "{SEG-TEST-4. Block465|    IF SEG-CALC EQUAL TO 0\l}"
-]
-Block466 [
-label = "{Block466|}"
-]
-Block467 [
-label = "{Block467|        PERFORM PASS\l}"
-]
-Block467 -> Block1449 [style=dashed]
-
-Block468 [
-label = "{Block468|        GO TO TEST-4-WRITE\l}"
-]
-Block481 [
-label = "{TEST-4-WRITE. Block481|    MOVE \"SEG-TEST-4\" TO PAR-NAME\l}"
-]
-Block482 [
-label = "{TEST-4-WRITE. Block482|}"
-]
-Block483 [
-label = "{Block483|    PERFORM PRINT-DETAIL\l}"
-]
-Block483 -> Block1456 [style=dashed]
-
-Block484 [
-label = "{Block484|}"
-]
-Block485 [
-label = "{TEST-4-WRITE. Block485|    GO TO SEG-TEST-5\l}"
-]
-Block314 [
-label = "{SEG-TEST-5. Block314|    MOVE SPACE TO COMPUTED-RANGE\l}"
-]
-Block315 [
-label = "{SEG-TEST-5. Block315|    MOVE 5 TO SEG-CALC\l}"
-]
-Block316 [
-label = "{SEG-TEST-5. Block316|    MOVE SEG-CALC TO RANGE-X (1)\l}"
-]
-Block317 [
-label = "{SEG-TEST-5. Block317|    MOVE \"-\" TO RANGE-X (2) RANGE-X (4)\l}"
-]
-Block318 [
-label = "{SEG-TEST-5. Block318|    MOVE 3 TO RANGE-SUB\l}"
-]
-Block319 [
-label = "{SEG-TEST-5. Block319|}"
-]
-Block320 [
-label = "{Block320|    PERFORM TEST-5\l}"
-]
-Block320 -> Block1226 [style=dashed]
-
-Block321 [
-label = "{Block321|}"
-]
-Block322 [
-label = "{SEG-5A. Block322|    GO TO SEG-5C\l}"
-]
-Block333 [
-label = "{SEG-5C. Block333|    MOVE COMPUTED-RANGE TO COMPUTED-A\l}"
-]
-Block334 [
-label = "{SEG-5C. Block334|    MOVE \"5-6-7\" TO CORRECT-A\l}"
-]
-Block335 [
-label = "{SEG-5C. Block335|}"
-]
-Block336 [
-label = "{Block336|    PERFORM FAIL\l}"
-]
-Block336 -> Block1246 [style=dashed]
-
-Block337 [
-label = "{Block337|}"
-]
-Block338 [
-label = "{SEG-5C. Block338|    GO TO TEST-5-WRITE\l}"
-]
-Block343 [
-label = "{TEST-5-WRITE. Block343|    MOVE \"SEG-TEST-5\" TO PAR-NAME\l}"
-]
-Block344 [
-label = "{TEST-5-WRITE. Block344|}"
-]
-Block345 [
-label = "{Block345|    PERFORM PRINT-DETAIL\l}"
-]
-Block345 -> Block1251 [style=dashed]
-
-Block346 [
-label = "{Block346|}"
-]
-Block347 [
-label = "{TEST-5-WRITE. Block347|    GO TO SEG-TEST-6\l}"
-]
-Block487 [
-label = "{SEG-TEST-6. Block487|    MOVE 9 TO SEG-CALC\l}"
-]
-Block488 [
-label = "{SEG-TEST-6. Block488|    MOVE SPACE TO COMPUTED-RANGE\l}"
-]
-Block489 [
-label = "{SEG-TEST-6. Block489|    MOVE SEG-CALC TO RANGE-X (1)\l}"
-]
-Block490 [
-label = "{SEG-TEST-6. Block490|    MOVE \"-\" TO RANGE-X (2) RANGE-X (4) RANGE-X (6)\l}"
-]
-Block491 [
-label = "{SEG-TEST-6. Block491|    MOVE 3 TO RANGE-SUB\l}"
-]
-Block492 [
-label = "{SEG-TEST-6. Block492|}"
-]
-Block493 [
-label = "{Block493|    PERFORM TEST-6A THRU TEST-6I\l}"
-]
-Block493 -> Block1480 [style=dashed]
-
-Block494 [
-label = "{Block494|}"
-]
-Block495 [
-label = "{SEG-TEST-6. Block495|    IF SEG-CALC EQUAL TO 8\l}"
-]
-Block496 [
-label = "{Block496|}"
-]
-Block497 [
-label = "{Block497|        PERFORM PASS\l}"
-]
-Block497 -> Block1539 [style=dashed]
-
-Block498 [
-label = "{Block498|        GO TO TEST-6-WRITE\l}"
-]
-Block511 [
-label = "{TEST-6-WRITE. Block511|    MOVE \"SEG-TEST-6\" TO PAR-NAME\l}"
-]
-Block512 [
-label = "{TEST-6-WRITE. Block512|}"
-]
-Block513 [
-label = "{Block513|    PERFORM PRINT-DETAIL\l}"
-]
-Block513 -> Block1546 [style=dashed]
-
-Block514 [
-label = "{Block514|}"
-]
-Block515 [
-label = "{TEST-6-WRITE. Block515|    GO TO SEG-TEST-7\l}"
-]
-Block349 [
-label = "{SEG-TEST-7. Block349|    MOVE SPACE TO COMPUTED-RANGE\l}"
-]
-Block350 [
-label = "{SEG-TEST-7. Block350|    MOVE 3 TO SEG-CALC\l}"
-]
-Block351 [
-label = "{SEG-TEST-7. Block351|    MOVE 3 TO RANGE-SUB\l}"
-]
-Block352 [
-label = "{SEG-TEST-7. Block352|    MOVE SEG-CALC TO RANGE-X (1)\l}"
-]
-Block353 [
-label = "{SEG-TEST-7. Block353|    MOVE \"-\" TO RANGE-X (2) RANGE-X (4) RANGE-X (6)\l}"
-]
-Block354 [
-label = "{SEG-TEST-7. Block354|    ALTER TEST-7A TO PROCEED TO TEST-7D\l}"
-]
-Block355 [
-label = "{SEG-TEST-7. Block355|}"
-]
-Block356 [
-label = "{Block356|    PERFORM TEST-7-1 THRU TEST-7-4\l}"
-]
-Block356 -> Block1275 [style=dashed]
-
-Block357 [
-label = "{Block357|}"
-]
-Block358 [
-label = "{SEG-TEST-7. Block358|}"
-]
-Block359 [
-label = "{Block359|    PERFORM TEST-7-1 THRU TEST-7-4\l}"
-]
-Block359 -> Block1291 [style=dashed]
-
-Block360 [
-label = "{Block360|}"
-]
-Block361 [
-label = "{SEG-TEST-7. Block361|    IF SEG-CALC EQUAL TO 4\l}"
-]
-Block362 [
-label = "{Block362|}"
-]
-Block363 [
-label = "{Block363|        PERFORM PASS\l}"
-]
-Block363 -> Block1307 [style=dashed]
-
-Block364 [
-label = "{Block364|        GO TO TEST-7-WRITE\l}"
-]
-Block377 [
-label = "{TEST-7-WRITE. Block377|    MOVE \"SEG-TEST-7\" TO PAR-NAME\l}"
-]
-Block378 [
-label = "{TEST-7-WRITE. Block378|}"
-]
-Block379 [
-label = "{Block379|    PERFORM PRINT-DETAIL\l}"
-]
-Block379 -> Block1314 [style=dashed]
-
-Block380 [
-label = "{Block380|}"
-]
-Block381 [
-label = "{TEST-7-WRITE. Block381|    MOVE 0 TO SEG-CALC\l}"
-]
-Block382 [
-label = "{TEST-7-WRITE. Block382|    GO TO TEST-8-BRANCH\l}"
-]
-Block280 [
-label = "{PARA-8. Block280|    GO TO SEG-TEST8\l}"
-]
-Block517 [
-label = "{SEG-TEST-8. Block517|    ALTER PARA-8 TO PROCEED TO SEG-TEST-8A\l}"
-]
-Block518 [
-label = "{SEG-TEST-8. Block518|    ADD 1 TO SEG-CALC\l}"
-]
-Block519 [
-label = "{SEG-TEST-8. Block519|    IF SEG-CALC EQUAL TO 2\l}"
-]
-Block520 [
-label = "{Block520|}"
-]
-Block521 [
-label = "{Block521|        PERFORM FAIL\l}"
-]
-Block521 -> Block1570 [style=dashed]
-
-Block522 [
-label = "{Block522|        GO TO TEST-8-WRITE\l}"
-]
-Block530 [
-label = "{TEST-8-WRITE. Block530|    MOVE \"ALTER RES TO NON-RES\" TO FEATURE\l}"
-]
-Block531 [
-label = "{TEST-8-WRITE. Block531|    MOVE \"SEG-TEST-8\" TO PAR-NAME\l}"
-]
-Block532 [
-label = "{TEST-8-WRITE. Block532|}"
-]
-Block533 [
-label = "{Block533|    PERFORM PRINT-DETAIL\l}"
-]
-Block533 -> Block1574 [style=dashed]
-
-Block534 [
-label = "{Block534|}"
-]
-Block535 [
-label = "{TEST-8-WRITE. Block535|    GO TO    CLOSE-FILES\l}"
-]
-Block15 [
-label = "{CLOSE-FILES. Block15|}"
-]
-Block16 [
-label = "{Block16|    PERFORM END-ROUTINE THRU END-ROUTINE-13\l}"
-]
-Block16 -> Block756 [style=dashed]
-
-Block17 [
-label = "{Block17|}"
-]
-Block18 [
-label = "{CLOSE-FILES. Block18|                                             CLOSE PRINT-FILE\l}"
-]
-Block19 [
-label = "{TERMINATE-CCVS. Block19|    EXIT PROGRAM\l}"
-]
-Block524 [
-label = "{Block524|}"
-]
-Block525 [
-label = "{SEG-TEST-8. Block525|    GO TO TEST-8-BRANCH\l}"
-]
-Block527 [
-label = "{PARA-85. Block527|}"
-]
-Block528 [
-label = "{Block528|    PERFORM PASS\l}"
-]
-Block528 -> Block1572 [style=dashed]
-
-Block529 [
-label = "{Block529|}"
-]
-Block366 [
-label = "{Block366|}"
-]
-Block367 [
-label = "{SEG-TEST-7. Block367|    MOVE COMPUTED-RANGE TO COMPUTED-A\l}"
-]
-Block368 [
-label = "{SEG-TEST-7. Block368|    MOVE \"3-2-5-4\" TO CORRECT-A\l}"
-]
-Block369 [
-label = "{SEG-TEST-7. Block369|}"
-]
-Block370 [
-label = "{Block370|    PERFORM FAIL\l}"
-]
-Block370 -> Block1309 [style=dashed]
-
-Block371 [
-label = "{Block371|}"
-]
-Block372 [
-label = "{SEG-TEST-7. Block372|    GO TO TEST-7-WRITE\l}"
-]
-Block500 [
-label = "{Block500|}"
-]
-Block501 [
-label = "{SEG-TEST-6. Block501|    MOVE COMPUTED-RANGE TO COMPUTED-A\l}"
-]
-Block502 [
-label = "{SEG-TEST-6. Block502|    MOVE \"9-0-9-8\" TO CORRECT-A\l}"
-]
-Block503 [
-label = "{SEG-TEST-6. Block503|}"
-]
-Block504 [
-label = "{Block504|    PERFORM FAIL\l}"
-]
-Block504 -> Block1541 [style=dashed]
-
-Block505 [
-label = "{Block505|}"
-]
-Block506 [
-label = "{SEG-TEST-6. Block506|    GO TO TEST-6-WRITE\l}"
-]
-Block324 [
-label = "{SEG-5B. Block324|}"
-]
-Block325 [
-label = "{Block325|    PERFORM TEST-5B THRU TEST-5C\l}"
-]
-Block325 -> Block1236 [style=dashed]
-
-Block326 [
-label = "{Block326|}"
-]
-Block327 [
-label = "{SEG-5B. Block327|    IF SEG-CALC EQUAL TO 7\l}"
-]
-Block328 [
-label = "{Block328|}"
-]
-Block329 [
-label = "{Block329|        PERFORM PASS\l}"
-]
-Block329 -> Block1244 [style=dashed]
-
-Block330 [
-label = "{Block330|        GO TO TEST-5-WRITE\l}"
-]
-Block332 [
-label = "{Block332|}"
-]
-Block470 [
-label = "{Block470|}"
-]
-Block471 [
-label = "{SEG-TEST-4. Block471|    MOVE COMPUTED-RANGE TO COMPUTED-A\l}"
-]
-Block472 [
-label = "{SEG-TEST-4. Block472|    MOVE \"3-2-1-0\" TO CORRECT-A\l}"
-]
-Block473 [
-label = "{SEG-TEST-4. Block473|}"
-]
-Block474 [
-label = "{Block474|    PERFORM FAIL\l}"
-]
-Block474 -> Block1451 [style=dashed]
-
-Block475 [
-label = "{Block475|}"
-]
-Block476 [
-label = "{SEG-TEST-4. Block476|    GO TO TEST-4-WRITE\l}"
-]
-Block1376 [
-label = "{Block1376|}"
-]
-Block1377 [
-label = "{TEST-3B. Block1377|    MOVE COMPUTED-RANGE TO COMPUTED-A\l}"
-]
-Block1378 [
-label = "{TEST-3B. Block1378|    MOVE \"2-4-6\" TO CORRECT-A\l}"
-]
-Block1379 [
-label = "{TEST-3B. Block1379|}"
-]
-Block1380 [
-label = "{Block1380|    PERFORM FAIL\l}"
-]
-Block1380 -> Block1429 [style=dashed]
-
-Block1381 [
-label = "{Block1381|}"
-]
-Block1382 [
-label = "{TEST-3B. Block1382|    GO TO TEST-3-WRITE\l}"
-]
-Block1384 [
-label = "{TEST-3C. Block1384|    ADD 2 TO SEG-CALC\l}"
-]
-Block1385 [
-label = "{TEST-3C. Block1385|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
-]
-Block1386 [
-label = "{TEST-3C. Block1386|    ADD 2 TO RANGE-SUB\l}"
-]
-Block1387 [
-label = "{TEST-3D. Block1387|    IF SEG-CALC EQUAL TO 2\l}"
-]
-Block1388 [
-label = "{Block1388|                           GO TO TEST-3EXIT\l}"
-]
-Block1396 [
-label = "{TEST-3EXIT. Block1396|    EXIT\l}"
-]
-Block1390 [
-label = "{Block1390|}"
-]
-Block1391 [
-label = "{TEST-3D. Block1391|}"
-]
-Block1392 [
-label = "{Block1392|    PERFORM TEST-3C\l}"
-]
-Block1392 -> Block1431 [style=dashed]
-
-Block1393 [
-label = "{Block1393|}"
-]
-Block1394 [
-label = "{TEST-3D. Block1394|    GO TO TEST-3B\l}"
-]
-Block1369 -> Block1371
-Block1369 -> Block1384
-Block1371 -> Block1372
-Block1371 -> Block1376
-Block1372 -> Block1373
-Block1373 -> Block1374
-Block1374 -> Block421
-Block421 -> Block422
-Block422 -> Block423
-Block423 -> Block424
-Block424 -> Block425
-Block425 -> Block457
-Block457 -> Block458
-Block458 -> Block459
-Block459 -> Block460
-Block460 -> Block461
-Block461 -> Block462
-Block462 -> Block463
-Block463 -> Block464
-Block464 -> Block465
-Block465 -> Block466
-Block465 -> Block470
-Block466 -> Block467
-Block467 -> Block468
-Block468 -> Block481
-Block481 -> Block482
-Block482 -> Block483
-Block483 -> Block484
-Block484 -> Block485
-Block485 -> Block314
-Block314 -> Block315
-Block315 -> Block316
-Block316 -> Block317
-Block317 -> Block318
-Block318 -> Block319
-Block319 -> Block320
-Block320 -> Block321
-Block321 -> Block322
-Block322 -> Block333
-Block322 -> Block324
-Block333 -> Block334
-Block334 -> Block335
-Block335 -> Block336
-Block336 -> Block337
-Block337 -> Block338
-Block338 -> Block343
-Block343 -> Block344
-Block344 -> Block345
-Block345 -> Block346
-Block346 -> Block347
-Block347 -> Block487
-Block487 -> Block488
-Block488 -> Block489
-Block489 -> Block490
-Block490 -> Block491
-Block491 -> Block492
-Block492 -> Block493
-Block493 -> Block494
-Block494 -> Block495
-Block495 -> Block496
-Block495 -> Block500
-Block496 -> Block497
-Block497 -> Block498
-Block498 -> Block511
-Block511 -> Block512
-Block512 -> Block513
-Block513 -> Block514
-Block514 -> Block515
-Block515 -> Block349
-Block349 -> Block350
-Block350 -> Block351
-Block351 -> Block352
-Block352 -> Block353
-Block353 -> Block354
-Block354 -> Block355
-Block355 -> Block356
-Block356 -> Block357
-Block357 -> Block358
-Block358 -> Block359
-Block359 -> Block360
-Block360 -> Block361
-Block361 -> Block362
-Block361 -> Block366
-Block362 -> Block363
-Block363 -> Block364
-Block364 -> Block377
-Block377 -> Block378
-Block378 -> Block379
-Block379 -> Block380
-Block380 -> Block381
-Block381 -> Block382
-Block382 -> Block280
-Block280 -> Block517
-Block280 -> Block527
-Block517 -> Block518
-Block518 -> Block519
-Block519 -> Block520
-Block519 -> Block524
-Block520 -> Block521
-Block521 -> Block522
-Block522 -> Block530
-Block530 -> Block531
-Block531 -> Block532
-Block532 -> Block533
-Block533 -> Block534
-Block534 -> Block535
-Block535 -> Block15
-Block15 -> Block16
-Block16 -> Block17
-Block17 -> Block18
-Block18 -> Block19
-Block524 -> Block525
-Block525 -> Block280
-Block527 -> Block528
-Block528 -> Block529
-Block529 -> Block530
-Block366 -> Block367
-Block367 -> Block368
-Block368 -> Block369
-Block369 -> Block370
-Block370 -> Block371
-Block371 -> Block372
-Block372 -> Block377
-Block500 -> Block501
-Block501 -> Block502
-Block502 -> Block503
-Block503 -> Block504
-Block504 -> Block505
-Block505 -> Block506
-Block506 -> Block511
-Block324 -> Block325
-Block325 -> Block326
-Block326 -> Block327
-Block327 -> Block328
-Block327 -> Block332
-Block328 -> Block329
-Block329 -> Block330
-Block330 -> Block343
-Block332 -> Block333
-Block470 -> Block471
-Block471 -> Block472
-Block472 -> Block473
-Block473 -> Block474
-Block474 -> Block475
-Block475 -> Block476
-Block476 -> Block481
-Block1376 -> Block1377
-Block1377 -> Block1378
-Block1378 -> Block1379
-Block1379 -> Block1380
-Block1380 -> Block1381
-Block1381 -> Block1382
-Block1382 -> Block421
-Block1384 -> Block1385
-Block1385 -> Block1386
-Block1386 -> Block1387
-Block1387 -> Block1388
-Block1387 -> Block1390
-Block1388 -> Block1396
-Block1390 -> Block1391
-Block1391 -> Block1392
-Block1392 -> Block1393
-Block1393 -> Block1394
-Block1394 -> Block1371
 
 }
-Block411 -> Block1369 [style=dashed]
+Block411 -> Block1254 [style=dashed]
 
 Block412 [
 label = "{Block412|}"
@@ -5161,20 +2592,18 @@ label = "{Block414|    PERFORM TEST-3C\l}"
 subgraph cluster_59{
 color = blue;
 label = "TEST-3C";
-Block1397 [
-label = "{TEST-3C. Block1397|    ADD 2 TO SEG-CALC\l}"
+Block1279 [
+label = "{TEST-3C. Block1279|    ADD 2 TO SEG-CALC\l}"
 ]
-Block1398 [
-label = "{TEST-3C. Block1398|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
+Block1280 [
+label = "{TEST-3C. Block1280|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
 ]
-Block1399 [
-label = "{TEST-3C. Block1399|    ADD 2 TO RANGE-SUB\l}"
+Block1281 [
+label = "{TEST-3C. Block1281|    ADD 2 TO RANGE-SUB\l}"
 ]
-Block1397 -> Block1398
-Block1398 -> Block1399
 
 }
-Block414 -> Block1397 [style=dashed]
+Block414 -> Block1279 [style=dashed]
 
 Block415 [
 label = "{Block415|}"
@@ -5194,434 +2623,6 @@ label = "{Block448|                           GO TO TEST-3EXIT\l}"
 Block456 [
 label = "{TEST-3EXIT. Block456|    EXIT\l}"
 ]
-Block457 [
-label = "{SEG-TEST-4. Block457|    MOVE SPACE TO COMPUTED-RANGE\l}"
-]
-Block458 [
-label = "{SEG-TEST-4. Block458|    MOVE 3 TO RANGE-SUB\l}"
-]
-Block459 [
-label = "{SEG-TEST-4. Block459|    MOVE 3 TO SEG-CALC\l}"
-]
-Block460 [
-label = "{SEG-TEST-4. Block460|    MOVE 3 TO RANGE-X (1)\l}"
-]
-Block461 [
-label = "{SEG-TEST-4. Block461|    MOVE \"-\" TO RANGE-X (2) RANGE-X (4) RANGE-X (6)\l}"
-]
-Block462 [
-label = "{SEG-TEST-4. Block462|}"
-]
-Block463 [
-label = "{Block463|    PERFORM TEST-4\l}"
-]
-Block463 -> Block1434 [style=dashed]
-
-Block464 [
-label = "{Block464|}"
-]
-Block465 [
-label = "{SEG-TEST-4. Block465|    IF SEG-CALC EQUAL TO 0\l}"
-]
-Block466 [
-label = "{Block466|}"
-]
-Block467 [
-label = "{Block467|        PERFORM PASS\l}"
-]
-Block467 -> Block1449 [style=dashed]
-
-Block468 [
-label = "{Block468|        GO TO TEST-4-WRITE\l}"
-]
-Block481 [
-label = "{TEST-4-WRITE. Block481|    MOVE \"SEG-TEST-4\" TO PAR-NAME\l}"
-]
-Block482 [
-label = "{TEST-4-WRITE. Block482|}"
-]
-Block483 [
-label = "{Block483|    PERFORM PRINT-DETAIL\l}"
-]
-Block483 -> Block1456 [style=dashed]
-
-Block484 [
-label = "{Block484|}"
-]
-Block485 [
-label = "{TEST-4-WRITE. Block485|    GO TO SEG-TEST-5\l}"
-]
-Block314 [
-label = "{SEG-TEST-5. Block314|    MOVE SPACE TO COMPUTED-RANGE\l}"
-]
-Block315 [
-label = "{SEG-TEST-5. Block315|    MOVE 5 TO SEG-CALC\l}"
-]
-Block316 [
-label = "{SEG-TEST-5. Block316|    MOVE SEG-CALC TO RANGE-X (1)\l}"
-]
-Block317 [
-label = "{SEG-TEST-5. Block317|    MOVE \"-\" TO RANGE-X (2) RANGE-X (4)\l}"
-]
-Block318 [
-label = "{SEG-TEST-5. Block318|    MOVE 3 TO RANGE-SUB\l}"
-]
-Block319 [
-label = "{SEG-TEST-5. Block319|}"
-]
-Block320 [
-label = "{Block320|    PERFORM TEST-5\l}"
-]
-Block320 -> Block1226 [style=dashed]
-
-Block321 [
-label = "{Block321|}"
-]
-Block322 [
-label = "{SEG-5A. Block322|    GO TO SEG-5C\l}"
-]
-Block333 [
-label = "{SEG-5C. Block333|    MOVE COMPUTED-RANGE TO COMPUTED-A\l}"
-]
-Block334 [
-label = "{SEG-5C. Block334|    MOVE \"5-6-7\" TO CORRECT-A\l}"
-]
-Block335 [
-label = "{SEG-5C. Block335|}"
-]
-Block336 [
-label = "{Block336|    PERFORM FAIL\l}"
-]
-Block336 -> Block1246 [style=dashed]
-
-Block337 [
-label = "{Block337|}"
-]
-Block338 [
-label = "{SEG-5C. Block338|    GO TO TEST-5-WRITE\l}"
-]
-Block343 [
-label = "{TEST-5-WRITE. Block343|    MOVE \"SEG-TEST-5\" TO PAR-NAME\l}"
-]
-Block344 [
-label = "{TEST-5-WRITE. Block344|}"
-]
-Block345 [
-label = "{Block345|    PERFORM PRINT-DETAIL\l}"
-]
-Block345 -> Block1251 [style=dashed]
-
-Block346 [
-label = "{Block346|}"
-]
-Block347 [
-label = "{TEST-5-WRITE. Block347|    GO TO SEG-TEST-6\l}"
-]
-Block487 [
-label = "{SEG-TEST-6. Block487|    MOVE 9 TO SEG-CALC\l}"
-]
-Block488 [
-label = "{SEG-TEST-6. Block488|    MOVE SPACE TO COMPUTED-RANGE\l}"
-]
-Block489 [
-label = "{SEG-TEST-6. Block489|    MOVE SEG-CALC TO RANGE-X (1)\l}"
-]
-Block490 [
-label = "{SEG-TEST-6. Block490|    MOVE \"-\" TO RANGE-X (2) RANGE-X (4) RANGE-X (6)\l}"
-]
-Block491 [
-label = "{SEG-TEST-6. Block491|    MOVE 3 TO RANGE-SUB\l}"
-]
-Block492 [
-label = "{SEG-TEST-6. Block492|}"
-]
-Block493 [
-label = "{Block493|    PERFORM TEST-6A THRU TEST-6I\l}"
-]
-Block493 -> Block1480 [style=dashed]
-
-Block494 [
-label = "{Block494|}"
-]
-Block495 [
-label = "{SEG-TEST-6. Block495|    IF SEG-CALC EQUAL TO 8\l}"
-]
-Block496 [
-label = "{Block496|}"
-]
-Block497 [
-label = "{Block497|        PERFORM PASS\l}"
-]
-Block497 -> Block1539 [style=dashed]
-
-Block498 [
-label = "{Block498|        GO TO TEST-6-WRITE\l}"
-]
-Block511 [
-label = "{TEST-6-WRITE. Block511|    MOVE \"SEG-TEST-6\" TO PAR-NAME\l}"
-]
-Block512 [
-label = "{TEST-6-WRITE. Block512|}"
-]
-Block513 [
-label = "{Block513|    PERFORM PRINT-DETAIL\l}"
-]
-Block513 -> Block1546 [style=dashed]
-
-Block514 [
-label = "{Block514|}"
-]
-Block515 [
-label = "{TEST-6-WRITE. Block515|    GO TO SEG-TEST-7\l}"
-]
-Block349 [
-label = "{SEG-TEST-7. Block349|    MOVE SPACE TO COMPUTED-RANGE\l}"
-]
-Block350 [
-label = "{SEG-TEST-7. Block350|    MOVE 3 TO SEG-CALC\l}"
-]
-Block351 [
-label = "{SEG-TEST-7. Block351|    MOVE 3 TO RANGE-SUB\l}"
-]
-Block352 [
-label = "{SEG-TEST-7. Block352|    MOVE SEG-CALC TO RANGE-X (1)\l}"
-]
-Block353 [
-label = "{SEG-TEST-7. Block353|    MOVE \"-\" TO RANGE-X (2) RANGE-X (4) RANGE-X (6)\l}"
-]
-Block354 [
-label = "{SEG-TEST-7. Block354|    ALTER TEST-7A TO PROCEED TO TEST-7D\l}"
-]
-Block355 [
-label = "{SEG-TEST-7. Block355|}"
-]
-Block356 [
-label = "{Block356|    PERFORM TEST-7-1 THRU TEST-7-4\l}"
-]
-Block356 -> Block1275 [style=dashed]
-
-Block357 [
-label = "{Block357|}"
-]
-Block358 [
-label = "{SEG-TEST-7. Block358|}"
-]
-Block359 [
-label = "{Block359|    PERFORM TEST-7-1 THRU TEST-7-4\l}"
-]
-Block359 -> Block1291 [style=dashed]
-
-Block360 [
-label = "{Block360|}"
-]
-Block361 [
-label = "{SEG-TEST-7. Block361|    IF SEG-CALC EQUAL TO 4\l}"
-]
-Block362 [
-label = "{Block362|}"
-]
-Block363 [
-label = "{Block363|        PERFORM PASS\l}"
-]
-Block363 -> Block1307 [style=dashed]
-
-Block364 [
-label = "{Block364|        GO TO TEST-7-WRITE\l}"
-]
-Block377 [
-label = "{TEST-7-WRITE. Block377|    MOVE \"SEG-TEST-7\" TO PAR-NAME\l}"
-]
-Block378 [
-label = "{TEST-7-WRITE. Block378|}"
-]
-Block379 [
-label = "{Block379|    PERFORM PRINT-DETAIL\l}"
-]
-Block379 -> Block1314 [style=dashed]
-
-Block380 [
-label = "{Block380|}"
-]
-Block381 [
-label = "{TEST-7-WRITE. Block381|    MOVE 0 TO SEG-CALC\l}"
-]
-Block382 [
-label = "{TEST-7-WRITE. Block382|    GO TO TEST-8-BRANCH\l}"
-]
-Block280 [
-label = "{PARA-8. Block280|    GO TO SEG-TEST8\l}"
-]
-Block517 [
-label = "{SEG-TEST-8. Block517|    ALTER PARA-8 TO PROCEED TO SEG-TEST-8A\l}"
-]
-Block518 [
-label = "{SEG-TEST-8. Block518|    ADD 1 TO SEG-CALC\l}"
-]
-Block519 [
-label = "{SEG-TEST-8. Block519|    IF SEG-CALC EQUAL TO 2\l}"
-]
-Block520 [
-label = "{Block520|}"
-]
-Block521 [
-label = "{Block521|        PERFORM FAIL\l}"
-]
-Block521 -> Block1570 [style=dashed]
-
-Block522 [
-label = "{Block522|        GO TO TEST-8-WRITE\l}"
-]
-Block530 [
-label = "{TEST-8-WRITE. Block530|    MOVE \"ALTER RES TO NON-RES\" TO FEATURE\l}"
-]
-Block531 [
-label = "{TEST-8-WRITE. Block531|    MOVE \"SEG-TEST-8\" TO PAR-NAME\l}"
-]
-Block532 [
-label = "{TEST-8-WRITE. Block532|}"
-]
-Block533 [
-label = "{Block533|    PERFORM PRINT-DETAIL\l}"
-]
-Block533 -> Block1574 [style=dashed]
-
-Block534 [
-label = "{Block534|}"
-]
-Block535 [
-label = "{TEST-8-WRITE. Block535|    GO TO    CLOSE-FILES\l}"
-]
-Block15 [
-label = "{CLOSE-FILES. Block15|}"
-]
-Block16 [
-label = "{Block16|    PERFORM END-ROUTINE THRU END-ROUTINE-13\l}"
-]
-Block16 -> Block756 [style=dashed]
-
-Block17 [
-label = "{Block17|}"
-]
-Block18 [
-label = "{CLOSE-FILES. Block18|                                             CLOSE PRINT-FILE\l}"
-]
-Block19 [
-label = "{TERMINATE-CCVS. Block19|    EXIT PROGRAM\l}"
-]
-Block524 [
-label = "{Block524|}"
-]
-Block525 [
-label = "{SEG-TEST-8. Block525|    GO TO TEST-8-BRANCH\l}"
-]
-Block527 [
-label = "{PARA-85. Block527|}"
-]
-Block528 [
-label = "{Block528|    PERFORM PASS\l}"
-]
-Block528 -> Block1572 [style=dashed]
-
-Block529 [
-label = "{Block529|}"
-]
-Block366 [
-label = "{Block366|}"
-]
-Block367 [
-label = "{SEG-TEST-7. Block367|    MOVE COMPUTED-RANGE TO COMPUTED-A\l}"
-]
-Block368 [
-label = "{SEG-TEST-7. Block368|    MOVE \"3-2-5-4\" TO CORRECT-A\l}"
-]
-Block369 [
-label = "{SEG-TEST-7. Block369|}"
-]
-Block370 [
-label = "{Block370|    PERFORM FAIL\l}"
-]
-Block370 -> Block1309 [style=dashed]
-
-Block371 [
-label = "{Block371|}"
-]
-Block372 [
-label = "{SEG-TEST-7. Block372|    GO TO TEST-7-WRITE\l}"
-]
-Block500 [
-label = "{Block500|}"
-]
-Block501 [
-label = "{SEG-TEST-6. Block501|    MOVE COMPUTED-RANGE TO COMPUTED-A\l}"
-]
-Block502 [
-label = "{SEG-TEST-6. Block502|    MOVE \"9-0-9-8\" TO CORRECT-A\l}"
-]
-Block503 [
-label = "{SEG-TEST-6. Block503|}"
-]
-Block504 [
-label = "{Block504|    PERFORM FAIL\l}"
-]
-Block504 -> Block1541 [style=dashed]
-
-Block505 [
-label = "{Block505|}"
-]
-Block506 [
-label = "{SEG-TEST-6. Block506|    GO TO TEST-6-WRITE\l}"
-]
-Block324 [
-label = "{SEG-5B. Block324|}"
-]
-Block325 [
-label = "{Block325|    PERFORM TEST-5B THRU TEST-5C\l}"
-]
-Block325 -> Block1236 [style=dashed]
-
-Block326 [
-label = "{Block326|}"
-]
-Block327 [
-label = "{SEG-5B. Block327|    IF SEG-CALC EQUAL TO 7\l}"
-]
-Block328 [
-label = "{Block328|}"
-]
-Block329 [
-label = "{Block329|        PERFORM PASS\l}"
-]
-Block329 -> Block1244 [style=dashed]
-
-Block330 [
-label = "{Block330|        GO TO TEST-5-WRITE\l}"
-]
-Block332 [
-label = "{Block332|}"
-]
-Block470 [
-label = "{Block470|}"
-]
-Block471 [
-label = "{SEG-TEST-4. Block471|    MOVE COMPUTED-RANGE TO COMPUTED-A\l}"
-]
-Block472 [
-label = "{SEG-TEST-4. Block472|    MOVE \"3-2-1-0\" TO CORRECT-A\l}"
-]
-Block473 [
-label = "{SEG-TEST-4. Block473|}"
-]
-Block474 [
-label = "{Block474|    PERFORM FAIL\l}"
-]
-Block474 -> Block1451 [style=dashed]
-
-Block475 [
-label = "{Block475|}"
-]
-Block476 [
-label = "{SEG-TEST-4. Block476|    GO TO TEST-4-WRITE\l}"
-]
 Block450 [
 label = "{Block450|}"
 ]
@@ -5631,7 +2632,21 @@ label = "{TEST-3D. Block451|}"
 Block452 [
 label = "{Block452|    PERFORM TEST-3C\l}"
 ]
-Block452 -> Block1431 [style=dashed]
+subgraph cluster_64{
+color = blue;
+label = "TEST-3C";
+Block1309 [
+label = "{TEST-3C. Block1309|    ADD 2 TO SEG-CALC\l}"
+]
+Block1310 [
+label = "{TEST-3C. Block1310|    MOVE SEG-CALC TO RANGE-X (RANGE-SUB)\l}"
+]
+Block1311 [
+label = "{TEST-3C. Block1311|    ADD 2 TO RANGE-SUB\l}"
+]
+
+}
+Block452 -> Block1309 [style=dashed]
 
 Block453 [
 label = "{Block453|}"
@@ -5648,27 +2663,21 @@ label = "{Block432|}"
 Block433 [
 label = "{Block433|        PERFORM PASS\l}"
 ]
-Block433 -> Block1427 [style=dashed]
+subgraph cluster_62{
+color = blue;
+label = "PASS";
+Block1305 [
+label = "{PASS. Block1305|       MOVE \"PASS \" TO P-OR-F\l}"
+]
+Block1306 [
+label = "{PASS. Block1306|                                ADD 1 TO PASS-COUNTER\l}"
+]
+
+}
+Block433 -> Block1305 [style=dashed]
 
 Block434 [
 label = "{Block434|        GO TO TEST-3-WRITE\l}"
-]
-Block421 [
-label = "{TEST-3-WRITE. Block421|    MOVE \"SEG-TEST-3\" TO PAR-NAME\l}"
-]
-Block422 [
-label = "{TEST-3-WRITE. Block422|}"
-]
-Block423 [
-label = "{Block423|    PERFORM PRINT-DETAIL\l}"
-]
-Block423 -> Block1403 [style=dashed]
-
-Block424 [
-label = "{Block424|}"
-]
-Block425 [
-label = "{TEST-3-WRITE. Block425|    GO TO SEG-TEST-4\l}"
 ]
 Block436 [
 label = "{Block436|}"
@@ -5685,7 +2694,18 @@ label = "{TEST-3B. Block439|}"
 Block440 [
 label = "{Block440|    PERFORM FAIL\l}"
 ]
-Block440 -> Block1429 [style=dashed]
+subgraph cluster_63{
+color = blue;
+label = "FAIL";
+Block1307 [
+label = "{FAIL. Block1307|       MOVE \"FAIL*\" TO P-OR-F\l}"
+]
+Block1308 [
+label = "{FAIL. Block1308|                                ADD 1 TO ERROR-COUNTER\l}"
+]
+
+}
+Block440 -> Block1307 [style=dashed]
 
 Block441 [
 label = "{Block441|}"
@@ -5711,16 +2731,15 @@ label = "{Block220|    PERFORM FAIL\l}"
 subgraph cluster_35{
 color = blue;
 label = "FAIL";
-Block1142 [
-label = "{FAIL. Block1142|       MOVE \"FAIL*\" TO P-OR-F\l}"
+Block1047 [
+label = "{FAIL. Block1047|       MOVE \"FAIL*\" TO P-OR-F\l}"
 ]
-Block1143 [
-label = "{FAIL. Block1143|                                ADD 1 TO ERROR-COUNTER\l}"
+Block1048 [
+label = "{FAIL. Block1048|                                ADD 1 TO ERROR-COUNTER\l}"
 ]
-Block1142 -> Block1143
 
 }
-Block220 -> Block1142 [style=dashed]
+Block220 -> Block1047 [style=dashed]
 
 Block221 [
 label = "{Block221|}"
@@ -5746,16 +2765,15 @@ label = "{Block266|    PERFORM FAIL\l}"
 subgraph cluster_41{
 color = blue;
 label = "FAIL";
-Block1197 [
-label = "{FAIL. Block1197|       MOVE \"FAIL*\" TO P-OR-F\l}"
+Block1096 [
+label = "{FAIL. Block1096|       MOVE \"FAIL*\" TO P-OR-F\l}"
 ]
-Block1198 [
-label = "{FAIL. Block1198|                                ADD 1 TO ERROR-COUNTER\l}"
+Block1097 [
+label = "{FAIL. Block1097|                                ADD 1 TO ERROR-COUNTER\l}"
 ]
-Block1197 -> Block1198
 
 }
-Block266 -> Block1197 [style=dashed]
+Block266 -> Block1096 [style=dashed]
 
 Block267 [
 label = "{Block267|}"
@@ -5765,6 +2783,252 @@ label = "{SEG-TEST-1. Block268|    GO TO TEST-1-WRITE\l}"
 ]
 Block0 -> Block1
 Block1 -> Block2
+Block555 -> Block556
+Block556 -> Block557
+Block557 -> Block558
+Block558 -> Block559
+Block559 -> Block560
+Block1472 -> Block1473
+Block1473 -> Block607
+Block1581 -> Block1582
+Block1582 -> Block1583
+Block1582 -> Block1587
+Block1583 -> Block680
+Block1698 -> Block1699
+Block680 -> Block681
+Block681 -> Block682
+Block1700 -> Block1701
+Block1701 -> Block682
+Block682 -> Block683
+Block683 -> Block684
+Block1702 -> Block1703
+Block684 -> Block685
+Block685 -> Block686
+Block686 -> Block687
+Block687 -> Block688
+Block1704 -> Block1705
+Block688 -> Block689
+Block689 -> Block690
+Block690 -> Block691
+Block691 -> Block692
+Block692 -> Block693
+Block1706 -> Block1707
+Block693 -> Block694
+Block694 -> Block695
+Block695 -> Block696
+Block695 -> Block698
+Block696 -> Block710
+Block710 -> Block711
+Block1717 -> Block1718
+Block1718 -> Block1719
+Block1718 -> Block1723
+Block1719 -> Block680
+Block1723 -> Block1724
+Block1724 -> Block688
+Block711 -> Block712
+Block712 -> Block713
+Block1726 -> Block1727
+Block1727 -> Block1728
+Block1727 -> Block1732
+Block1728 -> Block680
+Block1732 -> Block1733
+Block1733 -> Block688
+Block713 -> Block714
+Block714 -> Block715
+Block715 -> Block716
+Block716 -> Block717
+Block716 -> Block719
+Block717 -> Block724
+Block724 -> Block725
+Block725 -> Block726
+Block726 -> Block727
+Block727 -> Block728
+Block1735 -> Block1736
+Block1736 -> Block1737
+Block1736 -> Block1741
+Block1737 -> Block680
+Block1741 -> Block1742
+Block1742 -> Block688
+Block728 -> Block729
+Block729 -> Block730
+Block730 -> Block731
+Block731 -> Block607
+Block719 -> Block720
+Block720 -> Block721
+Block720 -> Block723
+Block721 -> Block730
+Block723 -> Block724
+Block698 -> Block699
+Block699 -> Block700
+Block699 -> Block702
+Block700 -> Block710
+Block702 -> Block703
+Block703 -> Block704
+Block704 -> Block705
+Block705 -> Block706
+Block1708 -> Block1709
+Block1709 -> Block1710
+Block1709 -> Block1714
+Block1710 -> Block680
+Block1714 -> Block1715
+Block1715 -> Block688
+Block706 -> Block707
+Block707 -> Block708
+Block708 -> Block715
+Block1587 -> Block1588
+Block1588 -> Block688
+Block607 -> Block608
+Block608 -> Block609
+Block609 -> Block610
+Block610 -> Block611
+Block1590 -> Block1591
+Block1591 -> Block1592
+Block1591 -> Block1596
+Block1592 -> Block680
+Block1596 -> Block1597
+Block1597 -> Block688
+Block611 -> Block612
+Block612 -> Block613
+Block613 -> Block614
+Block614 -> Block615
+Block1599 -> Block1600
+Block1600 -> Block1601
+Block1600 -> Block1605
+Block1601 -> Block680
+Block1605 -> Block1606
+Block1606 -> Block688
+Block615 -> Block616
+Block616 -> Block617
+Block617 -> Block618
+Block618 -> Block619
+Block1608 -> Block1609
+Block1609 -> Block1610
+Block1609 -> Block1614
+Block1610 -> Block680
+Block1614 -> Block1615
+Block1615 -> Block688
+Block619 -> Block620
+Block620 -> Block621
+Block621 -> Block622
+Block622 -> Block623
+Block1617 -> Block1618
+Block1618 -> Block1619
+Block1618 -> Block1623
+Block1619 -> Block680
+Block1623 -> Block1624
+Block1624 -> Block688
+Block623 -> Block624
+Block624 -> Block625
+Block625 -> Block626
+Block626 -> Block627
+Block1626 -> Block1627
+Block1627 -> Block1628
+Block1627 -> Block1632
+Block1628 -> Block680
+Block1632 -> Block1633
+Block1633 -> Block688
+Block627 -> Block628
+Block628 -> Block629
+Block629 -> Block630
+Block630 -> Block631
+Block1635 -> Block1636
+Block1636 -> Block1637
+Block1636 -> Block1641
+Block1637 -> Block680
+Block1641 -> Block1642
+Block1642 -> Block688
+Block631 -> Block632
+Block632 -> Block633
+Block633 -> Block634
+Block634 -> Block635
+Block1644 -> Block1645
+Block1645 -> Block1646
+Block1645 -> Block1650
+Block1646 -> Block680
+Block1650 -> Block1651
+Block1651 -> Block688
+Block635 -> Block636
+Block636 -> Block637
+Block637 -> Block638
+Block638 -> Block639
+Block639 -> Block640
+Block640 -> Block641
+Block641 -> Block642
+Block642 -> Block643
+Block643 -> Block644
+Block1653 -> Block1654
+Block1654 -> Block1655
+Block1654 -> Block1659
+Block1655 -> Block680
+Block1659 -> Block1660
+Block1660 -> Block688
+Block644 -> Block645
+Block645 -> Block646
+Block646 -> Block647
+Block647 -> Block648
+Block647 -> Block649
+Block648 -> Block650
+Block650 -> Block651
+Block651 -> Block652
+Block652 -> Block653
+Block1662 -> Block1663
+Block1663 -> Block1664
+Block1663 -> Block1668
+Block1664 -> Block680
+Block1668 -> Block1669
+Block1669 -> Block688
+Block653 -> Block654
+Block654 -> Block655
+Block655 -> Block656
+Block655 -> Block657
+Block656 -> Block658
+Block658 -> Block659
+Block659 -> Block660
+Block660 -> Block661
+Block661 -> Block662
+Block1671 -> Block1672
+Block1672 -> Block1673
+Block1672 -> Block1677
+Block1673 -> Block680
+Block1677 -> Block1678
+Block1678 -> Block688
+Block662 -> Block663
+Block663 -> Block664
+Block664 -> Block665
+Block664 -> Block666
+Block665 -> Block667
+Block667 -> Block668
+Block668 -> Block669
+Block669 -> Block670
+Block670 -> Block671
+Block1680 -> Block1681
+Block1681 -> Block1682
+Block1681 -> Block1686
+Block1682 -> Block680
+Block1686 -> Block1687
+Block1687 -> Block688
+Block671 -> Block672
+Block672 -> Block673
+Block673 -> Block674
+Block674 -> Block675
+Block1689 -> Block1690
+Block1690 -> Block1691
+Block1690 -> Block1695
+Block1691 -> Block680
+Block1695 -> Block1696
+Block1696 -> Block688
+Block675 -> Block676
+Block676 -> Block677
+Block677 -> Block678
+Block678 -> Block679
+Block678 -> Block686
+Block679 -> Block680
+Block666 -> Block667
+Block657 -> Block658
+Block649 -> Block650
+Block560 -> Block561
+Block561 -> Block562
+Block562 -> Block731
 Block2 -> Block3
 Block3 -> Block4
 Block4 -> Block245
@@ -5775,19 +3039,111 @@ Block248 -> Block249
 Block249 -> Block250
 Block250 -> Block251
 Block251 -> Block252
+Block1072 -> Block1082
+Block1072 -> Block1074
+Block1072 -> Block1079
+Block1074 -> Block1075
+Block1075 -> Block1076
+Block1076 -> Block1077
+Block1077 -> Block1082
+Block1079 -> Block1080
+Block1080 -> Block1020
+Block1744 -> Block1750
+Block1744 -> Block1746
+Block1746 -> Block1747
+Block1747 -> Block1748
+Block1748 -> Block1749
+Block1749 -> Block1750
+Block1020 -> Block1021
+Block1021 -> Block1022
 Block252 -> Block253
 Block253 -> Block254
 Block254 -> Block255
+Block1083 -> Block1093
+Block1083 -> Block1085
+Block1083 -> Block1090
+Block1085 -> Block1086
+Block1086 -> Block1087
+Block1087 -> Block1088
+Block1088 -> Block1093
+Block1090 -> Block1091
+Block1091 -> Block1020
 Block255 -> Block256
 Block256 -> Block257
 Block257 -> Block258
 Block257 -> Block262
 Block258 -> Block259
+Block1094 -> Block1095
 Block259 -> Block260
 Block260 -> Block273
 Block273 -> Block274
 Block274 -> Block275
 Block275 -> Block276
+Block1101 -> Block1102
+Block1101 -> Block1103
+Block1102 -> Block1103
+Block1103 -> Block1104
+Block1104 -> Block1105
+Block1105 -> Block586
+Block1531 -> Block1532
+Block1532 -> Block1533
+Block1532 -> Block1537
+Block1533 -> Block680
+Block1537 -> Block1538
+Block1538 -> Block688
+Block586 -> Block587
+Block587 -> Block588
+Block588 -> Block589
+Block588 -> Block594
+Block589 -> Block590
+Block1540 -> Block1541
+Block1541 -> Block1542
+Block1541 -> Block1546
+Block1542 -> Block680
+Block1546 -> Block1547
+Block1547 -> Block688
+Block590 -> Block591
+Block591 -> Block592
+Block1549 -> Block1550
+Block1549 -> Block1552
+Block1550 -> Block1563
+Block1563 -> Block711
+Block1552 -> Block1553
+Block1553 -> Block1554
+Block1553 -> Block1556
+Block1554 -> Block1563
+Block1556 -> Block1557
+Block1557 -> Block1558
+Block1558 -> Block1559
+Block1559 -> Block706
+Block592 -> Block593
+Block593 -> Block597
+Block597 -> Block598
+Block598 -> Block599
+Block599 -> Block600
+Block600 -> Block601
+Block601 -> Block602
+Block601 -> Block603
+Block602 -> Block603
+Block603 -> Block604
+Block604 -> Block605
+Block605 -> Block606
+Block606 -> Block607
+Block594 -> Block595
+Block1567 -> Block1568
+Block1567 -> Block1570
+Block1568 -> Block1575
+Block1575 -> Block1576
+Block1576 -> Block1577
+Block1577 -> Block1578
+Block1578 -> Block728
+Block1570 -> Block1571
+Block1571 -> Block1572
+Block1571 -> Block1574
+Block1572 -> Block1580
+Block1574 -> Block1575
+Block595 -> Block596
+Block596 -> Block597
 Block276 -> Block277
 Block277 -> Block278
 Block278 -> Block195
@@ -5798,22 +3154,56 @@ Block198 -> Block199
 Block199 -> Block200
 Block200 -> Block201
 Block201 -> Block202
+Block1011 -> Block1022
+Block1011 -> Block1013
+Block1011 -> Block1018
+Block1013 -> Block1014
+Block1014 -> Block1015
+Block1015 -> Block1016
+Block1016 -> Block1022
+Block1018 -> Block1019
+Block1019 -> Block1020
 Block202 -> Block203
 Block203 -> Block204
 Block204 -> Block205
 Block205 -> Block206
+Block1023 -> Block1033
+Block1023 -> Block1025
+Block1023 -> Block1030
+Block1025 -> Block1026
+Block1026 -> Block1027
+Block1027 -> Block1028
+Block1028 -> Block1033
+Block1030 -> Block1031
+Block1031 -> Block1020
 Block206 -> Block207
 Block207 -> Block208
 Block208 -> Block209
+Block1034 -> Block1044
+Block1034 -> Block1036
+Block1034 -> Block1041
+Block1036 -> Block1037
+Block1037 -> Block1038
+Block1038 -> Block1039
+Block1039 -> Block1044
+Block1041 -> Block1042
+Block1042 -> Block1020
 Block209 -> Block210
 Block210 -> Block211
 Block211 -> Block212
 Block211 -> Block216
 Block212 -> Block213
+Block1045 -> Block1046
 Block213 -> Block214
 Block214 -> Block227
 Block227 -> Block228
 Block228 -> Block229
+Block1052 -> Block1053
+Block1052 -> Block1054
+Block1053 -> Block1054
+Block1054 -> Block1055
+Block1055 -> Block1056
+Block1056 -> Block586
 Block229 -> Block230
 Block230 -> Block231
 Block231 -> Block400
@@ -5823,38 +3213,69 @@ Block402 -> Block403
 Block403 -> Block404
 Block404 -> Block405
 Block405 -> Block406
-Block406 -> Block407
-Block407 -> Block408
-Block408 -> Block409
-Block409 -> Block410
-Block410 -> Block411
-Block411 -> Block412
-Block412 -> Block413
-Block413 -> Block414
-Block414 -> Block415
-Block415 -> Block416
-Block416 -> Block427
-Block427 -> Block447
-Block427 -> Block431
-Block447 -> Block448
-Block447 -> Block450
-Block448 -> Block456
-Block456 -> Block457
+Block1224 -> Block1244
+Block1224 -> Block1228
+Block1244 -> Block1245
+Block1244 -> Block1247
+Block1245 -> Block1253
+Block1247 -> Block1248
+Block1248 -> Block1249
+Block1764 -> Block1765
+Block1765 -> Block1766
+Block1249 -> Block1250
+Block1250 -> Block1251
+Block1251 -> Block1228
+Block1228 -> Block1229
+Block1228 -> Block1233
+Block1229 -> Block1230
+Block1760 -> Block1761
+Block1230 -> Block1231
+Block1231 -> Block421
+Block421 -> Block422
+Block422 -> Block423
+Block1285 -> Block1286
+Block1285 -> Block1287
+Block1286 -> Block1287
+Block1287 -> Block1288
+Block1288 -> Block1289
+Block1289 -> Block586
+Block423 -> Block424
+Block424 -> Block425
+Block425 -> Block457
 Block457 -> Block458
 Block458 -> Block459
 Block459 -> Block460
 Block460 -> Block461
 Block461 -> Block462
 Block462 -> Block463
+Block1312 -> Block1323
+Block1312 -> Block1314
+Block1323 -> Block1324
+Block1324 -> Block1314
+Block1314 -> Block1315
+Block1315 -> Block1316
+Block1316 -> Block1317
+Block1317 -> Block1318
+Block1317 -> Block1320
+Block1318 -> Block1312
+Block1320 -> Block1321
+Block1321 -> Block1326
 Block463 -> Block464
 Block464 -> Block465
 Block465 -> Block466
 Block465 -> Block470
 Block466 -> Block467
+Block1327 -> Block1328
 Block467 -> Block468
 Block468 -> Block481
 Block481 -> Block482
 Block482 -> Block483
+Block1334 -> Block1335
+Block1334 -> Block1336
+Block1335 -> Block1336
+Block1336 -> Block1337
+Block1337 -> Block1338
+Block1338 -> Block586
 Block483 -> Block484
 Block484 -> Block485
 Block485 -> Block314
@@ -5864,6 +3285,21 @@ Block316 -> Block317
 Block317 -> Block318
 Block318 -> Block319
 Block319 -> Block320
+Block1121 -> Block1123
+Block1121 -> Block1130
+Block1123 -> Block1124
+Block1124 -> Block1125
+Block1125 -> Block1126
+Block1751 -> Block1753
+Block1751 -> Block1758
+Block1753 -> Block1754
+Block1754 -> Block1755
+Block1755 -> Block1756
+Block1756 -> Block1757
+Block1757 -> Block1758
+Block1126 -> Block1127
+Block1127 -> Block1128
+Block1128 -> Block1121
 Block320 -> Block321
 Block321 -> Block322
 Block322 -> Block333
@@ -5871,11 +3307,18 @@ Block322 -> Block324
 Block333 -> Block334
 Block334 -> Block335
 Block335 -> Block336
+Block1140 -> Block1141
 Block336 -> Block337
 Block337 -> Block338
 Block338 -> Block343
 Block343 -> Block344
 Block344 -> Block345
+Block1145 -> Block1146
+Block1145 -> Block1147
+Block1146 -> Block1147
+Block1147 -> Block1148
+Block1148 -> Block1149
+Block1149 -> Block586
 Block345 -> Block346
 Block346 -> Block347
 Block347 -> Block487
@@ -5885,15 +3328,40 @@ Block489 -> Block490
 Block490 -> Block491
 Block491 -> Block492
 Block492 -> Block493
+Block1354 -> Block1355
+Block1355 -> Block1361
+Block1355 -> Block1360
+Block1355 -> Block1403
+Block1355 -> Block1409
+Block1361 -> Block1362
+Block1362 -> Block1363
+Block1363 -> Block1364
+Block1364 -> Block1355
+Block1360 -> Block1361
+Block1403 -> Block1404
+Block1404 -> Block1405
+Block1405 -> Block1406
+Block1406 -> Block1407
+Block1407 -> Block1355
+Block1409 -> Block1410
+Block1410 -> Block1411
+Block1411 -> Block1412
 Block493 -> Block494
 Block494 -> Block495
 Block495 -> Block496
 Block495 -> Block500
 Block496 -> Block497
+Block1413 -> Block1414
 Block497 -> Block498
 Block498 -> Block511
 Block511 -> Block512
 Block512 -> Block513
+Block1420 -> Block1421
+Block1420 -> Block1422
+Block1421 -> Block1422
+Block1422 -> Block1423
+Block1423 -> Block1424
+Block1424 -> Block586
 Block513 -> Block514
 Block514 -> Block515
 Block515 -> Block349
@@ -5904,18 +3372,52 @@ Block352 -> Block353
 Block353 -> Block354
 Block354 -> Block355
 Block355 -> Block356
+Block1165 -> Block1167
+Block1165 -> Block1171
+Block1165 -> Block1168
+Block1167 -> Block1168
+Block1168 -> Block1169
+Block1169 -> Block1170
+Block1170 -> Block1171
+Block1171 -> Block1172
+Block1172 -> Block1173
+Block1173 -> Block1174
+Block1174 -> Block1175
+Block1175 -> Block1176
+Block1176 -> Block1177
+Block1177 -> Block1179
+Block1177 -> Block1180
+Block1179 -> Block1180
 Block356 -> Block357
 Block357 -> Block358
 Block358 -> Block359
+Block1181 -> Block1183
+Block1181 -> Block1187
+Block1181 -> Block1184
+Block1183 -> Block1184
+Block1184 -> Block1185
+Block1185 -> Block1186
+Block1186 -> Block1187
+Block1187 -> Block1188
+Block1188 -> Block1189
+Block1189 -> Block1190
+Block1190 -> Block1175
 Block359 -> Block360
 Block360 -> Block361
 Block361 -> Block362
 Block361 -> Block366
 Block362 -> Block363
+Block1196 -> Block1197
 Block363 -> Block364
 Block364 -> Block377
 Block377 -> Block378
 Block378 -> Block379
+Block1203 -> Block1204
+Block1203 -> Block1205
+Block1204 -> Block1205
+Block1205 -> Block1206
+Block1206 -> Block1207
+Block1207 -> Block586
 Block379 -> Block380
 Block380 -> Block381
 Block381 -> Block382
@@ -5927,27 +3429,38 @@ Block518 -> Block519
 Block519 -> Block520
 Block519 -> Block524
 Block520 -> Block521
+Block1440 -> Block1441
 Block521 -> Block522
 Block522 -> Block530
 Block530 -> Block531
 Block531 -> Block532
 Block532 -> Block533
+Block1444 -> Block1445
+Block1444 -> Block1446
+Block1445 -> Block1446
+Block1446 -> Block1447
+Block1447 -> Block1448
+Block1448 -> Block586
 Block533 -> Block534
 Block534 -> Block535
 Block535 -> Block15
 Block15 -> Block16
+Block750 -> Block751
+Block751 -> Block631
 Block16 -> Block17
 Block17 -> Block18
 Block18 -> Block19
 Block524 -> Block525
 Block525 -> Block280
 Block527 -> Block528
+Block1442 -> Block1443
 Block528 -> Block529
 Block529 -> Block530
 Block366 -> Block367
 Block367 -> Block368
 Block368 -> Block369
 Block369 -> Block370
+Block1198 -> Block1199
 Block370 -> Block371
 Block371 -> Block372
 Block372 -> Block377
@@ -5955,15 +3468,20 @@ Block500 -> Block501
 Block501 -> Block502
 Block502 -> Block503
 Block503 -> Block504
+Block1415 -> Block1416
 Block504 -> Block505
 Block505 -> Block506
 Block506 -> Block511
 Block324 -> Block325
+Block1131 -> Block1132
+Block1132 -> Block1133
+Block1133 -> Block1126
 Block325 -> Block326
 Block326 -> Block327
 Block327 -> Block328
 Block327 -> Block332
 Block328 -> Block329
+Block1138 -> Block1139
 Block329 -> Block330
 Block330 -> Block343
 Block332 -> Block333
@@ -5971,28 +3489,72 @@ Block470 -> Block471
 Block471 -> Block472
 Block472 -> Block473
 Block473 -> Block474
+Block1329 -> Block1330
 Block474 -> Block475
 Block475 -> Block476
 Block476 -> Block481
+Block1233 -> Block1234
+Block1234 -> Block1235
+Block1235 -> Block1236
+Block1236 -> Block1237
+Block1762 -> Block1763
+Block1237 -> Block1238
+Block1238 -> Block1239
+Block1239 -> Block421
+Block406 -> Block407
+Block407 -> Block408
+Block408 -> Block409
+Block409 -> Block410
+Block410 -> Block411
+Block1254 -> Block1256
+Block1254 -> Block1267
+Block1256 -> Block1257
+Block1256 -> Block1260
+Block1257 -> Block1230
+Block1260 -> Block1261
+Block1261 -> Block1262
+Block1262 -> Block1263
+Block1263 -> Block1237
+Block1267 -> Block1268
+Block1268 -> Block1269
+Block1269 -> Block1270
+Block1270 -> Block1271
+Block1270 -> Block1273
+Block1271 -> Block1278
+Block1273 -> Block1274
+Block1274 -> Block1249
+Block411 -> Block412
+Block412 -> Block413
+Block413 -> Block414
+Block1279 -> Block1280
+Block1280 -> Block1281
+Block414 -> Block415
+Block415 -> Block416
+Block416 -> Block427
+Block427 -> Block447
+Block427 -> Block431
+Block447 -> Block448
+Block447 -> Block450
+Block448 -> Block456
+Block456 -> Block457
 Block450 -> Block451
 Block451 -> Block452
+Block1309 -> Block1310
+Block1310 -> Block1311
 Block452 -> Block453
 Block453 -> Block454
 Block454 -> Block431
 Block431 -> Block432
 Block431 -> Block436
 Block432 -> Block433
+Block1305 -> Block1306
 Block433 -> Block434
 Block434 -> Block421
-Block421 -> Block422
-Block422 -> Block423
-Block423 -> Block424
-Block424 -> Block425
-Block425 -> Block457
 Block436 -> Block437
 Block437 -> Block438
 Block438 -> Block439
 Block439 -> Block440
+Block1307 -> Block1308
 Block440 -> Block441
 Block441 -> Block442
 Block442 -> Block421
@@ -6000,6 +3562,7 @@ Block216 -> Block217
 Block217 -> Block218
 Block218 -> Block219
 Block219 -> Block220
+Block1047 -> Block1048
 Block220 -> Block221
 Block221 -> Block222
 Block222 -> Block227
@@ -6007,6 +3570,7 @@ Block262 -> Block263
 Block263 -> Block264
 Block264 -> Block265
 Block265 -> Block266
+Block1096 -> Block1097
 Block266 -> Block267
 Block267 -> Block268
 Block268 -> Block273

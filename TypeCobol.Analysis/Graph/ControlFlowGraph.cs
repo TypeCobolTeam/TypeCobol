@@ -14,10 +14,13 @@ namespace TypeCobol.Analysis.Graph
         /// <summary>
         /// BasicBlock callback type.
         /// </summary>
-        /// <param name="block">The BasicBlock</param>
+        /// <param name="block">The current block.</param>
+        /// <param name="incomingEdge">Incoming edge that led to the current block (i.e. block equals to cfg.SuccessorEdges[incomingEdge]).
+        /// -1 for a root block.</param>
+        /// <param name="predecessorBlock">Previous block. null if current block is a root block.</param>
         /// <param name="cfg">The Control Flow Graph in which the basic Block belongs to.</param>
-        /// <returns>true if ok, false otherwise</returns>
-        public delegate bool BasicBlockCallback(BasicBlock<N, D> block, ControlFlowGraph<N, D> cfg);
+        /// <returns>true to continue the traversal, false to stop.</returns>
+        public delegate bool BasicBlockCallback(BasicBlock<N, D> block, int incomingEdge, BasicBlock<N, D> predecessorBlock, ControlFlowGraph<N, D> cfg);
 
         /// <summary>
         /// Flag on a Cfg.
@@ -224,18 +227,23 @@ namespace TypeCobol.Analysis.Graph
         /// DFS Depth First Search implementation
         /// </summary>
         /// <param name="block">The current block</param>
+        /// <param name="incomingEdge">Incoming edge that led to the current block</param>
+        /// <param name="predecessorBlock">Previous block.</param>
         /// <param name="discovered">Array of already discovered nodes</param>
         /// <param name="callback">CallBack function</param>
-        private void DFS(BasicBlock<N, D> block, System.Collections.BitArray discovered, BasicBlockCallback callback)
+        private void DFS(BasicBlock<N, D> block, int incomingEdge, BasicBlock<N, D> predecessorBlock, System.Collections.BitArray discovered, BasicBlockCallback callback)
         {
             discovered[block.Index] = true;
-            if (!callback(block, this))
+
+            if (!callback(block, incomingEdge, predecessorBlock, this))
                 return;//Means stop
+
             foreach (var edge in block.SuccessorEdges)
             {
-                if (!discovered[SuccessorEdges[edge].Index])
+                var nextBlock = SuccessorEdges[edge];
+                if (!discovered[nextBlock.Index])
                 {
-                    DFS(SuccessorEdges[edge], discovered, callback);
+                    DFS(nextBlock, edge, block, discovered, callback);
                 }
             }
         }
@@ -248,7 +256,8 @@ namespace TypeCobol.Analysis.Graph
         public void DFS(BasicBlock<N, D> startBlock, BasicBlockCallback callback)
         {
             System.Collections.BitArray discovered = new System.Collections.BitArray(AllBlocks.Count);
-            DFS(startBlock, discovered, callback);
+            //Incoming edge => -1, Previous block => null
+            DFS(startBlock, -1, null, discovered, callback);
         }
 
         /// <summary>

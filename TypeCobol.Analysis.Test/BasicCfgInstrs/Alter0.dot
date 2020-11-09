@@ -40,8 +40,6 @@ label = "{D-PARA. Block18|    DISPLAY 'IN D-PARA'\l}"
 Block19 [
 label = "{E-PARA. Block19|    DISPLAY 'IN E-PARA'\l}"
 ]
-Block17 -> Block18
-Block18 -> Block19
 
 }
 Block6 -> Block17 [style=dashed]
@@ -64,6 +62,8 @@ Block2 -> Block3
 Block3 -> Block4
 Block4 -> Block5
 Block5 -> Block6
+Block17 -> Block18
+Block18 -> Block19
 Block6 -> Block7
 Block7 -> Block8
 Block8 -> Block9

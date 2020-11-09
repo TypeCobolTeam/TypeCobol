@@ -3,16 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Antlr4.Runtime.Atn;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
-using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Text;
-using String = System.String;
 
 namespace TypeCobol.Compiler.Scanner
 {
@@ -1561,12 +1557,23 @@ namespace TypeCobol.Compiler.Scanner
                                     return true;
 
                                 //Try to guess if it is a LevelNumber or Literal depending on previous tokens
-                                bool currentTokenIsExpectedToBeALiteral =
-                                    lastSignificantToken.TokenType == TokenType.OCCURS ||
-                                    lastSignificantToken.TokenType == TokenType.VALUE  ||
-                                    lastSignificantToken.TokenType == TokenType.VALUES ||
-                                    (beforeLastSignificantToken.TokenType == TokenType.VALUE && lastSignificantToken.TokenType == TokenType.IS) ||
-                                    (beforeLastSignificantToken.TokenType == TokenType.VALUES && lastSignificantToken.TokenType == TokenType.ARE);
+                                bool currentTokenIsExpectedToBeALiteral = false;
+                                switch (lastSignificantToken.TokenType)
+                                {
+                                    case TokenType.OCCURS:
+                                    case TokenType.VALUE:
+                                    case TokenType.VALUES:
+                                    case TokenType.THROUGH:
+                                    case TokenType.THRU:
+                                        currentTokenIsExpectedToBeALiteral = true;
+                                        break;
+                                    case TokenType.IS:
+                                    case TokenType.ARE:
+                                        currentTokenIsExpectedToBeALiteral =
+                                            beforeLastSignificantToken.TokenType == TokenType.VALUE ||
+                                            beforeLastSignificantToken.TokenType == TokenType.VALUES;
+                                        break;
+                                }
                                 if (!currentTokenIsExpectedToBeALiteral)
                                 {
                                     /*

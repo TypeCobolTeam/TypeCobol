@@ -88,11 +88,11 @@ namespace TypeCobol.Analysis {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Recursive Basic Block Group with the following instruction : {0}.
+        ///   Looks up a localized string similar to A recursive loop has been encountered while analyzing &apos;PERFORM {0}&apos;, recursive instruction is &apos;{1}&apos;..
         /// </summary>
-        internal static string RecursiveBasicBlockGroupInstructions {
+        internal static string RecursiveBlockOnPerformProcedure {
             get {
-                return ResourceManager.GetString("RecursiveBasicBlockGroupInstructions", resourceCulture);
+                return ResourceManager.GetString("RecursiveBlockOnPerformProcedure", resourceCulture);
             }
         }
     }

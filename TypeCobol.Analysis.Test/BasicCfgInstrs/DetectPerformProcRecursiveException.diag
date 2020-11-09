@@ -1,5 +1,0 @@
-﻿--- Diagnostics ---
-Line 12[12,12] <45, Error, Semantics> - Diagnostic during Control Flow Graph building: Recursive Basic Block Group with the following instruction : Block[18] { 
-PerformProcedureStatement
-}
-

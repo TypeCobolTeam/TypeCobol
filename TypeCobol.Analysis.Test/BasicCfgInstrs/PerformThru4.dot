@@ -38,7 +38,6 @@ label = "{C. Block24|    display 'C'\l}"
 Block25 [
 label = "{D. Block25|    display 'D'\l}"
 ]
-Block24 -> Block25
 
 }
 Block3 -> Block24 [style=dashed]
@@ -61,8 +60,6 @@ label = "{B. Block27|    display 'B'\l}"
 Block28 [
 label = "{C. Block28|    display 'C'\l}"
 ]
-Block26 -> Block27
-Block27 -> Block28
 
 }
 Block5 -> Block26 [style=dashed]
@@ -85,8 +82,6 @@ label = "{C. Block30|    display 'C'\l}"
 Block31 [
 label = "{D. Block31|    display 'D'\l}"
 ]
-Block29 -> Block30
-Block30 -> Block31
 
 }
 Block7 -> Block29 [style=dashed]
@@ -109,8 +104,6 @@ label = "{A. Block33|    display 'A'\l}"
 Block34 [
 label = "{B. Block34|    display 'B'\l}"
 ]
-Block32 -> Block33
-Block33 -> Block34
 
 }
 Block9 -> Block32 [style=dashed]
@@ -133,8 +126,6 @@ label = "{S3. Block36|    display 'in section S3'\l}"
 Block37 [
 label = "{E. Block37|    display 'E'\l}"
 ]
-Block35 -> Block36
-Block36 -> Block37
 
 }
 Block11 -> Block35 [style=dashed]
@@ -157,8 +148,6 @@ label = "{S3. Block39|    display 'in section S3'\l}"
 Block40 [
 label = "{E. Block40|    display 'E'\l}"
 ]
-Block38 -> Block39
-Block39 -> Block40
 
 }
 Block13 -> Block38 [style=dashed]
@@ -169,16 +158,27 @@ label = "{Block14|    GOBACK\l}"
 Block0 -> Block1
 Block1 -> Block2
 Block2 -> Block3
+Block24 -> Block25
 Block3 -> Block4
 Block4 -> Block5
+Block26 -> Block27
+Block27 -> Block28
 Block5 -> Block6
 Block6 -> Block7
+Block29 -> Block30
+Block30 -> Block31
 Block7 -> Block8
 Block8 -> Block9
+Block32 -> Block33
+Block33 -> Block34
 Block9 -> Block10
 Block10 -> Block11
+Block35 -> Block36
+Block36 -> Block37
 Block11 -> Block12
 Block12 -> Block13
+Block38 -> Block39
+Block39 -> Block40
 Block13 -> Block14
 
 }

@@ -86,16 +86,16 @@ namespace TypeCobol.Codegen.Actions
                 int count = node.Children.Count;
                 Node previousNode = null;
 
-                foreach (var child in node.Children)
+                foreach (var token in node.Children.Cast<Qualifier.GenerateToken>())
                 {
-                    TypeCobol.Codegen.Actions.Qualifier.GenerateToken token = child as TypeCobol.Codegen.Actions.Qualifier.GenerateToken;
+                    if (token.IsFlagSet(Node.Flag.NodeContainsIndex)) continue;
 
-                    if (previousNode == null || child.CodeElement.ConsumedTokens[0].TokenType == TokenType.UserDefinedWord && previousNode.CodeElement.ConsumedTokens[0].TokenType != TokenType.QualifiedNameSeparator)
+                    if (previousNode == null || token.CodeElement.ConsumedTokens[0].TokenType == TokenType.UserDefinedWord && previousNode.CodeElement.ConsumedTokens[0].TokenType != TokenType.QualifiedNameSeparator)
                     {
                         //Add the -false
-                        if (token != null) token.ReplaceCode = token.ReplaceCode + "-false";
+                        token.ReplaceCode += "-false";
                     }
-                    previousNode = child;
+                    previousNode = token;
                 }
                 
                 //Create a Token to replase the "false" to TRUE ==> lookup for the last one;

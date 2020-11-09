@@ -22,7 +22,6 @@ label = "{C. Block10|    display 'C'\l}"
 Block11 [
 label = "{D. Block11|    display 'D'\l}"
 ]
-Block10 -> Block11
 
 }
 Block1 -> Block10 [style=dashed]
@@ -45,8 +44,6 @@ label = "{B. Block13|    display 'B'\l}"
 Block14 [
 label = "{C. Block14|    display 'C'\l}"
 ]
-Block12 -> Block13
-Block13 -> Block14
 
 }
 Block3 -> Block12 [style=dashed]
@@ -55,8 +52,11 @@ Block4 [
 label = "{Block4|    GOBACK\l}"
 ]
 Block0 -> Block1
+Block10 -> Block11
 Block1 -> Block2
 Block2 -> Block3
+Block12 -> Block13
+Block13 -> Block14
 Block3 -> Block4
 
 }

@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.Nodes
 {
-    public class ParametersProfileNode : GenericNode<ParametersProfile>, ParameterList, IEquatable<ParametersProfileNode>
+    public class ParametersProfileNode : GenericNode<ParametersProfile>, IProfile, IEquatable<ParametersProfileNode>
     {
         public IList<ParameterDescription> InputParameters { get; set; }
         public IList<ParameterDescription> InoutParameters { get; set; }
@@ -81,49 +79,23 @@ namespace TypeCobol.Compiler.Nodes
             return base.CodeElement.GetHashCode();
         }
 
-        IList<DataType> _icache = null;
-        IList<DataType> ParameterList.InputParameters
-        {
-            get
+        private IList<TypeInfo> _inputsCache;
+        public IList<TypeInfo> Inputs => _inputsCache ?? (_inputsCache = InputParameters.Select(MakeTypeInfo).ToList());
+
+        private IList<TypeInfo> _inoutsCache;
+        public IList<TypeInfo> Inouts => _inoutsCache ?? (_inoutsCache = InoutParameters.Select(MakeTypeInfo).ToList());
+
+        private IList<TypeInfo> _outputsCache;
+        public IList<TypeInfo> Outputs => _outputsCache ?? (_outputsCache = OutputParameters.Select(MakeTypeInfo).ToList());
+
+        private TypeInfo _returningCache;
+        public TypeInfo Returning => _returningCache ?? (_returningCache = MakeTypeInfo(ReturningParameter));
+
+        private static TypeInfo MakeTypeInfo(ParameterDescription parameter) =>
+            new TypeInfo()
             {
-                if (_icache != null) return _icache;
-                _icache = new List<DataType>();
-                foreach (var parameter in this.InputParameters)
-                    _icache.Add(parameter.DataType);
-                return _icache;
-            }
-        }
-        IList<DataType> _ycache = null;
-        IList<DataType> ParameterList.InoutParameters
-        {
-            get
-            {
-                if (_ycache != null) return _ycache;
-                _ycache = new List<DataType>();
-                foreach (var parameter in this.InoutParameters)
-                    _ycache.Add(parameter.DataType);
-                return _ycache;
-            }
-        }
-        IList<DataType> _ocache = null;
-        IList<DataType> ParameterList.OutputParameters
-        {
-            get
-            {
-                if (_ocache != null) return _ocache;
-                _ocache = new List<DataType>();
-                foreach (var parameter in this.OutputParameters)
-                    _ocache.Add(parameter.DataType);
-                return _ocache;
-            }
-        }
-        DataType ParameterList.ReturningParameter
-        {
-            get
-            {
-                if (this.ReturningParameter == null) return null;
-                return this.ReturningParameter.DataType;
-            }
-        }
+                DataType = parameter.DataType,
+                TypeDefinition = parameter.TypeDefinition
+            };
     }
 }
