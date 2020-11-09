@@ -13,7 +13,7 @@
         public int Index
         {
             get;
-            set;
+            internal set;
         }
 
         /// <summary>
@@ -22,7 +22,7 @@
         public I Instruction
         {
             get;
-            set;
+            internal set;
         }
 
         /// <summary>
@@ -40,7 +40,7 @@
         public V Variable
         {
             get;
-            set;
+            internal set;
         }
 
         /// <summary>
@@ -49,7 +49,7 @@
         public int BlockIndex
         {
             get;
-            set;
+            internal set;
         }
 
         /// <summary>
