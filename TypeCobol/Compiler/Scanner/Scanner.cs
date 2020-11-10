@@ -2306,7 +2306,6 @@ namespace TypeCobol.Compiler.Scanner
             { }
 
             // no legal cobol word chars found 
-            //if (index == startIndex + 1 && !CobolChar.IsCobolWordChar(line[index])) return false;
             if (index == startIndex + 1 && !CobolChar.IsCobolWordChar(line[index]))
             {
                 //Empty partialCobolWord are only allowed inside pseudo text and copy
