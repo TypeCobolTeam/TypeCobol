@@ -961,7 +961,7 @@ namespace TypeCobol.Compiler.Scanner
                     // QualifiedNameSeparator => qualifierName::qualifiedName
                     //if (currentIndex < lastIndex && line[currentIndex + 1] == ':')
                     if (!currentState.InsidePseudoText //No QualifiedNameSeparator allowed in pseudoText
-                        && (this.compilerOptions != null && !currentState.InsideCopy) //No QualifiedNameSeparator allowed in COPY 
+                        && (!currentState.InsideCopy) //No QualifiedNameSeparator allowed in COPY 
                         && currentIndex < lastIndex && line[currentIndex + 1] == ':')
                     {
                         // consume two :: chars
