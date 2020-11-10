@@ -453,7 +453,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     // Transfer the scanner context the of original token to the call below
                     Diagnostic error = null;
                     MultilineScanState scanState = FigureOutScanState(originalToken);
-                    Token generatedToken = Scanner.Scanner.ScanIsolatedTokenInGivenScanOrDefaultContext(scanState, tokenText, out error);
+                    Token generatedToken = Scanner.Scanner.ScanIsolatedToken(tokenText, out error, scanState);
                     // TO DO : find a way to report the error above ...
 
                     if (originalToken.PreviousTokenType != null) //In case orignal token was previously an other type of token reset it back to it's orignal type. 
@@ -550,14 +550,14 @@ namespace TypeCobol.Compiler.Preprocessor
         }        
 
         /// <summary>
-        /// Rescan the TokenType of a set of relaced Tokens.
+        /// Rescan the TokenType of a set of replaced Tokens.
         /// </summary>
         /// <param name="firstOriginalToken">The first original token to be replaced</param>
         /// <param name="replacedTokens">The array of replacement tokens.</param>
         private static void RescanReplacedTokenTypes(Token firstOriginalToken, params Token[] replacedTokens)
         {
             MultilineScanState scanState = FigureOutScanState(firstOriginalToken);
-            if (scanState != null && Array.Exists(replacedTokens, t => IsScanStateDependent(t)))
+            if (scanState != null && replacedTokens.Any(IsScanStateDependent))
             {
                 StringBuilder sb = new StringBuilder();
                 foreach (var t in replacedTokens)

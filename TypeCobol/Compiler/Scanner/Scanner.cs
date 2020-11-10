@@ -540,14 +540,14 @@ namespace TypeCobol.Compiler.Scanner
         }
 
         /// <summary>
-        /// Scan an isolated token in the following "default" context :
+        /// Scan an isolated token in the given contect if not null or in following "default" context otherwise:
         /// - insideDataDivision = true
         /// - decimalPointIsComma = false
         /// - withDebuggingMode = false
         /// - encodingForAlphanumericLiterals = IBM 1147
         /// - default compiler options
         /// </summary>
-        public static Token ScanIsolatedTokenInGivenScanOrDefaultContext(MultilineScanState scanContext,  string tokenText, out Diagnostic error)
+        public static Token ScanIsolatedToken(string tokenText, out Diagnostic error, MultilineScanState scanContext = null)
         {
             TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
             tempTokensLine.InitializeScanState(scanContext ?? new MultilineScanState(true, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
