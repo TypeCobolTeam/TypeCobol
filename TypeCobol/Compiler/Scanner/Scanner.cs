@@ -67,7 +67,7 @@ namespace TypeCobol.Compiler.Scanner
                 // Try to scan REMARKS compiler directive parameters inside the comment or non-comment line
                 if (tokensLine.ScanState.InsideRemarksDirective)
                 {
-                    string remarksLine = textLine.SourceText?.Trim();
+                    string remarksLine = textLine.SourceText?.TrimEnd();
 
                     if (!string.IsNullOrEmpty(remarksLine))
                     {
