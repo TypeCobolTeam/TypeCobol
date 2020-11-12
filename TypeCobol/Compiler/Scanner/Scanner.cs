@@ -67,9 +67,9 @@ namespace TypeCobol.Compiler.Scanner
                 // Try to scan REMARKS compiler directive parameters inside the comment or non-comment line
                 if (tokensLine.ScanState.InsideRemarksDirective)
                 {
-                    string remarksLine = textLine.SourceText;
+                    string remarksLine = textLine.SourceText?.Trim();
 
-                    if (remarksLine != null)
+                    if (!string.IsNullOrEmpty(remarksLine))
                     {
                         int startIndexForSignificantPart = GetStartIndexOfSignificantPart(remarksLine, tokensLine.ScanState);
                         int firstPeriodIndex = remarksLine.IndexOf('.', startIndexForSignificantPart);
@@ -200,7 +200,7 @@ namespace TypeCobol.Compiler.Scanner
         private static RemarksDirective CreateRemarksDirective(string significantPart, MultilineScanState state) {
             if (significantPart.Length < 1) return null;
             var remarksDirective = new RemarksDirective();
-            foreach (string candidateName in significantPart.Split(' ')) {
+            foreach (string candidateName in significantPart.Split(' ', ',')) {
                 if (candidateName.Length >= 7) {
                     RemarksDirective.TextNameVariation textName = new RemarksDirective.TextNameVariation(candidateName);
                     remarksDirective.CopyTextNamesVariations.Add(textName);
