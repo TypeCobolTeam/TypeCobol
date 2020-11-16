@@ -1,0 +1,40 @@
+﻿digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{MAIN-PARA. Block1|}"
+]
+Block2 [
+label = "{Block2|      PERFORM FIRST-PARA THRU SECOND-PARA\l}"
+]
+subgraph cluster_1{
+color = blue;
+label = "FIRST-PARA";
+Block8 [
+label = "{FIRST-PARA. Block8|      DISPLAY 'PARA NAME IS  FIRST-PARA'\l}"
+]
+Block9 [
+label = "{SECOND-PARA. Block9|      DISPLAY 'PARA NAME IS  SECOND-PARA'\l}"
+]
+
+}
+Block2 -> Block8 [style=dashed]
+
+Block3 [
+label = "{Block3|      DISPLAY 'DOING PERFORM THRU'\l      DISPLAY 'PARA NAME IS  FIRST-PARA'\l      GOBACK\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block8 -> Block9
+Block2 -> Block3
+
+}
