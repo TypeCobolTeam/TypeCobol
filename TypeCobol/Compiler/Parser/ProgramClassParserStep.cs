@@ -1,6 +1,4 @@
 ﻿//#define DEBUG_ANTRL_CUP_TIME
-using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
 using TypeCobol.Compiler.AntlrUtils;
@@ -8,18 +6,14 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.Parser.Generated;
-using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.Nodes;
-using System.Linq;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CupParser;
 using TypeCobol.Compiler.CupParser.NodeBuilder;
-using System.Reflection;
 using System.Runtime.CompilerServices;
+using TypeCobol.Analysis;
 using TypeCobol.Compiler.Domain;
-using TypeCobolProgramParser = TypeCobol.Compiler.CupParser.TypeCobolProgramParser;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -49,7 +43,15 @@ namespace TypeCobol.Compiler.Parser
                 }
             }
         }
-        public static void CupParseProgramOrClass(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> codeElementsLines, TypeCobolOptions compilerOptions, SymbolTable customSymbols, PerfStatsForParserInvocation perfStatsForParserInvocation, out SourceFile root, out List<Diagnostic> diagnostics, 
+        public static void CupParseProgramOrClass(
+            TextSourceInfo textSourceInfo,
+            ISearchableReadOnlyList<CodeElementsLine> codeElementsLines,
+            TypeCobolOptions compilerOptions,
+            SymbolTable customSymbols,
+            PerfStatsForParserInvocation perfStatsForParserInvocation,
+            ISyntaxDrivenAnalyzer[] customAnalyzers,
+            out SourceFile root,
+            out List<Diagnostic> diagnostics, 
             out Dictionary<CodeElement, Node> nodeCodeElementLinkers,
             out List<DataDefinition> typedVariablesOutsideTypedef,
             out List<TypeDefinition> typeThatNeedTypeLinking)
@@ -66,14 +68,20 @@ namespace TypeCobol.Compiler.Parser
             parser.Builder = builder;
             ParserDiagnostic programClassBuilderError = null;
 
-            //Register a ProgramSymbolTableBuilder as a new listener to build Semantic Domain during parsing.
-            NodeListenerFactory programSymbolTableBuilderFactory = () => new ProgramSymbolTableBuilder();
-            NodeDispatcher.RegisterStaticNodeListenerFactory(programSymbolTableBuilderFactory);
-
             builder.SyntaxTree = new SyntaxTree(); //Initialize SyntaxTree for the current source file
             builder.CustomSymbols = customSymbols;
             builder.Dispatcher = new ProgramClassBuilderNodeDispatcher();
-            builder.Dispatcher.CreateListeners();
+            //Add mandatory ProgramSymbolTableBuilder
+            builder.Dispatcher.AddListener(new ProgramSymbolTableBuilder());
+
+            //Add custom additional analyzers
+            if (customAnalyzers != null)
+            {
+                foreach (var customAnalyzer in customAnalyzers)
+                {
+                    builder.Dispatcher.AddListener(customAnalyzer);
+                }
+            }
 
             // Try to parse a Cobol program or class, with cup w are also building the The Syntax Tree Node
             perfStatsForParserInvocation.OnStartParsing();
@@ -88,7 +96,6 @@ namespace TypeCobol.Compiler.Parser
             }
             perfStatsForParserInvocation.OnStopParsing(0, 0);
 
-            NodeDispatcher.RemoveStaticNodeListenerFactory(programSymbolTableBuilderFactory);
 
 #if DEBUG_ANTRL_CUP_TIME
             var t2 = DateTime.UtcNow;
@@ -108,6 +115,15 @@ namespace TypeCobol.Compiler.Parser
             nodeCodeElementLinkers = builder.NodeCodeElementLinkers;
             typedVariablesOutsideTypedef = builder.TypedVariablesOutsideTypedef;
             typeThatNeedTypeLinking = builder.TypeThatNeedTypeLinking;
+
+            //Collect analyzer diagnostics
+            if (customAnalyzers != null)
+            {
+                foreach (var customAnalyzer in customAnalyzers)
+                {
+                    diagnostics.AddRange(customAnalyzer.Diagnostics);
+                }
+            }
 
             if (programClassBuilderError != null)
             {

@@ -98,13 +98,6 @@ namespace TypeCobol.Analysis.Graph
             Report(writer);
         }
 
-        //Temporary implementation
-        public string Filepath
-        {
-            get => throw new System.NotImplementedException();
-            set => throw new System.NotImplementedException();
-        }
-
         /// <summary>
         /// Generate the current Control Flow Graph of this generator in the given TextWriter
         /// </summary>
