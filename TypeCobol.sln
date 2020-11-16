@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSCup", "CSCup\CSCup.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSCupRuntime", "CSCupRuntime\CSCupRuntime.csproj", "{8CC6CCC3-7ED4-4DC8-A636-733856301AAC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Analysis", "TypeCobol.Analysis\TypeCobol.Analysis.csproj", "{C3250314-C22B-4EB6-9174-17D0791AF7BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -147,6 +149,14 @@ Global
 		{8CC6CCC3-7ED4-4DC8-A636-733856301AAC}.EI_Release|Any CPU.Build.0 = EI_Release|Any CPU
 		{8CC6CCC3-7ED4-4DC8-A636-733856301AAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8CC6CCC3-7ED4-4DC8-A636-733856301AAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3250314-C22B-4EB6-9174-17D0791AF7BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3250314-C22B-4EB6-9174-17D0791AF7BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3250314-C22B-4EB6-9174-17D0791AF7BE}.EI_Debug|Any CPU.ActiveCfg = EI_Debug|Any CPU
+		{C3250314-C22B-4EB6-9174-17D0791AF7BE}.EI_Debug|Any CPU.Build.0 = EI_Debug|Any CPU
+		{C3250314-C22B-4EB6-9174-17D0791AF7BE}.EI_Release|Any CPU.ActiveCfg = EI_Release|Any CPU
+		{C3250314-C22B-4EB6-9174-17D0791AF7BE}.EI_Release|Any CPU.Build.0 = EI_Release|Any CPU
+		{C3250314-C22B-4EB6-9174-17D0791AF7BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3250314-C22B-4EB6-9174-17D0791AF7BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
