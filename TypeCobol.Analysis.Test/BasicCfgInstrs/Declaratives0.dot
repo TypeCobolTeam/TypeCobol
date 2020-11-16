@@ -1,0 +1,33 @@
+﻿digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{DECLARATION. Block1|    USE FOR DEBUGGING ON ALL PROCEDURES.\l}"
+]
+Block2 [
+label = "{AFFICHAGE-PARAGRAPHE. Block2|       display DEBUG-NAME\l}"
+]
+Block3 [
+label = "{X. Block3|    EXIT\l}"
+]
+Block4 [
+label = "{Block4|}"
+]
+Block5 [
+label = "{Block5|DISPLAY \"TOTO\"\l}"
+]
+Block0 -> Block1
+Block0 -> Block4
+Block1 -> Block2
+Block2 -> Block3
+Block4 -> Block5
+
+}

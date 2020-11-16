@@ -1,0 +1,61 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. StackedNestedPgms.
+      
+       PROCEDURE DIVISION.
+      
+       DECLARE PROCEDURE Proc0.
+       END-DECLARE.
+      
+       DECLARE PROCEDURE Proc1.
+       END-DECLARE.
+      
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Nested0.
+       PROCEDURE DIVISION.
+           GOBACK.
+       DECLARE PROCEDURE NestedProc0.
+       PROCEDURE DIVISION.
+       END-DECLARE.
+       END PROGRAM Nested0.
+      
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Nested1.
+       PROCEDURE DIVISION.
+           GOBACK.
+       DECLARE PROCEDURE NestedProc1.
+       PROCEDURE DIVISION.
+       END-DECLARE.
+      
+       END PROGRAM Nested1.
+      
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Nested2.
+       PROCEDURE DIVISION.
+           GOBACK.
+       DECLARE PROCEDURE NestedProc2.
+       PROCEDURE DIVISION.
+       END-DECLARE.
+      
+       END PROGRAM Nested2.
+      
+       END PROGRAM StackedNestedPgms.
+      
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Stacked0.
+       PROCEDURE DIVISION.
+           GOBACK.
+       DECLARE PROCEDURE StackedNestedProc0.
+       PROCEDURE DIVISION.
+       END-DECLARE.
+      
+       END PROGRAM Stacked0.
+      
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Stacked1.
+       PROCEDURE DIVISION.
+           GOBACK.
+       DECLARE PROCEDURE StackedNestedProc1.
+       PROCEDURE DIVISION.
+       END-DECLARE.
+       END PROGRAM Stacked1.
+      

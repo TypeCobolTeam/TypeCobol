@@ -1,0 +1,26 @@
+﻿digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|    DISPLAY \"Enter : \" NO ADVANCING\l                                    ACCEPT phrase\l    DISPLAY \"Repeat : \" NO ADVANCING\l                                     ACCEPT c\l}"
+]
+Block1 [
+label = "{Block1|    PERFORM c TIMES\l}"
+]
+Block2 [
+label = "{Block2|      DISPLAY phrase\l}"
+]
+Block3 [
+label = "{Block3|    GOBACK\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block1 -> Block3
+Block2 -> Block1
+
+}

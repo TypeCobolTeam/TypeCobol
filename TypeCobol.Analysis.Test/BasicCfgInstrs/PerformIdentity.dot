@@ -1,0 +1,37 @@
+﻿digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{MAIN. Block1|}"
+]
+Block2 [
+label = "{Block2|    PERFORM main\l}"
+]
+subgraph cluster_1{
+color = blue;
+label = "main";
+Block5 [
+label = "{MAIN. Block5|}"
+]
+
+}
+Block2 -> Block5 [style=dashed]
+
+Block3 [
+label = "{Block3|    GOBACK\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block5 -> Block2
+Block2 -> Block3
+
+}
