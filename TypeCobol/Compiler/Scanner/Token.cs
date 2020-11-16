@@ -297,7 +297,7 @@ namespace TypeCobol.Compiler.Scanner
 
         /// <summary>
         /// ScanState associated to this token if any, null otherwise.
-        /// This property is used to allow PartialCobolWords allow proper reconstruction.
+        /// This property is used to allow PartialCobolWords proper reconstruction.
         /// </summary>
         public MultilineScanState ScanStateSnapshot { get; set; }
 

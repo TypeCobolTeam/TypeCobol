@@ -540,7 +540,7 @@ namespace TypeCobol.Compiler.Scanner
         }
 
         /// <summary>
-        /// Scan an isolated token in the given contect if not null or in following "default" context otherwise:
+        /// Scan an isolated token in the given context if not null or in following "default" context otherwise:
         /// - insideDataDivision = true
         /// - decimalPointIsComma = false
         /// - withDebuggingMode = false
