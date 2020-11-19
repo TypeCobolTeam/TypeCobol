@@ -42,7 +42,7 @@ namespace TypeCobol.Tools.CommandLine
             // Initialize a compilation project
             TypeCobolOptions compilerOptions = new TypeCobolOptions();
             CompilationProject project = new CompilationProject("samples", sourcePath, programExtensions.Concat(copyExtensions).ToArray(),
-                docFormat.Encoding, docFormat.EndOfLineDelimiter, docFormat.FixedLineLength, docFormat.ColumnsLayout, compilerOptions);
+                docFormat, compilerOptions, null);
 
             // Output files used to store the results
             string resultFilePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);

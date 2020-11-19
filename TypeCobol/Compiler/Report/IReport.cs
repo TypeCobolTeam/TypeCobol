@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace TypeCobol.Compiler.Report
 {
@@ -13,14 +8,9 @@ namespace TypeCobol.Compiler.Report
     public interface IReport
     {
         /// <summary>
-        /// The file where the report should be emited
-        /// </summary>
-        string Filepath { get; set; }
-
-        /// <summary>
         /// Emit the Report in the given TextWriter
         /// </summary>
-        /// <param name="writer"></param>
+        /// <param name="writer">Output TextWriter</param>
         void Report(TextWriter writer);
     }
 }
