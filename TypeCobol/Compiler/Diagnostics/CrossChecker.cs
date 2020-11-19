@@ -663,10 +663,13 @@ namespace TypeCobol.Compiler.Diagnostics
                     //Check if we're dealing with an input parameter
                     if (paramDesc?.PassingType == ParameterDescription.PassingTypes.Input)
                     {
-                        var specialRegister = storageArea as StorageAreaPropertySpecialRegister;
-                        //Unless this is a format 5 set statement, we have an error. So we're checking we're not in the following format  :
+                        //We allow modification on indices because semantically they are value types, the procedure uses a copy of the input (issue #1789).
+                        //Also format 5 set statements are allowed because it does not affect the input for the caller (issue #1625).
                         //set (address of)? identifier(pointer) TO (address of)? identifier | NULL
-                        if (specialRegister?.SpecialRegisterName.TokenType != TokenType.ADDRESS)
+                        bool isModificationAllowed = dataDefinitionFound.IsIndex
+                                                     ||
+                                                     (storageArea is StorageAreaPropertySpecialRegister register && register.SpecialRegisterName.TokenType == TokenType.ADDRESS);
+                        if (!isModificationAllowed)
                         {
                             DiagnosticUtils.AddError(node, "Input variable '" + paramDesc.Name + "' is modified by an instruction", area.SymbolReference);
                         }
