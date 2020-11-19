@@ -793,6 +793,46 @@ namespace TypeCobol.Compiler.CodeModel
 
         #endregion
 
+        /// <summary>
+        /// Try to disambiguate between Section or Paragraph reference.
+        /// </summary>
+        /// <param name="target">A non-null SymbolReference.</param>
+        /// <param name="callerNodeSection">The Section node in which the statement making the reference appears.</param>
+        /// <returns>A tuple made of both list of sections and list of paragraphs. The lists may be null,
+        /// this indicates that the search has not been performed for the corresponding type.
+        /// They also may be empty, this means the search has been performed but yielded no results.</returns>
+        public (IList<Section>, IList<Paragraph>) GetSectionOrParagraph([NotNull] SymbolReference target, Section callerNodeSection)
+        {
+            IList<Section> sections = null;
+            IList<Paragraph> paragraphs = null;
+
+            //Check target type to avoid useless search if the type is already known
+            if (target.IsAmbiguous)
+            {
+                //Have to search for both sections and paragraphs
+                sections = GetSections();
+                paragraphs = GetParagraphs();
+            }
+            else
+            {
+                switch (target.Type)
+                {
+                    case SymbolType.SectionName:
+                        sections = GetSections();
+                        break;
+                    case SymbolType.ParagraphName:
+                        paragraphs = GetParagraphs();
+                        break;
+                }
+            }
+
+            return (sections, paragraphs);
+
+            IList<Section> GetSections() => GetSection(target.Name);
+
+            IList<Paragraph> GetParagraphs() => GetParagraph(target, callerNodeSection);
+        }
+
         #region TYPES
 
         public readonly IDictionary<string, List<TypeDefinition>> Types =

@@ -176,6 +176,10 @@
       <Project>{07445710-6B27-443E-9FE8-54B1476BC629}</Project>
       <Name>Analytics</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TypeCobol.Analysis\TypeCobol.Analysis.csproj">
+      <Project>{c3250314-c22b-4eb6-9174-17d0791af7be}</Project>
+      <Name>TypeCobol.Analysis</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TypeCobol\TypeCobol.csproj">
       <Project>{7ac7a3e5-91f2-44bf-955d-86cc61375742}</Project>
       <Name>TypeCobol</Name>

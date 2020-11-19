@@ -15,9 +15,10 @@ namespace TypeCobol.Test.Parser.Scanner
 
         public static void CheckAllFilesForExceptions()
         {
+            var documentFormat = new DocumentFormat(IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147), EndOfLineDelimiter.FixedLengthLines, 80, ColumnsLayout.CobolReferenceFormat);
             CompilationProject project = new CompilationProject("test", 
                 PlatformUtils.GetPathForProjectFile(ParserScannerSamples), new string[] { ".txt" },
-                IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147), EndOfLineDelimiter.FixedLengthLines, 80, ColumnsLayout.CobolReferenceFormat, new TypeCobolOptions());
+                documentFormat, new TypeCobolOptions(), null);
 
             int filesCount = 0;
             //int linesCount = 0;
