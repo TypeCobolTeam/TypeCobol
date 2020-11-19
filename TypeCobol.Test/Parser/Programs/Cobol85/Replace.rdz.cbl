@@ -38,7 +38,10 @@
        01 var-:tag : PIC X.
        REPLACE ==: tag :== BY ==name16==.
        01 : tag :var: tag : PIC X.
-      
+       
+       REPLACE ==:   tag    :== BY ==name17==.
+       01 var-:  tag   : PIC X.
+       
        procedure division.
            display var-name1
            display name2-var
@@ -56,6 +59,7 @@
            display name14-var
            display var-name15
            display name16varname16
+           display var-name17
            goback
            .
        end program TCOMFL02.

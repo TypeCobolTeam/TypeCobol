@@ -19,6 +19,7 @@ PROGRAM: TCOMFL02 common:False initial:False recursive:False
   name14-var:Alphanumeric
   var-name15:Alphanumeric
   name16varname16:Alphanumeric
+  var-name17:Alphanumeric
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL
