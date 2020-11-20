@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TypeCobol.Analysis;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
@@ -17,12 +18,15 @@ namespace TypeCobol.Compiler
     /// </summary>
     public class CompilationUnit : CompilationDocument
     {
+        private readonly IAnalyzerProvider _analyzerProvider;
+        private readonly Dictionary<string, object> _analyzerResults;
+
         /// <summary>
         /// Initializes a new compilation document from a list of text lines.
         /// This method does not scan the inserted text lines to produce tokens.
-        /// You must explicitely call UpdateTokensLines() to start an initial scan of the document.
+        /// You must explicitly call UpdateTokensLines() to start an initial scan of the document.
         /// </summary>
-        public CompilationUnit(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider, List<RemarksDirective.TextNameVariation> copyTextNameVariations) :
+        public CompilationUnit(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider, List<RemarksDirective.TextNameVariation> copyTextNameVariations, IAnalyzerProvider analyzerProvider) :
             base(textSourceInfo, initialTextLines, compilerOptions, processedTokensDocumentProvider, copyTextNameVariations)
         {
             // Initialize performance stats 
@@ -30,8 +34,8 @@ namespace TypeCobol.Compiler
             PerfStatsForTemporarySemantic = new PerfStatsForParsingStep(CompilationStep.ProgramClassParser);
             PerfStatsForProgramCrossCheck = new PerfStatsForParsingStep(CompilationStep.ProgramCrossCheck);
 
-
-
+            _analyzerProvider = analyzerProvider;
+            _analyzerResults = new Dictionary<string, object>();
         }
 
         /// <summary>
@@ -152,6 +156,28 @@ namespace TypeCobol.Compiler
         }
 
         /// <summary>
+        /// Attempt to retrieve the result for specific analyzer identified by its id.
+        /// </summary>
+        /// <typeparam name="TResult">Desired type of result.</typeparam>
+        /// <param name="analyzerIdentifier">Unique string identifier of the analyzer.</param>
+        /// <param name="result">The result of the analyzer if found, default(TResult) otherwise.</param>
+        /// <returns>True if the result has been found, False otherwise.</returns>
+        public bool TryGetAnalyzerResult<TResult>(string analyzerIdentifier, out TResult result)
+        {
+            lock (lockObjectForAnalyzerResults)
+            {
+                if (_analyzerResults.TryGetValue(analyzerIdentifier, out var untypedResult) && untypedResult is TResult typedResult)
+                {
+                    result = typedResult;
+                    return true;
+                }
+
+                result = default;
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Creates a new snapshot of the document viewed as complete Cobol Program or Class.
         /// Thread-safe : this method can be called from any thread.
         /// </summary>
@@ -224,14 +250,36 @@ namespace TypeCobol.Compiler
                     List<DataDefinition> typedVariablesOutsideTypedef = new List<DataDefinition>();
                     List<TypeDefinition> typeThatNeedTypeLinking = new List<TypeDefinition>();
 
+                    var customAnalyzers = _analyzerProvider?.CreateSyntaxDrivenAnalyzers(CompilerOptions, TextSourceInfo);
                     //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
-                    ProgramClassParserStep.CupParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, perfStatsForParserInvocation, out root, out newDiagnostics, out nodeCodeElementLinkers,
+                    ProgramClassParserStep.CupParseProgramOrClass(
+                        TextSourceInfo,
+                        (ImmutableList<CodeElementsLine>) codeElementsDocument.Lines,
+                        CompilerOptions,
+                        CustomSymbols,
+                        perfStatsForParserInvocation,
+                        customAnalyzers,
+                        out root,
+                        out newDiagnostics,
+                        out nodeCodeElementLinkers,
                         out typedVariablesOutsideTypedef,
                         out typeThatNeedTypeLinking);
 
                     // Capture the produced results
                     TemporaryProgramClassDocumentSnapshot = new TemporarySemanticDocument(codeElementsDocument, new DocumentVersion<ICodeElementsLine>(this), codeElementsDocument.Lines,  root, newDiagnostics, nodeCodeElementLinkers,
                         typedVariablesOutsideTypedef, typeThatNeedTypeLinking);
+
+                    //Capture the syntax-driven analyzers results, the diagnostics are already collected
+                    if (customAnalyzers != null)
+                    {
+                        lock (lockObjectForAnalyzerResults)
+                        {
+                            foreach (var customAnalyzer in customAnalyzers)
+                            {
+                                _analyzerResults[customAnalyzer.Identifier] = customAnalyzer.GetResult();
+                            }
+                        }
+                    }
 
                     // Stop perf measurement
                     PerfStatsForTemporarySemantic.OnStopRefreshParsingStep();
@@ -351,6 +399,7 @@ namespace TypeCobol.Compiler
         protected readonly object lockObjectForCodeElementsDocumentSnapshot = new object();
         protected readonly object lockObjectForTemporarySemanticDocument = new object();
         protected readonly object lockObjectForProgramClassDocumentSnapshot = new object();
+        protected readonly object lockObjectForAnalyzerResults = new object();
 
         #endregion
     }

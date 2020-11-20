@@ -161,6 +161,7 @@ namespace TypeCobol.Codegen.Actions
                     string hashName = GeneratorHelper.ComputeIndexHashName(qualified_name, this.CurrentNode);
                     item = new GenerateToken(
                         new TokenCodeElement(storageArea.SymbolReference.NameLiteral.Token), hashName, sourcePositions);
+                    item.SetFlag(Node.Flag.NodeContainsIndex, true);
                     item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
                     this.CurrentNode.Add(item);
                     if (UsedStorageArea == null)
@@ -615,12 +616,14 @@ namespace TypeCobol.Codegen.Actions
                                 item = new GenerateToken(
                                     new TokenCodeElement(nodeTokens[r]), "",
                                     sourcePositions);
+                                item.SetFlag(Node.Flag.NodeContainsIndex, true);
                                 item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
                                 sourceNode.Add(item);
-                             }
+                            }
                             item = new GenerateToken(
                                 new TokenCodeElement(nodeTokens[range.Item2]), hashName,
                                 sourcePositions);
+                            item.SetFlag(Node.Flag.NodeContainsIndex, true);
                             item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
                             sourceNode.Add(item);
                             continue;

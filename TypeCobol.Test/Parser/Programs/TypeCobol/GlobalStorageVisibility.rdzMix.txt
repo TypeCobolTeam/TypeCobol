@@ -1,0 +1,66 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. GlobalStorageTest.
+      
+       DATA DIVISION.
+      
+       GLOBAL-STORAGE SECTION.
+       01 var1 PIC X(12).
+       01 var2 PIC X(12).
+       01 var3 PIC X(12).
+       01 MyPoint TYPE POINT.
+      
+       WORKING-STORAGE SECTION.
+       01 var1 PIC X(12) GLOBAL.
+       01 result PIC X(12).
+       01 xxyy PIC 9(4).
+       01 var4 PIC X(12) GLOBAL.
+       01 MyPoint TYPE POINT GLOBAL.
+       01 POINT Typedef STRICT PRIVATE.
+           05 XX PIC 9(4).
+           05 YY PIC 9(4).
+      
+       PROCEDURE DIVISION.
+      
+      *KO var1 ambiguous with GS
+Line 25[17,20] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol var1 
+Symbols found: GlobalStorageTest::var1 | GlobalStorageTest::var1
+           MOVE var1 TO result.
+      *KO MyPoint::XX with GS
+Line 27[26,27] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol MyPoint.XX 
+Symbols found: GlobalStorageTest::MyPoint::POINT::XX | GlobalStorageTest::MyPoint::POINT::XX
+           MOVE MyPoint::XX TO xxyy.
+      
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. NestedProc.
+      
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 var1 PIC X(12).
+       01 var2 PIC 9(12).
+       01 result PIC X(12).
+       01 var3 PIC X(12) GLOBAL.
+       01 var4 PIC X(12) GLOBAL.
+      
+       PROCEDURE DIVISION.
+      
+      *KO var1 ambiguous with var1 in GS
+Line 43[16,19] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol var1 
+Symbols found: GlobalStorageTest::NestedProc::var1 | GlobalStorageTest::var1
+          MOVE var1 TO result
+      *KO var2 ambiguous with parent's GS
+Line 45[16,19] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol var2 
+Symbols found: GlobalStorageTest::NestedProc::var2 | GlobalStorageTest::var2
+          MOVE var2 TO result
+      *KO var3 ambiguous with parent's GS
+Line 47[16,19] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol var3 
+Symbols found: GlobalStorageTest::NestedProc::var3 | GlobalStorageTest::var3
+          MOVE var3 TO result
+      
+      *OK
+          MOVE var4 to result
+          .
+      
+       END PROGRAM NestedProc.
+      
+       END PROGRAM GlobalStorageTest.
+      

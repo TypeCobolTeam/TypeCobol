@@ -1,22 +1,22 @@
 -- Line 1 --
-[1,1:1]<IntegerLiteral>{1}
+=>continued:[1,1:123456]<IntegerLiteral>{123456}
 
 -- Line 2 --
 [2,29:This is a comment line ! ***]<CommentLine>
 
 -- Line 3 --
 [2,5:    ]<SpaceSeparator>
-[6,10:23456]<IntegerLiteral>{23456}
+=>continuation:[6,10:123456]<IntegerLiteral>{123456}
 
 -- Line 4 --
-[1,5:12345]<IntegerLiteral>{12345}
+=>continued:[1,5:123456]<IntegerLiteral>{123456}
 
 -- Line 5 --
 [1,4:    ]<SpaceSeparator>
 
 -- Line 6 --
 [2,5:    ]<SpaceSeparator>
-[6,6:6]<IntegerLiteral>{6}
+=>continuation:[6,6:123456]<IntegerLiteral>{123456}
 
 -- Line 7 --
 =>continued:[1,1:+123]<IntegerLiteral>{123}

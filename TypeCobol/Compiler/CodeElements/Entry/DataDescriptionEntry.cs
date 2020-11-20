@@ -1207,7 +1207,7 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// </summary>
 		PackedDecimal,
 		/// <summary>
-		//// p231: COMPUTATIONAL-1 or COMP-1 (floating-point)
+		/// p231: COMPUTATIONAL-1 or COMP-1 (floating-point)
 		/// </summary>
 		FloatingPoint,
 		/// <summary>

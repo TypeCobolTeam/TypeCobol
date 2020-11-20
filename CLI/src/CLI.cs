@@ -5,9 +5,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TypeCobol.Analysis;
 using TypeCobol.CLI.CustomExceptions;
 using TypeCobol.Codegen;
-using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
@@ -108,8 +108,9 @@ namespace TypeCobol.Server
             //Load intrinsics and dependencies, it will build the root symbol table
             var rootSymbolTable = LoadIntrinsicsAndDependencies();
 
-            //Add report listeners
-            var reports = InitializeReports();
+            //Add analyzers
+            var analyzerProvider = new AnalyzerProvider();
+            var reports = RegisterAnalyzers(analyzerProvider);
 
             //Normalize TypeCobolOptions, the parser does not need to go beyond SemanticCheck for the first phase
             var typeCobolOptions = new TypeCobolOptions(_configuration);
@@ -122,7 +123,7 @@ namespace TypeCobol.Server
             foreach (var inputFilePath in _configuration.InputFiles)
             {
                 var parser = new Parser(rootSymbolTable);
-                parser.Init(inputFilePath, typeCobolOptions, _configuration.Format, _configuration.CopyFolders);
+                parser.Init(inputFilePath, typeCobolOptions, _configuration.Format, _configuration.CopyFolders, analyzerProvider);
                 parser.Parse(inputFilePath);
 
                 //Collect results : parsing results, used and missing copies
@@ -230,18 +231,23 @@ namespace TypeCobol.Server
             }
         }
 
-        private List<AbstractReport> InitializeReports()
+        private Dictionary<string, IReport> RegisterAnalyzers(AnalyzerProvider analyzerProvider)
         {
-            List<AbstractReport> reports = new List<AbstractReport>();
+            var reports = new Dictionary<string, IReport>();
             if (_configuration.ExecToStep >= ExecutionStep.CrossCheck)
             {
+                //CFG/DFA
+                analyzerProvider.AddActivator(
+                    (o, t) =>
+                        CfgDfaAnalyzerFactory.CreateCfgDfaAnalyzer("cfg-dfa", _configuration.CfgBuildingMode));
+
                 if (!string.IsNullOrEmpty(_configuration.ReportCopyMoveInitializeFilePath))
                 {
-                    Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(
-                        () =>
+                    analyzerProvider.AddActivator(
+                        (o, t) =>
                         {
-                            var report = new CopyMoveInitializeReport(_configuration.ReportCopyMoveInitializeFilePath);
-                            reports.Add(report);
+                            var report = new CopyMoveInitializeReport();
+                            reports.Add(_configuration.ReportCopyMoveInitializeFilePath, report);
                             return report;
                         });
 
@@ -249,11 +255,11 @@ namespace TypeCobol.Server
 
                 if (!string.IsNullOrEmpty(_configuration.ReportZCallFilePath))
                 {
-                    Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(
-                        () =>
+                    analyzerProvider.AddActivator(
+                        (o, t) =>
                         {
-                            var report = new ZCallPgmReport(_configuration.ReportZCallFilePath);
-                            reports.Add(report);
+                            var report = new ZCallPgmReport();
+                            reports.Add(_configuration.ReportZCallFilePath, report);
                             return report;
                         });
 
@@ -293,7 +299,7 @@ namespace TypeCobol.Server
                 try
                 {
                     StringBuilder output = new StringBuilder();
-                    var generator = GeneratorFactoryManager.Instance.Create(OutputFormat.ExpandingCopy.ToString(), compilationUnit, output, null, null, false);
+                    var generator = GeneratorFactoryManager.Instance.Create(OutputFormat.ExpandingCopy.ToString(), compilationUnit, output, null, false);
                     var streamWriter = new StreamWriter(_configuration.ExpandingCopyFilePath);
                     generator.Generate(compilationUnit, ColumnsLayout.CobolReferenceFormat);
                     streamWriter.Write(output);
@@ -319,19 +325,23 @@ namespace TypeCobol.Server
             generationExceptions.Add(generationException);
         }
 
-        private void CreateReports(string inputFilePath, IEnumerable<AbstractReport> reports)
+        private void CreateReports(string inputFilePath, Dictionary<string, IReport> reports)
         {
             foreach (var report in reports)
             {
+                string filePath = report.Key;
                 try
                 {
-                    report.Report();
-                    Console.WriteLine($"Succeed to emit report '{report.Filepath}'");
+                    using (var writer = File.CreateText(filePath))
+                    {
+                        report.Value.Report(writer);
+                    }
+                    Console.WriteLine($"Succeed to emit report '{filePath}'");
                 }
                 catch (Exception exception)
                 {
                     Console.Error.WriteLine(exception.Message);
-                    var generationException = new GenerationException(exception.Message, report.Filepath, exception);
+                    var generationException = new GenerationException(exception.Message, filePath, exception);
                     StoreGenerationException(inputFilePath, generationException);
                 }
             }
@@ -341,19 +351,12 @@ namespace TypeCobol.Server
         {
             try
             {
-                //Load skeletons if necessary
-                List<Skeleton> skeletons = null;
-                if (!string.IsNullOrEmpty(_configuration.skeletonPath))
-                {
-                    skeletons = Codegen.Config.Config.Parse(_configuration.skeletonPath);
-                }
-
                 //Get Generator from specified config.OutputFormat
                 var sb = new StringBuilder();
                 bool needLineMap = _configuration.LineMapFiles.Count > fileIndex;
                 var generator = GeneratorFactoryManager.Instance.Create(_configuration.OutputFormat.ToString(),
                     compilationUnit,
-                    sb, skeletons, AnalyticsWrapper.Telemetry.TypeCobolVersion, needLineMap);
+                    sb, AnalyticsWrapper.Telemetry.TypeCobolVersion, needLineMap);
                 if (generator == null)
                 {
                     throw new GenerationException("Unknown OutputFormat=" + _configuration.OutputFormat + "_", inputFilePath);
@@ -434,7 +437,7 @@ namespace TypeCobol.Server
         private ReturnCode AddErrorsAndComputeReturnCode()
         {
             /*
-             * Here we start with a Sucesss return code, then we check all diagnostics from
+             * Here we start with a Success return code, then we check all diagnostics from
              * lowest to highest priority.
              */
 
@@ -515,7 +518,7 @@ namespace TypeCobol.Server
                 UpdateReturnCode(_intrinsicsDiagnostics.Select(dee => dee.Diagnostic).ToList());
             }
 
-            //Always retrun MissingCopy when there is at least one missing copy because it could help the developer to correct several parsing errors at once
+            //Always return MissingCopy when there is at least one missing copy because it could help the developer to correct several parsing errors at once
             if (_missingCopies.Count > 0)
             {
                 returnCode = ReturnCode.MissingCopy;

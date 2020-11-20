@@ -3,17 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Analytics;
-using Antlr4.Runtime.Atn;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
-using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Text;
-using String = System.String;
 
 namespace TypeCobol.Compiler.Scanner
 {
@@ -72,9 +67,9 @@ namespace TypeCobol.Compiler.Scanner
                 // Try to scan REMARKS compiler directive parameters inside the comment or non-comment line
                 if (tokensLine.ScanState.InsideRemarksDirective)
                 {
-                    string remarksLine = textLine.SourceText;
+                    string remarksLine = textLine.SourceText?.TrimEnd();
 
-                    if (remarksLine != null)
+                    if (!string.IsNullOrEmpty(remarksLine))
                     {
                         int startIndexForSignificantPart = GetStartIndexOfSignificantPart(remarksLine, tokensLine.ScanState);
                         int firstPeriodIndex = remarksLine.IndexOf('.', startIndexForSignificantPart);
@@ -205,7 +200,7 @@ namespace TypeCobol.Compiler.Scanner
         private static RemarksDirective CreateRemarksDirective(string significantPart, MultilineScanState state) {
             if (significantPart.Length < 1) return null;
             var remarksDirective = new RemarksDirective();
-            foreach (string candidateName in significantPart.Split(' ')) {
+            foreach (string candidateName in significantPart.Split(' ', ',')) {
                 if (candidateName.Length >= 7) {
                     RemarksDirective.TextNameVariation textName = new RemarksDirective.TextNameVariation(candidateName);
                     remarksDirective.CopyTextNamesVariations.Add(textName);
@@ -252,6 +247,7 @@ namespace TypeCobol.Compiler.Scanner
             TextArea[] textAreasForOriginalLinesInConcatenatedLine = new TextArea[continuationLinesGroup.Count];
             int[] startIndexForTextAreasInOriginalLines = new int[continuationLinesGroup.Count];
             int[] offsetForLiteralContinuationInOriginalLines = new int[continuationLinesGroup.Count];
+            var scanState = initialScanState;
 
             // Initialize the continuation text with the complete source text of the first line
             TokensLine firstLine = continuationLinesGroup[0];
@@ -264,20 +260,34 @@ namespace TypeCobol.Compiler.Scanner
             {
                 concatenatedLine = String.Empty;
                 Scanner.ScanTokensLine(firstLine, initialScanState, compilerOptions, copyTextNameVariations);
+                scanState = firstLine.ScanState;
             }
             textAreasForOriginalLinesInConcatenatedLine[0] = new TextArea(TextAreaType.Source, 0, concatenatedLine.Length -1);
             startIndexForTextAreasInOriginalLines[0] = firstLine.Source.StartIndex;
             offsetForLiteralContinuationInOriginalLines[0] = 0;
 
-            // All the following lines are continuation lines
+            // Find the index of the last ContinuationLine in the group
+            int lastContinuationLineIndex;
+            for (lastContinuationLineIndex = continuationLinesGroup.Count - 1; lastContinuationLineIndex >= 0 && continuationLinesGroup[lastContinuationLineIndex].Type != CobolTextLineType.Continuation; lastContinuationLineIndex--) { }
+
+            // Iterate over the continuation lines (some blank lines or comment lines may come in-between)
             // => build a character string representing the complete continuation text along the way
-            for (int i = 1, lastContinuationLinesIndex = continuationLinesGroup.Count - 1; i <= lastContinuationLinesIndex; i++)
+            int i;
+            for (i = 1; i <= lastContinuationLineIndex; i++)
             {
-                bool isLastLine = i == lastContinuationLinesIndex;
+                bool isLastLine = i == lastContinuationLineIndex;
                 TokensLine continuationLine = continuationLinesGroup[i];
                 int startIndex = continuationLine.Source.StartIndex;
                 int lastIndex = continuationLine.Source.EndIndex;
                 string line = continuationLine.Text;
+
+                // Not a continuation line
+                if (continuationLine.Type != CobolTextLineType.Continuation)
+                {
+                    Scanner.ScanTokensLine(continuationLine, scanState, compilerOptions, copyTextNameVariations);
+                    scanState = continuationLine.ScanState;
+                    continue;
+                }
 
                 // 1. Match and remove all blank characters at the beginning of the continuation line
                 int startOfContinuationIndex = startIndex;
@@ -286,19 +296,10 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     Token whitespaceToken = new Token(TokenType.SpaceSeparator, startIndex, startOfContinuationIndex - 1, continuationLine);
                     continuationLine.SourceTokens.Add(whitespaceToken);
-                    startIndex = startOfContinuationIndex;
                 }
-                if (startOfContinuationIndex <= lastIndex)
+                if (startOfContinuationIndex < 4)
                 {
-                    if (startOfContinuationIndex < 4)
-                    {
-                        continuationLine.AddDiagnostic(MessageCode.AreaAOfContinuationLineMustBeBlank, startOfContinuationIndex, startOfContinuationIndex);
-                    }
-                }
-                else
-                {
-                    // Nothing but spaces on the continuation line
-                    continue;
+                    continuationLine.AddDiagnostic(MessageCode.AreaAOfContinuationLineMustBeBlank, startOfContinuationIndex, startOfContinuationIndex);
                 }
 
                 // p55: Continuation of alphanumeric and national literals
@@ -458,12 +459,13 @@ namespace TypeCobol.Compiler.Scanner
             // Scan the complete continuation text as a whole
             TokensLine virtualContinuationTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstLine.LineIndex, concatenatedLine);
             Scanner.ScanTokensLine(virtualContinuationTokensLine, initialScanState, compilerOptions, copyTextNameVariations);
+            scanState = initialScanState;
 
             // Then attribute each token and diagnostic to its corresponding tokens line
-            MultilineScanState scanState = initialScanState;
-            for (int i = 0; i < continuationLinesGroup.Count; i++)
+            for (i = 0; i < continuationLinesGroup.Count; i++)
             {
                 TokensLine originalLine = continuationLinesGroup[i];
+                if (i > 0 && originalLine.Type != CobolTextLineType.Continuation) continue;
                 originalLine.InitializeScanState(scanState);
 
                 TextArea textAreaForOriginalLine = textAreasForOriginalLinesInConcatenatedLine[i];
@@ -541,6 +543,14 @@ namespace TypeCobol.Compiler.Scanner
                 }
 
                 scanState = originalLine.ScanState;
+            }
+
+            // Scan remaining lines of the group
+            for (i = lastContinuationLineIndex + 1; i < continuationLinesGroup.Count; i++)
+            {
+                var continuationLine = continuationLinesGroup[i];
+                Scanner.ScanTokensLine(continuationLine, scanState, compilerOptions, copyTextNameVariations);
+                scanState = continuationLine.ScanState;
             }
         }
 
@@ -1562,12 +1572,23 @@ namespace TypeCobol.Compiler.Scanner
                                     return true;
 
                                 //Try to guess if it is a LevelNumber or Literal depending on previous tokens
-                                bool currentTokenIsExpectedToBeALiteral =
-                                    lastSignificantToken.TokenType == TokenType.OCCURS ||
-                                    lastSignificantToken.TokenType == TokenType.VALUE  ||
-                                    lastSignificantToken.TokenType == TokenType.VALUES ||
-                                    (beforeLastSignificantToken.TokenType == TokenType.VALUE && lastSignificantToken.TokenType == TokenType.IS) ||
-                                    (beforeLastSignificantToken.TokenType == TokenType.VALUES && lastSignificantToken.TokenType == TokenType.ARE);
+                                bool currentTokenIsExpectedToBeALiteral = false;
+                                switch (lastSignificantToken.TokenType)
+                                {
+                                    case TokenType.OCCURS:
+                                    case TokenType.VALUE:
+                                    case TokenType.VALUES:
+                                    case TokenType.THROUGH:
+                                    case TokenType.THRU:
+                                        currentTokenIsExpectedToBeALiteral = true;
+                                        break;
+                                    case TokenType.IS:
+                                    case TokenType.ARE:
+                                        currentTokenIsExpectedToBeALiteral =
+                                            beforeLastSignificantToken.TokenType == TokenType.VALUE ||
+                                            beforeLastSignificantToken.TokenType == TokenType.VALUES;
+                                        break;
+                                }
                                 if (!currentTokenIsExpectedToBeALiteral)
                                 {
                                     /*

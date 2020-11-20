@@ -5,6 +5,9 @@
        01 Person typedef strict public.
           05 LastName  pic X(80).
           05 FirstName pic X(80).
+          05 CAddress.
+             10 AddressTab occurs 5 indexed by AdrIdx.
+                15 AdressLine    pic X(50).
        01 myPerson type Person.
        01 myName PIC X(20) VALUE "mammouth".
        01 myNbr  PIC 99 VALUE 20.
@@ -21,19 +24,28 @@
            output IsOk Type Bool.
        DATA DIVISION.
        Working-Storage Section.
+       01 personPtr          PIC X(16).
        PROCEDURE DIVISION.
-Line 25[35,42] <27, Error, Syntax> - Syntax error : Input variable 'pperson' is modified by an instruction
-           move "ppp" TO pperson::LastName
-Line 26[26,33] <27, Error, Syntax> - Syntax error : Input variable 'pperson' is modified by an instruction
-           move "ppp" TO LastName
-Line 27[26,30] <27, Error, Syntax> - Syntax error : Input variable 'pname' is modified by an instruction
+Line 29[35,42] <27, Error, Syntax> - Syntax error : Input variable 'pperson' is modified by an instruction
+           move "ppp" to pperson::LastName
+Line 30[26,33] <27, Error, Syntax> - Syntax error : Input variable 'pperson' is modified by an instruction
+           move "ppp" to LastName
+Line 31[26,30] <27, Error, Syntax> - Syntax error : Input variable 'pname' is modified by an instruction
            move "ggg" to pname
-Line 28[25,29] <27, Error, Syntax> - Syntax error : Input variable 'pname' is modified by an instruction
-           move "hh" to PName
-Line 29[25,33] <27, Error, Syntax> - Syntax error : Input variable 'pperson' is modified by an instruction
-           move "jj" to firstnAme OF PPErson
-           move 30 to pnbr
-           SET IsOk TO True
+Line 32[26,30] <27, Error, Syntax> - Syntax error : Input variable 'pname' is modified by an instruction
+           move "hh"  to PName
+Line 33[26,34] <27, Error, Syntax> - Syntax error : Input variable 'pperson' is modified by an instruction
+           move "jj"  to firstName of pperson
+           move 30    to pnbr
+           Set IsOk   to true
+      *ok pperson is not modified
+           Set address of pperson to address of personPtr
+      *ok pperson is not modified, only the index
+           Set pperson::CAddress::AddressTab::AdrIdx to 1
+      *same thing when iterating over the table using its index
+           Perform varying AdrIdx from 1 by 1 until AdrIdx > 200
+              Display AdressLine(AdrIdx)
+           End-Perform
            .
        END-DECLARE.
       
@@ -42,7 +54,7 @@ Line 29[25,33] <27, Error, Syntax> - Syntax error : Input variable 'pperson' is 
       * Ok, 1st param is also input in Foo2
            call Foo2 input var1
       * Ko, 1st param is also in-out in Foo3
-Line 40[29,32] <27, Error, Syntax> - Syntax error : Input variable 'var1' is modified by an instruction
+Line 52[29,32] <27, Error, Syntax> - Syntax error : Input variable 'var1' is modified by an instruction
            call Foo3 in-out var1
            goback
            .
@@ -66,12 +78,12 @@ Line 40[29,32] <27, Error, Syntax> - Syntax error : Input variable 'var1' is mod
                - var1 pic X
       %>>>
        declare InvalidParamProc private
-Line 63[32,37] <27, Error, Syntax> - Syntax error : 'occurs' is not supported yet
+Line 75[32,37] <27, Error, Syntax> - Syntax error : 'occurs' is not supported yet
               input var1 pic X occurs 5.
        end-declare.
       
        declare InvalidParamProc2 private
-Line 67[33,38] <27, Error, Syntax> - Syntax error : 'occurs' is not supported yet
+Line 79[33,38] <27, Error, Syntax> - Syntax error : 'occurs' is not supported yet
                input var1 pic X occurs 5.
        end-declare.
       
@@ -83,4 +95,3 @@ Line 67[33,38] <27, Error, Syntax> - Syntax error : 'occurs' is not supported ye
                  call Foo input myvar1
            GOBACK.
        END PROGRAM Pgm.
-      

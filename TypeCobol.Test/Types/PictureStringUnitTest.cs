@@ -3,6 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler.Types;
+using Type = TypeCobol.Compiler.Types.Type;
 
 namespace TypeCobol.Test.Types
 {
@@ -197,15 +198,15 @@ namespace TypeCobol.Test.Types
         [TestMethod]
         public void PictureWithUsageTest()
         {
-            Tuple<string, TypeCobolType.UsageFormat, int>[] pics =
+            Tuple<string, Type.UsageFormat, int>[] pics =
             {
-                new Tuple<string,TypeCobolType.UsageFormat,int>("S9(6)V99", TypeCobolType.UsageFormat.None, 8),
-                new Tuple<string,TypeCobolType.UsageFormat,int>("S9(6)V99", TypeCobolType.UsageFormat.Comp3, 5),
-                new Tuple<string,TypeCobolType.UsageFormat,int>("S9(7)", TypeCobolType.UsageFormat.Comp3, 4),
-                new Tuple<string,TypeCobolType.UsageFormat,int>("S9(5)V99", TypeCobolType.UsageFormat.Comp3, 4),
-                new Tuple<string,TypeCobolType.UsageFormat,int>("S9(6)", TypeCobolType.UsageFormat.Comp3, 4),
-                new Tuple<string,TypeCobolType.UsageFormat,int>("9(7)", TypeCobolType.UsageFormat.Comp3, 4),
-                new Tuple<string,TypeCobolType.UsageFormat,int>("9(6)", TypeCobolType.UsageFormat.Comp3, 4),
+                new Tuple<string,Type.UsageFormat,int>("S9(6)V99", Type.UsageFormat.None, 8),
+                new Tuple<string,Type.UsageFormat,int>("S9(6)V99", Type.UsageFormat.Comp3, 5),
+                new Tuple<string,Type.UsageFormat,int>("S9(7)", Type.UsageFormat.Comp3, 4),
+                new Tuple<string,Type.UsageFormat,int>("S9(5)V99", Type.UsageFormat.Comp3, 4),
+                new Tuple<string,Type.UsageFormat,int>("S9(6)", Type.UsageFormat.Comp3, 4),
+                new Tuple<string,Type.UsageFormat,int>("9(7)", Type.UsageFormat.Comp3, 4),
+                new Tuple<string,Type.UsageFormat,int>("9(6)", Type.UsageFormat.Comp3, 4),
             };
             for (int i = 0; i < pics.Length; i++)
             {
@@ -216,6 +217,73 @@ namespace TypeCobol.Test.Types
                 int len = type.Length;
                 Assert.AreEqual(len, pics[i].Item3);
             }
+        }
+
+        /// <summary>
+        /// Test invalid syntax of picture strings
+        /// </summary>
+        [TestMethod]
+        public void InvalidSyntaxPictureStringTest()
+        {
+            string[] invalids = {
+                "",
+                "()",
+                "9(",
+                "9()",
+                "9)(2)",
+                "9(2)(4)",
+                "()9(2)",
+                "9(((2)))",
+                "X(0)9(44B",
+                "X(0B)9",
+                "X(0102)9()X",
+                "X(0102",
+                "X)0102",
+                "(0102)",
+                "X(7)B(8)(1)()(0)",
+                "b(1)(2)X",
+                "9(1)V9(02)()()()()",
+                //The following one is invalid because if any symbols after the decimal points are Z, then all the symbols after the decimal point must be Z.
+                "ZZZ.Z9",
+                "Z,ZZ9CRR",
+                "Z,ZZ9.99DBBB",
+                "Z,ZZ9.99DBCR",
+                "Z,ZZ9.99CRDB",
+                "---X(2)"
+            };
+            for (int i = 0; i < invalids.Length; i++)
+            {
+                TypeCobol.Compiler.Types.PictureValidator psv = new TypeCobol.Compiler.Types.PictureValidator(invalids[i]);
+                Assert.IsFalse(psv.IsValid());
+            }
+
+            //Change other currency symbol than $
+            TypeCobol.Compiler.Types.PictureValidator psv1 = new TypeCobol.Compiler.Types.PictureValidator("$,$$$.99");
+            psv1.CurrencySymbol = "€";
+            Assert.IsFalse(psv1.IsValid());
+        }
+
+        /// <summary>
+        /// Test Picture String Syntax with various Currency Symbols
+        /// </summary>
+        [TestMethod]
+        public void StrangeCurrencyPictureStringTest()
+        {
+            //EURO
+            TypeCobol.Compiler.Types.PictureValidator psv = new TypeCobol.Compiler.Types.PictureValidator("€Z,ZZZ,ZZZ.ZZCR");
+            psv.CurrencySymbol = "€";
+            Assert.IsTrue(psv.IsValid());
+
+            //SUISSE
+            psv = new TypeCobol.Compiler.Types.PictureValidator("CHFZ,ZZZ,ZZZ.ZZCR");
+            psv.CurrencySymbol = "CHF";
+            Assert.IsTrue(psv.IsValid());
+
+            //Hong Kong Dollar
+            psv = new TypeCobol.Compiler.Types.PictureValidator("HK$Z,ZZZ,ZZZ.ZZCR");
+            psv.CurrencySymbol = "HK$";
+            Assert.IsTrue(psv.IsValid());
+
         }
     }
 }

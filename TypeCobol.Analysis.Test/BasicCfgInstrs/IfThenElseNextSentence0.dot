@@ -1,0 +1,42 @@
+﻿digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|    MOVE 100 TO WS-A\l}"
+]
+Block1 [
+label = "{Block1|    MOVE 200 TO WS-B\l}"
+]
+Block2 [
+label = "{Block2|    MOVE 300 TO WS-C\l}"
+]
+Block3 [
+label = "{Block3|    IF WS-A \> ZERO AND WS-B \> ZERO THEN\l}"
+]
+Block4 [
+label = "{Block4|      NEXT SENTENCE\l}"
+]
+Block8 [
+label = "{Block8|    DISPLAY 'WS-C value ', WS-C\l}"
+]
+Block6 [
+label = "{Block6|    ELSE\l      DISPLAY 'One of the input amount are positive '\l      DISPLAY 'WS-A value ', WS-A\l      DISPLAY 'WS-B value ', WS-B\l}"
+]
+Block7 [
+label = "{Block7|    ADD WS-A TO WS-C\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block2 -> Block3
+Block3 -> Block4
+Block3 -> Block6
+Block4 -> Block8
+Block6 -> Block7
+Block7 -> Block8
+
+}

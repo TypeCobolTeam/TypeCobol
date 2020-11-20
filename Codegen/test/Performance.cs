@@ -59,14 +59,15 @@ namespace TypeCobol.Codegen
                 Path.GetDirectoryName(path),
                 new[] { ".tcbl", ".cbl", ".cpy" },
                 DocumentFormat.RDZReferenceFormat,
-                new TypeCobolOptions());
+                new TypeCobolOptions(),
+                null);
             FileCompiler fileCompiler = new FileCompiler(compilationProject, fileName, false);
             fileCompiler.CompileOnce();
 
             // Generator.
             StringBuilder destination = new StringBuilder();
             var columnsLayout = fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
-            IGenerator generator = new DefaultGenerator(fileCompiler.CompilationResultsForProgram, destination, null, null);
+            IGenerator generator = new DefaultGenerator(fileCompiler.CompilationResultsForProgram, destination, null);
 
             // Codegen iterations.
             Console.WriteLine("FILE;ITERATION;STEP;TIME_TAKEN");

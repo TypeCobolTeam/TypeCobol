@@ -4,8 +4,6 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
-using Object = System.Object;
-using String = System.String;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -34,8 +32,8 @@ namespace TypeCobol.Compiler.CodeElements
 
         public bool Equals(DataType dataType)
         {
-            if (Object.ReferenceEquals(this, dataType)) return true;
-            if (Object.ReferenceEquals(null, dataType)) return false;
+            if (object.ReferenceEquals(this, dataType)) return true;
+            if (object.ReferenceEquals(null, dataType)) return false;
 
             return string.Equals(Name, dataType.Name, StringComparison.OrdinalIgnoreCase)
                    && RestrictionLevel.Equals(dataType.RestrictionLevel)
@@ -188,6 +186,7 @@ namespace TypeCobol.Compiler.CodeElements
                 typeDefinition.Add(CreateData(5, "YYYY", '9', 4, typeDefinition));
                 typeDefinition.Add(CreateData(5, "MM", '9', 2, typeDefinition));
                 typeDefinition.Add(CreateData(5, "DD", '9', 2, typeDefinition));
+                typeDefinition.SemanticData = Compiler.Symbols.Builtins.Date;
             }
             else if (type == DataType.Currency)
             {
@@ -202,10 +201,21 @@ namespace TypeCobol.Compiler.CodeElements
                 dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.PictureCharacterString, 38, 42, tokenLine));
                 dataTypeDescriptionEntry.ConsumedTokens.Add(new Token(TokenType.PeriodSeparator, 43, 43, tokenLine));
                 typeDefinition = new Nodes.TypeDefinition(dataTypeDescriptionEntry);
+                typeDefinition.SemanticData = Compiler.Symbols.Builtins.Currency;
             }
-            else // Boolean and String
+            else if (type == DataType.Boolean)
             {
                 typeDefinition = new Nodes.TypeDefinition(dataTypeDescriptionEntry);
+                typeDefinition.SemanticData = Compiler.Symbols.Builtins.Boolean;
+            }
+            else if (type == DataType.String)
+            {
+                typeDefinition = new Nodes.TypeDefinition(dataTypeDescriptionEntry);
+                typeDefinition.SemanticData = Compiler.Symbols.Builtins.String;
+            }
+            else
+            {
+                throw new NotSupportedException($"Unsupported built-in type '{type.Name}'.");
             }
             typeDefinition.SetFlag(Node.Flag.NodeIsIntrinsic, true); //Mark BuiltIn Type as Instrinsic
             return typeDefinition;
@@ -218,7 +228,8 @@ namespace TypeCobol.Compiler.CodeElements
                 Visibility = AccessModifier.Public,
                 LevelNumber = new GeneratedIntegerValue(1),
                 DataName = new SymbolDefinition(new GeneratedAlphanumericValue(type.Name), SymbolType.DataName),
-                DataType = type
+                DataType = type,
+                Strong = new SyntaxProperty<bool>(true, null)
             };
         }
 

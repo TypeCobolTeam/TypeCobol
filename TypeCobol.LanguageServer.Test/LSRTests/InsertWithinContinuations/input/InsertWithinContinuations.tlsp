@@ -1,0 +1,35 @@
+{
+  "name": "InsertWithinContinuations.tlsp",
+  "session": "C:\\Users\\MILLETFL\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2020_10_27_10_36_06_896\\TestSuite_2020_10_27_10_36_06_896.slsp",
+  "user": "MILLETFL",
+  "date": "2020/10/27 10:36:06 905",
+  "uri": "file:///C:/TypeCobol/LSRSessions/InsertWithinContinuations/InsertWithinContinuations.tlsp",
+  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\GitHub\\\\TypeCobol\\\\bin\\\\EI_Debug\",\"rootUri\":\"file:/C:/GitHub/TypeCobol/bin/EI_Debug/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"signatureHelp\":{\"dynamicRegistration\":true},\"references\":{\"dynamicRegistration\":true},\"documentHighlight\":{\"dynamicRegistration\":true},\"documentSymbol\":{\"dynamicRegistration\":true},\"formatting\":{\"dynamicRegistration\":true},\"rangeFormatting\":{\"dynamicRegistration\":true},\"onTypeFormatting\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true},\"codeAction\":{\"dynamicRegistration\":true},\"codeLens\":{\"dynamicRegistration\":true},\"documentLink\":{\"dynamicRegistration\":true},\"rename\":{\"dynamicRegistration\":true}}},\"trace\":\"off\"}}",
+  "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"experimental\":[{\"Item1\":\"version\",\"Item2\":\"0.1(alpha)\"}],\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
+  "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\GitHub\\\\TypeCobol\\\\bin\\\\EI_Debug\\\\TypeCobol.CLI.exe\",\"-1\",\"-e\",\"rdz\",\"-y\",\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\Intrinsic\\\\Intrinsic.txt\",\"-glm\",\"\\\"{6}\\\"\",\"--autoremarks\",\"--outputFormat\\u003dCobol85Mixed\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\Production\",\"-md\",\"200\",\"--dependencies\",\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\Dependencies\\\\*.tcbl\",\"--dependencies\",\"\\\\\\\\uf44-004\\\\TYPECOBOL-DEPENDENCIES\\\\Y530\\\\*.tcbl\"]}}",
+  "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT04639631886754489909.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZZMFT0.\\r\\n       data division.\\r\\n       working-storage section.\\r\\n      *add a continuation\\r\\n       01 var1 PIC X(120) VALUE \\\"text1-AAAAABBBBBCCCCCDDDDDEEEEEFFFFFGGG\\r\\n      -    \\\"GG-end1\\\".\\r\\n\\r\\n      *add a comment\\r\\n       01 var2 PIC X(120) VALUE \\\"text2-AAAAABBBBBCCCCCDDDDDEEEEEFFFFFGGG\\r\\n      -    \\\"GG-end2\\\".\\r\\n\\r\\n      *add a blank\\r\\n       01 var3 PIC X(120) VALUE \\\"text3-AAAAABBBBBCCCCCDDDDDEEEEEFFFFFGGG\\r\\n      -    \\\"GG-end3\\\".\\r\\n\\r\\n      *add a continuation blank\\r\\n       01 var4 PIC X(120) VALUE \\\"text4-AAAAABBBBBCCCCCDDDDDEEEEEFFFFFGGG\\r\\n      -    \\\"GG-end4\\\".\\r\\n       procedure division.\\r\\n           goback\\r\\n           .\\r\\n       end program DVZZMFT0.\"}}}",
+  "messages": [
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT04639631886754489909.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT04639631886754489909.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZZMFT0.\\r\\n       data division.\\r\\n       working-storage section.\\r\\n      *add a continuation\\r\\n       01 var1 PIC X(120) VALUE \\\"text1-AAAAABBBBBCCCCCDDDDDEEEEEFFFFFGGG\\r\\n      -    \\\"GG-end1\\\".\\r\\n\\r\\n      *add a comment\\r\\n       01 var2 PIC X(120) VALUE \\\"text2-AAAAABBBBBCCCCCDDDDDEEEEEFFFFFGGG\\r\\n      -    \\\"GG-end2\\\".\\r\\n\\r\\n      *add a blank\\r\\n       01 var3 PIC X(120) VALUE \\\"text3-AAAAABBBBBCCCCCDDDDDEEEEEFFFFFGGG\\r\\n      -    \\\"GG-end3\\\".\\r\\n\\r\\n      *add a continuation blank\\r\\n       01 var4 PIC X(120) VALUE \\\"text4-AAAAABBBBBCCCCCDDDDDEEEEEFFFFFGGG\\r\\n      -    \\\"GG-end4\\\".\\r\\n       procedure division.\\r\\n           goback\\r\\n           .\\r\\n       end program DVZZMFT0.\"}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT04639631886754489909.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT04639631886754489909.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT04639631886754489909.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":5,\"character\":72},\"end\":{\"line\":5,\"character\":72}},\"rangeLength\":0,\"text\":\"\\r\\n       \"}]}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT04639631886754489909.cee\",\"diagnostics\":[]}}"
+    }
+  ],
+  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT04639631886754489909.cee\"}}}",
+  "IsValid": true
+}

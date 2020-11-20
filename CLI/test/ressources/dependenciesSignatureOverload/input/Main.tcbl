@@ -1,0 +1,14 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGMTEST.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 alpha     pic X.
+       01 myVar     type DPDCY01::GroupType.
+       PROCEDURE DIVISION.
+       INIT-LIBRARY.
+           Continue.
+      *Must resolve dependency function acepting alphanumeric
+       call DPDCY01::FunTest input alpha.
+      *Must resolve dependency function acepting Type01
+       call DPDCY01::FunTest input myVar::subType.
+       end program PGMTEST.
