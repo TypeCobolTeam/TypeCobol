@@ -1,0 +1,2 @@
+ReturnCode=MissingCopy_
+No error in "input\MissingCopy.rdz.tcbl".

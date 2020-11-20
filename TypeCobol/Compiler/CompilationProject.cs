@@ -179,16 +179,17 @@ namespace TypeCobol.Compiler
         }
 
 
-        public virtual ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, string textName, out PerfStatsForImportedDocument perfStats)
+        public virtual ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, string textName, out List<CopyDirective> missingCopies, out PerfStatsForImportedDocument perfStats)
         {
-            return GetProcessedTokensDocument(libraryName, textName, null, null, out perfStats);
+            return GetProcessedTokensDocument(libraryName, textName, null, null, out missingCopies, out perfStats);
         }
 
         /// <summary>
         /// Returns a ProcessedTokensDocument already in cache or loads, scans and processes a new CompilationDocument
         /// </summary>
         public virtual ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, [NotNull] string textName,
-            [CanBeNull] MultilineScanState scanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, out PerfStatsForImportedDocument perfStats)
+            [CanBeNull] MultilineScanState scanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations,
+            out List<CopyDirective> missingCopies, out PerfStatsForImportedDocument perfStats)
         {
             string cacheKey = (libraryName == null ? SourceFileProvider.DEFAULT_LIBRARY_NAME : libraryName.ToUpper()) + "." + textName.ToUpper();
             if (scanState != null)
@@ -221,6 +222,8 @@ namespace TypeCobol.Compiler
 
                 importedCompilationDocumentsCache[cacheKey] = resultDocument;
             }
+
+            missingCopies = resultDocument.MissingCopies;
             return resultDocument.ProcessedTokensDocumentSnapshot;
         }
     }

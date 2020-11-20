@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
@@ -39,8 +40,9 @@ namespace TypeCobol.Test.Parser.Preprocessor
 
         public static string ProcessCompilerDirectives(string testName)
         {
+            List<CopyDirective> missingCopies;
             PerfStatsForImportedDocument perfStats;
-            ProcessedTokensDocument processedDoc = DirectivesProject.GetProcessedTokensDocument(null, testName, out perfStats);
+            ProcessedTokensDocument processedDoc = DirectivesProject.GetProcessedTokensDocument(null, testName, out missingCopies, out perfStats);
 
             StringBuilder sbResult = new StringBuilder();
             int lineNumber = 1;
@@ -135,8 +137,9 @@ namespace TypeCobol.Test.Parser.Preprocessor
 
         public static string ProcessCopyDirectives(string name)
         {
+            List<CopyDirective> missingCopies;
             PerfStatsForImportedDocument perfStats;
-            return ProcessTokensDocument(name, CopyProject.GetProcessedTokensDocument(null, name, out perfStats));
+            return ProcessTokensDocument(name, CopyProject.GetProcessedTokensDocument(null, name, out missingCopies, out perfStats));
         }
 
         public static void CheckWithCopyResultFile(string result, string testName)
@@ -148,8 +151,9 @@ namespace TypeCobol.Test.Parser.Preprocessor
 
         public static string ProcessReplaceDirectives(string name)
         {
+            List<CopyDirective> missingCopies;
             PerfStatsForImportedDocument perfStats;
-            return ProcessTokensDocument(name, ReplaceProject.GetProcessedTokensDocument(null, name, out perfStats));
+            return ProcessTokensDocument(name, ReplaceProject.GetProcessedTokensDocument(null, name, out missingCopies, out perfStats));
         }
 
         public static void CheckWithReplaceResultFile(string result, string testName)

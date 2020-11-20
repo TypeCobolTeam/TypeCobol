@@ -1,0 +1,1 @@
+﻿-i input\MissingCopy.rdz.tcbl -o output\MissingCopy.rdz.cbl -d output\error.txt -c input\Copies --exectostep=Preprocessor --haltonmissingcopy="output\MissingCopy.txt" -e rdz

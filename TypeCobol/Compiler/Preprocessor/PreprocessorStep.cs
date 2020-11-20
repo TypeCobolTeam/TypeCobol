@@ -288,6 +288,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     {
                         try
                         {
+                            List<CopyDirective> missingCopiesInCopy;
                             PerfStatsForImportedDocument perfStats;
 
                             // Load (or retrieve in cache) the document referenced by the COPY directive
@@ -295,7 +296,10 @@ namespace TypeCobol.Compiler.Preprocessor
                             ProcessedTokensDocument importedDocumentSource =
                                 processedTokensDocumentProvider.GetProcessedTokensDocument(copyDirective.LibraryName,
                                     copyDirective.TextName,
-                                    tokensLineWithCopyDirective.ScanStateBeforeCOPYToken[copyDirective.COPYToken], copyTextNameVariations, out perfStats);
+                                    tokensLineWithCopyDirective.ScanStateBeforeCOPYToken[copyDirective.COPYToken], copyTextNameVariations, out missingCopiesInCopy, out perfStats);
+
+                            // The copy has missing copies, so add them to the list
+                            foreach (var copyInstruction in missingCopiesInCopy) AddMissingCopy(copyInstruction);
 
                             // Store it on the current line after applying the REPLACING directive
                             ImportedTokensDocument importedDocument = new ImportedTokensDocument(copyDirective,
@@ -305,13 +309,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         }
                         catch (Exception e)
                         {
-                            if (missingCopies != null && copyDirective != null && copyDirective.COPYToken != null && !missingCopies.Contains(copyDirective)) //If list already contains the copy directive just ignore
-                            {
-                                var missingCopieToReplace =  missingCopies.FirstOrDefault(c => c.COPYToken.Line == copyDirective.COPYToken.Line);
-                                missingCopies.Remove(missingCopieToReplace);
-                                missingCopies.Add(copyDirective);
-                            }
-
+                            AddMissingCopy(copyDirective);
 
                             // Text name refenced by COPY directive was not found
                             // => register a preprocessor error on this line                            
@@ -327,6 +325,18 @@ namespace TypeCobol.Compiler.Preprocessor
                                 failedDirectiveToken.Line, e.Message, e);
 
                             tokensLineWithCopyDirective.AddDiagnostic(diag);
+                        }
+
+                        void AddMissingCopy(CopyDirective copyInstruction)
+                        {
+                            if (missingCopies != null
+                                && copyInstruction?.COPYToken != null
+                                && !missingCopies.Contains(copyInstruction)) //If list already contains the copy directive just ignore
+                            {
+                                var missingCopyToReplace = missingCopies.FirstOrDefault(c => c.COPYToken.Line == copyInstruction.COPYToken.Line);
+                                missingCopies.Remove(missingCopyToReplace);
+                                missingCopies.Add(copyInstruction);
+                            }
                         }
                     }
 
@@ -605,6 +615,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     {
                         try
                         {
+                            List<CopyDirective> missingCopiesInCopy;
                             PerfStatsForImportedDocument perfStats;
 
                             // Load (or retrieve in cache) the document referenced by the COPY directive
@@ -613,7 +624,12 @@ namespace TypeCobol.Compiler.Preprocessor
                                 processedTokensDocumentProvider.GetProcessedTokensDocument(copyDirective.LibraryName,
                                     copyDirective.TextName,
                                     tokensLineWithCopyDirective.ScanStateBeforeCOPYToken[copyDirective.COPYToken],
-                                    copyTextNameVariations, out perfStats);
+                                    copyTextNameVariations,
+                                    out missingCopiesInCopy,
+                                    out perfStats);
+
+                            // The copy has missing copies, so add them to the list
+                            foreach (var copyInstruction in missingCopiesInCopy) AddMissingCopy(copyInstruction);
 
                             // Store it on the current line after applying the REPLACING directive
                             ImportedTokensDocument importedDocument = new ImportedTokensDocument(copyDirective,
@@ -622,16 +638,8 @@ namespace TypeCobol.Compiler.Preprocessor
                         }
                         catch (Exception e)
                         {
-                            if (missingCopies != null && copyDirective != null && copyDirective.COPYToken != null &&
-                                !missingCopies.Contains(copyDirective))
-                                //If list already contains the copy directive just ignore
-                            {
-                                var missingCopieToReplace =
-                                    missingCopies.FirstOrDefault(c => c.COPYToken.Line == copyDirective.COPYToken.Line);
-                                missingCopies.Remove(missingCopieToReplace);
-                                missingCopies.Add(copyDirective);
-                            }
-
+                            // The copy itself is missing
+                            AddMissingCopy(copyDirective);
 
                             // Text name refenced by COPY directive was not found
                             // => register a preprocessor error on this line                            
@@ -647,6 +655,18 @@ namespace TypeCobol.Compiler.Preprocessor
                                 failedDirectiveToken.Line, e.Message, e);
 
                             tokensLineWithCopyDirective.AddDiagnostic(diag);
+                        }
+
+                        void AddMissingCopy(CopyDirective copyInstruction)
+                        {
+                            if (missingCopies != null
+                                && copyInstruction?.COPYToken != null
+                                && !missingCopies.Contains(copyInstruction)) //If list already contains the copy directive just ignore
+                            {
+                                var missingCopyToReplace = missingCopies.FirstOrDefault(c => c.COPYToken.Line == copyInstruction.COPYToken.Line);
+                                missingCopies.Remove(missingCopyToReplace);
+                                missingCopies.Add(copyInstruction);
+                            }
                         }
                     }
 
