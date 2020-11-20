@@ -1,0 +1,128 @@
+﻿digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{MAINLINE. Block1|}"
+]
+Block2 [
+label = "{Block2|    PERFORM A-STARTUP\l}"
+]
+subgraph cluster_1{
+color = blue;
+label = "A-STARTUP";
+Block25 [
+label = "{A-STARTUP. Block25|    OPEN INPUT USER-FILE\l}"
+]
+
+}
+Block2 -> Block25 [style=dashed]
+
+Block3 [
+label = "{Block3|}"
+]
+Block4 [
+label = "{Block4|    PERFORM B-PROCESS\l}"
+]
+subgraph cluster_2{
+color = blue;
+label = "B-PROCESS";
+Block26 [
+label = "{B-PROCESS. Block26|    READ USER-FILE\l}"
+]
+Block27 [
+label = "{Block27|        AT END\l           MOVE \"Y\" TO EOF-SEEN\l}"
+]
+Block28 [
+label = "{Block28|}"
+]
+Block29 [
+label = "{B-PROCESS. Block29|}"
+]
+Block41 [
+label = "{B-LOOP. Block41|    DISPLAY \"THE ID IS \" USER-ID\l}"
+]
+Block42 [
+label = "{B-LOOP. Block42|    DISPLAY \"THE NAME IS \" USER-NAME\l}"
+]
+Block43 [
+label = "{B-LOOP. Block43|    DISPLAY \" \"\l}"
+]
+Block44 [
+label = "{B-LOOP. Block44|    DISPLAY \"ENTER TO CONTINUE\"\l}"
+]
+Block45 [
+label = "{B-LOOP. Block45|    ACCEPT ANSWER\l}"
+]
+Block46 [
+label = "{B-LOOP. Block46|    READ USER-FILE\l}"
+]
+Block47 [
+label = "{Block47|        AT END\l           MOVE \"Y\" TO EOF-SEEN\l}"
+]
+Block48 [
+label = "{Block48|}"
+]
+Block30 [
+label = "{Block30|    PERFORM B-LOOP          WITH TEST AFTER UNTIL EOF-SEEN = \"Y\"\l}"
+]
+Block30 -> Block41 [style=dashed]
+
+Block31 [
+label = "{Block31|}"
+]
+
+}
+Block4 -> Block26 [style=dashed]
+
+Block5 [
+label = "{Block5|}"
+]
+Block6 [
+label = "{Block6|    PERFORM C-CLEANUP\l}"
+]
+subgraph cluster_3{
+color = blue;
+label = "C-CLEANUP";
+Block32 [
+label = "{C-CLEANUP. Block32|    CLOSE USER-FILE\l}"
+]
+
+}
+Block6 -> Block32 [style=dashed]
+
+Block7 [
+label = "{Block7|    GOBACK\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block2 -> Block3
+Block3 -> Block4
+Block26 -> Block27
+Block26 -> Block28
+Block27 -> Block28
+Block28 -> Block29
+Block29 -> Block41
+Block41 -> Block42
+Block42 -> Block43
+Block43 -> Block44
+Block44 -> Block45
+Block45 -> Block46
+Block46 -> Block47
+Block46 -> Block48
+Block47 -> Block48
+Block48 -> Block30
+Block30 -> Block31
+Block4 -> Block5
+Block5 -> Block6
+Block6 -> Block7
+
+}

@@ -1,0 +1,25 @@
+﻿digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{MAIN. Block1|    ALTER p1 TO PROCEED TO other-finish\l    ALTER p2 TO PROCEED TO other-finish\l    ALTER p3 TO PROCEED TO other-finish\l    ALTER p4 TO PROCEED TO other-finish\l    ALTER p5 TO PROCEED TO other-finish\l}"
+]
+Block2 [
+label = "{P1. Block2|    GO TO p2\l}"
+]
+Block10 [
+label = "{OTHER-FINISH. Block10|    DISPLAY 'other'\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block2 -> Block10
+
+}
