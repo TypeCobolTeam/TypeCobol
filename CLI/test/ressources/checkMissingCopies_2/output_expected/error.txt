@@ -1,2 +1,4 @@
 ReturnCode=MissingCopy_
-No error in "input\MissingCopy.rdz.tcbl".
+2 errors in "input\MissingCopy.rdz.tcbl":
+Line 5[8,18] <46, Error, Directives> - Dependent COPY COPY3 not found
+Line 5[8,18] <46, Error, Directives> - Dependent COPY COPY4 not found

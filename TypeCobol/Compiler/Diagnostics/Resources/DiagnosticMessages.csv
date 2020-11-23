@@ -43,4 +43,5 @@ Category;Code;Severity;MessageTemplate;Document;PageNumber;ReferenceText
 2;42;1;Multilines comment marckups should start on column 7;0;0;Page
 5;43;1;Formalized Comment misplaced;0;0;Page
 5;44;1;Invalid use of '%'. Should be used with "%<< ... (linebreak) %>>" for MultiLine Comment or "%<<< ... (linebreak) %>>>" for Formalized Comment;0;0;Page
-7;37;2;Info: {0};0;0;
+7;45;2;Info: {0};0;0;
+3;46;1;Dependent COPY {0} not found;1;531;text-name identifies the copy text. library-name identifies where the copy text exists
