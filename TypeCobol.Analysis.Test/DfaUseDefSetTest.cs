@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler.Symbols;
 using System.IO;
-using TypeCobol.Analysis.Dfa;
 using TypeCobol.Compiler.CodeElements.Expressions;
 
 using static TypeCobol.Analysis.Test.CfgTestUtils;
@@ -68,12 +67,10 @@ namespace TypeCobol.Analysis.Test
         public void USE_DEF_SET_SampleGotos0()
         {
             string path = Path.Combine(BasicDfaSamples, "SampleGotos0.cbl");
-            var cfg = ParseCompareDiagnosticsForDfa(path);
-            Assert.IsTrue(cfg.Count == 1);
+            var dfaResults = ParseCompareDiagnosticsWithDfa(path);
+            Assert.IsTrue(dfaResults.Graphs.Count == 1);
 
-            DefaultDataFlowGraphBuilder dfaBuilder = new DefaultDataFlowGraphBuilder(cfg[0]);
-            dfaBuilder.ComputeUseDefSet();
-
+            var cfg = dfaResults.Graphs[0];
             //------------------------------------
             // All definitions
             // d(0) : MOVE 2 TO I
@@ -86,7 +83,7 @@ namespace TypeCobol.Analysis.Test
 
             //Resolve variable I
             QualifiedName qi = new URI("I");
-            var namesI = cfg[0].ProcedureDivisionNode.SymbolTable.GetVariablesExplicitWithQualifiedName(qi);
+            var namesI = cfg.ProcedureDivisionNode.SymbolTable.GetVariablesExplicitWithQualifiedName(qi);
             Assert.AreEqual(1, namesI.Count);
             Assert.IsNotNull(namesI[0]);
             Assert.IsNotNull(namesI[0].Value);
@@ -96,7 +93,7 @@ namespace TypeCobol.Analysis.Test
 
             //Resolve variable J
             QualifiedName qj = new URI("J");
-            var namesJ = cfg[0].ProcedureDivisionNode.SymbolTable.GetVariablesExplicitWithQualifiedName(qj);
+            var namesJ = cfg.ProcedureDivisionNode.SymbolTable.GetVariablesExplicitWithQualifiedName(qj);
             Assert.AreEqual(1, namesJ.Count);
             Assert.IsNotNull(namesJ[0]);
             Assert.IsNotNull(namesJ[0].Value);
@@ -104,35 +101,36 @@ namespace TypeCobol.Analysis.Test
             Assert.IsTrue(namesJ[0].Value.SemanticData is VariableSymbol);
             var J = (VariableSymbol) namesJ[0].Value.SemanticData;
 
+            var variableDefMap = dfaResults.GetVariableDefMap(cfg);
             //Check Var I definitions
-            Assert.AreEqual("{0, 3}", dfaBuilder.VariableDefMap[I].ToString());
-
+            Assert.AreEqual("{0, 3}", variableDefMap[I].ToString());
             //Check Var J definitions
-            Assert.AreEqual("{1, 2, 4, 5}", dfaBuilder.VariableDefMap[J].ToString());
+            Assert.AreEqual("{1, 2, 4, 5}", variableDefMap[J].ToString());
 
+            var useList = dfaResults.GetUseList(cfg);
             //--------------------------
             // VAR : I
             // Block(1)
             //--------------------------
-            Assert.AreEqual(1, dfaBuilder.UseList[0].BlockIndex);
-            Assert.AreEqual(I, dfaBuilder.UseList[0].Variable);
-            Assert.AreEqual("{0}", dfaBuilder.UseList[0].UseDef.ToString());
+            Assert.AreEqual(1, useList[0].BlockIndex);
+            Assert.AreEqual(I, useList[0].Variable);
+            Assert.AreEqual("{0}", useList[0].UseDef.ToString());
 
             //--------------------------
             // VAR : J
             // Block(2)
             //--------------------------
-            Assert.AreEqual(2, dfaBuilder.UseList[1].BlockIndex);
-            Assert.AreEqual(J, dfaBuilder.UseList[1].Variable);
-            Assert.AreEqual("{2, 4, 5}", dfaBuilder.UseList[1].UseDef.ToString());
+            Assert.AreEqual(2, useList[1].BlockIndex);
+            Assert.AreEqual(J, useList[1].Variable);
+            Assert.AreEqual("{2, 4, 5}", useList[1].UseDef.ToString());
 
             //--------------------------
             // VAR : J
             // Block(6)
             //--------------------------
-            Assert.AreEqual(6, dfaBuilder.UseList[2].BlockIndex);
-            Assert.AreEqual(J, dfaBuilder.UseList[2].Variable);
-            Assert.AreEqual("{4}", dfaBuilder.UseList[2].UseDef.ToString());
+            Assert.AreEqual(6, useList[2].BlockIndex);
+            Assert.AreEqual(J, useList[2].Variable);
+            Assert.AreEqual("{4}", useList[2].UseDef.ToString());
         }
     }
 }

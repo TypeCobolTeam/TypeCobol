@@ -56,15 +56,33 @@ namespace TypeCobol.Analysis.Test
         }
 
         /// <summary>
-        /// Perform parsing of the supplied Cobol or TypeCobol source file and build CFGs to be built for a DFA analysis.
+        /// Perform parsing of the supplied Cobol or TypeCobol source file and build CFGs and DFA results.
         /// </summary>
         /// <param name="sourceFilePath">Full path to the source file.</param>
         /// <param name="expectedDiagnosticsFilePath">Full path to the diagnostic file, pass null to skip
         /// diagnostic comparison</param>
-        /// <returns>List of CFG built for the source file.</returns>
-        public static IList<ControlFlowGraph<Node, DfaBasicBlockInfo<VariableSymbol>>> ParseCompareDiagnosticsForDfa(string sourceFilePath, string expectedDiagnosticsFilePath = null)
+        /// <param name="expectedLivenessFilePath">Full path to a variable liveness CSV result file, pass null to skip comparison</param>
+        /// <param name="expectedUseDefsFilePath">Full path to a use-def CSV result file, pass null to skip comparison</param>
+        /// <returns>An instance of <see cref="DfaTestResults" /> containing all graphs and DFA results.</returns>
+        public static DfaTestResults ParseCompareDiagnosticsWithDfa(string sourceFilePath,
+            string expectedDiagnosticsFilePath = null,
+            string expectedLivenessFilePath = null,
+            string expectedUseDefsFilePath = null)
         {
-            return ParseCompareDiagnostics<DfaBasicBlockInfo<VariableSymbol>>(sourceFilePath, CfgBuildingMode.WithDfa, expectedDiagnosticsFilePath);
+            var graphs = ParseCompareDiagnostics<DfaBasicBlockInfo<VariableSymbol>>(sourceFilePath, CfgBuildingMode.WithDfa, expectedDiagnosticsFilePath);
+            var results = new DfaTestResults(graphs);
+
+            if (expectedLivenessFilePath !=  null)
+            {
+                //TODO Perform liveness sets comparison
+            }
+
+            if (expectedUseDefsFilePath != null)
+            {
+                //TODO Perform use-def sets comparison
+            }
+
+            return results;
         }
 
         /// <summary>
@@ -75,9 +93,10 @@ namespace TypeCobol.Analysis.Test
         /// <param name="expectedDiagnosticsFilePath">Full path to the diagnostic file, pass null to skip
         /// diagnostic comparison</param>
         /// <returns>List of CFG built for the source file.</returns>
-        public static IList<ControlFlowGraph<Node, object>> ParseCompareDiagnostics(string sourceFilePath, string expectedDiagnosticsFilePath = null)
+        public static CfgTestResults<object> ParseCompareDiagnosticsCfgOnly(string sourceFilePath, string expectedDiagnosticsFilePath = null)
         {
-            return ParseCompareDiagnostics<object>(sourceFilePath, CfgBuildingMode.Standard, expectedDiagnosticsFilePath);
+            var graphs = ParseCompareDiagnostics<object>(sourceFilePath, CfgBuildingMode.Standard, expectedDiagnosticsFilePath);
+            return new CfgTestResults<object>(graphs);
         }
 
         /// <summary>

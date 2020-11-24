@@ -1,7 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
 using System.IO;
+using TypeCobol.Analysis.Dfa;
 using TypeCobol.Analysis.Report;
+using TypeCobol.Compiler.Symbols;
 
 using static TypeCobol.Analysis.Test.CfgTestUtils;
 
@@ -17,7 +19,7 @@ namespace TypeCobol.Analysis.Test
         public void InBulkCallPgmReportTest()
         {
             string path = Path.Combine(CfgTestUtils.Report, "InBulkCallPgm.cbl");
-            var cfgs = ParseCompareDiagnosticsForDfa(path);
+            var cfgs = ParseCompareDiagnostics<DfaBasicBlockInfo<VariableSymbol>>(path, CfgBuildingMode.WithDfa);
             Assert.IsTrue(cfgs.Count == 1);
 
             //Create the report file.
@@ -37,7 +39,7 @@ namespace TypeCobol.Analysis.Test
         public void InBulkCallPgm88SetReportTest()
         {
             string path = Path.Combine(CfgTestUtils.Report, "InBulkCallPgm88Set.cbl");
-            var cfgs = ParseCompareDiagnosticsForDfa(path);
+            var cfgs = ParseCompareDiagnostics<DfaBasicBlockInfo<VariableSymbol>>(path, CfgBuildingMode.WithDfa);
             Assert.IsTrue(cfgs.Count == 1);
 
             //Create the report file.
