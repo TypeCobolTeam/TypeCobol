@@ -41,10 +41,26 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\TypeCobol.Analysis.Test\Report\InBulkCallPgm.cbl">
+      <Link>ressources\zcallpgmreportdfa_1\input\InBulkCallPgm.cbl</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\TypeCobol.Analysis.Test\Report\InBulkCallPgm.csv">
+      <Link>ressources\zcallpgmreportdfa_1\output_expected\InBulkCallPgm.csv</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\TypeCobol.Analysis.Test\Report\InBulkCallPgm88Set.cbl">
+      <Link>ressources\zcallpgmreportdfa_2\input\InBulkCallPgm88Set.cbl</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\TypeCobol.Analysis.Test\Report\InBulkCallPgm88Set.csv">
+      <Link>ressources\zcallpgmreportdfa_2\output_expected\InBulkCallPgm88Set.csv</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="ressources\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
+  </ItemGroup>  
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

@@ -1,1 +1,1 @@
--i input\InBulkCallPgm.cbl -cfg WithDfa -zcr=output\InBulkCallPgm.csv --exectostep=CrossCheck
+-i input\InBulkCallPgm.cbl -zcr=output\InBulkCallPgm.csv --exectostep=CrossCheck

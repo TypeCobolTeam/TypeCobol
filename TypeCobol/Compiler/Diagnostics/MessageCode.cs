@@ -52,7 +52,6 @@ namespace TypeCobol.Compiler.Diagnostics
         WrongMultilineCommentMarckupPosition = 42,
         ErrorFormalizedCommentMissplaced = 43,
         MultiFormalizedCommentIndicatorMisused = 44,
-        ControlFlowGraphDiagnostic = 45,
-        Info = 46
+        Info = 45
     }
 }

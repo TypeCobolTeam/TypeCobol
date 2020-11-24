@@ -40,6 +40,8 @@
            evaluate true
            when "1" = "1"
                 continue
+           when other
+                continue
            end-evaluate.
            EXIT.
       

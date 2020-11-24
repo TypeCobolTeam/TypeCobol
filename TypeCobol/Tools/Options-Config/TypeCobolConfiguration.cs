@@ -246,7 +246,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
                 { "diag.cea|diagnostic.checkEndAlignment=", "Indicate level of check end aligment: warning, error, info, ignore.", v => typeCobolConfig.CheckEndAlignment = TypeCobolCheckOption.Parse(v) },
                 { "log|logfilepath=", "{PATH} to TypeCobol.CLI.log log file", v => typeCobolConfig.LogFile = Path.Combine(v, TypeCobolConfiguration.DefaultLogFileName)},
-                { "cfg|cfgbuildingmode=", "CFG building mode to allow advanced code analysis (None/0: do not build any Control Flow Graph, Standard/1: build standard Control Flow Graph, Extended/2: same as Standard but with PERFORM targets extended, WithDfa/3: include Data Flow Analysis).", v => typeCobolConfig.RawCfgBuildingMode = v},
+                { "cfg|cfgbuild", "Standard CFG build.", v => typeCobolConfig.RawCfgBuildingMode = CfgBuildingMode.Standard.ToString()},
             };
             return commonOptions;
         }

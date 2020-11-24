@@ -45,6 +45,8 @@
         evaluate true
             when "1" = "1"
                 continue
+            when other
+                continue
         end-evaluate.
         EXIT.
        CHANGEPGM1.
@@ -59,5 +61,7 @@
        CHANGETMP3.
            MOVE 'PGMTMP3' TO PGM_NAME_TMP
            .
-           END PROGRAM ProcCall.
+       END PROGRAM ProcCall.
+      
+      
       
