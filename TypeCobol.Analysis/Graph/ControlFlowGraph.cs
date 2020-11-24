@@ -224,6 +224,17 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
+        /// Clear previous analysis data for all blocks.
+        /// </summary>
+        public void ResetAllBlockData()
+        {
+            foreach (var block in AllBlocks)
+            {
+                block.Data = default;
+            }
+        }
+
+        /// <summary>
         /// DFS Depth First Search implementation
         /// </summary>
         /// <param name="block">The current block</param>
