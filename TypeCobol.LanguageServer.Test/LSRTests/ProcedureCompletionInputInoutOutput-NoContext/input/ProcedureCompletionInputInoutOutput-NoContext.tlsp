@@ -1,125 +1,65 @@
 {
   "name": "ProcedureCompletionInputInoutOutput-NoContext.tlsp",
-  "session": "C:\\Users\\SMEDILOL\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2018_08_14_18_37_21_218\\TestSuite_2018_08_14_18_37_21_218.slsp",
-  "user": "SMEDILOL",
-  "date": "2018/08/14 18:37:21 233",
-  "uri": "file:///C:/Users/SMEDILOL/workspaces/TypeCobol/TypeCobol.LanguageServer.Test/LSRTests/ProcedureCompletionInputInoutOutput/input/ProcedureCompletionInputInoutOutput-NoContext.tlsp",
-  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\Users\\\\SMEDILOL\\\\workspaces\\\\TypeCobol\\\\bin\\\\EI_Release\",\"rootUri\":\"file:/C:/Users/SMEDILOL/workspaces/TypeCobol/bin/EI_Release/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"signatureHelp\":{\"dynamicRegistration\":true},\"references\":{\"dynamicRegistration\":true},\"documentHighlight\":{\"dynamicRegistration\":true},\"documentSymbol\":{\"dynamicRegistration\":true},\"formatting\":{\"dynamicRegistration\":true},\"rangeFormatting\":{\"dynamicRegistration\":true},\"onTypeFormatting\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true},\"codeAction\":{\"dynamicRegistration\":true},\"codeLens\":{\"dynamicRegistration\":true},\"documentLink\":{\"dynamicRegistration\":true},\"rename\":{\"dynamicRegistration\":true}}},\"trace\":\"off\"}}",
-  "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
-  "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\Users\\\\SMEDILOL\\\\workspaces\\\\TypeCobol\\\\bin\\\\EI_Release\\\\TypeCobol.CLI.exe\",\"-1\",\"-s\",\"C:\\\\TypeCobol\\\\Sources\\\\##Latest_Release##\\\\skeletons.xml\",\"-e\",\"rdz\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\",\"-y\",\"C:\\\\TypeCobol\\\\Sources\\\\##Latest_Release##\\\\Intrinsic\\\\Intrinsic.txt\",\"-t\",\"--autoremarks\",\"-md\",\"30\"]}}",
-  "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZF0OSM.\\r\\n       data division.\\r\\n       working-storage section.\\r\\n       01 Person.\\r\\n           05 FirstName   pic X(10).\\r\\n           05 LastName    pic X(10).\\r\\n           05 MiddleName  pic X(10).\\r\\n           05 Gender      pic X.\\r\\n           05 BirthDate   TYPE DATE.\\r\\n           05 Height      pic X(10).\\r\\n\\r\\n       01 MyDate type Date.\\r\\n\\r\\n       procedure division.\\r\\n           call AProcedureTest INPUT Person::FirstName\\r\\n                               IN-OUT Person::BirthDate\\r\\n                               OUTPUT Person::Gender Person::Height\\r\\n           call AProcedureTest INPUT Person::FirstName Person::LastName\\r\\n                               OUTPUT Person::Gender Person::Height\\r\\n           .\\r\\n       declare procedure AProcedureTest private\\r\\n              input  FirstName    PIC X(10)\\r\\n              in-out BirthDate    TYPE DATE\\r\\n              output Gender       PIC X\\r\\n                     Height       PIC X(10).\\r\\n\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  FirstName    PIC X(10)\\r\\n                     LastName     PIC X(10)\\r\\n              output Gender       PIC X\\r\\n                     Height       PIC X(10).\\r\\n\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  FirstName    PIC X(10)\\r\\n                     LastName     PIC X(10)\\r\\n                     MiddleName   PIC X(10)\\r\\n              in-out BirthDate    TYPE DATE\\r\\n              output Gender       PIC X\\r\\n                     Height       PIC X(10).\\r\\n\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  FirstName     PIC X(10)\\r\\n                     LastName      PIC X(10)\\r\\n                     MiddleName    PIC X(10)\\r\\n                     ImaginaryName PIC X(10)\\r\\n              output Gender        PIC X\\r\\n                     Height        PIC X(10).\\r\\n\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure NoContext private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       in-out param3 type Date\\r\\n              param4 type date\\r\\n       output param5 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContext private\\r\\n       input  param1 type date\\r\\n       in-out param2 type Date\\r\\n              param3 type Date\\r\\n       output param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n           call NoContext input MyDate Person::BirthDate\\r\\n                          IN-OUT MyDate MyDate\\r\\n                          OUTPUT  MyDate\\r\\n\\r\\n           .\\r\\n       declare procedure NoContextAndWithoutInOut private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       output param3 type Date\\r\\n              param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContextAndWithoutInOut private\\r\\n       input  param1 type date\\r\\n       output param2 type Date\\r\\n              param3 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n           call NoContextAndWithoutInOut input MyDate MyDate\\r\\n                                         OUTPUT MyDate MyDate\\r\\n           .\\r\\n\\r\\n\\r\\n       declare procedure NoContextWithoutOutput private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       in-out param3 type Date\\r\\n              param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContextWithoutOutput private\\r\\n       input  param1 type date\\r\\n       in-out param2 type Date\\r\\n              param3 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n           call NoContextWithoutOutput input MyDate MyDate\\r\\n                                       IN-OUT MyDate MyDate\\r\\n           .\\r\\n       END PROGRAM DVZF0OSM.\"}}}",
+  "session": "C:\\Users\\MILLETFL\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2020_03_04_15_01_12_975\\TestSuite_2020_03_04_15_01_12_975.slsp",
+  "user": "MILLETFL",
+  "date": "2020/03/04 15:01:12 989",
+  "uri": "file:///C:/Users/MILLETFL/Downloads/LSRtemp/ProcedureCompletionInputInoutOutput-NoContext.tlsp",
+  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\GIT\\\\TypeCobol\\\\bin\\\\EI_Debug\",\"rootUri\":\"file:/C:/GIT/TypeCobol/bin/EI_Debug/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"signatureHelp\":{\"dynamicRegistration\":true},\"references\":{\"dynamicRegistration\":true},\"documentHighlight\":{\"dynamicRegistration\":true},\"documentSymbol\":{\"dynamicRegistration\":true},\"formatting\":{\"dynamicRegistration\":true},\"rangeFormatting\":{\"dynamicRegistration\":true},\"onTypeFormatting\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true},\"codeAction\":{\"dynamicRegistration\":true},\"codeLens\":{\"dynamicRegistration\":true},\"documentLink\":{\"dynamicRegistration\":true},\"rename\":{\"dynamicRegistration\":true}}},\"trace\":\"off\"}}",
+  "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"experimental\":[{\"Item1\":\"version\",\"Item2\":\"v1.4.0.7\"}],\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
+  "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\GIT\\\\TypeCobol\\\\bin\\\\EI_Debug\\\\TypeCobol.CLI.exe\",\"-1\",\"-e\",\"rdz\",\"-y\",\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\Intrinsic\\\\Intrinsic.txt\",\"-glm\",\"\\\"{6}\\\"\",\"--autoremarks\",\"--outputFormat\\u003dCobol85Mixed\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\Production\",\"-md\",\"200\"]}}",
+  "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZZMFT1.\\r\\n       data division.\\r\\n       working-storage section.\\r\\n       01 Person.\\r\\n           05 FirstName   pic X(10).\\r\\n           05 LastName    pic X(10).\\r\\n           05 MiddleName  pic X(10).\\r\\n           05 Gender      pic X.\\r\\n           05 BirthDate   TYPE DATE.\\r\\n           05 Height      pic X(10).\\r\\n\\r\\n       01 MyDate type Date.\\r\\n\\r\\n       procedure division.\\r\\n\\r\\n           .\\r\\n\\r\\n       declare procedure NoContext private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       in-out param3 type Date\\r\\n              param4 type date\\r\\n       output param5 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContext private\\r\\n       input  param1 type date\\r\\n       in-out param2 type Date\\r\\n              param3 type Date\\r\\n       output param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n\\r\\n           .\\r\\n       declare procedure NoContextAndWithoutInOut private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       output param3 type Date\\r\\n              param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContextAndWithoutInOut private\\r\\n       input  param1 type date\\r\\n       output param2 type Date\\r\\n              param3 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n\\r\\n           .\\r\\n       declare procedure NoContextWithoutOutput private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       in-out param3 type Date\\r\\n              param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContextWithoutOutput private\\r\\n       input  param1 type date\\r\\n       in-out param2 type Date\\r\\n              param3 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n\\r\\n           .\\r\\n       END PROGRAM DVZZMFT1.\"}}}",
   "messages": [
     {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZF0OSM.\\r\\n       data division.\\r\\n       working-storage section.\\r\\n       01 Person.\\r\\n           05 FirstName   pic X(10).\\r\\n           05 LastName    pic X(10).\\r\\n           05 MiddleName  pic X(10).\\r\\n           05 Gender      pic X.\\r\\n           05 BirthDate   TYPE DATE.\\r\\n           05 Height      pic X(10).\\r\\n\\r\\n       01 MyDate type Date.\\r\\n\\r\\n       procedure division.\\r\\n\\r\\n           .\\r\\n       declare procedure AProcedureTest private\\r\\n              input  FirstName    PIC X(10)\\r\\n              in-out BirthDate    TYPE DATE\\r\\n              output Gender       PIC X\\r\\n                     Height       PIC X(10).\\r\\n\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  FirstName    PIC X(10)\\r\\n                     LastName     PIC X(10)\\r\\n              output Gender       PIC X\\r\\n                     Height       PIC X(10).\\r\\n\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  FirstName    PIC X(10)\\r\\n                     LastName     PIC X(10)\\r\\n                     MiddleName   PIC X(10)\\r\\n              in-out BirthDate    TYPE DATE\\r\\n              output Gender       PIC X\\r\\n                     Height       PIC X(10).\\r\\n\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  FirstName     PIC X(10)\\r\\n                     LastName      PIC X(10)\\r\\n                     MiddleName    PIC X(10)\\r\\n                     ImaginaryName PIC X(10)\\r\\n              output Gender        PIC X\\r\\n                     Height        PIC X(10).\\r\\n\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure NoContext private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       in-out param3 type Date\\r\\n              param4 type date\\r\\n       output param5 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContext private\\r\\n       input  param1 type date\\r\\n       in-out param2 type Date\\r\\n              param3 type Date\\r\\n       output param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n\\r\\n\\r\\n           .\\r\\n       declare procedure NoContextAndWithoutInOut private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       output param3 type Date\\r\\n              param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContextAndWithoutInOut private\\r\\n       input  param1 type date\\r\\n       output param2 type Date\\r\\n              param3 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n\\r\\n           .\\r\\n\\r\\n\\r\\n       declare procedure NoContextWithoutOutput private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       in-out param3 type Date\\r\\n              param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContextWithoutOutput private\\r\\n       input  param1 type date\\r\\n       in-out param2 type Date\\r\\n              param3 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n\\r\\n           .\\r\\n       END PROGRAM DVZF0OSM.\"}}"
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":0},\"end\":{\"line\":68,\"character\":0}},\"rangeLength\":0,\"text\":\"       \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":7},\"end\":{\"line\":68,\"character\":7}},\"rangeLength\":0,\"text\":\"    \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":11},\"end\":{\"line\":68,\"character\":11}},\"rangeLength\":0,\"text\":\"c\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":12},\"end\":{\"line\":68,\"character\":12}},\"rangeLength\":0,\"text\":\"a\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":13},\"end\":{\"line\":68,\"character\":13}},\"rangeLength\":0,\"text\":\"l\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZZMFT1.\\r\\n       data division.\\r\\n       working-storage section.\\r\\n       01 Person.\\r\\n           05 FirstName   pic X(10).\\r\\n           05 LastName    pic X(10).\\r\\n           05 MiddleName  pic X(10).\\r\\n           05 Gender      pic X.\\r\\n           05 BirthDate   TYPE DATE.\\r\\n           05 Height      pic X(10).\\r\\n\\r\\n       01 MyDate type Date.\\r\\n\\r\\n       procedure division.\\r\\n\\r\\n           .\\r\\n\\r\\n       declare procedure NoContext private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       in-out param3 type Date\\r\\n              param4 type date\\r\\n       output param5 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContext private\\r\\n       input  param1 type date\\r\\n       in-out param2 type Date\\r\\n              param3 type Date\\r\\n       output param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n\\r\\n           .\\r\\n       declare procedure NoContextAndWithoutInOut private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       output param3 type Date\\r\\n              param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContextAndWithoutInOut private\\r\\n       input  param1 type date\\r\\n       output param2 type Date\\r\\n              param3 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n\\r\\n           .\\r\\n       declare procedure NoContextWithoutOutput private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       in-out param3 type Date\\r\\n              param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContextWithoutOutput private\\r\\n       input  param1 type date\\r\\n       in-out param2 type Date\\r\\n              param3 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n\\r\\n           .\\r\\n       END PROGRAM DVZZMFT1.\"}}"
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":33,\"character\":0},\"end\":{\"line\":33,\"character\":0}},\"rangeLength\":0,\"text\":\"           call NoContext\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":33,\"character\":25},\"end\":{\"line\":33,\"character\":25}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":33,\"character\":26},\"end\":{\"line\":33,\"character\":26}},\"rangeLength\":0,\"text\":\"i\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":33,\"character\":27},\"end\":{\"line\":33,\"character\":27}},\"rangeLength\":0,\"text\":\"n\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":33,\"character\":28},\"end\":{\"line\":33,\"character\":28}},\"rangeLength\":0,\"text\":\"p\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":33,\"character\":29},\"end\":{\"line\":33,\"character\":29}},\"rangeLength\":0,\"text\":\"u\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":33,\"character\":30},\"end\":{\"line\":33,\"character\":30}},\"rangeLength\":0,\"text\":\"t\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":33,\"character\":31},\"end\":{\"line\":33,\"character\":31}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"}}}"
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":14},\"end\":{\"line\":68,\"character\":14}},\"rangeLength\":0,\"text\":\"l\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":15},\"end\":{\"line\":68,\"character\":15}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":16},\"end\":{\"line\":68,\"character\":16}},\"rangeLength\":0,\"text\":\"N\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":17},\"end\":{\"line\":68,\"character\":17}},\"rangeLength\":0,\"text\":\"o\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":18},\"end\":{\"line\":68,\"character\":18}},\"rangeLength\":0,\"text\":\"C\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":19},\"end\":{\"line\":68,\"character\":19}},\"rangeLength\":0,\"text\":\"o\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":20},\"end\":{\"line\":68,\"character\":20}},\"rangeLength\":0,\"text\":\"n\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":21},\"end\":{\"line\":68,\"character\":21}},\"rangeLength\":0,\"text\":\"t\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":22},\"end\":{\"line\":68,\"character\":22}},\"rangeLength\":0,\"text\":\"e\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":23},\"end\":{\"line\":68,\"character\":23}},\"rangeLength\":0,\"text\":\"x\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":24},\"end\":{\"line\":68,\"character\":24}},\"rangeLength\":0,\"text\":\"t\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":25},\"end\":{\"line\":68,\"character\":25}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":26},\"end\":{\"line\":68,\"character\":26}},\"rangeLength\":0,\"text\":\"i\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":27},\"end\":{\"line\":68,\"character\":27}},\"rangeLength\":0,\"text\":\"n\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":28},\"end\":{\"line\":68,\"character\":28}},\"rangeLength\":0,\"text\":\"p\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":29},\"end\":{\"line\":68,\"character\":29}},\"rangeLength\":0,\"text\":\"u\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":30},\"end\":{\"line\":68,\"character\":30}},\"rangeLength\":0,\"text\":\"t\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":31},\"end\":{\"line\":68,\"character\":31}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
-    },
-    {
-      "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":71,\"character\":12},\"end\":{\"line\":71,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '<end of file>'\"},{\"range\":{\"start\":{\"line\":69,\"character\":12},\"end\":{\"line\":69,\"character\":31}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' \"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":35,\"character\":12},\"end\":{\"line\":35,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":34,\"character\":12},\"end\":{\"line\":34,\"character\":31}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext(no arguments)'\"}]}}"
     },
     {
       "category": 2,
@@ -127,23 +67,27 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"position\":{\"line\":68,\"character\":32}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":33,\"character\":32}}}"
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate IN-OUT \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate IN-OUT \"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":32},\"end\":{\"line\":68,\"character\":32}},\"rangeLength\":0,\"text\":\"MyDate\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":33,\"character\":32},\"end\":{\"line\":33,\"character\":32}},\"rangeLength\":0,\"text\":\"MyDate\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":33,\"character\":38},\"end\":{\"line\":33,\"character\":38}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"}}}"
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":69,\"character\":12},\"end\":{\"line\":69,\"character\":38}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":34,\"character\":12},\"end\":{\"line\":34,\"character\":38}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -151,47 +95,51 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":38},\"end\":{\"line\":68,\"character\":38}},\"rangeLength\":0,\"text\":\" \"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":33,\"character\":39}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\\n                          in-out \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\\n                          in-out \"}]}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":33,\"character\":39},\"end\":{\"line\":33,\"character\":39}},\"rangeLength\":0,\"text\":\"MyDate\\n                          in-out \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"}}}"
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":69,\"character\":12},\"end\":{\"line\":69,\"character\":38}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":36,\"character\":12},\"end\":{\"line\":36,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":34,\"character\":12},\"end\":{\"line\":34,\"character\":32}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE, DATE)\"}]}}"
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":true}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":true}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"position\":{\"line\":68,\"character\":39}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":34,\"character\":33}}}"
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":68,\"character\":39},\"end\":{\"line\":68,\"character\":39}},\"rangeLength\":0,\"text\":\"MyDate\\n                          IN-OUT \"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":34,\"character\":33},\"end\":{\"line\":34,\"character\":33}},\"rangeLength\":0,\"text\":\"MyDate\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":34,\"character\":39},\"end\":{\"line\":34,\"character\":39}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"}}}"
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":72,\"character\":12},\"end\":{\"line\":72,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '<end of file>'\"},{\"range\":{\"start\":{\"line\":69,\"character\":12},\"end\":{\"line\":69,\"character\":32}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE, DATE)\"}]}}"
-    },
-    {
-      "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":true}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":34,\"character\":12},\"end\":{\"line\":34,\"character\":39}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE, DATE) in-out(DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -199,27 +147,23 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"position\":{\"line\":69,\"character\":33}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":34,\"character\":40}}}"
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\\n                          output \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\\n                          output \"}]}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":69,\"character\":33},\"end\":{\"line\":69,\"character\":33}},\"rangeLength\":0,\"text\":\"MyDate\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":34,\"character\":40},\"end\":{\"line\":34,\"character\":40}},\"rangeLength\":0,\"text\":\"MyDate\\n                          output \"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":69,\"character\":39},\"end\":{\"line\":69,\"character\":39}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"9\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"9\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"}}}"
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":69,\"character\":12},\"end\":{\"line\":69,\"character\":39}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE, DATE) in-out(DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":37,\"character\":12},\"end\":{\"line\":37,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":34,\"character\":12},\"end\":{\"line\":34,\"character\":32}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE, DATE) in-out(DATE, DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -227,131 +171,115 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":35,\"character\":33}}}"
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"result\":true}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"position\":{\"line\":69,\"character\":40}}}"
-    },
-    {
-      "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate OUTPUT \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate OUTPUT \"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":35,\"character\":33},\"end\":{\"line\":35,\"character\":33}},\"rangeLength\":0,\"text\":\"MyDate\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":69,\"character\":40},\"end\":{\"line\":69,\"character\":40}},\"rangeLength\":0,\"text\":\"MyDate\\n                          OUTPUT \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZZMFT1.\\r\\n       data division.\\r\\n       working-storage section.\\r\\n       01 Person.\\r\\n           05 FirstName   pic X(10).\\r\\n           05 LastName    pic X(10).\\r\\n           05 MiddleName  pic X(10).\\r\\n           05 Gender      pic X.\\r\\n           05 BirthDate   TYPE DATE.\\r\\n           05 Height      pic X(10).\\r\\n\\r\\n       01 MyDate type Date.\\r\\n\\r\\n       procedure division.\\r\\n\\r\\n           .\\r\\n\\r\\n       declare procedure NoContext private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       in-out param3 type Date\\r\\n              param4 type date\\r\\n       output param5 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContext private\\r\\n       input  param1 type date\\r\\n       in-out param2 type Date\\r\\n              param3 type Date\\r\\n       output param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n           call NoContext input MyDate MyDate\\n                          in-out MyDate MyDate\\n                          output MyDate\\r\\n           .\\r\\n       declare procedure NoContextAndWithoutInOut private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       output param3 type Date\\r\\n              param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContextAndWithoutInOut private\\r\\n       input  param1 type date\\r\\n       output param2 type Date\\r\\n              param3 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n\\r\\n           .\\r\\n       declare procedure NoContextWithoutOutput private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       in-out param3 type Date\\r\\n              param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContextWithoutOutput private\\r\\n       input  param1 type date\\r\\n       in-out param2 type Date\\r\\n              param3 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n\\r\\n           .\\r\\n       END PROGRAM DVZZMFT1.\"}}"
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":73,\"character\":12},\"end\":{\"line\":73,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '<end of file>'\"},{\"range\":{\"start\":{\"line\":69,\"character\":12},\"end\":{\"line\":69,\"character\":32}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContext' input(DATE, DATE) in-out(DATE, DATE)\"}]}}"
-    },
-    {
-      "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"result\":true}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"position\":{\"line\":70,\"character\":33}}}"
-    },
-    {
-      "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":50,\"character\":0},\"end\":{\"line\":50,\"character\":0}},\"rangeLength\":0,\"text\":\"           call NoContextAndWithoutInOut\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":70,\"character\":33},\"end\":{\"line\":70,\"character\":33}},\"rangeLength\":0,\"text\":\"MyDate\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":50,\"character\":40},\"end\":{\"line\":50,\"character\":40}},\"rangeLength\":0,\"text\":\" \"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZF0OSM.\\r\\n       data division.\\r\\n       working-storage section.\\r\\n       01 Person.\\r\\n           05 FirstName   pic X(10).\\r\\n           05 LastName    pic X(10).\\r\\n           05 MiddleName  pic X(10).\\r\\n           05 Gender      pic X.\\r\\n           05 BirthDate   TYPE DATE.\\r\\n           05 Height      pic X(10).\\r\\n\\r\\n       01 MyDate type Date.\\r\\n\\r\\n       procedure division.\\r\\n\\r\\n           .\\r\\n       declare procedure AProcedureTest private\\r\\n              input  FirstName    PIC X(10)\\r\\n              in-out BirthDate    TYPE DATE\\r\\n              output Gender       PIC X\\r\\n                     Height       PIC X(10).\\r\\n\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  FirstName    PIC X(10)\\r\\n                     LastName     PIC X(10)\\r\\n              output Gender       PIC X\\r\\n                     Height       PIC X(10).\\r\\n\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  FirstName    PIC X(10)\\r\\n                     LastName     PIC X(10)\\r\\n                     MiddleName   PIC X(10)\\r\\n              in-out BirthDate    TYPE DATE\\r\\n              output Gender       PIC X\\r\\n                     Height       PIC X(10).\\r\\n\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  FirstName     PIC X(10)\\r\\n                     LastName      PIC X(10)\\r\\n                     MiddleName    PIC X(10)\\r\\n                     ImaginaryName PIC X(10)\\r\\n              output Gender        PIC X\\r\\n                     Height        PIC X(10).\\r\\n\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure NoContext private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       in-out param3 type Date\\r\\n              param4 type date\\r\\n       output param5 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContext private\\r\\n       input  param1 type date\\r\\n       in-out param2 type Date\\r\\n              param3 type Date\\r\\n       output param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n           call NoContext input MyDate MyDate\\n                          IN-OUT MyDate MyDate\\n                          OUTPUT MyDate\\r\\n\\r\\n           .\\r\\n       declare procedure NoContextAndWithoutInOut private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       output param3 type Date\\r\\n              param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContextAndWithoutInOut private\\r\\n       input  param1 type date\\r\\n       output param2 type Date\\r\\n              param3 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n\\r\\n           .\\r\\n\\r\\n\\r\\n       declare procedure NoContextWithoutOutput private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       in-out param3 type Date\\r\\n              param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContextWithoutOutput private\\r\\n       input  param1 type date\\r\\n       in-out param2 type Date\\r\\n              param3 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n\\r\\n           .\\r\\n       END PROGRAM DVZF0OSM.\"}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":50,\"character\":41},\"end\":{\"line\":50,\"character\":41}},\"rangeLength\":0,\"text\":\"i\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":50,\"character\":42},\"end\":{\"line\":50,\"character\":42}},\"rangeLength\":0,\"text\":\"n\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":50,\"character\":43},\"end\":{\"line\":50,\"character\":43}},\"rangeLength\":0,\"text\":\"p\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":50,\"character\":44},\"end\":{\"line\":50,\"character\":44}},\"rangeLength\":0,\"text\":\"u\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":50,\"character\":45},\"end\":{\"line\":50,\"character\":45}},\"rangeLength\":0,\"text\":\"t\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":50,\"character\":46},\"end\":{\"line\":50,\"character\":46}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"}}}"
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":86,\"character\":0},\"end\":{\"line\":86,\"character\":0}},\"rangeLength\":0,\"text\":\"       \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":86,\"character\":7},\"end\":{\"line\":86,\"character\":7}},\"rangeLength\":0,\"text\":\"    \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":86,\"character\":11},\"end\":{\"line\":86,\"character\":11}},\"rangeLength\":0,\"text\":\"c\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":86,\"character\":12},\"end\":{\"line\":86,\"character\":12}},\"rangeLength\":0,\"text\":\"a\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":86,\"character\":13},\"end\":{\"line\":86,\"character\":13}},\"rangeLength\":0,\"text\":\"l\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":86,\"character\":14},\"end\":{\"line\":86,\"character\":14}},\"rangeLength\":0,\"text\":\"l\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":86,\"character\":15},\"end\":{\"line\":86,\"character\":15}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":86,\"character\":16},\"end\":{\"line\":86,\"character\":16}},\"rangeLength\":0,\"text\":\"NoContextAndWithoutInOut\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":86,\"character\":40},\"end\":{\"line\":86,\"character\":40}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":86,\"character\":41},\"end\":{\"line\":86,\"character\":41}},\"rangeLength\":0,\"text\":\"i\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":86,\"character\":42},\"end\":{\"line\":86,\"character\":42}},\"rangeLength\":0,\"text\":\"n\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":86,\"character\":43},\"end\":{\"line\":86,\"character\":43}},\"rangeLength\":0,\"text\":\"p\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":86,\"character\":44},\"end\":{\"line\":86,\"character\":44}},\"rangeLength\":0,\"text\":\"u\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":86,\"character\":45},\"end\":{\"line\":86,\"character\":45}},\"rangeLength\":0,\"text\":\"t\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":86,\"character\":46},\"end\":{\"line\":86,\"character\":46}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
-    },
-    {
-      "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":88,\"character\":12},\"end\":{\"line\":88,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '<end of file>'\"},{\"range\":{\"start\":{\"line\":87,\"character\":12},\"end\":{\"line\":87,\"character\":46}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut' \"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":52,\"character\":12},\"end\":{\"line\":52,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":51,\"character\":12},\"end\":{\"line\":51,\"character\":46}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut(no arguments)'\"}]}}"
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"result\":true}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"result\":true}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"15\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":50,\"character\":47}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":50,\"character\":47},\"end\":{\"line\":50,\"character\":47}},\"rangeLength\":0,\"text\":\"MyDate\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":50,\"character\":53},\"end\":{\"line\":50,\"character\":53}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":51,\"character\":12},\"end\":{\"line\":51,\"character\":53}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut' input(DATE)\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":50,\"character\":54}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\\n                                         output \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\\n                                         output \"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":50,\"character\":54},\"end\":{\"line\":50,\"character\":54}},\"rangeLength\":0,\"text\":\"MyDate\\n                                         output \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"15\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":53,\"character\":12},\"end\":{\"line\":53,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":51,\"character\":12},\"end\":{\"line\":51,\"character\":47}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut' input(DATE, DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -359,27 +287,27 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"position\":{\"line\":86,\"character\":47}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":51,\"character\":48}}}"
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate OUTPUT \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate OUTPUT \"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":86,\"character\":47},\"end\":{\"line\":86,\"character\":47}},\"rangeLength\":0,\"text\":\"MyDate\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":51,\"character\":48},\"end\":{\"line\":51,\"character\":48}},\"rangeLength\":0,\"text\":\"MyDate\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":86,\"character\":53},\"end\":{\"line\":86,\"character\":53}},\"rangeLength\":0,\"text\":\" \"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":51,\"character\":54},\"end\":{\"line\":51,\"character\":54}},\"rangeLength\":0,\"text\":\" \"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"17\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"17\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"}}}"
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":87,\"character\":12},\"end\":{\"line\":87,\"character\":53}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut' input(DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":51,\"character\":12},\"end\":{\"line\":51,\"character\":54}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut' input(DATE, DATE) output(DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -387,7 +315,7 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"18\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"position\":{\"line\":86,\"character\":54}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"18\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":51,\"character\":55}}}"
     },
     {
       "category": 2,
@@ -395,15 +323,55 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":86,\"character\":54},\"end\":{\"line\":86,\"character\":54}},\"rangeLength\":0,\"text\":\"MyDate\\n                                         OUTPUT \"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":51,\"character\":55},\"end\":{\"line\":51,\"character\":55}},\"rangeLength\":0,\"text\":\"MyDate\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"19\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZZMFT1.\\r\\n       data division.\\r\\n       working-storage section.\\r\\n       01 Person.\\r\\n           05 FirstName   pic X(10).\\r\\n           05 LastName    pic X(10).\\r\\n           05 MiddleName  pic X(10).\\r\\n           05 Gender      pic X.\\r\\n           05 BirthDate   TYPE DATE.\\r\\n           05 Height      pic X(10).\\r\\n\\r\\n       01 MyDate type Date.\\r\\n\\r\\n       procedure division.\\r\\n\\r\\n           .\\r\\n\\r\\n       declare procedure NoContext private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       in-out param3 type Date\\r\\n              param4 type date\\r\\n       output param5 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContext private\\r\\n       input  param1 type date\\r\\n       in-out param2 type Date\\r\\n              param3 type Date\\r\\n       output param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n           call NoContext input MyDate MyDate\\n                          in-out MyDate MyDate\\n                          output MyDate\\r\\n           .\\r\\n       declare procedure NoContextAndWithoutInOut private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       output param3 type Date\\r\\n              param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContextAndWithoutInOut private\\r\\n       input  param1 type date\\r\\n       output param2 type Date\\r\\n              param3 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n           call NoContextAndWithoutInOut input MyDate MyDate\\n                                         output MyDate MyDate\\r\\n           .\\r\\n       declare procedure NoContextWithoutOutput private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       in-out param3 type Date\\r\\n              param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContextWithoutOutput private\\r\\n       input  param1 type date\\r\\n       in-out param2 type Date\\r\\n              param3 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n\\r\\n           .\\r\\n       END PROGRAM DVZZMFT1.\"}}"
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":89,\"character\":12},\"end\":{\"line\":89,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '<end of file>'\"},{\"range\":{\"start\":{\"line\":87,\"character\":12},\"end\":{\"line\":87,\"character\":47}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut' input(DATE, DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":66,\"character\":0},\"end\":{\"line\":66,\"character\":0}},\"rangeLength\":0,\"text\":\"           call NoContextWithoutOutput\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":66,\"character\":38},\"end\":{\"line\":66,\"character\":38}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":66,\"character\":39},\"end\":{\"line\":66,\"character\":39}},\"rangeLength\":0,\"text\":\"i\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":66,\"character\":40},\"end\":{\"line\":66,\"character\":40}},\"rangeLength\":0,\"text\":\"n\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":66,\"character\":41},\"end\":{\"line\":66,\"character\":41}},\"rangeLength\":0,\"text\":\"p\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":66,\"character\":42},\"end\":{\"line\":66,\"character\":42}},\"rangeLength\":0,\"text\":\"u\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":66,\"character\":43},\"end\":{\"line\":66,\"character\":43}},\"rangeLength\":0,\"text\":\"t\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":66,\"character\":44},\"end\":{\"line\":66,\"character\":44}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"19\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":68,\"character\":12},\"end\":{\"line\":68,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":67,\"character\":12},\"end\":{\"line\":67,\"character\":44}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput(no arguments)'\"}]}}"
     },
     {
       "category": 2,
@@ -411,43 +379,51 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":66,\"character\":45}}}"
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"result\":true}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"21\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"position\":{\"line\":87,\"character\":48}}}"
-    },
-    {
-      "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"21\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":66,\"character\":45},\"end\":{\"line\":66,\"character\":45}},\"rangeLength\":0,\"text\":\"MyDate\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":87,\"character\":48},\"end\":{\"line\":87,\"character\":48}},\"rangeLength\":0,\"text\":\"MyDate\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":66,\"character\":51},\"end\":{\"line\":66,\"character\":51}},\"rangeLength\":0,\"text\":\" \"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":87,\"character\":54},\"end\":{\"line\":87,\"character\":54}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"22\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"21\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"}}}"
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":87,\"character\":12},\"end\":{\"line\":87,\"character\":54}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextAndWithoutInOut' input(DATE, DATE) output(DATE)\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":67,\"character\":12},\"end\":{\"line\":67,\"character\":51}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput' input(DATE)\"}]}}"
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"22\",\"result\":true}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"21\",\"result\":true}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"23\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"22\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":66,\"character\":52}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"22\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\\n                                       in-out \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\\n                                       in-out \"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":66,\"character\":52},\"end\":{\"line\":66,\"character\":52}},\"rangeLength\":0,\"text\":\"MyDate\\n                                       in-out \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"23\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":69,\"character\":12},\"end\":{\"line\":69,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '.' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":67,\"character\":12},\"end\":{\"line\":67,\"character\":45}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput' input(DATE, DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -455,7 +431,7 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"24\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"position\":{\"line\":87,\"character\":55}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"24\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":67,\"character\":46}}}"
     },
     {
       "category": 2,
@@ -463,83 +439,19 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":87,\"character\":55},\"end\":{\"line\":87,\"character\":55}},\"rangeLength\":0,\"text\":\"MyDate\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":67,\"character\":46},\"end\":{\"line\":67,\"character\":46}},\"rangeLength\":0,\"text\":\"MyDate\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZF0OSM.\\r\\n       data division.\\r\\n       working-storage section.\\r\\n       01 Person.\\r\\n           05 FirstName   pic X(10).\\r\\n           05 LastName    pic X(10).\\r\\n           05 MiddleName  pic X(10).\\r\\n           05 Gender      pic X.\\r\\n           05 BirthDate   TYPE DATE.\\r\\n           05 Height      pic X(10).\\r\\n\\r\\n       01 MyDate type Date.\\r\\n\\r\\n       procedure division.\\r\\n\\r\\n           .\\r\\n       declare procedure AProcedureTest private\\r\\n              input  FirstName    PIC X(10)\\r\\n              in-out BirthDate    TYPE DATE\\r\\n              output Gender       PIC X\\r\\n                     Height       PIC X(10).\\r\\n\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  FirstName    PIC X(10)\\r\\n                     LastName     PIC X(10)\\r\\n              output Gender       PIC X\\r\\n                     Height       PIC X(10).\\r\\n\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  FirstName    PIC X(10)\\r\\n                     LastName     PIC X(10)\\r\\n                     MiddleName   PIC X(10)\\r\\n              in-out BirthDate    TYPE DATE\\r\\n              output Gender       PIC X\\r\\n                     Height       PIC X(10).\\r\\n\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  FirstName     PIC X(10)\\r\\n                     LastName      PIC X(10)\\r\\n                     MiddleName    PIC X(10)\\r\\n                     ImaginaryName PIC X(10)\\r\\n              output Gender        PIC X\\r\\n                     Height        PIC X(10).\\r\\n\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure NoContext private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       in-out param3 type Date\\r\\n              param4 type date\\r\\n       output param5 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContext private\\r\\n       input  param1 type date\\r\\n       in-out param2 type Date\\r\\n              param3 type Date\\r\\n       output param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n           call NoContext input MyDate MyDate\\n                          IN-OUT MyDate MyDate\\n                          OUTPUT MyDate\\r\\n\\r\\n           .\\r\\n       declare procedure NoContextAndWithoutInOut private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       output param3 type Date\\r\\n              param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContextAndWithoutInOut private\\r\\n       input  param1 type date\\r\\n       output param2 type Date\\r\\n              param3 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n           call NoContextAndWithoutInOut input MyDate MyDate\\n                                         OUTPUT MyDate MyDate\\r\\n           .\\r\\n\\r\\n\\r\\n       declare procedure NoContextWithoutOutput private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       in-out param3 type Date\\r\\n              param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContextWithoutOutput private\\r\\n       input  param1 type date\\r\\n       in-out param2 type Date\\r\\n              param3 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n\\r\\n           .\\r\\n       END PROGRAM DVZF0OSM.\"}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":67,\"character\":52},\"end\":{\"line\":67,\"character\":52}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"25\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"}}}"
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":104,\"character\":0},\"end\":{\"line\":104,\"character\":0}},\"rangeLength\":0,\"text\":\"       \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":104,\"character\":7},\"end\":{\"line\":104,\"character\":7}},\"rangeLength\":0,\"text\":\"    \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":104,\"character\":11},\"end\":{\"line\":104,\"character\":11}},\"rangeLength\":0,\"text\":\"c\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":104,\"character\":12},\"end\":{\"line\":104,\"character\":12}},\"rangeLength\":0,\"text\":\"a\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":104,\"character\":13},\"end\":{\"line\":104,\"character\":13}},\"rangeLength\":0,\"text\":\"l\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":104,\"character\":14},\"end\":{\"line\":104,\"character\":14}},\"rangeLength\":0,\"text\":\"l\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":104,\"character\":15},\"end\":{\"line\":104,\"character\":15}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":104,\"character\":16},\"end\":{\"line\":104,\"character\":16}},\"rangeLength\":0,\"text\":\"NoContextWithoutOutput\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":104,\"character\":38},\"end\":{\"line\":104,\"character\":38}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":104,\"character\":39},\"end\":{\"line\":104,\"character\":39}},\"rangeLength\":0,\"text\":\"i\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":104,\"character\":40},\"end\":{\"line\":104,\"character\":40}},\"rangeLength\":0,\"text\":\"n\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":104,\"character\":41},\"end\":{\"line\":104,\"character\":41}},\"rangeLength\":0,\"text\":\"p\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":104,\"character\":42},\"end\":{\"line\":104,\"character\":42}},\"rangeLength\":0,\"text\":\"u\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":104,\"character\":43},\"end\":{\"line\":104,\"character\":43}},\"rangeLength\":0,\"text\":\"t\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":104,\"character\":44},\"end\":{\"line\":104,\"character\":44}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"25\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
-    },
-    {
-      "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":106,\"character\":12},\"end\":{\"line\":106,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '<end of file>'\"},{\"range\":{\"start\":{\"line\":105,\"character\":12},\"end\":{\"line\":105,\"character\":44}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput' \"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":67,\"character\":12},\"end\":{\"line\":67,\"character\":52}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput' input(DATE, DATE) in-out(DATE)\"}]}}"
     },
     {
       "category": 2,
@@ -547,129 +459,25 @@
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"26\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"position\":{\"line\":104,\"character\":45}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"26\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"position\":{\"line\":67,\"character\":53}}}"
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"26\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate IN-OUT \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate IN-OUT \"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"26\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":104,\"character\":45},\"end\":{\"line\":104,\"character\":45}},\"rangeLength\":0,\"text\":\"MyDate\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":67,\"character\":53},\"end\":{\"line\":67,\"character\":53}},\"rangeLength\":0,\"text\":\"MyDate\"}]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":104,\"character\":51},\"end\":{\"line\":104,\"character\":51}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"27\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZZMFT1.\\r\\n       data division.\\r\\n       working-storage section.\\r\\n       01 Person.\\r\\n           05 FirstName   pic X(10).\\r\\n           05 LastName    pic X(10).\\r\\n           05 MiddleName  pic X(10).\\r\\n           05 Gender      pic X.\\r\\n           05 BirthDate   TYPE DATE.\\r\\n           05 Height      pic X(10).\\r\\n\\r\\n       01 MyDate type Date.\\r\\n\\r\\n       procedure division.\\r\\n\\r\\n           .\\r\\n\\r\\n       declare procedure NoContext private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       in-out param3 type Date\\r\\n              param4 type date\\r\\n       output param5 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContext private\\r\\n       input  param1 type date\\r\\n       in-out param2 type Date\\r\\n              param3 type Date\\r\\n       output param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n           call NoContext input MyDate MyDate\\n                          in-out MyDate MyDate\\n                          output MyDate\\r\\n           .\\r\\n       declare procedure NoContextAndWithoutInOut private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       output param3 type Date\\r\\n              param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContextAndWithoutInOut private\\r\\n       input  param1 type date\\r\\n       output param2 type Date\\r\\n              param3 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n           call NoContextAndWithoutInOut input MyDate MyDate\\n                                         output MyDate MyDate\\r\\n           .\\r\\n       declare procedure NoContextWithoutOutput private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       in-out param3 type Date\\r\\n              param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContextWithoutOutput private\\r\\n       input  param1 type date\\r\\n       in-out param2 type Date\\r\\n              param3 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n           call NoContextWithoutOutput input MyDate MyDate\\n                                       in-out MyDate MyDate\\r\\n           .\\r\\n       END PROGRAM DVZZMFT1.\"}}"
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":105,\"character\":12},\"end\":{\"line\":105,\"character\":51}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput' input(DATE)\"}]}}"
-    },
-    {
-      "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"27\",\"result\":true}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"28\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
-    },
-    {
-      "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"28\",\"result\":true}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"29\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"position\":{\"line\":104,\"character\":52}}}"
-    },
-    {
-      "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"29\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":104,\"character\":52},\"end\":{\"line\":104,\"character\":52}},\"rangeLength\":0,\"text\":\"MyDate\\n                                       IN-OUT \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"30\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
-    },
-    {
-      "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":107,\"character\":12},\"end\":{\"line\":107,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '<end of file>'\"},{\"range\":{\"start\":{\"line\":105,\"character\":12},\"end\":{\"line\":105,\"character\":45}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput' input(DATE, DATE)\"}]}}"
-    },
-    {
-      "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"30\",\"result\":true}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"31\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
-    },
-    {
-      "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"31\",\"result\":true}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"32\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"position\":{\"line\":105,\"character\":46}}}"
-    },
-    {
-      "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"32\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate\"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate\"}]}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":105,\"character\":46},\"end\":{\"line\":105,\"character\":46}},\"rangeLength\":0,\"text\":\"MyDate\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":105,\"character\":52},\"end\":{\"line\":105,\"character\":52}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"33\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
-    },
-    {
-      "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":105,\"character\":12},\"end\":{\"line\":105,\"character\":52}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'NoContextWithoutOutput' input(DATE, DATE) in-out(DATE)\"}]}}"
-    },
-    {
-      "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"33\",\"result\":true}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"34\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}"
-    },
-    {
-      "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"34\",\"result\":true}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"35\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"position\":{\"line\":105,\"character\":53}}}"
-    },
-    {
-      "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"35\",\"result\":[{\"label\":\"BirthDate (DATE) (Person::BirthDate)\",\"kind\":6,\"insertText\":\"Person::BirthDate OUTPUT \"},{\"label\":\"MyDate (DATE) (MyDate)\",\"kind\":6,\"insertText\":\"MyDate OUTPUT \"}]}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":105,\"character\":53},\"end\":{\"line\":105,\"character\":53}},\"rangeLength\":0,\"text\":\"MyDate\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZF0OSM.\\r\\n       data division.\\r\\n       working-storage section.\\r\\n       01 Person.\\r\\n           05 FirstName   pic X(10).\\r\\n           05 LastName    pic X(10).\\r\\n           05 MiddleName  pic X(10).\\r\\n           05 Gender      pic X.\\r\\n           05 BirthDate   TYPE DATE.\\r\\n           05 Height      pic X(10).\\r\\n\\r\\n       01 MyDate type Date.\\r\\n\\r\\n       procedure division.\\r\\n\\r\\n           .\\r\\n       declare procedure AProcedureTest private\\r\\n              input  FirstName    PIC X(10)\\r\\n              in-out BirthDate    TYPE DATE\\r\\n              output Gender       PIC X\\r\\n                     Height       PIC X(10).\\r\\n\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  FirstName    PIC X(10)\\r\\n                     LastName     PIC X(10)\\r\\n              output Gender       PIC X\\r\\n                     Height       PIC X(10).\\r\\n\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  FirstName    PIC X(10)\\r\\n                     LastName     PIC X(10)\\r\\n                     MiddleName   PIC X(10)\\r\\n              in-out BirthDate    TYPE DATE\\r\\n              output Gender       PIC X\\r\\n                     Height       PIC X(10).\\r\\n\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  FirstName     PIC X(10)\\r\\n                     LastName      PIC X(10)\\r\\n                     MiddleName    PIC X(10)\\r\\n                     ImaginaryName PIC X(10)\\r\\n              output Gender        PIC X\\r\\n                     Height        PIC X(10).\\r\\n\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure NoContext private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       in-out param3 type Date\\r\\n              param4 type date\\r\\n       output param5 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContext private\\r\\n       input  param1 type date\\r\\n       in-out param2 type Date\\r\\n              param3 type Date\\r\\n       output param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n           call NoContext input MyDate MyDate\\n                          IN-OUT MyDate MyDate\\n                          OUTPUT MyDate\\r\\n\\r\\n           .\\r\\n       declare procedure NoContextAndWithoutInOut private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       output param3 type Date\\r\\n              param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContextAndWithoutInOut private\\r\\n       input  param1 type date\\r\\n       output param2 type Date\\r\\n              param3 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n           call NoContextAndWithoutInOut input MyDate MyDate\\n                                         OUTPUT MyDate MyDate\\r\\n           .\\r\\n\\r\\n\\r\\n       declare procedure NoContextWithoutOutput private\\r\\n       input  param1 type date\\r\\n              param2 type date\\r\\n       in-out param3 type Date\\r\\n              param4 type date\\r\\n           .\\r\\n       end-declare.\\r\\n       declare procedure NoContextWithoutOutput private\\r\\n       input  param1 type date\\r\\n       in-out param2 type Date\\r\\n              param3 type Date\\r\\n           .\\r\\n       end-declare.\\r\\n           call NoContextWithoutOutput input MyDate MyDate\\n                                       IN-OUT MyDate MyDate\\r\\n           .\\r\\n       END PROGRAM DVZF0OSM.\"}}"
-    },
-    {
-      "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\",\"diagnostics\":[]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\",\"diagnostics\":[]}}"
     }
   ],
-  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/SMEDILOL/AppData/Local/Temp/tcbl/DVZF0OSM9165188753288086678.cee\"}}}",
+  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/DVZZMFT16140549261148664121.cee\"}}}",
   "IsValid": true
 }

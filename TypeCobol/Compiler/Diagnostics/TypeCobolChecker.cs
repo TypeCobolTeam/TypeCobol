@@ -1,17 +1,12 @@
 using System;
-using Antlr4.Runtime;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
-using System.Linq;
-using System.Runtime.InteropServices;
-using Analytics;
-using Castle.Core.Internal;
-using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Parser.Generated;
 
@@ -83,10 +78,10 @@ namespace TypeCobol.Compiler.Diagnostics
             if (functionCaller.FunctionDeclaration == null)
             {
                 //Get Funtion by name and profile (matches on precise parameters)
-                var parameterList = functionCaller.FunctionCall.AsProfile(node);
+                var callProfile = functionCaller.FunctionCall.BuildProfile(node);
                 var functionDeclarations =
                     node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName),
-                    parameterList, functionCaller.FunctionCall.Namespace);
+                    callProfile, functionCaller.FunctionCall.Namespace);
 
                 string message;
                 //There is one CallSite per function call
@@ -97,7 +92,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (functionDeclarations.Count == 1)
                     {
                         functionCaller.FunctionDeclaration = functionDeclarations.First();
-                        Check(node, functionCaller.FunctionCall, functionCaller.FunctionDeclaration);
+                        Check(node, functionCaller.FunctionCall, callProfile, functionCaller.FunctionDeclaration);
                         return; //Everything seems to be ok, lets continue on the next one
                     }
 
@@ -105,7 +100,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (functionDeclarations.Count > 0)
                     {
                         message = string.Format("Same function '{0}' {1} declared '{2}' times",
-                            functionCaller.FunctionCall.FunctionName, parameterList.GetSignature(),
+                            functionCaller.FunctionCall.FunctionName, callProfile.GetSignature(),
                             functionDeclarations.Count);
                         DiagnosticUtils.AddError(node, message, MessageCode.ImplementationError);
                         return; //Do not continue the function/procedure is defined multiple times
@@ -119,15 +114,15 @@ namespace TypeCobol.Compiler.Diagnostics
                     {
                         message = string.Format("Function not found '{0}' {1}",
                             functionCaller.FunctionCall.FunctionName,
-                            parameterList.GetSignature());
-                        DiagnosticUtils.AddError(node, message);
+                            callProfile.GetSignature());
+                        DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
                         return; //Do not continue the function/procedure does not exists
                     }
 
                     if (otherDeclarations.Count > 1)
                     {
                         message = string.Format("No suitable function signature found for '{0}' {1}",
-                            functionCaller.FunctionCall.FunctionName, parameterList.GetSignature());
+                            functionCaller.FunctionCall.FunctionName, callProfile.GetSignature());
                         DiagnosticUtils.AddError(node, message);
                         return;
                     }
@@ -193,16 +188,13 @@ namespace TypeCobol.Compiler.Diagnostics
 
                 functionCaller.FunctionDeclaration = functionDeclarations[0];
                 //If function is not ambigous and exists, lets check the parameters
-                Check(node, functionCaller.FunctionCall, functionCaller.FunctionDeclaration);
+                Check(node, functionCaller.FunctionCall, callProfile, functionCaller.FunctionDeclaration);
             }
         }
 
-        private static void Check(Node node, [NotNull] FunctionCall call,
-            [NotNull] FunctionDeclaration definition)
+        private static void Check(Node node, [NotNull] FunctionCall call, [NotNull] IProfile callProfile, [NotNull] FunctionDeclaration definition)
         {
-            var table = node.SymbolTable;
             var parameters = definition.Profile.Parameters;
-            var callerProfile = call.AsProfile(node);
             var callArgsCount = call.Arguments != null ? call.Arguments.Length : 0;
             if (callArgsCount > parameters.Count)
             {
@@ -211,12 +203,12 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(node, m);
             }
 
-            if (callerProfile.InputParameters.Count != definition.Profile.InputParameters.Count
-                || callerProfile.InoutParameters.Count != definition.Profile.InoutParameters.Count
-                || callerProfile.OutputParameters.Count != definition.Profile.OutputParameters.Count)
+            if (callProfile.Inputs.Count != definition.Profile.InputParameters.Count
+                || callProfile.Inouts.Count != definition.Profile.InoutParameters.Count
+                || callProfile.Outputs.Count != definition.Profile.OutputParameters.Count)
             {
                 var m = string.Format("No suitable function signature found for '{0}' {1}", call.FunctionName,
-                    callerProfile.GetSignature());
+                    callProfile.GetSignature());
                 DiagnosticUtils.AddError(node, m);
             }
 
@@ -233,6 +225,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         TypeCobolLinker.CheckCircularReferences(expected.TypeDefinition);
                     }
                 }
+
                 if (c < callArgsCount)
                 {
                     //Omitted
@@ -626,14 +619,16 @@ namespace TypeCobol.Compiler.Diagnostics
             CheckNoLinkageItemIsAParameter(functionDeclaration.Get<LinkageSection>("linkage"), header.Profile);
 
             CheckParameters(header.Profile, functionDeclaration);
-            CheckNoPerform(functionDeclaration.SymbolTable.EnclosingScope, functionDeclaration);
 
             var headerNameURI = new URI(header.Name);
             var functions = functionDeclaration.SymbolTable.GetFunction(headerNameURI, functionDeclaration.Profile);
             if (functions.Count > 1)
-                DiagnosticUtils.AddError(functionDeclaration,
+            {
+                Token nameToken = header.FunctionName.NameLiteral.Token;
+                DiagnosticUtils.AddError(header,
                     "A function \"" + headerNameURI.Head + "\" with the same profile already exists in namespace \"" +
-                    headerNameURI.Tail + "\".");
+                    headerNameURI.Tail + "\".", nameToken, null, MessageCode.SemanticTCErrorInParser);
+            }
 
 
             //// Set a Warning if the formalized comment parameter is unknown or if the function parameter have no description
@@ -694,12 +689,8 @@ namespace TypeCobol.Compiler.Diagnostics
         private static void CheckParameters([NotNull] ParametersProfile profile, Node node)
         {
             var parameters = profile.Parameters;
-            foreach (var parameter in profile.InputParameters) CheckParameter(parameter, node);
-            foreach (var parameter in profile.InoutParameters) CheckParameter(parameter, node);
-            foreach (var parameter in profile.OutputParameters) CheckParameter(parameter, node);
             if (profile.ReturningParameter != null)
             {
-                CheckParameter(profile.ReturningParameter, node);
                 parameters.Add(profile.ReturningParameter);
             }
 
@@ -712,31 +703,6 @@ namespace TypeCobol.Compiler.Diagnostics
                     string.Format("Parameter with name '{0}' declared multiple times", duplicatedParameter.Name), duplicatedParameter);
             }
 
-
-        }
-
-        private static void CheckParameter([NotNull] ParameterDescriptionEntry parameter, Node node)
-        {
-            // TCRFUN_LEVEL_88_PARAMETERS
-            if (parameter.LevelNumber?.Value != 1)
-            {
-                DiagnosticUtils.AddError(node,
-                    "Condition parameter \"" + parameter.Name + "\" must be subordinate to another parameter.", parameter);
-            }
-
-            if (parameter.DataConditions != null)
-            {
-                foreach (var condition in parameter.DataConditions)
-                {
-                    if (condition.LevelNumber?.Value != 88)
-                        DiagnosticUtils.AddError(node,
-                            "Condition parameter \"" + condition.Name + "\" must be level 88.", condition);
-                    if (condition.LevelNumber?.Value == 88 && parameter.DataType == DataType.Boolean)
-                        DiagnosticUtils.AddError(node,
-                            "The Level 88 symbol '" + parameter.Name +
-                            "' cannot be declared under a BOOL typed symbol", condition);
-                }
-            }
 
         }
 
@@ -811,31 +777,6 @@ namespace TypeCobol.Compiler.Diagnostics
         private static void AddErrorAlreadyParameter([NotNull] Node node, [NotNull] string parameterName)
         {
             DiagnosticUtils.AddError(node, parameterName + " is already a parameter.");
-        }
-
-        private static void CheckNoPerform(SymbolTable table, [NotNull] Node node)
-        {
-            if (node is PerformProcedure)
-            {
-                var perform = (PerformProcedureStatement) node.CodeElement;
-                CheckNotInTable(table, perform.Procedure, node);
-                CheckNotInTable(table, perform.ThroughProcedure, node);
-            }
-
-            foreach (var child in node.Children) CheckNoPerform(table, child);
-        }
-
-        private static void CheckNotInTable(SymbolTable table, SymbolReference symbol, Node node)
-        {
-            if (symbol == null) return;
-            string message = "TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM";
-            var found = table.GetSection(symbol.Name);
-            if (found.Count > 0) DiagnosticUtils.AddError(node, message, symbol);
-            else
-            {
-                var paragraphFounds = table.GetParagraph(symbol.Name);
-                if (paragraphFounds.Count > 0) DiagnosticUtils.AddError(node, message, symbol);
-            }
         }
     }
 
@@ -1004,7 +945,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public static void OnNode([NotNull] GlobalStorageSection globalStorageSection)
         {
             //Check if GlobalStorageSection is declared in main program Rule - GLOBALSS_ONLY_IN_MAIN 
-            if (!globalStorageSection.GetProgramNode().IsMainProgram)
+            if (globalStorageSection.IsFlagSet(Node.Flag.InsideProcedure) || !globalStorageSection.GetProgramNode().IsMainProgram)
                 DiagnosticUtils.AddError(globalStorageSection,
                     "GLOBAL-STORAGE SECTION is only authorized in the main program of this source file.");
 

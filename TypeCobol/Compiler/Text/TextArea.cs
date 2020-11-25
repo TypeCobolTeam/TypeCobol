@@ -10,7 +10,9 @@ namespace TypeCobol.Compiler.Text
         SequenceNumber,
         Indicator,
         Source,
-        Comment
+        Comment,
+        AreaA,
+        AreaB
     }
 
     /// <summary>

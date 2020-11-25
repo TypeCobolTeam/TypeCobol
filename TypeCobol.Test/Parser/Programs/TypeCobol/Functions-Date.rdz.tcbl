@@ -23,17 +23,7 @@
        DECLARE FUNCTION currentDateFreeFormat PRIVATE
            INPUT dateType  PIC X
                  direction PIC X
-                      88 direction-YearFirst      value 'A'
-                      88 direction-DayFirst       value 'J'
-                      88 direction-MonthFirst     value 'M'
-                      88 direction-LocalDependent value 'L'
                  separator PIC X
-                      88 separator-without        value 'S'
-                      88 separator-blank          value 'B'
-                      88 separator-slash          value '/'
-                      88 separator-dot            value '.'
-                      88 separator-hyphen         value '-'
-                      88 separator-LocalDependent value 'L'
                  languageCode  pic X(02)
                  countryCode   pic X(02)
            RETURNING result PIC X(10).
@@ -157,6 +147,11 @@
         PROCEDURE DIVISION.
         END-DECLARE.
       *  05: KO because same input as 02
+      %<<<
+           Description conflict.
+           @Params:
+               - x pic 9(08)
+      %>>>
        DECLARE FUNCTION conflict PRIVATE
            INPUT     x   PIC 9(08)
            RETURNING y   PIC 9(08).

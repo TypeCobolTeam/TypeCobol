@@ -63,11 +63,11 @@ namespace TypeCobol.Codegen.Nodes {
                         ProgramImports imports = ProgramImportsAttribute.GetProgramImports(originalNode);
                         Node[] toAddRange =
                         {
-                            new GeneratedNode2("01 TC-Call          PIC X     VALUE 'T'.", true),
-                            new GeneratedNode2("    88 TC-FirstCall  VALUE 'T'.", true),
-                            new GeneratedNode2("    88 TC-NthCall    VALUE 'F'", true),
-                            new GeneratedNode2("                     X'00' thru 'S'", true),
-                            new GeneratedNode2("                     'U' thru X'FF'.", true)
+                            new GeneratedNode("01 TC-Call          PIC X     VALUE 'T'.", true),
+                            new GeneratedNode("    88 TC-FirstCall  VALUE 'T'.", true),
+                            new GeneratedNode("    88 TC-NthCall    VALUE 'F'", true),
+                            new GeneratedNode("                     X'00' thru 'S'", true),
+                            new GeneratedNode("                     'U' thru X'FF'.", true)
                         };
                         workingStorageSection.AddRange(toAddRange, 0);
                         GenerateCodeToCallPublicProc(originalNode, pdiv,  workingStorageSection, linkageSection);
@@ -119,30 +119,30 @@ namespace TypeCobol.Codegen.Nodes {
 
             foreach (var pgm in imports.Programs.Values) {
                 workingStorageSection.Add(
-                    new GeneratedNode2("01 TC-" + pgm.Name + " pic X(08) value '" + pgm.Name.ToUpperInvariant() + "'.\n", true), 0);
+                    new GeneratedNode("01 TC-" + pgm.Name + " pic X(08) value '" + pgm.Name.ToUpperInvariant() + "'.\n", true), 0);
             }
 
             List<Node> toAddRange = new List<Node>();
-            toAddRange.Add(new GeneratedNode2("*Common to all librairies used by the program.", true));
-            toAddRange.Add(new GeneratedNode2("01 TC-Library-PntTab.", false));
-            toAddRange.Add(new GeneratedNode2("    05 TC-Library-PntNbr          PIC S9(04) COMP.", true));
-            toAddRange.Add(new GeneratedNode2(
+            toAddRange.Add(new GeneratedNode("*Common to all librairies used by the program.", true));
+            toAddRange.Add(new GeneratedNode("01 TC-Library-PntTab.", false));
+            toAddRange.Add(new GeneratedNode("    05 TC-Library-PntNbr          PIC S9(04) COMP.", true));
+            toAddRange.Add(new GeneratedNode(
                 "    05 TC-Library-Item OCCURS 1000\n                        DEPENDING ON TC-Library-PntNbr\n                        INDEXED   BY TC-Library-Idx.",
                 false));
-            toAddRange.Add(new GeneratedNode2("       10 TC-Library-Item-Idt      PIC X(08).", true));
-            toAddRange.Add(new GeneratedNode2("       10 TC-Library-Item-Pnt      PROCEDURE-POINTER.", true));
+            toAddRange.Add(new GeneratedNode("       10 TC-Library-Item-Idt      PIC X(08).", true));
+            toAddRange.Add(new GeneratedNode("       10 TC-Library-Item-Pnt      PROCEDURE-POINTER.", true));
 
 
             foreach (var pgm in imports.Programs.Values) {
                 foreach (var proc in pgm.Procedures.Values) {
                     proc.IsNotByExternalPointer = true;
-                    toAddRange.Add(new GeneratedNode2(" ", true));
-                    toAddRange.Add(new GeneratedNode2("*To call program " + proc.Hash + " in module " + proc.ProcStyleCall.FunctionDeclaration.QualifiedName.Tail, false));
-                    toAddRange.Add(new GeneratedNode2("*Which is generated code for " + proc.ProcStyleCall.FunctionDeclaration.QualifiedName, false));
-                    toAddRange.Add(new GeneratedNode2("*Declared in source file " + proc.ProcStyleCall.FunctionDeclaration.CodeElement.TokenSource.SourceName, false));
-                    toAddRange.Add(new GeneratedNode2("01 TC-" + pgm.Name + "-" + proc.Hash + "-Item.", false));
-                    toAddRange.Add(new GeneratedNode2("   05 TC-" + pgm.Name + "-" + proc.Hash + "-Idt PIC X(08).", true));
-                    toAddRange.Add(new GeneratedNode2("   05 TC-" + pgm.Name + "-" + proc.Hash + " PROCEDURE-POINTER.",
+                    toAddRange.Add(new GeneratedNode(" ", true));
+                    toAddRange.Add(new GeneratedNode("*To call program " + proc.Hash + " in module " + proc.ProcStyleCall.FunctionDeclaration.QualifiedName.Tail, false));
+                    toAddRange.Add(new GeneratedNode("*Which is generated code for " + proc.ProcStyleCall.FunctionDeclaration.QualifiedName, false));
+                    toAddRange.Add(new GeneratedNode("*Declared in source file " + proc.ProcStyleCall.FunctionDeclaration.CodeElement.TokenSource.SourceName, false));
+                    toAddRange.Add(new GeneratedNode("01 TC-" + pgm.Name + "-" + proc.Hash + "-Item.", false));
+                    toAddRange.Add(new GeneratedNode("   05 TC-" + pgm.Name + "-" + proc.Hash + "-Idt PIC X(08).", true));
+                    toAddRange.Add(new GeneratedNode("   05 TC-" + pgm.Name + "-" + proc.Hash + " PROCEDURE-POINTER.",
                         true));
                 }
             }
@@ -152,6 +152,7 @@ namespace TypeCobol.Codegen.Nodes {
             if (imports.HasPublicProcedures)
             {
                 Node whereToGenerate;
+                int insertIndex = 0;
 
                 //Generate a PERFORM, this must be the first instruction unless we have a Paragraph or a section
                 var firstChildOfPDiv = procedureDivision.Children.First();
@@ -173,20 +174,22 @@ namespace TypeCobol.Codegen.Nodes {
                 }
                 else
                 {
+                    //Special case for declaratives : PERFORM must be generated after them
+                    if (firstChildOfPDiv is Declaratives) insertIndex = 1;
                     whereToGenerate = procedureDivision;
                 }
 
                 //After #655, TC-Initializations is not used
-                whereToGenerate.Add(new GeneratedNode2("    PERFORM TC-INITIALIZATIONS", true), 0);
+                whereToGenerate.Add(new GeneratedNode("    PERFORM TC-INITIALIZATIONS", true), insertIndex);
 
                 //Generate "TC-Initializations" paragraph
                 procedureDivision.Add(
-                    new GeneratedNode2("*=================================================================", true));
+                    new GeneratedNode("*=================================================================", true));
                 procedureDivision.Add(new ParagraphGen("TC-INITIALIZATIONS"));
                 procedureDivision.Add(
-                    new GeneratedNode2("*=================================================================", true));
-                procedureDivision.Add(new GeneratedNode2("     IF TC-FirstCall", true));
-                procedureDivision.Add(new GeneratedNode2("          SET TC-NthCall TO TRUE", true));
+                    new GeneratedNode("*=================================================================", true));
+                procedureDivision.Add(new GeneratedNode("     IF TC-FirstCall", true));
+                procedureDivision.Add(new GeneratedNode("          SET TC-NthCall TO TRUE", true));
                 if (OriginalNode.IsFlagSet(Node.Flag.UseGlobalStorage))
                 {
                     procedureDivision.AddRange(GenerateCodeToCallGlobalStorage(10));
@@ -197,37 +200,37 @@ namespace TypeCobol.Codegen.Nodes {
                     foreach (var proc in pgm.Procedures.Values)
                     {
                         procedureDivision.Add(
-                            new GeneratedNode2(
+                            new GeneratedNode(
                                 "          SET ADDRESS OF TC-" + pgm.Name + "-" + proc.Hash + "-Item  TO NULL", true));
                     }
                 }
-                procedureDivision.Add(new GeneratedNode2("     END-IF", true));
-                procedureDivision.Add(new GeneratedNode2("     .", true));
+                procedureDivision.Add(new GeneratedNode("     END-IF", true));
+                procedureDivision.Add(new GeneratedNode("     .", true));
             }
 
             //Generate "TC-LOAD-POINTERS-" paragraph
                 foreach (var pgm in imports.Programs.Values) {
-                procedureDivision.Add(new GeneratedNode2("*=================================================================", true));
+                procedureDivision.Add(new GeneratedNode("*=================================================================", true));
                 procedureDivision.Add(new ParagraphGen("TC-LOAD-POINTERS-" + pgm.Name));
-                procedureDivision.Add(new GeneratedNode2("*=================================================================",true));
-                procedureDivision.Add(new GeneratedNode2("     CALL 'ZCALLPGM' USING TC-" + pgm.Name, true));
+                procedureDivision.Add(new GeneratedNode("*=================================================================",true));
+                procedureDivision.Add(new GeneratedNode("     CALL 'ZCALLPGM' USING TC-" + pgm.Name, true));
 
-                procedureDivision.Add(new GeneratedNode2("     ADDRESS OF TC-Library-PntTab", true));
-                procedureDivision.Add(new GeneratedNode2("     PERFORM VARYING TC-Library-Idx FROM 1 BY 1", true));
-                procedureDivision.Add(new GeneratedNode2("     UNTIL TC-Library-Idx > TC-Library-PntNbr", true));
-                procedureDivision.Add(new GeneratedNode2("         EVALUATE TC-Library-Item-Idt (TC-Library-Idx)", true));
+                procedureDivision.Add(new GeneratedNode("     ADDRESS OF TC-Library-PntTab", true));
+                procedureDivision.Add(new GeneratedNode("     PERFORM VARYING TC-Library-Idx FROM 1 BY 1", true));
+                procedureDivision.Add(new GeneratedNode("     UNTIL TC-Library-Idx > TC-Library-PntNbr", true));
+                procedureDivision.Add(new GeneratedNode("         EVALUATE TC-Library-Item-Idt (TC-Library-Idx)", true));
                 foreach (var proc in pgm.Procedures.Values) {
-                    procedureDivision.Add(new GeneratedNode2("         WHEN '" + proc.Hash + "'", true));
-                    procedureDivision.Add(new GeneratedNode2("              SET ADDRESS OF", true));
-                    procedureDivision.Add(new GeneratedNode2("              TC-" + pgm.Name + "-" + proc.Hash + "-Item", true));
-                    procedureDivision.Add(new GeneratedNode2("              TO ADDRESS OF", true));
-                    procedureDivision.Add(new GeneratedNode2("              TC-Library-Item(TC-Library-Idx)", true));
+                    procedureDivision.Add(new GeneratedNode("         WHEN '" + proc.Hash + "'", true));
+                    procedureDivision.Add(new GeneratedNode("              SET ADDRESS OF", true));
+                    procedureDivision.Add(new GeneratedNode("              TC-" + pgm.Name + "-" + proc.Hash + "-Item", true));
+                    procedureDivision.Add(new GeneratedNode("              TO ADDRESS OF", true));
+                    procedureDivision.Add(new GeneratedNode("              TC-Library-Item(TC-Library-Idx)", true));
                 }
-                procedureDivision.Add(new GeneratedNode2("         WHEN OTHER", true));
-                procedureDivision.Add(new GeneratedNode2("              CONTINUE", true));
-                procedureDivision.Add(new GeneratedNode2("         END-EVALUATE", true));
-                procedureDivision.Add(new GeneratedNode2("     END-PERFORM", true));
-                procedureDivision.Add(new GeneratedNode2("     .", true));
+                procedureDivision.Add(new GeneratedNode("         WHEN OTHER", true));
+                procedureDivision.Add(new GeneratedNode("              CONTINUE", true));
+                procedureDivision.Add(new GeneratedNode("         END-EVALUATE", true));
+                procedureDivision.Add(new GeneratedNode("     END-PERFORM", true));
+                procedureDivision.Add(new GeneratedNode("     .", true));
             }
         }
 
@@ -268,10 +271,10 @@ namespace TypeCobol.Codegen.Nodes {
         {
             return new Node[]
             {
-                new GeneratedNode2("* Get the data from the global storage section", false),
-                new GeneratedNode2($"{new string(' ', columnOffset)}CALL '{OriginalNode.Root.MainProgram.Hash}' USING", true),
-                new GeneratedNode2($"{new string(' ', columnOffset)}    by reference address of TC-GlobalData", true),
-                new GeneratedNode2($"{new string(' ', columnOffset)}end-call", true),
+                new GeneratedNode("* Get the data from the global storage section", false),
+                new GeneratedNode($"{new string(' ', columnOffset)}CALL '{OriginalNode.Root.MainProgram.Hash}' USING", true),
+                new GeneratedNode($"{new string(' ', columnOffset)}    by reference address of TC-GlobalData", true),
+                new GeneratedNode($"{new string(' ', columnOffset)}end-call", true),
             };
         }
 
@@ -279,9 +282,6 @@ namespace TypeCobol.Codegen.Nodes {
         {
             var paramEntry = parameter.CodeElement as ParameterDescriptionEntry;
             var generated = new ParameterEntry(paramEntry, node.SymbolTable, parameter);
-            if (paramEntry.DataConditions != null) {
-                foreach (var child in paramEntry.DataConditions) generated.Add(new DataCondition(child));
-            }
 
             var parameterNode = node.Profile.Parameters.FirstOrDefault(x => x.Name == paramEntry.Name);
             if (parameterNode != null)

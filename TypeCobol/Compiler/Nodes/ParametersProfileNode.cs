@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.Nodes
 {
-    public class ParametersProfileNode : GenericNode<ParametersProfile>, ParameterList
+    public class ParametersProfileNode : GenericNode<ParametersProfile>, IProfile, IEquatable<ParametersProfileNode>
     {
         public IList<ParameterDescription> InputParameters { get; set; }
         public IList<ParameterDescription> InoutParameters { get; set; }
@@ -40,43 +38,6 @@ namespace TypeCobol.Compiler.Nodes
         /// <summary>TCRFUN_NO_RETURNING_FOR_PROCEDURES</summary>
         public bool IsProcedure { get { return ReturningParameter == null; } }
 
-
-
-        public override bool Equals(object other)
-        {
-            if (other == null || GetType() != other.GetType()) return false;
-            var o = other as ParametersProfileNode;
-            if (o == null) return false;
-            // instead of doing foreach(var mode in Tools.Reflection.GetValues<Passing.Mode>()) ...,
-            // only iterate over input+output+inout parameters: returning parameter does not have
-            // any impact in conflict between function profiles resolution
-            bool okay = true;
-            okay = AreEqual(InputParameters, o.InputParameters);
-            if (!okay) return false;
-            okay = AreEqual(InoutParameters, o.InoutParameters);
-            if (!okay) return false;
-            okay = AreEqual(OutputParameters, o.OutputParameters);
-            return okay;
-        }
-
-        private static bool AreEqual(IList<ParameterDescription> mine, IList<ParameterDescription> hers)
-        {
-            if (mine.Count != hers.Count) return false;
-            for (int c = 0; c < mine.Count; c++)
-            {
-                if (!mine[c].Equals(hers[c])) return false;
-                if (!mine[c].Equals(hers[c])) return false;
-            }
-            return true;
-        }
-
-        public override int GetHashCode()
-        {
-            int hash = 17;
-            foreach (var p in Parameters) hash = hash * 23 + p.GetHashCode();
-            return hash;
-        }
-
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this) && this.ContinueVisitToChildren(astVisitor, InputParameters, InoutParameters, OutputParameters) && this.ContinueVisitToChildren(astVisitor, ReturningParameter);
@@ -100,51 +61,41 @@ namespace TypeCobol.Compiler.Nodes
             return str.ToString();
         }
 
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as ParametersProfileNode);
+        }
 
+        public bool Equals(ParametersProfileNode parametersProfileNode)
+        {
+            if (Object.ReferenceEquals(this, parametersProfileNode)) return true;
+            if (Object.ReferenceEquals(null, parametersProfileNode)) return false;
 
-        IList<DataType> _icache = null;
-        IList<DataType> ParameterList.InputParameters
-        {
-            get
-            {
-                if (_icache != null) return _icache;
-                _icache = new List<DataType>();
-                foreach (var parameter in this.InputParameters)
-                    _icache.Add(parameter.DataType);
-                return _icache;
-            }
+            return base.CodeElement.Equals(parametersProfileNode.CodeElement);
         }
-        IList<DataType> _ycache = null;
-        IList<DataType> ParameterList.InoutParameters
+
+        public override int GetHashCode()
         {
-            get
-            {
-                if (_ycache != null) return _ycache;
-                _ycache = new List<DataType>();
-                foreach (var parameter in this.InoutParameters)
-                    _ycache.Add(parameter.DataType);
-                return _ycache;
-            }
+            return base.CodeElement.GetHashCode();
         }
-        IList<DataType> _ocache = null;
-        IList<DataType> ParameterList.OutputParameters
-        {
-            get
+
+        private IList<TypeInfo> _inputsCache;
+        public IList<TypeInfo> Inputs => _inputsCache ?? (_inputsCache = InputParameters.Select(MakeTypeInfo).ToList());
+
+        private IList<TypeInfo> _inoutsCache;
+        public IList<TypeInfo> Inouts => _inoutsCache ?? (_inoutsCache = InoutParameters.Select(MakeTypeInfo).ToList());
+
+        private IList<TypeInfo> _outputsCache;
+        public IList<TypeInfo> Outputs => _outputsCache ?? (_outputsCache = OutputParameters.Select(MakeTypeInfo).ToList());
+
+        private TypeInfo _returningCache;
+        public TypeInfo Returning => _returningCache ?? (_returningCache = MakeTypeInfo(ReturningParameter));
+
+        private static TypeInfo MakeTypeInfo(ParameterDescription parameter) =>
+            new TypeInfo()
             {
-                if (_ocache != null) return _ocache;
-                _ocache = new List<DataType>();
-                foreach (var parameter in this.OutputParameters)
-                    _ocache.Add(parameter.DataType);
-                return _ocache;
-            }
-        }
-        DataType ParameterList.ReturningParameter
-        {
-            get
-            {
-                if (this.ReturningParameter == null) return null;
-                return this.ReturningParameter.DataType;
-            }
-        }
+                DataType = parameter.DataType,
+                TypeDefinition = parameter.TypeDefinition
+            };
     }
 }

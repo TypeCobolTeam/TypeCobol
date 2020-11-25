@@ -1,0 +1,43 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM2.
+       data division.
+       working-storage section.
+       PROCEDURE DIVISION.
+       INIT-LIBRARY.
+           continue.
+           .
+       declare procedure GetTechnicalContext public
+           input myname1 pic X.
+       end-declare.
+
+       declare procedure Proc1 public
+           input t pic x.
+       procedure division.
+           .
+       end-declare.
+       END PROGRAM PGM2.
+      
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. STACKED.
+       PROCEDURE DIVISION.
+       declare procedure Foo public
+           input t pic x.
+       procedure division.
+           .
+       end-declare.
+       declare procedure FooPgm2 public
+           input t pic x.
+       procedure division.
+           .
+       end-declare.
+       END PROGRAM STACKED.
+      
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. STACKED2.
+       PROCEDURE DIVISION.
+       declare procedure Foo public
+           input t pic x.
+       procedure division.
+           .
+       end-declare.
+       END PROGRAM STACKED2.

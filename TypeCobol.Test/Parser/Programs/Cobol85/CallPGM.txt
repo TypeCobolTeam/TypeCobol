@@ -1,8 +1,8 @@
 --- Diagnostics ---
 Line 1[1,27] <37, Warning, General> - Warning: "END PROGRAM" is missing.
-Line 8[24,24] <27, Error, Syntax> - Syntax error : Symbol x is not referenced OffendingSymbol=[24,24:x]<UserDefinedWord>
-Line 8[26,26] <27, Error, Syntax> - Syntax error : Symbol y is not referenced OffendingSymbol=[26,26:y]<UserDefinedWord>
-Line 8[28,28] <27, Error, Syntax> - Syntax error : Symbol z is not referenced OffendingSymbol=[28,28:z]<UserDefinedWord>
+Line 8[24,24] <30, Error, Semantics> - Semantic error: Symbol x is not referenced OffendingSymbol=[24,24:x]<UserDefinedWord>
+Line 8[26,26] <30, Error, Semantics> - Semantic error: Symbol y is not referenced OffendingSymbol=[26,26:y]<UserDefinedWord>
+Line 8[28,28] <30, Error, Semantics> - Semantic error: Symbol z is not referenced OffendingSymbol=[28,28:z]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: call-program common:False initial:False recursive:False

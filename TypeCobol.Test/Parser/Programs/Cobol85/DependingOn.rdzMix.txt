@@ -19,7 +19,7 @@
           05 MyAmbiguousCounter  pic 999 comp-5.
       *KO reference to MyAmbiguousCounter is ... Ambiguous
           05 MyAmbiguousTab     PIC X occurs 99 
-Line 22[46,63] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol MyAmbiguousCounter 
+Line 22[46,63] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol MyAmbiguousCounter 
 Symbols found: StringStatement::MyAmbiguousGroup::MyAmbiguousCounter | StringStatement::MyAmbiguousGroup::MyAmbiguousCounter
                                 depending on MyAmbiguousCounter.
 
@@ -49,12 +49,12 @@ Line 27[54,56] <27, Error, Syntax> - Syntax error : mismatched input '999' expec
 
       *KO
 000000    05 MyTab5     PIC X occurs 99 
-Line 49[38,47] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol MyGroup5.MyCounter5 
+Line 49[38,47] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol MyGroup5.MyCounter5 
 Symbols found: StringStatement::MyGroup5::MySubGroup5::MySubSubGroup51::MyCounter5 | StringStatement::MyGroup5::MySubGroup5::MySubSubGroup52::MyCounter5
                         depending on MyCounter5 of MyGroup5. 
       *KO
 000000    05 MyTab5     PIC X occurs 99 depending on 
-Line 52[25,34] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol MyGroup5.MySubGroup5.MyCounter5 
+Line 52[25,34] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol MyGroup5.MySubGroup5.MyCounter5 
 Symbols found: StringStatement::MyGroup5::MySubGroup5::MySubSubGroup51::MyCounter5 | StringStatement::MyGroup5::MySubGroup5::MySubSubGroup52::MyCounter5
                         MyCounter5 of MySubGroup5 of MyGroup5.
       *Ok

@@ -1,11 +1,11 @@
 ﻿--- Diagnostics ---
-Line 16[34,41] <27, Error, Syntax> - Syntax error : Symbol unknown1 is not referenced OffendingSymbol=[34,41:unknown1]<UserDefinedWord>
-Line 18[40,47] <27, Error, Syntax> - Syntax error : Symbol unknown1 is not referenced OffendingSymbol=[40,47:unknown1]<UserDefinedWord>
-Line 18[49,56] <27, Error, Syntax> - Syntax error : Symbol unknown2 is not referenced OffendingSymbol=[49,56:unknown2]<UserDefinedWord>
-Line 19[40,47] <27, Error, Syntax> - Syntax error : Symbol unknown1 is not referenced OffendingSymbol=[40,47:unknown1]<UserDefinedWord>
-Line 20[46,53] <27, Error, Syntax> - Syntax error : Symbol unknown2 is not referenced OffendingSymbol=[46,53:unknown2]<UserDefinedWord>
-Line 22[34,45] <27, Error, Syntax> - Syntax error : Symbol notDeclared1 is not referenced OffendingSymbol=[34,45:notDeclared1]<UserDefinedWord>
-Line 26[27,38] <27, Error, Syntax> - Syntax error : Symbol notDeclared2 is not referenced OffendingSymbol=[27,38:notDeclared2]<UserDefinedWord>
+Line 16[34,41] <30, Error, Semantics> - Semantic error: Symbol unknown1 is not referenced OffendingSymbol=[34,41:unknown1]<UserDefinedWord>
+Line 18[40,47] <30, Error, Semantics> - Semantic error: Symbol unknown1 is not referenced OffendingSymbol=[40,47:unknown1]<UserDefinedWord>
+Line 18[49,56] <30, Error, Semantics> - Semantic error: Symbol unknown2 is not referenced OffendingSymbol=[49,56:unknown2]<UserDefinedWord>
+Line 19[40,47] <30, Error, Semantics> - Semantic error: Symbol unknown1 is not referenced OffendingSymbol=[40,47:unknown1]<UserDefinedWord>
+Line 20[46,53] <30, Error, Semantics> - Semantic error: Symbol unknown2 is not referenced OffendingSymbol=[46,53:unknown2]<UserDefinedWord>
+Line 22[34,45] <30, Error, Semantics> - Semantic error: Symbol notDeclared1 is not referenced OffendingSymbol=[34,45:notDeclared1]<UserDefinedWord>
+Line 26[27,38] <30, Error, Semantics> - Semantic error: Symbol notDeclared2 is not referenced OffendingSymbol=[27,38:notDeclared2]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: StringStatement common:False initial:False recursive:False

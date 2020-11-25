@@ -1,1346 +1,850 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.Parser;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
     /// <summary>
-    /// A Node Dispatcher on a ProgramClassBuilder that is able to also dispatch building actions.
+    /// Implements IProgramClassBuilderNodeListener so as to dispatch calls to a list of listeners.
     /// </summary>
-    public class ProgramClassBuilderNodeDispatcher : NodeDispatcher, IProgramClassBuilder
+    public class ProgramClassBuilderNodeDispatcher : IProgramClassBuilderNodeListener
     {
-        private IList<ProgramClassBuilderNodeListener> _builderListeners = null;
+        private readonly IList<IProgramClassBuilderNodeListener> _listeners;
 
+        /// <summary>
+        /// Creates a new ProgramClassBuilderNodeDispatcher without any listener attached.
+        /// </summary>
         public ProgramClassBuilderNodeDispatcher()
         {
+            _listeners = new List<IProgramClassBuilderNodeListener>();
         }
 
         /// <summary>
-        /// Overriden AddListener to filter those that are ProgramClassBuilderNodeListener instance.
-        /// So that we can build a specific list, and avoid dynamic type checking at dispatch time.
+        /// Add a listener to this dispatcher.
         /// </summary>
-        /// <param name="listener">The listener to be added</param>
-        protected override void AddListener(NodeListener listener)
+        /// <param name="listener">A non-null instance of IProgramClassBuilderNodeListener.</param>
+        public void AddListener([NotNull] IProgramClassBuilderNodeListener listener) => _listeners.Add(listener);
+
+        public virtual void OnNode(Node node, Program program)
         {
-            base.AddListener(listener);
-            if (listener is ProgramClassBuilderNodeListener nodeListener)
-            {
-                if (_builderListeners == null)
-                {
-                    _builderListeners = new List<ProgramClassBuilderNodeListener>();
-                }
-                _builderListeners.Add(nodeListener);
-            }
+            foreach (var listener in _listeners) listener.OnNode(node, program);
         }
 
-        public virtual void OnLevel1Definition(DataDefinition level1Node)
+        public virtual void StartCobolCompilationUnit()
         {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnLevel1Definition(level1Node);
-                }
+            foreach (var listener in _listeners) listener.StartCobolCompilationUnit();
+        }
+
+        public virtual void StartCobolProgram(ProgramIdentification programIdentification, LibraryCopyCodeElement libraryCopy)
+        {
+            foreach (var listener in _listeners) listener.StartCobolProgram(programIdentification, libraryCopy);
+        }
+
+        public virtual void EndCobolProgram(ProgramEnd end)
+        {
+            foreach (var listener in _listeners) listener.EndCobolProgram(end);
+        }
+
+        public virtual void StartEnvironmentDivision(EnvironmentDivisionHeader header)
+        {
+            foreach (var listener in _listeners) listener.StartEnvironmentDivision(header);
+        }
+
+        public virtual void EndEnvironmentDivision()
+        {
+            foreach (var listener in _listeners) listener.EndEnvironmentDivision();
+        }
+
+        public virtual void StartConfigurationSection(ConfigurationSectionHeader header)
+        {
+            foreach (var listener in _listeners) listener.StartConfigurationSection(header);
+        }
+
+        public virtual void EndConfigurationSection()
+        {
+            foreach (var listener in _listeners) listener.EndConfigurationSection();
+        }
+
+        public virtual void StartSourceComputerParagraph(SourceComputerParagraph paragraph)
+        {
+            foreach (var listener in _listeners) listener.StartSourceComputerParagraph(paragraph);
+        }
+
+        public virtual void EndSourceComputerParagraph()
+        {
+            foreach (var listener in _listeners) listener.EndSourceComputerParagraph();
+        }
+
+        public virtual void StartObjectComputerParagraph(ObjectComputerParagraph paragraph)
+        {
+            foreach (var listener in _listeners) listener.StartObjectComputerParagraph(paragraph);
+        }
+
+        public virtual void EndObjectComputerParagraph()
+        {
+            foreach (var listener in _listeners) listener.EndObjectComputerParagraph();
+        }
+
+        public virtual void StartSpecialNamesParagraph(SpecialNamesParagraph paragraph)
+        {
+            foreach (var listener in _listeners) listener.StartSpecialNamesParagraph(paragraph);
+        }
+
+        public virtual void EndSpecialNamesParagraph()
+        {
+            foreach (var listener in _listeners) listener.EndSpecialNamesParagraph();
+        }
+
+        public virtual void StartRepositoryParagraph(RepositoryParagraph paragraph)
+        {
+            foreach (var listener in _listeners) listener.StartRepositoryParagraph(paragraph);
+        }
+
+        public virtual void EndRepositoryParagraph()
+        {
+            foreach (var listener in _listeners) listener.EndRepositoryParagraph();
+        }
+
+        public virtual void StartInputOutputSection(InputOutputSectionHeader header)
+        {
+            foreach (var listener in _listeners) listener.StartInputOutputSection(header);
+        }
+
+        public virtual void EndInputOutputSection()
+        {
+            foreach (var listener in _listeners) listener.EndInputOutputSection();
+        }
+
+        public virtual void StartFileControlParagraph(FileControlParagraphHeader header)
+        {
+            foreach (var listener in _listeners) listener.StartFileControlParagraph(header);
+        }
+
+        public virtual void EndFileControlParagraph()
+        {
+            foreach (var listener in _listeners) listener.EndFileControlParagraph();
+        }
+
+        public virtual void StartFileControlEntry(FileControlEntry entry)
+        {
+            foreach (var listener in _listeners) listener.StartFileControlEntry(entry);
+        }
+
+        public virtual void EndFileControlEntry()
+        {
+            foreach (var listener in _listeners) listener.EndFileControlEntry();
+        }
+
+        public virtual void StartDataDivision(DataDivisionHeader header)
+        {
+            foreach (var listener in _listeners) listener.StartDataDivision(header);
+        }
+
+        public virtual void EndDataDivision()
+        {
+            foreach (var listener in _listeners) listener.EndDataDivision();
+        }
+
+        public virtual void StartFileSection(FileSectionHeader header)
+        {
+            foreach (var listener in _listeners) listener.StartFileSection(header);
+        }
+
+        public virtual void EndFileSection()
+        {
+            foreach (var listener in _listeners) listener.EndFileSection();
+        }
+
+        public virtual void StartFileDescriptionEntry(FileDescriptionEntry entry)
+        {
+            foreach (var listener in _listeners) listener.StartFileDescriptionEntry(entry);
+        }
+
+        public virtual void EndFileDescriptionEntry()
+        {
+            foreach (var listener in _listeners) listener.EndFileDescriptionEntry();
+        }
+
+        public virtual void EndFileDescriptionEntryIfAny()
+        {
+            foreach (var listener in _listeners) listener.EndFileDescriptionEntryIfAny();
+        }
+
+        public virtual void StartDataDescriptionEntry(DataDescriptionEntry entry)
+        {
+            foreach (var listener in _listeners) listener.StartDataDescriptionEntry(entry);
+        }
+
+        public virtual void StartDataRedefinesEntry(DataRedefinesEntry entry)
+        {
+            foreach (var listener in _listeners) listener.StartDataRedefinesEntry(entry);
+        }
+
+        public virtual void StartDataRenamesEntry(DataRenamesEntry entry)
+        {
+            foreach (var listener in _listeners) listener.StartDataRenamesEntry(entry);
+        }
+
+        public virtual void StartDataConditionEntry(DataConditionEntry entry)
+        {
+            foreach (var listener in _listeners) listener.StartDataConditionEntry(entry);
+        }
+
+        public virtual void StartTypeDefinitionEntry(DataTypeDescriptionEntry typedef)
+        {
+            foreach (var listener in _listeners) listener.StartTypeDefinitionEntry(typedef);
+        }
+
+        public virtual void StartWorkingStorageSection(WorkingStorageSectionHeader header)
+        {
+            foreach (var listener in _listeners) listener.StartWorkingStorageSection(header);
+        }
+
+        public virtual void EndWorkingStorageSection()
+        {
+            foreach (var listener in _listeners) listener.EndWorkingStorageSection();
+        }
+
+        public virtual void StartGlobalStorageSection(GlobalStorageSectionHeader header)
+        {
+            foreach (var listener in _listeners) listener.StartGlobalStorageSection(header);
+        }
+
+        public virtual void EndGlobalStorageSection()
+        {
+            foreach (var listener in _listeners) listener.EndGlobalStorageSection();
+        }
+
+        public virtual void StartLocalStorageSection(LocalStorageSectionHeader header)
+        {
+            foreach (var listener in _listeners) listener.StartLocalStorageSection(header);
+        }
+
+        public virtual void EndLocalStorageSection()
+        {
+            foreach (var listener in _listeners) listener.EndLocalStorageSection();
+        }
+
+        public virtual void StartLinkageSection(LinkageSectionHeader header)
+        {
+            foreach (var listener in _listeners) listener.StartLinkageSection(header);
+        }
+
+        public virtual void EndLinkageSection()
+        {
+            foreach (var listener in _listeners) listener.EndLinkageSection();
+        }
+
+        public virtual void StartProcedureDivision(ProcedureDivisionHeader header)
+        {
+            foreach (var listener in _listeners) listener.StartProcedureDivision(header);
+        }
+
+        public virtual void EndProcedureDivision()
+        {
+            foreach (var listener in _listeners) listener.EndProcedureDivision();
+        }
+
+        public virtual void StartDeclaratives(DeclarativesHeader header)
+        {
+            foreach (var listener in _listeners) listener.StartDeclaratives(header);
+        }
+
+        public virtual void EndDeclaratives(DeclarativesEnd end)
+        {
+            foreach (var listener in _listeners) listener.EndDeclaratives(end);
+        }
+
+        public virtual void StartFunctionDeclaration(FunctionDeclarationHeader header)
+        {
+            foreach (var listener in _listeners) listener.StartFunctionDeclaration(header);
+        }
+
+        public virtual void EndFunctionDeclaration(FunctionDeclarationEnd end)
+        {
+            foreach (var listener in _listeners) listener.EndFunctionDeclaration(end);
+        }
+
+        public virtual void StartFunctionProcedureDivision(ProcedureDivisionHeader header)
+        {
+            foreach (var listener in _listeners) listener.StartFunctionProcedureDivision(header);
+        }
+
+        public virtual void EndFunctionProcedureDivision()
+        {
+            foreach (var listener in _listeners) listener.EndFunctionProcedureDivision();
+        }
+
+        public virtual void StartSection(SectionHeader header)
+        {
+            foreach (var listener in _listeners) listener.StartSection(header);
+        }
+
+        public virtual void EndSection()
+        {
+            foreach (var listener in _listeners) listener.EndSection();
+        }
+
+        public virtual void StartParagraph(ParagraphHeader header)
+        {
+            foreach (var listener in _listeners) listener.StartParagraph(header);
+        }
+
+        public virtual void EndParagraph()
+        {
+            foreach (var listener in _listeners) listener.EndParagraph();
+        }
+
+        public virtual void StartSentence()
+        {
+            foreach (var listener in _listeners) listener.StartSentence();
+        }
+
+        public virtual void EndSentence(SentenceEnd end, bool bCheck = false)
+        {
+            foreach (var listener in _listeners) listener.EndSentence(end, bCheck);
+        }
+
+        public virtual void CheckStartSentenceLastStatement()
+        {
+            foreach (var listener in _listeners) listener.CheckStartSentenceLastStatement();
+        }
+
+        public virtual void StartExecStatement(ExecStatement execStmt)
+        {
+            foreach (var listener in _listeners) listener.StartExecStatement(execStmt);
+        }
+
+        public virtual void EndExecStatement()
+        {
+            foreach (var listener in _listeners) listener.EndExecStatement();
+        }
+
+        public virtual void EnterUseStatement(UseStatement useStatement)
+        {
+            foreach (var listener in _listeners) listener.EnterUseStatement(useStatement);
+        }
+
+        public virtual void OnContinueStatement(ContinueStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnContinueStatement(stmt);
+        }
+
+        public virtual void OnEntryStatement(EntryStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnEntryStatement(stmt);
+        }
+
+        public virtual void OnAcceptStatement(AcceptStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnAcceptStatement(stmt);
+        }
+
+        public virtual void OnInitializeStatement(InitializeStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnInitializeStatement(stmt);
+        }
+
+        public virtual void OnInspectStatement(InspectStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnInspectStatement(stmt);
+        }
+
+        public virtual void OnMoveStatement(MoveStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnMoveStatement(stmt);
+        }
+
+        public virtual void OnSetStatement(SetStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnSetStatement(stmt);
+        }
+
+        public virtual void OnStopStatement(StopStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnStopStatement(stmt);
+        }
+
+        public virtual void OnExitMethodStatement(ExitMethodStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnExitMethodStatement(stmt);
+        }
+
+        public virtual void OnExitProgramStatement(ExitProgramStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnExitProgramStatement(stmt);
+        }
+
+        public virtual void OnAllocateStatement(AllocateStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnAllocateStatement(stmt);
+        }
+
+        public virtual void OnFreeStatement(FreeStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnFreeStatement(stmt);
+        }
+
+        public virtual void OnGobackStatement(GobackStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnGobackStatement(stmt);
+        }
+
+        public virtual void OnCloseStatement(CloseStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnCloseStatement(stmt);
+        }
+
+        public virtual void OnDisplayStatement(DisplayStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnDisplayStatement(stmt);
+        }
+
+        public virtual void OnOpenStatement(OpenStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnOpenStatement(stmt);
+        }
+
+        public virtual void OnMergeStatement(MergeStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnMergeStatement(stmt);
+        }
+
+        public virtual void OnReleaseStatement(ReleaseStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnReleaseStatement(stmt);
+        }
+
+        public virtual void OnSortStatement(SortStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnSortStatement(stmt);
+        }
+
+        public virtual void OnAlterStatement(AlterStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnAlterStatement(stmt);
+        }
+
+        public virtual void OnExitStatement(ExitStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnExitStatement(stmt);
+        }
+
+        public virtual void OnGotoStatement(GotoStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnGotoStatement(stmt);
+        }
+
+        public virtual void OnPerformProcedureStatement(PerformProcedureStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnPerformProcedureStatement(stmt);
+        }
+
+        public virtual void OnCancelStatement(CancelStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnCancelStatement(stmt);
+        }
+
+        public virtual void OnProcedureStyleCall(ProcedureStyleCallStatement stmt, CallStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.OnProcedureStyleCall(stmt, end);
+        }
+
+        public virtual void OnExecStatement(ExecStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.OnExecStatement(stmt);
+        }
+
+        public virtual void StartAddStatementConditional(AddStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartAddStatementConditional(stmt);
+        }
+
+        public virtual void EndAddStatementConditional(AddStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndAddStatementConditional(end);
+        }
+
+        public virtual void StartCallStatementConditional(CallStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartCallStatementConditional(stmt);
+        }
+
+        public virtual void EndCallStatementConditional(CallStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndCallStatementConditional(end);
+        }
+
+        public virtual void StartComputeStatementConditional(ComputeStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartComputeStatementConditional(stmt);
+        }
+
+        public virtual void EndComputeStatementConditional(ComputeStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndComputeStatementConditional(end);
+        }
+
+        public virtual void StartDeleteStatementConditional(DeleteStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartDeleteStatementConditional(stmt);
+        }
+
+        public virtual void EndDeleteStatementConditional(DeleteStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndDeleteStatementConditional(end);
+        }
+
+        public virtual void StartDivideStatementConditional(DivideStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartDivideStatementConditional(stmt);
+        }
+
+        public virtual void EndDivideStatementConditional(DivideStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndDivideStatementConditional(end);
+        }
+
+        public virtual void StartEvaluateStatementWithBody(EvaluateStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartEvaluateStatementWithBody(stmt);
+        }
+
+        public virtual void EndEvaluateStatementWithBody(EvaluateStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndEvaluateStatementWithBody(end);
+        }
+
+        public virtual void StartWhenConditionClause(List<CodeElement> conditions)
+        {
+            foreach (var listener in _listeners) listener.StartWhenConditionClause(conditions);
+        }
+
+        public virtual void EndWhenConditionClause()
+        {
+            foreach (var listener in _listeners) listener.EndWhenConditionClause();
+        }
+
+        public virtual void StartWhenOtherClause(WhenOtherCondition cond)
+        {
+            foreach (var listener in _listeners) listener.StartWhenOtherClause(cond);
+        }
+
+        public virtual void EndWhenOtherClause()
+        {
+            foreach (var listener in _listeners) listener.EndWhenOtherClause();
+        }
+
+        public virtual void StartIfStatementWithBody(IfStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartIfStatementWithBody(stmt);
+        }
+
+        public virtual void EnterElseClause(ElseCondition clause)
+        {
+            foreach (var listener in _listeners) listener.EnterElseClause(clause);
+        }
+
+        public virtual void EndIfStatementWithBody(IfStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndIfStatementWithBody(end);
+        }
+
+        public virtual void AddNextSentenceStatement(NextSentenceStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.AddNextSentenceStatement(stmt);
+        }
+
+        public virtual void StartInvokeStatementConditional(InvokeStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartInvokeStatementConditional(stmt);
+        }
+
+        public virtual void EndInvokeStatementConditional(InvokeStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndInvokeStatementConditional(end);
+        }
+
+        public virtual void StartJsonGenerateStatementConditional(JsonGenerateStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartJsonGenerateStatementConditional(stmt);
+        }
+
+        public virtual void EndJsonGenerateStatementConditional(JsonStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndJsonGenerateStatementConditional(end);
+        }
+
+        public virtual void StartJsonParseStatementConditional(JsonParseStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartJsonParseStatementConditional(stmt);
+        }
+
+        public virtual void EndJsonParseStatementConditional(JsonStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndJsonParseStatementConditional(end);
+        }
+
+        public virtual void StartMultiplyStatementConditional(MultiplyStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartMultiplyStatementConditional(stmt);
+        }
+
+        public virtual void EndMultiplyStatementConditional(MultiplyStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndMultiplyStatementConditional(end);
+        }
+
+        public virtual void StartPerformStatementWithBody(PerformStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartPerformStatementWithBody(stmt);
+        }
+
+        public virtual void EndPerformStatementWithBody(PerformStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndPerformStatementWithBody(end);
+        }
+
+        public virtual void StartSearchStatementWithBody(SearchStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartSearchStatementWithBody(stmt);
+        }
+
+        public virtual void EndSearchStatementWithBody(SearchStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndSearchStatementWithBody(end);
+        }
+
+        public virtual void StartWhenSearchConditionClause(WhenSearchCondition condition)
+        {
+            foreach (var listener in _listeners) listener.StartWhenSearchConditionClause(condition);
+        }
+
+        public virtual void EndWhenSearchConditionClause()
+        {
+            foreach (var listener in _listeners) listener.EndWhenSearchConditionClause();
+        }
+
+        public virtual void EnterReadStatementConditional(ReadStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.EnterReadStatementConditional(stmt);
+        }
+
+        public virtual void EndReadStatementConditional(ReadStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndReadStatementConditional(end);
+        }
+
+        public virtual void EnterReturnStatementConditional(ReturnStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.EnterReturnStatementConditional(stmt);
+        }
+
+        public virtual void EndReturnStatementConditional(ReturnStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndReturnStatementConditional(end);
+        }
+
+        public virtual void StartRewriteStatementConditional(RewriteStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartRewriteStatementConditional(stmt);
+        }
+
+        public virtual void EndRewriteStatementConditional(RewriteStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndRewriteStatementConditional(end);
+        }
+
+        public virtual void StartStartStatementConditional(StartStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartStartStatementConditional(stmt);
+        }
+
+        public virtual void EndStartStatementConditional(StartStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndStartStatementConditional(end);
+        }
+
+        public virtual void StartStringStatementConditional(StringStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartStringStatementConditional(stmt);
+        }
+
+        public virtual void EndStringStatementConditional(StringStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndStringStatementConditional(end);
+        }
+
+        public virtual void StartSubtractStatementConditional(SubtractStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartSubtractStatementConditional(stmt);
+        }
+
+        public virtual void EndSubtractStatementConditional(SubtractStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndSubtractStatementConditional(end);
+        }
+
+        public virtual void StartUnstringStatementConditional(UnstringStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartUnstringStatementConditional(stmt);
+        }
+
+        public virtual void EndUnstringStatementConditional(UnstringStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndUnstringStatementConditional(end);
+        }
+
+        public virtual void StartWriteStatementConditional(WriteStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartWriteStatementConditional(stmt);
+        }
+
+        public virtual void EndWriteStatementConditional(WriteStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndWriteStatementConditional(end);
+        }
+
+        public virtual void StartXmlGenerateStatementConditional(XmlGenerateStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartXmlGenerateStatementConditional(stmt);
+        }
+
+        public virtual void EndXmlGenerateStatementConditional(XmlStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndXmlGenerateStatementConditional(end);
+        }
+
+        public virtual void StartXmlParseStatementConditional(XmlParseStatement stmt)
+        {
+            foreach (var listener in _listeners) listener.StartXmlParseStatementConditional(stmt);
+        }
+
+        public virtual void EndXmlParseStatementConditional(XmlStatementEnd end = null)
+        {
+            foreach (var listener in _listeners) listener.EndXmlParseStatementConditional(end);
+        }
+
+        public virtual void StartOnSizeError(OnSizeErrorCondition cond)
+        {
+            foreach (var listener in _listeners) listener.StartOnSizeError(cond);
+        }
+
+        public virtual void EndOnSizeError()
+        {
+            foreach (var listener in _listeners) listener.EndOnSizeError();
+        }
+
+        public virtual void StartNoSizeError(NotOnSizeErrorCondition cond)
+        {
+            foreach (var listener in _listeners) listener.StartNoSizeError(cond);
+        }
+
+        public virtual void EndNoSizeError()
+        {
+            foreach (var listener in _listeners) listener.EndNoSizeError();
+        }
+
+        public virtual void StartOnException(OnExceptionCondition cond)
+        {
+            foreach (var listener in _listeners) listener.StartOnException(cond);
+        }
+
+        public virtual void EndOnException()
+        {
+            foreach (var listener in _listeners) listener.EndOnException();
+        }
+
+        public virtual void StartNoException(NotOnExceptionCondition cond)
+        {
+            foreach (var listener in _listeners) listener.StartNoException(cond);
+        }
+
+        public virtual void EndNoException()
+        {
+            foreach (var listener in _listeners) listener.EndNoException();
+        }
+
+        public virtual void StartOnOverflow(OnOverflowCondition cond)
+        {
+            foreach (var listener in _listeners) listener.StartOnOverflow(cond);
+        }
+
+        public virtual void EndOnOverflow()
+        {
+            foreach (var listener in _listeners) listener.EndOnOverflow();
+        }
+
+        public virtual void StartNoOverflow(NotOnOverflowCondition cond)
+        {
+            foreach (var listener in _listeners) listener.StartNoOverflow(cond);
+        }
+
+        public virtual void EndNoOverflow()
+        {
+            foreach (var listener in _listeners) listener.EndNoOverflow();
+        }
+
+        public virtual void StartOnInvalidKey(InvalidKeyCondition cond)
+        {
+            foreach (var listener in _listeners) listener.StartOnInvalidKey(cond);
+        }
+
+        public virtual void EndOnInvalidKey()
+        {
+            foreach (var listener in _listeners) listener.EndOnInvalidKey();
+        }
+
+        public virtual void StartNoInvalidKey(NotInvalidKeyCondition cond)
+        {
+            foreach (var listener in _listeners) listener.StartNoInvalidKey(cond);
+        }
+
+        public virtual void EndNoInvalidKey()
+        {
+            foreach (var listener in _listeners) listener.EndNoInvalidKey();
+        }
+
+        public virtual void StartOnAtEnd(AtEndCondition cond)
+        {
+            foreach (var listener in _listeners) listener.StartOnAtEnd(cond);
+        }
+
+        public virtual void EndOnAtEnd()
+        {
+            foreach (var listener in _listeners) listener.EndOnAtEnd();
+        }
+
+        public virtual void StartNoAtEnd(NotAtEndCondition cond)
+        {
+            foreach (var listener in _listeners) listener.StartNoAtEnd(cond);
+        }
+
+        public void StartDummyWhenSearchConditionClause(WhenDummy condition)
+        {
+            foreach (var listener in _listeners) listener.StartDummyWhenSearchConditionClause(condition);
+        }
+        
+        public virtual void EndNoAtEnd()
+        {
+            foreach (var listener in _listeners) listener.EndNoAtEnd();
         }
 
         public virtual void Enter(Node node)
         {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.Enter(node);
-                }
+            foreach (var listener in _listeners) listener.Enter(node);
         }
 
         public virtual void Exit(Node node)
         {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.Exit(node);
-                }
+            foreach (var listener in _listeners) listener.Exit(node);
         }
 
-        public void AddNextSentenceStatement([NotNull] NextSentenceStatement stmt)
+        public virtual void OnLevel1Definition(DataDefinition level1Node)
         {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.AddNextSentenceStatement(stmt);
-                }
-        }
-
-        public void CheckStartSentenceLastStatement()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.CheckStartSentenceLastStatement();
-                }
-        }
-
-        public void EndAddStatementConditional(AddStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndAddStatementConditional(end);
-                }
-        }
-
-        public void EndCallStatementConditional(CallStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndCallStatementConditional(end);
-                }
-        }
-
-        public void EndCobolProgram(ProgramEnd end)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndCobolProgram(end);
-                }
-        }
-
-        public void EndComputeStatementConditional(ComputeStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndComputeStatementConditional(end);
-                }
-        }
-
-        public void EndConfigurationSection()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndConfigurationSection();
-                }
-        }
-
-        public void EndDataDivision()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndDataDivision();
-                }
-        }
-
-        public void EndDeclaratives([NotNull] DeclarativesEnd end)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndDeclaratives(end);
-                }
-        }
-
-        public void EndDeleteStatementConditional(DeleteStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndDeleteStatementConditional(end);
-                }
-        }
-
-        public void EndDivideStatementConditional(DivideStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndDivideStatementConditional(end);
-                }
-        }
-
-        public void EndEnvironmentDivision()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndEnvironmentDivision();
-                }
-        }
-
-        public void EndEvaluateStatementWithBody(EvaluateStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndEvaluateStatementWithBody(end);
-                }
-        }
-
-        public void EndExecStatement()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndExecStatement();
-                }
-        }
-
-        public void EndFileControlEntry()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndFileControlEntry();
-                }
-        }
-
-        public void EndFileControlParagraph()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndFileControlParagraph();
-                }
-        }
-
-        public void EndFileDescriptionEntry()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndFileDescriptionEntry();
-                }
-        }
-
-        public void EndFileDescriptionEntryIfAny()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndFileDescriptionEntryIfAny();
-                }
-        }
-
-        public void EndFileSection()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndFileSection();
-                }
-        }
-
-        public void EndFunctionDeclaration([NotNull] FunctionDeclarationEnd end)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndFunctionDeclaration(end);
-                }
-        }
-
-        public void EndFunctionProcedureDivision()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndFunctionProcedureDivision();
-                }
-        }
-
-        public void EndGlobalStorageSection()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndGlobalStorageSection();
-                }
-        }
-
-        public void EndIfStatementWithBody(IfStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndIfStatementWithBody();
-                }
-        }
-
-        public void EndInputOutputSection()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndInputOutputSection();
-                }
-        }
-
-        public void EndInvokeStatementConditional(InvokeStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndInvokeStatementConditional(end);
-                }
-        }
-
-        public void EndJsonGenerateStatementConditional(JsonStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndJsonGenerateStatementConditional(end);
-                }
-        }
-
-        public void EndJsonParseStatementConditional(JsonStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-            {
-                l.EndJsonParseStatementConditional(end);
-            }
-        }
-
-        public void EndLinkageSection()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndLinkageSection();
-                }
-        }
-
-        public void EndLocalStorageSection()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndLocalStorageSection();
-                }
-        }
-
-        public void EndMultiplyStatementConditional(MultiplyStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndMultiplyStatementConditional(end);
-                }
-        }
-
-        public void EndNoAtEnd()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndNoAtEnd();
-                }
-        }
-
-        public void EndNoException()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndNoException();
-                }
-        }
-
-        public void EndNoInvalidKey()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndNoInvalidKey();
-                }
-        }
-
-        public void EndNoOverflow()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndNoOverflow();
-                }
-        }
-
-        public void EndNoSizeError()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndNoSizeError();
-                }
-        }
-
-        public void EndObjectComputerParagraph()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndObjectComputerParagraph();
-                }
-        }
-
-        public void EndOnAtEnd()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndOnAtEnd();
-                }
-        }
-
-        public void EndOnException()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndOnException();
-                }
-        }
-
-        public void EndOnInvalidKey()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndOnInvalidKey();
-                }
-        }
-
-        public void EndOnOverflow()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndOnOverflow();
-                }
-        }
-
-        public void EndOnSizeError()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndOnSizeError();
-                }
-        }
-
-        public void EndParagraph()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndParagraph();
-                }
-        }
-
-        public void EndPerformStatementWithBody(PerformStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndPerformStatementWithBody(end);
-                }
-        }
-
-        public void EndProcedureDivision()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndProcedureDivision();
-                }
-        }
-
-        public void EndReadStatementConditional(ReadStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndReadStatementConditional(end);
-                }
-        }
-
-        public void EndRepositoryParagraph()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndRepositoryParagraph();
-                }
-        }
-
-        public void EndReturnStatementConditional(ReturnStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndReturnStatementConditional(end);
-                }
-        }
-
-        public void EndRewriteStatementConditional(RewriteStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndRewriteStatementConditional(end);
-                }
-        }
-
-        public void EndSearchStatementWithBody(SearchStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndSearchStatementWithBody(end);
-                }
-        }
-
-        public void EndSection()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndSection();
-                }
-        }
-
-        public void EndSentence(SentenceEnd end, bool bCheck = false)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndSentence(end, bCheck);
-                }
-        }
-
-        public void EndSourceComputerParagraph()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndSourceComputerParagraph();
-                }
-        }
-
-        public void EndSpecialNamesParagraph()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndSpecialNamesParagraph();
-                }
-        }
-
-        public void EndStartStatementConditional(StartStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndStartStatementConditional(end);
-                }
-        }
-
-        public void EndStringStatementConditional(StringStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndStringStatementConditional(end);
-                }
-        }
-
-        public void EndSubtractStatementConditional(SubtractStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndSubtractStatementConditional(end);
-                }
-        }
-
-        public void EndUnstringStatementConditional(UnstringStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndUnstringStatementConditional(end);
-                }
-        }
-
-        public void EndWhenConditionClause()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndWhenConditionClause();
-                }
-        }
-
-        public void EndWhenOtherClause()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndWhenOtherClause();
-                }
-        }
-
-        public void EndWhenSearchConditionClause()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndWhenSearchConditionClause();
-                }
-        }
-
-        public void EndWorkingStorageSection()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndWorkingStorageSection();
-                }
-        }
-
-        public void EndWriteStatementConditional(WriteStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndWriteStatementConditional(end);
-                }
-        }
-
-        public void EndXmlGenerateStatementConditional(XmlStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndXmlGenerateStatementConditional(end);
-                }
-        }
-
-        public void EndXmlParseStatementConditional(XmlStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EndXmlParseStatementConditional(end);
-                }
-        }
-
-        public void EnterElseClause(ElseCondition clause)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EnterElseClause(clause);
-                }
-        }
-
-        public void EnterReadStatementConditional([NotNull] ReadStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EnterReadStatementConditional(stmt);
-                }
-        }
-
-        public void EnterReturnStatementConditional([NotNull] ReturnStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EnterReturnStatementConditional(stmt);
-                }
-        }
-
-        public void EnterUseStatement(UseStatement useStatement)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.EnterUseStatement(useStatement);
-                }
-        }
-
-        public void OnAcceptStatement([NotNull] AcceptStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnAcceptStatement(stmt);
-                }
-        }
-
-        public void OnAlterStatement([NotNull] AlterStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnAlterStatement(stmt);
-                }
-        }
-
-        public void OnCancelStatement([NotNull] CancelStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnCancelStatement(stmt);
-                }
-        }
-
-        public void OnCloseStatement([NotNull] CloseStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnCloseStatement(stmt);
-                }
-        }
-
-        public void OnContinueStatement([NotNull] ContinueStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnContinueStatement(stmt);
-                }
-        }
-
-        public void OnDisplayStatement([NotNull] DisplayStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnDisplayStatement(stmt);
-                }
-        }
-
-        public void OnEntryStatement([NotNull] EntryStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnEntryStatement(stmt);
-                }
-        }
-
-        public void OnExecStatement([NotNull] ExecStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnExecStatement(stmt);
-                }
-        }
-
-        public void OnExitMethodStatement([NotNull] ExitMethodStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnExitMethodStatement(stmt);
-                }
-        }
-
-        public void OnExitProgramStatement([NotNull] ExitProgramStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnExitProgramStatement(stmt);
-                }
-        }
-
-        public void OnExitStatement([NotNull] ExitStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnExitStatement(stmt);
-                }
-        }
-
-        public void OnAllocateStatement([NotNull] AllocateStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnAllocateStatement(stmt);
-                }
-        }
-
-        public void OnFreeStatement([NotNull] FreeStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnFreeStatement(stmt);
-                }
-        }
-
-        public void OnGobackStatement([NotNull] GobackStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnGobackStatement(stmt);
-                }
-        }
-
-        public void OnGotoStatement([NotNull] GotoStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnGotoStatement(stmt);
-                }
-        }
-
-        public void OnInitializeStatement([NotNull] InitializeStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnInitializeStatement(stmt);
-                }
-        }
-
-        public void OnInspectStatement([NotNull] InspectStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnInspectStatement(stmt);
-                }
-        }
-
-        public void OnMergeStatement([NotNull] MergeStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnMergeStatement(stmt);
-                }
-        }
-
-        public void OnMoveStatement([NotNull] MoveStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnMoveStatement(stmt);
-                }
-        }
-
-        public void OnOpenStatement([NotNull] OpenStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnOpenStatement(stmt);
-                }
-        }
-
-        public void OnPerformProcedureStatement([NotNull] PerformProcedureStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnPerformProcedureStatement(stmt);
-                }
-        }
-
-        public void OnProcedureStyleCall([NotNull] ProcedureStyleCallStatement stmt, CallStatementEnd end = null)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnProcedureStyleCall(stmt, end);
-                }
-        }
-
-        public void OnReleaseStatement([NotNull] ReleaseStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnReleaseStatement(stmt);
-                }
-        }
-
-        public void OnSetStatement([NotNull] SetStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnSetStatement(stmt);
-                }
-        }
-
-        public void OnSortStatement([NotNull] SortStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnSortStatement(stmt);
-                }
-        }
-
-        public void OnStopStatement([NotNull] StopStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.OnStopStatement(stmt);
-                }
-        }
-
-        public void StartAddStatementConditional([NotNull] AddStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartAddStatementConditional(stmt);
-                }
-        }
-
-        public void StartCallStatementConditional([NotNull] CallStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartCallStatementConditional(stmt);
-                }
-        }
-
-        public void StartCobolCompilationUnit()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartCobolCompilationUnit();
-                }
-        }
-
-        public void StartCobolProgram([NotNull] ProgramIdentification programIdentification, LibraryCopyCodeElement libraryCopy)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartCobolProgram(programIdentification, libraryCopy);
-                }
-        }
-
-        public void StartComputeStatementConditional([NotNull] ComputeStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartComputeStatementConditional(stmt);
-                }
-        }
-
-        public void StartConfigurationSection([NotNull] ConfigurationSectionHeader header)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartConfigurationSection(header);
-                }
-        }
-
-        public void StartDataConditionEntry([NotNull] DataConditionEntry entry)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartDataConditionEntry(entry);
-                }
-        }
-
-        public void StartDataDescriptionEntry([NotNull] DataDescriptionEntry entry)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartDataDescriptionEntry(entry);
-                }
-        }
-
-        public void StartDataDivision([NotNull] DataDivisionHeader header)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartDataDivision(header);
-                }
-        }
-
-        public void StartDataRedefinesEntry([NotNull] DataRedefinesEntry entry)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartDataRedefinesEntry(entry);
-                }
-        }
-
-        public void StartDataRenamesEntry([NotNull] DataRenamesEntry entry)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartDataRenamesEntry(entry);
-                }
-        }
-
-        public void StartDeclaratives([NotNull] DeclarativesHeader header)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartDeclaratives(header);
-                }
-        }
-
-        public void StartDeleteStatementConditional([NotNull] DeleteStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartDeleteStatementConditional(stmt);
-                }
-        }
-
-        public void StartDivideStatementConditional([NotNull] DivideStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartDivideStatementConditional(stmt);
-                }
-        }
-
-        public void StartEnvironmentDivision([NotNull] EnvironmentDivisionHeader header)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartEnvironmentDivision(header);
-                }
-        }
-
-        public void StartEvaluateStatementWithBody([NotNull] EvaluateStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartEvaluateStatementWithBody(stmt);
-                }
-        }
-
-        public void StartExecStatement([NotNull] ExecStatement execStmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartExecStatement(execStmt);
-                }
-        }
-
-        public void StartFileControlEntry([NotNull] FileControlEntry entry)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartFileControlEntry(entry);
-                }
-        }
-
-        public void StartFileControlParagraph([NotNull] FileControlParagraphHeader header)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartFileControlParagraph(header);
-                }
-        }
-
-        public void StartFileDescriptionEntry([NotNull] FileDescriptionEntry entry)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartFileDescriptionEntry(entry);
-                }
-        }
-
-        public void StartFileSection([NotNull] FileSectionHeader header)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartFileSection(header);
-                }
-        }
-
-        public void StartFunctionDeclaration([NotNull] FunctionDeclarationHeader header)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartFunctionDeclaration(header);
-                }
-        }
-
-        public void StartFunctionProcedureDivision([NotNull] ProcedureDivisionHeader header)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartFunctionProcedureDivision(header);
-                }
-        }
-
-        public void StartGlobalStorageSection([NotNull] GlobalStorageSectionHeader header)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartGlobalStorageSection(header);
-                }
-        }
-
-        public void StartIfStatementWithBody([NotNull] IfStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartIfStatementWithBody(stmt);
-                }
-        }
-
-        public void StartInputOutputSection([NotNull] InputOutputSectionHeader header)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartInputOutputSection(header);
-                }
-        }
-
-        public void StartInvokeStatementConditional([NotNull] InvokeStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartInvokeStatementConditional(stmt);
-                }
-        }
-
-        public void StartJsonGenerateStatementConditional([NotNull] JsonGenerateStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartJsonGenerateStatementConditional(stmt);
-                }
-        }
-
-        public void StartJsonParseStatementConditional([NotNull] JsonParseStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-            {
-                l.StartJsonParseStatementConditional(stmt);
-            }
-        }
-
-        public void StartLinkageSection([NotNull] LinkageSectionHeader header)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartLinkageSection(header);
-                }
-        }
-
-        public void StartLocalStorageSection([NotNull] LocalStorageSectionHeader header)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartLocalStorageSection(header);
-                }
-        }
-
-        public void StartMultiplyStatementConditional([NotNull] MultiplyStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartMultiplyStatementConditional(stmt);
-                }
-        }
-
-        public void StartNoAtEnd([NotNull] NotAtEndCondition cond)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartNoAtEnd(cond);
-                }
-        }
-
-        public void StartNoException([NotNull] NotOnExceptionCondition cond)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartNoException(cond);
-                }
-        }
-
-        public void StartNoInvalidKey([NotNull] NotInvalidKeyCondition cond)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartNoInvalidKey(cond);
-                }
-        }
-
-        public void StartNoOverflow([NotNull] NotOnOverflowCondition cond)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartNoOverflow(cond);
-                }
-        }
-
-        public void StartNoSizeError([NotNull] NotOnSizeErrorCondition cond)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartNoSizeError(cond);
-                }
-        }
-
-        public void StartObjectComputerParagraph([NotNull] ObjectComputerParagraph paragraph)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartObjectComputerParagraph(paragraph);
-                }
-        }
-
-        public void StartOnAtEnd([NotNull] AtEndCondition cond)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartOnAtEnd(cond);
-                }
-        }
-
-        public void StartOnException([NotNull] OnExceptionCondition cond)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartOnException(cond);
-                }
-        }
-
-        public void StartOnInvalidKey([NotNull] InvalidKeyCondition cond)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartOnInvalidKey(cond);
-                }
-        }
-
-        public void StartOnOverflow([NotNull] OnOverflowCondition cond)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartOnOverflow(cond);
-                }
-        }
-
-        public void StartOnSizeError([NotNull] OnSizeErrorCondition cond)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartOnSizeError(cond);
-                }
-        }
-
-        public void StartParagraph([NotNull] ParagraphHeader header)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartParagraph(header);
-                }
-        }
-
-        public void StartPerformStatementWithBody([NotNull] PerformStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartPerformStatementWithBody(stmt);
-                }
-        }
-
-        public void StartProcedureDivision([NotNull] ProcedureDivisionHeader header)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartProcedureDivision(header);
-                }
-        }
-
-        public void StartRepositoryParagraph([NotNull] RepositoryParagraph paragraph)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartRepositoryParagraph(paragraph);
-                }
-        }
-
-        public void StartRewriteStatementConditional([NotNull] RewriteStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartRewriteStatementConditional(stmt);
-                }
-        }
-
-        public void StartSearchStatementWithBody([NotNull] SearchStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartSearchStatementWithBody(stmt);
-                }
-        }
-
-        public void StartSection([NotNull] SectionHeader header)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartSection(header);
-                }
-        }
-
-        public void StartSentence()
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartSentence();
-                }
-        }
-
-        public void StartSourceComputerParagraph([NotNull] SourceComputerParagraph paragraph)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartSourceComputerParagraph(paragraph);
-                }
-        }
-
-        public void StartSpecialNamesParagraph([NotNull] SpecialNamesParagraph paragraph)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartSpecialNamesParagraph(paragraph);
-                }
-        }
-
-        public void StartStartStatementConditional([NotNull] StartStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartStartStatementConditional(stmt);
-                }
-        }
-
-        public void StartStringStatementConditional([NotNull] StringStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartStringStatementConditional(stmt);
-                }
-        }
-
-        public void StartSubtractStatementConditional([NotNull] SubtractStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartSubtractStatementConditional(stmt);
-                }
-        }
-
-        public void StartTypeDefinitionEntry([NotNull] DataTypeDescriptionEntry typedef)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartTypeDefinitionEntry(typedef);
-                }
-        }
-
-        public void StartUnstringStatementConditional([NotNull] UnstringStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartUnstringStatementConditional(stmt);
-                }
-        }
-
-        public void StartWhenConditionClause([NotNull] List<CodeElement> conditions)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartWhenConditionClause(conditions);
-                }
-        }
-
-        public void StartWhenOtherClause([NotNull] WhenOtherCondition cond)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartWhenOtherClause(cond);
-                }
-        }
-
-        public void StartWhenSearchConditionClause([NotNull] WhenSearchCondition condition)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartWhenSearchConditionClause(condition);
-                }
-        }
-
-        public void StartDummyWhenSearchConditionClause([NotNull] WhenDummy condition)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartDummyWhenSearchConditionClause(condition);
-                }
-        }
-
-        public void StartWorkingStorageSection([NotNull] WorkingStorageSectionHeader header)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartWorkingStorageSection(header);
-                }
-        }
-
-        public void StartWriteStatementConditional([NotNull] WriteStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartWriteStatementConditional(stmt);
-                }
-        }
-
-        public void StartXmlGenerateStatementConditional([NotNull] XmlGenerateStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartXmlGenerateStatementConditional(stmt);
-                }
-        }
-
-        public void StartXmlParseStatementConditional([NotNull] XmlParseStatement stmt)
-        {
-            if (_builderListeners != null) foreach (var l in _builderListeners)
-                {
-                    l.StartXmlParseStatementConditional(stmt);
-                }
+            foreach (var listener in _listeners) listener.OnLevel1Definition(level1Node);
         }
     }
 }

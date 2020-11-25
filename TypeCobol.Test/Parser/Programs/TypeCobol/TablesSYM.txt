@@ -1,0 +1,98 @@
+--- Diagnostics ---
+Line 1[1,21] <37, Warning, General> - Warning: "END PROGRAM" is missing.
+
+--- Program ---
+Tables (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ScopeType, Tag=Scope)
+WorkingStorageData:
+  mysize (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Tables
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: 9(1)
+  Level: 1
+  IsFiller: False
+  X (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Tables
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(1)
+  Level: 1
+  IsFiller: False
+  T-fixed-1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Tables
+  Type:
+    (.NET Type=ArrayType, Tag=Array)
+    MinOccur: 1
+    MaxOccur: 100
+    ElementType:
+      (.NET Type=GroupType, Tag=Group)
+      Fields:
+        T-fixed-2 (.NET Type=VariableSymbol, Kind=Variable)
+        Flags: [WORKING_STORAGE]
+        Owner: Tables::T-fixed-1
+        Type:
+          (.NET Type=ArrayType, Tag=Array)
+          MinOccur: 1
+          MaxOccur: 100
+          ElementType:
+            (.NET Type=GroupType, Tag=Group)
+            Fields:
+              E (.NET Type=VariableSymbol, Kind=Variable)
+              Flags: [WORKING_STORAGE]
+              Owner: Tables::T-fixed-1::T-fixed-2
+              Type:
+                (.NET Type=PictureType, Tag=Picture)
+                Picture: X(8)
+              Level: 10
+              IsFiller: False
+        Level: 5
+        IsFiller: False
+  Level: 1
+  IsFiller: False
+  T-variable (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Tables
+  Type:
+    (.NET Type=ArrayType, Tag=Array)
+    MinOccur: 1
+    MaxOccur: 100
+    ElementType:
+      (.NET Type=GroupType, Tag=Group)
+      Fields:
+        E (.NET Type=VariableSymbol, Kind=Variable)
+        Flags: [WORKING_STORAGE]
+        Owner: Tables::T-variable
+        Type:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(8)
+        Level: 5
+        IsFiller: False
+  Level: 1
+  IsFiller: False
+  T-nobounds (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: Tables
+  Type:
+    (.NET Type=ArrayType, Tag=Array)
+    MinOccur: 1
+    MaxOccur: Unbounded
+    ElementType:
+      (.NET Type=GroupType, Tag=Group)
+      Fields:
+        E (.NET Type=VariableSymbol, Kind=Variable)
+        Flags: [WORKING_STORAGE]
+        Owner: Tables::T-nobounds
+        Type:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(8)
+        Level: 5
+        IsFiller: False
+  Level: 1
+  IsFiller: False
+IsNested: False
+

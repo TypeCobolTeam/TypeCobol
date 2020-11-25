@@ -1,0 +1,14 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM2.
+      * same name PGM2
+       PROCEDURE DIVISION.
+       INIT-LIBRARY.
+           continue.
+           .
+       declare procedure Proc1 public
+           input t pic x.
+       procedure division.
+           .
+       end-declare.
+      
+       END PROGRAM PGM2.

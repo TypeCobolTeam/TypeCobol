@@ -30,7 +30,7 @@
        01 r pic X.
        procedure division.
       *KO a is ambiguous
-Line 33[17,17] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol a 
+Line 33[17,17] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol a 
 Symbols found: DVZFSCT0::Nested::a | DVZFSCT0::a
            move a to r
       *OK b refers to Nested::b

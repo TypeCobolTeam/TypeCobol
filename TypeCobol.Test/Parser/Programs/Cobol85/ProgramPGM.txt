@@ -1,9 +1,71 @@
 --- Diagnostics ---
-Line 1[1,29] <37, Warning, General> - Warning: "END PROGRAM" is missing.
-Line 30[4,4] <27, Error, Syntax> - Syntax error : Group item x cannot have a "PICTURE" OffendingSymbol=[4,4:x]<UserDefinedWord>
-Line 57[16,19] <27, Error, Syntax> - Syntax error : mismatched input 'TYPE' expecting {symbol, special register, keyword} RuleStack=codeElement>moveStatement>moveSimple,  OffendingSymbol=[16,19:TYPE]<TYPE>
-Line 72[1,16] <37, Warning, General> - Warning: Paragraph 'EMPTY-PARAGRAPH' is empty
+Line 2[3,12] <37, Warning, General> - Warning: Dot expected after PROGRAM-ID OffendingSymbol=[3,12:PROGRAM-ID]<PROGRAM_ID>
+Line 9[3,12] <37, Warning, General> - Warning: Dot expected after PROGRAM-ID OffendingSymbol=[3,12:PROGRAM-ID]<PROGRAM_ID>
+Line 17[15,36] <37, Warning, General> - Warning: Dot expected at the end of PROGRAM-ID declaration OffendingSymbol=[15,36:declarProgIdWithoutDot]<UserDefinedWord>
+Line 24[51,57] <37, Warning, General> - Warning: Dot expected at the end of PROGRAM-ID declaration OffendingSymbol=[51,57:PROGRAM]<PROGRAM>
+Line 32[3,12] <37, Warning, General> - Warning: Dot expected after PROGRAM-ID OffendingSymbol=[3,12:PROGRAM-ID]<PROGRAM_ID>
+Line 32[36,42] <37, Warning, General> - Warning: Dot expected at the end of PROGRAM-ID declaration OffendingSymbol=[36,42:PROGRAM]<PROGRAM>
+Line 40[3,12] <37, Warning, General> - Warning: Dot expected after PROGRAM-ID OffendingSymbol=[3,12:PROGRAM-ID]<PROGRAM_ID>
+Line 40[14,24] <37, Warning, General> - Warning: Dot expected at the end of PROGRAM-ID declaration OffendingSymbol=[14,24:allWithout2]<UserDefinedWord>
+Line 50[1,29] <37, Warning, General> - Warning: "END PROGRAM" is missing.
+Line 79[4,4] <27, Error, Syntax> - Syntax error : Group item x cannot have a "PICTURE" OffendingSymbol=[4,4:x]<UserDefinedWord>
+Line 106[16,19] <27, Error, Syntax> - Syntax error : mismatched input 'TYPE' expecting {symbol, special register, keyword} RuleStack=codeElement>moveStatement>moveSimple,  OffendingSymbol=[16,19:TYPE]<TYPE>
+Line 121[1,16] <37, Warning, General> - Warning: Paragraph 'EMPTY-PARAGRAPH' is empty
 
+--- Program ---
+PROGRAM: progIdWithoutDot common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
+--- Program ---
+PROGRAM: progIdWithoutDot2 common:False initial:True recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
+--- Program ---
+PROGRAM: declarProgIdWithoutDot common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
+--- Program ---
+PROGRAM: declarProgIdWithoutDot2 common:False initial:True recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
+--- Program ---
+PROGRAM: allWithout common:False initial:True recursive:False
+ author: me. written: ? compiled: ? installation: ? security: ?
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
+--- Program ---
+PROGRAM: allWithout2 common:False initial:False recursive:False
+ author: me. written: ? compiled: ? installation: ? security: programType.
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
 --- Program ---
 PROGRAM: Simple common:False initial:True recursive:False
  author: WIZTIGERS. written: NOVEMBER 2015 compiled: ? installation: ? security: ?

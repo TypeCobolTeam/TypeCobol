@@ -3,8 +3,10 @@ using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
@@ -445,19 +447,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                     node.ParentTypeDefinition = _CurrentTypeDefinition;
                 Enter(node, null, symbolTable);
 
-                if (entry.Indexes != null && entry.Indexes.Any())
-                {
-                    
-                    foreach (var index in entry.Indexes)
-                    {
-                        var indexNode = new IndexDefinition(index);
-                        Enter(indexNode, null, symbolTable);
-                        if (_CurrentTypeDefinition != null)
-                            indexNode.ParentTypeDefinition = _CurrentTypeDefinition;
-                        symbolTable.AddVariable(indexNode);
-                        Exit();
-                    }
-                }
+                //Add all index to symbol table
+                CreateIndexAndAddToSymbolTable(entry, symbolTable);
 
 
                 if (_IsInsideWorkingStorageContext)
@@ -521,9 +512,26 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Enter(node, null, symbolTable);
             node.SymbolTable.AddVariable(node);
 
+            //Add all index to symbol table
+            CreateIndexAndAddToSymbolTable(entry, symbolTable);
+            
             Dispatcher.StartDataRedefinesEntry(entry);
 
             CheckIfItsTyped(node, node.CodeElement);
+        }
+
+        public virtual void CreateIndexAndAddToSymbolTable(CommonDataDescriptionAndDataRedefines entry, SymbolTable symbolTable)
+        {
+            if (entry.Indexes == null || !entry.Indexes.Any()) return;
+            foreach (var index in entry.Indexes)
+            {
+                var indexNode = new IndexDefinition(index);
+                Enter(indexNode, null, symbolTable);
+                if (_CurrentTypeDefinition != null)
+                    indexNode.ParentTypeDefinition = _CurrentTypeDefinition;
+                symbolTable.AddVariable(indexNode);
+                Exit();
+            }
         }
 
         public virtual void StartDataRenamesEntry(DataRenamesEntry entry)

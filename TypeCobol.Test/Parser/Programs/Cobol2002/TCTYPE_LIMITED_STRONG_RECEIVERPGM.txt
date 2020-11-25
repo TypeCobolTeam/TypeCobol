@@ -1,7 +1,7 @@
 --- Diagnostics ---
 Line 1[1,28] <37, Warning, General> - Warning: "END PROGRAM" is missing.
-Line 68[24,34] <27, Error, Syntax> - Syntax error : Symbol CharsStrong is not referenced OffendingSymbol=[24,34:CharsStrong]<UserDefinedWord>
-Line 71[23,33] <27, Error, Syntax> - Syntax error : Symbol CharsStrong is not referenced OffendingSymbol=[23,33:CharsStrong]<UserDefinedWord>
+Line 68[24,34] <30, Error, Semantics> - Semantic error: Symbol CharsStrong is not referenced OffendingSymbol=[24,34:CharsStrong]<UserDefinedWord>
+Line 71[23,33] <30, Error, Semantics> - Semantic error: Symbol CharsStrong is not referenced OffendingSymbol=[23,33:CharsStrong]<UserDefinedWord>
 Line 77[9,19] <30, Error, Semantics> - Semantic error: Cannot write  to strongly typed variable myStrongInt:IntegerStrong. OffendingSymbol=[9,19:myStrongInt]<UserDefinedWord>
 Line 81[51,63] <30, Error, Semantics> - Semantic error: Cannot write  to strongly typed variable myStrongChars:CharsStrong. OffendingSymbol=[51,63:myStrongChars]<UserDefinedWord>
 Line 85[51,63] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strongly typed variable myStrongChars:CharsStrong. OffendingSymbol=[51,63:myStrongChars]<UserDefinedWord>

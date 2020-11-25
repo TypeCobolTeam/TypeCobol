@@ -5,28 +5,40 @@ Line 59[11,11] <27, Error, Syntax> - Syntax error : Group item a cannot have a "
 Line 60[12,26] <27, Error, Syntax> - Syntax error : x is already a parameter.
 Line 61[12,26] <27, Error, Syntax> - Syntax error : z is already a parameter.
 Line 64[8,27] <27, Error, Syntax> - Syntax error : result is already a parameter.
-Line 66[22,27] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result 
+Line 66[22,27] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol result 
 Symbols found: FunDeclare::SumThreeWithClutterInLinkage::result | FunDeclare::SumThreeWithClutterInLinkage::result OffendingSymbol=[22,27:result]<UserDefinedWord>
-Line 67[16,16] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol x 
+Line 67[16,16] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol x 
 Symbols found: FunDeclare::SumThreeWithClutterInLinkage::x | FunDeclare::SumThreeWithClutterInLinkage::x | FunDeclare::SumThreeWithClutterInLinkage::a::x OffendingSymbol=[16,16:x]<UserDefinedWord>
-Line 67[21,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result 
+Line 67[21,26] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol result 
 Symbols found: FunDeclare::SumThreeWithClutterInLinkage::result | FunDeclare::SumThreeWithClutterInLinkage::result OffendingSymbol=[21,26:result]<UserDefinedWord>
-Line 68[16,16] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol y 
+Line 68[16,16] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol y 
 Symbols found: FunDeclare::SumThreeWithClutterInLinkage::y | FunDeclare::SumThreeWithClutterInLinkage::y OffendingSymbol=[16,16:y]<UserDefinedWord>
-Line 68[21,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result 
+Line 68[21,26] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol result 
 Symbols found: FunDeclare::SumThreeWithClutterInLinkage::result | FunDeclare::SumThreeWithClutterInLinkage::result OffendingSymbol=[21,26:result]<UserDefinedWord>
-Line 69[16,16] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol z 
+Line 69[16,16] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol z 
 Symbols found: FunDeclare::SumThreeWithClutterInLinkage::z | FunDeclare::SumThreeWithClutterInLinkage::a::z OffendingSymbol=[16,16:z]<UserDefinedWord>
-Line 69[21,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result 
+Line 69[21,26] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol result 
 Symbols found: FunDeclare::SumThreeWithClutterInLinkage::result | FunDeclare::SumThreeWithClutterInLinkage::result OffendingSymbol=[21,26:result]<UserDefinedWord>
 Line 89[21,21] <27, Error, Syntax> - Syntax error : Parameter with name 'x' declared multiple times OffendingSymbol=[21,21:x]<UserDefinedWord>
 Line 90[21,21] <27, Error, Syntax> - Syntax error : Parameter with name 'y' declared multiple times OffendingSymbol=[21,21:y]<UserDefinedWord>
 Line 92[21,21] <27, Error, Syntax> - Syntax error : Parameter with name 'x' declared multiple times OffendingSymbol=[21,21:x]<UserDefinedWord>
 Line 93[21,21] <27, Error, Syntax> - Syntax error : Parameter with name 'y' declared multiple times OffendingSymbol=[21,21:y]<UserDefinedWord>
 Line 103[11,11] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in function data item. OffendingSymbol=[11,11:g]<UserDefinedWord>
-Line 124[23,34] <27, Error, Syntax> - Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter. OffendingSymbol=[23,34:valid-gender]<UserDefinedWord>
-Line 124[23,34] <27, Error, Syntax> - Syntax error : The variable 'valid-gender' can only be of level 01 or 77 OffendingSymbol=[23,34:valid-gender]<UserDefinedWord>
-Line 127[24,27] <27, Error, Syntax> - Syntax error : Condition parameter "male" must be level 88. OffendingSymbol=[24,27:male]<UserDefinedWord>
+Line 114[18,19] <27, Error, Syntax> - Syntax error : no viable alternative at input '88' RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter>tcfuncParameterUsageClause,  OffendingSymbol=[18,19:88]<IntegerLiteral>{88}
+Line 114[35,39] <27, Error, Syntax> - Syntax error : mismatched input 'VALUE' expecting {FUNCTION-POINTER, PIC, PICTURE, POINTER, PROCEDURE-POINTER, TYPE, ?} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[35,39:VALUE]<VALUE>
+Line 114[22,33] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[22,33:valid-gender]<UserDefinedWord>
+Line 115[29,33] <27, Error, Syntax> - Syntax error : mismatched input 'VALUE' expecting {FUNCTION-POINTER, PIC, PICTURE, POINTER, PROCEDURE-POINTER, TYPE, ?} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[29,33:VALUE]<VALUE>
+Line 115[22,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[22,27:female]<UserDefinedWord>
+Line 116[29,33] <27, Error, Syntax> - Syntax error : mismatched input 'VALUE' expecting {FUNCTION-POINTER, PIC, PICTURE, POINTER, PROCEDURE-POINTER, TYPE, ?} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[29,33:VALUE]<VALUE>
+Line 116[22,25] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[22,25:male]<UserDefinedWord>
+Line 124[20,21] <27, Error, Syntax> - Syntax error : extraneous input '88' expecting user defined word RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase,  OffendingSymbol=[20,21:88]<IntegerLiteral>{88}
+Line 124[36,40] <27, Error, Syntax> - Syntax error : mismatched input 'VALUE' expecting {FUNCTION-POINTER, PIC, PICTURE, POINTER, PROCEDURE-POINTER, TYPE, ?} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[36,40:VALUE]<VALUE>
+Line 124[23,34] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[23,34:valid-gender]<UserDefinedWord>
+Line 126[20,21] <27, Error, Syntax> - Syntax error : no viable alternative at input '88' RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter>tcfuncParameterUsageClause,  OffendingSymbol=[20,21:88]<IntegerLiteral>{88}
+Line 126[31,35] <27, Error, Syntax> - Syntax error : mismatched input 'VALUE' expecting {FUNCTION-POINTER, PIC, PICTURE, POINTER, PROCEDURE-POINTER, TYPE, ?} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[31,35:VALUE]<VALUE>
+Line 126[24,29] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[24,29:female]<UserDefinedWord>
+Line 127[31,35] <27, Error, Syntax> - Syntax error : mismatched input 'VALUE' expecting {FUNCTION-POINTER, PIC, PICTURE, POINTER, PROCEDURE-POINTER, TYPE, ?} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[31,35:VALUE]<VALUE>
+Line 127[24,27] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[24,27:male]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: FunDeclare common:False initial:False recursive:False
@@ -61,9 +73,14 @@ PROGRAM: FunDeclare common:False initial:False recursive:False
   IllegalClauses
   FunConditions
         in: gender:Alphanumeric
+        in: valid-gender:?
+        in: female:?
+        in: male:?
   FunConditions
         in: valid-gender:?
         in: gender:Alphanumeric
+        in: female:?
+        in: male:?
   MyNOT
         in: x:BOOL
     return: y:BOOL

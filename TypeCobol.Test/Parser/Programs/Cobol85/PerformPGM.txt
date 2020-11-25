@@ -1,8 +1,8 @@
 --- Diagnostics ---
 Line 1[1,30] <37, Warning, General> - Warning: "END PROGRAM" is missing.
-Line 14[9,21] <27, Error, Syntax> - Syntax error : Symbol procedurename is not referenced OffendingSymbol=[9,21:procedurename]<UserDefinedWord>
-Line 17[15,24] <27, Error, Syntax> - Syntax error : Symbol condition1 is not referenced OffendingSymbol=[15,24:condition1]<UserDefinedWord>
-Line 18[6,15] <27, Error, Syntax> - Syntax error : Symbol condition2 is not referenced OffendingSymbol=[6,15:condition2]<UserDefinedWord>
+Line 14[9,21] <30, Error, Semantics> - Semantic error: Symbol procedurename is not referenced OffendingSymbol=[9,21:procedurename]<UserDefinedWord>
+Line 17[15,24] <30, Error, Semantics> - Semantic error: Symbol condition1 is not referenced OffendingSymbol=[15,24:condition1]<UserDefinedWord>
+Line 18[6,15] <30, Error, Semantics> - Semantic error: Symbol condition2 is not referenced OffendingSymbol=[6,15:condition2]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: perform-program common:False initial:False recursive:False

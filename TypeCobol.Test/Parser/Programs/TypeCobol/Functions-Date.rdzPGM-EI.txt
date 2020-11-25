@@ -1,11 +1,11 @@
 --- Diagnostics ---
 Line 1[8,33] <37, Warning, General> - Warning: "END PROGRAM" is missing.
-Line 6[25,31] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[25,31:TYPEDEF]<TYPEDEF>
-Line 9[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[19,25:TYPEDEF]<TYPEDEF>
-Line 136[9,36] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions".
-Line 142[9,36] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions".
-Line 154[9,36] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions".
-Line 160[8,35] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions".
+Line 6[25,31] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'DateJulian' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[25,31:TYPEDEF]<TYPEDEF>
+Line 9[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'DateDB2' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[19,25:TYPEDEF]<TYPEDEF>
+Line 126[26,33] <30, Error, Semantics> - Semantic error: A function "conflict" with the same profile already exists in namespace "DateFunctions". OffendingSymbol=[26,33:conflict]<UserDefinedWord>
+Line 132[26,33] <30, Error, Semantics> - Semantic error: A function "conflict" with the same profile already exists in namespace "DateFunctions". OffendingSymbol=[26,33:conflict]<UserDefinedWord>
+Line 144[26,33] <30, Error, Semantics> - Semantic error: A function "conflict" with the same profile already exists in namespace "DateFunctions". OffendingSymbol=[26,33:conflict]<UserDefinedWord>
+Line 155[25,32] <30, Error, Semantics> - Semantic error: A function "conflict" with the same profile already exists in namespace "DateFunctions". OffendingSymbol=[25,32:conflict]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: DateFunctions common:False initial:False recursive:False

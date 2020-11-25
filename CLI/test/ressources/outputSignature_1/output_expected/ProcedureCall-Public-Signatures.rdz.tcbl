@@ -1,52 +1,48 @@
       *TypeCobol_Version:0.1(alpha)
        IDENTIFICATION DIVISION.
-      *<<
-      * Multiline comment
-      * should be commented
-      *>>
        PROGRAM-ID. Callee.
        DATA DIVISION.
        working-storage section.                                               
        01  MyType1 TYPEDEF STRICT PUBLIC.
           05 Var1 pic X.
-      *<<<
-      * My public Type 2
-      *>>>
+      %<<<
+        My public Type 2
+      %>>>
        01  MyType2 TYPEDEF STRICT PUBLIC.
           05 Var2 pic X.
        01  MyType5 TYPEDEF STRICT PUBLIC.
           05 Var5 pic X.
-      *<<< My program
-      *   @ Description  description
-      *   @deprecated
-      *   @    replacedBy  MyFonction2
-      *   @ need  some needs
-      *   @ todo
-      *       - make my second type my first type
-      *       - get another type
-      *   @Params:
-      *     - MyType2: my second type
-      *     - MyType3: my third type
-      *     - Mydate: today date
-      *>>>
+      %<<< My program
+          @ Description  description
+          @deprecated
+          @    replacedBy  MyFonction2
+          @ need  some needs
+          @ todo
+              - make my second type my first type
+              - get another type
+          @Params:
+            - MyType2: my second type
+            - MyType3: my third type
+            - Mydate: today date
+      %>>>
        PROCEDURE DIVISION.
        declare procedure check public
           input mydate        TYPE Date
          .
        END-DECLARE.
-      *<<<
-      * check if the given date is before today
-      * @params:
-      *   - mydate: tyhe date to test
-      *>>>
+      %<<<
+        check if the given date is before today
+        @params:
+          - mydate: tyhe date to test
+      %>>>
        declare procedure check2 public
           input mydate        TYPE Date
          .
        END-DECLARE.
-      *<<<
-      * Same as check2 but with two dates
-      * @see: check2
-      *>>>
+      %<<<
+        Same as check2 but with two dates
+        @see: check2
+      %>>>
        declare procedure check2 public
           input mydate        TYPE Date
                 myDate2       type date
@@ -54,10 +50,6 @@
        END-DECLARE.
        DECLARE PROCEDURE MyPublicProcedure PUBLIC
            INPUT mydate        TYPE Date
-      *<<
-      *       Multiline comment
-      *       should be commented
-      *>>
                  format        PIC X(08)
           OUTPUT okay          TYPE Bool
                  actual-format PIC X(08).

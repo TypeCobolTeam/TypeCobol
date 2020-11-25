@@ -1,0 +1,75 @@
+{
+  "name": "CompletionOnPartialTypeName.tlsp",
+  "session": "C:\\Users\\MILLETFL\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2020_02_07_09_30_25_640\\TestSuite_2020_02_07_09_30_25_640.slsp",
+  "user": "MILLETFL",
+  "date": "2020/02/07 09:30:25 654",
+  "uri": "file:///C:/Users/MILLETFL/Downloads/LSRtemp/CompletionOnPartialTypeName.tlsp",
+  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\GIT\\\\TypeCobol\\\\bin\\\\EI_Debug\",\"rootUri\":\"file:/C:/GIT/TypeCobol/bin/EI_Debug/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"signatureHelp\":{\"dynamicRegistration\":true},\"references\":{\"dynamicRegistration\":true},\"documentHighlight\":{\"dynamicRegistration\":true},\"documentSymbol\":{\"dynamicRegistration\":true},\"formatting\":{\"dynamicRegistration\":true},\"rangeFormatting\":{\"dynamicRegistration\":true},\"onTypeFormatting\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true},\"codeAction\":{\"dynamicRegistration\":true},\"codeLens\":{\"dynamicRegistration\":true},\"documentLink\":{\"dynamicRegistration\":true},\"rename\":{\"dynamicRegistration\":true}}},\"trace\":\"off\"}}",
+  "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"experimental\":[{\"Item1\":\"version\",\"Item2\":\"v1.4.0.4\"}],\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
+  "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\GIT\\\\TypeCobol\\\\bin\\\\EI_Debug\\\\TypeCobol.CLI.exe\",\"-1\",\"-e\",\"rdz\",\"-y\",\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\Intrinsic\\\\Intrinsic.txt\",\"-glm\",\"\\\"{6}\\\"\",\"--autoremarks\",\"--outputFormat\\u003dCobol85Mixed\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\Production\",\"-md\",\"200\"]}}",
+  "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZZMFT0.\\r\\n\\r\\n       DATA DIVISION.\\r\\n       working-storage section.\\r\\n\\r\\n       01 STR1.\\r\\n           05 DATA1 PIC X.\\r\\n           05 DATA2 TYPE B\\r\\n           05 FILLER PIC X.\\r\\n\\r\\n       01 STR2.\\r\\n           05 DATA1 PIC 9.\\r\\n           05 DATA2 TYPE C\\r\\n\\r\\n\\r\\n           05 FILLER PIC X.\\r\\n\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n       END PROGRAM DVZZMFT0.\"}}}",
+  "messages": [
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":10,\"character\":12},\"end\":{\"line\":10,\"character\":13}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '05' expecting {separator, statement starting keyword, keyword}\"},{\"range\":{\"start\":{\"line\":17,\"character\":12},\"end\":{\"line\":17,\"character\":13}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '05' expecting {separator, statement starting keyword, keyword}\"},{\"range\":{\"start\":{\"line\":9,\"character\":12},\"end\":{\"line\":9,\"character\":26}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: TYPE 'B' is not referenced\"},{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":26}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: TYPE 'C' is not referenced\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZZMFT0.\\r\\n\\r\\n       DATA DIVISION.\\r\\n       working-storage section.\\r\\n\\r\\n       01 STR1.\\r\\n           05 DATA1 PIC X.\\r\\n           05 DATA2 TYPE B\\r\\n           05 FILLER PIC X.\\r\\n\\r\\n       01 STR2.\\r\\n           05 DATA1 PIC 9.\\r\\n           05 DATA2 TYPE C\\r\\n\\r\\n\\r\\n           05 FILLER PIC X.\\r\\n\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n       END PROGRAM DVZZMFT0.\"}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":10,\"character\":12},\"end\":{\"line\":10,\"character\":13}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '05' expecting {separator, statement starting keyword, keyword}\"},{\"range\":{\"start\":{\"line\":17,\"character\":12},\"end\":{\"line\":17,\"character\":13}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '05' expecting {separator, statement starting keyword, keyword}\"},{\"range\":{\"start\":{\"line\":9,\"character\":12},\"end\":{\"line\":9,\"character\":26}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: TYPE 'B' is not referenced\"},{\"range\":{\"start\":{\"line\":14,\"character\":12},\"end\":{\"line\":14,\"character\":26}},\"severity\":1,\"code\":\"30\",\"source\":\"Page\",\"message\":\"Semantic error: TYPE 'C' is not referenced\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\"}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\",\"position\":{\"line\":8,\"character\":26}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"BigInt\",\"kind\":19,\"insertText\":\"BigInt.\",\"data\":{\"start\":{\"line\":8,\"character\":25},\"end\":{\"line\":8,\"character\":26}}},{\"label\":\"BOOL\",\"kind\":19,\"insertText\":\"BOOL.\",\"data\":{\"start\":{\"line\":8,\"character\":25},\"end\":{\"line\":8,\"character\":26}}}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\"}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\"}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\"}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\",\"position\":{\"line\":13,\"character\":26}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"CountryISO2\",\"kind\":19,\"insertText\":\"CountryISO2.\",\"data\":{\"start\":{\"line\":13,\"character\":25},\"end\":{\"line\":13,\"character\":26}}},{\"label\":\"CURRENCY\",\"kind\":19,\"insertText\":\"CURRENCY.\",\"data\":{\"start\":{\"line\":13,\"character\":25},\"end\":{\"line\":13,\"character\":26}}}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\"}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\"}}}"
+    }
+  ],
+  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/4/tcbl/DVZZMFT03692547232921701321.cee\"}}}",
+  "IsValid": true
+}

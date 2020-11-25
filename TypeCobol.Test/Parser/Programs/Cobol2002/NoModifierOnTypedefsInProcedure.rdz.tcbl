@@ -43,7 +43,7 @@
       
       *Stacked ---------------------------------------------------------
        IDENTIFICATION DIVISION.
-       PROGRAM-ID Stacked.
+       PROGRAM-ID. Stacked.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        PROCEDURE DIVISION.

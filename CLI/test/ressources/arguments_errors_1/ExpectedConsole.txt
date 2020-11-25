@@ -2,6 +2,7 @@
 Code: 1020 TypeCobol.CLI.exe: Input files given are unreachable.
 Code: 1022 TypeCobol.CLI.exe: Error diagnostics path is unreachable.
 Code: 1024 TypeCobol.CLI.exe: Missing copy path given is unreachable.
+Code: 1026 TypeCobol.CLI.exe: The format 'BadFormat' is not supported. The input encoding 'BadInputEncoding' could not be found.
 Code: 1027 TypeCobol.CLI.exe: Intrinsic files given are unreachable.
 Code: 1028 TypeCobol.CLI.exe: Copies files given are unreachable.
 Code: 1029 TypeCobol.CLI.exe: Dependencies files given are unreachable: input\MissingDependencies1

@@ -45,7 +45,7 @@ namespace TypeCobol.LanguageServer.SignatureHelper
                 i++; firstPass = false;
             }
 
-            return new SignatureInformation(procedure.Name, null, parametersInfo); //Replace null with commented documentation linked to procedure declaration
+            return new SignatureInformation(procedure.QualifiedName.ToString(), null, parametersInfo); //Replace null with commented documentation linked to procedure declaration
         }
 
         /// <summary>

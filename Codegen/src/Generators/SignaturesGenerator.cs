@@ -34,9 +34,7 @@ namespace TypeCobol.Codegen.Generators
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="Document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
-        /// <param name="skeletons">All skeletons pattern for code generation </param>
         /// <param name="typeCobolVersion">Version of the TypeCobol Parser/Generator</param>
         public SignaturesGenerator(StringBuilder destination, string typeCobolVersion) {
             this.Destination = destination;
@@ -57,7 +55,6 @@ namespace TypeCobol.Codegen.Generators
 
             var sourceFile = compilationUnit.ProgramClassDocumentSnapshot.Root;
             sourceFile.AcceptASTVisitor(new ExportToDependency());
-            bool insideFormalizedComment = false;
             bool insideMultilineComment = false;
 
             var buildExportDataElapsed = stopwatch.Elapsed;
@@ -65,27 +62,37 @@ namespace TypeCobol.Codegen.Generators
 
             foreach (var textLine in GenerateLinesForChildren(sourceFile.Children))
             {
-                string text = textLine is TextLineSnapshot ?
-                    CobolTextLine.Create(textLine.Text, ColumnsLayout.CobolReferenceFormat).First().Text :
-                    textLine.Text;
-
+                bool shouldWriteLine = true;
                 if (textLine is ITokensLine tokensLine)
                 {
-                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.FORMALIZED_COMMENTS_START))
-                        insideFormalizedComment = true;
+                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.CommentLine))
+                        shouldWriteLine = false;
+
                     if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.MULTILINES_COMMENTS_START))
+                    {
+                        shouldWriteLine = false;
                         insideMultilineComment = true;
+                    }
 
-                    if (insideFormalizedComment || insideMultilineComment)
-                        text = text.Substring(0, 6) + '*' + text.Substring(7, text.Length - 7);
-
-                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.FORMALIZED_COMMENTS_STOP))
-                        insideFormalizedComment = false;
                     if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.MULTILINES_COMMENTS_STOP))
+                    {
+                        shouldWriteLine = false;
                         insideMultilineComment = false;
+                    }
                 }
 
-                Destination.AppendLine(text);
+                if (shouldWriteLine && !insideMultilineComment)
+                {
+                    if (textLine is TextLineSnapshot)
+                    {
+                        var test = CobolTextLine.Create(textLine.Text, ColumnsLayout.CobolReferenceFormat);
+                        Destination.AppendLine(test.First().Text);
+                    }
+                    else
+                    {
+                        Destination.AppendLine(textLine.Text);
+                    }
+                }
             }
 
             var writeExportDataElapsed = stopwatch.Elapsed;
@@ -131,26 +138,7 @@ namespace TypeCobol.Codegen.Generators
                                 LinearNodeSourceCodeMapper.LinearCopyNode copyNode =
                                     new LinearNodeSourceCodeMapper.LinearCopyNode(new Qualifier.TokenCodeElement(copyTokens));
 
-                                var linesContent = copyNode.CodeElement.SourceText.Split(new string[] {System.Environment.NewLine}, System.StringSplitOptions.None);
-
-                                //Indent the line according to its declaration
-                                foreach (string line in linesContent)
-                                {
-                                    //Only the line containing copy can be badly indented. 
-                                    string lineText;
-                                    if (line.IndexOf("COPY", StringComparison.OrdinalIgnoreCase) >= 0)
-                                    {
-                                        //Indent this line with the same indentation than the declaring line.
-                                        lineText = copyNode.Lines.First().Text.GetIndent() + line.Trim();
-                                    }
-                                    else
-                                    {
-                                        //Otherwise generate the other lines as is, with a little extra for the columns 1-7
-                                        lineText = new string(' ', 7) + line.TrimEnd();
-                                    }
-                                    
-                                    lines.Add(new CobolTextLine(new TextLineSnapshot(-1,  lineText, null), ColumnsLayout.CobolReferenceFormat));
-                                }
+                                lines.AddRange(copyNode.Lines);
                                 generatedCopyDirectives.Add(copy);
                             }
                         }
@@ -163,8 +151,20 @@ namespace TypeCobol.Codegen.Generators
                     {
                         //In case the node contains a line with multiple instructions
                         //Create new line containing only the CodeElement text
-                        var lineText = child.Lines.First().Text.GetIndent() + data.CodeElement.SourceText.Trim();
-                        lines.Add(new CobolTextLine(new TextLineSnapshot(data.CodeElement.Line, lineText, null), ColumnsLayout.CobolReferenceFormat));
+                        string globalIndent = child.Lines.First().Text.GetIndent();
+
+                        //Indent the line(s) according to its declaration
+                        int i = 0;
+                        StringBuilder strB = new StringBuilder();
+                        var linesContent = data.CodeElement.SourceText.Split(new string[] { System.Environment.NewLine }, System.StringSplitOptions.None);
+                        foreach (string line in linesContent)
+                        {
+                            if (i == 1) strB.Append(Environment.NewLine);
+                            strB.Append(globalIndent + line.Trim());
+                            i = 1;
+                        }
+
+                        lines.Add(new CobolTextLine(new TextLineSnapshot(data.CodeElement.Line, strB.ToString(), null), ColumnsLayout.CobolReferenceFormat));
                     }
                     else
                     {

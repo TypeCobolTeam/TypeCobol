@@ -1,0 +1,18 @@
+--- Diagnostics ---
+Line 1[8,22] <37, Warning, General> - Warning: "END PROGRAM" is missing.
+Line 25725[8,28] <37, Warning, General> - Warning: Paragraph 'SDDDD-PROGRAM-DEBUG' is empty
+Line 25842[8,30] <37, Warning, General> - Warning: Paragraph 'A4000-DATA-VALIDATION' is empty
+Line 25852[8,36] <37, Warning, General> - Warning: Paragraph 'A4500-RELATIONAL-VALIDATION' is empty
+Line 27072[8,22] <37, Warning, General> - Warning: Paragraph 'A9600-WRAP-UP' is empty
+Line 27896[13,18] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+Line 28237[18,23] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+Line 28239[14,19] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+Line 28256[8,37] <37, Warning, General> - Warning: Paragraph 'CGBCALAK-SYSPUNCH-BANA-SUITE' is empty
+Line 28289[8,37] <37, Warning, General> - Warning: Paragraph 'CGBCALAK-SYSPUNCH-WSBA-SUITE' is empty
+Line 28327[8,32] <37, Warning, General> - Warning: Paragraph 'CGBCALAK-SYSPUNCH-SUITE' is empty
+Line 29421[13,18] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+Line 29627[16,21] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+Line 29628[16,21] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+Line 29772[12,17] <37, Warning, General> - Warning: "end-if" is missing
+Line 29776[16,21] <37, Warning, General> - Warning: "end-if" is missing
+Line 31035[21,26] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement

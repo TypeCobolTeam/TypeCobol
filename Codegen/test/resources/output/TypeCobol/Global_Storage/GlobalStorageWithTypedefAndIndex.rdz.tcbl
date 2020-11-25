@@ -1,0 +1,154 @@
+﻿      *TypeCobol_Version:TestTypeCobolVersion
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOZDR03.
+       DATA DIVISION.
+
+      *GLOBAL-STORAGE SECTION.
+
+      *01 GlobalTab Type TypeA.
+
+       WORKING-STORAGE SECTION.
+
+      *01 TypeA  TYPEDEF STRICT PRIVATE.
+      *   05 Contenu.
+      *      10 Ligne OCCURS 10
+      *               ASCENDING KEY IS Obj
+      *               INDEXED BY IdxA.
+      *         15 Obj  PIC X(12).
+      *         15 Flag Type Bool.
+       LINKAGE SECTION.
+
+       01 TC-GlobalData.
+
+
+      *01 GlobalTab Type TypeA.
+       02 GlobalTab.
+           03 Contenu.
+             04 Ligne OCCURS 10
+                      ASCENDING KEY IS Obj
+                      INDEXED BY a14c7288IdxA.
+               05 Obj PIC X(12).
+              05  Flag-value PIC X VALUE LOW-VALUE.
+                  88  Flag       VALUE 'T'.
+                  88  Flag-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
+
+
+
+       PROCEDURE DIVISION.
+
+       INIT-LIBRARY.
+      * Get the data from the global storage section
+           CALL 'b8131d02' USING
+               by reference address of TC-GlobalData
+           end-call
+
+                    
+           CONTINUE.
+
+       MAIN.
+      *    SET GlobalTab::IdxA TO 1
+           SET a14c7288IdxA TO 1
+      *    SET GlobalTab::Flag(GlobalTab::IdxA) TO false
+           SET Flag-false OF GlobalTab(a14c7288IdxA) TO TRUE
+      *    SET GlobalTab::Flag(IdxA) TO false
+           SET Flag-false OF GlobalTab(a14c7288IdxA) TO TRUE
+      *    CALL DisplayTable INPUT GlobalTab::Flag(GlobalTab::IdxA)
+           CALL 'aff15808' USING
+                                 Flag-value IN GlobalTab(a14c7288IdxA)
+           end-call
+                                                                   
+      *    CALL DisplayTable INPUT GlobalTab::Flag(IdxA)
+           CALL 'aff15808' USING
+                                 Flag-value IN GlobalTab(a14c7288IdxA)
+           end-call
+                                                        
+           GOBACK
+           .
+           
+      *DECLARE PROCEDURE DisplayTable
+      *        INPUT myBool Type Bool.
+
+       END PROGRAM TCOZDR03.
+      *
+      *DECLARE PROCEDURE DisplayTable
+      *        INPUT myBool Type Bool.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. aff15808.
+       DATA DIVISION.
+       LINKAGE SECTION.
+      *TCOZDR03.DisplayTable - Params :
+      *     input(myBool: BOOL)
+       01 myBool-value PIC X     VALUE LOW-VALUE.
+           88 myBool       VALUE 'T'.
+           88 myBool-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
+       01 TC-GlobalData.
+
+
+      *01 GlobalTab Type TypeA.
+       02 GlobalTab.
+           03 Contenu.
+             04 Ligne OCCURS 10
+                      ASCENDING KEY IS Obj
+                      INDEXED BY a14c7288IdxA.
+               05 Obj PIC X(12).
+              05  Flag-value PIC X VALUE LOW-VALUE.
+                  88  Flag       VALUE 'T'.
+                  88  Flag-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
+
+
+       PROCEDURE DIVISION
+             USING BY REFERENCE myBool-value
+           .
+      *TCOZDR03.DisplayTable - Params :
+      *     input(myBool: BOOL)
+      * Get the data from the global storage section
+           CALL 'b8131d02' USING
+               by reference address of TC-GlobalData
+           end-call
+      *    PERFORM VARYING GlobalTab::IdxA FROM 1 BY 1
+      *    UNTIL GlobalTab::IdxA > 5
+           PERFORM VARYING a14c7288IdxA FROM 1 BY 1
+           UNTIL a14c7288IdxA > 5
+      *      DISPLAY 'Test' GlobalTab::Obj(GlobalTab::IdxA)
+             DISPLAY 'Test' Obj OF GlobalTab(a14c7288IdxA)
+           END-PERFORM
+           .
+       END PROGRAM aff15808.
+      *
+      * Global Storage Section variables
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. b8131d02.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 PIC X(8) value ':TC:GBLS'.
+       01 TC-GlobalData.
+                              
+
+      *01 GlobalTab Type TypeA.
+       02 GlobalTab.
+           03 Contenu.
+             04 Ligne OCCURS 10
+                      ASCENDING KEY IS Obj
+                      INDEXED BY a14c7288IdxA.
+               05 Obj PIC X(12).
+              05  Flag-value PIC X VALUE LOW-VALUE.
+                  88  Flag       VALUE 'T'.
+                  88  Flag-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
+                               
+
+       LINKAGE SECTION.
+       01 GlobalPointer pointer.
+       PROCEDURE DIVISION USING BY REFERENCE GlobalPointer.
+           set GlobalPointer to address of TC-GlobalData
+           .
+       END PROGRAM b8131d02.

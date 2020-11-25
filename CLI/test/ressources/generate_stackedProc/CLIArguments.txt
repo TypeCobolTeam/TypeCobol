@@ -1,0 +1,1 @@
+﻿-i input\Pgm1.tcbl -o output\Pgm1.cbl -i input\Pgm2.tcbl -o output\Pgm2.cbl -i input\Pgm2Same.tcbl -o output\Pgm2Same.cbl -d output\error.txt -e rdz -f Cobol85Nested

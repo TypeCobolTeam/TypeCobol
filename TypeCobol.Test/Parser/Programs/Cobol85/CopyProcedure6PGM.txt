@@ -1,13 +1,16 @@
 --- Diagnostics ---
 Line 1[1,22] <37, Warning, General> - Warning: "END PROGRAM" is missing.
-Line 1[6,6] <27, Error, Syntax> - Syntax error : Symbol c is not referenced OffendingSymbol=[6,6:c]<UserDefinedWord> in COPY CPYProc
-Line 1[11,11] <27, Error, Syntax> - Syntax error : Symbol d is not referenced OffendingSymbol=[11,11:d]<UserDefinedWord> in COPY CPYProc
-Line 4[6,6] <27, Error, Syntax> - Syntax error : Symbol a is not referenced OffendingSymbol=[6,6:a]<UserDefinedWord>
-Line 4[11,11] <27, Error, Syntax> - Syntax error : Symbol b is not referenced OffendingSymbol=[11,11:b]<UserDefinedWord>
+Line 8[11,11] <30, Error, Semantics> - Semantic error: Symbol b is not referenced OffendingSymbol=[11,11:b]<UserDefinedWord>
+Line 9[11,11] <30, Error, Semantics> - Error in copy 'CPYProc' at line 1 : Semantic error: Symbol b is not referenced OffendingSymbol=[11,11:b]<UserDefinedWord> in COPY CPYProc
+Line 9[11,11] <30, Error, Semantics> - Error in copy 'CPYProc' at line 3 : Semantic error: Symbol d is not referenced OffendingSymbol=[11,11:d]<UserDefinedWord> in COPY CPYProc
 
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  a:Alphanumeric
+  c:Alphanumeric
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL

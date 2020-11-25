@@ -37,6 +37,22 @@
 
 [[DataDescriptionEntry]] [1,2:01]<LevelNumber>{1} --> [15,15+:.]<PeriodSeparator>
 
+[[DataDescriptionEntry]] [1,2:01]<LevelNumber>{1} --> [8,9:. ]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [1,2:01]<LevelNumber>{1} --> [12,12+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [5,6:05]<LevelNumber>{5} --> [26,26+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [1,2:01]<LevelNumber>{1} --> [8,9:. ]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [5,6:05]<LevelNumber>{5} --> [15,16:. ]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [5,6:02]<LevelNumber>{2} --> [26,26+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [1,2:01]<LevelNumber>{1} --> [8,9:. ]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [5,6:02]<LevelNumber>{2} --> [26,26+:.]<PeriodSeparator>
+
 [[ProcedureDivisionHeader]] [1,9:PROCEDURE]<PROCEDURE> --> [19,19+:.]<PeriodSeparator>
 
 [[ProgramEnd]] [1,3:END]<END> --> [22,22+:.]<PeriodSeparator>

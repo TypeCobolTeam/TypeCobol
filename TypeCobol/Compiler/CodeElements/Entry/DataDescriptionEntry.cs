@@ -861,7 +861,6 @@ namespace TypeCobol.Compiler.CodeElements {
         // that aggregates all the non-illegal stuff like justified,
         // group usage national, blank when zero and so on
 
-        public IList<DataConditionEntry> DataConditions { get; internal set; }
         public SyntaxProperty<bool> Omittable { get; set; }
 
         public bool IsOmittable {
@@ -869,8 +868,7 @@ namespace TypeCobol.Compiler.CodeElements {
         }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor) {
-            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
-                   && this.ContinueVisitToChildren(astVisitor, DataConditions);
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this);
         }
     }
 
@@ -1209,7 +1207,7 @@ namespace TypeCobol.Compiler.CodeElements {
 		/// </summary>
 		PackedDecimal,
 		/// <summary>
-		//// p231: COMPUTATIONAL-1 or COMP-1 (floating-point)
+		/// p231: COMPUTATIONAL-1 or COMP-1 (floating-point)
 		/// </summary>
 		FloatingPoint,
 		/// <summary>

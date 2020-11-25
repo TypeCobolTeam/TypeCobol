@@ -3,7 +3,9 @@ Line 21[11,16] <27, Error, Syntax> - Syntax error : Group item  MyVar2 cannot ha
 Line 23[11,16] <30, Error, Semantics> - Semantic error: Variable 'MyVar1' has to be limited to level 45 because of 'myType' maximum estimated children level OffendingSymbol=[11,16:MyVar1]<UserDefinedWord>
 Line 29[11,16] <30, Error, Semantics> - Semantic error: A 77 level variable cannot be typed with a type containing children OffendingSymbol=[11,16:MYVar5]<UserDefinedWord>
 Line 32[10,34] <27, Error, Syntax> - Syntax error : The Level 88 symbol 'WrongVarHere' cannot be declared under a BOOL typed symbol
-Line 46[20,28] <27, Error, Syntax> - Syntax error : The Level 88 symbol 'exists' cannot be declared under a BOOL typed symbol OffendingSymbol=[20,28:exists-Ok]<UserDefinedWord>
+Line 46[17,18] <27, Error, Syntax> - Syntax error : no viable alternative at input '88' RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter>tcfuncParameterUsageClause,  OffendingSymbol=[17,18:88]<IntegerLiteral>{88}
+Line 46[30,34] <27, Error, Syntax> - Syntax error : mismatched input 'value' expecting {FUNCTION-POINTER, PIC, PICTURE, POINTER, PROCEDURE-POINTER, TYPE, ?} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[30,34:value]<VALUE>
+Line 46[20,28] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[20,28:exists-Ok]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: LevelChecker common:False initial:False recursive:False
@@ -29,6 +31,7 @@ PROGRAM: LevelChecker common:False initial:False recursive:False
 -- FUNCTIONS ---
   MyProc
         in: exists:BOOL
+        in: exists-Ok:?
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL

@@ -99,9 +99,9 @@ Line 87[13,29] <30, Error, Semantics> - Semantic error: Type circular reference 
           move MyVar::A5var::B5Var::C5Var to MyVar::A5var::B5Var::C5Var
  
       *KO, A5Var must not be a valid child of C5Var as it's a circular reference
-Line 94[44,48] <27, Error, Syntax> - Syntax error : Symbol MyVar.A5var.B5Var.C5Var.A5Var is not referenced
+Line 94[44,48] <30, Error, Semantics> - Semantic error: Symbol MyVar.A5var.B5Var.C5Var.A5Var is not referenced
           move MyVar::A5var::B5Var::C5Var::A5Var 
-Line 95[44,48] <27, Error, Syntax> - Syntax error : Symbol MyVar.A5var.B5Var.C5Var.A5Var is not referenced
+Line 95[44,48] <30, Error, Semantics> - Semantic error: Symbol MyVar.A5var.B5Var.C5Var.A5Var is not referenced
             to MyVar::A5var::B5Var::C5Var::A5Var
           .
        end-declare.

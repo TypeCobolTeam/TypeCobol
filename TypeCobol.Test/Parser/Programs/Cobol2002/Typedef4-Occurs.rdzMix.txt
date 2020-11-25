@@ -42,7 +42,7 @@ Line 40[16,26] <27, Error, Syntax> - Syntax error : Index can not be use with OF
            set td-var30Ind IN Var3a to 1
 
       *KO, Typedef3 is used 3 times
-Line 43[16,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol td-var30Ind 
+Line 43[16,26] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol td-var30Ind 
 Symbols found: MainProgram::Var1::Typedef1::td-var10::td-var13::Typedef2::td-var20::td-var23::Typedef3::td-var30::td-var30Ind | MainProgram::Var3a::Typedef3::td-var30::td-var30Ind | MainProgram::Var3b::Typedef3::td-var30::td-var30Ind
            set td-var30Ind to 1
 

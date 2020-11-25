@@ -61,14 +61,11 @@ namespace TypeCobol.Compiler.AntlrUtils
 		{
 			OffendingSymbol = offendingSymbol;
 			this.ruleStack = ruleStack;
-
-            // TO DO - IMPORTANT : this is the INITIAL line number, and not the CURRENT line number
-            // This is enough to pass all unit tests, but will return false informations in real usage !
-            // for real line number, use a Snapshot
-            if (Line < 0 && OffendingSymbol != null)
+            var copyDirective = (OffendingSymbol as ImportedToken)?.CopyDirective;
+            if (copyDirective != null)
             {
-                CodeElement e = OffendingSymbol as CodeElement;
-                if (e != null && e.ConsumedTokens.Count > 0) Line = e.ConsumedTokens[0].Line;
+                Line = copyDirective.COPYToken.Line;
+                Message = $"Error in copy '{copyDirective.TextName}' at line {OffendingSymbol.Line} : {Message}";
             }
         }
 

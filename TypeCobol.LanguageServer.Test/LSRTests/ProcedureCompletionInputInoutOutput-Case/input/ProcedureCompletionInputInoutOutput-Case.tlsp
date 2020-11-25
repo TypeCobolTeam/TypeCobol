@@ -1,667 +1,665 @@
 {
-    "name": "TestDom3.tlsp",
-    "session": "C:\\Users\\LANOYDO\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2019_10_21_10_43_04_937\\TestSuite_2019_10_21_10_43_04_937.slsp",
-    "user": "LANOYDO",
-    "date": "2019/10/21 10:43:04 948",
-    "uri": "file:///C:/Users/LANOYDO/source/repos/TypeCobol/TypeCobol.LanguageServer.Test/LSRTests/PerformCompletion/input/TestDom3.tlsp",
-    "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\Users\\\\LANOYDO\\\\source\\\\repos\\\\TypeCobol\\\\bin\\\\EI_Debug\",\"rootUri\":\"file:/C:/Users/LANOYDO/source/repos/TypeCobol/bin/EI_Debug/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"signatureHelp\":{\"dynamicRegistration\":true},\"references\":{\"dynamicRegistration\":true},\"documentHighlight\":{\"dynamicRegistration\":true},\"documentSymbol\":{\"dynamicRegistration\":true},\"formatting\":{\"dynamicRegistration\":true},\"rangeFormatting\":{\"dynamicRegistration\":true},\"onTypeFormatting\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true},\"codeAction\":{\"dynamicRegistration\":true},\"codeLens\":{\"dynamicRegistration\":true},\"documentLink\":{\"dynamicRegistration\":true},\"rename\":{\"dynamicRegistration\":true}}},\"trace\":\"off\"}}",
-    "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"experimental\":[{\"Item1\":\"version\",\"Item2\":\"0.1(alpha)\"}],\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
-    "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\Users\\\\LANOYDO\\\\source\\\\repos\\\\TypeCobol\\\\bin\\\\EI_Debug\\\\TypeCobol.CLI.exe\",\"-1\",\"-e\",\"rdz\",\"-y\",\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\Intrinsic\\\\Intrinsic.txt\",\"-glm\",\"\\\"{6}\\\"\",\"--autoremarks\",\"--outputFormat\\u003dCobol85Mixed\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\Production\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\MISC\",\"-md\",\"200\"]}}",
-    "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. Pgm.\\r\\n       DATA DIVISION.\\r\\n       Working-Storage Section.\\r\\n       01 myName PIC X(20) VALUE \\\"mammouth\\\".\\r\\n       01 myNbr  PIC 99 VALUE 20.\\r\\n       01 result TYPE bool.\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n       DECLARE PROCEDURE myProc\\r\\n           input  pname PIC X(20)\\r\\n           in-out pnbr PIC 99\\r\\n           output IsOk Type Bool.\\r\\n       DATA DIVISION.\\r\\n       Working-Storage Section.\\r\\n       PROCEDURE DIVISION.\\r\\n           SET IsOk TO True\\r\\n           .\\r\\n       END-DECLARE.\\r\\n\\r\\n       Traitement.\\r\\n           CALL myProc INPUT myName\\r\\n                       IN-OUT myNbr\\r\\n                       OUTPUT result\\r\\n           Call\\r\\n\\r\\n           GOBACK.\\r\\n       END PROGRAM Pgm.\"}}}",
-    "messages": [
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. Pgm.\\r\\n       DATA DIVISION.\\r\\n       Working-Storage Section.\\r\\n       01 myName PIC X(20) VALUE \\\"mammouth\\\".\\r\\n       01 myNbr  PIC 99 VALUE 20.\\r\\n       01 result TYPE bool.\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n       DECLARE PROCEDURE myProc\\r\\n           input  pname PIC X(20)\\r\\n           in-out pnbr PIC 99\\r\\n           output IsOk Type Bool.\\r\\n       DATA DIVISION.\\r\\n       Working-Storage Section.\\r\\n       PROCEDURE DIVISION.\\r\\n           SET IsOk TO True\\r\\n           .\\r\\n       END-DECLARE.\\r\\n\\r\\n       Traitement.\\r\\n\\r\\n\\r\\n           GOBACK.\\r\\n       END PROGRAM Pgm.\"}}"
-        },
-        {
-            "category": 1,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":25,\"character\":12},\"end\":{\"line\":25,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
-        },
-        {
-            "category": 1,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":0},\"end\":{\"line\":21,\"character\":0}},\"rangeLength\":0,\"text\":\"       \"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":7},\"end\":{\"line\":21,\"character\":7}},\"rangeLength\":0,\"text\":\"    \"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":11},\"end\":{\"line\":21,\"character\":11}},\"rangeLength\":0,\"text\":\"C\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":12},\"end\":{\"line\":21,\"character\":12}},\"rangeLength\":0,\"text\":\"A\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":13},\"end\":{\"line\":21,\"character\":13}},\"rangeLength\":0,\"text\":\"L\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":14},\"end\":{\"line\":21,\"character\":14}},\"rangeLength\":0,\"text\":\"L\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":15},\"end\":{\"line\":21,\"character\":15}},\"rangeLength\":0,\"text\":\" \"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
-        },
-        {
-            "category": 1,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":21,\"character\":16}}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"myProc INPUT pname(Alphanumeric) IN-OUT pnbr(Numeric) OUTPUT IsOk(BOOL)\",\"kind\":2,\"insertText\":\"myProc INPUT\",\"data\":[null,{\"label\":\"myProc\",\"parameters\":[{\"label\":\"INPUT pname(Alphanumeric)\"},{\"label\":\"IN-OUT pnbr(Numeric)\"},{\"label\":\"OUTPUT IsOk(BOOL)\"}]},null]},{\"label\":\"myName\",\"kind\":6,\"insertText\":\"myName\"},{\"label\":\"Pgm\",\"kind\":9}]}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":16},\"end\":{\"line\":21,\"character\":16}},\"rangeLength\":0,\"text\":\"myProc INPUT \"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"signatureInformation\":{\"label\":\"myProc\",\"parameters\":[{\"label\":\"INPUT pname(Alphanumeric)\"},{\"label\":\"IN-OUT pnbr(Numeric)\"},{\"label\":\"OUTPUT IsOk(BOOL)\"}]}}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
-        },
-        {
-            "category": 1,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":24,\"character\":12},\"end\":{\"line\":24,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'myProc' \"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'pname' of type Alphanumeric and length 20\"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'pnbr' of type Numeric and length 2\"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'IsOk' of type BOOL and length 1\"}]}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":true}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":21,\"character\":29}}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"myName (Alphanumeric) (myName)\",\"kind\":6,\"insertText\":\"myName\\n                       IN-OUT \"}]}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":29},\"end\":{\"line\":21,\"character\":29}},\"rangeLength\":0,\"text\":\"myName\\n                       IN-OUT \"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
-        },
-        {
-            "category": 1,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":25,\"character\":12},\"end\":{\"line\":25,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'myProc' input(Alphanumeric)\"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'pnbr' of type Numeric and length 2\"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'IsOk' of type BOOL and length 1\"}]}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":true}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":22,\"character\":30}}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"myNbr (Numeric) (myNbr)\",\"kind\":6,\"insertText\":\"myNbr\\n                       OUTPUT \"}]}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":30},\"end\":{\"line\":22,\"character\":30}},\"rangeLength\":0,\"text\":\"myNbr\\n                       OUTPUT \"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
-        },
-        {
-            "category": 1,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":26,\"character\":12},\"end\":{\"line\":26,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'myProc' input(Alphanumeric) in-out(Numeric)\"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'IsOk' of type BOOL and length 1\"}]}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":true}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":23,\"character\":30}}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"result\":[{\"label\":\"result (BOOL) (result)\",\"kind\":6,\"insertText\":\"result\"}]}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":23,\"character\":30},\"end\":{\"line\":23,\"character\":30}},\"rangeLength\":0,\"text\":\"result\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":23,\"character\":36},\"end\":{\"line\":23,\"character\":36}},\"rangeLength\":0,\"text\":\"\\r\\n                       \"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":0},\"end\":{\"line\":24,\"character\":23}},\"rangeLength\":23,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. Pgm.\\r\\n       DATA DIVISION.\\r\\n       Working-Storage Section.\\r\\n       01 myName PIC X(20) VALUE \\\"mammouth\\\".\\r\\n       01 myNbr  PIC 99 VALUE 20.\\r\\n       01 result TYPE bool.\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n       DECLARE PROCEDURE myProc\\r\\n           input  pname PIC X(20)\\r\\n           in-out pnbr PIC 99\\r\\n           output IsOk Type Bool.\\r\\n       DATA DIVISION.\\r\\n       Working-Storage Section.\\r\\n       PROCEDURE DIVISION.\\r\\n           SET IsOk TO True\\r\\n           .\\r\\n       END-DECLARE.\\r\\n\\r\\n       Traitement.\\r\\n           CALL myProc INPUT myName\\n                       IN-OUT myNbr\\n                       OUTPUT result\\r\\n\\r\\n\\r\\n           GOBACK.\\r\\n       END PROGRAM Pgm.\"}}"
-        },
-        {
-            "category": 1,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":0},\"end\":{\"line\":24,\"character\":0}},\"rangeLength\":0,\"text\":\"\\r\\n\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":0},\"end\":{\"line\":25,\"character\":0}},\"rangeLength\":2,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":0},\"end\":{\"line\":24,\"character\":0}},\"rangeLength\":0,\"text\":\"                       \"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":22},\"end\":{\"line\":24,\"character\":23}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":21},\"end\":{\"line\":24,\"character\":22}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":20},\"end\":{\"line\":24,\"character\":21}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":19},\"end\":{\"line\":24,\"character\":20}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":18},\"end\":{\"line\":24,\"character\":19}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":17},\"end\":{\"line\":24,\"character\":18}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":16},\"end\":{\"line\":24,\"character\":17}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":15},\"end\":{\"line\":24,\"character\":16}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":14},\"end\":{\"line\":24,\"character\":15}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":13},\"end\":{\"line\":24,\"character\":14}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":12},\"end\":{\"line\":24,\"character\":13}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":11},\"end\":{\"line\":24,\"character\":12}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":11},\"end\":{\"line\":24,\"character\":11}},\"rangeLength\":0,\"text\":\" \"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":12},\"end\":{\"line\":24,\"character\":12}},\"rangeLength\":0,\"text\":\"C\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":13},\"end\":{\"line\":24,\"character\":13}},\"rangeLength\":0,\"text\":\"a\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":14},\"end\":{\"line\":24,\"character\":14}},\"rangeLength\":0,\"text\":\"l\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":15},\"end\":{\"line\":24,\"character\":15}},\"rangeLength\":0,\"text\":\"l\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":16},\"end\":{\"line\":24,\"character\":16}},\"rangeLength\":0,\"text\":\" \"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"9\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
-        },
-        {
-            "category": 1,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":25,\"character\":13},\"end\":{\"line\":25,\"character\":13}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"9\",\"result\":true}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":24,\"character\":17}}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"result\":[{\"label\":\"myProc Input pname(Alphanumeric) In-Out pnbr(Numeric) Output IsOk(BOOL)\",\"kind\":2,\"insertText\":\"myProc Input\",\"data\":[null,{\"label\":\"myProc\",\"parameters\":[{\"label\":\"INPUT pname(Alphanumeric)\"},{\"label\":\"IN-OUT pnbr(Numeric)\"},{\"label\":\"OUTPUT IsOk(BOOL)\"}]},null]},{\"label\":\"myName\",\"kind\":6,\"insertText\":\"myName\"},{\"label\":\"Pgm\",\"kind\":9}]}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":17},\"end\":{\"line\":24,\"character\":17}},\"rangeLength\":0,\"text\":\"myProc Input \"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"signatureInformation\":{\"label\":\"myProc\",\"parameters\":[{\"label\":\"INPUT pname(Alphanumeric)\"},{\"label\":\"IN-OUT pnbr(Numeric)\"},{\"label\":\"OUTPUT IsOk(BOOL)\"}]}}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
-        },
-        {
-            "category": 1,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":27,\"character\":12},\"end\":{\"line\":27,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":25,\"character\":13},\"end\":{\"line\":25,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'myProc' \"},{\"range\":{\"start\":{\"line\":25,\"character\":13},\"end\":{\"line\":25,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'pname' of type Alphanumeric and length 20\"},{\"range\":{\"start\":{\"line\":25,\"character\":13},\"end\":{\"line\":25,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'pnbr' of type Numeric and length 2\"},{\"range\":{\"start\":{\"line\":25,\"character\":13},\"end\":{\"line\":25,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'IsOk' of type BOOL and length 1\"}]}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"result\":true}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":24,\"character\":30}}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"result\":[{\"label\":\"myName (Alphanumeric) (myName)\",\"kind\":6,\"insertText\":\"myName\\n                        In-Out \"}]}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":30},\"end\":{\"line\":24,\"character\":30}},\"rangeLength\":0,\"text\":\"myName\\n                        In-Out \"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
-        },
-        {
-            "category": 1,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":25,\"character\":13},\"end\":{\"line\":25,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'myProc' input(Alphanumeric)\"},{\"range\":{\"start\":{\"line\":25,\"character\":13},\"end\":{\"line\":25,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'pnbr' of type Numeric and length 2\"},{\"range\":{\"start\":{\"line\":25,\"character\":13},\"end\":{\"line\":25,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'IsOk' of type BOOL and length 1\"}]}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"result\":true}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":25,\"character\":31}}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"result\":[{\"label\":\"myNbr (Numeric) (myNbr)\",\"kind\":6,\"insertText\":\"myNbr\\n                        Output \"}]}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":31},\"end\":{\"line\":25,\"character\":31}},\"rangeLength\":0,\"text\":\"myNbr\\n                        Output \"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"15\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
-        },
-        {
-            "category": 1,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":29,\"character\":12},\"end\":{\"line\":29,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":25,\"character\":13},\"end\":{\"line\":25,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'myProc' input(Alphanumeric) in-out(Numeric)\"},{\"range\":{\"start\":{\"line\":25,\"character\":13},\"end\":{\"line\":25,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'IsOk' of type BOOL and length 1\"}]}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"15\",\"result\":true}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":26,\"character\":31}}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"result\":[{\"label\":\"result (BOOL) (result)\",\"kind\":6,\"insertText\":\"result\"}]}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":26,\"character\":31},\"end\":{\"line\":26,\"character\":31}},\"rangeLength\":0,\"text\":\"result\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":26,\"character\":37},\"end\":{\"line\":26,\"character\":37}},\"rangeLength\":0,\"text\":\"\\r\\n                        \"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":0},\"end\":{\"line\":27,\"character\":24}},\"rangeLength\":24,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. Pgm.\\r\\n       DATA DIVISION.\\r\\n       Working-Storage Section.\\r\\n       01 myName PIC X(20) VALUE \\\"mammouth\\\".\\r\\n       01 myNbr  PIC 99 VALUE 20.\\r\\n       01 result TYPE bool.\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n       DECLARE PROCEDURE myProc\\r\\n           input  pname PIC X(20)\\r\\n           in-out pnbr PIC 99\\r\\n           output IsOk Type Bool.\\r\\n       DATA DIVISION.\\r\\n       Working-Storage Section.\\r\\n       PROCEDURE DIVISION.\\r\\n           SET IsOk TO True\\r\\n           .\\r\\n       END-DECLARE.\\r\\n\\r\\n       Traitement.\\r\\n           CALL myProc INPUT myName\\n                       IN-OUT myNbr\\n                       OUTPUT result\\r\\n            Call myProc Input myName\\n                        In-Out myNbr\\n                        Output result\\r\\n\\r\\n\\r\\n           GOBACK.\\r\\n       END PROGRAM Pgm.\"}}"
-        },
-        {
-            "category": 1,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":0},\"end\":{\"line\":27,\"character\":0}},\"rangeLength\":0,\"text\":\"\\r\\n\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":0},\"end\":{\"line\":28,\"character\":0}},\"rangeLength\":2,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":0},\"end\":{\"line\":27,\"character\":0}},\"rangeLength\":0,\"text\":\"                        \"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":23},\"end\":{\"line\":27,\"character\":24}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":22},\"end\":{\"line\":27,\"character\":23}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":21},\"end\":{\"line\":27,\"character\":22}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":20},\"end\":{\"line\":27,\"character\":21}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":19},\"end\":{\"line\":27,\"character\":20}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":18},\"end\":{\"line\":27,\"character\":19}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":17},\"end\":{\"line\":27,\"character\":18}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":16},\"end\":{\"line\":27,\"character\":17}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":15},\"end\":{\"line\":27,\"character\":16}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":14},\"end\":{\"line\":27,\"character\":15}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":13},\"end\":{\"line\":27,\"character\":14}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":12},\"end\":{\"line\":27,\"character\":13}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":11},\"end\":{\"line\":27,\"character\":12}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":11},\"end\":{\"line\":27,\"character\":11}},\"rangeLength\":0,\"text\":\"c\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":12},\"end\":{\"line\":27,\"character\":12}},\"rangeLength\":0,\"text\":\"a\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":13},\"end\":{\"line\":27,\"character\":13}},\"rangeLength\":0,\"text\":\"l\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":14},\"end\":{\"line\":27,\"character\":14}},\"rangeLength\":0,\"text\":\"l\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":15},\"end\":{\"line\":27,\"character\":15}},\"rangeLength\":0,\"text\":\" \"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":16},\"end\":{\"line\":27,\"character\":16}},\"rangeLength\":0,\"text\":\"DisplayDebug\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":27},\"end\":{\"line\":27,\"character\":28}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":26},\"end\":{\"line\":27,\"character\":27}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":25},\"end\":{\"line\":27,\"character\":26}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":24},\"end\":{\"line\":27,\"character\":25}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":23},\"end\":{\"line\":27,\"character\":24}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":22},\"end\":{\"line\":27,\"character\":23}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":21},\"end\":{\"line\":27,\"character\":22}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":20},\"end\":{\"line\":27,\"character\":21}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":19},\"end\":{\"line\":27,\"character\":20}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":18},\"end\":{\"line\":27,\"character\":19}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":17},\"end\":{\"line\":27,\"character\":18}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":16},\"end\":{\"line\":27,\"character\":17}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":15},\"end\":{\"line\":27,\"character\":16}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":14},\"end\":{\"line\":27,\"character\":15}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":13},\"end\":{\"line\":27,\"character\":14}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":12},\"end\":{\"line\":27,\"character\":13}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":11},\"end\":{\"line\":27,\"character\":12}},\"rangeLength\":1,\"text\":\"\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":11},\"end\":{\"line\":27,\"character\":11}},\"rangeLength\":0,\"text\":\"c\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":12},\"end\":{\"line\":27,\"character\":12}},\"rangeLength\":0,\"text\":\"a\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":13},\"end\":{\"line\":27,\"character\":13}},\"rangeLength\":0,\"text\":\"l\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":14},\"end\":{\"line\":27,\"character\":14}},\"rangeLength\":0,\"text\":\"l\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":15},\"end\":{\"line\":27,\"character\":15}},\"rangeLength\":0,\"text\":\" \"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"17\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
-        },
-        {
-            "category": 1,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"17\",\"result\":true}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"18\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":27,\"character\":16}}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"18\",\"result\":[{\"label\":\"myProc input pname(Alphanumeric) in-out pnbr(Numeric) output IsOk(BOOL)\",\"kind\":2,\"insertText\":\"myProc input\",\"data\":[null,{\"label\":\"myProc\",\"parameters\":[{\"label\":\"INPUT pname(Alphanumeric)\"},{\"label\":\"IN-OUT pnbr(Numeric)\"},{\"label\":\"OUTPUT IsOk(BOOL)\"}]},null]},{\"label\":\"myName\",\"kind\":6,\"insertText\":\"myName\"},{\"label\":\"Pgm\",\"kind\":9}]}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":16},\"end\":{\"line\":27,\"character\":16}},\"rangeLength\":0,\"text\":\"myProc input \"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"signatureInformation\":{\"label\":\"myProc\",\"parameters\":[{\"label\":\"INPUT pname(Alphanumeric)\"},{\"label\":\"IN-OUT pnbr(Numeric)\"},{\"label\":\"OUTPUT IsOk(BOOL)\"}]}}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"19\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
-        },
-        {
-            "category": 1,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":30,\"character\":12},\"end\":{\"line\":30,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'myProc' \"},{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'pname' of type Alphanumeric and length 20\"},{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'pnbr' of type Numeric and length 2\"},{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'IsOk' of type BOOL and length 1\"}]}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"19\",\"result\":true}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":27,\"character\":29}}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"result\":[{\"label\":\"myName (Alphanumeric) (myName)\",\"kind\":6,\"insertText\":\"myName\\n                       in-out \"}]}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":29},\"end\":{\"line\":27,\"character\":29}},\"rangeLength\":0,\"text\":\"myName\\n                       in-out \"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"21\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
-        },
-        {
-            "category": 1,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":31,\"character\":12},\"end\":{\"line\":31,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'myProc' input(Alphanumeric)\"},{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'pnbr' of type Numeric and length 2\"},{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'IsOk' of type BOOL and length 1\"}]}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"21\",\"result\":true}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"22\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":28,\"character\":30}}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"22\",\"result\":[{\"label\":\"myNbr (Numeric) (myNbr)\",\"kind\":6,\"insertText\":\"myNbr\\n                       output \"}]}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":28,\"character\":30},\"end\":{\"line\":28,\"character\":30}},\"rangeLength\":0,\"text\":\"myNbr\\n                       output \"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"23\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
-        },
-        {
-            "category": 1,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":32,\"character\":12},\"end\":{\"line\":32,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'myProc' input(Alphanumeric) in-out(Numeric)\"},{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'IsOk' of type BOOL and length 1\"}]}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"23\",\"result\":true}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"24\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":29,\"character\":30}}}"
-        },
-        {
-            "category": 2,
-            "message": "{\"jsonrpc\":\"2.0\",\"id\":\"24\",\"result\":[{\"label\":\"result (BOOL) (result)\",\"kind\":6,\"insertText\":\"result\"}]}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":29,\"character\":30},\"end\":{\"line\":29,\"character\":30}},\"rangeLength\":0,\"text\":\"result\"}]}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
-        },
-        {
-            "category": 0,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. Pgm.\\r\\n       DATA DIVISION.\\r\\n       Working-Storage Section.\\r\\n       01 myName PIC X(20) VALUE \\\"mammouth\\\".\\r\\n       01 myNbr  PIC 99 VALUE 20.\\r\\n       01 result TYPE bool.\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n       DECLARE PROCEDURE myProc\\r\\n           input  pname PIC X(20)\\r\\n           in-out pnbr PIC 99\\r\\n           output IsOk Type Bool.\\r\\n       DATA DIVISION.\\r\\n       Working-Storage Section.\\r\\n       PROCEDURE DIVISION.\\r\\n           SET IsOk TO True\\r\\n           .\\r\\n       END-DECLARE.\\r\\n\\r\\n       Traitement.\\r\\n           CALL myProc INPUT myName\\n                       IN-OUT myNbr\\n                       OUTPUT result\\r\\n            Call myProc Input myName\\n                        In-Out myNbr\\n                        Output result\\r\\n           call myProc input myName\\n                       in-out myNbr\\n                       output result\\r\\n\\r\\n           GOBACK.\\r\\n       END PROGRAM Pgm.\"}}"
-        },
-        {
-            "category": 1,
-            "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[]}}"
-        }
-    ],
+  "name": "TestDom3.tlsp",
+  "session": "C:\\Users\\LANOYDO\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2019_10_21_10_43_04_937\\TestSuite_2019_10_21_10_43_04_937.slsp",
+  "user": "LANOYDO",
+  "date": "2019/10/21 10:43:04 948",
+  "uri": "file:///C:/Users/LANOYDO/source/repos/TypeCobol/TypeCobol.LanguageServer.Test/LSRTests/PerformCompletion/input/TestDom3.tlsp",
+  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\Users\\\\LANOYDO\\\\source\\\\repos\\\\TypeCobol\\\\bin\\\\EI_Debug\",\"rootUri\":\"file:/C:/Users/LANOYDO/source/repos/TypeCobol/bin/EI_Debug/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"signatureHelp\":{\"dynamicRegistration\":true},\"references\":{\"dynamicRegistration\":true},\"documentHighlight\":{\"dynamicRegistration\":true},\"documentSymbol\":{\"dynamicRegistration\":true},\"formatting\":{\"dynamicRegistration\":true},\"rangeFormatting\":{\"dynamicRegistration\":true},\"onTypeFormatting\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true},\"codeAction\":{\"dynamicRegistration\":true},\"codeLens\":{\"dynamicRegistration\":true},\"documentLink\":{\"dynamicRegistration\":true},\"rename\":{\"dynamicRegistration\":true}}},\"trace\":\"off\"}}", "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"experimental\":[{\"Item1\":\"version\",\"Item2\":\"0.1(alpha)\"}],\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}", "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\Users\\\\LANOYDO\\\\source\\\\repos\\\\TypeCobol\\\\bin\\\\EI_Debug\\\\TypeCobol.CLI.exe\",\"-1\",\"-e\",\"rdz\",\"-y\",\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\Intrinsic\\\\Intrinsic.txt\",\"-glm\",\"\\\"{6}\\\"\",\"--autoremarks\",\"--outputFormat\\u003dCobol85Mixed\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\Production\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\MISC\",\"-md\",\"200\"]}}", "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. Pgm.\\r\\n       DATA DIVISION.\\r\\n       Working-Storage Section.\\r\\n       01 myName PIC X(20) VALUE \\\"mammouth\\\".\\r\\n       01 myNbr  PIC 99 VALUE 20.\\r\\n       01 result TYPE bool.\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n       DECLARE PROCEDURE myProc\\r\\n           input  pname PIC X(20)\\r\\n           in-out pnbr PIC 99\\r\\n           output IsOk Type Bool.\\r\\n       DATA DIVISION.\\r\\n       Working-Storage Section.\\r\\n       PROCEDURE DIVISION.\\r\\n           SET IsOk TO True\\r\\n           .\\r\\n       END-DECLARE.\\r\\n\\r\\n       Traitement.\\r\\n           CALL myProc INPUT myName\\r\\n                       IN-OUT myNbr\\r\\n                       OUTPUT result\\r\\n           Call\\r\\n\\r\\n           GOBACK.\\r\\n       END PROGRAM Pgm.\"}}}",
+  "messages": [
+
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. Pgm.\\r\\n       DATA DIVISION.\\r\\n       Working-Storage Section.\\r\\n       01 myName PIC X(20) VALUE \\\"mammouth\\\".\\r\\n       01 myNbr  PIC 99 VALUE 20.\\r\\n       01 result TYPE bool.\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n       DECLARE PROCEDURE myProc\\r\\n           input  pname PIC X(20)\\r\\n           in-out pnbr PIC 99\\r\\n           output IsOk Type Bool.\\r\\n       DATA DIVISION.\\r\\n       Working-Storage Section.\\r\\n       PROCEDURE DIVISION.\\r\\n           SET IsOk TO True\\r\\n           .\\r\\n       END-DECLARE.\\r\\n\\r\\n       Traitement.\\r\\n\\r\\n\\r\\n           GOBACK.\\r\\n       END PROGRAM Pgm.\"}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":25,\"character\":12},\"end\":{\"line\":25,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":0},\"end\":{\"line\":21,\"character\":0}},\"rangeLength\":0,\"text\":\"       \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":7},\"end\":{\"line\":21,\"character\":7}},\"rangeLength\":0,\"text\":\"    \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":11},\"end\":{\"line\":21,\"character\":11}},\"rangeLength\":0,\"text\":\"C\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":12},\"end\":{\"line\":21,\"character\":12}},\"rangeLength\":0,\"text\":\"A\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":13},\"end\":{\"line\":21,\"character\":13}},\"rangeLength\":0,\"text\":\"L\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":14},\"end\":{\"line\":21,\"character\":14}},\"rangeLength\":0,\"text\":\"L\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":15},\"end\":{\"line\":21,\"character\":15}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":21,\"character\":16}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"myProc INPUT pname(Alphanumeric) IN-OUT pnbr(Numeric) OUTPUT IsOk(BOOL)\",\"kind\":2,\"insertText\":\"myProc INPUT\",\"data\":[null,{\"label\":\"Pgm.myProc\",\"parameters\":[{\"label\":\"INPUT pname(Alphanumeric)\"},{\"label\":\"IN-OUT pnbr(Numeric)\"},{\"label\":\"OUTPUT IsOk(BOOL)\"}]},null]},{\"label\":\"myName\",\"kind\":6,\"insertText\":\"myName\"},{\"label\":\"Pgm\",\"kind\":9}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":16},\"end\":{\"line\":21,\"character\":16}},\"rangeLength\":0,\"text\":\"myProc INPUT \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"signatureInformation\":{\"label\":\"myProc\",\"parameters\":[{\"label\":\"INPUT pname(Alphanumeric)\"},{\"label\":\"IN-OUT pnbr(Numeric)\"},{\"label\":\"OUTPUT IsOk(BOOL)\"}]}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":24,\"character\":12},\"end\":{\"line\":24,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'myProc' \"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'pname' of type Alphanumeric and length 20\"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'pnbr' of type Numeric and length 2\"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'IsOk' of type BOOL and length 1\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":21,\"character\":29}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"myName (Alphanumeric) (myName)\",\"kind\":6,\"insertText\":\"myName\\n                       IN-OUT \"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":21,\"character\":29},\"end\":{\"line\":21,\"character\":29}},\"rangeLength\":0,\"text\":\"myName\\n                       IN-OUT \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":25,\"character\":12},\"end\":{\"line\":25,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'myProc' input(Alphanumeric)\"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'pnbr' of type Numeric and length 2\"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'IsOk' of type BOOL and length 1\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":22,\"character\":30}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"myNbr (Numeric) (myNbr)\",\"kind\":6,\"insertText\":\"myNbr\\n                       OUTPUT \"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":30},\"end\":{\"line\":22,\"character\":30}},\"rangeLength\":0,\"text\":\"myNbr\\n                       OUTPUT \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":26,\"character\":12},\"end\":{\"line\":26,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'myProc' input(Alphanumeric) in-out(Numeric)\"},{\"range\":{\"start\":{\"line\":22,\"character\":12},\"end\":{\"line\":22,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'IsOk' of type BOOL and length 1\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":23,\"character\":30}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"result\":[{\"label\":\"result (BOOL) (result)\",\"kind\":6,\"insertText\":\"result\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":23,\"character\":30},\"end\":{\"line\":23,\"character\":30}},\"rangeLength\":0,\"text\":\"result\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":23,\"character\":36},\"end\":{\"line\":23,\"character\":36}},\"rangeLength\":0,\"text\":\"\\r\\n                       \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":0},\"end\":{\"line\":24,\"character\":23}},\"rangeLength\":23,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. Pgm.\\r\\n       DATA DIVISION.\\r\\n       Working-Storage Section.\\r\\n       01 myName PIC X(20) VALUE \\\"mammouth\\\".\\r\\n       01 myNbr  PIC 99 VALUE 20.\\r\\n       01 result TYPE bool.\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n       DECLARE PROCEDURE myProc\\r\\n           input  pname PIC X(20)\\r\\n           in-out pnbr PIC 99\\r\\n           output IsOk Type Bool.\\r\\n       DATA DIVISION.\\r\\n       Working-Storage Section.\\r\\n       PROCEDURE DIVISION.\\r\\n           SET IsOk TO True\\r\\n           .\\r\\n       END-DECLARE.\\r\\n\\r\\n       Traitement.\\r\\n           CALL myProc INPUT myName\\n                       IN-OUT myNbr\\n                       OUTPUT result\\r\\n\\r\\n\\r\\n           GOBACK.\\r\\n       END PROGRAM Pgm.\"}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":0},\"end\":{\"line\":24,\"character\":0}},\"rangeLength\":0,\"text\":\"\\r\\n\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":0},\"end\":{\"line\":25,\"character\":0}},\"rangeLength\":2,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":0},\"end\":{\"line\":24,\"character\":0}},\"rangeLength\":0,\"text\":\"                       \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":22},\"end\":{\"line\":24,\"character\":23}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":21},\"end\":{\"line\":24,\"character\":22}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":20},\"end\":{\"line\":24,\"character\":21}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":19},\"end\":{\"line\":24,\"character\":20}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":18},\"end\":{\"line\":24,\"character\":19}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":17},\"end\":{\"line\":24,\"character\":18}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":16},\"end\":{\"line\":24,\"character\":17}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":15},\"end\":{\"line\":24,\"character\":16}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":14},\"end\":{\"line\":24,\"character\":15}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":13},\"end\":{\"line\":24,\"character\":14}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":12},\"end\":{\"line\":24,\"character\":13}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":11},\"end\":{\"line\":24,\"character\":12}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":11},\"end\":{\"line\":24,\"character\":11}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":12},\"end\":{\"line\":24,\"character\":12}},\"rangeLength\":0,\"text\":\"C\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":13},\"end\":{\"line\":24,\"character\":13}},\"rangeLength\":0,\"text\":\"a\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":14},\"end\":{\"line\":24,\"character\":14}},\"rangeLength\":0,\"text\":\"l\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":15},\"end\":{\"line\":24,\"character\":15}},\"rangeLength\":0,\"text\":\"l\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":16},\"end\":{\"line\":24,\"character\":16}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"9\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":25,\"character\":13},\"end\":{\"line\":25,\"character\":13}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"9\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":24,\"character\":17}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"result\":[{\"label\":\"myProc Input pname(Alphanumeric) In-Out pnbr(Numeric) Output IsOk(BOOL)\",\"kind\":2,\"insertText\":\"myProc Input\",\"data\":[null,{\"label\":\"Pgm.myProc\",\"parameters\":[{\"label\":\"INPUT pname(Alphanumeric)\"},{\"label\":\"IN-OUT pnbr(Numeric)\"},{\"label\":\"OUTPUT IsOk(BOOL)\"}]},null]},{\"label\":\"myName\",\"kind\":6,\"insertText\":\"myName\"},{\"label\":\"Pgm\",\"kind\":9}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":17},\"end\":{\"line\":24,\"character\":17}},\"rangeLength\":0,\"text\":\"myProc Input \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"signatureInformation\":{\"label\":\"myProc\",\"parameters\":[{\"label\":\"INPUT pname(Alphanumeric)\"},{\"label\":\"IN-OUT pnbr(Numeric)\"},{\"label\":\"OUTPUT IsOk(BOOL)\"}]}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":27,\"character\":12},\"end\":{\"line\":27,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":25,\"character\":13},\"end\":{\"line\":25,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'myProc' \"},{\"range\":{\"start\":{\"line\":25,\"character\":13},\"end\":{\"line\":25,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'pname' of type Alphanumeric and length 20\"},{\"range\":{\"start\":{\"line\":25,\"character\":13},\"end\":{\"line\":25,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'pnbr' of type Numeric and length 2\"},{\"range\":{\"start\":{\"line\":25,\"character\":13},\"end\":{\"line\":25,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'IsOk' of type BOOL and length 1\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":24,\"character\":30}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"result\":[{\"label\":\"myName (Alphanumeric) (myName)\",\"kind\":6,\"insertText\":\"myName\\n                        In-Out \"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":24,\"character\":30},\"end\":{\"line\":24,\"character\":30}},\"rangeLength\":0,\"text\":\"myName\\n                        In-Out \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":25,\"character\":13},\"end\":{\"line\":25,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'myProc' input(Alphanumeric)\"},{\"range\":{\"start\":{\"line\":25,\"character\":13},\"end\":{\"line\":25,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'pnbr' of type Numeric and length 2\"},{\"range\":{\"start\":{\"line\":25,\"character\":13},\"end\":{\"line\":25,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'IsOk' of type BOOL and length 1\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":25,\"character\":31}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"result\":[{\"label\":\"myNbr (Numeric) (myNbr)\",\"kind\":6,\"insertText\":\"myNbr\\n                        Output \"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":31},\"end\":{\"line\":25,\"character\":31}},\"rangeLength\":0,\"text\":\"myNbr\\n                        Output \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"15\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":29,\"character\":12},\"end\":{\"line\":29,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":25,\"character\":13},\"end\":{\"line\":25,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'myProc' input(Alphanumeric) in-out(Numeric)\"},{\"range\":{\"start\":{\"line\":25,\"character\":13},\"end\":{\"line\":25,\"character\":30}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'IsOk' of type BOOL and length 1\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"15\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":26,\"character\":31}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"result\":[{\"label\":\"result (BOOL) (result)\",\"kind\":6,\"insertText\":\"result\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":26,\"character\":31},\"end\":{\"line\":26,\"character\":31}},\"rangeLength\":0,\"text\":\"result\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":26,\"character\":37},\"end\":{\"line\":26,\"character\":37}},\"rangeLength\":0,\"text\":\"\\r\\n                        \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":0},\"end\":{\"line\":27,\"character\":24}},\"rangeLength\":24,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. Pgm.\\r\\n       DATA DIVISION.\\r\\n       Working-Storage Section.\\r\\n       01 myName PIC X(20) VALUE \\\"mammouth\\\".\\r\\n       01 myNbr  PIC 99 VALUE 20.\\r\\n       01 result TYPE bool.\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n       DECLARE PROCEDURE myProc\\r\\n           input  pname PIC X(20)\\r\\n           in-out pnbr PIC 99\\r\\n           output IsOk Type Bool.\\r\\n       DATA DIVISION.\\r\\n       Working-Storage Section.\\r\\n       PROCEDURE DIVISION.\\r\\n           SET IsOk TO True\\r\\n           .\\r\\n       END-DECLARE.\\r\\n\\r\\n       Traitement.\\r\\n           CALL myProc INPUT myName\\n                       IN-OUT myNbr\\n                       OUTPUT result\\r\\n            Call myProc Input myName\\n                        In-Out myNbr\\n                        Output result\\r\\n\\r\\n\\r\\n           GOBACK.\\r\\n       END PROGRAM Pgm.\"}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":0},\"end\":{\"line\":27,\"character\":0}},\"rangeLength\":0,\"text\":\"\\r\\n\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":0},\"end\":{\"line\":28,\"character\":0}},\"rangeLength\":2,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":0},\"end\":{\"line\":27,\"character\":0}},\"rangeLength\":0,\"text\":\"                        \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":23},\"end\":{\"line\":27,\"character\":24}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":22},\"end\":{\"line\":27,\"character\":23}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":21},\"end\":{\"line\":27,\"character\":22}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":20},\"end\":{\"line\":27,\"character\":21}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":19},\"end\":{\"line\":27,\"character\":20}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":18},\"end\":{\"line\":27,\"character\":19}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":17},\"end\":{\"line\":27,\"character\":18}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":16},\"end\":{\"line\":27,\"character\":17}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":15},\"end\":{\"line\":27,\"character\":16}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":14},\"end\":{\"line\":27,\"character\":15}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":13},\"end\":{\"line\":27,\"character\":14}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":12},\"end\":{\"line\":27,\"character\":13}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":11},\"end\":{\"line\":27,\"character\":12}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":11},\"end\":{\"line\":27,\"character\":11}},\"rangeLength\":0,\"text\":\"c\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":12},\"end\":{\"line\":27,\"character\":12}},\"rangeLength\":0,\"text\":\"a\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":13},\"end\":{\"line\":27,\"character\":13}},\"rangeLength\":0,\"text\":\"l\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":14},\"end\":{\"line\":27,\"character\":14}},\"rangeLength\":0,\"text\":\"l\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":15},\"end\":{\"line\":27,\"character\":15}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":16},\"end\":{\"line\":27,\"character\":16}},\"rangeLength\":0,\"text\":\"DisplayDebug\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":27},\"end\":{\"line\":27,\"character\":28}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":26},\"end\":{\"line\":27,\"character\":27}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":25},\"end\":{\"line\":27,\"character\":26}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":24},\"end\":{\"line\":27,\"character\":25}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":23},\"end\":{\"line\":27,\"character\":24}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":22},\"end\":{\"line\":27,\"character\":23}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":21},\"end\":{\"line\":27,\"character\":22}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":20},\"end\":{\"line\":27,\"character\":21}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":19},\"end\":{\"line\":27,\"character\":20}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":18},\"end\":{\"line\":27,\"character\":19}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":17},\"end\":{\"line\":27,\"character\":18}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":16},\"end\":{\"line\":27,\"character\":17}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":15},\"end\":{\"line\":27,\"character\":16}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":14},\"end\":{\"line\":27,\"character\":15}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":13},\"end\":{\"line\":27,\"character\":14}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":12},\"end\":{\"line\":27,\"character\":13}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":11},\"end\":{\"line\":27,\"character\":12}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":11},\"end\":{\"line\":27,\"character\":11}},\"rangeLength\":0,\"text\":\"c\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":12},\"end\":{\"line\":27,\"character\":12}},\"rangeLength\":0,\"text\":\"a\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":13},\"end\":{\"line\":27,\"character\":13}},\"rangeLength\":0,\"text\":\"l\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":14},\"end\":{\"line\":27,\"character\":14}},\"rangeLength\":0,\"text\":\"l\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":15},\"end\":{\"line\":27,\"character\":15}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"17\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"17\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"18\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":27,\"character\":16}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"18\",\"result\":[{\"label\":\"myProc input pname(Alphanumeric) in-out pnbr(Numeric) output IsOk(BOOL)\",\"kind\":2,\"insertText\":\"myProc input\",\"data\":[null,{\"label\":\"Pgm.myProc\",\"parameters\":[{\"label\":\"INPUT pname(Alphanumeric)\"},{\"label\":\"IN-OUT pnbr(Numeric)\"},{\"label\":\"OUTPUT IsOk(BOOL)\"}]},null]},{\"label\":\"myName\",\"kind\":6,\"insertText\":\"myName\"},{\"label\":\"Pgm\",\"kind\":9}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":16},\"end\":{\"line\":27,\"character\":16}},\"rangeLength\":0,\"text\":\"myProc input \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"signatureInformation\":{\"label\":\"myProc\",\"parameters\":[{\"label\":\"INPUT pname(Alphanumeric)\"},{\"label\":\"IN-OUT pnbr(Numeric)\"},{\"label\":\"OUTPUT IsOk(BOOL)\"}]}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"19\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":30,\"character\":12},\"end\":{\"line\":30,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword}\"},{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'myProc' \"},{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'pname' of type Alphanumeric and length 20\"},{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'pnbr' of type Numeric and length 2\"},{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'IsOk' of type BOOL and length 1\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"19\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":27,\"character\":29}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"result\":[{\"label\":\"myName (Alphanumeric) (myName)\",\"kind\":6,\"insertText\":\"myName\\n                       in-out \"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":29},\"end\":{\"line\":27,\"character\":29}},\"rangeLength\":0,\"text\":\"myName\\n                       in-out \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"21\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":31,\"character\":12},\"end\":{\"line\":31,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'myProc' input(Alphanumeric)\"},{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'pnbr' of type Numeric and length 2\"},{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'IsOk' of type BOOL and length 1\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"21\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"22\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":28,\"character\":30}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"22\",\"result\":[{\"label\":\"myNbr (Numeric) (myNbr)\",\"kind\":6,\"insertText\":\"myNbr\\n                       output \"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":28,\"character\":30},\"end\":{\"line\":28,\"character\":30}},\"rangeLength\":0,\"text\":\"myNbr\\n                       output \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"23\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":32,\"character\":12},\"end\":{\"line\":32,\"character\":17}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {symbol, special register, keyword}\"},{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'myProc' input(Alphanumeric) in-out(Numeric)\"},{\"range\":{\"start\":{\"line\":28,\"character\":12},\"end\":{\"line\":28,\"character\":29}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Function 'myProc' is missing parameter 'IsOk' of type BOOL and length 1\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"23\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"24\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"position\":{\"line\":29,\"character\":30}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"24\",\"result\":[{\"label\":\"result (BOOL) (result)\",\"kind\":6,\"insertText\":\"result\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":29,\"character\":30},\"end\":{\"line\":29,\"character\":30}},\"rangeLength\":0,\"text\":\"result\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. Pgm.\\r\\n       DATA DIVISION.\\r\\n       Working-Storage Section.\\r\\n       01 myName PIC X(20) VALUE \\\"mammouth\\\".\\r\\n       01 myNbr  PIC 99 VALUE 20.\\r\\n       01 result TYPE bool.\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n       DECLARE PROCEDURE myProc\\r\\n           input  pname PIC X(20)\\r\\n           in-out pnbr PIC 99\\r\\n           output IsOk Type Bool.\\r\\n       DATA DIVISION.\\r\\n       Working-Storage Section.\\r\\n       PROCEDURE DIVISION.\\r\\n           SET IsOk TO True\\r\\n           .\\r\\n       END-DECLARE.\\r\\n\\r\\n       Traitement.\\r\\n           CALL myProc INPUT myName\\n                       IN-OUT myNbr\\n                       OUTPUT result\\r\\n            Call myProc Input myName\\n                        In-Out myNbr\\n                        Output result\\r\\n           call myProc input myName\\n                       in-out myNbr\\n                       output result\\r\\n\\r\\n           GOBACK.\\r\\n       END PROGRAM Pgm.\"}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\",\"diagnostics\":[]}}"
+    }
+  ],
     "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY1717995021841378630.cee\"}}}",
     "IsValid": true
 }

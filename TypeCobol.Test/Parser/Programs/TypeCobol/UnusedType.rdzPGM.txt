@@ -1,12 +1,12 @@
 ﻿--- Diagnostics ---
-Line 19[43,46] <27, Error, Syntax> - Syntax error : Symbol var1.type2.var2.type3.var3 is not referenced OffendingSymbol=[43,46:var3]<UserDefinedWord>
-Line 19[52,55] <27, Error, Syntax> - Syntax error : Symbol var3 is not referenced OffendingSymbol=[52,55:var3]<UserDefinedWord>
-Line 20[24,27] <27, Error, Syntax> - Syntax error : Symbol type3.var3 is not referenced OffendingSymbol=[24,27:var3]<UserDefinedWord>
-Line 20[33,36] <27, Error, Syntax> - Syntax error : Symbol var3 is not referenced OffendingSymbol=[33,36:var3]<UserDefinedWord>
-Line 21[17,20] <27, Error, Syntax> - Syntax error : Symbol var2 is not referenced OffendingSymbol=[17,20:var2]<UserDefinedWord>
-Line 21[26,29] <27, Error, Syntax> - Syntax error : Symbol var2 is not referenced OffendingSymbol=[26,29:var2]<UserDefinedWord>
-Line 22[17,20] <27, Error, Syntax> - Syntax error : Symbol var1 is not referenced OffendingSymbol=[17,20:var1]<UserDefinedWord>
-Line 22[26,29] <27, Error, Syntax> - Syntax error : Symbol var1 is not referenced OffendingSymbol=[26,29:var1]<UserDefinedWord>
+Line 19[43,46] <30, Error, Semantics> - Semantic error: Symbol var1.type2.var2.type3.var3 is not referenced OffendingSymbol=[43,46:var3]<UserDefinedWord>
+Line 19[52,55] <30, Error, Semantics> - Semantic error: Symbol var3 is not referenced OffendingSymbol=[52,55:var3]<UserDefinedWord>
+Line 20[24,27] <30, Error, Semantics> - Semantic error: Symbol type3.var3 is not referenced OffendingSymbol=[24,27:var3]<UserDefinedWord>
+Line 20[33,36] <30, Error, Semantics> - Semantic error: Symbol var3 is not referenced OffendingSymbol=[33,36:var3]<UserDefinedWord>
+Line 21[17,20] <30, Error, Semantics> - Semantic error: Symbol var2 is not referenced OffendingSymbol=[17,20:var2]<UserDefinedWord>
+Line 21[26,29] <30, Error, Semantics> - Semantic error: Symbol var2 is not referenced OffendingSymbol=[26,29:var2]<UserDefinedWord>
+Line 22[17,20] <30, Error, Semantics> - Semantic error: Symbol var1 is not referenced OffendingSymbol=[17,20:var1]<UserDefinedWord>
+Line 22[26,29] <30, Error, Semantics> - Semantic error: Symbol var1 is not referenced OffendingSymbol=[26,29:var1]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: MyPGM common:False initial:False recursive:False

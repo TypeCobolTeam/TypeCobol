@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Timers;
 using Analytics;
+using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
@@ -15,10 +16,9 @@ using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
 using TypeCobol.CustomExceptions;
 using TypeCobol.LanguageServer.Context;
-using TypeCobol.LanguageServer.Interfaces;
 using TypeCobol.Tools.Options_Config;
 using TypeCobol.LanguageServer.Utilities;
-using TypeCobol.LanguageServices.Editor;
+using TypeCobol.Tools.APIHelpers;
 
 namespace TypeCobol.LanguageServer
 {
@@ -33,11 +33,9 @@ namespace TypeCobol.LanguageServer
     /// </summary>
     public class Workspace
     {
-
         private SymbolTable _customSymbols;
         private string _rootDirectoryFullName;
         private string _workspaceName;
-        private string[] _extensions = { ".cbl", ".cpy" };
         private DependenciesFileWatcher _DepWatcher;
         private CopyWatcher _CopyWatcher;
         private System.Timers.Timer _semanticUpdaterTimer;
@@ -154,10 +152,10 @@ namespace TypeCobol.LanguageServer
             this._rootDirectoryFullName = rootDirectoryFullName;
             this._workspaceName = workspaceName;
 
+            var defaultDocumentFormat = new DocumentFormat(Encoding.GetEncoding("iso-8859-1"), EndOfLineDelimiter.CrLfCharacters, 80, ColumnsLayout.CobolReferenceFormat);
             this.CompilationProject = new CompilationProject(
-                _workspaceName, _rootDirectoryFullName, _extensions,
-                Encoding.GetEncoding("iso-8859-1"), EndOfLineDelimiter.CrLfCharacters, 80, ColumnsLayout.CobolReferenceFormat,
-                new TypeCobolOptions()); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
+                _workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, defaultDocumentFormat,
+                new TypeCobolOptions(), null); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
             this.CompilationProject.CompilationOptions.UseAntlrProgramParsing =
                 this.CompilationProject.CompilationOptions.UseAntlrProgramParsing || UseAntlrProgramParsing;
 
@@ -442,7 +440,11 @@ namespace TypeCobol.LanguageServer
 
             var typeCobolOptions = new TypeCobolOptions(Configuration);
 
-            CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, _extensions, Configuration.Format.Encoding, Configuration.Format.EndOfLineDelimiter, Configuration.Format.FixedLineLength, Configuration.Format.ColumnsLayout, typeCobolOptions);
+            //Configure CFG/DFA analyzer
+            var analyzerProvider = new AnalyzerProvider();
+            analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgDfaAnalyzer("cfg-dfa", Configuration.CfgBuildingMode));
+
+            CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format, typeCobolOptions, analyzerProvider);
 
             if (Configuration.CopyFolders != null && Configuration.CopyFolders.Count > 0)
             {

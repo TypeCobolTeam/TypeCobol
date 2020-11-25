@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
+using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Directives;
@@ -12,8 +13,8 @@ using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.CodeModel;
-using Analytics;
 using TypeCobol.CustomExceptions;
+using TypeCobol.Tools.APIHelpers;
 
 namespace TypeCobol
 {
@@ -25,9 +26,6 @@ namespace TypeCobol
         protected FileCompiler Compiler = null;
 		/// <summary>Optional custom symbol table to use for name and type resolution.</summary>
 		public SymbolTable CustomSymbols = null;
-
-		public string[] Extensions = { ".cbl", ".cpy" };
-		public string[] CopyExtensions = { ".cpy" };
 
 		public Parser() {
 			Inits = new Dictionary<string,bool>();
@@ -43,20 +41,20 @@ namespace TypeCobol
 			return DocumentFormat.FreeUTF8Format;//TODO autodetect
 		}
 
-		public void Init([NotNull] string path, TypeCobolOptions options, DocumentFormat format = null, IList<string> copies = null) {
+		public void Init([NotNull] string path, TypeCobolOptions options, DocumentFormat format = null, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null) {
 			FileCompiler compiler;
 			if (Compilers.TryGetValue(path, out compiler)) return;
 			string filename = Path.GetFileName(path);
 			var root = new DirectoryInfo(Directory.GetParent(path).FullName);
 			if (format == null) format = GetFormat(path);
             
-            CompilationProject project = new CompilationProject(path, root.FullName, Extensions,
-				format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
+            CompilationProject project = new CompilationProject(path, root.FullName, Helpers.DEFAULT_EXTENSIONS,
+				format, options, analyzerProvider);
 			//Add copy folder into sourceFileProvider
 			SourceFileProvider sourceFileProvider = project.SourceFileProvider;
 			copies = copies ?? new List<string>();
 			foreach (var folder in copies) {
-				sourceFileProvider.AddLocalDirectoryLibrary(folder, false, CopyExtensions, format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength);
+				sourceFileProvider.AddLocalDirectoryLibrary(folder, false, Helpers.DEFAULT_COPY_EXTENSIONS, format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength);
 			}
 			compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, CustomSymbols, false, project);
             
@@ -149,13 +147,13 @@ namespace TypeCobol
 
 
 
-		public static Parser Parse(string path, DocumentFormat format, bool autoRemarks = false, IList<string> copies = null) {
+		public static Parser Parse(string path, DocumentFormat format, bool autoRemarks = false, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null) {
 			var parser = new Parser();
             var typeCobolOption = new TypeCobolOptions() { ExecToStep = ExecutionStep.Generate };
 #if EUROINFO_RULES
 		    typeCobolOption.AutoRemarksEnable = autoRemarks;
 #endif
-            parser.Init(path, typeCobolOption, format, copies);
+            parser.Init(path, typeCobolOption, format, copies, analyzerProvider);
 
             parser.Parse(path);
 			return parser;

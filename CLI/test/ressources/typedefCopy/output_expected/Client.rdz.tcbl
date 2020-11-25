@@ -1,0 +1,33 @@
+      *TypeCobol_Version:0.1(alpha)
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Client.
+       data division.
+       working-storage section.
+      *01 MyType typedef strict public.
+      *    05  MyData.
+      *  COPY TESTCPY.
+      *01 myVar type MyType.
+       01 myVar.
+           02 MyData.
+		       COPY TESTCPY.
+                              
+
+      *01 MyType2 typedef strict public.
+      *    05  MyData. COPY TESTCPY.
+      *01 myVar2 type MyType2.
+       01 myVar2.
+           02 MyData.
+           COPY TESTCPY.
+                              
+
+      *01 MyType3 typedef strict public.
+      *    05  MyData value "COPY". COPY TESTCPY.
+      *01 myVar3 type MyType3.
+       01 myVar3.
+           02 MyData value "COPY".
+           COPY TESTCPY.
+                              
+	   
+       PROCEDURE DIVISION.
+           GOBACK.
+       END PROGRAM Client.

@@ -1,0 +1,22 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DPDCY01.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 Type01 typedef strict public.
+          05 myPic       pic X.
+       01 GroupType typedef strict public.
+          05 subType     type Type01.
+       PROCEDURE DIVISION.
+       declare procedure FunTest public
+                                 input myInput pic X.
+       data division.
+       procedure division.
+                continue.
+       end-declare.
+       declare procedure FunTest public
+                                 input myInput type Type01.
+       data division.
+       procedure division.
+                continue.
+       end-declare.
+       end program DPDCY01.

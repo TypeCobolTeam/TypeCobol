@@ -1,6 +1,6 @@
 ﻿--- Diagnostics ---
-Line 6[13,19] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[13,19:typedef]<TYPEDEF>
-Line 7[20,26] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[20,26:typedef]<TYPEDEF>
+Line 6[13,19] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'NewType' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[13,19:typedef]<TYPEDEF>
+Line 7[20,26] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'NewPrivateType' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[20,26:typedef]<TYPEDEF>
 Line 22[1,31] <30, Error, Semantics> - Semantic error: TYPE 'NewPrivateType' is not referenced
 Line 39[1,31] <30, Error, Semantics> - Semantic error: TYPE 'NewPrivateType' is not referenced
 

@@ -43,14 +43,17 @@ namespace TypeCobol.Compiler.File
 
             this._rootPath = rootPath;
             rootDirectory = new DirectoryInfo(rootPath);
-            if(!rootDirectory.Exists)
+            if (!rootDirectory.Exists)
             {
                 throw new ArgumentException($"Local copy library {rootPath} does not exist on disk.");
             }
             this.includeSubdirectories = includeSubdirectories;
-            if (fileExtensions != null) {
-                foreach (var fileExtension in fileExtensions) {
-                    if (fileExtension[0] != '.') {
+            if (fileExtensions != null)
+            {
+                foreach (var fileExtension in fileExtensions)
+                {
+                    if (fileExtension[0] != '.')
+                    {
                         throw new ArgumentException(string.Format("File extension must start with a '.' : {0}", fileExtension));
                     }
                 }
@@ -81,7 +84,7 @@ namespace TypeCobol.Compiler.File
         public bool TryGetFile(string textName, out CobolFile cobolFile)
         {
             string absoluteFilePath = FindFirstMatchingFilePath(textName);
-            if(absoluteFilePath != null)
+            if (absoluteFilePath != null)
             {
                 cobolFile = new LocalCobolFile(textName, absoluteFilePath, encoding, endOfLineDelimiter, fixedLineLength);
                 return true;
@@ -94,85 +97,93 @@ namespace TypeCobol.Compiler.File
         }
 
         /// <summary>
-        /// Returns the full path of the first file matching textName, with or without extensions, below the root directory.
+        /// Returns the full path of the first file matching textName with one of the given extensions, below the root directory.
         /// Or returns null if no matching file is found.
         /// </summary>
+        /// <param name="textName">Name of the Cobol library, as specified in a Cobol program (COPY textName OF libraryName)</param>
         private string FindFirstMatchingFilePath(string textName)
         {
-            //If textName already contains a '.', we can assume that textName already contains an extension
-            //So let's try first to get the file with only textName and then with project extension
+            //If file name already contains a "." => apply search first without any extension and then with all extensions filtering through given values
             if (textName.Contains("."))
             {
-                return FindFirstMatchingFilePath_EmptyFirst(textName);
+                return FindFirstMatchingFilePathWithoutExtensionsFirst(textName);
             }
-            //Otherwise, let's first try with project extension and then without
-            return FindFirstMatchingFilePath_ExtensionsFirst(textName);
+
+            //Otherwise first search using given extensions first and then without
+            return FindFirstMatchingFilePathWithExtensionsFirst(textName);
         }
 
-        private string FindFirstMatchingFilePath_EmptyFirst(string textName)
+        /// <summary>
+        /// Returns the full path of the first file matching textName with one of the given extensions, below the root directory.
+        /// First searches without any extension added to file name and then, if extensions are given in fileExtensions, search and filter all possible extensions added to file name through them 
+        /// If no result found return null
+        /// </summary>
+        /// <param name="textName">Name of the Cobol library, as specified in a Cobol program (COPY textName OF libraryName)</param>
+        private string FindFirstMatchingFilePathWithoutExtensionsFirst(string textName)
         {
-            // First try without extension
-            string matchingFilePath = FindFirstMatchingFilePath(textName, String.Empty);
-            if (matchingFilePath != null)
+            //First search without any extension
+            FileInfo candidateFile = SearchForFileWithoutExtensions(textName);
+
+            if (candidateFile != null)
             {
-                return matchingFilePath;
+                return candidateFile.FullName;
             }
 
-            // Then try with each extension in the order of the table
+            //Search using given extensions
             if (fileExtensions != null)
             {
-                foreach (string extension in fileExtensions)
+                return SearchForFileWithExtensions(textName)?.FullName;
+            }
+
+            //No result found then return null
+            return null;
+        }
+
+        /// <summary>
+        /// Returns the full path of the first file matching textName with one of the given extensions, below the root directory.
+        /// First search all files matching all possible extensions filtered through given extensions in fileExtensions, if no result is found search without any extension
+        /// If no result found return null
+        /// </summary>
+        /// <param name="textName">Name of the Cobol library, as specified in a Cobol program (COPY textName OF libraryName)</param>
+        private string FindFirstMatchingFilePathWithExtensionsFirst(string textName)
+        {
+            //Search using given extensions
+            if (fileExtensions != null)
+            {
+                FileInfo candidateFile = SearchForFileWithExtensions(textName);
+
+                //Return this result only if not null, otherwise proceed to next search instruction
+                if (candidateFile != null)
                 {
-                    matchingFilePath = FindFirstMatchingFilePath(textName, extension);
-                    if (matchingFilePath != null)
-                    {
-                        return matchingFilePath;
-                    }
+                    return candidateFile.FullName;
                 }
             }
 
-            // Not found
-            return null;
+            //If previous search wasn't conclusive, search without any extension, and return null if no result retrieved
+            return SearchForFileWithoutExtensions(textName)?.FullName;
         }
 
-        private string FindFirstMatchingFilePath_ExtensionsFirst(string textName)
+        /// <summary>
+        /// Return result from search in Root directory without any extension added
+        /// </summary>
+        /// <param name="textName">Name of the Cobol library, as specified in a Cobol program (COPY textName OF libraryName)</param>
+        public FileInfo SearchForFileWithoutExtensions(string textName)
         {
-            // First try with each extension in the order of the table
-            if (fileExtensions != null)
-            {
-                foreach (string extension in fileExtensions) {
-                    var matchingFilePath = FindFirstMatchingFilePath(textName, extension);
-                    if (matchingFilePath != null)
-                    {
-                        return matchingFilePath;
-                    }
-                }
-            }
-
-            // Then try without extension
-            return FindFirstMatchingFilePath(textName, String.Empty);
-            // Not found
+            return rootDirectory.EnumerateFiles(textName,
+                    includeSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
+                .FirstOrDefault();
         }
 
-
-        // Reused part of the previous method
-        private string FindFirstMatchingFilePath(string textName, string extension)
+        /// <summary>
+        /// Return result from search in Root directory filtering all possible extensions added to file name through given extensions in fileExtensions
+        /// </summary>
+        /// <param name="textName">Name of the Cobol library, as specified in a Cobol program (COPY textName OF libraryName)</param>
+        public FileInfo SearchForFileWithExtensions(string textName)
         {
-            if (includeSubdirectories) {
-                FileInfo candidateFiles =
-                    rootDirectory.EnumerateFiles(textName + extension, includeSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
-                        .FirstOrDefault();
-                if (candidateFiles != null) {
-                    return candidateFiles.FullName;
-                }
-                return null;
-            }
-
-            var fullPath = _rootPath + Path.DirectorySeparatorChar + textName + extension;
-            if (System.IO.File.Exists(fullPath)) {
-                return fullPath;
-            }
-            return null;
+            return rootDirectory.EnumerateFiles($"{textName}.*", includeSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
+                .FirstOrDefault(f =>
+                    fileExtensions.Any(suffix =>
+                        f.Extension.Equals(suffix, StringComparison.OrdinalIgnoreCase)));
         }
 
         /// <summary>
@@ -182,7 +193,7 @@ namespace TypeCobol.Compiler.File
         {
             FileInfo newLocalFile = new FileInfo(fullPath);
             if (newLocalFile.Exists)
-            {                
+            {
                 throw new InvalidOperationException(String.Format("The local library {0} already contains a Cobol file named {1} at path {2} : impossible to create a new one with the same name and path", Name, textName, fullPath));
             }
             else
@@ -219,7 +230,7 @@ namespace TypeCobol.Compiler.File
             if (filesToMonitor == null)
             {
                 filesToMonitor = new Dictionary<string, LocalCobolFile>();
-            } 
+            }
             filesToMonitor.Add(localCobolFile.FullPath, localCobolFile);
 
             // Lazy initialization of FileSystemWatcher
@@ -237,41 +248,41 @@ namespace TypeCobol.Compiler.File
         internal void StopMonitoringCobolFile(LocalCobolFile localCobolFile)
         {
             // Unregister a file to monitor
-            if(filesToMonitor != null && filesToMonitor.ContainsKey(localCobolFile.FullPath))
+            if (filesToMonitor != null && filesToMonitor.ContainsKey(localCobolFile.FullPath))
             {
                 filesToMonitor.Remove(localCobolFile.FullPath);
             }
         }
 
-         void fileSystemWatcher_Deleted(object sender, FileSystemEventArgs e)
-         { 
-             LocalCobolFile localCobolFile;
-             if(filesToMonitor.TryGetValue(e.FullPath, out localCobolFile))
-             {
-                 CobolFileChangedEvent deletedEvent = new CobolFileChangedEvent(CobolFileChangeType.FileDeleted, DateTime.Now, null);
-                 localCobolFile.RaiseCobolFileChanged(deletedEvent);
-             }
-         }
+        void fileSystemWatcher_Deleted(object sender, FileSystemEventArgs e)
+        {
+            LocalCobolFile localCobolFile;
+            if (filesToMonitor.TryGetValue(e.FullPath, out localCobolFile))
+            {
+                CobolFileChangedEvent deletedEvent = new CobolFileChangedEvent(CobolFileChangeType.FileDeleted, DateTime.Now, null);
+                localCobolFile.RaiseCobolFileChanged(deletedEvent);
+            }
+        }
 
-         void fileSystemWatcher_Renamed(object sender, RenamedEventArgs e)
-         {
-             LocalCobolFile localCobolFile;
-             if (filesToMonitor.TryGetValue(e.FullPath, out localCobolFile))
-             {
-                 CobolFileChangedEvent renamedEvent = new CobolFileChangedEvent(CobolFileChangeType.FileRenamed, DateTime.Now, e.FullPath);
-                 localCobolFile.RaiseCobolFileChanged(renamedEvent);
-             }
-         }
+        void fileSystemWatcher_Renamed(object sender, RenamedEventArgs e)
+        {
+            LocalCobolFile localCobolFile;
+            if (filesToMonitor.TryGetValue(e.FullPath, out localCobolFile))
+            {
+                CobolFileChangedEvent renamedEvent = new CobolFileChangedEvent(CobolFileChangeType.FileRenamed, DateTime.Now, e.FullPath);
+                localCobolFile.RaiseCobolFileChanged(renamedEvent);
+            }
+        }
 
-         void fileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
-         {
-             LocalCobolFile localCobolFile;
-             if (filesToMonitor.TryGetValue(e.FullPath, out localCobolFile))
-             {
-                 CobolFileChangedEvent changedEvent = new CobolFileChangedEvent(CobolFileChangeType.FileChanged, DateTime.Now, null);
-                 localCobolFile.RaiseCobolFileChanged(changedEvent);
-             }
-         }
+        void fileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            LocalCobolFile localCobolFile;
+            if (filesToMonitor.TryGetValue(e.FullPath, out localCobolFile))
+            {
+                CobolFileChangedEvent changedEvent = new CobolFileChangedEvent(CobolFileChangeType.FileChanged, DateTime.Now, null);
+                localCobolFile.RaiseCobolFileChanged(changedEvent);
+            }
+        }
 
         /// <summary>
         /// Free all ressources acquired by this library

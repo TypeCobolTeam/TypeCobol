@@ -7,15 +7,15 @@ Line 37[21,26] <27, Error, Syntax> - Syntax error : Parameter with name 'format'
 Line 38[21,24] <27, Error, Syntax> - Syntax error : Parameter with name 'var1' declared multiple times OffendingSymbol=[21,24:var1]<UserDefinedWord>
 Line 39[21,24] <27, Error, Syntax> - Syntax error : Parameter with name 'var1' declared multiple times OffendingSymbol=[21,24:var1]<UserDefinedWord>
 Line 41[21,26] <27, Error, Syntax> - Syntax error : Parameter with name 'format' declared multiple times OffendingSymbol=[21,26:format]<UserDefinedWord>
-Line 111[8,55] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall".
-Line 115[8,55] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall".
-Line 119[8,70] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall".
+Line 111[16,20] <30, Error, Semantics> - Semantic error: A function "proc2" with the same profile already exists in namespace "ProcedureCall". OffendingSymbol=[16,20:proc2]<UserDefinedWord>
+Line 115[16,20] <30, Error, Semantics> - Semantic error: A function "proc2" with the same profile already exists in namespace "ProcedureCall". OffendingSymbol=[16,20:proc2]<UserDefinedWord>
+Line 119[16,20] <30, Error, Semantics> - Semantic error: A function "proc2" with the same profile already exists in namespace "ProcedureCall". OffendingSymbol=[16,20:proc2]<UserDefinedWord>
 Line 127[8,8] <27, Error, Syntax> - Syntax error : Empty CALL is not authorized
 Line 137[8,43] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'GetPtrFn'  output(Alphanumeric, Alphanumeric)
 Line 142[8,43] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'GetPtrFn'  in-out(Alphanumeric, Alphanumeric)
 Line 147[8,40] <27, Error, Syntax> - Syntax error : Function 'GetPtrFn' expected parameter 'ptrFn' of usage FunctionPointer and received 'someformat' of usage 
 Line 147[8,40] <27, Error, Syntax> - Syntax error : Function 'GetPtrFn' expected parameter 'ptrPr' of usage ProcedurePointer and received 'someformat' of usage 
-Line 162[12,50] <27, Error, Syntax> - Syntax error : Function not found 'ValidateDatFormatt' input(DATE, Alphanumeric) output(Numeric)
+Line 162[12,50] <30, Error, Semantics> - Semantic error: Function not found 'ValidateDatFormatt' input(DATE, Alphanumeric) output(Numeric)
 Line 170[12,34] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'ValidateDateFormat' 
 Line 170[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'mydate' of type DATE and length 8
 Line 170[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'format' of type Alphanumeric and length 8
@@ -33,7 +33,7 @@ Line 201[12,46] <27, Error, Syntax> - Syntax error : Function 'MyProc1' only tak
 Line 201[12,46] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'MyProc1' input(DATE, Alphanumeric, ?, DATE) output(BOOL, Alphanumeric)
 Line 201[12,46] <27, Error, Syntax> - Syntax error : Function 'MyProc1' expected parameter 'BOOL' of type BOOL and received 'somedate' of type DATE 
 Line 201[12,46] <27, Error, Syntax> - Syntax error : Function 'MyProc1' expected parameter 'actual-format' of type Alphanumeric and received 'flag' of type BOOL 
-Line 203[21,25] <27, Error, Syntax> - Syntax error : Symbol INOUT is not referenced OffendingSymbol=[21,25:INOUT]<UserDefinedWord>
+Line 203[21,25] <30, Error, Semantics> - Semantic error: Symbol INOUT is not referenced OffendingSymbol=[21,25:INOUT]<UserDefinedWord>
 Line 233[12,34] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'ValidateDateFormat' 
 Line 233[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'mydate' of type DATE and length 8
 Line 233[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'format' of type Alphanumeric and length 8

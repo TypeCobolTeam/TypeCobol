@@ -6,7 +6,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TypeCobol.Server;
 using TypeCobol.Tools.Options_Config;
 
 namespace CLI.Test
@@ -56,6 +55,15 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// Perform a generation with procedure generated as nested programs
+        /// </summary>
+        [TestMethod]
+        public void TestGenerate_StackedProcedure()
+        {
+            CLITestHelper.Test("generate_stackedProc", ReturnCode.ParsingDiagnostics);
+        }
+
+        /// <summary>
         /// Test various case of usage of dependencies such as good usage, bad file, bad path.
         /// </summary>
         [TestMethod]
@@ -86,22 +94,22 @@ namespace CLI.Test
         /// Tests with a dependency that depends on a dependency which is loaded after itself.
         /// </summary>
         [TestMethod]
-        public void TestDpendenciesNotLoadedInCorrectOrder() {
+        public void TestDependenciesNotLoadedInCorrectOrder() {
             CLITestHelper.Test("dependenciesNotLoadedInCorrectOrder", ReturnCode.ParsingDiagnostics);
             CLITestHelper.Test("dependenciesNotLoadedInCorrectOrder_2", ReturnCode.Success);
         }
 
+        [TestMethod]
+        public void TestDependenciesSignatureOverload()
+        {
+            CLITestHelper.Test("dependenciesSignatureOverload", ReturnCode.Success);
+        }
 
-
-
-        
-
-            [TestMethod]
+        [TestMethod]
         public void TestCircularTypedef_1()
         {
             CLITestHelper.Test("CircularTypedef_1", ReturnCode.ParsingDiagnostics);
         }
-
 
         [TestMethod]
         public void TestEmptyDependency()
@@ -109,10 +117,8 @@ namespace CLI.Test
             var testFolderName = "empty_dependency_folder";
             Directory.CreateDirectory("ressources" + Path.DirectorySeparatorChar + testFolderName + Path.DirectorySeparatorChar +  "emptyFolder");
 
-            CLITestHelper.ReadConsoleWarnings(testFolderName, ReturnCode.Success);
+            CLITestHelper.ReadConsoleWarnings(testFolderName, ReturnCode.Warning);
         }
-
-
 
         /// <summary>
         /// Test that even with a execToStep>Preprocessor, then the parsing will halt on preprocessor phase because copy are missing
@@ -190,6 +196,16 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// Try parsing with copy inside a typedef.
+        /// Should return success.
+        /// </summary>
+        [TestMethod]
+        public void TestTypeDefCopy()
+        {
+            CLITestHelper.Test("typedefCopy", ReturnCode.Success);
+        }
+
+        /// <summary>
         /// Try parsing with PublicSignature as output format.
         /// Should return success.
         /// </summary>
@@ -198,6 +214,7 @@ namespace CLI.Test
         {
             CLITestHelper.Test("outputSignature_1", ReturnCode.Warning);
             CLITestHelper.Test("outputSignature_2", ReturnCode.Success);
+            CLITestHelper.Test("outputSignature_3", ReturnCode.Success);
         }
 
 
@@ -270,6 +287,28 @@ namespace CLI.Test
         public void TestValueClauses()
         {
             CLITestHelper.Test("value_clauses", ReturnCode.Success);
+        }
+
+        /// <summary>
+        /// Test multiple files parsing.
+        /// </summary>
+        [TestMethod]
+        public void TestMassGeneration()
+        {
+            CLITestHelper.Test("mass_generation_all_programs_ok", ReturnCode.Success);
+            CLITestHelper.Test("mass_generation_one_program_is_ko", ReturnCode.ParsingDiagnostics);
+            CLITestHelper.Test("mass_generation_dependent_programs_1", ReturnCode.Success);
+            CLITestHelper.Test("mass_generation_dependent_programs_2", ReturnCode.ParsingDiagnostics);
+        }
+
+        /// <summary>
+        /// Test override of UTF-8 encoding for RDZ format.
+        /// </summary>
+        [TestMethod]
+        public void TestRDZFormatInputEncodings()
+        {
+            CLITestHelper.Test("rdzformat_inputencoding_wrong", ReturnCode.Success);
+            CLITestHelper.Test("rdzformat_inputencoding_good", ReturnCode.Success);
         }
     }
 

@@ -16,8 +16,8 @@ namespace TypeCobol.Compiler.Scanner
         private int startIndex;
         private int stopIndex;
 
-		/// <summary>Empty constructor for mock.</summary>
-		public Token() { }
+        /// <summary>Empty constructor for mock.</summary>
+        public Token() { }
 
         public override bool Equals(object obj)
         {
@@ -262,6 +262,8 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
+        internal string NormalizedText => Regex.Replace(Text, @"\s*", string.Empty);
+
         // --- Literals with or without delimiters ---
 
         /// <summary>
@@ -411,7 +413,7 @@ namespace TypeCobol.Compiler.Scanner
             //    is contained in the current token text (":TAG:-AMOUNT")
             else if(TokenType == TokenType.PartialCobolWord)
             {
-                return Text.IndexOf(comparisonToken.Text, StringComparison.OrdinalIgnoreCase) >= 0;
+                return NormalizedText.IndexOf(comparisonToken.NormalizedText, StringComparison.OrdinalIgnoreCase) >= 0;
             }
             // 3. Check for Picture replacement
             //else if (TokenType == TokenType.PictureCharacterString)

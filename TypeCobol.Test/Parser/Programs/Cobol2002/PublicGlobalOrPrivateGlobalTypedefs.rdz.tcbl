@@ -29,7 +29,7 @@
       
       *Stacked ---------------------------------------------------------
        IDENTIFICATION DIVISION.
-       PROGRAM-ID Stacked.
+       PROGRAM-ID. Stacked.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
            01 type5 typedef public global.

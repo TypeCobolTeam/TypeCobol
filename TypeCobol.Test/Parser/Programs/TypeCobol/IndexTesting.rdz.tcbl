@@ -51,6 +51,11 @@
             05 someVar pic x(2) occurs 5
             indexed by ThisIndexNameIsClearlyToLong2.
 
+      *Test on index reference in redefined picture
+       01 W-VAR    PIC XXX.
+       01 W003-REQUESTS REDEFINES W-VAR
+                   OCCURS 3 TIMES INDEXED BY W003-INDX PIC X.
+
        PROCEDURE DIVISION.
 
       *OK : Qualified Index works
@@ -72,5 +77,8 @@
        SET myPointerGroup::myPointer UP BY strVar.
 
        SET myPointer Down BY ((MyFinalIdxVar::Counter)**2).
+
+      *OK index is referenced
+       SET W003-INDX             To 1.
 
        END PROGRAM IndexTesting.

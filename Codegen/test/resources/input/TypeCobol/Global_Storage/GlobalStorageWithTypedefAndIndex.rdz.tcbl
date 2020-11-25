@@ -1,0 +1,44 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOZDR03.
+       DATA DIVISION.
+
+       GLOBAL-STORAGE SECTION.
+
+       01 GlobalTab Type TypeA.
+
+       WORKING-STORAGE SECTION.
+
+       01 TypeA  TYPEDEF STRICT PRIVATE.
+          05 Contenu.
+             10 Ligne OCCURS 10
+                      ASCENDING KEY IS Obj
+                      INDEXED BY IdxA.
+                15 Obj  PIC X(12).
+                15 Flag Type Bool.
+
+       PROCEDURE DIVISION.
+
+       INIT-LIBRARY.
+           CONTINUE.
+
+       MAIN.
+           SET GlobalTab::IdxA TO 1
+           SET GlobalTab::Flag(GlobalTab::IdxA) TO false
+           SET GlobalTab::Flag(IdxA) TO false
+           CALL DisplayTable INPUT GlobalTab::Flag(GlobalTab::IdxA)
+           CALL DisplayTable INPUT GlobalTab::Flag(IdxA)
+           GOBACK
+           .
+           
+       DECLARE PROCEDURE DisplayTable
+               INPUT myBool Type Bool.
+       DATA DIVISION.
+       PROCEDURE DIVISION.
+           PERFORM VARYING GlobalTab::IdxA FROM 1 BY 1
+           UNTIL GlobalTab::IdxA > 5
+             DISPLAY 'Test' GlobalTab::Obj(GlobalTab::IdxA)
+           END-PERFORM
+           .
+       END-DECLARE.
+
+       END PROGRAM TCOZDR03.

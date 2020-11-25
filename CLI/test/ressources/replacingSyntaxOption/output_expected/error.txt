@@ -1,3 +1,3 @@
 ReturnCode=ParsingDiagnostics_
 1 error in "input\replacingSyntaxOff.rdz.tcbl":
-Line 14[23,41] <27, Error, Syntax> - Syntax error : Symbol CONVEA-TESTVEA-TEST is not referenced
+Line 14[23,41] <30, Error, Semantics> - Semantic error: Symbol CONVEA-TESTVEA-TEST is not referenced

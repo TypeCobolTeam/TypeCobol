@@ -1,26 +1,26 @@
-Line 9[12,18] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
-Line 15[10,16] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
-Line 40[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 9[12,18] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'Feature' must be marked as STRICT.
+Line 15[10,16] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'Vect2' must be marked as STRICT.
+Line 40[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TypeDefinedAfter' must be marked as STRICT.
 Line 45[14,20] <27, Error, Syntax> - Syntax error : TYPEDEF clause can only be specified for level 01 entries
-Line 45[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 45[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'LevelKO' must be marked as STRICT.
 Line 50[29,35] <27, Error, Syntax> - Syntax error : extraneous input 'TYPEDEF' expecting {separator, statement starting keyword, keyword}
-Line 53[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
-Line 57[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 53[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'ClausesOrderOK' must be marked as STRICT.
+Line 57[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'NoDescription' must be marked as STRICT.
 Line 63[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
 Line 68[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
 Line 73[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
-Line 80[20,26] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
-Line 84[20,26] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 80[20,26] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'varNoRedefines4' must be marked as STRICT.
+Line 84[20,26] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'varNoRedefines5' must be marked as STRICT.
 Line 93[26,33] <27, Error, Syntax> - Syntax error : EXTERNAL clause cannot be specified with TYPEDEF clause
-Line 93[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
-Line 96[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 93[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'ExternalType1' must be marked as STRICT.
+Line 96[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'ExternalType2' must be marked as STRICT.
 Line 97[33,40] <27, Error, Syntax> - Syntax error : External is only allowed for level 01
-Line 101[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
-Line 109[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
-Line 113[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
-Line 124[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
-Line 149[30,36] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
-Line 156[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 101[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'CannotBeStrong' must be marked as STRICT.
+Line 109[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TYPE_ELT' must be marked as STRICT.
+Line 113[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TYPE-GRP' must be marked as STRICT.
+Line 124[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TYPE-GRP-STRONG' must be marked as STRICT.
+Line 149[30,36] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'GroupWithLevel77JustAfter' must be marked as STRICT.
+Line 156[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'strongType1' must be marked as STRICT.
 Line 1[1,24] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 36[1,31] <30, Error, Semantics> - Semantic error: TYPE 'TypeNotDefined' is not referenced
 Line 51[1,41] <30, Error, Semantics> - Semantic error: TYPE 'ClausesOrderKO' is not referenced

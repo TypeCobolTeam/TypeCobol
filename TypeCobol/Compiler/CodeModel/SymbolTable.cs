@@ -734,10 +734,50 @@ namespace TypeCobol.Compiler.CodeModel
             Add(Paragraphs, paragraph);
         }
 
-        public IList<Paragraph> GetParagraph(string name)
+        public IList<Paragraph> GetParagraph(SymbolReference symbolRef, Section sectionNode)
         {
-            Paragraphs.TryGetValue(name, out var values);
-            if (values != null) return values.ToList();  //.ToList so the caller cannot modify our stored list
+            //First extract expected paragraph and section names from symbol ref
+            string paragraphName, parentSectionName;
+            if (symbolRef.IsQualifiedReference)
+            {
+                //If paragraph is qualified we get a paragraph and a section name
+                var qualifiedSymbolReference = (QualifiedSymbolReference) symbolRef;
+                paragraphName = qualifiedSymbolReference.NameLiteral.Value;
+                parentSectionName = qualifiedSymbolReference.Tail.Name;
+            }
+            else
+            {
+                //Otherwise expected parent section is null
+                paragraphName = symbolRef.Name;
+                parentSectionName = null;
+            }
+
+            //Retrieve all paragraphs with matching name, then apply additional filters
+            if (Paragraphs.TryGetValue(paragraphName, out var candidates))
+            {
+                if (parentSectionName != null)
+                {
+                    //We're looking for a paragraph inside a specific section, so we keep only paragraphs whose parent section matches
+                    return candidates.FindAll(p => p.Parent.Name.Equals(parentSectionName, StringComparison.OrdinalIgnoreCase));
+                }
+
+                //Priority is given to paragraphs located in the same section as the caller node
+                Predicate<Paragraph> matchParentSection;
+                if (sectionNode != null)
+                {
+                    //Match paragraphs located inside the given section node
+                    matchParentSection = p => p.Parent == sectionNode;
+                }
+                else
+                {
+                    //Match paragraphs located directly in the PROCEDURE DIVISION
+                    matchParentSection = p => p.Parent.CodeElement.Type == CodeElementType.ProcedureDivisionHeader;
+                }
+
+                //If we get results in the same section, we return them. Otherwise, just return candidates with correct name.
+                var inSameSection = candidates.FindAll(matchParentSection);
+                return inSameSection.Count > 0 ? inSameSection : candidates.ToList();
+            }
 
             return EmptyParagraphList;
         }
@@ -752,6 +792,46 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         #endregion
+
+        /// <summary>
+        /// Try to disambiguate between Section or Paragraph reference.
+        /// </summary>
+        /// <param name="target">A non-null SymbolReference.</param>
+        /// <param name="callerNodeSection">The Section node in which the statement making the reference appears.</param>
+        /// <returns>A tuple made of both list of sections and list of paragraphs. The lists may be null,
+        /// this indicates that the search has not been performed for the corresponding type.
+        /// They also may be empty, this means the search has been performed but yielded no results.</returns>
+        public (IList<Section>, IList<Paragraph>) GetSectionOrParagraph([NotNull] SymbolReference target, Section callerNodeSection)
+        {
+            IList<Section> sections = null;
+            IList<Paragraph> paragraphs = null;
+
+            //Check target type to avoid useless search if the type is already known
+            if (target.IsAmbiguous)
+            {
+                //Have to search for both sections and paragraphs
+                sections = GetSections();
+                paragraphs = GetParagraphs();
+            }
+            else
+            {
+                switch (target.Type)
+                {
+                    case SymbolType.SectionName:
+                        sections = GetSections();
+                        break;
+                    case SymbolType.ParagraphName:
+                        paragraphs = GetParagraphs();
+                        break;
+                }
+            }
+
+            return (sections, paragraphs);
+
+            IList<Section> GetSections() => GetSection(target.Name);
+
+            IList<Paragraph> GetParagraphs() => GetParagraph(target, callerNodeSection);
+        }
 
         #region TYPES
 
@@ -886,20 +966,28 @@ namespace TypeCobol.Compiler.CodeModel
         /// <summary>
         /// Get type into a specific program by giving program name
         /// </summary>
-        /// <param name="name">Qualified name of the wated type</param>
-        /// <param name="pgmName">Name of the program tha tmay contains the type</param>
+        /// <param name="name">Qualified name of the wanted type</param>
+        /// <param name="pgmName">Name of the program that may contains the type</param>
         /// <returns></returns>
         private List<TypeDefinition> GetType(QualifiedName name, string pgmName, List<TypeDefinition> found = null)
         {
             found = found ?? new List<TypeDefinition>();
-            var program = GetProgramHelper(pgmName); //Get the program corresponding to the given namespace
-            if (program != null)
-            {
-                //Get all TYPEDEF PUBLIC from this program
-                var programTypes = GetPublicTypes(program.SymbolTable.GetTableFromScope(Scope.Program).Types);
+            var programs = GetProgramsHelper(pgmName); //Get the program corresponding to the given namespace
 
-                //Check if there is a type that correspond to the given name (head)
-                return GetFromTable(name.Head, programTypes); 
+            if (programs != null)
+            {
+                var types = new List<TypeDefinition>();
+                foreach (var program in programs)
+                {
+                    //Get all TYPEDEF PUBLIC from this program
+                    var programTypes = GetPublicTypes(program.SymbolTable.GetTableFromScope(Scope.Program).Types);
+
+                    //Check if there is a type that correspond to the given name (head)
+                    var typeList =  GetFromTable(name.Head, programTypes);
+                    if (typeList.Count > 0) types.AddRange(typeList);
+                }
+
+                return types;
             }
 
             return found;
@@ -930,12 +1018,12 @@ namespace TypeCobol.Compiler.CodeModel
             Add(Functions, function);
         }
 
-        public List<FunctionDeclaration> GetFunction(StorageArea storageArea, ParameterList profile = null)
+        public List<FunctionDeclaration> GetFunction(StorageArea storageArea, IProfile profile = null)
         {
             return GetFunction(storageArea.SymbolReference, profile);
         }
 
-        private List<FunctionDeclaration> GetFunction(SymbolReference symbolReference, ParameterList profile = null)
+        private List<FunctionDeclaration> GetFunction(SymbolReference symbolReference, IProfile profile = null)
         {
             var uri = new URI(symbolReference.Name);
             return GetFunction(uri, profile);
@@ -973,7 +1061,7 @@ namespace TypeCobol.Compiler.CodeModel
             return foundedFunctions.Distinct();
         }
 
-        public List<FunctionDeclaration> GetFunction(QualifiedName name, ParameterList profile = null, string nameSpace = null)
+        public List<FunctionDeclaration> GetFunction(QualifiedName name, IProfile profile = null, string nameSpace = null)
         {
             var found = GetFunction(name, nameSpace);
             
@@ -991,46 +1079,47 @@ namespace TypeCobol.Compiler.CodeModel
             return found;
         }
 
-        private bool Matches(ParametersProfileNode p1, ParameterList p2, string pgmName)
+        private bool Matches(ParametersProfileNode expected, IProfile actual, string pgmName)
         {
-            if (p1.InputParameters.Count != p2.InputParameters.Count) return false;
-            if (p1.InoutParameters.Count != p2.InoutParameters.Count) return false;
-            if (p1.OutputParameters.Count != p2.OutputParameters.Count) return false;
+            if (expected.InputParameters.Count != actual.Inputs.Count) return false;
+            if (expected.InoutParameters.Count != actual.Inouts.Count) return false;
+            if (expected.OutputParameters.Count != actual.Outputs.Count) return false;
 
-            for (int c = 0; c < p1.InputParameters.Count; c++)
-                if (!TypeCompare(p1.InputParameters[c], p2.InputParameters[c], pgmName)) return false;
-            for (int c = 0; c < p1.InoutParameters.Count; c++)
-                if (!TypeCompare(p1.InoutParameters[c], p2.InoutParameters[c], pgmName)) return false;
-            for (int c = 0; c < p1.OutputParameters.Count; c++)
-                if (!TypeCompare(p1.OutputParameters[c], p2.OutputParameters[c], pgmName)) return false;
+            for (int c = 0; c < expected.InputParameters.Count; c++)
+                if (!TypeCompare(expected.InputParameters[c], actual.Inputs[c], pgmName)) return false;
+            for (int c = 0; c < expected.InoutParameters.Count; c++)
+                if (!TypeCompare(expected.InoutParameters[c], actual.Inouts[c], pgmName)) return false;
+            for (int c = 0; c < expected.OutputParameters.Count; c++)
+                if (!TypeCompare(expected.OutputParameters[c], actual.Outputs[c], pgmName)) return false;
             return true;
         }
-        /// <summary>
-        /// Type comparaison
-        /// </summary>
-        /// <param name="p1">Represent the DataType from the called function/procedure</param>
-        /// <param name="p2">Represent the DataType from the caller function/procedure</param>
-        /// <param name="pgmName">Corresponds to the progam containing the called function/procedure</param>
-        /// <returns></returns>
-        private bool TypeCompare(ParameterDescription p1, DataType p2, string pgmName)
+
+        private bool TypeCompare(ParameterDescription parameter, TypeInfo argumentTypeInfo, string pgmName)
         {
             //Omitted accepted only if parameter is Omittable
-            if (p2 == DataType.Omitted) {
-                return p1.IsOmittable;
+            if (argumentTypeInfo.DataType == DataType.Omitted)
+            {
+                return parameter.IsOmittable;
             }
-            
-            var p1Types = p1.Name.Contains(".") ? this.GetType(p1) : this.GetType(p1.DataType, pgmName);
-            var p2Types = this.GetType(p2);
 
-            if (p1Types.Count > 1 || p2Types.Count > 1)
-                return false; //Means that a type is declare many times. Case already handle by checker.
-            var p1Type = p1Types.FirstOrDefault();
-            var p2Type = p2Types.FirstOrDefault();
+            var parameterType = parameter.TypeDefinition;
+            if (parameterType == null)
+            {
+                var parameterTypes = parameter.Name.Contains(".") ? this.GetType(parameter) : this.GetType(parameter.DataType, pgmName);
+                if (parameterTypes.Count > 1)
+                {
+                    return false;
+                }
+                parameterType = parameterTypes.FirstOrDefault();
+            }
 
-            if (p1Type != p2Type)
-                return false;
+            var argumentType = argumentTypeInfo.TypeDefinition;
+            if (argumentType == null)
+            {
+                return parameterType == null && parameter.DataType == argumentTypeInfo.DataType;
+            }
 
-            return true;
+            return parameterType == argumentType;
         }
 
         [NotNull]
@@ -1040,16 +1129,25 @@ namespace TypeCobol.Compiler.CodeModel
             if (string.IsNullOrEmpty(nameSpace) || result.Count > 0)
                 return result;
 
-            var program = GetProgramHelper(nameSpace); //Get the program corresponding to the given namespace
-            if(program != null)
+            var programs = GetProgramsHelper(nameSpace); //Get the programs corresponding to the given namespace
+            if (programs != null)
             {
-                var programFunctions = program.SymbolTable.GetTableFromScope(Scope.Program).Functions; //Get all function from this program
-                programFunctions = programFunctions
-                                    .Where(p =>
-                                            p.Value.All(f => (f.CodeElement).Visibility == AccessModifier.Public))
-                                            .ToDictionary(f => f.Key, f => f.Value, StringComparer.OrdinalIgnoreCase); //Sort functions to get only the one with public AccessModifier
+                result = new List<FunctionDeclaration>();
+                foreach (var program in programs)
+                {
+                    var programFunctions = program.SymbolTable.GetTableFromScope(Scope.Program)
+                            .Functions; //Get all function from this program
+                    programFunctions = programFunctions
+                                        .Where(p =>
+                                               p.Value.All(f => (f.CodeElement).Visibility == AccessModifier.Public))
+                                               .ToDictionary(f => f.Key, f => f.Value, StringComparer.OrdinalIgnoreCase); //Sort functions to get only the one with public AccessModifier
 
-                result = GetFromTable(name.Head, programFunctions); //Check if there is a function that correspond to the given name (head)
+                    var res = GetFromTable(name.Head, programFunctions); //Check if there is a function that correspond to the given name (head)
+                    if (res.Count > 0)
+                    {
+                        result.AddRange(res);
+                    }
+                }
             }
 
             return result;
@@ -1072,7 +1170,7 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         [NotNull]
-        private List<Program> GetProgram(QualifiedName name)
+        private List<Program> GetPrograms(QualifiedName name)
         {
             return GetFromTableAndEnclosing(name, st => st.Programs, MatchUsingName, Scope.Namespace);
         }
@@ -1173,14 +1271,9 @@ namespace TypeCobol.Compiler.CodeModel
             Function
         }
 
-        private Program GetProgramHelper(string nameSpace)
+        private List<Program> GetProgramsHelper(string nameSpace)
         {
-            var programs = GetProgram(new URI(nameSpace));
-  
-            if (programs.Count > 1)
-                throw new Exception(string.Format("Program with identifier {0} is defined multiple times.", programs.FirstOrDefault()?.Name));
-
-            return programs.FirstOrDefault();
+            return GetPrograms(new URI(nameSpace));
         }
 
         public override string ToString()

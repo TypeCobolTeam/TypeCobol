@@ -313,7 +313,7 @@ namespace TypeCobol.Compiler.Parser
                             {
 // ISSUE #204:
                                 var tempToken = tokenStream.Lt(1);
-                                if (tempToken != null && tempToken != Token.END_OF_FILE)
+                                if (tempToken != null && tempToken.Type != (int)TokenType.EndOfFile)
                                 {
 // if not end of file,
                                     // add next token to ConsumedTokens to know where is the CodeElement in error
@@ -432,7 +432,7 @@ namespace TypeCobol.Compiler.Parser
                         if (previousLineHasCodeElements)
                         {
                             currentParseSection.StartLineIndex = previousLineIndex;
-                            currentParseSection.StartToken = previousLine.CodeElements.First().ConsumedTokens.FirstOrDefault();
+                            currentParseSection.StartToken = previousLine.CodeElements.First(ce => ce.ConsumedTokens.Any()).ConsumedTokens.First();
                         }
 
                         // All lines contained in the parse section could be modified, and should be reset
@@ -490,7 +490,7 @@ namespace TypeCobol.Compiler.Parser
                         {
                             try
                             {
-                                Token startTokenForNextParseSection = nextLine.CodeElements.First().ConsumedTokens.FirstOrDefault();
+                                Token startTokenForNextParseSection = nextLine.CodeElements.First(ce => ce.ConsumedTokens.Any()).ConsumedTokens.First();
                                 Token firstSourceTokenOfThisLine = nextLine.TokensWithCompilerDirectives.First(token => token.Channel == Token.CHANNEL_SourceTokens);
                                 nextCodeElementStartsAtTheBeginningOfTheLine = startTokenForNextParseSection == firstSourceTokenOfThisLine;
                             }
@@ -515,7 +515,7 @@ namespace TypeCobol.Compiler.Parser
                             if (oneMoreLine || !(nextLine.CodeElements.Any(ce => ce is IFormalizedCommentable)))
                             {
                                 currentParseSection.StopLineIndex = nextLineIndex;
-                                currentParseSection.StopToken = nextLine.CodeElements.First().ConsumedTokens.FirstOrDefault();
+                                currentParseSection.StopToken = nextLine.CodeElements.First(ce => ce.ConsumedTokens.Any()).ConsumedTokens.First();
                                 currentParseSection.StopTokenIsFirstTokenOfTheLine = nextCodeElementStartsAtTheBeginningOfTheLine;
                                 break;
                             }

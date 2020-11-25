@@ -1,0 +1,5 @@
+﻿ReturnCode=ParsingDiagnostics_
+No error in "input\DVZZPGM1.tcbl".
+1 error in "input\DVZZPGM2.tcbl":
+Line 8[20,42] <30, Error, Semantics> - Semantic error: Symbol someVarThatIsNotDefined is not referenced
+No error in "input\DVZZPGM3.tcbl".

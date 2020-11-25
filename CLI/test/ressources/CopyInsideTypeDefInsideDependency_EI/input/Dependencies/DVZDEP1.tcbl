@@ -21,6 +21,14 @@
             05 firstname PIC X(20).
             05 lastname PIC X(20).
       
+       01 Type1 TYPEDEF STRICT PUBLIC.
+          02  Body. COPY YCONVEA.
+          02  Part1. COPY YPRTD20.
+          02  Part2. COPY YCONVEA.
+
+       01 Type2 TYPEDEF STRICT PUBLIC.
+          COPY SUPCPY.
+
        PROCEDURE DIVISION.
       
        END PROGRAM DVZDEP1.

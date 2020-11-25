@@ -33,7 +33,7 @@ Line 20[37,42] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be spec
       
       *Stacked ---------------------------------------------------------
        IDENTIFICATION DIVISION.
-       PROGRAM-ID Stacked.
+       PROGRAM-ID. Stacked.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
 Line 35[36,41] <27, Error, Syntax> - Syntax error : GLOBAL clause cannot be specified with PUBLIC access modifier

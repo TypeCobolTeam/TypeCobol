@@ -1,6 +1,6 @@
 ﻿--- Diagnostics ---
-Line 11[29,35] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[29,35:TYPEDEF]<TYPEDEF>
-Line 14[26,32] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[26,32:TYPEDEF]<TYPEDEF>
+Line 11[29,35] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'DateJulian' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[29,35:TYPEDEF]<TYPEDEF>
+Line 14[26,32] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'DateDB2' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[26,32:TYPEDEF]<TYPEDEF>
 Line 31[8,35] <32, Error, Syntax> - A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)
 Line 39[8,35] <32, Error, Syntax> - A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)
 Line 47[8,35] <32, Error, Syntax> - A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)

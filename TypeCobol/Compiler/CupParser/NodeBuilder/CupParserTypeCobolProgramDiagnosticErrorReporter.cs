@@ -166,13 +166,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             OffendingSymbol = offendingSymbol;
             this.ruleStack = ruleStack;
 
-            // TO DO - IMPORTANT : this is the INITIAL line number, and not the CURRENT line number
-            // This is enough to pass all unit tests, but will return false informations in real usage !
-            // for real line number, use a Snapshot
-            if (Line < 0 && OffendingSymbol != null)
+            CodeElement e = offendingSymbol?.value as CodeElement;
+            if (e != null && e.IsInsideCopy())
             {
-                CodeElement e = OffendingSymbol.value as CodeElement;
-                if (e != null && e.ConsumedTokens.Count > 0) Line = e.ConsumedTokens[0].Line;
+                var copyToken = e.FirstCopyDirective?.COPYToken;
+                if (copyToken != null) Line = copyToken.Line;
             }
         }
 

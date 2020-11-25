@@ -262,7 +262,7 @@ namespace TypeCobol.Codegen.Nodes
                         List<Tuple<string, string>> rootVars;
                         GeneratorHelper.ComputeTypedProperPaths(this, data, customtype, out rootProcedures, out rootVars);
                         _cache.AddRange(CreateDataDefinition(this.Node, this.Node.SymbolTable, Layout, rootProcedures, rootVars, customtype, data, level, 0, true, true, customtype));
-                        _cache.AddRange(InsertChildren(Layout, rootProcedures, rootVars, customtype, customtype, level + 1, 1));
+                        _cache.AddRange(InsertChildren(Layout, rootProcedures, rootVars, customtype, level + 1));
                     }
                 }
                 return _cache;
@@ -479,20 +479,25 @@ namespace TypeCobol.Codegen.Nodes
         /// <param name="indexes">The Array of Index Symbol Definition</param>
         /// <param name="ownerDefinition">The Owner of the definition that contains the INDEXED BY clause</param>
         /// <returns>The Dictionary</returns>
-        private static Dictionary<Compiler.Scanner.Token, string> BuiltIndexMap(Node rootNode, List<string> rootProcedures, List<Tuple<string, string>> rootVariableName, SymbolDefinition[] indexes, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition)
+        private static Dictionary<Compiler.Scanner.Token, string> BuildIndexMap(Node rootNode, List<string> rootProcedures, List<Tuple<string, string>> rootVariableName, SymbolDefinition[] indexes, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition)
         {
             Dictionary<Compiler.Scanner.Token, string> map = new Dictionary<Compiler.Scanner.Token, string>(indexes.Length);
             List<string> pathProcedures;
             List<string> pathVariables;
             GeneratorHelper.ComputeProperPaths(ownerDefinition, out pathProcedures, out pathVariables);
             List<string> list_items = new List<string>();
-            //list_items.AddRange(pathProcedures);
 
             //Add root procedures
-
-            for (int j = rootProcedures.Count - 1; j >= 0; j--)
+            if (rootProcedures.Count == 0)
             {
-                list_items.Add(rootProcedures[j]);
+                list_items.AddRange(pathProcedures);
+            }
+            else
+            {
+                for (int j = rootProcedures.Count - 1; j >= 0; j--)
+                {
+                    list_items.Add(rootProcedures[j]);
+                }
             }
 
             //Add Root variables
@@ -600,7 +605,7 @@ namespace TypeCobol.Codegen.Nodes
             {
                 bHasIndexes = true;
                 //So Children of the owner definition contains all indexes
-                indexesMap = BuiltIndexMap(rootNode, rootProcedures, rootVariableName, data.Indexes, ownerDefinition);
+                indexesMap = BuildIndexMap(rootNode, rootProcedures, rootVariableName, data.Indexes, ownerDefinition);
             }
         }
 
@@ -972,11 +977,15 @@ namespace TypeCobol.Codegen.Nodes
 
         };
 
-        public static List<ITextLine> InsertChildren(ColumnsLayout? layout, List<string> rootProcedures, List< Tuple<string,string> > rootVariableName, DataDefinition ownerDefinition, DataDefinition type, int level, int indent)
+        public static List<ITextLine> InsertChildren(ColumnsLayout? layout, List<string> rootProcedures, List<Tuple<string, string>> rootVariableName, DataDefinition type, int level)
+        {
+            return InsertChildren(layout, rootProcedures, rootVariableName, type, level, 1, null);
+        }
+
+        private static List<ITextLine> InsertChildren(ColumnsLayout? layout, List<string> rootProcedures, List<Tuple<string,string>> rootVariableName, DataDefinition type, int level, int indent, CopyDirective usedCopy)
         {
             var lines = new List<ITextLine>();
             // List of all the CopyDirectives that have been added to the lines
-            List<CopyDirective> usedCopies = new List<CopyDirective>();
             foreach (var child in type.Children)
             {
                 bool bIsInsideCopy = child.IsInsideCopy();
@@ -1002,10 +1011,10 @@ namespace TypeCobol.Codegen.Nodes
                         CopyDirective copy = child.CodeElement.FirstCopyDirective;
                         //The first data coming from a copy is used to recover the Clause COPY, the other would be only a repetition of this one, so we skip them.
                         //Even with the same name, two different Clause COPY are differentiated by their token lines
-                        if (usedCopies.Contains(copy) == false)
+                        if (usedCopy != copy)
                         {
                             lines.AddRange(CopyDirectiveToTextLines(copy));
-                            usedCopies.Add(copy);
+                            usedCopy = copy;
                             continue;
                         }
                     }
@@ -1096,14 +1105,14 @@ namespace TypeCobol.Codegen.Nodes
                     List< Tuple<string,string> > newRootVariableName = new List<Tuple<string, string>>();
                     newRootVariableName.Add(new Tuple<string, string>(typed.Name, typed.TypeDefinition.Name));
                     newRootVariableName.AddRange(rootVariableName);
-                    var texts = InsertChildren(layout, rootProcedures, newRootVariableName, typed, typed.TypeDefinition,
-                        level + 1, indent + 1);
+                    var texts = InsertChildren(layout, rootProcedures, newRootVariableName, typed.TypeDefinition,
+                        level + 1, indent + 1, usedCopy);
                     lines.AddRange(texts);
                 }
                 else
                 {
-                    var texts = InsertChildren(layout, rootProcedures, rootVariableName, typed, typed, level + 1,
-                        indent + 1);
+                    var texts = InsertChildren(layout, rootProcedures, rootVariableName, typed, level + 1,
+                        indent + 1, usedCopy);
                     lines.AddRange(texts);
                 }
             }
