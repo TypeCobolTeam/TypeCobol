@@ -41,15 +41,29 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
 
             RemoteConsole = new RemoteConsole(rpcServer);
             RemoteWindow = new RemoteWindow(rpcServer);
+
+            //Track any unhandled exception during rpc communication from the server
+            rpcServer.Handler += UnhandledExceptionHandler;
         }
 
         // RPC server used to send Remote Procedure Calls to the client
         protected IRPCServer RpcServer { get; }
 
-        public void NotifyException(Exception e)
+        /// <summary>
+        /// Unhandled Exception Event Handler
+        /// </summary>
+        /// <param name="sender">Sender of the unhandled exception</param>
+        /// <param name="e">Tne Exception event argument</param>
+        private void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e)
         {
-            AnalyticsWrapper.Telemetry.TrackException(e, null);
+            NotifyException(e.ExceptionObject as Exception);
+        }
+
+        public virtual void NotifyException(Exception e)
+        {
             this.RemoteWindow.ShowErrorMessage(e.Message + "\n" + e.StackTrace);
+            AnalyticsWrapper.Telemetry.TrackException(e, null);            
+            AnalyticsWrapper.Telemetry.SendMail(e, null, null, null);
         }
 
         public void NotifyWarning(string message)
