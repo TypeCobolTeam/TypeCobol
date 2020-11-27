@@ -178,7 +178,12 @@ namespace TypeCobol.Compiler.CodeElements
         //String built in type
         public static readonly DataType String = new DataType("STRING", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
 
-        public static Nodes.TypeDefinition CreateBuiltIn(DataType type)
+        public static readonly TypeDefinition BooleanType = CreateBuiltIn(Boolean);
+        public static readonly TypeDefinition DateType = CreateBuiltIn(Date);
+        public static readonly TypeDefinition CurrencyType = CreateBuiltIn(Currency);
+        public static readonly TypeDefinition StringType = CreateBuiltIn(String);
+
+        private static Nodes.TypeDefinition CreateBuiltIn(DataType type)
         {
             var dataTypeDescriptionEntry = CreateBuiltInDataTypeDescriptionEntry(type);
             Nodes.TypeDefinition typeDefinition;
@@ -234,6 +239,8 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public static readonly DataType[] BuiltInCustomTypes = { DataType.Boolean, DataType.Date, DataType.Currency, DataType.String};
+
+        public static readonly TypeDefinition[] BuiltInCustomTypeDefinitions = { DataType.BooleanType, DataType.DateType, DataType.CurrencyType, DataType.StringType };
         // [/TYPECOBOL]
     }
     public enum RestrictionLevel

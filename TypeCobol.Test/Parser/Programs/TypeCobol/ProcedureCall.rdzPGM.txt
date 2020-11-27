@@ -31,7 +31,7 @@ Line 179[12,46] <27, Error, Syntax> - Syntax error : Function 'ValidateDateForma
 Line 194[18,21] <27, Error, Syntax> - Syntax error : extraneous input 'var1' expecting {FUNCTION-POINTER, PIC, PICTURE, POINTER, PROCEDURE-POINTER, TYPE, ?} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[18,21:var1]<UserDefinedWord>
 Line 201[12,46] <27, Error, Syntax> - Syntax error : Function 'MyProc1' only takes 5 parameter(s)
 Line 201[12,46] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'MyProc1' input(DATE, Alphanumeric, ?, DATE) output(BOOL, Alphanumeric)
-Line 201[12,46] <27, Error, Syntax> - Syntax error : Function 'MyProc1' expected parameter 'BOOL' of type BOOL and received 'somedate' of type DATE 
+Line 201[12,46] <27, Error, Syntax> - Syntax error : Function 'MyProc1' expected parameter 'okay' of type BOOL and received 'somedate' of type DATE 
 Line 201[12,46] <27, Error, Syntax> - Syntax error : Function 'MyProc1' expected parameter 'actual-format' of type Alphanumeric and received 'flag' of type BOOL 
 Line 203[21,25] <30, Error, Semantics> - Semantic error: Symbol INOUT is not referenced OffendingSymbol=[21,25:INOUT]<UserDefinedWord>
 Line 233[12,34] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'ValidateDateFormat' 

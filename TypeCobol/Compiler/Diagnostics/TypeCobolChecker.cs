@@ -361,30 +361,28 @@ namespace TypeCobol.Compiler.Diagnostics
 
                             
                         }
-                        else if (actualDataDefinition.DataType != expected.DataType)
+                        else
                         {
                             TypeDefinition callerType = actualDataDefinition.TypeDefinition;
                             TypeDefinition calleeType = expected.TypeDefinition;
                             if (callerType != null && calleeType != null)
                             {
-                                //Compare reference of TypeDefinition
+                                //Compare references of TypeDefinition
                                 if (callerType != calleeType)
                                 {
                                     var m = string.Format(
                                         "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
-                                        call.FunctionName, calleeType.Name, calleeType.DataType,
-                                        callArgName ?? string.Format("position {0}", c + 1), callerType.DataType);
+                                        call.FunctionName, expected.Name, calleeType.QualifiedName,
+                                        callArgName ?? string.Format("position {0}", c + 1), callerType.QualifiedName);
                                     DiagnosticUtils.AddError(node, m);
                                 }
                                 //else
-                                //DataType were not written exactly the same in the source code
-                                //eg. we can have a type qualified with its program and the same type without the qualification, then DataType are not the same but TypeDefinition are
-                                //So no error here, it's ok
+                                //same TypeDefinition it's ok.
+                                //Note that DataType may differ: we can have a type qualified with its program and the same type without the qualification,
+                                //in that case DataType are not the same but TypeDefinition are
                             }
-                            else
-                            {
-                                //Ignore, it's an unknown DataType. It's already checked by TypeCobolLinker
-                            }
+
+                            //Ignore, it's an unknown TypeDefinition. It's already checked by TypeCobolLinker
                         }
                     }
 
