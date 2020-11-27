@@ -44,6 +44,19 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
 
             //Track any unhandled exception during rpc communication from the server
             rpcServer.Handler += UnhandledExceptionHandler;
+            //Also enforce with AppDomain unhandled exception handler
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            currentDomain.UnhandledException += UnhandledExceptionHandler;
+        }
+
+        /// <summary>
+        /// Destructor.
+        /// </summary>
+        ~LanguageServer()
+        {
+            this.RpcServer.Handler -= UnhandledExceptionHandler;
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            currentDomain.UnhandledException -= UnhandledExceptionHandler;
         }
 
         // RPC server used to send Remote Procedure Calls to the client
