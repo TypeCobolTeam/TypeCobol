@@ -264,18 +264,29 @@ namespace TypeCobol.Compiler.Preprocessor
                     {
                         if (currentPosition.ReplaceOperations != null)
                         {
-                            for(int i = 0; i < currentPosition.ReplaceOperations.Count; i++)
+                            Token lastReplacedToken = null;
+                            bool matchingMode = false;
+                            foreach (ReplaceOperation replaceOperation in currentPosition.ReplaceOperations)
                             {
-                                ReplaceOperation replaceOperation = currentPosition.ReplaceOperations[i];
-                                status = TryAndReplace(nextToken, replaceOperation);
-                                if (status.replacedToken != null)
-                                    return ApplyRemainingReplaces(i + 1, status, currentPosition.ReplaceOperations);
-                                    //return status.replacedToken;
+                                status = TryAndReplace(lastReplacedToken??nextToken, replaceOperation);
+                                lastReplacedToken = status.replacedToken??lastReplacedToken;
+                                matchingMode = lastReplacedToken != null;
                                 if (status.tryAgain)
                                 {
-                                    nextToken = sourceIterator.NextToken();
-                                    break;
+                                    if (matchingMode)
+                                    {
+                                        sourceIterator.ReturnToLastPositionSnapshot();
+                                    }
+                                    else
+                                    {
+                                        nextToken = sourceIterator.NextToken();
+                                        break;                                        
+                                    }
                                 }
+                            }
+                            if (matchingMode)
+                            {
+                                return lastReplacedToken;
                             }
                         }
                     }
@@ -285,31 +296,6 @@ namespace TypeCobol.Compiler.Preprocessor
                 currentPosition.CurrentToken = nextToken;
                 return nextToken;
             }
-        }
-
-        /// <summary>
-        /// Try to apply all remaining replacements on a token.
-        /// </summary>
-        /// <param name="start">The start position in the replacement</param>
-        /// <param name="prevStatus">The previous replacement status</param>
-        /// <param name="replaceOperations">The replacements</param>
-        /// <returns>The last Token that matches replacement.</returns>
-        private Token ApplyRemainingReplaces(int start, ReplaceStatus prevStatus, IList<ReplaceOperation> replaceOperations)
-        {
-            Token lastReplacedToken = prevStatus.replacedToken;
-            for(int i = start; i < replaceOperations.Count; i++)
-            {
-                ReplaceStatus status;
-                ReplaceOperation replaceOperation = replaceOperations[i];
-                status = TryAndReplace(lastReplacedToken, replaceOperation);
-                if (status.replacedToken != null)
-                {
-                    lastReplacedToken = status.replacedToken;
-                }
-                if (status.tryAgain)
-                    sourceIterator.ReturnToLastPositionSnapshot();
-            }
-            return lastReplacedToken;
         }
 
         private class ReplaceStatus
