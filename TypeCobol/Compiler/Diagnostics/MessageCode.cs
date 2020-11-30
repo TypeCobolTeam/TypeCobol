@@ -52,6 +52,7 @@ namespace TypeCobol.Compiler.Diagnostics
         WrongMultilineCommentMarckupPosition = 42,
         ErrorFormalizedCommentMissplaced = 43,
         MultiFormalizedCommentIndicatorMisused = 44,
-        Info = 45
+        Info = 45,
+        FailedToLoadDependentCopy = 46
     }
 }

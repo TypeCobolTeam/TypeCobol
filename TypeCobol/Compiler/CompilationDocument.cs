@@ -12,7 +12,6 @@ using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.AntlrUtils;
-using TypeCobol.LanguageServices.Editor;
 
 namespace TypeCobol.Compiler
 {
@@ -53,7 +52,7 @@ namespace TypeCobol.Compiler
         /// </summary>
         public List<RemarksDirective.TextNameVariation> CopyTextNamesVariations { get; set; }
 
-        public List<CopyDirective> MissingCopies { get; set; }
+        public HashSet<string> MissingCopies { get; }
 
         /// <summary>
         /// Issue #315
@@ -158,7 +157,7 @@ namespace TypeCobol.Compiler
             TextSourceInfo = textSourceInfo;
             CompilerOptions = compilerOptions;
             CopyTextNamesVariations = copyTextNameVariations ?? new List<RemarksDirective.TextNameVariation>();
-            MissingCopies = new List<CopyDirective>();
+            MissingCopies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             this.processedTokensDocumentProvider = processedTokensDocumentProvider;
 
@@ -620,21 +619,28 @@ namespace TypeCobol.Compiler
                 DocumentChangedEvent<IProcessedTokensLine> documentChangedEvent = null;
 
                 // Apply text changes to the compilation document
+                bool refreshMissingCopies = true;
+                List<MissingCopy> missingCopies;
                 if (scanAllDocumentLines)
                 {
                     if (tokensDocument != null)
                     {
                         // Process all lines of the document for the first time
-                        PreprocessorStep.ProcessDocument(TextSourceInfo, ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), CompilerOptions, processedTokensDocumentProvider, CopyTextNamesVariations, perfStatsForParserInvocation, this.MissingCopies);
+                        PreprocessorStep.ProcessDocument(this, ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), processedTokensDocumentProvider, perfStatsForParserInvocation, out missingCopies);
 
                         // Create the first processed tokens document snapshot
-                        ProcessedTokensDocumentSnapshot = new ProcessedTokensDocument(tokensDocument, new DocumentVersion<IProcessedTokensLine>(this), ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), CompilerOptions);
+                        ProcessedTokensDocumentSnapshot = new ProcessedTokensDocument(tokensDocument, new DocumentVersion<IProcessedTokensLine>(this), ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), CompilerOptions, missingCopies);
+                    }
+                    else
+                    {
+                        // No new ProcessedTokensDocument created, so no need to refresh missing copies
+                        refreshMissingCopies = false;
                     }
                 }
                 else
                 {
                     ImmutableList<CodeElementsLine>.Builder processedTokensDocumentLines = ((ImmutableList<CodeElementsLine>)tokensDocument.Lines).ToBuilder();
-                    IList<DocumentChange<IProcessedTokensLine>> documentChanges = PreprocessorStep.ProcessTokensLinesChanges(TextSourceInfo, processedTokensDocumentLines, tokensLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, processedTokensDocumentProvider, CopyTextNamesVariations, perfStatsForParserInvocation, this.MissingCopies);
+                    IList<DocumentChange<IProcessedTokensLine>> documentChanges = PreprocessorStep.ProcessTokensLinesChanges(this, processedTokensDocumentLines, tokensLineChanges, PrepareDocumentLineForUpdate, processedTokensDocumentProvider, perfStatsForParserInvocation, out missingCopies);
 
                     // Create a new version of the document to track these changes
                     DocumentVersion<IProcessedTokensLine> currentProcessedTokensLineVersion = previousProcessedTokensDocument.CurrentVersion;
@@ -646,7 +652,17 @@ namespace TypeCobol.Compiler
                     currentProcessedTokensLineVersion = currentProcessedTokensLineVersion.next;
 
                     // Update the processed tokens document snapshot
-                    ProcessedTokensDocumentSnapshot = new ProcessedTokensDocument(tokensDocument, currentProcessedTokensLineVersion, processedTokensDocumentLines.ToImmutable(), CompilerOptions);
+                    ProcessedTokensDocumentSnapshot = new ProcessedTokensDocument(tokensDocument, currentProcessedTokensLineVersion, processedTokensDocumentLines.ToImmutable(), CompilerOptions, missingCopies);
+                }
+
+                // Refresh missing copies
+                if (refreshMissingCopies)
+                {
+                    MissingCopies.Clear();
+                    foreach (var missingCopy in ProcessedTokensDocumentSnapshot.MissingCopies)
+                    {
+                        MissingCopies.Add(missingCopy.FaultyDirective.TextName);
+                    }
                 }
 
                 // Stop perf measurement
