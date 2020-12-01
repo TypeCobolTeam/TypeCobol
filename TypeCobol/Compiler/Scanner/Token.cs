@@ -398,16 +398,6 @@ namespace TypeCobol.Compiler.Scanner
             get { return -1; }
         }
 
-        /// <summary>
-        /// Determine if this token belong to a family that is textually comparable.
-        /// </summary>
-        /// <returns>true if yes, false otherwise</returns>
-        private bool IsFamilyComparable()
-        {
-            return TokenFamily == TokenFamily.AlphanumericLiteral || TokenFamily == TokenFamily.NumericLiteral ||
-                                 TokenFamily == TokenFamily.Symbol || TokenFamily == TokenFamily.SyntaxLiteral;
-        }
-
         // Common token for End of file
         public static Token END_OF_FILE = new Token(TokenType.EndOfFile, 0, -1, TypeCobol.Compiler.Scanner.TokensLine.CreateVirtualLineForInsertedToken(-1, String.Empty));
 
@@ -449,6 +439,16 @@ namespace TypeCobol.Compiler.Scanner
             // 5. In all other cases, token type comparison was enough
             {
                 return true;
+            }
+
+            /// <summary>
+            /// Determine if this token belong to a family that is textually comparable.
+            /// </summary>
+            /// <returns>true if yes, false otherwise</returns>
+            bool IsFamilyComparable()
+            {
+                return TokenFamily == TokenFamily.AlphanumericLiteral || TokenFamily == TokenFamily.NumericLiteral ||
+                                     TokenFamily == TokenFamily.Symbol || TokenFamily == TokenFamily.SyntaxLiteral;
             }
         }
     }

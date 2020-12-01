@@ -23,16 +23,5 @@ namespace TypeCobol.Codegen.Test {
 			string file = Path.Combine("Cobol85","CopyNotExpanded");
             CodegenTestUtils.ParseGenerateCompare(file+".rdz.cbl");
 		}
-
-        [TestMethod]
-        [TestCategory("Codegen")]
-        [TestCategory("Parsing")]
-        [TestProperty("Time", "fast")]
-        public void ReplaceTokenInsideDataDiv()
-        {
-            string file = Path.Combine("Cobol85", "ReplaceTokenInsideDataDiv");
-            CodegenTestUtils.ParseGenerateCompare(file + ".rdz.cbl");
-        }
-
     }
 }
