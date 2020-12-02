@@ -66,11 +66,11 @@ namespace TypeCobol.Compiler.Scanner
                         //Group must be scanned as a whole
                         if (lastScanState == null)
                         {
-                            Scanner.ScanFirstLineContinuationGroup(lineGroup, false, false, false, textSourceInfo.EncodingForAlphanumericLiterals, compilerOptions, copyTextNameVariations);
+                            Scanner.ScanFirstLineContinuationGroup(lineGroup, false, false, false, textSourceInfo.EncodingForAlphanumericLiterals, textSourceInfo.ColumnsLayout, compilerOptions, copyTextNameVariations);
                         }
                         else
                         {
-                            Scanner.ScanTokensLineContinuationGroup(lineGroup, lastScanState, compilerOptions, copyTextNameVariations);
+                            Scanner.ScanTokensLineContinuationGroup(lineGroup, lastScanState, textSourceInfo.ColumnsLayout, compilerOptions, copyTextNameVariations);
                         }
 
                         lastScanState = lineGroup.Last().ScanState;
@@ -385,14 +385,14 @@ namespace TypeCobol.Compiler.Scanner
                 if (firstLineIndex == 0)
                 {
                     // Scan the first line group of the document
-                    Scanner.ScanFirstLineContinuationGroup(continuationLinesGroup, false, false, false, textSourceInfo.EncodingForAlphanumericLiterals, compilerOptions, copyTextNameVariations);
+                    Scanner.ScanFirstLineContinuationGroup(continuationLinesGroup, false, false, false, textSourceInfo.EncodingForAlphanumericLiterals, textSourceInfo.ColumnsLayout, compilerOptions, copyTextNameVariations);
                 }
                 else
                 {
                     // Get the scan state at the end of the previous line
                     TokensLine previousLine = documentLines[firstLineIndex - 1];
                     // Scan the current line group with this initial scan state 
-                    Scanner.ScanTokensLineContinuationGroup(continuationLinesGroup, previousLine.ScanState, compilerOptions, copyTextNameVariations);
+                    Scanner.ScanTokensLineContinuationGroup(continuationLinesGroup, previousLine.ScanState, textSourceInfo.ColumnsLayout, compilerOptions, copyTextNameVariations);
                 }
                 int updatedLineIndex = firstLineIndex;
                 foreach(TokensLine updatedLine in continuationLinesGroup)
