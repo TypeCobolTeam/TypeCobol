@@ -35,6 +35,7 @@ namespace TypeCobol.Analysis.Dfa
         {
             System.Diagnostics.Debug.Assert(start != null);
             System.Diagnostics.Debug.Assert(dfaBuilder != null);
+            System.Diagnostics.Debug.Assert(dfaBuilder.IsUseDefSetCalculated);
             var variable = start.Variable;
             System.Diagnostics.Debug.Assert(variable != null);
 
@@ -86,8 +87,11 @@ namespace TypeCobol.Analysis.Dfa
                             {
                                 //(2.1.1.1.1) MOVE 'LITERAL' TO var
                                 var literal = simpleMove.SendingVariable.AlphanumericValue;
-                                result.Value = new Value(literal);
-                                result.Origins = null;
+                                var origin = new ValueOrigin(variable)
+                                {
+                                    Value = new Value(literal)
+                                };
+                                result.Origins.Add(origin);
                             }
                             else if (!simpleMove.SendingVariable.IsLiteral && simpleMove.SendingVariable.StorageArea != null)
                             {
