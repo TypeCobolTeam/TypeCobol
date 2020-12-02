@@ -207,9 +207,9 @@ namespace TypeCobol.Analysis.Report
         private List<Tuple<string, string>> ComputeUsePointDefPaths(DefaultDataFlowGraphBuilder dfaBuilder, DfaUsePoint<Node, VariableSymbol> up)
         {
             var valueOrigin = ValueOrigin.ComputeFrom(up, dfaBuilder);
-            return AsPaths(valueOrigin).ToList();
+            return AsPaths(valueOrigin, null).ToList();
 
-            IEnumerable<Tuple<string, string>> AsPaths(ValueOrigin vo)
+            IEnumerable<Tuple<string, string>> AsPaths(ValueOrigin vo, VariableSymbol previousVariable)
             {
                 if (vo == null)
                 {
@@ -218,28 +218,50 @@ namespace TypeCobol.Analysis.Report
                     yield break;
                 }
 
-                string variable = vo.Variable.FullDotName;
+                var currentVariable = vo.Variable;
+                //To avoid duplicate variables in resulting path
+                bool writeVariable = currentVariable != previousVariable;
+
+                string variable = currentVariable.FullDotName;
                 if (vo.Value != null)
                 {
+                    //This is a leaf
                     System.Diagnostics.Debug.Assert(vo.Origins == null);
                     string value = vo.Value.ToString();
-                    if (vo.Variable.IsCondition)
+                    if (currentVariable.IsCondition)
                     {
+                        //Special representation for condition variables: "InitialValue"<-Lvl88Var<-"true"
                         yield return new Tuple<string, string>(value, $"\"{value}\"<-{variable}<-\"true\"");
                     }
                     else
                     {
-                        yield return new Tuple<string, string>(value, $"{variable}<-\"{value}\"");
+                        if (writeVariable)
+                        {
+                            yield return new Tuple<string, string>(value, $"{variable}<-\"{value}\"");
+                        }
+                        else
+                        {
+                            yield return new Tuple<string, string>(value, $"\"{value}\"");
+                        }
                     }
                 }
                 else
                 {
+                    //Build paths for every possible origin
                     System.Diagnostics.Debug.Assert(vo.Origins != null);
                     foreach (var voOrigin in vo.Origins)
                     {
-                        foreach (var path in AsPaths(voOrigin))
+                        foreach (var path in AsPaths(voOrigin, currentVariable))
                         {
-                            yield return new Tuple<string, string>(path.Item1, $"{variable}<-{path.Item2}");
+                            if (writeVariable)
+                            {
+                                yield return new Tuple<string, string>(path.Item1, $"{variable}<-{path.Item2}");
+                            }
+                            else
+                            {
+                                //This is unlikely but it may happen for instruction like MOVE var TO var
+                                yield return path;
+                            }
                         }
                     }
                 }
