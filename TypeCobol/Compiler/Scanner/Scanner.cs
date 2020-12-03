@@ -226,16 +226,16 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Scan a group of continuation lines when no previous scan state object is available
         /// </summary>
-        public static void ScanFirstLineContinuationGroup(IList<TokensLine> continuationLinesGroup, bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
+        public static void ScanFirstLineContinuationGroup(IList<TokensLine> continuationLinesGroup, bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals, ColumnsLayout format, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
             MultilineScanState initialScanState = new MultilineScanState(insideDataDivision, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals);
-            ScanTokensLineContinuationGroup(continuationLinesGroup, initialScanState, compilerOptions, copyTextNameVariations);
+            ScanTokensLineContinuationGroup(continuationLinesGroup, initialScanState, format, compilerOptions, copyTextNameVariations);
         }
 
         /// <summary>
         /// Scan a group of continuation lines
         /// </summary>
-        public static void ScanTokensLineContinuationGroup(IList<TokensLine> continuationLinesGroup, MultilineScanState initialScanState, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
+        public static void ScanTokensLineContinuationGroup(IList<TokensLine> continuationLinesGroup, MultilineScanState initialScanState, ColumnsLayout format, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
             // p54: Continuation lines
             // Any sentence, entry, clause, or phrase that requires more than one line can be
@@ -247,33 +247,49 @@ namespace TypeCobol.Compiler.Scanner
             TextArea[] textAreasForOriginalLinesInConcatenatedLine = new TextArea[continuationLinesGroup.Count];
             int[] startIndexForTextAreasInOriginalLines = new int[continuationLinesGroup.Count];
             int[] offsetForLiteralContinuationInOriginalLines = new int[continuationLinesGroup.Count];
-            var scanState = initialScanState;
 
-            // Initialize the continuation text with the complete source text of the first line
-            TokensLine firstLine = continuationLinesGroup[0];
-            string concatenatedLine = null;
-            if (firstLine.Type == CobolTextLineType.Source || (firstLine.Type == CobolTextLineType.Debug && initialScanState.WithDebuggingMode))
+            // Scan the first lines (until Source is encountered)
+            var scanState = initialScanState;
+            int i = 0;
+            bool hasSource = false;
+            for (; i < continuationLinesGroup.Count; i++)
             {
-                concatenatedLine = firstLine.SourceText;
+                TokensLine line = continuationLinesGroup[i];
+                if (line.Type == CobolTextLineType.Source || (line.Type == CobolTextLineType.Debug && scanState.WithDebuggingMode))
+                {
+                    hasSource = true;
+                    break;
+                }
+
+                Scanner.ScanTokensLine(line, scanState, compilerOptions, copyTextNameVariations);
+                scanState = line.ScanState;
             }
-            else
-            {
-                concatenatedLine = String.Empty;
-                Scanner.ScanTokensLine(firstLine, initialScanState, compilerOptions, copyTextNameVariations);
-                scanState = firstLine.ScanState;
-            }
-            textAreasForOriginalLinesInConcatenatedLine[0] = new TextArea(TextAreaType.Source, 0, concatenatedLine.Length -1);
-            startIndexForTextAreasInOriginalLines[0] = firstLine.Source.StartIndex;
-            offsetForLiteralContinuationInOriginalLines[0] = 0;
+
+            // No source line found, it was not a continuation group...
+            if (!hasSource) return;
+
+            // Initialize the continuation text with the complete source text of the first source line
+            int firstSourceLineIndex = i;
+            TokensLine firstSourceLine = continuationLinesGroup[firstSourceLineIndex];
+            string concatenatedLine = firstSourceLine.SourceText;
+            textAreasForOriginalLinesInConcatenatedLine[firstSourceLineIndex] = new TextArea(TextAreaType.Source, 0, concatenatedLine.Length -1);
+            startIndexForTextAreasInOriginalLines[firstSourceLineIndex] = firstSourceLine.Source.StartIndex;
+            offsetForLiteralContinuationInOriginalLines[firstSourceLineIndex] = 0;
 
             // Find the index of the last ContinuationLine in the group
             int lastContinuationLineIndex;
-            for (lastContinuationLineIndex = continuationLinesGroup.Count - 1; lastContinuationLineIndex >= 0 && continuationLinesGroup[lastContinuationLineIndex].Type != CobolTextLineType.Continuation; lastContinuationLineIndex--) { }
+            for (lastContinuationLineIndex = continuationLinesGroup.Count - 1; lastContinuationLineIndex > firstSourceLineIndex; lastContinuationLineIndex--)
+            {
+                if (continuationLinesGroup[lastContinuationLineIndex].Type == CobolTextLineType.Continuation)
+                {
+                    break;
+                }
+            }
 
             // Iterate over the continuation lines (some blank lines or comment lines may come in-between)
             // => build a character string representing the complete continuation text along the way
-            int i;
-            for (i = 1; i <= lastContinuationLineIndex; i++)
+            int previousLastIndex = firstSourceLine.Source.EndIndex;
+            for (i = firstSourceLineIndex + 1; i <= lastContinuationLineIndex; i++)
             {
                 bool isLastLine = i == lastContinuationLineIndex;
                 TokensLine continuationLine = continuationLinesGroup[i];
@@ -329,7 +345,7 @@ namespace TypeCobol.Compiler.Scanner
                 if (concatenatedLine.Length > 0)
                 {
                     // Scan the continuation text, and get its last token so far
-                    TokensLine temporaryTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstLine.LineIndex, concatenatedLine);
+                    TokensLine temporaryTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstSourceLine.LineIndex, concatenatedLine);
                     Scanner.ScanTokensLine(temporaryTokensLine, initialScanState, compilerOptions, copyTextNameVariations);
                     Token lastTokenOfConcatenatedLineSoFar = temporaryTokensLine.SourceTokens[temporaryTokensLine.SourceTokens.Count - 1];
 
@@ -338,6 +354,14 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         if (!lastTokenOfConcatenatedLineSoFar.HasClosingDelimiter)
                         {
+                            // In CobolReferenceFormat, add remaining spaces at the end of the original line into the AlphanumericLiteral
+                            // Does not apply to FreeTextFormat as lines do not have maximum length
+                            if (format == ColumnsLayout.CobolReferenceFormat)
+                            {
+                                string padding = new string(' ', 71 - previousLastIndex);
+                                concatenatedLine += padding;
+                            }
+
                             // check delimiters
                             const char QUOTE = '\'';
                             const char DOUBLE_QUOTE = '"';
@@ -454,103 +478,146 @@ namespace TypeCobol.Compiler.Scanner
                 offsetForLiteralContinuationInOriginalLines[i] = offsetForLiteralContinuation;
 
                 concatenatedLine += line.Substring(startIndexOfContinuationStringInContinuationLine, lengthOfContinuationStringInContinuationLine);
+                previousLastIndex = lastIndex;
             }
 
             // Scan the complete continuation text as a whole
-            TokensLine virtualContinuationTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstLine.LineIndex, concatenatedLine);
+            TokensLine virtualContinuationTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstSourceLine.LineIndex, concatenatedLine);
             Scanner.ScanTokensLine(virtualContinuationTokensLine, initialScanState, compilerOptions, copyTextNameVariations);
-            scanState = initialScanState;
 
             // Then attribute each token and diagnostic to its corresponding tokens line
-            for (i = 0; i < continuationLinesGroup.Count; i++)
+            i = firstSourceLineIndex;
+            TokensLine originalLine = null;
+            TextArea textAreaForOriginalLine;
+            int concatenatedLineToOriginalLineOffset;
+            InitLine();
+            foreach (var token in virtualContinuationTokensLine.SourceTokens)
             {
-                TokensLine originalLine = continuationLinesGroup[i];
-                if (i > 0 && originalLine.Type != CobolTextLineType.Continuation) continue;
-                originalLine.InitializeScanState(scanState);
+                TryAddTokenToCurrentLine();
 
-                TextArea textAreaForOriginalLine = textAreasForOriginalLinesInConcatenatedLine[i];
-                int concatenatedLineToOriginalLineOffset = startIndexForTextAreasInOriginalLines[i] - textAreaForOriginalLine.StartIndex;
-                
-                foreach (Token token in virtualContinuationTokensLine.SourceTokens)
+                void TryAddTokenToCurrentLine()
                 {
-                    // Token located after the current line
-                    if(token.StartIndex > textAreaForOriginalLine.EndIndex)
+                    System.Diagnostics.Debug.Assert(token.StartIndex >= textAreaForOriginalLine.StartIndex);
+                    if (token.StopIndex <= textAreaForOriginalLine.EndIndex)
                     {
-                        break;
+                        // The token is fully included in the current line
+                        AddTokenToCurrentLine();
                     }
-                    // Token located before the current line
-                    else if(token.StopIndex < textAreaForOriginalLine.StartIndex)
+                    else if (token.StartIndex <= textAreaForOriginalLine.EndIndex)
                     {
-                        continue;
+                        // The token starts on the current line but ends after the end of it, split it into multiple ContinuationTokens !
+                        SplitToken();
                     }
-                    // Token completely completely included inside the current line
-                    else if(token.StartIndex >= textAreaForOriginalLine.StartIndex && token.StopIndex <= textAreaForOriginalLine.EndIndex)
-                    {                        
+                    else
+                    {
+                        //The token starts on the next line
+                        AdvanceToNextContinuationLine();
+                        TryAddTokenToCurrentLine();
+                    }
+
+                    void AddTokenToCurrentLine()
+                    {
                         int startIndexInOriginalLine = token.StartIndex + concatenatedLineToOriginalLineOffset;
                         int stopIndexInOriginalLine = token.StopIndex + concatenatedLineToOriginalLineOffset;
 
                         token.CorrectTokensLine(originalLine, startIndexInOriginalLine, stopIndexInOriginalLine);
                         originalLine.AddToken(token);
 
-                        foreach(Diagnostic diag in virtualContinuationTokensLine.GetDiagnosticsForToken(token))
+                        foreach (Diagnostic diag in virtualContinuationTokensLine.GetDiagnosticsForToken(token))
                         {
                             originalLine.AddDiagnostic((MessageCode)diag.Info.Code, token, diag.MessageArgs);
                         }
                     }
-                    // Multiline continuation token only partially located on this line
-                    else
+
+                    void SplitToken()
                     {
-                        bool isContinuationFromPreviousLine = token.StartIndex < textAreaForOriginalLine.StartIndex;
-                        bool isContinuedOnNextLine = token.StopIndex > textAreaForOriginalLine.EndIndex;
+                        // First, create a continued token on the current line
+                        bool isContinuedOnNextLine = true;
+                        CreateAndAddFirstContinuationToken();
 
-                        int startIndexInOriginalLine = 0; 
-                        if (isContinuationFromPreviousLine)
+                        // The token may be split across 2 or more lines
+                        // So keep creating continuation tokens until the end of the token is reached
+                        do
                         {
-                            startIndexInOriginalLine = startIndexForTextAreasInOriginalLines[i] - offsetForLiteralContinuationInOriginalLines[i];
+                            AdvanceToNextContinuationLine();
+                            isContinuedOnNextLine = token.StopIndex > textAreaForOriginalLine.EndIndex;
+                            CreateAndAddFollowingContinuationToken();
                         }
-                        else
-                        {
-                            startIndexInOriginalLine = token.StartIndex + concatenatedLineToOriginalLineOffset;
-                        }
-                        int stopIndexInOriginalLine = 0;
-                        if (isContinuedOnNextLine)
-                        {
-                            stopIndexInOriginalLine = originalLine.Source.EndIndex;
-                            // If a continued line ends with a floating comment, the continued token ends just before the floating comment
-                            if (originalLine.SourceTokens.Count > 0 && originalLine.SourceTokens[originalLine.SourceTokens.Count - 1].TokenType == TokenType.FloatingComment)
-                            {
-                                stopIndexInOriginalLine -= originalLine.SourceTokens[originalLine.SourceTokens.Count - 1].Length;
-                            }
-                        }
-                        else
-                        {
-                            stopIndexInOriginalLine = token.StopIndex + concatenatedLineToOriginalLineOffset;
-                        }
+                        while (isContinuedOnNextLine);
 
-                        ContinuationToken continuationToken = new ContinuationToken(token, startIndexInOriginalLine, stopIndexInOriginalLine, 
-                            originalLine, isContinuationFromPreviousLine, isContinuedOnNextLine);
-                        originalLine.AddToken(continuationToken);                        
-
-                        // Copy diagnostics on the first line only
-                        if(!isContinuationFromPreviousLine)
+                        void CreateAndAddFirstContinuationToken()
                         {
+                            CreateAndAddContinuationToken(false);
+
+                            // Copy diagnostics on the first line only
                             foreach (Diagnostic diag in virtualContinuationTokensLine.GetDiagnosticsForToken(token))
                             {
                                 originalLine.AddDiagnostic((MessageCode)diag.Info.Code, token, diag.MessageArgs);
                             }
                         }
+
+                        void CreateAndAddFollowingContinuationToken() => CreateAndAddContinuationToken(true);
+
+                        void CreateAndAddContinuationToken(bool isContinuationFromPreviousLine)
+                        {
+                            int startIndexInOriginalLine;
+                            if (isContinuationFromPreviousLine)
+                            {
+                                startIndexInOriginalLine = startIndexForTextAreasInOriginalLines[i] - offsetForLiteralContinuationInOriginalLines[i];
+                            }
+                            else
+                            {
+                                startIndexInOriginalLine = token.StartIndex + concatenatedLineToOriginalLineOffset;
+                            }
+                            int stopIndexInOriginalLine;
+                            if (isContinuedOnNextLine)
+                            {
+                                stopIndexInOriginalLine = originalLine.Source.EndIndex;
+                                // If a continued line ends with a floating comment, the continued token ends just before the floating comment
+                                if (originalLine.SourceTokens.Count > 0 && originalLine.SourceTokens[originalLine.SourceTokens.Count - 1].TokenType == TokenType.FloatingComment)
+                                {
+                                    stopIndexInOriginalLine -= originalLine.SourceTokens[originalLine.SourceTokens.Count - 1].Length;
+                                }
+                            }
+                            else
+                            {
+                                stopIndexInOriginalLine = token.StopIndex + concatenatedLineToOriginalLineOffset;
+                            }
+
+                            ContinuationToken continuationToken = new ContinuationToken(token, startIndexInOriginalLine, stopIndexInOriginalLine,
+                                originalLine, isContinuationFromPreviousLine, isContinuedOnNextLine);
+                            originalLine.AddToken(continuationToken);
+                        }
+                    }
+
+                    void AdvanceToNextContinuationLine()
+                    {
+                        // Advance index until a new ContinuationLine is found
+                        do { i++; } while (continuationLinesGroup[i].Type != CobolTextLineType.Continuation);
+                        InitLine();
                     }
                 }
-
-                scanState = originalLine.ScanState;
             }
 
-            // Scan remaining lines of the group
+            void InitLine()
+            {
+                // Update current scanState before jumping onto new line
+                scanState = originalLine?.ScanState ?? initialScanState; // On first call, originalLine is not set and scanState is reset to initialScanState.
+
+                // Update loop variables for new current line
+                originalLine = continuationLinesGroup[i];
+                originalLine.InitializeScanState(scanState);
+                textAreaForOriginalLine = textAreasForOriginalLinesInConcatenatedLine[i];
+                concatenatedLineToOriginalLineOffset = startIndexForTextAreasInOriginalLines[i] - textAreaForOriginalLine.StartIndex;
+            }
+
+            // Finally, scan remaining lines of the group
+            scanState = virtualContinuationTokensLine.ScanState;
             for (i = lastContinuationLineIndex + 1; i < continuationLinesGroup.Count; i++)
             {
-                var continuationLine = continuationLinesGroup[i];
-                Scanner.ScanTokensLine(continuationLine, scanState, compilerOptions, copyTextNameVariations);
-                scanState = continuationLine.ScanState;
+                var line = continuationLinesGroup[i];
+                Scanner.ScanTokensLine(line, scanState, compilerOptions, copyTextNameVariations);
+                scanState = line.ScanState;
             }
         }
 
