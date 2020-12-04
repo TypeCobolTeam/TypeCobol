@@ -153,6 +153,9 @@ namespace TypeCobol.Server
                     //Force CrossCheck
                     compilationUnit.RefreshProgramClassDocumentSnapshot();
 
+                    //Perform QualityCheck
+                    if (_configuration.ExecToStep > ExecutionStep.CrossCheck) compilationUnit.RefreshCodeAnalysisDocumentSnapshot();
+
                     //Since collecting diagnostics may be costly, we cache them here
                     var currentFileDiagnostics = compilationUnit.AllDiagnostics();
                     _inputsDiagnosticsCache.Add(inputFilePath, currentFileDiagnostics);

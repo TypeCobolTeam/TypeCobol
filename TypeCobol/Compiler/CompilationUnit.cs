@@ -33,6 +33,7 @@ namespace TypeCobol.Compiler
             PerfStatsForCodeElementsParser = new PerfStatsForParsingStep(CompilationStep.CodeElementsParser);
             PerfStatsForTemporarySemantic = new PerfStatsForParsingStep(CompilationStep.ProgramClassParser);
             PerfStatsForProgramCrossCheck = new PerfStatsForParsingStep(CompilationStep.ProgramCrossCheck);
+            PerfStatsForCodeQualityCheck = new PerfStatsForCompilationStep(CompilationStep.CodeQualityCheck);
 
             _analyzerProvider = analyzerProvider;
             _analyzerResults = new Dictionary<string, object>();
@@ -287,6 +288,18 @@ namespace TypeCobol.Compiler
             }
         }
 
+        /// <summary>
+        /// Launch AST analyzers to perform code quality analysis.
+        /// Update the list of quality violations.
+        /// </summary>
+        public void RefreshCodeAnalysisDocumentSnapshot()
+        {
+            PerfStatsForCodeQualityCheck.OnStartRefresh();
+
+            //TODO implement code analysis refresh: create and launch analyzers, gather violations, capture results in a new snapshot
+
+            PerfStatsForCodeQualityCheck.OnStopRefresh();
+        }
 
         /// <summary>
         /// Last snapshot of the compilation unit viewed as a complete Cobol program or class, after parsing the code elements.
@@ -389,9 +402,11 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Performance stats for the TemporaryProgramClassDocumentSnapshot method
         /// </summary>
-        public PerfStatsForParsingStep PerfStatsForTemporarySemantic { get; private set; }
+        public PerfStatsForParsingStep PerfStatsForTemporarySemantic { get; }
 
-        public PerfStatsForParsingStep PerfStatsForProgramCrossCheck { get; private set; }
+        public PerfStatsForParsingStep PerfStatsForProgramCrossCheck { get; }
+
+        public PerfStatsForCompilationStep PerfStatsForCodeQualityCheck { get; }
 
         #region Thread ownership and synchronization
 

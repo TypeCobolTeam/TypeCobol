@@ -67,25 +67,29 @@ namespace TypeCobol.LanguageServer
         public static ServerLogLevel LogLevel { get; set; }
 
         /// <summary>
-        /// Lstr Testing Source document
+        /// Lsr Testing Source document
         /// </summary>
         public static bool LsrSourceTesting { get; set; }
         /// <summary>
-        /// Lstr Testing Scanning of the document.
+        /// Lsr Testing Scanning of the document.
         /// </summary>
         public static bool LsrScannerTesting { get; set; }
         /// <summary>
-        /// Lstr Testing preprocessed Source document
+        /// Lsr Testing preprocessed Source document
         /// </summary>
         public static bool LsrPreprocessTesting { get; set; }
         /// <summary>
-        /// Lstr Testing parsing
+        /// Lsr Testing parsing
         /// </summary>
         public static bool LsrParserTesting { get; set; }
         /// <summary>
-        /// Lstr Testing semantic phase
+        /// Lsr Testing semantic phase
         /// </summary>
         public static bool LsrSemanticTesting { get; set; }
+        /// <summary>
+        /// Lsr code quality check phase
+        /// </summary>
+        public static bool LsrCodeAnalysisTesting { get; set; }
 
         /// <summary>
         /// Timer Disabled for TypeCobol.LanguageServer.
@@ -201,6 +205,7 @@ namespace TypeCobol.LanguageServer
                 { "tpreprocess",  "Preprocessing testing mode.", _ => LsrPreprocessTesting = true},
                 { "tparser",  "parsing testing mode.", _ => LsrParserTesting = true},
                 { "tsemantic",  "Semantic analysis testing mode.", _ => LsrSemanticTesting = true},
+                { "tcodeanalysis",  "Code quality analysis testing mode.", _ => LsrCodeAnalysisTesting = true},
                 { "antlrp",  "Use ANTLR to parse a Program.", _ => UseAntlrProgramParsing = true},
                 { "dcs|disablecopysuffixing", "Deactictivate Euro Information suffixing", v => UseEuroInformationLegacyReplacingSyntax = false },
                 { "sc|syntaxcolor",  "Syntax Coloring Support.", _ => UseSyntaxColoring = true},
@@ -275,6 +280,7 @@ namespace TypeCobol.LanguageServer
                 if (LsrPreprocessTesting) typeCobolServer.LsrTestingLevel = LsrTestingOptions.LsrPreprocessingPhaseTesting;
                 if (LsrParserTesting) typeCobolServer.LsrTestingLevel = LsrTestingOptions.LsrParsingPhaseTesting;
                 if (LsrSemanticTesting) typeCobolServer.LsrTestingLevel = LsrTestingOptions.LsrSemanticPhaseTesting;
+                if (LsrCodeAnalysisTesting) typeCobolServer.LsrTestingLevel = LsrTestingOptions.LsrCodeAnalysisPhaseTesting;
                 typeCobolServer.TimerDisabledOption = TimerDisabledOption;
                 typeCobolServer.UseAntlrProgramParsing = UseAntlrProgramParsing;
                 typeCobolServer.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;

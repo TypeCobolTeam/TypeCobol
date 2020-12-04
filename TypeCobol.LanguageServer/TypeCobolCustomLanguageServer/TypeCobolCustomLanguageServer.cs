@@ -125,10 +125,10 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// <param name="parameter"></param>
         protected virtual void OnDidReceiveNodeRefresh(NodeRefreshParams parameter)
         {
-            var context = GetDocumentContextFromStringUri(parameter.textDocument.uri, false);
+            var context = GetDocumentContextFromStringUri(parameter.textDocument.uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
             if (context != null && context.FileCompiler != null)
             {
-                this.Workspace.RefreshSyntaxTree(context.FileCompiler, true);
+                this.Workspace.RefreshSyntaxTree(context.FileCompiler, Workspace.SyntaxTreeRefreshLevel.ForceFullRefresh);
             }
         }
 
@@ -146,7 +146,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 
         protected virtual void OnDidReceiveExtractUseCopies(ExtractUseCopiesParams parameter)
         {
-            var docContext = GetDocumentContextFromStringUri(parameter.textDocument.uri, false);
+            var docContext = GetDocumentContextFromStringUri(parameter.textDocument.uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
             if (docContext?.FileCompiler?.CompilationResultsForProgram?.CopyTextNamesVariations != null)
             {
                 var _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(this.Workspace.Configuration.Copies, this.Workspace.Configuration.Format, null); //Refresh Intrinsics
@@ -189,7 +189,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// <param name="bForced">Force the server to send the program OutlineNodes</param>
         protected virtual void OnDidReceiveRefreshOutline(string uri, bool bForced)
         {
-            var context = GetDocumentContextFromStringUri(uri, false);
+            var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
 
             if (context != null && context.FileCompiler != null)
             {
