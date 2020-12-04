@@ -488,11 +488,5 @@ namespace TypeCobol.LanguageServer.Test
                 Assert.Fail("Set AutoReplace to false in UnitTestHelper.CompareDirectory()\n\n");
             }
         }
-
-        [TestMethod]
-        public void WhenCompletion()
-        {
-            LSRTestHelper.Test("WhenCompletion", LsrTestingOptions.NoLsrTesting, true);
-        }        
     }
 }

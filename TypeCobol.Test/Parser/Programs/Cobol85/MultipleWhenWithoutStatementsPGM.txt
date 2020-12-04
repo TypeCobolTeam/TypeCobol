@@ -1,10 +1,9 @@
 ﻿--- Diagnostics ---
-Line 1[2,19] <37, Warning, General> - Warning: "END PROGRAM" is missing.
-Line 7[12,24] <37, Warning, General> - Warning: "when other" is missing
 Line 8[19,28] <30, Error, Semantics> - Semantic error: Symbol TST-STT-KO is not referenced OffendingSymbol=[19,28:TST-STT-KO]<UserDefinedWord>
 Line 9[52,58] <30, Error, Semantics> - Semantic error: Symbol NBR-ERR is not referenced OffendingSymbol=[52,58:NBR-ERR]<UserDefinedWord>
 Line 10[19,28] <30, Error, Semantics> - Semantic error: Symbol TST-STT-OK is not referenced OffendingSymbol=[19,28:TST-STT-OK]<UserDefinedWord>
 Line 11[52,57] <30, Error, Semantics> - Semantic error: Symbol NBR-OK is not referenced OffendingSymbol=[52,57:NBR-OK]<UserDefinedWord>
+Line 13[14,33] <27, Error, Syntax> - Syntax error : Missing statement in "when" clause
 Line 13[19,33] <30, Error, Semantics> - Semantic error: Symbol TST-STT-UNKNOWN is not referenced OffendingSymbol=[19,33:TST-STT-UNKNOWN]<UserDefinedWord>
 Line 15[25,29] <30, Error, Semantics> - Semantic error: Symbol ABEND is not referenced OffendingSymbol=[25,29:ABEND]<UserDefinedWord>
 

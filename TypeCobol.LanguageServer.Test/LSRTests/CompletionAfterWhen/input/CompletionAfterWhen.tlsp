@@ -1,171 +1,91 @@
 {
-  "name": "CompletionAfterWhen.tlsp",
-  "session": "C:\\Users\\LANOYDO\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2020_01_03_10_33_12_253\\TestSuite_2020_01_03_10_33_12_253.slsp",
-  "user": "LANOYDO",
-  "date": "2020/01/03 10:33:12 267",
-  "uri": "file:///C:/Users/LANOYDO/Documents/CompletionAfterWhen.tlsp",
-  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\Users\\\\LANOYDO\\\\source\\\\repos\\\\TypeCobol\\\\bin\\\\EI_Debug\",\"rootUri\":\"file:/C:/Users/LANOYDO/source/repos/TypeCobol/bin/EI_Debug/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"signatureHelp\":{\"dynamicRegistration\":true},\"references\":{\"dynamicRegistration\":true},\"documentHighlight\":{\"dynamicRegistration\":true},\"documentSymbol\":{\"dynamicRegistration\":true},\"formatting\":{\"dynamicRegistration\":true},\"rangeFormatting\":{\"dynamicRegistration\":true},\"onTypeFormatting\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true},\"codeAction\":{\"dynamicRegistration\":true},\"codeLens\":{\"dynamicRegistration\":true},\"documentLink\":{\"dynamicRegistration\":true},\"rename\":{\"dynamicRegistration\":true}}},\"trace\":\"off\"}}",
-  "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"experimental\":[{\"Item1\":\"version\",\"Item2\":\"v1.4.0-prerelease.48\"}],\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
-  "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\Users\\\\LANOYDO\\\\source\\\\repos\\\\TypeCobol\\\\bin\\\\EI_Debug\\\\TypeCobol.CLI.exe\",\"-1\",\"-e\",\"rdz\",\"-y\",\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\Intrinsic\\\\Intrinsic.txt\",\"-glm\",\"\\\"{6}\\\"\",\"--autoremarks\",\"--outputFormat\\u003dCobol85Mixed\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\Production\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\MISC\",\"-md\",\"200\",\"--dependencies\",\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\Dependencies\\\\*.tcbl\",\"--dependencies\",\"\\\\\\\\uf44-004\\\\TYPECOBOL-DEPENDENCIES\\\\Y530\\\\*.tcbl\",\"--dependencies\",\"C:\\\\TypeCobol\\\\MyDependencies\\\\*.tcbl\"]}}",
-  "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. Pgm.\\r\\n       data division.\\r\\n       working-storage section.\\r\\n       01 W-OPTION         PIC X.\\r\\n           88 W-OPTION-1    Value \\u00271\\u0027.\\r\\n           88 W-OPTION-2    Value \\u00272\\u0027.\\r\\n       PROCEDURE DIVISION.\\r\\n           evaluate true\\r\\n              when W-OPTION-1 display \\\"creation\\\"\\r\\n      *Case 1\\r\\n      *Completion suggestions W-OPTION, W-OPTION-1 and W-OPTION-2\\r\\n      *but should only show W-OPTION, W-OPTION-1 and W-OPTION-2\\r\\n              when\\r\\n           end-evaluate.\\r\\n\\r\\n           evaluate true\\r\\n              when W-OPTION-1 perform creation\\r\\n      *Case 2\\r\\n      *Completion suggests CREATION, ERREUR and INIT-LIBRARY\\r\\n      *but should only show W-OPTION, W-OPTION-1 and W-OPTION-2\\r\\n              when\\r\\n           end-evaluate.\\r\\n\\r\\n           goback.\\r\\n       CREATION.\\r\\n           display \\u0027creation\\u0027 .\\r\\n       ERREUR.\\r\\n           display \\u0027error\\u0027 .\\r\\n       END PROGRAM Pgm.\"}}}",
+  "name": "Completion.Whentlsp.tlsp",
+  "session": "C:\\Users\\MAYANJE\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2020_12_04_08_50_14_138\\TestSuite_2020_12_04_08_50_14_138.slsp",
+  "user": "MAYANJE",
+  "date": "2020/12/04 08:50:14 148",
+  "uri": "file:///C:/Users/MAYANJE/Source/TEST_LSR/CompletionAfterWhen.tlsp",
+  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\Users\\\\MAYANJE\\\\Source\\\\1593_CheckCompletionUnknownValues\\\\TypeCobol\\\\bin\\\\Debug\",\"rootUri\":\"file:/C:/Users/MAYANJE/Source/1593_CheckCompletionUnknownValues/TypeCobol/bin/Debug/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"signatureHelp\":{\"dynamicRegistration\":true},\"references\":{\"dynamicRegistration\":true},\"documentHighlight\":{\"dynamicRegistration\":true},\"documentSymbol\":{\"dynamicRegistration\":true},\"formatting\":{\"dynamicRegistration\":true},\"rangeFormatting\":{\"dynamicRegistration\":true},\"onTypeFormatting\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true},\"codeAction\":{\"dynamicRegistration\":true},\"codeLens\":{\"dynamicRegistration\":true},\"documentLink\":{\"dynamicRegistration\":true},\"rename\":{\"dynamicRegistration\":true}}},\"trace\":\"off\"}}",
+  "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"experimental\":[{\"Item1\":\"version\",\"Item2\":\"0.1(alpha)\"}],\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
+  "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\Users\\\\MAYANJE\\\\Source\\\\1593_CheckCompletionUnknownValues\\\\TypeCobol\\\\bin\\\\Debug\\\\TypeCobol.CLI.exe\",\"-1\",\"-e\",\"rdz\",\"-y\",\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\Intrinsic\\\\Intrinsic.txt\",\"-glm\",\"\\\"{6}\\\"\",\"--autoremarks\",\"--outputFormat\\u003dCobol85Mixed\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\Test\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\PDSAlternatives\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\UATL\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\UAT\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\Production\",\"-md\",\"200\",\"--dependencies\",\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\Dependencies\\\\*.tcbl\",\"--dependencies\",\"\\\\\\\\uf44-004\\\\TYPECOBOL-DEPENDENCIES\\\\Y530\\\\*.tcbl\"]}}",
+  "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. Pgm.\\r\\n       data division.\\r\\n       working-storage section.\\r\\n        01 W-OPTION         PIC X.\\r\\n           88 W-OPTION-1    Value \\u00271\\u0027.\\r\\n           88 W-OPTION-2    Value \\u00272\\u0027.\\r\\n       PROCEDURE DIVISION.\\r\\n           evaluate true\\r\\n               when W-OPTION-1 display \\\"creation\\\"\\r\\n               when other continue\\r\\n      *Case 1\\r\\n      *OK Completion suggests W-OPTION, W-OPTION-1 and W-OPTION-2\\r\\n      *         when\\r\\n           end-evaluate.\\r\\n\\r\\n           evaluate true\\r\\n               when W-OPTION-1 perform creation\\r\\n               when other continue\\r\\n      *Case 2\\r\\n      *KO Completion suggests CREATION, ERREUR and INIT-LIBRARY but shou\\r\\n      *W-OPTION, W-OPTION-1 and W-OPTION-2\\r\\n      *         when\\r\\n           end-evaluate.\\r\\n\\r\\n           goback.\\r\\n       CREATION.\\r\\n           display \\u0027creation\\u0027 .\\r\\n       ERREUR.\\r\\n           display \\u0027error\\u0027 .\\r\\n       END PROGRAM Pgm.\"}}}",
   "messages": [
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":13,\"character\":18},\"end\":{\"line\":13,\"character\":18}},\"rangeLength\":0,\"text\":\" \"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. Pgm.\\r\\n       data division.\\r\\n       working-storage section.\\r\\n        01 W-OPTION         PIC X.\\r\\n           88 W-OPTION-1    Value \\u00271\\u0027.\\r\\n           88 W-OPTION-2    Value \\u00272\\u0027.\\r\\n       PROCEDURE DIVISION.\\r\\n           evaluate true\\r\\n               when W-OPTION-1 display \\\"creation\\\"\\r\\n               when other continue\\r\\n      *Case 1\\r\\n      *OK Completion suggests W-OPTION, W-OPTION-1 and W-OPTION-2\\r\\n      *         when\\r\\n           end-evaluate.\\r\\n\\r\\n           evaluate true\\r\\n               when W-OPTION-1 perform creation\\r\\n               when other continue\\r\\n      *Case 2\\r\\n      *KO Completion suggests CREATION, ERREUR and INIT-LIBRARY but shou\\r\\n      *W-OPTION, W-OPTION-1 and W-OPTION-2\\r\\n      *         when\\r\\n           end-evaluate.\\r\\n\\r\\n           goback.\\r\\n       CREATION.\\r\\n           display \\u0027creation\\u0027 .\\r\\n       ERREUR.\\r\\n           display \\u0027error\\u0027 .\\r\\n       END PROGRAM Pgm.\"}}"
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":14,\"character\":15},\"end\":{\"line\":14,\"character\":18}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing condition in \\\"when\\\" clause\"},{\"range\":{\"start\":{\"line\":22,\"character\":15},\"end\":{\"line\":22,\"character\":18}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing condition in \\\"when\\\" clause\"},{\"range\":{\"start\":{\"line\":30,\"character\":8},\"end\":{\"line\":30,\"character\":23}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: a End statement is not aligned with the matching opening statement\"},{\"range\":{\"start\":{\"line\":1,\"character\":8},\"end\":{\"line\":1,\"character\":23}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"END PROGRAM\\\" is missing.\"},{\"range\":{\"start\":{\"line\":9,\"character\":12},\"end\":{\"line\":9,\"character\":24}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"when other\\\" is missing\"},{\"range\":{\"start\":{\"line\":17,\"character\":12},\"end\":{\"line\":17,\"character\":24}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"when other\\\" is missing\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\",\"diagnostics\":[]}}"
     },
     {
       "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"position\":{\"line\":13,\"character\":19}}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\"},\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":10,\"character\":0},\"end\":{\"line\":10,\"character\":34}},\"rangeLength\":34,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\"},\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":18,\"character\":0},\"end\":{\"line\":18,\"character\":34}},\"rangeLength\":34,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\"},\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":13,\"character\":6},\"end\":{\"line\":13,\"character\":7}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\"},\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":13,\"character\":19},\"end\":{\"line\":13,\"character\":19}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":14,\"character\":16},\"end\":{\"line\":14,\"character\":19}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing condition in \\\"when\\\" clause\"},{\"range\":{\"start\":{\"line\":14,\"character\":16},\"end\":{\"line\":14,\"character\":19}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement in \\\"when\\\" clause\"},{\"range\":{\"start\":{\"line\":9,\"character\":12},\"end\":{\"line\":9,\"character\":24}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"when other\\\" is missing\"},{\"range\":{\"start\":{\"line\":17,\"character\":12},\"end\":{\"line\":17,\"character\":24}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"when other\\\" is missing\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\"},\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\",\"position\":{\"line\":13,\"character\":20}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"W-OPTION (Alphanumeric) (W-OPTION)\",\"kind\":6,\"insertText\":\"W-OPTION\"},{\"label\":\"W-OPTION-1 (Level88) (W-OPTION::W-OPTION-1)\",\"kind\":6,\"insertText\":\"W-OPTION::W-OPTION-1\"},{\"label\":\"W-OPTION-2 (Level88) (W-OPTION::W-OPTION-2)\",\"kind\":6,\"insertText\":\"W-OPTION::W-OPTION-2\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\"},\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":6},\"end\":{\"line\":22,\"character\":7}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\"},\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":19},\"end\":{\"line\":22,\"character\":19}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":14,\"character\":16},\"end\":{\"line\":14,\"character\":19}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing condition in \\\"when\\\" clause\"},{\"range\":{\"start\":{\"line\":14,\"character\":16},\"end\":{\"line\":14,\"character\":19}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing condition in \\\"when\\\" clause\"},{\"range\":{\"start\":{\"line\":23,\"character\":16},\"end\":{\"line\":23,\"character\":19}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing condition in \\\"when\\\" clause\"},{\"range\":{\"start\":{\"line\":14,\"character\":16},\"end\":{\"line\":14,\"character\":19}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement in \\\"when\\\" clause\"},{\"range\":{\"start\":{\"line\":23,\"character\":16},\"end\":{\"line\":23,\"character\":19}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Missing statement in \\\"when\\\" clause\"},{\"range\":{\"start\":{\"line\":9,\"character\":12},\"end\":{\"line\":9,\"character\":24}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"when other\\\" is missing\"},{\"range\":{\"start\":{\"line\":17,\"character\":12},\"end\":{\"line\":17,\"character\":24}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"when other\\\" is missing\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\"},\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\",\"position\":{\"line\":22,\"character\":20}}}"
     },
     {
       "category": 2,
       "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"W-OPTION (Alphanumeric) (W-OPTION)\",\"kind\":6,\"insertText\":\"W-OPTION\"},{\"label\":\"W-OPTION-1 (Level88) (W-OPTION::W-OPTION-1)\",\"kind\":6,\"insertText\":\"W-OPTION::W-OPTION-1\"},{\"label\":\"W-OPTION-2 (Level88) (W-OPTION::W-OPTION-2)\",\"kind\":6,\"insertText\":\"W-OPTION::W-OPTION-2\"}]}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":13,\"character\":19},\"end\":{\"line\":13,\"character\":19}},\"rangeLength\":0,\"text\":\"W-OPTION::W-OPTION-1\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":13,\"character\":39},\"end\":{\"line\":13,\"character\":39}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":13,\"character\":40},\"end\":{\"line\":13,\"character\":40}},\"rangeLength\":0,\"text\":\"d\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":13,\"character\":41},\"end\":{\"line\":13,\"character\":41}},\"rangeLength\":0,\"text\":\"i\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":13,\"character\":42},\"end\":{\"line\":13,\"character\":42}},\"rangeLength\":0,\"text\":\"s\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":13,\"character\":43},\"end\":{\"line\":13,\"character\":43}},\"rangeLength\":0,\"text\":\"p\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":13,\"character\":44},\"end\":{\"line\":13,\"character\":44}},\"rangeLength\":0,\"text\":\"l\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":13,\"character\":45},\"end\":{\"line\":13,\"character\":45}},\"rangeLength\":0,\"text\":\"a\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":13,\"character\":46},\"end\":{\"line\":13,\"character\":46}},\"rangeLength\":0,\"text\":\"y\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":13,\"character\":47},\"end\":{\"line\":13,\"character\":47}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":13,\"character\":48},\"end\":{\"line\":13,\"character\":48}},\"rangeLength\":0,\"text\":\"\\\"\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":13,\"character\":49},\"end\":{\"line\":13,\"character\":49}},\"rangeLength\":0,\"text\":\"h\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":13,\"character\":50},\"end\":{\"line\":13,\"character\":50}},\"rangeLength\":0,\"text\":\"i\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":13,\"character\":51},\"end\":{\"line\":13,\"character\":51}},\"rangeLength\":0,\"text\":\"\\\"\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":18},\"end\":{\"line\":22,\"character\":18}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"position\":{\"line\":22,\"character\":19}}}"
-    },
-    {
-      "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":[{\"label\":\"W-OPTION (Alphanumeric) (W-OPTION)\",\"kind\":6,\"insertText\":\"W-OPTION\"},{\"label\":\"W-OPTION-1 (Level88) (W-OPTION::W-OPTION-1)\",\"kind\":6,\"insertText\":\"W-OPTION::W-OPTION-1\"},{\"label\":\"W-OPTION-2 (Level88) (W-OPTION::W-OPTION-2)\",\"kind\":6,\"insertText\":\"W-OPTION::W-OPTION-2\"}]}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":19},\"end\":{\"line\":22,\"character\":19}},\"rangeLength\":0,\"text\":\"W-OPTION::W-OPTION-2\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":39},\"end\":{\"line\":22,\"character\":39}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":40},\"end\":{\"line\":22,\"character\":40}},\"rangeLength\":0,\"text\":\"p\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":41},\"end\":{\"line\":22,\"character\":41}},\"rangeLength\":0,\"text\":\"e\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":42},\"end\":{\"line\":22,\"character\":42}},\"rangeLength\":0,\"text\":\"r\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":43},\"end\":{\"line\":22,\"character\":43}},\"rangeLength\":0,\"text\":\"f\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":44},\"end\":{\"line\":22,\"character\":44}},\"rangeLength\":0,\"text\":\"o\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":45},\"end\":{\"line\":22,\"character\":45}},\"rangeLength\":0,\"text\":\"r\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":46},\"end\":{\"line\":22,\"character\":46}},\"rangeLength\":0,\"text\":\"m\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":47},\"end\":{\"line\":22,\"character\":47}},\"rangeLength\":0,\"text\":\" \"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":48},\"end\":{\"line\":22,\"character\":48}},\"rangeLength\":0,\"text\":\"c\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":49},\"end\":{\"line\":22,\"character\":49}},\"rangeLength\":0,\"text\":\"r\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":50},\"end\":{\"line\":22,\"character\":50}},\"rangeLength\":0,\"text\":\"e\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":51},\"end\":{\"line\":22,\"character\":51}},\"rangeLength\":0,\"text\":\"a\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":52},\"end\":{\"line\":22,\"character\":52}},\"rangeLength\":0,\"text\":\"t\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":53},\"end\":{\"line\":22,\"character\":53}},\"rangeLength\":0,\"text\":\"i\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":54},\"end\":{\"line\":22,\"character\":54}},\"rangeLength\":0,\"text\":\"o\"}]}}"
-    },
-    {
-      "category": 0,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"},\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":22,\"character\":55},\"end\":{\"line\":22,\"character\":55}},\"rangeLength\":0,\"text\":\"n\"}]}}"
     }
   ],
-  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/LANOYDO/AppData/Local/Temp/1/tcbl/DVZZDLY18604604860308688404.cee\"}}}",
+  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM48506413085541971394.cee\"}}}",
   "IsValid": true
 }

@@ -1,5 +1,4 @@
-﻿Line 1[8,23] <37, Warning, General> - Warning: "END PROGRAM" is missing.
-       IDENTIFICATION DIVISION.
+﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. Pgm.
        data division.
        working-storage section.
@@ -9,7 +8,6 @@
        01 bool1 type bool.
        01 bool2 type bool.
        PROCEDURE DIVISION.
-Line 11[12,24] <37, Warning, General> - Warning: "when other" is missing
            evaluate true
 Line 12[17,20] <27, Error, Syntax> - Syntax error : Missing condition in "when" clause
                 when
@@ -17,16 +15,22 @@ Line 12[17,20] <27, Error, Syntax> - Syntax error : Missing condition in "when" 
                 when bool1
                      when bool2 display "evaluate"
 Line 16[17,20] <27, Error, Syntax> - Syntax error : Missing condition in "when" clause
+Line 16[17,20] <27, Error, Syntax> - Syntax error : Missing statement in "when" clause
                 when
                 when other continue
            end-evaluate
-      
+           evaluate true
+                when bool1 display "evaluate"
+Line 21[17,26] <27, Error, Syntax> - Syntax error : Missing statement in "when" clause
+                when bool1
+                when other continue
+           end-evaluate      
            search var1
-Line 21[17,20] <27, Error, Syntax> - Syntax error : Missing condition in "when" clause
+Line 25[17,20] <27, Error, Syntax> - Syntax error : Missing condition in "when" clause
                 when
                 when var2
                     when var3 display "search"
-Line 24[17,20] <27, Error, Syntax> - Syntax error : Missing condition in "when" clause
+Line 28[17,20] <27, Error, Syntax> - Syntax error : Missing condition in "when" clause
                 when
            end-search
       

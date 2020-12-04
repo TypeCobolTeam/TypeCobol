@@ -16,7 +16,11 @@
                 when
                 when other continue
            end-evaluate
-      
+           evaluate true
+                when bool1 display "evaluate"
+                when bool1
+                when other continue
+           end-evaluate      
            search var1
                 when
                 when var2
