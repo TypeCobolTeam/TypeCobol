@@ -27,7 +27,11 @@
                     when var3 display "search"
                 when
            end-search
-      
+           evaluate true
+                when bool1 display "evaluate"
+      *KO missing statement in "when other" clause
+                when other
+           end-evaluate      
            move "hi" to var1
            goback.
        END PROGRAM Pgm.
