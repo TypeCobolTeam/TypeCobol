@@ -1,16 +1,16 @@
 ﻿Graph 0;;;;
 Block;InstructionIndex;Instruction;;
-Block1;0;    MOVE 2 TO I;;
-Block1;1;    MOVE I TO J;;
-Block1;2;    ADD 1 TO J;;
-Block2;0;    MOVE 1 TO I;;
-Block2;1;    IF J = 999 THEN;;
-Block3;0;         GO TO L4;;
-Block6;0;    ADD 1 TO J;;
-Block6;1;    IF J = 999 THEN;;
-Block7;0;         GO TO L4;;
-Block9;0;    SUBTRACT 4 FROM J;;
-Block10;0;    GO TO L2;;
+Block1;0;"MOVE 2 TO I";;
+Block1;1;"MOVE I TO J";;
+Block1;2;"ADD 1 TO J";;
+Block2;0;"MOVE 1 TO I";;
+Block2;1;"IF J = 999 THEN";;
+Block3;0;"GO TO L4";;
+Block6;0;"ADD 1 TO J";;
+Block6;1;"IF J = 999 THEN";;
+Block7;0;"GO TO L4";;
+Block9;0;"SUBTRACT 4 FROM J";;
+Block10;0;"GO TO L2";;
 Block;In;Out;Gen;Kill
 Block1;{};{I:Block1:0, J:Block1:2};{I:Block1:0, J:Block1:2};{I:Block2:0, J:Block6:0, J:Block9:0}
 Block2;{I:Block1:0, J:Block1:2, I:Block2:0, J:Block6:0, J:Block9:0};{J:Block1:2, I:Block2:0, J:Block6:0, J:Block9:0};{I:Block2:0};{I:Block1:0}

@@ -257,10 +257,27 @@ namespace TypeCobol.Analysis.Test
                         int instructionIndex = 0;
                         foreach (var instruction in block.Instructions)
                         {
-                            output.WriteLine($"Block{block.Index};{instructionIndex};{instruction.CodeElement?.SourceText ?? "<empty>"};;");
+                            output.WriteLine($"Block{block.Index};{instructionIndex};{InstructionToString(instruction)};;");
                             instructionIndex++;
                         }
                     }
+
+                    string InstructionToString(Node instruction)
+                    {
+                        string sourceText = instruction.CodeElement?.SourceText;
+                        if (sourceText != null)
+                        {
+                            sourceText = sourceText.Trim();
+                            sourceText = sourceText.Replace('\n', ' ')
+                                .Replace('\r', ' '); //instruction written on a single line
+                            sourceText = sourceText.Replace("\"", "\"\""); //escape double-quote
+                            return '"' + sourceText + '"';
+                        }
+
+                        return "\"<empty>\"";
+                    }
+
+                    //instruction.CodeElement?.SourceText ?? "<empty>"
                 }
 
                 //Second part of the file: In, Out, Gen and Kill sets of each block
