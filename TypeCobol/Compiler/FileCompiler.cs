@@ -184,7 +184,7 @@ namespace TypeCobol.Compiler
             // 3. Prepare the data structures used by the different steps of the compiler
             if (isCopyFile)
             {
-                CompilationResultsForCopy = new CompilationDocument(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, scanState, copyTextNameVariations);                
+                CompilationResultsForCopy = new CompilationDocument(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, scanState, copyTextNameVariations);
                 CompilationResultsForCopy.CustomSymbols = customSymbols;
             }
             else
