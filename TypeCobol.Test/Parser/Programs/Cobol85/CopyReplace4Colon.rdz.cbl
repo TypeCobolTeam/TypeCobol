@@ -3,11 +3,11 @@
        data division.
        working-storage section.
        COPY YDVZOSM replacing ==::== by ====
-                                         ==:MDVZOSM:== by ==MDVZOSM==.
+                                         ==:DVZOSM:== by ==DVZOSM==.
        COPY YDVZOSM replacing ==::== by ==2==
-                                         ==:MDVZOSM:== by ==Foo==.
+                                         ==:DVZOSM:== by ==Foo==.
        procedure division.
-           move 'A' to MDVZOSM-A
+           move 'A' to DVZOSM-A
            move 'A' to Foo-A2
            .
        end program DVZS0OSM.

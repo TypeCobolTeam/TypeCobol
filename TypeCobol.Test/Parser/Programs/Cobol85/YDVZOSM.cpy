@@ -1,2 +1,2 @@
-﻿       01  :MDVZOSM:-A::.
-           05 :MDVZOSM:-A::-Var0 pic X.
+﻿       01  :DVZOSM:-A::.
+           05 :DVZOSM:-A::-Var0 pic X.
