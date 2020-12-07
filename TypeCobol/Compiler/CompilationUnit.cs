@@ -294,15 +294,72 @@ namespace TypeCobol.Compiler
         /// </summary>
         public void RefreshCodeAnalysisDocumentSnapshot()
         {
-            PerfStatsForCodeQualityCheck.OnStartRefresh();
+            lock (lockObjectForCodeAnalysisDocumentSnapshot)
+            {
+                var programClassDocument = ProgramClassDocumentSnapshot;
+                if (programClassDocument != null && CodeAnalysisDocumentNeedsUpdate())
+                {
+                    PerfStatsForCodeQualityCheck.OnStartRefresh();
 
-            //TODO implement code analysis refresh: create and launch analyzers, gather violations, capture results in a new snapshot
+                    List<Diagnostic> violations = new List<Diagnostic>();
+                    var analyzers = _analyzerProvider?.CreateASTAnalyzers(CompilerOptions);
+                    if (analyzers != null)
+                    {
+                        //Launch code analysis and gather violations
+                        foreach (var analyzer in analyzers)
+                        {
+                            try
+                            {
+                                programClassDocument.Root.AcceptASTVisitor(analyzer);
+                                violations.AddRange(analyzer.Diagnostics);
+                            }
+                            catch (Exception exception)
+                            {
+                                ReportAnalyzerException(exception);
+                            }
+                        }
 
-            PerfStatsForCodeQualityCheck.OnStopRefresh();
+                        //Store analyzer results (if any)
+                        lock (lockObjectForAnalyzerResults)
+                        {
+                            foreach (var analyzer in analyzers)
+                            {
+                                try
+                                {
+                                    _analyzerResults[analyzer.Identifier] = analyzer.GetResult();
+                                }
+                                catch (Exception exception)
+                                {
+                                    ReportAnalyzerException(exception);
+                                }
+                            }
+                        }
+                    }
+
+                    //Create updated snapshot
+                    CodeAnalysisDocumentSnapshot = new InspectedProgramClassDocument(programClassDocument, violations);
+
+                    PerfStatsForCodeQualityCheck.OnStopRefresh();
+                }
+
+                bool CodeAnalysisDocumentNeedsUpdate()
+                {
+                    return CodeAnalysisDocumentSnapshot == null //Not yet computed
+                           ||
+                           (CodeAnalysisDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != programClassDocument.CurrentVersion); //Obsolete version
+                }
+
+                void ReportAnalyzerException(Exception exception)
+                {
+                    //TODO create diagnostic for analyzer failure
+                }
+            }
+
+            //TODO CompositeAnalyzerProvider
         }
 
         /// <summary>
-        /// Last snapshot of the compilation unit viewed as a complete Cobol program or class, after parsing the code elements.
+        /// Snapshot of the compilation unit viewed as a complete Cobol program or class, after parsing the code elements.
         /// Only one of the two properties Program or Class can be not null.
         /// Tread-safe : accessible from any thread, returns an immutable object tree.
         /// </summary> 
@@ -315,6 +372,13 @@ namespace TypeCobol.Compiler
         /// </summary>
         public TemporarySemanticDocument TemporaryProgramClassDocumentSnapshot { get; private set; }
 
+
+        /// <summary>
+        /// Final snapshot of the compilation unit, it captures the fully parsed Cobol program
+        /// along with all code-quality violations produced during the code analysis phase.
+        /// This property is thread-safe.
+        /// </summary>
+        public InspectedProgramClassDocument CodeAnalysisDocumentSnapshot { get; private set; }
 
         /// <summary>
         /// Return diagnostics attached directly to a CodeElement or to CodeElementsDocumentSnapshot
@@ -415,6 +479,7 @@ namespace TypeCobol.Compiler
         protected readonly object lockObjectForTemporarySemanticDocument = new object();
         protected readonly object lockObjectForProgramClassDocumentSnapshot = new object();
         protected readonly object lockObjectForAnalyzerResults = new object();
+        protected readonly object lockObjectForCodeAnalysisDocumentSnapshot = new object();
 
         #endregion
     }
