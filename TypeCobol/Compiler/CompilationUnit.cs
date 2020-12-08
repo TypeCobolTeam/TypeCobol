@@ -315,7 +315,7 @@ namespace TypeCobol.Compiler
                             }
                             catch (Exception exception)
                             {
-                                ReportAnalyzerException(exception);
+                                ReportAnalyzerException(analyzer.Identifier, exception);
                             }
                         }
 
@@ -330,9 +330,15 @@ namespace TypeCobol.Compiler
                                 }
                                 catch (Exception exception)
                                 {
-                                    ReportAnalyzerException(exception);
+                                    ReportAnalyzerException(analyzer.Identifier, exception);
                                 }
                             }
+                        }
+
+                        void ReportAnalyzerException(string analyzer, Exception exception)
+                        {
+                            var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, 0, 0, 0, analyzer, exception.Message, exception);
+                            violations.Add(diagnostic);
                         }
                     }
 
@@ -347,11 +353,6 @@ namespace TypeCobol.Compiler
                     return CodeAnalysisDocumentSnapshot == null //Not yet computed
                            ||
                            (CodeAnalysisDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != programClassDocument.CurrentVersion); //Obsolete version
-                }
-
-                void ReportAnalyzerException(Exception exception)
-                {
-                    //TODO create diagnostic for analyzer failure
                 }
             }
 
@@ -408,18 +409,21 @@ namespace TypeCobol.Compiler
         }
 
         /// <summary>
-        /// Return All diagnostics from all snapshots (token, CodeElement, Node, ...) with the possibily to exclude Node diagnostics
-        /// 
+        /// Return All diagnostics from all snapshots (token, CodeElement, Node, ...) with the possibility
+        /// to exclude Node diagnostics and/or Quality diagnostics
         /// Note that a snapshot only contains diagnostics related to its own phase.
         /// </summary>
-        /// <param name="includeNodeDiagnostics"></param>
-        /// <returns></returns>
-        public IList<Diagnostic> AllDiagnostics(bool includeNodeDiagnostics) {
+        /// <param name="includeNodeDiagnostics">True to include diagnostics produced by Node phase</param>
+        /// <param name="includeQualityViolations">True to include diagnostics/rule-violations produced by QualityCheck</param>
+        /// <returns>A list of selected diagnostics.</returns>
+        public IList<Diagnostic> AllDiagnostics(bool includeNodeDiagnostics, bool includeQualityViolations)
+        {
             var allDiagnostics = new List<Diagnostic>(base.AllDiagnostics());
 
             allDiagnostics.AddRange(OnlyCodeElementDiagnostics());
 
-            if (includeNodeDiagnostics) {
+            if (includeNodeDiagnostics)
+            {
                 lock (lockObjectForTemporarySemanticDocument)
                 {
                     if (TemporaryProgramClassDocumentSnapshot != null)
@@ -441,6 +445,17 @@ namespace TypeCobol.Compiler
                 }
             }
 
+            if (includeQualityViolations)
+            {
+                lock (lockObjectForCodeAnalysisDocumentSnapshot)
+                {
+                    if (CodeAnalysisDocumentSnapshot != null)
+                    {
+                        allDiagnostics.AddRange(CodeAnalysisDocumentSnapshot.Violations);
+                    }
+                }
+            }
+
             return allDiagnostics;
         }
 
@@ -449,7 +464,7 @@ namespace TypeCobol.Compiler
         /// </summary>
         /// <returns></returns>
         public override IList<Diagnostic> AllDiagnostics() {
-            return AllDiagnostics(true);
+            return AllDiagnostics(true, true);
         }
 
         /// <summary>
