@@ -59,11 +59,11 @@ namespace TypeCobol.Analysis.Test
         public void ProcCallPgmReportTest()
         {
             string path = Path.Combine(CfgTestUtils.Report, "ProcCallPgm.cbl");
-            var cfgs = ParseCompareDiagnostics<DfaBasicBlockInfo<VariableSymbol>>(path, CfgBuildingMode.WithDfa);
-            Assert.IsTrue(cfgs.Count == 1);
+            DfaTestResults dfaresult = ParseCompareDiagnosticsWithDfa(path);
+            Assert.IsTrue(dfaresult.Graphs.Count == 1);
 
             //Create the report file.
-            ZCallPgmReport reporter = new ZCallPgmReport(cfgs);
+            ZCallPgmReport reporter = new ZCallPgmReport(dfaresult.Graphs);
             using (StringWriter sw = new StringWriter())
             {
                 reporter.Report(sw);

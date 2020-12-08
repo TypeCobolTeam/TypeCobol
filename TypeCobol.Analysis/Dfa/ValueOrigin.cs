@@ -140,25 +140,24 @@ namespace TypeCobol.Analysis.Dfa
                 void ProcessDataDefinition(DataDefinition dataDef)
                 {
                     VariableSymbol vs = (VariableSymbol)dataDef.SemanticData;
-                    if (vs.Value != null)
-                    { //(2.1.1.3.1) Take the initial value and add it to the origins path.
-                        if (vs.Value is Value value)
-                        {                            
-                            var origin = new ValueOrigin(vs)
-                            {
-                                Value = value
-                            };
-                            result.Origins.Add(origin);
-                        }
-                        else if (vs.Value is Value[] values && values.Length > 0)
+                    System.Diagnostics.Debug.Assert(vs.Value != null);
+                    //(2.1.1.3.1) Take the initial value and add it to the origins path.
+                    if (vs.Value is Value value)
+                    {                            
+                        var origin = new ValueOrigin(vs)
                         {
-                            var origin = new ValueOrigin(vs)
-                            {
-                                Value = values[0]
-                            };
-                            result.Origins.Add(origin);
-                        };                        
+                            Value = value
+                        };
+                        result.Origins.Add(origin);
                     }
+                    else if (vs.Value is Value[] values && values.Length > 0)
+                    {
+                        var origin = new ValueOrigin(vs)
+                        {
+                            Value = values[0]
+                        };
+                        result.Origins.Add(origin);
+                    };                        
                 }
             }
 
