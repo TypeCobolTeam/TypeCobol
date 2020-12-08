@@ -779,7 +779,7 @@ namespace TypeCobol.LanguageServer
             if (docContext.FileCompiler?.CompilationResultsForProgram?.ProcessedTokensDocumentSnapshot == null) //Semantic snapshot is not available
                 return null;
 
-            var wrappedCodeElement = CodeElementFinder(docContext.FileCompiler, parameters.position).FirstOrDefault();
+            var wrappedCodeElement = CodeElementFinder(docContext.FileCompiler, parameters.position)?.FirstOrDefault();
             if (wrappedCodeElement == null) //No codeelements found
                 return null;
 

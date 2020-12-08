@@ -103,7 +103,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (performCE.Procedure != null)
             {
-                var procedure = SectionOrParagraphUsageChecker.ResolveTargetSectionOrParagraph(performProcedureNode, performCE.Procedure, _currentSection);
+                var procedure = SectionOrParagraphUsageChecker.ResolveSectionOrParagraph(performProcedureNode, performCE.Procedure, _currentSection);
                 switch (procedure.Item1)
                 {
                     case SymbolType.SectionName:
@@ -117,7 +117,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (performCE.ThroughProcedure != null)
             {
-                var throughProcedure = SectionOrParagraphUsageChecker.ResolveTargetSectionOrParagraph(performProcedureNode, performCE.ThroughProcedure, _currentSection);
+                var throughProcedure = SectionOrParagraphUsageChecker.ResolveSectionOrParagraph(performProcedureNode, performCE.ThroughProcedure, _currentSection);
                 switch (throughProcedure.Item1)
                 {
                     case SymbolType.SectionName:
@@ -663,10 +663,13 @@ namespace TypeCobol.Compiler.Diagnostics
                     //Check if we're dealing with an input parameter
                     if (paramDesc?.PassingType == ParameterDescription.PassingTypes.Input)
                     {
-                        var specialRegister = storageArea as StorageAreaPropertySpecialRegister;
-                        //Unless this is a format 5 set statement, we have an error. So we're checking we're not in the following format  :
+                        //We allow modification on indices because semantically they are value types, the procedure uses a copy of the input (issue #1789).
+                        //Also format 5 set statements are allowed because it does not affect the input for the caller (issue #1625).
                         //set (address of)? identifier(pointer) TO (address of)? identifier | NULL
-                        if (specialRegister?.SpecialRegisterName.TokenType != TokenType.ADDRESS)
+                        bool isModificationAllowed = dataDefinitionFound.IsIndex
+                                                     ||
+                                                     (storageArea is StorageAreaPropertySpecialRegister register && register.SpecialRegisterName.TokenType == TokenType.ADDRESS);
+                        if (!isModificationAllowed)
                         {
                             DiagnosticUtils.AddError(node, "Input variable '" + paramDesc.Name + "' is modified by an instruction", area.SymbolReference);
                         }
@@ -861,56 +864,34 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class SectionOrParagraphUsageChecker
+    static class SectionOrParagraphUsageChecker
     {
         /// <summary>
         /// Disambiguate between Section or Paragraph reference.
         /// </summary>
         /// <param name="callerNode">Node using the paragraph or the reference.</param>
         /// <param name="target">A non-null Symbol reference to disambiguate.</param>
-        /// /// <param name="currentSection">The node scope in which the perform statement is declared</param>
+        /// <param name="currentSection">The node scope in which the perform statement is declared</param>
         /// <returns>A tuple made of a SymbolType and a Node when the target has been correctly resolved.
         /// The returned SymbolType is non-ambiguous if the type of the target has been determined.</returns>
         /// <remarks>This method will create appropriate diagnostics on Node if resolution is inconclusive.</remarks>
-        public static (SymbolType, Node) ResolveTargetSectionOrParagraph(Node callerNode, [NotNull] SymbolReference target, Section currentSection)
+        public static (SymbolType, Node) ResolveSectionOrParagraph(Node callerNode, [NotNull] SymbolReference target, Section currentSection)
         {
-            IList<Section> sections;
-            IList<Paragraph> paragraphs;
+            var candidates = callerNode.SymbolTable.GetSectionOrParagraph(target, currentSection);
+            IList<Section> sections = candidates.Item1;
+            IList<Paragraph> paragraphs = candidates.Item2;
+
             var symbolType = target.Type;
-            //First step : check target type
-            if (target.IsAmbiguous)
-            {
-                //Have to search for both sections and paragraphs in SymbolTable
-                sections = GetSections();
-                paragraphs = GetParagraphs();
-            }
-            else
-            {
-                switch (symbolType)
-                {
-                    case SymbolType.SectionName:
-                        sections = GetSections();
-                        paragraphs = null;
-                        break;
-                    case SymbolType.ParagraphName:
-                        sections = null;
-                        paragraphs = GetParagraphs();
-                        break;
-                    default:
-                        //Invalid SymbolType for a procedure name
-                        return (symbolType, null);
-                }
-            }
-            //Second step : Resolve according to whether we're dealing with a section or a paragraph name
-            //Here we're dealing with a section
             if (paragraphs == null || paragraphs.Count == 0)
             {
                 if (sections == null || sections.Count == 0)
                 {
+                    //Nothing found
                     DiagnosticUtils.AddError(callerNode, $"Symbol {target.Name} is not referenced", target, MessageCode.SemanticTCErrorInParser);
                     return (symbolType, null);
                 }
 
+                //We know for sure it's a section but is it ambiguous ?
                 symbolType = SymbolType.SectionName;
                 if (sections.Count > 1)
                 {
@@ -918,36 +899,28 @@ namespace TypeCobol.Compiler.Diagnostics
                     return (symbolType, null);
                 }
 
+                //Return single section found
                 return (symbolType, sections[0]);
             }
-            //Here we're dealing with either a section or a paragraph
-            else
-            {
-                //No section matches the name so it's a paragraph
-                if (sections == null || sections.Count == 0)
-                {
-                    //We set the symbol type to paragraph
-                    symbolType = SymbolType.ParagraphName;
-                    
-                    if (paragraphs.Count > 1)
-                    {
-                        DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to paragraph {target.Name}", target, MessageCode.SemanticTCErrorInParser);
-                        return (symbolType, null);
-                    }
 
-                    return (symbolType, paragraphs[0]);
-                }
-                //The reference is ambiguous, we don't know what we're dealing with
-                else
+            //No section matches the name so it's a paragraph
+            if (sections == null || sections.Count == 0)
+            {
+                //Check if paragraph is ambiguous
+                symbolType = SymbolType.ParagraphName;
+                if (paragraphs.Count > 1)
                 {
-                    DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to procedure {target.Name}", target, MessageCode.SemanticTCErrorInParser);
-                    return (SymbolType.TO_BE_RESOLVED, null);
+                    DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to paragraph {target.Name}", target, MessageCode.SemanticTCErrorInParser);
+                    return (symbolType, null);
                 }
+
+                //Return single paragraph found
+                return (symbolType, paragraphs[0]);
             }
 
-            IList<Section> GetSections() => callerNode.SymbolTable.GetSection(target.Name);
-
-            IList<Paragraph> GetParagraphs() => callerNode.SymbolTable.GetParagraph(target, currentSection);
+            //The reference is ambiguous, we don't know what we're dealing with
+            DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to procedure {target.Name}", target, MessageCode.SemanticTCErrorInParser);
+            return (SymbolType.TO_BE_RESOLVED, null);
         }
 
         private static void CheckIsNotEmpty<T>(string nodeTypeName, T node) where T : Node

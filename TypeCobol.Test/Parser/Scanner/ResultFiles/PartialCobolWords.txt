@@ -20,12 +20,7 @@
 [29,35:MYCOPY1]<UserDefinedWord>
 
 -- Line 4 --
-[1,5:WORD1]<UserDefinedWord>
-[6,6::]<ColonSeparator>
-[7,11:WORD2]<UserDefinedWord>
-[12,12: ]<SpaceSeparator>
-[13,13::]<ColonSeparator>
-[14,18:WORD3]<UserDefinedWord>
+[1,18:WORD1:WORD2 :WORD3]<PartialCobolWord>
 [19,19:(]<LeftParenthesisSeparator>
 [20,20:0]<IntegerLiteral>{0}
 [21,21::]<ColonSeparator>
@@ -54,10 +49,9 @@
 [7,7+:.]<PeriodSeparator>
 
 -- Line 11 --
-[1,14:a01-:7::8:_:9:]<PartialCobolWord>
-[15,15::]<ColonSeparator>
-[16,16: ]<SpaceSeparator>
-[17,32:b02-:10:11:12:ab]<PartialCobolWord>
+[1,29:a01-:7::8:_:9:: b02-:10:11:12]<PartialCobolWord>
+[30,30::]<ColonSeparator>
+[31,32:ab]<UserDefinedWord>
 [33,33: ]<SpaceSeparator>
 [34,49:c03-:13:abc:14:e]<PartialCobolWord>
 

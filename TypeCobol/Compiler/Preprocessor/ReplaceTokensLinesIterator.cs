@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
@@ -441,31 +442,17 @@ namespace TypeCobol.Compiler.Preprocessor
                 // One pure partial word => one replacement token
                 case ReplaceOperationType.PartialWord:
                     PartialWordReplaceOperation partialWordReplaceOperation = (PartialWordReplaceOperation)replaceOperation;
-                    string tokenText = originalToken.Text;
-                    string partToReplace = partialWordReplaceOperation.ComparisonToken.Text;
+                    string normalizedTokenText = originalToken.NormalizedText;
+                    string normalizedPartToReplace = partialWordReplaceOperation.ComparisonToken.NormalizedText;
                     //#258 - PartialReplacementToken can be null. In this case, we consider that it's an empty replacement
                     var replacementPart = partialWordReplaceOperation.PartialReplacementToken != null ? partialWordReplaceOperation.PartialReplacementToken.Text : "";
-                    //replace every occurrences in the original token text
-                    int startIndex = 0;
-                    int indexOfPartToReplace;
-                    while (startIndex < tokenText.Length
-                           &&
-                           (indexOfPartToReplace = tokenText.IndexOf(partToReplace, startIndex, StringComparison.OrdinalIgnoreCase)) >= 0)
-                    {
-                        tokenText =
-                            (indexOfPartToReplace > 0
-                                ? tokenText.Substring(0, indexOfPartToReplace)
-                                : string.Empty) +
-                            replacementPart +
-                            (indexOfPartToReplace + partToReplace.Length < tokenText.Length
-                                ? tokenText.Substring(indexOfPartToReplace + partToReplace.Length)
-                                : string.Empty);
-                        startIndex = indexOfPartToReplace + replacementPart.Length;
-                    }
+
                     // TO DO use Replace(String, String, StringComparison) overload, available in .NET 5
+                    string replacedTokenText = Regex.Replace(normalizedTokenText, normalizedPartToReplace, replacementPart, RegexOptions.IgnoreCase);
+
                     // TO DO : find a way to transfer the scanner context the of original token to the call below
                     Diagnostic error = null;
-                    Token generatedToken = Scanner.Scanner.ScanIsolatedTokenInDefaultContext(tokenText, out error);
+                    Token generatedToken = Scanner.Scanner.ScanIsolatedTokenInDefaultContext(replacedTokenText, out error);
                     // TO DO : find a way to report the error above ...
 
                     if (originalToken.PreviousTokenType != null) //In case orignal token was previously an other type of token reset it back to it's orignal type. 
