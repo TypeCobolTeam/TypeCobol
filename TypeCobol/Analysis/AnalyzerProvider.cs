@@ -58,4 +58,52 @@ namespace TypeCobol.Analysis
             _astaActivators.Add(activator);
         }
     }
+
+    /// <summary>
+    /// Extends AnalyzerProvider to allow composition of multiple providers into one.
+    /// </summary>
+    public class CompositeAnalyzerProvider : AnalyzerProvider
+    {
+        private List<IAnalyzerProvider> _providers;
+
+        private TAnalyzer[] Concat<TAnalyzer>(TAnalyzer[] fromBase, Func<IAnalyzerProvider, IEnumerable<TAnalyzer>> selector)
+        {
+            if (_providers != null && _providers.Count > 0)
+            {
+                var result = _providers.SelectMany(selector);
+                if (fromBase != null)
+                {
+                    result = fromBase.Concat(result);
+                }
+                return result.ToArray();
+            }
+
+            return fromBase;
+        }
+
+        public override ISyntaxDrivenAnalyzer[] CreateSyntaxDrivenAnalyzers(TypeCobolOptions options, TextSourceInfo textSourceInfo)
+        {
+            var fromBase = base.CreateSyntaxDrivenAnalyzers(options, textSourceInfo);
+            return Concat(fromBase, p => p.CreateSyntaxDrivenAnalyzers(options, textSourceInfo));
+        }
+
+        public override IASTAnalyzer[] CreateASTAnalyzers(TypeCobolOptions options)
+        {
+            var fromBase = base.CreateASTAnalyzers(options);
+            return Concat(fromBase, p => p.CreateASTAnalyzers(options));
+        }
+
+        /// <summary>
+        /// Add an analyzer provider to this one.
+        /// </summary>
+        /// <param name="provider">Instance of IAnalyzerProvider.</param>
+        public void AddProvider(IAnalyzerProvider provider)
+        {
+            if (_providers == null)
+            {
+                _providers = new List<IAnalyzerProvider>();
+            }
+            _providers.Add(provider);
+        }
+    }
 }

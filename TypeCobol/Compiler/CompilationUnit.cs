@@ -355,8 +355,6 @@ namespace TypeCobol.Compiler
                            (CodeAnalysisDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != programClassDocument.CurrentVersion); //Obsolete version
                 }
             }
-
-            //TODO CompositeAnalyzerProvider
         }
 
         /// <summary>

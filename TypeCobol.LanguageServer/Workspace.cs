@@ -507,7 +507,7 @@ namespace TypeCobol.LanguageServer
             var typeCobolOptions = new TypeCobolOptions(Configuration);
 
             //Configure CFG/DFA analyzer
-            var analyzerProvider = new AnalyzerProvider();
+            var analyzerProvider = new CompositeAnalyzerProvider();
             analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgDfaAnalyzer("cfg-dfa", Configuration.CfgBuildingMode));
 
             CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format, typeCobolOptions, analyzerProvider);
