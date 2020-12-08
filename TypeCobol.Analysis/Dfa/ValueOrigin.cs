@@ -14,7 +14,7 @@ namespace TypeCobol.Analysis.Dfa
         /// <summary>
         /// Computes the ValueOrigin from a starting UsePoint.
         /// The Algorithm works like that:
-        /// (1) If the UsePoint has no associated UseDef set then tries to see if variable has an initial value.
+        /// (1) If the UsePoint has no associated UseDef set then return.
         /// (2) The UsePoint has a UseDef set.
         /// (2.1) For each Definition Point of the UseDef set
         /// (2.1.1) Only take in account those DefinitionPoints associated to a MOVE or a SET instruction.
@@ -27,6 +27,8 @@ namespace TypeCobol.Analysis.Dfa
         /// (2.1.1.2) a SET statement
         ///     (2.1.1.2.1) The Set instruction is Condition variable set then
         ///                 the value is the first value of the level 88 variable
+        /// (2.1.1.3) a DataDescription, Redefines or a DataCondition Entry from a Data Definition.
+        ///     (2.1.1.3.1) Take the initiale value and add it to the origins path.
         /// </summary>
         /// <param name="start">UsePoint to start the analysis.</param>
         /// <param name="dfaBuilder">Data Flow Graph builder.</param>
@@ -41,16 +43,7 @@ namespace TypeCobol.Analysis.Dfa
 
             if (start.UseDef == null || start.UseDef.Cardinality() == 0)
             {
-                //(1) No Definitions ==> try to see if the variable has an Initial Value
-                if (variable.Value != null && variable.Value is Value value)
-                {
-                    return new ValueOrigin(variable)
-                    {
-                        Value = value
-                    };
-                }
-
-                //This is an uninitialized variable !
+                //(1) No Definitions ==> This is an uninitialized variable !
                 return null;
             }
 
@@ -75,6 +68,12 @@ namespace TypeCobol.Analysis.Dfa
                         //(2.1.1.2)
                         ProcessSetStatement((SetStatement) defPoint.Instruction.CodeElement);
                         break;
+                    case CodeElementType.DataDescriptionEntry:
+                    case CodeElementType.DataRedefinesEntry:
+                    case CodeElementType.DataConditionEntry:
+                        //(2.1.1.3)
+                        ProcessDataDefinition(defPoint.Instruction as DataDefinition);
+                        break;                    
                 }
 
                 void ProcessMoveStatement(MoveStatement move)
@@ -135,6 +134,30 @@ namespace TypeCobol.Analysis.Dfa
                                 result.Origins.Add(origin);
                             }
                             break;
+                    }
+                }
+
+                void ProcessDataDefinition(DataDefinition dataDef)
+                {
+                    VariableSymbol vs = (VariableSymbol)dataDef.SemanticData;
+                    if (vs.Value != null)
+                    { //(2.1.1.3.1) Take the initial value and add it to the origins path.
+                        if (vs.Value is Value value)
+                        {                            
+                            var origin = new ValueOrigin(vs)
+                            {
+                                Value = value
+                            };
+                            result.Origins.Add(origin);
+                        }
+                        else if (vs.Value is Value[] values && values.Length > 0)
+                        {
+                            var origin = new ValueOrigin(vs)
+                            {
+                                Value = values[0]
+                            };
+                            result.Origins.Add(origin);
+                        };                        
                     }
                 }
             }

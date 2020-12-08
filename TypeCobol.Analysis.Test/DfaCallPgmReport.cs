@@ -54,5 +54,26 @@ namespace TypeCobol.Analysis.Test
                 TypeCobol.Test.TestUtils.compareLines(path, result, expected, output);
             }
         }
+
+        [TestMethod]
+        public void ProcCallPgmReportTest()
+        {
+            string path = Path.Combine(CfgTestUtils.Report, "ProcCallPgm.cbl");
+            var cfgs = ParseCompareDiagnostics<DfaBasicBlockInfo<VariableSymbol>>(path, CfgBuildingMode.WithDfa);
+            Assert.IsTrue(cfgs.Count == 1);
+
+            //Create the report file.
+            ZCallPgmReport reporter = new ZCallPgmReport(cfgs);
+            using (StringWriter sw = new StringWriter())
+            {
+                reporter.Report(sw);
+                // compare with expected result
+                string result = sw.ToString();
+                string output = Path.Combine(CfgTestUtils.Report, "ProcCallPgm.csv");
+                string expected = File.ReadAllText(output, DocumentFormat.RDZReferenceFormat.Encoding);
+                TypeCobol.Test.TestUtils.compareLines(path, result, expected, output);
+            }
+        }
+
     }
 }
