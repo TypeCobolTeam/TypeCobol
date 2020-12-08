@@ -189,7 +189,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// <param name="bForced">Force the server to send the program OutlineNodes</param>
         protected virtual void OnDidReceiveRefreshOutline(string uri, bool bForced)
         {
-            var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
+            var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
 
             if (context != null && context.FileCompiler != null)
             {
