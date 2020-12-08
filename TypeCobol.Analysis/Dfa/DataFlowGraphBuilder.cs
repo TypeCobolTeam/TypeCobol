@@ -25,6 +25,7 @@ namespace TypeCobol.Analysis.Dfa
         {
             System.Diagnostics.Debug.Assert(cfg != null);
             this.Cfg = cfg;
+            this.Cfg.ResetAllBlockData();
         }
 
         /// <summary>

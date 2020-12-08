@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler.Symbols;
 using System.IO;
 using TypeCobol.Analysis.Dfa;
-using TypeCobol.Analysis.Graph;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.CupParser.NodeBuilder;
 using TypeCobol.Compiler.Directives;
@@ -76,24 +74,15 @@ namespace TypeCobol.Analysis.Test
         public void PrgWithNoProcDiv()
         {
             string path = Path.Combine(CfgTestUtils.CfgDfaBuildTests, "PrgWithNoProcDiv.cbl");
-            var cfg = ParseCompareDiagnosticsForDfa(path);
-            Assert.IsTrue(cfg.Count == 1);
+            var dfaResults = ParseCompareDiagnosticsWithDfa(path);
+            Assert.IsTrue(dfaResults.Graphs.Count == 1);
 
             //Try to compute predecessor edges.
-            cfg[0].SetupPredecessorEdgesFromRoot();
+            dfaResults.Graphs[0].SetupPredecessorEdgesFromRoot();
 
             //Test Empty Cfg Generated.
             string expectedPath = Path.Combine(CfgTestUtils.CfgDfaBuildTests, "EmptyCfg.dot");
-            GenDotCfgAndCompare(cfg[0], path, expectedPath, true);
-
-            //Test DFA algorithms.
-            DefaultDataFlowGraphBuilder dfaBuilder = new DefaultDataFlowGraphBuilder(cfg[0]);
-            dfaBuilder.ComputeUseList();
-            dfaBuilder.ComputeDefList();
-            dfaBuilder.ComputeGenSet();
-            dfaBuilder.ComputeKillSet();
-            dfaBuilder.ComputeInOutSet();
-            dfaBuilder.ComputeUseDefSet();
+            GenDotCfgAndCompare(dfaResults.Graphs[0], path, expectedPath, true);
         }
     }
 }

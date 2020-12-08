@@ -1,10 +1,5 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TypeCobol.Analysis.Dfa;
-using TypeCobol.Analysis.Graph;
-using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.Symbols;
 
 using static TypeCobol.Analysis.Test.CfgTestUtils;
 
@@ -20,84 +15,83 @@ namespace TypeCobol.Analysis.Test
         public void IfThenTest()
         {
             string path = Path.Combine(BasicCfgInstrs, "IfThen0.cbl");
-            var cfg = ParseCompareDiagnosticsForDfa(path);
-            Assert.IsTrue(cfg.Count == 1);
+            var dfaResults = ParseCompareDiagnosticsWithDfa(path);
+            Assert.IsTrue(dfaResults.Graphs.Count == 1);
 
-            DefaultDataFlowGraphBuilder dfaBuilder = new DefaultDataFlowGraphBuilder(cfg[0]);
-            dfaBuilder.ComputeUseList();
-            Assert.AreEqual(1, dfaBuilder.UseList.Count);
-            Assert.IsTrue(dfaBuilder.UseList[0].Instruction.CodeElement.Type == Compiler.CodeElements.CodeElementType.IfStatement);
-            Assert.AreEqual(dfaBuilder.UseList[0].Variable.Name, "A");
+            var useList = dfaResults.GetUseList(dfaResults.Graphs[0]);
+            Assert.AreEqual(1, useList.Count);
+            Assert.IsTrue(useList[0].Instruction.CodeElement.Type == Compiler.CodeElements.CodeElementType.IfStatement);
+            Assert.AreEqual(useList[0].Variable.Name, "A");
 
-            dfaBuilder.ComputeDefList();
-            Assert.AreEqual(0, dfaBuilder.DefList.Count);
+            var defList = dfaResults.GetDefList(dfaResults.Graphs[0]);
+            Assert.AreEqual(0, defList.Count);
         }
 
         [TestMethod]
         public void SearchCond0()
         {
             string path = Path.Combine(BasicCfgInstrs, "SearchCond0.cbl");
-            var cfg = ParseCompareDiagnosticsForDfa(path);
-            Assert.IsTrue(cfg.Count == 1);
+            var dfaResults = ParseCompareDiagnosticsWithDfa(path);
+            Assert.IsTrue(dfaResults.Graphs.Count == 1);
 
-            DefaultDataFlowGraphBuilder dfaBuilder = new DefaultDataFlowGraphBuilder(cfg[0]);
-            dfaBuilder.ComputeUseList();
-            Assert.AreEqual(8, dfaBuilder.UseList.Count);
+            var useList = dfaResults.GetUseList(dfaResults.Graphs[0]);
+            Assert.AreEqual(8, useList.Count);
             string[] useVars = { "ELEM", "IDX", "NBJ", "IDX", "NUM", "LIB", "IDX", "IDX-END"};
             for (int i = 0; i < 8; i++)
             {
-                Assert.AreEqual(dfaBuilder.UseList[i].Variable.Name, useVars[i]);
+                Assert.AreEqual(useList[i].Variable.Name, useVars[i]);
             }
 
-            dfaBuilder.ComputeDefList();
-            Assert.AreEqual(2, dfaBuilder.DefList.Count);
-            Assert.AreEqual(dfaBuilder.DefList[0].Variable.Name, "IDX");
-            Assert.AreEqual(dfaBuilder.DefList[1].Variable.Name, "NUM");
+            var defList = dfaResults.GetDefList(dfaResults.Graphs[0]);
+            Assert.AreEqual(2, defList.Count);
+            Assert.AreEqual(defList[0].Variable.Name, "IDX");
+            Assert.AreEqual(defList[1].Variable.Name, "NUM");
         }
 
         [TestMethod]
         public void MixPerformEvaluateIf0()
         {
             string path = Path.Combine(BasicCfgInstrs, "MixPerformEvaluateIf0.cbl");
-            var cfgs = ParseCompareDiagnosticsForDfa(path);
-            Assert.IsTrue(cfgs.Count == 1);
+            var dfaResults = ParseCompareDiagnosticsWithDfa(path);
+            Assert.IsTrue(dfaResults.Graphs.Count == 1);
 
-            DefaultDataFlowGraphBuilder dfaBuilder = new DefaultDataFlowGraphBuilder(cfgs[0]);
-            dfaBuilder.ComputeUseList();
-            Assert.AreEqual(0, cfgs[0].AllBlocks[0].Data.UseCount);
-            Assert.AreEqual(0, cfgs[0].AllBlocks[1].Data.UseCount);
-            Assert.AreEqual(0, cfgs[0].AllBlocks[2].Data.UseCount);
-            Assert.AreEqual(0, cfgs[0].AllBlocks[3].Data.UseCount);
-            Assert.AreEqual(0, cfgs[0].AllBlocks[4].Data.UseCount);
-            Assert.AreEqual(1, cfgs[0].AllBlocks[5].Data.UseCount);
-            Assert.AreEqual("ef", dfaBuilder.UseList[cfgs[0].AllBlocks[1].Data.UseListFirstIndex].Variable.Name);
+            var cfg = dfaResults.Graphs[0];
+            Assert.AreEqual(0, cfg.AllBlocks[0].Data.UseCount);
+            Assert.AreEqual(0, cfg.AllBlocks[1].Data.UseCount);
+            Assert.AreEqual(0, cfg.AllBlocks[2].Data.UseCount);
+            Assert.AreEqual(0, cfg.AllBlocks[3].Data.UseCount);
+            Assert.AreEqual(0, cfg.AllBlocks[4].Data.UseCount);
+            Assert.AreEqual(1, cfg.AllBlocks[5].Data.UseCount);
 
-            Assert.AreEqual(2, cfgs[0].AllBlocks[18].Data.UseCount);
-            Assert.AreEqual("fct1", dfaBuilder.UseList[cfgs[0].AllBlocks[18].Data.UseListFirstIndex].Variable.Name);
-            Assert.AreEqual("fct2", dfaBuilder.UseList[cfgs[0].AllBlocks[18].Data.UseListFirstIndex + 1].Variable.Name);
+            var useList = dfaResults.GetUseList(cfg);
+            Assert.AreEqual("ef", useList[cfg.AllBlocks[1].Data.UseListFirstIndex].Variable.Name);
 
-            Assert.AreEqual(1, cfgs[0].AllBlocks[22].Data.UseCount);
-            Assert.AreEqual("ef", dfaBuilder.UseList[cfgs[0].AllBlocks[22].Data.UseListFirstIndex].Variable.Name);
+            Assert.AreEqual(2, cfg.AllBlocks[18].Data.UseCount);
+            Assert.AreEqual("fct1", useList[cfg.AllBlocks[18].Data.UseListFirstIndex].Variable.Name);
+            Assert.AreEqual("fct2", useList[cfg.AllBlocks[18].Data.UseListFirstIndex + 1].Variable.Name);
 
-            Assert.AreEqual(4, cfgs[0].AllBlocks[43].Data.UseCount);
+            Assert.AreEqual(1, cfg.AllBlocks[22].Data.UseCount);
+            Assert.AreEqual("ef", useList[cfg.AllBlocks[22].Data.UseListFirstIndex].Variable.Name);
 
-            dfaBuilder.ComputeDefList();
-            Assert.AreEqual(3, cfgs[0].AllBlocks[1].Data.DefCount);
-            Assert.AreEqual("fct1", dfaBuilder.DefList[cfgs[0].AllBlocks[1].Data.DefListFirstIndex].Variable.Name);
-            Assert.AreEqual("fct2", dfaBuilder.DefList[cfgs[0].AllBlocks[1].Data.DefListFirstIndex + 1].Variable.Name);
-            Assert.AreEqual("zres", dfaBuilder.DefList[cfgs[0].AllBlocks[1].Data.DefListFirstIndex + 2].Variable.Name);
+            Assert.AreEqual(4, cfg.AllBlocks[43].Data.UseCount);
 
-            Assert.AreEqual(1, cfgs[0].AllBlocks[5].Data.DefCount);
-            Assert.AreEqual("ind", dfaBuilder.DefList[cfgs[0].AllBlocks[5].Data.DefListFirstIndex].Variable.Name);
+            var defList = dfaResults.GetDefList(cfg);
+            Assert.AreEqual(3, cfg.AllBlocks[1].Data.DefCount);
+            Assert.AreEqual("fct1", defList[cfg.AllBlocks[1].Data.DefListFirstIndex].Variable.Name);
+            Assert.AreEqual("fct2", defList[cfg.AllBlocks[1].Data.DefListFirstIndex + 1].Variable.Name);
+            Assert.AreEqual("zres", defList[cfg.AllBlocks[1].Data.DefListFirstIndex + 2].Variable.Name);
 
-            Assert.AreEqual(1, cfgs[0].AllBlocks[18].Data.DefCount);
-            Assert.AreEqual("zres", dfaBuilder.DefList[cfgs[0].AllBlocks[18].Data.DefListFirstIndex].Variable.Name);
+            Assert.AreEqual(1, cfg.AllBlocks[5].Data.DefCount);
+            Assert.AreEqual("ind", defList[cfg.AllBlocks[5].Data.DefListFirstIndex].Variable.Name);
 
-            Assert.AreEqual(1, cfgs[0].AllBlocks[22].Data.DefCount);
-            Assert.AreEqual("ind", dfaBuilder.DefList[cfgs[0].AllBlocks[22].Data.DefListFirstIndex].Variable.Name);
+            Assert.AreEqual(1, cfg.AllBlocks[18].Data.DefCount);
+            Assert.AreEqual("zres", defList[cfg.AllBlocks[18].Data.DefListFirstIndex].Variable.Name);
 
-            Assert.AreEqual(1, cfgs[0].AllBlocks[43].Data.DefCount);
-            Assert.AreEqual("fct3", dfaBuilder.DefList[cfgs[0].AllBlocks[43].Data.DefListFirstIndex].Variable.Name);
+            Assert.AreEqual(1, cfg.AllBlocks[22].Data.DefCount);
+            Assert.AreEqual("ind", defList[cfg.AllBlocks[22].Data.DefListFirstIndex].Variable.Name);
+
+            Assert.AreEqual(1, cfg.AllBlocks[43].Data.DefCount);
+            Assert.AreEqual("fct3", defList[cfg.AllBlocks[43].Data.DefListFirstIndex].Variable.Name);
         }
     }
 }
