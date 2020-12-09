@@ -27,7 +27,7 @@ namespace TypeCobol.Analysis.Dfa
         /// (2.1.1.2) a SET statement
         ///     (2.1.1.2.1) The Set instruction is Condition variable set then
         ///                 the value is the first value of the level 88 variable
-        /// (2.1.1.3) a DataDescription, Redefines or a DataCondition Entry from a Data Definition.
+        /// (2.1.1.3) a DataDescription or Redefines Entry from a Data Definition.
         ///     (2.1.1.3.1) Take the initiale value and add it to the origins path.
         /// </summary>
         /// <param name="start">UsePoint to start the analysis.</param>
@@ -70,7 +70,6 @@ namespace TypeCobol.Analysis.Dfa
                         break;
                     case CodeElementType.DataDescriptionEntry:
                     case CodeElementType.DataRedefinesEntry:
-                    case CodeElementType.DataConditionEntry:
                         //(2.1.1.3)
                         ProcessDataDefinition(defPoint.Instruction as DataDefinition);
                         break;                    
@@ -150,14 +149,6 @@ namespace TypeCobol.Analysis.Dfa
                         };
                         result.Origins.Add(origin);
                     }
-                    else if (vs.Value is Value[] values && values.Length > 0)
-                    {
-                        var origin = new ValueOrigin(vs)
-                        {
-                            Value = values[0]
-                        };
-                        result.Origins.Add(origin);
-                    };                        
                 }
             }
 

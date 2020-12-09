@@ -44,16 +44,20 @@ namespace TypeCobol.Analysis.Dfa
                 var dataDivision = this.Cfg.ProcedureDivisionNode.Parent.GetChildren<DataDivision>().FirstOrDefault();
                 if (dataDivision != null)
                 {
-                    foreach(var dataDef in Collect(dataDivision))
+                    var firstInstr = root.Instructions.First;
+                    foreach (var dataDef in Collect(dataDivision))
                     {
-                        root.Instructions.AddFirst(dataDef);
+                        if (firstInstr == null)
+                            root.Instructions.AddLast(dataDef);
+                        else
+                            root.Instructions.AddBefore(firstInstr, dataDef);
                     }
                 }
                 IEnumerable<DataDefinition> Collect(Node node)
                 {
-                    if (node.SemanticData is VariableSymbol variable && variable.Value != null)
+                    if (node.SemanticData is VariableSymbol variable && variable.Value is Value)
                     {
-                        yield return node as DataDefinition;
+                        yield return (DataDefinition)node;
                     }
 
                     if (node.ChildrenCount > 0)
@@ -88,7 +92,7 @@ namespace TypeCobol.Analysis.Dfa
         public override HashSet<VariableSymbol> GetDefVariables(Node node)
         {
             System.Diagnostics.Debug.Assert(node != null);
-            return node is DataDefinition ? new HashSet<VariableSymbol>() { node.SemanticData as VariableSymbol} : GetSymbols(node.StorageAreaWritesSymbol);
+            return node is DataDefinition ? new HashSet<VariableSymbol>() { (VariableSymbol)node.SemanticData} : GetSymbols(node.StorageAreaWritesSymbol);
         }
     }
 }
