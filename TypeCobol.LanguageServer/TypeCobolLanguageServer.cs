@@ -16,6 +16,10 @@ using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 using TypeCobol.LanguageServices.Editor;
 using TokenType = TypeCobol.Compiler.Scanner.TokenType;
+using TypeCobol.Analysis.Graph;
+using TypeCobol.Compiler.Nodes;
+using TypeCobol.LanguageServer.Context;
+using System.IO;
 
 namespace TypeCobol.LanguageServer
 {
@@ -276,6 +280,41 @@ namespace TypeCobol.LanguageServer
             System.Diagnostics.Debug.Assert(sender is CompilationDocument);
             CompilationDocument compilationDocument = (CompilationDocument) sender;
             UpdateTokensLines(compilationDocument);
+        }
+
+        /// <summary>
+        /// LSR Cfg Analyzer ID.
+        /// </summary>
+        public const string lspcfgId = "lsp-cfg";
+
+        /// <summary>
+        /// Method to update CFG/DFA information.
+        /// </summary>
+        /// <param name="fileCompiler">The underlying File Compiler</param>
+        /// <returns>CFG/DFA Data information</returns>
+        public CfgDfaParams UpdateCfgDfaInformation(DocumentContext docContext)
+        {
+            CfgDfaParams result = null;
+            docContext.FileCompiler.CompilationResultsForProgram.TryGetAnalyzerResult(lspcfgId, out IList<ControlFlowGraph<Node, object>> cfgs);
+            if (cfgs != null)
+            {                
+                //Create a temporary dot file.
+                string tempFile = Path.GetTempFileName();
+                using (var writer = File.CreateText(tempFile))
+                {
+                    CfgDfaParamsBuilder builder = new CfgDfaParamsBuilder(new TextDocumentIdentifier(docContext.TextDocument.uri), tempFile);
+                    CfgDotFileForNodeGenerator<object> gen = new CfgDotFileForNodeGenerator<object>(cfgs[0]);
+                    gen.BlockEmittedEvent += (block, subgraph) => builder.AddBlock<object>(block, subgraph);
+                    gen.Report(writer);
+                    result = builder.Params;
+                }                
+            }
+            else
+            {
+                //An Empty
+                result = new CfgDfaParams(new TextDocumentIdentifier(docContext.TextDocument.uri));
+            }
+            return result;
         }
 
         /// <summary>

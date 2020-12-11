@@ -50,6 +50,10 @@ namespace TypeCobol.Analysis.Graph
         private readonly StringBuilder _blocksBuffer;
         private readonly StringBuilder _edgesBuffer;
         private ControlFlowGraph<Node, D> _cfg;
+        private int ClusterIndex = -1;
+
+        public delegate void BlockEmitted(BasicBlock<Node, D> block, int clusterIndex);
+        public event BlockEmitted BlockEmittedEvent;
 
         /// <summary>
         /// Constructor
@@ -70,6 +74,7 @@ namespace TypeCobol.Analysis.Graph
                 //In DOT, if an edge belongs to a subgraph, then its target block must be included into that subgraph
                 //To avoid unwanted block inclusions, we write all edges at the root level (main digraph)
                 _edgesBuffer = parentGenerator._edgesBuffer;
+                this.BlockEmittedEvent = parentGenerator.BlockEmittedEvent;
             }
             else
             {
@@ -158,6 +163,7 @@ namespace TypeCobol.Analysis.Graph
                     //Generate blocks for subgraph using a nested generator
                     var subgraphGenerator = new CfgDotFileForNodeGenerator<D>(_cfg, this);
                     subgraphGenerator.FullInstruction = this.FullInstruction;
+                    subgraphGenerator.ClusterIndex = group.GroupIndex;
                     BasicBlock<Node, D> first = group.Group.First.Value;
                     _cfg.DFS(first, subgraphGenerator.EmitBlock);
                     string blocks = subgraphGenerator._blocksBuffer.ToString();
@@ -193,7 +199,8 @@ namespace TypeCobol.Analysis.Graph
                 System.Diagnostics.Debug.Assert(edge >= 0 && edge < _cfg.SuccessorEdges.Count);
                 _edgesBuffer.AppendLine($"Block{block.Index} -> Block{_cfg.SuccessorEdges[edge].Index}");
             }
-
+            if (BlockEmittedEvent != null)
+                BlockEmittedEvent(block, ClusterIndex);
             return true;
         }
 

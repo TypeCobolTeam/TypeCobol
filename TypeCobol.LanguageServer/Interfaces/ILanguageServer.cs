@@ -1,4 +1,5 @@
 ﻿using System;
+using TypeCobol.LanguageServer.Context;
 using TypeCobol.LanguageServices.Editor;
 
 namespace TypeCobol.LanguageServer.Interfaces
@@ -26,6 +27,13 @@ namespace TypeCobol.LanguageServer.Interfaces
         /// <param name="programClassDocument"></param>
         /// <param name="bForced"></param>
         TypeCobolCustomLanguageServerProtocol.RefreshOutlineParams UpdateOutline(Compiler.Parser.ProgramClassDocument programClassDocument, bool bForced);
+
+        /// <summary>
+        /// Method to update CFG/DFA information.
+        /// </summary>
+        /// <param name="docContext">The underlying Document context</param>
+        /// <returns>CFG/DFA Data information</returns>
+        TypeCobolCustomLanguageServerProtocol.CfgDfaParams UpdateCfgDfaInformation(DocumentContext docContext);
 
         /// <summary>
         /// Event Handler when the whole document has changed.

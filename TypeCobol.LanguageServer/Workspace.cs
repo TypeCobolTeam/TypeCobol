@@ -55,6 +55,10 @@ namespace TypeCobol.LanguageServer
         public EventHandler<string> WarningTrigger { get; set; }
         public Queue<MessageActionWrapper> MessagesActionsQueue { get; private set; }
         private Func<string, Uri, bool> _Logger;
+        /// <summary>
+        /// The Analyzer Provider.
+        /// </summary>
+        public AnalyzerProvider AnalyzerProvider { get; private set; }
 
         #region Testing Options
 
@@ -148,6 +152,8 @@ namespace TypeCobol.LanguageServer
             _openedDocuments = new Dictionary<Uri, DocumentContext>();
             _fileCompilerWaittingForNodePhase = new List<FileCompiler>();
             _Logger = logger;
+            this.AnalyzerProvider = new AnalyzerProvider();
+            this.AnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(TypeCobolLanguageServer.lspcfgId, CfgBuildingMode.Standard));
 
             this._rootDirectoryFullName = rootDirectoryFullName;
             this._workspaceName = workspaceName;
@@ -155,7 +161,7 @@ namespace TypeCobol.LanguageServer
             var defaultDocumentFormat = new DocumentFormat(Encoding.GetEncoding("iso-8859-1"), EndOfLineDelimiter.CrLfCharacters, 80, ColumnsLayout.CobolReferenceFormat);
             this.CompilationProject = new CompilationProject(
                 _workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, defaultDocumentFormat,
-                new TypeCobolOptions(), null); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
+                new TypeCobolOptions(), this.AnalyzerProvider); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
             this.CompilationProject.CompilationOptions.UseAntlrProgramParsing =
                 this.CompilationProject.CompilationOptions.UseAntlrProgramParsing || UseAntlrProgramParsing;
 
@@ -441,10 +447,10 @@ namespace TypeCobol.LanguageServer
             var typeCobolOptions = new TypeCobolOptions(Configuration);
 
             //Configure CFG/DFA analyzer
-            var analyzerProvider = new AnalyzerProvider();
-            analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer("cfg-dfa", Configuration.CfgBuildingMode));
+            this.AnalyzerProvider = new AnalyzerProvider();
+            this.AnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(TypeCobolLanguageServer.lspcfgId, CfgBuildingMode.Standard));
 
-            CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format, typeCobolOptions, analyzerProvider);
+            CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format, typeCobolOptions, this.AnalyzerProvider);
 
             if (Configuration.CopyFolders != null && Configuration.CopyFolders.Count > 0)
             {
