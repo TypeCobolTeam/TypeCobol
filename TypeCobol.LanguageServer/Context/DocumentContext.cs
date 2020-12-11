@@ -50,6 +50,7 @@ namespace TypeCobol.LanguageServer.Context
             get;
             private set;
         }
+
         /// <summary>
         /// Constructor.
         /// </summary>

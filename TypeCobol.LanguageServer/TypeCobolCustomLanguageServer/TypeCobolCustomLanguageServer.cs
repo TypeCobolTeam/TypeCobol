@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TypeCobol.Analysis;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
@@ -23,29 +24,17 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// </summary>
         public bool UseOutlineRefresh { get; set; }
 
+        protected override InitializeResult OnInitialize(InitializeParams parameters)
+        {
+            var result = base.OnInitialize(parameters);
+            this.Workspace.DocumentModifiedEvent += DocumentModified;
+            return result;
+        }
+
         protected override void OnShutdown()
         {
-            if (UseOutlineRefresh && this.Workspace.DocumentModifiedEvent != null)
-                this.Workspace.DocumentModifiedEvent -= DocumentModified;
-
+            this.Workspace.DocumentModifiedEvent -= DocumentModified;
             base.OnShutdown();
-        }
-
-        protected override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
-        {
-            if (UseOutlineRefresh && this.Workspace.DocumentModifiedEvent == null)
-            {
-                this.Workspace.DocumentModifiedEvent += DocumentModified;
-            }
-            base.OnDidOpenTextDocument(parameters);
-        }
-
-        protected override void OnDidCloseTextDocument(DidCloseTextDocumentParams parameters)
-        {
-            base.OnDidCloseTextDocument(parameters);
-            if (UseOutlineRefresh && this.Workspace.DocumentModifiedEvent != null && this.Workspace.IsEmpty)
-                this.Workspace.DocumentModifiedEvent -= DocumentModified;
-
         }
 
         protected override void OnDidSaveTextDocument(DidSaveTextDocumentParams parameters)
@@ -202,9 +191,28 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 
         }
 
+        /// <summary>
+        /// Update Cfg/Dfa information to the client.
+        /// </summary>
+        /// <param name="uri">Uri of the document to update Cfg/Dfa Informations</param>
+        private void UpdateCfgDfaInformation(string uri)
+        {
+            var context = GetDocumentContextFromStringUri(uri, false);
+            if (context != null && context.FileCompiler != null)
+            {
+                var cfgDfaParams = context.LanguageServer.UpdateCfgDfaInformation(context);
+                if (cfgDfaParams != null)
+                {
+                    SendCfgDfaData(cfgDfaParams);
+                }
+            }
+        }
+
         public void DocumentModified(object sender, EventArgs args)
         {
-            OnDidReceiveRefreshOutline(sender.ToString(), false);
+            string uri = sender.ToString();
+            OnDidReceiveRefreshOutline(uri, false);
+            UpdateCfgDfaInformation(uri);
         }
 
         /// <summary>
@@ -213,6 +221,14 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         public virtual void SendOutlineData(RefreshOutlineParams parameters)
         {
             this.RpcServer.SendNotification(RefreshOutlineNotification.Type, parameters);
+        }
+
+        /// <summary>
+        /// CfgDfa data notification are sent from the server to the client.
+        /// </summary>
+        public virtual void SendCfgDfaData(CfgDfaParams parameters)
+        {
+            this.RpcServer.SendNotification(CfgDfaNotification.Type, parameters);
         }
     }
 }
