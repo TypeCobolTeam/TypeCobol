@@ -265,15 +265,29 @@ namespace TypeCobol.Compiler.Preprocessor
                     {
                         if (currentPosition.ReplaceOperations != null)
                         {
+                            Token lastReplacedToken = null;
+                            bool matchingMode = false;
                             foreach (ReplaceOperation replaceOperation in currentPosition.ReplaceOperations)
                             {
-                                status = TryAndReplace(nextToken, replaceOperation);
-                                if (status.replacedToken != null) return status.replacedToken;
+                                status = TryAndReplace(lastReplacedToken??nextToken, replaceOperation);
+                                lastReplacedToken = status.replacedToken??lastReplacedToken;
+                                matchingMode = lastReplacedToken != null;
                                 if (status.tryAgain)
                                 {
-                                    nextToken = sourceIterator.NextToken();
-                                    break;
+                                    if (matchingMode)
+                                    {
+                                        sourceIterator.ReturnToLastPositionSnapshot();
+                                    }
+                                    else
+                                    {
+                                        nextToken = sourceIterator.NextToken();
+                                        break;                                        
+                                    }
                                 }
+                            }
+                            if (matchingMode)
+                            {
+                                return lastReplacedToken;
                             }
                         }
                     }
