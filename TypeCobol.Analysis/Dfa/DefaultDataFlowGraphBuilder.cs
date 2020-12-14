@@ -3,6 +3,8 @@ using TypeCobol.Analysis.Graph;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Symbols;
+using TypeCobol.Compiler.Types;
+using System.Linq;
 
 namespace TypeCobol.Analysis.Dfa
 {
@@ -32,9 +34,45 @@ namespace TypeCobol.Analysis.Dfa
         public DefaultDataFlowGraphBuilder(ControlFlowGraph<Node, DfaBasicBlockInfo<VariableSymbol>> cfg)
             : base(cfg)
         {
-
         }
 
+        protected override void CollectDataDefinitions()
+        {
+            if (Cfg != null && Cfg.IsInitialized)
+            {
+                var root = Cfg.RootBlock;
+                var dataDivision = this.Cfg.ProcedureDivisionNode.Parent.GetChildren<DataDivision>().FirstOrDefault();
+                if (dataDivision != null)
+                {
+                    var firstInstr = root.Instructions.First;
+                    foreach (var dataDef in Collect(dataDivision))
+                    {
+                        if (firstInstr == null)
+                            root.Instructions.AddLast(dataDef);
+                        else
+                            root.Instructions.AddBefore(firstInstr, dataDef);
+                    }
+                }
+                IEnumerable<DataDefinition> Collect(Node node)
+                {
+                    if (node.SemanticData is VariableSymbol variable && variable.Value is Value)
+                    {
+                        yield return (DataDefinition)node;
+                    }
+
+                    if (node.ChildrenCount > 0)
+                    {
+                        foreach (var child in node.Children)
+                        {
+                            foreach (var childVariable in Collect(child))
+                            {
+                                yield return childVariable;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         /// <summary>
         /// Get Use Variables for a given node.
         /// </summary>
@@ -54,7 +92,7 @@ namespace TypeCobol.Analysis.Dfa
         public override HashSet<VariableSymbol> GetDefVariables(Node node)
         {
             System.Diagnostics.Debug.Assert(node != null);
-            return GetSymbols(node.StorageAreaWritesSymbol);
+            return node is DataDefinition ? new HashSet<VariableSymbol>() { (VariableSymbol)node.SemanticData} : GetSymbols(node.StorageAreaWritesSymbol);
         }
     }
 }

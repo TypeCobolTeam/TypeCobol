@@ -24,7 +24,7 @@ namespace TypeCobol.Analysis.Test
             Assert.AreEqual(useList[0].Variable.Name, "A");
 
             var defList = dfaResults.GetDefList(dfaResults.Graphs[0]);
-            Assert.AreEqual(0, defList.Count);
+            Assert.AreEqual(1, defList.Count);
         }
 
         [TestMethod]
