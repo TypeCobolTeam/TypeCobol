@@ -304,6 +304,7 @@ namespace TypeCobol.LanguageServer
                 {
                     CfgDfaParamsBuilder builder = new CfgDfaParamsBuilder(new TextDocumentIdentifier(docContext.TextDocument.uri), tempFile);
                     CfgDotFileForNodeGenerator<object> gen = new CfgDotFileForNodeGenerator<object>(cfgs[0]);
+                    gen.FullInstruction = true;
                     gen.BlockEmittedEvent += (block, subgraph) => builder.AddBlock<object>(block, subgraph);
                     gen.Report(writer);
                     result = builder.Params;
