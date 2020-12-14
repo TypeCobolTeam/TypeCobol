@@ -1,0 +1,16 @@
+--- Nodes ---
+?
+  PGM1
+    data-division
+      working-storage
+        TEST-GROUP1
+          TEST-SGROUP1
+            TEST-ELT1
+            TEST-ELT2
+          TEST-SGROUP2
+            TEST-ELT3
+            TEST-ELT4
+          TEST-SGROUP5
+            TEST-ELT5
+          TEST-RENAMES
+    end
