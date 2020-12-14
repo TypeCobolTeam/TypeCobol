@@ -149,29 +149,36 @@ namespace TypeCobol.Compiler.Parser
             return new EnumeratedValue(valueToken, enumType);
         }
 
+        private RepeatedCharacterValue CreateRepeatedCharacterValue(
+            CodeElementsParser.FigurativeConstantContext figurativeConstantContext,
+            ParserRuleContext parentContext,
+            Token optionalALLToken)
+        {
+            IParseTree parseTree;
+            if (figurativeConstantContext != null)
+            {
+                if (figurativeConstantContext.symbolicCharacterReference() != null)
+                {
+                    var symbolicCharacterReference = CreateSymbolicCharacterReference(figurativeConstantContext.symbolicCharacterReference());
+                    return new RepeatedCharacterValue(optionalALLToken, symbolicCharacterReference);
+                }
+
+                parseTree = figurativeConstantContext;
+            }
+            else
+            {
+                parseTree = parentContext;
+            }
+
+            Token valueToken = ParseTreeUtils.GetFirstToken(parseTree);
+            return new RepeatedCharacterValue(optionalALLToken, valueToken);
+        }
+
         [CanBeNull]
         internal RepeatedCharacterValue CreateRepeatedCharacterValue([CanBeNull]CodeElementsParser.RepeatedCharacterValue1Context context)
         {
             if (context == null) return null;
-
-            IParseTree parseTree;
-            if (context.figurativeConstant() != null)
-            {
-                if (context.figurativeConstant().symbolicCharacterReference() != null)
-                {
-                    var symbolicCharacterReference = CreateSymbolicCharacterReference(context.figurativeConstant().symbolicCharacterReference());
-                    return new RepeatedCharacterValue(null, symbolicCharacterReference);
-                }
-
-                parseTree = context.figurativeConstant();
-            }
-            else
-            {
-                parseTree = context;
-            }
-
-            Token valueToken = ParseTreeUtils.GetFirstToken(parseTree);
-            return new RepeatedCharacterValue(null, valueToken);
+            return CreateRepeatedCharacterValue(context.figurativeConstant(), context, null);
         }
 
         internal RepeatedCharacterValue CreateRepeatedCharacterValue(CodeElementsParser.RepeatedCharacterValue2Context context)
@@ -195,24 +202,7 @@ namespace TypeCobol.Compiler.Parser
                 }
             }
 
-            IParseTree parseTree;
-            if (figurativeConstantContext != null)
-            {
-                if (figurativeConstantContext.symbolicCharacterReference() != null)
-                {
-                    var symbolicCharacterReference = CreateSymbolicCharacterReference(figurativeConstantContext.symbolicCharacterReference());
-                    return new RepeatedCharacterValue(optionalALLToken, symbolicCharacterReference);
-                }
-
-                parseTree = figurativeConstantContext;
-            }
-            else
-            {
-                parseTree = context;
-            }
-
-            Token valueToken = ParseTreeUtils.GetFirstToken(parseTree);
-            return new RepeatedCharacterValue(optionalALLToken, valueToken);
+            return CreateRepeatedCharacterValue(figurativeConstantContext, context, optionalALLToken);
         }
 
         [CanBeNull]
