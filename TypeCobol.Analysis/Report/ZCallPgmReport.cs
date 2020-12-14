@@ -207,63 +207,49 @@ namespace TypeCobol.Analysis.Report
         private List<Tuple<string, string>> ComputeUsePointDefPaths(DefaultDataFlowGraphBuilder dfaBuilder, DfaUsePoint<Node, VariableSymbol> up)
         {
             var valueOrigin = ValueOrigin.ComputeFrom(up, dfaBuilder);
-            return AsPaths(valueOrigin, null).ToList();
+            var currentPath = new Stack<string>();
+            var result = ToPaths(valueOrigin).ToList();
+            System.Diagnostics.Debug.Assert(currentPath.Count == 0);
+            return result;
 
-            IEnumerable<Tuple<string, string>> AsPaths(ValueOrigin vo, VariableSymbol previousVariable)
+            IEnumerable<Tuple<string, string>> ToPaths(ValueOrigin vo)
             {
                 if (vo == null)
                 {
-                    //For an uninitialized variable, the ValueOrigin is null.
-                    yield return new Tuple<string, string>(null, null);
                     yield break;
                 }
 
-                var currentVariable = vo.Variable;
-                //To avoid duplicate variables in resulting path
-                bool writeVariable = currentVariable != previousVariable;
-
-                string variable = currentVariable.FullDotName;
+                string variable = vo.Variable.FullDotName;
                 if (vo.Value != null)
                 {
-                    //This is a leaf
                     System.Diagnostics.Debug.Assert(vo.Origins == null);
+
+                    //This is a leaf
                     string value = vo.Value.ToString();
-                    if (currentVariable.IsCondition)
-                    {
-                        //Special representation for condition variables: "InitialValue"<-Lvl88Var<-"true"
-                        yield return new Tuple<string, string>(value, $"\"{value}\"<-{variable}<-\"true\"");
-                    }
-                    else
-                    {
-                        if (writeVariable)
-                        {
-                            yield return new Tuple<string, string>(value, $"{variable}<-\"{value}\"");
-                        }
-                        else
-                        {
-                            yield return new Tuple<string, string>(value, $"\"{value}\"");
-                        }
-                    }
+
+                    //Compute current followed path
+                    currentPath.Push($"\"{value}\"");
+                    string path = string.Join("<-", currentPath.Reverse());
+                    //Special representation for condition variables: "InitialValue"<-Lvl88Var<-"true"
+                    if (vo.Variable.IsCondition) path += $"<-{variable}<-\"true\"";
+                    currentPath.Pop();
+
+                    yield return new Tuple<string, string>(value, path);
                 }
                 else
                 {
-                    //Build paths for every possible origin
                     System.Diagnostics.Debug.Assert(vo.Origins != null);
-                    foreach (var voOrigin in vo.Origins)
+
+                    //Build paths for every possible origin
+                    currentPath.Push(variable);
+                    foreach (var origin in vo.Origins)
                     {
-                        foreach (var path in AsPaths(voOrigin, currentVariable))
+                        foreach (var path in ToPaths(origin))
                         {
-                            if (writeVariable)
-                            {
-                                yield return new Tuple<string, string>(path.Item1, $"{variable}<-{path.Item2}");
-                            }
-                            else
-                            {
-                                //This is unlikely but it may happen for instruction like MOVE var TO var
-                                yield return path;
-                            }
+                            yield return path;
                         }
                     }
+                    currentPath.Pop();
                 }
             }
         }
