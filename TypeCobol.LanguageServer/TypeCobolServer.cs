@@ -92,8 +92,7 @@ namespace TypeCobol.LanguageServer
                 while (codeElements.Count == 0 && lineIndex >= 0)
                 {
                     var codeElementsLine =
-                        fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.PreviousStepSnapshot
-                            .Lines[lineIndex];
+                        fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines[lineIndex];
 
                     if (codeElementsLine != null)
                     {
