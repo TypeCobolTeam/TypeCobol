@@ -254,14 +254,10 @@ namespace TypeCobol.Server
 
                 if (!string.IsNullOrEmpty(_configuration.ReportZCallFilePath))
                 {
-                    analyzerProvider.AddActivator(
-                        (o, t) =>
-                        {
-                            var report = new ZCallPgmReport();
-                            reports.Add(_configuration.ReportZCallFilePath, report);
-                            return report;
-                        });
-
+                    const string zcrcfgDfaId = "zcr-cfg-dfa";
+                    analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(zcrcfgDfaId, CfgBuildingMode.WithDfa));
+                    var report = new TypeCobol.Analysis.Report.ZCallPgmReport(zcrcfgDfaId);
+                    reports.Add(_configuration.ReportZCallFilePath, report);
                 }
             }
 

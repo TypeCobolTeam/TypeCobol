@@ -36,6 +36,7 @@
     <Compile Include="CfgTestUtils.cs" />
     <Compile Include="CfgTestResults.cs" />
     <Compile Include="DfaBuildUseAndDefListTest.cs" />
+    <Compile Include="DfaCallPgmReport.cs" />
     <Compile Include="BasicDfaSamplesTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
