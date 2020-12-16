@@ -1,0 +1,48 @@
+﻿digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{L1. Block1|    MOVE 2 TO I\l    MOVE I TO J\l    ADD 1 TO J\l}"
+]
+Block2 [
+label = "{L2. Block2|    MOVE 1 TO I\l    IF J = 999 THEN\l}"
+]
+Block3 [
+label = "{Block3|         GO TO L4\l}"
+]
+Block10 [
+label = "{L4. Block10|    GO TO L2\l}"
+]
+Block5 [
+label = "{Block5|}"
+]
+Block6 [
+label = "{L3. Block6|    ADD 1 TO J\l    IF J = 999 THEN\l}"
+]
+Block7 [
+label = "{Block7|         GO TO L4\l}"
+]
+Block9 [
+label = "{Block9|    SUBTRACT 4 FROM J\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block2 -> Block3
+Block2 -> Block5
+Block3 -> Block10
+Block10 -> Block2
+Block5 -> Block6
+Block6 -> Block7
+Block6 -> Block9
+Block7 -> Block10
+Block9 -> Block10
+
+}

@@ -28,8 +28,15 @@
     <None Include="**\*.tcbl" />
     <None Include="**\*.dot" />
     <None Include="**\*.diag" />
+    <None Include="**\*.csv" />
+    <Compile Include="BasicCfgProgramTest.cs" />
     <Compile Include="BasicControlFlowInstructionTest.cs" />
+    <Compile Include="BitSetTest.cs" />
+    <Compile Include="CfgDfaBuildingTests.cs" />
     <Compile Include="CfgTestUtils.cs" />
+    <Compile Include="CfgTestResults.cs" />
+    <Compile Include="DfaBuildUseAndDefListTest.cs" />
+    <Compile Include="BasicDfaSamplesTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
