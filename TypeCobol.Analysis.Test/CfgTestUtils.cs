@@ -48,7 +48,7 @@ namespace TypeCobol.Analysis.Test
             void AddAnalyzerProvider(CfgBuildingMode mode)
             {
                 var analyzerProvider = new AnalyzerProvider();
-                analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgDfaAnalyzer(CFG_ANALYZER_IDENTIFIER, mode));
+                analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CFG_ANALYZER_IDENTIFIER, mode));
                 _AnalyzerProviders.Add(mode, analyzerProvider);
             }
         }

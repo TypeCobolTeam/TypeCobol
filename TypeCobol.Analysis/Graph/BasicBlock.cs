@@ -47,6 +47,15 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
+        /// The list of edge that enters this block. The edges entries in the PredecessorEdges list of the ControlFlowGraph that contains this block.
+        /// </summary>
+        public List<int> PredecessorEdges
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Flag on a basic block.
         /// </summary>
         [Flags]

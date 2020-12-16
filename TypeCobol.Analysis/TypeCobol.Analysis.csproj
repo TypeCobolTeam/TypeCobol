@@ -36,6 +36,12 @@
     <Compile Include="Cfg\ControlFlowGraphBuilder.Section.cs" />
     <Compile Include="Cfg\ControlFlowGraphBuilder.Sentence.cs" />
     <Compile Include="Cfg\DefaultControlFlowGraphBuilder.cs" />
+    <Compile Include="Dfa\DataFlowGraphBuilder.cs" />
+    <Compile Include="Dfa\DfaBasicBlockInfo.cs" />
+    <Compile Include="Dfa\DfaDefPoint.cs" />
+    <Compile Include="Dfa\DfaUsePoint.cs" />
+    <Compile Include="Dfa\DefaultDataFlowGraphBuilder.cs" />
+    <Compile Include="Dfa\ValueOrigin.cs" />
     <Compile Include="Graph\BasicBlock.cs" />
     <Compile Include="Graph\CfgDotFileForNodeGenerator.cs" />
     <Compile Include="Graph\ControlFlowGraph.cs" />
@@ -47,6 +53,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
+    <Compile Include="Util\BitSet.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TypeCobol\TypeCobol.csproj">
@@ -62,6 +69,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Util\Antlr4_license.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
