@@ -29,5 +29,10 @@ namespace TypeCobol.LanguageServer.JsonRPC
         /// Write a trace in the server log file
         /// </summary>
         void WriteServerLog(string trace);
+
+        /// <summary>
+        /// An Unhandled Exception handler
+        /// </summary>
+        UnhandledExceptionEventHandler Handler { get; set; }
     }
 }
