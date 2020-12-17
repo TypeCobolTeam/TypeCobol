@@ -293,7 +293,11 @@ namespace TypeCobol.Analysis.Cfg
         public override void Enter(Node node)
         {
             if (IsStatement(node))
+            {
+                if (!this.CurrentProgramCfgBuilder.Cfg.IsInitialized)
+                    return; //Not In Procedure DIVISION
                 this.CurrentProgramCfgBuilder.CheckStartSentence(node);
+            }
             if (node.CodeElement != null)
             {
                 switch (node.CodeElement.Type)
