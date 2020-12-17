@@ -155,6 +155,21 @@ namespace TypeCobol.Test.Parser.Scanner
             ScannerUtils.CheckWithResultFile(result, testName);
         }
 
+        public static void CheckPseudoText2()
+        {
+            string testName = "PseudoText2";
+            string[] testLines = new string[] {
+                "====== ==",  //Incorrect
+                              //Use == at the end, so the scanner is again in a correct state
+                "==== ====.", //Correct
+                "==::==== ==.",   //Incorrect
+		                  //Use == at the end, so the scanner is again in a correct state
+                "==::== ==::==.", //Correct
+            };
+            string result = ScannerUtils.ScanLines(testLines);
+            ScannerUtils.CheckWithResultFile(result, testName);
+        }
+
         public static void CheckNumericLiterals()
         {
             string testName = "NumericLiterals";
