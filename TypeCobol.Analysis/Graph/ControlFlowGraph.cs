@@ -62,6 +62,16 @@ namespace TypeCobol.Analysis.Graph
         }
 
         /// <summary>
+        /// Terminals blocks, those blocks that don't have successors.
+        /// </summary>
+        public LinkedList<BasicBlock<N, D>> TerminalsBlocks
+        {
+            get;
+            internal set;
+        }
+
+
+        /// <summary>
         /// Root block of this graph. This is the first block accessed in the program.
         /// </summary>
         public BasicBlock<N, D> RootBlock
@@ -84,6 +94,11 @@ namespace TypeCobol.Analysis.Graph
         /// The list of all Successor edges. The successor list for each basic block is a sublist of this list
         /// </summary>
         public List<BasicBlock<N, D>> SuccessorEdges { get; private set; }
+
+        /// <summary>
+        /// The list of all Predecessor edges. The predecessor list for each basic block is a sublist of this list
+        /// </summary>
+        public List<BasicBlock<N, D>> PredecessorEdges { get; private set; }
 
         /// <summary>
         /// The parent graph of this graph.
@@ -120,6 +135,8 @@ namespace TypeCobol.Analysis.Graph
                     parentGraph.NestedGraphs = new List<ControlFlowGraph<N, D>>();
                 parentGraph.NestedGraphs.Add(this);
             }
+            //At least empty if not Initialized
+            AllBlocks = new List<BasicBlock<N, D>>(0);
         }
 
         /// <summary>
@@ -132,6 +149,89 @@ namespace TypeCobol.Analysis.Graph
             AllBlocks = new List<BasicBlock<N, D>>();
             BlockFor = new Dictionary<N, BasicBlock<N, D>>();
             SuccessorEdges = new List<BasicBlock<N, D>>();
+        }
+
+        /// <summary>
+        /// Determine if this Cfg has already been initialized
+        /// (i.e. encountered a PROCEDURE DIVISION node while building).
+        /// </summary>
+        public bool IsInitialized => ProcedureDivisionNode != null;
+
+        /// <summary>
+        /// Set up the Predecessor Edges list starting from the root block.	
+        /// </summary>
+        public void SetupPredecessorEdgesFromRoot()
+        {
+            if (RootBlock != null)
+            {
+                SetupPredecessorEdgesFromStart(RootBlock);
+            }
+        }
+
+        /// <summary>
+        /// Set up the Predecessor Edges list starting from a given start block.	
+        /// </summary>	
+        /// <param name="start">The start block.</param>	
+        private void SetupPredecessorEdgesFromStart(BasicBlock<N, D> start)
+        {
+            if (this.PredecessorEdges != null || this.SuccessorEdges == null)
+                return;
+
+            this.TerminalsBlocks = new LinkedList<BasicBlock<N, D>>();
+            this.PredecessorEdges = new List<BasicBlock<N, D>>(this.SuccessorEdges.Count);
+
+            System.Collections.BitArray discovered = new System.Collections.BitArray(AllBlocks.Count);
+            Stack<BasicBlock<N, D>> stack = new Stack<BasicBlock<N, D>>();
+            stack.Push(start);
+            while (stack.Count > 0)
+            {
+                BasicBlock<N, D> block = stack.Pop();
+                if (discovered.Get(block.Index))
+                    continue;
+                discovered.Set(block.Index, true);
+
+                if (block.PredecessorEdges == null)
+                {
+                    block.PredecessorEdges = new List<int>(0);
+                }
+
+                if (block.SuccessorEdges.Count == 0)
+                {
+                    TerminalsBlocks.AddLast(block);
+                }
+                else
+                {
+                    int predIndex = -1;
+                    foreach (int successor in block.SuccessorEdges)
+                    {
+                        BasicBlock<N, D> successorBlock = SuccessorEdges[successor];
+                        stack.Push(successorBlock);
+                        if (successorBlock.PredecessorEdges == null)
+                        {
+                            successorBlock.PredecessorEdges = new List<int>();
+                        }
+
+                        if (predIndex == -1)
+                        {
+                            predIndex = this.PredecessorEdges.Count;
+                            this.PredecessorEdges.Add(block);
+                        }
+
+                        successorBlock.PredecessorEdges.Add(predIndex);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Clear previous analysis data for all blocks.
+        /// </summary>
+        public void ResetAllBlockData()
+        {
+            foreach (var block in AllBlocks)
+            {
+                block.Data = default;
+            }
         }
 
         /// <summary>
@@ -177,7 +277,8 @@ namespace TypeCobol.Analysis.Graph
         /// <param name="callback">CallBack function</param>
         public void DFS(BasicBlockCallback callback)
         {
-            DFS(RootBlock, callback);
+            if (RootBlock != null)
+                DFS(RootBlock, callback);
         }
     }
 }

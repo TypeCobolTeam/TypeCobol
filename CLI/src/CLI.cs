@@ -162,7 +162,7 @@ namespace TypeCobol.Server
                     if (!currentFileHasErrors)
                     {
                         //Generate reports
-                        CreateReports(inputFilePath, reports);
+                        CreateReports(inputFilePath, compilationUnit, reports);
 
                         //Generate COBOL code
                         if (_configuration.ExecToStep >= ExecutionStep.Generate)
@@ -237,9 +237,8 @@ namespace TypeCobol.Server
             if (_configuration.ExecToStep >= ExecutionStep.CrossCheck)
             {
                 //CFG/DFA
-                analyzerProvider.AddActivator(
-                    (o, t) =>
-                        CfgDfaAnalyzerFactory.CreateCfgDfaAnalyzer("cfg-dfa", _configuration.CfgBuildingMode));
+                const string cfgDfaId = "cfg-dfa";
+                analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(cfgDfaId, _configuration.CfgBuildingMode));
 
                 if (!string.IsNullOrEmpty(_configuration.ReportCopyMoveInitializeFilePath))
                 {
@@ -255,14 +254,10 @@ namespace TypeCobol.Server
 
                 if (!string.IsNullOrEmpty(_configuration.ReportZCallFilePath))
                 {
-                    analyzerProvider.AddActivator(
-                        (o, t) =>
-                        {
-                            var report = new ZCallPgmReport();
-                            reports.Add(_configuration.ReportZCallFilePath, report);
-                            return report;
-                        });
-
+                    const string zcrcfgDfaId = "zcr-cfg-dfa";
+                    analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(zcrcfgDfaId, CfgBuildingMode.WithDfa));
+                    var report = new TypeCobol.Analysis.Report.ZCallPgmReport(zcrcfgDfaId);
+                    reports.Add(_configuration.ReportZCallFilePath, report);
                 }
             }
 
@@ -325,7 +320,13 @@ namespace TypeCobol.Server
             generationExceptions.Add(generationException);
         }
 
-        private void CreateReports(string inputFilePath, Dictionary<string, IReport> reports)
+        /// <summary>
+        /// Create a Report for the given Input File and Compilation Unit.
+        /// </summary>
+        /// <param name="inputFilePath">The Original input file path</param>
+        /// <param name="unit">The target Compilation Unit</param>
+        /// <param name="reports"></param>
+        private void CreateReports(string inputFilePath, CompilationUnit unit, Dictionary<string, IReport> reports)
         {
             foreach (var report in reports)
             {
@@ -334,7 +335,7 @@ namespace TypeCobol.Server
                 {
                     using (var writer = File.CreateText(filePath))
                     {
-                        report.Value.Report(writer);
+                        report.Value.Report(writer, unit);
                     }
                     Console.WriteLine($"Succeed to emit report '{filePath}'");
                 }

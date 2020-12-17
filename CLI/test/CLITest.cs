@@ -299,6 +299,26 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// Test the reporting of modules call via ZCall Pgm like instructions.
+        /// This test is for the MOVE instruction.
+        /// </summary>
+        [TestMethod]
+        public void TestZCallPgmReportDFA_1()
+        {
+            CLITestHelper.Test("zcallpgmreportdfa_1", ReturnCode.Success);
+        }
+
+        /// <summary>
+        /// Test the reporting of modules call via ZCall Pgm like instructions.
+        /// This test is for the SET instruction on level 88 variables.
+        /// </summary>
+        [TestMethod]
+        public void TestZCallPgmReportDFA_2()
+        {
+            CLITestHelper.Test("zcallpgmreportdfa_2", ReturnCode.Success);
+        }
+
+        /// <summary>
         /// Test multiple files parsing.
         /// </summary>
         [TestMethod]
