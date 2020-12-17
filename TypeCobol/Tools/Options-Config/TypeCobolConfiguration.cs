@@ -51,6 +51,7 @@ namespace TypeCobol.Tools.Options_Config
         public int MaximumDiagnostics;
         public OutputFormat OutputFormat = OutputFormat.Cobol85;
         public CfgBuildingMode CfgBuildingMode = CfgBuildingMode.None;
+        public List<string> CustomAnalyzerFiles = new List<string>();
 
         // Raw values (it has to be verified)
         public string RawFormat;
@@ -62,32 +63,33 @@ namespace TypeCobol.Tools.Options_Config
         public static Dictionary<ReturnCode, string> ErrorMessages = new Dictionary<ReturnCode, string>()
         {
             // Warnings
-            { ReturnCode.Warning,                ""},
+            { ReturnCode.Warning,                 ""},
             // Errors   
-            { ReturnCode.ParsingDiagnostics,     "Syntax or semantic error in one or more input file."},
-            { ReturnCode.OutputFileError,        "The number of output files must be equal to the number of input files."},
-            { ReturnCode.MissingCopy,            "Use of option --haltonmissingcopy and at least one COPY is missing."},
-            { ReturnCode.GenerationError,        "Error during Code generation."},
-            { ReturnCode.FatalError,             "Unhandled error occurs."},
-            { ReturnCode.UnexpectedParamError,   "Unexpected parameter given."},
+            { ReturnCode.ParsingDiagnostics,      "Syntax or semantic error in one or more input file."},
+            { ReturnCode.OutputFileError,         "The number of output files must be equal to the number of input files."},
+            { ReturnCode.MissingCopy,             "Use of option --haltonmissingcopy and at least one COPY is missing."},
+            { ReturnCode.GenerationError,         "Error during Code generation."},
+            { ReturnCode.FatalError,              "Unhandled error occurs."},
+            { ReturnCode.UnexpectedParamError,    "Unexpected parameter given."},
             // Missing Parameters
-            { ReturnCode.InputFileMissing,       "Input file(s) are required." },
-            { ReturnCode.OutputFileMissing,      "Output are required in execution to generate step." },
+            { ReturnCode.InputFileMissing,        "Input file(s) are required." },
+            { ReturnCode.OutputFileMissing,       "Output are required in execution to generate step." },
             // Wrong parameter
-            { ReturnCode.InputFileError,         "Input files given are unreachable." },
-            { ReturnCode.OutputPathError,        "Output paths given are unreachable." },
-            { ReturnCode.ErrorFileError,         "Error diagnostics path is unreachable." },
-            { ReturnCode.HaltOnMissingCopyError, "Missing copy path given is unreachable." },
-            { ReturnCode.ExecToStepError,        "Unexpected parameter given for ExecToStep. Accepted parameters are \"Scanner\"/0, \"Preprocessor\"/1, \"SyntaxCheck\"/2, \"SemanticCheck\"/3, \"CrossCheck\"/4, \"Generate\"/5(default)." },
-            { ReturnCode.EncodingError,          "Unexpected parameter given for encoding option. Accepted parameters are \"rdz\"(default), \"zos\", \"utf8\"." },
-            { ReturnCode.IntrinsicError,         "Intrinsic files given are unreachable." },
-            { ReturnCode.CopiesError,            "Copies files given are unreachable." },
-            { ReturnCode.DependenciesError,      "Dependencies files given are unreachable: " },
-            { ReturnCode.MaxDiagnosticsError,    "Maximum diagnostics have to be an integer." },
-            { ReturnCode.OutputFormatError,      "Unexpected parameter given for Output format option. Accepted parameters are Cobol85/0(default), PublicSignature/1." },
-            { ReturnCode.ExpandingCopyError,     "Expanding copy path given is unreachable." },
-            { ReturnCode.ExtractusedCopyError,   "Extractused copy path given is unreachable." },
-            { ReturnCode.LogFileError,           "Log file path is unreachable." },
+            { ReturnCode.InputFileError,          "Input files given are unreachable." },
+            { ReturnCode.OutputPathError,         "Output paths given are unreachable." },
+            { ReturnCode.ErrorFileError,          "Error diagnostics path is unreachable." },
+            { ReturnCode.HaltOnMissingCopyError,  "Missing copy path given is unreachable." },
+            { ReturnCode.ExecToStepError,         "Unexpected parameter given for ExecToStep. Accepted parameters are \"Scanner\"/0, \"Preprocessor\"/1, \"SyntaxCheck\"/2, \"SemanticCheck\"/3, \"CrossCheck\"/4, \"Generate\"/5(default)." },
+            { ReturnCode.EncodingError,           "Unexpected parameter given for encoding option. Accepted parameters are \"rdz\"(default), \"zos\", \"utf8\"." },
+            { ReturnCode.IntrinsicError,          "Intrinsic files given are unreachable." },
+            { ReturnCode.CopiesError,             "Copies files given are unreachable." },
+            { ReturnCode.DependenciesError,       "Dependencies files given are unreachable: " },
+            { ReturnCode.MaxDiagnosticsError,     "Maximum diagnostics have to be an integer." },
+            { ReturnCode.OutputFormatError,       "Unexpected parameter given for Output format option. Accepted parameters are Cobol85/0(default), PublicSignature/1." },
+            { ReturnCode.ExpandingCopyError,      "Expanding copy path given is unreachable." },
+            { ReturnCode.ExtractusedCopyError,    "Extractused copy path given is unreachable." },
+            { ReturnCode.LogFileError,            "Log file path is unreachable." },
+            { ReturnCode.CustomAnalyzerFileError, "Custom analyzer assembly files are unreachable." }
         };
 
         public TypeCobolConfiguration()
@@ -143,6 +145,7 @@ namespace TypeCobol.Tools.Options_Config
         ExpandingCopyError = 1032,      // Expanding copy path given is unreachable.
         ExtractusedCopyError = 1033,    // Extractused copy path given is unreachable.
         LogFileError = 1034,            // Wrong log path given
+        CustomAnalyzerFileError = 1035, // Invalid path to custom analyzer DLL file
 
         MultipleErrors = 9999
 
@@ -244,6 +247,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "diag.cea|diagnostic.checkEndAlignment=", "Indicate level of check end aligment: warning, error, info, ignore.", v => typeCobolConfig.CheckEndAlignment = TypeCobolCheckOption.Parse(v) },
                 { "log|logfilepath=", "{PATH} to TypeCobol.CLI.log log file", v => typeCobolConfig.LogFile = Path.Combine(v, TypeCobolConfiguration.DefaultLogFileName)},
                 { "cfg|cfgbuild", "Standard CFG build.", v => typeCobolConfig.CfgBuildingMode = CfgBuildingMode.Standard},
+                { "ca|customanalyzer=", "{PATH} to a custom DLL file containing code analyzers. This option can be specified more than once.", v => typeCobolConfig.CustomAnalyzerFiles.Add(v) }
             };
             return commonOptions;
         }
@@ -367,6 +371,9 @@ namespace TypeCobol.Tools.Options_Config
             //LogFilePathError
             if (!CanCreateFile(config.LogFile) && !string.IsNullOrEmpty(config.LogFile))
                 errorStack.Add(ReturnCode.LogFileError, TypeCobolConfiguration.ErrorMessages[ReturnCode.LogFileError]);
+
+            //CustomAnalyzers
+            VerifFiles(config.CustomAnalyzerFiles, ReturnCode.CustomAnalyzerFileError, errorStack);
 
             return errorStack;
         }
