@@ -449,7 +449,7 @@ namespace TypeCobol.Compiler
                 {
                     if (CodeAnalysisDocumentSnapshot != null)
                     {
-                        allDiagnostics.AddRange(CodeAnalysisDocumentSnapshot.Violations);
+                        allDiagnostics.AddRange(CodeAnalysisDocumentSnapshot.Diagnostics);
                     }
                 }
             }

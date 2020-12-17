@@ -12,7 +12,7 @@ namespace TypeCobol.Compiler.Parser
         public InspectedProgramClassDocument(ProgramClassDocument programClassDocument, List<Diagnostic> violations)
         {
             PreviousStepSnapshot = programClassDocument;
-            Violations = violations;
+            Diagnostics = violations;
         }
 
         /// <summary>
@@ -23,16 +23,11 @@ namespace TypeCobol.Compiler.Parser
         /// <summary>
         /// List of rules violations returned by code analysis
         /// </summary>
-        public List<Diagnostic> Violations { get; }
+        public List<Diagnostic> Diagnostics { get; }
 
         /// <summary>
         /// Checked source file, root node of the AST
         /// </summary>
         public SourceFile Root => PreviousStepSnapshot.Root;
-
-        /// <summary>
-        /// Parsing diagnostics
-        /// </summary>
-        public List<Diagnostic> Diagnostics => PreviousStepSnapshot.Diagnostics;
     }
 }
