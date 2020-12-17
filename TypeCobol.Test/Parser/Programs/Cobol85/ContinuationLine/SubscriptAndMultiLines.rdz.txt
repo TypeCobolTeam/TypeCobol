@@ -1,0 +1,27 @@
+--- Code Elements ---
+[[ProgramIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [25,25+:.]<PeriodSeparator>
+- ProgramName = MYPGM
+- IsInitial = False
+- IsRecursive = False
+- IsCommon = False
+
+[[DataDivisionHeader]] [8,11:DATA]<DATA> --> [21,21+:.]<PeriodSeparator>
+
+[[WorkingStorageSectionHeader]] [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [65,65+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [51,51+:.]<PeriodSeparator>
+
+[[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+
+[[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [35,43:W-CPT-LUS]<UserDefinedWord>
+- variables = '>>> DOUBLON BIN: ' ENTREE-ENR ' ENREG NUM: ' W-CPT-LUS
+
+[[ExitStatement]] [12,15:EXIT]<EXIT> --> [12,15:EXIT]<EXIT>
+
+[[SentenceEnd]] [16,16+:.]<PeriodSeparator> --> [16,16+:.]<PeriodSeparator>
+
+[[ProgramEnd]] [8,10:END]<END> --> [25,25+:.]<PeriodSeparator>
+- ProgramName = MYPGM
+

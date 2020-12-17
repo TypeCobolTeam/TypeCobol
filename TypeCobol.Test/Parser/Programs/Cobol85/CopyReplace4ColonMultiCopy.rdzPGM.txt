@@ -1,0 +1,20 @@
+﻿--- Program ---
+PROGRAM: CPYRPL4C common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  xxxENT:Alphanumeric
+  xxxENT-FCT01:Alphanumeric
+  xxxENT-FCT01:Alphanumeric
+  xxxENT-FCT01-Var1:Alphanumeric
+  xxxENT-FCT01-Var1:Alphanumeric
+  xxxENT2:Alphanumeric
+  xxxENT2-FCT01:Alphanumeric
+  xxxENT2-FCT01-Var1:Alphanumeric
+  xxxENT1:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

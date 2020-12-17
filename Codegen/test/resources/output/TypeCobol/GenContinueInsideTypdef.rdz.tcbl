@@ -22,25 +22,26 @@
       *             'zfin'.
       * 01 var1 TYPE MyType.
         01 var1.
-           02 Tit PIC X(60) value 'blbablsdfklsdfksj dfjklsz ezfrzerzer'
+           02 Tit PIC X(60) value 'blbablsdfklsdfksj dfjklsz e         z
+      -    'frzerzer'
                                .
-           02 Titr PIC X(60) value 'blbablsdfklsdfksj dfjklsz ezfrzerzer
-      -    ''
+           02 Titr PIC X(60) value 'blbablsdfklsdfksj dfjklsz e        z
+      -    'frzerzer'
                                .
-           02 Titq PIC X(60) value "blbablsdfklsdfksj dfjklsz ezfrzerzer
-      -    ""
+           02 Titq PIC X(60) value "blbablsdfklsdfksj dfjklsz e        z
+      -    "frzerzer"
                                .
-           02 Titre PIC X(60) value 'blbablsdfklsdfksj dfjklsz ezfrzerze
-      -    'r'
+           02 Titre PIC X(60) value 'blbablsdfklsdfksj dfjklsz e       z
+      -    'frzerzer'
                                .
-           02 Titre2 PIC X(60) value "blbablsdfklsdfksj dfjklsz ezfrzerz
-      -    "er"
+           02 Titre2 PIC X(60) value "blbablsdfklsdfksj dfjklsz e      z
+      -    "frzerzer"
                                .
-           02 Titre3 PIC X(60) value "blbablsdfklsdfksj dfjklsz ezfrzerz
-      -    "erzfin"
+           02 Titre3 PIC X(60) value "blbablsdfklsdfksj dfjklsz e      z
+      -    "frzerzer                                          zfin"
                           .
-           02 Titre4 PIC X(60) value 'blbablsdfklsdfksj dfjklsz ezfrzerz
-      -    'erzfin'
+           02 Titre4 PIC X(60) value 'blbablsdfklsdfksj dfjklsz e      z
+      -    'frzerzer                                          zfin'
                           .
                             
 
