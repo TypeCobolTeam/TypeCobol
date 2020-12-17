@@ -31,6 +31,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\TypeCobol.Test\Parser\Programs\Cobol85\YxxxENT.cpy">
+      <Link>resources\input\TypeCobol\CopyReplace4Colon\YxxxENT.cpy</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="resources\config\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

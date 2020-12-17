@@ -405,7 +405,7 @@ namespace TypeCobol.Compiler.Scanner
         public bool CompareForReplace(Token comparisonToken)
         {
              // 1. First compare the token type                 
-            if(this.TokenType != comparisonToken.TokenType)
+            if(comparisonToken == null || this.TokenType != comparisonToken.TokenType)
             {
                 return false;
             }
