@@ -3,7 +3,7 @@
     /// <summary>
     /// Default Control Flow Graph Builder with any object has Data.
     /// </summary>
-    public class DefaultControlFlowGraphBuilder : ControlFlowGraphBuilder<object>
+    public class DefaultControlFlowGraphBuilder<D> : ControlFlowGraphBuilder<D>
     {
         /// <summary>
         /// Constructor.

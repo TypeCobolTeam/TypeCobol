@@ -143,7 +143,7 @@ namespace TypeCobol.Compiler.Report
         /// <returns>A List of Node.</returns>
         public override object GetResult() => _moveOrInitializeNodes;
 
-        public void Report(TextWriter writer)
+        public void Report(TextWriter writer, CompilationUnit unit = null)
         {
             foreach (Node node in _moveOrInitializeNodes)
             {

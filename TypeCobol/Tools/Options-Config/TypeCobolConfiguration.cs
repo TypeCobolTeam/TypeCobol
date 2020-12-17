@@ -58,7 +58,6 @@ namespace TypeCobol.Tools.Options_Config
         public string RawExecToStep = "5";
         public string RawMaximumDiagnostics;
         public string RawOutputFormat = "0";
-        public string RawCfgBuildingMode = "0";
 
         public static Dictionary<ReturnCode, string> ErrorMessages = new Dictionary<ReturnCode, string>()
         {
@@ -89,7 +88,6 @@ namespace TypeCobol.Tools.Options_Config
             { ReturnCode.ExpandingCopyError,     "Expanding copy path given is unreachable." },
             { ReturnCode.ExtractusedCopyError,   "Extractused copy path given is unreachable." },
             { ReturnCode.LogFileError,           "Log file path is unreachable." },
-            { ReturnCode.InvalidCfgBuildingMode, "Invalid CFG building mode. Accepted values are \"None\"/0(default), \"Standard\"/1, \"Extended\"/2, \"WithDfa\"/3." }
         };
 
         public TypeCobolConfiguration()
@@ -145,7 +143,6 @@ namespace TypeCobol.Tools.Options_Config
         ExpandingCopyError = 1032,      // Expanding copy path given is unreachable.
         ExtractusedCopyError = 1033,    // Extractused copy path given is unreachable.
         LogFileError = 1034,            // Wrong log path given
-        InvalidCfgBuildingMode = 1035,  // Invalid value supplied for CFG building mode option
 
         MultipleErrors = 9999
 
@@ -246,7 +243,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
                 { "diag.cea|diagnostic.checkEndAlignment=", "Indicate level of check end aligment: warning, error, info, ignore.", v => typeCobolConfig.CheckEndAlignment = TypeCobolCheckOption.Parse(v) },
                 { "log|logfilepath=", "{PATH} to TypeCobol.CLI.log log file", v => typeCobolConfig.LogFile = Path.Combine(v, TypeCobolConfiguration.DefaultLogFileName)},
-                { "cfg|cfgbuildingmode=", "CFG building mode to allow advanced code analysis (None/0: do not build any Control Flow Graph, Standard/1: build standard Control Flow Graph, Extended/2: same as Standard but with PERFORM targets extended, WithDfa/3: include Data Flow Analysis).", v => typeCobolConfig.RawCfgBuildingMode = v},
+                { "cfg|cfgbuild", "Standard CFG build.", v => typeCobolConfig.CfgBuildingMode = CfgBuildingMode.Standard},
             };
             return commonOptions;
         }
@@ -370,10 +367,6 @@ namespace TypeCobol.Tools.Options_Config
             //LogFilePathError
             if (!CanCreateFile(config.LogFile) && !string.IsNullOrEmpty(config.LogFile))
                 errorStack.Add(ReturnCode.LogFileError, TypeCobolConfiguration.ErrorMessages[ReturnCode.LogFileError]);
-
-            //CfgBuildingMode
-            if (!Enum.TryParse(config.RawCfgBuildingMode, true, out config.CfgBuildingMode))
-                errorStack.Add(ReturnCode.InvalidCfgBuildingMode, TypeCobolConfiguration.ErrorMessages[ReturnCode.InvalidCfgBuildingMode]);
 
             return errorStack;
         }

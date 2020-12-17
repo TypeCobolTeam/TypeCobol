@@ -30,6 +30,15 @@ namespace TypeCobol.Compiler.Symbols
             Indexes = new Domain<IndexSymbol>(this);
         }
 
+        /// <summary>
+        /// Any value associated to this Variable, more often an initial value.
+        /// </summary>
+        public object Value
+        {
+            get;
+            set;
+        }
+
         private int _level;
         /// <summary>
         /// Level of this variable.

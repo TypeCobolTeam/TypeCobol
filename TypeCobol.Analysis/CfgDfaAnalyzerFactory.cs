@@ -1,4 +1,6 @@
 ﻿using TypeCobol.Analysis.Cfg;
+using TypeCobol.Analysis.Dfa;
+using TypeCobol.Compiler.Symbols;
 
 namespace TypeCobol.Analysis
 {
@@ -8,20 +10,21 @@ namespace TypeCobol.Analysis
     public static class CfgDfaAnalyzerFactory
     {
         /// <summary>
-        /// Create the appropriate analyzer for the supplied CFG building mode.
+        /// Create the appropriate CFG analyzer for the supplied CFG building mode.
         /// </summary>
         /// <param name="identifier">Identifier of the analyzer.</param>
         /// <param name="mode">CFG building mode.</param>
         /// <returns>New instance of ISyntaxDrivenAnalyzer. Maybe null if the mode is not supported.</returns>
-        public static ISyntaxDrivenAnalyzer CreateCfgDfaAnalyzer(string identifier, CfgBuildingMode mode)
+        public static ISyntaxDrivenAnalyzer CreateCfgAnalyzer(string identifier, CfgBuildingMode mode)
         {
             switch (mode)
             {
                 case CfgBuildingMode.Standard:
-                    return new DefaultControlFlowGraphBuilder(identifier);
+                    return new DefaultControlFlowGraphBuilder<object>(identifier);
                 case CfgBuildingMode.Extended:
-                    return new DefaultControlFlowGraphBuilder(identifier, true);
-                //TODO DFA
+                    return new DefaultControlFlowGraphBuilder<object>(identifier, true);
+                case CfgBuildingMode.WithDfa:
+                    return new DefaultControlFlowGraphBuilder<DfaBasicBlockInfo<VariableSymbol>>(identifier, true);
             }
 
             return null;

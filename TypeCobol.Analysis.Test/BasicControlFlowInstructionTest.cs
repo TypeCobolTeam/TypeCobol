@@ -216,8 +216,8 @@ namespace TypeCobol.Analysis.Test
             string test = Path.Combine(BasicCfgInstrs, "MixedStackedNestedPgms");
             string path = test + ".cbl";
             string expectedDiagnosticsFilePath = test + ".diag";
-            var graphs = ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
-            CheckSimpleStructure(graphs);
+            var results = ParseCompareDiagnosticsCfgOnly(path, expectedDiagnosticsFilePath);
+            CheckSimpleStructure(results.Graphs);
         }
 
         /// <summary>
@@ -230,8 +230,8 @@ namespace TypeCobol.Analysis.Test
             string test = Path.Combine(BasicCfgInstrs, "MixedStackedNestedProcsPgms");
             string path = test + ".tcbl";
             string expectedDiagnosticsFilePath = test + ".diag";
-            var graphs = ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
-            CheckComplexStructure(graphs);
+            var results = ParseCompareDiagnosticsCfgOnly(path, expectedDiagnosticsFilePath);
+            CheckComplexStructure(results.Graphs);
         }
 
         /// <summary>
@@ -280,7 +280,6 @@ namespace TypeCobol.Analysis.Test
             string expectedResultFilePath = Path.Combine(expectedResultDirectoryPath ?? BasicCfgInstrs, expectedResultFileName + expectedResultExtension);
             Assert.IsTrue(File.Exists(expectedResultFilePath), $"Expected results file '{expectedResultFilePath}' does not exist.");
 
-            //var graphs = ParseCompareDiagnostics(inputFilePath, expectedDiagnosticsFilePath);
             var graphs = ParseCompareDiagnostics<object>(inputFilePath, mode, expectedDiagnosticsFilePath);
             Assert.IsTrue(graphs.Count == 1); //single program
             var cfg = graphs[0];
@@ -491,8 +490,8 @@ namespace TypeCobol.Analysis.Test
             string test = Path.Combine(BasicCfgInstrs, "CfgInNestedPrg0");
             string path = test + ".cbl";
             string expectedDiagnosticsFilePath = test + ".diag";
-            var graphs = ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
-            var results = CheckSimpleStructure(graphs);
+            var cfgResults = ParseCompareDiagnosticsCfgOnly(path, expectedDiagnosticsFilePath);
+            var results = CheckSimpleStructure(cfgResults.Graphs);
 
             //We have taken the same CFG than for IfThenElseCascade0
             string expectedPath = Path.Combine(BasicCfgInstrs, "IfThenElseCascade0.dot");
@@ -505,8 +504,8 @@ namespace TypeCobol.Analysis.Test
             string test = Path.Combine(BasicCfgInstrs, "CfgInNestedPrg1");
             string path = test + ".cbl";
             string expectedDiagnosticsFilePath = test + ".diag";
-            var graphs = ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
-            var results = CheckSimpleStructure(graphs);
+            var cfgResults = ParseCompareDiagnosticsCfgOnly(path, expectedDiagnosticsFilePath);
+            var results = CheckSimpleStructure(cfgResults.Graphs);
 
             //We have taken the same CFG than for PerformProcedure0  
             string expectedPath = Path.Combine(BasicCfgInstrs, "PerformProcedure0.dot");
@@ -519,8 +518,8 @@ namespace TypeCobol.Analysis.Test
             string test = Path.Combine(BasicCfgInstrs, "CfgInNestedPrg2");
             string path = test + ".cbl";
             string expectedDiagnosticsFilePath = test + ".diag";
-            var graphs = ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
-            var results = CheckSimpleStructure(graphs);
+            var cfgResults = ParseCompareDiagnosticsCfgOnly(path, expectedDiagnosticsFilePath);
+            var results = CheckSimpleStructure(cfgResults.Graphs);
 
             //We have taken the same CFG than for MixPerformEvaluateIf0  
             string expectedPath = Path.Combine(BasicCfgInstrs, "MixPerformEvaluateIf0.dot");
@@ -533,8 +532,8 @@ namespace TypeCobol.Analysis.Test
             string test = Path.Combine(BasicCfgInstrs, "CfgInStackedPrg0");
             string path = test + ".cbl";
             string expectedDiagnosticsFilePath = test + ".diag";
-            var graphs = ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
-            var results = CheckSimpleStructure(graphs);
+            var cfgResults = ParseCompareDiagnosticsCfgOnly(path, expectedDiagnosticsFilePath);
+            var results = CheckSimpleStructure(cfgResults.Graphs);
 
             //We have taken the same CFG than for PerformProcedure0  
             string expectedPath = Path.Combine(BasicCfgInstrs, "PerformProcedure0.dot");
@@ -547,8 +546,8 @@ namespace TypeCobol.Analysis.Test
             string test = Path.Combine(BasicCfgInstrs, "CfgInStackedPrg1");
             string path = test + ".cbl";
             string expectedDiagnosticsFilePath = test + ".diag";
-            var graphs = ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
-            var results = CheckSimpleStructure(graphs);
+            var cfgResults = ParseCompareDiagnosticsCfgOnly(path, expectedDiagnosticsFilePath);
+            var results = CheckSimpleStructure(cfgResults.Graphs);
 
             //We have taken the same CFG than for MixPerformEvaluateIf0  
             string expectedPath = Path.Combine(BasicCfgInstrs, "MixPerformEvaluateIf0.dot");
@@ -561,8 +560,8 @@ namespace TypeCobol.Analysis.Test
             string test = Path.Combine(BasicCfgInstrs, "CfgInProcedure0");
             string path = test + ".cbl";
             string expectedDiagnosticsFilePath = test + ".diag";
-            var graphs = ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
-            var results = CheckComplexStructure(graphs);
+            var cfgResults = ParseCompareDiagnosticsCfgOnly(path, expectedDiagnosticsFilePath);
+            var results = CheckComplexStructure(cfgResults.Graphs);
 
             //We have taken the same CFG than for IfThenElseCascade0  
             string expectedPath = Path.Combine(BasicCfgInstrs, "IfThenElseCascade0.dot");
@@ -575,8 +574,8 @@ namespace TypeCobol.Analysis.Test
             string test = Path.Combine(BasicCfgInstrs, "CfgInProcedure1");
             string path = test + ".cbl";
             string expectedDiagnosticsFilePath = test + ".diag";
-            var graphs = ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
-            var results = CheckComplexStructure(graphs);
+            var cfgResults = ParseCompareDiagnosticsCfgOnly(path, expectedDiagnosticsFilePath);
+            var results = CheckComplexStructure(cfgResults.Graphs);
 
             //We have taken the same CFG than for ComplexGotoPara0  
             string expectedPath = Path.Combine(BasicCfgInstrs, "ComplexGotoPara0.dot");
@@ -589,8 +588,8 @@ namespace TypeCobol.Analysis.Test
             string test = Path.Combine(BasicCfgInstrs, "CfgInNestedProcedure0");
             string path = test + ".cbl";
             string expectedDiagnosticsFilePath = test + ".diag";
-            var graphs = ParseCompareDiagnostics(path, expectedDiagnosticsFilePath);
-            var results = CheckComplexStructure(graphs);
+            var cfgResults = ParseCompareDiagnosticsCfgOnly(path, expectedDiagnosticsFilePath);
+            var results = CheckComplexStructure(cfgResults.Graphs);
 
             //We have taken the same CFG than for ComplexGotoPara0  
             string expectedPath = Path.Combine(BasicCfgInstrs, "ComplexGotoPara0.dot");
@@ -652,17 +651,17 @@ namespace TypeCobol.Analysis.Test
         {
             string path = Path.Combine(ThirdPartyDir, "Nist");
             string[] files = Directory.GetFiles(path, "*.cbl", SearchOption.AllDirectories);
-            var nistOutput = Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "Nist"));
+            var nistOutput = Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "Nist"));//Generate in bin directory
             foreach (string f in files)
             {
                 string dotFile = Path.GetFileNameWithoutExtension(f) + ".dot";
                 string dotName = (fullInstruction ? string.Empty : "_") + dotFile;
                 string dotFilePath = Path.Combine(nistOutput.FullName, dotName);
 
-                var graphs = ParseCompareDiagnostics(f);
+                var results = ParseCompareDiagnosticsCfgOnly(f);
 
-                Assert.IsTrue(graphs.Count > 0);
-                GenDotCfgFile(graphs[0], dotFilePath, fullInstruction);//Generate only main
+                Assert.IsTrue(results.Graphs.Count > 0);
+                GenDotCfgFile(results.Graphs[0], dotFilePath, fullInstruction);//Generate only main
             }
         }
 
@@ -683,6 +682,13 @@ namespace TypeCobol.Analysis.Test
         public void GenAllNistSrcDots() => GenAllNistDots(true);
 
         //Extended format
+        [TestMethod]
+        public void ExtendedPerformProc1Recursive0()
+        {
+            const string baseName = "PerformProc1Recursive0";
+            TestTemplate(inputFileName: baseName, expectedDiagnosticsFileName: baseName, mode: CfgBuildingMode.Extended);
+        }
+
         [TestMethod]
         public void ExtendedPerformProc3Recursive0()
         {

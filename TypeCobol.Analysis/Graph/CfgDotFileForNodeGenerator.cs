@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using TypeCobol.Analysis.Cfg;
+using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Report;
@@ -102,7 +103,7 @@ namespace TypeCobol.Analysis.Graph
         /// Generate the current Control Flow Graph of this generator in the given TextWriter
         /// </summary>
         /// <param name="writer">Output TextWriter</param>
-        public void Report(TextWriter writer)
+        public void Report(TextWriter writer, CompilationUnit unit = null)
         {
             //Reset state
             _encounteredBlocks.Clear();
