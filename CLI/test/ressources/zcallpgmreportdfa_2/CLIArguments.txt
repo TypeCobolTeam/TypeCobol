@@ -1,0 +1,1 @@
+-i input\InBulkCallPgm88Set.cbl -zcr=output\InBulkCallPgm88Set.csv --exectostep=CrossCheck

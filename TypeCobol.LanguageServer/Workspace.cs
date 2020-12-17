@@ -442,7 +442,7 @@ namespace TypeCobol.LanguageServer
 
             //Configure CFG/DFA analyzer
             var analyzerProvider = new AnalyzerProvider();
-            analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgDfaAnalyzer("cfg-dfa", Configuration.CfgBuildingMode));
+            analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer("cfg-dfa", Configuration.CfgBuildingMode));
 
             CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format, typeCobolOptions, analyzerProvider);
 

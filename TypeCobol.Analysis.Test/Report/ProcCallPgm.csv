@@ -1,0 +1,7 @@
+ObjectName=PGM00000;Line=14;Column=17;Path=ProcCall.PROGRAM_NAME<-"PGM00000";SourceText=call 'zcallpgm' using PROGRAM_NAME
+ObjectName=MyPgm;Line=14;Column=17;Path=ProcCall.PROGRAM_NAME<-"MyPgm";SourceText=call 'zcallpgm' using PROGRAM_NAME
+ObjectName=MyPgm2;Line=14;Column=17;Path=ProcCall.PROGRAM_NAME<-"MyPgm2";SourceText=call 'zcallpgm' using PROGRAM_NAME
+ObjectName=MyPgm3;Line=14;Column=17;Path=ProcCall.PROGRAM_NAME<-"MyPgm3";SourceText=call 'zcallpgm' using PROGRAM_NAME
+ObjectName=PGM00000;Line=20;Column=12;Path=ProcCall.PROGRAM_NAME<-"PGM00000";SourceText=call 'zcallpgm' using PROGRAM_NAME
+ObjectName=MyPgm2;Line=20;Column=12;Path=ProcCall.PROGRAM_NAME<-"MyPgm2";SourceText=call 'zcallpgm' using PROGRAM_NAME
+ObjectName=MyPgm3;Line=20;Column=12;Path=ProcCall.PROGRAM_NAME<-"MyPgm3";SourceText=call 'zcallpgm' using PROGRAM_NAME
