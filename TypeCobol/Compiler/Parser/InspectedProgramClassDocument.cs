@@ -9,10 +9,10 @@ namespace TypeCobol.Compiler.Parser
     /// </summary>
     public class InspectedProgramClassDocument
     {
-        public InspectedProgramClassDocument(ProgramClassDocument programClassDocument, List<Diagnostic> violations)
+        public InspectedProgramClassDocument(ProgramClassDocument programClassDocument, List<Diagnostic> diagnostics)
         {
             PreviousStepSnapshot = programClassDocument;
-            Diagnostics = violations;
+            Diagnostics = diagnostics;
         }
 
         /// <summary>
