@@ -290,7 +290,7 @@ namespace TypeCobol.Compiler
 
         /// <summary>
         /// Launch AST analyzers to perform code quality analysis.
-        /// Update the list of quality violations.
+        /// Update the list of quality-check diagnostics.
         /// </summary>
         public void RefreshCodeAnalysisDocumentSnapshot()
         {
@@ -301,17 +301,17 @@ namespace TypeCobol.Compiler
                 {
                     PerfStatsForCodeQualityCheck.OnStartRefresh();
 
-                    List<Diagnostic> violations = new List<Diagnostic>();
+                    List<Diagnostic> diagnostics = new List<Diagnostic>();
                     var analyzers = _analyzerProvider?.CreateASTAnalyzers(CompilerOptions);
                     if (analyzers != null)
                     {
-                        //Launch code analysis and gather violations
+                        //Launch code analysis and gather quality rules violations
                         foreach (var analyzer in analyzers)
                         {
                             try
                             {
                                 programClassDocument.Root.AcceptASTVisitor(analyzer);
-                                violations.AddRange(analyzer.Diagnostics);
+                                diagnostics.AddRange(analyzer.Diagnostics);
                             }
                             catch (Exception exception)
                             {
@@ -338,12 +338,12 @@ namespace TypeCobol.Compiler
                         void ReportAnalyzerException(string analyzer, Exception exception)
                         {
                             var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, 0, 0, 0, analyzer, exception.Message, exception);
-                            violations.Add(diagnostic);
+                            diagnostics.Add(diagnostic);
                         }
                     }
 
                     //Create updated snapshot
-                    CodeAnalysisDocumentSnapshot = new InspectedProgramClassDocument(programClassDocument, violations);
+                    CodeAnalysisDocumentSnapshot = new InspectedProgramClassDocument(programClassDocument, diagnostics);
 
                     PerfStatsForCodeQualityCheck.OnStopRefresh();
                 }
@@ -374,7 +374,7 @@ namespace TypeCobol.Compiler
 
         /// <summary>
         /// Final snapshot of the compilation unit, it captures the fully parsed Cobol program
-        /// along with all code-quality violations produced during the code analysis phase.
+        /// along with all code-quality diagnostics produced during the code analysis phase.
         /// This property is thread-safe.
         /// </summary>
         public InspectedProgramClassDocument CodeAnalysisDocumentSnapshot { get; private set; }
@@ -412,9 +412,9 @@ namespace TypeCobol.Compiler
         /// Note that a snapshot only contains diagnostics related to its own phase.
         /// </summary>
         /// <param name="includeNodeDiagnostics">True to include diagnostics produced by Node phase</param>
-        /// <param name="includeQualityViolations">True to include diagnostics/rule-violations produced by QualityCheck</param>
+        /// <param name="includeQualityDiagnostics">True to include diagnostics produced by QualityCheck</param>
         /// <returns>A list of selected diagnostics.</returns>
-        public IList<Diagnostic> AllDiagnostics(bool includeNodeDiagnostics, bool includeQualityViolations)
+        public IList<Diagnostic> AllDiagnostics(bool includeNodeDiagnostics, bool includeQualityDiagnostics)
         {
             var allDiagnostics = new List<Diagnostic>(base.AllDiagnostics());
 
@@ -443,7 +443,7 @@ namespace TypeCobol.Compiler
                 }
             }
 
-            if (includeQualityViolations)
+            if (includeQualityDiagnostics)
             {
                 lock (lockObjectForCodeAnalysisDocumentSnapshot)
                 {
