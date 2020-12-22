@@ -13,4 +13,12 @@
           TEST-SGROUP5
             TEST-ELT5
           TEST-RENAMES
+        TEST-GROUP2
+          TEST-SGROUP6
+            ELT1
+            ELT2
+          TEST-SGROUP7
+            ELT3
+            ELT4
+          TEST-RENAMES-GROUP
     end
