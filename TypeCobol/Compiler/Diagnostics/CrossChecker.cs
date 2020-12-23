@@ -489,18 +489,17 @@ namespace TypeCobol.Compiler.Diagnostics
                 var nodeIndex = dataDescription.Parent.IndexOf(dataDescription);
                 //Get sibling nodes
                 var siblingNodes = dataDescription.Parent.Children;
-                //Check if next node is inside a copy when this isn't the last node
-                if (siblingNodes.Count > nodeIndex + 1 && siblingNodes[nodeIndex + 1].IsInsideCopy())
+                //Get immediately following DataDefinition
+                var nextData = siblingNodes.Skip(nodeIndex + 1).OfType<DataDefinition>().FirstOrDefault();
+                if (nextData != null && nextData.IsInsideCopy())
                 {
-                    //Get next sibling node
-                    var nextSibling = siblingNodes[nodeIndex + 1];
-                    DiagnosticUtils.AddError(dataDescription, $"Cannot include copy {nextSibling.CodeElement?.FirstCopyDirective.TextName} " +
+                    DiagnosticUtils.AddError(dataDescription, $"Cannot include copy {nextData.CodeElement.FirstCopyDirective.TextName} " +
                                                               $"under level {dataDescriptionEntry.LevelNumber} " +
-                                                              $"because copy starts at level {((DataDescription)nextSibling).CodeElement.LevelNumber}.", dataDescriptionEntry);
+                                                              $"because copy starts at level {nextData.CodeElement.LevelNumber}.", dataDescriptionEntry);
                 }
-                //Last node so this is an empty group item
                 else
                 {
+                    //Last node so this is an empty group item
                     DiagnosticUtils.AddError(dataDescription, "A group item cannot be empty.", dataDescriptionEntry);
                 }
             }
