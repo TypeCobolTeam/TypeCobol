@@ -857,32 +857,39 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartExecStatement(ExecStatement execStmt)
         {
-            ExitLastLevel1Definition();
             Enter(new Exec(execStmt), execStmt);
             Dispatcher.StartExecStatement(execStmt);
         }
 
         public virtual void EndExecStatement()
         {
-            //Code duplicated in OnExecStatement
             //EndExecStatement (therefore StartExecStatement) is fired if the exec is in a procedure division and is the first instruction
             //OnExecStatement is fired if the exec is in a procedure division and is not the first instruction
+            ExitExecStatement();
+            Dispatcher.EndExecStatement();
+        }
 
-            //Code to generate a specific ProcedureDeclaration as Nested when an Exec Statement is spotted. See Issue #1209
-            //This might be helpful for later
-            //if (_ProcedureDeclaration != null)
-            //{
-            //    _ProcedureDeclaration.SetFlag(Node.Flag.GenerateAsNested, true);
-            //}
-
+        private void ExitExecStatement()
+        {
             //Code to generate all ProcedureDeclarations as Nested when an Exec Statement is spotted. See Issue #1209
             //This is the selected solution until we determine the more optimal way to generate a program that contains Exec Statements
             if (_ProcedureDeclaration != null)
             {
                 CurrentNode.Root.MainProgram.SetFlag(Node.Flag.GenerateAsNested, true);
             }
+
+            var exec = CurrentNode;
             Exit();
-            Dispatcher.EndExecStatement();
+
+            //EXECs inside a DataDefinition are moved to the parent data division section
+            //Children of a DataDefinition are thus guaranteed to be DataDefinition themselves
+            var targetParent = CurrentNode;
+            while (targetParent is DataDefinition)
+            {
+                targetParent = targetParent.Parent;
+            }
+            exec.Parent.Remove(exec);
+            targetParent.Add(exec);
         }
 
         public virtual void OnContinueStatement(ContinueStatement stmt)
@@ -1064,25 +1071,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         public virtual void OnExecStatement(ExecStatement stmt)
         {
             Enter(new Exec(stmt), stmt);
-
-            //Code duplicated in OnExecStatement
             //EndExecStatement (therefore StartExecStatement) is fired if the exec is in a procedure division and is the first instruction
             //OnExecStatement is fired if the exec is in a procedure division and is not the first instruction
-
-            //Code to generate a specific ProcedureDeclaration as Nested when an Exec Statement is spotted. See Issue #1209
-            //This might be helpful for later
-            //if (_ProcedureDeclaration != null)
-            //{
-            //    _ProcedureDeclaration.SetFlag(Node.Flag.GenerateAsNested, true);
-            //}
-
-            //Code to generate all ProcedureDeclarations as Nested when an Exec Statement is spotted. See Issue #1209
-            //This is the selected solution until we determine the more optimal way to generate a program that contains Exec Statements
-            if (_ProcedureDeclaration != null)
-            {
-                CurrentNode.Root.MainProgram.SetFlag(Node.Flag.GenerateAsNested, true);
-            }
-            Exit();
+            ExitExecStatement();
             Dispatcher.OnExecStatement(stmt);
         }
 
