@@ -148,19 +148,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             }
         }
 
-        private Node GetTopLevelItem(long level)
-        {
-            var parent = CurrentNode;
-            while (parent != null)
-            {
-                var data = parent.CodeElement as DataDefinitionEntry;
-                if (data == null) return null;
-                if (data.LevelNumber == null || data.LevelNumber.Value < level) return parent;
-                parent = parent.Parent;
-            }
-            return null;
-        }
-
         /// <summary>Exit() every Node that is not the top-level item for a data of a given level.</summary>
         /// <param name="levelnumber">
         /// Level number of the next data definition that will be Enter()ed.
@@ -168,25 +155,22 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </param>
         private void SetCurrentNodeToTopLevelItem(IntegerValue levelnumber)
         {
-            long level = levelnumber != null ? levelnumber.Value : 1;
-            Node parent;
-
+            long level = levelnumber?.Value ?? 1;
             if (level == 1 || level == 77)
             {
-                parent = null;
-            }
-            else
-            {
-                parent = GetTopLevelItem(level);
-            }
-            if (parent != null)
-            {
-                // Exit() previous sibling and all of its last children
-                while (parent != CurrentNode) Exit();
-            }
-            else
-            {
+                //level-1 and level-77 should be attached directly into the section.
                 ExitLastLevel1Definition();
+            }
+            else
+            {
+                long parentLevel = level == 66 ? 1 : level - 1; //level-66 should be attached to their corresponding level-1.
+                while (CurrentNode.CodeElement is DataDefinitionEntry entry)
+                {
+                    //Exit() till we reach or get over expected parent level.
+                    if (entry.LevelNumber == null) break;
+                    if (entry.LevelNumber.Value <= parentLevel) break;
+                    Exit();
+                }
             }
         }
 
@@ -194,14 +178,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         private void ExitLastLevel1Definition()
         {
             _CurrentTypeDefinition = null;
-            Node LastLevel1Def = null;
-            while (CurrentNode.CodeElement != null && CurrentNode.CodeElement is DataDefinitionEntry)
+            Node lastLevel1Definition = null;
+            while (CurrentNode.CodeElement is DataDefinitionEntry)
             {
-                LastLevel1Def = CurrentNode;
+                lastLevel1Definition = CurrentNode;
                 Exit();
             }
-            if (LastLevel1Def != null)
-                Dispatcher.OnLevel1Definition((DataDefinition)LastLevel1Def);
+            if (lastLevel1Definition != null)
+                Dispatcher.OnLevel1Definition((DataDefinition) lastLevel1Definition);//Call is made also for level-77.
         }
 
         public virtual void StartCobolCompilationUnit()
