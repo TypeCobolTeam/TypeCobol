@@ -76,6 +76,7 @@ namespace TypeCobol.Compiler.CodeElements
         DivideGivingStatement,
         DivideRemainderStatement,
         EvaluateStatement,
+        WhenDummy,
         WhenCondition,
         WhenOtherCondition,
         ExecStatement,

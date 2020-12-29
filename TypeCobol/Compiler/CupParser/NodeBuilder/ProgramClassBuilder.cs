@@ -1281,7 +1281,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             foreach (var cond in conditions)
             {
                 TypeCobol.Compiler.CodeElements.WhenCondition condition = null;
-                if (cond is TypeCobol.Compiler.CodeElements.WhenSearchCondition)
+                if (cond.Type == CodeElementType.WhenSearchCondition)
                 {
                     TypeCobol.Compiler.CodeElements.WhenSearchCondition whensearch =
                         cond as TypeCobol.Compiler.CodeElements.WhenSearchCondition;
@@ -1291,6 +1291,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                     condition.SelectionObjects = new EvaluateSelectionObject[1];
                     condition.SelectionObjects[0] = new EvaluateSelectionObject();
                     condition.SelectionObjects[0].BooleanComparisonVariable = new BooleanValueOrExpression(whensearch.Condition);
+                }
+                else if (cond.Type == CodeElementType.WhenDummy)
+                {
+                    condition = cond as TypeCobol.Compiler.CodeElements.WhenCondition;
+                    DiagnosticUtils.AddError(cond, "Missing condition in \"when\" clause");
                 }
                 else
                 {
@@ -1307,6 +1312,22 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void EndWhenConditionClause()
         {
+            if (SyntaxTree.CurrentNode.ChildrenCount == 0)
+            {
+                System.Diagnostics.Debug.Assert(SyntaxTree.CurrentNode.Parent.ChildrenCount >= 2);
+                // -1 is the Then node
+                // -2 is the When group
+                var whenGroup = SyntaxTree.CurrentNode.Parent.Children[SyntaxTree.CurrentNode.Parent.ChildrenCount - 2];
+                System.Diagnostics.Debug.Assert(whenGroup.ChildrenCount > 0);
+
+                var whenNode = whenGroup.Children[whenGroup.ChildrenCount - 1];
+                System.Diagnostics.Debug.Assert(whenNode.CodeElement != null);
+                System.Diagnostics.Debug.Assert(whenNode.CodeElement.Type == CodeElementType.WhenCondition || 
+                    whenNode.CodeElement.Type == CodeElementType.WhenDummy);
+
+                //Syntax error.
+                DiagnosticUtils.AddError(whenNode, "Missing statement in \"when\" clause");
+            }
             Exit();// exit THEN
             Dispatcher.EndWhenConditionClause();
         }
@@ -1433,6 +1454,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Dispatcher.StartWhenSearchConditionClause(condition);
         }
 
+        public virtual void StartDummyWhenSearchConditionClause([NotNull] TypeCobol.Compiler.CodeElements.WhenDummy condition)
+        {
+            Enter(new When(condition), condition);
+            DiagnosticUtils.AddError(condition, "Missing condition in \"when\" clause");
+        }
         public virtual void EndWhenSearchConditionClause()
         {
             Exit(); // WHEN

@@ -94,22 +94,24 @@ namespace TypeCobol.LanguageServer
                     var codeElementsLine =
                         fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines[lineIndex];
 
-                    if (codeElementsLine != null && codeElementsLine.CodeElements != null && !(codeElementsLine.CodeElements[0] is SentenceEnd))
+                    if (codeElementsLine != null)
                     {
-                        //Ignore all the EndOfFile token 
-                        var tempCodeElements = codeElementsLine.CodeElements.Where(c => c.ConsumedTokens.Any(t => t.TokenType != TokenType.EndOfFile));
-
-                        foreach (var tempCodeElement in tempCodeElements.Reverse())
+                        if (codeElementsLine.CodeElements != null && !(codeElementsLine.CodeElements[0] is SentenceEnd))
                         {
-                            if (!tempCodeElement.ConsumedTokens.Any(t => /*CompletionElligibleTokens.IsCompletionElligibleToken(t) &&*/
-                            ((t.Line == position.line + 1 && t.StopIndex + 1 <= position.character) || t.Line < position.line + 1)))
-                                ignoredCodeElements.Add(tempCodeElement);
-                            else
-                                codeElements.Add(tempCodeElement);
-                        }
+                            //Ignore all the EndOfFile token 
+                            var tempCodeElements = codeElementsLine.CodeElements.Where(c => c.ConsumedTokens.Any(t => t.TokenType != TokenType.EndOfFile));
+                              foreach (var tempCodeElement in tempCodeElements.Reverse())
+                            {
+                                if (!tempCodeElement.ConsumedTokens.Any(t => /*CompletionElligibleTokens.IsCompletionElligibleToken(t) &&*/
+                                        ((t.Line == position.line + 1 && t.StopIndex + 1 <= position.character) || t.Line < position.line + 1)))
+                                    ignoredCodeElements.Add(tempCodeElement);
+                                else
+                                    codeElements.Add(tempCodeElement);
+                            }
 
-                        if (tempCodeElements.Any(c => c.ConsumedTokens.Any(t => t.TokenType == TokenType.PeriodSeparator && !(t is Compiler.AntlrUtils.MissingToken))))
-                            break;
+                            if (tempCodeElements.Any(c => c.ConsumedTokens.Any(t => t.TokenType == TokenType.PeriodSeparator && !(t is Compiler.AntlrUtils.MissingToken))))
+                                break;
+                        }
                     }
 
                     lineIndex--; //decrease lineIndex to get the previous line of TypeCobol Tree.
@@ -657,7 +659,7 @@ namespace TypeCobol.LanguageServer
                                 break;
                             }
                         case TokenType.DISPLAY:
-                            {
+                        {
                                 System.Linq.Expressions.Expression<Func<DataDefinition, bool>> predicate = dataDefinition =>
                                     dataDefinition.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase) // keep only variables with matching name
                                     && dataDefinition.Usage != DataUsage.ProcedurePointer // invalid usages in DISPLAY statement
@@ -687,7 +689,7 @@ namespace TypeCobol.LanguageServer
                                 break;
                             }
                         case TokenType.INTO:
-                            {
+                        {
                                 items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
                                     v => v.Name.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase)
                                          && (v.CodeElement != null &&

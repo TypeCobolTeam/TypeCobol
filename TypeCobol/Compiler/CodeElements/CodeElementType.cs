@@ -134,6 +134,7 @@ namespace TypeCobol.Compiler.CodeElements
         OnSizeErrorCondition,
         NotOnSizeErrorCondition,
         ElseCondition,
+        WhenDummy,
         WhenCondition,
         WhenOtherCondition,
         WhenSearchCondition,

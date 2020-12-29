@@ -3,8 +3,8 @@ Line 8[19,28] <30, Error, Semantics> - Semantic error: Symbol TST-STT-KO is not 
 Line 9[52,58] <30, Error, Semantics> - Semantic error: Symbol NBR-ERR is not referenced OffendingSymbol=[52,58:NBR-ERR]<UserDefinedWord>
 Line 10[19,28] <30, Error, Semantics> - Semantic error: Symbol TST-STT-OK is not referenced OffendingSymbol=[19,28:TST-STT-OK]<UserDefinedWord>
 Line 11[52,57] <30, Error, Semantics> - Semantic error: Symbol NBR-OK is not referenced OffendingSymbol=[52,57:NBR-OK]<UserDefinedWord>
-Line 14[14,23] <27, Error, Syntax> - Syntax error : extraneous input 'whenother' expecting {AcceptStatement, AddStatement, AllocateStatement, AlterStatement, CallStatement, CancelStatement, CloseStatement, ComputeStatement, ContinueStatement, DeleteStatement, DisplayStatement, DivideStatement, EntryStatement, EvaluateStatement, ExecStatement, ExitMethodStatement, ExitProgramStatement, ExitStatement, FreeStatement, GobackStatement, GotoStatement, IfStatement, InitializeStatement, InspectStatement, InvokeStatement, JsonGenerateStatement, JsonParseStatement, MergeStatement, MoveStatement, MultiplyStatement, OpenStatement, PerformProcedureStatement, PerformStatement, ReadStatement, ReleaseStatement, ReturnStatement, RewriteStatement, SearchStatement, SetStatement, SortStatement, StartStatement, StopStatement, StringStatement, SubtractStatement, UnstringStatement, WriteStatement, XmlGenerateStatement, XmlParseStatement, WhenCondition, WhenSearchCondition, ProcedureStyleCall} OffendingSymbol=[[WhenOtherCondition]] [14,17:when]<WHEN> --> [19,23:other]<OTHER>
-
+Line 13[14,33] <27, Error, Syntax> - Syntax error : Missing statement in "when" clause
+Line 13[19,33] <30, Error, Semantics> - Semantic error: Symbol TST-STT-UNKNOWN is not referenced OffendingSymbol=[19,33:TST-STT-UNKNOWN]<UserDefinedWord>
 Line 15[25,29] <30, Error, Semantics> - Semantic error: Symbol ABEND is not referenced OffendingSymbol=[25,29:ABEND]<UserDefinedWord>
 
 --- Program ---

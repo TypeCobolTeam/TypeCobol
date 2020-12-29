@@ -39,14 +39,15 @@ namespace TypeCobol.Compiler.CodeElements
 	/// </summary>
 	public class WhenCondition : StatementElement {
 		public WhenCondition() : base(CodeElementType.WhenCondition, StatementType.WhenCondition) { }
+        protected WhenCondition(CodeElementType type) : base(type, StatementType.WhenCondition) { }
 
-		/// <summary>
-		/// Operands in the WHEN phrase
-		/// Are interpreted in one of two ways, depending on how they are specified:
-		/// - Individually, they are called selection objects
-		/// - Collectively, they are called a set of selection objects.
-		/// </summary>
-		public EvaluateSelectionObject[] SelectionObjects { get; set; }
+        /// <summary>
+        /// Operands in the WHEN phrase
+        /// Are interpreted in one of two ways, depending on how they are specified:
+        /// - Individually, they are called selection objects
+        /// - Collectively, they are called a set of selection objects.
+        /// </summary>
+        public EvaluateSelectionObject[] SelectionObjects { get; set; }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor) {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
@@ -54,7 +55,15 @@ namespace TypeCobol.Compiler.CodeElements
         }
     }
 
-	public class EvaluateSelectionObject : IVisitable  {
+    /// <summary>
+    /// Dummy Conditional expression case for the EVALUATE statement in completion.
+    /// </summary>
+    public class WhenDummy : WhenCondition
+    {
+        public WhenDummy() : base(CodeElementType.WhenDummy) { }
+    }
+
+    public class EvaluateSelectionObject : IVisitable  {
 
 		public SyntaxProperty<bool> IsAny { get; set; }
 

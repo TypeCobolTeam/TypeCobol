@@ -203,6 +203,7 @@ terminal TypeCobol.Compiler.CodeElements.NotInvalidKeyCondition NotInvalidKeyCon
 terminal TypeCobol.Compiler.CodeElements.OnSizeErrorCondition OnSizeErrorCondition;
 terminal TypeCobol.Compiler.CodeElements.NotOnSizeErrorCondition NotOnSizeErrorCondition;
 terminal TypeCobol.Compiler.CodeElements.ElseCondition ElseCondition;
+terminal TypeCobol.Compiler.CodeElements.WhenDummy WhenDummy;
 terminal TypeCobol.Compiler.CodeElements.WhenCondition WhenCondition;
 terminal TypeCobol.Compiler.CodeElements.WhenOtherCondition WhenOtherCondition;
 terminal TypeCobol.Compiler.CodeElements.WhenSearchCondition WhenSearchCondition;
@@ -1214,7 +1215,9 @@ whenConditionClauses ::=
 	|	whenConditionClauses error whenConditionClause
 	;
 
-whenConditionClause ::= whenEvaluateConditionsStart  statements
+whenConditionClause ::=  whenEvaluateConditionsStart
+    {: my_parser.Builder.EndWhenConditionClause(); :}
+	| whenEvaluateConditionsStart  statements
 	{: my_parser.Builder.EndWhenConditionClause(); :}
 	;
 
@@ -1222,6 +1225,9 @@ whenEvaluateCondition ::= WhenSearchCondition:wec
 	{: RESULT = wec; :}
 	| WhenCondition:wec
 	{: RESULT = wec; :}
+	| WhenDummy:wec
+	{: RESULT = wec; :}
+
 	;
 
 whenEvaluateConditions ::= whenEvaluateCondition:wec
@@ -1441,7 +1447,9 @@ searchStatement ::= SearchStatement:stmt
 	;
 
 whenSearchConditionClause ::= 
-		whenSearchCondition  statements
+		whenSearchCondition
+		{: my_parser.Builder.EndWhenSearchConditionClause(); :}
+	|   whenSearchCondition  statements
 		{: my_parser.Builder.EndWhenSearchConditionClause(); :}
 	|	whenSearchCondition  nextSentenceStatement
 		{: my_parser.Builder.EndWhenSearchConditionClause(); :}
@@ -1449,6 +1457,8 @@ whenSearchConditionClause ::=
 
 whenSearchCondition ::= WhenSearchCondition:wsc 
 	{: my_parser.Builder.StartWhenSearchConditionClause(wsc); :}
+	| WhenDummy:wd
+	{: my_parser.Builder.StartDummyWhenSearchConditionClause(wd); :}
 	;
 
 whenSearchConditionClauses ::= whenSearchConditionClause

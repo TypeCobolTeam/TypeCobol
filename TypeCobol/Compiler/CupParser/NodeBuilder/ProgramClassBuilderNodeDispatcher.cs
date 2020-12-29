@@ -822,6 +822,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             foreach (var listener in _listeners) listener.StartNoAtEnd(cond);
         }
 
+        public void StartDummyWhenSearchConditionClause(WhenDummy condition)
+        {
+            foreach (var listener in _listeners) listener.StartDummyWhenSearchConditionClause(condition);
+        }
+        
         public virtual void EndNoAtEnd()
         {
             foreach (var listener in _listeners) listener.EndNoAtEnd();

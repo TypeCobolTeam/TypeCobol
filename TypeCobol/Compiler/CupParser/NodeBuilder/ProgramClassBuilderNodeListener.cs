@@ -805,6 +805,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         }
 
+        public virtual void StartDummyWhenSearchConditionClause(WhenDummy condition) 
+        {
+
+        }
+
         public virtual void StartWorkingStorageSection(WorkingStorageSectionHeader header)
         {
 
