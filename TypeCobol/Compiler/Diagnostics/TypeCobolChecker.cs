@@ -535,15 +535,17 @@ namespace TypeCobol.Compiler.Diagnostics
                         DiagnosticUtils.AddError(node, m);
                     }
 
-                    if (actualDataDefinition.IsSynchronized != expected.IsSynchronized)
+                    bool actualIsSynchronized = actualDataDefinition.Synchronized != null;
+                    bool expectedIsSynchronized = expected.Synchronized != null;
+                    if (actualIsSynchronized != expectedIsSynchronized)
                     {
                         var m =
                            string.Format(
                                "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
                                 call.FunctionName, expected.Name,
-                                expected.IsSynchronized ? "synchonized" : "not synchronized",
+                                expectedIsSynchronized ? "synchonized" : "not synchronized",
                                 callArgName ?? string.Format("position {0}", c + 1),
-                                actualDataDefinition.IsSynchronized ? "synchonized" : "not synchronized");
+                                actualIsSynchronized ? "synchonized" : "not synchronized");
                         DiagnosticUtils.AddError(node, m);
                     }
 
