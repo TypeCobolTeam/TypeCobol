@@ -2,7 +2,7 @@
        PROGRAM-ID. ProcedureCall-ParamCompatibily.
        DATA DIVISION .
        local-STORAGE SECTION.
-      
+
        01  picAlpha10       pic X(10).
        01  picAlpha20       pic X(20).
        01  picNum10         pic 9(10).
@@ -14,9 +14,11 @@
            05 tabNum5     pic 9(10) occurs 5.
            05 tabAlpha5   pic X(10) occurs 5.
 
-       01  picNum10Sync     pic 9(10) sync.
-       01  picAlpha10Just   pic X(10) just.
-      
+       01  picNum10Sync         pic 9(10) sync.
+       01  picNum10SyncLeft     pic 9(10) sync left.
+       01  picNum10SyncRight    pic 9(10) sync right.
+       01  picAlpha10Just       pic X(10) just.
+
        PROCEDURE DIVISION.
 
        declare proc1 private input param1  pic 9(10).
@@ -28,62 +30,68 @@
        declare proc3 private input param1  pic 9(10) sync.
        end-declare.
 
+       declare proc31 private input param1  pic 9(10) sync left.
+       end-declare.
+
+       declare proc32 private input param1  pic 9(10) sync right.
+       end-declare.
+
        declare proc4 private input param1  pic X(10) just.
        end-declare.
       
       *    KO
-Line 35[12,38] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' with picture 9(10) and received 'picAlpha10' with picture X(10)
+Line 43[12,38] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' with picture 9(10) and received 'picAlpha10' with picture X(10)
            call proc1 input picAlpha10
       *OK
            call proc1 input picNum10
       *    KO
-Line 39[12,40] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' of usage  and received 'picNum10Comp' of usage Binary
+Line 47[12,40] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' of usage  and received 'picNum10Comp' of usage Binary
            call proc1 input picNum10Comp
       *    KO
-Line 41[12,41] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' of usage  and received 'picNum10Comp3' of usage PackedDecimal
+Line 49[12,41] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' of usage  and received 'picNum10Comp3' of usage PackedDecimal
            call proc1 input picNum10Comp3
       *    KO
-Line 43[12,41] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' of usage  and received 'picNum10Comp5' of usage NativeBinary
+Line 51[12,41] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' of usage  and received 'picNum10Comp5' of usage NativeBinary
            call proc1 input picNum10Comp5
       *    KO
-Line 45[12,35] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' to be NOT an array and received 'tabNum5' which is an array
+Line 53[12,35] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' to be NOT an array and received 'tabNum5' which is an array
            call proc1 input tabNum5
       *    KO
-Line 47[12,37] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' with picture 9(10) and received 'tabAlpha5' with picture X(10)
-Line 47[12,37] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' to be NOT an array and received 'tabAlpha5' which is an array
+Line 55[12,37] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' with picture 9(10) and received 'tabAlpha5' with picture X(10)
+Line 55[12,37] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' to be NOT an array and received 'tabAlpha5' which is an array
            call proc1 input tabAlpha5
 
 
       *OK
            call proc2 input picAlpha10
       *    KO
-Line 53[12,38] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' with picture X(10) and received 'picAlpha20' with picture X(20)
+Line 61[12,38] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' with picture X(10) and received 'picAlpha20' with picture X(20)
            call proc2 input picAlpha20
       *OK: because we only use 10caracters
       *TODO not working yet
       *   call proc2 input picAlpha20(1:10)
 
       *       KO
-Line 59[12,36] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' with picture X(10) and received 'picNum10' with picture 9(10)
+Line 67[12,36] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' with picture X(10) and received 'picNum10' with picture 9(10)
            call proc2 input picNum10
       *    KO
-Line 61[12,40] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' with picture X(10) and received 'picNum10Comp' with picture 9(10)
-Line 61[12,40] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' of usage  and received 'picNum10Comp' of usage Binary
+Line 69[12,40] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' with picture X(10) and received 'picNum10Comp' with picture 9(10)
+Line 69[12,40] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' of usage  and received 'picNum10Comp' of usage Binary
            call proc2 input picNum10Comp
       *    KO
-Line 63[12,41] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' with picture X(10) and received 'picNum10Comp3' with picture 9(10)
-Line 63[12,41] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' of usage  and received 'picNum10Comp3' of usage PackedDecimal
+Line 71[12,41] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' with picture X(10) and received 'picNum10Comp3' with picture 9(10)
+Line 71[12,41] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' of usage  and received 'picNum10Comp3' of usage PackedDecimal
            call proc2 input picNum10Comp3
       *    KO
-Line 65[12,41] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' with picture X(10) and received 'picNum10Comp5' with picture 9(10)
-Line 65[12,41] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' of usage  and received 'picNum10Comp5' of usage NativeBinary
+Line 73[12,41] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' with picture X(10) and received 'picNum10Comp5' with picture 9(10)
+Line 73[12,41] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' of usage  and received 'picNum10Comp5' of usage NativeBinary
            call proc2 input picNum10Comp5
       *    KO
-Line 67[12,35] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' to be NOT an array and received 'tabNum5' which is an array
+Line 75[12,35] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' to be NOT an array and received 'tabNum5' which is an array
            call proc1 input tabNum5
       *    KO
-Line 69[12,37] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' with picture 9(10) and received 'tabAlpha5' with picture X(10)
-Line 69[12,37] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' to be NOT an array and received 'tabAlpha5' which is an array
+Line 77[12,37] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' with picture 9(10) and received 'tabAlpha5' with picture X(10)
+Line 77[12,37] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' to be NOT an array and received 'tabAlpha5' which is an array
            call proc1 input tabAlpha5
       *OK because we only target one element of the array
       *TODO not working yet
@@ -91,12 +99,24 @@ Line 69[12,37] <27, Error, Syntax> - Syntax error : Function 'proc1' expected pa
 
 
       *KO
-Line 76[12,36] <27, Error, Syntax> - Syntax error : Function 'proc3' expected parameter 'param1' synchonized and received 'picNum10' not synchronized
-           call proc3 input picNum10
+Line 84[12,37] <27, Error, Syntax> - Syntax error : Function 'proc3' expected parameter 'param1' synchronized and received 'picNum10' not synchronized
+           call proc3  input picNum10
+Line 85[12,37] <27, Error, Syntax> - Syntax error : Function 'proc31' expected parameter 'param1' synchronized (Left) and received 'picNum10' not synchronized
+           call proc31 input picNum10
+Line 86[12,37] <27, Error, Syntax> - Syntax error : Function 'proc32' expected parameter 'param1' synchronized (Right) and received 'picNum10' not synchronized
+           call proc32 input picNum10
       *OK
-           call proc3 input picNum10Sync 
+           call proc3  input picNum10Sync
+           call proc31 input picNum10SyncLeft
+           call proc32 input picNum10SyncRight
+           call proc3  input picNum10Sync
+           call proc31 input picNum10SyncLeft
+           call proc32 input picNum10SyncRight
+           call proc3  input picNum10Sync
+           call proc31 input picNum10SyncLeft
+           call proc32 input picNum10SyncRight
       *KO
-Line 80[12,38] <27, Error, Syntax> - Syntax error : Function 'proc4' expected parameter 'param1' justified and received 'picAlpha10' non-justified
+Line 98[12,38] <27, Error, Syntax> - Syntax error : Function 'proc4' expected parameter 'param1' justified and received 'picAlpha10' non-justified
            call proc4 input picAlpha10
       *OK
            call proc4 input picAlpha10Just
