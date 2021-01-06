@@ -162,11 +162,6 @@ namespace TypeCobol.Compiler.Parser
 					subscriptExpressions[i] = new SubscriptExpression(
 						ParseTreeUtils.GetFirstToken(context.ALL()));
 				}
-                else if (context.TALLY() != null)
-                {
-                    subscriptExpressions[i] = new SubscriptExpression(
-                        ParseTreeUtils.GetFirstToken(context.TALLY()));
-                }
                 else
 				{
 					IntegerVariable integerVariable = CreateIntegerVariableOrIndex(context.integerVariableOrIndex2());
@@ -1013,6 +1008,12 @@ namespace TypeCobol.Compiler.Parser
 					new DataOrConditionStorageArea(
 						CobolWordsBuilder.CreateQualifiedDataNameOrIndexName(context.qualifiedDataNameOrIndexName())));
 			}
+            else if (context.specialRegisterReference() != null)
+            {
+                variable = new IntegerVariable(
+                    new IntrinsicStorageArea(
+                        CobolWordsBuilder.CreateSpecialRegister(context.specialRegisterReference())));
+            }
 			else
 			{
 				variable = new IntegerVariable(
