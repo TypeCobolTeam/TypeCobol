@@ -22,12 +22,13 @@ namespace TypeCobol.Compiler.Diagnostics
         Syntax = 4,
         Semantics = 5,
         Generation = 6,
-        General = 7
+        General = 7,
+        CodeAnalysis = 8
     }
 
     public class DiagnosticMessage
     {
-        private DiagnosticMessage(Category category, int code, Severity severity, string messageTemplate, ReferenceDocument document, int pageNumber, string referenceText)
+        internal DiagnosticMessage(Category category, int code, Severity severity, string messageTemplate, ReferenceDocument document, int pageNumber, string referenceText)
         {
             Category = category;
             Code = code;

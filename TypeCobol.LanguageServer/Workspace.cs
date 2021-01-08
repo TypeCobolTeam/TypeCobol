@@ -106,6 +106,11 @@ namespace TypeCobol.LanguageServer
         public bool IsLsrSemanticTesting => LsrTestOptions.HasFlag(LsrTestingOptions.LsrSemanticPhaseTesting);
 
         /// <summary>
+        /// Testing everything from source document to quality check using quality rules.
+        /// </summary>
+        public bool IsLsrCodeAnalysisTesting => LsrTestOptions.HasFlag(LsrTestingOptions.LsrCodeAnalysisPhaseTesting);
+
+        /// <summary>
         /// True to use ANTLR for parsing a program
         /// </summary>
         public bool UseAntlrProgramParsing { get; set; }
@@ -175,9 +180,10 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         /// <param name="docContext">The Document context</param>
         /// <param name="sourceText">The source text</param>
-        /// <param name="lsrOptions">LSR options</param>
         /// <returns>The corresponding FileCompiler instance.</returns>
-        public FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, LsrTestingOptions lsrOptions)
+        public FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText) => OpenTextDocument(docContext, sourceText, LsrTestOptions);
+
+        private FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, LsrTestingOptions lsrOptions)
         {
             string fileName = Path.GetFileName(docContext.Uri.LocalPath);
             ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, Configuration.Format.Encoding, Configuration.Format.ColumnsLayout, sourceText);
@@ -280,7 +286,7 @@ namespace TypeCobol.LanguageServer
                 fileCompilerToUpdate.ExecutionStepEventHandler -= handler.Invoke;
                 
 
-                if (LsrTestOptions == LsrTestingOptions.NoLsrTesting || LsrTestOptions == LsrTestingOptions.LsrSemanticPhaseTesting)
+                if (LsrTestOptions == LsrTestingOptions.NoLsrTesting || IsLsrSemanticTesting)
                 {
                     if (!_timerDisabled) //If TimerDisabled is false, create a timer to automatically launch Node phase
                     {
@@ -338,6 +344,7 @@ namespace TypeCobol.LanguageServer
                     break;
                 case ExecutionStep.SemanticCheck:
                 case ExecutionStep.CrossCheck:
+                case ExecutionStep.QualityCheck:
                 case ExecutionStep.Generate:
                 default:
                     return;
@@ -355,7 +362,7 @@ namespace TypeCobol.LanguageServer
             try
             {
                 _semanticUpdaterTimer.Stop();
-                Action nodeRefreshAction = () => { RefreshSyntaxTree(fileCompiler); };
+                Action nodeRefreshAction = () => { RefreshSyntaxTree(fileCompiler, SyntaxTreeRefreshLevel.RebuildNodesAndPerformQualityCheck); };
                 lock (MessagesActionsQueue)
                 {
                     MessagesActionsQueue.Enqueue(new MessageActionWrapper(nodeRefreshAction));
@@ -370,22 +377,81 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
+        /// Lists all supported refresh modes for the RefreshSyntaxTree method.
+        /// </summary>
+        public enum SyntaxTreeRefreshLevel
+        {
+            /// <summary>
+            /// Do not perform any refresh
+            /// </summary>
+            NoRefresh,
+
+            /// <summary>
+            /// Rebuilds semantic document and run CrossCheck on updated version
+            /// </summary>
+            RebuildNodes,
+
+            /// <summary>
+            /// Same as RebuildNodes but also launches code quality analysis
+            /// </summary>
+            RebuildNodesAndPerformQualityCheck,
+
+            /// <summary>
+            /// Rebuild nodes and run code quality analysis even if the file hasn't changed
+            /// </summary>
+            ForceFullRefresh
+        }
+
+        /// <summary>
         /// Use this method to force a node phase if there is a filecompiler waiting for node refresh. 
         /// </summary>
         /// <param name="fileCompiler">FileCompiler on which the node phase will be done</param>
-        public void RefreshSyntaxTree(FileCompiler fileCompiler, bool forceRefresh = false)
+        /// <param name="refreshLevel">Desired level of refresh</param>
+        public void RefreshSyntaxTree(FileCompiler fileCompiler, SyntaxTreeRefreshLevel refreshLevel)
         {
+            if (refreshLevel == SyntaxTreeRefreshLevel.NoRefresh) return; //nothing to do
+
             lock (_fileCompilerWaittingForNodePhase)
             {
-                var fileCompilerContained = _fileCompilerWaittingForNodePhase.Contains(fileCompiler);
-                if (!fileCompilerContained && !forceRefresh) return;   
-                else if(fileCompilerContained)             
+                var fileCompilerNeedsRefresh = _fileCompilerWaittingForNodePhase.Contains(fileCompiler);
+                if (fileCompilerNeedsRefresh)
+                {
                     _fileCompilerWaittingForNodePhase.Remove(fileCompiler);
+                }
+                else
+                {
+                    if (refreshLevel < SyntaxTreeRefreshLevel.ForceFullRefresh)
+                    {
+                        //The file compiler does not need to be refreshed and the refresh was not forced, we abort
+                        return;
+                    }
+                }
+                
+                //Perform refresh according to desired level
+                switch (refreshLevel)
+                {
+                    case SyntaxTreeRefreshLevel.RebuildNodes:
+                        RefreshNodes();
+                        break;
+                    case SyntaxTreeRefreshLevel.RebuildNodesAndPerformQualityCheck:
+                    case SyntaxTreeRefreshLevel.ForceFullRefresh:
+                        RefreshNodes();
+                        RefreshCodeAnalysisResults();
+                        break;
+                }
+            }
 
-
+            void RefreshNodes()
+            {
                 if (LsrTestOptions != LsrTestingOptions.NoLsrTesting && !IsLsrSemanticTesting) return;
                 fileCompiler.CompilationResultsForProgram.ProduceTemporarySemanticDocument(); //Produce the temporary snapshot before full cross check
                 fileCompiler.CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Do a Node phase
+            }
+
+            void RefreshCodeAnalysisResults()
+            {
+                if (LsrTestOptions != LsrTestingOptions.NoLsrTesting && !IsLsrCodeAnalysisTesting) return;
+                fileCompiler.CompilationResultsForProgram.RefreshCodeAnalysisDocumentSnapshot(); //Do a Quality check
             }
         }
 
@@ -436,13 +502,14 @@ namespace TypeCobol.LanguageServer
                 UseEuroInformationLegacyReplacingSyntax = true;
 
             if (Configuration.ExecToStep >= ExecutionStep.Generate)
-                Configuration.ExecToStep = ExecutionStep.CrossCheck; //Language Server does not support Cobol Generation for now
+                Configuration.ExecToStep = ExecutionStep.QualityCheck; //Language Server does not support Cobol Generation for now
 
             var typeCobolOptions = new TypeCobolOptions(Configuration);
 
-            //Configure CFG/DFA analyzer
-            var analyzerProvider = new AnalyzerProvider();
+            //Configure CFG/DFA analyzer + external analyzers if any
+            var analyzerProvider = new CompositeAnalyzerProvider();
             analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer("cfg-dfa", Configuration.CfgBuildingMode));
+            analyzerProvider.AddCustomProviders(Configuration.CustomAnalyzerFiles);
 
             CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format, typeCobolOptions, analyzerProvider);
 
@@ -633,7 +700,8 @@ namespace TypeCobol.LanguageServer
         LsrScanningPhaseTesting = LsrSourceDocumentTesting | 0x1 << 1,
         LsrPreprocessingPhaseTesting = LsrScanningPhaseTesting | 0x01 << 2,
         LsrParsingPhaseTesting = LsrPreprocessingPhaseTesting | 0x01 << 3,
-        LsrSemanticPhaseTesting = LsrParsingPhaseTesting | 0x1 << 4
+        LsrSemanticPhaseTesting = LsrParsingPhaseTesting | 0x1 << 4,
+        LsrCodeAnalysisPhaseTesting = LsrSemanticPhaseTesting | 0x1 << 5
     }
 
     public class DiagnosticEvent : EventArgs

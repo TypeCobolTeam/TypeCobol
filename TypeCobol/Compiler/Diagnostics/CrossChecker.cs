@@ -257,6 +257,26 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(Then thenNode)
+        {
+            //This check only applies to THEN nodes coming from IF statements.
+            if (thenNode.ChildrenCount == 0 && thenNode.Parent.CodeElement?.Type == CodeElementType.IfStatement)
+            {
+                //THEN has no CodeElement, report on Parent IF.
+                DiagnosticUtils.AddError(thenNode.Parent, "Missing statement or NEXT SENTENCE after IF condition.");
+            }
+            return true;
+        }
+
+        public override bool Visit(Else elseNode)
+        {
+            if (elseNode.ChildrenCount == 0)
+            {
+                DiagnosticUtils.AddError(elseNode, "Missing statement or NEXT SENTENCE after ELSE keyword.");
+            }
+            return true;
+        }
+
         public override bool Visit(TypeDefinition typeDefinition)
         {
             //Cobol 2002 rule
