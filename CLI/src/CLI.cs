@@ -109,8 +109,11 @@ namespace TypeCobol.Server
             var rootSymbolTable = LoadIntrinsicsAndDependencies();
 
             //Add analyzers
-            var analyzerProvider = new AnalyzerProvider();
+            var analyzerProvider = new CompositeAnalyzerProvider();
             var reports = RegisterAnalyzers(analyzerProvider);
+
+            //Add external analyzers
+            analyzerProvider.AddCustomProviders(_configuration.CustomAnalyzerFiles);
 
             //Normalize TypeCobolOptions, the parser does not need to go beyond SemanticCheck for the first phase
             var typeCobolOptions = new TypeCobolOptions(_configuration);
