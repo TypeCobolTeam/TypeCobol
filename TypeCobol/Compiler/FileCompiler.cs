@@ -249,6 +249,11 @@ namespace TypeCobol.Compiler
 
                 CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Cross Check step
                 ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.CrossCheck });
+
+                if (!(exec2Step > ExecutionStep.CrossCheck)) return;
+
+                CompilationResultsForProgram.RefreshCodeAnalysisDocumentSnapshot(); //QualityCheck step
+                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.QualityCheck });
             }
         }
     }

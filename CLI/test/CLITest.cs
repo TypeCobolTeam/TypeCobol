@@ -330,6 +330,15 @@ namespace CLI.Test
             CLITestHelper.Test("rdzformat_inputencoding_wrong", ReturnCode.Success);
             CLITestHelper.Test("rdzformat_inputencoding_good", ReturnCode.Success);
         }
+
+        /// <summary>
+        /// Test custom analyzers defined in TypeCobol.Analysis.Test.dll.
+        /// </summary>
+        [TestMethod]
+        public void TestCustomAnalyzers()
+        {
+            CLITestHelper.Test("custom_analyzers", ReturnCode.Warning);
+        }
     }
 
     public class CLITestHelper {

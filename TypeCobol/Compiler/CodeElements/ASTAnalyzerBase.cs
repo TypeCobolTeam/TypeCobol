@@ -4,14 +4,12 @@ using JetBrains.Annotations;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler.Diagnostics;
 
-namespace TypeCobol.Compiler.CupParser.NodeBuilder
+namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
-    /// Base class to help implement an ISyntaxDrivenAnalyzer.
-    /// All methods from <code>INodeListener</code> and <code>IProgramClassBuilder</code> have empty implementations
-    /// and can be overriden. This base class also supports Diagnostics property from <code>IAnalyzer</code>.
+    /// Base class to help implement an IASTAnalyzer.
     /// </summary>
-    public abstract class SyntaxDrivenAnalyzerBase : ProgramClassBuilderNodeListener, ISyntaxDrivenAnalyzer
+    public abstract class ASTAnalyzerBase : AbstractAstVisitor, IASTAnalyzer
     {
         private List<Diagnostic> _diagnostics;
 
@@ -20,7 +18,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         public string Identifier { get; }
 
-        protected SyntaxDrivenAnalyzerBase([NotNull] string identifier)
+        protected ASTAnalyzerBase([NotNull] string identifier)
         {
             Identifier = identifier;
         }
