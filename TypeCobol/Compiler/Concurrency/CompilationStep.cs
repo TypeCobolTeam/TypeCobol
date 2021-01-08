@@ -30,8 +30,11 @@ namespace TypeCobol.Compiler.Concurrency
         /// <summary>
         /// Final compilation phase that will cross check parsed files
         /// </summary>
-        ProgramCrossCheck
-
+        ProgramCrossCheck,
+        /// <summary>
+        /// Optional code analysis step to check quality using multiple custom rules
+        /// </summary>
+        CodeQualityCheck
     }
 
     /// <summary>

@@ -55,7 +55,7 @@ namespace TypeCobol.Tools.Options_Config
         // Raw values (it has to be verified)
         public string RawFormat;
         public string RawInputCodepageOrEncoding;
-        public string RawExecToStep = "5";
+        public string RawExecToStep = "6";
         public string RawMaximumDiagnostics;
         public string RawOutputFormat = "0";
 
@@ -224,7 +224,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "s|skeletons=", "{PATH} to the skeletons file. DEPRECATED : generation using dynamic skeleton is no longer supported.", v => {}},
                 { "a|autoremarks", "Enable automatic remarks creation while parsing and generating Cobol.", v => typeCobolConfig.AutoRemarks = true },
                 { "hc|haltonmissingcopy=", "HaltOnMissingCopy will generate a file to list all the absent copies.", v => typeCobolConfig.HaltOnMissingCopyFilePath = v },
-                { "ets|exectostep=", "ExecToStep will execute TypeCobol Compiler until the included given step (Scanner/0, Preprocessor/1, SyntaxCheck/2, SemanticCheck/3, CrossCheck/4, Generate/5).", v => typeCobolConfig.RawExecToStep = v},
+                { "ets|exectostep=", "ExecToStep will execute TypeCobol Compiler until the included given step (Scanner/0, Preprocessor/1, SyntaxCheck/2, SemanticCheck/3, CrossCheck/4, QualityCheck/5, Generate/6).", v => typeCobolConfig.RawExecToStep = v},
                 { "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "+"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
                     v => typeCobolConfig.RawFormat = v},
                 { "ie|inputencoding=", "Allows to change default encoding when used with RDZ format. Specify a valid encoding name, example : -ie \"Windows-1252\".", v => typeCobolConfig.RawInputCodepageOrEncoding = v },
