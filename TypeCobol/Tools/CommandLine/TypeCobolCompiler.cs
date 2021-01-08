@@ -29,7 +29,7 @@ namespace TypeCobol.Tools.CommandLine
 
             TypeCobolOptions compilerOptions = new TypeCobolOptions();
             CompilationProject project = new CompilationProject("samples", sourcePath, programExtensions.Concat(Helpers.DEFAULT_COPY_EXTENSIONS).ToArray(),
-                docFormat.Encoding, docFormat.EndOfLineDelimiter, docFormat.FixedLineLength, docFormat.ColumnsLayout, compilerOptions);
+                docFormat, compilerOptions, null);
             
             // Iterate over all programs in the source directory
             foreach (string programExtension in programExtensions)

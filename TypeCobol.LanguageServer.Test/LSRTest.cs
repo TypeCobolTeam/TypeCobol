@@ -191,7 +191,6 @@ namespace TypeCobol.LanguageServer.Test
             LSRTestHelper.Test("FirstLineEditCommentBeforeIdentDiv", LsrTestingOptions.NoLsrTesting, false, true);
         }
 
-
         /// <summary>
         /// Test for the fix of:https://github.com/TypeCobolTeam/TypeCobol/issues/1370 
         /// </summary>
@@ -200,7 +199,19 @@ namespace TypeCobol.LanguageServer.Test
         public void IncrementalThruTokenInsideCopies()
         {
             LSRTestHelper.Test("IncrementalThruTokenInsideCopies", LsrTestingOptions.NoLsrTesting, false, true);
-        }        
+        }
+
+        /// <summary>
+        /// Test the error reporting when modifying a continued line
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Incremental")]
+        [Ignore] //Not fixed yet ! No error should be reported when adding a blank line after a continued line
+        public void InsertWithinContinuations()
+        {
+            LSRTestHelper.Test("InsertWithinContinuations", LsrTestingOptions.NoLsrTesting, false);
+        }
+
         #endregion
 
         #region SyntaxColoring

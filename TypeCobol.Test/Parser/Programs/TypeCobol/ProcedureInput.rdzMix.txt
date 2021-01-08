@@ -40,9 +40,12 @@ Line 33[26,34] <27, Error, Syntax> - Syntax error : Input variable 'pperson' is 
            Set IsOk   to true
       *ok pperson is not modified
            Set address of pperson to address of personPtr
-      *ko pperson is modified
-Line 39[47,52] <27, Error, Syntax> - Syntax error : Input variable 'pperson' is modified by an instruction
-           Set pperson::CAddress::AddressTab::AdrIdx    to 1
+      *ok pperson is not modified, only the index
+           Set pperson::CAddress::AddressTab::AdrIdx to 1
+      *same thing when iterating over the table using its index
+           Perform varying AdrIdx from 1 by 1 until AdrIdx > 200
+              Display AdressLine(AdrIdx)
+           End-Perform
            .
        END-DECLARE.
       
@@ -51,7 +54,7 @@ Line 39[47,52] <27, Error, Syntax> - Syntax error : Input variable 'pperson' is 
       * Ok, 1st param is also input in Foo2
            call Foo2 input var1
       * Ko, 1st param is also in-out in Foo3
-Line 48[29,32] <27, Error, Syntax> - Syntax error : Input variable 'var1' is modified by an instruction
+Line 52[29,32] <27, Error, Syntax> - Syntax error : Input variable 'var1' is modified by an instruction
            call Foo3 in-out var1
            goback
            .
@@ -75,12 +78,12 @@ Line 48[29,32] <27, Error, Syntax> - Syntax error : Input variable 'var1' is mod
                - var1 pic X
       %>>>
        declare InvalidParamProc private
-Line 71[32,37] <27, Error, Syntax> - Syntax error : 'occurs' is not supported yet
+Line 75[32,37] <27, Error, Syntax> - Syntax error : 'occurs' is not supported yet
               input var1 pic X occurs 5.
        end-declare.
       
        declare InvalidParamProc2 private
-Line 75[33,38] <27, Error, Syntax> - Syntax error : 'occurs' is not supported yet
+Line 79[33,38] <27, Error, Syntax> - Syntax error : 'occurs' is not supported yet
                input var1 pic X occurs 5.
        end-declare.
       

@@ -155,7 +155,7 @@ dataItemReferenceOrConditionReferenceOrClassName:
 // program to alter the value of the index.
 
 subscript: 
-	(integerVariableOrIndex2 withRelativeSubscripting?) | ALL | TALLY;
+	(integerVariableOrIndex2 withRelativeSubscripting?) | ALL;
 
 withRelativeSubscripting: 
 	(PlusOperator | MinusOperator) IntegerLiteral;
@@ -993,7 +993,7 @@ integerVariable2: dataNameReference | IntegerLiteral;
 
 integerVariableOrIndex1: identifierOrIndexName | IntegerLiteral;
 
-integerVariableOrIndex2: qualifiedDataNameOrIndexName | IntegerLiteral;
+integerVariableOrIndex2: qualifiedDataNameOrIndexName | specialRegisterReference | IntegerLiteral;
 
 numericVariable1: identifier;
 

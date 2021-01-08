@@ -70,6 +70,11 @@ namespace TypeCobol.Compiler.Scanner
         public bool WithDebuggingMode { get; private set; }
 
         /// <summary>
+        /// True if we are scanning inside a Copy.
+        /// </summary>
+        public bool InsideCopy { get; set; }
+
+        /// <summary>
         /// Encoding of the text file : used to decode the value of an hexadecimal alphanumeric literal
         /// </summary>
         public Encoding EncodingForAlphanumericLiterals { get; private set; }
@@ -141,6 +146,7 @@ namespace TypeCobol.Compiler.Scanner
             MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, InsideSymbolicCharacterDefinitions,
                 InsideFormalizedComment, InsideMultilineComments, InsideParamsField, 
                 DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
+            clone.InsideCopy = this.InsideCopy;
             if (LastSignificantToken != null) clone.LastSignificantToken = LastSignificantToken;
             if (BeforeLastSignificantToken != null) clone.BeforeLastSignificantToken = BeforeLastSignificantToken;
             if (SymbolicCharacters != null)
@@ -498,6 +504,7 @@ namespace TypeCobol.Compiler.Scanner
                    InsideFormalizedComment == otherScanState.InsideFormalizedComment &&
                    InsideParamsField == otherScanState.InsideParamsField &&
                    InsideMultilineComments == otherScanState.InsideMultilineComments &&
+                   InsideCopy == otherScanState.InsideCopy &&
 
 #if EUROINFO_RULES
                    InsideRemarksDirective == otherScanState.InsideRemarksDirective &&
@@ -527,6 +534,7 @@ namespace TypeCobol.Compiler.Scanner
                 hash = hash * 23 + InsideFormalizedComment.GetHashCode();
                 hash = hash * 23 + InsideParamsField.GetHashCode();
                 hash = hash * 23 + InsideMultilineComments.GetHashCode();
+                hash = hash * 23 + InsideCopy.GetHashCode();
 
 #if EUROINFO_RULES
                 hash = hash * 23 + InsideRemarksDirective.GetHashCode();

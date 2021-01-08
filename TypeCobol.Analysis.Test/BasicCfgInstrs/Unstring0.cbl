@@ -1,0 +1,30 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. UNSTR01.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 WS-DATA           PIC X(20) VALUE 'HELLO'.
+       01 WS-OUTPUT-DATA1   PIC X(4).
+       01 WS-OUTPUT-DATA2   PIC X.
+       PROCEDURE DIVISION.
+           PERFORM SMPL-UNSTRING
+           GOBACK
+           .
+       SMPL-UNSTRING.
+           DISPLAY 'UNSTRING EXAMPLE....'
+           UNSTRING WS-DATA DELIMITED BY ","
+             INTO  WS-OUTPUT-DATA1, WS-OUTPUT-DATA2
+             ON OVERFLOW
+                PERFORM ERROR-OCCURED
+             NOT ON OVERFLOW
+                PERFORM NO-ERROR
+           END-UNSTRING.
+           DISPLAY 'DATA1 AFTER UNSTRING FUNCTION : ' WS-OUTPUT-DATA1
+           DISPLAY 'DATA2 AFTER UNSTRING FUNCTION : ' WS-OUTPUT-DATA2
+           .
+       ERROR-OCCURED.
+           DISPLAY "ERROR OCCURED"
+           .
+       NO-ERROR.
+           DISPLAY "NO ERROR"
+           .
+       END PROGRAM UNSTR01.

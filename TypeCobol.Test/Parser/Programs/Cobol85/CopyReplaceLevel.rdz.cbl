@@ -3,7 +3,7 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01 MyGroup.
-           COPY YXXXENT REPLACING  ==:XXXENT:==  BY ==XXXENT==
-                                   ==01 :XXXENT:== BY ==02 XXXENT==.
+           COPY YXXXTEN REPLACING  ==:XXXTEN:==  BY ==XXXTEN==
+                                   ==01 :XXXTEN:== BY ==02 XXXTEN==.
       
        END PROGRAM DVZF0OSM.

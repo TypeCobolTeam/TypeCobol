@@ -208,6 +208,17 @@ namespace TypeCobol.Codegen {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol","Codegen")+".rdz.cbl");
 		}
 
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void CopyReplace4Colon()
+        {
+            string dir = System.IO.Directory.GetCurrentDirectory();
+            string copies = Path.Combine(dir, "resources", "input", "TypeCobol", "CopyReplace4Colon");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CopyReplace4Colon", "CopyReplace4Colon") + ".rdz.cbl", false,
+                null, new List<string>() { copies });
+        }
+
         [TestMethod][Ignore]
 		[TestCategory("Codegen")]
 		[TestProperty("Time","fast")]

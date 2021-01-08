@@ -58,7 +58,11 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Issue #315
         /// </summary>
-        private MultilineScanState initialScanStateForCopy;
+        private MultilineScanState InitialScanStateForCopy
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Informations used to track the performance of each compilation step
@@ -181,7 +185,9 @@ namespace TypeCobol.Compiler
             PerfStatsForScanner = new PerfStatsForCompilationStep(CompilationStep.Scanner);
             PerfStatsForPreprocessor = new PerfStatsForParsingStep(CompilationStep.Preprocessor);
 
-            initialScanStateForCopy = scanState;
+            InitialScanStateForCopy = scanState;
+            if (scanState != null)
+                InitialScanStateForCopy.InsideCopy = true;
         }
 
         /// <summary>
@@ -476,15 +482,15 @@ namespace TypeCobol.Compiler
                 // Apply text changes to the compilation document
                 if (scanAllDocumentLines)
                 {
-                    ScannerStep.ScanDocument(TextSourceInfo, compilationDocumentLines, CompilerOptions, CopyTextNamesVariations, initialScanStateForCopy);
+                    ScannerStep.ScanDocument(TextSourceInfo, compilationDocumentLines, CompilerOptions, CopyTextNamesVariations, InitialScanStateForCopy);
                     // Notify all listeners that the whole document has changed.
                     EventHandler wholeDocumentChanged = WholeDocumentChanged; // avoid race condition
                     wholeDocumentChanged?.Invoke(this, EventArgs.Empty);
                 }
                 else
                 {
-                    IList<DocumentChange<ITokensLine>> documentChanges = ScannerStep.ScanTextLinesChanges(TextSourceInfo, compilationDocumentLines, textLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, CopyTextNamesVariations, initialScanStateForCopy);
-
+                    IList<DocumentChange<ITokensLine>> documentChanges = null;
+                    documentChanges = ScannerStep.ScanTextLinesChanges(TextSourceInfo, compilationDocumentLines, textLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, CopyTextNamesVariations, InitialScanStateForCopy);
                     // Create a new version of the document to track these changes
                     currentTokensLinesVersion.changes = documentChanges;
                     currentTokensLinesVersion.next = new DocumentVersion<ITokensLine>(currentTokensLinesVersion);

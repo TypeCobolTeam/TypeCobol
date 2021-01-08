@@ -1,0 +1,293 @@
+﻿digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{Block1|    perform pararec\l}"
+]
+subgraph cluster_1{
+color = blue;
+label = "pararec";
+Block36 [
+label = "{PARAREC. Block36|    add 1 to n\l    display n\l    if n \< 3\l}"
+]
+Block37 [
+label = "{Block37|       display 'before perform pararec2 in pararec'\l}"
+]
+Block38 [
+label = "{Block38|       perform pararec2\l}"
+]
+subgraph cluster_3{
+color = blue;
+label = "pararec2";
+Block95 [
+label = "{PARAREC2. Block95|    add 1 to n\l    display n\l    if n \< 3\l}"
+]
+Block96 [
+label = "{Block96|       display 'before perform pararec in pararec2'\l}"
+]
+Block56 [
+label = "{Block56|       perform pararec\l}"
+]
+subgraph cluster_6{
+color = blue;
+label = "pararec";
+Block122 [
+label = "{PARAREC. Block122|    add 1 to n\l    display n\l    if n \< 3\l}"
+]
+Block123 [
+label = "{Block123|       display 'before perform pararec2 in pararec'\l}"
+]
+Block125 [
+label = "{Block125|    else\l       display 'not done in pararec perform pararec3'\l}"
+]
+Block41 [
+label = "{Block41|       perform pararec3\l}"
+]
+subgraph cluster_4{
+color = blue;
+label = "pararec3";
+Block100 [
+label = "{PARAREC3. Block100|    add 1 to n\l    display n\l    if n \< 3\l}"
+]
+Block101 [
+label = "{Block101|       display 'before perform pararec2 in pararec3'\l}"
+]
+Block62 [
+label = "{Block62|       perform pararec2\l}"
+]
+subgraph cluster_7{
+color = blue;
+label = "pararec2";
+Block129 [
+label = "{PARAREC2. Block129|    add 1 to n\l    display n\l    if n \< 3\l}"
+]
+Block130 [
+label = "{Block130|       display 'before perform pararec in pararec2'\l}"
+]
+Block132 [
+label = "{Block132|    else\l       display 'not done in pararec2'\l}"
+]
+Block133 [
+label = "{Block133|    display 'terminate in pararec2'\l}"
+]
+
+}
+Block62 -> Block129 [style=dashed]
+
+Block63 [
+label = "{Block63|       display 'after perform pararec2 in pararec3'\l}"
+]
+Block65 [
+label = "{Block65|    display 'terminate in pararec3'\l}"
+]
+Block48 [
+label = "{Block48|       perform pararec3 test after varying n from 1 by 1 until n\l}"
+]
+subgraph cluster_8{
+color = blue;
+label = "pararec3";
+Block111 [
+label = "{PARAREC3. Block111|    add 1 to n\l    display n\l    if n \< 3\l}"
+]
+Block112 [
+label = "{Block112|       display 'before perform pararec2 in pararec3'\l}"
+]
+Block114 [
+label = "{Block114|    else\l       display 'not done in pararec3'\l}"
+]
+Block115 [
+label = "{Block115|    display 'terminate in pararec3'\l}"
+]
+
+}
+Block48 -> Block111 [style=dashed]
+
+Block49 [
+label = "{Block49|       display 'after perform pararec3 in pararec4'\l}"
+]
+Block53 [
+label = "{Block53|    display 'terminate in pararec4'\l}"
+]
+Block51 [
+label = "{Block51|       perform pararec4 varying n from 1 by 1 until n \> 5\l}"
+]
+subgraph cluster_9{
+color = blue;
+label = "pararec4";
+Block116 [
+label = "{PARAREC4. Block116|    add 1 to n\l    display n\l    if n \< 3\l}"
+]
+Block117 [
+label = "{Block117|       display 'before perform pararec3 in pararec4'\l}"
+]
+Block119 [
+label = "{Block119|    else\l       display 'Try recurse in pararec4'\l}"
+]
+
+}
+Block51 -> Block116 [style=dashed]
+
+Block52 [
+label = "{Block52|}"
+]
+Block103 [
+label = "{Block103|    else\l       display 'not done in pararec3'\l}"
+]
+Block104 [
+label = "{Block104|    display 'terminate in pararec3'\l}"
+]
+
+}
+Block41 -> Block100 [style=dashed]
+
+Block42 [
+label = "{Block42|       display 'not done in pararec perform pararec4'\l}"
+]
+Block43 [
+label = "{Block43|       perform pararec4\l}"
+]
+subgraph cluster_5{
+color = blue;
+label = "pararec4";
+Block105 [
+label = "{PARAREC4. Block105|    add 1 to n\l    display n\l    if n \< 3\l}"
+]
+Block106 [
+label = "{Block106|       display 'before perform pararec3 in pararec4'\l}"
+]
+Block108 [
+label = "{Block108|    else\l       display 'Try recurse in pararec4'\l}"
+]
+
+}
+Block43 -> Block105 [style=dashed]
+
+Block44 [
+label = "{Block44|}"
+]
+Block45 [
+label = "{Block45|    display 'terminate in pararec'\l}"
+]
+
+}
+Block56 -> Block122 [style=dashed]
+
+Block57 [
+label = "{Block57|       display 'after perform pararec in pararec2'\l}"
+]
+Block59 [
+label = "{Block59|    display 'terminate in pararec2'\l}"
+]
+Block98 [
+label = "{Block98|    else\l       display 'not done in pararec2'\l}"
+]
+Block99 [
+label = "{Block99|    display 'terminate in pararec2'\l}"
+]
+
+}
+Block38 -> Block95 [style=dashed]
+
+Block39 [
+label = "{Block39|       display 'after perform pararec2 in pararec'\l}"
+]
+Block40 [
+label = "{Block40|    else\l       display 'not done in pararec perform pararec3'\l}"
+]
+
+}
+Block1 -> Block36 [style=dashed]
+
+Block2 [
+label = "{Block2|}"
+]
+Block3 [
+label = "{Block3|    perform pararec4\l}"
+]
+subgraph cluster_2{
+color = blue;
+label = "pararec4";
+Block46 [
+label = "{PARAREC4. Block46|    add 1 to n\l    display n\l    if n \< 3\l}"
+]
+Block47 [
+label = "{Block47|       display 'before perform pararec3 in pararec4'\l}"
+]
+Block50 [
+label = "{Block50|    else\l       display 'Try recurse in pararec4'\l}"
+]
+
+}
+Block3 -> Block46 [style=dashed]
+
+Block4 [
+label = "{Block4|    goback\l}"
+]
+Block0 -> Block1
+Block36 -> Block37
+Block36 -> Block40
+Block37 -> Block38
+Block95 -> Block96
+Block95 -> Block98
+Block96 -> Block56
+Block122 -> Block123
+Block122 -> Block125
+Block123 -> Block38
+Block125 -> Block41
+Block100 -> Block101
+Block100 -> Block103
+Block101 -> Block62
+Block129 -> Block130
+Block129 -> Block132
+Block130 -> Block56
+Block132 -> Block133
+Block62 -> Block63
+Block63 -> Block65
+Block65 -> Block48
+Block111 -> Block112
+Block111 -> Block114
+Block112 -> Block62
+Block114 -> Block115
+Block115 -> Block48
+Block48 -> Block49
+Block49 -> Block53
+Block53 -> Block51
+Block116 -> Block117
+Block116 -> Block119
+Block117 -> Block111
+Block119 -> Block51
+Block51 -> Block52
+Block52 -> Block53
+Block103 -> Block104
+Block41 -> Block42
+Block42 -> Block43
+Block105 -> Block106
+Block105 -> Block108
+Block106 -> Block111
+Block108 -> Block51
+Block43 -> Block44
+Block44 -> Block45
+Block56 -> Block57
+Block57 -> Block59
+Block98 -> Block99
+Block38 -> Block39
+Block39 -> Block45
+Block40 -> Block41
+Block1 -> Block2
+Block2 -> Block3
+Block46 -> Block47
+Block46 -> Block50
+Block47 -> Block111
+Block50 -> Block51
+Block3 -> Block4
+
+}

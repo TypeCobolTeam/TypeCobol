@@ -37,7 +37,7 @@ namespace TypeCobol.Test.Utils
             //comparator.paths.sextension = extensions[0].Substring(1);
             CompilationProject project = new CompilationProject("TEST",
                 localDirectory.FullName, extensions,
-                format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
+                format, options, null);
             string filename = Comparator.paths.SampleName;
             Compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, null, false, project);
 

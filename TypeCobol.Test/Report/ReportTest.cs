@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TypeCobol.Compiler.Report;
 
 namespace TypeCobol.Test.Report
 {
@@ -12,19 +10,8 @@ namespace TypeCobol.Test.Report
         [TestCategory("Report")]
         public void TestReportMoveInitializeInCopy()
         {
-            Assert.AreEqual(ReportTestHelper.ReturnCode.Success, ReportTestHelper.ParseWithNodeListenerReportCompare("RPTCPY01.cbl", "RPTCPY01.rpt",
-                typeof(TypeCobol.Compiler.Report.CopyMoveInitializeReport)));
-
-            Assert.AreEqual(ReportTestHelper.ReturnCode.ParserDiagnosticsErrors, ReportTestHelper.ParseWithNodeListenerReportCompare("RPTCPY02.cbl", "RPTCPY02.rpt",
-                typeof(TypeCobol.Compiler.Report.CopyMoveInitializeReport)));
-        }
-
-        [TestMethod]
-        [TestCategory("Report")]
-        public void TestReportCall()
-        {
-            Assert.AreEqual(ReportTestHelper.ReturnCode.Success, ReportTestHelper.ParseWithNodeListenerReportCompare("RPTCAL01.cbl", "RPTCAL01.rpt",
-                typeof(TypeCobol.Compiler.Report.ZCallPgmReport)));
+            Assert.AreEqual(ReportTestHelper.ReturnCode.Success, ReportTestHelper.ParseWithNodeListenerReportCompare<CopyMoveInitializeReport>("RPTCPY01.cbl", "RPTCPY01.rpt"));
+            Assert.AreEqual(ReportTestHelper.ReturnCode.ParserDiagnosticsErrors, ReportTestHelper.ParseWithNodeListenerReportCompare<CopyMoveInitializeReport>("RPTCPY02.cbl", "RPTCPY02.rpt"));
         }
     }
 }

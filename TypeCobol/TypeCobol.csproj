@@ -135,6 +135,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Analysis\" />
     <Folder Include="Compiler\Parser\NodeBuilder\" />
     <Folder Include="Documentation\Presentations\" />
   </ItemGroup>

@@ -1,0 +1,35 @@
+﻿digraph Cfg {
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{ENTRANCE. Block1|    ALTER front TO PROCEED TO atstart OF MAIN\l    GO TO front\l}"
+]
+Block3 [
+label = "{FRONT. Block3|    GO TO atstart\l}"
+]
+Block5 [
+label = "{ATSTART. Block5|    ALTER front TO PROCEED to middle of MAIN\l    DISPLAY \"This is the start of a changing front\"\l    GO TO front\l}"
+]
+Block7 [
+label = "{MIDDLE. Block7|    ALTER front TO PROCEED to main::atfinish\l    DISPLAY \"The front progresses\"\l    GO TO main::front\l}"
+]
+Block9 [
+label = "{ATFINISH. Block9|    DISPLAY \"The front ends, happily ever after\"\l}"
+]
+Block0 -> Block1
+Block1 -> Block3
+Block3 -> Block5
+Block3 -> Block7
+Block3 -> Block9
+Block5 -> Block3
+Block7 -> Block3
+
+}

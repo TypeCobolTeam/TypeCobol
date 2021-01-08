@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Mono.Options;
+using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
 
@@ -49,7 +50,7 @@ namespace TypeCobol.Tools.Options_Config
         public bool Telemetry;
         public int MaximumDiagnostics;
         public OutputFormat OutputFormat = OutputFormat.Cobol85;
-
+        public CfgBuildingMode CfgBuildingMode = CfgBuildingMode.None;
 
         // Raw values (it has to be verified)
         public string RawFormat;
@@ -57,7 +58,6 @@ namespace TypeCobol.Tools.Options_Config
         public string RawExecToStep = "5";
         public string RawMaximumDiagnostics;
         public string RawOutputFormat = "0";
-
 
         public static Dictionary<ReturnCode, string> ErrorMessages = new Dictionary<ReturnCode, string>()
         {
@@ -88,7 +88,6 @@ namespace TypeCobol.Tools.Options_Config
             { ReturnCode.ExpandingCopyError,     "Expanding copy path given is unreachable." },
             { ReturnCode.ExtractusedCopyError,   "Extractused copy path given is unreachable." },
             { ReturnCode.LogFileError,           "Log file path is unreachable." },
-
         };
 
         public TypeCobolConfiguration()
@@ -244,6 +243,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
                 { "diag.cea|diagnostic.checkEndAlignment=", "Indicate level of check end aligment: warning, error, info, ignore.", v => typeCobolConfig.CheckEndAlignment = TypeCobolCheckOption.Parse(v) },
                 { "log|logfilepath=", "{PATH} to TypeCobol.CLI.log log file", v => typeCobolConfig.LogFile = Path.Combine(v, TypeCobolConfiguration.DefaultLogFileName)},
+                { "cfg|cfgbuild", "Standard CFG build.", v => typeCobolConfig.CfgBuildingMode = CfgBuildingMode.Standard},
             };
             return commonOptions;
         }
