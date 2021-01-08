@@ -107,13 +107,13 @@ Line 86[12,37] <27, Error, Syntax> - Syntax error : Function 'proc32' expected p
            call proc32 input picNum10
       *OK
            call proc3  input picNum10Sync
+           call proc31 input picNum10Sync
+           call proc32 input picNum10Sync
+           call proc3  input picNum10SyncLeft
            call proc31 input picNum10SyncLeft
-           call proc32 input picNum10SyncRight
-           call proc3  input picNum10Sync
-           call proc31 input picNum10SyncLeft
-           call proc32 input picNum10SyncRight
-           call proc3  input picNum10Sync
-           call proc31 input picNum10SyncLeft
+           call proc32 input picNum10SyncLeft
+           call proc3  input picNum10SyncRight
+           call proc31 input picNum10SyncRight
            call proc32 input picNum10SyncRight
       *KO
 Line 98[12,38] <27, Error, Syntax> - Syntax error : Function 'proc4' expected parameter 'param1' justified and received 'picAlpha10' non-justified

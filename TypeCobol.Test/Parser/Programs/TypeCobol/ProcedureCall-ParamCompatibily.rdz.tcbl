@@ -86,13 +86,13 @@
            call proc32 input picNum10
       *OK
            call proc3  input picNum10Sync
+           call proc31 input picNum10Sync
+           call proc32 input picNum10Sync
+           call proc3  input picNum10SyncLeft
            call proc31 input picNum10SyncLeft
-           call proc32 input picNum10SyncRight
-           call proc3  input picNum10Sync
-           call proc31 input picNum10SyncLeft
-           call proc32 input picNum10SyncRight
-           call proc3  input picNum10Sync
-           call proc31 input picNum10SyncLeft
+           call proc32 input picNum10SyncLeft
+           call proc3  input picNum10SyncRight
+           call proc31 input picNum10SyncRight
            call proc32 input picNum10SyncRight
       *KO
            call proc4 input picAlpha10
