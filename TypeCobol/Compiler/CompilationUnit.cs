@@ -33,6 +33,7 @@ namespace TypeCobol.Compiler
             PerfStatsForCodeElementsParser = new PerfStatsForParsingStep(CompilationStep.CodeElementsParser);
             PerfStatsForTemporarySemantic = new PerfStatsForParsingStep(CompilationStep.ProgramClassParser);
             PerfStatsForProgramCrossCheck = new PerfStatsForParsingStep(CompilationStep.ProgramCrossCheck);
+            PerfStatsForCodeQualityCheck = new PerfStatsForCompilationStep(CompilationStep.CodeQualityCheck);
 
             _analyzerProvider = analyzerProvider;
             _analyzerResults = new Dictionary<string, object>();
@@ -287,9 +288,77 @@ namespace TypeCobol.Compiler
             }
         }
 
+        /// <summary>
+        /// Launch AST analyzers to perform code quality analysis.
+        /// Update the list of quality-check diagnostics.
+        /// </summary>
+        public void RefreshCodeAnalysisDocumentSnapshot()
+        {
+            lock (lockObjectForCodeAnalysisDocumentSnapshot)
+            {
+                var programClassDocument = ProgramClassDocumentSnapshot;
+                if (programClassDocument != null && CodeAnalysisDocumentNeedsUpdate())
+                {
+                    PerfStatsForCodeQualityCheck.OnStartRefresh();
+
+                    List<Diagnostic> diagnostics = new List<Diagnostic>();
+                    var analyzers = _analyzerProvider?.CreateASTAnalyzers(CompilerOptions);
+                    if (analyzers != null)
+                    {
+                        //Launch code analysis and gather quality rules violations
+                        foreach (var analyzer in analyzers)
+                        {
+                            try
+                            {
+                                programClassDocument.Root.AcceptASTVisitor(analyzer);
+                                diagnostics.AddRange(analyzer.Diagnostics);
+                            }
+                            catch (Exception exception)
+                            {
+                                ReportAnalyzerException(analyzer.Identifier, exception);
+                            }
+                        }
+
+                        //Store analyzer results (if any)
+                        lock (lockObjectForAnalyzerResults)
+                        {
+                            foreach (var analyzer in analyzers)
+                            {
+                                try
+                                {
+                                    _analyzerResults[analyzer.Identifier] = analyzer.GetResult();
+                                }
+                                catch (Exception exception)
+                                {
+                                    ReportAnalyzerException(analyzer.Identifier, exception);
+                                }
+                            }
+                        }
+
+                        void ReportAnalyzerException(string analyzer, Exception exception)
+                        {
+                            var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, 0, 0, 0, analyzer, exception.Message, exception);
+                            diagnostics.Add(diagnostic);
+                        }
+                    }
+
+                    //Create updated snapshot
+                    CodeAnalysisDocumentSnapshot = new InspectedProgramClassDocument(programClassDocument, diagnostics);
+
+                    PerfStatsForCodeQualityCheck.OnStopRefresh();
+                }
+
+                bool CodeAnalysisDocumentNeedsUpdate()
+                {
+                    return CodeAnalysisDocumentSnapshot == null //Not yet computed
+                           ||
+                           (CodeAnalysisDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != programClassDocument.CurrentVersion); //Obsolete version
+                }
+            }
+        }
 
         /// <summary>
-        /// Last snapshot of the compilation unit viewed as a complete Cobol program or class, after parsing the code elements.
+        /// Snapshot of the compilation unit viewed as a complete Cobol program or class, after parsing the code elements.
         /// Only one of the two properties Program or Class can be not null.
         /// Tread-safe : accessible from any thread, returns an immutable object tree.
         /// </summary> 
@@ -302,6 +371,13 @@ namespace TypeCobol.Compiler
         /// </summary>
         public TemporarySemanticDocument TemporaryProgramClassDocumentSnapshot { get; private set; }
 
+
+        /// <summary>
+        /// Final snapshot of the compilation unit, it captures the fully parsed Cobol program
+        /// along with all code-quality diagnostics produced during the code analysis phase.
+        /// This property is thread-safe.
+        /// </summary>
+        public InspectedProgramClassDocument CodeAnalysisDocumentSnapshot { get; private set; }
 
         /// <summary>
         /// Return diagnostics attached directly to a CodeElement or to CodeElementsDocumentSnapshot
@@ -331,18 +407,21 @@ namespace TypeCobol.Compiler
         }
 
         /// <summary>
-        /// Return All diagnostics from all snapshots (token, CodeElement, Node, ...) with the possibily to exclude Node diagnostics
-        /// 
+        /// Return All diagnostics from all snapshots (token, CodeElement, Node, ...) with the possibility
+        /// to exclude Node diagnostics and/or Quality diagnostics
         /// Note that a snapshot only contains diagnostics related to its own phase.
         /// </summary>
-        /// <param name="includeNodeDiagnostics"></param>
-        /// <returns></returns>
-        public IList<Diagnostic> AllDiagnostics(bool includeNodeDiagnostics) {
+        /// <param name="includeNodeDiagnostics">True to include diagnostics produced by Node phase</param>
+        /// <param name="includeQualityDiagnostics">True to include diagnostics produced by QualityCheck</param>
+        /// <returns>A list of selected diagnostics.</returns>
+        public IList<Diagnostic> AllDiagnostics(bool includeNodeDiagnostics, bool includeQualityDiagnostics)
+        {
             var allDiagnostics = new List<Diagnostic>(base.AllDiagnostics());
 
             allDiagnostics.AddRange(OnlyCodeElementDiagnostics());
 
-            if (includeNodeDiagnostics) {
+            if (includeNodeDiagnostics)
+            {
                 lock (lockObjectForTemporarySemanticDocument)
                 {
                     if (TemporaryProgramClassDocumentSnapshot != null)
@@ -364,6 +443,17 @@ namespace TypeCobol.Compiler
                 }
             }
 
+            if (includeQualityDiagnostics)
+            {
+                lock (lockObjectForCodeAnalysisDocumentSnapshot)
+                {
+                    if (CodeAnalysisDocumentSnapshot != null)
+                    {
+                        allDiagnostics.AddRange(CodeAnalysisDocumentSnapshot.Diagnostics);
+                    }
+                }
+            }
+
             return allDiagnostics;
         }
 
@@ -372,7 +462,7 @@ namespace TypeCobol.Compiler
         /// </summary>
         /// <returns></returns>
         public override IList<Diagnostic> AllDiagnostics() {
-            return AllDiagnostics(true);
+            return AllDiagnostics(true, true);
         }
 
         /// <summary>
@@ -389,9 +479,11 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Performance stats for the TemporaryProgramClassDocumentSnapshot method
         /// </summary>
-        public PerfStatsForParsingStep PerfStatsForTemporarySemantic { get; private set; }
+        public PerfStatsForParsingStep PerfStatsForTemporarySemantic { get; }
 
-        public PerfStatsForParsingStep PerfStatsForProgramCrossCheck { get; private set; }
+        public PerfStatsForParsingStep PerfStatsForProgramCrossCheck { get; }
+
+        public PerfStatsForCompilationStep PerfStatsForCodeQualityCheck { get; }
 
         #region Thread ownership and synchronization
 
@@ -400,6 +492,7 @@ namespace TypeCobol.Compiler
         protected readonly object lockObjectForTemporarySemanticDocument = new object();
         protected readonly object lockObjectForProgramClassDocumentSnapshot = new object();
         protected readonly object lockObjectForAnalyzerResults = new object();
+        protected readonly object lockObjectForCodeAnalysisDocumentSnapshot = new object();
 
         #endregion
     }

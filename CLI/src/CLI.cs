@@ -109,8 +109,11 @@ namespace TypeCobol.Server
             var rootSymbolTable = LoadIntrinsicsAndDependencies();
 
             //Add analyzers
-            var analyzerProvider = new AnalyzerProvider();
+            var analyzerProvider = new CompositeAnalyzerProvider();
             var reports = RegisterAnalyzers(analyzerProvider);
+
+            //Add external analyzers
+            analyzerProvider.AddCustomProviders(_configuration.CustomAnalyzerFiles);
 
             //Normalize TypeCobolOptions, the parser does not need to go beyond SemanticCheck for the first phase
             var typeCobolOptions = new TypeCobolOptions(_configuration);
@@ -152,6 +155,9 @@ namespace TypeCobol.Server
 
                     //Force CrossCheck
                     compilationUnit.RefreshProgramClassDocumentSnapshot();
+
+                    //Perform QualityCheck
+                    if (_configuration.ExecToStep > ExecutionStep.CrossCheck) compilationUnit.RefreshCodeAnalysisDocumentSnapshot();
 
                     //Since collecting diagnostics may be costly, we cache them here
                     var currentFileDiagnostics = compilationUnit.AllDiagnostics();
