@@ -288,6 +288,31 @@ namespace TypeCobol.Compiler.Scanner
             LastSignificantToken = newToken;
         }
 
+        /// <summary>
+        /// Determines if the given token may be dependent of a state when scanned.
+        /// </summary>
+        /// <param name="token">The token to be checked for scanning state dependency</param>
+        /// <returns>true if the token may be dependent of a scanning state, false otherwise.</returns>
+        public static bool IsScanStateDependent(Token token)
+        {
+            switch (token.TokenType)
+            {
+                case TokenType.IntegerLiteral:
+                case TokenType.UserDefinedWord:
+                case TokenType.DATA:
+                case TokenType.DELETE:
+                case TokenType.END:
+                case TokenType.FILE:
+                case TokenType.ID:
+                case TokenType.NEXT:
+                case TokenType.PROCEDURE:
+                case TokenType.SERVICE:
+                case TokenType.WHEN:
+                    return true;
+            }
+            return false;
+        }
+
         private void AdjustPreviousTokenPropertiesBasedOnCurrentToken(Token newToken)
         {
             if (LastSignificantToken != null)

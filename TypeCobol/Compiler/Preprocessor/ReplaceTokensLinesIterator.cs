@@ -524,31 +524,6 @@ namespace TypeCobol.Compiler.Preprocessor
         }
 
         /// <summary>
-        /// Determines if the given token may be dependent of a state when scanned.
-        /// </summary>
-        /// <param name="token">The token to be checked for scanning state dependency</param>
-        /// <returns>true if the token may be dependent of a scanning state, false otherwise.</returns>
-        private static bool IsScanStateDependent(Token token)
-        {
-            switch(token.TokenType)
-            {
-                case TokenType.IntegerLiteral:
-                case TokenType.UserDefinedWord:
-                case TokenType.DATA:
-                case TokenType.DELETE:
-                case TokenType.END:
-                case TokenType.FILE:
-                case TokenType.ID:
-                case TokenType.NEXT:
-                case TokenType.PROCEDURE:
-                case TokenType.SERVICE:
-                case TokenType.WHEN:
-                    return true;
-            }
-            return false;
-        }        
-
-        /// <summary>
         /// Rescan the TokenType of a set of replaced Tokens.
         /// </summary>
         /// <param name="firstOriginalToken">The first original token to be replaced</param>
@@ -556,7 +531,7 @@ namespace TypeCobol.Compiler.Preprocessor
         private static void RescanReplacedTokenTypes(Token firstOriginalToken, params Token[] replacedTokens)
         {
             MultilineScanState scanState = FigureOutScanState(firstOriginalToken);
-            if (scanState != null && replacedTokens.Any(IsScanStateDependent))
+            if (scanState != null && replacedTokens.Any(MultilineScanState.IsScanStateDependent))
             {
                 StringBuilder sb = new StringBuilder();
                 foreach (var t in replacedTokens)
