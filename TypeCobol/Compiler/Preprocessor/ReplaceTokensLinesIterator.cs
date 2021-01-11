@@ -517,8 +517,7 @@ namespace TypeCobol.Compiler.Preprocessor
         {
             if (token != null)
             {
-                return token.ScanStateSnapshot ?? (token.TokensLine is TypeCobol.Compiler.Scanner.TokensLine tl
-                            && tl.ScanState != null ? tl.ScanState : null);
+                return token.ScanStateSnapshot ?? (token.TokensLine is TokensLine tl ? tl.ScanState : null);
             }
             return null;
         }
