@@ -1,4 +1,4 @@
 ReturnCode=MissingCopy_
 2 errors in "input\MissingCopy.rdz.tcbl":
-Line 5[8,18] <46, Error, Directives> - Missing copy 'COPY3' included by copy 'COPY2'
-Line 5[8,18] <46, Error, Directives> - Missing copy 'COPY4' included by copy 'COPY2'
+Line 5[8,18] <48, Error, Directives> - Missing copy 'COPY3' included by copy 'COPY2'
+Line 5[8,18] <48, Error, Directives> - Missing copy 'COPY4' included by copy 'COPY2'

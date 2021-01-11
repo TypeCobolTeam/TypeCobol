@@ -12,7 +12,7 @@ namespace TypeCobol.Compiler.Diagnostics
     public class Diagnostic
     {
         public Diagnostic(MessageCode messageCode, int columnStart, int columnEnd, int lineNumber, params object[] messageArgs)
-            : this(DiagnosticMessage.GetFromCode[(int)messageCode], columnStart, columnEnd, lineNumber, messageArgs)
+            : this(DiagnosticMessage.GetFromCode(messageCode), columnStart, columnEnd, lineNumber, messageArgs)
         {
 
         }

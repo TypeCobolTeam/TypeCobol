@@ -62,7 +62,7 @@
 ++ Preprocessor diagnostics ++
 -- Line 2 --
 Line 2[39,46] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be used
-Line 2[29,48] <46, Error, Directives> - Missing copy 'UNKNOWN' included by copy 'CPY1'
+Line 2[29,48] <48, Error, Directives> - Missing copy 'UNKNOWN' included by copy 'CPY1'
 -- Line 5 --
 Line 5[29,36] <37, Warning, General> - Warning: "COPY SUPPRESS" should not be used
 -- Line 6 --
