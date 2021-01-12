@@ -14,8 +14,7 @@
 +++ CONTINUATION OF COMPILER_DIRECTIVE ([8,12:file2]<UserDefinedWord>) +++
 
 -- Line 6 --
-*** DIRECTIVE INVALID SYNTAX -> BASIS  ([1,5:BASIS]<BASIS>[6,6+:.]<PeriodSeparator>) ***
-Line 6[6,6] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting  expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, user defined word}
+[7,6:]<SpaceSeparator>
 
 -- Line 7 --
 *** DIRECTIVE BASIS file1 ([1,5:Basis]<BASIS>[6,6: ]<SpaceSeparator>[7,13:'file1']<AlphanumericLiteral>(',Y,Y){file1}) ***
