@@ -263,6 +263,7 @@ namespace TypeCobol.Test.Parser.Performance
                 stats.AverageCodeElementParserTime          += compiler.CompilationResultsForProgram.PerfStatsForCodeElementsParser.LastRefreshTime;
                 stats.AverateTemporarySemanticsParserTime   += compiler.CompilationResultsForProgram.PerfStatsForTemporarySemantic.LastRefreshTime;
                 stats.AverageCrossCheckerParserTime         += compiler.CompilationResultsForProgram.PerfStatsForProgramCrossCheck.LastRefreshTime;
+                stats.AverageQualityCheckerParserTime       += compiler.CompilationResultsForProgram.PerfStatsForCodeQualityCheck.LastRefreshTime;
             }
             //Compute average time needed for each phase
             stats.AverageTextUpdateTime                 = (int) stats.AverageTextUpdateTime / stats.IterationNumber;
@@ -271,12 +272,14 @@ namespace TypeCobol.Test.Parser.Performance
             stats.AverageCodeElementParserTime          = (int) stats.AverageCodeElementParserTime / stats.IterationNumber;
             stats.AverateTemporarySemanticsParserTime   = (int) stats.AverateTemporarySemanticsParserTime / stats.IterationNumber;
             stats.AverageCrossCheckerParserTime         = (int) stats.AverageCrossCheckerParserTime / stats.IterationNumber;
-            stats.AverageTotalProcessingTime = stats.AverageCodeElementParserTime +
-                                               stats.AverageCrossCheckerParserTime +
-                                               stats.AveragePreprocessorTime +
+            stats.AverageQualityCheckerParserTime       = (int) stats.AverageQualityCheckerParserTime / stats.IterationNumber;
+            stats.AverageTotalProcessingTime = stats.AverageTextUpdateTime +
                                                stats.AverageScannerTime +
-                                               stats.AverageTextUpdateTime +
-                                               stats.AverateTemporarySemanticsParserTime;
+                                               stats.AveragePreprocessorTime +
+                                               stats.AverageCodeElementParserTime +
+                                               stats.AverateTemporarySemanticsParserTime +
+                                               stats.AverageCrossCheckerParserTime +
+                                               stats.AverageQualityCheckerParserTime;
         }
 
 
@@ -401,9 +404,9 @@ namespace TypeCobol.Test.Parser.Performance
                 stats.AverageScannerTime += document.Results.PerfStatsForScanner.FirstCompilationTime;
                 stats.AveragePreprocessorTime += document.Results.PerfStatsForPreprocessor.FirstCompilationTime;
                 stats.AverageCodeElementParserTime += document.Results.PerfStatsForCodeElementsParser.FirstCompilationTime;
-                stats.AverateTemporarySemanticsParserTime +=
-                    document.Results.PerfStatsForTemporarySemantic.FirstCompilationTime;
+                stats.AverateTemporarySemanticsParserTime += document.Results.PerfStatsForTemporarySemantic.FirstCompilationTime;
                 stats.AverageCrossCheckerParserTime += document.Results.PerfStatsForProgramCrossCheck.FirstCompilationTime;
+                stats.AverageQualityCheckerParserTime += document.Results.PerfStatsForCodeQualityCheck.FirstCompilationTime;
             }
 
             //Compute average time needed for each phase
@@ -413,13 +416,15 @@ namespace TypeCobol.Test.Parser.Performance
             stats.AverageCodeElementParserTime = (int)stats.AverageCodeElementParserTime / stats.IterationNumber;
             stats.AverateTemporarySemanticsParserTime = (int)stats.AverateTemporarySemanticsParserTime / stats.IterationNumber;
             stats.AverageCrossCheckerParserTime = (int)stats.AverageCrossCheckerParserTime / stats.IterationNumber;
+            stats.AverageQualityCheckerParserTime = (int)stats.AverageQualityCheckerParserTime / stats.IterationNumber;
 
-            stats.AverageTotalProcessingTime = stats.AverageCodeElementParserTime +
-                                               stats.AverageCrossCheckerParserTime +
-                                               stats.AveragePreprocessorTime +
+            stats.AverageTotalProcessingTime = stats.AverageTextUpdateTime +
                                                stats.AverageScannerTime +
-                                               stats.AverageTextUpdateTime +
-                                               stats.AverateTemporarySemanticsParserTime;
+                                               stats.AveragePreprocessorTime +
+                                               stats.AverageCodeElementParserTime +
+                                               stats.AverateTemporarySemanticsParserTime +
+                                               stats.AverageCrossCheckerParserTime +
+                                               stats.AverageQualityCheckerParserTime;
             stats.Line = documentWarmup.Results.CobolTextLines.Count;
             stats.TotalCodeElements = documentWarmup.Results.CodeElementsDocumentSnapshot.CodeElements.Count();
 

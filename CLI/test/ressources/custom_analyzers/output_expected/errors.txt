@@ -1,0 +1,5 @@
+ReturnCode=Warning_
+3 errors in "input\CustomAnalyzers.rdz.tcbl":
+Line 0[0,0] <45, Warning, General> - Info: Analyzer 'DummySyntaxDrivenAnalyzer': starting AST building...
+Line 0[0,0] <45, Warning, General> - Info: Analyzer 'DummySyntaxDrivenAnalyzer': finished AST building.
+Line 0[0,0] <45, Warning, General> - Info: Analyzer 'DummyASTAnalyzer': visiting source file.

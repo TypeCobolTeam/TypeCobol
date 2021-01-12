@@ -44,7 +44,7 @@ namespace TypeCobol.LanguageServer
         public bool NoLogsMessageNotification { get; set; }
 
         /// <summary>
-        /// Lsr testing level (Source, Scan, Preprocess, Parse, Check)
+        /// Lsr testing level (Source, Scan, Preprocess, Parse, Check, CodeAnalysis)
         /// </summary>
         public LsrTestingOptions LsrTestingLevel { get; set; }
 
@@ -193,14 +193,14 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        protected DocumentContext GetDocumentContextFromStringUri(string uri, bool acceptNodeRefresh = true)
+        protected DocumentContext GetDocumentContextFromStringUri(string uri, Workspace.SyntaxTreeRefreshLevel refreshLevel)
         {
             Uri objUri = new Uri(uri);
             if (objUri.IsFile && this.Workspace.TryGetOpenedDocumentContext(objUri, out var context))
             {
-                // Get compilation info for the current file
-                if (acceptNodeRefresh)
-                    this.Workspace.RefreshSyntaxTree(context.FileCompiler); //Do a Node Refresh
+                System.Diagnostics.Debug.Assert(context.FileCompiler != null);
+                //Refresh context
+                this.Workspace.RefreshSyntaxTree(context.FileCompiler, refreshLevel);
                 return context;
             }
 
@@ -286,7 +286,7 @@ namespace TypeCobol.LanguageServer
                 //These are no longer needed.
                 parameters.text = null;
                 parameters.textDocument.text = null;
-                this.Workspace.OpenTextDocument(docContext, text, this.Workspace.LsrTestOptions);
+                this.Workspace.OpenTextDocument(docContext, text);
 
                 // DEBUG information
                 RemoteConsole.Log("Opened source file : " + docContext.Uri.LocalPath);
@@ -296,7 +296,7 @@ namespace TypeCobol.LanguageServer
         protected override void OnDidChangeTextDocument(DidChangeTextDocumentParams parameters)
         {
 
-            var docContext = GetDocumentContextFromStringUri(parameters.uri, false); //Text Change do not have to trigger node phase, it's only a another event that will do it
+            var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh); //Text Change do not have to trigger node phase, it's only a another event that will do it
             if (docContext == null)
                 return;
 
@@ -330,7 +330,7 @@ namespace TypeCobol.LanguageServer
                     try
                     {
                         docContext.LanguageServerConnection(false);
-                        this.Workspace.OpenTextDocument(docContext, contentChange.text, this.Workspace.LsrTestOptions);
+                        this.Workspace.OpenTextDocument(docContext, contentChange.text);
                         return;
                     }
                     catch (Exception e)
@@ -488,7 +488,7 @@ namespace TypeCobol.LanguageServer
 
             //Commented because it's too slow
             //AnalyticsWrapper.Telemetry.TrackEvent(EventType.Hover, "Hover event", LogType.Completion);
-            var docContext = GetDocumentContextFromStringUri(parameters.uri);
+            var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (docContext == null)
                 return resultHover;
             System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
@@ -592,7 +592,7 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         protected override List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
         {
-            var docContext = GetDocumentContextFromStringUri(parameters.uri);
+            var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (docContext == null)
                 return null;
             System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);
@@ -771,7 +771,7 @@ namespace TypeCobol.LanguageServer
         protected override SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)
         {
             AnalyticsWrapper.Telemetry.TrackEvent(EventType.SignatureHelp, "Signature help event", LogType.Completion); //Send event to analytics
-            var docContext = GetDocumentContextFromStringUri(parameters.uri);
+            var docContext = GetDocumentContextFromStringUri(parameters.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
             if (docContext == null)
                 return null;
             System.Diagnostics.Debug.Assert(docContext.FileCompiler != null);

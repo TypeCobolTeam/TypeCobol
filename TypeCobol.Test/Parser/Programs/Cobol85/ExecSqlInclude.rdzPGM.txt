@@ -1,0 +1,19 @@
+﻿--- Program ---
+PROGRAM: DVZZMFT3 common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  GROUP1:Alphanumeric
+  GROUP1-DATA1:Alphanumeric
+  GROUP2:Alphanumeric
+  GROUP2-DATA1:Alphanumeric
+  GROUP3:Alphanumeric
+  GROUP3-DATA1:Alphanumeric
+  GROUP4:Alphanumeric
+  GROUP4-DATA1:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

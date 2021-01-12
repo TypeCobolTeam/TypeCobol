@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler.Diagnostics;
@@ -28,19 +29,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// Returns the diagnostics produced by this analyzer.
         /// May be empty, but not null.
         /// </summary>
-        public IEnumerable<Diagnostic> Diagnostics
-        {
-            get
-            {
-                if (_diagnostics != null)
-                {
-                    foreach (var diagnostic in _diagnostics)
-                    {
-                        yield return diagnostic;
-                    }
-                }
-            }
-        }
+        public IEnumerable<Diagnostic> Diagnostics => _diagnostics ?? Enumerable.Empty<Diagnostic>();
 
         /// <summary>
         /// Returns the result produced by this analyzer.

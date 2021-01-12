@@ -12,17 +12,23 @@ namespace TypeCobol.Compiler.Diagnostics
     public class Diagnostic
     {
         public Diagnostic(MessageCode messageCode, int columnStart, int columnEnd, int lineNumber, params object[] messageArgs)
+            : this(DiagnosticMessage.GetFromCode[(int)messageCode], columnStart, columnEnd, lineNumber, messageArgs)
         {
-            Info = DiagnosticMessage.GetFromCode[(int)messageCode];
+
+        }
+
+        protected Diagnostic(DiagnosticMessage info, int columnStart, int columnEnd, int lineNumber, params object[] messageArgs)
+        {
+            Info = info;
 
             ColumnStart = Math.Max(columnStart, 0);
-            ColumnEnd   = Math.Max(columnEnd,   0);
+            ColumnEnd = Math.Max(columnEnd, 0);
 
             Line = lineNumber;
-            Message = String.Format(Info.MessageTemplate, messageArgs ?? new object[0]);
+            Message = string.Format(Info.MessageTemplate, messageArgs ?? new object[0]);
             if (messageArgs != null)
             {
-                CatchedException = messageArgs.FirstOrDefault(x => x is Exception) as Exception;
+                CatchedException = messageArgs.OfType<Exception>().FirstOrDefault();
                 MessageArgs = messageArgs;
             }
         }
