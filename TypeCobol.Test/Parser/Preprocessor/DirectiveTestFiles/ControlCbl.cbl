@@ -33,3 +33,6 @@
 009720*CONTROLE CAISSES                                                 09230000
 009720*CBLENDRIER ANNUEL                                                09230000
 
+000001*CBL/SOURCE
+000001*CBL LIST
+000001*CBL,MAP

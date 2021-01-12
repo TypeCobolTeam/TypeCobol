@@ -297,8 +297,14 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public LiteralTokenValue LiteralValue { get; set; }
 
+        /// <summary>
+        /// ScanState associated to this token if any, null otherwise.
+        /// This property is used to allow PartialCobolWords proper reconstruction.
+        /// </summary>
+        public MultilineScanState ScanStateSnapshot { get; set; }
+
         // --- Ambiguous tokens resolved after having been created ---
-        
+
         internal void CorrectType(TokenType tokenType)
         {
             // Copy token type and family from the continuation token
@@ -404,14 +410,15 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public bool CompareForReplace(Token comparisonToken)
         {
-             // 1. First compare the token type                 
-            if(comparisonToken == null || this.TokenType != comparisonToken.TokenType)
+            // 1. First compare the token type                 
+            if (comparisonToken == null || this.TokenType != comparisonToken.TokenType &&
+                !(this.TokenFamily == comparisonToken.TokenFamily && IsFamilyComparable()))
             {
                 return false;
             }
             // 2. For partial Cobol words, chech if the comparison token text (":TAG:") 
             //    is contained in the current token text (":TAG:-AMOUNT")
-            else if(TokenType == TokenType.PartialCobolWord)
+            else if (TokenType == TokenType.PartialCobolWord)
             {
                 return NormalizedText.IndexOf(comparisonToken.NormalizedText, StringComparison.OrdinalIgnoreCase) >= 0;
             }
@@ -427,14 +434,23 @@ namespace TypeCobol.Compiler.Scanner
             //    - SyntaxLiteral
             //    - Symbol
             //    => compare Token text
-            else if (TokenFamily == TokenFamily.AlphanumericLiteral || TokenFamily == TokenFamily.NumericLiteral ||
-                     TokenFamily == TokenFamily.Symbol || TokenFamily == TokenFamily.SyntaxLiteral)
+            else if (IsFamilyComparable())
             {
                 return Text.Equals(comparisonToken.Text, StringComparison.OrdinalIgnoreCase);
             }
             // 5. In all other cases, token type comparison was enough
             {
                 return true;
+            }
+
+            /// <summary>
+            /// Determine if this token belong to a family that is textually comparable.
+            /// </summary>
+            /// <returns>true if yes, false otherwise</returns>
+            bool IsFamilyComparable()
+            {
+                return TokenFamily == TokenFamily.AlphanumericLiteral || TokenFamily == TokenFamily.NumericLiteral ||
+                                     TokenFamily == TokenFamily.Symbol || TokenFamily == TokenFamily.SyntaxLiteral;
             }
         }
     }
