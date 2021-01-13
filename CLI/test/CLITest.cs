@@ -172,6 +172,16 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// This test checks that a diagnostic is reported for copies with broken format
+        /// (after some characters have been turned into unwanted newline).
+        /// </summary>
+        [TestMethod]
+        public void TestCopyBrokenFormat()
+        {
+            CLITestHelper.Test("CopyBrokenFormat", ReturnCode.ParsingDiagnostics);
+        }
+
+        /// <summary>
         /// Test if Euro Information suffixing rule is deactivated
         /// </summary>
         [TestMethod]
