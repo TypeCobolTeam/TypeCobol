@@ -74,8 +74,13 @@ namespace TypeCobol.Compiler.Scanner
             HasClosingDelimiter = false;
 
             UsesVirtualSpaceAtEndOfLine = usesVirtualSpaceAtEndOfLine;
-        }  
-      
+
+            //Scan Dependent Tokens Inside DataDivision must have their scan state. see #428
+            if (tokensLine is TokensLine tl && tl.ScanState != null && tl.ScanState.InsideDataDivision
+                && MultilineScanState.IsScanStateDependent(this))
+                ScanStateSnapshot = tl.ScanState.Clone();
+        }
+
         /// <summary>
         /// Constructor for tokens with delimiters
         /// </summary>
