@@ -2006,21 +2006,20 @@ namespace TypeCobol.Compiler.Scanner
                 return new Token(TokenType.IS, startIndex, endIndex, tokensLine);
             }
             else
-            {
-                var picToken = new Token(TokenType.PictureCharacterString, startIndex, endIndex, tokensLine);
+            {                
                 var patternEndIndex = endIndex;
                 var replaceStartIndex = line.Substring(startIndex).IndexOf(":", StringComparison.Ordinal) + startIndex;
-                if (replaceStartIndex > picToken.StartIndex && picToken.EndColumn > replaceStartIndex && CheckForPartialCobolWordPattern(replaceStartIndex, out patternEndIndex)) 
+                if (replaceStartIndex > startIndex && (patternEndIndex + 1) > replaceStartIndex && CheckForPartialCobolWordPattern(replaceStartIndex, out patternEndIndex)) 
                 { //Check if there is cobol partial word inside the picture declaration. 
-                    picToken.TokenType = TokenType.PartialCobolWord; //Match the whole PictureCharecterString token as a partial cobol word. 
+                    //Match the whole PictureCharecterString token as a partial cobol word. 
+                    var picToken = new Token(TokenType.PartialCobolWord, startIndex, endIndex, tokensLine);
                     picToken.PreviousTokenType = TokenType.PictureCharacterString; //Save that the token was previously a picture character string token
-                    picToken.ScanStateSnapshot = picToken.ScanStateSnapshot ?? tokensLine.ScanState.Clone();
                     return picToken;
                 }
                 else
                 {
                     // Return a picture character string
-                    return picToken;
+                    return new Token(TokenType.PictureCharacterString, startIndex, endIndex, tokensLine);
                 }
                
             }
@@ -2450,7 +2449,6 @@ namespace TypeCobol.Compiler.Scanner
             currentIndex = endIndex + 1;
 
             Token t = new Token(TokenType.PartialCobolWord, startIndex, endIndex, tokensLine);
-            t.ScanStateSnapshot = t.ScanStateSnapshot ?? tokensLine.ScanState.Clone();
             return t;
         }
     }

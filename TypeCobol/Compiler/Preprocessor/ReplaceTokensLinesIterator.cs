@@ -451,7 +451,7 @@ namespace TypeCobol.Compiler.Preprocessor
 					string replacedTokenText = Regex.Replace(normalizedTokenText, normalizedPartToReplace, replacementPart, RegexOptions.IgnoreCase);
                     // Transfer the scanner context the of original token to the call below
                     Diagnostic error = null;					
-                    MultilineScanState scanState = FigureOutScanState(originalToken);
+                    MultilineScanState scanState = originalToken.ScanStateSnapshot;
                     Token generatedToken = Scanner.Scanner.ScanIsolatedToken(replacedTokenText, out error, scanState);
                     // TO DO : find a way to report the error above ...
 
@@ -509,27 +509,13 @@ namespace TypeCobol.Compiler.Preprocessor
         }
 
         /// <summary>
-        /// Figure out a scan state from the given token.
-        /// </summary>
-        /// <param name="token">The Token to figure out the scan state.</param>
-        /// <returns>The Scan state in any, null otherwise</returns>
-        private static MultilineScanState FigureOutScanState(Token token)
-        {
-            if (token != null)
-            {
-                return token.ScanStateSnapshot ?? (token.TokensLine is TokensLine tl ? tl.ScanState : null);
-            }
-            return null;
-        }
-
-        /// <summary>
         /// Rescan the TokenType of a set of replaced Tokens.
         /// </summary>
         /// <param name="firstOriginalToken">The first original token to be replaced</param>
         /// <param name="replacedTokens">The array of replacement tokens.</param>
         private static void RescanReplacedTokenTypes(Token firstOriginalToken, params Token[] replacedTokens)
         {
-            MultilineScanState scanState = FigureOutScanState(firstOriginalToken);
+            MultilineScanState scanState = firstOriginalToken.ScanStateSnapshot;
             if (scanState != null && replacedTokens.Any(MultilineScanState.IsScanStateDependent))
             {
                 StringBuilder sb = new StringBuilder();
