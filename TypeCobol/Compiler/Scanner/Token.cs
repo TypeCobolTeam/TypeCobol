@@ -76,9 +76,9 @@ namespace TypeCobol.Compiler.Scanner
             UsesVirtualSpaceAtEndOfLine = usesVirtualSpaceAtEndOfLine;
 
             //Scan Dependent Tokens Inside DataDivision must have their scan state. see #428
-            if (tokensLine is TokensLine tl && tl.ScanState != null && (tokenType == TokenType.PartialCobolWord || 
-                    tl.ScanState.InsideDataDivision && MultilineScanState.IsScanStateDependent(this)))
-                scanStateSnapshot = tl.ScanState.Clone();
+            if (tokensLine.ScanState != null && (tokenType == TokenType.PartialCobolWord ||
+                    tokensLine.ScanState.InsideDataDivision && MultilineScanState.IsScanStateDependent(this)))
+                scanStateSnapshot = tokensLine.ScanState.Clone();
 
         }
 
@@ -312,7 +312,7 @@ namespace TypeCobol.Compiler.Scanner
         {
             get
             {
-                return scanStateSnapshot ?? (this.TokensLine is TokensLine tl ? tl.ScanState : null);
+                return scanStateSnapshot ?? tokensLine.ScanState;
             }
         }
 
