@@ -24,16 +24,34 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// </summary>
         public bool UseOutlineRefresh { get; set; }
 
+        /// <summary>
+        /// Are we using the CFG view in the client.    
+        /// </summary>
+        public bool UseCfgDfaDataRefresh { get; set; }
+
         protected override InitializeResult OnInitialize(InitializeParams parameters)
         {
             var result = base.OnInitialize(parameters);
             this.Workspace.DocumentModifiedEvent += DocumentModified;
+            this.Workspace.ClientConfigurationChangedEvent += OnClientOptionsChanged;
             return result;
+        }
+
+        /// <summary>
+        /// Handle -ol and -cfg options from the client configuration change notification.
+        /// </summary>
+        /// <param name="sender">Should be the Workspace instance</param>
+        /// <param name="options">Client's Options</param>
+        private void OnClientOptionsChanged(object sender, IEnumerable<string> options)
+        {
+            //this.UseOutlineRefresh = options.Contains("-ol");
+            this.UseCfgDfaDataRefresh = options.Contains("-cfg");
         }
 
         protected override void OnShutdown()
         {
             this.Workspace.DocumentModifiedEvent -= DocumentModified;
+            this.Workspace.ClientConfigurationChangedEvent -= OnClientOptionsChanged;
             base.OnShutdown();
         }
 
@@ -114,10 +132,10 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// <param name="parameter"></param>
         protected virtual void OnDidReceiveNodeRefresh(NodeRefreshParams parameter)
         {
-            var context = GetDocumentContextFromStringUri(parameter.textDocument.uri, false);
+            var context = GetDocumentContextFromStringUri(parameter.textDocument.uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
             if (context != null && context.FileCompiler != null)
             {
-                this.Workspace.RefreshSyntaxTree(context.FileCompiler, true);
+                this.Workspace.RefreshSyntaxTree(context.FileCompiler, Workspace.SyntaxTreeRefreshLevel.ForceFullRefresh);
             }
         }
 
@@ -135,7 +153,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 
         protected virtual void OnDidReceiveExtractUseCopies(ExtractUseCopiesParams parameter)
         {
-            var docContext = GetDocumentContextFromStringUri(parameter.textDocument.uri, false);
+            var docContext = GetDocumentContextFromStringUri(parameter.textDocument.uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
             if (docContext?.FileCompiler?.CompilationResultsForProgram?.CopyTextNamesVariations != null)
             {
                 var _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(this.Workspace.Configuration.Copies, this.Workspace.Configuration.Format, null); //Refresh Intrinsics
@@ -178,17 +196,19 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// <param name="bForced">Force the server to send the program OutlineNodes</param>
         protected virtual void OnDidReceiveRefreshOutline(string uri, bool bForced)
         {
-            var context = GetDocumentContextFromStringUri(uri, false);
-
-            if (context != null && context.FileCompiler != null)
+            if (this.UseOutlineRefresh)
             {
-                var refreshOutlineParams = context.LanguageServer.UpdateOutline(context.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot, bForced);
-                if (refreshOutlineParams != null)
+                var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
+
+                if (context != null && context.FileCompiler != null)
                 {
-                    SendOutlineData(refreshOutlineParams);
+                    var refreshOutlineParams = context.LanguageServer.UpdateOutline(context.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot, bForced);
+                    if (refreshOutlineParams != null)
+                    {
+                        SendOutlineData(refreshOutlineParams);
+                    }
                 }
             }
-
         }
 
         /// <summary>
@@ -197,13 +217,16 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// <param name="uri">Uri of the document to update Cfg/Dfa Informations</param>
         private void UpdateCfgDfaInformation(string uri)
         {
-            var context = GetDocumentContextFromStringUri(uri, false);
-            if (context != null && context.FileCompiler != null)
+            if (this.UseCfgDfaDataRefresh)
             {
-                var cfgDfaParams = context.LanguageServer.UpdateCfgDfaInformation(context);
-                if (cfgDfaParams != null)
+                var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
+                if (context != null && context.FileCompiler != null)
                 {
-                    SendCfgDfaData(cfgDfaParams);
+                    var cfgDfaParams = context.LanguageServer.UpdateCfgDfaInformation(context);
+                    if (cfgDfaParams != null)
+                    {
+                        SendCfgDfaData(cfgDfaParams);
+                    }
                 }
             }
         }

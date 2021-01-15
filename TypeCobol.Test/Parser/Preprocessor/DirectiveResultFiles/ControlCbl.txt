@@ -135,9 +135,7 @@ Line 30[8,13] <27, Error, Syntax> - Syntax error : mismatched input 'SOURCE' exp
 Line 30[25,30] <27, Error, Syntax> - Syntax error : mismatched input 'SOURCE' expecting user defined word
 
 -- Line 31 --
-*** DIRECTIVE INVALID SYNTAX -> ASTERISK_CBL ([7,10:*CBL]<ASTERISK_CBL>[11,12:. ]<PeriodSeparator>) ***
-[13,18:SOURCE]<SOURCE>
-Line 31[11,12] <27, Error, Syntax> - Syntax error : mismatched input '. ' expecting user defined word
+[8,18:CBL. SOURCE]<CommentLine>
 
 -- Line 32 --
 
@@ -148,4 +146,13 @@ Line 31[11,12] <27, Error, Syntax> - Syntax error : mismatched input '. ' expect
 [8,72:CBLENDRIER ANNUEL                                                ]<CommentLine>
 
 -- Line 35 --
+
+-- Line 36 --
+[8,17:CBL/SOURCE]<CommentLine>
+
+-- Line 37 --
+*** DIRECTIVE ASTERISK_CBL|LIST ([7,10:*CBL]<ASTERISK_CBL>[11,11: ]<SpaceSeparator>[12,15:LIST]<UserDefinedWord>) ***
+
+-- Line 38 --
+*** DIRECTIVE ASTERISK_CBL|MAP ([7,10:*CBL]<ASTERISK_CBL>[11,11:,]<CommaSeparator>[12,14:MAP]<UserDefinedWord>) ***
 

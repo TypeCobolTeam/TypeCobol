@@ -34,11 +34,12 @@
     <Compile Include="BitSetTest.cs" />
     <Compile Include="CfgDfaBuildingTests.cs" />
     <Compile Include="CfgTestUtils.cs" />
+    <Compile Include="CfgTestResults.cs" />
     <Compile Include="DfaBuildUseAndDefListTest.cs" />
     <Compile Include="DfaCallPgmReport.cs" />
-    <Compile Include="DfaGenAndKillSetTest.cs" />
-    <Compile Include="DfaInOutSetsTest.cs" />
-    <Compile Include="DfaUseDefSetTest.cs" />
+    <Compile Include="BasicDfaSamplesTest.cs" />
+    <Compile Include="CustomAnalyzers\TestAnalyzerProvider.cs" />
+    <Compile Include="CustomAnalyzers\Analyzers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

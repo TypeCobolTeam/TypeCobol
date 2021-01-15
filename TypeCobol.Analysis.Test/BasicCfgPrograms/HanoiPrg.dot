@@ -8,7 +8,7 @@ edge [
 arrowtail = "empty"
 ]
 Block0 [
-label = "{START|}"
+label = "{START|    02  CN        PIC 9(1)    VALUE 3.\l    02  CFROM     PIC X(1)    VALUE \"1\".\l    02  CUSING    PIC X(1)    VALUE \"2\".\l    02  CTO       PIC X(1)    VALUE \"3\".\l    02  CPROC     PIC 9(1)    VALUE 0.\l    02  TN        PIC 9(1)    VALUE 3.\l    02  TFROM     PIC X(1)    VALUE \"1\".\l    02  TUSING    PIC X(1)    VALUE \"2\".\l    02  TTO       PIC X(1)    VALUE \"3\".\l    02  TPROC     PIC 9(1)    VALUE 0.\l}"
 ]
 Block1 [
 label = "{BEGIN-PROGRAM. Block1|}"

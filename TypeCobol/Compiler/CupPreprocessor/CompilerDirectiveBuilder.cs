@@ -157,22 +157,32 @@ namespace TypeCobol.Compiler.CupPreprocessor
                 Token replacementToken = null;
                 Token[] replacementTokens = null;
 
+                bool bReported = false;
                 foreach (Tuple<List<Token>,List<Token>> copyReplacingOperands in replacingOperands)
                 {
                     // Get relevant tokens
                     List<Token> relevantTokens = copyReplacingOperands.Item1;
                     List<Token> replaceTokens = copyReplacingOperands.Item2;
-                    BuildReplaceOperation(copy.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens,
-                        ref replacementToken, ref replacementTokens, false, relevantTokens);
+                    if (!BuildReplaceOperation(copy.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens,
+                        ref replacementToken, ref replacementTokens, false, relevantTokens))
+                    {
+                        if (!bReported)
+                        {
+                            Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, qualifiedTextName.TextName.Column,
+                                qualifiedTextName.TextName.EndColumn,
+                                  qualifiedTextName.TextName.Line, "\"REPLACE\" Empty Comparison Pseudo Text.");
+                            CompilerDirective.AddDiagnostic(error);
+                            bReported = true;
+                        }
+                    }
 
                     BuildReplaceOperation(copy.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens,
                         ref replacementToken, ref replacementTokens, true, replaceTokens);
-
                 }
             }
         }
 
-        private static void BuildReplaceOperation(IList<ReplaceOperation> replaceOperations, ref Token comparisonToken, ref Token[] followingComparisonTokens, ref Token replacementToken, ref Token[] replacementTokens, bool replaceTokens, List<Token> operandTokens)
+        private static bool BuildReplaceOperation(IList<ReplaceOperation> replaceOperations, ref Token comparisonToken, ref Token[] followingComparisonTokens, ref Token replacementToken, ref Token[] replacementTokens, bool replaceTokens, List<Token> operandTokens)
         {
             // Comparison tokens
             if (!replaceTokens)
@@ -188,6 +198,10 @@ namespace TypeCobol.Compiler.CupPreprocessor
                             followingComparisonTokens[i - 1] = (Token)operandTokens[i];
                         }
                     }
+                }
+                else
+                {//It cannot be empty
+                    return false;
                 }
             }
             // Replacement tokens
@@ -241,6 +255,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
                 replacementToken = null;
                 replacementTokens = null;
             }
+            return true;
         }
 
         public virtual void StartDeleteCompilerStatement()

@@ -25,7 +25,14 @@ namespace TypeCobol.Analysis.Dfa
         {
             System.Diagnostics.Debug.Assert(cfg != null);
             this.Cfg = cfg;
+            this.Cfg.ResetAllBlockData();
+            CollectDataDefinitions();
         }
+
+        /// <summary>
+        /// Collect Data Definitions
+        /// </summary>
+        protected abstract void CollectDataDefinitions();
 
         /// <summary>
         /// The USE List

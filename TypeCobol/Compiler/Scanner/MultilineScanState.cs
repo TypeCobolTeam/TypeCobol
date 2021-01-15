@@ -70,6 +70,11 @@ namespace TypeCobol.Compiler.Scanner
         public bool WithDebuggingMode { get; private set; }
 
         /// <summary>
+        /// True if we are scanning inside a Copy.
+        /// </summary>
+        public bool InsideCopy { get; set; }
+
+        /// <summary>
         /// Encoding of the text file : used to decode the value of an hexadecimal alphanumeric literal
         /// </summary>
         public Encoding EncodingForAlphanumericLiterals { get; private set; }
@@ -141,6 +146,7 @@ namespace TypeCobol.Compiler.Scanner
             MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, InsideSymbolicCharacterDefinitions,
                 InsideFormalizedComment, InsideMultilineComments, InsideParamsField, 
                 DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
+            clone.InsideCopy = this.InsideCopy;
             if (LastSignificantToken != null) clone.LastSignificantToken = LastSignificantToken;
             if (BeforeLastSignificantToken != null) clone.BeforeLastSignificantToken = BeforeLastSignificantToken;
             if (SymbolicCharacters != null)
@@ -188,6 +194,7 @@ namespace TypeCobol.Compiler.Scanner
                         if (LastSignificantToken.TokenType == TokenType.DATA)
                         {
                             InsideDataDivision = true;
+                            InsideProcedureDivision = false;
                         }
                         // Register the start of the PROCEDURE DIVISION and end of DATA DIVISION
                         else if (LastSignificantToken.TokenType == TokenType.PROCEDURE)
@@ -279,6 +286,31 @@ namespace TypeCobol.Compiler.Scanner
             // Register the last significant token 
             BeforeLastSignificantToken = LastSignificantToken;
             LastSignificantToken = newToken;
+        }
+
+        /// <summary>
+        /// Determines if the given token may be dependent of a state when scanned.
+        /// </summary>
+        /// <param name="token">The token to be checked for scanning state dependency</param>
+        /// <returns>true if the token may be dependent of a scanning state, false otherwise.</returns>
+        public static bool IsScanStateDependent(Token token)
+        {
+            switch (token.TokenType)
+            {
+                case TokenType.IntegerLiteral:
+                case TokenType.UserDefinedWord:
+                case TokenType.DATA:
+                case TokenType.DELETE:
+                case TokenType.END:
+                case TokenType.FILE:
+                case TokenType.ID:
+                case TokenType.NEXT:
+                case TokenType.PROCEDURE:
+                case TokenType.SERVICE:
+                case TokenType.WHEN:
+                    return true;
+            }
+            return false;
         }
 
         private void AdjustPreviousTokenPropertiesBasedOnCurrentToken(Token newToken)
@@ -497,6 +529,7 @@ namespace TypeCobol.Compiler.Scanner
                    InsideFormalizedComment == otherScanState.InsideFormalizedComment &&
                    InsideParamsField == otherScanState.InsideParamsField &&
                    InsideMultilineComments == otherScanState.InsideMultilineComments &&
+                   InsideCopy == otherScanState.InsideCopy &&
 
 #if EUROINFO_RULES
                    InsideRemarksDirective == otherScanState.InsideRemarksDirective &&
@@ -526,6 +559,7 @@ namespace TypeCobol.Compiler.Scanner
                 hash = hash * 23 + InsideFormalizedComment.GetHashCode();
                 hash = hash * 23 + InsideParamsField.GetHashCode();
                 hash = hash * 23 + InsideMultilineComments.GetHashCode();
+                hash = hash * 23 + InsideCopy.GetHashCode();
 
 #if EUROINFO_RULES
                 hash = hash * 23 + InsideRemarksDirective.GetHashCode();

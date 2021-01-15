@@ -52,6 +52,8 @@ namespace TypeCobol.Compiler.Diagnostics
         WrongMultilineCommentMarckupPosition = 42,
         ErrorFormalizedCommentMissplaced = 43,
         MultiFormalizedCommentIndicatorMisused = 44,
-        Info = 45
+        Info = 45,
+        AnalyzerFailure = 46,
+        QualityRuleViolation = 47 //MessageCode 47 is reserved for violations coming from any analyzer
     }
 }

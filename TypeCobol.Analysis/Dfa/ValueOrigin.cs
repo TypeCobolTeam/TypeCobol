@@ -14,10 +14,10 @@ namespace TypeCobol.Analysis.Dfa
         /// <summary>
         /// Computes the ValueOrigin from a starting UsePoint.
         /// The Algorithm works like that:
-        /// (1) If the UsePoint has no associated UseDef set then tries to see if variable has an initial value.
+        /// (1) If the UsePoint has no associated UseDef set then return.
         /// (2) The UsePoint has a UseDef set.
         /// (2.1) For each Definition Point of the UseDef set
-        /// (2.1.1) Only take in account those DefinitionPoints associated to a MOVE or a SET instruction.
+        /// (2.1.1) Only take in account those DefinitionPoints associated to a MOVE or a SET instruction or initial value assignment.
         /// (2.1.1.1) a MOVE statement
         /// (2.1.1.1.1)If the MoveStatement is a SimpleMoveStatement and the sending variable is a Literal alphabetic value
         ///     then append a value origin path with this value.
@@ -27,6 +27,8 @@ namespace TypeCobol.Analysis.Dfa
         /// (2.1.1.2) a SET statement
         ///     (2.1.1.2.1) The Set instruction is Condition variable set then
         ///                 the value is the first value of the level 88 variable
+        /// (2.1.1.3) a DataDescription or Redefines Entry from a Data Definition.
+        ///     (2.1.1.3.1) Take the initial value and add it to the origins path.
         /// </summary>
         /// <param name="start">UsePoint to start the analysis.</param>
         /// <param name="dfaBuilder">Data Flow Graph builder.</param>
@@ -41,16 +43,7 @@ namespace TypeCobol.Analysis.Dfa
 
             if (start.UseDef == null || start.UseDef.Cardinality() == 0)
             {
-                //(1) No Definitions ==> try to see if the variable has an Initial Value
-                if (variable.Value != null && variable.Value is Value value)
-                {
-                    return new ValueOrigin(variable)
-                    {
-                        Value = value
-                    };
-                }
-
-                //This is an uninitialized variable !
+                //(1) No Definitions ==> This is an uninitialized variable !
                 return null;
             }
 
@@ -74,6 +67,11 @@ namespace TypeCobol.Analysis.Dfa
                     case CodeElementType.SetStatement:
                         //(2.1.1.2)
                         ProcessSetStatement((SetStatement) defPoint.Instruction.CodeElement);
+                        break;
+                    case CodeElementType.DataDescriptionEntry:
+                    case CodeElementType.DataRedefinesEntry:
+                        //(2.1.1.3)
+                        ProcessDataDefinition();
                         break;
                 }
 
@@ -101,10 +99,11 @@ namespace TypeCobol.Analysis.Dfa
                                 var defBlockData = dfaBuilder.Cfg.AllBlocks[defPoint.BlockIndex].Data;
                                 for (int i = defBlockData.UseListFirstIndex; i < defBlockData.UseListFirstIndex + defBlockData.UseCount; i++)
                                 {
-                                    if (dfaBuilder.UseList[i].Instruction == defPoint.Instruction && dfaBuilder.UseList[i].Variable == sendingVariable)
+                                    var usePoint = dfaBuilder.UseList[i];
+                                    if (usePoint.Instruction == defPoint.Instruction && usePoint.Variable == sendingVariable)
                                     {
                                         //We have found the correct UsePoint
-                                        var origin = ComputeFrom(dfaBuilder.UseList[i], dfaBuilder);
+                                        var origin = ComputeFrom(usePoint, dfaBuilder);
                                         result.Origins.Add(origin);
                                         break;
                                     }
@@ -136,6 +135,17 @@ namespace TypeCobol.Analysis.Dfa
                             }
                             break;
                     }
+                }
+
+                void ProcessDataDefinition()
+                {
+                    System.Diagnostics.Debug.Assert(variable.Value is Value);
+                    //(2.1.1.3.1) Take the initial value and add it to the origins path.
+                    var origin = new ValueOrigin(variable)
+                    {
+                        Value = (Value) variable.Value
+                    };
+                    result.Origins.Add(origin);
                 }
             }
 

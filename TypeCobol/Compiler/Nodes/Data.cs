@@ -450,7 +450,7 @@ namespace TypeCobol.Compiler.Nodes {
                 _slackBytes = 0;
                 DataDefinition redefinedDataDefinition = null;
 
-                if (IsSynchronized && Usage != null && Usage != DataUsage.None && Parent is DataDefinition parent)
+                if (Synchronized != null && Usage != null && Usage != DataUsage.None && Parent is DataDefinition parent)
                 {
                     //Analyse all DataDefinition that preceed the current node
                     while (parent != null && parent.Type != CodeElementType.SectionHeader)
@@ -701,17 +701,17 @@ namespace TypeCobol.Compiler.Nodes {
         public bool SignIsSeparate { get { if (_ComonDataDesc != null && _ComonDataDesc.SignIsSeparate != null) return _ComonDataDesc.SignIsSeparate.Value; else return false; } }
         public SignPosition? SignPosition { get { if (_ComonDataDesc != null && _ComonDataDesc.SignPosition != null) return _ComonDataDesc.SignPosition.Value; else return null; } }
 
-        public bool IsSynchronized
+        public SyncAlignment? Synchronized
         {
             get
             {
-                if (_ComonDataDesc?.IsSynchronized != null)
-                    return _ComonDataDesc.IsSynchronized.Value;
+                if (_ComonDataDesc?.Synchronized != null)
+                    return _ComonDataDesc.Synchronized.Value;
 
                 else if (Parent is DataDefinition parent)
-                    return parent.IsSynchronized;
+                    return parent.Synchronized;
 
-                else return false;
+                else return null;
             }
         }
         public SymbolReference ObjectReferenceClass { get { if (_ComonDataDesc != null) return _ComonDataDesc.ObjectReferenceClass; else return null; } }

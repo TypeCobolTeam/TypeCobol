@@ -19,3 +19,18 @@
 000007 exec sql include textname6 endexec.
 000008 display "ok ?".
 000009 exec sql delete * from table end-exec. 
+
+000001 exec sql include textname7
+000002 end-exec.
+000003 
+000004 exec sql include
+000005                  textname8
+000006 end-exec.
+000007 
+000008 exec sql
+000009          include textname9
+000010 end-exec.
+000000 
+000008 exec
+000009      sql include textnameA
+000010 end-exec.

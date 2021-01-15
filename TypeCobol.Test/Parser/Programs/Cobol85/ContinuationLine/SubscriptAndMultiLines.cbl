@@ -1,4 +1,3 @@
-﻿*Don't except any errors
  IDENTIFICATION DIVISION.
  PROGRAM-ID. C6LIST1B.
  DATA DIVISION.
@@ -10,3 +9,4 @@
      DISPLAY '>>> DOUBLON BIN: ' ENTREE-ENR(3:19)
 -            ' ENREG NUM: ' W-CPT-LUS
      EXIT.
+ END PROGRAM C6LIST1B.

@@ -57,6 +57,7 @@ namespace TypeCobol.Test {
             TestTokenTypes.CheckOperators();
             TestTokenTypes.CheckAlphanumericLiterals();
             TestTokenTypes.CheckPseudoText();
+            TestTokenTypes.CheckPseudoText2();
             TestTokenTypes.CheckNumericLiterals();
             TestTokenTypes.CheckKeywordsAndUserDefinedWords();
             TestTokenTypes.CheckPartialCobolWords();

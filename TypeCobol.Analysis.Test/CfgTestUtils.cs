@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Analysis.Dfa;
 using TypeCobol.Analysis.Graph;
+using TypeCobol.Analysis.Util;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
@@ -56,15 +58,36 @@ namespace TypeCobol.Analysis.Test
         }
 
         /// <summary>
-        /// Perform parsing of the supplied Cobol or TypeCobol source file and build CFGs to be built for a DFA analysis.
+        /// Perform parsing of the supplied Cobol or TypeCobol source file and build CFGs and DFA results.
         /// </summary>
         /// <param name="sourceFilePath">Full path to the source file.</param>
         /// <param name="expectedDiagnosticsFilePath">Full path to the diagnostic file, pass null to skip
         /// diagnostic comparison</param>
-        /// <returns>List of CFG built for the source file.</returns>
-        public static IList<ControlFlowGraph<Node, DfaBasicBlockInfo<VariableSymbol>>> ParseCompareDiagnosticsForDfa(string sourceFilePath, string expectedDiagnosticsFilePath = null)
+        /// <param name="expectedLivenessFilePath">Full path to a variable liveness CSV result file, pass null to skip comparison</param>
+        /// <returns>An instance of <see cref="DfaTestResults" /> containing all graphs and DFA results.</returns>
+        public static DfaTestResults ParseCompareDiagnosticsWithDfa(string sourceFilePath,
+            string expectedDiagnosticsFilePath = null,
+            string expectedLivenessFilePath = null)
         {
-            return ParseCompareDiagnostics<DfaBasicBlockInfo<VariableSymbol>>(sourceFilePath, CfgBuildingMode.WithDfa, expectedDiagnosticsFilePath);
+            var graphs = ParseCompareDiagnostics<DfaBasicBlockInfo<VariableSymbol>>(sourceFilePath, CfgBuildingMode.WithDfa, expectedDiagnosticsFilePath);
+            var dfaResults = new DfaTestResults(graphs);
+
+            if (expectedLivenessFilePath !=  null)
+            {
+                //Perform variable liveness (and UseDefs) data comparison
+
+                if (!File.Exists(expectedLivenessFilePath))
+                    throw new ArgumentException($"Expected DFA result file not found, invalid path is '{expectedLivenessFilePath}'.");
+
+                StringWriter writer = new StringWriter();
+                GenVariableLivenessResults(dfaResults, writer);
+
+                string result = writer.ToString();
+                string expected = File.ReadAllText(expectedLivenessFilePath);
+                TestUtils.compareLines(sourceFilePath, result, expected, expectedLivenessFilePath);
+            }
+
+            return dfaResults;
         }
 
         /// <summary>
@@ -75,9 +98,10 @@ namespace TypeCobol.Analysis.Test
         /// <param name="expectedDiagnosticsFilePath">Full path to the diagnostic file, pass null to skip
         /// diagnostic comparison</param>
         /// <returns>List of CFG built for the source file.</returns>
-        public static IList<ControlFlowGraph<Node, object>> ParseCompareDiagnostics(string sourceFilePath, string expectedDiagnosticsFilePath = null)
+        public static CfgTestResults<object> ParseCompareDiagnosticsCfgOnly(string sourceFilePath, string expectedDiagnosticsFilePath = null)
         {
-            return ParseCompareDiagnostics<object>(sourceFilePath, CfgBuildingMode.Standard, expectedDiagnosticsFilePath);
+            var graphs = ParseCompareDiagnostics<object>(sourceFilePath, CfgBuildingMode.Standard, expectedDiagnosticsFilePath);
+            return new CfgTestResults<object>(graphs);
         }
 
         /// <summary>
@@ -196,6 +220,119 @@ namespace TypeCobol.Analysis.Test
             string result = writer.ToString();
             string expected = File.ReadAllText(expectedDotFile);
             TestUtils.compareLines(testPath, result, expected, expectedDotFile);
+        }
+
+        /// <summary>
+        /// Write DFA results into the supplied TextWriter.
+        /// The results are written in CSV format, for each graph the file has 3 stacked parts:
+        /// first part is a table of all instructions of the program,
+        /// second part describes In, Out, Gen and Kill sets for each block,
+        /// last part describes DefPoints for each UsePoint.
+        /// </summary>
+        /// <param name="dfaResults">Previously computed DFA results.</param>
+        /// <param name="output">Target TextWriter.</param>
+        public static void GenVariableLivenessResults(DfaTestResults dfaResults, TextWriter output)
+        {
+            for (int i = 0; i < dfaResults.Graphs.Count; i++)
+            {
+                //Each graph is identified by its index in the results
+                var cfg = dfaResults.Graphs[i];
+                output.WriteLine($"Graph {i};;;;");
+
+                WriteInstructionTable();
+
+                var defList = dfaResults.GetDefList(cfg);
+                WriteLivenessSets();
+
+                var useList = dfaResults.GetUseList(cfg);
+                WriteUseDefsSets();
+
+                //First part of the file: a table of all instructions of the program.
+                //Each instruction is identified by its block and its index within all the instructions of the block.
+                void WriteInstructionTable()
+                {
+                    output.WriteLine("Block;InstructionIndex;Instruction;;");
+                    foreach (var block in cfg.AllBlocks)
+                    {
+                        int instructionIndex = 0;
+                        foreach (var instruction in block.Instructions)
+                        {
+                            output.WriteLine($"Block{block.Index};{instructionIndex};{InstructionToString(instruction)};;");
+                            instructionIndex++;
+                        }
+                    }
+
+                    string InstructionToString(Node instruction)
+                    {
+                        string sourceText = instruction.CodeElement?.SourceText;
+                        if (sourceText != null)
+                        {
+                            sourceText = sourceText.Trim();
+                            sourceText = sourceText.Replace('\n', ' ')
+                                .Replace('\r', ' '); //instruction written on a single line
+                            sourceText = sourceText.Replace("\"", "\"\""); //escape double-quote
+                            return '"' + sourceText + '"';
+                        }
+
+                        return "\"<empty>\"";
+                    }
+
+                    //instruction.CodeElement?.SourceText ?? "<empty>"
+                }
+
+                //Second part of the file: In, Out, Gen and Kill sets of each block
+                //These sets contain DefPoints, each DefPoint is represented as "VarName:Block:InstructionIndex"
+                void WriteLivenessSets()
+                {
+                    output.WriteLine("Block;In;Out;Gen;Kill");
+                    foreach (var block in cfg.AllBlocks)
+                    {
+                        const string emptyData = "{};{};{};{}";
+                        string @in = BitSetToString(block.Data.In, defList, DefPointToString);
+                        string @out = BitSetToString(block.Data.Out, defList, DefPointToString);
+                        string gen = BitSetToString(block.Data.Gen, defList, DefPointToString);
+                        string kill = BitSetToString(block.Data.Kill, defList, DefPointToString);
+                        string data = $"{@in};{@out};{gen};{kill}";
+                        if (data != emptyData)
+                        {
+                            output.WriteLine($"Block{block.Index};{data}");
+                        }
+                    }
+                }
+
+                //Third part of the file: UseDef set of each UsePoint in the graph
+                //UsePoint and DefPoint have the same representation as "VarName:Block:InstructionIndex"
+                void WriteUseDefsSets()
+                {
+                    output.WriteLine("UsePoint;Definitions;;;");
+                    foreach (var usePoint in useList)
+                    {
+                        string definitions = BitSetToString(usePoint.UseDef, defList, DefPointToString);
+                        output.WriteLine($"{UsePointToString(usePoint)};{definitions};;;");
+                    }
+                }
+
+                //Helper methods
+                string DefPointToString(DfaDefPoint<Node, VariableSymbol> defPoint) => $"{defPoint.Variable.Name}:Block{defPoint.BlockIndex}:{defPoint.InstructionIndex}";
+
+                string UsePointToString(DfaUsePoint<Node, VariableSymbol> usePoint) => $"{usePoint.Variable.Name}:Block{usePoint.BlockIndex}:{usePoint.InstructionIndex}";
+
+                string BitSetToString<T>(BitSet set, List<T> list, Func<T, string> toString)
+                {
+                    return "{" + string.Join(", ", EnumerateSet().Select(toString)) + "}";
+
+                    IEnumerable<T> EnumerateSet()
+                    {
+                        if (set == null) yield break;
+
+                        int nextSetBit = -1;
+                        while ((nextSetBit = set.NextSetBit(nextSetBit + 1)) >= 0)
+                        {
+                            yield return list[nextSetBit];
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -289,8 +289,8 @@ namespace TypeCobol.Compiler.Text
             if (lastIndexOfLine >= 0 && line[0] == '*')
             {
                 // Check for compiler directives
-                if ((line.Length >= 5 && line.StartsWith("*CBL ")) ||
-                    (line.Length >= 9 && line.StartsWith("*CONTROL ")))
+                if ((line.Length >= 5 && (line.StartsWith("*CBL ") || line.StartsWith("*CBL,"))) ||
+                    (line.Length >= 9 && (line.StartsWith("*CONTROL ") || line.StartsWith("*CONTROL,"))))
                 {
                     Indicator = new TextArea(TextAreaType.Indicator, 0, -1);
                     Source = new TextArea(TextAreaType.Source, 0, lastIndexOfLine);
@@ -328,7 +328,7 @@ namespace TypeCobol.Compiler.Text
         // List of compiler directives keywords which can be encountered before column 8
         // even in Cobol reference format, and which force a certain form a free format
         // text lines in otherwise reference format files
-        internal static string[] COMPILER_DIRECTIVE_KEYWORDS_STARTING_BEFORE_LINE_8 = new string[] {
+        private static readonly string[] COMPILER_DIRECTIVE_KEYWORDS_STARTING_BEFORE_LINE_8 = new string[] {
             "CBL",
             "PROCESS",
             "*CBL",
@@ -381,7 +381,7 @@ namespace TypeCobol.Compiler.Text
                             // Complete keyword matched => exit both loops
                             if (nextCharIndex == afterLastCharIndex)
                             {
-                                if (nextCharIndex == line.Length || CobolChar.IsCobolWordSeparator(line[nextCharIndex]))
+                                if (nextCharIndex == line.Length || line[nextCharIndex] == ' ' || line[nextCharIndex] == ',')
                                 {
                                     compilerDirectiveFound = true;
                                 }

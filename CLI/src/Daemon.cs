@@ -59,7 +59,7 @@ namespace TypeCobol.Server {
                 }
 
                 if (config.OutputFiles.Count == 0 && config.ExecToStep >= ExecutionStep.Generate)
-                    config.ExecToStep = ExecutionStep.CrossCheck; //If there is no given output file, we can't run generation, fallback to CrossCheck
+                    config.ExecToStep = ExecutionStep.QualityCheck; //If there is no given output file, we can't run generation, fallback to QualityCheck
 
                 var returnCode = CLI.runOnce(config);
                 if (returnCode != ReturnCode.Success)
