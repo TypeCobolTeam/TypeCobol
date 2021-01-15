@@ -78,7 +78,8 @@ namespace TypeCobol.Compiler.Scanner
             //Scan Dependent Tokens Inside DataDivision must have their scan state. see #428
             if (tokensLine is TokensLine tl && tl.ScanState != null && (tokenType == TokenType.PartialCobolWord || 
                     tl.ScanState.InsideDataDivision && MultilineScanState.IsScanStateDependent(this)))
-                ScanStateSnapshot = tl.ScanState.Clone();
+                scanStateSnapshot = tl.ScanState.Clone();
+
         }
 
         /// <summary>
@@ -302,7 +303,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public LiteralTokenValue LiteralValue { get; set; }
 
-        private MultilineScanState scanStateSnapshot;
+        private readonly MultilineScanState scanStateSnapshot;
         /// <summary>
         /// ScanState associated to this token if any, null otherwise.
         /// This property is used to allow PartialCobolWords proper reconstruction.
@@ -312,10 +313,6 @@ namespace TypeCobol.Compiler.Scanner
             get
             {
                 return scanStateSnapshot ?? (this.TokensLine is TokensLine tl ? tl.ScanState : null);
-            }
-            private set
-            {
-                scanStateSnapshot = value;
             }
         }
 
