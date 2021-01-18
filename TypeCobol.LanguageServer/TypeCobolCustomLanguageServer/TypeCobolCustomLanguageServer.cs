@@ -28,6 +28,14 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// Are we using the CFG view in the client.    
         /// </summary>
         public bool UseCfgDfaDataRefresh { get; set; }
+        /// <summary>
+        /// True if The server is executed in LSR TestMode
+        /// </summary>
+        public bool InRobotLsrTestMode { get; set; }
+        /// <summary>
+        /// True if the server is executed in LSR client mode.
+        /// </summary>
+        public bool InLsrClientMode { get; set; }
 
         protected override InitializeResult OnInitialize(InitializeParams parameters)
         {
@@ -43,9 +51,12 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// <param name="sender">Should be the Workspace instance</param>
         /// <param name="options">Client's Options</param>
         private void OnClientOptionsChanged(object sender, IEnumerable<string> options)
-        {
-            //this.UseOutlineRefresh = options.Contains("-ol");
-            this.UseCfgDfaDataRefresh = options.Contains("-cfg");
+        {            
+            if (!this.InRobotLsrTestMode)
+            {
+                this.UseOutlineRefresh = options.Contains("-ol");
+                this.UseCfgDfaDataRefresh = options.Contains("-cfg");
+            }
         }
 
         protected override void OnShutdown()
@@ -222,7 +233,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                 var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
                 if (context != null && context.FileCompiler != null)
                 {
-                    var cfgDfaParams = context.LanguageServer.UpdateCfgDfaInformation(context);
+                    var cfgDfaParams = context.LanguageServer.UpdateCfgDfaInformation(context, InRobotLsrTestMode || InLsrClientMode);
                     if (cfgDfaParams != null)
                     {
                         SendCfgDfaData(cfgDfaParams);

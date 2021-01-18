@@ -291,8 +291,9 @@ namespace TypeCobol.LanguageServer
         /// Method to update CFG/DFA information.
         /// </summary>
         /// <param name="fileCompiler">The underlying File Compiler</param>
+        /// <param name="lsrMode)">True if this action is executed in a LSR Mode</param>
         /// <returns>CFG/DFA Data information</returns>
-        public CfgDfaParams UpdateCfgDfaInformation(DocumentContext docContext)
+        public CfgDfaParams UpdateCfgDfaInformation(DocumentContext docContext, bool lsrMode)
         {
             CfgDfaParams result = null;
             docContext.FileCompiler.CompilationResultsForProgram.TryGetAnalyzerResult(lspcfgId, out IList<ControlFlowGraph<Node, object>> cfgs);
@@ -300,15 +301,20 @@ namespace TypeCobol.LanguageServer
             {                
                 //Create a temporary dot file.
                 string tempFile = Path.GetTempFileName();
-                using (var writer = File.CreateText(tempFile))
+                using (TextWriter writer = lsrMode ? (TextWriter)new StringWriter() : File.CreateText(tempFile))
                 {
-                    CfgDfaParamsBuilder builder = new CfgDfaParamsBuilder(new TextDocumentIdentifier(docContext.TextDocument.uri), tempFile);
+                    CfgDfaParamsBuilder builder = new CfgDfaParamsBuilder(new TextDocumentIdentifier(docContext.TextDocument.uri), lsrMode ? null : tempFile);
                     CfgDotFileForNodeGenerator<object> gen = new CfgDotFileForNodeGenerator<object>(cfgs[0]);
                     gen.FullInstruction = true;
                     gen.BlockEmittedEvent += (block, subgraph) => builder.AddBlock<object>(block, subgraph);
                     gen.Report(writer);
                     result = builder.Params;
-                }                
+                    if (lsrMode)
+                    {
+                        writer.Flush();
+                        result.dotContent = writer.ToString();
+                    }
+                }
             }
             else
             {

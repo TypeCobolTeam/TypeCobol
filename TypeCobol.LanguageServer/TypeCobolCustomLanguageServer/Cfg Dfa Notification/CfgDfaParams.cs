@@ -35,8 +35,14 @@
         /// <summary>
         /// The Path to the associated .dot File if any.
         /// The File if it exists is a temporary file it shall be deleted by the client.
+        /// Can be null
         /// </summary>
         public string dotFilePath { get; set; }
+        /// <summary>
+        /// The Dot content if the dotFilePath is not provided.
+        /// Can be null
+        /// </summary>
+        public string dotContent { get; set; }
         /// <summary>
         /// An array of instruction positions in the source document.
         /// </summary>

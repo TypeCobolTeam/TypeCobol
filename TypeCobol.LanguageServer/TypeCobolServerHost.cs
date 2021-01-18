@@ -125,6 +125,10 @@ namespace TypeCobol.LanguageServer
         /// Are we supporting CFG/DFA Refresh Notifications.
         /// </summary>
         public static bool UseCfg { get; set; }
+        /// <summary>
+        /// Are We running from the LSR client mode.
+        /// </summary>
+        public static bool LsrClientMode { get; set; }
 
         public static System.Diagnostics.Process Process;
 
@@ -216,6 +220,7 @@ namespace TypeCobol.LanguageServer
                 { "sc|syntaxcolor",  "Syntax Coloring Support.", _ => UseSyntaxColoring = true},
                 { "ol|outlineRefresh",  "Outline Support.", _ => UseOutlineRefresh = true},
                 { "cfg",  "Control Flow Graph support.", _ => UseCfg = true},
+                { "lsrclient",  "Server is running in LSR Client mode.", _ => LsrClientMode = true},
             };
 
             System.Collections.Generic.List<string> arguments;
@@ -293,6 +298,8 @@ namespace TypeCobol.LanguageServer
                 typeCobolServer.UseSyntaxColoring = UseSyntaxColoring;
                 typeCobolServer.UseOutlineRefresh = UseOutlineRefresh;
                 typeCobolServer.UseCfgDfaDataRefresh = UseCfg;
+                typeCobolServer.InRobotLsrTestMode = LsrMode;
+                typeCobolServer.InLsrClientMode = LsrClientMode;
 
 
                 //Creating the thread that will read mesages and handle them 
