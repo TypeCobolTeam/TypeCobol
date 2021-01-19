@@ -469,7 +469,7 @@
                                 IX-CNAPRG-2-PACKWK.                     CGPACKWK
                   20 WSBA-CNAPRS PIC XXX.                               CGPACKWK
                   20 WSBA-RSNAPR PIC XX.                                CGPACKWK
-               15 LT-MAX-CNAPRG-PACKWK    PIC S9(9) COMP-5 SYNC         CGPACKWK
+               15 LT-MAX-CNAPRG-PACKWK    PIC S9(9) COMP-5              CGPACKWK
                                                            VALUE 20.    CGPACKWK
                15 WSBA-NFICPN    PIC S9(7) COMP-3.                      CGPACKWK
                15 WSBA-NDESTI    PIC S9(7) COMP-3.                      CGPACKWK
@@ -491,9 +491,9 @@
                   20 WSBA-NFICPN3         PIC 9(7) OCCURS 2             CGPACKWK
                      INDEXED BY IX-NFICPN3-1-PACKWK                     CGPACKWK
                                 IX-NFICPN3-2-PACKWK.                    CGPACKWK
-               15 LT-MAX-DEMRSA3-PACKWK    PIC S9(9) COMP-5 SYNC        CGPACKWK
+               15 LT-MAX-DEMRSA3-PACKWK    PIC S9(9) COMP-5             CGPACKWK
                                                             VALUE 2.    CGPACKWK
-               15 LT-MAX-NFICPN3-PACKWK    PIC S9(9) COMP-5 SYNC        CGPACKWK
+               15 LT-MAX-NFICPN3-PACKWK    PIC S9(9) COMP-5             CGPACKWK
                                                             VALUE 2.    CGPACKWK
                15 WSBA-CDPIRTYI.                                        CGPACKWK
                   20 WSBA-CWTINT PIC X.                                 CGPACKWK
@@ -509,7 +509,7 @@
                   20 WSBA-CTYPER          PIC X(3) OCCURS 2             CGPACKWK
                      INDEXED BY IX-CTYPER-1-PACKWK                      CGPACKWK
                                 IX-CTYPER-2-PACKWK.                     CGPACKWK
-               15 LT-MAX-CTYPER-PACKWK    PIC S9(9) COMP-5 SYNC VALUE 2.CGPACKWK
+               15 LT-MAX-CTYPER-PACKWK    PIC S9(9) COMP-5      VALUE 2.CGPACKWK
                15 WSBA-CDDRADRA.                                        CGPACKWK
                   20 WSBA-MENDRO PIC S9(7)V9(2) COMP-3.                 CGPACKWK
                15 WSBA-CDODEZZZ.                                        CGPACKWK
@@ -526,7 +526,7 @@
                   20 WSBA-EMOIVS          PIC S9(9) COMP-3 OCCURS 2     CGPACKWK
                      INDEXED BY IX-EMOIVS-1-PACKWK                      CGPACKWK
                                 IX-EMOIVS-2-PACKWK.                     CGPACKWK
-               15 LT-MAX-EMOIVS-PACKWK    PIC S9(9) COMP-5 SYNC VALUE 2.CGPACKWK
+               15 LT-MAX-EMOIVS-PACKWK    PIC S9(9) COMP-5      VALUE 2.CGPACKWK
                15 WSBA-CDPCOPCO.                                        CGPACKWK
                   20 WSBA-CCNAPF PIC X.                                 CGPACKWK
                   20 WSBA-COUVDT PIC X.                                 CGPACKWK
@@ -551,7 +551,7 @@
                   20 WSBA-CAGAMT          PIC X OCCURS 4                CGPACKWK
                      INDEXED BY IX-CAGAMT-1-PACKWK                      CGPACKWK
                                 IX-CAGAMT-2-PACKWK.                     CGPACKWK
-               15 LT-MAX-CAGAMT-PACKWK    PIC S9(9) COMP-5 SYNC VALUE 4.CGPACKWK
+               15 LT-MAX-CAGAMT-PACKWK    PIC S9(9) COMP-5      VALUE 4.CGPACKWK
                15 WSBA-CDRSD.                                           CGPACKWK
                   20 WSBA-DEMRSA PIC 9(8).                              CGPACKWK
                15 WSBA-CDRMAZZZ.                                        CGPACKWK
@@ -14902,7 +14902,7 @@
                  88 LKMO-ALLO-FL-CFAPRS-PAC        VALUE 'PAC'.         CGLKMO
                17 LKMO-ALLO-CGAL0ALC.                                   CGLKMO
                20 LKMO-INDALC                    PIC 9(1).              CGLKMO
-               20 LKMO-CDALLALC.                                        CGLKMO
+               20 LKMO-CDALLALC                 PIC 9(1).               CGLKMO
              11 LKMO-ASS-MATER-DOS.                                     CGLKMO
                14 LKMO-ASS-MATER-PER                                    CGLKMO
                             OCCURS 005 TIMES                            CGLKMO
@@ -17697,7 +17697,7 @@
                                              'RSIN2' 'RSJN2'.           CGLKPIMO
                           88 LS-T11-FL-CNAPRG-RSIN2       VALUE         CGLKPIMO
                                              'RSIN2'.                   CGLKPIMO
-                    25 LS-T11-POS-PELEM        PIC S9(9) COMP-5 SYNC.   CGLKPIMO
+                    25 LS-T11-POS-PELEM        PIC S9(9) COMP-5     .   CGLKPIMO
                     25 LS-T11-EVALPRX.                                  CGLKPIMO
                        30 LS-T11-EVALPR        PIC 9(08).               CGLKPIMO
                     25 LS-T11-FVALPRX.                                  CGLKPIMO
