@@ -43,7 +43,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             int firstInstrIndex = block.Instructions.Count > 0 ? instructionPositions.Count : -1;
             foreach (var i in block.Instructions)
             {
-                instructionPositions.Add(new Position(i.CodeElement.Line, i.CodeElement.Column));
+                instructionPositions.Add(new Position(i.CodeElement.Line - 1, i.CodeElement.Column - 1));
             }
             int lastInstrIndex = block.Instructions.Count > 0 ? instructionPositions.Count : -1;
             BasicBlockInfo blockInfo = new BasicBlockInfo()
