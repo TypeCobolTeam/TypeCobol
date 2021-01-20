@@ -463,7 +463,7 @@
                                 IX-CNAPRG-2-PACKWK.
         12 WSBA-CNAPRS PIC XXX.
         12 WSBA-RSNAPR PIC XX.
-        11 LT-MAX-CNAPRG-PACKWK PIC S9(9) COMP-5 SYNC
+        11 LT-MAX-CNAPRG-PACKWK PIC S9(9) COMP-5     
                                                            VALUE 20.
         11 WSBA-NFICPN PIC S9(7) COMP-3.
         11 WSBA-NDESTI PIC S9(7) COMP-3.
@@ -485,9 +485,9 @@
         12 WSBA-NFICPN3 PIC 9(7) OCCURS 2
                      INDEXED BY IX-NFICPN3-1-PACKWK
                                 IX-NFICPN3-2-PACKWK.
-        11 LT-MAX-DEMRSA3-PACKWK PIC S9(9) COMP-5 SYNC
+        11 LT-MAX-DEMRSA3-PACKWK PIC S9(9) COMP-5     
                                                             VALUE 2.
-        11 LT-MAX-NFICPN3-PACKWK PIC S9(9) COMP-5 SYNC
+        11 LT-MAX-NFICPN3-PACKWK PIC S9(9) COMP-5     
                                                             VALUE 2.
         11 WSBA-CDPIRTYI.
         12 WSBA-CWTINT PIC X.
@@ -503,7 +503,7 @@
         12 WSBA-CTYPER PIC X(3) OCCURS 2
                      INDEXED BY IX-CTYPER-1-PACKWK
                                 IX-CTYPER-2-PACKWK.
-        11 LT-MAX-CTYPER-PACKWK PIC S9(9) COMP-5 SYNC VALUE 2.
+        11 LT-MAX-CTYPER-PACKWK PIC S9(9) COMP-5      VALUE 2.
         11 WSBA-CDDRADRA.
         12 WSBA-MENDRO PIC S9(7)V9(2) COMP-3.
         11 WSBA-CDODEZZZ.
@@ -520,7 +520,7 @@
         12 WSBA-EMOIVS PIC S9(9) COMP-3 OCCURS 2
                      INDEXED BY IX-EMOIVS-1-PACKWK
                                 IX-EMOIVS-2-PACKWK.
-        11 LT-MAX-EMOIVS-PACKWK PIC S9(9) COMP-5 SYNC VALUE 2.
+        11 LT-MAX-EMOIVS-PACKWK PIC S9(9) COMP-5      VALUE 2.
         11 WSBA-CDPCOPCO.
         12 WSBA-CCNAPF PIC X.
         12 WSBA-COUVDT PIC X.
@@ -545,7 +545,7 @@
         12 WSBA-CAGAMT PIC X OCCURS 4
                      INDEXED BY IX-CAGAMT-1-PACKWK
                                 IX-CAGAMT-2-PACKWK.
-        11 LT-MAX-CAGAMT-PACKWK PIC S9(9) COMP-5 SYNC VALUE 4.
+        11 LT-MAX-CAGAMT-PACKWK PIC S9(9) COMP-5      VALUE 4.
         11 WSBA-CDRSD.
         12 WSBA-DEMRSA PIC 9(8).
         11 WSBA-CDRMAZZZ.
@@ -14748,7 +14748,7 @@
          88 LKMO-ALLO-FL-CFAPRS-PAC VALUE 'PAC'.
         30 LKMO-ALLO-CGAL0ALC.
         31 LKMO-INDALC PIC 9(1).
-        31 LKMO-CDALLALC.
+        31 LKMO-CDALLALC PIC 9(1).
         28 LKMO-ASS-MATER-DOS.
         29 LKMO-ASS-MATER-PER
                             OCCURS 005 TIMES
@@ -17493,7 +17493,7 @@
                                              'RSIN2' 'RSJN2'.
          88 LS-T11-FL-CNAPRG-RSIN2 VALUE
                                              'RSIN2'.
-        30 LS-T11-POS-PELEM PIC S9(9) COMP-5 SYNC.
+        30 LS-T11-POS-PELEM PIC S9(9) COMP-5     .
         30 LS-T11-EVALPRX.
         31 LS-T11-EVALPR PIC 9(08).
         30 LS-T11-FVALPRX.
