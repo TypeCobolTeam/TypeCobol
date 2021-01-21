@@ -285,7 +285,7 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// LSR Cfg Analyzer ID.
         /// </summary>
-        public const string lspcfgId = "lsp-cfg";
+        internal const string lspcfgId = "lsp-cfg";
 
         /// <summary>
         /// Method to update CFG/DFA information.

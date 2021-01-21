@@ -50,7 +50,7 @@ namespace TypeCobol.Analysis.Graph
         private readonly StringBuilder _blocksBuffer;
         private readonly StringBuilder _edgesBuffer;
         private ControlFlowGraph<Node, D> _cfg;
-        private int ClusterIndex = -1;
+        private readonly int _clusterIndex = -1;
 
         public delegate void BlockEmitted(BasicBlock<Node, D> block, int clusterIndex);
         public event BlockEmitted BlockEmittedEvent;
@@ -65,8 +65,9 @@ namespace TypeCobol.Analysis.Graph
             
         }
 
-        private CfgDotFileForNodeGenerator(ControlFlowGraph<Node, D> cfg, CfgDotFileForNodeGenerator<D> parentGenerator)
+        private CfgDotFileForNodeGenerator(ControlFlowGraph<Node, D> cfg, CfgDotFileForNodeGenerator<D> parentGenerator, int clusterIndex = -1)
         {
+            this._clusterIndex = clusterIndex;
             if (parentGenerator != null)
             {
                 //List of encountered blocks is inherited from parent
@@ -161,9 +162,8 @@ namespace TypeCobol.Analysis.Graph
                 if (group.Group.Count > 0)
                 {
                     //Generate blocks for subgraph using a nested generator
-                    var subgraphGenerator = new CfgDotFileForNodeGenerator<D>(_cfg, this);
+                    var subgraphGenerator = new CfgDotFileForNodeGenerator<D>(_cfg, this, group.GroupIndex);
                     subgraphGenerator.FullInstruction = this.FullInstruction;
-                    subgraphGenerator.ClusterIndex = group.GroupIndex;
                     BasicBlock<Node, D> first = group.Group.First.Value;
                     _cfg.DFS(first, subgraphGenerator.EmitBlock);
                     string blocks = subgraphGenerator._blocksBuffer.ToString();
@@ -200,7 +200,7 @@ namespace TypeCobol.Analysis.Graph
                 _edgesBuffer.AppendLine($"Block{block.Index} -> Block{_cfg.SuccessorEdges[edge].Index}");
             }
             if (BlockEmittedEvent != null)
-                BlockEmittedEvent(block, ClusterIndex);
+                BlockEmittedEvent(block, _clusterIndex);
             return true;
         }
 
