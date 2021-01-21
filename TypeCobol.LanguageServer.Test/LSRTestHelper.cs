@@ -55,6 +55,10 @@ namespace TypeCobol.LanguageServer.Test
             configFileContent = configFileContent.Replace("{CopyFolder}",
                 new DirectoryInfo(testWorkingDirectory + Path.DirectorySeparatorChar + "input" +
                                   Path.DirectorySeparatorChar + copyFolder).FullName.Replace(@"\", @"\\"));
+            String testOptions = "";
+            testOptions += useOutline ? ",\"-ol\"" : "";
+            testOptions += useCfg ? ",\"-cfg\"" : "";
+            configFileContent = configFileContent.Replace("{TestOptions}", testOptions);
 
             configFileContent = configFileContent.Replace("{IntrinsicFile}",
                 customIntrinsicFile == null

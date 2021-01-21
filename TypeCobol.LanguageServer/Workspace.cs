@@ -511,7 +511,10 @@ namespace TypeCobol.LanguageServer
 
             //Configure CFG/DFA analyzer + external analyzers if any
             var compositeAnalyzerProvider = new CompositeAnalyzerProvider();
-            compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(TypeCobolLanguageServer.lspcfgId, CfgBuildingMode.Standard));
+            if (Configuration.CfgBuildingMode != CfgBuildingMode.None)
+            {
+                compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(TypeCobolLanguageServer.lspcfgId, Configuration.CfgBuildingMode));
+            }
             compositeAnalyzerProvider.AddCustomProviders(Configuration.CustomAnalyzerFiles);
 
             CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format, typeCobolOptions, compositeAnalyzerProvider);

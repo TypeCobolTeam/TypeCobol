@@ -52,14 +52,8 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// <param name="options">Client's Options</param>
         private void OnClientOptionsChanged(object sender, IEnumerable<string> options)
         {
-            // LSR tests use -ol and -cfg options by the command line
-            // and not thru the Configuration Change.
-            // LSR tests use their own and unique configuration change notification for all tests.
-            if (!this.InRobotLsrTestMode)
-            {
-                this.UseOutlineRefresh = options.Contains("-ol");
-                this.UseCfgDfaDataRefresh = options.Contains("-cfg");
-            }
+            this.UseOutlineRefresh = options.Contains("-ol");
+            this.UseCfgDfaDataRefresh = options.Contains("-cfg");
         }
 
         protected override void OnShutdown()
