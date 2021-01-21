@@ -432,6 +432,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     if (singleTokenReplaceOperation.ReplacementToken != null)
                     {
                         ReplacedToken replacedToken = new ReplacedToken(singleTokenReplaceOperation.ReplacementToken, originalToken);
+                        RescanReplacedTokenTypes(originalToken, replacedToken);
                         return replacedToken;
                     }
                     else
@@ -447,12 +448,11 @@ namespace TypeCobol.Compiler.Preprocessor
                     //#258 - PartialReplacementToken can be null. In this case, we consider that it's an empty replacement
                     var replacementPart = partialWordReplaceOperation.PartialReplacementToken != null ? partialWordReplaceOperation.PartialReplacementToken.Text : "";
 
-                    // TO DO use Replace(String, String, StringComparison) overload, available in .NET 5
-                    string replacedTokenText = Regex.Replace(normalizedTokenText, normalizedPartToReplace, replacementPart, RegexOptions.IgnoreCase);
-
-                    // TO DO : find a way to transfer the scanner context the of original token to the call below
-                    Diagnostic error = null;
-                    Token generatedToken = Scanner.Scanner.ScanIsolatedTokenInDefaultContext(replacedTokenText, out error);
+					string replacedTokenText = Regex.Replace(normalizedTokenText, normalizedPartToReplace, replacementPart, RegexOptions.IgnoreCase);
+                    // Transfer the scanner context the of original token to the call below
+                    Diagnostic error = null;					
+                    MultilineScanState scanState = originalToken.ScanStateSnapshot;
+                    Token generatedToken = Scanner.Scanner.ScanIsolatedToken(replacedTokenText, out error, scanState);
                     // TO DO : find a way to report the error above ...
 
                     if (originalToken.PreviousTokenType != null) //In case orignal token was previously an other type of token reset it back to it's orignal type. 
@@ -471,6 +471,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         currentPosition.ReplacementTokensBeingReturned[i] = new ReplacedToken(replacementToken, originalToken);
                         i++;
                     }
+                    RescanReplacedTokenTypes(originalToken, currentPosition.ReplacementTokensBeingReturned);
                     currentPosition.ReplacementTokenIndexLastReturned = 0;
                     return currentPosition.ReplacementTokensBeingReturned[currentPosition.ReplacementTokenIndexLastReturned];
 
@@ -483,6 +484,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         if (multipleTokensReplaceOperation.ReplacementTokens.Length == 1)
                         {
                             ReplacedTokenGroup replacedTokenGroup = new ReplacedTokenGroup(multipleTokensReplaceOperation.ReplacementTokens[0], originalMatchingTokens);
+                            RescanReplacedTokenTypes(originalMatchingTokens.Count > 0 ? originalMatchingTokens[0] : null, replacedTokenGroup);
                             return replacedTokenGroup;
                         }
                         else
@@ -495,6 +497,7 @@ namespace TypeCobol.Compiler.Preprocessor
                                 i++;
                             }
                             currentPosition.ReplacementTokenIndexLastReturned = 0;
+                            RescanReplacedTokenTypes(originalMatchingTokens.Count > 0 ? originalMatchingTokens[0]: null,  currentPosition.ReplacementTokensBeingReturned);
                             return currentPosition.ReplacementTokensBeingReturned[currentPosition.ReplacementTokenIndexLastReturned];
                         }
                     }
@@ -502,6 +505,38 @@ namespace TypeCobol.Compiler.Preprocessor
                     {
                         return null;
                     }
+            }
+        }
+
+        /// <summary>
+        /// Rescan the TokenType of a set of replaced Tokens.
+        /// </summary>
+        /// <param name="firstOriginalToken">The first original token to be replaced</param>
+        /// <param name="replacedTokens">The array of replacement tokens.</param>
+        private static void RescanReplacedTokenTypes(Token firstOriginalToken, params Token[] replacedTokens)
+        {
+            MultilineScanState scanState = firstOriginalToken.ScanStateSnapshot;
+            if (scanState != null && replacedTokens.Any(MultilineScanState.IsScanStateDependent))
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (var t in replacedTokens)
+                {
+                    sb.Append(t.Text);
+                    sb.Append(' ');
+                }
+                string tokenText = sb.ToString();
+                TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
+                tempTokensLine.InitializeScanState(scanState);
+                var tempScanner = new TypeCobol.Compiler.Scanner.Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions(), true);
+                Token rescannedToken = null;
+                int i = 0;
+                while ((rescannedToken = tempScanner.GetNextToken()) != null)
+                {
+                    if (rescannedToken.TokenFamily != TokenFamily.Whitespace && i < replacedTokens.Length)
+                    {
+                        replacedTokens[i++].TokenType = rescannedToken.TokenType;
+                    }
+                }
             }
         }
 

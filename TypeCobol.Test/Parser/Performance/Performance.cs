@@ -13,6 +13,7 @@ using TypeCobol.Test.Utils;
 namespace TypeCobol.Test.Parser.Performance
 {
     [TestClass]
+    [Ignore]
     public class Performance
     {
         static readonly string AntlrFolder = PlatformUtils.GetPathForProjectFile("Parser") + Path.DirectorySeparatorChar + "Performance";
@@ -91,7 +92,7 @@ namespace TypeCobol.Test.Parser.Performance
         /// </summary>
         private static readonly string UseALotOfTypes_WithProc_100Times = CNAF_TC_FOLDER + "CGMV01-UseAlotOfTypes-WithProc-100Times.tcbl";
 
-        
+
 
         /// <summary>
         /// Cobol85 with deep variables declaration
@@ -115,7 +116,7 @@ namespace TypeCobol.Test.Parser.Performance
         private static readonly string DeepTypes = CNAF_TC_FOLDER + "CGMV01-DeepTypes.tcbl";
 
 
-        
+
 
 
 
@@ -123,6 +124,7 @@ namespace TypeCobol.Test.Parser.Performance
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "fast")]
+        //[Ignore]
         public void AntlrPerformanceProfiler()
         {
             Paths paths = new Paths(AntlrFolder, AntlrFolder, AntlrFolder + Path.DirectorySeparatorChar + "AntlrTest.rdz.pgm", new AntlrName());
@@ -137,7 +139,7 @@ namespace TypeCobol.Test.Parser.Performance
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
-        [Ignore]
+        //[Ignore]
         public void Part1_Incremental_Cobol85_NoRedefines()
         {
             IncrementalPerformance2(Cobol85_NoRedefines, 65809, "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM       ");
@@ -146,7 +148,7 @@ namespace TypeCobol.Test.Parser.Performance
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
-        [Ignore]
+        //[Ignore]
         public void Part1_Incremental_TC_BigTypesNoProcedure()
         {
             IncrementalPerformance2(BigTypes_NoProcedure, 65897, "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM                      CMM010AK");
@@ -155,42 +157,42 @@ namespace TypeCobol.Test.Parser.Performance
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
-        [Ignore]
+        //[Ignore]
         public void Part1_Incremental_TC_BigTypesWithProcedure()
         {
-            IncrementalPerformance2(BigTypes_1Procedure,65899, "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM                      CMM010AK");
+            IncrementalPerformance2(BigTypes_1Procedure, 65899, "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM                      CMM010AK");
         }
 
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
-        [Ignore]
+        //[Ignore]
         public void Part1_Incremental_TC_GlobaStorage()
         {
-            IncrementalPerformance2(BigTypes_1Procedure,65807, "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM                      CMM010AK");
+            IncrementalPerformance2(BigTypes_1Procedure, 65807, "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM                      CMM010AK");
         }
 
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
-        [Ignore]
+        //[Ignore]
         public void Part2_Incremental_TC_UseALotOfTypes_001Time()
         {
-            IncrementalPerformance2(UseALotOfTypes_1Times_Reference,50, "                                                                                ");
+            IncrementalPerformance2(UseALotOfTypes_1Times_Reference, 50, "                                                                                ");
         }
 
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
-        [Ignore]
+        //[Ignore]
         public void Part2_Incremental_TC_UseALotOfTypes_100Times()
         {
-            IncrementalPerformance2(UseALotOfTypes_100Times,50, "                                                                                ");
+            IncrementalPerformance2(UseALotOfTypes_100Times, 50, "                                                                                ");
         }
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
-        [Ignore]
+        //[Ignore]
         public void Part2_Incremental_TC_UseALotOfTypes_WithProc_100Times()
         {
             IncrementalPerformance2(UseALotOfTypes_WithProc_100Times, 50, "                                                                                ");
@@ -199,23 +201,23 @@ namespace TypeCobol.Test.Parser.Performance
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
-        [Ignore]
+        //[Ignore]
         public void Part3_Incremental_Cobol85_DeepVariables()
         {
-            IncrementalPerformance2(DeepVariables,20535, "                                                                                ");
+            IncrementalPerformance2(DeepVariables, 20535, "                                                                                ");
         }
 
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
-        [Ignore]
+        //[Ignore]
         public void Part3_Incremental_TC_DeepTypes()
         {
-            IncrementalPerformance2(DeepTypes,20692, "                                                                                ");
+            IncrementalPerformance2(DeepTypes, 20692, "                                                                                ");
         }
 
         private void IncrementalPerformance2(string relativePath, int newLineIndex, string newLineText)
-        { 
+        {
             DocumentFormat documentFormat = DocumentFormat.RDZReferenceFormat;
             string fullPath = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.FullName + "\\" + relativePath;
 
@@ -235,44 +237,44 @@ namespace TypeCobol.Test.Parser.Performance
             TestUtils.CreateRunReport("Incremental", TestUtils.GetReportDirectoryPath(), compiler.CobolFile.Name, stats, compiler.CompilationResultsForProgram);
         }
 
-        private void ExecuteIncremental(FileCompiler compiler, TestUtils.CompilationStats stats, int newLineIndex, string newLineText )
+        private void ExecuteIncremental(FileCompiler compiler, TestUtils.CompilationStats stats, int newLineIndex, string newLineText)
         {
             // Execute a first (complete) compilation
             compiler.CompileOnce();
             //Iterate multiple times over an incremental change
-            stats.IterationNumber= 40;
+            stats.IterationNumber = 40;
             for (int i = 0; i < stats.IterationNumber; i++)
             {
                 // Append one line in the middle of the program
-                
+
                 ITextLine newLine = new TextLineSnapshot(newLineIndex, newLineText, null);
-                
+
                 TextChangedEvent textChangedEvent = new TextChangedEvent();
                 textChangedEvent.TextChanges.Add(new TextChange(TextChangeType.LineInserted, newLine.LineIndex, newLine));
                 compiler.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
-                
+
                 // Execute a second (incremental) compilation
                 compiler.CompileOnce();
                 //Be sure that there is no error, otherwise parsing can be incomplete
                 CheckThatThereIsNoError(compiler.CompilationResultsForProgram);
 
                 //Accumulate results
-                stats.AverageTextUpdateTime                 += compiler.CompilationResultsForProgram.PerfStatsForText.LastRefreshTime;
-                stats.AverageScannerTime                    += compiler.CompilationResultsForProgram.PerfStatsForScanner.LastRefreshTime;
-                stats.AveragePreprocessorTime               += compiler.CompilationResultsForProgram.PerfStatsForPreprocessor.LastRefreshTime;
-                stats.AverageCodeElementParserTime          += compiler.CompilationResultsForProgram.PerfStatsForCodeElementsParser.LastRefreshTime;
-                stats.AverateTemporarySemanticsParserTime   += compiler.CompilationResultsForProgram.PerfStatsForTemporarySemantic.LastRefreshTime;
-                stats.AverageCrossCheckerParserTime         += compiler.CompilationResultsForProgram.PerfStatsForProgramCrossCheck.LastRefreshTime;
-                stats.AverageQualityCheckerParserTime       += compiler.CompilationResultsForProgram.PerfStatsForCodeQualityCheck.LastRefreshTime;
+                stats.AverageTextUpdateTime += compiler.CompilationResultsForProgram.PerfStatsForText.LastRefreshTime;
+                stats.AverageScannerTime += compiler.CompilationResultsForProgram.PerfStatsForScanner.LastRefreshTime;
+                stats.AveragePreprocessorTime += compiler.CompilationResultsForProgram.PerfStatsForPreprocessor.LastRefreshTime;
+                stats.AverageCodeElementParserTime += compiler.CompilationResultsForProgram.PerfStatsForCodeElementsParser.LastRefreshTime;
+                stats.AverateTemporarySemanticsParserTime += compiler.CompilationResultsForProgram.PerfStatsForTemporarySemantic.LastRefreshTime;
+                stats.AverageCrossCheckerParserTime += compiler.CompilationResultsForProgram.PerfStatsForProgramCrossCheck.LastRefreshTime;
+                stats.AverageQualityCheckerParserTime += compiler.CompilationResultsForProgram.PerfStatsForCodeQualityCheck.LastRefreshTime;
             }
             //Compute average time needed for each phase
-            stats.AverageTextUpdateTime                 = (int) stats.AverageTextUpdateTime / stats.IterationNumber;
-            stats.AverageScannerTime                    = (int) stats.AverageScannerTime / stats.IterationNumber;
-            stats.AveragePreprocessorTime               = (int) stats.AveragePreprocessorTime / stats.IterationNumber;
-            stats.AverageCodeElementParserTime          = (int) stats.AverageCodeElementParserTime / stats.IterationNumber;
-            stats.AverateTemporarySemanticsParserTime   = (int) stats.AverateTemporarySemanticsParserTime / stats.IterationNumber;
-            stats.AverageCrossCheckerParserTime         = (int) stats.AverageCrossCheckerParserTime / stats.IterationNumber;
-            stats.AverageQualityCheckerParserTime       = (int) stats.AverageQualityCheckerParserTime / stats.IterationNumber;
+            stats.AverageTextUpdateTime = (int)stats.AverageTextUpdateTime / stats.IterationNumber;
+            stats.AverageScannerTime = (int)stats.AverageScannerTime / stats.IterationNumber;
+            stats.AveragePreprocessorTime = (int)stats.AveragePreprocessorTime / stats.IterationNumber;
+            stats.AverageCodeElementParserTime = (int)stats.AverageCodeElementParserTime / stats.IterationNumber;
+            stats.AverateTemporarySemanticsParserTime = (int)stats.AverateTemporarySemanticsParserTime / stats.IterationNumber;
+            stats.AverageCrossCheckerParserTime = (int)stats.AverageCrossCheckerParserTime / stats.IterationNumber;
+            stats.AverageQualityCheckerParserTime = (int)stats.AverageQualityCheckerParserTime / stats.IterationNumber;
             stats.AverageTotalProcessingTime = stats.AverageTextUpdateTime +
                                                stats.AverageScannerTime +
                                                stats.AveragePreprocessorTime +
@@ -286,7 +288,7 @@ namespace TypeCobol.Test.Parser.Performance
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
-        [Ignore]
+        //[Ignore]
         public void Part1_FullParsing_Cobol85_NoRedefines()
         {
             FullParsing(Cobol85_NoRedefines);
@@ -295,24 +297,24 @@ namespace TypeCobol.Test.Parser.Performance
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
-        [Ignore]
+        //[Ignore]
         public void Part1_FullParsing_TC_BigTypesNoProcedure()
         {
-            FullParsing( BigTypes_NoProcedure);
+            FullParsing(BigTypes_NoProcedure);
         }
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
-        [Ignore]
+        //[Ignore]
         public void Part1_FullParsing_TC_BigTypesWithProcedure()
         {
-            FullParsing( BigTypes_1Procedure);
+            FullParsing(BigTypes_1Procedure);
         }
 
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
-        [Ignore]
+        //[Ignore]
         public void Part1_FullParsing_TC_GlobalStorage()
         {
             FullParsing(GlobalStorage);
@@ -321,7 +323,7 @@ namespace TypeCobol.Test.Parser.Performance
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
-        [Ignore]
+        //[Ignore]
         public void Part2_FullParsing_TC_UseALotOfTypes_001Time()
         {
             FullParsing(UseALotOfTypes_1Times_Reference);
@@ -330,7 +332,7 @@ namespace TypeCobol.Test.Parser.Performance
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
-        [Ignore]
+        //[Ignore]
         public void Part2_FullParsing_TC_UseALotOfTypes_100Times()
         {
             FullParsing(UseALotOfTypes_100Times);
@@ -339,7 +341,7 @@ namespace TypeCobol.Test.Parser.Performance
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
-        [Ignore]
+        //[Ignore]
         public void Part2_FullParsing_TC_UseALotOfTypes_WithProc_100Times()
         {
             FullParsing(UseALotOfTypes_WithProc_100Times);
@@ -348,7 +350,7 @@ namespace TypeCobol.Test.Parser.Performance
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
-        [Ignore]
+        //[Ignore]
         public void Part3_FullParsing_Cobol85_DeepVariables()
         {
             FullParsing(DeepVariables);
@@ -357,7 +359,7 @@ namespace TypeCobol.Test.Parser.Performance
         [TestMethod]
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
-        [Ignore]
+        //[Ignore]
         public void Part3_FullParsing_TC_DeepTypes()
         {
             FullParsing(DeepTypes);

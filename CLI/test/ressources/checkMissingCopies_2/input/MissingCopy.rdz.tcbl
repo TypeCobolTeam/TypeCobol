@@ -1,0 +1,11 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZZMFT0.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       COPY COPY1.
+       PROCEDURE DIVISION.
+      *KO final-var and group3 are defined by COPY3 which is missing.
+           DISPLAY final-var OF group3 OF group2 OF group1
+           GOBACK
+           .
+       END PROGRAM DVZZMFT0.    
