@@ -97,20 +97,19 @@ namespace TypeCobol.Tools.APIHelpers
 
         public static IEnumerable<string> GetDependenciesMissingCopies([NotNull] TypeCobolConfiguration config, SymbolTable intrinsicTable, EventHandler<DiagnosticsErrorEvent> diagEvent)
         {
-            List<CopyDirective> missingCopies = new List<CopyDirective>();
-
             // For all paths given in preferences
             foreach (var path in config.Dependencies)
             {
                 // For each dependency source found in path
                 foreach (string dependency in Tools.FileSystem.GetFiles(path, _DependenciesExtensions, true))
                 {
-                    missingCopies.AddRange(ParseDependency(dependency, config, intrinsicTable).MissingCopies);
+                    // For each missing copy found in dependency file
+                    foreach (var missingCopy in ParseDependency(dependency, config, intrinsicTable).MissingCopies)
+                    {
+                        yield return missingCopy;
+                    }
                 }
             }
-
-            // Return a list of name of the CopyDirective
-            return missingCopies.Select(mc => mc.TextName);
         }
 
         public static SymbolTable LoadDependencies([NotNull] TypeCobolConfiguration config, SymbolTable intrinsicTable, EventHandler<DiagnosticsErrorEvent> diagEvent,
@@ -199,7 +198,7 @@ namespace TypeCobol.Tools.APIHelpers
                     //Collect missing copies
                     if (parsingResult.MissingCopies.Count > 0)
                     {
-                        missingCopies.Add(path, parsingResult.MissingCopies.Select(mc => mc.TextName));
+                        missingCopies.Add(path, parsingResult.MissingCopies);
                         continue; //There will be diagnostics because copies are missing. Don't report diagnostic for this dependency, but load following dependencies
                     }
 

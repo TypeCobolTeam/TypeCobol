@@ -54,6 +54,7 @@ namespace TypeCobol.Compiler.Diagnostics
         MultiFormalizedCommentIndicatorMisused = 44,
         Info = 45,
         AnalyzerFailure = 46,
-        QualityRuleViolation = 47 //MessageCode 47 is reserved for violations coming from any analyzer
+        //MessageCode number 47 is reserved for violations coming from a Quality analyzer, it has no corresponding DiagnosticMessage object.
+        FailedToLoadDependentCopy = 48
     }
 }
