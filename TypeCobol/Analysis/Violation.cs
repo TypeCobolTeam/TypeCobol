@@ -7,7 +7,7 @@ namespace TypeCobol.Analysis
     /// </summary>
     public class Violation : Diagnostic
     {
-        private const int DIAGNOSTIC_CODE = (int) MessageCode.QualityRuleViolation;
+        private const int DIAGNOSTIC_CODE = 47; //Reserved code for violations (See MessageCode.cs for full enum).
 
         private static DiagnosticMessage ToDiagnosticMessage(Severity severity, string message, string ruleId)
         {

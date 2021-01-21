@@ -74,8 +74,14 @@ namespace TypeCobol.Compiler.Scanner
             HasClosingDelimiter = false;
 
             UsesVirtualSpaceAtEndOfLine = usesVirtualSpaceAtEndOfLine;
-        }  
-      
+
+            //Scan Dependent Tokens Inside DataDivision must have their scan state. see #428
+            if (tokensLine.ScanState != null && (tokenType == TokenType.PartialCobolWord ||
+                    tokensLine.ScanState.InsideDataDivision && MultilineScanState.IsScanStateDependent(this)))
+                scanStateSnapshot = tokensLine.ScanState.Clone();
+
+        }
+
         /// <summary>
         /// Constructor for tokens with delimiters
         /// </summary>
@@ -297,11 +303,18 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public LiteralTokenValue LiteralValue { get; set; }
 
+        private readonly MultilineScanState scanStateSnapshot;
         /// <summary>
         /// ScanState associated to this token if any, null otherwise.
         /// This property is used to allow PartialCobolWords proper reconstruction.
         /// </summary>
-        public MultilineScanState ScanStateSnapshot { get; set; }
+        public MultilineScanState ScanStateSnapshot
+        {
+            get
+            {
+                return scanStateSnapshot ?? tokensLine.ScanState;
+            }
+        }
 
         // --- Ambiguous tokens resolved after having been created ---
 

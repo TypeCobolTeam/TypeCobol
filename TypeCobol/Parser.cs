@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler;
@@ -20,7 +19,7 @@ namespace TypeCobol
 {
 	public class Parser
 	{
-	    public List<string> MissingCopys { get; set; }
+	    public IEnumerable<string> MissingCopys { get; private set; }
         protected Dictionary<string,bool> Inits;
         protected Dictionary<string,FileCompiler> Compilers;
         protected FileCompiler Compiler = null;
@@ -84,7 +83,7 @@ namespace TypeCobol
                 throw new ParsingException(MessageCode.SyntaxErrorInParser, ex.Message, path, ex, true, true);
 			}
 
-		    MissingCopys = Compiler.CompilationResultsForProgram.MissingCopies.Select(c => c.TextName).Distinct().ToList();
+		    MissingCopys = Compiler.CompilationResultsForProgram.MissingCopies;
 
 			Compiler.CompilationResultsForProgram.TextLinesChanged -= OnTextLine;
 			Compiler.CompilationResultsForProgram.CodeElementsLinesChanged -= OnCodeElementLine;
