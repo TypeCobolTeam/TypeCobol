@@ -53,10 +53,6 @@ namespace TypeCobol.LanguageServer
         public EventHandler<LoadingIssueEvent> LoadingIssueEvent { get; set; }
         public EventHandler<ThreadExceptionEventArgs> ExceptionTriggered { get; set; }
         public EventHandler<string> WarningTrigger { get; set; }
-        /// <summary>
-        /// Event When the client configuration has changed in reception of a DidChangeConfiguration notification
-        /// </summary>
-        public EventHandler<IEnumerable<string>> ClientConfigurationChangedEvent { get; set; }
         public Queue<MessageActionWrapper> MessagesActionsQueue { get; private set; }
         private Func<string, Uri, bool> _Logger;
 
@@ -481,7 +477,7 @@ namespace TypeCobol.LanguageServer
         /// Handle the Configuration change notification.
         /// </summary>
         /// <param name="arguments">The arguments</param>
-        public void DidChangeConfigurationParams(IEnumerable<string> arguments)
+        public void DidChangeConfigurationParams(string[] arguments)
         {
             Configuration = new TypeCobolConfiguration();
             var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(Configuration);
@@ -506,15 +502,9 @@ namespace TypeCobol.LanguageServer
 
             var typeCobolOptions = new TypeCobolOptions(Configuration);
 
-            if (ClientConfigurationChangedEvent != null)
-                ClientConfigurationChangedEvent(this, arguments);
-
             //Configure CFG/DFA analyzer + external analyzers if any
             var compositeAnalyzerProvider = new CompositeAnalyzerProvider();
-            if (Configuration.CfgBuildingMode != CfgBuildingMode.None)
-            {
-                compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(TypeCobolLanguageServer.lspcfgId, Configuration.CfgBuildingMode));
-            }
+            compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(TypeCobolLanguageServer.lspcfgId, Configuration.CfgBuildingMode));
             compositeAnalyzerProvider.AddCustomProviders(Configuration.CustomAnalyzerFiles);
 
             CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format, typeCobolOptions, compositeAnalyzerProvider);

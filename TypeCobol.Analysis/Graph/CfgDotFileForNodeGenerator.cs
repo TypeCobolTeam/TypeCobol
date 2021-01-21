@@ -50,7 +50,7 @@ namespace TypeCobol.Analysis.Graph
         private readonly StringBuilder _blocksBuffer;
         private readonly StringBuilder _edgesBuffer;
         private ControlFlowGraph<Node, D> _cfg;
-        private readonly int _clusterIndex = -1;
+        private readonly int _clusterIndex;
 
         public delegate void BlockEmitted(BasicBlock<Node, D> block, int clusterIndex);
         public event BlockEmitted BlockEmittedEvent;
@@ -60,12 +60,12 @@ namespace TypeCobol.Analysis.Graph
         /// </summary>
         /// <param name="cfg">Control Flow Graph to represent, can be null and set later through the Generate method.</param>
         public CfgDotFileForNodeGenerator(ControlFlowGraph<Node, D> cfg)
-            : this(cfg, null)
+            : this(cfg, null, -1)
         {
             
         }
 
-        private CfgDotFileForNodeGenerator(ControlFlowGraph<Node, D> cfg, CfgDotFileForNodeGenerator<D> parentGenerator, int clusterIndex = -1)
+        private CfgDotFileForNodeGenerator(ControlFlowGraph<Node, D> cfg, CfgDotFileForNodeGenerator<D> parentGenerator, int clusterIndex)
         {
             this._clusterIndex = clusterIndex;
             if (parentGenerator != null)

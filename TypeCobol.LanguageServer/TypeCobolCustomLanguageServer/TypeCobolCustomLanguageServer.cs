@@ -41,7 +41,6 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         {
             var result = base.OnInitialize(parameters);
             this.Workspace.DocumentModifiedEvent += DocumentModified;
-            this.Workspace.ClientConfigurationChangedEvent += OnClientOptionsChanged;
             return result;
         }
 
@@ -50,16 +49,16 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// </summary>
         /// <param name="sender">Should be the Workspace instance</param>
         /// <param name="options">Client's Options</param>
-        private void OnClientOptionsChanged(object sender, IEnumerable<string> options)
+        protected override void OnDidChangeConfiguration(string[] options)
         {
             this.UseOutlineRefresh = options.Contains("-ol");
             this.UseCfgDfaDataRefresh = options.Contains("-cfg");
+            base.OnDidChangeConfiguration(options);
         }
 
         protected override void OnShutdown()
         {
             this.Workspace.DocumentModifiedEvent -= DocumentModified;
-            this.Workspace.ClientConfigurationChangedEvent -= OnClientOptionsChanged;
             base.OnShutdown();
         }
 
