@@ -368,8 +368,21 @@ namespace TypeCobol.Test.Parser.Performance
 
 
 
-
-
+        /// <summary>
+        /// Method for parsinga document.
+        /// </summary>
+        /// <param name="fullPath"></param>
+        /// <param name="options"></param>
+        /// <param name="format"></param>
+        /// <param name="copiesFolder"></param>
+        /// <returns></returns>
+        protected virtual TypeCobol.Parser parseDocument(string fullPath, TypeCobolOptions options, TypeCobol.Compiler.DocumentFormat format, string[] copiesFolder)
+        {
+            var document = new TypeCobol.Parser();
+            document.Init(fullPath, options, format, copiesFolder);
+            document.Parse(fullPath);
+            return document;
+        }
 
         private void FullParsing(string relativePath, params string[] copiesFolder)
         {
@@ -390,17 +403,13 @@ namespace TypeCobol.Test.Parser.Performance
 
 
             //Warmup
-            documentWarmup = new TypeCobol.Parser();
-            documentWarmup.Init(fullPath, options, format, copiesFolder);
-            documentWarmup.Parse(fullPath);
+            documentWarmup = parseDocument(fullPath, options, format, copiesFolder);
             //Be sure that there is no error, otherwise parsing can be incomplete
             CheckThatThereIsNoError(documentWarmup.Results);
 
             for (int i = 0; i < stats.IterationNumber; i++)
             {
-                var document = new TypeCobol.Parser();
-                document.Init(fullPath, options, format, copiesFolder);
-                document.Parse(fullPath);
+                var document = parseDocument(fullPath, options, format, copiesFolder);
 
                 stats.AverageTextUpdateTime += document.Results.PerfStatsForText.FirstCompilationTime;
                 stats.AverageScannerTime += document.Results.PerfStatsForScanner.FirstCompilationTime;
