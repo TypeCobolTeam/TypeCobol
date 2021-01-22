@@ -40,16 +40,6 @@ namespace TypeCobol.Analysis.Test
 
         [TestMethod]
         [TestCategory("Performance")]
-        [TestProperty("Time", "fast")]
-        //[Ignore]
-        public new void AntlrPerformanceProfiler()
-        {
-            base.AntlrPerformanceProfiler();
-        }
-
-
-        [TestMethod]
-        [TestCategory("Performance")]
         [TestProperty("Time", "long")]
         //[Ignore]
         public new void Part1_Incremental_Cobol85_NoRedefines()
