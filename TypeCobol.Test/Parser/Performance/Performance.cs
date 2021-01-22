@@ -376,7 +376,7 @@ namespace TypeCobol.Test.Parser.Performance
         /// <param name="format"></param>
         /// <param name="copiesFolder"></param>
         /// <returns></returns>
-        protected virtual TypeCobol.Parser parseDocument(string fullPath, TypeCobolOptions options, TypeCobol.Compiler.DocumentFormat format, string[] copiesFolder)
+        protected virtual TypeCobol.Parser ParseDocument(string fullPath, TypeCobolOptions options, TypeCobol.Compiler.DocumentFormat format, string[] copiesFolder)
         {
             var document = new TypeCobol.Parser();
             document.Init(fullPath, options, format, copiesFolder);
@@ -403,13 +403,13 @@ namespace TypeCobol.Test.Parser.Performance
 
 
             //Warmup
-            documentWarmup = parseDocument(fullPath, options, format, copiesFolder);
+            documentWarmup = ParseDocument(fullPath, options, format, copiesFolder);
             //Be sure that there is no error, otherwise parsing can be incomplete
             CheckThatThereIsNoError(documentWarmup.Results);
 
             for (int i = 0; i < stats.IterationNumber; i++)
             {
-                var document = parseDocument(fullPath, options, format, copiesFolder);
+                var document = ParseDocument(fullPath, options, format, copiesFolder);
 
                 stats.AverageTextUpdateTime += document.Results.PerfStatsForText.FirstCompilationTime;
                 stats.AverageScannerTime += document.Results.PerfStatsForScanner.FirstCompilationTime;

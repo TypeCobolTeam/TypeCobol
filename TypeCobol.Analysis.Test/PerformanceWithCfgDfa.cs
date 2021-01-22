@@ -24,7 +24,7 @@ namespace TypeCobol.Analysis.Test
         /// <param name="format"></param>
         /// <param name="copiesFolder"></param>
         /// <returns></returns>
-        protected override TypeCobol.Parser parseDocument(string fullPath, TypeCobolOptions options, TypeCobol.Compiler.DocumentFormat format, string[] copiesFolder)
+        protected override TypeCobol.Parser ParseDocument(string fullPath, TypeCobolOptions options, TypeCobol.Compiler.DocumentFormat format, string[] copiesFolder)
         {
             //Add analyzers
             var analyzerProvider = new CompositeAnalyzerProvider();
