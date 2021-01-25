@@ -21,7 +21,7 @@
     <!--<IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>-->
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp></NuGetPackageImportStamp>
     <TargetFrameworkProfile />
