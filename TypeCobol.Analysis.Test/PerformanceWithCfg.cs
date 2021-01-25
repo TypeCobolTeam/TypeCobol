@@ -17,7 +17,21 @@ namespace TypeCobol.Analysis.Test
     public class PerformanceWithCfg : TypeCobol.Test.Parser.Performance.Performance
     {
         /// <summary>
-        /// Method for parsinga document.
+        /// AnalyzerProvider for test.
+        /// </summary>
+        /// <returns></returns>
+        private static CompositeAnalyzerProvider MyAnalyzerProvider()
+        {
+            //Add analyzers
+            var analyzerProvider = new CompositeAnalyzerProvider();
+            //CFG/DFA
+            const string cfgDfaId = "cfg-dfa";
+            analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(cfgDfaId, CfgBuildingMode.Standard));
+            return analyzerProvider;
+        }
+
+        /// <summary>
+        /// Method for parsing a document.
         /// </summary>
         /// <param name="fullPath"></param>
         /// <param name="options"></param>
@@ -26,16 +40,15 @@ namespace TypeCobol.Analysis.Test
         /// <returns></returns>
         protected override TypeCobol.Parser ParseDocument(string fullPath, TypeCobolOptions options, TypeCobol.Compiler.DocumentFormat format, string[] copiesFolder)
         {
-            //Add analyzers
-            var analyzerProvider = new CompositeAnalyzerProvider();
-            //CFG/DFA
-            const string cfgDfaId = "cfg-dfa";
-            analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(cfgDfaId, CfgBuildingMode.Standard));
-
             var document = new TypeCobol.Parser();
-            document.Init(fullPath, options, format, copiesFolder, analyzerProvider);
+            document.Init(fullPath, options, format, copiesFolder, MyAnalyzerProvider());
             document.Parse(fullPath);
             return document;
+        }
+
+        protected override CompilationProject CreateCompilationProject(string projectName, string rootDirectory, string[] fileExtensions, DocumentFormat documentFormat, TypeCobolOptions compilationOptions, IAnalyzerProvider analyzerProvider)
+        {
+            return base.CreateCompilationProject(projectName, rootDirectory, fileExtensions, documentFormat, compilationOptions, MyAnalyzerProvider());
         }
 
         [TestMethod]

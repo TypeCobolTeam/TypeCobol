@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
@@ -216,6 +217,21 @@ namespace TypeCobol.Test.Parser.Performance
             IncrementalPerformance2(DeepTypes, 20692, "                                                                                ");
         }
 
+        /// <summary>
+        /// Create the compiltaion project to be used.
+        /// </summary>
+        /// <param name="projectName"></param>
+        /// <param name="rootDirectory"></param>
+        /// <param name="fileExtensions"></param>
+        /// <param name="documentFormat"></param>
+        /// <param name="compilationOptions"></param>
+        /// <param name="analyzerProvider"></param>
+        /// <returns></returns>
+        protected virtual CompilationProject CreateCompilationProject(string projectName, string rootDirectory, string[] fileExtensions, DocumentFormat documentFormat, TypeCobolOptions compilationOptions, IAnalyzerProvider analyzerProvider)
+        {
+            return new CompilationProject(projectName, rootDirectory, fileExtensions, documentFormat, compilationOptions, analyzerProvider);
+        }
+
         private void IncrementalPerformance2(string relativePath, int newLineIndex, string newLineText)
         {
             DocumentFormat documentFormat = DocumentFormat.RDZReferenceFormat;
@@ -225,7 +241,7 @@ namespace TypeCobol.Test.Parser.Performance
             string filename = Path.GetFileName(fullPath);
             var root = new DirectoryInfo(Directory.GetParent(fullPath).FullName);
 
-            CompilationProject project = new CompilationProject("test",
+            CompilationProject project = CreateCompilationProject("test",
                 root.FullName, new[] { ".cbl", ".cpy" },
                 documentFormat, new TypeCobolOptions(), null);
             FileCompiler compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, false, project);
