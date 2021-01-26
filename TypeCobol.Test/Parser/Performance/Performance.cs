@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
@@ -216,6 +217,15 @@ namespace TypeCobol.Test.Parser.Performance
             IncrementalPerformance2(DeepTypes, 20692, "                                                                                ");
         }
 
+        /// <summary>
+        /// Creates the AnalyzerProvider to be used.
+        /// </summary>
+        /// <returns></returns>
+        protected virtual CompositeAnalyzerProvider CreateAnalyzerProvider()
+        {
+            return null;
+        }
+
         private void IncrementalPerformance2(string relativePath, int newLineIndex, string newLineText)
         {
             DocumentFormat documentFormat = DocumentFormat.RDZReferenceFormat;
@@ -227,7 +237,7 @@ namespace TypeCobol.Test.Parser.Performance
 
             CompilationProject project = new CompilationProject("test",
                 root.FullName, new[] { ".cbl", ".cpy" },
-                documentFormat, new TypeCobolOptions(), null);
+                documentFormat, new TypeCobolOptions(), CreateAnalyzerProvider());
             FileCompiler compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, false, project);
             //Make an incremental change to the source code
             TestUtils.CompilationStats stats = new TestUtils.CompilationStats();
@@ -368,8 +378,21 @@ namespace TypeCobol.Test.Parser.Performance
 
 
 
-
-
+        /// <summary>
+        /// Method for parsinga document.
+        /// </summary>
+        /// <param name="fullPath"></param>
+        /// <param name="options"></param>
+        /// <param name="format"></param>
+        /// <param name="copiesFolder"></param>
+        /// <returns></returns>
+        protected virtual TypeCobol.Parser ParseDocument(string fullPath, TypeCobolOptions options, TypeCobol.Compiler.DocumentFormat format, string[] copiesFolder)
+        {
+            var document = new TypeCobol.Parser();
+            document.Init(fullPath, options, format, copiesFolder, CreateAnalyzerProvider());
+            document.Parse(fullPath);
+            return document;
+        }
 
         private void FullParsing(string relativePath, params string[] copiesFolder)
         {
@@ -390,17 +413,13 @@ namespace TypeCobol.Test.Parser.Performance
 
 
             //Warmup
-            documentWarmup = new TypeCobol.Parser();
-            documentWarmup.Init(fullPath, options, format, copiesFolder);
-            documentWarmup.Parse(fullPath);
+            documentWarmup = ParseDocument(fullPath, options, format, copiesFolder);
             //Be sure that there is no error, otherwise parsing can be incomplete
             CheckThatThereIsNoError(documentWarmup.Results);
 
             for (int i = 0; i < stats.IterationNumber; i++)
             {
-                var document = new TypeCobol.Parser();
-                document.Init(fullPath, options, format, copiesFolder);
-                document.Parse(fullPath);
+                var document = ParseDocument(fullPath, options, format, copiesFolder);
 
                 stats.AverageTextUpdateTime += document.Results.PerfStatsForText.FirstCompilationTime;
                 stats.AverageScannerTime += document.Results.PerfStatsForScanner.FirstCompilationTime;
