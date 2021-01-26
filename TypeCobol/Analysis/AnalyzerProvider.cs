@@ -14,7 +14,7 @@ namespace TypeCobol.Analysis
     public class AnalyzerProvider : IAnalyzerProvider
     {
         private List<Func<TypeCobolOptions, TextSourceInfo, ISyntaxDrivenAnalyzer>> _sdaActivators;
-        private List<Func<TypeCobolOptions, IASTAnalyzer>> _astaActivators;
+        private List<Func<TypeCobolOptions, IQualityAnalyzer>> _qaActivators;
 
         public virtual ISyntaxDrivenAnalyzer[] CreateSyntaxDrivenAnalyzers(TypeCobolOptions options, TextSourceInfo textSourceInfo)
         {
@@ -24,11 +24,11 @@ namespace TypeCobol.Analysis
                 .ToArray();
         }
 
-        public virtual IASTAnalyzer[] CreateASTAnalyzers(TypeCobolOptions options)
+        public virtual IQualityAnalyzer[] CreateQualityAnalyzers(TypeCobolOptions options)
         {
-            return _astaActivators?
-                .Select(astaActivator => astaActivator(options))
-                .Where(asta => asta != null)
+            return _qaActivators?
+                .Select(qaActivator => qaActivator(options))
+                .Where(qa => qa != null)
                 .ToArray();
         }
 
@@ -46,16 +46,16 @@ namespace TypeCobol.Analysis
         }
 
         /// <summary>
-        /// Add an activation delegate to produce a new instance of IASTAnalyzer.
+        /// Add an activation delegate to produce a new instance of IQualityAnalyzer.
         /// </summary>
-        /// <param name="activator">Non-null Func delegate to create a new IASTAnalyzer.</param>
-        public void AddActivator([NotNull] Func<TypeCobolOptions, IASTAnalyzer> activator)
+        /// <param name="activator">Non-null Func delegate to create a new IQualityAnalyzer.</param>
+        public void AddActivator([NotNull] Func<TypeCobolOptions, IQualityAnalyzer> activator)
         {
-            if (_astaActivators == null)
+            if (_qaActivators == null)
             {
-                _astaActivators = new List<Func<TypeCobolOptions, IASTAnalyzer>>();
+                _qaActivators = new List<Func<TypeCobolOptions, IQualityAnalyzer>>();
             }
-            _astaActivators.Add(activator);
+            _qaActivators.Add(activator);
         }
     }
 
@@ -90,10 +90,10 @@ namespace TypeCobol.Analysis
             return Concat(fromBase, p => p.CreateSyntaxDrivenAnalyzers(options, textSourceInfo));
         }
 
-        public override IASTAnalyzer[] CreateASTAnalyzers(TypeCobolOptions options)
+        public override IQualityAnalyzer[] CreateQualityAnalyzers(TypeCobolOptions options)
         {
-            var fromBase = base.CreateASTAnalyzers(options);
-            return Concat(fromBase, p => p.CreateASTAnalyzers(options));
+            var fromBase = base.CreateQualityAnalyzers(options);
+            return Concat(fromBase, p => p.CreateQualityAnalyzers(options));
         }
 
         /// <summary>
