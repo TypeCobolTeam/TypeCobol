@@ -336,6 +336,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartFileControlEntry(FileControlEntry entry)
         {
+            var currentProg = CurrentProgram;
+            if (currentProg.FileConnectors == null)
+            {
+                currentProg.FileConnectors = new Dictionary<SymbolDefinition, FileControlEntry>();
+            }
+
+            currentProg.FileConnectors.Add(entry.FileName, entry);
+
             var fileControlEntry = new FileControlEntryNode(entry);
             Enter(fileControlEntry, entry);
             Dispatcher.StartFileControlEntry(entry);
