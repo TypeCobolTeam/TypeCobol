@@ -218,18 +218,12 @@ namespace TypeCobol.Test.Parser.Performance
         }
 
         /// <summary>
-        /// Create the compiltaion project to be used.
+        /// Creates the AnalyzerProvider to be used.
         /// </summary>
-        /// <param name="projectName"></param>
-        /// <param name="rootDirectory"></param>
-        /// <param name="fileExtensions"></param>
-        /// <param name="documentFormat"></param>
-        /// <param name="compilationOptions"></param>
-        /// <param name="analyzerProvider"></param>
         /// <returns></returns>
-        protected virtual CompilationProject CreateCompilationProject(string projectName, string rootDirectory, string[] fileExtensions, DocumentFormat documentFormat, TypeCobolOptions compilationOptions, IAnalyzerProvider analyzerProvider)
+        protected virtual CompositeAnalyzerProvider CreateAnalyzerProvider()
         {
-            return new CompilationProject(projectName, rootDirectory, fileExtensions, documentFormat, compilationOptions, analyzerProvider);
+            return null;
         }
 
         private void IncrementalPerformance2(string relativePath, int newLineIndex, string newLineText)
@@ -241,9 +235,9 @@ namespace TypeCobol.Test.Parser.Performance
             string filename = Path.GetFileName(fullPath);
             var root = new DirectoryInfo(Directory.GetParent(fullPath).FullName);
 
-            CompilationProject project = CreateCompilationProject("test",
+            CompilationProject project = new CompilationProject("test",
                 root.FullName, new[] { ".cbl", ".cpy" },
-                documentFormat, new TypeCobolOptions(), null);
+                documentFormat, new TypeCobolOptions(), CreateAnalyzerProvider());
             FileCompiler compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, false, project);
             //Make an incremental change to the source code
             TestUtils.CompilationStats stats = new TestUtils.CompilationStats();
@@ -395,7 +389,7 @@ namespace TypeCobol.Test.Parser.Performance
         protected virtual TypeCobol.Parser ParseDocument(string fullPath, TypeCobolOptions options, TypeCobol.Compiler.DocumentFormat format, string[] copiesFolder)
         {
             var document = new TypeCobol.Parser();
-            document.Init(fullPath, options, format, copiesFolder);
+            document.Init(fullPath, options, format, copiesFolder, CreateAnalyzerProvider());
             document.Parse(fullPath);
             return document;
         }

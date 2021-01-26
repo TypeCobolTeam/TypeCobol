@@ -20,7 +20,7 @@ namespace TypeCobol.Analysis.Test
         /// AnalyzerProvider for test.
         /// </summary>
         /// <returns></returns>
-        private static CompositeAnalyzerProvider MyAnalyzerProvider()
+        protected override CompositeAnalyzerProvider CreateAnalyzerProvider()
         {
             //Add analyzers
             var analyzerProvider = new CompositeAnalyzerProvider();
@@ -28,27 +28,6 @@ namespace TypeCobol.Analysis.Test
             const string cfgDfaId = "cfg-dfa";
             analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(cfgDfaId, CfgBuildingMode.Standard));
             return analyzerProvider;
-        }
-
-        /// <summary>
-        /// Method for parsing a document.
-        /// </summary>
-        /// <param name="fullPath"></param>
-        /// <param name="options"></param>
-        /// <param name="format"></param>
-        /// <param name="copiesFolder"></param>
-        /// <returns></returns>
-        protected override TypeCobol.Parser ParseDocument(string fullPath, TypeCobolOptions options, TypeCobol.Compiler.DocumentFormat format, string[] copiesFolder)
-        {
-            var document = new TypeCobol.Parser();
-            document.Init(fullPath, options, format, copiesFolder, MyAnalyzerProvider());
-            document.Parse(fullPath);
-            return document;
-        }
-
-        protected override CompilationProject CreateCompilationProject(string projectName, string rootDirectory, string[] fileExtensions, DocumentFormat documentFormat, TypeCobolOptions compilationOptions, IAnalyzerProvider analyzerProvider)
-        {
-            return base.CreateCompilationProject(projectName, rootDirectory, fileExtensions, documentFormat, compilationOptions, MyAnalyzerProvider());
         }
 
         [TestMethod]
