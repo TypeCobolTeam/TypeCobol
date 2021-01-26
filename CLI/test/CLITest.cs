@@ -341,6 +341,15 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// This is a duplicate of 'mass_generation_dependent_programs_2' but with alternate .xmldiag error format.
+        /// </summary>
+        [TestMethod]
+        public void TestXmlDiagFormat()
+        {
+            CLITestHelper.Test("mass_generation_xmldiagformat", ReturnCode.ParsingDiagnostics);
+        }
+
+        /// <summary>
         /// Test override of UTF-8 encoding for RDZ format.
         /// </summary>
         [TestMethod]
