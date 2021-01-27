@@ -544,25 +544,7 @@ namespace TypeCobol.LanguageServer
 
         public void UpdateMissingCopies(Uri fileUri, List<string> RemainingMissingCopies)
         {
-            if (IsEmpty)
-                return;
-
-            if (TryGetOpenedDocumentContext(fileUri, out var context))
-            {
-                FileCompiler fileCompiler = context.FileCompiler;
-                if (fileCompiler == null)
-                    return;
-
-                if (RemainingMissingCopies == null || RemainingMissingCopies.Count == 0)
-                {
-                    fileCompiler.CompilationResultsForProgram.MissingCopies.RemoveAll(c => true);
-                    return;
-                }
-
-                fileCompiler.CompilationResultsForProgram.MissingCopies =
-                    fileCompiler.CompilationResultsForProgram.MissingCopies.Where(
-                        c => RemainingMissingCopies.Any(rc => rc == c.TextName)).ToList();
-            }
+            //TODO remove client to server notification properly.
         }
 
         /// <summary>
@@ -700,7 +682,7 @@ namespace TypeCobol.LanguageServer
             DiagnosticsEvent(fileUri, new DiagnosticEvent() { Diagnostics = diags.Take(Configuration.MaximumDiagnostics == 0 ? 200 : Configuration.MaximumDiagnostics) });
 
             if (compilationUnit?.MissingCopies.Count > 0)
-                MissingCopiesEvent(fileUri, new MissingCopiesEvent() { Copies = compilationUnit.MissingCopies.Select(c => c.TextName).Distinct().ToList() });
+                MissingCopiesEvent(fileUri, new MissingCopiesEvent() { Copies = new List<string>(compilationUnit.MissingCopies) });
 
             DocumentModifiedEvent?.Invoke(fileUri, new EventArgs());
         }

@@ -1,7 +1,10 @@
-﻿using TypeCobol.Compiler.CodeElements;
+﻿using System.Linq;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CupParser.NodeBuilder;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Preprocessor;
 
 namespace TypeCobol.Analysis.Test.CustomAnalyzers
 {
@@ -33,14 +36,32 @@ namespace TypeCobol.Analysis.Test.CustomAnalyzers
     }
 
     /// <summary>
-    /// Simple ASTAnalyzer to demonstrate dynamic load and use in QualityCheck
+    /// Simple QualityAnalyzer to demonstrate dynamic load and use in QualityCheck
     /// </summary>
-    internal class DummyASTAnalyzer : ASTAnalyzerBase
+    internal class DummyQualityAnalyzer : QualityAnalyzerBase
     {
-        public DummyASTAnalyzer(string identifier)
+        private class AstVisitor : AbstractAstVisitor
+        {
+            private readonly DummyQualityAnalyzer _owner;
+
+            public AstVisitor(DummyQualityAnalyzer owner)
+            {
+                _owner = owner;
+            }
+
+            public override bool Visit(SourceFile sourceFile)
+            {
+                _owner.AddInfo($"source file has {sourceFile.Programs.Count()} program(s), main program is '{sourceFile.MainProgram.Name}'.");
+                return false;
+            }
+        }
+
+        private readonly AstVisitor _astVisitor;
+
+        public DummyQualityAnalyzer(string identifier)
             : base(identifier)
         {
-
+            _astVisitor = new AstVisitor(this);
         }
 
         public override object GetResult()
@@ -48,10 +69,24 @@ namespace TypeCobol.Analysis.Test.CustomAnalyzers
             return null;
         }
 
-        public override bool Visit(SourceFile sourceFile)
+        private void AddInfo(string info)
         {
-            AddDiagnostic(new Diagnostic(MessageCode.Info, 0, 0, 0, $"Analyzer '{Identifier}': visiting source file."));
-            return false;
+            AddDiagnostic(new Diagnostic(MessageCode.Info, 0, 0, 0, $"Analyzer '{Identifier}': {info}"));
+        }
+
+        public override void Inspect(ProcessedTokensDocument processedTokensDocument)
+        {
+            AddInfo($"number of tokens (after preprocessing): {processedTokensDocument.ProcessedTokensSource.Count()}");
+        }
+
+        public override void Inspect(CodeElementsDocument codeElementsDocument)
+        {
+            AddInfo($"number of code elements: {codeElementsDocument.CodeElements.Count()}");
+        }
+
+        public override void Inspect(ProgramClassDocument programClassDocument)
+        {
+            programClassDocument.Root.AcceptASTVisitor(_astVisitor);
         }
     }
 }

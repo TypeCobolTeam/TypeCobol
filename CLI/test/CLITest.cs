@@ -143,6 +143,15 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// Check that missing copies found inside copies are also listed in output MissingCopy file
+        /// </summary>
+        [TestMethod]
+        public void CheckMissingCopies_2()
+        {
+            CLITestHelper.Test("checkMissingCopies_2", ReturnCode.MissingCopy);
+        }
+
+        /// <summary>
         /// This test should return MissingCopy.
         /// It tests if in case of missing copy and with the proper arguments extracted copies file and missing copies file are present and well formed.
         /// </summary>
@@ -169,6 +178,16 @@ namespace CLI.Test
             CLITestHelper.Test("CopyInsideTypeDefInsideDependency", ReturnCode.Success);
 #endif
 
+        }
+
+        /// <summary>
+        /// This test checks that a diagnostic is reported for copies with broken format
+        /// (after some characters have been turned into unwanted newline).
+        /// </summary>
+        [TestMethod]
+        public void TestCopyBrokenFormat()
+        {
+            CLITestHelper.Test("CopyBrokenFormat", ReturnCode.ParsingDiagnostics);
         }
 
         /// <summary>
@@ -319,6 +338,15 @@ namespace CLI.Test
             CLITestHelper.Test("mass_generation_one_program_is_ko", ReturnCode.ParsingDiagnostics);
             CLITestHelper.Test("mass_generation_dependent_programs_1", ReturnCode.Success);
             CLITestHelper.Test("mass_generation_dependent_programs_2", ReturnCode.ParsingDiagnostics);
+        }
+
+        /// <summary>
+        /// This is a duplicate of 'mass_generation_dependent_programs_2' but with alternate .xmldiag error format.
+        /// </summary>
+        [TestMethod]
+        public void TestXmlDiagFormat()
+        {
+            CLITestHelper.Test("mass_generation_xmldiagformat", ReturnCode.ParsingDiagnostics);
         }
 
         /// <summary>

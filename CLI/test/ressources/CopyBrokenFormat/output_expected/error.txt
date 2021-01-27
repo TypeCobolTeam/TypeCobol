@@ -1,0 +1,4 @@
+ReturnCode=ParsingDiagnostics_
+2 errors in "input\COMPCOPY.pgm":
+Line 10[55,59] <27, Error, Syntax> - Error in copy 'YBRKCPY' at line 3 : Syntax error : Invalid VALUE clause
+Line 10[12,19] <27, Error, Syntax> - Error in copy 'YBRKCPY' at line 4 : Syntax error : extraneous input '00900005' expecting {separator, statement starting keyword, keyword}

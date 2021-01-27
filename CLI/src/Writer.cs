@@ -62,7 +62,6 @@ namespace TypeCobol.Server {
         public abstract void FlushAndClose();
     }
 
-
     public class XMLWriter : AbstractErrorWriter {
         private XmlWriter writer;
 
@@ -161,7 +160,6 @@ namespace TypeCobol.Server {
         }
     }
 
-
     public class ConsoleWriter : AbstractErrorWriter {
         private System.IO.TextWriter writer;
 
@@ -195,6 +193,85 @@ namespace TypeCobol.Server {
         public override void FlushAndClose() {
             writer.Flush();
             writer.Close();
+        }
+    }
+
+    public class XmlDiagWriter : AbstractErrorWriter
+    {
+        private readonly XmlWriter _xmlWriter;
+
+        public XmlDiagWriter(TextWriter textWriter)
+        {
+            var settings = new XmlWriterSettings
+                           {
+                               Indent = true
+                           };
+            _xmlWriter = XmlWriter.Create(textWriter, settings);
+        }
+
+        public override void Write(ReturnCode returnCode)
+        {
+            _xmlWriter.WriteStartDocument();
+            _xmlWriter.WriteStartElement("build");
+            _xmlWriter.WriteAttributeString("return-code", returnCode.ToString());
+            WriteFileTable();
+            WriteDiagnostics();
+            _xmlWriter.WriteEndElement();
+            _xmlWriter.WriteEndDocument();
+        }
+
+        private void WriteFileTable()
+        {
+            _xmlWriter.WriteStartElement("filetable");
+            foreach (var input in Inputs)
+            {
+                _xmlWriter.WriteStartElement("file");
+                _xmlWriter.WriteAttributeString("index", input.Value);
+                _xmlWriter.WriteAttributeString("path", input.Key);
+                _xmlWriter.WriteEndElement();
+            }
+            _xmlWriter.WriteEndElement();
+        }
+
+        private void WriteDiagnostics()
+        {
+            _xmlWriter.WriteStartElement("diagnostics");
+            foreach (var error in Errors)
+            {
+                string fileIndex = Inputs[error.Key];
+                foreach (var diagnostic in error.Value)
+                {
+                    _xmlWriter.WriteStartElement("diagnostic");
+                    _xmlWriter.WriteAttributeString("file-index", fileIndex);
+
+                    //range
+                    _xmlWriter.WriteStartElement("range");
+                    _xmlWriter.WriteAttributeString("line-start", diagnostic.Line.ToString());
+                    _xmlWriter.WriteAttributeString("column-start", diagnostic.ColumnStart.ToString());
+                    _xmlWriter.WriteAttributeString("line-end", diagnostic.Line.ToString());
+                    _xmlWriter.WriteAttributeString("column-end", diagnostic.ColumnEnd.ToString());
+                    _xmlWriter.WriteEndElement();
+
+                    //message
+                    _xmlWriter.WriteElementString("message", diagnostic.Message);
+
+                    //info
+                    _xmlWriter.WriteStartElement("info");
+                    _xmlWriter.WriteAttributeString("severity", diagnostic.Info.Severity.ToString());
+                    _xmlWriter.WriteAttributeString("code", diagnostic.Info.Code.ToString());
+                    _xmlWriter.WriteAttributeString("source", diagnostic.Info.ReferenceText);
+                    _xmlWriter.WriteEndElement();
+
+                    _xmlWriter.WriteEndElement();
+                }
+            }
+            _xmlWriter.WriteEndElement();
+        }
+
+        public override void FlushAndClose()
+        {
+            _xmlWriter.Flush();
+            _xmlWriter.Close();
         }
     }
 }

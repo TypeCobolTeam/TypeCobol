@@ -9,6 +9,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Preprocessor;
+using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler
@@ -302,15 +303,25 @@ namespace TypeCobol.Compiler
                     PerfStatsForCodeQualityCheck.OnStartRefresh();
 
                     List<Diagnostic> diagnostics = new List<Diagnostic>();
-                    var analyzers = _analyzerProvider?.CreateASTAnalyzers(CompilerOptions);
+                    var analyzers = _analyzerProvider?.CreateQualityAnalyzers(CompilerOptions);
                     if (analyzers != null)
                     {
+                        //Results from previous steps
+                        var temporarySemanticDocument = programClassDocument.PreviousStepSnapshot;
+                        var codeElementsDocument = (CodeElementsDocument) temporarySemanticDocument.PreviousStepSnapshot;
+                        var processedTokensDocument = (ProcessedTokensDocument) codeElementsDocument.PreviousStepSnapshot;
+                        var tokensDocument = (TokensDocument) processedTokensDocument.PreviousStepSnapshot;
+
                         //Launch code analysis and gather quality rules violations
                         foreach (var analyzer in analyzers)
                         {
                             try
                             {
-                                programClassDocument.Root.AcceptASTVisitor(analyzer);
+                                analyzer.Inspect(tokensDocument);
+                                analyzer.Inspect(processedTokensDocument);
+                                analyzer.Inspect(codeElementsDocument);
+                                analyzer.Inspect(temporarySemanticDocument);
+                                analyzer.Inspect(programClassDocument);
                                 diagnostics.AddRange(analyzer.Diagnostics);
                             }
                             catch (Exception exception)

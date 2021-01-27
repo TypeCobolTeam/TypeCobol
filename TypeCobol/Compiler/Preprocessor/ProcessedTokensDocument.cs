@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
@@ -13,13 +12,14 @@ namespace TypeCobol.Compiler.Preprocessor
     /// </summary>
     public class ProcessedTokensDocument : ICompilerStepDocumentSnapshot<ITokensLine, IProcessedTokensLine>
     {
-        public ProcessedTokensDocument(TokensDocument previousStepSnapshot, DocumentVersion<IProcessedTokensLine> processedTokensLinesVersion, ISearchableReadOnlyList<IProcessedTokensLine> processedTokensLines, TypeCobolOptions compilerOptions)
+        public ProcessedTokensDocument(TokensDocument previousStepSnapshot, DocumentVersion<IProcessedTokensLine> processedTokensLinesVersion, ISearchableReadOnlyList<IProcessedTokensLine> processedTokensLines, TypeCobolOptions compilerOptions, List<MissingCopy> missingCopies)
         {
             TextSourceInfo = previousStepSnapshot.TextSourceInfo;
             PreviousStepSnapshot = previousStepSnapshot;
             CurrentVersion = processedTokensLinesVersion;
             Lines = processedTokensLines;
             CompilerOptions = compilerOptions;
+            MissingCopies = missingCopies;
         }
 
         private TypeCobolOptions CompilerOptions;
@@ -43,6 +43,11 @@ namespace TypeCobol.Compiler.Preprocessor
         /// Lines of the source text file viewed as lists of tokens and error messages
         /// </summary>
         public ISearchableReadOnlyList<IProcessedTokensLine> Lines { get; private set; }
+
+        /// <summary>
+        /// List of all missing copies found while processing the document
+        /// </summary>
+        public List<MissingCopy> MissingCopies { get; }
 
         /// <summary>
         /// Iterator over the tokens contained in this document after
