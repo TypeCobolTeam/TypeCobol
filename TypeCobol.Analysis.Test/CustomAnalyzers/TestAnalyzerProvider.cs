@@ -13,9 +13,9 @@ namespace TypeCobol.Analysis.Test.CustomAnalyzers
             return new ISyntaxDrivenAnalyzer[] { new DummySyntaxDrivenAnalyzer(nameof(DummySyntaxDrivenAnalyzer)) };
         }
 
-        public IASTAnalyzer[] CreateASTAnalyzers(TypeCobolOptions options)
+        public IQualityAnalyzer[] CreateQualityAnalyzers(TypeCobolOptions options)
         {
-            return new IASTAnalyzer[] { new DummyASTAnalyzer(nameof(DummyASTAnalyzer)) };
+            return new IQualityAnalyzer[] { new DummyQualityAnalyzer(nameof(DummyQualityAnalyzer)) };
         }
     }
 }

@@ -20,11 +20,11 @@ namespace TypeCobol.Analysis
         ISyntaxDrivenAnalyzer[] CreateSyntaxDrivenAnalyzers([NotNull] TypeCobolOptions options, [NotNull] TextSourceInfo textSourceInfo);
 
         /// <summary>
-        /// Triggers the creation of full-AST analyzers.
+        /// Triggers the creation of quality analyzers.
         /// </summary>
         /// <param name="options">Current TypeCobol compilation options.</param>
-        /// <returns>An array of AST analyzers.</returns>
-        /// <remarks>Called each time a SourceFile Node is quality checked. See <see cref="CompilationUnit.RefreshCodeAnalysisDocumentSnapshot"/> method.</remarks>
-        IASTAnalyzer[] CreateASTAnalyzers([NotNull] TypeCobolOptions options);
+        /// <returns>An array of quality analyzers.</returns>
+        /// <remarks>Called each time a quality check is requested. See <see cref="CompilationUnit.RefreshCodeAnalysisDocumentSnapshot"/> method.</remarks>
+        IQualityAnalyzer[] CreateQualityAnalyzers([NotNull] TypeCobolOptions options);
     }
 }
