@@ -30,7 +30,7 @@ namespace TypeCobol.Test.Misc
             var fileConnectors = compilationUnit.TemporaryProgramClassDocumentSnapshot.Root.MainProgram.FileConnectors;
 
             Assert.IsNotNull(fileConnectors);
-            Assert.AreEqual(fileConnectors.Count, expectedResults.Count);
+            Assert.AreEqual(expectedResults.Count, fileConnectors.Count);
             foreach (var fileConnectorPair in fileConnectors)
             {
                 var symbolDefinition = fileConnectorPair.Key;
@@ -39,8 +39,8 @@ namespace TypeCobol.Test.Misc
                 var isExpectedFileName = expectedResults.TryGetValue(symbolDefinition.Name, out var expectedDataSetName);
                 Assert.IsTrue(isExpectedFileName);
                 Assert.IsNotNull(fileControlEntry);
-                Assert.AreEqual(fileControlEntry.FileName?.Name, symbolDefinition.Name);
-                Assert.AreEqual(fileControlEntry.ExternalDataSet?.Name, expectedDataSetName);
+                Assert.AreEqual(symbolDefinition.Name, fileControlEntry.FileName?.Name);
+                Assert.AreEqual(expectedDataSetName, fileControlEntry.ExternalDataSet?.Name);
             }
         }
     }
