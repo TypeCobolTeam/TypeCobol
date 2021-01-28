@@ -1,8 +1,7 @@
-﻿using System.IO;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System.IO;
 using TypeCobol.Compiler;
-using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Test.Utils;
 
 namespace TypeCobol.Test.Misc
@@ -18,36 +17,30 @@ namespace TypeCobol.Test.Misc
         [TestProperty("Time", "fast")]
         public void CheckFileConnectorsSet()
         {
+            var expectedResults = new Dictionary<string, string>()
+            {
+                {"CUSTOMER-F01", "UT-CUSTOMER-F01"},
+                {"CUSTOMER-F02", "UT-CUSTOMER-F02"},
+                {"STUDENT-F01", "UT-STUDENT-F01"},
+                {"STUDENT-F02", "UT-STUDENT-F02"}
+            };
+
             var folder = Path.Combine("Parser", "Programs", "Cobol85");
             var compilationUnit = ParserUtils.ParseCobolFile("FileControl2", DocumentFormat.RDZReferenceFormat, folder);
             var fileConnectors = compilationUnit.TemporaryProgramClassDocumentSnapshot.Root.MainProgram.FileConnectors;
 
             Assert.IsNotNull(fileConnectors);
-            Assert.AreEqual(fileConnectors.Keys.Count, 4);
-            // CUSTOMER-F01
-            var customer1 = GetFileControlEntry("CUSTOMER-F01");
-            Assert.IsNotNull(customer1);
-            Assert.AreEqual(customer1.FileName?.Name, "CUSTOMER-F01");
-            Assert.AreEqual(customer1.ExternalDataSet?.Name, "UT-CUSTOMER-F01");
-            // CUSTOMER-F02
-            var customer2 = GetFileControlEntry("CUSTOMER-F02");
-            Assert.IsNotNull(customer2);
-            Assert.AreEqual(customer2.FileName?.Name, "CUSTOMER-F02");
-            Assert.AreEqual(customer2.ExternalDataSet?.Name, "UT-CUSTOMER-F02");
-            // STUDENT-01
-            var student1 = GetFileControlEntry("STUDENT-F01");
-            Assert.IsNotNull(student1);
-            Assert.AreEqual(student1.FileName?.Name, "STUDENT-F01");
-            Assert.AreEqual(student1.ExternalDataSet?.Name, "UT-STUDENT-F01");
-            // STUDENT-02
-            var student2 = GetFileControlEntry("STUDENT-F02");
-            Assert.IsNotNull(student2);
-            Assert.AreEqual(student2.FileName?.Name, "STUDENT-F02");
-            Assert.AreEqual(student2.ExternalDataSet?.Name, "UT-STUDENT-F02");
-
-            FileControlEntry GetFileControlEntry(string keyName)
+            Assert.AreEqual(fileConnectors.Count, expectedResults.Count);
+            foreach (var fileConnectorPair in fileConnectors)
             {
-                return fileConnectors.FirstOrDefault(pair => pair.Key.Name == keyName).Value;
+                var symbolDefinition = fileConnectorPair.Key;
+                var fileControlEntry = fileConnectorPair.Value;
+                Assert.IsNotNull(symbolDefinition);
+                var isExpectedFileName = expectedResults.TryGetValue(symbolDefinition.Name, out var expectedDataSetName);
+                Assert.IsTrue(isExpectedFileName);
+                Assert.IsNotNull(fileControlEntry);
+                Assert.AreEqual(fileControlEntry.FileName?.Name, symbolDefinition.Name);
+                Assert.AreEqual(fileControlEntry.ExternalDataSet?.Name, expectedDataSetName);
             }
         }
     }
