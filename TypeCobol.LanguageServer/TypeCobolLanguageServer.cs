@@ -297,7 +297,7 @@ namespace TypeCobol.LanguageServer
         {
             CfgDfaParams result = null;
             docContext.FileCompiler.CompilationResultsForProgram.TryGetAnalyzerResult(lspcfgId, out IList<ControlFlowGraph<Node, object>> cfgs);
-            if (cfgs != null)
+            if (cfgs != null && cfgs.Count > 0)
             {                
                 //Create a temporary dot file.
                 string tempFile = Path.GetTempFileName();
