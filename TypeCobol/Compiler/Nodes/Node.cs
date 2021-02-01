@@ -7,6 +7,7 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Symbols;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Tools;
 
@@ -44,6 +45,23 @@ namespace TypeCobol.Compiler.Nodes {
         [CanBeNull]
         protected abstract CodeElement InternalCodeElement {  get;}
 
+        /// <summary>
+        /// The Semantic data of this Node which is the Symbol instance associated to it.
+        /// </summary>
+        private Symbol _semanticData;
+        public virtual Symbol SemanticData
+        {
+            get => _semanticData;
+            set
+            {
+                _semanticData = value;
+                if (value != null)
+                {
+                    _semanticData.TargetNode = this;
+                }
+            }
+        }
+
         /// <summary>Parent node (weakly-typed)</summary>
         public Node Parent { get; private set; }
 
@@ -54,11 +72,7 @@ namespace TypeCobol.Compiler.Nodes {
         /// <see cref="Remove" />
         /// methods.
         public IReadOnlyList<Node> Children {
-#if NET40
-            get { return new ReadOnlyList<Node>(children); }
-#else
             get { return children; }
-#endif
         }
 
         /// <summary>
@@ -870,6 +884,18 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         /// <summary>
+        /// Stores VariableSymbol for each read StorageArea of this Node.
+        /// This dictionary is set and populated only by the CrossChecker.
+        /// </summary>
+        public Dictionary<StorageArea, VariableSymbol> StorageAreaReadsSymbol { get; set; }
+
+        /// <summary>
+        /// Stores VariableSymbol for each written StorageArea of this Node.
+        /// This dictionary is set and populated only by the CrossChecker.
+        /// </summary>
+        public Dictionary<StorageArea, VariableSymbol> StorageAreaWritesSymbol { get; set; }
+
+        /// <summary>
         /// Clone the children of this node by creating a new list of Nodes.
         /// </summary>
         /// <param name="parent"></param>
@@ -973,12 +999,7 @@ namespace TypeCobol.Compiler.Nodes {
             // if the performance is better or if it avoids a copy.
             var result = new List<C>();
             foreach (var child in node.Children) result.Add((C) child);
-#if NET40
-            return new ReadOnlyList<C>(result);
-#else
             return result.AsReadOnly();
-#endif
-
         }
     }
 

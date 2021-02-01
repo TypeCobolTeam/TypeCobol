@@ -34,9 +34,7 @@ namespace TypeCobol.Codegen.Generators
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="Document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
-        /// <param name="skeletons">All skeletons pattern for code generation </param>
         /// <param name="typeCobolVersion">Version of the TypeCobol Parser/Generator</param>
         public SignaturesGenerator(StringBuilder destination, string typeCobolVersion) {
             this.Destination = destination;

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using Analytics;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Directives;
@@ -190,7 +189,7 @@ namespace TypeCobol.Compiler
             }
             else
             {
-                CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, copyTextNameVariations);
+                CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, copyTextNameVariations, CompilationProject.AnalyzerProvider);
                 CompilationResultsForProgram.CustomSymbols = customSymbols;
             }
             CompilerOptions = compilerOptions;
@@ -250,6 +249,11 @@ namespace TypeCobol.Compiler
 
                 CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Cross Check step
                 ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.CrossCheck });
+
+                if (!(exec2Step > ExecutionStep.CrossCheck)) return;
+
+                CompilationResultsForProgram.RefreshCodeAnalysisDocumentSnapshot(); //QualityCheck step
+                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.QualityCheck });
             }
         }
     }

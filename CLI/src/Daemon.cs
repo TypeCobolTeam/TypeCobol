@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using TypeCobol.Compiler.Diagnostics;
 using Analytics;
-using Castle.Core.Internal;
+using TypeCobol.Tools;
 using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Server {
@@ -44,7 +44,7 @@ namespace TypeCobol.Server {
                     return 0;
                 }
 
-                if (!errors.IsNullOrEmpty())
+                if (errors.Any())
                     return exit(errors);
 
                 if (version)
@@ -59,7 +59,7 @@ namespace TypeCobol.Server {
                 }
 
                 if (config.OutputFiles.Count == 0 && config.ExecToStep >= ExecutionStep.Generate)
-                    config.ExecToStep = ExecutionStep.CrossCheck; //If there is no given output file, we can't run generation, fallback to CrossCheck
+                    config.ExecToStep = ExecutionStep.QualityCheck; //If there is no given output file, we can't run generation, fallback to QualityCheck
 
                 var returnCode = CLI.runOnce(config);
                 if (returnCode != ReturnCode.Success)
@@ -140,10 +140,6 @@ namespace TypeCobol.Server {
             errmsg += "Try " + PROGNAME + " --help for usage information.";
             Console.WriteLine(errmsg);
             return errors.Count > 1 ? (int)ReturnCode.MultipleErrors : (int)errors.Keys.First();
-        }
-        static int exit(ReturnCode code)
-        {
-            return exit(code, TypeCobolConfiguration.ErrorMessages[code].IsNullOrEmpty() ? "" : TypeCobolConfiguration.ErrorMessages[code]);
         }
     }
 }

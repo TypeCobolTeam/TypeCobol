@@ -245,7 +245,7 @@
     }
 
     /// <summary> Format 3: SET for external switches: set externalSwitches to ON|OFF</summary>
-    internal class SetStatementForSwitches : SetStatement
+    public class SetStatementForSwitches : SetStatement
     {
         public SetStatementForSwitches() : base(StatementType.SetStatementForSwitches) { }
 
@@ -304,7 +304,7 @@
     /// set condition-names to true
     ///          List<Identifier> ConditionIdentifiers //identifier
     /// </summary>
-    internal class SetStatementForConditions : SetStatement
+    public class SetStatementForConditions : SetStatement
     {
         public SetStatementForConditions() : base(StatementType.SetStatementForConditions) { }
 
@@ -355,7 +355,7 @@
         }
     }
 
-    internal class SetStatementPartial : SetStatementForAssignment
+    public class SetStatementPartial : SetStatementForAssignment
     {
         public SetStatementPartial() : base(StatementType.SetStatementPartial)
         {

@@ -1,0 +1,237 @@
+--- Diagnostics ---
+Line 43[12,38] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' with picture 9(10) and received 'picAlpha10' with picture X(10)
+Line 47[12,40] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' of usage  and received 'picNum10Comp' of usage Binary
+Line 49[12,41] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' of usage  and received 'picNum10Comp3' of usage PackedDecimal
+Line 51[12,41] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' of usage  and received 'picNum10Comp5' of usage NativeBinary
+Line 53[12,35] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' to be NOT an array and received 'tabNum5' which is an array
+Line 55[12,37] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' with picture 9(10) and received 'tabAlpha5' with picture X(10)
+Line 55[12,37] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' to be NOT an array and received 'tabAlpha5' which is an array
+Line 61[12,38] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' with picture X(10) and received 'picAlpha20' with picture X(20)
+Line 67[12,36] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' with picture X(10) and received 'picNum10' with picture 9(10)
+Line 69[12,40] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' with picture X(10) and received 'picNum10Comp' with picture 9(10)
+Line 69[12,40] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' of usage  and received 'picNum10Comp' of usage Binary
+Line 71[12,41] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' with picture X(10) and received 'picNum10Comp3' with picture 9(10)
+Line 71[12,41] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' of usage  and received 'picNum10Comp3' of usage PackedDecimal
+Line 73[12,41] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' with picture X(10) and received 'picNum10Comp5' with picture 9(10)
+Line 73[12,41] <27, Error, Syntax> - Syntax error : Function 'proc2' expected parameter 'param1' of usage  and received 'picNum10Comp5' of usage NativeBinary
+Line 75[12,35] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' to be NOT an array and received 'tabNum5' which is an array
+Line 77[12,37] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' with picture 9(10) and received 'tabAlpha5' with picture X(10)
+Line 77[12,37] <27, Error, Syntax> - Syntax error : Function 'proc1' expected parameter 'param1' to be NOT an array and received 'tabAlpha5' which is an array
+Line 84[12,37] <27, Error, Syntax> - Syntax error : Function 'proc3' expected parameter 'param1' synchronized and received 'picNum10' not synchronized
+Line 85[12,37] <27, Error, Syntax> - Syntax error : Function 'proc31' expected parameter 'param1' synchronized (Left) and received 'picNum10' not synchronized
+Line 86[12,37] <27, Error, Syntax> - Syntax error : Function 'proc32' expected parameter 'param1' synchronized (Right) and received 'picNum10' not synchronized
+Line 98[12,38] <27, Error, Syntax> - Syntax error : Function 'proc4' expected parameter 'param1' justified and received 'picAlpha10' non-justified
+
+--- Program ---
+ProcedureCall-ParamCompatibily (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ScopeType, Tag=Scope)
+LocalStorageData:
+  picAlpha10 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [LOCAL_STORAGE]
+  Owner: ProcedureCall-ParamCompatibily
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(10)
+  Level: 1
+  IsFiller: False
+  picAlpha20 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [LOCAL_STORAGE]
+  Owner: ProcedureCall-ParamCompatibily
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(20)
+  Level: 1
+  IsFiller: False
+  picNum10 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [LOCAL_STORAGE]
+  Owner: ProcedureCall-ParamCompatibily
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: 9(10)
+  Level: 1
+  IsFiller: False
+  picNum10Comp (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [LOCAL_STORAGE]
+  Owner: ProcedureCall-ParamCompatibily
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Usage: Comp
+    Picture: 9(10)
+  Level: 1
+  IsFiller: False
+  picNum10Comp3 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [LOCAL_STORAGE]
+  Owner: ProcedureCall-ParamCompatibily
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Usage: Comp3
+    Picture: 9(10)
+  Level: 1
+  IsFiller: False
+  picNum10Comp5 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [LOCAL_STORAGE]
+  Owner: ProcedureCall-ParamCompatibily
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Usage: Comp5
+    Picture: 9(10)
+  Level: 1
+  IsFiller: False
+  tab (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [LOCAL_STORAGE]
+  Owner: ProcedureCall-ParamCompatibily
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      tabNum5 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [LOCAL_STORAGE]
+      Owner: ProcedureCall-ParamCompatibily::tab
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 5
+        ElementType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: 9(10)
+      Level: 5
+      IsFiller: False
+      tabAlpha5 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [LOCAL_STORAGE]
+      Owner: ProcedureCall-ParamCompatibily::tab
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 5
+        ElementType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(10)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  picNum10Sync (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [LOCAL_STORAGE, Sync]
+  Owner: ProcedureCall-ParamCompatibily
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: 9(10)
+  Level: 1
+  IsFiller: False
+  picNum10SyncLeft (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [LOCAL_STORAGE, Sync]
+  Owner: ProcedureCall-ParamCompatibily
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: 9(10)
+  Level: 1
+  IsFiller: False
+  picNum10SyncRight (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [LOCAL_STORAGE, Sync]
+  Owner: ProcedureCall-ParamCompatibily
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: 9(10)
+  Level: 1
+  IsFiller: False
+  picAlpha10Just (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [LOCAL_STORAGE, Justified]
+  Owner: ProcedureCall-ParamCompatibily
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(10)
+  Level: 1
+  IsFiller: False
+Functions:
+  proc1 (.NET Type=FunctionSymbol, Kind=Function)
+  Flags: [Private]
+  Owner: ProcedureCall-ParamCompatibily
+  Type:
+    (.NET Type=ScopeType, Tag=Scope)
+    Parameters: [ProcedureCall-ParamCompatibily::proc1::param1]
+  LinkageData:
+    param1 (.NET Type=VariableSymbol, Kind=Variable)
+    Flags: [LINKAGE, Input, Parameter]
+    Owner: ProcedureCall-ParamCompatibily::proc1
+    Type:
+      (.NET Type=PictureType, Tag=Picture)
+      Picture: 9(10)
+    Level: 1
+    IsFiller: False
+  proc2 (.NET Type=FunctionSymbol, Kind=Function)
+  Flags: [Private]
+  Owner: ProcedureCall-ParamCompatibily
+  Type:
+    (.NET Type=ScopeType, Tag=Scope)
+    Parameters: [ProcedureCall-ParamCompatibily::proc2::param1]
+  LinkageData:
+    param1 (.NET Type=VariableSymbol, Kind=Variable)
+    Flags: [LINKAGE, Input, Parameter]
+    Owner: ProcedureCall-ParamCompatibily::proc2
+    Type:
+      (.NET Type=PictureType, Tag=Picture)
+      Picture: X(10)
+    Level: 1
+    IsFiller: False
+  proc3 (.NET Type=FunctionSymbol, Kind=Function)
+  Flags: [Private]
+  Owner: ProcedureCall-ParamCompatibily
+  Type:
+    (.NET Type=ScopeType, Tag=Scope)
+    Parameters: [ProcedureCall-ParamCompatibily::proc3::param1]
+  LinkageData:
+    param1 (.NET Type=VariableSymbol, Kind=Variable)
+    Flags: [LINKAGE, Input, Sync, Parameter]
+    Owner: ProcedureCall-ParamCompatibily::proc3
+    Type:
+      (.NET Type=PictureType, Tag=Picture)
+      Picture: 9(10)
+    Level: 1
+    IsFiller: False
+  proc31 (.NET Type=FunctionSymbol, Kind=Function)
+  Flags: [Private]
+  Owner: ProcedureCall-ParamCompatibily
+  Type:
+    (.NET Type=ScopeType, Tag=Scope)
+    Parameters: [ProcedureCall-ParamCompatibily::proc31::param1]
+  LinkageData:
+    param1 (.NET Type=VariableSymbol, Kind=Variable)
+    Flags: [LINKAGE, Input, Sync, Parameter]
+    Owner: ProcedureCall-ParamCompatibily::proc31
+    Type:
+      (.NET Type=PictureType, Tag=Picture)
+      Picture: 9(10)
+    Level: 1
+    IsFiller: False
+  proc32 (.NET Type=FunctionSymbol, Kind=Function)
+  Flags: [Private]
+  Owner: ProcedureCall-ParamCompatibily
+  Type:
+    (.NET Type=ScopeType, Tag=Scope)
+    Parameters: [ProcedureCall-ParamCompatibily::proc32::param1]
+  LinkageData:
+    param1 (.NET Type=VariableSymbol, Kind=Variable)
+    Flags: [LINKAGE, Input, Sync, Parameter]
+    Owner: ProcedureCall-ParamCompatibily::proc32
+    Type:
+      (.NET Type=PictureType, Tag=Picture)
+      Picture: 9(10)
+    Level: 1
+    IsFiller: False
+  proc4 (.NET Type=FunctionSymbol, Kind=Function)
+  Flags: [Private]
+  Owner: ProcedureCall-ParamCompatibily
+  Type:
+    (.NET Type=ScopeType, Tag=Scope)
+    Parameters: [ProcedureCall-ParamCompatibily::proc4::param1]
+  LinkageData:
+    param1 (.NET Type=VariableSymbol, Kind=Variable)
+    Flags: [LINKAGE, Input, Justified, Parameter]
+    Owner: ProcedureCall-ParamCompatibily::proc4
+    Type:
+      (.NET Type=PictureType, Tag=Picture)
+      Picture: X(10)
+    Level: 1
+    IsFiller: False
+IsNested: False
+

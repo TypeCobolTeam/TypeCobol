@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Symbols;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -22,6 +23,9 @@ namespace TypeCobol.Compiler.Diagnostics
         }
 
         private readonly TypeCobolOptions _compilerOptions;
+
+        //Holds a reference to the last section node visited as to know in which current section we are
+        private Section _currentSection;
 
         private Node CurrentNode { get; set; }
 
@@ -95,7 +99,36 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(PerformProcedure performProcedureNode)
         {
-            SectionOrParagraphUsageChecker.CheckReferenceToParagraphOrSection(performProcedureNode);
+            var performCE = performProcedureNode.CodeElement;
+
+            if (performCE.Procedure != null)
+            {
+                var procedure = SectionOrParagraphUsageChecker.ResolveSectionOrParagraph(performProcedureNode, performCE.Procedure, _currentSection);
+                switch (procedure.Item1)
+                {
+                    case SymbolType.SectionName:
+                        performProcedureNode.ProcedureSectionSymbol = (SectionSymbol) procedure.Item2?.SemanticData;
+                        break;
+                    case SymbolType.ParagraphName:
+                        performProcedureNode.ProcedureParagraphSymbol = (ParagraphSymbol) procedure.Item2?.SemanticData;
+                        break;
+                }
+            }
+
+            if (performCE.ThroughProcedure != null)
+            {
+                var throughProcedure = SectionOrParagraphUsageChecker.ResolveSectionOrParagraph(performProcedureNode, performCE.ThroughProcedure, _currentSection);
+                switch (throughProcedure.Item1)
+                {
+                    case SymbolType.SectionName:
+                        performProcedureNode.ThroughProcedureSectionSymbol = (SectionSymbol) throughProcedure.Item2?.SemanticData;
+                        break;
+                    case SymbolType.ParagraphName:
+                        performProcedureNode.ThroughProcedureParagraphSymbol = (ParagraphSymbol) throughProcedure.Item2?.SemanticData;
+                        break;
+                }
+            }
+
             return true;
         }
 
@@ -108,6 +141,8 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(ProcedureDivision procedureDivision)
         {
             LibraryChecker.CheckLibrary(procedureDivision);
+            //initializing the current section to null
+            _currentSection = null;
             ProcedureDivisionHeader ce = procedureDivision.CodeElement as ProcedureDivisionHeader;
             if (ce?.FormalizedCommentDocumentation != null && procedureDivision.Parent is FunctionDeclaration)
             {
@@ -120,6 +155,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Section section)
         {
+            //Save current scope node for paragraph resolution
+            _currentSection = section;
             SectionOrParagraphUsageChecker.CheckSection(section);
             return true;
         }
@@ -216,6 +253,26 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 DiagnosticUtils.AddError(ifNode,
                     "\"end-if\" is missing", MessageCode.Warning);
+            }
+            return true;
+        }
+
+        public override bool Visit(Then thenNode)
+        {
+            //This check only applies to THEN nodes coming from IF statements.
+            if (thenNode.ChildrenCount == 0 && thenNode.Parent.CodeElement?.Type == CodeElementType.IfStatement)
+            {
+                //THEN has no CodeElement, report on Parent IF.
+                DiagnosticUtils.AddError(thenNode.Parent, "Missing statement or NEXT SENTENCE after IF condition.");
+            }
+            return true;
+        }
+
+        public override bool Visit(Else elseNode)
+        {
+            if (elseNode.ChildrenCount == 0)
+            {
+                DiagnosticUtils.AddError(elseNode, "Missing statement or NEXT SENTENCE after ELSE keyword.");
             }
             return true;
         }
@@ -359,6 +416,29 @@ namespace TypeCobol.Compiler.Diagnostics
 
             }
 
+            //Check if Strict Typedef declaration uses Sync clause
+            if (dataDefinition.SemanticData.HasFlag(Symbol.Flags.InsideTypedef) &&
+                dataDefinition.SemanticData.HasFlag(Symbol.Flags.Sync))
+            {
+                //Typedef instruction => check if it's marked Strict
+                if (dataDefinition.SemanticData.Kind == Symbol.Kinds.Typedef && dataDefinition.SemanticData.HasFlag(Symbol.Flags.Strict))
+                {
+                    DiagnosticUtils.AddError(dataDefinition, $"Cannot declare Type definition {dataDefinition.Name} with Sync clause because it is Strict.");
+                }
+                //Variable inside Typedef => check if parent typedef is marked Strict
+                else if (dataDefinition.SemanticData.NearestParent(Symbol.Kinds.Typedef).HasFlag(Symbol.Flags.Strict))
+                {
+                    DiagnosticUtils.AddError(dataDefinition, $"{dataDefinition.Name} is part of a declaration using Sync clause in Strict Type definition {dataDefinition.ParentTypeDefinition?.Name}.");
+                }
+
+            }
+            //Check if variable of user defined Strict Type is declared or has a parent declared with Sync clause (flag is inherited so no need to iterate through parents)
+            else if (dataDefinition.SemanticData.HasFlag(Symbol.Flags.HasATypedefType) && 
+                dataDefinition.TypeDefinition?.RestrictionLevel == RestrictionLevel.STRICT &&
+                dataDefinition.SemanticData.HasFlag(Symbol.Flags.Sync))
+            {
+                DiagnosticUtils.AddError(dataDefinition, $"{dataDefinition.Name} cannot be declared or have a parent declared with Sync clause because its Type definition {dataDefinition.DataType.Name} is Strict.");
+            }
 
             if (HasChildrenThatDeclareData(dataDefinition))
             {
@@ -429,18 +509,17 @@ namespace TypeCobol.Compiler.Diagnostics
                 var nodeIndex = dataDescription.Parent.IndexOf(dataDescription);
                 //Get sibling nodes
                 var siblingNodes = dataDescription.Parent.Children;
-                //Check if next node is inside a copy when this isn't the last node
-                if (siblingNodes.Count > nodeIndex + 1 && siblingNodes[nodeIndex + 1].IsInsideCopy())
+                //Get immediately following DataDefinition
+                var nextData = siblingNodes.Skip(nodeIndex + 1).OfType<DataDefinition>().FirstOrDefault();
+                if (nextData != null && nextData.IsInsideCopy())
                 {
-                    //Get next sibling node
-                    var nextSibling = siblingNodes[nodeIndex + 1];
-                    DiagnosticUtils.AddError(dataDescription, $"Cannot include copy {nextSibling.CodeElement?.FirstCopyDirective.TextName} " +
+                    DiagnosticUtils.AddError(dataDescription, $"Cannot include copy {nextData.CodeElement.FirstCopyDirective.TextName} " +
                                                               $"under level {dataDescriptionEntry.LevelNumber} " +
-                                                              $"because copy starts at level {((DataDescription)nextSibling).CodeElement.LevelNumber}.", dataDescriptionEntry);
+                                                              $"because copy starts at level {nextData.CodeElement.LevelNumber}.", dataDescriptionEntry);
                 }
-                //Last node so this is an empty group item
                 else
                 {
+                    //Last node so this is an empty group item
                     DiagnosticUtils.AddError(dataDescription, "A group item cannot be empty.", dataDescriptionEntry);
                 }
             }
@@ -603,34 +682,60 @@ namespace TypeCobol.Compiler.Diagnostics
                     //Check if we're dealing with an input parameter
                     if (paramDesc?.PassingType == ParameterDescription.PassingTypes.Input)
                     {
-                        var specialRegister = storageArea as StorageAreaPropertySpecialRegister;
-                        //Unless this is a format 5 set statement, we have an error. So we're checking we're not in the following format  :
+                        //We allow modification on indices because semantically they are value types, the procedure uses a copy of the input (issue #1789).
+                        //Also format 5 set statements are allowed because it does not affect the input for the caller (issue #1625).
                         //set (address of)? identifier(pointer) TO (address of)? identifier | NULL
-                        if (specialRegister?.SpecialRegisterName.TokenType != TokenType.ADDRESS)
+                        bool isModificationAllowed = dataDefinitionFound.IsIndex
+                                                     ||
+                                                     (storageArea is StorageAreaPropertySpecialRegister register && register.SpecialRegisterName.TokenType == TokenType.ADDRESS);
+                        if (!isModificationAllowed)
                         {
                             DiagnosticUtils.AddError(node, "Input variable '" + paramDesc.Name + "' is modified by an instruction", area.SymbolReference);
                         }
                     }
                 }
 
-                //add the found DataDefinition to a dictionary depending on the storage area type
+                //Initialize node caches for DataDef and Symbol.
+                IDictionary<StorageArea, DataDefinition> dataDefinitionStorage;
+                IDictionary<StorageArea, VariableSymbol> symbolStorage;
                 if (isReadStorageArea)
                 {
-                    //need to initialize the dictionaries
+                    //Initialize reads dictionaries
                     if (node.StorageAreaReadsDataDefinition == null)
-                    {
                         node.StorageAreaReadsDataDefinition = new Dictionary<StorageArea, DataDefinition>();
-                    }
-                    node.StorageAreaReadsDataDefinition.Add(storageArea, dataDefinitionFound);
+                    if (node.StorageAreaReadsSymbol == null)
+                        node.StorageAreaReadsSymbol = new Dictionary<StorageArea, VariableSymbol>();
+
+                    //Target read dictionaries
+                    dataDefinitionStorage = node.StorageAreaReadsDataDefinition;
+                    symbolStorage = node.StorageAreaReadsSymbol;
                 }
                 else
                 {
-                    //need to initialize the dictionaries
+                    //Initialize writes dictionaries
                     if (node.StorageAreaWritesDataDefinition == null)
-                    {
                         node.StorageAreaWritesDataDefinition = new Dictionary<StorageArea, DataDefinition>();
-                    }
-                    node.StorageAreaWritesDataDefinition.Add(storageArea, dataDefinitionFound);
+                    if (node.StorageAreaWritesSymbol == null)
+                        node.StorageAreaWritesSymbol = new Dictionary<StorageArea, VariableSymbol>();
+
+                    //Target writes dictionaries
+                    dataDefinitionStorage = node.StorageAreaWritesDataDefinition;
+                    symbolStorage = node.StorageAreaWritesSymbol;
+                }
+
+                //Add DataDefinition found and corresponding VariableSymbol into caches
+                dataDefinitionStorage.Add(storageArea, dataDefinitionFound);
+                var variableSymbol = dataDefinitionFound.SemanticData as VariableSymbol;
+                symbolStorage.Add(storageArea, variableSymbol);//Beware, variableSymbol my be null !
+
+                //SemanticDomain validation : check that the symbol has been built.
+                if (dataDefinitionFound.ParentTypeDefinition == null)
+                {
+                    System.Diagnostics.Debug.Assert(variableSymbol != null);
+                }
+                else
+                {
+                    //TODO SemanticDomain: requires type expansion.
                 }
 
                 return dataDefinitionFound;
@@ -778,69 +883,67 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class SectionOrParagraphUsageChecker
+    static class SectionOrParagraphUsageChecker
     {
-        public static void CheckReferenceToParagraphOrSection(PerformProcedure perform)
+        /// <summary>
+        /// Disambiguate between Section or Paragraph reference.
+        /// </summary>
+        /// <param name="callerNode">Node using the paragraph or the reference.</param>
+        /// <param name="target">A non-null Symbol reference to disambiguate.</param>
+        /// <param name="currentSection">The node scope in which the perform statement is declared</param>
+        /// <returns>A tuple made of a SymbolType and a Node when the target has been correctly resolved.
+        /// The returned SymbolType is non-ambiguous if the type of the target has been determined.</returns>
+        /// <remarks>This method will create appropriate diagnostics on Node if resolution is inconclusive.</remarks>
+        public static (SymbolType, Node) ResolveSectionOrParagraph(Node callerNode, [NotNull] SymbolReference target, Section currentSection)
         {
-            var performCE = perform.CodeElement;
-            SymbolReference symbol;
-            symbol = ResolveProcedureName(perform.SymbolTable, performCE.Procedure as AmbiguousSymbolReference,
-                perform);
-            if (symbol != null) performCE.Procedure = symbol;
-            symbol = ResolveProcedureName(perform.SymbolTable, performCE.ThroughProcedure as AmbiguousSymbolReference,
-                perform);
-            if (symbol != null) performCE.ThroughProcedure = symbol;
+            var candidates = callerNode.SymbolTable.GetSectionOrParagraph(target, currentSection);
+            IList<Section> sections = candidates.Item1;
+            IList<Paragraph> paragraphs = candidates.Item2;
+
+            var symbolType = target.Type;
+            if (paragraphs == null || paragraphs.Count == 0)
+            {
+                if (sections == null || sections.Count == 0)
+                {
+                    //Nothing found
+                    DiagnosticUtils.AddError(callerNode, $"Symbol {target.Name} is not referenced", target, MessageCode.SemanticTCErrorInParser);
+                    return (symbolType, null);
+                }
+
+                //We know for sure it's a section but is it ambiguous ?
+                symbolType = SymbolType.SectionName;
+                if (sections.Count > 1)
+                {
+                    DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to section {target.Name}", target, MessageCode.SemanticTCErrorInParser);
+                    return (symbolType, null);
+                }
+
+                //Return single section found
+                return (symbolType, sections[0]);
+            }
+
+            //No section matches the name so it's a paragraph
+            if (sections == null || sections.Count == 0)
+            {
+                //Check if paragraph is ambiguous
+                symbolType = SymbolType.ParagraphName;
+                if (paragraphs.Count > 1)
+                {
+                    DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to paragraph {target.Name}", target, MessageCode.SemanticTCErrorInParser);
+                    return (symbolType, null);
+                }
+
+                //Return single paragraph found
+                return (symbolType, paragraphs[0]);
+            }
+
+            //The reference is ambiguous, we don't know what we're dealing with
+            DiagnosticUtils.AddError(callerNode, $"Ambiguous reference to procedure {target.Name}", target, MessageCode.SemanticTCErrorInParser);
+            return (SymbolType.TO_BE_RESOLVED, null);
         }
 
-        /// <summary>Disambiguate between section and paragraph names</summary>
-        /// <param name="table">Symbol table used for name resolution</param>
-        /// <param name="symbol">Symbol to disambiguate</param>
-        /// <param name="ce">Original CodeElement ; error diagnostics will be added to it if name resolution fails</param>
-        /// <returns>symbol as a SymbolReference whith a SymbolType properly set</returns>
-        private static SymbolReference ResolveProcedureName(SymbolTable table, SymbolReference symbol, Node node)
+        private static void CheckIsNotEmpty<T>(string nodeTypeName, T node) where T : Node
         {
-            if (symbol == null) return null;
-
-            SymbolReference sname = null, pname = null;
-            var sfound = table.GetSection(symbol.Name);
-            if (sfound.Count > 0) sname = new SymbolReference(symbol.NameLiteral, SymbolType.SectionName);
-            var pfound = table.GetParagraph(symbol.Name);
-            if (pfound.Count > 0) pname = new SymbolReference(symbol.NameLiteral, SymbolType.ParagraphName);
-
-            if (pname == null)
-            {
-                if (sname == null)
-                {
-                    DiagnosticUtils.AddError(node, "Symbol " + symbol.Name + " is not referenced", symbol, MessageCode.SemanticTCErrorInParser);
-                }
-                else
-                {
-                    if (sfound.Count > 1)
-                        DiagnosticUtils.AddError(node, "Ambiguous reference to section " + symbol.Name, symbol);
-                    return sname;
-                }
-            }
-            else
-            {
-                if (sname == null)
-                {
-                    if (pfound.Count > 1)
-                        DiagnosticUtils.AddError(node, "Ambiguous reference to paragraph " + symbol.Name, symbol);
-                    return pname;
-                }
-                else
-                {
-                    DiagnosticUtils.AddError(node, "Ambiguous reference to procedure " + symbol.Name, symbol);
-                }
-            }
-            return null;
-        }
-
-        private static void Check<T>(string nodeTypeName, T node, [NotNull] IList<T> found) where T : Node
-        {
-            if (found.Count > 1)
-                DiagnosticUtils.AddError(node, nodeTypeName + " \'" + node.Name + "\' already declared");
-
             // a section/paragraph (node) is empty when it has no child or when its child/children is/are an End node
             bool empty = true; // default value
             foreach (Node child in node.Children)  
@@ -871,12 +974,45 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public static void CheckSection(Section section)
         {
-            Check("Section", section, section.SymbolTable.GetSection(section.Name));
+            //Get all sections with the same name
+            var sections = section.SymbolTable.GetSection(section.Name);
+
+            //Sections can be declared with the same name but then "perform thru" is not possible
+            if (sections.Count > 1)
+            {
+                DiagnosticUtils.AddError(section, $"Section \'{section.Name}\' already declared", MessageCode.Warning);
+            }
+
+            //Check if any paragraphs also have that name
+            var paragraphs = section.SymbolTable.GetParagraphs(p => p.Name.Equals(section.Name, StringComparison.OrdinalIgnoreCase)).ToList();
+            
+            //A section cannot have the same name as a paragraph
+            if (paragraphs.Count > 0)
+            {
+                DiagnosticUtils.AddError(section, $"Section {section.Name} is also declared as a paragraph", MessageCode.SemanticTCErrorInParser);
+                foreach (var paragraph in paragraphs)
+                {
+                    DiagnosticUtils.AddError(paragraph, $"Paragraph {paragraph.Name} is also declared as a section", MessageCode.SemanticTCErrorInParser);
+                }
+            }
+
+            CheckIsNotEmpty("Section", section);
         }
 
         public static void CheckParagraph(Paragraph paragraph)
         {
-            Check("Paragraph", paragraph, paragraph.SymbolTable.GetParagraph(paragraph.Name));
+            //Get all paragraphs with the same name and having the same section name
+            var paragraphs = paragraph.SymbolTable.GetParagraphs(p => p.Name.Equals(paragraph.Name, StringComparison.OrdinalIgnoreCase) && p.SemanticData.Owner == paragraph.SemanticData.Owner).ToList();
+
+            //Paragraphs can't have the same name within the same section
+            if (paragraphs.Count > 1)
+            {
+                //Get the name of the scope to display in diagnostic message
+                var scope = string.IsNullOrEmpty(paragraph.Parent.Name) ? paragraph.Parent.ID : paragraph.Parent.Name ;
+                DiagnosticUtils.AddError(paragraph, $"Paragraph \'{paragraph.Name}\' already declared in {scope}", MessageCode.Warning);
+            }
+
+            CheckIsNotEmpty("Paragraph", paragraph);
         }
     }
 

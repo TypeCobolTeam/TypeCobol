@@ -1,0 +1,185 @@
+--- Diagnostics ---
+Line 7[8,14] <27, Error, Syntax> - Syntax error : Cannot include copy CPYData2 under level 5 because copy starts at level 5. OffendingSymbol=[8,14:MyGroup]<UserDefinedWord>
+Line 12[8,14] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[8,14:MyGroup]<UserDefinedWord>
+Line 28[4,7] <27, Error, Syntax> - Syntax error : Cannot include copy CPYData3 under level 1 because copy starts at level 1. OffendingSymbol=[4,7:STR5]<UserDefinedWord>
+Line 32[8,14] <27, Error, Syntax> - Syntax error : Cannot include copy CPYData4 under level 5 because copy starts at level 2. OffendingSymbol=[8,14:MyGroup]<UserDefinedWord>
+
+--- Program ---
+TypeCobol (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ScopeType, Tag=Scope)
+WorkingStorageData:
+  STR1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: TypeCobol
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      MyGroup (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TypeCobol::STR1
+      Type:
+        (.NET Type=Type, Tag=Usage)
+      Level: 5
+      IsFiller: False
+      DATA1 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TypeCobol::STR1
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 5
+      IsFiller: False
+      DATA2 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TypeCobol::STR1
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  STR2 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: TypeCobol
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      MyGroup (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TypeCobol::STR2
+      Type:
+        (.NET Type=Type, Tag=Usage)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  STR3 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: TypeCobol
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      MyGroup (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TypeCobol::STR3
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        Fields:
+          DATA1 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: TypeCobol::STR3::MyGroup
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Picture: X(1)
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  STR4 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: TypeCobol
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      MyGroup (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TypeCobol::STR4
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        Fields:
+          DATA1 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: TypeCobol::STR4::MyGroup
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Picture: X(1)
+          Level: 5
+          IsFiller: False
+          DATA2 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: TypeCobol::STR4::MyGroup
+          Type:
+            (.NET Type=PictureType, Tag=Picture)
+            Picture: X(1)
+          Level: 5
+          IsFiller: False
+      Level: 4
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  myVar (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: TypeCobol
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(1)
+  Level: 1
+  IsFiller: False
+  STR5 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: TypeCobol
+  Type:
+    (.NET Type=Type, Tag=Usage)
+  Level: 1
+  IsFiller: False
+  MyCopy (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: TypeCobol
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      MyCopy-Key (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TypeCobol::MyCopy
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  STR6 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: TypeCobol
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      MyGroup (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TypeCobol::STR6
+      Type:
+        (.NET Type=Type, Tag=Usage)
+      Level: 5
+      IsFiller: False
+      MyCopy-Key (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TypeCobol::STR6
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 2
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  STR7 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: TypeCobol
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      MyCopy-Key (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TypeCobol::STR7
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Picture: X(1)
+      Level: 2
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+IsNested: False
+

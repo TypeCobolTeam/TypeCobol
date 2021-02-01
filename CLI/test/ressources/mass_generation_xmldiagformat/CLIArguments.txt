@@ -1,0 +1,1 @@
+﻿-i input\DVZZPGM1.tcbl -i input\DVZZPGM2.tcbl -i input\DVZZPGM3.tcbl -o output\DVZZPGM1.cbl -o output\DVZZPGM2.cbl -o output\DVZZPGM3.cbl -d output\error.xmldiag

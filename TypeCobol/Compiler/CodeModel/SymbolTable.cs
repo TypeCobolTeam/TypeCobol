@@ -734,10 +734,50 @@ namespace TypeCobol.Compiler.CodeModel
             Add(Paragraphs, paragraph);
         }
 
-        public IList<Paragraph> GetParagraph(string name)
+        public IList<Paragraph> GetParagraph(SymbolReference symbolRef, Section sectionNode)
         {
-            Paragraphs.TryGetValue(name, out var values);
-            if (values != null) return values.ToList();  //.ToList so the caller cannot modify our stored list
+            //First extract expected paragraph and section names from symbol ref
+            string paragraphName, parentSectionName;
+            if (symbolRef.IsQualifiedReference)
+            {
+                //If paragraph is qualified we get a paragraph and a section name
+                var qualifiedSymbolReference = (QualifiedSymbolReference) symbolRef;
+                paragraphName = qualifiedSymbolReference.NameLiteral.Value;
+                parentSectionName = qualifiedSymbolReference.Tail.Name;
+            }
+            else
+            {
+                //Otherwise expected parent section is null
+                paragraphName = symbolRef.Name;
+                parentSectionName = null;
+            }
+
+            //Retrieve all paragraphs with matching name, then apply additional filters
+            if (Paragraphs.TryGetValue(paragraphName, out var candidates))
+            {
+                if (parentSectionName != null)
+                {
+                    //We're looking for a paragraph inside a specific section, so we keep only paragraphs whose parent section matches
+                    return candidates.FindAll(p => p.Parent.Name.Equals(parentSectionName, StringComparison.OrdinalIgnoreCase));
+                }
+
+                //Priority is given to paragraphs located in the same section as the caller node
+                Predicate<Paragraph> matchParentSection;
+                if (sectionNode != null)
+                {
+                    //Match paragraphs located inside the given section node
+                    matchParentSection = p => p.Parent == sectionNode;
+                }
+                else
+                {
+                    //Match paragraphs located directly in the PROCEDURE DIVISION
+                    matchParentSection = p => p.Parent.CodeElement.Type == CodeElementType.ProcedureDivisionHeader;
+                }
+
+                //If we get results in the same section, we return them. Otherwise, just return candidates with correct name.
+                var inSameSection = candidates.FindAll(matchParentSection);
+                return inSameSection.Count > 0 ? inSameSection : candidates.ToList();
+            }
 
             return EmptyParagraphList;
         }
@@ -752,6 +792,46 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         #endregion
+
+        /// <summary>
+        /// Try to disambiguate between Section or Paragraph reference.
+        /// </summary>
+        /// <param name="target">A non-null SymbolReference.</param>
+        /// <param name="callerNodeSection">The Section node in which the statement making the reference appears.</param>
+        /// <returns>A tuple made of both list of sections and list of paragraphs. The lists may be null,
+        /// this indicates that the search has not been performed for the corresponding type.
+        /// They also may be empty, this means the search has been performed but yielded no results.</returns>
+        public (IList<Section>, IList<Paragraph>) GetSectionOrParagraph([NotNull] SymbolReference target, Section callerNodeSection)
+        {
+            IList<Section> sections = null;
+            IList<Paragraph> paragraphs = null;
+
+            //Check target type to avoid useless search if the type is already known
+            if (target.IsAmbiguous)
+            {
+                //Have to search for both sections and paragraphs
+                sections = GetSections();
+                paragraphs = GetParagraphs();
+            }
+            else
+            {
+                switch (target.Type)
+                {
+                    case SymbolType.SectionName:
+                        sections = GetSections();
+                        break;
+                    case SymbolType.ParagraphName:
+                        paragraphs = GetParagraphs();
+                        break;
+                }
+            }
+
+            return (sections, paragraphs);
+
+            IList<Section> GetSections() => GetSection(target.Name);
+
+            IList<Paragraph> GetParagraphs() => GetParagraph(target, callerNodeSection);
+        }
 
         #region TYPES
 

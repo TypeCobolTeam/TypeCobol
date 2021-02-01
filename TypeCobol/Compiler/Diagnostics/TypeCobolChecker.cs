@@ -1,16 +1,12 @@
 using System;
-using Antlr4.Runtime;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
-using System.Linq;
-using System.Runtime.InteropServices;
-using Castle.Core.Internal;
-using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Parser.Generated;
 
@@ -539,16 +535,26 @@ namespace TypeCobol.Compiler.Diagnostics
                         DiagnosticUtils.AddError(node, m);
                     }
 
-                    if (actualDataDefinition.IsSynchronized != expected.IsSynchronized)
+                    bool actualIsSynchronized = actualDataDefinition.Synchronized != null;
+                    bool expectedIsSynchronized = expected.Synchronized != null;
+                    if (actualIsSynchronized != expectedIsSynchronized)
                     {
                         var m =
                            string.Format(
                                "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
-                                call.FunctionName, expected.Name,
-                                expected.IsSynchronized ? "synchonized" : "not synchronized",
+                                call.FunctionName,
+                                expected.Name,
+                                SyncToString(expected.Synchronized),
                                 callArgName ?? string.Format("position {0}", c + 1),
-                                actualDataDefinition.IsSynchronized ? "synchonized" : "not synchronized");
+                                SyncToString(actualDataDefinition.Synchronized));
                         DiagnosticUtils.AddError(node, m);
+
+                        string SyncToString(SyncAlignment? syncAlignment)
+                        {
+                            return syncAlignment.HasValue
+                                ? "synchronized" + (syncAlignment.Value == SyncAlignment.None ? string.Empty : $" ({syncAlignment.Value})")
+                                : "not synchronized";
+                        }
                     }
 
                     if (actualDataDefinition.ObjectReferenceClass != expected.ObjectReferenceClass)
@@ -623,7 +629,6 @@ namespace TypeCobol.Compiler.Diagnostics
             CheckNoLinkageItemIsAParameter(functionDeclaration.Get<LinkageSection>("linkage"), header.Profile);
 
             CheckParameters(header.Profile, functionDeclaration);
-            CheckNoPerform(functionDeclaration.SymbolTable.EnclosingScope, functionDeclaration);
 
             var headerNameURI = new URI(header.Name);
             var functions = functionDeclaration.SymbolTable.GetFunction(headerNameURI, functionDeclaration.Profile);
@@ -782,31 +787,6 @@ namespace TypeCobol.Compiler.Diagnostics
         private static void AddErrorAlreadyParameter([NotNull] Node node, [NotNull] string parameterName)
         {
             DiagnosticUtils.AddError(node, parameterName + " is already a parameter.");
-        }
-
-        private static void CheckNoPerform(SymbolTable table, [NotNull] Node node)
-        {
-            if (node is PerformProcedure)
-            {
-                var perform = (PerformProcedureStatement) node.CodeElement;
-                CheckNotInTable(table, perform.Procedure, node);
-                CheckNotInTable(table, perform.ThroughProcedure, node);
-            }
-
-            foreach (var child in node.Children) CheckNoPerform(table, child);
-        }
-
-        private static void CheckNotInTable(SymbolTable table, SymbolReference symbol, Node node)
-        {
-            if (symbol == null) return;
-            string message = "TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM";
-            var found = table.GetSection(symbol.Name);
-            if (found.Count > 0) DiagnosticUtils.AddError(node, message, symbol);
-            else
-            {
-                var paragraphFounds = table.GetParagraph(symbol.Name);
-                if (paragraphFounds.Count > 0) DiagnosticUtils.AddError(node, message, symbol);
-            }
         }
     }
 

@@ -10,7 +10,10 @@ using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Test.Parser.Preprocessor
 {
-    internal class PreprocessorUtils {
+    internal class PreprocessorUtils
+    {
+        private static readonly DocumentFormat _Format = new DocumentFormat(Encoding.Unicode, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.CobolReferenceFormat);
+
         public static readonly string Root = "Parser" + Path.DirectorySeparatorChar +"Preprocessor";
 
         public static CompilationProject DirectivesProject;
@@ -21,15 +24,15 @@ namespace TypeCobol.Test.Parser.Preprocessor
         {
             DirectivesProject = new CompilationProject("directives",
                 PlatformUtils.GetPathForProjectFile(Root + Path.DirectorySeparatorChar+"DirectiveTestFiles"), new string[] { ".cbl", ".cpy" },
-                Encoding.Unicode, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.CobolReferenceFormat, CompilerOptions);
+                _Format, CompilerOptions, null);
 
             CopyProject = new CompilationProject("copy",
                 PlatformUtils.GetPathForProjectFile(Root + Path.DirectorySeparatorChar + "CopyTestFiles"), new string[] { ".cbl", ".cpy" },
-                Encoding.Unicode, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.CobolReferenceFormat, CompilerOptions);
+                _Format, CompilerOptions, null);
 
             ReplaceProject = new CompilationProject("replace",
                 PlatformUtils.GetPathForProjectFile(Root + Path.DirectorySeparatorChar + "ReplaceTestFiles"), new string[] { ".cbl", ".cpy" },
-                Encoding.Unicode, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.CobolReferenceFormat, CompilerOptions);
+                _Format, CompilerOptions, null);
         }
 
         public static TypeCobolOptions CompilerOptions = new TypeCobolOptions();

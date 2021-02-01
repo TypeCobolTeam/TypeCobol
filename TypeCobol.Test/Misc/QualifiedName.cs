@@ -1,7 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using TypeCobol.Compiler.CodeElements.Expressions;
-using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Test.Misc {
 
@@ -127,12 +125,5 @@ namespace TypeCobol.Test.Misc {
 		private static QualifiedName qname(string uri, bool isFirstFilename = false) {
 			return new URI(uri);
 		}
-		private static Token token(string word) {
-			var token = new Mock<Token>();
-			token.Setup(foo => foo.Text).Returns(word);
-//			token.Setup(foo => foo.TokenType).Returns(TokenType.UserDefinedWord);
-			token.Setup(foo => foo.TokenFamily).Returns(TokenFamily.Symbol);
-			return token.Object;
-		}
-	}
+    }
 }

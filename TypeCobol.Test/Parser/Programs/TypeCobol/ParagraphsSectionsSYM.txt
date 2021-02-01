@@ -1,0 +1,84 @@
+--- Diagnostics ---
+Line 14[1,11] <37, Warning, General> - Warning: Section 'S1' already declared
+Line 25[1,3] <30, Error, Semantics> - Semantic error: Paragraph P5 is also declared as a section
+Line 28[1,11] <30, Error, Semantics> - Semantic error: Section P5 is also declared as a paragraph
+Line 32[1,11] <37, Warning, General> - Warning: Section 'S1' already declared
+Line 37[13,14] <30, Error, Semantics> - Semantic error: Symbol P0 is not referenced OffendingSymbol=[13,14:P0]<UserDefinedWord>
+Line 40[13,14] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph P3 OffendingSymbol=[13,14:P3]<UserDefinedWord>
+Line 41[13,14] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph P4 OffendingSymbol=[13,14:P4]<UserDefinedWord>
+Line 42[13,14] <30, Error, Semantics> - Semantic error: Ambiguous reference to procedure P5 OffendingSymbol=[13,14:P5]<UserDefinedWord>
+Line 45[24,25] <30, Error, Semantics> - Semantic error: Symbol P0 is not referenced OffendingSymbol=[24,25:P0]<UserDefinedWord>
+Line 48[24,25] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph P3 OffendingSymbol=[24,25:P3]<UserDefinedWord>
+Line 49[24,25] <30, Error, Semantics> - Semantic error: Ambiguous reference to paragraph P4 OffendingSymbol=[24,25:P4]<UserDefinedWord>
+Line 50[24,25] <30, Error, Semantics> - Semantic error: Ambiguous reference to procedure P5 OffendingSymbol=[24,25:P5]<UserDefinedWord>
+Line 57[13,14] <30, Error, Semantics> - Semantic error: Symbol P0 is not referenced OffendingSymbol=[13,14:P0]<UserDefinedWord>
+Line 58[13,14] <30, Error, Semantics> - Semantic error: Symbol P1 is not referenced OffendingSymbol=[13,14:P1]<UserDefinedWord>
+Line 59[13,14] <30, Error, Semantics> - Semantic error: Symbol P2 is not referenced OffendingSymbol=[13,14:P2]<UserDefinedWord>
+Line 60[13,14] <30, Error, Semantics> - Semantic error: Symbol P3 is not referenced OffendingSymbol=[13,14:P3]<UserDefinedWord>
+Line 61[13,14] <30, Error, Semantics> - Semantic error: Symbol P4 is not referenced OffendingSymbol=[13,14:P4]<UserDefinedWord>
+Line 62[13,14] <30, Error, Semantics> - Semantic error: Symbol P5 is not referenced OffendingSymbol=[13,14:P5]<UserDefinedWord>
+Line 63[13,14] <30, Error, Semantics> - Semantic error: Symbol P6 is not referenced OffendingSymbol=[13,14:P6]<UserDefinedWord>
+Line 64[13,14] <30, Error, Semantics> - Semantic error: Symbol P7 is not referenced OffendingSymbol=[13,14:P7]<UserDefinedWord>
+Line 65[13,14] <30, Error, Semantics> - Semantic error: Symbol P1 is not referenced OffendingSymbol=[13,14:P1]<UserDefinedWord>
+Line 65[24,25] <30, Error, Semantics> - Semantic error: Symbol P0 is not referenced OffendingSymbol=[24,25:P0]<UserDefinedWord>
+Line 66[13,14] <30, Error, Semantics> - Semantic error: Symbol P1 is not referenced OffendingSymbol=[13,14:P1]<UserDefinedWord>
+Line 66[24,25] <30, Error, Semantics> - Semantic error: Symbol P1 is not referenced OffendingSymbol=[24,25:P1]<UserDefinedWord>
+Line 67[13,14] <30, Error, Semantics> - Semantic error: Symbol P1 is not referenced OffendingSymbol=[13,14:P1]<UserDefinedWord>
+Line 67[24,25] <30, Error, Semantics> - Semantic error: Symbol P2 is not referenced OffendingSymbol=[24,25:P2]<UserDefinedWord>
+Line 68[13,14] <30, Error, Semantics> - Semantic error: Symbol P1 is not referenced OffendingSymbol=[13,14:P1]<UserDefinedWord>
+Line 68[24,25] <30, Error, Semantics> - Semantic error: Symbol P3 is not referenced OffendingSymbol=[24,25:P3]<UserDefinedWord>
+Line 69[13,14] <30, Error, Semantics> - Semantic error: Symbol P1 is not referenced OffendingSymbol=[13,14:P1]<UserDefinedWord>
+Line 69[24,25] <30, Error, Semantics> - Semantic error: Symbol P4 is not referenced OffendingSymbol=[24,25:P4]<UserDefinedWord>
+Line 70[13,14] <30, Error, Semantics> - Semantic error: Symbol P1 is not referenced OffendingSymbol=[13,14:P1]<UserDefinedWord>
+Line 70[24,25] <30, Error, Semantics> - Semantic error: Symbol P5 is not referenced OffendingSymbol=[24,25:P5]<UserDefinedWord>
+Line 71[13,14] <30, Error, Semantics> - Semantic error: Symbol P1 is not referenced OffendingSymbol=[13,14:P1]<UserDefinedWord>
+Line 71[24,25] <30, Error, Semantics> - Semantic error: Symbol P6 is not referenced OffendingSymbol=[24,25:P6]<UserDefinedWord>
+Line 72[13,14] <30, Error, Semantics> - Semantic error: Symbol P1 is not referenced OffendingSymbol=[13,14:P1]<UserDefinedWord>
+Line 72[24,25] <30, Error, Semantics> - Semantic error: Symbol P7 is not referenced OffendingSymbol=[24,25:P7]<UserDefinedWord>
+
+--- Program ---
+ParagraphsSections (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ScopeType, Tag=Scope)
+Sections:
+  S1 (.NET Type=SectionSymbol, Kind=Section)
+  Owner: ParagraphsSections
+  Paragraphs:
+    P2 (.NET Type=ParagraphSymbol, Kind=Paragraph)
+    Owner: ParagraphsSections::S1
+    P3 (.NET Type=ParagraphSymbol, Kind=Paragraph)
+    Owner: ParagraphsSections::S1
+    P4 (.NET Type=ParagraphSymbol, Kind=Paragraph)
+    Owner: ParagraphsSections::S1
+  S2 (.NET Type=SectionSymbol, Kind=Section)
+  Owner: ParagraphsSections
+  Paragraphs:
+    P4 (.NET Type=ParagraphSymbol, Kind=Paragraph)
+    Owner: ParagraphsSections::S2
+    P5 (.NET Type=ParagraphSymbol, Kind=Paragraph)
+    Owner: ParagraphsSections::S2
+  P5 (.NET Type=SectionSymbol, Kind=Section)
+  Owner: ParagraphsSections
+  Paragraphs:
+    P6 (.NET Type=ParagraphSymbol, Kind=Paragraph)
+    Owner: ParagraphsSections::P5
+  S1 (.NET Type=SectionSymbol, Kind=Section)
+  Owner: ParagraphsSections
+  Paragraphs:
+    P7 (.NET Type=ParagraphSymbol, Kind=Paragraph)
+    Owner: ParagraphsSections::S1
+    TEST-PERFORM (.NET Type=ParagraphSymbol, Kind=Paragraph)
+    Owner: ParagraphsSections::S1
+Paragraphs:
+  P1 (.NET Type=ParagraphSymbol, Kind=Paragraph)
+  Owner: ParagraphsSections
+  P3 (.NET Type=ParagraphSymbol, Kind=Paragraph)
+  Owner: ParagraphsSections
+Functions:
+  fun (.NET Type=FunctionSymbol, Kind=Function)
+  Flags: [Private]
+  Owner: ParagraphsSections
+  Type:
+    (.NET Type=ScopeType, Tag=Scope)
+IsNested: False
+

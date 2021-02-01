@@ -74,8 +74,14 @@ namespace TypeCobol.Compiler.Scanner
             HasClosingDelimiter = false;
 
             UsesVirtualSpaceAtEndOfLine = usesVirtualSpaceAtEndOfLine;
-        }  
-      
+
+            //Scan Dependent Tokens Inside DataDivision must have their scan state. see #428
+            if (tokensLine.ScanState != null && (tokenType == TokenType.PartialCobolWord ||
+                    tokensLine.ScanState.InsideDataDivision && MultilineScanState.IsScanStateDependent(this)))
+                scanStateSnapshot = tokensLine.ScanState.Clone();
+
+        }
+
         /// <summary>
         /// Constructor for tokens with delimiters
         /// </summary>
@@ -262,6 +268,8 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
+        internal string NormalizedText => Regex.Replace(Text, @"\s*", string.Empty);
+
         // --- Literals with or without delimiters ---
 
         /// <summary>
@@ -295,8 +303,21 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public LiteralTokenValue LiteralValue { get; set; }
 
+        private readonly MultilineScanState scanStateSnapshot;
+        /// <summary>
+        /// ScanState associated to this token if any, null otherwise.
+        /// This property is used to allow PartialCobolWords proper reconstruction.
+        /// </summary>
+        public MultilineScanState ScanStateSnapshot
+        {
+            get
+            {
+                return scanStateSnapshot ?? tokensLine.ScanState;
+            }
+        }
+
         // --- Ambiguous tokens resolved after having been created ---
-        
+
         internal void CorrectType(TokenType tokenType)
         {
             // Copy token type and family from the continuation token
@@ -402,16 +423,17 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public bool CompareForReplace(Token comparisonToken)
         {
-             // 1. First compare the token type                 
-            if(this.TokenType != comparisonToken.TokenType)
+            // 1. First compare the token type                 
+            if (comparisonToken == null || this.TokenType != comparisonToken.TokenType &&
+                !(this.TokenFamily == comparisonToken.TokenFamily && IsFamilyComparable()))
             {
                 return false;
             }
             // 2. For partial Cobol words, chech if the comparison token text (":TAG:") 
             //    is contained in the current token text (":TAG:-AMOUNT")
-            else if(TokenType == TokenType.PartialCobolWord)
+            else if (TokenType == TokenType.PartialCobolWord)
             {
-                return Text.IndexOf(comparisonToken.Text, StringComparison.OrdinalIgnoreCase) >= 0;
+                return NormalizedText.IndexOf(comparisonToken.NormalizedText, StringComparison.OrdinalIgnoreCase) >= 0;
             }
             // 3. Check for Picture replacement
             //else if (TokenType == TokenType.PictureCharacterString)
@@ -425,14 +447,23 @@ namespace TypeCobol.Compiler.Scanner
             //    - SyntaxLiteral
             //    - Symbol
             //    => compare Token text
-            else if (TokenFamily == TokenFamily.AlphanumericLiteral || TokenFamily == TokenFamily.NumericLiteral ||
-                     TokenFamily == TokenFamily.Symbol || TokenFamily == TokenFamily.SyntaxLiteral)
+            else if (IsFamilyComparable())
             {
                 return Text.Equals(comparisonToken.Text, StringComparison.OrdinalIgnoreCase);
             }
             // 5. In all other cases, token type comparison was enough
             {
                 return true;
+            }
+
+            /// <summary>
+            /// Determine if this token belong to a family that is textually comparable.
+            /// </summary>
+            /// <returns>true if yes, false otherwise</returns>
+            bool IsFamilyComparable()
+            {
+                return TokenFamily == TokenFamily.AlphanumericLiteral || TokenFamily == TokenFamily.NumericLiteral ||
+                                     TokenFamily == TokenFamily.Symbol || TokenFamily == TokenFamily.SyntaxLiteral;
             }
         }
     }

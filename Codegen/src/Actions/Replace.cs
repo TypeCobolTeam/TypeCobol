@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using TypeCobol.Codegen.Nodes;
-using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 
@@ -25,34 +24,31 @@ namespace TypeCobol.Codegen.Actions
         /// True if this replace action is for a "replace SET <pointer> UP BY <integer>" pattern, false otherwise.
         /// </summary>
         private bool IsReplaceSetUpByPointer;
-        private bool UseRazor;
+
+        private bool _optimized;
 
         /// <summary>
         /// Determine if the given node, the given template and the set of template variables correspond to a "replace SET <boolean> TO FALSE"
         /// pattern
         /// </summary>
         /// <param name="node">The Node to check</param>
-        /// <param name="pattern">The pattern instance</param>
-        /// <param name="variables">The set of variable templates</param>        
+        /// <param name="pattern">The name of the pattern to check</param>
         /// <returns>true if all parameters corresponds to a "replace SET <boolean> TO FALSE" pattern, false otherwise</returns>
-        private static bool IsSetBoolVarTemplate(Node node, Pattern pattern, Dictionary<string, object> variables)
+        private static bool IsSetBoolVarTemplate(Node node, string pattern)
         {
-            return (node is TypeCobol.Compiler.Nodes.Set) && pattern.Name != null && pattern.Name.Equals("BOOL.SET") && variables != null &&
-                   variables.ContainsKey("receiver");
+            return (node is TypeCobol.Compiler.Nodes.Set) && "BOOL.SET".Equals(pattern);
         }
 
         /// <summary>
-        /// Determine if the given node, the given template and the set of template variables correspond to a "replace SET <boolean> TO FALSE"
+        /// Determine if the given node, the given template and the set of template variables correspond to POINTER INCREMENT"
         /// pattern
         /// </summary>
         /// <param name="node">The Node to check</param>
-        /// <param name="pattern">The pattern instance</param>
-        /// <param name="variables">The set of variable templates</param>
-        /// <returns>true if all parameters corresponds to a "replace SET <boolean> TO FALSE" pattern, false otherwise</returns>
-        private static bool IsSetPointerInrementVarTemplate(Node node, Pattern pattern, Dictionary<string, object> variables)
+        /// <param name="pattern">The name of the pattern to check</param>
+        /// <returns>true if all parameters corresponds to the POINTER INCREMENT, false otherwise</returns>
+        private static bool IsSetPointerInrementVarTemplate(Node node, string pattern)
         {
-            return (node is TypeCobol.Compiler.Nodes.Set) && variables != null &&
-                   variables.ContainsKey("incrementDirection");
+            return (node is TypeCobol.Compiler.Nodes.Set) && "POINTER.INCREMENT".Equals(pattern);
         }
 
         /// <summary>
@@ -76,18 +72,16 @@ namespace TypeCobol.Codegen.Actions
         /// Check for a customization of the replacement
         /// </summary>
         /// <param name="node">The old node</param>
-        /// <param name="pattern">The pattern instance</param>
-        /// <param name="variables">The substitution Variable for the new GenerateNode based on the template</param>
-        /// <param name="group"></param>
+        /// <param name="pattern">The pattern name</param>
         /// <returns>The new template to apply for a customization, or the same template otherwise</returns>
-        private string CheckCustomReplace(Node node, Pattern pattern, Dictionary<string, object> variables, string group)
+        private void CheckCustomReplace(Node node, string pattern)
         {
-            IsReplaceSetBool = IsSetBoolVarTemplate(node, pattern, variables) && IsQualifiedNodeReceiver(node);
-            IsReplaceSetUpByPointer = IsSetPointerInrementVarTemplate(node, pattern, variables) && IsQualifiedNodeReceiver(node);
+            IsReplaceSetBool = IsSetBoolVarTemplate(node, pattern) && IsQualifiedNodeReceiver(node);
+            IsReplaceSetUpByPointer = IsSetPointerInrementVarTemplate(node, pattern) && IsQualifiedNodeReceiver(node);
 
             if (IsReplaceSetBool)
             {
-                //Method : Optimization don't use Razor just create adequate TypeCobol.Codegen.Actions.Qualifier.GenerateToken.
+                //Optimization : for SET instructions on booleans, just create adequate TypeCobol.Codegen.Actions.Qualifier.GenerateToken.
                 //In addition this method can allow the Code Generator to detect a column 72 overflow.
                 int count = node.Children.Count;
                 Node previousNode = null;
@@ -103,7 +97,7 @@ namespace TypeCobol.Codegen.Actions
                     }
                     previousNode = token;
                 }
-
+                
                 //Create a Token to replase the "false" to TRUE ==> lookup for the last one;
                 var consumedTokens = node.CodeElement.ConsumedTokens;
                 count = consumedTokens.Count;
@@ -119,35 +113,33 @@ namespace TypeCobol.Codegen.Actions
                         break;
                     }
                 }
-                UseRazor = false;
+                _optimized = true;
             }
             else if (IsReplaceSetUpByPointer)
             {
                 // In case of pointer incrementation, the name qualification is already done
                 node.RemoveAllChildren();
             }
-            return pattern.Template;
         }
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="node">The old node</param>
-        /// <param name="pattern">The pattern instance</param>
-        /// <param name="variables">The substitution Variable for the new GenerateNode based on the template</param>
+        /// <param name="pattern">The pattern's name</param>
+        /// <param name="code">The code to be applied</param>
         /// <param name="group"></param>        
-        public Replace(Node node, Pattern pattern, Dictionary<string, object> variables, string group)
+        public Replace(Node node, string pattern, string code, string group)
         {
             this.Old = node;
-            UseRazor = true;
-            string template = CheckCustomReplace(node, pattern, variables, group);
+            _optimized = false;
+            CheckCustomReplace(node, pattern);
             //Substitute any group code
-            if (UseRazor)
+            if (!_optimized)
             {
-                if (group != null) this.Group = new TypeCobol.Codegen.Skeletons.Templates.RazorEngine().Replace(group, variables);
-                var solver = TypeCobol.Codegen.Skeletons.Templates.RazorEngine.Create(template, variables);
+                if (group != null) this.Group = group;
                 //JCM Give to the replaced form the same Code element So that positions will be calculated correctly
-                this.New = new GeneratedNode((TypeCobol.Codegen.Skeletons.Templates.RazorEngine)solver, Old.CodeElement);
-            }
+                this.New = new GeneratedNode(code, false, Old.CodeElement);
+            }            
         }
 
         /// <summary>
@@ -158,7 +150,7 @@ namespace TypeCobol.Codegen.Actions
             //No need to replace an erased node.
             if (!Old.IsFlagSet(Node.Flag.GeneratorErasedNode) || Old.IsFlagSet(Node.Flag.PersistentNode))
             {
-                if (UseRazor)
+                if (!_optimized)
                 {
                     // transfer Old's children to New
                     for (int i = Old.Children.Count - 1; i >= 0; --i)
@@ -174,6 +166,7 @@ namespace TypeCobol.Codegen.Actions
                     parent.Add(New, index + 1);
                 }
             }
+
             return null;
         }
     }

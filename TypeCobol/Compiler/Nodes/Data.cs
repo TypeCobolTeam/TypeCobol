@@ -407,59 +407,13 @@ namespace TypeCobol.Compiler.Nodes {
         /// <returns></returns>
         private long GetPhysicalLength()
         {
-            TypeCobolType.UsageFormat usage = TypeCobolType.UsageFormat.None;
-            if (Usage != null)
-            {
-                switch (Usage.Value)
-                {
-                    case DataUsage.Binary:
-                    case DataUsage.NativeBinary:
-                        usage = TypeCobolType.UsageFormat.Binary;
-                        break;
-                    case DataUsage.FloatingPoint:
-                        usage = TypeCobolType.UsageFormat.Comp1;
-                        break;
-                    case DataUsage.Display:
-                        usage = TypeCobolType.UsageFormat.Display;
-                        break;
-                    case DataUsage.FunctionPointer:
-                        usage = TypeCobolType.UsageFormat.FunctionPointer;
-                        break;
-                    case DataUsage.Index:
-                        usage = TypeCobolType.UsageFormat.Index;
-                        break;
-                    case DataUsage.National:
-                        usage = TypeCobolType.UsageFormat.National;
-                        break;
-                    case DataUsage.None:
-                        usage = TypeCobolType.UsageFormat.None;
-                        break;
-                    case DataUsage.ObjectReference:
-                        usage = TypeCobolType.UsageFormat.ObjectReference;
-                        break;
-                    case DataUsage.PackedDecimal:
-                        usage = TypeCobolType.UsageFormat.PackedDecimal;
-                        break;
-                    case DataUsage.Pointer:
-                        usage = TypeCobolType.UsageFormat.Pointer;
-                        break;
-                    case DataUsage.ProcedurePointer:
-                        usage = TypeCobolType.UsageFormat.ProcedurePointer;
-                        break;
-                    case DataUsage.LongFloatingPoint:
-                        usage = TypeCobolType.UsageFormat.Comp2;
-                        break;
-                    case DataUsage.DBCS:
-                        usage = TypeCobolType.UsageFormat.Display1;
-                        break;
-                }
-            }
+            var usage = Usage.HasValue ? Types.Type.DataUsage2UsageFormat(Usage.Value) : Types.Type.UsageFormat.None;
             
             if (Picture == null)
             {
                 if (Usage != null && Usage.Value != DataUsage.None)
                 {
-                    return new TypeCobolType(TypeCobolType.Tags.Usage, usage).Length;
+                    return new Types.Type(Types.Type.Tags.Usage, usage).Length;
                 }
                 return 1;
             }
@@ -496,7 +450,7 @@ namespace TypeCobol.Compiler.Nodes {
                 _slackBytes = 0;
                 DataDefinition redefinedDataDefinition = null;
 
-                if (IsSynchronized && Usage != null && Usage != DataUsage.None && Parent is DataDefinition parent)
+                if (Synchronized != null && Usage != null && Usage != DataUsage.None && Parent is DataDefinition parent)
                 {
                     //Analyse all DataDefinition that preceed the current node
                     while (parent != null && parent.Type != CodeElementType.SectionHeader)
@@ -747,17 +701,17 @@ namespace TypeCobol.Compiler.Nodes {
         public bool SignIsSeparate { get { if (_ComonDataDesc != null && _ComonDataDesc.SignIsSeparate != null) return _ComonDataDesc.SignIsSeparate.Value; else return false; } }
         public SignPosition? SignPosition { get { if (_ComonDataDesc != null && _ComonDataDesc.SignPosition != null) return _ComonDataDesc.SignPosition.Value; else return null; } }
 
-        public bool IsSynchronized
+        public SyncAlignment? Synchronized
         {
             get
             {
-                if (_ComonDataDesc?.IsSynchronized != null)
-                    return _ComonDataDesc.IsSynchronized.Value;
+                if (_ComonDataDesc?.Synchronized != null)
+                    return _ComonDataDesc.Synchronized.Value;
 
                 else if (Parent is DataDefinition parent)
-                    return parent.IsSynchronized;
+                    return parent.Synchronized;
 
-                else return false;
+                else return null;
             }
         }
         public SymbolReference ObjectReferenceClass { get { if (_ComonDataDesc != null) return _ComonDataDesc.ObjectReferenceClass; else return null; } }

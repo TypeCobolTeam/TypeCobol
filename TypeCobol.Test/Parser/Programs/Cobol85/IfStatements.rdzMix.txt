@@ -1,0 +1,61 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. IfStatements.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 A PIC 9.
+       01 B PIC 9.
+       PROCEDURE DIVISION.
+Line 8[12,19] <37, Warning, General> - Warning: "end-if" is missing
+Line 8[12,19] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after IF condition.
+           IF A > B .
+Line 9[12,19] <37, Warning, General> - Warning: "end-if" is missing
+Line 9[12,19] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after IF condition.
+Line 9[21,24] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after ELSE keyword.
+           IF A > B ELSE .
+Line 10[12,19] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after IF condition.
+Line 10[21,24] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after ELSE keyword.
+           IF A > B ELSE END-IF.
+Line 11[12,19] <37, Warning, General> - Warning: "end-if" is missing
+Line 11[12,19] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after IF condition.
+           IF A > B ELSE DISPLAY B .
+Line 12[12,19] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after IF condition.
+           IF A > B ELSE DISPLAY B END-IF.
+Line 13[12,19] <37, Warning, General> - Warning: "end-if" is missing
+Line 13[12,19] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after IF condition.
+           IF A > B ELSE NEXT SENTENCE .
+Line 14[12,19] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after IF condition.
+           IF A > B ELSE NEXT SENTENCE END-IF.
+Line 15[12,19] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after IF condition.
+           IF A > B END-IF.
+
+Line 17[12,19] <37, Warning, General> - Warning: "end-if" is missing
+           IF A > B DISPLAY A .
+Line 18[12,19] <37, Warning, General> - Warning: "end-if" is missing
+Line 18[31,34] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after ELSE keyword.
+           IF A > B DISPLAY A ELSE .
+Line 19[31,34] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after ELSE keyword.
+           IF A > B DISPLAY A ELSE END-IF.
+Line 20[12,19] <37, Warning, General> - Warning: "end-if" is missing
+           IF A > B DISPLAY A ELSE DISPLAY B .
+           IF A > B DISPLAY A ELSE DISPLAY B END-IF.
+Line 22[12,19] <37, Warning, General> - Warning: "end-if" is missing
+           IF A > B DISPLAY A ELSE NEXT SENTENCE .
+           IF A > B DISPLAY A ELSE NEXT SENTENCE END-IF.
+           IF A > B DISPLAY A END-IF.
+
+Line 26[12,19] <37, Warning, General> - Warning: "end-if" is missing
+           IF A > B NEXT SENTENCE .
+Line 27[12,19] <37, Warning, General> - Warning: "end-if" is missing
+Line 27[35,38] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after ELSE keyword.
+           IF A > B NEXT SENTENCE ELSE .
+Line 28[35,38] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after ELSE keyword.
+           IF A > B NEXT SENTENCE ELSE END-IF.
+Line 29[12,19] <37, Warning, General> - Warning: "end-if" is missing
+           IF A > B NEXT SENTENCE ELSE DISPLAY B .
+           IF A > B NEXT SENTENCE ELSE DISPLAY B END-IF.
+Line 31[12,19] <37, Warning, General> - Warning: "end-if" is missing
+           IF A > B NEXT SENTENCE ELSE NEXT SENTENCE .
+           IF A > B NEXT SENTENCE ELSE NEXT SENTENCE END-IF.
+           IF A > B NEXT SENTENCE END-IF.
+           .
+       END PROGRAM IfStatements.

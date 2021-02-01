@@ -1,0 +1,242 @@
+--- Diagnostics ---
+Line 22[46,63] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol MyAmbiguousCounter 
+Symbols found: StringStatement::MyAmbiguousGroup::MyAmbiguousCounter | StringStatement::MyAmbiguousGroup::MyAmbiguousCounter OffendingSymbol=[46,63:MyAmbiguousCounter]<UserDefinedWord>
+Line 27[54,56] <27, Error, Syntax> - Syntax error : mismatched input '999' expecting {symbol, special register, keyword} RuleStack=codeElement>dataDescriptionEntry>occursClause>numericVariable1>identifier>storageAreaReferenceOrConditionReference,  OffendingSymbol=[54,56:999]<IntegerLiteral>{999}
+Line 49[38,47] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol MyGroup5.MyCounter5 
+Symbols found: StringStatement::MyGroup5::MySubGroup5::MySubSubGroup51::MyCounter5 | StringStatement::MyGroup5::MySubGroup5::MySubSubGroup52::MyCounter5 OffendingSymbol=[38,47:MyCounter5]<UserDefinedWord>
+Line 52[25,34] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol MyGroup5.MySubGroup5.MyCounter5 
+Symbols found: StringStatement::MyGroup5::MySubGroup5::MySubSubGroup51::MyCounter5 | StringStatement::MyGroup5::MySubGroup5::MySubSubGroup52::MyCounter5 OffendingSymbol=[25,34:MyCounter5]<UserDefinedWord>
+
+--- Program ---
+StringStatement (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ScopeType, Tag=Scope)
+WorkingStorageData:
+  MyGroup (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: StringStatement
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      MyCounter (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: StringStatement::MyGroup
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Usage: Comp5
+        Picture: 9(3)
+      Level: 5
+      IsFiller: False
+      MyTab (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: StringStatement::MyGroup
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 99
+        ElementType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  MyAmbiguousGroup (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: StringStatement
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      MyAmbiguousCounter (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: StringStatement::MyAmbiguousGroup
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Usage: Comp5
+        Picture: 9(3)
+      Level: 5
+      IsFiller: False
+      MyAmbiguousCounter (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: StringStatement::MyAmbiguousGroup
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Usage: Comp5
+        Picture: 9(3)
+      Level: 5
+      IsFiller: False
+      MyAmbiguousTab (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: StringStatement::MyAmbiguousGroup
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 99
+        ElementType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  MyGroup3 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: StringStatement
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      MyCounter3 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: StringStatement::MyGroup3
+      Type:
+        (.NET Type=PictureType, Tag=Picture)
+        Usage: Comp5
+        Picture: 9(3)
+      Level: 5
+      IsFiller: False
+      MyTab3 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: StringStatement::MyGroup3
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 99
+        ElementType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  MyGroup4 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: StringStatement
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      MyTab3 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: StringStatement::MyGroup4
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 99
+        ElementType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+  MyGroup5 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: StringStatement
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      MySubGroup5 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: StringStatement::MyGroup5
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        Fields:
+          MySubSubGroup51 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: StringStatement::MyGroup5::MySubGroup5
+          Type:
+            (.NET Type=GroupType, Tag=Group)
+            Fields:
+              MyCounter5 (.NET Type=VariableSymbol, Kind=Variable)
+              Flags: [WORKING_STORAGE]
+              Owner: StringStatement::MyGroup5::MySubGroup5::MySubSubGroup51
+              Type:
+                (.NET Type=PictureType, Tag=Picture)
+                Usage: Comp5
+                Picture: 9(3)
+              Level: 15
+              IsFiller: False
+          Level: 10
+          IsFiller: False
+          MySubSubGroup52 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: StringStatement::MyGroup5::MySubGroup5
+          Type:
+            (.NET Type=GroupType, Tag=Group)
+            Fields:
+              MyCounter5 (.NET Type=VariableSymbol, Kind=Variable)
+              Flags: [WORKING_STORAGE]
+              Owner: StringStatement::MyGroup5::MySubGroup5::MySubSubGroup52
+              Type:
+                (.NET Type=PictureType, Tag=Picture)
+                Usage: Comp5
+                Picture: 9(3)
+              Level: 15
+              IsFiller: False
+          Level: 10
+          IsFiller: False
+      Level: 5
+      IsFiller: False
+      MyTab5 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: StringStatement::MyGroup5
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 99
+        ElementType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+      Level: 5
+      IsFiller: False
+      MyTab51 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: StringStatement::MyGroup5
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 99
+        ElementType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+      Level: 5
+      IsFiller: False
+      MyTab5 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: StringStatement::MyGroup5
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 99
+        ElementType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+      Level: 5
+      IsFiller: False
+      MyTab5 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: StringStatement::MyGroup5
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 99
+        ElementType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+      Level: 5
+      IsFiller: False
+      MyTab5 (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: StringStatement::MyGroup5
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 99
+        ElementType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(1)
+      Level: 5
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+IsNested: False
+

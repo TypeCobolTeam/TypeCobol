@@ -1,0 +1,39 @@
+﻿--- Program ---
+DVZF0OSM (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ScopeType, Tag=Scope)
+WorkingStorageData:
+  MyGroup (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      XXXTEN (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: DVZF0OSM::MyGroup
+      Type:
+        (.NET Type=GroupType, Tag=Group)
+        Fields:
+          XXXTEN-G1 (.NET Type=VariableSymbol, Kind=Variable)
+          Flags: [WORKING_STORAGE]
+          Owner: DVZF0OSM::MyGroup::XXXTEN
+          Type:
+            (.NET Type=GroupType, Tag=Group)
+            Fields:
+              XXXTEN-Var1 (.NET Type=VariableSymbol, Kind=Variable)
+              Flags: [WORKING_STORAGE]
+              Owner: DVZF0OSM::MyGroup::XXXTEN::XXXTEN-G1
+              Type:
+                (.NET Type=PictureType, Tag=Picture)
+                Picture: X(1)
+              Level: 20
+              IsFiller: False
+          Level: 5
+          IsFiller: False
+      Level: 2
+      IsFiller: False
+  Level: 1
+  IsFiller: False
+IsNested: False
+
