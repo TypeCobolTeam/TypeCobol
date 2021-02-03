@@ -41,10 +41,6 @@ namespace TypeCobol.Tools.Options_Config
 #endif
         public TypeCobolCheckOption CheckEndAlignment { get; set; }
 
-        public bool IsErrorXML
-        {
-            get { return ErrorFile != null && ErrorFile.ToLower().EndsWith(".xml"); }
-        }
         public List<string> Copies = new List<string>();
         public List<string> Dependencies = new List<string>();
         public bool Telemetry;
