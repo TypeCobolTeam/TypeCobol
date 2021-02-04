@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
@@ -81,6 +79,50 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                 }
             }
+
+            //Check Picture character string format
+            CheckPicture(data);
+        }
+
+        public static void CheckPicture([NotNull] CommonDataDescriptionAndDataRedefines codeElement)
+        {
+            if (codeElement.Picture == null) return;
+
+            var pictureToken = codeElement.Picture.Token;
+            // if there is not the same number of '(' than of ')'
+            if ((codeElement.Picture.Value.Split('(').Length - 1) != (codeElement.Picture.Value.Split(')').Length - 1))
+            {
+                DiagnosticUtils.AddError(codeElement, "missing '(' or ')'", pictureToken);
+            }
+            // if the first '(' is after first ')' OR last '(' is after last ')'
+            else if (codeElement.Picture.Value.IndexOf("(", StringComparison.Ordinal) >
+                     codeElement.Picture.Value.IndexOf(")", StringComparison.Ordinal) ||
+                     codeElement.Picture.Value.LastIndexOf("(", StringComparison.Ordinal) >
+                     codeElement.Picture.Value.LastIndexOf(")", StringComparison.Ordinal))
+            {
+                DiagnosticUtils.AddError(codeElement, "missing '(' or ')'", pictureToken);
+            }
+            else
+            {
+                foreach (Match match in Regex.Matches(codeElement.Picture.Value, @"\(([^)]*)\)"))
+                {
+                    try //Try catch is here because of the risk to parse a non numerical value
+                    {
+                        int.Parse(match.Value, System.Globalization.NumberStyles.AllowParentheses);
+                    }
+                    catch (Exception)
+                    {
+                        var m = "Given value is not correct : " + match.Value + " expected numerical value only";
+                        DiagnosticUtils.AddError(codeElement, m, pictureToken);
+                    }
+                }
+            }
+        }
+
+        public static void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context)
+        {
+            TypeDefinitionEntryChecker.CheckRedefines(redefines, context);
+            CheckPicture(redefines);
         }
 
         /// <summary>
