@@ -22,12 +22,13 @@ namespace TypeCobol.Compiler.Diagnostics
         Syntax = 4,
         Semantics = 5,
         Generation = 6,
-        General = 7
+        General = 7,
+        CodeAnalysis = 8
     }
 
     public class DiagnosticMessage
     {
-        private DiagnosticMessage(Category category, int code, Severity severity, string messageTemplate, ReferenceDocument document, int pageNumber, string referenceText)
+        internal DiagnosticMessage(Category category, int code, Severity severity, string messageTemplate, ReferenceDocument document, int pageNumber, string referenceText)
         {
             Category = category;
             Code = code;
@@ -51,12 +52,16 @@ namespace TypeCobol.Compiler.Diagnostics
 
         // Load messages table DiagnosticMessages.csv in memory at startup
 
-        public static IList<DiagnosticMessage> GetFromCode { get; private set; }
+        private static readonly Dictionary<MessageCode, DiagnosticMessage> _predefinedMessages;
+        public static DiagnosticMessage GetFromCode(MessageCode code)
+        {
+            System.Diagnostics.Debug.Assert(_predefinedMessages.ContainsKey(code));
+            return _predefinedMessages[code];
+        }
 
         static DiagnosticMessage()
         {
-            GetFromCode = new List<DiagnosticMessage>();
-            GetFromCode.Add(null); // to start message codes at index 1
+            _predefinedMessages = new Dictionary<MessageCode, DiagnosticMessage>();
 
             using (StreamReader tableReader = new StreamReader(GetStreamForProjectFile("Compiler/Diagnostics/Resources/DiagnosticMessages.csv")))
             {
@@ -84,7 +89,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     // ReferenceText
                     string referenceText = columns[6];
 
-                    GetFromCode.Add(new DiagnosticMessage(category, code, severity, messageTemplate, referenceDocument, pageNumber, referenceText));
+                    var message = new DiagnosticMessage(category, code, severity, messageTemplate, referenceDocument, pageNumber, referenceText);
+                    _predefinedMessages.Add((MessageCode) code, message);
                 }
             }
         }

@@ -46,14 +46,35 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
 
                 //Retrieve VALUE token through context
-                var valueToken =
-                    (Token)context?.children.OfType<CodeElementsParser.ValueClauseContext>().SingleOrDefault()?.Start;
+                var valueClauseContexts = context?.children.OfType<CodeElementsParser.ValueClauseContext>();
+                Token valueToken = null;
+                bool multipleContexts = false;
+                if (valueClauseContexts != null)
+                {
+                    foreach (var valueClauseContext in valueClauseContexts)
+                    {
+                        if (valueToken != null)
+                        {
+                            multipleContexts = true;
+                            break;
+                        }
+
+                        valueToken = (Token) valueClauseContext.Start;
+                    }
+                }
 
                 if (valueToken != null)
                 {
+                    if (multipleContexts)
+                    {
+                        //This is a parsing error
+                        DiagnosticUtils.AddError(data, "Invalid VALUE clause", valueToken);
+                    }
                     //In Cobol reference format check that VALUE clause starts in Area B
-                    if (((CodeElementsLine)valueToken.TokensLine).ColumnsLayout == ColumnsLayout.CobolReferenceFormat &&
-                          DocumentFormat.GetTextAreaTypeInCobolReferenceFormat(valueToken) != TextAreaType.AreaB) {
+                    else if (((CodeElementsLine) valueToken.TokensLine).ColumnsLayout == ColumnsLayout.CobolReferenceFormat
+                             &&
+                             DocumentFormat.GetTextAreaTypeInCobolReferenceFormat(valueToken) != TextAreaType.AreaB)
+                    {
                         DiagnosticUtils.AddError(data, "VALUE clause must start in area B", valueToken);
                     }
                 }

@@ -265,8 +265,8 @@ namespace TypeCobol.Test.Utils
 		}
 
 		public virtual void Compare(CompilationUnit result, StreamReader reader, string expectedResultPath) {
-            //Warning by default we only want All codeElementDiagnostics EXCEPT Node Diagnostics
-			Compare(result.CodeElementsDocumentSnapshot.CodeElements, result.AllDiagnostics(false), reader, expectedResultPath);
+            //Warning by default we only want All codeElementDiagnostics (Node Diagnostics and Quality Diagnostics are not compared)
+			Compare(result.CodeElementsDocumentSnapshot.CodeElements, result.AllDiagnostics(false, false), reader, expectedResultPath);
 		}
 
 		internal virtual void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> codeElementDiagnostics, StreamReader expected, string expectedResultPath) {

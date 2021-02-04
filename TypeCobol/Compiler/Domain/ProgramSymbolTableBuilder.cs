@@ -802,7 +802,7 @@ namespace TypeCobol.Compiler.Domain
                     sym.SetFlag(Symbol.Flags.TrailingSign, true);
                     break;
             }
-            if (dataDef.IsSynchronized)
+            if (dataDef.Synchronized != null)
                 sym.SetFlag(Symbol.Flags.Sync, true);
 
             //Set level and other flags: Global, BlankWhenZero and External are read from CodeElement

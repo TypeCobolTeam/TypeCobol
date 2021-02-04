@@ -143,6 +143,15 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// Check that missing copies found inside copies are also listed in output MissingCopy file
+        /// </summary>
+        [TestMethod]
+        public void CheckMissingCopies_2()
+        {
+            CLITestHelper.Test("checkMissingCopies_2", ReturnCode.MissingCopy);
+        }
+
+        /// <summary>
         /// This test should return MissingCopy.
         /// It tests if in case of missing copy and with the proper arguments extracted copies file and missing copies file are present and well formed.
         /// </summary>
@@ -169,6 +178,16 @@ namespace CLI.Test
             CLITestHelper.Test("CopyInsideTypeDefInsideDependency", ReturnCode.Success);
 #endif
 
+        }
+
+        /// <summary>
+        /// This test checks that a diagnostic is reported for copies with broken format
+        /// (after some characters have been turned into unwanted newline).
+        /// </summary>
+        [TestMethod]
+        public void TestCopyBrokenFormat()
+        {
+            CLITestHelper.Test("CopyBrokenFormat", ReturnCode.ParsingDiagnostics);
         }
 
         /// <summary>
@@ -322,6 +341,15 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// This is a duplicate of 'mass_generation_dependent_programs_2' but with alternate .xmldiag error format.
+        /// </summary>
+        [TestMethod]
+        public void TestXmlDiagFormat()
+        {
+            CLITestHelper.Test("mass_generation_xmldiagformat", ReturnCode.ParsingDiagnostics);
+        }
+
+        /// <summary>
         /// Test override of UTF-8 encoding for RDZ format.
         /// </summary>
         [TestMethod]
@@ -329,6 +357,15 @@ namespace CLI.Test
         {
             CLITestHelper.Test("rdzformat_inputencoding_wrong", ReturnCode.Success);
             CLITestHelper.Test("rdzformat_inputencoding_good", ReturnCode.Success);
+        }
+
+        /// <summary>
+        /// Test custom analyzers defined in TypeCobol.Analysis.Test.dll.
+        /// </summary>
+        [TestMethod]
+        public void TestCustomAnalyzers()
+        {
+            CLITestHelper.Test("custom_analyzers", ReturnCode.Warning);
         }
     }
 

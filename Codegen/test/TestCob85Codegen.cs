@@ -23,6 +23,5 @@ namespace TypeCobol.Codegen.Test {
 			string file = Path.Combine("Cobol85","CopyNotExpanded");
             CodegenTestUtils.ParseGenerateCompare(file+".rdz.cbl");
 		}
-
-	}
+    }
 }

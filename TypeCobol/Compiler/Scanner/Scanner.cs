@@ -622,17 +622,17 @@ namespace TypeCobol.Compiler.Scanner
         }
 
         /// <summary>
-        /// Scan an isolated token in the following "default" context :
+        /// Scan an isolated token in the given context if not null or in following "default" context otherwise:
         /// - insideDataDivision = true
         /// - decimalPointIsComma = false
         /// - withDebuggingMode = false
         /// - encodingForAlphanumericLiterals = IBM 1147
         /// - default compiler options
         /// </summary>
-        public static Token ScanIsolatedTokenInDefaultContext(string tokenText, out Diagnostic error)
+        public static Token ScanIsolatedToken(string tokenText, out Diagnostic error, MultilineScanState scanContext = null)
         {
             TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
-            tempTokensLine.InitializeScanState(new MultilineScanState(true, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
+            tempTokensLine.InitializeScanState(scanContext ?? new MultilineScanState(true, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
 
             Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions(), false);
             Token candidateToken = tempScanner.GetNextToken();
@@ -2006,20 +2006,20 @@ namespace TypeCobol.Compiler.Scanner
                 return new Token(TokenType.IS, startIndex, endIndex, tokensLine);
             }
             else
-            {
-                var picToken = new Token(TokenType.PictureCharacterString, startIndex, endIndex, tokensLine);
+            {                
                 var patternEndIndex = endIndex;
                 var replaceStartIndex = line.Substring(startIndex).IndexOf(":", StringComparison.Ordinal) + startIndex;
-                if (replaceStartIndex > picToken.StartIndex && picToken.EndColumn > replaceStartIndex && CheckForPartialCobolWordPattern(replaceStartIndex, out patternEndIndex)) 
+                if (replaceStartIndex > startIndex && (patternEndIndex + 1) > replaceStartIndex && CheckForPartialCobolWordPattern(replaceStartIndex, out patternEndIndex)) 
                 { //Check if there is cobol partial word inside the picture declaration. 
-                    picToken.TokenType = TokenType.PartialCobolWord; //Match the whole PictureCharecterString token as a partial cobol word. 
+                    //Match the whole PictureCharecterString token as a partial cobol word. 
+                    var picToken = new Token(TokenType.PartialCobolWord, startIndex, endIndex, tokensLine);
                     picToken.PreviousTokenType = TokenType.PictureCharacterString; //Save that the token was previously a picture character string token
                     return picToken;
                 }
                 else
                 {
                     // Return a picture character string
-                    return picToken;
+                    return new Token(TokenType.PictureCharacterString, startIndex, endIndex, tokensLine);
                 }
                
             }
@@ -2448,7 +2448,8 @@ namespace TypeCobol.Compiler.Scanner
             // Consume the entire the partial Cobol word
             currentIndex = endIndex + 1;
 
-            return new Token(TokenType.PartialCobolWord, startIndex, endIndex, tokensLine);
-        }        
+            Token t = new Token(TokenType.PartialCobolWord, startIndex, endIndex, tokensLine);
+            return t;
+        }
     }
 }
