@@ -1,0 +1,15 @@
+﻿--- Program ---
+TCOZCHKP (.NET Type=ProgramSymbol, Kind=Program)
+Type:
+  (.NET Type=ScopeType, Tag=Scope)
+WorkingStorageData:
+  var1 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: TCOZCHKP
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Picture: X(900)
+  Level: 1
+  IsFiller: False
+IsNested: False
+

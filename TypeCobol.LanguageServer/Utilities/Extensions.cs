@@ -23,6 +23,8 @@ namespace TypeCobol.LanguageServer.Utilities
                     return TypeCobol.ExecutionStep.SyntaxCheck;
                 case LsrTestingOptions.LsrSemanticPhaseTesting:
                     return TypeCobol.ExecutionStep.CrossCheck;
+                case LsrTestingOptions.LsrCodeAnalysisPhaseTesting:
+                    return TypeCobol.ExecutionStep.QualityCheck;
             }
             return defaultValue;
         }
@@ -41,6 +43,8 @@ namespace TypeCobol.LanguageServer.Utilities
                     return "-tparser";
                 case LsrTestingOptions.LsrSemanticPhaseTesting:
                     return "-tsemantic";
+                case LsrTestingOptions.LsrCodeAnalysisPhaseTesting:
+                    return "-tcodeanalysis";
                 case LsrTestingOptions.NoLsrTesting:
                 default:
                     return "";

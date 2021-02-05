@@ -1142,7 +1142,7 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
 			CodeElement = entry;
 
-		    TypeDefinitionEntryChecker.CheckRedefines(entry, context);
+		    DataDescriptionChecker.CheckRedefines(entry, context);
 		}
 
 	    private void EnterCommonDataDescriptionAndDataRedefines(CommonDataDescriptionAndDataRedefines entry, CodeElementsParser.DataDescriptionEntryContext context)
@@ -1289,15 +1289,20 @@ namespace TypeCobol.Compiler.Parser
             if (context.synchronizedClause() != null && context.synchronizedClause().Length > 0)
             {
                 var synchronizedClauseContext = context.synchronizedClause()[0];
-                if (synchronizedClauseContext.SYNCHRONIZED() != null)
+                if (synchronizedClauseContext.LEFT() != null)
                 {
-                    entry.IsSynchronized = new SyntaxProperty<bool>(true,
-                        ParseTreeUtils.GetFirstToken(synchronizedClauseContext.SYNCHRONIZED()));
+                    entry.Synchronized = new SyntaxProperty<SyncAlignment>(SyncAlignment.Left,
+                        ParseTreeUtils.GetFirstToken(synchronizedClauseContext.LEFT()));
+                }
+                else if (synchronizedClauseContext.RIGHT() != null)
+                {
+                    entry.Synchronized = new SyntaxProperty<SyncAlignment>(SyncAlignment.Right,
+                        ParseTreeUtils.GetFirstToken(synchronizedClauseContext.RIGHT()));
                 }
                 else
                 {
-                    entry.IsSynchronized = new SyntaxProperty<bool>(true,
-                        ParseTreeUtils.GetFirstToken(synchronizedClauseContext.SYNC()));
+                    entry.Synchronized = new SyntaxProperty<SyncAlignment>(SyncAlignment.None,
+                        ParseTreeUtils.GetFirstToken(synchronizedClauseContext.SYNCHRONIZED() ?? synchronizedClauseContext.SYNC()));
                 }
             }
             if (context.usageClause() != null && context.usageClause().Length > 0)

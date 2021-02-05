@@ -257,6 +257,26 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(Then thenNode)
+        {
+            //This check only applies to THEN nodes coming from IF statements.
+            if (thenNode.ChildrenCount == 0 && thenNode.Parent.CodeElement?.Type == CodeElementType.IfStatement)
+            {
+                //THEN has no CodeElement, report on Parent IF.
+                DiagnosticUtils.AddError(thenNode.Parent, "Missing statement or NEXT SENTENCE after IF condition.");
+            }
+            return true;
+        }
+
+        public override bool Visit(Else elseNode)
+        {
+            if (elseNode.ChildrenCount == 0)
+            {
+                DiagnosticUtils.AddError(elseNode, "Missing statement or NEXT SENTENCE after ELSE keyword.");
+            }
+            return true;
+        }
+
         public override bool Visit(TypeDefinition typeDefinition)
         {
             //Cobol 2002 rule
@@ -336,17 +356,10 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             TypedDeclarationChecker.OnNode(dataDefinition);
 
-            var commonDataDataDefinitionCodeElement =
-                dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines;
-            if (commonDataDataDefinitionCodeElement != null)
-            {
-                CheckPicture(dataDefinition);
-            }
-
-
             DataDefinitionEntry dataDefinitionEntry = dataDefinition.CodeElement;
-
             if (dataDefinitionEntry == null) return true;
+
+            var commonDataDataDefinitionCodeElement = dataDefinitionEntry as CommonDataDescriptionAndDataRedefines;
 
             var levelNumber = dataDefinitionEntry.LevelNumber;
             if (levelNumber != null)
@@ -489,18 +502,17 @@ namespace TypeCobol.Compiler.Diagnostics
                 var nodeIndex = dataDescription.Parent.IndexOf(dataDescription);
                 //Get sibling nodes
                 var siblingNodes = dataDescription.Parent.Children;
-                //Check if next node is inside a copy when this isn't the last node
-                if (siblingNodes.Count > nodeIndex + 1 && siblingNodes[nodeIndex + 1].IsInsideCopy())
+                //Get immediately following DataDefinition
+                var nextData = siblingNodes.Skip(nodeIndex + 1).OfType<DataDefinition>().FirstOrDefault();
+                if (nextData != null && nextData.IsInsideCopy())
                 {
-                    //Get next sibling node
-                    var nextSibling = siblingNodes[nodeIndex + 1];
-                    DiagnosticUtils.AddError(dataDescription, $"Cannot include copy {nextSibling.CodeElement?.FirstCopyDirective.TextName} " +
+                    DiagnosticUtils.AddError(dataDescription, $"Cannot include copy {nextData.CodeElement.FirstCopyDirective.TextName} " +
                                                               $"under level {dataDescriptionEntry.LevelNumber} " +
-                                                              $"because copy starts at level {((DataDescription)nextSibling).CodeElement.LevelNumber}.", dataDescriptionEntry);
+                                                              $"because copy starts at level {nextData.CodeElement.LevelNumber}.", dataDescriptionEntry);
                 }
-                //Last node so this is an empty group item
                 else
                 {
+                    //Last node so this is an empty group item
                     DiagnosticUtils.AddError(dataDescription, "A group item cannot be empty.", dataDescriptionEntry);
                 }
             }
@@ -555,40 +567,6 @@ namespace TypeCobol.Compiler.Diagnostics
                     "An index named '" + indexDefinition.Name + "' is already defined.", MessageCode.Warning);
             }
             return true;
-        }
-
-        public static void CheckPicture(Node node, CommonDataDescriptionAndDataRedefines customCodeElement = null)
-        {
-            var codeElement = customCodeElement ?? node.CodeElement as CommonDataDescriptionAndDataRedefines;
-            if (codeElement?.Picture == null) return;
-
-
-            // if there is not the same number of '(' than of ')'
-            if ((codeElement.Picture.Value.Split('(').Length - 1) != (codeElement.Picture.Value.Split(')').Length - 1))
-            {
-                DiagnosticUtils.AddError(node, "missing '(' or ')'");
-            }
-            // if the first '(' is after first ')' OR last '(' is after last ')'
-            else if (codeElement.Picture.Value.IndexOf("(", StringComparison.Ordinal) >
-                     codeElement.Picture.Value.IndexOf(")", StringComparison.Ordinal) ||
-                     codeElement.Picture.Value.LastIndexOf("(", StringComparison.Ordinal) >
-                     codeElement.Picture.Value.LastIndexOf(")", StringComparison.Ordinal))
-                DiagnosticUtils.AddError(node, "missing '(' or ')'");
-            else
-            {
-                foreach (Match match in Regex.Matches(codeElement.Picture.Value, @"\(([^)]*)\)"))
-                {
-                    try //Try catch is here because of the risk to parse a non numerical value
-                    {
-                        int.Parse(match.Value, System.Globalization.NumberStyles.AllowParentheses);
-                    }
-                    catch (Exception)
-                    {
-                        var m = "Given value is not correct : " + match.Value + " expected numerical value only";
-                        DiagnosticUtils.AddError(node, m, codeElement);
-                    }
-                }
-            }
         }
 
         public static DataDefinition CheckVariable(Node node, StorageArea storageArea, bool isReadStorageArea)

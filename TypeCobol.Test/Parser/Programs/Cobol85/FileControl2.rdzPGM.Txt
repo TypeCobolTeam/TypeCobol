@@ -1,0 +1,25 @@
+--- Program ---
+PROGRAM: Pgm common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  CUSTOMER-F01-FILE:Alphanumeric
+  CUSTOMER-F01-ID:Alphanumeric
+  CUSTOMER-F02-FILE:Alphanumeric
+  CUSTOMER-F02-ID:Alphanumeric
+  STUDENT-F01-FILE:Alphanumeric
+  STUDENT-F01-ID:Alphanumeric
+  STUDENT-F02-FILE:Alphanumeric
+  STUDENT-F02-ID:Alphanumeric
+  WS-CUSTOMER-F01-FILE:Alphanumeric
+  WS-CUSTOMER-F02-FILE:Alphanumeric
+  FS-CUSTOMER:Alphanumeric
+  WS-STUDENT-F01-FILE:Alphanumeric
+  WS-STUDENT-F02-FILE:Alphanumeric
+  FS-STUDENT:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

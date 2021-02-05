@@ -38,6 +38,10 @@
     <Compile Include="DfaBuildUseAndDefListTest.cs" />
     <Compile Include="DfaCallPgmReport.cs" />
     <Compile Include="BasicDfaSamplesTest.cs" />
+    <Compile Include="CustomAnalyzers\TestAnalyzerProvider.cs" />
+    <Compile Include="CustomAnalyzers\Analyzers.cs" />
+    <Compile Include="PerformanceWithCfg.cs" />
+    <Compile Include="PerformanceWithCfgDfa.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

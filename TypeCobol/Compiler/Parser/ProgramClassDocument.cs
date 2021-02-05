@@ -34,7 +34,7 @@ namespace TypeCobol.Compiler.Parser
         /// <summary>
         /// Snapshot of the code elements document which was used to compute the current step
         /// </summary>
-        public IDocumentSnapshot<ICodeElementsLine> PreviousStepSnapshot { get; private set; }
+        public TemporarySemanticDocument PreviousStepSnapshot { get; private set; }
 
         /// <summary>
         /// Numeric version identifier for the current document

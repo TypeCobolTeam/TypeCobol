@@ -115,15 +115,6 @@ namespace TypeCobol.Compiler.Parser
             return parameters;
         }
 
-        private ParameterDescriptionEntry CreateFunctionDataParameter(DataConditionEntry condition)
-        {
-            var data = new ParameterDescriptionEntry();
-            data.LevelNumber = condition.LevelNumber;
-            data.DataName = condition.DataName;
-            data.DataType = DataType.Unknown;
-            return data;
-        }
-
         public ParameterDescriptionEntry CreateFunctionDataParameter(
             CodeElementsParser.FunctionDataParameterContext context)
         {
@@ -183,15 +174,20 @@ namespace TypeCobol.Compiler.Parser
             if (context.synchronizedClause() != null)
             {
                 var synchronizedClauseContext = context.synchronizedClause();
-                if (synchronizedClauseContext.SYNCHRONIZED() != null)
+                if (synchronizedClauseContext.LEFT() != null)
                 {
-                    parameter.IsSynchronized = new SyntaxProperty<bool>(true,
-                        ParseTreeUtils.GetFirstToken(synchronizedClauseContext.SYNCHRONIZED()));
+                    parameter.Synchronized = new SyntaxProperty<SyncAlignment>(SyncAlignment.Left,
+                        ParseTreeUtils.GetFirstToken(synchronizedClauseContext.LEFT()));
+                }
+                else if (synchronizedClauseContext.RIGHT() != null)
+                {
+                    parameter.Synchronized = new SyntaxProperty<SyncAlignment>(SyncAlignment.Right,
+                        ParseTreeUtils.GetFirstToken(synchronizedClauseContext.RIGHT()));
                 }
                 else
                 {
-                    parameter.IsSynchronized = new SyntaxProperty<bool>(true,
-                        ParseTreeUtils.GetFirstToken(synchronizedClauseContext.SYNC()));
+                    parameter.Synchronized = new SyntaxProperty<SyncAlignment>(SyncAlignment.None,
+                        ParseTreeUtils.GetFirstToken(synchronizedClauseContext.SYNCHRONIZED() ?? synchronizedClauseContext.SYNC()));
                 }
             }
 
@@ -317,6 +313,7 @@ namespace TypeCobol.Compiler.Parser
                 parameter.Omittable = new SyntaxProperty<bool>(true, ParseTreeUtils.GetTokenFromTerminalNode(context.QUESTION_MARK()));
             }
 
+            DataDescriptionChecker.CheckPicture(parameter);
             return parameter;
         }
 

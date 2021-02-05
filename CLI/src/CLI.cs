@@ -45,7 +45,19 @@ namespace TypeCobol.Server
             File.AppendAllText(config.LogFile ?? TypeCobolConfiguration.DefaultLogFileName, debugLine);
             Console.WriteLine(debugLine);
             TextWriter textWriter = config.ErrorFile == null ?  Console.Error : File.CreateText(config.ErrorFile);
-            AbstractErrorWriter errorWriter = config.IsErrorXML ? (AbstractErrorWriter) new XMLWriter(textWriter) : new ConsoleWriter(textWriter);
+            AbstractErrorWriter errorWriter;
+            switch (Path.GetExtension(config.ErrorFile)?.ToLower())
+            {
+                case ".xml":
+                    errorWriter = new XMLWriter(textWriter);
+                    break;
+                case ".xmldiag":
+                    errorWriter = new XmlDiagWriter(textWriter);
+                    break;
+                default:
+                    errorWriter = new ConsoleWriter(textWriter);
+                    break;
+            }
             errorWriter.Outputs = config.OutputFiles;
 
             ReturnCode returnCode;
@@ -109,8 +121,11 @@ namespace TypeCobol.Server
             var rootSymbolTable = LoadIntrinsicsAndDependencies();
 
             //Add analyzers
-            var analyzerProvider = new AnalyzerProvider();
+            var analyzerProvider = new CompositeAnalyzerProvider();
             var reports = RegisterAnalyzers(analyzerProvider);
+
+            //Add external analyzers
+            analyzerProvider.AddCustomProviders(_configuration.CustomAnalyzerFiles);
 
             //Normalize TypeCobolOptions, the parser does not need to go beyond SemanticCheck for the first phase
             var typeCobolOptions = new TypeCobolOptions(_configuration);
@@ -152,6 +167,9 @@ namespace TypeCobol.Server
 
                     //Force CrossCheck
                     compilationUnit.RefreshProgramClassDocumentSnapshot();
+
+                    //Perform QualityCheck
+                    if (_configuration.ExecToStep > ExecutionStep.CrossCheck) compilationUnit.RefreshCodeAnalysisDocumentSnapshot();
 
                     //Since collecting diagnostics may be costly, we cache them here
                     var currentFileDiagnostics = compilationUnit.AllDiagnostics();
