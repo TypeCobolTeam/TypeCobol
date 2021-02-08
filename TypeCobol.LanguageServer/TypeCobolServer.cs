@@ -271,7 +271,7 @@ namespace TypeCobol.LanguageServer
             }
             else
             {
-                OnDidChangeConfiguration(parameters.settings.ToString().Split(' '));                
+                OnDidChangeConfiguration(parameters.settings.ToString().Split(' '));
             }
         }
 

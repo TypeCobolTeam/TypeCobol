@@ -229,7 +229,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                 var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
                 if (context != null && context.FileCompiler != null)
                 {
-                    var cfgDfaParams = context.LanguageServer.UpdateCfgDfaInformation(context, InRobotLsrTestMode || InLsrClientMode);
+                    var cfgDfaParams = context.LanguageServer.UpdateCfgDfaInformation(context, !(InRobotLsrTestMode || InLsrClientMode));
                     if (cfgDfaParams != null)
                     {
                         SendCfgDfaData(cfgDfaParams);

@@ -291,9 +291,10 @@ namespace TypeCobol.LanguageServer
         /// Method to update CFG/DFA information.
         /// </summary>
         /// <param name="fileCompiler">The underlying File Compiler</param>
-        /// <param name="lsrMode)">True if this action is executed in a LSR Mode</param>
+        /// <param name="writeToFile">True if CfgDfaParams shall write the dot content to a temporary file, 
+        /// false if the dot content shall be put in the CfgDfaParams.dotContent field.</param>
         /// <returns>CFG/DFA Data information</returns>
-        public CfgDfaParams UpdateCfgDfaInformation(DocumentContext docContext, bool lsrMode)
+        public CfgDfaParams UpdateCfgDfaInformation(DocumentContext docContext, bool writeToFile)
         {
             CfgDfaParams result = null;
             docContext.FileCompiler.CompilationResultsForProgram.TryGetAnalyzerResult(lspcfgId, out IList<ControlFlowGraph<Node, object>> cfgs);
@@ -301,15 +302,15 @@ namespace TypeCobol.LanguageServer
             {                
                 //Create a temporary dot file.
                 string tempFile = Path.GetTempFileName();
-                using (TextWriter writer = lsrMode ? (TextWriter)new StringWriter() : File.CreateText(tempFile))
+                using (TextWriter writer = writeToFile ? File.CreateText(tempFile)  : (TextWriter)new StringWriter())
                 {
-                    CfgDfaParamsBuilder builder = new CfgDfaParamsBuilder(new TextDocumentIdentifier(docContext.TextDocument.uri), lsrMode ? null : tempFile);
+                    CfgDfaParamsBuilder builder = new CfgDfaParamsBuilder(new TextDocumentIdentifier(docContext.TextDocument.uri), writeToFile ? tempFile : null);
                     CfgDotFileForNodeGenerator<object> gen = new CfgDotFileForNodeGenerator<object>(cfgs[0]);
                     gen.FullInstruction = true;
                     gen.BlockEmittedEvent += (block, subgraph) => builder.AddBlock<object>(block, subgraph);
                     gen.Report(writer);
-                    result = builder.Params;
-                    if (lsrMode)
+                    result = builder.GetParams();
+                    if (!writeToFile)
                     {
                         writer.Flush();
                         result.dotContent = writer.ToString();

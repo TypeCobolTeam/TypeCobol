@@ -32,9 +32,10 @@ namespace TypeCobol.LanguageServer.Interfaces
         /// Method to update CFG/DFA information.
         /// </summary>
         /// <param name="fileCompiler">The underlying File Compiler</param>
-        /// <param name="lsrMode)">True if this action is executed in a LSR Mode</param>
+        /// <param name="writeToFile">True if CfgDfaParams shall write the dot content to a temporary file, 
+        /// false if the dot content shall be put in the CfgDfaParams.dotContent field.</param>
         /// <returns>CFG/DFA Data information</returns>
-        TypeCobolCustomLanguageServerProtocol.CfgDfaParams UpdateCfgDfaInformation(DocumentContext docContext, bool lsrMode);
+        TypeCobolCustomLanguageServerProtocol.CfgDfaParams UpdateCfgDfaInformation(DocumentContext docContext, bool writeToFile);
 
         /// <summary>
         /// Event Handler when the whole document has changed.

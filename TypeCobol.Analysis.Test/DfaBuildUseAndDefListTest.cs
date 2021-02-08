@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static TypeCobol.Analysis.Test.CfgTestUtils;

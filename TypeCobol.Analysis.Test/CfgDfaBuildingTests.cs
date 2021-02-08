@@ -1,4 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler.Symbols;
 using System.IO;
 using TypeCobol.Analysis.Dfa;
