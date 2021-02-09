@@ -312,7 +312,6 @@ namespace TypeCobol.LanguageServer
                     result = builder.GetParams();
                     if (!writeToFile)
                     {
-                        writer.Flush();
                         result.dotContent = writer.ToString();
                     }
                 }

@@ -262,9 +262,8 @@ namespace TypeCobol.LanguageServer
         }
         protected override void OnDidChangeConfiguration(DidChangeConfigurationParams parameters)
         {
-            if (parameters.settings is Newtonsoft.Json.Linq.JArray)
+            if (parameters.settings is Newtonsoft.Json.Linq.JArray array)
             {
-                Newtonsoft.Json.Linq.JArray array = parameters.settings as Newtonsoft.Json.Linq.JArray;
                 IEnumerable<string> argsEnum = array.Select(t => t.ToString());
                 string[] arguments = argsEnum.ToArray<string>();
                 OnDidChangeConfiguration(arguments);
