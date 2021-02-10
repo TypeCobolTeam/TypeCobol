@@ -7,6 +7,7 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Parser.Generated;
 
@@ -936,16 +937,52 @@ namespace TypeCobol.Compiler.Diagnostics
 
     public class ProgramChecker
     {
-        public static void OnNode(Program node)
+        public static void OnNode(Program node, TypeCobolOptions typeCobolOptions)
         {
-            node.SetFlag(Node.Flag.MissingEndProgram, !(node.Children.LastOrDefault() is End));
+            //var lastChild = node.Children.LastOrDefault();
+            //if (lastChild is End end)
+            //{
+            //    node.SetFlag(Node.Flag.MissingEndProgram, false);
+            //}
+            //else
+            //{
+            //    node.SetFlag(Node.Flag.MissingEndProgram, true);
+            //    DiagnosticUtils.AddError(node, "\"END PROGRAM\" is missing.", typeCobolOptions.CheckEndProgram.GetMessageCode());
+            //}
 
-            if (node.IsFlagSet(Node.Flag.MissingEndProgram))
+            var lastChild = node.Children.LastOrDefault();
+            if (lastChild is End end)
             {
-                DiagnosticUtils.AddError(node,
-                    "\"END PROGRAM\" is missing.", MessageCode.Warning);
+                node.SetFlag(Node.Flag.MissingEndProgram, false);
+                if (typeCobolOptions.CheckEndProgram.IsActive)
+                {
+                    var programEnd = (ProgramEnd)end.CodeElement;
+                    if (programEnd.ProgramName?.Name == null)
+                    {
+                        DiagnosticUtils.AddError(end, "\"PROGRAM END\" should have a program name.", typeCobolOptions.CheckEndProgram.GetMessageCode());
+                    }
+                    else
+                    {
+                        if (!node.Name.Equals(programEnd.ProgramName.Name, StringComparison.OrdinalIgnoreCase))
+                        {
+                            DiagnosticUtils.AddError(end, "Program name not matching \"PROGRAM END\".", typeCobolOptions.CheckEndProgram.GetMessageCode());
+                        }
+                    }
+                }
             }
-
+            else
+            {
+                node.SetFlag(Node.Flag.MissingEndProgram, true);
+                if (typeCobolOptions.CheckEndProgram.IsActive)
+                {
+                    if (node.IsMainProgram && node.GetChildren<Program>().Count == 0)
+                    {
+                        // Exception if only 1 program is in the source file
+                        return;
+                    }
+                    DiagnosticUtils.AddError(node, "\"END PROGRAM\" is missing.", typeCobolOptions.CheckEndProgram.GetMessageCode());
+                }
+            }
         }
     }
 

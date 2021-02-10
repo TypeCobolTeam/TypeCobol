@@ -44,6 +44,11 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public TypeCobolCheckOption CheckEndAlignment { get; set; }
 
+        /// <summary>
+        /// Check if END PROGRAM have a program name associated and this name exists
+        /// </summary>
+        public TypeCobolCheckOption CheckEndProgram { get; set; }
+
         public TypeCobolOptions(TypeCobolConfiguration config)
         {
             HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null;
@@ -55,6 +60,7 @@ namespace TypeCobol.Compiler.Directives
             AutoRemarksEnable = config.AutoRemarks;
 #endif
             CheckEndAlignment = config.CheckEndAlignment;
+            CheckEndProgram = config.CheckEndProgram;
         }
 
         public TypeCobolOptions()

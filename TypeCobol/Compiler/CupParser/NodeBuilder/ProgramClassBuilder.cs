@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
@@ -230,12 +231,36 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Dispatcher.StartCobolProgram(programIdentification, libraryCopy);
         }
 
-        public virtual void EndCobolProgram(TypeCobol.Compiler.CodeElements.ProgramEnd end)
+        public virtual void EndCobolProgram(ProgramEnd end)
         {
-            AttachEndIfExists(end);
-            Exit();
-            programsStack.Pop();
-            Dispatcher.EndCobolProgram(end);
+            if (end != null)
+            {
+                if (end.ProgramName?.Name != null)
+                {
+                    var matchingProgram = FindMatchingProgram();
+                    if (matchingProgram != null)
+                    {
+                        // Pop all programs to have CurrentProgram as the program whose name match
+                        while (matchingProgram != CurrentProgram)
+                        {
+                            // Skip closing all nested programs
+                            Exit();
+                            programsStack.Pop();
+                        }
+                    }
+                }
+
+                // Add end to current program
+                AttachEndIfExists(end);
+                Exit();
+                programsStack.Pop();
+                Dispatcher.EndCobolProgram(end);
+            }
+
+            Program FindMatchingProgram()
+            {
+                return programsStack.FirstOrDefault(p => p.Name.Equals(end.ProgramName.Name, StringComparison.OrdinalIgnoreCase));
+            }
         }
 
         public virtual void StartEnvironmentDivision(EnvironmentDivisionHeader header)

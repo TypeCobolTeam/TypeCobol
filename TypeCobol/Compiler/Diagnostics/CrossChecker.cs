@@ -289,7 +289,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Program program)
         {
-            ProgramChecker.OnNode(program);
+            // Check that program has a closing end
+            ProgramChecker.OnNode(program, _compilerOptions);
 
             //// Set a Warning if the FormCom parameter in unknown or if the program parameter have no description
 
