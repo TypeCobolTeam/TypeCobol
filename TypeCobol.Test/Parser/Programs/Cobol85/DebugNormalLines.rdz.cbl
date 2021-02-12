@@ -15,6 +15,9 @@
                 yyyy
            MOVE '1234' TO yyyy
       
+      *Debug and not debug line
+      d    DISPLAY "I'm A". DISPLAY "I'm B".
+
       *Debug line in the middle
            DISPLAY 'name = '
       d        yyyy
@@ -41,6 +44,9 @@
       d       yyyy
       
              '_4'
+
+      *Whole debug line
+      d    DISPLAY 'name = ' yyyy
       
            GOBACK.
        END PROGRAM Pgm.
@@ -57,6 +63,7 @@
            MOVE xxxx TO yyyy
       d    DISPLAY 'name = '
                 yyyy
+      d    DISPLAY 'name = ' yyyy
            MOVE '1234' TO yyyy
            GOBACK.
        END PROGRAM Pgm2.

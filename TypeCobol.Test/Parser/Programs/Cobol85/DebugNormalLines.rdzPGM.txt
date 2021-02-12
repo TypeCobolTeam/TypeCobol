@@ -1,11 +1,11 @@
 --- Diagnostics ---
 Line 5[38,46] <37, Warning, General> - Warning: Debugging mode is active OffendingSymbol=[38,46:DEBUGGING]<DEBUGGING>
 Line 14[12,20] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
-Line 19[12,19] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
-Line 24[12,19] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
-Line 29[12,19] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
-Line 35[12,18] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
-Line 40[12,17] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+Line 22[12,19] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+Line 27[12,19] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+Line 32[12,19] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+Line 38[12,18] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
+Line 43[12,17] <27, Error, Syntax> - Syntax error : In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.
 
 --- Program ---
 PROGRAM: Pgm common:False initial:False recursive:False

@@ -29,6 +29,11 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public CodeElementType Type { get; }
 
+        /// <summary>
+        /// Describe how the CodeElement is debugged
+        /// </summary>
+        public DebugType DebugMode;
+
         private IList<Token> _consumedTokens;
         /// <summary>
         /// All significant tokens consumed in the source document to build this code element
@@ -388,7 +393,12 @@ namespace TypeCobol.Compiler.CodeElements
 			}
 		}
 
-       
+        public enum DebugType
+        {
+            None,    // Contain no debugging at all
+            Mix,     // Contain some element in debug, some without debug
+            All // Contain only elements in debug
+        }
     }
 
     // --- Temporary base classes for data definition code elements ---
