@@ -217,7 +217,7 @@ namespace TypeCobol.LanguageServer
                 { "ol|outlineRefresh",  "Outline Support.", _ => UseOutlineRefresh = true},
                 { "cfg=",  "{dot output mode} Control Flow Graph support and Dot Output mode: No/0, AsFile/1 or AsContent/2.",
                     (String m) => {TypeCobolCustomLanguageServer.UseCfgMode ucm = TypeCobolCustomLanguageServer.UseCfgMode.No;
-                        Enum.TryParse(m, false, out ucm); UseCfg = ucm; }  },
+                        Enum.TryParse(m, out ucm); UseCfg = ucm; }  },
             };
 
             System.Collections.Generic.List<string> arguments;
