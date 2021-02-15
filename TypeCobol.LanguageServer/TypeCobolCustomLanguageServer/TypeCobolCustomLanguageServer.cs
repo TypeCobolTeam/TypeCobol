@@ -25,18 +25,19 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         public bool UseOutlineRefresh { get; set; }
 
         /// <summary>
+        /// Use Cfg Mode
+        /// </summary>
+        public enum UseCfgMode
+        {
+            No,         // No Cfg information
+            AsFile,     // Dot content is emitted as file
+            AsContent   // Dot content is emitted as as a String content.
+        };
+
+        /// <summary>
         /// Are we using the CFG view in the client.    
         /// </summary>
-        public bool UseCfgDfaDataRefresh { get; set; }
-        /// <summary>
-        /// True if The server is executed in LSR TestMode
-        /// </summary>
-        public bool InRobotLsrTestMode { get; set; }
-        /// <summary>
-        /// True if the server is executed in LSR client mode.
-        /// </summary>
-        public bool InLsrClientMode { get; set; }
-
+        public UseCfgMode UseCfgDfaDataRefresh { get; set; }
         protected override InitializeResult OnInitialize(InitializeParams parameters)
         {
             var result = base.OnInitialize(parameters);
@@ -52,7 +53,12 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         protected override void OnDidChangeConfiguration(string[] options)
         {
             this.UseOutlineRefresh = options.Contains("-ol");
-            this.UseCfgDfaDataRefresh = options.Contains("-cfg");
+            if(options.Contains("-cfg=AsFile"))
+                this.UseCfgDfaDataRefresh = UseCfgMode.AsFile;
+            else if(options.Contains("-cfg=AsContent"))
+                this.UseCfgDfaDataRefresh = UseCfgMode.AsContent;
+            else
+                this.UseCfgDfaDataRefresh = UseCfgMode.No;
             base.OnDidChangeConfiguration(options);
         }
 
@@ -224,12 +230,12 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// <param name="uri">Uri of the document to update Cfg/Dfa Informations</param>
         private void UpdateCfgDfaInformation(string uri)
         {
-            if (this.UseCfgDfaDataRefresh)
+            if (this.UseCfgDfaDataRefresh != UseCfgMode.No)
             {
                 var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
                 if (context != null && context.FileCompiler != null)
                 {
-                    var cfgDfaParams = context.LanguageServer.UpdateCfgDfaInformation(context, !(InRobotLsrTestMode || InLsrClientMode));
+                    var cfgDfaParams = context.LanguageServer.UpdateCfgDfaInformation(context, this.UseCfgDfaDataRefresh == UseCfgMode.AsFile);
                     if (cfgDfaParams != null)
                     {
                         SendCfgDfaData(cfgDfaParams);

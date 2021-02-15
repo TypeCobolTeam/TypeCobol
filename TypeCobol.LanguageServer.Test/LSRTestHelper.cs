@@ -57,7 +57,7 @@ namespace TypeCobol.LanguageServer.Test
                                   Path.DirectorySeparatorChar + copyFolder).FullName.Replace(@"\", @"\\"));
             String testOptions = "";
             testOptions += useOutline ? ",\"-ol\"" : "";
-            testOptions += useCfg ? ",\"-cfg\"" : "";
+            testOptions += useCfg ? ",\"-cfg=AsContent\"" : "";
             configFileContent = configFileContent.Replace("{TestOptions}", testOptions);
 
             configFileContent = configFileContent.Replace("{IntrinsicFile}",
@@ -100,7 +100,7 @@ namespace TypeCobol.LanguageServer.Test
                 tcLogFile,
                 useSyntaxColoring ? "-sc" : "",
                 useOutline ? "-ol" : "",
-                useCfg ? "-cfg" : "");
+                useCfg ? "-cfg=AsContent" : "");
 
             System.Diagnostics.Process process = new System.Diagnostics.Process();
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();

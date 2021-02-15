@@ -124,11 +124,7 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Are we supporting CFG/DFA Refresh Notifications.
         /// </summary>
-        public static bool UseCfg { get; set; }
-        /// <summary>
-        /// Are We running from the LSR client mode.
-        /// </summary>
-        public static bool LsrClientMode { get; set; }
+        public static TypeCobolCustomLanguageServer.UseCfgMode UseCfg { get; set; }
 
         public static System.Diagnostics.Process Process;
 
@@ -219,8 +215,9 @@ namespace TypeCobol.LanguageServer
                 { "dcs|disablecopysuffixing", "Deactictivate Euro Information suffixing", v => UseEuroInformationLegacyReplacingSyntax = false },
                 { "sc|syntaxcolor",  "Syntax Coloring Support.", _ => UseSyntaxColoring = true},
                 { "ol|outlineRefresh",  "Outline Support.", _ => UseOutlineRefresh = true},
-                { "cfg",  "Control Flow Graph support.", _ => UseCfg = true},
-                { "lsrclient",  "Server is running in LSR Client mode.", _ => LsrClientMode = true},
+                { "cfg=",  "{dot output mode} Control Flow Graph support and Dot Output mode: No/0, AsFile/1 or AsContent/2.",
+                    (String m) => {TypeCobolCustomLanguageServer.UseCfgMode ucm = TypeCobolCustomLanguageServer.UseCfgMode.No;
+                        Enum.TryParse(m, false, out ucm); UseCfg = ucm; }  },
             };
 
             System.Collections.Generic.List<string> arguments;
@@ -298,9 +295,6 @@ namespace TypeCobol.LanguageServer
                 typeCobolServer.UseSyntaxColoring = UseSyntaxColoring;
                 typeCobolServer.UseOutlineRefresh = UseOutlineRefresh;
                 typeCobolServer.UseCfgDfaDataRefresh = UseCfg;
-                typeCobolServer.InRobotLsrTestMode = LsrMode;
-                typeCobolServer.InLsrClientMode = LsrClientMode;
-
 
                 //Creating the thread that will read mesages and handle them 
                 var backgroundExecutionThread = new Thread(() => { MessageHandler(jsonRPCServer, typeCobolServer); }) { IsBackground = true };
