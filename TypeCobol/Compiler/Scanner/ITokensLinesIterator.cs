@@ -38,6 +38,11 @@ namespace TypeCobol.Compiler.Scanner
         int LineIndex { get; }
 
         /// <summary>
+        /// Returns the first token lines (null if empty document)
+        /// </summary>
+        ITokensLine FirstLine { get; }
+
+        /// <summary>
         /// Current tokens line
         /// (in the text document identified by DocumentPath)
         /// </summary>

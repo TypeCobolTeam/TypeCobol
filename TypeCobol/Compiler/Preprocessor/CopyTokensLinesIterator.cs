@@ -163,6 +163,11 @@ namespace TypeCobol.Compiler.Preprocessor
         }
 
         /// <summary>
+        /// Returns the first token lines (null if empty document)
+        /// </summary>
+        public ITokensLine FirstLine => tokensLines.Count > 0 ? tokensLines[0] : null;
+
+        /// <summary>
         /// Current tokens line
         /// </summary>
         public ITokensLine CurrentLine

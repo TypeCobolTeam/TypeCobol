@@ -139,6 +139,14 @@ namespace TypeCobol.Compiler.Preprocessor
         }
 
         /// <summary>
+        /// Returns the first token lines (null if empty document)
+        /// </summary>
+        public ITokensLine FirstLine
+        {
+            get { return sourceIterator.FirstLine; }
+        }
+
+        /// <summary>
         /// Current tokens line
         /// </summary>
         public ITokensLine CurrentLine
