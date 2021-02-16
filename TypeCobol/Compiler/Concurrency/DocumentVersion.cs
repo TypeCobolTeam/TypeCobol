@@ -35,11 +35,17 @@ namespace TypeCobol.Compiler.Concurrency
         internal DocumentVersion<T> next;
 
         /// <summary>
+        /// True if this version is initial, False if it is a new version of an existing document
+        /// </summary>
+        public bool IsInitial { get; }
+
+        /// <summary>
         /// Initial version
         /// </summary>
         internal DocumentVersion(object provider)
         {
             this.provider = provider;
+            IsInitial = true;
         }
 
         /// <summary>
@@ -49,18 +55,7 @@ namespace TypeCobol.Compiler.Concurrency
         {
             this.provider = prev.provider;
             this.id = unchecked(prev.id + 1);
-        }
-
-        /// <summary>
-        /// Gets whether this checkpoint belongs to the same document as the other checkpoint.
-        /// </summary>
-        /// <remarks>
-        /// Returns false when given <c>null</c>.
-        /// </remarks>
-        public bool BelongsToSameDocumentAs(DocumentVersion<T> other)
-        {
-            DocumentVersion<T> o = other as DocumentVersion<T>;
-            return o != null && provider == o.provider;
+            IsInitial = false;
         }
 
         /// <summary>
