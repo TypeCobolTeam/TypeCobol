@@ -1,5 +1,4 @@
 --- Diagnostics ---
-Line 1[1,24] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 9[12,18] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'Feature' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[12,18:TYPEDEF]<TYPEDEF>
 Line 15[10,16] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'Vect2' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[10,16:TYPEDEF]<TYPEDEF>
 Line 36[1,31] <30, Error, Semantics> - Semantic error: TYPE 'TypeNotDefined' is not referenced

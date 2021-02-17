@@ -1,5 +1,4 @@
 --- Diagnostics ---
-Line 1[1,18] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 89[25,29] <30, Error, Semantics> - Semantic error: Symbol T1-A.T1-B3 is not referenced OffendingSymbol=[25,29:T1-B3]<UserDefinedWord>
 Line 90[17,21] <30, Error, Semantics> - Semantic error: Symbol T1-A.T1-B3 is not referenced OffendingSymbol=[17,21:T1-B3]<UserDefinedWord>
 Line 92[26,29] <30, Error, Semantics> - Semantic error: Symbol T1-B2.T1-A is not referenced OffendingSymbol=[26,29:T1-A]<UserDefinedWord>

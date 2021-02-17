@@ -977,7 +977,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     if (node.IsMainProgram && node.GetChildren<Program>().Count == 0)
                     {
-                        // Exception if only 1 program is in the source file
+                        // Exception if only last program is not closed and has no nested program
                         return;
                     }
                     DiagnosticUtils.AddError(node, "\"END PROGRAM\" is missing.", typeCobolOptions.CheckEndProgram.GetMessageCode());
