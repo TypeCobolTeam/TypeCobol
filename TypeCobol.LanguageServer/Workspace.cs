@@ -327,7 +327,7 @@ namespace TypeCobol.LanguageServer
                     {
                         //Return log information about updated processed tokens
                         var sb = new StringBuilder();
-                        foreach (var token in fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.ProcessedTokensSource)
+                        foreach (var token in fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.GetProcessedTokens())
                             sb.AppendLine(token.ToString());
                         _Logger(sb.ToString(), fileUri);
                     }

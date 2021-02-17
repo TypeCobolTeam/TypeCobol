@@ -87,7 +87,7 @@ namespace TypeCobol.Test.Parser.Preprocessor
         {
             // Tokens
             StringBuilder sbTokens = new StringBuilder();
-            ITokensLinesIterator tokens = processedDoc.ProcessedTokens;
+            ITokensLinesIterator tokens = processedDoc.GetProcessedTokensIterator();
             Token token = tokens.NextToken();
             if (token != Token.END_OF_FILE)
             {
