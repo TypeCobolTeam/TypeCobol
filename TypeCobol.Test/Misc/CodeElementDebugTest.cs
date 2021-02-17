@@ -36,17 +36,17 @@ namespace TypeCobol.Test.Misc
                 CodeElement.DebugType.Mix,
                 CodeElement.DebugType.None,
                 CodeElement.DebugType.All,
-                CodeElement.DebugType.Unset, //    Doubt here
+                CodeElement.DebugType.Unset, //    .
                 CodeElement.DebugType.All,  //15
-                CodeElement.DebugType.Unset, //    Doubt here
+                CodeElement.DebugType.Unset, //    .
                 CodeElement.DebugType.Mix, 
                 CodeElement.DebugType.Mix, 
                 CodeElement.DebugType.Mix,
                 CodeElement.DebugType.Mix, //20
                 CodeElement.DebugType.Mix, 
                 CodeElement.DebugType.All, 
-                CodeElement.DebugType.Unset, //    Doubt here
-                CodeElement.DebugType.Unset, //    Doubt here
+                CodeElement.DebugType.Unset, //    GO BACK
+                CodeElement.DebugType.Unset, //    .
                 CodeElement.DebugType.None, //25
                 CodeElement.DebugType.None, 
                 CodeElement.DebugType.None, 
@@ -60,8 +60,8 @@ namespace TypeCobol.Test.Misc
                 CodeElement.DebugType.Mix,  //35
                 CodeElement.DebugType.All, 
                 CodeElement.DebugType.None, 
-                CodeElement.DebugType.Unset, //    Doubt here
-                CodeElement.DebugType.Unset, //    Doubt here
+                CodeElement.DebugType.Unset, //    GO BACK
+                CodeElement.DebugType.Unset, //    .
                 CodeElement.DebugType.None, //40
             };
 
