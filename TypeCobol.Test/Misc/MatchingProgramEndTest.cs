@@ -39,13 +39,6 @@ namespace TypeCobol.Test.Misc
 
             Assert.IsTrue(mainProgram.Children.Last().CodeElement is ProgramEnd);
             Assert.AreEqual(0, nested.Children.Count);
-
-            foreach (var diagnostic in diags)
-            {
-                Console.Error.WriteLine(diagnostic);
-            }
-            Console.Error.WriteLine();
-            Console.Error.WriteLine(astRoot.ToString());
         }
     }
 }

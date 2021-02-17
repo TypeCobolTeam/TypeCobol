@@ -249,7 +249,19 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                         }
                     }
                 }
+            }
+            else
+            {
+                // When end is null, it is has been automatically generated
+                if (CurrentProgram?.Children.LastOrDefault() is End endNode && endNode.CodeElement.Type == CodeElementType.ProgramEnd)
+                {
+                    // It can be useless because it was generated when we already closed the CurrentProgram
+                    return;
+                }
+            }
 
+            if (CurrentProgram != null)
+            {
                 // Add end to current program
                 AttachEndIfExists(end);
                 Exit();
