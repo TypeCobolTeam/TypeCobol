@@ -381,48 +381,9 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             if (isDebuggingModeEnabled)
             {
-                // detect CodeElement with a mix of Debug and "Normal" lines in debugging mode
-                int consumedTokensCount = codeElement.ConsumedTokens.Count;
-                if (consumedTokensCount > 1)
+                if (codeElement.DebugMode == CodeElement.DebugType.Mix)
                 {
-                    bool isDebug = false, isNoDebug = false;
-                    // CodeElement is on one line
-                    if (codeElement.ConsumedTokens.First().Line == codeElement.ConsumedTokens.Last().Line)
-                    {
-                        if (char.ToLower(codeElement.ConsumedTokens[0].TokensLine.IndicatorChar) == 'd')
-                        {
-                            isDebug = true;
-                        }
-                        else
-                        {
-                            isNoDebug = true;
-                        }
-                    }
-                    else
-                    {
-                        // CodeElement is on multiple lines
-                        for (int i = 0; i < consumedTokensCount; i++)
-                        {
-                            bool isDebugType = char.ToLower(codeElement.ConsumedTokens[i].TokensLine.IndicatorChar) == 'd';
-                            isDebug |= isDebugType;
-                            isNoDebug |= !isDebugType;
-                            if (isDebug && isNoDebug)
-                            {
-                                codeElement.DebugMode = CodeElement.DebugType.Mix;
-                                DiagnosticUtils.AddError(codeElement, "In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.");
-                                break;
-                            }
-                        }
-                    }
-                    if (isDebug && !isNoDebug)
-                    {
-                        // Only debug lines
-                        codeElement.DebugMode = CodeElement.DebugType.All;
-                    } else if (!isDebug && isNoDebug)
-                    {
-                        // Only not debug lines
-                        codeElement.DebugMode = CodeElement.DebugType.None;
-                    }
+                    DiagnosticUtils.AddError(codeElement, "In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.");
                 }
             }
         }

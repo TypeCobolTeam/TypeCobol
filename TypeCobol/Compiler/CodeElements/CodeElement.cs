@@ -2,6 +2,7 @@ using Antlr4.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Diagnostics;
@@ -32,7 +33,60 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// Describe how the CodeElement is debugged
         /// </summary>
-        public DebugType DebugMode;
+        public DebugType DebugMode
+        {
+            get
+            {
+                if (_debugMode != DebugType.Unset) return _debugMode;
+                // detect CodeElement with a mix of Debug and "Normal" lines in debugging mode
+                int consumedTokensCount = ConsumedTokens.Count;
+                if (consumedTokensCount > 1)
+                {
+                    bool isDebug = false, isNoDebug = false;
+                    // CodeElement is on one line
+                    if (ConsumedTokens.First().Line == ConsumedTokens.Last().Line)
+                    {
+                        if (char.ToLower(ConsumedTokens[0].TokensLine.IndicatorChar) == 'd')
+                        {
+                            isDebug = true;
+                        }
+                        else
+                        {
+                            isNoDebug = true;
+                        }
+                    }
+                    else
+                    {
+                        // CodeElement is on multiple lines
+                        for (int i = 0; i < consumedTokensCount; i++)
+                        {
+                            bool isDebugType = char.ToLower(ConsumedTokens[i].TokensLine.IndicatorChar) == 'd';
+                            isDebug |= isDebugType;
+                            isNoDebug |= !isDebugType;
+                            if (isDebug && isNoDebug)
+                            {
+                                _debugMode = DebugType.Mix;
+                                break;
+                            }
+                        }
+                    }
+                    if (isDebug && !isNoDebug)
+                    {
+                        // Only debug lines
+                        _debugMode = DebugType.All;
+                    }
+                    else if (!isDebug && isNoDebug)
+                    {
+                        // Only not debug lines
+                        _debugMode = DebugType.None;
+                    }
+                }
+
+                return _debugMode;
+            }
+        }
+
+        private DebugType _debugMode = DebugType.Unset;
 
         private IList<Token> _consumedTokens;
         /// <summary>
@@ -395,9 +449,10 @@ namespace TypeCobol.Compiler.CodeElements
 
         public enum DebugType
         {
-            None,    // Contain no debugging at all
-            Mix,     // Contain some element in debug, some without debug
-            All // Contain only elements in debug
+            Unset = 0, // Property has not been set 
+            None,      // Contain no debugging at all
+            Mix,       // Contain some element in debug, some without debug
+            All        // Contain only elements in debug
         }
     }
 

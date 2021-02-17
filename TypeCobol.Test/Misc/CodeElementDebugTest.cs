@@ -36,17 +36,17 @@ namespace TypeCobol.Test.Misc
                 CodeElement.DebugType.Mix,
                 CodeElement.DebugType.None,
                 CodeElement.DebugType.All,
-                CodeElement.DebugType.None, //    Doubt here
+                CodeElement.DebugType.Unset, //    Doubt here
                 CodeElement.DebugType.All,  //15
-                CodeElement.DebugType.None, //    Doubt here
+                CodeElement.DebugType.Unset, //    Doubt here
                 CodeElement.DebugType.Mix, 
                 CodeElement.DebugType.Mix, 
                 CodeElement.DebugType.Mix,
                 CodeElement.DebugType.Mix, //20
                 CodeElement.DebugType.Mix, 
                 CodeElement.DebugType.All, 
-                CodeElement.DebugType.None, 
-                CodeElement.DebugType.None, 
+                CodeElement.DebugType.Unset, //    Doubt here
+                CodeElement.DebugType.Unset, //    Doubt here
                 CodeElement.DebugType.None, //25
                 CodeElement.DebugType.None, 
                 CodeElement.DebugType.None, 
@@ -57,11 +57,11 @@ namespace TypeCobol.Test.Misc
                 CodeElement.DebugType.None, 
                 CodeElement.DebugType.None, 
                 CodeElement.DebugType.None,
-                CodeElement.DebugType.None, //35
+                CodeElement.DebugType.Mix,  //35
+                CodeElement.DebugType.All, 
                 CodeElement.DebugType.None, 
-                CodeElement.DebugType.None, 
-                CodeElement.DebugType.None, 
-                CodeElement.DebugType.None, 
+                CodeElement.DebugType.Unset, //    Doubt here
+                CodeElement.DebugType.Unset, //    Doubt here
                 CodeElement.DebugType.None, //40
             };
 
@@ -75,20 +75,18 @@ namespace TypeCobol.Test.Misc
             {
                 Assert.AreEqual(expectedDebugMode[i], codeElements[i].DebugMode, $"CodeElement number: {i}");
             }
-        }
 
-        /// <summary>
-        /// Compare CodeElement based on line then column
-        /// </summary>
-        private static int CodeElementPositionComparer(CodeElement a, CodeElement b)
-        {
-            var comparison = a.Line.CompareTo(b.Line);
-            if (comparison != 0)
+            // Compare CodeElement based on line then column
+            int CodeElementPositionComparer(CodeElement a, CodeElement b)
             {
-                return comparison;
-            }
+                var comparison = a.Line.CompareTo(b.Line);
+                if (comparison != 0)
+                {
+                    return comparison;
+                }
 
-            return a.Column.CompareTo(b.Column);
+                return a.Column.CompareTo(b.Column);
+            }
         }
     }
 }
