@@ -33,6 +33,7 @@ namespace TypeCobol.Tools.Options_Config
 
         //Log file name
         public const string DefaultLogFileName = "TypeCobol.CLI.log";
+        public static string LogFileName { get; internal set; }
 
 #if EUROINFO_RULES
         public bool UseEuroInformationLegacyReplacingSyntax = true;
@@ -92,6 +93,10 @@ namespace TypeCobol.Tools.Options_Config
         {
             // default values for checks
             TypeCobolCheckOptionsInitializer.SetDefaultValues(this);
+        }
+        static TypeCobolConfiguration()
+        {
+            LogFileName = DefaultLogFileName;            
         }
     }
 
@@ -241,7 +246,8 @@ namespace TypeCobol.Tools.Options_Config
                 { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing.", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false },
                 { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
                 { "diag.cea|diagnostic.checkEndAlignment=", "Indicate level of check end aligment: warning, error, info, ignore.", v => typeCobolConfig.CheckEndAlignment = TypeCobolCheckOption.Parse(v) },
-                { "log|logfilepath=", "{PATH} to TypeCobol.CLI.log log file", v => typeCobolConfig.LogFile = Path.Combine(v, TypeCobolConfiguration.DefaultLogFileName)},
+                { "log|logfilepath=", "{PATH} to TypeCobol.CLI.log log file", v => {typeCobolConfig.LogFile = Path.Combine(v, TypeCobolConfiguration.DefaultLogFileName); TypeCobolConfiguration.LogFileName = typeCobolConfig.LogFile;
+        } },
                 { "cfg|cfgbuild", "Standard CFG build.", v => typeCobolConfig.CfgBuildingMode = CfgBuildingMode.Standard},
                 { "ca|customanalyzer=", "{PATH} to a custom DLL file containing code analyzers. This option can be specified more than once.", v => typeCobolConfig.CustomAnalyzerFiles.Add(v) }
             };

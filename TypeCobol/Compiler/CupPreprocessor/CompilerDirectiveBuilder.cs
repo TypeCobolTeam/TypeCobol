@@ -8,6 +8,7 @@ using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CupCommon;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CupPreprocessor
@@ -91,7 +92,8 @@ namespace TypeCobol.Compiler.CupPreprocessor
             bool isCopy = copy.COPYToken.TokenType == TokenType.COPY;
             copy.TextName = GetName(qualifiedTextName.TextName);
             copy.TextNameSymbol = qualifiedTextName.TextName;
-            {                
+            CopyNameFileMap.CheckCopyDirective(copy, qualifiedTextName, replacingOperands != null);
+            {
 #if EUROINFO_RULES
                 if (TypeCobolOptions.UseEuroInformationLegacyReplacingSyntax)
                 {

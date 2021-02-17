@@ -49,9 +49,26 @@ namespace TypeCobol.Test.Utils
         }
 
 		public void Parse() {
-			try { Compiler.CompileOnce(); }
+			try
+            {
+                if (this.Comparator.IsCplFileMap)
+                {
+                    FileInfo fi = new FileInfo(this.Compiler.CobolFile.FullPath);
+                    string copyFileMap = Path.Combine(fi.DirectoryName, fi.Directory.Name + "Copies.lst");
+                    TypeCobol.Compiler.Preprocessor.CopyNameFileMap.cleartInstance();
+                    TypeCobol.Compiler.Preprocessor.CopyNameFileMap.setInstance(new TypeCobol.Compiler.Preprocessor.CopyNameFileMap(copyFileMap, true));
+                }
+                Compiler.CompileOnce();
+            }
 			catch(Exception e) { Observer.OnError(e); }
-		}
+            finally
+            {
+                if (this.Comparator.IsCplFileMap)
+                {
+                    TypeCobol.Compiler.Preprocessor.CopyNameFileMap.cleartInstance();
+                }
+            }
+        }
 
 		public string ToJSON() {
 			return new TestJSONSerializer().ToJSON(Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.CodeElements);
@@ -99,6 +116,7 @@ namespace TypeCobol.Test.Utils
                 new NYName(),
                 new PGMName(),
                 new SYMName(),
+                new CPLName(),
                 new MixDiagIntoSourceName(),
                 new MemoryName(),
                 new NodeName(),
@@ -113,6 +131,7 @@ namespace TypeCobol.Test.Utils
                 new EINYName(),
                 new EIPGMName(),
                 new EISYMName(),
+                new EICPLName(),
                 new EIMixDiagIntoSourceName(),
                 new EIMemoryName(),
                 new EINodeName(),
@@ -252,6 +271,10 @@ namespace TypeCobol.Test.Utils
 		internal Paths paths;
 		internal bool debug;
         internal bool IsEI { get; private set; }
+        /// <summary>
+        /// Is this comparer, associated with Copy List File Map.
+        /// </summary>
+        internal bool IsCplFileMap { get; set; }
 
         public FilesComparator(string name, bool debug) /*: this(name, null, debug)*/
 	    {
@@ -262,7 +285,7 @@ namespace TypeCobol.Test.Utils
 		    paths = path;
 			this.debug = debug;
             IsEI = isEI;
-		}
+        }
 
 		public virtual void Compare(CompilationUnit result, StreamReader reader, string expectedResultPath) {
             //Warning by default we only want All codeElementDiagnostics (Node Diagnostics and Quality Diagnostics are not compared)
@@ -400,6 +423,14 @@ namespace TypeCobol.Test.Utils
             string result = ParserUtils.DumpResult(programs, classes, diagnostics);
             if (debug) Console.WriteLine("\"" + paths.SamplePath+ "\" result:\n" + result);
             ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected, expectedResultPath);
+        }
+    }
+
+    internal class ProgramsCopyFileMapComparator : ProgramsComparator
+    {
+        public ProgramsCopyFileMapComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI)
+        {
+            base.IsCplFileMap = true;
         }
     }
 
@@ -968,6 +999,12 @@ namespace TypeCobol.Test.Utils
         public override Type GetComparatorType() { return typeof(SymbolComparator); }
     }
 
+    internal class CPLName : AbstractNames
+    {
+        public override string CreateName(string name) { return name + "CPL" + Rextension; }
+        public override Type GetComparatorType() { return typeof(ProgramsCopyFileMapComparator); }
+    }
+
     internal class MixDiagIntoSourceName : AbstractNames
     {
         public override string CreateName(string name) { return name + "Mix" + Rextension; }
@@ -1048,6 +1085,12 @@ namespace TypeCobol.Test.Utils
     {
         public override string CreateName(string name) { return name + "SYM-EI" + Rextension; }
         public override Type GetComparatorType() { return typeof(SymbolComparator); }
+    }
+
+    internal class EICPLName : AbstractEINames
+    {
+        public override string CreateName(string name) { return name + "CPL-EI" + Rextension; }
+        public override Type GetComparatorType() { return typeof(ProgramsCopyFileMapComparator); }
     }
 
     internal class EIMixDiagIntoSourceName : AbstractEINames

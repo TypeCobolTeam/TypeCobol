@@ -1,0 +1,35 @@
+--- Diagnostics ---
+Line 7[16,22] <27, Error, Syntax> - Syntax error : Copy YCPYTST of type CPY cannot be declared using REPLACING clause.
+Line 9[16,22] <27, Error, Syntax> - Syntax error : Copy TCPLTST of type CPX(or CPM) should be declared using REPLACING clause.
+
+--- Program ---
+PROGRAM: TESTCPL common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  CPYTST:Alphanumeric
+  CPYTST-Arg:Alphanumeric
+  CPYTST-Arg:Alphanumeric
+  CPYTST-CLE:Alphanumeric
+  CPYTST-CLE:Alphanumeric
+  CPYTST-CLE-BQE:Alphanumeric
+  CPYTST-CLE-BQE:Alphanumeric
+  CPYTST-CLE-CAI:Alphanumeric
+  CPYTST-CLE-CAI:Alphanumeric
+  CPLTST:Alphanumeric
+  REF-BIE:Alphanumeric
+  ETA-BIE:Alphanumeric
+  PTC-BIE:Alphanumeric
+  NAT-BIE:Alphanumeric
+  CPXTST:Alphanumeric
+  CPXTST-REF-BIE:Alphanumeric
+  CPXTST-ETA-BIE:Alphanumeric
+  CPXTST-PTC-BIE:Alphanumeric
+  CPXTST-NAT-BIE:Alphanumeric
+  CPYTST2:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
