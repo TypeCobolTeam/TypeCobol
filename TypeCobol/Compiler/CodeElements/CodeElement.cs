@@ -39,50 +39,53 @@ namespace TypeCobol.Compiler.CodeElements
         {
             get
             {
-                if (_debugMode.HasValue) return _debugMode.Value;
+                if (!_debugMode.HasValue) ComputeDebugMode();
+                Debug.Assert(_debugMode.HasValue);
+                return _debugMode.Value;
 
-                var consumedTokensCount = ConsumedTokens.Count;
-                // CodeElement should be at least one token
-                Debug.Assert(consumedTokensCount > 0);
-                
-                bool atLeastOneDebug = false, atLeastOneWithoutDebug = false;
-                // CodeElement is on one line
-                if (ConsumedTokens.First().Line == ConsumedTokens.Last().Line)
+                void ComputeDebugMode()
                 {
-                    atLeastOneDebug = ConsumedTokens[0].TokensLine.Type == CobolTextLineType.Debug;
-                    atLeastOneWithoutDebug = !atLeastOneDebug;
-                }
-                else
-                {
-                    // CodeElement is on multiple lines
-                    for (var i = 0; i < consumedTokensCount; i++)
+                    var consumedTokensCount = ConsumedTokens.Count;
+                    // CodeElement should be at least one token
+                    Debug.Assert(consumedTokensCount > 0);
+
+                    bool atLeastOneDebug = false, atLeastOneWithoutDebug = false;
+                    // CodeElement is on one line
+                    if (ConsumedTokens.First().Line == ConsumedTokens.Last().Line)
                     {
-                        var isDebugType = ConsumedTokens[i].TokensLine.Type == CobolTextLineType.Debug;
-                        atLeastOneDebug |= isDebugType;
-                        atLeastOneWithoutDebug |= !isDebugType;
-                        if (atLeastOneDebug && atLeastOneWithoutDebug)
+                        atLeastOneDebug = ConsumedTokens[0].TokensLine.Type == CobolTextLineType.Debug;
+                        atLeastOneWithoutDebug = !atLeastOneDebug;
+                    }
+                    else
+                    {
+                        // CodeElement is on multiple lines
+                        for (var i = 0; i < consumedTokensCount; i++)
                         {
-                            break;
+                            var isDebugType = ConsumedTokens[i].TokensLine.Type == CobolTextLineType.Debug;
+                            atLeastOneDebug |= isDebugType;
+                            atLeastOneWithoutDebug |= !isDebugType;
+                            if (atLeastOneDebug && atLeastOneWithoutDebug)
+                            {
+                                break;
+                            }
                         }
                     }
+                    if (atLeastOneDebug && !atLeastOneWithoutDebug)
+                    {
+                        // Only debug lines
+                        _debugMode = DebugType.All;
+                    }
+                    else if (!atLeastOneDebug && atLeastOneWithoutDebug)
+                    {
+                        // Only not debug lines
+                        _debugMode = DebugType.None;
+                    }
+                    else
+                    {
+                        // Some debug lines and some not debug lines
+                        _debugMode = DebugType.Mix;
+                    }
                 }
-                if (atLeastOneDebug && !atLeastOneWithoutDebug)
-                {
-                    // Only debug lines
-                    _debugMode = DebugType.All;
-                }
-                else if (!atLeastOneDebug && atLeastOneWithoutDebug)
-                {
-                    // Only not debug lines
-                    _debugMode = DebugType.None;
-                }
-                else
-                {
-                    // Some debug lines and some not debug lines
-                    _debugMode = DebugType.Mix;
-                }
-
-                return _debugMode.Value;
             }
         }
 
