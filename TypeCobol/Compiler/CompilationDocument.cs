@@ -57,11 +57,7 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Issue #315
         /// </summary>
-        private MultilineScanState InitialScanStateForCopy
-        {
-            get;
-            set;
-        }
+        private MultilineScanState InitialScanState { get; }
 
         /// <summary>
         /// Informations used to track the performance of each compilation step
@@ -149,14 +145,8 @@ namespace TypeCobol.Compiler
         /// This method does not scan the inserted text lines to produce tokens.
         /// You must explicitely call UpdateTokensLines() to start an initial scan of the document.
         /// </summary>
-        public CompilationDocument(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines,
-            TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider, List<RemarksDirective.TextNameVariation> copyTextNameVariations) :
-            this(textSourceInfo, initialTextLines, compilerOptions, processedTokensDocumentProvider, null, copyTextNameVariations)
-        {
-        }
-
         public CompilationDocument(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider,
-            [CanBeNull] MultilineScanState scanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
+            [NotNull] MultilineScanState initialScanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
             TextSourceInfo = textSourceInfo;
             CompilerOptions = compilerOptions;
@@ -184,9 +174,7 @@ namespace TypeCobol.Compiler
             PerfStatsForScanner = new PerfStatsForCompilationStep(CompilationStep.Scanner);
             PerfStatsForPreprocessor = new PerfStatsForParsingStep(CompilationStep.Preprocessor);
 
-            InitialScanStateForCopy = scanState;
-            if (scanState != null)
-                InitialScanStateForCopy.InsideCopy = true;
+            InitialScanState = initialScanState;
         }
 
         /// <summary>
@@ -481,7 +469,7 @@ namespace TypeCobol.Compiler
                 // Apply text changes to the compilation document
                 if (scanAllDocumentLines)
                 {
-                    ScannerStep.ScanDocument(TextSourceInfo, compilationDocumentLines, CompilerOptions, CopyTextNamesVariations, InitialScanStateForCopy);
+                    ScannerStep.ScanDocument(TextSourceInfo, compilationDocumentLines, CompilerOptions, CopyTextNamesVariations, InitialScanState);
                     // Notify all listeners that the whole document has changed.
                     EventHandler wholeDocumentChanged = WholeDocumentChanged; // avoid race condition
                     wholeDocumentChanged?.Invoke(this, EventArgs.Empty);
@@ -489,7 +477,7 @@ namespace TypeCobol.Compiler
                 else
                 {
                     IList<DocumentChange<ITokensLine>> documentChanges = null;
-                    documentChanges = ScannerStep.ScanTextLinesChanges(TextSourceInfo, compilationDocumentLines, textLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, CopyTextNamesVariations, InitialScanStateForCopy);
+                    documentChanges = ScannerStep.ScanTextLinesChanges(TextSourceInfo, compilationDocumentLines, textLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, CopyTextNamesVariations, InitialScanState);
                     // Create a new version of the document to track these changes
                     currentTokensLinesVersion.changes = documentChanges;
                     currentTokensLinesVersion.next = new DocumentVersion<ITokensLine>(currentTokensLinesVersion);

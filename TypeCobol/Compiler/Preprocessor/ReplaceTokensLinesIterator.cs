@@ -509,10 +509,11 @@ namespace TypeCobol.Compiler.Preprocessor
         internal static Token GenerateReplacementToken(Token originalToken, string replacedTokenText)
         { 
             // Transfer the scanner context the of original token to the call below
-            Diagnostic error = null;
             MultilineScanState scanState = originalToken.ScanStateSnapshot;
-            Token generatedToken = Scanner.Scanner.ScanIsolatedToken(replacedTokenText, out error, scanState);
-            // TO DO : find a way to report the error above ...
+            System.Diagnostics.Debug.Assert(scanState != null);
+
+            Token generatedToken = Scanner.Scanner.ScanIsolatedToken(replacedTokenText, scanState, out _);
+            // TODO : find a way to report the error above ...
 
             if (originalToken.PreviousTokenType != null)
                 //In case orignial token was previously an other type of token reset it back to it's original type. 

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Directives;
 
 namespace TypeCobol.Compiler.Scanner
 {
@@ -98,6 +95,7 @@ namespace TypeCobol.Compiler.Scanner
             SymbolicCharacters.Add(tokenText);
         }
 
+#if EUROINFO_RULES
         /// <summary>
         /// True when we are existing a remarks directive. 
         /// </summary>
@@ -111,6 +109,7 @@ namespace TypeCobol.Compiler.Scanner
         /// True if we are inside a COPY=(..) of a REMARKS compiler directive.
         /// </summary>
         public bool InsideRemarksParentheses { get; set; }
+#endif
 
         /// <summary>
         /// Initialize scanner state for the first line
@@ -122,7 +121,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Initialize scanner state
         /// </summary>
-        public MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions, 
+        private MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions, 
                 bool insideFormalizedComment, bool insideMultilineComments, bool insideParamsField,
                 bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals)
         {

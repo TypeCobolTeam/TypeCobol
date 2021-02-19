@@ -32,10 +32,10 @@ namespace TypeCobol.Test.Utils
                 localDirectory.FullName, new string[] { ".cbl", ".cpy" },
                 documentFormat, new TypeCobolOptions(), null);
 
-            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, true, project);
+            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, false, project);
             compiler.CompileOnce();
 
-            return compiler.CompilationResultsForCopy;
+            return compiler.CompilationResultsForProgram;
         }
 
         public static CompilationUnit ParseCobolFile(string textName, DocumentFormat documentFormat = null, string folder = null, ExecutionStep execToStep = ExecutionStep.SemanticCheck)

@@ -125,7 +125,6 @@ namespace TypeCobol.Compiler
         private FileCompiler(string libraryName, string fileName, CobolFile loadedCobolFile, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, ITextDocument textDocument, TypeCobolOptions compilerOptions, SymbolTable customSymbols, bool isCopyFile,
             [CanBeNull] MultilineScanState scanState, CompilationProject compilationProject, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
-
             var chrono = new Stopwatch();
             chrono.Start();
 
@@ -184,12 +183,16 @@ namespace TypeCobol.Compiler
             // 3. Prepare the data structures used by the different steps of the compiler
             if (isCopyFile)
             {
+                Debug.Assert(scanState != null);
+                Debug.Assert(scanState.InsideCopy);
                 CompilationResultsForCopy = new CompilationDocument(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, scanState, copyTextNameVariations);
                 CompilationResultsForCopy.CustomSymbols = customSymbols;
             }
             else
             {
-                CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, copyTextNameVariations, CompilationProject.AnalyzerProvider);
+                Debug.Assert(scanState == null);
+                var initialScanState = new MultilineScanState(false, false, false, TextDocument.Source.EncodingForAlphanumericLiterals);
+                CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, initialScanState, copyTextNameVariations, CompilationProject.AnalyzerProvider);
                 CompilationResultsForProgram.CustomSymbols = customSymbols;
             }
             CompilerOptions = compilerOptions;

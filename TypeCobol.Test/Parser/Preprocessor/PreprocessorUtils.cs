@@ -10,11 +10,18 @@ using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Test.Parser.Preprocessor
 {
-    internal class PreprocessorUtils
+    internal static class PreprocessorUtils
     {
         private static readonly DocumentFormat _Format = new DocumentFormat(Encoding.Unicode, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.CobolReferenceFormat);
+        private static readonly MultilineScanState _ScanState = new MultilineScanState(false, false, false, Encoding.Unicode);
 
         public static readonly string Root = "Parser" + Path.DirectorySeparatorChar +"Preprocessor";
+
+        private static ProcessedTokensDocument GetProcessedTokensDocument(this CompilationProject compilationProject, string testName)
+        {
+            //This is a hack, we should create a FileCompiler instead of using this shortcut. Note that the source is considered as a copy here.
+            return compilationProject.GetProcessedTokensDocument(null, testName, _ScanState, null, out _);
+        }
 
         public static CompilationProject DirectivesProject;
         public static CompilationProject CopyProject;
@@ -39,8 +46,7 @@ namespace TypeCobol.Test.Parser.Preprocessor
 
         public static string ProcessCompilerDirectives(string testName)
         {
-            PerfStatsForImportedDocument perfStats;
-            ProcessedTokensDocument processedDoc = DirectivesProject.GetProcessedTokensDocument(null, testName, out perfStats);
+            ProcessedTokensDocument processedDoc = DirectivesProject.GetProcessedTokensDocument(testName);
 
             StringBuilder sbResult = new StringBuilder();
             int lineNumber = 1;
@@ -135,8 +141,7 @@ namespace TypeCobol.Test.Parser.Preprocessor
 
         public static string ProcessCopyDirectives(string name)
         {
-            PerfStatsForImportedDocument perfStats;
-            return ProcessTokensDocument(name, CopyProject.GetProcessedTokensDocument(null, name, out perfStats));
+            return ProcessTokensDocument(name, CopyProject.GetProcessedTokensDocument(name));
         }
 
         public static void CheckWithCopyResultFile(string result, string testName)
@@ -148,8 +153,7 @@ namespace TypeCobol.Test.Parser.Preprocessor
 
         public static string ProcessReplaceDirectives(string name)
         {
-            PerfStatsForImportedDocument perfStats;
-            return ProcessTokensDocument(name, ReplaceProject.GetProcessedTokensDocument(null, name, out perfStats));
+            return ProcessTokensDocument(name, ReplaceProject.GetProcessedTokensDocument(name));
         }
 
         public static void CheckWithReplaceResultFile(string result, string testName)
