@@ -267,29 +267,7 @@ namespace TypeCobol.Compiler.Domain
             SetSymbolAccessModifer(funSym, header.Visibility);
             //The current scope is now the function.
             this.CurrentFunction = funSym;
-        }
 
-        /// <summary>
-        /// Creates a VariableSymbol for the supplied ParameterDescription node.
-        /// </summary>
-        /// <param name="parameter">The parameter to be handled.</param>
-        /// <param name="linkageData">Linkage data symbol set.</param>
-        private VariableSymbol FunctionParameter2Symbol(ParameterDescription parameter, Domain<VariableSymbol> linkageData)
-        {
-            VariableSymbol p = DataDefinition2Symbol(parameter, linkageData, null);
-            
-            //Enter the symbol in the linkage section domain
-            linkageData.Enter(p);
-
-            return p;
-        }
-
-        public override void EndFunctionDeclaration(FunctionDeclarationEnd end)
-        {
-            System.Diagnostics.Debug.Assert(LastFunctionDeclaration != null);
-            FunctionDeclaration funDecl = LastFunctionDeclaration;
-            System.Diagnostics.Debug.Assert(CurrentFunction != null);
-            FunctionSymbol funSym = CurrentFunction;
 
             //Collect Function parameters.
             ParametersProfileNode funcProfile = funDecl.Profile;
@@ -326,6 +304,28 @@ namespace TypeCobol.Compiler.Domain
             parameters.TrimExcess();
             funSym.Type = new ScopeType(parameters, retVar);
 
+        }
+
+        /// <summary>
+        /// Creates a VariableSymbol for the supplied ParameterDescription node.
+        /// </summary>
+        /// <param name="parameter">The parameter to be handled.</param>
+        /// <param name="linkageData">Linkage data symbol set.</param>
+        private VariableSymbol FunctionParameter2Symbol(ParameterDescription parameter, Domain<VariableSymbol> linkageData)
+        {
+            VariableSymbol p = DataDefinition2Symbol(parameter, linkageData, null);
+            
+            //Enter the symbol in the linkage section domain
+            linkageData.Enter(p);
+
+            return p;
+        }
+
+        public override void EndFunctionDeclaration(FunctionDeclarationEnd end)
+        {
+            System.Diagnostics.Debug.Assert(LastFunctionDeclaration != null);
+            System.Diagnostics.Debug.Assert(CurrentFunction != null);
+            
             //Pop the Function declaration context
             LastFunctionDeclaration = null;
             //Also Pop CurrentScope
