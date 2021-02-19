@@ -60,6 +60,12 @@ namespace TypeCobol.Compiler
         private MultilineScanState InitialScanState { get; }
 
         /// <summary>
+        /// Special compilation mode for copies that are not imported from another document.
+        /// To parse them, use a fake wrapper program.
+        /// </summary>
+        protected bool UseDirectCopyParsing { get; }
+
+        /// <summary>
         /// Informations used to track the performance of each compilation step
         /// </summary>
         public class PerfStatsForCompilationStep
@@ -145,9 +151,14 @@ namespace TypeCobol.Compiler
         /// This method does not scan the inserted text lines to produce tokens.
         /// You must explicitely call UpdateTokensLines() to start an initial scan of the document.
         /// </summary>
-        public CompilationDocument(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider,
+        public CompilationDocument(bool isCopy, bool isImported, TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider,
             [NotNull] MultilineScanState initialScanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
+            if (isImported && !isCopy)
+            {
+                throw new InvalidOperationException("Only copies can be imported.");
+            }
+
             TextSourceInfo = textSourceInfo;
             CompilerOptions = compilerOptions;
             CopyTextNamesVariations = copyTextNameVariations ?? new List<RemarksDirective.TextNameVariation>();
@@ -175,6 +186,7 @@ namespace TypeCobol.Compiler
             PerfStatsForPreprocessor = new PerfStatsForParsingStep(CompilationStep.Preprocessor);
 
             InitialScanState = initialScanState;
+            UseDirectCopyParsing = isCopy && !isImported;
         }
 
         /// <summary>
@@ -623,7 +635,7 @@ namespace TypeCobol.Compiler
                         PreprocessorStep.ProcessDocument(this, ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), processedTokensDocumentProvider, perfStatsForParserInvocation, out missingCopies);
 
                         // Create the first processed tokens document snapshot
-                        ProcessedTokensDocumentSnapshot = new ProcessedTokensDocument(tokensDocument, new DocumentVersion<IProcessedTokensLine>(this), ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), CompilerOptions, missingCopies);
+                        ProcessedTokensDocumentSnapshot = CreateProcessedTokensDocument(new DocumentVersion<IProcessedTokensLine>(this), (ImmutableList<CodeElementsLine>) tokensDocument.Lines);
                     }
                     else
                     {
@@ -646,7 +658,15 @@ namespace TypeCobol.Compiler
                     currentProcessedTokensLineVersion = currentProcessedTokensLineVersion.next;
 
                     // Update the processed tokens document snapshot
-                    ProcessedTokensDocumentSnapshot = new ProcessedTokensDocument(tokensDocument, currentProcessedTokensLineVersion, processedTokensDocumentLines.ToImmutable(), CompilerOptions, missingCopies);
+                    ProcessedTokensDocumentSnapshot = CreateProcessedTokensDocument(currentProcessedTokensLineVersion, processedTokensDocumentLines.ToImmutable());
+                }
+
+                ProcessedTokensDocument CreateProcessedTokensDocument(DocumentVersion<IProcessedTokensLine> version, ISearchableReadOnlyList<IProcessedTokensLine> lines)
+                {
+                    //Use wrapper for direct copy parsing mode
+                    return UseDirectCopyParsing
+                        ? new CopyWrappedAsProgramTokensDocument(tokensDocument, version, lines, CompilerOptions, missingCopies)
+                        : new ProcessedTokensDocument(tokensDocument, version, lines, CompilerOptions, missingCopies);
                 }
 
                 // Refresh missing copies

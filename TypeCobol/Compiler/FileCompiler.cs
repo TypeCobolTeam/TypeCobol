@@ -185,14 +185,14 @@ namespace TypeCobol.Compiler
             {
                 Debug.Assert(scanState != null);
                 Debug.Assert(scanState.InsideCopy);
-                CompilationResultsForCopy = new CompilationDocument(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, scanState, copyTextNameVariations);
+                CompilationResultsForCopy = new CompilationDocument(true, true, TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, scanState, copyTextNameVariations);
                 CompilationResultsForCopy.CustomSymbols = customSymbols;
             }
             else
             {
                 Debug.Assert(scanState == null);
                 var initialScanState = new MultilineScanState(false, false, false, TextDocument.Source.EncodingForAlphanumericLiterals);
-                CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, initialScanState, copyTextNameVariations, CompilationProject.AnalyzerProvider);
+                CompilationResultsForProgram = new CompilationUnit(false, false, TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, initialScanState, copyTextNameVariations, CompilationProject.AnalyzerProvider);
                 CompilationResultsForProgram.CustomSymbols = customSymbols;
             }
             CompilerOptions = compilerOptions;
