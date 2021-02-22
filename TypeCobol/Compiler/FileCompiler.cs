@@ -183,9 +183,20 @@ namespace TypeCobol.Compiler
             // 3. Prepare the data structures used by the different steps of the compiler
             if (isCopyFile)
             {
-                Debug.Assert(scanState != null);
-                Debug.Assert(scanState.InsideCopy);
-                CompilationResultsForCopy = new CompilationDocument(true, true, TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, scanState, copyTextNameVariations);
+                if (scanState != null)
+                {
+                    //This is an imported copy
+                    Debug.Assert(scanState.InsideCopy);
+                    CompilationResultsForCopy = new CompilationDocument(true, true, TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, scanState, copyTextNameVariations);
+                }
+                else
+                {
+                    //Direct copy parsing
+                    var initialScanState = new MultilineScanState(true, true, false, TextDocument.Source.EncodingForAlphanumericLiterals);
+                    CompilationResultsForProgram = new CompilationUnit(true, false, TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, initialScanState, copyTextNameVariations, CompilationProject.AnalyzerProvider);
+                    CompilationResultsForCopy = CompilationResultsForProgram;
+                }
+
                 CompilationResultsForCopy.CustomSymbols = customSymbols;
             }
             else
