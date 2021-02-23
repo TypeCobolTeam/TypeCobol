@@ -50,19 +50,24 @@ namespace TypeCobol.Analysis.Graph
         private readonly StringBuilder _blocksBuffer;
         private readonly StringBuilder _edgesBuffer;
         private ControlFlowGraph<Node, D> _cfg;
+        private readonly int _clusterIndex;
+
+        public delegate void BlockEmitted(BasicBlock<Node, D> block, int clusterIndex);
+        public event BlockEmitted BlockEmittedEvent;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="cfg">Control Flow Graph to represent, can be null and set later through the Generate method.</param>
         public CfgDotFileForNodeGenerator(ControlFlowGraph<Node, D> cfg)
-            : this(cfg, null)
+            : this(cfg, null, -1)
         {
             
         }
 
-        private CfgDotFileForNodeGenerator(ControlFlowGraph<Node, D> cfg, CfgDotFileForNodeGenerator<D> parentGenerator)
+        private CfgDotFileForNodeGenerator(ControlFlowGraph<Node, D> cfg, CfgDotFileForNodeGenerator<D> parentGenerator, int clusterIndex)
         {
+            this._clusterIndex = clusterIndex;
             if (parentGenerator != null)
             {
                 //List of encountered blocks is inherited from parent
@@ -70,6 +75,7 @@ namespace TypeCobol.Analysis.Graph
                 //In DOT, if an edge belongs to a subgraph, then its target block must be included into that subgraph
                 //To avoid unwanted block inclusions, we write all edges at the root level (main digraph)
                 _edgesBuffer = parentGenerator._edgesBuffer;
+                this.BlockEmittedEvent = parentGenerator.BlockEmittedEvent;
             }
             else
             {
@@ -156,7 +162,7 @@ namespace TypeCobol.Analysis.Graph
                 if (group.Group.Count > 0)
                 {
                     //Generate blocks for subgraph using a nested generator
-                    var subgraphGenerator = new CfgDotFileForNodeGenerator<D>(_cfg, this);
+                    var subgraphGenerator = new CfgDotFileForNodeGenerator<D>(_cfg, this, group.GroupIndex);
                     subgraphGenerator.FullInstruction = this.FullInstruction;
                     BasicBlock<Node, D> first = group.Group.First.Value;
                     _cfg.DFS(first, subgraphGenerator.EmitBlock);
@@ -193,7 +199,8 @@ namespace TypeCobol.Analysis.Graph
                 System.Diagnostics.Debug.Assert(edge >= 0 && edge < _cfg.SuccessorEdges.Count);
                 _edgesBuffer.AppendLine($"Block{block.Index} -> Block{_cfg.SuccessorEdges[edge].Index}");
             }
-
+            if (BlockEmittedEvent != null)
+                BlockEmittedEvent(block, _clusterIndex);
             return true;
         }
 
