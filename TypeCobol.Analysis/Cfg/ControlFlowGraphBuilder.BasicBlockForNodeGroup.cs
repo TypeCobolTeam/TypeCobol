@@ -75,17 +75,6 @@ namespace TypeCobol.Analysis.Cfg
             }
 
             /// <summary>
-            /// To detect recursivity on PERFORM Procedure calls.
-            /// This is a bit array of GroupIndex encountered during the workflow
-            /// call of other PERFORM.
-            /// </summary>
-            internal BitArray RecursivityGroupSet
-            {
-                get;
-                set;
-            }
-
-            /// <summary>
             /// Constructor.
             /// </summary>
             public BasicBlockForNodeGroup()

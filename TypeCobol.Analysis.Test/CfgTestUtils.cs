@@ -190,16 +190,6 @@ namespace TypeCobol.Analysis.Test
             dotGen.Report(writer);
         }
 
-        private static void GenDotCfg(ControlFlowGraph<Node, object> cfg, TextWriter writer, bool fullInstruction)
-        {
-            //Create a Dot File Generator            
-            CfgDotFileForNodeGenerator<object> dotGen = new CfgDotFileForNodeGenerator<object>(cfg)
-                                                        {
-                                                            FullInstruction = fullInstruction,
-                                                        };
-            dotGen.Report(writer);
-        }
-
         /// <summary>
         /// Generates a Dot CFG file
         /// </summary>
