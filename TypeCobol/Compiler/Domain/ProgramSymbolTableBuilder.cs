@@ -257,7 +257,7 @@ namespace TypeCobol.Compiler.Domain
             FunctionDeclaration funDecl = (FunctionDeclaration) CurrentNode;
             System.Diagnostics.Debug.Assert(LastFunctionDeclaration == null);
             LastFunctionDeclaration = funDecl;
-            //Create a function symbol (the FunctionType will be set at end of declaration)
+            //Create a function symbol (the FunctionType will be set at after parameters are known)
             FunctionSymbol funSym = new FunctionSymbol(header.FunctionName.Name);
             funDecl.SemanticData = funSym;
             //Enter the function in the current program
