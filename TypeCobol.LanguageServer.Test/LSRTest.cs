@@ -440,6 +440,13 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("CompletionOutputParamEmptyType", LsrTestingOptions.NoLsrTesting, true);
         }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void CompletionCallDuplicateProcedure()
+        {
+            LSRTestHelper.Test("CompletionCallDuplicateProcedure", LsrTestingOptions.NoLsrTesting, true);
+        }
         #endregion
 
         [TestMethod]
