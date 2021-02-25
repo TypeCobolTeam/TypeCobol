@@ -1,19 +1,13 @@
-﻿Line 1[8,23] <37, Warning, General> - Warning: "END PROGRAM" is missing.
-       IDENTIFICATION DIVISION.
+﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. Pgm.
        ENVIRONMENT DIVISION.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
+       01 MyBool         pic X.
+         88 O            value 'O'.
        PROCEDURE DIVISION.
-       DECLARE PROCEDURE Proc1
-           INPUT  O PIC X
-           OUTPUT R PIC X.
-       data division.
-       working-storage section.
-       procedure division.
-Line 13[12,15] <37, Warning, General> - Warning: "end-if" is missing
-Line 13[12,15] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after IF condition.
+Line 9[12,15] <37, Warning, General> - Warning: "end-if" is missing
+Line 9[12,15] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after IF condition.
            if O
-Line 14[8,19] <27, Error, Syntax> - Syntax error : extraneous input 'END-DECLARE.' expecting {SentenceEnd, AcceptStatement, AddStatement, AllocateStatement, AlterStatement, CallStatement, CancelStatement, CloseStatement, ComputeStatement, ContinueStatement, DeleteStatement, DisplayStatement, DivideStatement, EntryStatement, EvaluateStatement, ExecStatement, ExitMethodStatement, ExitProgramStatement, ExitStatement, FreeStatement, GobackStatement, GotoStatement, IfStatement, InitializeStatement, InspectStatement, InvokeStatement, JsonGenerateStatement, JsonParseStatement, MergeStatement, MoveStatement, MultiplyStatement, NextSentenceStatement, OpenStatement, PerformProcedureStatement, PerformStatement, ReadStatement, ReleaseStatement, ReturnStatement, RewriteStatement, SearchStatement, SetStatement, SortStatement, StartStatement, StopStatement, StringStatement, SubtractStatement, UnstringStatement, WriteStatement, XmlGenerateStatement, XmlParseStatement, AtEndCondition, NotAtEndCondition, OnExceptionCondition, NotOnExceptionCondition, OnOverflowCondition, NotOnOverflowCondition, InvalidKeyCondition, NotInvalidKeyCondition, OnSizeErrorCondition, NotOnSizeErrorCondition, ElseCondition, WhenCondition, WhenOtherCondition, WhenSearchCondition, AddStatementEnd, CallStatementEnd, ComputeStatementEnd, DeleteStatementEnd, DivideStatementEnd, EvaluateStatementEnd, IfStatementEnd, InvokeStatementEnd, JsonStatementEnd, MultiplyStatementEnd, PerformStatementEnd, ReadStatementEnd, ReturnStatementEnd, RewriteStatementEnd, SearchStatementEnd, StartStatementEnd, StringStatementEnd, SubtractStatementEnd, UnstringStatementEnd, WriteStatementEnd, XmlStatementEnd, ProcedureStyleCall}
-       END-DECLARE.
+           .
        END PROGRAM Pgm.
