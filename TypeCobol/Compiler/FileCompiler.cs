@@ -212,7 +212,7 @@ namespace TypeCobol.Compiler
         }
 
         /// <summary>
-        /// Perform a cmpilation based on an execution step.
+        /// Perform a compilation based on an execution step.
         /// </summary>
         /// <param name="exec2Step">The execution step</param>
         /// <param name="haltOnMissingCopy">For preprocessing step, halt on missing copy options</param>
@@ -222,31 +222,22 @@ namespace TypeCobol.Compiler
             if (exec2Step == null)
                 exec2Step = ExecutionStep.CrossCheck;
 
-            if (CompilationResultsForCopy != null)
-            {
-                CompilationResultsForCopy.UpdateTokensLines(); //Scanner
-
-                if (!(exec2Step > ExecutionStep.Scanner)) return;
-
-                CompilationResultsForCopy.RefreshTokensDocumentSnapshot();
-                CompilationResultsForCopy.RefreshProcessedTokensDocumentSnapshot(); //Preprocessor
-            }
-            else
+            if (CompilationResultsForProgram != null)
             {
                 CompilationResultsForProgram.UpdateTokensLines(); //Scanner
                 CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
-                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() {ExecutionStep = ExecutionStep.Scanner});
+                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.Scanner });
 
                 if (!(exec2Step > ExecutionStep.Scanner)) return;
 
                 CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot(); //Preprocessor
-                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.Preprocessor});
+                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.Preprocessor });
 
                 if (!(exec2Step > ExecutionStep.Preprocessor)) return;
                 if (haltOnMissingCopy && CompilationResultsForProgram.MissingCopies.Count > 0) return; //If the Option is set to true and there is at least one missing copy, we don't have to run the semantic phase
 
                 CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot(); //SyntaxCheck
-                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.SyntaxCheck});
+                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.SyntaxCheck });
 
                 if (!(exec2Step > ExecutionStep.SyntaxCheck)) return;
 
@@ -262,6 +253,16 @@ namespace TypeCobol.Compiler
 
                 CompilationResultsForProgram.RefreshCodeAnalysisDocumentSnapshot(); //QualityCheck step
                 ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.QualityCheck });
+            }
+            else
+            {
+                Debug.Assert(CompilationResultsForCopy != null);
+                CompilationResultsForCopy.UpdateTokensLines(); //Scanner
+
+                if (!(exec2Step > ExecutionStep.Scanner)) return;
+
+                CompilationResultsForCopy.RefreshTokensDocumentSnapshot();
+                CompilationResultsForCopy.RefreshProcessedTokensDocumentSnapshot(); //Preprocessor
             }
         }
     }
