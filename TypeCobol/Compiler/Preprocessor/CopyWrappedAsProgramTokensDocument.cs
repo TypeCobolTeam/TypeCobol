@@ -12,40 +12,44 @@ namespace TypeCobol.Compiler.Preprocessor
         {
             if (targetLine == null) yield break;
 
+            int s = targetLine.Source.StartIndex;
+
             //IDENTIFICATION DIVISION.
             //PROGRAM-ID. <copyName>.
-            yield return new Token(TokenType.IDENTIFICATION, 0, 0, targetLine);
-            yield return new Token(TokenType.DIVISION, 0, 0, targetLine);
-            yield return new Token(TokenType.PeriodSeparator, 0, 0, targetLine);
-            yield return new Token(TokenType.PROGRAM_ID, 0, 0, targetLine);
-            yield return new Token(TokenType.PeriodSeparator, 0, 0, targetLine);
-            yield return new Token(TokenType.UserDefinedWord, 0, 0, targetLine) { LiteralValue = new AlphanumericLiteralTokenValue(copyName) };
-            yield return new Token(TokenType.PeriodSeparator, 0, 0, targetLine);
+            yield return new Token(TokenType.IDENTIFICATION, s, s, targetLine);
+            yield return new Token(TokenType.DIVISION, s, s, targetLine);
+            yield return new Token(TokenType.PeriodSeparator, s, s, targetLine);
+            yield return new Token(TokenType.PROGRAM_ID, s, s, targetLine);
+            yield return new Token(TokenType.PeriodSeparator, s, s, targetLine);
+            yield return new Token(TokenType.UserDefinedWord, s, s, targetLine) { LiteralValue = new AlphanumericLiteralTokenValue(copyName) };
+            yield return new Token(TokenType.PeriodSeparator, s, s, targetLine);
 
             //DATA DIVISION.
             //WORKING-STORAGE SECTION.
-            yield return new Token(TokenType.DATA, 0, 0, targetLine);
-            yield return new Token(TokenType.DIVISION, 0, 0, targetLine);
-            yield return new Token(TokenType.PeriodSeparator, 0, 0, targetLine);
-            yield return new Token(TokenType.WORKING_STORAGE, 0, 0, targetLine);
-            yield return new Token(TokenType.SECTION, 0, 0, targetLine);
-            yield return new Token(TokenType.PeriodSeparator, 0, 0, targetLine);
+            yield return new Token(TokenType.DATA, s, s, targetLine);
+            yield return new Token(TokenType.DIVISION, s, s, targetLine);
+            yield return new Token(TokenType.PeriodSeparator, s, s, targetLine);
+            yield return new Token(TokenType.WORKING_STORAGE, s, s, targetLine);
+            yield return new Token(TokenType.SECTION, s, s, targetLine);
+            yield return new Token(TokenType.PeriodSeparator, s, s, targetLine);
 
             //Always add an anonymous 01 root level. Depending of the content of the copy, this level may be populated
             //with children or not. We remove it if it is empty at the end of Node phase
-            yield return new Token(TokenType.LevelNumber, 0, 0, targetLine) { LiteralValue = new IntegerLiteralTokenValue(null, "01") };
-            yield return new Token(TokenType.PeriodSeparator, 0, 0, targetLine);
+            yield return new Token(TokenType.LevelNumber, s, s, targetLine) { LiteralValue = new IntegerLiteralTokenValue(null, "01") };
+            yield return new Token(TokenType.PeriodSeparator, s, s, targetLine);
         }
 
         private static IEnumerable<Token> EndProgramSkeleton(ITokensLine targetLine, string copyName)
         {
             if (targetLine == null) yield break;
 
+            int s = targetLine.Source.StartIndex;
+
             //END PROGRAM <copyName>.
-            yield return new Token(TokenType.END, 0, 0, targetLine);
-            yield return new Token(TokenType.PROGRAM, 0, 0, targetLine);
-            yield return new Token(TokenType.UserDefinedWord, 0, 0, targetLine) { LiteralValue = new AlphanumericLiteralTokenValue(copyName) };
-            yield return new Token(TokenType.PeriodSeparator, 0, 0, targetLine);
+            yield return new Token(TokenType.END, s, s, targetLine);
+            yield return new Token(TokenType.PROGRAM, s, s, targetLine);
+            yield return new Token(TokenType.UserDefinedWord, s, s, targetLine) { LiteralValue = new AlphanumericLiteralTokenValue(copyName) };
+            yield return new Token(TokenType.PeriodSeparator, s, s, targetLine);
         }
 
         private static Token GenerateReplacement(Token partialCobolWordToken)

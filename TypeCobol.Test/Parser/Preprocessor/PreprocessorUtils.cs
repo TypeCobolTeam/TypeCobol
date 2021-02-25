@@ -17,10 +17,10 @@ namespace TypeCobol.Test.Parser.Preprocessor
 
         public static readonly string Root = "Parser" + Path.DirectorySeparatorChar +"Preprocessor";
 
-        private static ProcessedTokensDocument GetProcessedTokensDocument(this CompilationProject compilationProject, string testName)
+        private static ProcessedTokensDocument GetProcessedTokensDocument(this IProcessedTokensDocumentProvider processedTokensDocumentProvider, string testName)
         {
             //This is a hack, we should create a FileCompiler instead of using this shortcut. Note that the source is considered as a copy here.
-            return compilationProject.GetProcessedTokensDocument(null, testName, _ScanState, null, out _);
+            return processedTokensDocumentProvider.GetProcessedTokensDocument(null, testName, _ScanState, null, out _);
         }
 
         public static CompilationProject DirectivesProject;
