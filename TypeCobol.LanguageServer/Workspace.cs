@@ -214,10 +214,13 @@ namespace TypeCobol.LanguageServer
                 arrangedCustomSymbol.CopyAllPrograms(new List<List<Program>>() {prog.ToList()});
                 arrangedCustomSymbol.Programs.Remove(matchingPgm);
             }
+
+            //TODO issue #1892 use nature of source document
             fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider,
                 CompilationProject, CompilationProject.CompilationOptions, arrangedCustomSymbol ?? _customSymbols,
                 false, CompilationProject);
 #else
+            //TODO issue #1892 use nature of source document
             fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, _customSymbols, false, CompilationProject);
 #endif
             //Set Any Language Server Connection Options.
