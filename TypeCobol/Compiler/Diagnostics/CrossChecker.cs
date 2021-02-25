@@ -239,6 +239,72 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(WhenSearch whenSearch)
+        {
+            var whenSearchVisitor = new WhenSearchVisitor(whenSearch);
+            whenSearch.CodeElement.Condition.AcceptASTVisitor(whenSearchVisitor);
+            if (whenSearchVisitor.IsInError)
+            {
+                DiagnosticUtils.AddError(whenSearch, "First index declared for the table when subscripting and one of declared keys must be used.");
+            }
+            return true;
+        }
+
+        private class WhenSearchVisitor : AbstractAstVisitor
+        {
+            private readonly WhenSearch _whenSearch;
+            public bool IsInError { get; private set; } = false;
+
+
+            public WhenSearchVisitor(WhenSearch whenSearch)
+            {
+                _whenSearch = whenSearch;
+            }
+
+
+            public override bool Visit(NumericVariable numericVariable)
+            {
+                var variableStorageArea = (DataOrConditionStorageArea)numericVariable.StorageArea;
+                ////////// WHEN must use one of the declared keys (ascending or descending) //////////
+                var dataDefinitionKey = _whenSearch.GetDataDefinitionFromStorageAreaDictionary(variableStorageArea);
+                if (dataDefinitionKey?.Parent.CodeElement is DataDescriptionEntry tableDescriptionEntry)
+                {
+                    if (tableDescriptionEntry.TableSortingKeys != null)
+                    {
+                        var tableSortingKeyNames = tableDescriptionEntry.TableSortingKeys
+                            .Where(key => key.SortDirection?.Value != SortDirection.None)
+                            .Select(key => key.SortKey.Name);
+                        var isTableSortingKey = tableSortingKeyNames.Contains(dataDefinitionKey.Name);
+                        if (!isTableSortingKey)
+                        {
+                            // error
+                            IsInError = true;
+                        }
+                    }
+                }
+
+                ////////// WHEN must use the first index declared for the table when subscripting //////////
+                if (variableStorageArea?.Subscripts.Count > 0)
+                {
+                    // Get the 1st subscript used
+                    var firstSubscriptStorageArea = ((NumericVariableOperand)variableStorageArea.Subscripts[0].NumericExpression).IntegerVariable.StorageArea;
+                    var dataDefinitionFirstSubscript = _whenSearch.GetDataDefinitionFromStorageAreaDictionary(firstSubscriptStorageArea);
+                    // Ensure the subscript is the 1st declared
+                    var isFirstIndexDeclaredInTable = false;
+                    if (dataDefinitionFirstSubscript?.Parent.CodeElement is DataDescriptionEntry tableDescriptionEntry2)
+                    {
+                        isFirstIndexDeclaredInTable = tableDescriptionEntry2.Indexes[0].Name.Equals(dataDefinitionFirstSubscript.Name, StringComparison.OrdinalIgnoreCase);
+                    }
+                    if (!isFirstIndexDeclaredInTable)
+                    {
+                        // error
+                        IsInError = true;
+                    }
+                }
+                return true;
+            }
+        }
+
         public override bool Visit(Evaluate evaluate)
         {
             if (evaluate.GetChildren<WhenOther>().Count == 0)
