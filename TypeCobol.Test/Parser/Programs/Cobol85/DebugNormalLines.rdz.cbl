@@ -65,6 +65,8 @@
                 yyyy
       d    DISPLAY 'name = ' yyyy
            MOVE '1234' TO yyyy
+      d    DISPLAY 
+           'name = ' yyyy
            GOBACK.
        END PROGRAM Pgm2.
       

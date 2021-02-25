@@ -59,9 +59,10 @@ namespace TypeCobol.Test.Misc
                 CodeElement.DebugType.Mix,  //35
                 CodeElement.DebugType.All,
                 CodeElement.DebugType.None,
-                CodeElement.DebugType.None,
+                CodeElement.DebugType.Mix,
                 CodeElement.DebugType.None,
                 CodeElement.DebugType.None, //40
+                CodeElement.DebugType.None, 
             };
 
             var folder = Path.Combine("Parser", "Programs", "Cobol85");
