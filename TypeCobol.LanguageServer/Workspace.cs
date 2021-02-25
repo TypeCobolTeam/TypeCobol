@@ -124,10 +124,6 @@ namespace TypeCobol.LanguageServer
         /// Are we supporting Syntax Coloring Notifications.    
         /// </summary>
         public bool UseSyntaxColoring { get; set; }
-        /// <summary>
-        /// Are we supporting OutlineRefresh Notifications.    
-        /// </summary>
-        public bool UseOutlineRefresh { get; set; }
 
         /// <summary>
         /// Indicates whether this workspace has opened documents or not.
@@ -484,7 +480,7 @@ namespace TypeCobol.LanguageServer
         /// Handle the Configuration change notification.
         /// </summary>
         /// <param name="arguments">The arguments</param>
-        public void DidChangeConfigurationParams(IEnumerable<string> arguments)
+        public void DidChangeConfigurationParams(string[] arguments)
         {
             Configuration = new TypeCobolConfiguration();
             var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(Configuration);
@@ -510,11 +506,11 @@ namespace TypeCobol.LanguageServer
             var typeCobolOptions = new TypeCobolOptions(Configuration);
 
             //Configure CFG/DFA analyzer + external analyzers if any
-            var analyzerProvider = new CompositeAnalyzerProvider();
-            analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer("cfg-dfa", Configuration.CfgBuildingMode));
-            analyzerProvider.AddCustomProviders(Configuration.CustomAnalyzerFiles);
+            var compositeAnalyzerProvider = new CompositeAnalyzerProvider();
+            compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(TypeCobolLanguageServer.lspcfgId, Configuration.CfgBuildingMode));
+            compositeAnalyzerProvider.AddCustomProviders(Configuration.CustomAnalyzerFiles);
 
-            CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format, typeCobolOptions, analyzerProvider);
+            CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format, typeCobolOptions, compositeAnalyzerProvider);
 
             if (Configuration.CopyFolders != null && Configuration.CopyFolders.Count > 0)
             {

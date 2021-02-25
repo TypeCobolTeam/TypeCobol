@@ -46,6 +46,9 @@
     <Compile Include="StdioHttp\IMessageServer.cs" />
     <Compile Include="StdioHttp\ServerLogLevel.cs" />
     <Compile Include="StdioHttp\StdioHttpServer.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Cfg Dfa Notification\CfgDfaNotification.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Cfg Dfa Notification\CfgDfaParams.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Cfg Dfa Notification\CfgDfaParamsBuilder.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Extract Used Copies\ExtractUseCopiesNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Extract Used Copies\ExtractUseCopiesParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Loading Issue Notification\LoadingIssueNotification.cs" />
