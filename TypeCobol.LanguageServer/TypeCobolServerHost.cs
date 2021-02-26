@@ -125,6 +125,9 @@ namespace TypeCobol.LanguageServer
         /// A Path to a file of CPY Copy names
         /// </summary>
         private static string CPYMapFilePath { get; set; }
+        /// Are we supporting CFG/DFA Refresh Notifications.
+        /// </summary>
+        public static TypeCobolCustomLanguageServer.UseCfgMode UseCfg { get; set; }
 
         public static System.Diagnostics.Process Process;
 
@@ -215,7 +218,10 @@ namespace TypeCobol.LanguageServer
                 { "dcs|disablecopysuffixing", "Deactictivate Euro Information suffixing", v => UseEuroInformationLegacyReplacingSyntax = false },
                 { "sc|syntaxcolor",  "Syntax Coloring Support.", _ => UseSyntaxColoring = true},
                 { "ol|outlineRefresh",  "Outline Support.", _ => UseOutlineRefresh = true},
-                { "ycpl|ycopylist=", "{PATH} to a file of CPY copy names uppercase sorted.", v => CPYMapFilePath = v }
+                { "ycpl|ycopylist=", "{PATH} to a file of CPY copy names uppercase sorted.", v => CPYMapFilePath = v },
+                { "cfg=",  "{dot output mode} Control Flow Graph support and Dot Output mode: No/0, AsFile/1 or AsContent/2.",
+                    (String m) => {TypeCobolCustomLanguageServer.UseCfgMode ucm = TypeCobolCustomLanguageServer.UseCfgMode.No;
+                        Enum.TryParse(m, out ucm); UseCfg = ucm; }  },
             };
 
             System.Collections.Generic.List<string> arguments;
@@ -292,6 +298,7 @@ namespace TypeCobol.LanguageServer
                 typeCobolServer.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;
                 typeCobolServer.UseSyntaxColoring = UseSyntaxColoring;
                 typeCobolServer.UseOutlineRefresh = UseOutlineRefresh;
+                typeCobolServer.UseCfgDfaDataRefresh = UseCfg;
 
                 try
                 { //Read Cpy Copy names file.
