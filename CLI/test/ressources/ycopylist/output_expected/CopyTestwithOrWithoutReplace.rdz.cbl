@@ -1,0 +1,20 @@
+      *TypeCobol_Version:0.1(alpha)
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MYCPYTST. 
+      *REMARKS. COPY=(
+      *        XMYCOPY
+      *        YMYCOPY1
+      *        ).
+                                                               
+
+       ENVIRONMENT DIVISION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 XMYCOPY-X.
+          COPY XMYCOPY REPLACING ==:MYCOPY:== BY ==MYCOPY== .
+       01 MYCOPY1-Y. COPY YMYCOPY1.
+       PROCEDURE DIVISION.
+	      MOVE 4 TO MYCOPY-CODE.
+	      MOVE 5 TO MYCOPY1-CODE.
+       END PROGRAM MYCPYTST.
+      

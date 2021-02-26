@@ -82,6 +82,9 @@ namespace TypeCobol.LanguageServer.Test
             //Specify log file for TC LSP
             var tcLogFile = Path.Combine(workingDir.FullName, "TCLSPLog.txt");
 
+            //Check Cpy Copy names file
+            FileInfo cpyCopiesFile = new FileInfo(Path.Combine(testWorkingDirectory, "input", "CpyCopies.lst"));
+
             var scriptFileInfo = new FileInfo(scriptPath);
             //Setup the arguments
             //The path for LanguageServerRobot depends on the NuGetPackage. If the NuGet is not downloaded, it won't works
@@ -96,6 +99,10 @@ namespace TypeCobol.LanguageServer.Test
                 tcLogFile,
                 useSyntaxColoring ? "-sc" : "",
                 useOutline ? "-ol" : "");
+            if (cpyCopiesFile.Exists)
+            {
+                arguments += "-ycpl=\"" + cpyCopiesFile.FullName + "\"";
+            }
 
             System.Diagnostics.Process process = new System.Diagnostics.Process();
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();

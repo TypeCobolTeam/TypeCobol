@@ -6,6 +6,7 @@ using Mono.Options;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Preprocessor;
 
 namespace TypeCobol.Tools.Options_Config
 {
@@ -56,6 +57,9 @@ namespace TypeCobol.Tools.Options_Config
         public string RawMaximumDiagnostics;
         public string RawOutputFormat = "0";
 
+        public string CPYMapFilePath;
+        internal const string DefaultCopyNameFile = "COPIES_CPY.txt";
+
         public static Dictionary<ReturnCode, string> ErrorMessages = new Dictionary<ReturnCode, string>()
         {
             // Warnings
@@ -85,7 +89,8 @@ namespace TypeCobol.Tools.Options_Config
             { ReturnCode.ExpandingCopyError,      "Expanding copy path given is unreachable." },
             { ReturnCode.ExtractusedCopyError,    "Extractused copy path given is unreachable." },
             { ReturnCode.LogFileError,            "Log file path is unreachable." },
-            { ReturnCode.CustomAnalyzerFileError, "Custom analyzer assembly files are unreachable." }
+            { ReturnCode.CustomAnalyzerFileError, "Custom analyzer assembly files are unreachable." },
+            { ReturnCode.CopyNameMapFileError,    "CPY Copy name map file given is unreachable." }
         };
 
         public TypeCobolConfiguration()
@@ -142,6 +147,7 @@ namespace TypeCobol.Tools.Options_Config
         ExtractusedCopyError = 1033,    // Extractused copy path given is unreachable.
         LogFileError = 1034,            // Wrong log path given
         CustomAnalyzerFileError = 1035, // Invalid path to custom analyzer DLL file
+        CopyNameMapFileError = 1036,    // Wrong CPY Copy name map file
 
         MultipleErrors = 9999
 
@@ -243,7 +249,8 @@ namespace TypeCobol.Tools.Options_Config
                 { "diag.cea|diagnostic.checkEndAlignment=", "Indicate level of check end aligment: warning, error, info, ignore.", v => typeCobolConfig.CheckEndAlignment = TypeCobolCheckOption.Parse(v) },
                 { "log|logfilepath=", "{PATH} to TypeCobol.CLI.log log file", v => typeCobolConfig.LogFile = Path.Combine(v, TypeCobolConfiguration.DefaultLogFileName)},
                 { "cfg|cfgbuild", "Standard CFG build.", v => typeCobolConfig.CfgBuildingMode = CfgBuildingMode.Standard},
-                { "ca|customanalyzer=", "{PATH} to a custom DLL file containing code analyzers. This option can be specified more than once.", v => typeCobolConfig.CustomAnalyzerFiles.Add(v) }
+                { "ca|customanalyzer=", "{PATH} to a custom DLL file containing code analyzers. This option can be specified more than once.", v => typeCobolConfig.CustomAnalyzerFiles.Add(v) },
+                { "ycpl|ycopylist=", "{PATH} to a file of CPY copy names uppercase sorted.", v => typeCobolConfig.CPYMapFilePath = v }
             };
             return commonOptions;
         }
@@ -368,10 +375,45 @@ namespace TypeCobol.Tools.Options_Config
             if (!CanCreateFile(config.LogFile) && !string.IsNullOrEmpty(config.LogFile))
                 errorStack.Add(ReturnCode.LogFileError, TypeCobolConfiguration.ErrorMessages[ReturnCode.LogFileError]);
 
+            //CPY Map File
+            try {
+                SetCpyCopiesFile(config.CPYMapFilePath);
+            } catch(Exception e) {
+                //Fail to read the Copy File Name, Log
+                System.IO.File.AppendAllText(config.LogFile != null ? config.LogFile : TypeCobolConfiguration.DefaultLogFileName, e.ToString());
+                if (config.CPYMapFilePath != null)
+                {
+                    errorStack.Add(ReturnCode.CopyNameMapFileError, TypeCobolConfiguration.ErrorMessages[ReturnCode.CopyNameMapFileError]);
+                }
+            }
+
             //CustomAnalyzers
             VerifFiles(config.CustomAnalyzerFiles, ReturnCode.CustomAnalyzerFileError, errorStack);
 
             return errorStack;
+        }
+
+        /// <summary>
+        /// Set the file of CPY COPY names to be used.
+        /// </summary>
+        /// <param name="cpyCopiesFilePath"></param>
+        /// <exception cref="Exception">Any exception if an error occurs.</exception>
+        public static void SetCpyCopiesFile(string cpyCopiesFilePath)
+        {
+            string cpyMapFilePath = cpyCopiesFilePath;
+#if EUROINFO_RULES
+            if (cpyMapFilePath == null)
+            {
+                cpyMapFilePath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location),
+                    TypeCobolConfiguration.DefaultCopyNameFile);
+                if (!File.Exists(cpyMapFilePath))
+                    cpyMapFilePath = null;
+            }
+#endif
+            if (cpyMapFilePath != null)
+            {
+                CopyNameMapFile.Singleton = new CopyNameMapFile(cpyMapFilePath, cpyCopiesFilePath != null);                    
+            }
         }
 
 

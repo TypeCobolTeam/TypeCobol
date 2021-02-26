@@ -121,6 +121,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public static bool UseOutlineRefresh { get; set; }
 
+        /// <summary>
+        /// A Path to a file of CPY Copy names
+        /// </summary>
+        private static string CPYMapFilePath { get; set; }
+
         public static System.Diagnostics.Process Process;
 
         /// <summary>
@@ -210,6 +215,7 @@ namespace TypeCobol.LanguageServer
                 { "dcs|disablecopysuffixing", "Deactictivate Euro Information suffixing", v => UseEuroInformationLegacyReplacingSyntax = false },
                 { "sc|syntaxcolor",  "Syntax Coloring Support.", _ => UseSyntaxColoring = true},
                 { "ol|outlineRefresh",  "Outline Support.", _ => UseOutlineRefresh = true},
+                { "ycpl|ycopylist=", "{PATH} to a file of CPY copy names uppercase sorted.", v => CPYMapFilePath = v }
             };
 
             System.Collections.Generic.List<string> arguments;
@@ -287,6 +293,13 @@ namespace TypeCobol.LanguageServer
                 typeCobolServer.UseSyntaxColoring = UseSyntaxColoring;
                 typeCobolServer.UseOutlineRefresh = UseOutlineRefresh;
 
+                try
+                { //Read Cpy Copy names file.
+                    TypeCobol.Tools.Options_Config.TypeCobolOptionSet.SetCpyCopiesFile(CPYMapFilePath);
+                } catch(Exception e)
+                {
+                    logWriter.WriteLine(e.Message);                    
+                }
 
                 //Creating the thread that will read mesages and handle them 
                 var backgroundExecutionThread = new Thread(() => { MessageHandler(jsonRPCServer, typeCobolServer); }) { IsBackground = true };

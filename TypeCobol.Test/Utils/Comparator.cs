@@ -49,11 +49,25 @@ namespace TypeCobol.Test.Utils
         }
 
 		public void Parse() {
-			try { Compiler.CompileOnce(); }
+			try
+            {
+                //Check for the presence of a CpyCopies.lst file.
+                FileInfo fi = new FileInfo(this.Compiler.CobolFile.FullPath);
+                FileInfo copyFileMap = new FileInfo(Path.Combine(fi.DirectoryName, fi.Directory.Name + "CpyCopies.lst"));
+                if (copyFileMap.Exists) { 
+                    TypeCobol.Compiler.Preprocessor.CopyNameMapFile.Singleton = null;
+                    TypeCobol.Compiler.Preprocessor.CopyNameMapFile.Singleton = new TypeCobol.Compiler.Preprocessor.CopyNameMapFile(copyFileMap.FullName, true);
+                }
+                Compiler.CompileOnce();
+            }
 			catch(Exception e) { Observer.OnError(e); }
-		}
+            finally
+            {
+                TypeCobol.Compiler.Preprocessor.CopyNameMapFile.Singleton = null;
+            }
+        }
 
-		public string ToJSON() {
+        public string ToJSON() {
 			return new TestJSONSerializer().ToJSON(Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.CodeElements);
 		}
 

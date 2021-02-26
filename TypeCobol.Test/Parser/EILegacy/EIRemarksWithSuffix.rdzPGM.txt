@@ -8,8 +8,12 @@ PROGRAM: MyPGM common:False initial:False recursive:False
 -- DATA --------
   YXXXFAL:Alphanumeric
   XXXFAL-buffer:Alphanumeric
-  YXXXFALS:Alphanumeric
-  XXXFALS-buffer:Alphanumeric
+  YXXXFALM:Alphanumeric
+  XXXFALM-buffer:Alphanumeric
+  YXXXFAS:Alphanumeric
+  XXXFAS-buffer:Alphanumeric
+  YXXXFASM:Alphanumeric
+  XXXFASM-buffer:Alphanumeric
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL

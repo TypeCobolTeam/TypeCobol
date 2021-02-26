@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Tools.APIHelpers;
 
 namespace TypeCobol.Test.HighLevelAPI {
@@ -30,6 +31,12 @@ namespace TypeCobol.Test.HighLevelAPI {
             var rootPath = Root + Path.DirectorySeparatorChar + "LTNV";
 
 
+            CopyNameMapFile.Singleton = new CopyNameMapFile(
+                new string[] { "YFO2FAW", "YFO2FAL" ,
+                    "YFO2FRW", "YFO2FRE",
+                    "YFO2E1L",
+                    "YFO2S1L"}, true);            
+
             ParseAndTestGetLTNVCopys(rootPath, "FO200001.rdz.cbl", true, errors, new List<string> {"FO200001"},
                 new Dictionary<string, string>()
                 {
@@ -38,6 +45,20 @@ namespace TypeCobol.Test.HighLevelAPI {
                     {"YFO2E1L", "FO2E01"},
                     {"YFO2S1L", "FO2S01"}
                 });
+            CopyNameMapFile.Singleton = null;
+
+            CopyNameMapFile.Singleton = new CopyNameMapFile(
+                new string[] { "YFOOFAW",
+                    "YFOOFRW",
+                    "YFOOHEW",
+                    "YFOOT00",
+                    "YFOOT01",
+                    "YFOOT10",
+                    "YFOOT11",
+                    "YFOOT12",
+                    "YFOOT13",
+                    "YFOOT14",
+                    "YFOOT15" }, true);            
 
             ParseAndTestGetLTNVCopys(rootPath, "FOOABCDE.rdz.cbl", true, errors, new List<string> { "FOOABCDE" },
                 new Dictionary<string, string>()
@@ -52,6 +73,7 @@ namespace TypeCobol.Test.HighLevelAPI {
                     { "YFOOT14", "FOOT12" },
                     { "YFOOT15", "FOOT13" }
                 });
+            CopyNameMapFile.Singleton = null;
 
             if (errors.Count > 0)
             {

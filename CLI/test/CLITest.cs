@@ -367,6 +367,17 @@ namespace CLI.Test
         {
             CLITestHelper.Test("custom_analyzers", ReturnCode.Warning);
         }
+
+#if EUROINFO_RULES
+        /// <summary>
+        /// Test the usage of option -ycpl
+        /// </summary>
+        [TestMethod]
+        public void TestYCpyList()
+        {
+            CLITestHelper.Test("ycopylist", ReturnCode.Success);
+        }
+#endif
     }
 
     public class CLITestHelper {

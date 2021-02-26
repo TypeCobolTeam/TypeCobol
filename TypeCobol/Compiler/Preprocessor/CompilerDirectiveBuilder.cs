@@ -189,7 +189,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         {
                             var declaration = variations.Find(d => String.Equals(d.TextNameWithSuffix, copy.TextName,
                                             StringComparison.InvariantCultureIgnoreCase));
-                            if (declaration != null && copy.TextName.StartsWith("Y", StringComparison.InvariantCultureIgnoreCase))
+                            if (declaration != null && TypeCobol.Compiler.Preprocessor.CopyNameMapFile.HasCpyCopy(copy.TextName))
                             {
                                 // Declaration found and copy name starts with Y => apply the legacy REPLACING semantics to the copy directive
                                 copy.RemoveFirst01Level = true;
