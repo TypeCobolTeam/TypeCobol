@@ -645,7 +645,7 @@ namespace TypeCobol.Compiler
                 }
                 else
                 {
-                    ImmutableList<CodeElementsLine>.Builder processedTokensDocumentLines = ((ImmutableList<CodeElementsLine>)tokensDocument.Lines).ToBuilder();
+                    ImmutableList<CodeElementsLine>.Builder processedTokensDocumentLines = ((ImmutableList<CodeElementsLine>) tokensDocument.Lines).ToBuilder();
                     IList<DocumentChange<IProcessedTokensLine>> documentChanges = PreprocessorStep.ProcessTokensLinesChanges(this, processedTokensDocumentLines, tokensLineChanges, PrepareDocumentLineForUpdate, processedTokensDocumentProvider, perfStatsForParserInvocation, out missingCopies);
 
                     // Create a new version of the document to track these changes
@@ -661,7 +661,7 @@ namespace TypeCobol.Compiler
                     ProcessedTokensDocumentSnapshot = CreateProcessedTokensDocument(currentProcessedTokensLineVersion, processedTokensDocumentLines.ToImmutable());
                 }
 
-                ProcessedTokensDocument CreateProcessedTokensDocument(DocumentVersion<IProcessedTokensLine> version, ISearchableReadOnlyList<IProcessedTokensLine> lines)
+                ProcessedTokensDocument CreateProcessedTokensDocument(DocumentVersion<IProcessedTokensLine> version, ISearchableReadOnlyList<CodeElementsLine> lines)
                 {
                     //Use wrapper for direct copy parsing mode
                     return UseDirectCopyParsing

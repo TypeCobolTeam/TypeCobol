@@ -33,7 +33,7 @@ namespace TypeCobol.Test.Utils
                 documentFormat, new TypeCobolOptions(), null);
 
             FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, isCopy, project);
-            compiler.CompileOnce();
+            compiler.CompileOnce(ExecutionStep.Preprocessor, false, false);
 
             return compiler.CompilationResultsForProgram;
         }
