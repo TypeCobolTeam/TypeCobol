@@ -1,0 +1,9 @@
+--- Nodes ---
+?
+  AutomaticTagReplacing.rdz.cpy
+    data-division
+      working-storage
+        PREFIX-group1
+          PREFIX-data1
+          PREFIX-data2
+    end

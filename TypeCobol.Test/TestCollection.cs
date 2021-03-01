@@ -304,5 +304,29 @@ namespace TypeCobol.Test {
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
         }
+
+
+        /// <summary>
+        /// Direct copy parsing tests. Checks all ".cpy" files from "Parser\Copies".
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "fast")]
+        public void CheckCopies()
+        {
+            int nbOfTests = 0;
+
+            string[] extensions = { ".cpy" };
+            var directory = PlatformUtils.GetPathForProjectFile("Parser" + Path.DirectorySeparatorChar + "Copies");
+            var dirname = Path.GetFileName(directory);
+
+            Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
+            var folderTester = new FolderTester(directory, directory, directory, extensions);
+            folderTester.Test();
+            nbOfTests += folderTester.GetTestCount();
+            Console.Write("\n");
+            Console.Write("Number of tests: " + nbOfTests + "\n");
+            Assert.IsTrue(nbOfTests > 0, "No tests found");
+        }
     }
 }
