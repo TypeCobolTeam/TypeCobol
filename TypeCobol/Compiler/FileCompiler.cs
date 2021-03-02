@@ -187,6 +187,7 @@ namespace TypeCobol.Compiler
                 {
                     //Direct copy parsing
                     var initialScanState = new MultilineScanState(true, true, false, TextDocument.Source.EncodingForAlphanumericLiterals);
+                    initialScanState.InsideCopy = true;
                     CompilationResultsForProgram = new CompilationUnit(true, false, TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, initialScanState, copyTextNameVariations, CompilationProject.AnalyzerProvider);
                     CompilationResultsForCopy = CompilationResultsForProgram;
                 }

@@ -115,7 +115,8 @@ namespace TypeCobol.Compiler.Preprocessor
             Debug.Assert(partialCobolWordToken.TokenType == TokenType.PartialCobolWord);
 
             //basic replacement mechanic, remove the ':' from the tag.
-            //NOTE : PartialCobolWord have their ScanStateSnapshot embedded so we can use it to replace with number literal after OCCURS if need be...
+            //NOTE: PartialCobolWord have their ScanStateSnapshot embedded so we can use it to replace with number literal after OCCURS if need be...
+            //NOTE: Does not handle '::-item' or 'item-::' partial names as '::' will turn into empty string and will produce invalid data names.
             string replacedTokenText = partialCobolWordToken.NormalizedText.Replace(":", string.Empty);
             return ReplaceTokensLinesIterator.GenerateReplacementToken(partialCobolWordToken, replacedTokenText);
         }
