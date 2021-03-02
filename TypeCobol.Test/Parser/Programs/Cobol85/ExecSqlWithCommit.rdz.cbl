@@ -1,0 +1,12 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZZMFT3.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+          EXEC SQL DELETE FROM CUSTOMERS
+            WHERE AGE = 25;
+          COMMIT;
+         END-EXEC.
+       PROCEDURE DIVISION.
+           GOBACK
+           .
+       END PROGRAM DVZZMFT3.

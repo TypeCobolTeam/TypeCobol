@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using TypeCobol.Compiler.SqlScanner;
 
 namespace TypeCobol.Compiler.Scanner
 {
@@ -14,15 +15,24 @@ namespace TypeCobol.Compiler.Scanner
         {
             // Map token types to token families
             var types = (TokenType[])Enum.GetValues(typeof(TokenType));
+            var sql_types = (SqlTokenType[])Enum.GetValues(typeof(SqlTokenType));
             var families = (TokenFamily[])Enum.GetValues(typeof(TokenFamily));
 
-            tokenFamilyFromTokenType = new TokenFamily[types.Length];
+            tokenFamilyFromTokenType = new TokenFamily[types.Length + sql_types.Length];
             int family = 0;
-            for (int tokenType = 0; tokenType < types.Length - 1; tokenType++)
+            int tokenType;
+            for (tokenType = 0; tokenType < types.Length - 1; tokenType++)
             {
                 if (family < (families.Length - 1) && tokenType == (int)families[family + 1]) family++;
                 tokenFamilyFromTokenType[tokenType] = families[family];
             }
+            for (int sql_tokenType = 0; sql_tokenType < sql_types.Length - 1; sql_tokenType++, tokenType++)
+            {                
+                if (family < (families.Length - 1) && tokenType == (int)families[family + 1]) family++;
+                tokenFamilyFromTokenType[tokenType] = families[family];
+
+            }
+
             // Register the token strings corresponding to each token type (for keywords only)
             int keywordBegin = (int)TokenType.UserDefinedWord + 1;
             int keywordEnd = (int)TokenType.QUESTION_MARK - 1;
@@ -41,7 +51,7 @@ namespace TypeCobol.Compiler.Scanner
 
             // Map token string to token type
             tokenTypeFromTokenString = new Dictionary<string, TokenType>(types.Length - 1, StringComparer.OrdinalIgnoreCase);
-            for (int tokenType = 0; tokenType < types.Length; tokenType++)
+            for (tokenType = 0; tokenType < types.Length; tokenType++)
             {
                 string tokenString = tokenStringFromTokenType[tokenType];
                 if (!String.IsNullOrEmpty(tokenString) && !tokenTypeFromTokenString.ContainsKey(tokenString))

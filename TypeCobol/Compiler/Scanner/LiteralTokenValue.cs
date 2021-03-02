@@ -142,6 +142,11 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
+        public DecimalLiteralTokenValue(double value) : base(LiteralTokenValueType.Decimal)
+        {
+            Number = value;
+        }
+
         /// <summary>
         /// For the number 5.43, the integer value is 543
         /// </summary>

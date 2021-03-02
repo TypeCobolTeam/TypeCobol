@@ -5,8 +5,8 @@ namespace TypeCobol.Compiler.Nodes {
     using System.Collections.Generic;
     using TypeCobol.Compiler.CodeElements;
     using TypeCobol.Compiler.CodeElements.Expressions;
-
-
+    using TypeCobol.Compiler.Scanner;
+    using TypeCobol.Compiler.SqlScanner;
 
     public interface Statement { }
 
@@ -130,6 +130,26 @@ namespace TypeCobol.Compiler.Nodes {
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
+        }
+        /// <summary>
+        /// Determine if this Exec nodehas been parser
+        /// </summary>
+        public bool HasBeenParsed { get; private set; }
+        /// <summary>
+        /// All Scanned SQL Tokens.
+        /// </summary>
+        public List<SqlToken> Tokens { get; private set; }
+        /// <summary>
+        /// Parser this Exec Statement Node
+        /// </summary>
+        public void Parse()
+        {
+            string sourcTest = this.CodeElement.SourceText;
+            string text = this.CodeElement.Text; ;
+            TypeCobol.Compiler.SqlScanner.SqlScanner sqlScanner = 
+                new TypeCobol.Compiler.SqlScanner.SqlScanner(this.CodeElement.SourceText);
+            HasBeenParsed = true;
+            Tokens = sqlScanner.Tokens;
         }
     }
 

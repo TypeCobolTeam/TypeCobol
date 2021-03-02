@@ -99,6 +99,7 @@ namespace TypeCobol.Test.Utils
                 new NYName(),
                 new PGMName(),
                 new SYMName(),
+                new SQLName(),
                 new MixDiagIntoSourceName(),
                 new MemoryName(),
                 new NodeName(),
@@ -113,6 +114,7 @@ namespace TypeCobol.Test.Utils
                 new EINYName(),
                 new EIPGMName(),
                 new EISYMName(),
+                new EISQLName(),
                 new EIMixDiagIntoSourceName(),
                 new EIMemoryName(),
                 new EINodeName(),
@@ -443,10 +445,86 @@ namespace TypeCobol.Test.Utils
     }
 
     /// <summary>
-    /// Create a result file which contains:
-    /// The original source file with all diagnostics inserted at corresponding lines
+    /// Comparator that on compare Exec Sql nodes data
     /// </summary>
-    internal class ProgramsComparator2 : FilesComparator
+    internal class SqlComparator : FilesComparator
+    {
+        public class NodeDumper : AbstractAstVisitor
+        {
+            private StringBuilder _builder;
+            public NodeDumper(StringBuilder builder) => _builder = builder;
+            public override bool BeginNode(Node node)
+            {
+                _builder.AppendLine(node.ToString());
+                return true;
+            }
+        }
+
+        public class ExecNodeDumper : AbstractAstVisitor
+        {
+            private StringBuilder _builder;
+            private NodeDumper _nodeDumber;
+            public ExecNodeDumper(StringBuilder builder)
+            {
+                _builder = builder;
+                _nodeDumber = new NodeDumper(builder);
+            }
+
+            public override bool Visit(Exec exec)
+            {
+                if (!exec.HasBeenParsed)
+                {
+                    exec.Parse();
+                }
+                _builder.AppendLine("--- Exec ---");
+                exec.AcceptASTVisitor(_nodeDumber);
+                return true;
+            }
+        }
+
+        public SqlComparator(Paths path, bool debug = false, bool isEI = false)
+        : base(path, debug, isEI)
+        {
+
+        }
+
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
+        {
+            var diagnostics = compilationUnit.AllDiagnostics();
+            var programs = compilationUnit.ProgramClassDocumentSnapshot.Root.Programs.ToList();
+
+            var builder = new StringBuilder();
+
+            //Write diagnostics
+            if (diagnostics.Count > 0)
+            {
+                builder.AppendLine(ParserUtils.DiagnosticsToString(diagnostics));
+            }
+
+            //Write program symbols
+            if (programs.Count > 0)
+            {
+                var execNodeDumper = new ExecNodeDumper(builder);
+                foreach (var program in programs)
+                {
+                    //Visit and Dump All SQL Nodes on the Program.
+                    program.AcceptASTVisitor(execNodeDumper);                    
+                }
+            }
+
+            //TODO Comparison for classes ?
+
+            string result = builder.ToString();
+            if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader, expectedResultPath);
+        }
+    }
+
+        /// <summary>
+        /// Create a result file which contains:
+        /// The original source file with all diagnostics inserted at corresponding lines
+        /// </summary>
+        internal class ProgramsComparator2 : FilesComparator
     {
         public ProgramsComparator2(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
@@ -968,6 +1046,12 @@ namespace TypeCobol.Test.Utils
         public override Type GetComparatorType() { return typeof(SymbolComparator); }
     }
 
+    internal class SQLName : AbstractNames
+    {
+        public override string CreateName(string name) { return name + "SQL" + Rextension; }
+        public override Type GetComparatorType() { return typeof(SqlComparator); }
+    }
+
     internal class MixDiagIntoSourceName : AbstractNames
     {
         public override string CreateName(string name) { return name + "Mix" + Rextension; }
@@ -1048,6 +1132,12 @@ namespace TypeCobol.Test.Utils
     {
         public override string CreateName(string name) { return name + "SYM-EI" + Rextension; }
         public override Type GetComparatorType() { return typeof(SymbolComparator); }
+    }
+
+    internal class EISQLName : AbstractEINames
+    {
+        public override string CreateName(string name) { return name + "SQL-EI" + Rextension; }
+        public override Type GetComparatorType() { return typeof(SqlComparator); }
     }
 
     internal class EIMixDiagIntoSourceName : AbstractEINames
