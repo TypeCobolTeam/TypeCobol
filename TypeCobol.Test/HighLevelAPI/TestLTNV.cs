@@ -6,8 +6,8 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Tools.APIHelpers;
+using TypeCobol.Compiler.Preprocessor;
 
 namespace TypeCobol.Test.HighLevelAPI {
 
@@ -22,22 +22,20 @@ namespace TypeCobol.Test.HighLevelAPI {
         [TestCategory("Parsing")]
         [TestProperty("Time", "fast")]
         public void TestGetLTNVCopy() {
-#if !EUROINFO_RULES
-            return;
-#endif
+#if EUROINFO_RULES            
 
             var errors = new List<Exception>();
 
             var rootPath = Root + Path.DirectorySeparatorChar + "LTNV";
 
 
-            CopyNameMapFile.Singleton = new CopyNameMapFile(
+            CopyNameMapFile cpyCopyNamesMap = new CopyNameMapFile(
                 new string[] { "YFO2FAW", "YFO2FAL" ,
                     "YFO2FRW", "YFO2FRE",
                     "YFO2E1L",
-                    "YFO2S1L"}, true);            
+                    "YFO2S1L"});            
 
-            ParseAndTestGetLTNVCopys(rootPath, "FO200001.rdz.cbl", true, errors, new List<string> {"FO200001"},
+            ParseAndTestGetLTNVCopys(rootPath, "FO200001.rdz.cbl", true, cpyCopyNamesMap, errors, new List<string> {"FO200001"},
                 new Dictionary<string, string>()
                 {
                     {"YFO2FAW", "YFO2FAL"},
@@ -45,9 +43,8 @@ namespace TypeCobol.Test.HighLevelAPI {
                     {"YFO2E1L", "FO2E01"},
                     {"YFO2S1L", "FO2S01"}
                 });
-            CopyNameMapFile.Singleton = null;
 
-            CopyNameMapFile.Singleton = new CopyNameMapFile(
+            cpyCopyNamesMap = new CopyNameMapFile(
                 new string[] { "YFOOFAW",
                     "YFOOFRW",
                     "YFOOHEW",
@@ -58,9 +55,9 @@ namespace TypeCobol.Test.HighLevelAPI {
                     "YFOOT12",
                     "YFOOT13",
                     "YFOOT14",
-                    "YFOOT15" }, true);            
+                    "YFOOT15" });            
 
-            ParseAndTestGetLTNVCopys(rootPath, "FOOABCDE.rdz.cbl", true, errors, new List<string> { "FOOABCDE" },
+            ParseAndTestGetLTNVCopys(rootPath, "FOOABCDE.rdz.cbl", true, cpyCopyNamesMap, errors, new List<string> { "FOOABCDE" },
                 new Dictionary<string, string>()
                 {
                     { "YFOOFAW", "FOOFAW" },
@@ -73,7 +70,6 @@ namespace TypeCobol.Test.HighLevelAPI {
                     { "YFOOT14", "FOOT12" },
                     { "YFOOT15", "FOOT13" }
                 });
-            CopyNameMapFile.Singleton = null;
 
             if (errors.Count > 0)
             {
@@ -81,15 +77,16 @@ namespace TypeCobol.Test.HighLevelAPI {
                 foreach (var ex in errors) str.Append(ex.Message + "\n" + ex.StackTrace);
                 throw new Exception(str.ToString());
             }
+#endif
         }
 
-
-        private static void ParseAndTestGetLTNVCopys(string rootPath, string path, bool autoRemarks, List < Exception> errors, IList<string> programsName ,params IDictionary<string, string>[] expected )
+#if EUROINFO_RULES
+        private static void ParseAndTestGetLTNVCopys(string rootPath, string path, bool autoRemarks, CopyNameMapFile cpyCopyNamesMap, List < Exception> errors, IList<string> programsName ,params IDictionary<string, string>[] expected)
         {
             Assert.IsTrue(programsName.Count == expected.Length);//check if parameter of this method are coherent
             try
             {
-                var result = ParseAndGetLTNVCopys(rootPath, path, autoRemarks);
+                var result = ParseAndGetLTNVCopys(rootPath, path, autoRemarks, cpyCopyNamesMap);
                 Assert.IsTrue(result.Count == expected.Length);
 
                 var actualPgmNames = result.Keys.ToList();
@@ -112,9 +109,9 @@ namespace TypeCobol.Test.HighLevelAPI {
             }
         }
 
-        private static IDictionary<Program, IDictionary<string, string>> ParseAndGetLTNVCopys(string rootPath, string path, bool autoRemarks = false)
+        private static IDictionary<Program, IDictionary<string, string>> ParseAndGetLTNVCopys(string rootPath, string path, bool autoRemarks = false, CopyNameMapFile cpyCopyNamesMap = null)
         {
-            var parser = TypeCobol.Parser.Parse(rootPath + Path.DirectorySeparatorChar + path, DocumentFormat.RDZReferenceFormat, autoRemarks);
+            var parser = TypeCobol.Parser.EIParse(rootPath + Path.DirectorySeparatorChar + path, DocumentFormat.RDZReferenceFormat, autoRemarks, null, null,  cpyCopyNamesMap);
             var diagnostics = parser.Results.AllDiagnostics();
             // There should be no diagnostics errors
             // warning diagnostics are not considered : for example, test with warning with COPY SUPPRESS is always running
@@ -122,5 +119,6 @@ namespace TypeCobol.Test.HighLevelAPI {
 
             return LTNVHelper.GetLTNVCopy(parser.Results.ProgramClassDocumentSnapshot.Root);
         }
+#endif
     }
 }

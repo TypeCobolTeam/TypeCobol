@@ -373,7 +373,7 @@ namespace CLI.Test
         /// Test the usage of option -ycpl
         /// </summary>
         [TestMethod]
-        public void TestYCpyList()
+        public void TestCpyList()
         {
             CLITestHelper.Test("ycopylist", ReturnCode.Success);
         }

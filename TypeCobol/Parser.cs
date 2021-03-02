@@ -14,6 +14,9 @@ using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.CustomExceptions;
 using TypeCobol.Tools.APIHelpers;
+#if EUROINFO_RULES
+using TypeCobol.Compiler.Preprocessor;
+#endif
 
 namespace TypeCobol
 {
@@ -145,9 +148,20 @@ namespace TypeCobol
 		}
 
 
-
-		public static Parser Parse(string path, DocumentFormat format, bool autoRemarks = false, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null) {
-			var parser = new Parser();
+#if EUROINFO_RULES
+        public static Parser EIParse(string path, DocumentFormat format, bool autoRemarks = false, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null, CopyNameMapFile cpyCopyNamesMap = null)
+        {
+            var parser = new Parser();
+            var typeCobolOption = new TypeCobolOptions() { ExecToStep = ExecutionStep.Generate };
+            typeCobolOption.AutoRemarksEnable = autoRemarks;
+            typeCobolOption.CpyCopyNamesMap = cpyCopyNamesMap;
+            parser.Init(path, typeCobolOption, format, copies, analyzerProvider);
+            parser.Parse(path);
+            return parser;
+        }
+#endif
+        public static Parser Parse(string path, DocumentFormat format, bool autoRemarks = false, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null) {
+            var parser = new Parser();
             var typeCobolOption = new TypeCobolOptions() { ExecToStep = ExecutionStep.Generate };
 #if EUROINFO_RULES
 		    typeCobolOption.AutoRemarksEnable = autoRemarks;

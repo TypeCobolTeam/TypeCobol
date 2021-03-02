@@ -16,6 +16,9 @@ using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.LanguageServer.Context;
 using TypeCobol.LanguageServer.SignatureHelper;
+#if EUROINFO_RULES
+using TypeCobol.Compiler.Preprocessor;
+#endif
 
 namespace TypeCobol.LanguageServer
 {
@@ -63,6 +66,12 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public bool UseEuroInformationLegacyReplacingSyntax { get; set; }
 
+#if EUROINFO_RULES
+        /// <summary>
+        /// The Instance of the Cpy Copy names Map
+        /// </summary>
+        public CopyNameMapFile CpyCopyNamesMap { get; set; }
+#endif
         /// <summary>
         /// Timer Disabled for TypeCobol.LanguageServer.
         /// </summary>
@@ -218,9 +227,12 @@ namespace TypeCobol.LanguageServer
             var rootDirectory = new DirectoryInfo(parameters.rootPath);
             string workspaceName = rootDirectory.Name + "#" + parameters.processId;
 
-            // Initialize the workspace.
+            // Initialize the workspace.            
+#if EUROINFO_RULES
+            this.Workspace = new Workspace(rootDirectory.FullName, workspaceName, _messagesActionsQueue, Logger, CpyCopyNamesMap);
+#else
             this.Workspace = new Workspace(rootDirectory.FullName, workspaceName, _messagesActionsQueue, Logger);
-
+#endif
             // Propagate LSR testing options.
             this.Workspace.LsrTestOptions = LsrTestingLevel;
             this.Workspace.UseSyntaxColoring = UseSyntaxColoring;
@@ -306,7 +318,7 @@ namespace TypeCobol.LanguageServer
 
             Uri objUri = new Uri(parameters.uri);
 
-            #region Convert text changes format from multiline range replacement to single line updates
+#region Convert text changes format from multiline range replacement to single line updates
 
             TextChangedEvent textChangedEvent = new TextChangedEvent();
             foreach (var contentChange in parameters.contentChanges)
@@ -448,7 +460,7 @@ namespace TypeCobol.LanguageServer
                 }
             }
 
-            #endregion
+#endregion
 
             // Update the source file with the computed text changes
             this.Workspace.UpdateSourceFile(objUri, textChangedEvent);

@@ -4,6 +4,9 @@ using System.Text;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Test;
+#if EUROINFO_RULES
+using TypeCobol.Compiler.Preprocessor;
+#endif
 
 namespace TypeCobol.Codegen {
 
@@ -21,11 +24,27 @@ namespace TypeCobol.Codegen {
         /// <param name="autoRemarks"></param>
         /// <param name="typeCobolVersion"></param>
         /// <param name="copies"></param>        
+        /// <param name="cpyCopyNamesMap"></param>        
+#if EUROINFO_RULES
+        public static void ParseGenerateCompare(string path, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null, CopyNameMapFile cpyCopyNamesMap = null) {
+            ParseGenerateCompare(path, DocumentFormat.RDZReferenceFormat, typeCobolVersion, autoRemarks, copies, null, cpyCopyNamesMap);
+        }
+#else
         public static void ParseGenerateCompare(string path, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null) {
             ParseGenerateCompare(path, DocumentFormat.RDZReferenceFormat, typeCobolVersion, autoRemarks, copies);
         }
+#endif
+
+#if EUROINFO_RULES
+        public static void ParseGenerateCompare(string path, DocumentFormat format, string typeCobolVersion, bool autoRemarks = false, IList<string> copies = null, MemoryStream lmStream = null, CopyNameMapFile cpyCopyNamesMap = null) {
+#else
         public static void ParseGenerateCompare(string path, DocumentFormat format, string typeCobolVersion, bool autoRemarks = false, IList<string> copies = null, MemoryStream lmStream = null) {
+#endif
+#if EUROINFO_RULES
+            var document = Parser.EIParse(Path.Combine(ROOT, INPUT, path), format, autoRemarks, copies, null, cpyCopyNamesMap);
+#else
             var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), format, autoRemarks, copies);
+#endif
             var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
             var writer = new StringWriter();
             // write parsing errors

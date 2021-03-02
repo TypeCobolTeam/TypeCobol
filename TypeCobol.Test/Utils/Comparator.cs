@@ -49,22 +49,23 @@ namespace TypeCobol.Test.Utils
         }
 
 		public void Parse() {
+#if EUROINFO_RULES
 			try
             {
                 //Check for the presence of a CpyCopies.lst file.
                 FileInfo fi = new FileInfo(this.Compiler.CobolFile.FullPath);
                 FileInfo copyFileMap = new FileInfo(Path.Combine(fi.DirectoryName, fi.Directory.Name + "CpyCopies.lst"));
                 if (copyFileMap.Exists) { 
-                    TypeCobol.Compiler.Preprocessor.CopyNameMapFile.Singleton = null;
-                    TypeCobol.Compiler.Preprocessor.CopyNameMapFile.Singleton = new TypeCobol.Compiler.Preprocessor.CopyNameMapFile(copyFileMap.FullName, true);
+                    Compiler.CompilerOptions.CpyCopyNamesMap = new TypeCobol.Compiler.Preprocessor.CopyNameMapFile(copyFileMap.FullName);
                 }
                 Compiler.CompileOnce();
             }
 			catch(Exception e) { Observer.OnError(e); }
-            finally
-            {
-                TypeCobol.Compiler.Preprocessor.CopyNameMapFile.Singleton = null;
-            }
+            finally { Compiler.CompilerOptions.CpyCopyNamesMap = null;}
+#else
+            try { Compiler.CompileOnce(); }
+            catch (Exception e) { Observer.OnError(e); }
+#endif
         }
 
         public string ToJSON() {
@@ -254,7 +255,7 @@ namespace TypeCobol.Test.Utils
         }
     }
 
-    #region Comparators
+#region Comparators
     
     internal interface Comparator
     {
@@ -917,7 +918,7 @@ namespace TypeCobol.Test.Utils
         }
     }
 
-    #endregion
+#endregion
 
 
     internal interface Names
@@ -944,7 +945,7 @@ namespace TypeCobol.Test.Utils
         }
     }
 
-    #region DefaultNames
+#region DefaultNames
     internal class EmptyName : AbstractNames
     {
         private Names _namesImplementation;
@@ -1024,9 +1025,9 @@ namespace TypeCobol.Test.Utils
         public override string CreateName(string name) { return name + "Doc" + Rextension; }
         public override Type GetComparatorType() { return typeof(DocumentationPropertiesComparator); }
     }
-    #endregion
+#endregion
 
-    #region EINames
+#region EINames
 #if EUROINFO_RULES
     internal class EIEmptyName : AbstractEINames
     {
@@ -1088,7 +1089,7 @@ namespace TypeCobol.Test.Utils
         public override Type GetComparatorType() { return typeof(MemoryComparator); }
     }
 #endif
-    #endregion
+#endregion
 
     internal class Paths
     {

@@ -19,6 +19,9 @@ using TypeCobol.LanguageServer.Context;
 using TypeCobol.Tools.Options_Config;
 using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.Tools.APIHelpers;
+#if EUROINFO_RULES
+using TypeCobol.Compiler.Preprocessor;
+#endif
 
 namespace TypeCobol.LanguageServer
 {
@@ -55,6 +58,13 @@ namespace TypeCobol.LanguageServer
         public EventHandler<string> WarningTrigger { get; set; }
         public Queue<MessageActionWrapper> MessagesActionsQueue { get; private set; }
         private Func<string, Uri, bool> _Logger;
+
+#if EUROINFO_RULES
+        /// <summary>
+        /// The Instance of the Cpy Copy names Map
+        /// </summary>
+        public CopyNameMapFile CpyCopyNamesMap { get; set; }
+#endif
 
         #region Testing Options
 
@@ -141,11 +151,20 @@ namespace TypeCobol.LanguageServer
 
         #endregion
 
-
+#if EUROINFO_RULES
+        public Workspace(string rootDirectoryFullName, string workspaceName, Queue<MessageActionWrapper> messagesActionsQueue, Func<string, Uri, bool> logger, CopyNameMapFile cpyCopyNamesMap = null)
+#else
         public Workspace(string rootDirectoryFullName, string workspaceName, Queue<MessageActionWrapper> messagesActionsQueue, Func<string, Uri, bool> logger)
+#endif
         {
+#if EUROINFO_RULES
+            CpyCopyNamesMap = cpyCopyNamesMap;
+#endif
             MessagesActionsQueue = messagesActionsQueue;
             Configuration = new TypeCobolConfiguration();
+#if EUROINFO_RULES
+            Configuration.CpyCopyNamesMap = cpyCopyNamesMap;
+#endif
             _openedDocuments = new Dictionary<Uri, DocumentContext>();
             _fileCompilerWaittingForNodePhase = new List<FileCompiler>();
             _Logger = logger;
@@ -156,7 +175,7 @@ namespace TypeCobol.LanguageServer
             var defaultDocumentFormat = new DocumentFormat(Encoding.GetEncoding("iso-8859-1"), EndOfLineDelimiter.CrLfCharacters, 80, ColumnsLayout.CobolReferenceFormat);
             this.CompilationProject = new CompilationProject(
                 _workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, defaultDocumentFormat,
-                new TypeCobolOptions(), null); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
+                new TypeCobolOptions(Configuration), null); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
             this.CompilationProject.CompilationOptions.UseAntlrProgramParsing =
                 this.CompilationProject.CompilationOptions.UseAntlrProgramParsing || UseAntlrProgramParsing;
 
@@ -483,6 +502,9 @@ namespace TypeCobol.LanguageServer
             var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(Configuration);
 
             var errors = TypeCobolOptionSet.InitializeCobolOptions(Configuration, arguments, options);
+#if EUROINFO_RULES
+            Configuration.CpyCopyNamesMap = Configuration.CpyCopyNamesMap??CpyCopyNamesMap;
+#endif
 
             //Adding default copies folder
             var folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);

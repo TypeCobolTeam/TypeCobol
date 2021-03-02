@@ -1,4 +1,4 @@
-000070 01  Y:PRTD20:.                                                     
+000070 01  X:PRTD20:.                                                     
 000080      05  FILLER                 PIC X(8) VALUE 'Y:PRTD20: '.       
 000090      05  :PRTD20:-RECH            PIC X(2).                        
 000100         88 :PRTD20:-VIDE          VALUE '  '.                      

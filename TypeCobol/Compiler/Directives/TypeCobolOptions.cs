@@ -1,4 +1,7 @@
 ﻿using TypeCobol.Tools.Options_Config;
+#if EUROINFO_RULES
+using TypeCobol.Compiler.Preprocessor;
+#endif
 
 namespace TypeCobol.Compiler.Directives
 {
@@ -34,7 +37,21 @@ namespace TypeCobol.Compiler.Directives
         }
 
 #if EUROINFO_RULES
+        /// <summary>
+        /// The Instance of the Cpy Copy names Map
+        /// </summary>
+        public CopyNameMapFile CpyCopyNamesMap { get; set; }
         private bool _useEuroInformationLegacyReplacingSyntax = true;
+
+        /// <summary>
+        /// Check if using the current Instance, the Given name corresponds to a CPY copy name. 
+        /// </summary>
+        /// <param name="name">The Copy's name</param>
+        /// <returns>true if the name is CPY Copys name, false otherwise.</returns>
+        public bool HasCpyCopy(string name)
+        {
+            return CpyCopyNamesMap != null ? CpyCopyNamesMap.HasCpyCopy(name) : false;
+        }
 #else
         private bool _useEuroInformationLegacyReplacingSyntax;
 #endif
@@ -53,6 +70,7 @@ namespace TypeCobol.Compiler.Directives
 
 #if EUROINFO_RULES
             AutoRemarksEnable = config.AutoRemarks;
+            CpyCopyNamesMap = config.CpyCopyNamesMap;
 #endif
             CheckEndAlignment = config.CheckEndAlignment;
         }

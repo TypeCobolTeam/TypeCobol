@@ -23,31 +23,21 @@ namespace TypeCobol.Compiler.Preprocessor
         /// Constructor
         /// </summary>
         /// <param name="filepath">The Copy list File Path to map</param>
-        /// <param name="bSort">true to sort the resulting array of Copy names, false otherwise.</param>
-        public CopyNameMapFile(String filepath, bool bSort = false)
+        public CopyNameMapFile(String filepath)
         {
             _CpyCopyNames = System.IO.File.ReadAllLines(filepath);
-            if (_CpyCopyNames != null && bSort)
-                Array.Sort(_CpyCopyNames);
+            Array.Sort(_CpyCopyNames);
         }
 
         /// <summary>
         /// Array constructor
         /// </summary>
         /// <param name="cpyCopyNames">The Array of Cpy Names</param>
-        /// <param name="bSort">true to sort the array</param>
-        public CopyNameMapFile(string[] cpyCopyNames, bool bSort = false)
+        public CopyNameMapFile(string[] cpyCopyNames)
         {
             _CpyCopyNames = cpyCopyNames;
-            if (_CpyCopyNames != null && bSort)
-                Array.Sort(_CpyCopyNames);
+            Array.Sort(_CpyCopyNames);
         }
-
-        /// <summary>
-        /// Get the singleton instance. Create one if it does not exists
-        /// </summary>
-        /// <returns>The singleton instance</returns>
-        public static CopyNameMapFile Singleton { get; set; }
         
         /// <summary>
         /// Check if the Given name corresponds to a CPY copy name. 
@@ -55,19 +45,9 @@ namespace TypeCobol.Compiler.Preprocessor
         /// </summary>
         /// <param name="name">The Copy's name</param>
         /// <returns>true if the name is CPY Copys name, false otherwise.</returns>
-        public bool IsCpyCopy(string name)
+        public bool HasCpyCopy(string name)
         {
             return _CpyCopyNames != null ? System.Array.BinarySearch(_CpyCopyNames, name.ToUpper()) >= 0 : false;
-        }
-
-        /// <summary>
-        /// Check if using the current Instance, the Given name corresponds to a CPY copy name. 
-        /// </summary>
-        /// <param name="name">The Copy's name</param>
-        /// <returns>true if the name is CPY Copys name, false otherwise.</returns>
-        public static bool HasCpyCopy(string name)
-        {
-            return Singleton != null ? Singleton.IsCpyCopy(name) : false;
         }
     }
 }
