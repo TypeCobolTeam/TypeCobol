@@ -23,10 +23,8 @@ namespace TypeCobol.Compiler.Preprocessor
         /// Constructor
         /// </summary>
         /// <param name="filepath">The Copy list File Path to map</param>
-        public CopyNameMapFile(String filepath)
-        {
-            _CpyCopyNames = System.IO.File.ReadAllLines(filepath);
-            Array.Sort(_CpyCopyNames);
+        public CopyNameMapFile(String filepath) : this(System.IO.File.ReadAllLines(filepath))
+        {         
         }
 
         /// <summary>
