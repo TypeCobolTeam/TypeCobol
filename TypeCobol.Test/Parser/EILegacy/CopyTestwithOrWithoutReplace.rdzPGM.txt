@@ -16,9 +16,7 @@ PROGRAM: MYCPYTST common:False initial:False recursive:False
   MYCOPY1-FONC:Alphanumeric
   MYCOPY1-FONC-STD:Level88
   MYCOPY1-Y:Alphanumeric
-  MYCOPY1-ENR:Alphanumeric
-  MYCOPY1-CLE:Alphanumeric
-  MYCOPY1-CODE:Numeric
+  MYCOPY1-DATA:Alphanumeric
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL

@@ -1,0 +1,19 @@
+--- Diagnostics ---
+Line 1[8,23] <37, Warning, General> - Warning: "END PROGRAM" is missing.
+Line 6[37,45] <27, Error, Syntax> - Syntax error : extraneous input 'REPLACING' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements} RuleStack=,  OffendingSymbol=[37,45:REPLACING]<REPLACING>
+Line 6[72,72] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader} OffendingSymbol=[[SentenceEnd]] [72,72+:.]<PeriodSeparator> --> [72,72+:.]<PeriodSeparator>
+
+Line 6[11,17] <27, Error, Syntax> - Syntax error : A group item cannot be empty. OffendingSymbol=[11,17:MYCOPY1]<UserDefinedWord>
+
+--- Program ---
+PROGRAM: Pgm common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  MYCOPY1:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
