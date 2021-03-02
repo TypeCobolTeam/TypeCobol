@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler;
-using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.Interfaces;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
@@ -18,11 +13,7 @@ namespace TypeCobol.LanguageServer.Context
         /// <summary>
         /// The original TextDocumentItem instance from the client.
         /// </summary>
-        public TextDocumentItem TextDocument
-        {
-            get;
-            set;
-        }
+        public TextDocumentItem TextDocument { get; }
 
         /// <summary>
         /// The target FileCompiler instance
@@ -45,32 +36,29 @@ namespace TypeCobol.LanguageServer.Context
         /// <summary>
         /// Document's Uri.
         /// </summary>
-        public Uri Uri
-        {
-            get;
-            private set;
-        }
+        public Uri Uri { get; }
+
+        /// <summary>
+        /// True if the text document is a Copy, False if it's a Program.
+        /// </summary>
+        public bool IsCopy => TextDocument.languageId == LanguageIds.Copybook;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="textDocument">The original Text Document instance from the client</param>
-        /// <param name="fileCompiler">Target FileCompiler instance</param>
-        /// <param name="languageServer">Underlying <see cref="ILanguageServer"/> instance.</param>
-        public DocumentContext(TextDocumentItem textDocument, FileCompiler fileCompiler = null, ILanguageServer languageServer = null)
+        public DocumentContext(TextDocumentItem textDocument)
         {
             System.Diagnostics.Debug.Assert(textDocument != null);
             this.Uri = new Uri(textDocument.uri);
             this.TextDocument = textDocument;
-            this.FileCompiler = fileCompiler;
-            this.LanguageServer = languageServer;
+            this.FileCompiler = null;
+            this.LanguageServer = null;
         }
 
         /// <summary>
         /// Connect or Disconnect a ILanguageServer instance to a FileCompiler instance.
         /// </summary>
-        /// <param name="fileCompiler">The ILanguageServer instance to be connected</param>
-        /// <param name="languageServer">The ILanguageServer instance to be connected</param>
         /// <param name="bConnect">true to connect, false to disconnect</param>
         public void LanguageServerConnection(bool bConnect)
         {
@@ -88,6 +76,5 @@ namespace TypeCobol.LanguageServer.Context
                 }
             }
         }
-
     }
 }
