@@ -1,0 +1,25 @@
+﻿Line 20[12,20] <27, Error, Syntax> - Syntax error : extraneous input ''name = '' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements}
+Line 26[12,17] <27, Error, Syntax> - Syntax error : no viable alternative at input 'yyyy ... GOBACK'
+--- Nodes ---
+?
+  Pgm
+    environment-division
+      configuration
+    data-division
+      working-storage
+        xxxx
+        yyyy
+    procedure-division
+      sentence-0
+        [[MoveStatement]] [12,15:MOVE]<MOVE> --> [17,20:yyyy]<UserDefinedWord>
+
+        [[MoveStatement]] [12,15:MOVE]<MOVE> --> [27,30:yyyy]<UserDefinedWord>
+
+        [[MoveStatement]] [12,15:MOVE]<MOVE> --> [25,28:yyyy]<UserDefinedWord>
+
+        end
+      sentence-1
+        [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+        end
+    end
