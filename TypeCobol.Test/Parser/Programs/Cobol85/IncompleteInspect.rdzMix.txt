@@ -1,0 +1,8 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZZBCO0.
+       procedure division.
+           inspect
+Line 5[12,17] <27, Error, Syntax> - Syntax error : mismatched input 'GOBACK' expecting {symbol, special register, keyword}
+           GOBACK.
+      
+       END PROGRAM DVZZBCO0.
