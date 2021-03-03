@@ -26,6 +26,7 @@
            CLASS class2 IS SPACE
            CLASS class3 QUOTE
            CLASS class4 IS ZERO
+           CLASS class5 IS LOW-VALUE QUOTE SPACE HIGH-VALUE ZERO
            .
        DATA DIVISION.
        WORKING-STORAGE SECTION.
