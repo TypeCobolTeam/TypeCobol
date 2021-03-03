@@ -1,4 +1,3 @@
-Line 16[8,28] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 --- Nodes ---
 ?
   Stacked0

@@ -957,7 +957,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         if (!node.Name.Equals(programEnd.ProgramName.Name, StringComparison.OrdinalIgnoreCase))
                         {
                             // Wrong name is specified after END PROGRAM
-                            DiagnosticUtils.AddError(node, "Program name not matching \"PROGRAM END\".", typeCobolOptions.CheckEndProgram.GetMessageCode());
+                            DiagnosticUtils.AddError(end, $"Program name not matching \"{node.Name}\".", typeCobolOptions.CheckEndProgram.GetMessageCode());
                         }
                     }
                 }
@@ -968,10 +968,15 @@ namespace TypeCobol.Compiler.Diagnostics
                 node.SetFlag(Node.Flag.MissingEndProgram, true);
                 if (typeCobolOptions.CheckEndProgram.IsActive)
                 {
-                    if (node.IsMainProgram && !node.NestedPrograms.Any())
+                    if (node.IsStacked || (node.IsMainProgram && node.Parent.Children.OfType<Program>().Count() == 1))
                     {
-                        // Exception if only last program is not closed and has no nested program
-                        return;
+                        // Node is last program
+                        if (!node.NestedPrograms.Any())
+                        {
+                            // Exception if only last program is not closed and has no nested program
+                            // No diagnostic in this case
+                            return;
+                        }
                     }
                     DiagnosticUtils.AddError(node, "\"END PROGRAM\" is missing.", typeCobolOptions.CheckEndProgram.GetMessageCode());
                 }
