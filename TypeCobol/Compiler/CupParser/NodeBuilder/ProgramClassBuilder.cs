@@ -246,6 +246,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                             // Skip closing all nested programs
                             Exit();
                             programsStack.Pop();
+                            Dispatcher.EndCobolProgram(null);
                         }
                     }
                 }
