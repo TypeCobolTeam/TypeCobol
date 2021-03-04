@@ -1,7 +1,10 @@
-Line 6[8,26] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 --- Nodes ---
 ?
-  MainProgram
-    procedure-division
-    Nested
+  Stacked0
+    Nested0
+      end
+    Nested1
+      end
+    end
+  Stacked1
     end
