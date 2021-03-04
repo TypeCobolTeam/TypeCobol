@@ -110,6 +110,7 @@
     <None Include="Compiler\CupParser\EmptyTypeCobolProgram.cup" />
     <None Include="Compiler\CupParser\TypeCobolProgram.cup" />
     <None Include="Compiler\CupPreprocessor\CobolCompilerDirectives.cup" />
+    <None Include="Compiler\SqlParser\SqlCodeElements.cup" />
     <None Include="Documentation\Architecture\Initial requirements.docx" />
     <None Include="Documentation\Architecture\TypeCobolStats_14_04_2015.xlsx" />
     <None Include="Documentation\Reference\DB2 11 for zOs - Application Programming and SQL Guide.pdf" />
@@ -178,6 +179,10 @@ COPY $(TargetDir)CobolCompilerDirectivesSymbols.cs $(ProjectDir)\Compiler\CupPre
 $(OutDir)\CSCup.exe -nodate -nopositions -expect 2000 -parser TypeCobolProgramParser -symbols TypeCobolProgramSymbols $(ProjectDir)\Compiler\CupParser\TypeCobolProgram.cup
 COPY $(TargetDir)TypeCobolProgramParser.cs $(ProjectDir)\Compiler\CupParser\
 COPY $(TargetDir)TypeCobolProgramSymbols.cs $(ProjectDir)\Compiler\CupParser\
+
+$(OutDir)\CSCup.exe -nodate -nopositions -expect 2000 -parser SqlCodeElementsParser -symbols SqlCodeElementsSymbols $(ProjectDir)\Compiler\SqlParser\SqlCodeElements.cup
+COPY $(TargetDir)SqlCodeElementsParser.cs $(ProjectDir)\Compiler\SqlParser\
+COPY $(TargetDir)SqlCodeElementsSymbols.cs $(ProjectDir)\Compiler\SqlParser\
 </PreBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

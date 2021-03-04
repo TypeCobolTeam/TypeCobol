@@ -171,5 +171,8 @@ namespace TypeCobol.Compiler.CodeElements
 
         Program,
         ParametersProfile,
+
+        //...
+        LastCodeElementType
     }
 }

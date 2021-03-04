@@ -127,6 +127,9 @@ namespace TypeCobol.Compiler.CodeElements
         UseStatement,
         WriteStatement,
         XmlGenerateStatement,
-        XmlParseStatement
+        XmlParseStatement,
+
+        //
+        LastStatementType,
     }
 }

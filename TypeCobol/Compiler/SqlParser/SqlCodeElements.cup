@@ -1,0 +1,60 @@
+﻿namespace TypeCobol.Compiler.SqlParser;
+
+using TUVienna.CS_CUP.Runtime;
+using System;
+using System.Collections.Generic;
+using TypeCobol.Compiler.SqlScanner;
+using TypeCobol.Compiler.SqlCodeElements;
+using TypeCobol.Compiler.CodeElements;
+
+
+action code {:
+:};
+
+parser code {:
+	// The Sql Code Element Class Builder instance.
+	public ISqlCodeElementBuilder Builder
+	{
+		get;
+		set;
+	}
+
+	public IList<CodeElement> SqlCodeElements
+	{
+		get;
+		internal set;
+	}
+:};
+
+/* Terminals */
+terminal SqlToken EXEC;
+terminal SqlToken SQL;
+terminal SqlToken END_EXEC;
+terminal SqlToken COMMIT;
+
+/* Non terminals */
+non terminal starts, ExecSql;
+non terminal System.Collections.IList SqlCodeElements;
+non terminal CodeElement SqlCodeElement;
+
+start with starts;
+
+starts ::= ExecSql;
+
+ExecSql ::= EXEC SQL SqlCodeElements:codeElements END_EXEC
+{: 
+	my_parser.SqlCodeElements = (List<CodeElement>)codeElements;
+:}
+;
+
+SqlCodeElements ::=  /* empty */
+	{: RESULT = new List<CodeElement>(); :}
+| SqlCodeElement:codeElement
+	{: RESULT = new List<CodeElement>(){codeElement}; :}
+| SqlCodeElements:codeElements SqlCodeElement:codeElement
+	{: RESULT = codeElements; codeElements.Add(codeElement); :}
+;
+
+SqlCodeElement ::= COMMIT:commit
+	{:  RESULT = my_parser.Builder?.CreateCommitStatement(commit); :}
+;
