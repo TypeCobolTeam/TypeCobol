@@ -81,7 +81,7 @@ namespace TypeCobol.Compiler.Scanner
         // 525 -> 526 : Multilines Comments Tokens
         MultilinesCommentsFamily = 525,
 
-        SqlFamily
+        SqlFamily = TokenType.LastTokenType
     }
 
     // INFO : the list below is generated from the file Documentation/Studies/CobolLexer.tokens.xls
