@@ -48,10 +48,7 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         /// <param name="name">The Copy's name</param>
         /// <returns>true if the name is CPY Copys name, false otherwise.</returns>
-        public bool HasCpyCopy(string name)
-        {
-            return CpyCopyNamesMap != null ? CpyCopyNamesMap.HasCpyCopy(name) : false;
-        }
+        public bool HasCpyCopy(string name) => CpyCopyNamesMap != null ? CpyCopyNamesMap.HasCpyCopy(name) : false;
 #else
         private bool _useEuroInformationLegacyReplacingSyntax;
 #endif
