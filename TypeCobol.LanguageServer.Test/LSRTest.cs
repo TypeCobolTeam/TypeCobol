@@ -488,5 +488,13 @@ namespace TypeCobol.LanguageServer.Test
                 Assert.Fail("Set AutoReplace to false in UnitTestHelper.CompareDirectory()\n\n");
             }
         }
+
+        [TestMethod]
+        [TestCategory("CfgDfa")]
+        public void CfgDataInformation()
+        {
+            LSRTestHelper.Test("CfgDataInformation", LsrTestingOptions.NoLsrTesting, true, useCfg:true);
+        }
+
     }
 }
