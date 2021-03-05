@@ -290,7 +290,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(Program program)
         {
             // Check that program has a closing end
-            ProgramChecker.OnNode(program, _compilerOptions);
+            CheckEndProgram(program, _compilerOptions);
 
             //// Set a Warning if the FormCom parameter in unknown or if the program parameter have no description
 
@@ -880,6 +880,52 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(endCodeElement,
                     "a End statement is not aligned with the matching opening statement",
                     _compilerOptions.CheckEndAlignment.GetMessageCode());
+            }
+        }
+
+        private static void CheckEndProgram(Program node, TypeCobolOptions typeCobolOptions)
+        {
+            var lastChild = node.Children.LastOrDefault();
+            if (lastChild is End end)
+            {
+                // END PROGRAM is present
+                node.SetFlag(Node.Flag.MissingEndProgram, false);
+                if (typeCobolOptions.CheckEndProgram.IsActive)
+                {
+                    var programEnd = (ProgramEnd)end.CodeElement;
+                    if (programEnd.ProgramName?.Name == null)
+                    {
+                        // No name is specified after END PROGRAM
+                        DiagnosticUtils.AddError(end, $"\"PROGRAM END\" should have a program name. \"{node.Name}\" was assumed.", typeCobolOptions.CheckEndProgram.GetMessageCode());
+                    }
+                    else
+                    {
+                        if (!node.Name.Equals(programEnd.ProgramName.Name, StringComparison.OrdinalIgnoreCase))
+                        {
+                            // Wrong name is specified after END PROGRAM
+                            DiagnosticUtils.AddError(end, $"Program name not matching \"{node.Name}\".", typeCobolOptions.CheckEndProgram.GetMessageCode());
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // END PROGRAM is missing
+                node.SetFlag(Node.Flag.MissingEndProgram, true);
+                if (typeCobolOptions.CheckEndProgram.IsActive)
+                {
+                    if (node.IsStacked || (node.IsMainProgram && node.Parent.Children.OfType<Program>().Count() == 1))
+                    {
+                        // Node is last program
+                        if (!node.NestedPrograms.Any())
+                        {
+                            // Exception if only last program is not closed and has no nested program
+                            // No diagnostic in this case
+                            return;
+                        }
+                    }
+                    DiagnosticUtils.AddError(node, "\"END PROGRAM\" is missing.", typeCobolOptions.CheckEndProgram.GetMessageCode());
+                }
             }
         }
     }
