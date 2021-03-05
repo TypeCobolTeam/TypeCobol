@@ -1,0 +1,10 @@
+Line 11[8,28] <37, Warning, General> - Warning: "END PROGRAM" is missing.
+--- Nodes ---
+?
+  Main
+    Nested1
+      end
+    end
+  Stacked1
+    Nested1
+      end
