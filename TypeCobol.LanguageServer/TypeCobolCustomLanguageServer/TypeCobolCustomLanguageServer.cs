@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TypeCobol.Analysis;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
@@ -23,29 +24,48 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// </summary>
         public bool UseOutlineRefresh { get; set; }
 
+        /// <summary>
+        /// Use Cfg Mode
+        /// </summary>
+        public enum UseCfgMode
+        {
+            No,         // No Cfg information
+            AsFile,     // Dot content is emitted as file
+            AsContent   // Dot content is emitted as as a String content.
+        };
+
+        /// <summary>
+        /// Are we using the CFG view in the client.    
+        /// </summary>
+        public UseCfgMode UseCfgDfaDataRefresh { get; set; }
+        protected override InitializeResult OnInitialize(InitializeParams parameters)
+        {
+            var result = base.OnInitialize(parameters);
+            this.Workspace.DocumentModifiedEvent += DocumentModified;
+            return result;
+        }
+
+        /// <summary>
+        /// Handle -ol and -cfg options from the client configuration change notification.
+        /// </summary>
+        /// <param name="sender">Should be the Workspace instance</param>
+        /// <param name="options">Client's Options</param>
+        protected override void OnDidChangeConfiguration(string[] options)
+        {
+            this.UseOutlineRefresh = options.Contains("-ol");
+            if(options.Contains("-cfg=AsFile"))
+                this.UseCfgDfaDataRefresh = UseCfgMode.AsFile;
+            else if(options.Contains("-cfg=AsContent"))
+                this.UseCfgDfaDataRefresh = UseCfgMode.AsContent;
+            else
+                this.UseCfgDfaDataRefresh = UseCfgMode.No;
+            base.OnDidChangeConfiguration(options);
+        }
+
         protected override void OnShutdown()
         {
-            if (UseOutlineRefresh && this.Workspace.DocumentModifiedEvent != null)
-                this.Workspace.DocumentModifiedEvent -= DocumentModified;
-
+            this.Workspace.DocumentModifiedEvent -= DocumentModified;
             base.OnShutdown();
-        }
-
-        protected override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
-        {
-            if (UseOutlineRefresh && this.Workspace.DocumentModifiedEvent == null)
-            {
-                this.Workspace.DocumentModifiedEvent += DocumentModified;
-            }
-            base.OnDidOpenTextDocument(parameters);
-        }
-
-        protected override void OnDidCloseTextDocument(DidCloseTextDocumentParams parameters)
-        {
-            base.OnDidCloseTextDocument(parameters);
-            if (UseOutlineRefresh && this.Workspace.DocumentModifiedEvent != null && this.Workspace.IsEmpty)
-                this.Workspace.DocumentModifiedEvent -= DocumentModified;
-
         }
 
         protected override void OnDidSaveTextDocument(DidSaveTextDocumentParams parameters)
@@ -189,22 +209,46 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// <param name="bForced">Force the server to send the program OutlineNodes</param>
         protected virtual void OnDidReceiveRefreshOutline(string uri, bool bForced)
         {
-            var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
-
-            if (context != null && context.FileCompiler != null)
+            if (this.UseOutlineRefresh)
             {
-                var refreshOutlineParams = context.LanguageServer.UpdateOutline(context.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot, bForced);
-                if (refreshOutlineParams != null)
+                var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
+
+                if (context != null && context.FileCompiler != null)
                 {
-                    SendOutlineData(refreshOutlineParams);
+                    var refreshOutlineParams = context.LanguageServer.UpdateOutline(context.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot, bForced);
+                    if (refreshOutlineParams != null)
+                    {
+                        SendOutlineData(refreshOutlineParams);
+                    }
                 }
             }
+        }
 
+        /// <summary>
+        /// Update Cfg/Dfa information to the client.
+        /// </summary>
+        /// <param name="uri">Uri of the document to update Cfg/Dfa Informations</param>
+        private void UpdateCfgDfaInformation(string uri)
+        {
+            if (this.UseCfgDfaDataRefresh != UseCfgMode.No)
+            {
+                var context = GetDocumentContextFromStringUri(uri, Workspace.SyntaxTreeRefreshLevel.NoRefresh);
+                if (context != null && context.FileCompiler != null)
+                {
+                    var cfgDfaParams = context.LanguageServer.UpdateCfgDfaInformation(context, this.UseCfgDfaDataRefresh == UseCfgMode.AsFile);
+                    if (cfgDfaParams != null)
+                    {
+                        SendCfgDfaData(cfgDfaParams);
+                    }
+                }
+            }
         }
 
         public void DocumentModified(object sender, EventArgs args)
         {
-            OnDidReceiveRefreshOutline(sender.ToString(), false);
+            string uri = sender.ToString();
+            OnDidReceiveRefreshOutline(uri, false);
+            UpdateCfgDfaInformation(uri);
         }
 
         /// <summary>
@@ -213,6 +257,14 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         public virtual void SendOutlineData(RefreshOutlineParams parameters)
         {
             this.RpcServer.SendNotification(RefreshOutlineNotification.Type, parameters);
+        }
+
+        /// <summary>
+        /// CfgDfa data notification are sent from the server to the client.
+        /// </summary>
+        public virtual void SendCfgDfaData(CfgDfaParams parameters)
+        {
+            this.RpcServer.SendNotification(CfgDfaNotification.Type, parameters);
         }
     }
 }
