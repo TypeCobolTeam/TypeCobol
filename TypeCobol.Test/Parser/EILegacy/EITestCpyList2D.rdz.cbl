@@ -7,5 +7,7 @@
        PROCEDURE DIVISION.
       *   Ko special CPY suffixing mechanism doesn't apply with placeholder
            Move 'A'             to MECOPY1-Data
+      *Ok special CPY suffixing mechanism doesn't apply with placeholder
+           Move 'A'             to MECOPY-Data
            .
        END PROGRAM Pgm.
