@@ -12,8 +12,7 @@ namespace TypeCobol.Compiler.Preprocessor
 {
     /// <summary>
     /// Class that implements, mapping of CPY copy names.
-    /// The Lookup is performed using  BinarySearch, thus it necessary for the underlying array of names to be sorted.
-    /// ALL COPY NAMES MUST BE IN UPPERCASE.
+    /// The Lookup is performed using  BinarySearch.
     /// </summary>
     public class CopyNameMapFile
     {
@@ -34,6 +33,10 @@ namespace TypeCobol.Compiler.Preprocessor
         public CopyNameMapFile(string[] cpyCopyNames)
         {
             _CpyCopyNames = cpyCopyNames;
+            for (int i = 0; i < _CpyCopyNames.Length; i++)
+            {
+                _CpyCopyNames[i] = _CpyCopyNames[i].ToUpper();
+            }
             Array.Sort(_CpyCopyNames);
         }
         
