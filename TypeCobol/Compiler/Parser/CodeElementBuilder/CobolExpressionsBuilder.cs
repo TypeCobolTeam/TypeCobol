@@ -256,22 +256,22 @@ namespace TypeCobol.Compiler.Parser
         {
             // Create function call
             FunctionCall functionCall;
-            SymbolReference callTarget;
+            SymbolReference callTargetReference;
             if (context.intrinsicFunctionCall() != null)
             {
                 functionCall = CreateIntrinsicFunctionCall(context.intrinsicFunctionCall());
-                callTarget = null;  //TODO : define symbol reference for IntrinsicFunctionName ?
+                callTargetReference = null;  //TODO : define symbol reference for IntrinsicFunctionName ?
             }
             else
             {
                 functionCall = CreateUserDefinedFunctionCall(context.userDefinedFunctionCall());
-                callTarget = ((UserDefinedFunctionCall) functionCall).UserDefinedFunctionName;
+                callTargetReference = ((UserDefinedFunctionCall) functionCall).UserDefinedFunctionName;
             }
 
             // Register call parameters (shared storage areas) information at the CodeElement level
             var callSite = new CallSite()
                            {
-                               CallTarget = callTarget,
+                               CallTarget = callTargetReference,
                                Parameters = functionCall.Arguments
                            };
             this.callSites.Add(callSite);

@@ -521,8 +521,8 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 
 		public ExternalName IntrinsicFunctionName { get; private set; }
-		public override string FunctionName { get { return IntrinsicFunctionName.Name; } }
-		public override Token FunctionNameToken { get { return IntrinsicFunctionName.NameLiteral.Token; } }
+		public override string FunctionName { get { return IntrinsicFunctionName?.Name; } }
+		public override Token FunctionNameToken { get { return IntrinsicFunctionName?.NameLiteral.Token; } }
 
         public override bool NeedDeclaration
         {
@@ -551,8 +551,8 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 
 		public SymbolReference UserDefinedFunctionName { get; private set;  }
-		public override string FunctionName { get { return UserDefinedFunctionName.Name; } }
-		public override Token FunctionNameToken { get { return UserDefinedFunctionName.NameLiteral.Token; } }
+		public override string FunctionName { get { return UserDefinedFunctionName?.Name; } }
+		public override Token FunctionNameToken { get { return UserDefinedFunctionName?.NameLiteral.Token; } }
 
         public override string Namespace { get { return (UserDefinedFunctionName as QualifiedSymbolReference) == null ? null : ((QualifiedSymbolReference)UserDefinedFunctionName).Tail.Name; } }
 

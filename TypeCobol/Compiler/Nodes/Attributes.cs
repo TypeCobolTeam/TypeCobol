@@ -438,6 +438,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
 	    private static FunctionCallInfo Create(FunctionCall call, FunctionDeclaration declaration) {
+            System.Diagnostics.Debug.Assert(call.FunctionName != null);
 		    var result = new FunctionCallInfo(new URI(call.FunctionName), declaration.Library, declaration.Copy);
 		    if (declaration.Profile == null) return result;
 		    int count = declaration.Profile.InputParameters.Count + declaration.Profile.InoutParameters.Count + declaration.Profile.OutputParameters.Count;
