@@ -21,5 +21,8 @@ namespace TypeCobol.Compiler.SqlScanner
         END,
         END_EXEC,
         COMMIT,
+
+        //..
+        LastSqlTokenType,
     }
 }

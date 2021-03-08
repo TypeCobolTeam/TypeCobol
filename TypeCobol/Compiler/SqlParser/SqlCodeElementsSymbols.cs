@@ -10,10 +10,11 @@ namespace TypeCobol.Compiler.SqlParser
 public class SqlCodeElementsSymbols {
   /* terminals */
   public const int EOF = 0;
-  public const int COMMIT = 5;
-  public const int END_EXEC = 4;
+  public const int COMMIT = 6;
   public const int EXEC = 2;
+  public const int END_EXEC = 5;
   public const int error = 1;
   public const int SQL = 3;
+  public const int END = 4;
 	}
 }

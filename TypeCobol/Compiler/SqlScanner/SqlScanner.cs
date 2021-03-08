@@ -61,7 +61,7 @@ namespace TypeCobol.Compiler.SqlScanner
                                                 {
                                                     SqlToken end_exec = new SqlToken(SqlTokenType.END_EXEC, startColumn, ec, Lines[lineNumber - 1]);
                                                     end_exec.LiteralValue = new AlphanumericLiteralTokenValue(tokenizer.sval);
-                                                    Tokens.Add(end_exec);
+                                                    AddToken(end_exec);
                                                     continue;
                                                 }
                                             }
@@ -71,14 +71,17 @@ namespace TypeCobol.Compiler.SqlScanner
                                 }
                                 SqlToken sqlToken = new SqlToken(sqlTokType, startColumn, endColumn, Lines[lineNumber - 1]);
                                 sqlToken.LiteralValue = new AlphanumericLiteralTokenValue(tokenizer.sval);
-                                Tokens.Add(sqlToken);
+                                AddToken(sqlToken);
                             }
                             else
                             {
                                 SqlTokenType sqlKwType = (tokenizer.sval.ToUpper().Equals("END-EXEC")) ? SqlTokenType.END_EXEC : (SqlTokenType)TokenType.UserDefinedWord;
-                                SqlToken sqlToken = new SqlToken(sqlKwType, startColumn, endColumn, Lines[lineNumber - 1]);
-                                sqlToken.LiteralValue = new AlphanumericLiteralTokenValue(tokenizer.sval);
-                                Tokens.Add(sqlToken);
+                                if (sqlKwType == SqlTokenType.END_EXEC)
+                                {
+                                    SqlToken sqlToken = new SqlToken(sqlKwType, startColumn, endColumn, Lines[lineNumber - 1]);
+                                    sqlToken.LiteralValue = new AlphanumericLiteralTokenValue(tokenizer.sval);
+                                    AddToken(sqlToken);
+                                }
                             }
                         }
                         break;
@@ -86,7 +89,7 @@ namespace TypeCobol.Compiler.SqlScanner
                         {
                             SqlToken sqlToken = new SqlToken((SqlTokenType)TokenType.FloatingPointLiteral, startColumn, endColumn, Lines[lineNumber - 1]);
                             sqlToken.LiteralValue = new DecimalLiteralTokenValue(tokenizer.nval);
-                            Tokens.Add(sqlToken);
+                            AddToken(sqlToken);
                         }
                         break;
                     default:
@@ -94,11 +97,23 @@ namespace TypeCobol.Compiler.SqlScanner
                             if (!System.Char.IsWhiteSpace((char)token)) {
                                 SqlToken sqlToken = new SqlToken((SqlTokenType)TokenType.UserDefinedWord, startColumn, endColumn, Lines[lineNumber - 1]);
                                 sqlToken.LiteralValue = new AlphanumericLiteralTokenValue(((char)token).ToString());
-                                Tokens.Add(sqlToken);
+                                AddToken(sqlToken);
                             }
                         }
                         break;     
                 }  
+            }
+
+            bool IsSqlTokenType(SqlToken sqlToken)
+            {
+                return (int)sqlToken.TokenType >= (int)SqlTokenType.EXEC && (int)sqlToken.TokenType < (int)SqlTokenType.LastSqlTokenType;
+            }
+            void AddToken(SqlToken sqlToken)
+            {//only Add Keywords for this POC.
+                if (IsSqlTokenType(sqlToken))
+                {
+                    Tokens.Add(sqlToken);
+                }
             }
         }
         public SqlScanner(List<SqlToken> tokens)
@@ -125,7 +140,8 @@ namespace TypeCobol.Compiler.SqlScanner
             if (++tokenIndex < Tokens.Count)
             {
                 SqlToken token = Tokens[tokenIndex];
-                TUVienna.CS_CUP.Runtime.Symbol symbol = new TUVienna.CS_CUP.Runtime.Symbol((int)token.TokenType, token);
+                TUVienna.CS_CUP.Runtime.Symbol symbol = new TUVienna.CS_CUP.Runtime.Symbol((int)token.TokenType
+                    - (int)SqlTokenType.EXEC + 2 , token);//+2 to skip EOF and error symbols
                 return symbol;
             }
             else

@@ -6,6 +6,7 @@ namespace TypeCobol.Compiler.Nodes {
     using TypeCobol.Compiler.CodeElements;
     using TypeCobol.Compiler.CodeElements.Expressions;
     using TypeCobol.Compiler.Scanner;
+    using TypeCobol.Compiler.SqlParser;
     using TypeCobol.Compiler.SqlScanner;
 
     public interface Statement { }
@@ -139,17 +140,25 @@ namespace TypeCobol.Compiler.Nodes {
         /// All Scanned SQL Tokens.
         /// </summary>
         public List<SqlToken> Tokens { get; private set; }
+        // All parsed Code Elements
+        public IList<CodeElement> SqlCodeElements { get; private set; }
         /// <summary>
         /// Parser this Exec Statement Node
         /// </summary>
         public void Parse()
         {
             string sourcTest = this.CodeElement.SourceText;
-            string text = this.CodeElement.Text; ;
+            string text = this.CodeElement.Text;
             TypeCobol.Compiler.SqlScanner.SqlScanner sqlScanner = 
                 new TypeCobol.Compiler.SqlScanner.SqlScanner(this.CodeElement.SourceText);
             HasBeenParsed = true;
             Tokens = sqlScanner.Tokens;
+            //Parse Code Elements
+            SqlCodeElementsParser sqlCodeElementParser = new SqlCodeElementsParser(sqlScanner);
+            SqlCodeElementBuilder builder = new SqlCodeElementBuilder();
+            sqlCodeElementParser.Builder = builder;
+            sqlCodeElementParser.parse();
+            SqlCodeElements = sqlCodeElementParser.SqlCodeElements;
         }
     }
 
