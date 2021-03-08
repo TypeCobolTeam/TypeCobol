@@ -443,7 +443,8 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
-            return astVisitor.Visit(this) && FunctionNameToken.AcceptASTVisitor(astVisitor)
+            return astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, FunctionNameToken)
                    && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) Arguments);
         }
 

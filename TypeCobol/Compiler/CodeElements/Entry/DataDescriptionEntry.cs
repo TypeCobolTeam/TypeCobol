@@ -835,6 +835,9 @@ namespace TypeCobol.Compiler.CodeElements {
     public class FunctionCallResultDescriptionEntry : DataDescriptionEntry
     {
         public FunctionCallResultDescriptionEntry(FunctionCall functionCall, int callSiteId) {
+            System.Diagnostics.Debug.Assert(functionCall != null);
+            System.Diagnostics.Debug.Assert(functionCall.FunctionName != null);
+            System.Diagnostics.Debug.Assert(functionCall.FunctionNameToken != null);
             // Generate a unique symbol name for the function call at this specific call site
             var generatedSymbolName = new GeneratedSymbolName(functionCall.FunctionNameToken, functionCall.FunctionName + "-" + callSiteId);
             DataName = new SymbolDefinition(generatedSymbolName, SymbolType.DataName);
