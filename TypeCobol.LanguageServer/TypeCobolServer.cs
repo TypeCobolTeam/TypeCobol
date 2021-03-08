@@ -256,17 +256,21 @@ namespace TypeCobol.LanguageServer
             base.OnShutdown();
         }
 
+        protected virtual void OnDidChangeConfiguration(string[] arguments)
+        {
+            this.Workspace.DidChangeConfigurationParams(arguments);
+        }
         protected override void OnDidChangeConfiguration(DidChangeConfigurationParams parameters)
         {
-            if (parameters.settings is Newtonsoft.Json.Linq.JArray)
+            if (parameters.settings is Newtonsoft.Json.Linq.JArray array)
             {
-                Newtonsoft.Json.Linq.JArray array = parameters.settings as Newtonsoft.Json.Linq.JArray;
-                IEnumerable<string> arguments = array.Select(t => t.ToString());
-                this.Workspace.DidChangeConfigurationParams(arguments);
+                IEnumerable<string> argsEnum = array.Select(t => t.ToString());
+                string[] arguments = argsEnum.ToArray<string>();
+                OnDidChangeConfiguration(arguments);
             }
             else
             {
-                this.Workspace.DidChangeConfigurationParams(parameters.settings.ToString());
+                OnDidChangeConfiguration(parameters.settings.ToString().Split(' '));
             }
         }
 
