@@ -233,31 +233,19 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void EndCobolProgram(ProgramEnd end)
         {
-            if (end != null)
+            var endedProgramName = end?.ProgramName?.Name;
+            if (endedProgramName != null)
             {
-                if (end.ProgramName?.Name != null)
+                // Find the program in the stack that has the name specified by END PROGRAM
+                var matchingProgram = programsStack.FirstOrDefault(p => p.Name.Equals(endedProgramName, StringComparison.OrdinalIgnoreCase));
+                if (matchingProgram != null)
                 {
-                    var matchingProgram = FindMatchingProgram();
-                    if (matchingProgram != null)
+                    // Pop all programs to have CurrentProgram as the program whose name match
+                    if (matchingProgram != CurrentProgram)
                     {
-                        // Pop all programs to have CurrentProgram as the program whose name match
-                        while (matchingProgram != CurrentProgram)
-                        {
-                            // Skip closing all nested programs
-                            Exit();
-                            programsStack.Pop();
-                            Dispatcher.EndCobolProgram(null);
-                        }
+                        // Recursively close all nested programs
+                        EndCobolProgram(null);
                     }
-                }
-            }
-            else
-            {
-                // When end is null, it is has been automatically generated
-                if (CurrentProgram?.Children.LastOrDefault() is End endNode && endNode.CodeElement.Type == CodeElementType.ProgramEnd)
-                {
-                    // It can be useless because it was generated when we already closed the CurrentProgram
-                    return;
                 }
             }
 
@@ -268,11 +256,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 Exit();
                 programsStack.Pop();
                 Dispatcher.EndCobolProgram(end);
-            }
-
-            Program FindMatchingProgram()
-            {
-                return programsStack.FirstOrDefault(p => p.Name.Equals(end.ProgramName.Name, StringComparison.OrdinalIgnoreCase));
             }
         }
 
