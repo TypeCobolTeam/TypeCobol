@@ -914,7 +914,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 node.SetFlag(Node.Flag.MissingEndProgram, true);
                 if (typeCobolOptions.CheckEndProgram.IsActive)
                 {
-                    if (node.IsStacked || (node.IsMainProgram && node.Parent.Children.OfType<Program>().Count() == 1))
+                    if (node is SourceProgram && node.Parent.Children.OfType<SourceProgram>().Last() == node)
                     {
                         // Node is last program
                         if (!node.NestedPrograms.Any())
