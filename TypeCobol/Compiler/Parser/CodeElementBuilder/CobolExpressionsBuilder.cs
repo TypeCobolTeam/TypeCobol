@@ -290,12 +290,14 @@ namespace TypeCobol.Compiler.Parser
             return null;
         }
 
+        [NotNull]
         internal FunctionCall CreateIntrinsicFunctionCall(CodeElementsParser.IntrinsicFunctionCallContext context) {
 			var name = CobolWordsBuilder.CreateIntrinsicFunctionName(context.IntrinsicFunctionName());
 			return new IntrinsicFunctionCall(name, CreateArguments(context.argument()));
 		}
 
-		internal FunctionCall CreateUserDefinedFunctionCall(CodeElementsParser.UserDefinedFunctionCallContext context) {
+        [NotNull]
+        internal FunctionCall CreateUserDefinedFunctionCall(CodeElementsParser.UserDefinedFunctionCallContext context) {
 			var name = CobolWordsBuilder.CreateFunctionNameReference(context.functionNameReference());
 			return new UserDefinedFunctionCall(name, CreateArguments(context.argument()));
 		}

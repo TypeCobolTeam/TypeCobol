@@ -1110,9 +1110,10 @@ namespace TypeCobol.Compiler.Parser
             YEAR_TO_YYYY
         }
 
-        internal ExternalName CreateIntrinsicFunctionName(ITerminalNode IntrinsicFunctionName)
+        [CanBeNull]
+        internal ExternalName CreateIntrinsicFunctionName(ITerminalNode intrinsicFunctionName)
         {
-            return CreateExternalName(IntrinsicFunctionName, SymbolType.IntrinsicFunctionName, typeof(FunctionNameEnum));
+            return CreateExternalName(intrinsicFunctionName, SymbolType.IntrinsicFunctionName, typeof(FunctionNameEnum));
         }
 
         /// <summary>
