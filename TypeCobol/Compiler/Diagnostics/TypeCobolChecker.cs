@@ -357,7 +357,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
                             
                         }
-                        else if (actualDataDefinition.DataType != expected.DataType)
+                        else
                         {
                             TypeDefinition callerType = actualDataDefinition.TypeDefinition;
                             TypeDefinition calleeType = expected.TypeDefinition;
@@ -373,14 +373,12 @@ namespace TypeCobol.Compiler.Diagnostics
                                     DiagnosticUtils.AddError(node, m);
                                 }
                                 //else
-                                //DataType were not written exactly the same in the source code
-                                //eg. we can have a type qualified with its program and the same type without the qualification, then DataType are not the same but TypeDefinition are
-                                //So no error here, it's ok
+                                //Same TypeDefinition it's ok.
+                                //Note that DataType may differ: we can have a type qualified with its program and the same type without the qualification,
+                                //in that case DataType are not the same but TypeDefinition are
                             }
-                            else
-                            {
-                                //Ignore, it's an unknown DataType. It's already checked by TypeCobolLinker
-                            }
+                            //else
+                            //Ignore, it's an unknown DataType. It's already checked by TypeCobolLinker
                         }
                     }
 
