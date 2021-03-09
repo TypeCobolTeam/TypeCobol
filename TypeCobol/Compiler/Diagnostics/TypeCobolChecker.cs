@@ -363,13 +363,13 @@ namespace TypeCobol.Compiler.Diagnostics
                             TypeDefinition calleeType = expected.TypeDefinition;
                             if (callerType != null && calleeType != null)
                             {
-                                //Compare reference of TypeDefinition
+                                //Compare references of TypeDefinition
                                 if (callerType != calleeType)
                                 {
                                     var m = string.Format(
                                         "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
-                                        call.FunctionName, calleeType.Name, calleeType.DataType,
-                                        callArgName ?? string.Format("position {0}", c + 1), callerType.DataType);
+                                        call.FunctionName, expected.Name, calleeType.QualifiedName,
+                                        callArgName ?? string.Format("position {0}", c + 1), callerType.QualifiedName);
                                     DiagnosticUtils.AddError(node, m);
                                 }
                                 //else
