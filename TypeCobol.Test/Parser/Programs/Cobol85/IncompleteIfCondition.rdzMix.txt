@@ -1,0 +1,13 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Pgm.
+       ENVIRONMENT DIVISION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 MyBool         pic X.
+         88 O            value 'O'.
+       PROCEDURE DIVISION.
+Line 9[12,15] <37, Warning, General> - Warning: "end-if" is missing
+Line 9[12,15] <27, Error, Syntax> - Syntax error : Missing statement or NEXT SENTENCE after IF condition.
+           if O
+           .
+       END PROGRAM Pgm.
