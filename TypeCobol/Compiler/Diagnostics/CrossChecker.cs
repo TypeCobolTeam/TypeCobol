@@ -250,6 +250,11 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        /// <summary>
+        /// Visit a WhenSearch and set a flag to true if either:
+        /// WHEN does not use one of the declared keys (ascending or descending)
+        /// WHEN does not use the first index declared for the table when subscripting
+        /// </summary>
         private class WhenSearchVisitor : AbstractAstVisitor
         {
             private readonly WhenSearch _whenSearch;
@@ -265,27 +270,28 @@ namespace TypeCobol.Compiler.Diagnostics
             public override bool Visit(NumericVariable numericVariable)
             {
                 var variableStorageArea = (DataOrConditionStorageArea)numericVariable.StorageArea;
-                ////////// WHEN must use one of the declared keys (ascending or descending) //////////
-                var dataDefinitionKey = _whenSearch.GetDataDefinitionFromStorageAreaDictionary(variableStorageArea);
-                if (dataDefinitionKey?.Parent.CodeElement is DataDescriptionEntry tableDescriptionEntry)
+                // TODO : Handle the case of sub-tables
+                if (variableStorageArea?.Subscripts.Count == 1)
                 {
-                    if (tableDescriptionEntry.TableSortingKeys != null)
+                    ////////// WHEN must use one of the declared keys (ascending or descending) //////////
+                    var dataDefinitionKey = _whenSearch.GetDataDefinitionFromStorageAreaDictionary(variableStorageArea);
+                    if (dataDefinitionKey?.Parent.CodeElement is DataDescriptionEntry tableDescriptionEntry)
                     {
-                        var tableSortingKeyNames = tableDescriptionEntry.TableSortingKeys
-                            .Where(key => key.SortDirection?.Value != SortDirection.None)
-                            .Select(key => key.SortKey.Name);
-                        var isTableSortingKey = tableSortingKeyNames.Contains(dataDefinitionKey.Name);
-                        if (!isTableSortingKey)
+                        if (tableDescriptionEntry.TableSortingKeys != null)
                         {
-                            // error
-                            IsInError = true;
+                            var tableSortingKeyNames = tableDescriptionEntry.TableSortingKeys
+                                .Where(key => key.SortDirection?.Value != SortDirection.None)
+                                .Select(key => key.SortKey.Name);
+                            var isTableSortingKey = tableSortingKeyNames.Contains(dataDefinitionKey.Name);
+                            if (!isTableSortingKey)
+                            {
+                                // error
+                                IsInError = true;
+                            }
                         }
                     }
-                }
 
-                ////////// WHEN must use the first index declared for the table when subscripting //////////
-                if (variableStorageArea?.Subscripts.Count > 0)
-                {
+                    ////////// WHEN must use the first index declared for the table when subscripting //////////
                     // Get the 1st subscript used
                     var firstSubscriptStorageArea = ((NumericVariableOperand)variableStorageArea.Subscripts[0].NumericExpression).IntegerVariable.StorageArea;
                     var dataDefinitionFirstSubscript = _whenSearch.GetDataDefinitionFromStorageAreaDictionary(firstSubscriptStorageArea);
