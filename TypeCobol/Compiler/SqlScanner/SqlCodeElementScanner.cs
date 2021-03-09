@@ -14,6 +14,10 @@ namespace TypeCobol.Compiler.SqlScanner
     public class SqlCodeElementScanner : TUVienna.CS_CUP.Runtime.Scanner
     {
         private int index = -1;
+        /// <summary>
+        /// The EOF symbol
+        /// </summary>
+        public static TUVienna.CS_CUP.Runtime.Symbol EOF => new TUVienna.CS_CUP.Runtime.Symbol(0, null);
         public IList<CodeElement> SqlCodeElements { get; private set; }
         public SqlCodeElementScanner(IList<CodeElement> sqlCodeElements)
         {
@@ -21,7 +25,17 @@ namespace TypeCobol.Compiler.SqlScanner
         }
         public Symbol next_token()
         {
-            throw new NotImplementedException();
+            if (++index < SqlCodeElements.Count)
+            {
+                CodeElement ce = SqlCodeElements[index];
+                TUVienna.CS_CUP.Runtime.Symbol symbol = new TUVienna.CS_CUP.Runtime.Symbol((int)ce.Type
+                    - (int)CodeElementType.LastCodeElementType + 2, ce);//+2 to skip EOF and error symbols
+                return symbol;
+            }
+            else
+            {
+                return EOF;
+            }
         }
     }
 }

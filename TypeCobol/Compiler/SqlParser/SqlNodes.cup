@@ -1,0 +1,50 @@
+﻿namespace TypeCobol.Compiler.SqlParser;
+
+using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.SqlCodeElements;
+using TypeCobol.Compiler.SqlScanner;
+using System.Collections.Generic;
+using System;
+using TUVienna.CS_CUP.Runtime;
+using CSCupRuntime;
+using TypeCobol.Compiler.SqlNodes;
+using TypeCobol.Compiler.SqlCodeElements.Statement;
+
+action code {:
+:};
+
+parser code {:
+	// The Sql Node Class Builder instance.
+	public ISqlNodeBuilder Builder
+	{
+		get;
+		set;
+	}
+:};
+
+/* Terminals */
+terminal CommitStatement CommitStatement;
+
+/* Non terminals */
+non terminal starts, SqlUnit;
+non terminal SqlStatements, SqlStatement;
+
+start with starts;
+
+starts ::= SqlUnit;
+
+SqlUnit ::= SqlStatements
+{: :}
+;
+
+SqlStatements ::= /* empty */
+	{: :}
+|	SqlStatement
+	{: :}
+|	SqlStatements SqlStatement
+	{: :}
+;
+
+SqlStatement ::= CommitStatement:commit
+	{:  my_parser.Builder?.EnterCommit(commit); :}
+;

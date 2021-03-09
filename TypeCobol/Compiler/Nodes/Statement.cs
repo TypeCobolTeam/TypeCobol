@@ -159,6 +159,7 @@ namespace TypeCobol.Compiler.Nodes {
             sqlCodeElementParser.Builder = builder;
             sqlCodeElementParser.parse();
             SqlCodeElements = sqlCodeElementParser.SqlCodeElements;
+            //Parse Nodes
         }
     }
 
