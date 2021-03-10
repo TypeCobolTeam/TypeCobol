@@ -176,8 +176,11 @@ namespace TypeCobol.LanguageServer
                 ((object[])completionItem.data)[1] = signatureInformation;
 
                 //Store the link between the hash and the procedure. This will help to determine the procedure parameter completion context later. 
-                functionDeclarationSignatureDictionary.Add(signatureInformation, proc);
-                completionItems.Add(completionItem);
+                if (!functionDeclarationSignatureDictionary.ContainsKey(signatureInformation))
+                {
+                    functionDeclarationSignatureDictionary.Add(signatureInformation, proc);
+                    completionItems.Add(completionItem);
+                }
             }
 
             return completionItems;

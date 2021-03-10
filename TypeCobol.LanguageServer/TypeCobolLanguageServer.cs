@@ -16,6 +16,10 @@ using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 using TypeCobol.LanguageServices.Editor;
 using TokenType = TypeCobol.Compiler.Scanner.TokenType;
+using TypeCobol.Analysis.Graph;
+using TypeCobol.Compiler.Nodes;
+using TypeCobol.LanguageServer.Context;
+using System.IO;
 
 namespace TypeCobol.LanguageServer
 {
@@ -276,6 +280,48 @@ namespace TypeCobol.LanguageServer
             System.Diagnostics.Debug.Assert(sender is CompilationDocument);
             CompilationDocument compilationDocument = (CompilationDocument) sender;
             UpdateTokensLines(compilationDocument);
+        }
+
+        /// <summary>
+        /// LSR Cfg Analyzer ID.
+        /// </summary>
+        internal const string lspcfgId = "lsp-cfg";
+
+        /// <summary>
+        /// Method to update CFG/DFA information.
+        /// </summary>
+        /// <param name="fileCompiler">The underlying File Compiler</param>
+        /// <param name="writeToFile">True if CfgDfaParams shall write the dot content to a temporary file, 
+        /// false if the dot content shall be put in the CfgDfaParams.dotContent field.</param>
+        /// <returns>CFG/DFA Data information</returns>
+        public CfgDfaParams UpdateCfgDfaInformation(DocumentContext docContext, bool writeToFile)
+        {
+            CfgDfaParams result = null;
+            docContext.FileCompiler.CompilationResultsForProgram.TryGetAnalyzerResult(lspcfgId, out IList<ControlFlowGraph<Node, object>> cfgs);
+            if (cfgs != null && cfgs.Count > 0)
+            {                
+                //Create a temporary dot file.
+                string tempFile = Path.GetTempFileName();
+                using (TextWriter writer = writeToFile ? File.CreateText(tempFile)  : (TextWriter)new StringWriter())
+                {
+                    CfgDfaParamsBuilder builder = new CfgDfaParamsBuilder(new TextDocumentIdentifier(docContext.TextDocument.uri), writeToFile ? tempFile : null);
+                    CfgDotFileForNodeGenerator<object> gen = new CfgDotFileForNodeGenerator<object>(cfgs[0]);
+                    gen.FullInstruction = true;
+                    gen.BlockEmittedEvent += (block, subgraph) => builder.AddBlock<object>(block, subgraph);
+                    gen.Report(writer);
+                    result = builder.GetParams();
+                    if (!writeToFile)
+                    {
+                        result.dotContent = writer.ToString();
+                    }
+                }
+            }
+            else
+            {
+                //An Empty
+                result = new CfgDfaParams(new TextDocumentIdentifier(docContext.TextDocument.uri));
+            }
+            return result;
         }
 
         /// <summary>
