@@ -15,6 +15,9 @@
                 yyyy
            MOVE '1234' TO yyyy
       
+      *Debug and not debug line
+      d    DISPLAY "I'm A". DISPLAY "I'm B".
+
       *Debug line in the middle
            DISPLAY 'name = '
       d        yyyy
@@ -41,24 +44,18 @@
       d       yyyy
       
              '_4'
-      
-           GOBACK.
-       END PROGRAM Pgm.
-      
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. Pgm2.
-       ENVIRONMENT DIVISION.
-       CONFIGURATION SECTION.
-       DATA DIVISION.
-       Working-Storage Section.
-       01 xxxx pic XXXX value 'toto'.
-       01 yyyy pic XXXX.
-       PROCEDURE DIVISION.
-           MOVE xxxx TO yyyy
+
+      *Whole debug line
+      d    DISPLAY 'name = ' yyyy
+
+      *Normal line then debug
+           MOVE '1234' TO yyyy
+      d    DISPLAY 
+           'name = ' yyyy
+
+      *Normal line ended with dot followed by mix debug
+           MOVE xxxx TO yyyy.
       d    DISPLAY 'name = '
                 yyyy
-           MOVE '1234' TO yyyy
            GOBACK.
-       END PROGRAM Pgm2.
-      
-      
+       END PROGRAM Pgm.
