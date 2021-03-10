@@ -1,0 +1,36 @@
+--- Nodes ---
+?
+  TCOMFL06
+    environment-division
+      configuration
+        special-names
+    data-division
+      working-storage
+        var1
+        var2
+        var3
+        t1
+        t2
+        t3
+        c
+    procedure-division
+      sentence-0
+        [[MoveStatement]] [12,15:MOVE]<MOVE> --> [24,24:c]<UserDefinedWord>
+
+        [[MoveStatement]] [12,15:MOVE]<MOVE> --> [28,29:t1]<UserDefinedWord>
+
+        [[MoveStatement]] [12,15:MOVE]<MOVE> --> [28,29:t2]<UserDefinedWord>
+
+        [[MoveStatement]] [12,15:MOVE]<MOVE> --> [28,29:t3]<UserDefinedWord>
+
+        [[IfStatement]] [12,13:IF]<IF> --> [20,27:NAMECHAR]<UserDefinedWord>
+
+          ?
+            [[DisplayStatement]] [15,21:DISPLAY]<DISPLAY> --> [23,26+:"ok"]<AlphanumericLiteral>(",Y,Y){ok}
+- variables = "ok"
+
+          end
+        [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+        end
+    end
