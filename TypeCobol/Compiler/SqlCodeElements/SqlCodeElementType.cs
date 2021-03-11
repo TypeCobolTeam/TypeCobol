@@ -12,6 +12,7 @@ namespace TypeCobol.Compiler.SqlCodeElements
     /// </summary>
     public enum SqlCodeElementType
     {
-        CommitStatement = CodeElementType.LastCodeElementType,
+        FirstSqlCodeElementType = CodeElementType.CommitStatement,
+        CommitStatement = FirstSqlCodeElementType,
     }
 }

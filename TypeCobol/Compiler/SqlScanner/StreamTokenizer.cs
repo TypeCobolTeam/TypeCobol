@@ -286,7 +286,7 @@ namespace TypeCobol.Compiler.SqlScanner
                 if (currentChar == '\r')
                 {                    
                     LineNumber++;
-                    ColumnNumber = 1;
+                    ColumnNumber = -1;
                     starColumn = endColumn = ColumnNumber;
                     lineNumber = LineNumber;
                     if (isEOLSignificant)
@@ -297,13 +297,15 @@ namespace TypeCobol.Compiler.SqlScanner
                     }
                     if ((currentChar = Read()) == '\n')
                     {
+                        ColumnNumber = -1;
+                        starColumn = endColumn = ColumnNumber;
                         currentChar = Read();
                     }
                 }
                 else if (currentChar == '\n')
                 {
                     LineNumber++;
-                    ColumnNumber = 1;
+                    ColumnNumber = -1;
                     starColumn = endColumn = ColumnNumber;
                     lineNumber = LineNumber;
                     if (isEOLSignificant)
@@ -505,12 +507,12 @@ namespace TypeCobol.Compiler.SqlScanner
                                 peekOne = Read();
                             }
                             LineNumber++;
-                            ColumnNumber = 1;
+                            ColumnNumber = -1;
                         }
                         else if (currentChar == '\n')
                         {
                             LineNumber++;
-                            ColumnNumber = 1;
+                            ColumnNumber = -1;
                         }
                         else if (currentChar == '*' && peekOne == '/')
                         {

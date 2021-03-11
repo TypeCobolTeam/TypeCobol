@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TUVienna.CS_CUP.Runtime;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.SqlCodeElements;
 
 namespace TypeCobol.Compiler.SqlScanner
 {
@@ -21,7 +22,7 @@ namespace TypeCobol.Compiler.SqlScanner
         public IList<CodeElement> SqlCodeElements { get; private set; }
         public SqlCodeElementScanner(IList<CodeElement> sqlCodeElements)
         {
-
+            SqlCodeElements = sqlCodeElements;
         }
         public Symbol next_token()
         {
@@ -29,7 +30,7 @@ namespace TypeCobol.Compiler.SqlScanner
             {
                 CodeElement ce = SqlCodeElements[index];
                 TUVienna.CS_CUP.Runtime.Symbol symbol = new TUVienna.CS_CUP.Runtime.Symbol((int)ce.Type
-                    - (int)CodeElementType.LastCodeElementType + 2, ce);//+2 to skip EOF and error symbols
+                    - (int)SqlCodeElementType.FirstSqlCodeElementType + 2, ce);//+2 to skip EOF and error symbols
                 return symbol;
             }
             else

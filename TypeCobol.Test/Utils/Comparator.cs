@@ -449,25 +449,12 @@ namespace TypeCobol.Test.Utils
     /// </summary>
     internal class SqlComparator : FilesComparator
     {
-        public class NodeDumper : AbstractAstVisitor
-        {
-            private StringBuilder _builder;
-            public NodeDumper(StringBuilder builder) => _builder = builder;
-            public override bool BeginNode(Node node)
-            {
-                _builder.AppendLine(node.ToString());
-                return true;
-            }
-        }
-
         public class ExecNodeDumper : AbstractAstVisitor
         {
             private StringBuilder _builder;
-            private NodeDumper _nodeDumber;
             public ExecNodeDumper(StringBuilder builder)
             {
                 _builder = builder;
-                _nodeDumber = new NodeDumper(builder);
             }
 
             public override bool Visit(Exec exec)
@@ -477,7 +464,7 @@ namespace TypeCobol.Test.Utils
                     exec.Parse();
                 }
                 _builder.AppendLine("--- Exec ---");
-                exec.AcceptASTVisitor(_nodeDumber);
+                _builder.AppendLine(exec.ToString());
                 return true;
             }
         }

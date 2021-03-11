@@ -172,7 +172,7 @@ namespace TypeCobol.Compiler.CodeElements
         Program,
         ParametersProfile,
 
-        //...
-        LastCodeElementType
+        //SQL
+        CommitStatement,
     }
 }
