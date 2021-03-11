@@ -692,7 +692,7 @@ namespace TypeCobol.Compiler.Scanner
                     case ' ':
                         return ScanWhitespace(startIndex);
                     case '.':
-                        return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.PeriodSeparator, MessageCode.InvalidCharAfterPeriod);
+                        return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.PeriodSeparator, MessageCode.DotShouldBeFollowedBySpace);
                     default:
                         tryScanCommentEntry = true;
                         break;
@@ -1036,7 +1036,7 @@ namespace TypeCobol.Compiler.Scanner
                         //IntegerLiteral = 27,
                         //DecimalLiteral = 28,
                         //FloatingPointLiteral = 29,
-                        return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.PeriodSeparator, MessageCode.InvalidCharAfterPeriod);
+                        return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.PeriodSeparator, MessageCode.DotShouldBeFollowedBySpace);
                     }
                 case ':':
                     // -- TypeCobol specific syntax --
@@ -1489,7 +1489,7 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
-        private Token ScanOneCharFollowedBySpaceOrNumericLiteral(int startIndex, TokenType tokenType, MessageCode messageCode, bool spaceAfterIsMandatory = true)
+        private Token ScanOneCharFollowedBySpaceOrNumericLiteral(int startIndex, TokenType tokenType, MessageCode messageCode, bool spaceAfterIsMandatory = true, bool emitErrorOnMandatorySpaceAfter = true)
         {
             if (currentIndex == lastIndex)
             {
@@ -1519,7 +1519,7 @@ namespace TypeCobol.Compiler.Scanner
                 currentIndex++;
                 if (spaceAfterIsMandatory) {
                     Token invalidToken = new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
-                    tokensLine.AddDiagnostic(messageCode, invalidToken);
+                    tokensLine.AddDiagnostic(messageCode, invalidToken, line[currentIndex], currentIndex+1);
                     return invalidToken;
                 }
                 return new Token(tokenType, startIndex, currentIndex - 1, tokensLine);

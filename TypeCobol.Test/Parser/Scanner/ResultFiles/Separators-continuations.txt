@@ -6,7 +6,7 @@
 
 -- Line 3 --
 [1,1:.]<PeriodSeparator>
-Line 0[1,1] <12, Error, Tokens> - Invalid character found after . : expecting space or digit
+Line 0[1,1] <49, Warning, Tokens> - A blank was missing before character "a" in column 2. A blank was assumed.
 
 -- Line 4 --
 [2,2: ]<SpaceSeparator>
@@ -15,7 +15,7 @@ Line 0[2,2] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuati
 
 -- Line 5 --
 [1,1:.]<PeriodSeparator>
-Line 0[1,1] <12, Error, Tokens> - Invalid character found after . : expecting space or digit
+Line 0[1,1] <49, Warning, Tokens> - A blank was missing before character "a" in column 2. A blank was assumed.
 
 -- Line 6 --
 [2,5:    ]<SpaceSeparator>

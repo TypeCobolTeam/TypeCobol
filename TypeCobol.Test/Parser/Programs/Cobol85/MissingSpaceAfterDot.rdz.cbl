@@ -1,0 +1,15 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID.Pgm.
+       AUTHOR.AUTHOR.
+       DATE-WRITTEN.NOVEMBRE 80.
+       DATE-COMPILED.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER.IBM-370.
+       OBJECT-COMPUTER.IBMCOBOLII.
+       PROCEDURE DIVISION.
+           DISPLAY 'foo'.DISPLAY 'bar'
+           GOBACK
+           .
+      
+       End Program Pgm.

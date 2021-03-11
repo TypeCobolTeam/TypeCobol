@@ -1,0 +1,27 @@
+﻿Line 2[18,18] <49, Warning, Tokens> - A blank was missing before character "P" in column 19. A blank was assumed.
+Line 3[14,14] <49, Warning, Tokens> - A blank was missing before character "A" in column 15. A blank was assumed.
+Line 4[20,20] <49, Warning, Tokens> - A blank was missing before character "N" in column 21. A blank was assumed.
+Line 8[23,23] <49, Warning, Tokens> - A blank was missing before character "I" in column 24. A blank was assumed.
+Line 9[23,23] <49, Warning, Tokens> - A blank was missing before character "I" in column 24. A blank was assumed.
+Line 11[25,25] <49, Warning, Tokens> - A blank was missing before character "D" in column 26. A blank was assumed.
+--- Nodes ---
+?
+  Pgm
+    environment-division
+      configuration
+        source-computer
+        object-computer
+    procedure-division
+      sentence-0
+        [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [20,24:'foo']<AlphanumericLiteral>(',Y,Y){foo}
+- variables = 'foo'
+
+        end
+      sentence-1
+        [[DisplayStatement]] [26,32:DISPLAY]<DISPLAY> --> [34,38+:'bar']<AlphanumericLiteral>(',Y,Y){bar}
+- variables = 'bar'
+
+        [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+        end
+    end

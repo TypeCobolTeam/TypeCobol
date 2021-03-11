@@ -46,3 +46,4 @@ Category;Code;Severity;MessageTemplate;Document;PageNumber;ReferenceText
 7;45;2;Info: {0};0;0;
 8;46;1;CodeAnalysis: analyzer '{0}' failed. Exception message is '{1}';0;0;
 3;48;1;Missing copy '{0}' included by copy '{1}';1;531;text-name identifies the copy text. library-name identifies where the copy text exists
+2;49;2;A blank was missing before character "{0}" in column {1}. A blank was assumed.;0;0;A blank was missing before character "_x_" in column 41. A blank was assumed.
