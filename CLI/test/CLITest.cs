@@ -103,6 +103,8 @@ namespace CLI.Test
         public void TestDependenciesSignatureOverload()
         {
             CLITestHelper.Test("dependenciesSignatureOverload", ReturnCode.Success);
+            CLITestHelper.Test("dependenciesSignatureOverload_2", ReturnCode.Success);
+            CLITestHelper.Test("dependenciesSignatureOverload_3", ReturnCode.ParsingDiagnostics);
         }
 
         [TestMethod]
