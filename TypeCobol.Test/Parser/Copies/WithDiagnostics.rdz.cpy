@@ -4,3 +4,6 @@
        05 :tag:-var2.
           10 :tag:-var2-item1 PICTUR X.
           10 :tag:-var2-item3 PIC X.
+      *Checking DECIMAL-POINT IS COMMA
+       05 wrongInitialValueFormat PIC 9V99 VALUE 3.14.
+       05 var3                    PIC 9V99 VALUE 3,14.
