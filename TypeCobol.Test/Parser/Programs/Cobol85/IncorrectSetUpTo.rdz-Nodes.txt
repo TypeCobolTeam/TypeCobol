@@ -1,0 +1,17 @@
+﻿Line 11[12,14] <27, Error, Syntax> - Syntax error : Set xxx up/down by xxx: Sending field missing or type unknown
+Line 11[45,46] <27, Error, Syntax> - Syntax error : mismatched input 'TO' expecting BY
+--- Nodes ---
+?
+  RB1BCTLB
+    data-division
+      working-storage
+        W-TAB
+          W-TAB2
+            I-DTL
+            W-TAB-ELT
+        I-TAB-MAX
+    procedure-division
+      sentence-0
+        SET  I-TAB-MAX UP BY 
+        end
+    end

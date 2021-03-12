@@ -346,10 +346,10 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         public static void OnCodeElement(SetStatementForIndexes set, CodeElementsParser.SetStatementForIndexesContext context)
         {
-            if (set.SendingVariable == null)
+            var sendingVariable = set.SendingVariable;
+            if (sendingVariable == null)
             {
-                DiagnosticUtils.AddError(set, "Set xxx up/down by xxx: Sending field missing or type unknown",
-                    context?.variableOrExpression2());
+                DiagnosticUtils.AddError(set, "Set xxx up/down by xxx: Sending field missing or type unknown", context);
             }
         }
     }

@@ -913,19 +913,21 @@ namespace TypeCobol.Compiler.Diagnostics
                         "[Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.");
                 
                 // Check sender (increment)
-                int outputResult; // not used
-                if (!int.TryParse(statement.SendingVariable.ToString(), out outputResult))
+                if (statement.SendingVariable != null)
                 {
-                    // Not an integer
-                    var variable =
-                        node.GetDataDefinitionForQualifiedName(new URI(statement.SendingVariable.ToString()));
-                    if (variable == null || variable.DataType.Name != "Numeric")
+                    if (!int.TryParse(statement.SendingVariable.ToString(), out var outputResult))
                     {
-                        // Not an Variable or a notNumeric variable
-                        if (statement.SendingVariable.ArithmeticExpression == null)
-                            // Not an arithmetic expressions
-                            DiagnosticUtils.AddError(node,
-                                "Increment only support integer values, numeric variables and arithmetic expressions");
+                        // Not an integer
+                        var variable =
+                            node.GetDataDefinitionForQualifiedName(new URI(statement.SendingVariable.ToString()));
+                        if (variable == null || variable.DataType.Name != "Numeric")
+                        {
+                            // Not an Variable or a notNumeric variable
+                            if (statement.SendingVariable.ArithmeticExpression == null)
+                                // Not an arithmetic expressions
+                                DiagnosticUtils.AddError(node,
+                                    "Increment only support integer values, numeric variables and arithmetic expressions");
+                        }
                     }
                 }
             }
