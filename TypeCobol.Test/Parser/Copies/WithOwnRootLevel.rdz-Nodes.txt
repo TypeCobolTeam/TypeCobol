@@ -1,6 +1,6 @@
 --- Nodes ---
 ?
-  WithOwnRootLevel.rdz.cpy
+  WithOwnRootLevel.rdz
     data-division
       working-storage
         simpleGroup

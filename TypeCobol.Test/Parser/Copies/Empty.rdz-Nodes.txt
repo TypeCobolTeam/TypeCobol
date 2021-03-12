@@ -1,6 +1,6 @@
 --- Nodes ---
 ?
-  Empty.rdz.cpy
+  Empty.rdz
     data-division
       working-storage
     end

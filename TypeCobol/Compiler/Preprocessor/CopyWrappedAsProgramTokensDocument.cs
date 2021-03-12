@@ -53,8 +53,9 @@ namespace TypeCobol.Compiler.Preprocessor
 
             CodeElementsLine ProgramId()
             {
-                int nameLength = textSourceInfo.Name.Length;
-                string text = $"{indent}PROGRAM-ID. {textSourceInfo.Name}.";//0,9|10,10|11,11|12,12+nameLength-1|12+nameLength,12+nameLength
+                string programName = System.IO.Path.GetFileNameWithoutExtension(textSourceInfo.Name);
+                int nameLength = programName.Length;
+                string text = $"{indent}PROGRAM-ID. {programName}.";//0,9|10,10|11,11|12,12+nameLength-1|12+nameLength,12+nameLength
                 var line = new CodeElementsLine(new TextLineSnapshot(0, text, null), columnsLayout);
                 line.SourceTokens.Add(new Token(TokenType.PROGRAM_ID, start, start + 9, line));
                 line.SourceTokens.Add(new Token(TokenType.PeriodSeparator, start + 10, start + 10, line));

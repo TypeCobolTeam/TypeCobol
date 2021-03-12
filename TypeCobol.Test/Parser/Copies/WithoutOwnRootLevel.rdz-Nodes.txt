@@ -1,6 +1,6 @@
 --- Nodes ---
 ?
-  WithoutOwnRootLevel.rdz.cpy
+  WithoutOwnRootLevel.rdz
     data-division
       working-storage
         data-definition
