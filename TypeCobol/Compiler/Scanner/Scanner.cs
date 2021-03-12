@@ -606,7 +606,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Scan an isolated token in the given context.
         /// </summary>
-        public static Token ScanIsolatedToken(string tokenText, MultilineScanState scanContext, out Diagnostic error)
+        public static Token ScanIsolatedToken(string tokenText, [NotNull] MultilineScanState scanContext, out Diagnostic error)
         {
             TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
             tempTokensLine.InitializeScanState(scanContext);
