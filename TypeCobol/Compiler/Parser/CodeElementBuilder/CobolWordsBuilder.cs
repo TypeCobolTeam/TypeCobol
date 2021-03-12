@@ -778,8 +778,10 @@ namespace TypeCobol.Compiler.Parser
             return reference;
         }
 
-        internal SymbolDefinition CreateFileNameDefinition(CodeElementsParser.FileNameDefinitionContext context)
+        [CanBeNull]
+        internal SymbolDefinition CreateFileNameDefinition([CanBeNull] CodeElementsParser.FileNameDefinitionContext context)
         {
+            if (context == null) return null;
             return CreateSymbolDefinition(context.UserDefinedWord(), SymbolType.FileName);
         }
 
@@ -1081,8 +1083,10 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal ExternalName CreateAssignmentName(CodeElementsParser.AssignmentNameContext context)
+        [CanBeNull]
+        internal ExternalName CreateAssignmentName([CanBeNull] CodeElementsParser.AssignmentNameContext context)
         {
+            if (context == null) return null;
             return CreateExternalName(context.externalName5(), SymbolType.AssignmentName);
         }
 

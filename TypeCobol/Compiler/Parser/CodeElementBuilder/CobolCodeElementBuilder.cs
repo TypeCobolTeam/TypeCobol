@@ -638,7 +638,7 @@ namespace TypeCobol.Compiler.Parser
 			if (context.assignClause() != null && context.assignClause().Length > 0)
 			{
 				var assignClauseContext = context.assignClause()[0];
-				entry.ExternalDataSet = CobolWordsBuilder.CreateAssignmentName(assignClauseContext.assignmentName()[0]);
+                entry.ExternalDataSet = CobolWordsBuilder.CreateAssignmentName(assignClauseContext.assignmentName().FirstOrDefault());
 			}
 			if (context.reserveClause() != null && context.reserveClause().Length > 0)
 			{

@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -15,6 +16,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// Name of the file in the Cobol program.
         /// Must be identified by an FD or SD entry in the DATA DIVISION.
         /// </summary>
+        [CanBeNull]
         public SymbolDefinition FileName { get; set; }
 
         /// <summary>
@@ -29,6 +31,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// The name component of assignment-name-1 is initially treated as a ddname. 
         /// If no file has been allocated using this ddname, then name is treated as an environment variable
         /// </summary>
+        [CanBeNull]
         public ExternalName ExternalDataSet { get; set; }
 
         /// <summary>
