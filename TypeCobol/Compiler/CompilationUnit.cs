@@ -27,8 +27,8 @@ namespace TypeCobol.Compiler
         /// This method does not scan the inserted text lines to produce tokens.
         /// You must explicitly call UpdateTokensLines() to start an initial scan of the document.
         /// </summary>
-        public CompilationUnit(bool isCopy, bool isImported, TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider, MultilineScanState initialScanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, IAnalyzerProvider analyzerProvider) :
-            base(isCopy, isImported, textSourceInfo, initialTextLines, compilerOptions, processedTokensDocumentProvider, initialScanState, copyTextNameVariations)
+        public CompilationUnit(TextSourceInfo textSourceInfo, ParsingMode mode, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider, MultilineScanState initialScanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, IAnalyzerProvider analyzerProvider) :
+            base(textSourceInfo, mode, initialTextLines, compilerOptions, processedTokensDocumentProvider, initialScanState, copyTextNameVariations)
         {
             // Initialize performance stats 
             PerfStatsForCodeElementsParser = new PerfStatsForParsingStep(CompilationStep.CodeElementsParser);
@@ -284,7 +284,7 @@ namespace TypeCobol.Compiler
                     }
 
                     //Direct copy parsing : remove redundant root 01 level if any.
-                    if (UseDirectCopyParsing)
+                    if (Mode == ParsingMode.CopyAsProgram)
                     {
                         var firstDataDefinition = root.MainProgram
                             .Children[0]  //Data Division
