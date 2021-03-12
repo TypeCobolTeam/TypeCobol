@@ -1,0 +1,12 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DPDCY01.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 MyType01  typedef strict public pic X.
+       PROCEDURE DIVISION.
+       INIT-LIBRARY.
+           .
+       declare procedure Proc01 public
+                   input myInput type MyType01.
+       end-declare.
+       END PROGRAM DPDCY01.
