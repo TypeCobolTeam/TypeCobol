@@ -578,7 +578,7 @@ namespace TypeCobol.Compiler.Parser
 			if (context.alphanumericLiteralToken() != null) {
 				chars.CharacterValue = CobolWordsBuilder.CreateCharacterValue(context.alphanumericLiteralToken());
 			} else if (context.figurativeConstant() != null) {
-				chars.CharacterValue = CobolWordsBuilder.CreateFigurativeConstat(context.figurativeConstant());
+				chars.CharacterValue = CobolWordsBuilder.CreateFigurativeConstant(context.figurativeConstant());
 			} else if (context.ordinalPositionInCollatingSequence() != null) {
 				chars.OrdinalPositionInCollatingSequence = CobolWordsBuilder.CreateIntegerValue(context.ordinalPositionInCollatingSequence().IntegerLiteral());
 			}
@@ -1142,7 +1142,7 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
 			CodeElement = entry;
 
-		    TypeDefinitionEntryChecker.CheckRedefines(entry, context);
+		    DataDescriptionChecker.CheckRedefines(entry, context);
 		}
 
 	    private void EnterCommonDataDescriptionAndDataRedefines(CommonDataDescriptionAndDataRedefines entry, CodeElementsParser.DataDescriptionEntryContext context)

@@ -89,12 +89,12 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 }
 
                 // TODO#249: use a COPY for these
-                foreach (var type in DataType.BuiltInCustomTypes)
+                foreach (var type in DataType.BuiltInCustomTypeDefinitions)
                 {
-                    var createdType = DataType.CreateBuiltIn(type);
-                    TableOfIntrinsics.AddType(createdType); //Add default TypeCobol types BOOLEAN and DATE
+                    //Add default TypeCobol types BOOLEAN, DATE, STRING and CURRENCY
+                    TableOfIntrinsics.AddType(type); 
                     //Add type and children to DataTypeEntries dictionary in Intrinsic symbol table
-                    TableOfIntrinsics.AddDataDefinitionsUnderType(createdType);
+                    TableOfIntrinsics.AddDataDefinitionsUnderType(type);
                 }
             }
         }
@@ -336,6 +336,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartFileControlEntry(FileControlEntry entry)
         {
+            var currentProg = CurrentProgram;
+            if (currentProg.FileConnectors == null)
+            {
+                currentProg.FileConnectors = new Dictionary<SymbolDefinition, FileControlEntry>();
+            }
+
+            currentProg.FileConnectors.Add(entry.FileName, entry);
+
             var fileControlEntry = new FileControlEntryNode(entry);
             Enter(fileControlEntry, entry);
             Dispatcher.StartFileControlEntry(entry);

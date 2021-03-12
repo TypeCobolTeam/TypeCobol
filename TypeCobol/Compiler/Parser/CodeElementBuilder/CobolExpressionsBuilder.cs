@@ -1536,15 +1536,20 @@ namespace TypeCobol.Compiler.Parser
 		}
 
 		internal ReceivingStorageArea CreateAlphanumericStorageArea(CodeElementsParser.AlphanumericStorageAreaContext context)
-		{
-			var storageArea = new ReceivingStorageArea(StorageDataType.Alphanumeric,
-				CreateIdentifier(context?.identifier()));
+        {
+            var identifier = CreateIdentifier(context?.identifier());
+            if (identifier == null)
+            {
+                return null;
+            }
+            var storageArea = new ReceivingStorageArea(StorageDataType.Alphanumeric, identifier);
 
             // Collect storage area read/writes at the code element level
-            this.storageAreaWrites.Add(storageArea);
+            storageAreaWrites.Add(storageArea);
 
             return storageArea;
-		}
+
+        }
 
 		internal ReceivingStorageArea CreateIndexStorageArea(CodeElementsParser.IndexStorageAreaContext context)
 		{
