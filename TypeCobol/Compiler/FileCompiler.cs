@@ -185,8 +185,8 @@ namespace TypeCobol.Compiler
                 }
                 else
                 {
-                    //Direct copy parsing
-                    var initialScanState = new MultilineScanState(true, true, false, TextDocument.Source.EncodingForAlphanumericLiterals);
+                    //Direct copy parsing, copy is assumed to be part of Data Division and using comma as the decimal point.
+                    var initialScanState = new MultilineScanState(TextDocument.Source.EncodingForAlphanumericLiterals, true, true);
                     initialScanState.InsideCopy = true;
                     CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, CompilationDocument.ParsingMode.CopyAsProgram, TextDocument.Lines, compilerOptions, documentProvider, initialScanState, copyTextNameVariations, CompilationProject.AnalyzerProvider);
                     CompilationResultsForCopy = CompilationResultsForProgram;
@@ -198,7 +198,7 @@ namespace TypeCobol.Compiler
             {
                 //This is a regular program
                 Debug.Assert(scanState == null);
-                var initialScanState = new MultilineScanState(false, false, false, TextDocument.Source.EncodingForAlphanumericLiterals);
+                var initialScanState = new MultilineScanState(TextDocument.Source.EncodingForAlphanumericLiterals);
                 CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, CompilationDocument.ParsingMode.Program, TextDocument.Lines, compilerOptions, documentProvider, initialScanState, copyTextNameVariations, CompilationProject.AnalyzerProvider);
                 CompilationResultsForProgram.CustomSymbols = customSymbols;
             }
