@@ -5,6 +5,7 @@ namespace TypeCobol.Compiler.Nodes {
     using System.Collections.Generic;
     using TypeCobol.Compiler.CodeElements;
     using TypeCobol.Compiler.CodeElements.Expressions;
+    using TypeCobol.Compiler.Diagnostics;
     using TypeCobol.Compiler.Scanner;
     using TypeCobol.Compiler.SqlParser;
     using TypeCobol.Compiler.SqlScanner;
@@ -145,7 +146,8 @@ namespace TypeCobol.Compiler.Nodes {
         /// <summary>
         /// Parser this Exec Statement Node
         /// </summary>
-        public void Parse()
+        /// <param name="addDiagnostic">Any Diagnostic reporter</param>
+        public void Parse(Action<Diagnostic> addDiagnostic = null)
         {
             string sourcTest = this.CodeElement.SourceText;
             string text = this.CodeElement.Text;
