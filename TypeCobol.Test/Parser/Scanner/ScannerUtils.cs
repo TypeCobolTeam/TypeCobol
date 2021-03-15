@@ -63,7 +63,7 @@ namespace TypeCobol.Test.Parser.Scanner
 
         public static string ScanTextLine(TokensLine tokensLine)
         {
-            var initialScanState = new MultilineScanState(false, false, false, TextSourceInfo.EncodingForAlphanumericLiterals);
+            var initialScanState = new MultilineScanState(TextSourceInfo.EncodingForAlphanumericLiterals);
             TypeCobol.Compiler.Scanner.Scanner.ScanTokensLine(tokensLine, initialScanState, CompilerOptions, CopyTextNameVariations);
             return BuildResultString(tokensLine);
         }
@@ -73,7 +73,7 @@ namespace TypeCobol.Test.Parser.Scanner
             ImmutableList<TokensLine>.Builder tokensLinesList = ImmutableList<TokensLine>.Empty.ToBuilder();
             tokensLinesList.AddRange(tokensLines);
 
-            var initialScanState = new MultilineScanState(false, false, false, TextSourceInfo.EncodingForAlphanumericLiterals);
+            var initialScanState = new MultilineScanState(TextSourceInfo.EncodingForAlphanumericLiterals);
             ScannerStep.ScanDocument(TextSourceInfo, tokensLinesList, CompilerOptions, CopyTextNameVariations, initialScanState);
 
             StringBuilder sbResult = new StringBuilder();

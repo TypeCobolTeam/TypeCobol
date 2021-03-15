@@ -181,14 +181,14 @@ namespace TypeCobol.Compiler
                 {
                     //This is an imported copy
                     Debug.Assert(scanState.InsideCopy);
-                    CompilationResultsForCopy = new CompilationDocument(true, true, TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, scanState, copyTextNameVariations);
+                    CompilationResultsForCopy = new CompilationDocument(TextDocument.Source, CompilationDocument.ParsingMode.ImportedCopy, TextDocument.Lines, compilerOptions, documentProvider, scanState, copyTextNameVariations);
                 }
                 else
                 {
-                    //Direct copy parsing
-                    var initialScanState = new MultilineScanState(true, true, false, TextDocument.Source.EncodingForAlphanumericLiterals);
+                    //Direct copy parsing, copy is assumed to be part of Data Division and using comma as the decimal point.
+                    var initialScanState = new MultilineScanState(TextDocument.Source.EncodingForAlphanumericLiterals, true, true);
                     initialScanState.InsideCopy = true;
-                    CompilationResultsForProgram = new CompilationUnit(true, false, TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, initialScanState, copyTextNameVariations, CompilationProject.AnalyzerProvider);
+                    CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, CompilationDocument.ParsingMode.CopyAsProgram, TextDocument.Lines, compilerOptions, documentProvider, initialScanState, copyTextNameVariations, CompilationProject.AnalyzerProvider);
                     CompilationResultsForCopy = CompilationResultsForProgram;
                 }
 
@@ -196,9 +196,10 @@ namespace TypeCobol.Compiler
             }
             else
             {
+                //This is a regular program
                 Debug.Assert(scanState == null);
-                var initialScanState = new MultilineScanState(false, false, false, TextDocument.Source.EncodingForAlphanumericLiterals);
-                CompilationResultsForProgram = new CompilationUnit(false, false, TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, initialScanState, copyTextNameVariations, CompilationProject.AnalyzerProvider);
+                var initialScanState = new MultilineScanState(TextDocument.Source.EncodingForAlphanumericLiterals);
+                CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, CompilationDocument.ParsingMode.Program, TextDocument.Lines, compilerOptions, documentProvider, initialScanState, copyTextNameVariations, CompilationProject.AnalyzerProvider);
                 CompilationResultsForProgram.CustomSymbols = customSymbols;
             }
             CompilerOptions = compilerOptions;

@@ -298,24 +298,11 @@ namespace TypeCobol.Compiler.CodeElements {
 		    storageArea.IsWrittenTo = true;
 	    }
 
-	    public DataSourceType DataSourceType { get; set; }
 	    public StorageArea[] SendingStorageAreas { get; set; }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
                 && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) SendingStorageAreas);
         }
-    }
-    
-    public enum DataSourceType
-    {
-        ComputeExpression,
-        MoveFromStorageArea,
-        ReadFromDatabase,
-        ReadFromFile,
-        ReadFromInputDevice,
-        ReadFromSystemCall,
-        ReceiveFromCalledProgram,
-        ReceiveFromCallingProgram
     }
 }

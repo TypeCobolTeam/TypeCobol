@@ -193,7 +193,7 @@ namespace TypeCobol.Compiler.Text
                 }
             }
             TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, line);
-            tempTokensLine.InitializeScanState(new MultilineScanState(false, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
+            tempTokensLine.InitializeScanState(new MultilineScanState(IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
 
             Scanner.Scanner scanner = new Scanner.Scanner(line, 0, line.Length - 1, tempTokensLine, null, false);
             Token t = null;

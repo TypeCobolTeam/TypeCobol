@@ -1,6 +1,6 @@
 --- Nodes ---
 ?
-  AutomaticTagReplacing.rdz.cpy
+  AutomaticTagReplacing.rdz
     data-division
       working-storage
         PREFIX-group1

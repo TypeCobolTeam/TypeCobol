@@ -21,6 +21,27 @@ namespace TypeCobol.Compiler
     public class CompilationDocument
     {
         /// <summary>
+        /// Parsing modes
+        /// </summary>
+        public enum ParsingMode
+        {
+            /// <summary>
+            /// Default mode, input document is considered as a full Cobol Program.
+            /// </summary>
+            Program,
+
+            /// <summary>
+            /// Mode for copybooks imported into another document via COPY (or EXEC SQL INCLUDE) instruction.
+            /// </summary>
+            ImportedCopy,
+
+            /// <summary>
+            /// Special mode for 'direct' copy parsing. Copy content is parsed within a fake wrapper program.
+            /// </summary>
+            CopyAsProgram
+        }
+
+        /// <summary>
         /// Text source name and format
         /// </summary>
         public TextSourceInfo TextSourceInfo { get; private set; }
@@ -60,10 +81,9 @@ namespace TypeCobol.Compiler
         private MultilineScanState InitialScanState { get; }
 
         /// <summary>
-        /// Special compilation mode for copies that are not imported from another document.
-        /// To parse them, use a fake wrapper program.
+        /// Parsing mode of this document
         /// </summary>
-        protected bool UseDirectCopyParsing { get; }
+        public ParsingMode Mode { get; }
 
         /// <summary>
         /// Informations used to track the performance of each compilation step
@@ -151,14 +171,9 @@ namespace TypeCobol.Compiler
         /// This method does not scan the inserted text lines to produce tokens.
         /// You must explicitely call UpdateTokensLines() to start an initial scan of the document.
         /// </summary>
-        public CompilationDocument(bool isCopy, bool isImported, TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider,
+        public CompilationDocument(TextSourceInfo textSourceInfo, ParsingMode mode, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider,
             [NotNull] MultilineScanState initialScanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
-            if (isImported && !isCopy)
-            {
-                throw new InvalidOperationException("Only copies can be imported.");
-            }
-
             TextSourceInfo = textSourceInfo;
             CompilerOptions = compilerOptions;
             CopyTextNamesVariations = copyTextNameVariations ?? new List<RemarksDirective.TextNameVariation>();
@@ -186,7 +201,7 @@ namespace TypeCobol.Compiler
             PerfStatsForPreprocessor = new PerfStatsForParsingStep(CompilationStep.Preprocessor);
 
             InitialScanState = initialScanState;
-            UseDirectCopyParsing = isCopy && !isImported;
+            Mode = mode;
         }
 
         /// <summary>
@@ -664,7 +679,7 @@ namespace TypeCobol.Compiler
                 ProcessedTokensDocument CreateProcessedTokensDocument(DocumentVersion<IProcessedTokensLine> version, ISearchableReadOnlyList<CodeElementsLine> lines)
                 {
                     //Use wrapper for direct copy parsing mode
-                    return UseDirectCopyParsing
+                    return Mode == ParsingMode.CopyAsProgram
                         ? new CopyWrappedAsProgramTokensDocument(tokensDocument, version, lines, CompilerOptions, missingCopies)
                         : new ProcessedTokensDocument(tokensDocument, version, lines, CompilerOptions, missingCopies);
                 }

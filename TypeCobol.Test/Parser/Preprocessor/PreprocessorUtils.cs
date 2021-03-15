@@ -13,7 +13,7 @@ namespace TypeCobol.Test.Parser.Preprocessor
     internal static class PreprocessorUtils
     {
         private static readonly DocumentFormat _Format = new DocumentFormat(Encoding.Unicode, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.CobolReferenceFormat);
-        private static readonly MultilineScanState _ScanState = new MultilineScanState(false, false, false, Encoding.Unicode);
+        private static readonly MultilineScanState _ScanState = new MultilineScanState(Encoding.Unicode);
 
         public static readonly string Root = "Parser" + Path.DirectorySeparatorChar +"Preprocessor";
 

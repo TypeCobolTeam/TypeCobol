@@ -1,0 +1,21 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Main.
+       ENVIRONMENT DIVISION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  ThisReturnCode               TYPE ReturnCode.
+       01  W-SystemDateDB2              TYPE DateDB2.
+       01  W-Date                       TYPE Date.
+       01  W-Type1                      TYPE DPDCY01::Type1.
+       PROCEDURE DIVISION.
+      *Calling first overload of DPDCY01::Foo
+           CALL DPDCY01::Foo  INPUT W-Date
+                              OUTPUT W-SystemDateDB2
+                                     ThisReturnCode
+      *Calling second overload of DPDCY01::Foo
+           CALL DPDCY01::Foo  INPUT W-SystemDateDB2
+                              OUTPUT W-Type1::var1
+                                     ThisReturnCode
+           goback
+           .
+       END PROGRAM Main.
