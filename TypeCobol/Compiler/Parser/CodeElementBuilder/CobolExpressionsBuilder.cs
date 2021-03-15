@@ -252,36 +252,52 @@ namespace TypeCobol.Compiler.Parser
 
 		// - 3. Function calls (allocate a storage area for the result) -
 
-		internal StorageArea CreateFunctionIdentifier(CodeElementsParser.FunctionIdentifierContext context) {
-			FunctionCallResult result = null;
-			if (context.intrinsicFunctionCall() != null) {
-				result = new FunctionCallResult(CreateIntrinsicFunctionCall(context.intrinsicFunctionCall()));
-			} else { // [TYPECOBOL] user defined function calls
-				result = new FunctionCallResult(CreateUserDefinedFunctionCall(context.userDefinedFunctionCall()));
-			}
-			if (result.DataDescriptionEntry != null) {
-				var dataDescription = result.DataDescriptionEntry;
-				CobolWordsBuilder.symbolInformationForTokens[result.DataDescriptionEntry.DataName.NameLiteral.Token] = result.DataDescriptionEntry.DataName;
-			}
-			if (result.SymbolReference != null) {
-				CobolWordsBuilder.symbolInformationForTokens[result.SymbolReference.NameLiteral.Token] = result.SymbolReference;
-			}
-			// Register call parameters (shared storage areas) information at the CodeElement level
-			var functionCall = result.FunctionCall;
-			var callSite = new CallSite() {
-				CallTarget = functionCall is UserDefinedFunctionCall ? ((UserDefinedFunctionCall)functionCall).UserDefinedFunctionName : null, // TO DO : IntrinsicFunctionName
-				Parameters = functionCall.Arguments
-			};
-			this.callSites.Add(callSite);
-			return result;
-		}
+        internal StorageArea CreateFunctionIdentifier(CodeElementsParser.FunctionIdentifierContext context)
+        {
+            // Create function call
+            FunctionCall functionCall;
+            SymbolReference callTargetReference;
+            if (context.intrinsicFunctionCall() != null)
+            {
+                functionCall = CreateIntrinsicFunctionCall(context.intrinsicFunctionCall());
+                callTargetReference = null;  //TODO : define symbol reference for IntrinsicFunctionName ?
+            }
+            else
+            {
+                functionCall = CreateUserDefinedFunctionCall(context.userDefinedFunctionCall());
+                callTargetReference = ((UserDefinedFunctionCall) functionCall).UserDefinedFunctionName;
+            }
 
-		internal FunctionCall CreateIntrinsicFunctionCall(CodeElementsParser.IntrinsicFunctionCallContext context) {
+            // Register call parameters (shared storage areas) information at the CodeElement level
+            var callSite = new CallSite()
+                           {
+                               CallTarget = callTargetReference,
+                               Parameters = functionCall.Arguments
+                           };
+            this.callSites.Add(callSite);
+
+            // Create storage area for result
+            if (functionCall.FunctionName != null && functionCall.FunctionNameToken != null)
+            {
+                var functionCallResult = new FunctionCallResult(functionCall);
+                CobolWordsBuilder.symbolInformationForTokens[functionCallResult.DataDescriptionEntry.DataName.NameLiteral.Token] =
+                    functionCallResult.DataDescriptionEntry.DataName;
+                CobolWordsBuilder.symbolInformationForTokens[functionCallResult.SymbolReference.NameLiteral.Token] =
+                    functionCallResult.SymbolReference;
+                return functionCallResult;
+            }
+
+            return null;
+        }
+
+        [NotNull]
+        internal FunctionCall CreateIntrinsicFunctionCall(CodeElementsParser.IntrinsicFunctionCallContext context) {
 			var name = CobolWordsBuilder.CreateIntrinsicFunctionName(context.IntrinsicFunctionName());
 			return new IntrinsicFunctionCall(name, CreateArguments(context.argument()));
 		}
 
-		internal FunctionCall CreateUserDefinedFunctionCall(CodeElementsParser.UserDefinedFunctionCallContext context) {
+        [NotNull]
+        internal FunctionCall CreateUserDefinedFunctionCall(CodeElementsParser.UserDefinedFunctionCallContext context) {
 			var name = CobolWordsBuilder.CreateFunctionNameReference(context.functionNameReference());
 			return new UserDefinedFunctionCall(name, CreateArguments(context.argument()));
 		}

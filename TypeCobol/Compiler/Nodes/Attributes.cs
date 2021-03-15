@@ -420,22 +420,25 @@ namespace TypeCobol.Compiler.Nodes {
 
     internal class FunctionUserAttribute: Attribute {
 	    public object GetValue(object o, SymbolTable table) {
-		    var statement = ((Node)o).CodeElement as FunctionCaller;
-		    if (statement == null) return null;
-		    var functions = new List<FunctionCallInfo>();
-		
-		    var found = table.GetFunction(new URI(statement.FunctionCall.FunctionName));
-			
-		    if (found.Count > 1) throw new System.ArgumentException("Resolve ambiguity for "+found.Count+" items");
-		    var declaration = found[0];
-		    functions.Add(Create(statement.FunctionCall, declaration));
-		
-		    if (functions.Count == 0) return null;
-		    if (functions.Count == 1) return functions[0];
-		    return functions;
-	    }
+		    var statement = o as FunctionCaller;
+
+            string functionName = statement?.FunctionCall?.FunctionName;
+            if (functionName == null) return null;
+
+		    var found = table.GetFunction(new URI(functionName));
+            switch (found.Count)
+            {
+                case 0:
+                    return null;
+                case 1:
+                    return Create(statement.FunctionCall, found[0]);
+                default:
+                    throw new ArgumentException("Resolve ambiguity for " + found.Count + " items");
+            }
+        }
 
 	    private static FunctionCallInfo Create(FunctionCall call, FunctionDeclaration declaration) {
+            System.Diagnostics.Debug.Assert(call.FunctionName != null);
 		    var result = new FunctionCallInfo(new URI(call.FunctionName), declaration.Library, declaration.Copy);
 		    if (declaration.Profile == null) return result;
 		    int count = declaration.Profile.InputParameters.Count + declaration.Profile.InoutParameters.Count + declaration.Profile.OutputParameters.Count;
@@ -474,12 +477,6 @@ namespace TypeCobol.Compiler.Nodes {
 
     public class FunctionCallInfo
     {
-        public FunctionCallInfo(FunctionCallResult call)
-        {
-            QualifiedName = new URI(call.FunctionCall.FunctionName);
-            foreach (var arg in call.FunctionCall.Arguments)
-                InputParameters.Add(new CallParameter(arg.StorageAreaOrValue));
-        }
         /// <summary>Used for codegen.</summary>
         public FunctionCallInfo(QualifiedName name, string lib, string copy)
         {
