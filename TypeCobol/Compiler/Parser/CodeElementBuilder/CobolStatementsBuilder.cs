@@ -52,7 +52,6 @@ namespace TypeCobol.Compiler.Parser
 		internal AcceptFromInputDeviceStatement CreateAcceptDataTransferStatement(CodeElementsParser.AcceptDataTransferContext context) {
 			var statement = new AcceptFromInputDeviceStatement();
 			statement.ReceivingStorageArea = CobolExpressionsBuilder.CreateAlphanumericStorageArea(context.alphanumericStorageArea());
-			statement.ReceivingStorageArea.DataSourceType = DataSourceType.ReadFromInputDevice;
 			if (context.mnemonicForEnvironmentNameReferenceOrEnvironmentName() != null) {
 				statement.InputDevice = CobolWordsBuilder.CreateMnemonicForEnvironmentNameReferenceOrEnvironmentName(context.mnemonicForEnvironmentNameReferenceOrEnvironmentName());
 			}
@@ -64,7 +63,6 @@ namespace TypeCobol.Compiler.Parser
 			var statement = new AcceptFromSystemDateStatement();
 
 			statement.ReceivingStorageArea = CobolExpressionsBuilder.CreateAlphanumericStorageArea(context.alphanumericStorageArea());
-			statement.ReceivingStorageArea.DataSourceType = DataSourceType.ReadFromSystemCall;
 			if (context.yyyyMmDd() != null)
 			{
 				statement.SystemDateFormat = new SyntaxProperty<SystemDateFormat>(SystemDateFormat.DATE_YYYYMMDD,

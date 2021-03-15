@@ -1101,7 +1101,7 @@ conditionForUPSISwitchNameDefinition: UserDefinedWord;
 
 symbolicCharacterDefinition: SymbolicCharacter;
 
-symbolicCharacterReference: standardCollatingSequenceReference;
+symbolicCharacterReference: standardCollatingSequenceReference | SymbolicCharacter;
 
 // p 115 : ALPHABET alphabet-name-1 IS
 // alphabet-name-1 specifies a collating sequence when used in:
