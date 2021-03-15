@@ -286,7 +286,7 @@ namespace TypeCobol.Compiler.Nodes {
             {
                 // Used for pointers arithmetics
                 var setIndex = ce as SetStatementForIndexes;
-                if (setIndex != null)
+                if (setIndex?.SendingVariable != null)
                 {
                     if (setIndex.SendingVariable.MainSymbolReference != null)
                         // the sender is a qualified name
@@ -309,7 +309,7 @@ namespace TypeCobol.Compiler.Nodes {
             if (node.IsFlagSet(Node.Flag.NodeContainsPointer))
             {
                 var setIndex = (node as Set)?.CodeElement as SetStatementForIndexes;
-                if (setIndex?.SendingVariable.ArithmeticExpression != null)
+                if (setIndex?.SendingVariable?.ArithmeticExpression != null)
                     return true;
             }
             return false;

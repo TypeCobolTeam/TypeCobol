@@ -1468,9 +1468,10 @@ namespace TypeCobol.Compiler.Parser
             }
 
             return variable;
-		}        
+		}
 
-		internal VariableOrExpression CreateVariableOrExpression(CodeElementsParser.VariableOrExpression2Context context)
+        [CanBeNull]
+        internal VariableOrExpression CreateVariableOrExpression([CanBeNull] CodeElementsParser.VariableOrExpression2Context context)
 		{
             if (context == null) return null;
             VariableOrExpression variableOrExpression = null;

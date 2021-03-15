@@ -915,7 +915,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 // Check sender (increment)
                 if (statement.SendingVariable != null)
                 {
-                    if (!int.TryParse(statement.SendingVariable.ToString(), out var outputResult))
+                    if (!int.TryParse(statement.SendingVariable.ToString(), out var _))
                     {
                         // Not an integer
                         var variable =
