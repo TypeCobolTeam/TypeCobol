@@ -185,13 +185,6 @@ namespace TypeCobol.Compiler.CodeElements
         public CharacterInCollatingSequence Character { get; set; }
     }
 
-    public class CharactersInCollatingSequence : CharacterSetInCollatingSequence
-    {
-        public AlphanumericValue CharactersInAlphanmericValue { get; set; }
-        
-        public IntegerValue OrdinalPositionInCollatingSequence { get; set; }
-    }
-
     // In the two rules below, if characterInCollatingSequence is an alphanumeric literal, 
     // it can contain ONLY ONE characters
 
@@ -207,7 +200,7 @@ namespace TypeCobol.Compiler.CodeElements
         public CharacterInCollatingSequence[] EqualCharacters { get; set; }
     }
     
-    public class CharacterInCollatingSequence
+    public class CharacterInCollatingSequence : CharacterSetInCollatingSequence
     {
         public CharacterValue CharacterValue { get; set; }
 

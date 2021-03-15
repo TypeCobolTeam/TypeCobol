@@ -61,10 +61,20 @@ namespace TypeCobol.Compiler.Parser
         }
 
         [CanBeNull]
-        internal CharacterValue CreateFigurativeConstat(CodeElementsParser.FigurativeConstantContext context) {
-            if (context?.symbolicCharacterReference() != null)
-                return new CharacterValue(CreateSymbolReference(context.symbolicCharacterReference().standardCollatingSequenceReference(), SymbolType.SymbolicCharacter));
-            return null;
+        internal CharacterValue CreateFigurativeConstant(CodeElementsParser.FigurativeConstantContext context)
+        {
+            if (context == null)
+            {
+                return null;
+            }
+
+            if (context.symbolicCharacterReference() != null)
+            {
+                var symbolicCharacterReference = CreateSymbolicCharacterReference(context.symbolicCharacterReference());
+                return new CharacterValue(symbolicCharacterReference);
+            }
+
+            return new CharacterValue(ParseTreeUtils.GetFirstToken(context));
         }
 
         internal static CharacterValue CreateCharacterValue(CodeElementsParser.CharacterValue3Context context)
@@ -74,27 +84,27 @@ namespace TypeCobol.Compiler.Parser
 
         internal CharacterValue CreateCharacterValue(CodeElementsParser.CharacterValue4Context context)
         {
-            if (context.figurativeConstant() != null && context.figurativeConstant().symbolicCharacterReference() != null)
+            if (context.figurativeConstant() != null)
             {
-                SymbolReference symbolicCharacterReference = CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().standardCollatingSequenceReference(), SymbolType.SymbolicCharacter);
-                return new CharacterValue(symbolicCharacterReference);
+                return CreateFigurativeConstant(context.figurativeConstant());
             }
-            else
-            {
-                Token valueToken = ParseTreeUtils.GetFirstToken(context);
-                return new CharacterValue(valueToken);
-            }
+
+            //alphanumericOrNationalLiteralToken()
+            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            return new CharacterValue(valueToken);
         }
 
         [CanBeNull]
         internal AlphanumericValue CreateAlphanumericValue([CanBeNull] CodeElementsParser.AlphanumericValue3Context context)
         {
             if (context == null) return null;
-            var c = context.figurativeConstant();
-            if (c?.symbolicCharacterReference() != null)
+
+            if (context.figurativeConstant() != null)
             {
-                return new AlphanumericValue(CreateSymbolReference(c.symbolicCharacterReference().standardCollatingSequenceReference(), SymbolType.SymbolicCharacter));
+                return CreateFigurativeConstant(context.figurativeConstant());
             }
+
+            //alphanumericOrNationalLiteralToken()
             Token token = ParseTreeUtils.GetFirstToken(context);
             return new AlphanumericValue(token);
         }
@@ -143,56 +153,60 @@ namespace TypeCobol.Compiler.Parser
             return valueToken != null ? new EnumeratedValue(valueToken, enumType) : null;
         }
 
+        private RepeatedCharacterValue CreateRepeatedCharacterValue(
+            CodeElementsParser.FigurativeConstantContext figurativeConstantContext,
+            ParserRuleContext parentContext,
+            Token optionalALLToken)
+        {
+            IParseTree parseTree;
+            if (figurativeConstantContext != null)
+            {
+                if (figurativeConstantContext.symbolicCharacterReference() != null)
+                {
+                    var symbolicCharacterReference = CreateSymbolicCharacterReference(figurativeConstantContext.symbolicCharacterReference());
+                    return new RepeatedCharacterValue(optionalALLToken, symbolicCharacterReference);
+                }
+
+                parseTree = figurativeConstantContext;
+            }
+            else
+            {
+                parseTree = parentContext;
+            }
+
+            Token valueToken = ParseTreeUtils.GetFirstToken(parseTree);
+            return new RepeatedCharacterValue(optionalALLToken, valueToken);
+        }
+
         [CanBeNull]
         internal RepeatedCharacterValue CreateRepeatedCharacterValue([CanBeNull]CodeElementsParser.RepeatedCharacterValue1Context context)
         {
             if (context == null) return null;
-            try
-            {
-                if (context.figurativeConstant() != null && context.figurativeConstant().symbolicCharacterReference() != null)
-                {
-                    SymbolReference symbolicCharacterReference = CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().standardCollatingSequenceReference(), SymbolType.SymbolicCharacter);
-                    return new RepeatedCharacterValue(null, symbolicCharacterReference);
-                }
-                else
-                {
-                    Token valueToken = ParseTreeUtils.GetFirstToken(context);
-                    return new RepeatedCharacterValue(null, valueToken);
-                }
-            }
-            catch (InvalidOperationException) { return null; }
+            return CreateRepeatedCharacterValue(context.figurativeConstant(), context, null);
         }
 
         internal RepeatedCharacterValue CreateRepeatedCharacterValue(CodeElementsParser.RepeatedCharacterValue2Context context)
         {
             Token optionalALLToken = null;
+            var figurativeConstantContext = context.figurativeConstant();
             if (context.allFigurativeConstant() != null)
             {
-                optionalALLToken = ParseTreeUtils.GetFirstToken(context);
-            }
-
-            CodeElementsParser.FigurativeConstantContext figurativeConstantContext = context.figurativeConstant();
-            if (context.allFigurativeConstant() != null && context.allFigurativeConstant().figurativeConstant() != null)
-            {
+                optionalALLToken = ParseTreeUtils.GetFirstToken(context); //Grab the ALL token
                 figurativeConstantContext = context.allFigurativeConstant().figurativeConstant();
+
+                if (context.allFigurativeConstant().notNullTerminatedAlphanumericOrNationalLiteralToken() != null)
+                {
+                    var terminal = context.allFigurativeConstant().notNullTerminatedAlphanumericOrNationalLiteralToken();
+                    return new RepeatedCharacterValue(optionalALLToken, ParseTreeUtils.GetFirstToken(terminal));
+                }
+
+                if (figurativeConstantContext == null)
+                {
+                    return null;
+                }
             }
 
-            if (figurativeConstantContext != null && figurativeConstantContext.symbolicCharacterReference() != null)
-            {
-                SymbolReference symbolicCharacterReference = CreateSymbolReference(figurativeConstantContext.symbolicCharacterReference().standardCollatingSequenceReference(), SymbolType.SymbolicCharacter);
-                return new RepeatedCharacterValue(optionalALLToken, symbolicCharacterReference);
-            }
-            else
-            {
-                IParseTree valueNode = figurativeConstantContext;
-                if (valueNode == null)
-                {
-                    valueNode = context.allFigurativeConstant().notNullTerminatedAlphanumericOrNationalLiteralToken();
-                    if (valueNode == null && optionalALLToken != null) return null;
-                }
-                Token valueToken = ParseTreeUtils.GetFirstToken(valueNode);
-                return new RepeatedCharacterValue(optionalALLToken, valueToken);
-            }
+            return CreateRepeatedCharacterValue(figurativeConstantContext, context, optionalALLToken);
         }
 
         [CanBeNull]
@@ -568,7 +582,12 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolReference CreateSymbolicCharacterReference(CodeElementsParser.SymbolicCharacterReferenceContext context)
         {
-            return CreateSymbolReference(context.standardCollatingSequenceReference(), SymbolType.SymbolicCharacter);
+            if (context.standardCollatingSequenceReference() != null)
+            {
+                return CreateSymbolReference(context.standardCollatingSequenceReference(), SymbolType.SymbolicCharacter);
+            }
+
+            return CreateSymbolReference(context.SymbolicCharacter(), SymbolType.SymbolicCharacter);
         }
 
         internal SymbolDefinition CreateAlphabetNameDefinition(CodeElementsParser.AlphabetNameDefinitionContext context)

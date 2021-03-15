@@ -4,7 +4,7 @@
 [11,14:TITI]<UserDefinedWord>
 -- Line 5 --
 [16,27:PICTURE]<PICTURE>
-[16,27:N]<UserDefinedWord>
+[16,27:N]<PictureCharacterString>
 [16,27:(]<LeftParenthesisSeparator>
 [16,27:20]<IntegerLiteral>{20}
 [16,27:)]<RightParenthesisSeparator>
