@@ -12,17 +12,17 @@ namespace TypeCobol.Compiler.Preprocessor
     /// Token placeholder used to implement the REPLACE and COPY REPLACING compiler directives
     /// in the most common case when a single source token is replaced by a single replacement token.    
     /// </summary>
-    public class ReplacedToken : Token
+    public class ReplacedToken : Token, IEquatable<ReplacedToken>
     {
         /// <summary>
         /// Parameter of the REPLACE directive or REPLACING clause of the COPY directive which replaces the original token
         /// </summary>
-        public Token ReplacementToken { get; private set; }
+        public Token ReplacementToken { get; }
 
         /// <summary>
         /// Original tokens in the source text which was replaced
         /// </summary>
-        public Token OriginalToken { get; private set; }
+        public Token OriginalToken { get; }
 
         /// <summary>
         /// Create a token placeholder
@@ -47,6 +47,23 @@ namespace TypeCobol.Compiler.Preprocessor
             {
                 return ReplacementToken.Text;
             }
+        }
+
+        public bool Equals(ReplacedToken other)
+        {
+            if (object.ReferenceEquals(this, other)) return true;
+            if (object.ReferenceEquals(null, other)) return false;
+
+            return ReplacementToken.Equals(other.ReplacementToken) && OriginalToken.Equals(other.OriginalToken);
+        }
+
+        public override bool Equals(object obj) => Equals(obj as ReplacedToken);
+
+        public override int GetHashCode()
+        {
+            int hashCode = ReplacementToken.GetHashCode();
+            hashCode = (hashCode * 397) ^ OriginalToken.GetHashCode();
+            return hashCode;
         }
     }
 
@@ -79,17 +96,17 @@ namespace TypeCobol.Compiler.Preprocessor
     /// Token placeholder used to implement the REPLACE and COPY REPLACING compiler directives
     /// in the less common case when a list of source tokens are replaced by a list of replacement tokens.
     /// </summary>
-    public class ReplacedTokenGroup : Token
+    public class ReplacedTokenGroup : Token, IEquatable<ReplacedTokenGroup>
     {
         /// <summary>
         /// Parameter of the REPLACE directive or REPLACING clause of the COPY directive which replaces the original token
         /// </summary>
-        public Token ReplacementToken { get; private set; }
+        public Token ReplacementToken { get; }
 
         /// <summary>
         /// Original tokens in the source text which were replaced
         /// </summary>
-        public IList<Token> OriginalTokens { get; private set; }
+        public IList<Token> OriginalTokens { get; }
 
         /// <summary>
         /// Create a token placeholder
@@ -114,6 +131,23 @@ namespace TypeCobol.Compiler.Preprocessor
             {
                 return ReplacementToken.Text;
             }
+        }
+
+        public bool Equals(ReplacedTokenGroup other)
+        {
+            if (object.ReferenceEquals(this, other)) return true;
+            if (object.ReferenceEquals(null, other)) return false;
+
+            return ReplacementToken.Equals(other.ReplacementToken) && OriginalTokens.SequenceEqual(other.OriginalTokens);
+        }
+
+        public override bool Equals(object obj) => Equals(obj as ReplacedTokenGroup);
+
+        public override int GetHashCode()
+        {
+            int hashCode = ReplacementToken.GetHashCode();
+            foreach (var t in OriginalTokens) hashCode = (hashCode * 397) ^ t.GetHashCode();
+            return hashCode;
         }
     }
 
