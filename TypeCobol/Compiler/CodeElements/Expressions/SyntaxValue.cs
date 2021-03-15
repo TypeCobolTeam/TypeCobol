@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -542,7 +543,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// </summary>
     public class EnumeratedValue : AlphanumericValue
     {
-        public EnumeratedValue(Token t, Type enumType) : base(t)
+        public EnumeratedValue([NotNull] Token t, Type enumType) : base(t)
         {
             EnumType = enumType;
 

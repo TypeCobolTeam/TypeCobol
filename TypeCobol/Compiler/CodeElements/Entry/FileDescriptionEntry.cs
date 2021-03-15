@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -209,6 +210,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// The RECORDING MODE clause specifies the format of the physical records in a QSAM file. 
         /// The clause is ignored for a VSAM file.
         /// </summary>
+        [CanBeNull]
         public EnumeratedValue RecordingMode { get; set; }
 
         /// <summary>
