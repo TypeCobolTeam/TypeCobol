@@ -13,6 +13,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Report;
+using TypeCobol.Compiler.SqlAnalysis;
 using TypeCobol.Compiler.Text;
 using TypeCobol.CustomExceptions;
 using TypeCobol.Tools.APIHelpers;
@@ -277,6 +278,10 @@ namespace TypeCobol.Server
                     var report = new TypeCobol.Analysis.Report.ZCallPgmReport(zcrcfgDfaId);
                     reports.Add(_configuration.ReportZCallFilePath, report);
                 }
+
+                //Register SQL Analyzer
+                if (_configuration.UseSqlCodeAnalysis)
+                    analyzerProvider.AddActivator(options => new SqlQualityAnalyzer());
             }
 
             return reports;

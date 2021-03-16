@@ -152,7 +152,7 @@ namespace TypeCobol.Compiler.Nodes {
             string sourcTest = this.CodeElement.SourceText;
             string text = this.CodeElement.Text;
             TypeCobol.Compiler.SqlScanner.SqlScanner sqlScanner = 
-                new TypeCobol.Compiler.SqlScanner.SqlScanner(this.CodeElement.SourceText);
+                new TypeCobol.Compiler.SqlScanner.SqlScanner(this.CodeElement.SourceText, this.CodeElement.Line);
             HasBeenParsed = true;
             Tokens = sqlScanner.Tokens;
             //Parse Code Elements

@@ -57,6 +57,10 @@
       <Link>ressources\zcallpgmreportdfa_2\output_expected\InBulkCallPgm88Set.csv</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="..\..\TypeCobol.Test\Parser\Programs\Cobol85\ExecSqlWithCommit.rdz.cbl">
+      <Link>ressources\sqlcommitstatement\input\ExecSqlWithCommit.rdz.cbl</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="ressources\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

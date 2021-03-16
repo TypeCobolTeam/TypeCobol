@@ -56,6 +56,11 @@ namespace TypeCobol.Tools.Options_Config
         public string RawMaximumDiagnostics;
         public string RawOutputFormat = "0";
 
+        /// <summary>
+        /// Is Sql Code Analysis allowed.
+        /// </summary>
+        public bool UseSqlCodeAnalysis = false;
+
         public static Dictionary<ReturnCode, string> ErrorMessages = new Dictionary<ReturnCode, string>()
         {
             // Warnings
@@ -243,7 +248,8 @@ namespace TypeCobol.Tools.Options_Config
                 { "diag.cea|diagnostic.checkEndAlignment=", "Indicate level of check end aligment: warning, error, info, ignore.", v => typeCobolConfig.CheckEndAlignment = TypeCobolCheckOption.Parse(v) },
                 { "log|logfilepath=", "{PATH} to TypeCobol.CLI.log log file", v => typeCobolConfig.LogFile = Path.Combine(v, TypeCobolConfiguration.DefaultLogFileName)},
                 { "cfg|cfgbuild", "Standard CFG build.", v => typeCobolConfig.CfgBuildingMode = CfgBuildingMode.Standard},
-                { "ca|customanalyzer=", "{PATH} to a custom DLL file containing code analyzers. This option can be specified more than once.", v => typeCobolConfig.CustomAnalyzerFiles.Add(v) }
+                { "ca|customanalyzer=", "{PATH} to a custom DLL file containing code analyzers. This option can be specified more than once.", v => typeCobolConfig.CustomAnalyzerFiles.Add(v) },
+                { "sqla|sqlanalysis", "Use Sql Code Analysis.", v => typeCobolConfig.UseSqlCodeAnalysis = true}
             };
             return commonOptions;
         }

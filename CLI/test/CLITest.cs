@@ -329,6 +329,15 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// Test to detect the usage of an SQL COMIT statemnt
+        /// </summary>
+        [TestMethod]
+        public void TestSqlCommitStatement()
+        {
+            CLITestHelper.Test("sqlcommitstatement", ReturnCode.ParsingDiagnostics);
+        }
+
+        /// <summary>
         /// Test multiple files parsing.
         /// </summary>
         [TestMethod]

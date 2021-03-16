@@ -1,0 +1,1 @@
+-i input\ExecSqlWithCommit.rdz.cbl -o output\ExecSqlWithCommit.rdz.cbl -d output\error.txt -e rdz -sqla

@@ -15,16 +15,18 @@ namespace TypeCobol.Compiler.SqlScanner
 
         public List<TokensLine> Lines { get; private set; }
         public List<SqlToken> Tokens { get; private set; }
-        public SqlScanner(string sqlText)
+        private readonly int _startLine;
+        public SqlScanner(string sqlText, int startLine)
         {
             Lines = new List<TokensLine>();
             Tokens = new List<SqlToken>();
+            _startLine = startLine;
 
             System.IO.StringReader sr = new System.IO.StringReader(sqlText);
             string line;
-            int lineIndex = 0;
+            int lineIndex = _startLine-1;
             while ((line = sr.ReadLine()) != null) {
-                ITextLine textLine = new TextLineSnapshot(++lineIndex, line, null);
+                ITextLine textLine = new TextLineSnapshot(lineIndex++, line, null);
                 TokensLine tokenLine = new TokensLine(textLine, ColumnsLayout.FreeTextFormat);
                 Lines.Add(tokenLine);                
             }
