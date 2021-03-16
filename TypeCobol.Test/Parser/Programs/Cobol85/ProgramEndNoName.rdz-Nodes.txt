@@ -2,7 +2,7 @@ Line 7[19,19] <27, Error, Syntax> - Syntax error : mismatched input '.' expectin
 Line 7[8,19] <37, Warning, General> - Warning: "PROGRAM END" should have a program name. "Nested0" was assumed.
 --- Nodes ---
 ?
-  Stacked0
+  Main
     Nested0
       end
     Nested1

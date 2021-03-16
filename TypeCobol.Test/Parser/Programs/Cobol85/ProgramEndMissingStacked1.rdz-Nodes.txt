@@ -1,6 +1,6 @@
 --- Nodes ---
 ?
-  Stacked0
+  Main
     Nested0
       end
     Nested1

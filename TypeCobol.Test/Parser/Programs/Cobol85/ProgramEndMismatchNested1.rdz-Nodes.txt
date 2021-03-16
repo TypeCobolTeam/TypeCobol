@@ -1,7 +1,7 @@
 Line 12[8,24] <37, Warning, General> - Warning: Program name not matching "Nested1".
 --- Nodes ---
 ?
-  Stacked0
+  Main
     Nested0
       end
     Nested1

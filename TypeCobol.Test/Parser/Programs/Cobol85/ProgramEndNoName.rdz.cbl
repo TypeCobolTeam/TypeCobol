@@ -1,5 +1,5 @@
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. Stacked0.
+       PROGRAM-ID. Main.
       
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Nested0.
@@ -11,7 +11,7 @@
       
        END PROGRAM Nested1.
       
-       END PROGRAM Stacked0.
+       END PROGRAM Main.
       
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Stacked1.
