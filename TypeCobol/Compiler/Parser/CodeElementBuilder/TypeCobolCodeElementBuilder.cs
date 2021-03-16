@@ -115,15 +115,6 @@ namespace TypeCobol.Compiler.Parser
             return parameters;
         }
 
-        private ParameterDescriptionEntry CreateFunctionDataParameter(DataConditionEntry condition)
-        {
-            var data = new ParameterDescriptionEntry();
-            data.LevelNumber = condition.LevelNumber;
-            data.DataName = condition.DataName;
-            data.DataType = DataType.Unknown;
-            return data;
-        }
-
         public ParameterDescriptionEntry CreateFunctionDataParameter(
             CodeElementsParser.FunctionDataParameterContext context)
         {
@@ -322,6 +313,7 @@ namespace TypeCobol.Compiler.Parser
                 parameter.Omittable = new SyntaxProperty<bool>(true, ParseTreeUtils.GetTokenFromTerminalNode(context.QUESTION_MARK()));
             }
 
+            DataDescriptionChecker.CheckPicture(parameter);
             return parameter;
         }
 

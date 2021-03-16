@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Antlr4.Runtime;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
@@ -18,17 +19,12 @@ namespace TypeCobol.Compiler.Parser
             var parserDiag = new ParserDiagnostic(message, e.StartIndex + 1, e.StopIndex + 1, e.ConsumedTokens[0].Line, null, code);
             e.Diagnostics.Add(parserDiag);    
         }
-		internal static void AddError(CodeElement e, string message, Scanner.Token token, string rulestack = null, MessageCode code = MessageCode.SyntaxErrorInParser) {
+		internal static void AddError(CodeElement e, string message, IToken token, string rulestack = null, MessageCode code = MessageCode.SyntaxErrorInParser) {
             if (e.Diagnostics == null) e.Diagnostics = new List<Diagnostic>();
 		    var parserDiag = new ParserDiagnostic(message, token, rulestack, code);
             e.Diagnostics.Add(parserDiag);
         }
-	    internal static void AddError(CodeElement e, string message, DataDefinitionEntry data, string rulestack = null, MessageCode code = MessageCode.SyntaxErrorInParser) {
-            if (e.Diagnostics == null) e.Diagnostics = new List<Diagnostic>();
-            var parserDiag = new ParserDiagnostic(message, data.DataName.NameLiteral.Token, rulestack, code);
-            e.Diagnostics.Add(parserDiag);
-        }
-	    internal static void AddErrorWithNoRuleStack(CodeElement e, string message, Antlr4.Runtime.RuleContext context, MessageCode code = MessageCode.SyntaxErrorInParser)
+        internal static void AddErrorWithNoRuleStack(CodeElement e, string message, Antlr4.Runtime.RuleContext context, MessageCode code = MessageCode.SyntaxErrorInParser)
 	    {
 	        Token token = ParseTreeUtils.GetFirstToken(context);
             if (e.Diagnostics == null) e.Diagnostics = new List<Diagnostic>();

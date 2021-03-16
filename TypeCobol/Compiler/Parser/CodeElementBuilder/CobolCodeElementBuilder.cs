@@ -428,10 +428,10 @@ namespace TypeCobol.Compiler.Parser
 						for (int i = 0; i < alphabetContext.userDefinedCollatingSequence().Length; i++)
 						{
 							var userDefinedCSContext = alphabetContext.userDefinedCollatingSequence()[i];
-							if (userDefinedCSContext.charactersInCollatingSequence() != null)
+							if (userDefinedCSContext.characterInCollatingSequence() != null)
 							{
-								var charsInCSContext = userDefinedCSContext.charactersInCollatingSequence();
-								var characters = CreateCharactersInCollatingSequence(charsInCSContext);
+								var charInCSContext = userDefinedCSContext.characterInCollatingSequence();
+								var characters = CreateCharacterInCollatingSequence(charInCSContext);
 								userDefinedCollatingSequence.CharacterSets[i] = characters;
 							}
 							else if (userDefinedCSContext.charactersRange() != null)
@@ -496,10 +496,10 @@ namespace TypeCobol.Compiler.Parser
 					for (int i = 0; i < classContext.userDefinedCharacterClass().Length; i++)
 					{
 						var userDefinedCCContext = classContext.userDefinedCharacterClass()[i];
-						if (userDefinedCCContext.charactersInCollatingSequence() != null)
+						if (userDefinedCCContext.characterInCollatingSequence() != null)
 						{
-							userDefinedCharacterClass.CharacterSets[i] = CreateCharactersInCollatingSequence(
-								userDefinedCCContext.charactersInCollatingSequence());
+							userDefinedCharacterClass.CharacterSets[i] = CreateCharacterInCollatingSequence(
+								userDefinedCCContext.characterInCollatingSequence());
 						}
 						else if (userDefinedCCContext.charactersRange() != null)
 						{
@@ -562,23 +562,12 @@ namespace TypeCobol.Compiler.Parser
 			return charactersRange;
 		}
 
-		private CharactersInCollatingSequence CreateCharactersInCollatingSequence(CodeElementsParser.CharactersInCollatingSequenceContext context) {
-			var chars = new CharactersInCollatingSequence();
-			if (context.alphanumericLiteralToken() != null) {
-				chars.CharactersInAlphanmericValue = CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericLiteralToken());
-			} else
-			if (context.ordinalPositionInCollatingSequence() != null) {
-				chars.OrdinalPositionInCollatingSequence = CobolWordsBuilder.CreateIntegerValue(context.ordinalPositionInCollatingSequence().IntegerLiteral());
-			}
-			return chars;
-		}
-
-		private CharacterInCollatingSequence CreateCharacterInCollatingSequence(CodeElementsParser.CharacterInCollatingSequenceContext context) {
+        private CharacterInCollatingSequence CreateCharacterInCollatingSequence(CodeElementsParser.CharacterInCollatingSequenceContext context) {
 			var chars = new CharacterInCollatingSequence();
 			if (context.alphanumericLiteralToken() != null) {
 				chars.CharacterValue = CobolWordsBuilder.CreateCharacterValue(context.alphanumericLiteralToken());
 			} else if (context.figurativeConstant() != null) {
-				chars.CharacterValue = CobolWordsBuilder.CreateFigurativeConstat(context.figurativeConstant());
+				chars.CharacterValue = CobolWordsBuilder.CreateFigurativeConstant(context.figurativeConstant());
 			} else if (context.ordinalPositionInCollatingSequence() != null) {
 				chars.OrdinalPositionInCollatingSequence = CobolWordsBuilder.CreateIntegerValue(context.ordinalPositionInCollatingSequence().IntegerLiteral());
 			}
@@ -638,7 +627,7 @@ namespace TypeCobol.Compiler.Parser
 			if (context.assignClause() != null && context.assignClause().Length > 0)
 			{
 				var assignClauseContext = context.assignClause()[0];
-				entry.ExternalDataSet = CobolWordsBuilder.CreateAssignmentName(assignClauseContext.assignmentName()[0]);
+                entry.ExternalDataSet = CobolWordsBuilder.CreateAssignmentName(assignClauseContext.assignmentName().FirstOrDefault());
 			}
 			if (context.reserveClause() != null && context.reserveClause().Length > 0)
 			{
@@ -1142,7 +1131,7 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
 			CodeElement = entry;
 
-		    TypeDefinitionEntryChecker.CheckRedefines(entry, context);
+		    DataDescriptionChecker.CheckRedefines(entry, context);
 		}
 
 	    private void EnterCommonDataDescriptionAndDataRedefines(CommonDataDescriptionAndDataRedefines entry, CodeElementsParser.DataDescriptionEntryContext context)

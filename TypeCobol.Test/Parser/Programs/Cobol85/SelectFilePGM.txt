@@ -1,3 +1,8 @@
+--- Diagnostics ---
+Line 8[12,17] <27, Error, Syntax> - Syntax error : mismatched input 'SELECT' expecting {user defined word, OPTIONAL} RuleStack=codeElement>fileControlEntry>selectClause,  OffendingSymbol=[12,17:SELECT]<SELECT>
+Line 9[12,17] <27, Error, Syntax> - Syntax error : mismatched input 'SELECT' expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, user defined word, TO} RuleStack=codeElement>fileControlEntry>assignClause,  OffendingSymbol=[12,17:SELECT]<SELECT>
+Line 10[12,17] <27, Error, Syntax> - Syntax error : mismatched input 'SELECT' expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, user defined word} RuleStack=codeElement>fileControlEntry>assignClause,  OffendingSymbol=[12,17:SELECT]<SELECT>
+
 --- Program ---
 PROGRAM: SelectFile common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?

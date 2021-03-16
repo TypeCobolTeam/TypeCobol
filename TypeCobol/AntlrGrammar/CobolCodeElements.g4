@@ -775,14 +775,11 @@ alphabetClause:
 													EBCDICFiller=UserDefinedWord )
 											|  userDefinedCollatingSequence+);
 
-userDefinedCollatingSequence:
-    (charactersInCollatingSequence | charactersRange | charactersEqualSet);
-
 // In the rule below, if characterInCollatingSequence is an alphanumeric literal, 
 // it may contain SEVERAL characters
 
-charactersInCollatingSequence:
-	alphanumericLiteralToken | ordinalPositionInCollatingSequence;
+userDefinedCollatingSequence:
+    (characterInCollatingSequence | charactersRange | charactersEqualSet);
 
 // In the two rules below, if characterInCollatingSequence is an alphanumeric literal, 
 // it can contain ONLY ONE characters
@@ -901,7 +898,7 @@ classClause:
     CLASS characterClassNameDefinition IS? userDefinedCharacterClass+;
 
 userDefinedCharacterClass: 
-	(charactersInCollatingSequence | charactersRange);
+	(characterInCollatingSequence | charactersRange);
 				
 // p118 : literal-4, literal-5
 // Must be category numeric or alphanumeric, and both must be of the same

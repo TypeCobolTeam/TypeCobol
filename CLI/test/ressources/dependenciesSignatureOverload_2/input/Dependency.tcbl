@@ -1,0 +1,28 @@
+       IDENTIFICATION DIVISION .
+       PROGRAM-ID. DPDCY01.
+       ENVIRONMENT DIVISION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 Type1 typedef strict public.
+           05 var1     type Date.
+      
+       PROCEDURE DIVISION.
+       INIT-LIBRARY.
+           continue
+           .
+      
+       DECLARE PROCEDURE Foo PUBLIC
+               INPUT  Dat     TYPE Date
+               OUTPUT Result  TYPE DateDB2
+                      RC      TYPE ReturnCode
+               .
+       END-DECLARE.
+      
+       DECLARE PROCEDURE Foo PUBLIC
+               INPUT  DatDb2    TYPE DateDB2
+               OUTPUT Result    TYPE Date
+                      RC        TYPE ReturnCode
+               .
+       END-DECLARE.
+      
+       END PROGRAM DPDCY01.

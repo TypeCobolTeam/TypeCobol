@@ -13,7 +13,7 @@
       "{DependenciesFolder}\\*.tcbl",
       "--autoremarks",
       "-md",
-      "30"
+      "30"{TestOptions}
     ]
   }
 }
