@@ -1,4 +1,5 @@
-Line 4[8,27] <37, Warning, General> - Warning: "END PROGRAM" is missing.
+Line 4[8,27] <27, Error, Syntax> - Syntax error : "END PROGRAM" is missing.
+Line 14[8,27] <37, Warning, General> - Warning: Unexpected orphan "PROGRAM END" was discarded.
 --- Nodes ---
 ?
   Main
@@ -6,5 +7,6 @@ Line 4[8,27] <37, Warning, General> - Warning: "END PROGRAM" is missing.
     end
   Nested1
     end
+  end
   Stacked1
     end

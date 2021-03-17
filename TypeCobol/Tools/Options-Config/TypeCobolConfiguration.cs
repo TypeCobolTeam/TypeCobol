@@ -212,7 +212,7 @@ namespace TypeCobol.Tools.Options_Config
         public static void SetDefaultValues(ITypeCobolCheckOptions checkOptions)
         {
             checkOptions.CheckEndAlignment = new TypeCobolCheckOption(Severity.Warning);
-            checkOptions.CheckEndProgram = new TypeCobolCheckOption(Severity.Warning);
+            checkOptions.CheckEndProgram = new TypeCobolCheckOption(Severity.Error);
         }
     }
 

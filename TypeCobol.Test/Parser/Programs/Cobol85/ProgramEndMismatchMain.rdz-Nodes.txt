@@ -1,4 +1,4 @@
-Line 14[8,24] <37, Warning, General> - Warning: Program name not matching "Main".
+Line 14[8,24] <27, Error, Syntax> - Syntax error : Program name "Toto" did not match the name of any open program. The "END PROGRAM" marker was assumed to have ended program "Main".
 --- Nodes ---
 ?
   Main

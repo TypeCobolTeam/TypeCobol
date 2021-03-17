@@ -247,6 +247,13 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                         EndCobolProgram(null);
                     }
                 }
+                else
+                {
+                    if (CurrentProgram == null)
+                    {
+                        AttachEndIfExists(end);
+                    }
+                }
             }
 
             if (CurrentProgram != null)

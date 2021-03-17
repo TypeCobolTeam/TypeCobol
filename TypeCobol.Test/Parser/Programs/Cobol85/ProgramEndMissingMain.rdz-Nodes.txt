@@ -1,4 +1,4 @@
-Line 1[8,24] <37, Warning, General> - Warning: "END PROGRAM" is missing.
+Line 1[8,24] <27, Error, Syntax> - Syntax error : "END PROGRAM" is missing.
 --- Nodes ---
 ?
   Main

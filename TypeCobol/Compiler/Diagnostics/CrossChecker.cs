@@ -290,7 +290,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(Program program)
         {
             // Check that program has a closing end
-            CheckEndProgram(program, _compilerOptions);
+            CheckEndProgram(program);
 
             //// Set a Warning if the FormCom parameter in unknown or if the program parameter have no description
 
@@ -465,6 +465,15 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(End end)
         {
+            // Check if PROGRAM END is orphan
+            if (_compilerOptions.CheckEndProgram.IsActive)
+            {
+                if (end.CodeElement.Type == CodeElementType.ProgramEnd && !(end.Parent is Program))
+                {
+                    DiagnosticUtils.AddError(end, "Unexpected orphan \"PROGRAM END\" was discarded.", MessageCode.Warning);
+                }
+            }
+
             // Check end statement is aligned with the matching opening statement
             if (_compilerOptions.CheckEndAlignment.IsActive && end.CodeElement.Type != CodeElementType.SentenceEnd)
             {
@@ -842,27 +851,28 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-        private static void CheckEndProgram(Program node, TypeCobolOptions typeCobolOptions)
+        private void CheckEndProgram(Program node)
         {
+            var checkEndProgramOption = _compilerOptions.CheckEndProgram;
             var lastChild = node.Children.LastOrDefault();
             if (lastChild is End end)
             {
                 // END PROGRAM is present
                 node.SetFlag(Node.Flag.MissingEndProgram, false);
-                if (typeCobolOptions.CheckEndProgram.IsActive)
+                if (checkEndProgramOption.IsActive)
                 {
                     var programEnd = (ProgramEnd)end.CodeElement;
                     if (programEnd.ProgramName?.Name == null)
                     {
                         // No name is specified after END PROGRAM
-                        DiagnosticUtils.AddError(end, $"\"PROGRAM END\" should have a program name. \"{node.Name}\" was assumed.", typeCobolOptions.CheckEndProgram.GetMessageCode());
+                        DiagnosticUtils.AddError(end, $"\"PROGRAM END\" should have a program name. \"{node.Name}\" was assumed.", checkEndProgramOption.GetMessageCode());
                     }
                     else
                     {
                         if (!node.Name.Equals(programEnd.ProgramName.Name, StringComparison.OrdinalIgnoreCase))
                         {
                             // Wrong name is specified after END PROGRAM
-                            DiagnosticUtils.AddError(end, $"Program name not matching \"{node.Name}\".", typeCobolOptions.CheckEndProgram.GetMessageCode());
+                            DiagnosticUtils.AddError(end, $"Program name \"{programEnd.ProgramName.Name}\" did not match the name of any open program. The \"END PROGRAM\" marker was assumed to have ended program \"{node.Name}\".", checkEndProgramOption.GetMessageCode());
                         }
                     }
                 }
@@ -871,7 +881,7 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 // END PROGRAM is missing
                 node.SetFlag(Node.Flag.MissingEndProgram, true);
-                if (typeCobolOptions.CheckEndProgram.IsActive)
+                if (checkEndProgramOption.IsActive)
                 {
                     if (node is SourceProgram && node.Parent.Children.OfType<SourceProgram>().Last() == node)
                     {
@@ -883,7 +893,7 @@ namespace TypeCobol.Compiler.Diagnostics
                             return;
                         }
                     }
-                    DiagnosticUtils.AddError(node, "\"END PROGRAM\" is missing.", typeCobolOptions.CheckEndProgram.GetMessageCode());
+                    DiagnosticUtils.AddError(node, "\"END PROGRAM\" is missing.", checkEndProgramOption.GetMessageCode());
                 }
             }
         }

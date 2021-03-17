@@ -1,5 +1,4 @@
-Line 7[19,19] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, user defined word}
-Line 7[8,19] <37, Warning, General> - Warning: "PROGRAM END" should have a program name. "Nested0" was assumed.
+Line 7[8,19] <27, Error, Syntax> - Syntax error : "PROGRAM END" should have a program name. "Nested0" was assumed.
 --- Nodes ---
 ?
   Main

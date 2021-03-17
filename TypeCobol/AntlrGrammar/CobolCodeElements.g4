@@ -320,7 +320,7 @@ programIdentification:
 // p85 : An end program marker is optional for the last program in the sequence only if that program does not contain any nested source programs.
 
 programEnd:
-	END PROGRAM programNameReference2 PeriodSeparator;
+	END PROGRAM programNameReference2? PeriodSeparator;
 			  
 // p97 : Class IDENTIFICATION DIVISION
 // For a class, the first paragraph of the IDENTIFICATION DIVISION must
