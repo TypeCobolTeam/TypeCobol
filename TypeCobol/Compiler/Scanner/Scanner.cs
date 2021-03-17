@@ -1029,7 +1029,7 @@ namespace TypeCobol.Compiler.Scanner
                     // p46: A separator period is composed of a period followed by a space.
                     if(tokensLine.ScanState.DecimalPointIsComma)
                     {
-                        return ScanOneCharFollowedBySpace(startIndex, TokenType.PeriodSeparator, MessageCode.InvalidCharAfterPeriod);
+                        return ScanOneCharFollowedBySpace(startIndex, TokenType.PeriodSeparator, MessageCode.DotShouldBeFollowedBySpace);
                     }
                     else
                     {
@@ -1482,7 +1482,7 @@ namespace TypeCobol.Compiler.Scanner
                 currentIndex++;
                 if (spaceAfterisMandatory) {
                     Token invalidToken = new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
-                    tokensLine.AddDiagnostic(messageCode, invalidToken);
+                    tokensLine.AddDiagnostic(messageCode, invalidToken, line[currentIndex], currentIndex + 1);
                     return invalidToken;
                 }
                 return new Token(tokenType, startIndex, currentIndex-1, tokensLine);

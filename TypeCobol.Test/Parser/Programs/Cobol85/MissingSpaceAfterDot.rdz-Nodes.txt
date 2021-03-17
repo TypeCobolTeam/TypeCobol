@@ -1,27 +1,21 @@
 ﻿Line 2[18,18] <49, Warning, Tokens> - A blank was missing before character "P" in column 19. A blank was assumed.
 Line 3[14,14] <49, Warning, Tokens> - A blank was missing before character "A" in column 15. A blank was assumed.
 Line 4[20,20] <49, Warning, Tokens> - A blank was missing before character "N" in column 21. A blank was assumed.
-Line 8[23,23] <49, Warning, Tokens> - A blank was missing before character "I" in column 24. A blank was assumed.
-Line 9[23,23] <49, Warning, Tokens> - A blank was missing before character "I" in column 24. A blank was assumed.
-Line 11[25,25] <49, Warning, Tokens> - A blank was missing before character "D" in column 26. A blank was assumed.
+Line 13[15,15] <49, Warning, Tokens> - A blank was missing before character "." in column 16. A blank was assumed.
+Line 16[26,26] <49, Warning, Tokens> - A blank was missing before character "." in column 27. A blank was assumed.
+Line 17[23,23] <49, Warning, Tokens> - A blank was missing before character "." in column 24. A blank was assumed.
+Line 18[23,23] <49, Warning, Tokens> - A blank was missing before character "." in column 24. A blank was assumed.
+Line 18[24,24] <49, Warning, Tokens> - A blank was missing before character "." in column 25. A blank was assumed.
+Line 18[25,25] <49, Warning, Tokens> - A blank was missing before character "m" in column 26. A blank was assumed.
+Line 15[28,31] <27, Error, Syntax> - Syntax error : extraneous input 'var4' expecting {separator, statement starting keyword, keyword}
+Line 11[20,20] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader}
+Line 1[8,32] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 --- Nodes ---
 ?
   Pgm
     environment-division
       configuration
-        source-computer
-        object-computer
-    procedure-division
-      sentence-0
-        [[DisplayStatement]] [12,18:DISPLAY]<DISPLAY> --> [20,24:'foo']<AlphanumericLiteral>(',Y,Y){foo}
-- variables = 'foo'
-
-        end
-      sentence-1
-        [[DisplayStatement]] [26,32:DISPLAY]<DISPLAY> --> [34,38+:'bar']<AlphanumericLiteral>(',Y,Y){bar}
-- variables = 'bar'
-
-        [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
-
-        end
-    end
+    data-division
+      working-storage
+        A
+        B
