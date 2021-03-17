@@ -1489,7 +1489,7 @@ namespace TypeCobol.Compiler.Scanner
             }
         }
 
-        private Token ScanOneCharFollowedBySpaceOrNumericLiteral(int startIndex, TokenType tokenType, MessageCode messageCode, bool spaceAfterIsMandatory = true, bool emitErrorOnMandatorySpaceAfter = true)
+        private Token ScanOneCharFollowedBySpaceOrNumericLiteral(int startIndex, TokenType tokenType, MessageCode messageCode, bool spaceAfterIsMandatory = true)
         {
             if (currentIndex == lastIndex)
             {
