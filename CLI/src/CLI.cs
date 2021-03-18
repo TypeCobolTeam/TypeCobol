@@ -129,6 +129,21 @@ namespace TypeCobol.Server
 
             //Normalize TypeCobolOptions, the parser does not need to go beyond SemanticCheck for the first phase
             var typeCobolOptions = new TypeCobolOptions(_configuration);
+            ReturnCode optionRetCode = typeCobolOptions.OptionStatusCode;
+            switch (optionRetCode)
+            {
+                case ReturnCode.Success:
+                    break;
+#if EUROINFO_RULES
+                case ReturnCode.CopyNameMapFileError:
+                    //Exit only if we fail to read a Cpy Name file other than the default one.
+                    if (_configuration.CpyCopyNamesMapFilePath.Equals(TypeCobolConfiguration.DefaultLogFileName))
+                        return optionRetCode;
+                    break;
+#endif
+                default:
+                    return optionRetCode;
+            }
             if (_configuration.ExecToStep > ExecutionStep.SemanticCheck)
             {
                 typeCobolOptions.ExecToStep = ExecutionStep.SemanticCheck;

@@ -821,11 +821,10 @@ namespace TypeCobol.Codegen {
         public void RemarksGeneration()
         {
             string cpyCopiesPath = Path.Combine("resources", "input", "TypeCobol", "Remarks", "CpyCopies.lst");
-            CopyNameMapFile cpyCopyNamesMap = new CopyNameMapFile(cpyCopiesPath);
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Remarks", "RemarksLess") + ".rdz.cbl", true, null, null, cpyCopyNamesMap);
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Remarks", "RemarksPartial") + ".rdz.cbl", true, null, null, cpyCopyNamesMap);
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Remarks", "RemarksNonUsed") + ".rdz.cbl", true, null, null, cpyCopyNamesMap);
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Remarks", "NestedProgram") + ".rdz.cbl", true, null, null, cpyCopyNamesMap);
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Remarks", "RemarksLess") + ".rdz.cbl", true, null, null, cpyCopiesPath);
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Remarks", "RemarksPartial") + ".rdz.cbl", true, null, null, cpyCopiesPath);
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Remarks", "RemarksNonUsed") + ".rdz.cbl", true, null, null, cpyCopiesPath);
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Remarks", "NestedProgram") + ".rdz.cbl", true, null, null, cpyCopiesPath);
         }
 #endif
     }

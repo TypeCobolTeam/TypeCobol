@@ -56,12 +56,12 @@ namespace TypeCobol.Test.Utils
                 FileInfo fi = new FileInfo(this.Compiler.CobolFile.FullPath);
                 FileInfo copyFileMap = new FileInfo(Path.Combine(fi.DirectoryName, fi.Directory.Name + "CpyCopies.lst"));
                 if (copyFileMap.Exists) { 
-                    Compiler.CompilerOptions.CpyCopyNamesMap = new TypeCobol.Compiler.Preprocessor.CopyNameMapFile(copyFileMap.FullName);
+                    Compiler.CompilerOptions.CpyCopyNamesMapFilePath = copyFileMap.FullName;
                 }
                 Compiler.CompileOnce();
             }
 			catch(Exception e) { Observer.OnError(e); }
-            finally { Compiler.CompilerOptions.CpyCopyNamesMap = null;}
+            finally { Compiler.CompilerOptions.CpyCopyNamesMapFilePath = null;}
 #else
             try { Compiler.CompileOnce(); }
             catch (Exception e) { Observer.OnError(e); }

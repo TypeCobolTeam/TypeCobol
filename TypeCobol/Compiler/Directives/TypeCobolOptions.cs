@@ -1,4 +1,5 @@
 ﻿using TypeCobol.Tools.Options_Config;
+using System.IO;
 #if EUROINFO_RULES
 using TypeCobol.Compiler.Preprocessor;
 #endif
@@ -36,19 +37,66 @@ namespace TypeCobol.Compiler.Directives
             set { _useEuroInformationLegacyReplacingSyntax = value; }
         }
 
+        /// <summary>
+        /// Status code of these option.
+        /// </summary>
+        public ReturnCode OptionStatusCode
+        {
+            get;
+            private set;
+        }
+
 #if EUROINFO_RULES
         /// <summary>
         /// The Instance of the Cpy Copy names Map
         /// </summary>
-        public CopyNameMapFile CpyCopyNamesMap { get; set; }
+        private CopyNameMapFile CpyCopyNamesMap { get; set; }
         private bool _useEuroInformationLegacyReplacingSyntax = true;
 
+        private string _CpyCopyNamesMapFilePath;
+        /// <summary>
+        /// Path to the CpyCopyNames file.
+        /// </summary>
+        public string CpyCopyNamesMapFilePath
+        {
+            get
+            {
+                return _CpyCopyNamesMapFilePath; 
+            }
+            set
+            {
+                if (value == null)
+                {
+                    CpyCopyNamesMap = null;
+                }
+                else if (!value.Equals(_CpyCopyNamesMapFilePath))
+                {                    
+                    CpyCopyNamesMap = GetCpyCopiesFile(value);
+                    _CpyCopyNamesMapFilePath = value;
+                }                
+            }
+        }
         /// <summary>
         /// Check if using the current Instance, the Given name corresponds to a CPY copy name. 
         /// </summary>
         /// <param name="name">The Copy's name</param>
         /// <returns>true if the name is CPY Copys name, false otherwise.</returns>
         public bool HasCpyCopy(string name) => CpyCopyNamesMap != null ? CpyCopyNamesMap.HasCpyCopy(name) : false;
+
+        /// <summary>
+        /// Get the file of CPY COPY names to be used.
+        /// </summary>
+        /// <param name="cpyCopiesFilePath"></param>
+        /// <exception cref="Exception">Any exception if an error occurs.</exception>
+        /// <returns>the CopyNameMapFile instance if one is available, null otherwise</returns>
+        public static CopyNameMapFile GetCpyCopiesFile(string cpyCopiesFilePath)
+        {
+            if (cpyCopiesFilePath != null)
+            {
+                return new CopyNameMapFile(cpyCopiesFilePath);
+            }
+            return null;
+        }
 #else
         private bool _useEuroInformationLegacyReplacingSyntax;
 #endif
@@ -60,20 +108,27 @@ namespace TypeCobol.Compiler.Directives
 
         public TypeCobolOptions(TypeCobolConfiguration config)
         {
+            OptionStatusCode = ReturnCode.Success;
             HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null;
             ExecToStep = config.ExecToStep;
             UseAntlrProgramParsing = config.UseAntlrProgramParsing;
             UseEuroInformationLegacyReplacingSyntax = config.UseEuroInformationLegacyReplacingSyntax;
-
+            CheckEndAlignment = config.CheckEndAlignment;
 #if EUROINFO_RULES
             AutoRemarksEnable = config.AutoRemarks;
-            CpyCopyNamesMap = config.CpyCopyNamesMap;
+            try {
+                CpyCopyNamesMapFilePath = config.CpyCopyNamesMapFilePath;
+            } catch(System.Exception e) {
+                //Fail to read the Copy File Name, Log
+                System.IO.File.AppendAllText(config.LogFile != null ? config.LogFile : TypeCobolConfiguration.DefaultLogFileName, e.ToString());
+                OptionStatusCode = ReturnCode.CopyNameMapFileError;
+            }
 #endif
-            CheckEndAlignment = config.CheckEndAlignment;
         }
 
         public TypeCobolOptions()
         {
+            OptionStatusCode = ReturnCode.Success;
             // default values for checks
             TypeCobolCheckOptionsInitializer.SetDefaultValues(this);
         }

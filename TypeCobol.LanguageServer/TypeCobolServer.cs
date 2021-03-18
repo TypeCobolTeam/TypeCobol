@@ -68,9 +68,9 @@ namespace TypeCobol.LanguageServer
 
 #if EUROINFO_RULES
         /// <summary>
-        /// The Instance of the Cpy Copy names Map
+        /// The Cpy Copy names file
         /// </summary>
-        public CopyNameMapFile CpyCopyNamesMap { get; set; }
+        public string CpyCopyNamesMapFilePath { get; set; }
 #endif
         /// <summary>
         /// Timer Disabled for TypeCobol.LanguageServer.
@@ -79,13 +79,20 @@ namespace TypeCobol.LanguageServer
 
         private bool Logger(string message, Uri uri)
         {
-            var uriLogMessageParams = new UriLogMessageParams()
+            if (uri == null)
             {
-                type = MessageType.Log,
-                message = message,
-                textDocument = new TextDocumentIdentifier(uri.ToString())
-            };
-            this.RpcServer.SendNotification(UriLogMessageNotification.Type, uriLogMessageParams);
+                RemoteConsole.Log(message);
+            }
+            else
+            {
+                var uriLogMessageParams = new UriLogMessageParams()
+                {
+                    type = MessageType.Log,
+                    message = message,
+                    textDocument = new TextDocumentIdentifier(uri.ToString())
+                };
+                this.RpcServer.SendNotification(UriLogMessageNotification.Type, uriLogMessageParams);
+            }
             return true;
         }
 
@@ -228,10 +235,9 @@ namespace TypeCobol.LanguageServer
             string workspaceName = rootDirectory.Name + "#" + parameters.processId;
 
             // Initialize the workspace.            
-#if EUROINFO_RULES
-            this.Workspace = new Workspace(rootDirectory.FullName, workspaceName, _messagesActionsQueue, Logger, CpyCopyNamesMap);
-#else
             this.Workspace = new Workspace(rootDirectory.FullName, workspaceName, _messagesActionsQueue, Logger);
+#if EUROINFO_RULES
+            this.Workspace.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath;
 #endif
             // Propagate LSR testing options.
             this.Workspace.LsrTestOptions = LsrTestingLevel;

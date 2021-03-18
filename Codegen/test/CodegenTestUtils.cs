@@ -26,8 +26,8 @@ namespace TypeCobol.Codegen {
         /// <param name="copies"></param>        
         /// <param name="cpyCopyNamesMap"></param>        
 #if EUROINFO_RULES
-        public static void ParseGenerateCompare(string path, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null, CopyNameMapFile cpyCopyNamesMap = null) {
-            ParseGenerateCompare(path, DocumentFormat.RDZReferenceFormat, typeCobolVersion, autoRemarks, copies, null, cpyCopyNamesMap);
+        public static void ParseGenerateCompare(string path, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null, string cpyCopyNamesFile = null) {
+            ParseGenerateCompare(path, DocumentFormat.RDZReferenceFormat, typeCobolVersion, autoRemarks, copies, null, cpyCopyNamesFile);
         }
 #else
         public static void ParseGenerateCompare(string path, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null) {
@@ -36,12 +36,12 @@ namespace TypeCobol.Codegen {
 #endif
 
 #if EUROINFO_RULES
-        public static void ParseGenerateCompare(string path, DocumentFormat format, string typeCobolVersion, bool autoRemarks = false, IList<string> copies = null, MemoryStream lmStream = null, CopyNameMapFile cpyCopyNamesMap = null) {
+        public static void ParseGenerateCompare(string path, DocumentFormat format, string typeCobolVersion, bool autoRemarks = false, IList<string> copies = null, MemoryStream lmStream = null, string cpyCopyNamesFile = null) {
 #else
         public static void ParseGenerateCompare(string path, DocumentFormat format, string typeCobolVersion, bool autoRemarks = false, IList<string> copies = null, MemoryStream lmStream = null) {
 #endif
 #if EUROINFO_RULES
-            var document = Parser.EIParse(Path.Combine(ROOT, INPUT, path), format, autoRemarks, copies, null, cpyCopyNamesMap);
+            var document = Parser.EIParse(Path.Combine(ROOT, INPUT, path), format, autoRemarks, copies, null, cpyCopyNamesFile);
 #else
             var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), format, autoRemarks, copies);
 #endif

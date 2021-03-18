@@ -59,13 +59,6 @@ namespace TypeCobol.LanguageServer
         public Queue<MessageActionWrapper> MessagesActionsQueue { get; private set; }
         private Func<string, Uri, bool> _Logger;
 
-#if EUROINFO_RULES
-        /// <summary>
-        /// The Instance of the Cpy Copy names Map
-        /// </summary>
-        public CopyNameMapFile CpyCopyNamesMap { get; set; }
-#endif
-
         #region Testing Options
 
         /// <summary>
@@ -135,6 +128,30 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public bool UseSyntaxColoring { get; set; }
 
+#if EUROINFO_RULES
+        /// <summary>
+        /// The Cpy Copy names file
+        /// </summary>
+        public string CpyCopyNamesMapFilePath
+        {
+            get
+            {
+                return this.CompilationProject.CompilationOptions.CpyCopyNamesMapFilePath;
+            }
+            set
+            {
+                try
+                {
+                    this.CompilationProject.CompilationOptions.CpyCopyNamesMapFilePath = value;
+                }
+                catch (Exception e)
+                {
+                    this._Logger(TypeCobolConfiguration.ErrorMessages[ReturnCode.CopyNameMapFileError] + ":" + e.Message, null);
+                }
+            }
+        }
+#endif
+
         /// <summary>
         /// Indicates whether this workspace has opened documents or not.
         /// </summary>
@@ -151,20 +168,10 @@ namespace TypeCobol.LanguageServer
 
         #endregion
 
-#if EUROINFO_RULES
-        public Workspace(string rootDirectoryFullName, string workspaceName, Queue<MessageActionWrapper> messagesActionsQueue, Func<string, Uri, bool> logger, CopyNameMapFile cpyCopyNamesMap = null)
-#else
         public Workspace(string rootDirectoryFullName, string workspaceName, Queue<MessageActionWrapper> messagesActionsQueue, Func<string, Uri, bool> logger)
-#endif
         {
-#if EUROINFO_RULES
-            CpyCopyNamesMap = cpyCopyNamesMap;
-#endif
             MessagesActionsQueue = messagesActionsQueue;
             Configuration = new TypeCobolConfiguration();
-#if EUROINFO_RULES
-            Configuration.CpyCopyNamesMap = cpyCopyNamesMap;
-#endif
             _openedDocuments = new Dictionary<Uri, DocumentContext>();
             _fileCompilerWaittingForNodePhase = new List<FileCompiler>();
             _Logger = logger;
@@ -502,9 +509,6 @@ namespace TypeCobol.LanguageServer
             var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(Configuration);
 
             var errors = TypeCobolOptionSet.InitializeCobolOptions(Configuration, arguments, options);
-#if EUROINFO_RULES
-            Configuration.CpyCopyNamesMap = Configuration.CpyCopyNamesMap??CpyCopyNamesMap;
-#endif
 
             //Adding default copies folder
             var folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
@@ -523,7 +527,12 @@ namespace TypeCobol.LanguageServer
                 Configuration.ExecToStep = ExecutionStep.QualityCheck; //Language Server does not support Cobol Generation for now
 
             var typeCobolOptions = new TypeCobolOptions(Configuration);
-
+#if EUROINFO_RULES
+            ReturnCode optionRetCode = typeCobolOptions.OptionStatusCode;
+            if (optionRetCode == ReturnCode.CopyNameMapFileError) { 
+                this._Logger(TypeCobolConfiguration.ErrorMessages[ReturnCode.CopyNameMapFileError] + ":" + typeCobolOptions.CpyCopyNamesMapFilePath, null);
+            }
+#endif
             //Configure CFG/DFA analyzer + external analyzers if any
             var compositeAnalyzerProvider = new CompositeAnalyzerProvider();
             compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(TypeCobolLanguageServer.lspcfgId, Configuration.CfgBuildingMode));

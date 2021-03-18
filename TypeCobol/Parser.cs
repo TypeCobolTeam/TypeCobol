@@ -149,12 +149,12 @@ namespace TypeCobol
 
 
 #if EUROINFO_RULES
-        public static Parser EIParse(string path, DocumentFormat format, bool autoRemarks = false, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null, CopyNameMapFile cpyCopyNamesMap = null)
+        public static Parser EIParse(string path, DocumentFormat format, bool autoRemarks = false, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null, string cpyCopyNamesFile = null)
         {
             var parser = new Parser();
             var typeCobolOption = new TypeCobolOptions() { ExecToStep = ExecutionStep.Generate };
             typeCobolOption.AutoRemarksEnable = autoRemarks;
-            typeCobolOption.CpyCopyNamesMap = cpyCopyNamesMap;
+            typeCobolOption.CpyCopyNamesMapFilePath = cpyCopyNamesFile;
             parser.Init(path, typeCobolOption, format, copies, analyzerProvider);
             parser.Parse(path);
             return parser;

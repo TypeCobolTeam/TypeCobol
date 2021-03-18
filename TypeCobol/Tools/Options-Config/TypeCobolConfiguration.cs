@@ -38,10 +38,6 @@ namespace TypeCobol.Tools.Options_Config
         public const string DefaultLogFileName = "TypeCobol.CLI.log";
 
 #if EUROINFO_RULES
-        /// <summary>
-        /// The Instance of the Cpy Copy names file
-        /// </summary>
-        public CopyNameMapFile CpyCopyNamesMap { get; set; }
         public bool UseEuroInformationLegacyReplacingSyntax = true;
 #else
         public bool UseEuroInformationLegacyReplacingSyntax = false;
@@ -64,8 +60,11 @@ namespace TypeCobol.Tools.Options_Config
         public string RawOutputFormat = "0";
 
 #if EUROINFO_RULES
-        public string CPYMapFilePath;
-        internal const string DefaultCopyNameFile = "COPIES_CPY.txt";
+        public static string DefaultCopyNameFile => Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location),"COPIES_CPY.txt");
+        /// <summary>
+        /// The Cpy Copy names file
+        /// </summary>
+        public string CpyCopyNamesMapFilePath;
 #endif
 
         public static Dictionary<ReturnCode, string> ErrorMessages = new Dictionary<ReturnCode, string>()
@@ -263,7 +262,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "cfg|cfgbuild", "Standard CFG build.", v => typeCobolConfig.CfgBuildingMode = CfgBuildingMode.Standard},
                 { "ca|customanalyzer=", "{PATH} to a custom DLL file containing code analyzers. This option can be specified more than once.", v => typeCobolConfig.CustomAnalyzerFiles.Add(v) },
 #if EUROINFO_RULES
-                { "ycpl|ycopylist=", "{PATH} to a file of CPY copy names uppercase sorted.", v => typeCobolConfig.CPYMapFilePath = v },
+                { "ycpl|ycopylist=", "{PATH} to a file of CPY copy names uppercase sorted.", v => typeCobolConfig.CpyCopyNamesMapFilePath = v },
 #endif
             };
             return commonOptions;
@@ -389,50 +388,19 @@ namespace TypeCobol.Tools.Options_Config
             if (!CanCreateFile(config.LogFile) && !string.IsNullOrEmpty(config.LogFile))
                 errorStack.Add(ReturnCode.LogFileError, TypeCobolConfiguration.ErrorMessages[ReturnCode.LogFileError]);
 
-#if EUROINFO_RULES
-            //CPY Map File
-            try
-            {
-                config.CpyCopyNamesMap = GetCpyCopiesFile(config.CPYMapFilePath);
-            } catch(Exception e) {
-                //Fail to read the Copy File Name, Log
-                System.IO.File.AppendAllText(config.LogFile != null ? config.LogFile : TypeCobolConfiguration.DefaultLogFileName, e.ToString());
-                if (config.CPYMapFilePath != null)
-                {
-                    errorStack.Add(ReturnCode.CopyNameMapFileError, TypeCobolConfiguration.ErrorMessages[ReturnCode.CopyNameMapFileError]);
-                }
-            }
-#endif
             //CustomAnalyzers
             VerifFiles(config.CustomAnalyzerFiles, ReturnCode.CustomAnalyzerFileError, errorStack);
 
+#if EUROINFO_RULES
+            //CpyCopyNamesMapFilePath
+            if (config.CpyCopyNamesMapFilePath != null)
+                VerifFiles(new List<string>() { config.CpyCopyNamesMapFilePath }, ReturnCode.CopyNameMapFileError, errorStack);
+            else
+                config.CpyCopyNamesMapFilePath = TypeCobolConfiguration.DefaultCopyNameFile;
+#endif
             return errorStack;
         }
 
-#if EUROINFO_RULES
-        /// <summary>
-        /// Get the file of CPY COPY names to be used.
-        /// </summary>
-        /// <param name="cpyCopiesFilePath"></param>
-        /// <exception cref="Exception">Any exception if an error occurs.</exception>
-        /// <returns>the CopyNameMapFile instance if one is available, null otherwise</returns>
-        public static CopyNameMapFile GetCpyCopiesFile(string cpyCopiesFilePath)
-        {
-            string cpyMapFilePath = cpyCopiesFilePath;
-            if (cpyMapFilePath == null)
-            {
-                cpyMapFilePath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location),
-                    TypeCobolConfiguration.DefaultCopyNameFile);
-                if (!File.Exists(cpyMapFilePath))
-                    cpyMapFilePath = null;
-            }
-            if (cpyMapFilePath != null)
-            {
-                return new CopyNameMapFile(cpyMapFilePath);                    
-            }
-            return null;
-        }
-#endif
 
         public static void VerifFiles(List<string> paths, ReturnCode errorCode, Dictionary<ReturnCode, string> errorStack, bool isFolder = false)
         {
