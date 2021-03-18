@@ -1,0 +1,33 @@
+﻿Line 1[8,32] <37, Warning, General> - Warning: "END PROGRAM" is missing.
+       IDENTIFICATION DIVISION.
+Line 2[18,18] <49, Warning, Tokens> - A blank was missing before character "P" in column 19. A blank was assumed.
+       PROGRAM-ID.Pgm.
+Line 3[14,14] <49, Warning, Tokens> - A blank was missing before character "A" in column 15. A blank was assumed.
+       AUTHOR.AUTHOR.
+Line 4[20,20] <49, Warning, Tokens> - A blank was missing before character "N" in column 21. A blank was assumed.
+       DATE-WRITTEN.NOVEMBRE 80.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 A pic X.
+       01 B pic X..
+Line 11[20,20] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader}
+       01 C pic X. .
+      
+Line 13[15,15] <49, Warning, Tokens> - A blank was missing before character "." in column 16. A blank was assumed.
+       01 var1..
+          05 var2 pic XX.
+Line 15[28,31] <27, Error, Syntax> - Syntax error : extraneous input 'var4' expecting {separator, statement starting keyword, keyword}
+          05 var3 pic X.05 var4 pic X.
+Line 16[26,26] <49, Warning, Tokens> - A blank was missing before character "." in column 27. A blank was assumed.
+       PROCEDURE DIVISION..
+Line 17[23,23] <49, Warning, Tokens> - A blank was missing before character "." in column 24. A blank was assumed.
+           move A to B..
+Line 18[23,23] <49, Warning, Tokens> - A blank was missing before character "." in column 24. A blank was assumed.
+Line 18[24,24] <49, Warning, Tokens> - A blank was missing before character "." in column 25. A blank was assumed.
+Line 18[25,25] <49, Warning, Tokens> - A blank was missing before character "m" in column 26. A blank was assumed.
+           move A to B...move A to B.
+      
+           .
+       END PROGRAM Pgm.
