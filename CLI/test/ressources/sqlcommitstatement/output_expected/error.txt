@@ -1,3 +1,3 @@
 ReturnCode=ParsingDiagnostics_
 1 error in "input\ExecSqlWithCommit.rdz.cbl":
-Line 7[3,9] <47, Error, CodeAnalysis> - SQL Commit statement is not allowed in EXEC SQL statement
+Line 7[10,16] <47, Error, CodeAnalysis> - SQL Commit statement is not allowed in EXEC SQL statement

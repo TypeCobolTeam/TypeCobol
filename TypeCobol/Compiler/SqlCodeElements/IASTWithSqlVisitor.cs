@@ -11,7 +11,7 @@ using TypeCobol.Compiler.SqlNodes;
 namespace TypeCobol.Compiler.SqlCodeElements
 {
     /// <summary>
-    /// Visitor Interface that allow visiting Sql Coe Elements and Nodes
+    /// Visitor Interface that allow visiting Sql Code Elements and Nodes
     /// </summary>
     public interface IASTWithSqlVisitor : IASTVisitor
     {

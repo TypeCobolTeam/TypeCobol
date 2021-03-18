@@ -26,14 +26,12 @@ public class SqlCodeElementsParser : TUVienna.CS_CUP.Runtime.lr_parser {
 
   /** Production table. */
   protected static readonly short[][] _production_table = 
-new short[9][] {
+new short[7][] {
 	new short[2]{0,2},
 	new short[2]{1,1},
 	new short[2]{2,4},
 	new short[2]{3,0},
 	new short[2]{3,1},
-	new short[2]{3,1},
-	new short[2]{3,2},
 	new short[2]{3,2},
 	new short[2]{4,1}
 };
@@ -43,20 +41,18 @@ new short[9][] {
 
   /** Parse-action table. */
   protected static readonly short[][] _action_table = 
-new short[13][] {
+new short[11][] {
 	new short[4]{2,2,-1,0},
 	new short[4]{3,6,-1,0},
 	new short[4]{0,5,-1,0},
 	new short[4]{0,-2,-1,0},
 	new short[4]{0,-1,-1,0},
-	new short[8]{1,9,5,-4,6,10,-1,0},
-	new short[8]{1,-6,5,-6,6,-6,-1,0},
-	new short[8]{1,13,5,12,6,10,-1,0},
-	new short[8]{1,-5,5,-5,6,-5,-1,0},
-	new short[8]{1,-9,5,-9,6,-9,-1,0},
-	new short[8]{1,-7,5,-7,6,-7,-1,0},
-	new short[4]{0,-3,-1,0},
-	new short[8]{1,-8,5,-8,6,-8,-1,0}
+	new short[6]{5,-4,6,9,-1,0},
+	new short[6]{5,-5,6,-5,-1,0},
+	new short[6]{5,11,6,9,-1,0},
+	new short[6]{5,-7,6,-7,-1,0},
+	new short[6]{5,-6,6,-6,-1,0},
+	new short[4]{0,-3,-1,0}
 };
 
   /** Access to parse-action table. */
@@ -64,7 +60,7 @@ new short[13][] {
 
   /** <code>reduce_goto</code> table. */
   protected static readonly short[][] _reduce_table = 
-new short[13][] {
+new short[11][] {
 	new short[6]{1,2,2,3,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
@@ -72,9 +68,7 @@ new short[13][] {
 	new short[2]{-1,-1},
 	new short[6]{3,7,4,6,-1,-1},
 	new short[2]{-1,-1},
-	new short[4]{4,10,-1,-1},
-	new short[2]{-1,-1},
-	new short[2]{-1,-1},
+	new short[4]{4,9,-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1},
 	new short[2]{-1,-1}
@@ -158,7 +152,7 @@ public class CUP_SqlCodeElementsParser_actions {
       switch (CUP_SqlCodeElementsParser_act_num)
         {
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 8: // SqlCodeElement ::= COMMIT 
+          case 6: // SqlCodeElement ::= COMMIT 
             {
               CodeElement RESULT = null;
 		SqlToken commit = (SqlToken)( CUP_SqlCodeElementsParser_stack.ElementAtFromBottom(CUP_SqlCodeElementsParser_top)).value;
@@ -168,17 +162,7 @@ public class CUP_SqlCodeElementsParser_actions {
           return CUP_SqlCodeElementsParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 7: // SqlCodeElements ::= SqlCodeElements error 
-            {
-              System.Collections.IList RESULT = null;
-		System.Collections.IList codeElements = (System.Collections.IList)( CUP_SqlCodeElementsParser_stack.ElementAtFromBottom(CUP_SqlCodeElementsParser_top-1)).value;
-		 
-              CUP_SqlCodeElementsParser_result = new TUVienna.CS_CUP.Runtime.Symbol(3/*SqlCodeElements*/, RESULT);
-            }
-          return CUP_SqlCodeElementsParser_result;
-
-          /*. . . . . . . . . . . . . . . . . . . .*/
-          case 6: // SqlCodeElements ::= SqlCodeElements SqlCodeElement 
+          case 5: // SqlCodeElements ::= SqlCodeElements SqlCodeElement 
             {
               System.Collections.IList RESULT = null;
 		System.Collections.IList codeElements = (System.Collections.IList)( CUP_SqlCodeElementsParser_stack.ElementAtFromBottom(CUP_SqlCodeElementsParser_top-1)).value;
@@ -189,20 +173,11 @@ public class CUP_SqlCodeElementsParser_actions {
           return CUP_SqlCodeElementsParser_result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 5: // SqlCodeElements ::= SqlCodeElement 
+          case 4: // SqlCodeElements ::= SqlCodeElement 
             {
               System.Collections.IList RESULT = null;
 		CodeElement codeElement = (CodeElement)( CUP_SqlCodeElementsParser_stack.ElementAtFromBottom(CUP_SqlCodeElementsParser_top)).value;
 		 RESULT = new List<CodeElement>(){codeElement}; 
-              CUP_SqlCodeElementsParser_result = new TUVienna.CS_CUP.Runtime.Symbol(3/*SqlCodeElements*/, RESULT);
-            }
-          return CUP_SqlCodeElementsParser_result;
-
-          /*. . . . . . . . . . . . . . . . . . . .*/
-          case 4: // SqlCodeElements ::= error 
-            {
-              System.Collections.IList RESULT = null;
-		 
               CUP_SqlCodeElementsParser_result = new TUVienna.CS_CUP.Runtime.Symbol(3/*SqlCodeElements*/, RESULT);
             }
           return CUP_SqlCodeElementsParser_result;

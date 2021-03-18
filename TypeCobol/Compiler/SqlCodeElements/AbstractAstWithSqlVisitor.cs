@@ -10,6 +10,9 @@ using TypeCobol.Compiler.SqlNodes;
 
 namespace TypeCobol.Compiler.SqlCodeElements
 {
+    /// <summary>
+    /// Abstract Visitor that accept SQL COMMIT CodeElement and Node.
+    /// </summary>
     public abstract class AbstractAstWithSqlVisitor : AbstractAstVisitor, IASTWithSqlVisitor
     {
         public virtual bool Visit([NotNull] CommitStatement acceptStatement)

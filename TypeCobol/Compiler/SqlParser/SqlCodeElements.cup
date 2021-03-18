@@ -50,12 +50,10 @@ ExecSql ::= EXEC SQL SqlCodeElements:codeElements END_EXEC
 
 SqlCodeElements ::=  /* empty */
 	{: RESULT = new List<CodeElement>(); :}
-| error {: :}
 | SqlCodeElement:codeElement
 	{: RESULT = new List<CodeElement>(){codeElement}; :}
 | SqlCodeElements:codeElements SqlCodeElement:codeElement
 	{: RESULT = codeElements; codeElements.Add(codeElement); :}
-| SqlCodeElements:codeElements error {: :}
 ;
 
 SqlCodeElement ::= COMMIT:commit

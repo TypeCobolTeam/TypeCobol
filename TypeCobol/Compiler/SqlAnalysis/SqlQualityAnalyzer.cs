@@ -9,6 +9,9 @@ using TypeCobol.Compiler.Parser;
 
 namespace TypeCobol.Compiler.SqlAnalysis
 {
+    /// <summary>
+    /// SQL Quality Analyzer class.
+    /// </summary>
     public class SqlQualityAnalyzer : QualityAnalyzerBase
     {
         private readonly SqlASTChecker _sqlAstChecker;

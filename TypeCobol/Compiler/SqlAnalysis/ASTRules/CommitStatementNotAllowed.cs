@@ -9,6 +9,9 @@ using TypeCobol.Compiler.SqlNodes;
 
 namespace TypeCobol.Compiler.SqlAnalysis.ASTRules
 {
+    /// <summary>
+    /// Sql Commit Statement not allowed rule class
+    /// </summary>
     internal class CommitStatementNotAllowed : SqlAbstractRuleChecker<Commit>
     {
         public CommitStatementNotAllowed(Action<Violation> addViolation) : base("cobol:SqlCommitRollback", addViolation)

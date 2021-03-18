@@ -16,17 +16,25 @@ namespace TypeCobol.Compiler.SqlScanner
         public List<TokensLine> Lines { get; private set; }
         public List<SqlToken> Tokens { get; private set; }
         private readonly int _startLine;
-        public SqlScanner(string sqlText, int startLine)
+        private readonly int _columOffset;
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="sqlText">The SQL test to be parsed</param>
+        /// <param name="startLine">Thz starting line of the the EXEC SQL statement</param>
+        /// <param name="columOffset">Column Offset depending of the Layout format</param>
+        public SqlScanner(string sqlText, int startLine, int columOffset)
         {
             Lines = new List<TokensLine>();
             Tokens = new List<SqlToken>();
             _startLine = startLine;
+            _columOffset = columOffset;
 
             System.IO.StringReader sr = new System.IO.StringReader(sqlText);
             string line;
             int lineIndex = _startLine-1;
             while ((line = sr.ReadLine()) != null) {
-                ITextLine textLine = new TextLineSnapshot(lineIndex++, line, null);
+                ITextLine textLine = new TextLineSnapshot(lineIndex++, new string(' ', _columOffset) + line, null);
                 TokensLine tokenLine = new TokensLine(textLine, ColumnsLayout.FreeTextFormat);
                 Lines.Add(tokenLine);                
             }
@@ -46,32 +54,7 @@ namespace TypeCobol.Compiler.SqlScanner
                             SqlTokenType sqlTokType;
                             if (System.Enum.TryParse(tokenizer.sval, true, out sqlTokType))
                             {
-                                if (sqlTokType == SqlTokenType.END)
-                                {//END-SQL
-                                    StreamTokenizer.Context ctx = tokenizer.GetCurrentContext();
-                                    int l, sc, ec;
-                                    int minus = tokenizer.NextToken(out l, out sc, out ec);
-                                    if (minus == '-')
-                                    {
-                                        int exec = tokenizer.NextToken(out l, out sc, out ec);
-                                        if (exec == StreamTokenizer.TT_WORD)
-                                        {
-                                            SqlTokenType sqltok;
-                                            if (System.Enum.TryParse(tokenizer.sval, true, out sqltok))
-                                            {
-                                                if (sqltok == SqlTokenType.EXEC)
-                                                {
-                                                    SqlToken end_exec = new SqlToken(SqlTokenType.END_EXEC, startColumn, ec, Lines[lineNumber - 1]);
-                                                    end_exec.LiteralValue = new AlphanumericLiteralTokenValue(tokenizer.sval);
-                                                    AddToken(end_exec);
-                                                    continue;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    tokenizer.SetContext(ctx);
-                                }
-                                SqlToken sqlToken = new SqlToken(sqlTokType, startColumn, endColumn, Lines[lineNumber - 1]);
+                                SqlToken sqlToken = new SqlToken(sqlTokType, startColumn + columOffset, endColumn + columOffset, Lines[lineNumber - 1]);
                                 sqlToken.LiteralValue = new AlphanumericLiteralTokenValue(tokenizer.sval);
                                 AddToken(sqlToken);
                             }
@@ -80,7 +63,7 @@ namespace TypeCobol.Compiler.SqlScanner
                                 SqlTokenType sqlKwType = (tokenizer.sval.ToUpper().Equals("END-EXEC")) ? SqlTokenType.END_EXEC : (SqlTokenType)TokenType.UserDefinedWord;
                                 if (sqlKwType == SqlTokenType.END_EXEC)
                                 {
-                                    SqlToken sqlToken = new SqlToken(sqlKwType, startColumn, endColumn, Lines[lineNumber - 1]);
+                                    SqlToken sqlToken = new SqlToken(sqlKwType, startColumn + columOffset, endColumn + columOffset, Lines[lineNumber - 1]);
                                     sqlToken.LiteralValue = new AlphanumericLiteralTokenValue(tokenizer.sval);
                                     AddToken(sqlToken);
                                 }
@@ -89,7 +72,7 @@ namespace TypeCobol.Compiler.SqlScanner
                         break;
                     case StreamTokenizer.TT_NUMBER:
                         {
-                            SqlToken sqlToken = new SqlToken((SqlTokenType)TokenType.FloatingPointLiteral, startColumn, endColumn, Lines[lineNumber - 1]);
+                            SqlToken sqlToken = new SqlToken((SqlTokenType)TokenType.FloatingPointLiteral, startColumn + columOffset, endColumn + columOffset, Lines[lineNumber - 1]);
                             sqlToken.LiteralValue = new DecimalLiteralTokenValue(tokenizer.nval);
                             AddToken(sqlToken);
                         }
@@ -97,7 +80,7 @@ namespace TypeCobol.Compiler.SqlScanner
                     default:
                         {   //Ignore Whitespaces
                             if (!System.Char.IsWhiteSpace((char)token)) {
-                                SqlToken sqlToken = new SqlToken((SqlTokenType)TokenType.UserDefinedWord, startColumn, endColumn, Lines[lineNumber - 1]);
+                                SqlToken sqlToken = new SqlToken((SqlTokenType)TokenType.UserDefinedWord, startColumn + columOffset, endColumn + columOffset, Lines[lineNumber - 1]);
                                 sqlToken.LiteralValue = new AlphanumericLiteralTokenValue(((char)token).ToString());
                                 AddToken(sqlToken);
                             }

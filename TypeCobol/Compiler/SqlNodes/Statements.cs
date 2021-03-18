@@ -12,6 +12,9 @@ namespace TypeCobol.Compiler.SqlNodes
 {
     public interface Statement { }
 
+    /// <summary>
+    /// Sql COMMIT Node
+    /// </summary>
     public class Commit : GenericNode<CommitStatement>, Statement
     {
         public Commit(CommitStatement statement) : base(statement) { }

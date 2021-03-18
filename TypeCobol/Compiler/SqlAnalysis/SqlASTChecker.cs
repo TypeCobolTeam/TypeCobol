@@ -13,6 +13,9 @@ using TypeCobol.Compiler.SqlNodes;
 
 namespace TypeCobol.Compiler.SqlAnalysis
 {
+    /// <summary>
+    /// SQL AST Checker class
+    /// </summary>
     internal class SqlASTChecker : AbstractAstWithSqlVisitor
     {
         private Action<Violation> addViolation;
