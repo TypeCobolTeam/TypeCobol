@@ -102,7 +102,7 @@ namespace TypeCobol.LanguageServer.Test
                 useOutline ? "-ol" : "",
                 useCfg ? "-cfg=AsContent" : "");
 
-            //Check Cpy Copy names file
+            //Build full path to default Cpy Copy names file for LSR tests
             string cpyCopiesFile = Path.GetFullPath(Path.Combine(testWorkingDirectory, "input", "CpyCopies.lst"));
             arguments += "-ycpl=\"" + cpyCopiesFile + "\"";
 
