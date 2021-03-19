@@ -470,7 +470,7 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 if (end.CodeElement.Type == CodeElementType.ProgramEnd && !(end.Parent is Program))
                 {
-                    DiagnosticUtils.AddError(end, "Unexpected orphan \"PROGRAM END\" was discarded.", MessageCode.Warning);
+                    DiagnosticUtils.AddError(end, "Unexpected orphan \"PROGRAM END\".", _compilerOptions.CheckEndProgram.GetMessageCode());
                 }
             }
 
