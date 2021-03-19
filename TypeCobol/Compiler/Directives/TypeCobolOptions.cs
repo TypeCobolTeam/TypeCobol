@@ -81,7 +81,7 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         /// <param name="name">The Copy's name</param>
         /// <returns>true if the name is CPY Copys name, false otherwise.</returns>
-        public bool HasCpyCopy(string name) => CpyCopyNamesMap != null ? CpyCopyNamesMap.HasCpyCopy(name) : false;
+        public bool HasCpyCopy(string name) => CpyCopyNamesMap?.HasCpyCopy(name) ?? false;
 
         /// <summary>
         /// Get the file of CPY COPY names to be used.
