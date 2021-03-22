@@ -247,13 +247,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                         EndCobolProgram(null);
                     }
                 }
-                else
-                {
-                    if (CurrentProgram == null)
-                    {
-                        AttachEndIfExists(end);
-                    }
-                }
             }
 
             if (CurrentProgram != null)
@@ -263,6 +256,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 Exit();
                 programsStack.Pop();
                 Dispatcher.EndCobolProgram(end);
+            }
+            else
+            {
+                // End is attached to the SourceProgram and will be checked later to produce a diagnostic
+                AttachEndIfExists(end);
             }
         }
 
