@@ -52,10 +52,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// <param name="options">Client's Options</param>
         protected override void OnDidChangeConfiguration(string[] options)
         {
-            if (options.Contains("-dol"))
-                this.UseOutlineRefresh = false;
-            else if (options.Contains("-ol"))
-                this.UseOutlineRefresh = true;
+            this.UseOutlineRefresh = !options.Contains("-dol");
             if (options.Contains("-cfg=AsFile"))
                 this.UseCfgDfaDataRefresh = UseCfgMode.AsFile;
             else if(options.Contains("-cfg=AsContent"))
