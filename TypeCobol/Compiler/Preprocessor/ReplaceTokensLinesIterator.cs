@@ -532,6 +532,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 int i = 0;
                 while ((rescannedToken = tempScanner.GetNextToken()) != null)
                 {
+                    tempTokensLine.AddToken(rescannedToken);
                     if (rescannedToken.TokenFamily != TokenFamily.Whitespace && i < replacedTokens.Length)
                     {
                         replacedTokens[i++].TokenType = rescannedToken.TokenType;

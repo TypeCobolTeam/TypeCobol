@@ -131,22 +131,26 @@ namespace TypeCobol.Compiler.Parser
             return new AlphanumericValue(token);
         }
 
+        [CanBeNull]
         internal EnumeratedValue CreateEnumeratedValue(CodeElementsParser.EnumeratedValue1Context context, Type enumType)
         {
             Token valueToken = ParseTreeUtils.GetFirstToken(context);
-            return new EnumeratedValue(valueToken, enumType);
+            return valueToken != null ? new EnumeratedValue(valueToken, enumType) : null;
         }
 
-        internal EnumeratedValue CreateEnumeratedValue(ITerminalNode IntrinsicFunctionName, Type enumType)
+        [CanBeNull]
+        internal EnumeratedValue CreateEnumeratedValue(ITerminalNode intrinsicFunctionName, Type enumType)
         {
-            Token valueToken = ParseTreeUtils.GetTokenFromTerminalNode(IntrinsicFunctionName);
-            return new EnumeratedValue(valueToken, enumType);
+            if (intrinsicFunctionName == null) return null;
+            Token valueToken = ParseTreeUtils.GetTokenFromTerminalNode(intrinsicFunctionName);
+            return valueToken != null ? new EnumeratedValue(valueToken, enumType) : null;
         }
 
+        [CanBeNull]
         internal EnumeratedValue CreateEnumeratedValue(CodeElementsParser.EnumeratedValue3Context context, Type enumType)
         {
             Token valueToken = ParseTreeUtils.GetFirstToken(context);
-            return new EnumeratedValue(valueToken, enumType);
+            return valueToken != null ? new EnumeratedValue(valueToken, enumType) : null;
         }
 
         private RepeatedCharacterValue CreateRepeatedCharacterValue(
@@ -389,24 +393,32 @@ namespace TypeCobol.Compiler.Parser
             return symbolDefinitionOrReference;
         }
 
+        [CanBeNull]
         internal ExternalName CreateExternalName(CodeElementsParser.ExternalName1Context context, SymbolType symbolType, Type enumType)
         {
             AlphanumericValue nameLiteral = CreateEnumeratedValue(context.enumeratedValue1(), enumType);
-            var externalName = new ExternalName(nameLiteral, symbolType);
-            AddToSymbolInformations(nameLiteral, externalName);
-            return externalName;
+            return CreateExternalName(nameLiteral, symbolType);
         }
         
-        internal ExternalName CreateExternalName(ITerminalNode IntrinsicFunctionName, SymbolType symbolType, Type enumType)
+        [CanBeNull]
+        internal ExternalName CreateExternalName(ITerminalNode intrinsicFunctionName, SymbolType symbolType, Type enumType)
         {
-            AlphanumericValue nameLiteral = CreateEnumeratedValue(IntrinsicFunctionName, enumType);
-            var externalName = new ExternalName(nameLiteral, symbolType);
-            AddToSymbolInformations(nameLiteral, externalName);
-            return externalName;
+            AlphanumericValue nameLiteral = CreateEnumeratedValue(intrinsicFunctionName, enumType);
+            return CreateExternalName(nameLiteral, symbolType);
         }
+
+        [CanBeNull]
         internal ExternalName CreateExternalName(CodeElementsParser.ExternalName3Context context, SymbolType symbolType, Type enumType)
         {
             AlphanumericValue nameLiteral = CreateEnumeratedValue(context.enumeratedValue3(), enumType);
+            return CreateExternalName(nameLiteral, symbolType);
+        }
+
+        [CanBeNull]
+        private ExternalName CreateExternalName(AlphanumericValue nameLiteral, SymbolType symbolType)
+        {
+            if (nameLiteral == null) return null;
+
             var externalName = new ExternalName(nameLiteral, symbolType);
             AddToSymbolInformations(nameLiteral, externalName);
             return externalName;
@@ -778,8 +790,10 @@ namespace TypeCobol.Compiler.Parser
             return reference;
         }
 
-        internal SymbolDefinition CreateFileNameDefinition(CodeElementsParser.FileNameDefinitionContext context)
+        [CanBeNull]
+        internal SymbolDefinition CreateFileNameDefinition([CanBeNull] CodeElementsParser.FileNameDefinitionContext context)
         {
+            if (context == null) return null;
             return CreateSymbolDefinition(context.UserDefinedWord(), SymbolType.FileName);
         }
 
@@ -1037,6 +1051,7 @@ namespace TypeCobol.Compiler.Parser
             AFP_5A
         }
 
+        [CanBeNull]
         internal ExternalName CreateEnvironmentName(CodeElementsParser.EnvironmentNameContext context)
         {
             return CreateExternalName(context.externalName1(), SymbolType.EnvironmentName, typeof(EnvironmentName));
@@ -1050,6 +1065,7 @@ namespace TypeCobol.Compiler.Parser
             UPSI_0, UPSI_1, UPSI_2, UPSI_3, UPSI_4, UPSI_5, UPSI_6, UPSI_7
         }
 
+        [CanBeNull]
         internal ExternalName CreateUPSISwitchName(CodeElementsParser.UpsiSwitchNameContext context)
         {
             return CreateExternalName(context.externalName1(), SymbolType.UPSISwitchName, typeof(UPSISwitchNameEnum));
@@ -1081,8 +1097,10 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        internal ExternalName CreateAssignmentName(CodeElementsParser.AssignmentNameContext context)
+        [CanBeNull]
+        internal ExternalName CreateAssignmentName([CanBeNull] CodeElementsParser.AssignmentNameContext context)
         {
+            if (context == null) return null;
             return CreateExternalName(context.externalName5(), SymbolType.AssignmentName);
         }
 
@@ -1115,9 +1133,10 @@ namespace TypeCobol.Compiler.Parser
             YEAR_TO_YYYY
         }
 
-        internal ExternalName CreateIntrinsicFunctionName(ITerminalNode IntrinsicFunctionName)
+        [CanBeNull]
+        internal ExternalName CreateIntrinsicFunctionName(ITerminalNode intrinsicFunctionName)
         {
-            return CreateExternalName(IntrinsicFunctionName, SymbolType.IntrinsicFunctionName, typeof(FunctionNameEnum));
+            return CreateExternalName(intrinsicFunctionName, SymbolType.IntrinsicFunctionName, typeof(FunctionNameEnum));
         }
 
         /// <summary>
@@ -1135,6 +1154,7 @@ namespace TypeCobol.Compiler.Parser
             DLI
         }
 
+        [CanBeNull]
         internal ExternalName CreateExecTranslatorName(CodeElementsParser.ExecTranslatorNameContext context)
         {
             return CreateExternalName(context.externalName3(), SymbolType.ExecTranslatorName, typeof(ExecTranslatorNameEnum));
@@ -1157,6 +1177,7 @@ namespace TypeCobol.Compiler.Parser
             MAP, NOMAP
         }
 
+        [CanBeNull]
         internal EnumeratedValue CreateControlCblOption(CodeElementsParser.ControlCblOptionContext context)
         {
             return CreateEnumeratedValue(context.enumeratedValue1(), typeof(ControlCblOption));
@@ -1178,6 +1199,7 @@ namespace TypeCobol.Compiler.Parser
             S
         }
 
+        [CanBeNull]
         internal EnumeratedValue CreateRecordingMode(CodeElementsParser.RecordingModeContext context)
         {
             return CreateEnumeratedValue(context.enumeratedValue1(), typeof(RecordingModeEnum));

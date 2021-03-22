@@ -342,7 +342,10 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 currentProg.FileConnectors = new Dictionary<SymbolDefinition, FileControlEntry>();
             }
 
-            currentProg.FileConnectors.Add(entry.FileName, entry);
+            if (entry.FileName != null)
+            {
+                currentProg.FileConnectors.Add(entry.FileName, entry);
+            }
 
             var fileControlEntry = new FileControlEntryNode(entry);
             Enter(fileControlEntry, entry);
