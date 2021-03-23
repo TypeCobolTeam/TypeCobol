@@ -259,7 +259,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             }
             else
             {
-                // End is attached to the SourceProgram and will be checked later to produce a diagnostic
+                // End is attached to the SourceFile and will be checked later to produce a diagnostic
                 AttachEndIfExists(end);
             }
         }
