@@ -678,9 +678,9 @@ namespace TypeCobol.Compiler
 
                 ProcessedTokensDocument CreateProcessedTokensDocument(DocumentVersion<IProcessedTokensLine> version, ISearchableReadOnlyList<CodeElementsLine> lines)
                 {
-                    //Use wrapper for direct copy parsing mode
+                    //Apply automatic replacing of partial-words for direct copy parsing mode
                     return Mode == ParsingMode.CopyAsProgram
-                        ? new CopyWrappedAsProgramTokensDocument(tokensDocument, version, lines, CompilerOptions, missingCopies)
+                        ? new AutoReplacePartialWordsTokensDocument(tokensDocument, version, lines, CompilerOptions, missingCopies)
                         : new ProcessedTokensDocument(tokensDocument, version, lines, CompilerOptions, missingCopies);
                 }
 
