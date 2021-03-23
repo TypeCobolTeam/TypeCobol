@@ -19,7 +19,7 @@ namespace TypeCobol.Compiler.Diagnostics
         GreaterThanOrEqualOperatorShouldBeFollowedBySpace = 9,
         InvalidCharAfterGreaterThan = 10,
         InvalidCharAfterEquals = 11,
-        InvalidCharAfterPeriod = 12,
+        DotShouldBeFollowedBySpace = 12,
         InvalidCharAfterPlus = 13,
         InvalidCharAfterMinus = 14,
         InvalidCharAfterPseudoTextDelimiter = 15,
@@ -55,7 +55,6 @@ namespace TypeCobol.Compiler.Diagnostics
         Info = 45,
         AnalyzerFailure = 46,
         //MessageCode number 47 is reserved for violations coming from a Quality analyzer, it has no corresponding DiagnosticMessage object.
-        FailedToLoadDependentCopy = 48,
-        DotShouldBeFollowedBySpace = 49
+        FailedToLoadDependentCopy = 48
     }
 }

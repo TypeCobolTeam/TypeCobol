@@ -692,7 +692,7 @@ namespace TypeCobol.Compiler.Scanner
                     case ' ':
                         return ScanWhitespace(startIndex);
                     case '.':
-                        return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.PeriodSeparator, MessageCode.DotShouldBeFollowedBySpace);
+                        return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.PeriodSeparator, MessageCode.DotShouldBeFollowedBySpace, false);
                     default:
                         tryScanCommentEntry = true;
                         break;
