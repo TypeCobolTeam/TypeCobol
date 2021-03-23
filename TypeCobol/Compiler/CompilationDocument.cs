@@ -650,7 +650,7 @@ namespace TypeCobol.Compiler
                         PreprocessorStep.ProcessDocument(this, ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), processedTokensDocumentProvider, perfStatsForParserInvocation, out missingCopies);
 
                         // Create the first processed tokens document snapshot
-                        ProcessedTokensDocumentSnapshot = CreateProcessedTokensDocument(new DocumentVersion<IProcessedTokensLine>(this), (ImmutableList<CodeElementsLine>) tokensDocument.Lines);
+                        ProcessedTokensDocumentSnapshot = CreateProcessedTokensDocument(new DocumentVersion<IProcessedTokensLine>(this), (ISearchableReadOnlyList<CodeElementsLine>) tokensDocument.Lines);
                     }
                     else
                     {
