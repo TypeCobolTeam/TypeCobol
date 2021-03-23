@@ -261,6 +261,7 @@ namespace TypeCobol.Compiler
                         CustomSymbols,
                         perfStatsForParserInvocation,
                         customAnalyzers,
+                        Mode == ParsingMode.CopyAsProgram,
                         out root,
                         out newDiagnostics,
                         out nodeCodeElementLinkers,

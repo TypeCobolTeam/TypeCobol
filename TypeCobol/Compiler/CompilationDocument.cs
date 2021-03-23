@@ -650,7 +650,7 @@ namespace TypeCobol.Compiler
                         PreprocessorStep.ProcessDocument(this, ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), processedTokensDocumentProvider, perfStatsForParserInvocation, out missingCopies);
 
                         // Create the first processed tokens document snapshot
-                        ProcessedTokensDocumentSnapshot = CreateProcessedTokensDocument(new DocumentVersion<IProcessedTokensLine>(this), (ImmutableList<CodeElementsLine>) tokensDocument.Lines);
+                        ProcessedTokensDocumentSnapshot = CreateProcessedTokensDocument(new DocumentVersion<IProcessedTokensLine>(this), (ISearchableReadOnlyList<CodeElementsLine>) tokensDocument.Lines);
                     }
                     else
                     {
@@ -678,9 +678,9 @@ namespace TypeCobol.Compiler
 
                 ProcessedTokensDocument CreateProcessedTokensDocument(DocumentVersion<IProcessedTokensLine> version, ISearchableReadOnlyList<CodeElementsLine> lines)
                 {
-                    //Use wrapper for direct copy parsing mode
+                    //Apply automatic replacing of partial-words for direct copy parsing mode
                     return Mode == ParsingMode.CopyAsProgram
-                        ? new CopyWrappedAsProgramTokensDocument(tokensDocument, version, lines, CompilerOptions, missingCopies)
+                        ? new AutoReplacePartialWordsTokensDocument(tokensDocument, version, lines, CompilerOptions, missingCopies)
                         : new ProcessedTokensDocument(tokensDocument, version, lines, CompilerOptions, missingCopies);
                 }
 
