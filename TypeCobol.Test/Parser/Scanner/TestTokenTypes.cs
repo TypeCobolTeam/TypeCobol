@@ -246,7 +246,9 @@ namespace TypeCobol.Test.Parser.Scanner
                 "if (W-CCOMDE-UN-CHOIX(CCOMDI-:ZONE:) = 'D' or   ",
                 "replace ==:ZONE:== by ==SUPX== ==:SSPRO:== by ==CCTZ023B==."
             };
+            ScannerUtils.CompilerOptions.IsCobolLanguage = true;
             string result = ScannerUtils.ScanLines(testLines);
+            ScannerUtils.CompilerOptions.IsCobolLanguage = false;
             ScannerUtils.CheckWithResultFile(result, testName);
         }
 

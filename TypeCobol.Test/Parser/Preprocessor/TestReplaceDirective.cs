@@ -12,7 +12,9 @@
         public static void CheckReplacePartial()
         {
             string testName = "PgmReplacePartial";
+            PreprocessorUtils.ReplaceProject.CompilationOptions.IsCobolLanguage = true;
             string result = PreprocessorUtils.ProcessReplaceDirectives(testName);
+            PreprocessorUtils.ReplaceProject.CompilationOptions.IsCobolLanguage = false;
             PreprocessorUtils.CheckWithReplaceResultFile(result, testName);
         }
 

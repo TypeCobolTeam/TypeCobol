@@ -250,6 +250,16 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// Try parsing to parse a Pure Cobol Which maybe unparsed because of the presence of
+        /// specific TypeCobol Language feature..
+        /// </summary>
+        [TestMethod]
+        public void TestFailParseNonPureCobol()
+        {
+            CLITestHelper.Test("failcoboloptionparse", ReturnCode.ParsingDiagnostics);
+        }
+
+        /// <summary>
         /// Test all CLI arguments errors as follow:
         /// 
         /// arguments_errors_1:
