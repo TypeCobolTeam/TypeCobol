@@ -60,7 +60,7 @@ namespace TypeCobol.Compiler.Directives
             AutoRemarksEnable = config.AutoRemarks;
 #endif
             CheckEndAlignment = config.CheckEndAlignment;
-            this.IsCobolLanguage = config.IsCobolFile;
+            this.IsCobolLanguage = config.IsCobolLanguage;
         }
 
         public TypeCobolOptions()

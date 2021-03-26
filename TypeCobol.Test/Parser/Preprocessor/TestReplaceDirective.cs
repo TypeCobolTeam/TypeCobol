@@ -9,10 +9,10 @@
             PreprocessorUtils.CheckWithReplaceResultFile(result, testName);
         }
 
-        public static void CheckReplacePartial()
+        public static void CheckReplacePartial(bool cobol)
         {
-            string testName = "PgmReplacePartial";
-            PreprocessorUtils.ReplaceProject.CompilationOptions.IsCobolLanguage = true;
+            string testName = cobol ? "PgmReplacePartial" : "PgmReplacePartialTC";
+            PreprocessorUtils.ReplaceProject.CompilationOptions.IsCobolLanguage = cobol;
             string result = PreprocessorUtils.ProcessReplaceDirectives(testName);
             PreprocessorUtils.ReplaceProject.CompilationOptions.IsCobolLanguage = false;
             PreprocessorUtils.CheckWithReplaceResultFile(result, testName);

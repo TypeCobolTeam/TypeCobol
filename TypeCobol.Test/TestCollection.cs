@@ -60,7 +60,8 @@ namespace TypeCobol.Test {
             TestTokenTypes.CheckPseudoText2();
             TestTokenTypes.CheckNumericLiterals();
             TestTokenTypes.CheckKeywordsAndUserDefinedWords();
-            TestTokenTypes.CheckPartialCobolWords();
+            TestTokenTypes.CheckPartialCobolWords(true);//For Pur Cobol
+            TestTokenTypes.CheckPartialCobolWords(false);//For TypeCobol
             TestTokenTypes.CheckPictureCharacterString();
             TestTokenTypes.CheckCommentEntry();
             TestTokenTypes.CheckExecStatement();
@@ -107,7 +108,8 @@ namespace TypeCobol.Test {
             TestCopyDirective.CheckCopyReplacing();
 
             TestReplaceDirective.CheckReplaceSingle();
-            TestReplaceDirective.CheckReplacePartial();
+            TestReplaceDirective.CheckReplacePartial(true);
+            TestReplaceDirective.CheckReplacePartial(false);
             TestReplaceDirective.CheckReplaceSingleToMultiple();
             TestReplaceDirective.CheckReplaceMultiple();
             TestReplaceDirective.CheckReplaceNested();
@@ -144,21 +146,24 @@ namespace TypeCobol.Test {
             TestTokenSource.Check_CobolTokenSource_WithStartToken();
         }
 
-        [TestMethod]
-        [TestCategory("Parsing")]
-        [TestProperty("Time", "fast")]
-        public void CheckParserCobol85()
+        /// <summary>
+        /// Check Parsre on Cobol85 source code
+        /// </summary>
+        /// <param name="cobol">true if it is rellay for pure Cobol85 language, rather than TypeCobol, false otherwise</param>
+        private void CheckParserCobol85(bool cobol)
         {
-			var errors = new System.Collections.Generic.List<Exception>();
-			int nbOfTests = 0;
+            var errors = new System.Collections.Generic.List<Exception>();
+            int nbOfTests = 0;
             string[] extensions = { ".cbl", ".pgm" };
             string[] compilerExtensions = extensions.Concat(new[] { ".cpy" }).ToArray();
 
-            foreach (string directory in Directory.GetDirectories(root)) {
+            foreach (string directory in Directory.GetDirectories(root))
+            {
                 var dirname = Path.GetFileName(directory);
 
-			    Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-				var folderTester = new FolderTester(root, root, directory, extensions, compilerExtensions);
+                Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
+                var folderTester = new FolderTester(root, root, directory, extensions, compilerExtensions);
+                folderTester.IsCobolLanguage = cobol;
                 try
                 {
                     folderTester.Test();
@@ -167,18 +172,28 @@ namespace TypeCobol.Test {
                 {
                     errors.Add(ex);
                 }
-				nbOfTests += folderTester.GetTestCount();
-				Console.WriteLine();
-			}
+                nbOfTests += folderTester.GetTestCount();
+                Console.WriteLine();
+            }
 
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
 
-			if (errors.Count > 0) {
-				var str = new System.Text.StringBuilder();
-				foreach(var ex in errors) str.Append(ex.Message);
-				throw new Exception(str.ToString());
-			}
+            if (errors.Count > 0)
+            {
+                var str = new System.Text.StringBuilder();
+                foreach (var ex in errors) str.Append(ex.Message);
+                throw new Exception(str.ToString());
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "fast")]
+        public void CheckParserCobol85()
+        {
+            CheckParserCobol85(true);
+            CheckParserCobol85(false);
         }
 
         /// <summary>
