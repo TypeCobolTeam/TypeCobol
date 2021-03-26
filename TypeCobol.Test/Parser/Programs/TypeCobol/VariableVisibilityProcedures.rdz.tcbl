@@ -117,6 +117,6 @@
            .
        end-declare.
       
-       END PROGRAM Nested2.
+       END PROGRAM SubNested.
        END PROGRAM Nested.
        END PROGRAM MainProgram.

@@ -7,6 +7,7 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Parser.Generated;
 
@@ -77,17 +78,27 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (functionCaller.FunctionDeclaration == null)
             {
-                //Get Funtion by name and profile (matches on precise parameters)
+                var functionName = functionCaller.FunctionCall.FunctionName;
+                if (functionName == null)
+                {
+                    DiagnosticUtils.AddError(node, "Invalid call: function name is missing.");
+                    //Cannot attempt function resolution, abort
+                    return;
+                }
+
                 var callProfile = functionCaller.FunctionCall.BuildProfile(node);
+
+                //Get Function by name and profile (matches on precise parameters)
                 var functionDeclarations =
-                    node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName),
+                    node.SymbolTable.GetFunction(new URI(functionName),
                     callProfile, functionCaller.FunctionCall.Namespace);
 
                 string message;
                 //There is one CallSite per function call
                 //This is a call to a TypeCobol function or procedure with arguments
-                if (node.CodeElement.CallSites.Count == 1 &&
-                    node.CodeElement.CallSites[0].CallTarget.IsOrCanBeOnlyOfTypes(SymbolType.TCFunctionName))
+                if (node.CodeElement.CallSites.Count == 1
+                    && node.CodeElement.CallSites[0].CallTarget != null
+                    && node.CodeElement.CallSites[0].CallTarget.IsOrCanBeOnlyOfTypes(SymbolType.TCFunctionName))
                 {
                     if (functionDeclarations.Count == 1)
                     {
@@ -100,7 +111,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (functionDeclarations.Count > 0)
                     {
                         message = string.Format("Same function '{0}' {1} declared '{2}' times",
-                            functionCaller.FunctionCall.FunctionName, callProfile.GetSignature(),
+                            functionName, callProfile.GetSignature(),
                             functionDeclarations.Count);
                         DiagnosticUtils.AddError(node, message, MessageCode.ImplementationError);
                         return; //Do not continue the function/procedure is defined multiple times
@@ -113,7 +124,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (functionDeclarations.Count == 0 && otherDeclarations.Count == 0)
                     {
                         message = string.Format("Function not found '{0}' {1}",
-                            functionCaller.FunctionCall.FunctionName,
+                            functionName,
                             callProfile.GetSignature());
                         DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
                         return; //Do not continue the function/procedure does not exists
@@ -122,7 +133,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (otherDeclarations.Count > 1)
                     {
                         message = string.Format("No suitable function signature found for '{0}' {1}",
-                            functionCaller.FunctionCall.FunctionName, callProfile.GetSignature());
+                            functionName, callProfile.GetSignature());
                         DiagnosticUtils.AddError(node, message);
                         return;
                     }
@@ -134,7 +145,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     //call to a TypeCobol function/procedure without arguments or to a Variable
 
                     var potentialVariables =
-                        node.SymbolTable.GetVariablesExplicit(new URI(functionCaller.FunctionCall.FunctionName));
+                        node.SymbolTable.GetVariablesExplicit(new URI(functionName));
 
                     var potentialVariablesCount = potentialVariables.Count();
                     if (functionDeclarations.Count == 1 && potentialVariablesCount == 0)
@@ -144,14 +155,14 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
 
                     functionDeclarations =
-                        node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName), null,
+                        node.SymbolTable.GetFunction(new URI(functionName), null,
                             functionCaller.FunctionCall.Namespace);
 
                     if (potentialVariablesCount > 1)
                     {
                         //If there is more than one variable with the same name, it's ambiguous
                         message = string.Format("Call to '{0}'(no arguments) is ambigous. '{0}' is defined {1} times",
-                            functionCaller.FunctionCall.FunctionName,
+                            functionName,
                             potentialVariables.Count() + functionDeclarations.Count);
                         DiagnosticUtils.AddError(node, message);
                         return;
@@ -160,7 +171,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (functionDeclarations.Count > 1 && potentialVariablesCount == 0)
                     {
                         message = string.Format("No suitable function signature found for '{0}(no arguments)'",
-                            functionCaller.FunctionCall.FunctionName);
+                            functionName);
                         DiagnosticUtils.AddError(node, message);
                         return;
                     }
@@ -168,7 +179,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (functionDeclarations.Count >= 1 && potentialVariablesCount == 1)
                     {
                         message = string.Format("Warning: Risk of confusion in call of '{0}'",
-                            functionCaller.FunctionCall.FunctionName);
+                            functionName);
                         DiagnosticUtils.AddError(node, message);
                         return;
                     }
@@ -176,7 +187,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (functionDeclarations.Count == 0 && potentialVariablesCount == 0)
                     {
                         message = string.Format("No function or variable found for '{0}'(no arguments)",
-                            functionCaller.FunctionCall.FunctionName);
+                            functionName);
                         DiagnosticUtils.AddError(node, message);
                         return; //Do not continue the function/procedure does not exists
                     }
@@ -194,11 +205,14 @@ namespace TypeCobol.Compiler.Diagnostics
 
         private static void Check(Node node, [NotNull] FunctionCall call, [NotNull] IProfile callProfile, [NotNull] FunctionDeclaration definition)
         {
+            var functionName = call.FunctionName;
+            System.Diagnostics.Debug.Assert(functionName != null);//already checked in OnNode method
+
             var parameters = definition.Profile.Parameters;
             var callArgsCount = call.Arguments != null ? call.Arguments.Length : 0;
             if (callArgsCount > parameters.Count)
             {
-                var m = string.Format("Function '{0}' only takes {1} parameter(s)", call.FunctionName,
+                var m = string.Format("Function '{0}' only takes {1} parameter(s)", functionName,
                     parameters.Count);
                 DiagnosticUtils.AddError(node, m);
             }
@@ -207,7 +221,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 || callProfile.Inouts.Count != definition.Profile.InoutParameters.Count
                 || callProfile.Outputs.Count != definition.Profile.OutputParameters.Count)
             {
-                var m = string.Format("No suitable function signature found for '{0}' {1}", call.FunctionName,
+                var m = string.Format("No suitable function signature found for '{0}' {1}", functionName,
                     callProfile.GetSignature());
                 DiagnosticUtils.AddError(node, m);
             }
@@ -351,36 +365,34 @@ namespace TypeCobol.Compiler.Diagnostics
                         {
                             var m = string.Format(
                                     "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
-                                    call.FunctionName, expected.Name, expected.DataType,
+                                    functionName, expected.Name, expected.DataType,
                                     callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.DataType);
                             DiagnosticUtils.AddError(node, m);
 
                             
                         }
-                        else if (actualDataDefinition.DataType != expected.DataType)
+                        else
                         {
                             TypeDefinition callerType = actualDataDefinition.TypeDefinition;
                             TypeDefinition calleeType = expected.TypeDefinition;
                             if (callerType != null && calleeType != null)
                             {
-                                //Compare reference of TypeDefinition
+                                //Compare references of TypeDefinition
                                 if (callerType != calleeType)
                                 {
                                     var m = string.Format(
                                         "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
-                                        call.FunctionName, calleeType.Name, calleeType.DataType,
-                                        callArgName ?? string.Format("position {0}", c + 1), callerType.DataType);
+                                        functionName, expected.Name, calleeType.QualifiedName,
+                                        callArgName ?? string.Format("position {0}", c + 1), callerType.QualifiedName);
                                     DiagnosticUtils.AddError(node, m);
                                 }
                                 //else
-                                //DataType were not written exactly the same in the source code
-                                //eg. we can have a type qualified with its program and the same type without the qualification, then DataType are not the same but TypeDefinition are
-                                //So no error here, it's ok
+                                //Same TypeDefinition it's ok.
+                                //Note that DataType may differ: we can have a type qualified with its program and the same type without the qualification,
+                                //in that case DataType are not the same but TypeDefinition are
                             }
-                            else
-                            {
-                                //Ignore, it's an unknown DataType. It's already checked by TypeCobolLinker
-                            }
+                            //else
+                            //Ignore, it's an unknown DataType. It's already checked by TypeCobolLinker
                         }
                     }
 
@@ -390,29 +402,19 @@ namespace TypeCobol.Compiler.Diagnostics
                         var m =
                             string.Format(
                                 "Function '{0}' expected parameter '{1}' with picture {2} and received '{3}' with picture {4}",
-                                call.FunctionName, expected.Name, expected.Picture.Value,
+                                functionName, expected.Name, expected.Picture.Value,
                                 callArgName ?? string.Format("position {0}", c + 1),
                                 actualDataDefinition.Picture.Value);
                         DiagnosticUtils.AddError(node, m);
                     }
-              
-
-//                    if (dataDefinitionOfActual.Length != expectedParameter.Length)
-//                    {
-//                        var m =
-//                            string.Format(
-//                                "Function '{0}' expected parameter '{1}' of length {2} and received '{3}' of length {4}",
-//                                call.FunctionName, expectedParameter.Name, expectedParameter.Length,
-//                                callArgName ?? string.Format("position {0}", c + 1), dataDefinitionOfActual.Length);
-//                        DiagnosticUtils.AddError(e, m);
-//                    }
+                    
 
                     if (actualDataDefinition.Usage != expected.Usage)
                     {
                         var m =
                             string.Format(
                                 "Function '{0}' expected parameter '{1}' of usage {2} and received '{3}' of usage {4}",
-                                call.FunctionName, expected.Name, expected.Usage,
+                                functionName, expected.Name, expected.Usage,
                                 callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.Usage);
                         DiagnosticUtils.AddError(node, m);
                     }
@@ -422,7 +424,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         var m =
                             string.Format(
                                 "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
-                                call.FunctionName, expected.Name, expected.IsJustified ? "justified" : "non-justified",
+                                functionName, expected.Name, expected.IsJustified ? "justified" : "non-justified",
                                 callArgName ?? string.Format("position {0}", c + 1),
                                 actualDataDefinition.IsJustified ? "justified" : "non-justified");
                         DiagnosticUtils.AddError(node, m);
@@ -433,7 +435,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         var m =
                            string.Format(
                                "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
-                                call.FunctionName, expected.Name,
+                                functionName, expected.Name,
                                 expected.IsGroupUsageNational ? "national group-usage" : "non national group-usage",
                                 callArgName ?? string.Format("position {0}", c + 1),
                                 actualDataDefinition.IsGroupUsageNational
@@ -450,7 +452,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         var m =
                            string.Format(
                                "Function '{0}' expected parameter '{1}' to {2} an array and received '{3}' which {4} an array",
-                                call.FunctionName, expected.Name, expected.IsTableOccurence ? "be" : "be NOT",
+                                functionName, expected.Name, expected.IsTableOccurence ? "be" : "be NOT",
                                 actualDataDefinition.Name,
                                 actualIsTableOccurence ? "is" : "is NOT ");
                         DiagnosticUtils.AddError(node, m);
@@ -462,7 +464,7 @@ namespace TypeCobol.Compiler.Diagnostics
                             var m =
                                 string.Format(
                                     "Function '{0}' expected parameter '{1}' to have at least {2} occurences and received '{3}' with a minimum of {4} occurences",
-                                    call.FunctionName, expected.Name, expected.MinOccurencesCount,
+                                    functionName, expected.Name, expected.MinOccurencesCount,
                                     callArgName ?? string.Format("position {0}", c + 1), actualMinOccurencesCount);
                             DiagnosticUtils.AddError(node, m);
                         }
@@ -472,7 +474,7 @@ namespace TypeCobol.Compiler.Diagnostics
                             var m =
                                 string.Format(
                                     "Function '{0}' expected parameter '{1}' to have at most {2} occurences and received '{3}' with a maximum of {4} occurences",
-                                    call.FunctionName, expected.Name, expected.MaxOccurencesCount,
+                                    functionName, expected.Name, expected.MaxOccurencesCount,
                                     callArgName ?? string.Format("position {0}", c + 1), actualMaxOccurencesCount);
                             DiagnosticUtils.AddError(node, m);
                         }
@@ -483,7 +485,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         var m =
                            string.Format(
                                "Function '{0}' expected parameter '{1}' occurs depending on ({2}) occurences and received '{3}' occurs depending on ({4})",
-                               call.FunctionName, expected.Name, expected.OccursDependingOn,
+                               functionName, expected.Name, expected.OccursDependingOn,
                                callArgName ?? string.Format("position {0}", c + 1), actualOccursDependingOn);
                         DiagnosticUtils.AddError(node, m);
                     }
@@ -493,7 +495,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         var m =
                            string.Format(
                                "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
-                                call.FunctionName, expected.Name,
+                                functionName, expected.Name,
                                 expected.HasUnboundedNumberOfOccurences
                                     ? "has unbounded number of occurences"
                                     : "hasn't unbounded number of occurences",
@@ -510,7 +512,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         var m =
                            string.Format(
                                "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
-                                call.FunctionName, expected.Name,
+                                functionName, expected.Name,
                                 expected.HasUnboundedNumberOfOccurences
                                     ? "has unbounded number of occurences"
                                     : "hasn't unbounded number of occurences",
@@ -526,7 +528,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         var m =
                            string.Format(
                                "Function '{0}' expected parameter '{1}' with sign position {2} and received '{3}' with sign position {4}",
-                                call.FunctionName, expected.Name,
+                                functionName, expected.Name,
                                 expected.SignPosition == null ? "empty" : expected.SignPosition.ToString(),
                                 callArgName ?? string.Format("position {0}", c + 1),
                                 actualDataDefinition.SignPosition == null
@@ -542,7 +544,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         var m =
                            string.Format(
                                "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
-                                call.FunctionName,
+                                functionName,
                                 expected.Name,
                                 SyncToString(expected.Synchronized),
                                 callArgName ?? string.Format("position {0}", c + 1),
@@ -562,14 +564,14 @@ namespace TypeCobol.Compiler.Diagnostics
                         var m =
                           string.Format(
                               "Function '{0}' expected parameter '{1}' and received '{2}' with wrong object reference.",
-                              call.FunctionName, expected.Name, callArgName ?? string.Format("position {0}", c + 1));
+                              functionName, expected.Name, callArgName ?? string.Format("position {0}", c + 1));
                         DiagnosticUtils.AddError(node, m);
                     }
                 }
                 else
                 {
                     var m = string.Format("Function '{0}' is missing parameter '{1}' of type {2} and length {3}",
-                        call.FunctionName, expected.Name, expected.DataType, expected.PhysicalLength);
+                        functionName, expected.Name, expected.DataType, expected.PhysicalLength);
                     DiagnosticUtils.AddError(node, m);
                 }
             }
@@ -933,22 +935,6 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
     }
-
-    public class ProgramChecker
-    {
-        public static void OnNode(Program node)
-        {
-            node.SetFlag(Node.Flag.MissingEndProgram, !(node.Children.LastOrDefault() is End));
-
-            if (node.IsFlagSet(Node.Flag.MissingEndProgram))
-            {
-                DiagnosticUtils.AddError(node,
-                    "\"END PROGRAM\" is missing.", MessageCode.Warning);
-            }
-
-        }
-    }
-
 
     public class GlobalStorageSectionChecker
     {

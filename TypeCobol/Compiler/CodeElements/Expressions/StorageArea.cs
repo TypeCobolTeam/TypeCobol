@@ -428,8 +428,11 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
 	    public FunctionCallType Type { get; private set; }
+        [CanBeNull]
 	    public abstract string FunctionName { get; }
+        [CanBeNull]
         public abstract string Namespace { get; }
+        [CanBeNull]
         public abstract Token FunctionNameToken { get; }
 	    public virtual CallSiteParameter[] Arguments { get; private set; }
 
@@ -443,7 +446,8 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
-            return astVisitor.Visit(this) && FunctionNameToken.AcceptASTVisitor(astVisitor)
+            return astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, FunctionNameToken)
                    && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) Arguments);
         }
 
@@ -514,14 +518,15 @@ namespace TypeCobol.Compiler.CodeElements
 
 	/// <summary>Call to an intrinsic function</summary>
 	public class IntrinsicFunctionCall: FunctionCall {
-		public IntrinsicFunctionCall(ExternalName intrinsicFunctionName, CallSiteParameter[] arguments)
+		public IntrinsicFunctionCall([CanBeNull] ExternalName intrinsicFunctionName, CallSiteParameter[] arguments)
 			: base(FunctionCallType.IntrinsicFunctionCall, arguments) {
 			IntrinsicFunctionName = intrinsicFunctionName;
 		}
 
-		public ExternalName IntrinsicFunctionName { get; private set; }
-		public override string FunctionName { get { return IntrinsicFunctionName.Name; } }
-		public override Token FunctionNameToken { get { return IntrinsicFunctionName.NameLiteral.Token; } }
+        [CanBeNull]
+        public ExternalName IntrinsicFunctionName { get; private set; }
+        public override string FunctionName { get { return IntrinsicFunctionName?.Name; } }
+		public override Token FunctionNameToken { get { return IntrinsicFunctionName?.NameLiteral.Token; } }
 
         public override bool NeedDeclaration
         {
@@ -544,14 +549,15 @@ namespace TypeCobol.Compiler.CodeElements
 
 	/// <summary>Call to a TypeCobol user defined function</summary>
 	public class UserDefinedFunctionCall: FunctionCall {
-		public UserDefinedFunctionCall(SymbolReference functionName, CallSiteParameter[] arguments)
+		public UserDefinedFunctionCall([CanBeNull] SymbolReference functionName, CallSiteParameter[] arguments)
 			: base(FunctionCallType.UserDefinedFunctionCall, arguments) {
 			UserDefinedFunctionName = functionName;
 		}
 
-		public SymbolReference UserDefinedFunctionName { get; private set;  }
-		public override string FunctionName { get { return UserDefinedFunctionName.Name; } }
-		public override Token FunctionNameToken { get { return UserDefinedFunctionName.NameLiteral.Token; } }
+        [CanBeNull]
+        public SymbolReference UserDefinedFunctionName { get; private set;  }
+		public override string FunctionName { get { return UserDefinedFunctionName?.Name; } }
+		public override Token FunctionNameToken { get { return UserDefinedFunctionName?.NameLiteral.Token; } }
 
         public override string Namespace { get { return (UserDefinedFunctionName as QualifiedSymbolReference) == null ? null : ((QualifiedSymbolReference)UserDefinedFunctionName).Tail.Name; } }
 

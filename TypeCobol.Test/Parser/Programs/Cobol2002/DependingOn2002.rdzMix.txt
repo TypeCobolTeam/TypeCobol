@@ -113,4 +113,4 @@ Symbols found: DependOnPgm::DependType::ambigousCounter::DuplicatedCounterType::
        PROCEDURE DIVISION.
            move 1 to MyCounter
            .
-       END PROGRAM MYPGM.
+       END PROGRAM DependOnPgm.

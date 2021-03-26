@@ -18,16 +18,8 @@
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\"},\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":5,\"character\":0},\"end\":{\"line\":22,\"character\":28}},\"rangeLength\":508,\"text\":\"\"}]}}"
     },
     {
-      "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":1,\"character\":8},\"end\":{\"line\":1,\"character\":28}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"END PROGRAM\\\" is missing.\"}]}}"
-    },
-    {
       "category": 0,
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZXERRM.\\r\\n       DATA DIVISION.\\r\\n       WORKING-STORAGE SECTION.\\r\\n       LINKAGE SECTION.\\r\\n\"}}"
-    },
-    {
-      "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MAYANJE/AppData/Local/Temp/1/tcbl/DVZZJCM5496314490461340137.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":1,\"character\":8},\"end\":{\"line\":1,\"character\":28}},\"severity\":2,\"code\":\"37\",\"source\":\"\",\"message\":\"Warning: \\\"END PROGRAM\\\" is missing.\"}]}}"
     },
     {
       "category": 0,

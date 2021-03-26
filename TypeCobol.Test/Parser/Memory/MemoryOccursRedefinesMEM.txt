@@ -1,6 +1,6 @@
 Diagnostics
 ------------
-Line 1[1,27] <37, Warning, General> - Warning: "END PROGRAM" is missing.
+  None
    
 --------- FIELD LEVEL|NAME ---------- START     END  LENGTH
 1 TEST1-GROUP1                                             1    3260    3260
