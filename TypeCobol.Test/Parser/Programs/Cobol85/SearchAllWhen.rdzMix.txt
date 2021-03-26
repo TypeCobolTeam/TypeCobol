@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID.  Pgm.
        ENVIRONMENT DIVISION.
        DATA DIVISION.
@@ -97,6 +97,12 @@ Line 91[15,47] <27, Error, Syntax> - Syntax error : First index declared for the
               WHEN DSRCE-KEY-A (Idx) = WS-KEY
       *  Ko DSRCE-KEY-D is not indexed by the first index of DSRCE-TAB
                AND DSRCE-KEY-D (Idx2) = WS-KEY2
+                 DISPLAY 'VALUE FOUND'
+           END-SEARCH
+           
+      *  Ok this is not a SEARCH ALL
+           SEARCH DSRCE-TAB VARYING I
+              WHEN DSRCE-SRCE-VAL (I) = WS-SRCE-VAL
                  DISPLAY 'VALUE FOUND'
            END-SEARCH
       

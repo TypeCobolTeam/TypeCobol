@@ -241,11 +241,16 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(WhenSearch whenSearch)
         {
-            var whenSearchVisitor = new WhenSearchVisitor(whenSearch);
-            whenSearch.CodeElement.Condition.AcceptASTVisitor(whenSearchVisitor);
-            if (whenSearchVisitor.IsInError)
+            var search = whenSearch.Parent;
+            System.Diagnostics.Debug.Assert(search is Search);
+            if (search.CodeElement is SearchBinaryStatement)
             {
-                DiagnosticUtils.AddError(whenSearch, "First index declared for the table when subscripting and one of declared keys must be used.");
+                var whenSearchVisitor = new WhenSearchVisitor(whenSearch);
+                whenSearch.CodeElement.Condition.AcceptASTVisitor(whenSearchVisitor);
+                if (whenSearchVisitor.IsInError)
+                {
+                    DiagnosticUtils.AddError(whenSearch, "First index declared for the table when subscripting and one of declared keys must be used.");
+                }
             }
             return true;
         }

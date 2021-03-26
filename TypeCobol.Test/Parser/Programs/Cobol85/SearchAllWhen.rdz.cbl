@@ -93,6 +93,12 @@
                AND DSRCE-KEY-D (Idx2) = WS-KEY2
                  DISPLAY 'VALUE FOUND'
            END-SEARCH
+           
+      *  Ok this is not a SEARCH ALL
+           SEARCH DSRCE-TAB VARYING I
+              WHEN DSRCE-SRCE-VAL (I) = WS-SRCE-VAL
+                 DISPLAY 'VALUE FOUND'
+           END-SEARCH
       
            GOBACK
            .
