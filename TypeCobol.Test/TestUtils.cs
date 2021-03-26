@@ -77,7 +77,6 @@ namespace TypeCobol.Test
 
         private static void replaceLines(string result, string expectedResultPath)
         {
-            expectedResultPath = @"C:\Users\DELEVOVA\Desktop\ExpectedResult.txt";
             using (StreamWriter writer = new StreamWriter(expectedResultPath))
             {
                 writer.Write(result);
