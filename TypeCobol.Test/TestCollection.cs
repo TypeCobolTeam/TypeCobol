@@ -60,7 +60,7 @@ namespace TypeCobol.Test {
             TestTokenTypes.CheckPseudoText2();
             TestTokenTypes.CheckNumericLiterals();
             TestTokenTypes.CheckKeywordsAndUserDefinedWords();
-            TestTokenTypes.CheckPartialCobolWords(true);//For Pur Cobol
+            TestTokenTypes.CheckPartialCobolWords(true);//For Cobol
             TestTokenTypes.CheckPartialCobolWords(false);//For TypeCobol
             TestTokenTypes.CheckPictureCharacterString();
             TestTokenTypes.CheckCommentEntry();
@@ -147,9 +147,9 @@ namespace TypeCobol.Test {
         }
 
         /// <summary>
-        /// Check Parsre on Cobol85 source code
+        /// Check Parser on Cobol85 source code
         /// </summary>
-        /// <param name="cobol">true if it is rellay for pure Cobol85 language, rather than TypeCobol, false otherwise</param>
+        /// <param name="cobol">true if it is really for pure Cobol85 language, rather than TypeCobol, false otherwise</param>
         private void CheckParserCobol85(bool cobol)
         {
             var errors = new System.Collections.Generic.List<Exception>();
