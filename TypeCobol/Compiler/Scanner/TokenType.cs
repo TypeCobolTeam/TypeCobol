@@ -79,7 +79,9 @@ namespace TypeCobol.Compiler.Scanner
         FormalizedCommentsFamily = 513,
 
         // 525 -> 526 : Multilines Comments Tokens
-        MultilinesCommentsFamily = 525
+        MultilinesCommentsFamily = 525,
+
+        SqlFamily = 527
     }
 
     // INFO : the list below is generated from the file Documentation/Studies/CobolLexer.tokens.xls
@@ -616,5 +618,8 @@ namespace TypeCobol.Compiler.Scanner
         AT_SIGN = 524,
         MULTILINES_COMMENTS_START = 525,
         MULTILINES_COMMENTS_STOP = 526,
+
+        //Sql Tokens
+        COMMIT = 527,
     }
 }

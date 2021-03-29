@@ -312,6 +312,9 @@ namespace TypeCobol.Compiler.Parser
                     case CodeElementType.ExecStatement:
                         codeElement = new ExecStatement();
                         break;
+                    case CodeElementType.ExecStatementText:
+                        codeElement = new ExecStatementText();
+                        break;
                     case CodeElementType.ExitMethodStatement:
                         codeElement = new ExitMethodStatement();
                         break;
@@ -482,6 +485,9 @@ namespace TypeCobol.Compiler.Parser
                         break;
                     case CodeElementType.EvaluateStatementEnd:
                         codeElement = new EvaluateStatementEnd();
+                        break;
+                    case CodeElementType.ExecStatementEnd:
+                        codeElement = new ExecStatementEnd();
                         break;
                     case CodeElementType.IfStatementEnd:
                         codeElement = new IfStatementEnd();

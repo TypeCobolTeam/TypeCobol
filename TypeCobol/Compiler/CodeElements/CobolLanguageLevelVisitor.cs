@@ -112,6 +112,8 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] EntryStatement entryStatement);
         bool Visit([NotNull] EvaluateStatement evaluateStatement);
         bool Visit([NotNull] ExecStatement execStatement);
+        bool Visit([NotNull] ExecStatementText execStatementText);
+        bool Visit([NotNull] ExecStatementEnd execStatementEnd);
         bool Visit([NotNull] ExitMethodStatement exitMethodStatement);
         bool Visit([NotNull] ExitProgramStatement exitProgramStatement);
         bool Visit([NotNull] ExitStatement exitStatement);
@@ -275,6 +277,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] Display display);
         bool Visit([NotNull] Entry entry);
         bool Visit([NotNull] Exec exec);
+        bool Visit([NotNull] ExecText execText);
         bool Visit([NotNull] Exit exit);
         bool Visit([NotNull] ExitMethod exitMethod);
         bool Visit([NotNull] ExitProgram exitProgram);
@@ -484,6 +487,14 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(ExecStatement execStatement) {
+            return true;
+        }
+
+        public bool Visit(ExecStatementText execStatementText) {
+            return true;
+        }
+
+        public bool Visit([NotNull] ExecStatementEnd execStatementEnd) {
             return true;
         }
 
@@ -1074,6 +1085,10 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(Exec exec) {
+            return true;
+        }
+
+        public virtual bool Visit(ExecText execText) {
             return true;
         }
 

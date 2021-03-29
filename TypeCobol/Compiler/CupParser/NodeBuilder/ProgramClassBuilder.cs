@@ -7,6 +7,8 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.SqlCodeElements.Statement;
+using TypeCobol.Compiler.SqlNodes;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
@@ -872,12 +874,20 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Dispatcher.StartExecStatement(execStmt);
         }
 
-        public virtual void EndExecStatement()
+        public virtual void OnExecStatementText(ExecStatementText text)
         {
+            Enter(new ExecText(text), text);
+            Exit();
+            Dispatcher.OnExecStatementText(text);
+        }
+
+        public virtual void EndExecStatement(ExecStatementEnd end)
+        {
+            AttachEndIfExists(end);
             //EndExecStatement (therefore StartExecStatement) is fired if the exec is in a procedure division and is the first instruction
             //OnExecStatement is fired if the exec is in a procedure division and is not the first instruction
             ExitExecStatement();
-            Dispatcher.EndExecStatement();
+            Dispatcher.EndExecStatement(end);
         }
 
         private void ExitExecStatement()
@@ -1578,6 +1588,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             AttachEndIfExists(end);
             Exit();
             Dispatcher.EndXmlParseStatementConditional(end);
+        }
+
+        // FOR SQL
+        public void OnCommitStatement([NotNull] CommitStatement commit)
+        {
+            Enter(new Commit(commit), commit);
+            Exit();
+            Dispatcher.OnCommitStatement(commit);
         }
     }
 }

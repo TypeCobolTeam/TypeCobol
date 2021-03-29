@@ -133,6 +133,15 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
+    public class ExecText : GenericNode<ExecStatementText>, Statement
+    {
+        public ExecText(ExecStatementText statement) : base(statement) { }
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
+    }
+
     public class Exit: GenericNode<ExitStatement>, Statement {
 	    public Exit(ExitStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)

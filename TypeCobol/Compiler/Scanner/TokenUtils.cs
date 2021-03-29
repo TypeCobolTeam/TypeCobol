@@ -158,6 +158,8 @@ namespace TypeCobol.Compiler.Scanner
                     return "compiler directive starting keyword";
                 case TokenFamily.CodeElementStartingKeyword:
                     return "statement starting keyword";
+                case TokenFamily.SqlFamily:
+                    return "Sql statement starting keyword";
                 case TokenFamily.SpecialRegisterKeyword:
                     return "special register";
                 case TokenFamily.FigurativeConstantKeyword:

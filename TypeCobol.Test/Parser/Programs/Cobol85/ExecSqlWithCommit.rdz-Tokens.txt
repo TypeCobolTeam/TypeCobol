@@ -1,0 +1,64 @@
+Line 7[10,17] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
+--- Tokens ---
+---------------------------------
+_IDENTIFICATION DIVISION._
+    _IDENTIFICATION_    [8,21:IDENTIFICATION]<IDENTIFICATION>
+    _ _    [22,22: ]<SpaceSeparator>
+    _DIVISION_    [23,30:DIVISION]<DIVISION>
+    _._    [31,31+:.]<PeriodSeparator>
+---------------------------------
+_PROGRAM-ID. DVZZMFT3._
+    _PROGRAM-ID_    [8,17:PROGRAM-ID]<PROGRAM_ID>
+    _. _    [18,19:. ]<PeriodSeparator>
+    _DVZZMFT3_    [20,27:DVZZMFT3]<UserDefinedWord>
+    _._    [28,28+:.]<PeriodSeparator>
+---------------------------------
+_DATA DIVISION._
+    _DATA_    [8,11:DATA]<DATA>
+    _ _    [12,12: ]<SpaceSeparator>
+    _DIVISION_    [13,20:DIVISION]<DIVISION>
+    _._    [21,21+:.]<PeriodSeparator>
+---------------------------------
+_WORKING-STORAGE SECTION._
+    _WORKING-STORAGE_    [8,22:WORKING-STORAGE]<WORKING_STORAGE>
+    _ _    [23,23: ]<SpaceSeparator>
+    _SECTION_    [24,30:SECTION]<SECTION>
+    _._    [31,31+:.]<PeriodSeparator>
+---------------------------------
+_   EXEC SQL DELETE FROM CUSTOMERS	   _
+    _   _    [8,10:   ]<SpaceSeparator>
+    _EXEC_    [11,14:EXEC]<EXEC>
+    _ _    [15,15: ]<SpaceSeparator>
+    _SQL_    [16,18:SQL]<ExecTranslatorName>
+    _ _    [19,19: ]<SpaceSeparator>
+    _DELETE FROM CUSTOMERS	   _    [20,44:DELETE FROM CUSTOMERS	   ]<ExecStatementText>
+---------------------------------
+_COMMIT_
+    _COMMIT_    [8,13:COMMIT]<COMMIT>
+---------------------------------
+_  END-EXEC._
+    _  _    [8,9:  ]<SpaceSeparator>
+    _END-EXEC_    [10,17:END-EXEC]<END_EXEC>
+    _._    [18,18+:.]<PeriodSeparator>
+---------------------------------
+_PROCEDURE DIVISION._
+    _PROCEDURE_    [8,16:PROCEDURE]<PROCEDURE>
+    _ _    [17,17: ]<SpaceSeparator>
+    _DIVISION_    [18,25:DIVISION]<DIVISION>
+    _._    [26,26+:.]<PeriodSeparator>
+---------------------------------
+_    GOBACK_
+    _    _    [8,11:    ]<SpaceSeparator>
+    _GOBACK_    [12,17:GOBACK]<GOBACK>
+---------------------------------
+_    ._
+    _    _    [8,11:    ]<SpaceSeparator>
+    _._    [12,12+:.]<PeriodSeparator>
+---------------------------------
+_END PROGRAM DVZZMFT3._
+    _END_    [8,10:END]<END>
+    _ _    [11,11: ]<SpaceSeparator>
+    _PROGRAM_    [12,18:PROGRAM]<PROGRAM>
+    _ _    [19,19: ]<SpaceSeparator>
+    _DVZZMFT3_    [20,27:DVZZMFT3]<UserDefinedWord>
+    _._    [28,28+:.]<PeriodSeparator>

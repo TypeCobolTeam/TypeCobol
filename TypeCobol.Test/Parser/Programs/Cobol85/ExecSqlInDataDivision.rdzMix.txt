@@ -7,6 +7,7 @@ Line 6[11,16] <27, Error, Syntax> - Syntax error : A group item cannot be empty.
        01 group1.
           EXEC SQL DECLARE Table1 TABLE
           ( Table1_Field1 CHAR(1) NOT NULL,
+Line 9[13,20] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
           ) END-EXEC.
       *KO same thing but with a copy
 Line 11[11,16] <27, Error, Syntax> - Syntax error : A group item cannot be empty.

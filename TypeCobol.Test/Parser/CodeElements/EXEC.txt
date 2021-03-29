@@ -1,11 +1,55 @@
 ﻿--- Code Elements ---
-[[ExecStatement]] [1,4:EXEC]<EXEC> --> [1,8:END-EXEC]<END_EXEC>
+[[ExecStatement]] [1,4:EXEC]<EXEC> --> [6,8:SQL]<ExecTranslatorName>
 
-[[ExecStatement]] [1,4:EXEC]<EXEC> --> [1,8:END-EXEC]<END_EXEC>
+[[ExecStatementText]] [3,16:UPDATE TIDCA01]<ExecStatementText> --> [3,16:UPDATE TIDCA01]<ExecStatementText>
 
-[[ExecStatement]] [1,4:EXEC]<EXEC> --> [1,8:END-EXEC]<END_EXEC>
+[[ExecStatementText]] [1,12:  SET x = :y]<ExecStatementText> --> [1,12:  SET x = :y]<ExecStatementText>
 
-[[ExecStatement]] [1,4:EXEC]<EXEC> --> [1,8:END-EXEC]<END_EXEC>
+[[ExecStatementText]] [1,16:    WHERE a = :b]<ExecStatementText> --> [1,16:    WHERE a = :b]<ExecStatementText>
 
-[[ExecStatement]] [1,4:EXEC]<EXEC> --> [12,19:END-EXEC]<END_EXEC>
+[[ExecStatementText]] [1,16:      AND c = :d]<ExecStatementText> --> [1,16:      AND c = :d]<ExecStatementText>
+
+[[ExecStatementText]] [1,16:      AND e = :f]<ExecStatementText> --> [1,16:      AND e = :f]<ExecStatementText>
+
+[[ExecStatementText]] [1,16:      AND g = :h]<ExecStatementText> --> [1,16:      AND g = :h]<ExecStatementText>
+
+[[ExecStatementEnd]] [1,8:END-EXEC]<END_EXEC> --> [1,8:END-EXEC]<END_EXEC>
+
+[[ExecStatement]] [1,4:EXEC]<EXEC> --> [6,14:ramblings]<ExecTranslatorName>
+
+[[ExecStatementText]] [1,47:herp derp derp derrrpp herrp herpherp herp derp]<ExecStatementText> --> [1,47:herp derp derp derrrpp herrp herpherp herp derp]<ExecStatementText>
+
+[[ExecStatementText]] [1,24:AAAAAAAAAAAAAAAAAAAAAAAA]<ExecStatementText> --> [1,24:AAAAAAAAAAAAAAAAAAAAAAAA]<ExecStatementText>
+
+[[ExecStatementText]] [1,25:MY HANDS ARE TYPING WORDS]<ExecStatementText> --> [1,25:MY HANDS ARE TYPING WORDS]<ExecStatementText>
+
+[[ExecStatementText]] [1,18:HAAAAAAAAAAAAANNDS]<ExecStatementText> --> [1,18:HAAAAAAAAAAAAANNDS]<ExecStatementText>
+
+[[ExecStatementText]] [1,11:%$�*����#@�]<ExecStatementText> --> [1,11:%$�*����#@�]<ExecStatementText>
+
+[[ExecStatementText]] [1,43:herp derp derp heeeeeeeeeeeeerp "derp" derp]<ExecStatementText> --> [1,43:herp derp derp heeeeeeeeeeeeerp "derp" derp]<ExecStatementText>
+
+[[ExecStatementEnd]] [1,8:END-EXEC]<END_EXEC> --> [1,8:END-EXEC]<END_EXEC>
+
+[[ExecStatement]] [1,4:EXEC]<EXEC> --> [6,14:witespace]<ExecTranslatorName>
+
+[[ExecStatementEnd]] [1,8:END-EXEC]<END_EXEC> --> [1,8:END-EXEC]<END_EXEC>
+
+[[ExecStatement]] [1,4:EXEC]<EXEC> --> [6,10:cobol]<ExecTranslatorName>
+
+[[ExecStatementText]] [1,17:IF condition THEN]<ExecStatementText> --> [1,17:IF condition THEN]<ExecStatementText>
+
+[[ExecStatementText]] [1,10:  CONTINUE]<ExecStatementText> --> [1,10:  CONTINUE]<ExecStatementText>
+
+[[ExecStatementText]] [1,4:ELSE]<ExecStatementText> --> [1,4:ELSE]<ExecStatementText>
+
+[[ExecStatementText]] [1,10:  CONTINUE]<ExecStatementText> --> [1,10:  CONTINUE]<ExecStatementText>
+
+[[ExecStatementText]] [1,7:END-IF.]<ExecStatementText> --> [1,7:END-IF.]<ExecStatementText>
+
+[[ExecStatementEnd]] [1,8:END-EXEC]<END_EXEC> --> [1,8:END-EXEC]<END_EXEC>
+
+[[ExecStatement]] [1,4:EXEC]<EXEC> --> [6,10:empty]<ExecTranslatorName>
+
+[[ExecStatementEnd]] [12,19:END-EXEC]<END_EXEC> --> [12,19:END-EXEC]<END_EXEC>
 

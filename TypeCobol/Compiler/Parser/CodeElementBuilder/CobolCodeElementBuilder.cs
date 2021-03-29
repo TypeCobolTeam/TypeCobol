@@ -9,6 +9,7 @@ using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Diagnostics;
 using Antlr4.Runtime.Misc;
+using TypeCobol.Compiler.SqlCodeElements;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -22,15 +23,17 @@ namespace TypeCobol.Compiler.Parser
 		private CobolWordsBuilder CobolWordsBuilder { get; set; }
 		private CobolExpressionsBuilder CobolExpressionsBuilder { get; set; }
 		private CobolStatementsBuilder CobolStatementsBuilder { get; set; }
+        private SqlCodeElementBuilder SqlCodeElementBuilder { get; set; }
 
-		/// <summary>Initialization code run before parsing each new COBOL CodeElement</summary>
-		public override void EnterCodeElement(CodeElementsParser.CodeElementContext context) {
+        /// <summary>Initialization code run before parsing each new COBOL CodeElement</summary>
+        public override void EnterCodeElement(CodeElementsParser.CodeElementContext context) {
 			CodeElement = null;
 			Context = null;
 			CobolWordsBuilder = new CobolWordsBuilder(new Dictionary<Token, SymbolInformation>());
 			CobolExpressionsBuilder = new CobolExpressionsBuilder(CobolWordsBuilder);
 			CobolStatementsBuilder = new CobolStatementsBuilder(CobolWordsBuilder, CobolExpressionsBuilder);
-		}
+            SqlCodeElementBuilder = new SqlCodeElementBuilder();
+        }
 
 		/// <summary>Code run after parsing each new CodeElement</summary>
 		public override void ExitCodeElement(CodeElementsParser.CodeElementContext context) {
@@ -1795,16 +1798,37 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = new EvaluateStatementEnd();
 		}
 
-		// --- EXEC ---
-
-		public override void EnterExecStatement(CodeElementsParser.ExecStatementContext context) {
+        // --- EXEC ---
+        public override void EnterExecStatement(CodeElementsParser.ExecStatementContext context) {
 			Context = context;
 			CodeElement = CobolStatementsBuilder.CreateExecStatement(context);
 		}
 
-		// --- EXIT ---
+        /// <summary>
+        /// Enter a parse tree produced by <see cref="CodeElementsParser.execStatementText"/>.
+        /// <para>The default implementation does nothing.</para>
+        /// </summary>
+        /// <param name="context">The parse tree.</param>
+        public override void EnterExecStatementText([NotNull] CodeElementsParser.ExecStatementTextContext context)
+        {
+            Context = context;            
+            CodeElement = CobolStatementsBuilder.CreateExecStatementText(context);
+        }
 
-		public override void EnterExitStatement(CodeElementsParser.ExitStatementContext context) {
+        /// <summary>
+        /// Enter a parse tree produced by <see cref="CodeElementsParser.execStatementEnd"/>.
+        /// <para>The default implementation does nothing.</para>
+        /// </summary>
+        /// <param name="context">The parse tree.</param>
+        public override void EnterExecStatementEnd([NotNull] CodeElementsParser.ExecStatementEndContext context)
+        {
+            Context = context;
+            CodeElement = new ExecStatementEnd();
+        }
+
+        // --- EXIT ---
+
+        public override void EnterExitStatement(CodeElementsParser.ExitStatementContext context) {
 			Context = context;
 			CodeElement = new ExitStatement();
 		}
@@ -2189,561 +2213,574 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = new NotOnSizeErrorCondition();
 		}
 
+        // FOR SQL
 
-/*
-        // -- Symbols --
-
-        // ** Program names and Program entries **
-
-        public override void EnterProgramNameDefinition(CodeElementsParser.ProgramNameDefinitionContext context)
+        /// <summary>
+        /// Enter a parse tree produced by <see cref="CodeElementsParser.commitStatement"/>.
+        /// <para>The default implementation does nothing.</para>
+        /// </summary>
+        /// <param name="context">The parse tree.</param>
+        public override void EnterCommitStatement([NotNull] CodeElementsParser.CommitStatementContext context)
         {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ProgramName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+            Context = context;
+            CodeElement = SqlCodeElementBuilder.CreateCommitStatement(context);
         }
 
-        public override void EnterProgramEntryDefinition(CodeElementsParser.ProgramEntryDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ProgramEntry);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
 
-        public override void EnterProgramNameReference1(CodeElementsParser.ProgramNameReference1Context context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.ProgramName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+        /*
+                // -- Symbols --
 
-        public override void EnterProgramNameReference2(CodeElementsParser.ProgramNameReference2Context context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.ProgramName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                // ** Program names and Program entries **
 
-        public override void EnterProgramNameReferenceOrProgramEntryReference(CodeElementsParser.ProgramNameReferenceOrProgramEntryReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.ProgramName, SymbolType.ProgramEntry };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterProgramNameDefinition(CodeElementsParser.ProgramNameDefinitionContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ProgramName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        // + runtime references
-        // => programNameFromDataOrProgramEntryFromData
-        // => programNameFromDataOrProgramEntryFromDataOrProcedurePointerOrFunctionPointer
+                public override void EnterProgramEntryDefinition(CodeElementsParser.ProgramEntryDefinitionContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ProgramEntry);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        // ** Section names and Paragraph names **
+                public override void EnterProgramNameReference1(CodeElementsParser.ProgramNameReference1Context context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.ProgramName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterSectionNameDefinition(CodeElementsParser.SectionNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.SectionName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterProgramNameReference2(CodeElementsParser.ProgramNameReference2Context context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.ProgramName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterParagraphNameDefinition(CodeElementsParser.ParagraphNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ParagraphName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterProgramNameReferenceOrProgramEntryReference(CodeElementsParser.ProgramNameReferenceOrProgramEntryReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.ProgramName, SymbolType.ProgramEntry };
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterSectionNameReference(CodeElementsParser.SectionNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.SectionName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                // + runtime references
+                // => programNameFromDataOrProgramEntryFromData
+                // => programNameFromDataOrProgramEntryFromDataOrProcedurePointerOrFunctionPointer
 
-        public override void EnterParagraphNameReference(CodeElementsParser.ParagraphNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.ParagraphName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                // ** Section names and Paragraph names **
 
-        public override void ExitQualifiedParagraphNameReference(CodeElementsParser.QualifiedParagraphNameReferenceContext context)
-        {
-            if (context.sectionNameReference() != null)
-            {
-                Token qualifiedToken = ParseTreeUtils.GetFirstToken(context.paragraphNameReference());
-                Token[] qualifierTokens = new Token[] { ParseTreeUtils.GetFirstToken(context.sectionNameReference()) };
-                UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
-            }
-        }
+                public override void EnterSectionNameDefinition(CodeElementsParser.SectionNameDefinitionContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.SectionName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        // ** Class names and Method names **
+                public override void EnterParagraphNameDefinition(CodeElementsParser.ParagraphNameDefinitionContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ParagraphName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterClassNameDefinition(CodeElementsParser.ClassNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ClassName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterSectionNameReference(CodeElementsParser.SectionNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.SectionName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterMethodNameDefinition(CodeElementsParser.MethodNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.MethodName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterParagraphNameReference(CodeElementsParser.ParagraphNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.ParagraphName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterClassNameReference(CodeElementsParser.ClassNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.ClassName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void ExitQualifiedParagraphNameReference(CodeElementsParser.QualifiedParagraphNameReferenceContext context)
+                {
+                    if (context.sectionNameReference() != null)
+                    {
+                        Token qualifiedToken = ParseTreeUtils.GetFirstToken(context.paragraphNameReference());
+                        Token[] qualifierTokens = new Token[] { ParseTreeUtils.GetFirstToken(context.sectionNameReference()) };
+                        UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
+                    }
+                }
 
-        public override void EnterClassNameDefOrRef(CodeElementsParser.ClassNameDefOrRefContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinitionOrReference, SymbolType.ClassName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                // ** Class names and Method names **
 
-        public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName, SymbolType.ClassName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-        
-        public override void EnterExternalClassNameDefOrRef(CodeElementsParser.ExternalClassNameDefOrRefContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinitionOrReference, SymbolType.ExternalClassName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterClassNameDefinition(CodeElementsParser.ClassNameDefinitionContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ClassName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterMethodNameReference(CodeElementsParser.MethodNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.MethodName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterMethodNameDefinition(CodeElementsParser.MethodNameDefinitionContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.MethodName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        // + runtime references 
-        // => methodNameFromData
+                public override void EnterClassNameReference(CodeElementsParser.ClassNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.ClassName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        // ** Environment names, UPSI switch names and associated Mnemonics, Condition  **
+                public override void EnterClassNameDefOrRef(CodeElementsParser.ClassNameDefOrRefContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinitionOrReference, SymbolType.ClassName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterEnvironmentName(CodeElementsParser.EnvironmentNameContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.EnvironmentName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName, SymbolType.ClassName };
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterUpsiSwitchName(CodeElementsParser.UpsiSwitchNameContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.UPSISwitchName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterExternalClassNameDefOrRef(CodeElementsParser.ExternalClassNameDefOrRefContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinitionOrReference, SymbolType.ExternalClassName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterMnemonicForEnvironmentNameDefinition(CodeElementsParser.MnemonicForEnvironmentNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.MnemonicForEnvironmentName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterMethodNameReference(CodeElementsParser.MethodNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.MethodName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterMnemonicForUPSISwitchNameDefinition(CodeElementsParser.MnemonicForUPSISwitchNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.MnemonicForUPSISwitchName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                // + runtime references 
+                // => methodNameFromData
 
-        public override void EnterConditionForUPSISwitchNameDefinition(CodeElementsParser.ConditionForUPSISwitchNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ConditionForUPSISwitchName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                // ** Environment names, UPSI switch names and associated Mnemonics, Condition  **
 
-        public override void EnterMnemonicForEnvironmentNameReference(CodeElementsParser.MnemonicForEnvironmentNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.MnemonicForEnvironmentName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterEnvironmentName(CodeElementsParser.EnvironmentNameContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.EnvironmentName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterMnemonicForEnvironmentNameReferenceOrEnvironmentName(CodeElementsParser.MnemonicForEnvironmentNameReferenceOrEnvironmentNameContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.MnemonicForEnvironmentName, SymbolType.EnvironmentName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterUpsiSwitchName(CodeElementsParser.UpsiSwitchNameContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.UPSISwitchName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterMnemonicForUPSISwitchNameReference(CodeElementsParser.MnemonicForUPSISwitchNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.MnemonicForUPSISwitchName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterMnemonicForEnvironmentNameDefinition(CodeElementsParser.MnemonicForEnvironmentNameDefinitionContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.MnemonicForEnvironmentName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.ConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterMnemonicForUPSISwitchNameDefinition(CodeElementsParser.MnemonicForUPSISwitchNameDefinitionContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.MnemonicForUPSISwitchName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterConditionForUPSISwitchNameDefinition(CodeElementsParser.ConditionForUPSISwitchNameDefinitionContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ConditionForUPSISwitchName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.FileName, SymbolType.MnemonicForUPSISwitchName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterMnemonicForEnvironmentNameReference(CodeElementsParser.MnemonicForEnvironmentNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.MnemonicForEnvironmentName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        // ** Character sets **
+                public override void EnterMnemonicForEnvironmentNameReferenceOrEnvironmentName(CodeElementsParser.MnemonicForEnvironmentNameReferenceOrEnvironmentNameContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.MnemonicForEnvironmentName, SymbolType.EnvironmentName };
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterSymbolicCharacterDefinition(CodeElementsParser.SymbolicCharacterDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.SymbolicCharacter);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterMnemonicForUPSISwitchNameReference(CodeElementsParser.MnemonicForUPSISwitchNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.MnemonicForUPSISwitchName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterSymbolicCharacterReference(CodeElementsParser.SymbolicCharacterReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.SymbolicCharacter);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.ConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName };
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterAlphabetNameDefinition(CodeElementsParser.AlphabetNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.AlphabetName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName };
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterAlphabetNameReference(CodeElementsParser.AlphabetNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.AlphabetName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.FileName, SymbolType.MnemonicForUPSISwitchName };
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterCharacterClassNameDefinition(CodeElementsParser.CharacterClassNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.CharacterClassName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                // ** Character sets **
 
-        public override void EnterCharacterClassNameReference(CodeElementsParser.CharacterClassNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.CharacterClassName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterSymbolicCharacterDefinition(CodeElementsParser.SymbolicCharacterDefinitionContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.SymbolicCharacter);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        // ** Data item, Data conditions and Indexes **
+                public override void EnterSymbolicCharacterReference(CodeElementsParser.SymbolicCharacterReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.SymbolicCharacter);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterDataNameDefinition(CodeElementsParser.DataNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.DataName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterAlphabetNameDefinition(CodeElementsParser.AlphabetNameDefinitionContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.AlphabetName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterDataNameReference(CodeElementsParser.DataNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.DataName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterAlphabetNameReference(CodeElementsParser.AlphabetNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.AlphabetName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterSpecialRegister(CodeElementsParser.SpecialRegisterContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.DataName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterCharacterClassNameDefinition(CodeElementsParser.CharacterClassNameDefinitionContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.CharacterClassName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterDataNameReferenceOrFileNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.FileName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterCharacterClassNameReference(CodeElementsParser.CharacterClassNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.CharacterClassName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        // Data name reference already handled above :
-        // => public override void EnterDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext context)
-        
-        // Data name reference already handled above :
-        // => public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
-        
-        public override void EnterConditionNameDefinition(CodeElementsParser.ConditionNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ConditionName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                // ** Data item, Data conditions and Indexes **
 
-        // Condition name reference already handled above :
-        // => public override void EnterConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.ConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
+                public override void EnterDataNameDefinition(CodeElementsParser.DataNameDefinitionContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.DataName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        // Condition name reference already handled above :
-        // => public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
-        
-		public override void ExitQualifiedDataName(CodeElementsParser.QualifiedDataNameContext context) {
-			Token qualifiedToken = null;
-			Token[] qualifierTokens = null;
-			var legacy = context.legacyQualifiedDataName();
-			if (legacy != null) {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					legacy.dataNameReference(),
-					legacy.dataNameReferenceOrFileNameReference());
-			} else {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					context.dataNameReference(),
-					context.qDataOrFile());
-			}
-			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
-		}
-		public override void ExitQualifiedDataNameOrIndexName(CodeElementsParser.QualifiedDataNameOrIndexNameContext context) {
-			Token qualifiedToken = null;
-			Token[] qualifierTokens = null;
-			var legacy = context.legacyQualifiedDataNameOrIndexName();
-			if (legacy != null) {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					legacy.dataNameReferenceOrIndexNameReference(),
-					legacy.dataNameReferenceOrFileNameReference());
-			} else {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					context.dataNameReferenceOrIndexNameReference(),
-					context.qDataOrFile());
-			}
-			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
-		}
-		public override void ExitQualifiedConditionName(CodeElementsParser.QualifiedConditionNameContext context) {
-			Token qualifiedToken = null;
-			Token[] qualifierTokens = null;
-			var legacy = context.legacyQualifiedConditionName();
-			if (legacy != null) {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					legacy.conditionNameReferenceOrConditionForUPSISwitchNameReference(),
-					legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-			} else {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					context.conditionNameReferenceOrConditionForUPSISwitchNameReference(),
-					context.qDataOrFileOrUPSI());
-			}
-			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
-		}
-		public override void ExitQualifiedDataNameOrQualifiedConditionName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameContext context) {
-			Token qualifiedToken = null;
-			Token[] qualifierTokens = null;
-			var legacy = context.legacyQualifiedDataNameOrConditionName();
-			if (legacy != null) {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(),
-					legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-			} else {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(),
-					context.qDataOrFileOrUPSI());
-			}
-			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
-		}
-		public override void ExitQualifiedDataNameOrQualifiedConditionNameOrIndexName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrIndexNameContext context) {
-			Token qualifiedToken = null;
-			Token[] qualifierTokens = null;
-			var legacy = context.legacyQualifiedDataNameOrQualifiedConditionNameOrIndexName();
-			if (legacy != null) {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference(),
-					legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-			} else {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference(),
-					context.qDataOrFileOrUPSI());
-			}
-			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
-		}
-		public override void ExitQualifiedDataNameOrQualifiedConditionNameOrFileName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrFileNameContext context) {
-			Token qualifiedToken;
-			Token[] qualifierTokens;
-			var legacy = context.legacyQualifiedDataNameOrQualifiedConditionNameOrFileName();
-			if (legacy != null) {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference(),
-					legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-			} else {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference(),
-					context.qDataOrFileOrUPSI());
-			}
-			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
-		}
-		public override void ExitQualifiedDataNameOrQualifiedConditionNameOrClassName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrClassNameContext context) {
-			Token qualifiedToken;
-			Token[] qualifierTokens;
-			var legacy = context.legacyQualifiedDataNameOrQualifiedConditionNameOrClassName();
-			if (legacy != null) {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference(),
-					legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
-			} else {
-				GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
-					context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference(),
-					context.qDataOrFileOrUPSI());
-			}
-			UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
-		}
+                public override void EnterDataNameReference(CodeElementsParser.DataNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.DataName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-		private void GetTokensForSymbolInformation(out Token qualifiedToken, out Token[] qualifierTokens, IParseTree node, IParseTree[] nodes) {
-			if (node != null)  qualifiedToken  = ParseTreeUtils.GetFirstToken(node);
-			else qualifiedToken = null;
-			if (nodes != null) qualifierTokens = nodes.Select(ctx => ParseTreeUtils.GetFirstToken(ctx)).ToArray();
-			else qualifierTokens = null;
-		}
+                public override void EnterSpecialRegister(CodeElementsParser.SpecialRegisterContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.DataName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-		private void UpdateSymbolInformationForQualifiedNames(Token qualifiedToken, Token[] qualifierTokens) {
-			if (qualifiedToken != null) {
-				SymbolInformation qualifiedSymbolInfo = CodeElement.SymbolInformationForTokens[qualifiedToken];
-				qualifiedSymbolInfo.QualifedBy = qualifierTokens;
-			}
-			if (qualifierTokens != null)
-			foreach (var qualifierToken in qualifierTokens) {
-				SymbolInformation qualifierSymbolInfo = CodeElement.SymbolInformationForTokens[qualifierToken];
-				qualifierSymbolInfo.QualifierFor = qualifiedToken;
-			}
-		}
+                public override void EnterDataNameReferenceOrFileNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.FileName };
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterIndexNameDefinition(CodeElementsParser.IndexNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.IndexName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                // Data name reference already handled above :
+                // => public override void EnterDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext context)
 
-        public override void EnterIndexNameReference(CodeElementsParser.IndexNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.IndexName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                // Data name reference already handled above :
+                // => public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
 
-        public override void EnterDataNameReferenceOrIndexNameReference(CodeElementsParser.DataNameReferenceOrIndexNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.IndexName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterConditionNameDefinition(CodeElementsParser.ConditionNameDefinitionContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.ConditionName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName, SymbolType.IndexName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-               
-        // ** Files **
+                // Condition name reference already handled above :
+                // => public override void EnterConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.ConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
 
-        public override void EnterFileNameDefinition(CodeElementsParser.FileNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.FileName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                // Condition name reference already handled above :
+                // => public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
 
-        public override void EnterFileNameReference(CodeElementsParser.FileNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.FileName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void ExitQualifiedDataName(CodeElementsParser.QualifiedDataNameContext context) {
+                    Token qualifiedToken = null;
+                    Token[] qualifierTokens = null;
+                    var legacy = context.legacyQualifiedDataName();
+                    if (legacy != null) {
+                        GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+                            legacy.dataNameReference(),
+                            legacy.dataNameReferenceOrFileNameReference());
+                    } else {
+                        GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+                            context.dataNameReference(),
+                            context.qDataOrFile());
+                    }
+                    UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
+                }
+                public override void ExitQualifiedDataNameOrIndexName(CodeElementsParser.QualifiedDataNameOrIndexNameContext context) {
+                    Token qualifiedToken = null;
+                    Token[] qualifierTokens = null;
+                    var legacy = context.legacyQualifiedDataNameOrIndexName();
+                    if (legacy != null) {
+                        GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+                            legacy.dataNameReferenceOrIndexNameReference(),
+                            legacy.dataNameReferenceOrFileNameReference());
+                    } else {
+                        GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+                            context.dataNameReferenceOrIndexNameReference(),
+                            context.qDataOrFile());
+                    }
+                    UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
+                }
+                public override void ExitQualifiedConditionName(CodeElementsParser.QualifiedConditionNameContext context) {
+                    Token qualifiedToken = null;
+                    Token[] qualifierTokens = null;
+                    var legacy = context.legacyQualifiedConditionName();
+                    if (legacy != null) {
+                        GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+                            legacy.conditionNameReferenceOrConditionForUPSISwitchNameReference(),
+                            legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+                    } else {
+                        GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+                            context.conditionNameReferenceOrConditionForUPSISwitchNameReference(),
+                            context.qDataOrFileOrUPSI());
+                    }
+                    UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
+                }
+                public override void ExitQualifiedDataNameOrQualifiedConditionName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameContext context) {
+                    Token qualifiedToken = null;
+                    Token[] qualifierTokens = null;
+                    var legacy = context.legacyQualifiedDataNameOrConditionName();
+                    if (legacy != null) {
+                        GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+                            legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(),
+                            legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+                    } else {
+                        GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+                            context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(),
+                            context.qDataOrFileOrUPSI());
+                    }
+                    UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
+                }
+                public override void ExitQualifiedDataNameOrQualifiedConditionNameOrIndexName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrIndexNameContext context) {
+                    Token qualifiedToken = null;
+                    Token[] qualifierTokens = null;
+                    var legacy = context.legacyQualifiedDataNameOrQualifiedConditionNameOrIndexName();
+                    if (legacy != null) {
+                        GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+                            legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference(),
+                            legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+                    } else {
+                        GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+                            context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference(),
+                            context.qDataOrFileOrUPSI());
+                    }
+                    UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
+                }
+                public override void ExitQualifiedDataNameOrQualifiedConditionNameOrFileName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrFileNameContext context) {
+                    Token qualifiedToken;
+                    Token[] qualifierTokens;
+                    var legacy = context.legacyQualifiedDataNameOrQualifiedConditionNameOrFileName();
+                    if (legacy != null) {
+                        GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+                            legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference(),
+                            legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+                    } else {
+                        GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+                            context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference(),
+                            context.qDataOrFileOrUPSI());
+                    }
+                    UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
+                }
+                public override void ExitQualifiedDataNameOrQualifiedConditionNameOrClassName(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameOrClassNameContext context) {
+                    Token qualifiedToken;
+                    Token[] qualifierTokens;
+                    var legacy = context.legacyQualifiedDataNameOrQualifiedConditionNameOrClassName();
+                    if (legacy != null) {
+                        GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+                            legacy.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference(),
+                            legacy.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
+                    } else {
+                        GetTokensForSymbolInformation(out qualifiedToken, out qualifierTokens,
+                            context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference(),
+                            context.qDataOrFileOrUPSI());
+                    }
+                    UpdateSymbolInformationForQualifiedNames(qualifiedToken, qualifierTokens);
+                }
 
-        // File name reference already handled above :
-        // => public override void EnterDataNameReferenceOrFileNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceContext context)
+                private void GetTokensForSymbolInformation(out Token qualifiedToken, out Token[] qualifierTokens, IParseTree node, IParseTree[] nodes) {
+                    if (node != null)  qualifiedToken  = ParseTreeUtils.GetFirstToken(node);
+                    else qualifiedToken = null;
+                    if (nodes != null) qualifierTokens = nodes.Select(ctx => ParseTreeUtils.GetFirstToken(ctx)).ToArray();
+                    else qualifierTokens = null;
+                }
 
-        // File name reference already handled above :
-        // => public override void EnterDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext context)
+                private void UpdateSymbolInformationForQualifiedNames(Token qualifiedToken, Token[] qualifierTokens) {
+                    if (qualifiedToken != null) {
+                        SymbolInformation qualifiedSymbolInfo = CodeElement.SymbolInformationForTokens[qualifiedToken];
+                        qualifiedSymbolInfo.QualifedBy = qualifierTokens;
+                    }
+                    if (qualifierTokens != null)
+                    foreach (var qualifierToken in qualifierTokens) {
+                        SymbolInformation qualifierSymbolInfo = CodeElement.SymbolInformationForTokens[qualifierToken];
+                        qualifierSymbolInfo.QualifierFor = qualifiedToken;
+                    }
+                }
 
-        public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName, SymbolType.FileName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterIndexNameDefinition(CodeElementsParser.IndexNameDefinitionContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.IndexName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterXmlSchemaNameDefinition(CodeElementsParser.XmlSchemaNameDefinitionContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.XmlSchemaName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterIndexNameReference(CodeElementsParser.IndexNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.IndexName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterXmlSchemaNameReference(CodeElementsParser.XmlSchemaNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.XmlSchemaName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterDataNameReferenceOrIndexNameReference(CodeElementsParser.DataNameReferenceOrIndexNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.IndexName };
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterAssignmentName(CodeElementsParser.AssignmentNameContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.AssignmentName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName, SymbolType.IndexName };
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterAssignmentNameOrFileNameReference(CodeElementsParser.AssignmentNameOrFileNameReferenceContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.AssignmentName, SymbolType.FileName };
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                // ** Files **
 
-        // ** Runtime functions **
+                public override void EnterFileNameDefinition(CodeElementsParser.FileNameDefinitionContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.FileName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-		public override void EnterIntrinsicFunctionName(CodeElementsParser.IntrinsicFunctionNameContext context) {
-			ITerminalNode node = null;
-			if (context.UserDefinedWord() != null) node = context.UserDefinedWord();
-			else
-			if (context.LENGTH() != null) node = context.LENGTH();
-			else
-			if (context.RANDOM() != null) node = context.RANDOM();
-			else
-			if (context.WHEN_COMPILED() != null) node = context.WHEN_COMPILED();
-			Token symbolToken = ParseTreeUtils.GetFirstToken(node);
-			SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.TCFunctionName);
-			CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
+                public override void EnterFileNameReference(CodeElementsParser.FileNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.FileName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
 
-        public override void EnterExecTranslatorName(CodeElementsParser.ExecTranslatorNameContext context)
-        {
-            Token symbolToken = ParseTreeUtils.GetFirstToken(context);
-            SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.ExecTranslatorName);
-            CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
-        }
-*/
+                // File name reference already handled above :
+                // => public override void EnterDataNameReferenceOrFileNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceContext context)
+
+                // File name reference already handled above :
+                // => public override void EnterDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext context)
+
+                public override void EnterDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.DataName, SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName, SymbolType.FileName };
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
+
+                public override void EnterXmlSchemaNameDefinition(CodeElementsParser.XmlSchemaNameDefinitionContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolDefinition, SymbolType.XmlSchemaName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
+
+                public override void EnterXmlSchemaNameReference(CodeElementsParser.XmlSchemaNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, SymbolType.XmlSchemaName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
+
+                public override void EnterAssignmentName(CodeElementsParser.AssignmentNameContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.AssignmentName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
+
+                public override void EnterAssignmentNameOrFileNameReference(CodeElementsParser.AssignmentNameOrFileNameReferenceContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolType[] candidateSymbolTypes = new SymbolType[] { SymbolType.AssignmentName, SymbolType.FileName };
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.SymbolReference, candidateSymbolTypes);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
+
+                // ** Runtime functions **
+
+                public override void EnterIntrinsicFunctionName(CodeElementsParser.IntrinsicFunctionNameContext context) {
+                    ITerminalNode node = null;
+                    if (context.UserDefinedWord() != null) node = context.UserDefinedWord();
+                    else
+                    if (context.LENGTH() != null) node = context.LENGTH();
+                    else
+                    if (context.RANDOM() != null) node = context.RANDOM();
+                    else
+                    if (context.WHEN_COMPILED() != null) node = context.WHEN_COMPILED();
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(node);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.TCFunctionName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
+
+                public override void EnterExecTranslatorName(CodeElementsParser.ExecTranslatorNameContext context)
+                {
+                    Token symbolToken = ParseTreeUtils.GetFirstToken(context);
+                    SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.ExecTranslatorName);
+                    CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
+                }
+        */
 
     }
 }

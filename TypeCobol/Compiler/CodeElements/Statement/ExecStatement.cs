@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 
+//statement.CodeLines = BuildObjectArrayFromParserRules(context.ExecStatementText(), ctx => CobolWordsBuilder.CreateAlphanumericValue(ctx));
 namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
@@ -35,4 +36,31 @@ namespace TypeCobol.Compiler.CodeElements
                    && this.ContinueVisitToChildren(astVisitor, ExecTranslatorName);
         }
     }
+
+    public class ExecStatementText : CodeElementEnd
+    {
+        public ExecStatementText() : base(CodeElementType.ExecStatementText) { }
+
+        /// <summary>
+        /// Source code to be analyzed by the secondary compiler
+        /// </summary>
+        public AlphanumericValue CodeLine { get; set; }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, CodeLine);
+        }
+    }
+
+    public class ExecStatementEnd : CodeElementEnd
+    {
+        public ExecStatementEnd() : base(CodeElementType.ExecStatementEnd) { }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this);
+        }
+    }
+
 }
