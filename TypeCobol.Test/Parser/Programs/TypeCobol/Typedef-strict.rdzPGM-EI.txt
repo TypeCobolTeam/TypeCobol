@@ -1,5 +1,4 @@
 --- Diagnostics ---
-Line 1[8,29] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 10[8,40] <30, Error, Semantics> - Semantic error: TYPE 'bool' has already been declared
 Line 13[8,50] <30, Error, Semantics> - Semantic error: TYPE 'DuplicatedType' has already been declared
 Line 14[8,50] <30, Error, Semantics> - Semantic error: TYPE 'DuplicatedType' has already been declared

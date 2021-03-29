@@ -1,5 +1,4 @@
 --- Diagnostics ---
-Line 1[8,33] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 126[26,33] <30, Error, Semantics> - Semantic error: A function "conflict" with the same profile already exists in namespace "DateFunctions". OffendingSymbol=[26,33:conflict]<UserDefinedWord>
 Line 132[26,33] <30, Error, Semantics> - Semantic error: A function "conflict" with the same profile already exists in namespace "DateFunctions". OffendingSymbol=[26,33:conflict]<UserDefinedWord>
 Line 144[26,33] <30, Error, Semantics> - Semantic error: A function "conflict" with the same profile already exists in namespace "DateFunctions". OffendingSymbol=[26,33:conflict]<UserDefinedWord>

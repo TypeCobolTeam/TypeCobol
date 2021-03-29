@@ -8,4 +8,4 @@
          PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
-       END PROGRAM Callee.
+       END PROGRAM MyIntrinsicFunctions.
