@@ -1,0 +1,127 @@
+{
+  "name": "CopyEditAddDataItem.tlsp",
+  "session": "C:\\Users\\MILLETFL\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2021_03_02_11_07_28_742\\TestSuite_2021_03_02_11_07_28_742.slsp",
+  "user": "MILLETFL",
+  "date": "2021/03/02 11:07:28 755",
+  "uri": "file:///C:/TypeCobol/LSRSessions/CopyEditAddDataItem.tlsp",
+  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\TypeCobol\\\\Sources\\\\Production\\\\##Latest_Release##\",\"rootUri\":\"file:/C:/TypeCobol/Sources/Production/%23%23Latest_Release%23%23/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"signatureHelp\":{\"dynamicRegistration\":true},\"references\":{\"dynamicRegistration\":true},\"documentHighlight\":{\"dynamicRegistration\":true},\"documentSymbol\":{\"dynamicRegistration\":true},\"formatting\":{\"dynamicRegistration\":true},\"rangeFormatting\":{\"dynamicRegistration\":true},\"onTypeFormatting\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true},\"codeAction\":{\"dynamicRegistration\":true},\"codeLens\":{\"dynamicRegistration\":true},\"documentLink\":{\"dynamicRegistration\":true},\"rename\":{\"dynamicRegistration\":true}}},\"trace\":\"off\"}}",
+  "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"experimental\":[{\"Item1\":\"version\",\"Item2\":\"v1.5.0.2\"}],\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
+  "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\TypeCobol\\\\Sources\\\\Production\\\\##Latest_Release##\\\\TypeCobol.CLI.exe\",\"-1\",\"-e\",\"rdz\",\"-y\",\"C:\\\\TypeCobol\\\\Sources\\\\Production\\\\##Latest_Release##\\\\Intrinsic\\\\Intrinsic.txt\",\"-glm\",\"\\\"{6}\\\"\",\"--autoremarks\",\"--outputFormat\\u003dCobol85Mixed\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\Production\",\"-md\",\"200\",\"--dependencies\",\"C:\\\\TypeCobol\\\\Sources\\\\Production\\\\##Latest_Release##\\\\Dependencies\\\\*.tcbl\",\"--dependencies\",\"\\\\\\\\uf44-004\\\\TYPECOBOL-DEPENDENCIES\\\\Y530\\\\*.tcbl\"]}}",
+  "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"languageId\":\"__lsp4j_Copybook\",\"version\":0,\"text\":\"       01 YMYCOPY.\\r\\n          05 MYCOPY-DATA1 PIC X.\"}}}",
+  "messages": [
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"text\":\"       01 YMYCOPY.\\r\\n          05 MYCOPY-DATA1 PIC X.\"}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":1,\"character\":32},\"end\":{\"line\":1,\"character\":32}},\"rangeLength\":0,\"text\":\"\\r\\n          \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":10},\"end\":{\"line\":2,\"character\":10}},\"rangeLength\":0,\"text\":\"0\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":11},\"end\":{\"line\":2,\"character\":11}},\"rangeLength\":0,\"text\":\"5\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":12},\"end\":{\"line\":2,\"character\":12}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":13},\"end\":{\"line\":2,\"character\":13}},\"rangeLength\":0,\"text\":\"M\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":14},\"end\":{\"line\":2,\"character\":14}},\"rangeLength\":0,\"text\":\"Y\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":15},\"end\":{\"line\":2,\"character\":15}},\"rangeLength\":0,\"text\":\"C\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":16},\"end\":{\"line\":2,\"character\":16}},\"rangeLength\":0,\"text\":\"O\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":17},\"end\":{\"line\":2,\"character\":17}},\"rangeLength\":0,\"text\":\"P\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":18},\"end\":{\"line\":2,\"character\":18}},\"rangeLength\":0,\"text\":\"Y\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":19},\"end\":{\"line\":2,\"character\":19}},\"rangeLength\":0,\"text\":\"-\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":20},\"end\":{\"line\":2,\"character\":20}},\"rangeLength\":0,\"text\":\"D\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":21},\"end\":{\"line\":2,\"character\":21}},\"rangeLength\":0,\"text\":\"A\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":22},\"end\":{\"line\":2,\"character\":22}},\"rangeLength\":0,\"text\":\"T\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":23},\"end\":{\"line\":2,\"character\":23}},\"rangeLength\":0,\"text\":\"A\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":24},\"end\":{\"line\":2,\"character\":24}},\"rangeLength\":0,\"text\":\"2\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":25},\"end\":{\"line\":2,\"character\":25}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":26},\"end\":{\"line\":2,\"character\":26}},\"rangeLength\":0,\"text\":\"P\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":27},\"end\":{\"line\":2,\"character\":27}},\"rangeLength\":0,\"text\":\"I\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":28},\"end\":{\"line\":2,\"character\":28}},\"rangeLength\":0,\"text\":\"C\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":29},\"end\":{\"line\":2,\"character\":29}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":30},\"end\":{\"line\":2,\"character\":30}},\"rangeLength\":0,\"text\":\"9\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":2,\"character\":31},\"end\":{\"line\":2,\"character\":31}},\"rangeLength\":0,\"text\":\".\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"},\"text\":\"       01 YMYCOPY.\\r\\n          05 MYCOPY-DATA1 PIC X.\\r\\n          05 MYCOPY-DATA2 PIC 9.\"}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\",\"diagnostics\":[]}}"
+    }
+  ],
+  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/MILLETFL/AppData/Local/Temp/1/tcbl/YMYCOPY8279840513674899845.cee\"}}}",
+  "IsValid": true
+}

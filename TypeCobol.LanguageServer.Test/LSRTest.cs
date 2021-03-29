@@ -496,5 +496,11 @@ namespace TypeCobol.LanguageServer.Test
             LSRTestHelper.Test("CfgDataInformation", LsrTestingOptions.NoLsrTesting, true, useCfg:true);
         }
 
+        [TestMethod]
+        [TestCategory("CopyEdit")]
+        public void CopyEditAddDataItem()
+        {
+            LSRTestHelper.Test("CopyEditAddDataItem", LsrTestingOptions.NoLsrTesting, true);
+        }
     }
 }
