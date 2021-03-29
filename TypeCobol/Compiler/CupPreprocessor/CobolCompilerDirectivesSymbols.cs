@@ -437,6 +437,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int IS = 318;
   public const int END_RECEIVE = 464;
   public const int END_SEARCH = 97;
+  public const int COMMIT = 532;
   public const int PURGE = 483;
   public const int RESET = 57;
   public const int SEQUENTIAL = 403;

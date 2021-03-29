@@ -1,9 +1,9 @@
 --- Diagnostics ---
 Line 20[10,11] <27, Error, Syntax> - Syntax error : mismatched input '42' expecting {alphanumeric literal, symbol, special register, keyword} RuleStack=codeElement>invokeStatement,  OffendingSymbol=[10,11:42]<IntegerLiteral>{42}
-Line 22[26,30] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements} RuleStack=,  OffendingSymbol=[26,30:USING]<USING>
-Line 24[24,32] <27, Error, Syntax> - Syntax error : extraneous input 'RETURNING' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements} RuleStack=,  OffendingSymbol=[24,32:RETURNING]<RETURNING>
-Line 28[27,27] <27, Error, Syntax> - Syntax error : extraneous input 'b' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements} RuleStack=,  OffendingSymbol=[27,27:b]<UserDefinedWord>
-Line 30[24,28] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements} RuleStack=,  OffendingSymbol=[24,28:USING]<USING>
+Line 22[26,30] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[26,30:USING]<USING>
+Line 24[24,32] <27, Error, Syntax> - Syntax error : extraneous input 'RETURNING' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[24,32:RETURNING]<RETURNING>
+Line 28[27,27] <27, Error, Syntax> - Syntax error : extraneous input 'b' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[27,27:b]<UserDefinedWord>
+Line 30[24,28] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[24,28:USING]<USING>
 --- Code Elements ---
 [[InvokeStatement]] [1,6:INVOKE]<INVOKE> --> [19,19:x]<UserDefinedWord>
 

@@ -117,6 +117,8 @@ codeElement:
 	continueStatement |
     entryStatement |
     execStatement |
+	execStatementText |
+	execStatementEnd |
     exitMethodStatement |
     exitProgramStatement |	
 	gobackStatement |
@@ -207,6 +209,9 @@ codeElement:
 	notOnOverflowCondition |
 	onSizeErrorCondition |
 	notOnSizeErrorCondition
+
+// FOR SQL	
+	| commitStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -8241,12 +8246,14 @@ notOnSizeErrorCondition:
 // Coprocessor: The DB2 coprocessor requires that all lines of an EXEC SQL statement,
 // including continuation lines, be coded in columns 12 through 72.
 
-execStatement:
-                 (EXEC | EXECUTE) execTranslatorName 
-                 ExecStatementText* 
-                 execStatementEnd;
+execStatement: (EXEC | EXECUTE) execTranslatorName; 
+
+execStatementText: ExecStatementText;                 
 
 execStatementEnd: END_EXEC;
+
+//FOR SQL
+commitStatement: COMMIT;
 
 // ------------------------------
 // End of DB2 coprocessor

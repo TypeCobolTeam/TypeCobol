@@ -2111,10 +2111,18 @@ namespace TypeCobol.Compiler.Scanner
                 return ScanKeywordOrUserDefinedWord(startIndex);
             }
 
-            // Consume all chars
-            currentIndex = endIndex + 1;
+            Token sqlToken;
+            if (TypeCobol.Compiler.SqlScanner.SqlScanner.IsSqlKeyword(ref currentIndex, startIndex, lastIndex, line, tokensLine, out sqlToken))
+            {
+                return sqlToken;
+            }
+            else
+            {
+                // Consume all chars
+                currentIndex = endIndex + 1;
 
-            return new Token(TokenType.ExecStatementText, startIndex, endIndex, tokensLine);
+                return new Token(TokenType.ExecStatementText, startIndex, endIndex, tokensLine);
+            }
         }
 
         private Token ScanKeywordOrUserDefinedWord(int startIndex)

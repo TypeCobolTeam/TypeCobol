@@ -15,13 +15,13 @@
        INITIALIZE var1 WITH FILLER THEN TO DEFAULT
 
       *KO duplicate keyword FILLER
-Line 18[31,36] <27, Error, Syntax> - Syntax error : extraneous input 'FILLER' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements}
+Line 18[31,36] <27, Error, Syntax> - Syntax error : extraneous input 'FILLER' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
        INITIALIZE var1 FILLER FILLER
       *KO duplicate keyword WITH
 Line 20[29,32] <27, Error, Syntax> - Syntax error : extraneous input 'WITH' expecting FILLER
        INITIALIZE var1 WITH WITH FILLER
       *KO invalid data category
-Line 22[24,29] <27, Error, Syntax> - Syntax error : extraneous input 'BINARY' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements}
+Line 22[24,29] <27, Error, Syntax> - Syntax error : extraneous input 'BINARY' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
        INITIALIZE var1 BINARY TO VALUE
       *KO unexpected keyword DEFAULT
 Line 24[29,35] <27, Error, Syntax> - Syntax error : missing FILLER at 'DEFAULT'

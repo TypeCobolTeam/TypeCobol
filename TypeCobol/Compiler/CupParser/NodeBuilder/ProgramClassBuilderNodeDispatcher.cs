@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.SqlCodeElements.Statement;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
@@ -317,9 +318,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             foreach (var listener in _listeners) listener.StartExecStatement(execStmt);
         }
 
-        public virtual void EndExecStatement()
+        public virtual void OnExecStatementText(ExecStatementText execText)
         {
-            foreach (var listener in _listeners) listener.EndExecStatement();
+            foreach (var listener in _listeners) listener.OnExecStatementText(execText);
+        }
+
+        public virtual void EndExecStatement(ExecStatementEnd end)
+        {
+            foreach (var listener in _listeners) listener.EndExecStatement(end);
         }
 
         public virtual void EnterUseStatement(UseStatement useStatement)
@@ -840,6 +846,12 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         public virtual void OnLevel1Definition(DataDefinition level1Node)
         {
             foreach (var listener in _listeners) listener.OnLevel1Definition(level1Node);
+        }
+
+        // FOR SQL
+        public void OnCommitStatement([NotNull] CommitStatement commit)
+        {
+            foreach (var listener in _listeners) listener.OnCommitStatement(commit);
         }
     }
 }

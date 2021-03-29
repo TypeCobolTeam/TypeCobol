@@ -1,6 +1,6 @@
 --- Diagnostics ---
 Line 6[16,17] <27, Error, Syntax> - Syntax error : mismatched input 'no' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword} RuleStack=codeElement>displayStatement,  OffendingSymbol=[16,17:no]<NO>
-Line 16[48,51] <27, Error, Syntax> - Syntax error : extraneous input 'toto' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements} RuleStack=,  OffendingSymbol=[48,51:toto]<UserDefinedWord>
+Line 16[48,51] <27, Error, Syntax> - Syntax error : extraneous input 'toto' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[48,51:toto]<UserDefinedWord>
 --- Code Elements ---
 [[DisplayStatement]] [8,14:Display]<DISPLAY> --> [16,19:toto]<UserDefinedWord>
 - variables = toto

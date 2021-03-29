@@ -1072,6 +1072,8 @@ namespace TypeCobol.Compiler.CupCommon
                 case TokenType.IN_OUT:
                 case TokenType.STRICT:
                 case TokenType.QUESTION_MARK:
+                // FOR SQL
+                case TokenType.COMMIT:
                     return true;
                 default:
                     return false;

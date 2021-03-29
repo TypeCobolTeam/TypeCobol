@@ -83,6 +83,7 @@ namespace TypeCobol.Compiler.CodeElements
         EntryStatement,
         EvaluateStatement,
         ExecStatement,
+        ExecStatementText,
         ExitMethodStatement,
         ExitProgramStatement,
         ExitStatement,
@@ -146,6 +147,7 @@ namespace TypeCobol.Compiler.CodeElements
         DeleteStatementEnd,
         DivideStatementEnd,
         EvaluateStatementEnd,
+        ExecStatementEnd,
         IfStatementEnd,
         InvokeStatementEnd,
         JsonStatementEnd,
@@ -160,9 +162,14 @@ namespace TypeCobol.Compiler.CodeElements
         SubtractStatementEnd,
         UnstringStatementEnd,
         WriteStatementEnd,
-        XmlStatementEnd, 
+        XmlStatementEnd,
+
+        // FOR SQL
+        //Sql Statements,
+        CommitStatement,
+
         // [TYPECOBOL]
-		LibraryCopy,
+        LibraryCopy,
 		FunctionDeclarationHeader,
 		FunctionDeclarationEnd,
 		ProcedureStyleCall,

@@ -595,6 +595,9 @@ terminal TypeCobol.Compiler.Scanner.Token AT_SIGN;
 terminal TypeCobol.Compiler.Scanner.Token MULTILINES_COMMENTS_START;
 terminal TypeCobol.Compiler.Scanner.Token MULTILINES_COMMENTS_STOP;
 
+// FOR SQL
+terminal TypeCobol.Compiler.Scanner.Token COMMIT;
+
 // Non terminals
 non terminal TypeCobol.Compiler.Scanner.Token numericLiteralToken;
 non terminal TypeCobol.Compiler.Scanner.Token numericFigurativeConstant;

@@ -1,8 +1,8 @@
 --- Diagnostics ---
 Line 1[1,24] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 9[11,17] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'MyType' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[11,17:TYPEDEF]<TYPEDEF>
-Line 17[1,2] <27, Error, Syntax> - Syntax error : extraneous input '01' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements} RuleStack=,  OffendingSymbol=[1,2:01]<IntegerLiteral>{1}
-Line 18[3,4] <27, Error, Syntax> - Syntax error : extraneous input '02' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements} RuleStack=,  OffendingSymbol=[3,4:02]<IntegerLiteral>{2}
+Line 17[1,2] <27, Error, Syntax> - Syntax error : extraneous input '01' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[1,2:01]<IntegerLiteral>{1}
+Line 18[3,4] <27, Error, Syntax> - Syntax error : extraneous input '02' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[3,4:02]<IntegerLiteral>{2}
 
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TypeCobol.Compiler.CodeElements;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.SqlNodes;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
@@ -26,7 +27,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
     /// <summary>
     /// Interface of a Program class builder based
     /// </summary>
-    public interface IProgramClassBuilder
+    public interface IProgramClassBuilder: ISqlNodeBuilder
     {
         /// <summary>
         /// Starts a compilation unit.
@@ -350,7 +351,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// <summary>
         /// End an Exec Statement
         /// </summary>
-        void EndExecStatement();
+        void EndExecStatement(ExecStatementEnd end);
 
         void EnterUseStatement(UseStatement useStatement);
 
@@ -510,6 +511,12 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         /// <param name="stmt">Exec Statement code element</param>
         void OnExecStatement([NotNull] ExecStatement stmt);
+
+        /// <summary>
+        /// Exec Statement Text seen
+        /// </summary>
+        /// <param name="stmt">Exec Statement Text code element</param>
+        void OnExecStatementText([NotNull] ExecStatementText stmt);
 
         #region CompoundStatements
         /// <summary>

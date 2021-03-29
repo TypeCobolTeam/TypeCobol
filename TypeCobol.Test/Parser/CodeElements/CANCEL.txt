@@ -1,5 +1,5 @@
 --- Diagnostics ---
-Line 4[14,19] <27, Error, Syntax> - Syntax error : extraneous input '101010' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements} RuleStack=,  OffendingSymbol=[14,19:101010]<IntegerLiteral>{101010}
+Line 4[14,19] <27, Error, Syntax> - Syntax error : extraneous input '101010' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[14,19:101010]<IntegerLiteral>{101010}
 Line 4[8,9] <27, Error, Syntax> - Syntax error : extraneous input '42' expecting {alphanumeric literal, symbol, special register, keyword} RuleStack=codeElement>cancelStatement,  OffendingSymbol=[8,9:42]<IntegerLiteral>{42}
 --- Code Elements ---
 [[CancelStatement]] [1,6:CANCEL]<CANCEL> --> [8,8:x]<UserDefinedWord>
