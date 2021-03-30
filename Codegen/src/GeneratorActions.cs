@@ -117,7 +117,7 @@ namespace TypeCobol.Codegen
                     if (action.Group != null)
                         groups.Add(action.Group);
                 } catch (Exception e) {
-                    Diagnostic diag = new Diagnostic(MessageCode.ImplementationError, 0, 0, 0, e.Message + "\n" + e.StackTrace);
+                    Diagnostic diag = Diagnostic.FromException(MessageCode.ImplementationError, e);
                     Generator.AddDiagnostic(diag);
                 }
             }
