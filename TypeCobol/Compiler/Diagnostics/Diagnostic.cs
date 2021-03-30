@@ -62,16 +62,9 @@ namespace TypeCobol.Compiler.Diagnostics
 
         [Obsolete]
         public Diagnostic(MessageCode messageCode, int columnStart, int columnEnd, int lineNumber, params object[] messageArgs)
-            : this(DiagnosticMessage.GetFromCode(messageCode), columnStart, columnEnd, lineNumber, messageArgs)
+            : this(DiagnosticMessage.GetFromCode(messageCode), new Position(lineNumber, columnStart, columnEnd), messageArgs)
         {
 
-        }
-
-        [Obsolete]
-        protected Diagnostic(DiagnosticMessage info, int columnStart, int columnEnd, int lineNumber, params object[] messageArgs)
-            : this(info, new Position(lineNumber, columnStart, columnEnd), messageArgs)
-        {
-            
         }
 
         public DiagnosticMessage Info { get; }
