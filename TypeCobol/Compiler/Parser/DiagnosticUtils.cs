@@ -79,4 +79,34 @@ namespace TypeCobol.Compiler.Parser
 
         #endregion
     }
+
+    public static class DiagnosticPositionHelper
+    {
+        public static Diagnostic.Position Position(this IToken token)
+        {
+            if (token == null) return Diagnostic.Position.Default;
+
+            if (token is Token scannerToken) return Position(scannerToken);
+
+            if (token is CodeElement codeElement) return Position(codeElement);
+
+            throw new NotSupportedException($"Unsupported IToken implementation '{token.GetType().FullName}'.");
+        }
+
+        public static Diagnostic.Position Position(this Token token)
+        {
+            if (token == null) return Diagnostic.Position.Default;
+
+            var copyDirective = token is Preprocessor.ImportedToken importedToken ? importedToken.CopyDirective : null;
+            return new Diagnostic.Position(token.Line, token.Column, token.EndColumn, copyDirective);
+        }
+
+        public static Diagnostic.Position Position(this CodeElement codeElement)
+        {
+            if (codeElement == null) return Diagnostic.Position.Default;
+
+            var copyDirective = codeElement.IsInsideCopy() ? codeElement.FirstCopyDirective : null;
+            return new Diagnostic.Position(codeElement.Line, codeElement.StartIndex + 1, codeElement.StopIndex + 1, copyDirective);
+        }
+    }
 }

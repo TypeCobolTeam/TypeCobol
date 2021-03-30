@@ -479,10 +479,10 @@ namespace TypeCobol.Server
                 //Analytics
                 foreach (var diagnostic in diagnostics)
                 {
-                    if (diagnostic.CatchedException != null)
+                    if (diagnostic.CaughtException != null)
                     {
-                        AnalyticsWrapper.Telemetry.TrackException(diagnostic.CatchedException, inputFilePath);
-                        AnalyticsWrapper.Telemetry.SendMail(diagnostic.CatchedException, _configuration.InputFiles,
+                        AnalyticsWrapper.Telemetry.TrackException(diagnostic.CaughtException, inputFilePath);
+                        AnalyticsWrapper.Telemetry.SendMail(diagnostic.CaughtException, _configuration.InputFiles,
                             _configuration.CopyFolders, _configuration.CommandLine);
                     }
                 }

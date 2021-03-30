@@ -101,7 +101,6 @@ namespace TypeCobol.Server {
                 message != null
                 ? (path != null ? new object[2] { message, path } : new object[1] { message })
                 : (path != null ? new object[1] { path } : new object[0]));
-            diag.Message = message;
             AddError(writer, path, diag);
         }
 
