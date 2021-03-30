@@ -1,0 +1,26 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Pgm1.
+       DATA DIVISION.
+       LOCAL-STORAGE SECTION.
+       01 txt   pic X(100).
+       01 l     pic S9(5) comp-5.
+       01 RC    pic 99.
+       PROCEDURE DIVISION.
+      *All 4 calls should resolve to the same overload
+           Call Pgm2::Foo Input txt
+                                l
+                         Output RC.
+
+           Call Pgm2::Foo Input txt
+                     by content l
+                         Output RC.
+
+           Call Pgm2::Foo Input txt
+                      length of txt
+                         Output RC.
+
+           Call Pgm2::Foo Input txt
+           by content length of txt
+                         Output RC.
+
+       END PROGRAM Pgm1.
