@@ -27,23 +27,21 @@ Line 18[23,23] <12, Warning, Tokens> - A blank was missing before character "I" 
 Line 23[21,21] <12, Warning, Tokens> - A blank was missing before character "." in column 22. A blank was assumed.
 Line 23[22,22] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, MethodEnd, ProcedureDivisionHeader, FileSectionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FunctionDeclarationEnd, GlobalStorageSectionHeader}
        data division..
-      *Error: "."was invalid. Scanning was resumed at the next area
-      *       "A" item, level-number or the start of the next clause.
       *Warning: A blank was missing before character "." in column 32.
       *         A blank was assumed.
-Line 28[31,31] <12, Warning, Tokens> - A blank was missing before character "." in column 32. A blank was assumed.
+Line 26[31,31] <12, Warning, Tokens> - A blank was missing before character "." in column 32. A blank was assumed.
        working-storage section..
        01 A pic X.
        01 B pic X.
       
       *Warning: A blank was missing before character "." in column 27.
       *         A blank was assumed.
-Line 34[26,26] <12, Warning, Tokens> - A blank was missing before character "." in column 27. A blank was assumed.
+Line 32[26,26] <12, Warning, Tokens> - A blank was missing before character "." in column 27. A blank was assumed.
        PROCEDURE DIVISION..
       
       *Warning: A blank was missing before character "." in column 24.
       *         A blank was assumed.
-Line 38[23,23] <12, Warning, Tokens> - A blank was missing before character "." in column 24. A blank was assumed.
+Line 36[23,23] <12, Warning, Tokens> - A blank was missing before character "." in column 24. A blank was assumed.
            move A to B..
       
       *Warning: A blank was missing before character "." in column 24.
@@ -52,16 +50,13 @@ Line 38[23,23] <12, Warning, Tokens> - A blank was missing before character "." 
       *         A blank was assumed.
       *Warning: A blank was missing before character "m" in column 26.
       *         A blank was assumed.
-Line 46[23,23] <12, Warning, Tokens> - A blank was missing before character "." in column 24. A blank was assumed.
-Line 46[24,24] <12, Warning, Tokens> - A blank was missing before character "." in column 25. A blank was assumed.
-Line 46[25,25] <12, Warning, Tokens> - A blank was missing before character "m" in column 26. A blank was assumed.
+Line 44[23,23] <12, Warning, Tokens> - A blank was missing before character "." in column 24. A blank was assumed.
+Line 44[24,24] <12, Warning, Tokens> - A blank was missing before character "." in column 25. A blank was assumed.
+Line 44[25,25] <12, Warning, Tokens> - A blank was missing before character "m" in column 26. A blank was assumed.
            move A to B...move A to B.
       
            .
-      *Error: Expected end of source file or the beginning of a
-      *       separately compiled program, but found".".  Skipped to end
-      *       of source file or the beginning of the next program.
       *Warning: A blank was missing before character "." in column 24.
       *         A blank was assumed.
-Line 54[23,23] <12, Warning, Tokens> - A blank was missing before character "." in column 24. A blank was assumed.
+Line 49[23,23] <12, Warning, Tokens> - A blank was missing before character "." in column 24. A blank was assumed.
        END PROGRAM Pgm..

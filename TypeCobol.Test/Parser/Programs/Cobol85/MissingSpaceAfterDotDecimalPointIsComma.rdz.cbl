@@ -24,8 +24,6 @@
       *Warning: A blank was missing before character "." in column 22.
       *         A blank was assumed.
        data division..
-      *Error: "."was invalid. Scanning was resumed at the next area
-      *       "A" item, level-number or the start of the next clause.
       *Warning: A blank was missing before character "." in column 32.
       *         A blank was assumed.
        working-storage section..
@@ -49,9 +47,6 @@
            move A to B...move A to B.
       
            .
-      *Error: Expected end of source file or the beginning of a
-      *       separately compiled program, but found".".  Skipped to end
-      *       of source file or the beginning of the next program.
       *Warning: A blank was missing before character "." in column 24.
       *         A blank was assumed.
        END PROGRAM Pgm..
