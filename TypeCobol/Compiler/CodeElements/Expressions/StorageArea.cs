@@ -488,9 +488,15 @@ namespace TypeCobol.Compiler.CodeElements
                                 return _Alphanumeric;
                             }
                         }
-                        else
+                        else if (variable.StorageArea != null)
                         {
-                            if (node?.GetDataDefinitionFromStorageAreaDictionary(variable.StorageArea) is DataDescription data)
+                            var storageArea = variable.StorageArea;
+                            if (storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)
+                            {
+                                //Special case LENGTH OF / ADDRESS OF
+                                return _Numeric;
+                            }
+                            if (node?.GetDataDefinitionFromStorageAreaDictionary(storageArea) is DataDescription data)
                             {
                                 return new TypeInfo() {DataType = data.DataType, TypeDefinition = data.TypeDefinition};
                             }

@@ -105,6 +105,7 @@ namespace CLI.Test
             CLITestHelper.Test("dependenciesSignatureOverload", ReturnCode.Success);
             CLITestHelper.Test("dependenciesSignatureOverload_2", ReturnCode.Success);
             CLITestHelper.Test("dependenciesSignatureOverload_3", ReturnCode.ParsingDiagnostics);
+            CLITestHelper.Test("dependenciesSignatureOverload_4", ReturnCode.Success);
         }
 
         [TestMethod]
