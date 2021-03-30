@@ -1,4 +1,4 @@
-﻿** Document path PgmReplacePartialTC **
+﻿** Document path PgmReplacePartial **
 -- Line 1 --
 [8,9:01]<IntegerLiteral>{1}
 [11,15::TAG:]<PartialCobolWord>
