@@ -2409,7 +2409,7 @@ namespace TypeCobol.Compiler.Scanner
             if (line.Length > index && line[index] == ':')
             {
                 if (compilerOptions.IsCobolLanguage || !(line.Length > index + 1 && line[index + 1] == ':'))
-                {//For Cobol or if ':' is not followed par ':'. Because in TypeCobol we consider :: to be the qualifier symbol.
+                {//For Cobol or if ':' is not followed by ':'. Because in TypeCobol we consider :: to be the qualifier symbol.
                     patternEndIndex = index;
                     return true;
                 }
