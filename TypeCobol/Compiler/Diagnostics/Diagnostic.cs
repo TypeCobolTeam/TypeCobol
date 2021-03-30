@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.CustomExceptions;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -11,12 +13,13 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         public class Position
         {
-            public static readonly Position Default = new Position(1, 0, 0);
+            public static readonly Position Default = new Position(0, 0, 0);
 
             private readonly string _messageAdapter;
 
             public Position(int line, int columnStart, int columnEnd, CopyDirective includingDirective = null)
             {
+                line = Math.Max(0, line);
                 if (includingDirective != null)
                 {
                     Line = includingDirective.COPYToken.Line;
@@ -45,6 +48,19 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
+        public static Diagnostic FromException(MessageCode messageCode, [NotNull] Exception exception)
+        {
+            string message = exception.Message + Environment.NewLine + exception.StackTrace;
+            return new Diagnostic(messageCode, Position.Default, message);
+        }
+
+        public static Diagnostic FromTypeCobolException([NotNull] TypeCobolException typeCobolException)
+        {
+            string message = typeCobolException.Message + Environment.NewLine + typeCobolException.StackTrace;
+            var position = new Position(typeCobolException.LineNumber, typeCobolException.ColumnStartIndex, typeCobolException.ColumnEndIndex);
+            return new Diagnostic(typeCobolException.MessageCode, position, message);
+        }
+
         public Diagnostic(MessageCode messageCode, Position position, params object[] messageArgs)
             : this(DiagnosticMessage.GetFromCode(messageCode), position, messageArgs)
         {
@@ -54,9 +70,8 @@ namespace TypeCobol.Compiler.Diagnostics
         protected Diagnostic(DiagnosticMessage info, Position position, params object[] messageArgs)
         {
             Info = info;
-            messageArgs = messageArgs ?? new object[0];
-            CaughtException = messageArgs.OfType<Exception>().FirstOrDefault();
-            _messageArgs = messageArgs;
+            _messageArgs = messageArgs ?? new object[0];
+            CaughtException = _messageArgs.OfType<Exception>().FirstOrDefault();
             Relocate(position);
         }
 

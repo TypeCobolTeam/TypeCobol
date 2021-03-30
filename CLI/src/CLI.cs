@@ -72,7 +72,7 @@ namespace TypeCobol.Server
                 AnalyticsWrapper.Telemetry.TrackException(typeCobolException, typeCobolException.Path);
                 AnalyticsWrapper.Telemetry.SendMail(unexpected, config.InputFiles, config.CopyFolders, config.CommandLine);
 
-                Server.AddError(errorWriter, MessageCode.SyntaxErrorInParser, unexpected.Message + Environment.NewLine + unexpected.StackTrace, string.Empty);
+                Server.AddError(errorWriter, string.Empty, Diagnostic.FromException(MessageCode.SyntaxErrorInParser, unexpected));
                 returnCode = ReturnCode.FatalError;
             }
 
@@ -504,38 +504,15 @@ namespace TypeCobol.Server
 
                         if (generationException.Logged)
                         {
-                            Server.AddError(_errorWriter, generationException.MessageCode,
-                                generationException.ColumnStartIndex,
-                                generationException.ColumnEndIndex, generationException.LineNumber,
-                                generationException.Message + "\n" + generationException.StackTrace,
-                                generationException.Path);
+                            Server.AddError(_errorWriter, generationException.Path, Diagnostic.FromTypeCobolException(generationException));
                         }
                     }
                 }
             }
 
-            //Check diagnostics in dependencies
-            if (_dependenciesDiagnostics.Count > 0)
-            {
-                foreach (var diagnosticsErrorEvent in _dependenciesDiagnostics)
-                {
-                    Server.AddError(_errorWriter, diagnosticsErrorEvent.Path, diagnosticsErrorEvent.Diagnostic);
-                }
-                UpdateReturnCode(_dependenciesDiagnostics.Select(dee => dee.Diagnostic).ToList());
-            }
-
-            //Check diagnostics in intrinsics
-            if (_intrinsicsDiagnostics.Count > 0)
-            {
-                foreach (var diagnosticsErrorEvent in _intrinsicsDiagnostics)
-                {
-                    var diagnostic = diagnosticsErrorEvent.Diagnostic;
-                    Server.AddError(_errorWriter, MessageCode.IntrinsicLoading, diagnostic.ColumnStart, diagnostic.ColumnEnd,
-                        diagnostic.Line, "Error while parsing " + diagnosticsErrorEvent.Path + ": " + diagnostic,
-                        diagnosticsErrorEvent.Path);
-                }
-                UpdateReturnCode(_intrinsicsDiagnostics.Select(dee => dee.Diagnostic).ToList());
-            }
+            //Check diagnostics in dependencies, then intrinsics
+            CheckExternalDiagnostics(_dependenciesDiagnostics);
+            CheckExternalDiagnostics(_intrinsicsDiagnostics);
 
             //Always return MissingCopy when there is at least one missing copy because it could help the developer to correct several parsing errors at once
             if (_missingCopies.Count > 0)
@@ -555,6 +532,19 @@ namespace TypeCobol.Server
                 if (returnCode < ReturnCode.ParsingDiagnostics && diagnostics.Any(diagnostic => diagnostic.Info.Severity == Severity.Error))
                 {
                     returnCode = ReturnCode.ParsingDiagnostics;
+                }
+            }
+
+            //Local function to report diagnostics either from intrinsics or dependencies
+            void CheckExternalDiagnostics(IList<DiagnosticsErrorEvent> externalDiagEvents)
+            {
+                if (externalDiagEvents.Count > 0)
+                {
+                    foreach (var diagnosticsErrorEvent in externalDiagEvents)
+                    {
+                        Server.AddError(_errorWriter, diagnosticsErrorEvent.Path, diagnosticsErrorEvent.Diagnostic);
+                    }
+                    UpdateReturnCode(externalDiagEvents.Select(dee => dee.Diagnostic).ToList());
                 }
             }
         }
