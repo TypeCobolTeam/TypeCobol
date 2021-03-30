@@ -64,7 +64,7 @@ namespace TypeCobol.Tools.Options_Config
         /// <summary>
         /// The Cpy Copy names file
         /// </summary>
-        public string CpyCopyNamesMapFilePath;
+        public string CpyCopyNamesMapFilePath = DefaultCopyNameFile;
 #endif
 
         public static Dictionary<ReturnCode, string> ErrorMessages = new Dictionary<ReturnCode, string>()
@@ -391,13 +391,6 @@ namespace TypeCobol.Tools.Options_Config
             //CustomAnalyzers
             VerifFiles(config.CustomAnalyzerFiles, ReturnCode.CustomAnalyzerFileError, errorStack);
 
-#if EUROINFO_RULES
-            //CpyCopyNamesMapFilePath
-            if (config.CpyCopyNamesMapFilePath != null)
-                VerifFiles(new List<string>() { config.CpyCopyNamesMapFilePath }, ReturnCode.CopyNameMapFileError, errorStack);
-            else
-                config.CpyCopyNamesMapFilePath = TypeCobolConfiguration.DefaultCopyNameFile;
-#endif
             return errorStack;
         }
 

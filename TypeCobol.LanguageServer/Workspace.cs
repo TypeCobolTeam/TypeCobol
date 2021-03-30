@@ -132,24 +132,7 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// The Cpy Copy names file
         /// </summary>
-        public string CpyCopyNamesMapFilePath
-        {
-            get
-            {
-                return this.CompilationProject.CompilationOptions.CpyCopyNamesMapFilePath;
-            }
-            set
-            {
-                try
-                {
-                    this.CompilationProject.CompilationOptions.CpyCopyNamesMapFilePath = value;
-                }
-                catch (Exception e)
-                {
-                    this._Logger(TypeCobolConfiguration.ErrorMessages[ReturnCode.CopyNameMapFileError] + ":" + e.Message, null);
-                }
-            }
-        }
+        public string CpyCopyNamesMapFilePath{get; set;}
 #endif
 
         /// <summary>
@@ -526,13 +509,10 @@ namespace TypeCobol.LanguageServer
             if (Configuration.ExecToStep >= ExecutionStep.Generate)
                 Configuration.ExecToStep = ExecutionStep.QualityCheck; //Language Server does not support Cobol Generation for now
 
-            var typeCobolOptions = new TypeCobolOptions(Configuration);
 #if EUROINFO_RULES
-            ReturnCode optionRetCode = typeCobolOptions.OptionStatusCode;
-            if (optionRetCode == ReturnCode.CopyNameMapFileError) { 
-                this._Logger(TypeCobolConfiguration.ErrorMessages[ReturnCode.CopyNameMapFileError] + ":" + typeCobolOptions.CpyCopyNamesMapFilePath, null);
-            }
+            Configuration.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath ?? Configuration.CpyCopyNamesMapFilePath;
 #endif
+            var typeCobolOptions = new TypeCobolOptions(Configuration);
             //Configure CFG/DFA analyzer + external analyzers if any
             var compositeAnalyzerProvider = new CompositeAnalyzerProvider();
             compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(TypeCobolLanguageServer.lspcfgId, Configuration.CfgBuildingMode));

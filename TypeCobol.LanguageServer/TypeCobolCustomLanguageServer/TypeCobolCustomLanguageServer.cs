@@ -59,16 +59,6 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                 this.UseCfgDfaDataRefresh = UseCfgMode.AsContent;
             else
                 this.UseCfgDfaDataRefresh = UseCfgMode.No;
-#if EUROINFO_RULES
-            if (!options.Contains("-ycpl") && this.CpyCopyNamesMapFilePath != null)
-            {
-                string[] newOptions = new string[options.Length + 2];
-                Array.Copy(options, newOptions, options.Length);
-                newOptions[options.Length] = "-ycpl";
-                newOptions[options.Length + 1] = this.CpyCopyNamesMapFilePath;
-                options = newOptions;
-            }
-#endif
             base.OnDidChangeConfiguration(options);
         }
 

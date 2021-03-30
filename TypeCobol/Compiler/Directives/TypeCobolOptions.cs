@@ -37,15 +37,6 @@ namespace TypeCobol.Compiler.Directives
             set { _useEuroInformationLegacyReplacingSyntax = value; }
         }
 
-        /// <summary>
-        /// Status code of these option.
-        /// </summary>
-        public ReturnCode OptionStatusCode
-        {
-            get;
-            private set;
-        }
-
 #if EUROINFO_RULES
         /// <summary>
         /// The Instance of the Cpy Copy names Map
@@ -108,7 +99,6 @@ namespace TypeCobol.Compiler.Directives
 
         public TypeCobolOptions(TypeCobolConfiguration config)
         {
-            OptionStatusCode = ReturnCode.Success;
             HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null;
             ExecToStep = config.ExecToStep;
             UseAntlrProgramParsing = config.UseAntlrProgramParsing;
@@ -121,14 +111,12 @@ namespace TypeCobol.Compiler.Directives
             } catch(System.Exception e) {
                 //Fail to read the Copy File Name, Log
                 System.IO.File.AppendAllText(config.LogFile != null ? config.LogFile : TypeCobolConfiguration.DefaultLogFileName, e.ToString());
-                OptionStatusCode = ReturnCode.CopyNameMapFileError;
             }
 #endif
         }
 
         public TypeCobolOptions()
         {
-            OptionStatusCode = ReturnCode.Success;
             // default values for checks
             TypeCobolCheckOptionsInitializer.SetDefaultValues(this);
         }
