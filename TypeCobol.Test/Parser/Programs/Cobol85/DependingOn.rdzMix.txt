@@ -64,4 +64,4 @@ Symbols found: StringStatement::MyGroup5::MySubGroup5::MySubSubGroup51::MyCounte
 000000 PROCEDURE DIVISION.
 000000     move 1 to MyCounter
 000000     .
-000000 END PROGRAM MYPGM.
+000000 END PROGRAM StringStatement.

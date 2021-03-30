@@ -107,4 +107,4 @@
        PROCEDURE DIVISION.
            move 1 to MyCounter
            .
-       END PROGRAM MYPGM.
+       END PROGRAM DependOnPgm.
