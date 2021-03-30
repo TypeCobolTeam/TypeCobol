@@ -1,3 +1,3 @@
 ReturnCode=ParsingDiagnostics_
 1 error in "input\QualifiedVarSubsriptAccess.rdz.tcbl":
-Line 12[47,47] <27, Error, Syntax> - Syntax error : extraneous input '(' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements}
+Line 13[47,47] <27, Error, Syntax> - Syntax error : extraneous input '(' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements}

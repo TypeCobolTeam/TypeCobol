@@ -8,7 +8,8 @@
        PROCEDURE DIVISION.
       *Ok
              Move Low-Values       To StringT (1 : LengthT)
-      *Ko syntax error
+      *Ko syntax error, in a Pure Cobol source file
+      *Ok for TypeCobol
              Move Low-Values       To StringT (1:StringT::LengthT)
              GOBACK
              .
