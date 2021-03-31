@@ -1,6 +1,3 @@
---- Diagnostics ---
-Line 1[1,21] <37, Warning, General> - Warning: "END PROGRAM" is missing.
-
 --- Program ---
 PROGRAM: Tables common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
