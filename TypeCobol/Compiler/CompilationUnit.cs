@@ -348,7 +348,7 @@ namespace TypeCobol.Compiler
 
                         void ReportAnalyzerException(string analyzer, Exception exception)
                         {
-                            var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, 0, 0, 0, analyzer, exception.Message, exception);
+                            var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, Diagnostic.Position.Default, analyzer, exception.Message, exception);
                             diagnostics.Add(diagnostic);
                         }
                     }

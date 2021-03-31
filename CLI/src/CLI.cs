@@ -72,7 +72,8 @@ namespace TypeCobol.Server
                 AnalyticsWrapper.Telemetry.TrackException(typeCobolException, typeCobolException.Path);
                 AnalyticsWrapper.Telemetry.SendMail(unexpected, config.InputFiles, config.CopyFolders, config.CommandLine);
 
-                Server.AddError(errorWriter, string.Empty, Diagnostic.FromException(MessageCode.SyntaxErrorInParser, unexpected));
+                string message = unexpected.Message + Environment.NewLine + unexpected.StackTrace;
+                Server.AddError(errorWriter, string.Empty, new Diagnostic(MessageCode.SyntaxErrorInParser, Diagnostic.Position.Default, message));
                 returnCode = ReturnCode.FatalError;
             }
 
@@ -504,7 +505,9 @@ namespace TypeCobol.Server
 
                         if (generationException.Logged)
                         {
-                            Server.AddError(_errorWriter, generationException.Path, Diagnostic.FromTypeCobolException(generationException));
+                            string message = generationException.Message + Environment.NewLine + generationException.StackTrace;
+                            var position = new Diagnostic.Position(generationException.LineNumber, generationException.ColumnStartIndex, generationException.ColumnEndIndex, null);
+                            Server.AddError(_errorWriter, generationException.Path, new Diagnostic(generationException.MessageCode, position, message));
                         }
                     }
                 }

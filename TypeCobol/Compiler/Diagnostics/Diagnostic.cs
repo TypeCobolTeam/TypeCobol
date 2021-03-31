@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
-using JetBrains.Annotations;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.CustomExceptions;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -13,11 +11,11 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         public class Position
         {
-            public static readonly Position Default = new Position(0, 0, 0);
+            public static readonly Position Default = new Position(0, 0, 0, null);
 
             private readonly string _messageAdapter;
 
-            public Position(int line, int columnStart, int columnEnd, CopyDirective includingDirective = null)
+            public Position(int line, int columnStart, int columnEnd, CopyDirective includingDirective)
             {
                 line = Math.Max(0, line);
                 if (includingDirective != null)
@@ -48,19 +46,6 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-        public static Diagnostic FromException(MessageCode messageCode, [NotNull] Exception exception)
-        {
-            string message = exception.Message + Environment.NewLine + exception.StackTrace;
-            return new Diagnostic(messageCode, Position.Default, message);
-        }
-
-        public static Diagnostic FromTypeCobolException([NotNull] TypeCobolException typeCobolException)
-        {
-            string message = typeCobolException.Message + Environment.NewLine + typeCobolException.StackTrace;
-            var position = new Position(typeCobolException.LineNumber, typeCobolException.ColumnStartIndex, typeCobolException.ColumnEndIndex);
-            return new Diagnostic(typeCobolException.MessageCode, position, message);
-        }
-
         public Diagnostic(MessageCode messageCode, Position position, params object[] messageArgs)
             : this(DiagnosticMessage.GetFromCode(messageCode), position, messageArgs)
         {
@@ -70,32 +55,10 @@ namespace TypeCobol.Compiler.Diagnostics
         protected Diagnostic(DiagnosticMessage info, Position position, params object[] messageArgs)
         {
             Info = info;
+
             _messageArgs = messageArgs ?? new object[0];
             CaughtException = _messageArgs.OfType<Exception>().FirstOrDefault();
-            Relocate(position);
-        }
 
-        [Obsolete]
-        public Diagnostic(MessageCode messageCode, int columnStart, int columnEnd, int lineNumber, params object[] messageArgs)
-            : this(DiagnosticMessage.GetFromCode(messageCode), new Position(lineNumber, columnStart, columnEnd), messageArgs)
-        {
-
-        }
-
-        public DiagnosticMessage Info { get; }
-
-        public int Line { get; internal set; } //TODO private setter
-        public int ColumnStart { get; private set; }
-        public int ColumnEnd { get; private set; }
-
-        public string Message { get; internal set; } //TODO private setter
-
-        private readonly object[] _messageArgs;
-        public object[] MessageArgs => _messageArgs; //TODO remove this
-        public Exception CaughtException { get; }
-
-        public void Relocate(Position position)
-        {
             position = position ?? Position.Default;
             Line = position.Line;
             ColumnStart = position.ColumnStart;
@@ -103,7 +66,26 @@ namespace TypeCobol.Compiler.Diagnostics
             Message = position.AdaptMessage(string.Format(Info.MessageTemplate, _messageArgs));
         }
 
-         /// <summary>
+        [Obsolete]
+        public Diagnostic(MessageCode messageCode, int columnStart, int columnEnd, int lineNumber, params object[] messageArgs)
+            : this(DiagnosticMessage.GetFromCode(messageCode), new Position(lineNumber, columnStart, columnEnd, null), messageArgs)
+        {
+
+        }
+
+        public DiagnosticMessage Info { get; }
+
+        public int Line { get; internal set; } //TODO private setter ?
+        public int ColumnStart { get; }
+        public int ColumnEnd { get; }
+
+        public string Message { get; internal set; } //TODO private setter ?
+
+        private readonly object[] _messageArgs;
+        public object[] MessageArgs => _messageArgs; //TODO remove this ?
+        public Exception CaughtException { get; }
+
+        /// <summary>
         /// Text representation of a diagnostic for debugging or test purposes
         /// </summary>
         public override string ToString()
