@@ -20,7 +20,7 @@ Line 85[3,11] <28, Error, Directives> - Failed to load COPY : Cobol source file 
 Line 88[3,11] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: x
 Line 92[3,11] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: x
 Line 96[3,11] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: x
-Line 100[3,9] <27, Error, Syntax> - Syntax error : mismatched input 'PERFORM' expecting  expecting {EOF, '.', END-EXEC, IN, OF, REPLACING, SUPPRESS}
+Line 100[3,9] <27, Error, Syntax> - Syntax error : mismatched input 'PERFORM' expecting  expecting {EOF, '.', END-EXEC, IN, OF, REPLACING, SUPPRESS} OffendingSymbol=[3,9:PERFORM]<PERFORM>
 Line 106[1,8] <37, Warning, General> - Warning: Paragraph 'BASIS02' is empty
 Line 108[1,8] <37, Warning, General> - Warning: Paragraph 'BASIS03' is empty
 Line 111[1,8] <37, Warning, General> - Warning: Paragraph 'BASIS04' is empty
