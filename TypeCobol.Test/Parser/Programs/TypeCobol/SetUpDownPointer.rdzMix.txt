@@ -1,5 +1,5 @@
 ﻿       IDENTIFICATION DIVISION.
-       PROGRAM-ID. GlobalStorageTest.
+       PROGRAM-ID. MainProgram.
 
        DATA DIVISION.
 
@@ -16,4 +16,4 @@ Line 14[8,28] <27, Error, Syntax> - Syntax error : Pointer 'myPointer' belongs t
        SET myPointer UP BY 1.
       
 
-       END PROGRAM StackedProg.
+       END PROGRAM MainProgram.

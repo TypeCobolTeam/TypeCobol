@@ -26,10 +26,5 @@
       <message>Syntax error : extraneous input '.' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader}</message>
       <info severity="Error" code="27" source="Find the syntax diagram describing the statement in error in the language reference" />
     </diagnostic>
-    <diagnostic file-index="2">
-      <range line-start="1" column-start="8" line-end="1" column-end="28" />
-      <message>Warning: "END PROGRAM" is missing.</message>
-      <info severity="Warning" code="37" source="" />
-    </diagnostic>
   </diagnostics>
 </build>

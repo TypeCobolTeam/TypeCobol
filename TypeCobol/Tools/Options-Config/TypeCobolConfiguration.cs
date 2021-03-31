@@ -39,7 +39,9 @@ namespace TypeCobol.Tools.Options_Config
 #else
         public bool UseEuroInformationLegacyReplacingSyntax = false;
 #endif
+        // Checks
         public TypeCobolCheckOption CheckEndAlignment { get; set; }
+        public TypeCobolCheckOption CheckEndProgram { get; set; }
 
         public List<string> Copies = new List<string>();
         public List<string> Dependencies = new List<string>();
@@ -202,6 +204,7 @@ namespace TypeCobol.Tools.Options_Config
     public interface ITypeCobolCheckOptions
     {
         TypeCobolCheckOption CheckEndAlignment { get; set; }
+        TypeCobolCheckOption CheckEndProgram { get; set; }
     }
 
     public static class TypeCobolCheckOptionsInitializer
@@ -209,6 +212,7 @@ namespace TypeCobol.Tools.Options_Config
         public static void SetDefaultValues(ITypeCobolCheckOptions checkOptions)
         {
             checkOptions.CheckEndAlignment = new TypeCobolCheckOption(Severity.Warning);
+            checkOptions.CheckEndProgram = new TypeCobolCheckOption(Severity.Error);
         }
     }
 
@@ -241,6 +245,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing.", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false },
                 { "glm|genlinemap=", "{PATH} to an output file where line mapping will be generated.", v => typeCobolConfig.LineMapFiles.Add(v) },
                 { "diag.cea|diagnostic.checkEndAlignment=", "Indicate level of check end aligment: warning, error, info, ignore.", v => typeCobolConfig.CheckEndAlignment = TypeCobolCheckOption.Parse(v) },
+                { "diag.cep|diagnostic.checkEndProgram=", "Indicate level of check end program: warning, error, info, ignore.", v => typeCobolConfig.CheckEndProgram = TypeCobolCheckOption.Parse(v) },
                 { "log|logfilepath=", "{PATH} to TypeCobol.CLI.log log file", v => typeCobolConfig.LogFile = Path.Combine(v, TypeCobolConfiguration.DefaultLogFileName)},
                 { "cfg|cfgbuild", "Standard CFG build.", v => typeCobolConfig.CfgBuildingMode = CfgBuildingMode.Standard},
                 { "ca|customanalyzer=", "{PATH} to a custom DLL file containing code analyzers. This option can be specified more than once.", v => typeCobolConfig.CustomAnalyzerFiles.Add(v) }

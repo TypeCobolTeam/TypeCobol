@@ -1,5 +1,5 @@
 ﻿       IDENTIFICATION DIVISION.
-       PROGRAM-ID. GlobalStorageTest.
+       PROGRAM-ID. MainProgram.
 
        DATA DIVISION.
 
@@ -14,4 +14,4 @@
        SET myPointer UP BY 1.
       
 
-       END PROGRAM StackedProg.
+       END PROGRAM MainProgram.

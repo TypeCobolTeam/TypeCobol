@@ -7,6 +7,7 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Parser.Generated;
 
@@ -936,22 +937,6 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
     }
-
-    public class ProgramChecker
-    {
-        public static void OnNode(Program node)
-        {
-            node.SetFlag(Node.Flag.MissingEndProgram, !(node.Children.LastOrDefault() is End));
-
-            if (node.IsFlagSet(Node.Flag.MissingEndProgram))
-            {
-                DiagnosticUtils.AddError(node,
-                    "\"END PROGRAM\" is missing.", MessageCode.Warning);
-            }
-
-        }
-    }
-
 
     public class GlobalStorageSectionChecker
     {

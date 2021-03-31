@@ -21,7 +21,6 @@ Line 113[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TYPE
 Line 124[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TYPE-GRP-STRONG' must be marked as STRICT.
 Line 149[30,36] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'GroupWithLevel77JustAfter' must be marked as STRICT.
 Line 156[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'strongType1' must be marked as STRICT.
-Line 1[1,24] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 36[1,31] <30, Error, Semantics> - Semantic error: TYPE 'TypeNotDefined' is not referenced
 Line 51[1,41] <30, Error, Semantics> - Semantic error: TYPE 'ClausesOrderKO' is not referenced
 Line 57[1,32] <30, Error, Semantics> - Semantic error: TYPEDEF 'NoDescription' has no description.
