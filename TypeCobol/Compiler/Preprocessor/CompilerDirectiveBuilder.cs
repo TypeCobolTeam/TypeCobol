@@ -12,6 +12,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor.Generated;
 using TypeCobol.Compiler.Scanner;
 using Antlr4.Runtime.Misc;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Tools;
 
 namespace TypeCobol.Compiler.Preprocessor
@@ -104,10 +105,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 else
                 {
                     Token errorToken = ParseTreeUtils.GetTokenFromTerminalNode(context.enumeratedValue1().UserDefinedWord());
-                    Diagnostic diag = new Diagnostic(
-                        MessageCode.InvalidControlCblCompilerStatementOption, 
-                        errorToken.Column, errorToken.EndColumn,
-                        errorToken.Line, option);
+                    Diagnostic diag = new Diagnostic(MessageCode.InvalidControlCblCompilerStatementOption, errorToken.Position(), option);
                     CompilerDirective.AddDiagnostic(diag);
                 }
             }
@@ -217,8 +215,7 @@ namespace TypeCobol.Compiler.Preprocessor
             if (copy.Suppress)
             {
                 Token suppress = copy.COPYToken;
-                Diagnostic error = new Diagnostic(MessageCode.Warning, suppress.Column, suppress.EndColumn,
-                    suppress.Line, "\"COPY SUPPRESS\" should not be used");
+                Diagnostic error = new Diagnostic(MessageCode.Warning, suppress.Position(), "\"COPY SUPPRESS\" should not be used");
                 CompilerDirective.AddDiagnostic(error);
             }
 
@@ -433,10 +430,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 insertDirective.SequenceNumber = (int)ParseTreeUtils.GetIntegerLiteral(context.sequenceNumber().IntegerLiteral());
                 if (insertDirective.SequenceNumber < 0) {
                     Token errorToken = ParseTreeUtils.GetTokenFromTerminalNode(context.sequenceNumber().IntegerLiteral());
-                    Diagnostic error = new Diagnostic(
-                        MessageCode.InvalidNumericLiteralFormat,
-                        errorToken.Column, errorToken.EndColumn,
-                        errorToken.Line, "TODO");
+                    Diagnostic error = new Diagnostic(MessageCode.InvalidNumericLiteralFormat, errorToken.Position());
                     CompilerDirective.AddDiagnostic(error);//TODO proper diagnostic error
                 }
             }
