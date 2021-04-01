@@ -2408,13 +2408,13 @@ namespace TypeCobol.Compiler.Scanner
             // next character must be ':'
             if (line.Length > index && line[index] == ':')
             {
-                patternEndIndex = index;
-                return true;
+                if (compilerOptions.IsCobolLanguage || !(line.Length > index + 1 && line[index + 1] == ':'))
+                {//For Cobol or if ':' is not followed by ':'. Because in TypeCobol we consider :: to be the qualifier symbol.
+                    patternEndIndex = index;
+                    return true;
+                }
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         // :PREFIX:-NAME or NAME-:SUFFIX: or :TAG:
