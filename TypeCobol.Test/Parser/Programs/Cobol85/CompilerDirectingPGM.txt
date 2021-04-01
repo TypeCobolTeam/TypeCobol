@@ -1,5 +1,4 @@
 --- Diagnostics ---
-Line 1[1,33] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 6[1,14] <37, Warning, General> - Warning: Paragraph 'procedurename' is empty
 Line 13[1,8] <37, Warning, General> - Warning: Paragraph 'SKIP-02' is empty
 Line 15[1,8] <37, Warning, General> - Warning: Paragraph 'SKIP-03' is empty

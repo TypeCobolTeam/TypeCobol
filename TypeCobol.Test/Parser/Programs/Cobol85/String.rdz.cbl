@@ -13,4 +13,4 @@
 000000     string MyVar ' ' MyVar
 002620           delimited by size into Result
 000000     .
-000000 END PROGRAM MYPGM.
+000000 END PROGRAM StringStatement.

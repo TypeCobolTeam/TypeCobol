@@ -1,5 +1,4 @@
 --- Diagnostics ---
-Line 1[8,19] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 339[12,15] <37, Warning, General> - Warning: GOBACK should be used instead of STOP RUN OffendingSymbol=[12,15:STOP]<STOP>
 Line 346[12,38] <37, Warning, General> - Warning: "end-if" is missing
 Line 350[12,37] <37, Warning, General> - Warning: "end-if" is missing

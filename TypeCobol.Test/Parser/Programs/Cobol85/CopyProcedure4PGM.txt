@@ -1,5 +1,4 @@
 --- Diagnostics ---
-Line 1[1,22] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 4[1,13] <30, Error, Semantics> - Error in copy 'CPYProc' at line 1 : Semantic error: Symbol a is not referenced OffendingSymbol=[6,6:a]<UserDefinedWord> in COPY CPYProc
 Line 4[1,13] <30, Error, Semantics> - Error in copy 'CPYProc' at line 1 : Semantic error: Symbol b is not referenced OffendingSymbol=[11,11:b]<UserDefinedWord> in COPY CPYProc
 Line 4[1,13] <30, Error, Semantics> - Error in copy 'CPYProc' at line 2 : Semantic error: Symbol a is not referenced OffendingSymbol=[6,6:a]<UserDefinedWord> in COPY CPYProc

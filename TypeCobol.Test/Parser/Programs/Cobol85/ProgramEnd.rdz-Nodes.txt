@@ -1,0 +1,10 @@
+--- Nodes ---
+?
+  Main
+    Nested0
+      end
+    Nested1
+      end
+    end
+  Stacked1
+    end

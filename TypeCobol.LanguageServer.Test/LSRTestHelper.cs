@@ -56,7 +56,7 @@ namespace TypeCobol.LanguageServer.Test
                 new DirectoryInfo(testWorkingDirectory + Path.DirectorySeparatorChar + "input" +
                                   Path.DirectorySeparatorChar + copyFolder).FullName.Replace(@"\", @"\\"));
             String testOptions = "";
-            testOptions += useOutline ? ",\"-ol\"" : "";
+            testOptions += useOutline ? "" : ",\"-dol\"";
             testOptions += useCfg ? ",\"-cfg=AsContent\"" : "";
             configFileContent = configFileContent.Replace("{TestOptions}", testOptions);
 

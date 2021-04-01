@@ -1,5 +1,4 @@
 --- Diagnostics ---
-Line 1[1,24] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 15[6,16] <30, Error, Semantics> - Semantic error: Symbol check-value is not referenced OffendingSymbol=[6,16:check-value]<UserDefinedWord>
 Line 18[4,14] <30, Error, Semantics> - Semantic error: Symbol check-false is not referenced OffendingSymbol=[4,14:check-false]<UserDefinedWord>
 
