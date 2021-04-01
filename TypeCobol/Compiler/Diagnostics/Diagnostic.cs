@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.Directives;
 
 namespace TypeCobol.Compiler.Diagnostics
@@ -46,20 +47,23 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-        public Diagnostic(MessageCode messageCode, Position position, params object[] messageArgs)
+        private readonly object[] _messageArgs;
+
+        public Diagnostic(MessageCode messageCode, [NotNull] Position position, params object[] messageArgs)
             : this(DiagnosticMessage.GetFromCode(messageCode), position, messageArgs)
         {
 
         }
 
-        protected Diagnostic(DiagnosticMessage info, Position position, params object[] messageArgs)
+        protected Diagnostic(DiagnosticMessage info, [NotNull] Position position, params object[] messageArgs)
         {
+            System.Diagnostics.Debug.Assert(position != null);
+
             Info = info;
 
             _messageArgs = messageArgs ?? new object[0];
             CaughtException = _messageArgs.OfType<Exception>().FirstOrDefault();
 
-            position = position ?? Position.Default;
             Line = position.Line;
             ColumnStart = position.ColumnStart;
             ColumnEnd = position.ColumnEnd;
@@ -67,15 +71,10 @@ namespace TypeCobol.Compiler.Diagnostics
         }
 
         public DiagnosticMessage Info { get; }
-
-        public int Line { get; internal set; } //TODO private setter ?
+        public int Line { get; internal set; }
         public int ColumnStart { get; }
         public int ColumnEnd { get; }
-
-        public string Message { get; internal set; } //TODO private setter ?
-
-        private readonly object[] _messageArgs;
-        public object[] MessageArgs => _messageArgs; //TODO remove this ?
+        public string Message { get; }
         public Exception CaughtException { get; }
 
         /// <summary>
@@ -84,6 +83,11 @@ namespace TypeCobol.Compiler.Diagnostics
         public override string ToString()
         {
             return $"Line {Line}[{ColumnStart},{ColumnEnd}] <{Info.Code}, {Info.Severity}, {Info.Category}> - {Message}";
+        }
+
+        public Diagnostic CopyAt([NotNull] Position newPosition)
+        {
+            return new Diagnostic(Info, newPosition, _messageArgs);
         }
     }
 }

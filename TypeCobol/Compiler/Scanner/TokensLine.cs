@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Scanner
@@ -131,21 +132,22 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Filters only the diagnostics attached to a specific token of this line
         /// </summary>
-        internal IEnumerable<Diagnostic> GetDiagnosticsForToken(Token filterToken)
+        private IEnumerable<Diagnostic> GetDiagnosticsForToken(Token filterToken)
         {
-            return _ScannerDiagnostics.Where(diag => diag is TokenDiagnostic && ((TokenDiagnostic)diag).Token == filterToken );
+            return _ScannerDiagnostics.Where(diag => diag is TokenDiagnostic tokenDiag && tokenDiag.Token == filterToken);
         }
 
-
-
-        /// <summary>
-        /// In case a continuation of the last token of this line is discovered on the next line,
-        /// remove all diagnostics specifically attached to this incomplete token
-        /// </summary>
-        internal void RemoveDiagnosticsForLastSourceToken()
+        internal void CopyDiagnosticsForToken(Token token, TokensLine targetLine)
         {
-            Token lastToken = SourceTokens.Last();
-            RemoveDiagnosticsForToken(lastToken);
+            if (token != null)
+            {
+                var tokenPosition = token.Position();
+                foreach (var diagnostic in GetDiagnosticsForToken(token))
+                {
+                    var newDiagnostic = diagnostic.CopyAt(tokenPosition);
+                    targetLine._ScannerDiagnostics.Add(newDiagnostic);
+                }
+            }
         }
 
         /// <summary>
@@ -155,9 +157,9 @@ namespace TypeCobol.Compiler.Scanner
         {
             if (token != null)
             {
-                foreach (Diagnostic diag in GetDiagnosticsForToken(token).ToArray()) //ToArray in order to remove reference
+                foreach (var diagnostic in GetDiagnosticsForToken(token).ToArray()) //ToArray in order to remove reference
                 {
-                    _ScannerDiagnostics.Remove(diag);
+                    _ScannerDiagnostics.Remove(diagnostic);
                 }
             }
         }

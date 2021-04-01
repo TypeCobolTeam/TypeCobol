@@ -8,6 +8,7 @@ using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Scanner
@@ -521,12 +522,8 @@ namespace TypeCobol.Compiler.Scanner
                         int stopIndexInOriginalLine = token.StopIndex + concatenatedLineToOriginalLineOffset;
 
                         token.CorrectTokensLine(originalLine, startIndexInOriginalLine, stopIndexInOriginalLine);
+                        virtualContinuationTokensLine.CopyDiagnosticsForToken(token, originalLine);
                         originalLine.AddToken(token);
-
-                        foreach (Diagnostic diag in virtualContinuationTokensLine.GetDiagnosticsForToken(token))
-                        {
-                            originalLine.AddDiagnostic((MessageCode)diag.Info.Code, token, diag.MessageArgs);
-                        }
                     }
 
                     void SplitToken()
@@ -550,10 +547,7 @@ namespace TypeCobol.Compiler.Scanner
                             CreateAndAddContinuationToken(false);
 
                             // Copy diagnostics on the first line only
-                            foreach (Diagnostic diag in virtualContinuationTokensLine.GetDiagnosticsForToken(token))
-                            {
-                                originalLine.AddDiagnostic((MessageCode)diag.Info.Code, token, diag.MessageArgs);
-                            }
+                            virtualContinuationTokensLine.CopyDiagnosticsForToken(token, originalLine);
                         }
 
                         void CreateAndAddFollowingContinuationToken() => CreateAndAddContinuationToken(true);
