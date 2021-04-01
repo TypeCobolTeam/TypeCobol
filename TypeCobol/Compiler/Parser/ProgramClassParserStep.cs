@@ -92,7 +92,7 @@ namespace TypeCobol.Compiler.Parser
             catch (Exception ex)
             {
                 var code = Diagnostics.MessageCode.ImplementationError;
-                programClassBuilderError = new ParserDiagnostic(ex.ToString(), null, null, code, ex);
+                programClassBuilderError = new ParserDiagnostic(ex.ToString(), Diagnostic.Position.Default, null, code, ex);
             }
             perfStatsForParserInvocation.OnStopParsing(0, 0);
 

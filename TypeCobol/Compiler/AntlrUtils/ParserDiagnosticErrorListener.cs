@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Preprocessor;
 
 namespace TypeCobol.Compiler.AntlrUtils
@@ -57,20 +57,15 @@ namespace TypeCobol.Compiler.AntlrUtils
     public class ParserDiagnostic : Diagnostic
     {
 		public ParserDiagnostic(string message, IToken offendingSymbol, string ruleStack, MessageCode code = MessageCode.SyntaxErrorInParser, Exception exception = null) :
-			base(code, offendingSymbol == null ? -1 : offendingSymbol.Column, offendingSymbol == null ? -1 : (offendingSymbol.StopIndex < 0 ? -1 : (offendingSymbol.StopIndex+1)), offendingSymbol == null ? -1 : offendingSymbol.Line, message, exception)
+			base(code, offendingSymbol.Position(), message, exception)
 		{
 			OffendingSymbol = offendingSymbol;
 			this.ruleStack = ruleStack;
-            var copyDirective = (OffendingSymbol as ImportedToken)?.CopyDirective;
-            if (copyDirective != null)
-            {
-                Line = copyDirective.COPYToken.Line;
-                Message = $"Error in copy '{copyDirective.TextName}' at line {OffendingSymbol.Line} : {Message}";
-            }
         }
 
-        public ParserDiagnostic(string message, int start, int stop, int line, string ruleStack, MessageCode code = MessageCode.SyntaxErrorInParser, Exception exception = null)
-            : base(code, start, stop, line, message, exception) {
+        public ParserDiagnostic(string message, Position position, string ruleStack, MessageCode code = MessageCode.SyntaxErrorInParser, Exception exception = null)
+            : base(code, position, message, exception)
+        {
             this.ruleStack = ruleStack;
         }
 
