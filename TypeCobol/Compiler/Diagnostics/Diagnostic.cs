@@ -66,13 +66,6 @@ namespace TypeCobol.Compiler.Diagnostics
             Message = position.AdaptMessage(string.Format(Info.MessageTemplate, _messageArgs));
         }
 
-        [Obsolete]
-        public Diagnostic(MessageCode messageCode, int columnStart, int columnEnd, int lineNumber, params object[] messageArgs)
-            : this(DiagnosticMessage.GetFromCode(messageCode), new Position(lineNumber, columnStart, columnEnd, null), messageArgs)
-        {
-
-        }
-
         public DiagnosticMessage Info { get; }
 
         public int Line { get; internal set; } //TODO private setter ?

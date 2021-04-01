@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Text;
 
@@ -113,7 +110,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         internal void AddDiagnostic(MessageCode messageCode, int columnStart, int columnEnd, params object[] messageArgs)
         {
-            Diagnostic diag = new Diagnostic(messageCode, columnStart, columnEnd, this.LineIndex + 1, messageArgs);
+            Diagnostic diag = new Diagnostic(messageCode, new Diagnostic.Position(LineIndex + 1, columnStart, columnEnd, null), messageArgs);
             _ScannerDiagnostics.Add(diag);
         }
 
@@ -123,7 +120,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         internal void AddDiagnostic(MessageCode messageCode, Token token, params object[] messageArgs)
         {
-            Diagnostic diag = new TokenDiagnostic(messageCode, token, token.Line, messageArgs);
+            Diagnostic diag = new TokenDiagnostic(messageCode, token, messageArgs);
             if(diag.Info.Severity == Severity.Error)
             {
                 token.HasError = true;

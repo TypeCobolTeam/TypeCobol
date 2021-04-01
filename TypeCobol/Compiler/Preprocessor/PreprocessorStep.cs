@@ -8,6 +8,7 @@ using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.CupCommon;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Preprocessor.Generated;
 using TypeCobol.Compiler.Scanner;
 
@@ -60,13 +61,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 .TokensWithCompilerDirectives
                 .First(token => token.TokenType == TokenType.COPY_IMPORT_DIRECTIVE && ((CompilerDirectiveToken) token).CompilerDirective == copyDirective);
 
-            Diagnostic diagnostic = new Diagnostic(
-                messageCode,
-                targetToken.Column,
-                targetToken.EndColumn,
-                targetToken.Line,
-                messageArgs);
-
+            var diagnostic = new Diagnostic(messageCode, targetToken.Position(), messageArgs);
             tokensLineWithCopyDirective.AddDiagnostic(diagnostic);
         }
 

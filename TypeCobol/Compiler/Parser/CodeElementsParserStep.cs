@@ -205,8 +205,7 @@ namespace TypeCobol.Compiler.Parser
                 CodeElementsLine codeElementsLine = GetCodeElementsLineForToken(currentToken);
                 if (codeElementsLine != null)
                 {
-                    codeElementsLine.AddParserDiagnostic(new TokenDiagnostic(MessageCode.ImplementationError,
-                        currentToken, currentToken.Line, e));
+                    codeElementsLine.AddParserDiagnostic(new TokenDiagnostic(MessageCode.ImplementationError, currentToken, e));
                 }
             }
 

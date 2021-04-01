@@ -1,5 +1,5 @@
-﻿using System;
-using TypeCobol.Compiler.Diagnostics;
+﻿using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Parser;
 
 namespace TypeCobol.Compiler.Scanner
 {
@@ -8,8 +8,8 @@ namespace TypeCobol.Compiler.Scanner
     /// </summary>
     public class TokenDiagnostic : Diagnostic
     {
-        internal TokenDiagnostic(MessageCode messageCode, Token token, int lineNumber, params object[] messageArgs) :
-            base(messageCode, token.Column, token.EndColumn, lineNumber, messageArgs)
+        internal TokenDiagnostic(MessageCode messageCode, Token token, params object[] messageArgs)
+            : base(messageCode, token.Position(), messageArgs)
         {
             Token = token;
         }
