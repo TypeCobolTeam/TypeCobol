@@ -21,6 +21,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 line = Math.Max(0, line);
                 if (includingDirective != null)
                 {
+                    //Position diagnostic on including copy directive and adapt message
                     Line = includingDirective.COPYToken.Line;
                     var startToken = includingDirective.ConsumedTokens.SelectedTokensOnSeveralLines.FirstOrDefault()?.FirstOrDefault();
                     var endToken = includingDirective.ConsumedTokens.SelectedTokensOnSeveralLines.LastOrDefault()?.LastOrDefault();
@@ -30,6 +31,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
                 else
                 {
+                    //Position diagnostic directly at specified location
                     Line = line;
                     ColumnStart = Math.Max(0, columnStart);
                     ColumnEnd = Math.Max(0, columnEnd);
@@ -47,8 +49,6 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-        private readonly object[] _messageArgs;
-
         public Diagnostic(MessageCode messageCode, [NotNull] Position position, params object[] messageArgs)
             : this(DiagnosticMessage.GetFromCode(messageCode), position, messageArgs)
         {
@@ -61,21 +61,30 @@ namespace TypeCobol.Compiler.Diagnostics
 
             Info = info;
 
-            _messageArgs = messageArgs ?? new object[0];
-            CaughtException = _messageArgs.OfType<Exception>().FirstOrDefault();
+            MessageArgs = messageArgs ?? new object[0];
+            CaughtException = MessageArgs.OfType<Exception>().FirstOrDefault();
 
             Line = position.Line;
             ColumnStart = position.ColumnStart;
             ColumnEnd = position.ColumnEnd;
-            Message = position.AdaptMessage(string.Format(Info.MessageTemplate, _messageArgs));
+            Message = position.AdaptMessage(string.Format(Info.MessageTemplate, MessageArgs));
         }
 
         public DiagnosticMessage Info { get; }
-        public int Line { get; internal set; }
+
+        public int Line
+        {
+            get;
+            internal set;//Setter is required for incremental mode. When lines are inserted/removed, associated diagnostics are shifted up/down accordingly
+        }
+
         public int ColumnStart { get; }
         public int ColumnEnd { get; }
         public string Message { get; }
         public Exception CaughtException { get; }
+
+        //Required when a diagnostic has to be duplicated
+        internal object[] MessageArgs { get; }
 
         /// <summary>
         /// Text representation of a diagnostic for debugging or test purposes
@@ -83,11 +92,6 @@ namespace TypeCobol.Compiler.Diagnostics
         public override string ToString()
         {
             return $"Line {Line}[{ColumnStart},{ColumnEnd}] <{Info.Code}, {Info.Severity}, {Info.Category}> - {Message}";
-        }
-
-        public Diagnostic CopyAt([NotNull] Position newPosition)
-        {
-            return new Diagnostic(Info, newPosition, _messageArgs);
         }
     }
 }
