@@ -6,6 +6,7 @@ using Mono.Options;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Preprocessor;
 
 namespace TypeCobol.Tools.Options_Config
 {
@@ -57,11 +58,33 @@ namespace TypeCobol.Tools.Options_Config
         public string RawOutputFormat = "0";
 
 #if EUROINFO_RULES
-        public static readonly string DefaultCopyNameFile = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "COPIES_CPY.txt");
         /// <summary>
-        /// The Cpy Copy names file
+        /// Default location for CPY copy name map. Expects a file 'COPIES_CPY.txt' next to the current executable.
         /// </summary>
-        public string CpyCopyNamesMapFilePath = DefaultCopyNameFile;
+        private static readonly string _DefaultCpyCopyNameMapFilePath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "COPIES_CPY.txt");
+        
+        /// <summary>
+        /// The CPY copy name map loaded in memory.
+        /// </summary>
+        public CopyNameMapFile CpyCopyNameMap;
+
+        /// <summary>
+        /// Attempts loading of the CPY copy name map. If no path is given, default location is used.
+        /// </summary>
+        /// <param name="cpyCopyNameMapFilePath">Relative or absolute path to a CPY copy name map file on disk</param>
+        /// <remarks>Must be called after <see cref="TypeCobolOptionSet.InitializeCobolOptions"/>, <see cref="LogFile"/> must be writable</remarks>
+        public void LoadCpyCopyNameMap(string cpyCopyNameMapFilePath)
+        {
+            var path = string.IsNullOrWhiteSpace(cpyCopyNameMapFilePath) ? _DefaultCpyCopyNameMapFilePath : cpyCopyNameMapFilePath;
+            if (File.Exists(path))
+            {
+                CpyCopyNameMap = new CopyNameMapFile(path);
+            }
+            else
+            {
+                File.AppendAllText(LogFile ?? DefaultLogFileName, $"CPY Copy name map file '{path}' is unreachable.");
+            }
+        }
 #endif
 
         public static Dictionary<ReturnCode, string> ErrorMessages = new Dictionary<ReturnCode, string>()
@@ -249,10 +272,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "diag.cea|diagnostic.checkEndAlignment=", "Indicate level of check end aligment: warning, error, info, ignore.", v => typeCobolConfig.CheckEndAlignment = TypeCobolCheckOption.Parse(v) },
                 { "log|logfilepath=", "{PATH} to TypeCobol.CLI.log log file", v => typeCobolConfig.LogFile = Path.Combine(v, TypeCobolConfiguration.DefaultLogFileName)},
                 { "cfg|cfgbuild", "Standard CFG build.", v => typeCobolConfig.CfgBuildingMode = CfgBuildingMode.Standard},
-                { "ca|customanalyzer=", "{PATH} to a custom DLL file containing code analyzers. This option can be specified more than once.", v => typeCobolConfig.CustomAnalyzerFiles.Add(v) },
-#if EUROINFO_RULES
-                { "ycpl|ycopylist=", "{PATH} to a file of CPY copy names uppercase sorted.", v => typeCobolConfig.CpyCopyNamesMapFilePath = v },
-#endif
+                { "ca|customanalyzer=", "{PATH} to a custom DLL file containing code analyzers. This option can be specified more than once.", v => typeCobolConfig.CustomAnalyzerFiles.Add(v) }
             };
             return commonOptions;
         }

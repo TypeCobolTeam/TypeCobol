@@ -480,6 +480,10 @@ namespace TypeCobol.LanguageServer
         /// <param name="arguments">The arguments</param>
         public void DidChangeConfigurationParams(string[] arguments)
         {
+#if EUROINFO_RULES
+            var previouslyLoadedCpyCopyNamesMap = Configuration.CpyCopyNameMap;
+#endif
+            
             Configuration = new TypeCobolConfiguration();
             var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(Configuration);
 
@@ -502,10 +506,15 @@ namespace TypeCobol.LanguageServer
                 Configuration.ExecToStep = ExecutionStep.QualityCheck; //Language Server does not support Cobol Generation for now
 
 #if EUROINFO_RULES
-            if (CpyCopyNamesMapFilePath != null)
+            if (previouslyLoadedCpyCopyNamesMap != null)
             {
-                //Overwrite default value only if user-supplied value from command line is not null
-                Configuration.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath;
+                //re-use already loaded file
+                Configuration.CpyCopyNameMap = previouslyLoadedCpyCopyNamesMap;
+            }
+            else
+            {
+                //load file according to user-supplied value in command line
+                Configuration.LoadCpyCopyNameMap(CpyCopyNamesMapFilePath);
             }
 #endif
             var typeCobolOptions = new TypeCobolOptions(Configuration);

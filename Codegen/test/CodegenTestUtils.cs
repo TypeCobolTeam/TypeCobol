@@ -4,6 +4,9 @@ using System.Text;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+#if EUROINFO_RULES
+using TypeCobol.Compiler.Preprocessor;
+#endif
 using TypeCobol.Test;
 
 namespace TypeCobol.Codegen {
@@ -28,13 +31,11 @@ namespace TypeCobol.Codegen {
 #endif
         )
         {
-            var options = new TypeCobolOptions()
-                          {
-                              AutoRemarksEnable = autoRemarks,
+            var options = new TypeCobolOptions();
 #if EUROINFO_RULES
-                              CpyCopyNamesMapFilePath = cpyCopyNamesMapFilePath
+            options.AutoRemarksEnable = autoRemarks;
+            if (cpyCopyNamesMapFilePath != null) options.CpyCopyNameMap = new CopyNameMapFile(cpyCopyNamesMapFilePath);
 #endif
-                          };
             ParseGenerateCompare(path, options, DocumentFormat.RDZReferenceFormat, typeCobolVersion, copies, null);
         }
 
@@ -91,7 +92,11 @@ namespace TypeCobol.Codegen {
         /// <param name="copies"></param>        
         public static void ParseGenerateCompareWithLineMapping(string path, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null)
         {
-            var options = new TypeCobolOptions() { AutoRemarksEnable = autoRemarks };//No CPY copy list support yet
+            var options = new TypeCobolOptions();
+#if EUROINFO_RULES
+            options.AutoRemarksEnable = autoRemarks;
+            //No CPY copy list support yet
+#endif
             ParseGenerateCompare(path, options, DocumentFormat.RDZReferenceFormat, typeCobolVersion, copies, new MemoryStream());
         }
 

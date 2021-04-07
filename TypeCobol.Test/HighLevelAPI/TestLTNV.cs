@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if EUROINFO_RULES
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,6 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Tools.APIHelpers;
 
 namespace TypeCobol.Test.HighLevelAPI {
@@ -19,12 +22,10 @@ namespace TypeCobol.Test.HighLevelAPI {
         [TestCategory("Parsing")]
         [TestProperty("Time", "fast")]
         public void TestGetLTNVCopy() {
-#if EUROINFO_RULES            
 
             var errors = new List<Exception>();
 
             var rootPath = Root + Path.DirectorySeparatorChar + "LTNV";
-
 
             string cpyCopyNamesFile = Path.Combine(Root, "LTNV", "FO200001.copylist");
 
@@ -59,10 +60,8 @@ namespace TypeCobol.Test.HighLevelAPI {
                 foreach (var ex in errors) str.Append(ex.Message + "\n" + ex.StackTrace);
                 throw new Exception(str.ToString());
             }
-#endif
         }
 
-#if EUROINFO_RULES
         private static void ParseAndTestGetLTNVCopys(string rootPath, string path, bool autoRemarks, string cpyCopyNamesFile, List < Exception> errors, IList<string> programsName ,params IDictionary<string, string>[] expected)
         {
             Assert.IsTrue(programsName.Count == expected.Length);//check if parameter of this method are coherent
@@ -93,11 +92,11 @@ namespace TypeCobol.Test.HighLevelAPI {
 
         private static IDictionary<Program, IDictionary<string, string>> ParseAndGetLTNVCopys(string rootPath, string path, bool autoRemarks = false, string cpyCopyNamesFile = null)
         {
-            var options = new TypeCobolOptions
-                          {
-                              AutoRemarksEnable = autoRemarks,
-                              CpyCopyNamesMapFilePath = cpyCopyNamesFile
-                          };
+            var options = new TypeCobolOptions() { AutoRemarksEnable = autoRemarks };
+            if (cpyCopyNamesFile != null)
+            {
+                options.CpyCopyNameMap = new CopyNameMapFile(cpyCopyNamesFile);
+            }
             var parser = TypeCobol.Parser.Parse(rootPath + Path.DirectorySeparatorChar + path, options, DocumentFormat.RDZReferenceFormat);
             var diagnostics = parser.Results.AllDiagnostics();
             // There should be no diagnostics errors
@@ -106,6 +105,6 @@ namespace TypeCobol.Test.HighLevelAPI {
 
             return LTNVHelper.GetLTNVCopy(parser.Results.ProgramClassDocumentSnapshot.Root);
         }
-#endif
     }
 }
+#endif

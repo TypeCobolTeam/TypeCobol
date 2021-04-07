@@ -30,7 +30,7 @@ namespace TypeCobol.Compiler.Preprocessor
         /// </summary>
         /// <param name="name">The Copy's name</param>
         /// <returns>true if the name is CPY Copys name, false otherwise.</returns>
-        public bool HasCpyCopy(string name)
+        public bool Contains(string name)
         {
             return Array.BinarySearch(_cpyCopyNames, name.ToUpper()) >= 0;
         }

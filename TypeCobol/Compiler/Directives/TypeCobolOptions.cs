@@ -1,5 +1,4 @@
-﻿using System;
-using TypeCobol.Tools.Options_Config;
+﻿using TypeCobol.Tools.Options_Config;
 #if EUROINFO_RULES
 using TypeCobol.Compiler.Preprocessor;
 #endif
@@ -41,40 +40,16 @@ namespace TypeCobol.Compiler.Directives
         private bool _useEuroInformationLegacyReplacingSyntax = true;
 
         /// <summary>
-        /// The Instance of the Cpy Copy names Map
+        /// Instance of the CPY Copy name map
         /// </summary>
-        private CopyNameMapFile _cpyCopyNamesMap;
+        public CopyNameMapFile CpyCopyNameMap { get; set; }
 
-        private string _cpyCopyNamesMapFilePath;
-        /// <summary>
-        /// Path to the CpyCopyNames file.
-        /// </summary>
-        public string CpyCopyNamesMapFilePath
-        {
-            get
-            {
-                return _cpyCopyNamesMapFilePath; 
-            }
-            set
-            {
-                if (value == null)
-                {
-                    _cpyCopyNamesMapFilePath = null;
-                    _cpyCopyNamesMap = null;
-                }
-                else if (!value.Equals(_cpyCopyNamesMapFilePath, StringComparison.OrdinalIgnoreCase))
-                {
-                    _cpyCopyNamesMapFilePath = value;
-                    _cpyCopyNamesMap = new CopyNameMapFile(value);
-                }                
-            }
-        }
         /// <summary>
         /// Check if using the current Instance, the Given name corresponds to a CPY copy name. 
         /// </summary>
         /// <param name="name">The Copy's name</param>
         /// <returns>true if the name is CPY Copys name, false otherwise.</returns>
-        public bool HasCpyCopy(string name) => _cpyCopyNamesMap?.HasCpyCopy(name) ?? false;
+        public bool HasCpyCopy(string name) => CpyCopyNameMap?.Contains(name) ?? false;
 #else
         private bool _useEuroInformationLegacyReplacingSyntax = false;
 #endif
@@ -93,12 +68,7 @@ namespace TypeCobol.Compiler.Directives
             CheckEndAlignment = config.CheckEndAlignment;
 #if EUROINFO_RULES
             AutoRemarksEnable = config.AutoRemarks;
-            try {
-                CpyCopyNamesMapFilePath = config.CpyCopyNamesMapFilePath;
-            } catch(System.Exception e) {
-                //Fail to read the Copy File Name, Log
-                System.IO.File.AppendAllText(config.LogFile != null ? config.LogFile : TypeCobolConfiguration.DefaultLogFileName, e.ToString());
-            }
+            CpyCopyNameMap = config.CpyCopyNameMap;
 #endif
         }
 

@@ -10,6 +10,9 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
+#if EUROINFO_RULES
+using TypeCobol.Compiler.Preprocessor;
+#endif
 
 namespace TypeCobol.Test.Utils
 {
@@ -57,7 +60,7 @@ namespace TypeCobol.Test.Utils
                 string cpyListFilePath = Path.Combine(directory, "CpyCopies.lst");
                 if (File.Exists(cpyListFilePath))
                 {
-                    Compiler.CompilerOptions.CpyCopyNamesMapFilePath = cpyListFilePath;
+                    Compiler.CompilerOptions.CpyCopyNameMap = new CopyNameMapFile(cpyListFilePath);
                 }
 #endif
                 Compiler.CompileOnce();
@@ -69,7 +72,7 @@ namespace TypeCobol.Test.Utils
 #if EUROINFO_RULES
             finally
             {
-                Compiler.CompilerOptions.CpyCopyNamesMapFilePath = null;
+                Compiler.CompilerOptions.CpyCopyNameMap = null;
             }
 #endif
         }
