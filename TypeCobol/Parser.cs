@@ -14,9 +14,6 @@ using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.CustomExceptions;
 using TypeCobol.Tools.APIHelpers;
-#if EUROINFO_RULES
-using TypeCobol.Compiler.Preprocessor;
-#endif
 
 namespace TypeCobol
 {
@@ -147,27 +144,11 @@ namespace TypeCobol
 			get { return Compiler.CompilationResultsForProgram; }
 		}
 
-
-#if EUROINFO_RULES
-        public static Parser EIParse(string path, DocumentFormat format, bool autoRemarks = false, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null, string cpyCopyNamesFile = null)
+        public static Parser Parse(string path, TypeCobolOptions options, DocumentFormat format, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null)
         {
             var parser = new Parser();
-            var typeCobolOption = new TypeCobolOptions() { ExecToStep = ExecutionStep.Generate };
-            typeCobolOption.AutoRemarksEnable = autoRemarks;
-            typeCobolOption.CpyCopyNamesMapFilePath = cpyCopyNamesFile;
-            parser.Init(path, typeCobolOption, format, copies, analyzerProvider);
-            parser.Parse(path);
-            return parser;
-        }
-#endif
-        public static Parser Parse(string path, DocumentFormat format, bool autoRemarks = false, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null) {
-            var parser = new Parser();
-            var typeCobolOption = new TypeCobolOptions() { ExecToStep = ExecutionStep.Generate };
-#if EUROINFO_RULES
-		    typeCobolOption.AutoRemarksEnable = autoRemarks;
-#endif
-            parser.Init(path, typeCobolOption, format, copies, analyzerProvider);
-
+            options.ExecToStep = ExecutionStep.Generate;
+            parser.Init(path, options, format, copies, analyzerProvider);
             parser.Parse(path);
 			return parser;
 		}

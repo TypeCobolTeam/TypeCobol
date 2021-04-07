@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Tools.APIHelpers;
-using TypeCobol.Compiler.Preprocessor;
 
 namespace TypeCobol.Test.HighLevelAPI {
 
     [TestClass]
-
-
     public class TestLTNV {
 
         private static readonly string Root = PlatformUtils.GetPathForProjectFile("HighLevelAPI");
@@ -96,7 +93,12 @@ namespace TypeCobol.Test.HighLevelAPI {
 
         private static IDictionary<Program, IDictionary<string, string>> ParseAndGetLTNVCopys(string rootPath, string path, bool autoRemarks = false, string cpyCopyNamesFile = null)
         {
-            var parser = TypeCobol.Parser.EIParse(rootPath + Path.DirectorySeparatorChar + path, DocumentFormat.RDZReferenceFormat, autoRemarks, null, null,  cpyCopyNamesFile);
+            var options = new TypeCobolOptions
+                          {
+                              AutoRemarksEnable = autoRemarks,
+                              CpyCopyNamesMapFilePath = cpyCopyNamesFile
+                          };
+            var parser = TypeCobol.Parser.Parse(rootPath + Path.DirectorySeparatorChar + path, options, DocumentFormat.RDZReferenceFormat);
             var diagnostics = parser.Results.AllDiagnostics();
             // There should be no diagnostics errors
             // warning diagnostics are not considered : for example, test with warning with COPY SUPPRESS is always running
