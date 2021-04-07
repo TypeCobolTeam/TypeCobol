@@ -16,9 +16,6 @@ using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.LanguageServer.Context;
 using TypeCobol.LanguageServer.SignatureHelper;
-#if EUROINFO_RULES
-using TypeCobol.Compiler.Preprocessor;
-#endif
 
 namespace TypeCobol.LanguageServer
 {
@@ -234,7 +231,7 @@ namespace TypeCobol.LanguageServer
             var rootDirectory = new DirectoryInfo(parameters.rootPath);
             string workspaceName = rootDirectory.Name + "#" + parameters.processId;
 
-            // Initialize the workspace.            
+            // Initialize the workspace.
             this.Workspace = new Workspace(rootDirectory.FullName, workspaceName, _messagesActionsQueue, Logger);
 #if EUROINFO_RULES
             this.Workspace.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath;

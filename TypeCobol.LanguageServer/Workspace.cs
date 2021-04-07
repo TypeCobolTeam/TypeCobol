@@ -19,9 +19,6 @@ using TypeCobol.LanguageServer.Context;
 using TypeCobol.Tools.Options_Config;
 using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.Tools.APIHelpers;
-#if EUROINFO_RULES
-using TypeCobol.Compiler.Preprocessor;
-#endif
 
 namespace TypeCobol.LanguageServer
 {
@@ -132,7 +129,7 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// The Cpy Copy names file
         /// </summary>
-        public string CpyCopyNamesMapFilePath{get; set;}
+        public string CpyCopyNamesMapFilePath { get; set; }
 #endif
 
         /// <summary>
@@ -165,7 +162,7 @@ namespace TypeCobol.LanguageServer
             var defaultDocumentFormat = new DocumentFormat(Encoding.GetEncoding("iso-8859-1"), EndOfLineDelimiter.CrLfCharacters, 80, ColumnsLayout.CobolReferenceFormat);
             this.CompilationProject = new CompilationProject(
                 _workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, defaultDocumentFormat,
-                new TypeCobolOptions(Configuration), null); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
+                new TypeCobolOptions(), null); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
             this.CompilationProject.CompilationOptions.UseAntlrProgramParsing =
                 this.CompilationProject.CompilationOptions.UseAntlrProgramParsing || UseAntlrProgramParsing;
 
@@ -477,11 +474,6 @@ namespace TypeCobol.LanguageServer
             }            
         }
 
-        public void DidChangeConfigurationParams(string settings)
-        {
-            DidChangeConfigurationParams(settings.Split(' '));
-        }
-
         /// <summary>
         /// Handle the Configuration change notification.
         /// </summary>
@@ -491,7 +483,7 @@ namespace TypeCobol.LanguageServer
             Configuration = new TypeCobolConfiguration();
             var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(Configuration);
 
-            var errors = TypeCobolOptionSet.InitializeCobolOptions(Configuration, arguments, options);
+            TypeCobolOptionSet.InitializeCobolOptions(Configuration, arguments, options);
 
             //Adding default copies folder
             var folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
@@ -510,7 +502,10 @@ namespace TypeCobol.LanguageServer
                 Configuration.ExecToStep = ExecutionStep.QualityCheck; //Language Server does not support Cobol Generation for now
 
 #if EUROINFO_RULES
-            Configuration.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath ?? Configuration.CpyCopyNamesMapFilePath;
+            if (CpyCopyNamesMapFilePath != null)
+            {
+                Configuration.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath;
+            }
 #endif
             var typeCobolOptions = new TypeCobolOptions(Configuration);
             //Configure CFG/DFA analyzer + external analyzers if any
