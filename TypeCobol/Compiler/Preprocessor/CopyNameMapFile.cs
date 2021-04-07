@@ -1,3 +1,4 @@
+#if EUROINFO_RULES
 using System;
 
 namespace TypeCobol.Compiler.Preprocessor
@@ -36,3 +37,4 @@ namespace TypeCobol.Compiler.Preprocessor
         }
     }
 }
+#endif

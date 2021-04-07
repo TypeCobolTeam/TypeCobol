@@ -10,7 +10,6 @@ using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.StdioHttp;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 using TypeCobol.LanguageServer.Utilities;
-using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.LanguageServer
 {

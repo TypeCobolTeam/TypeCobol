@@ -6,7 +6,9 @@ using Mono.Options;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
+#if EUROINFO_RULES
 using TypeCobol.Compiler.Preprocessor;
+#endif
 
 namespace TypeCobol.Tools.Options_Config
 {

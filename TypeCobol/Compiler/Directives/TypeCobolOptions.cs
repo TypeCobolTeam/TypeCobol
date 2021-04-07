@@ -65,11 +65,13 @@ namespace TypeCobol.Compiler.Directives
             ExecToStep = config.ExecToStep;
             UseAntlrProgramParsing = config.UseAntlrProgramParsing;
             UseEuroInformationLegacyReplacingSyntax = config.UseEuroInformationLegacyReplacingSyntax;
-            CheckEndAlignment = config.CheckEndAlignment;
+
 #if EUROINFO_RULES
             AutoRemarksEnable = config.AutoRemarks;
             CpyCopyNameMap = config.CpyCopyNameMap;
 #endif
+
+            CheckEndAlignment = config.CheckEndAlignment;
         }
 
         public TypeCobolOptions()
