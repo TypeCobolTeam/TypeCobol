@@ -60,7 +60,7 @@ namespace TypeCobol.Tools.Options_Config
         public string RawOutputFormat = "0";
 
 #if EUROINFO_RULES
-        public static string DefaultCopyNameFile => Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location),"COPIES_CPY.txt");
+        public static readonly string DefaultCopyNameFile = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "COPIES_CPY.txt");
         /// <summary>
         /// The Cpy Copy names file
         /// </summary>

@@ -1,5 +1,5 @@
-﻿using TypeCobol.Tools.Options_Config;
-using System.IO;
+﻿using System;
+using TypeCobol.Tools.Options_Config;
 #if EUROINFO_RULES
 using TypeCobol.Compiler.Preprocessor;
 #endif
@@ -38,13 +38,14 @@ namespace TypeCobol.Compiler.Directives
         }
 
 #if EUROINFO_RULES
+        private bool _useEuroInformationLegacyReplacingSyntax = true;
+
         /// <summary>
         /// The Instance of the Cpy Copy names Map
         /// </summary>
-        private CopyNameMapFile CpyCopyNamesMap { get; set; }
-        private bool _useEuroInformationLegacyReplacingSyntax = true;
+        private CopyNameMapFile _cpyCopyNamesMap;
 
-        private string _CpyCopyNamesMapFilePath;
+        private string _cpyCopyNamesMapFilePath;
         /// <summary>
         /// Path to the CpyCopyNames file.
         /// </summary>
@@ -52,18 +53,19 @@ namespace TypeCobol.Compiler.Directives
         {
             get
             {
-                return _CpyCopyNamesMapFilePath; 
+                return _cpyCopyNamesMapFilePath; 
             }
             set
             {
                 if (value == null)
                 {
-                    CpyCopyNamesMap = null;
+                    _cpyCopyNamesMapFilePath = null;
+                    _cpyCopyNamesMap = null;
                 }
-                else if (!value.Equals(_CpyCopyNamesMapFilePath))
-                {                    
-                    CpyCopyNamesMap = GetCpyCopiesFile(value);
-                    _CpyCopyNamesMapFilePath = value;
+                else if (!value.Equals(_cpyCopyNamesMapFilePath, StringComparison.OrdinalIgnoreCase))
+                {
+                    _cpyCopyNamesMapFilePath = value;
+                    _cpyCopyNamesMap = new CopyNameMapFile(value);
                 }                
             }
         }
@@ -72,24 +74,9 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         /// <param name="name">The Copy's name</param>
         /// <returns>true if the name is CPY Copys name, false otherwise.</returns>
-        public bool HasCpyCopy(string name) => CpyCopyNamesMap?.HasCpyCopy(name) ?? false;
-
-        /// <summary>
-        /// Get the file of CPY COPY names to be used.
-        /// </summary>
-        /// <param name="cpyCopiesFilePath"></param>
-        /// <exception cref="Exception">Any exception if an error occurs.</exception>
-        /// <returns>the CopyNameMapFile instance if one is available, null otherwise</returns>
-        public static CopyNameMapFile GetCpyCopiesFile(string cpyCopiesFilePath)
-        {
-            if (cpyCopiesFilePath != null)
-            {
-                return new CopyNameMapFile(cpyCopiesFilePath);
-            }
-            return null;
-        }
+        public bool HasCpyCopy(string name) => _cpyCopyNamesMap?.HasCpyCopy(name) ?? false;
 #else
-        private bool _useEuroInformationLegacyReplacingSyntax;
+        private bool _useEuroInformationLegacyReplacingSyntax = false;
 #endif
 
         /// <summary>

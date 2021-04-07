@@ -504,6 +504,7 @@ namespace TypeCobol.LanguageServer
 #if EUROINFO_RULES
             if (CpyCopyNamesMapFilePath != null)
             {
+                //Overwrite default value only if user-supplied value is not null
                 Configuration.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath;
             }
 #endif
