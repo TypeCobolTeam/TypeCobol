@@ -1,4 +1,3 @@
-Line -1[0,0] <37, Warning, General> - Warning: "END PROGRAM" is missing.
        05 :tag:-var1.
           10 :tag:-var1-item1 PIC X.
 Line 3[31,34] <27, Error, Syntax> - Syntax error : no viable alternative at input '10 ... PICT'

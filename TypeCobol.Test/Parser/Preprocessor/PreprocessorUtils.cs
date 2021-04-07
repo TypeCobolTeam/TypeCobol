@@ -2,7 +2,6 @@
 using System.Text;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
-using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
@@ -12,41 +11,20 @@ namespace TypeCobol.Test.Parser.Preprocessor
 {
     internal static class PreprocessorUtils
     {
-        private static readonly DocumentFormat _Format = new DocumentFormat(Encoding.Unicode, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.CobolReferenceFormat);
-        private static readonly MultilineScanState _ScanState = new MultilineScanState(Encoding.Unicode);
+        public static readonly DocumentFormat Format = new DocumentFormat(Encoding.Unicode, EndOfLineDelimiter.CrLfCharacters, 0, ColumnsLayout.CobolReferenceFormat);
 
-        public static readonly string Root = "Parser" + Path.DirectorySeparatorChar +"Preprocessor";
+        public static readonly string Root = "Parser" + Path.DirectorySeparatorChar + "Preprocessor";
 
-        private static ProcessedTokensDocument GetProcessedTokensDocument(this IProcessedTokensDocumentProvider processedTokensDocumentProvider, string testName)
+        private static ProcessedTokensDocument GetProcessedTokensDocument(CompilationProject currentProject, string testName)
         {
-            //This is a hack, we should create a FileCompiler instead of using this shortcut. Note that the source is considered as a copy here.
-            return processedTokensDocumentProvider.GetProcessedTokensDocument(null, testName, _ScanState, null, out _);
+            FileCompiler fileCompiler = new FileCompiler(currentProject, testName, false);
+            fileCompiler.CompileOnce(ExecutionStep.Preprocessor, false, false);
+            return fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot;
         }
 
-        public static CompilationProject DirectivesProject;
-        public static CompilationProject CopyProject;
-        public static CompilationProject ReplaceProject;
-
-        static PreprocessorUtils()
+        public static string ProcessCompilerDirectives(CompilationProject project, string testName)
         {
-            DirectivesProject = new CompilationProject("directives",
-                PlatformUtils.GetPathForProjectFile(Root + Path.DirectorySeparatorChar+"DirectiveTestFiles"), new string[] { ".cbl", ".cpy" },
-                _Format, CompilerOptions, null);
-
-            CopyProject = new CompilationProject("copy",
-                PlatformUtils.GetPathForProjectFile(Root + Path.DirectorySeparatorChar + "CopyTestFiles"), new string[] { ".cbl", ".cpy" },
-                _Format, CompilerOptions, null);
-
-            ReplaceProject = new CompilationProject("replace",
-                PlatformUtils.GetPathForProjectFile(Root + Path.DirectorySeparatorChar + "ReplaceTestFiles"), new string[] { ".cbl", ".cpy" },
-                _Format, CompilerOptions, null);
-        }
-
-        public static TypeCobolOptions CompilerOptions = new TypeCobolOptions();
-
-        public static string ProcessCompilerDirectives(string testName)
-        {
-            ProcessedTokensDocument processedDoc = DirectivesProject.GetProcessedTokensDocument(testName);
+            ProcessedTokensDocument processedDoc = GetProcessedTokensDocument(project, testName);
 
             StringBuilder sbResult = new StringBuilder();
             int lineNumber = 1;
@@ -85,11 +63,11 @@ namespace TypeCobol.Test.Parser.Preprocessor
         public static void CheckWithDirectiveResultFile(string result, string testName)
         {
             string path = Path.Combine(Root, "DirectiveResultFiles", testName + ".txt");
-            string expected = System.IO.File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
-            TypeCobol.Test.TestUtils.compareLines(path, result, expected, PlatformUtils.GetPathForProjectFile(path));
+            string expected = File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
+            TestUtils.compareLines(path, result, expected, PlatformUtils.GetPathForProjectFile(path));
         }
 
-        private static string ProcessTokensDocument(string testName, ProcessedTokensDocument processedDoc)
+        private static string ProcessTokensDocument(ProcessedTokensDocument processedDoc)
         {
             // Tokens
             StringBuilder sbTokens = new StringBuilder();
@@ -139,30 +117,28 @@ namespace TypeCobol.Test.Parser.Preprocessor
             return sbTokens.ToString() + (hasDiagnostic ? sbDiagnostics.ToString() : "");
         }
 
-        public static string ProcessCopyDirectives(string name)
+        public static string ProcessCopyDirectives(CompilationProject project, string name)
         {
-            return ProcessTokensDocument(name, CopyProject.GetProcessedTokensDocument(name));
+            return ProcessTokensDocument(GetProcessedTokensDocument(project, name));
         }
 
         public static void CheckWithCopyResultFile(string result, string testName)
         {
             string path = Path.Combine(Root, "CopyResultFiles", testName + ".txt");
-            string expected = System.IO.File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
-            TypeCobol.Test.TestUtils.compareLines(path, result, expected, PlatformUtils.GetPathForProjectFile(path));
+            string expected = File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
+            TestUtils.compareLines(path, result, expected, PlatformUtils.GetPathForProjectFile(path));
         }
 
-        public static string ProcessReplaceDirectives(string name)
+        public static string ProcessReplaceDirectives(CompilationProject project, string name)
         {
-            return ProcessTokensDocument(name, ReplaceProject.GetProcessedTokensDocument(name));
+            return ProcessTokensDocument(GetProcessedTokensDocument(project, name));
         }
 
         public static void CheckWithReplaceResultFile(string result, string testName)
         {
             string path = Path.Combine(Root, "ReplaceResultFiles", testName + ".txt");
-            string expected = System.IO.File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
-            TypeCobol.Test.TestUtils.compareLines(path, result, expected, PlatformUtils.GetPathForProjectFile(path));
+            string expected = File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
+            TestUtils.compareLines(path, result, expected, PlatformUtils.GetPathForProjectFile(path));
         }
-
     }
-
 }

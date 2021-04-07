@@ -18,6 +18,7 @@ namespace TypeCobol.Test.Utils
         public FileCompiler Compiler { get; }
         public FilesComparator Comparator { get; }
         public TestObserver Observer { get; }
+        public bool IsCobolLanguage { get; set; }
 
         public TestUnit(FilesComparator comparator1, string[] copyExtensions = null, bool autoRemarks = false, bool antlrProfiler = false)
         {
@@ -28,7 +29,7 @@ namespace TypeCobol.Test.Utils
             DirectoryInfo localDirectory = new DirectoryInfo(Path.GetDirectoryName(filePath));
             DocumentFormat format = Comparator?.GetSampleFormat();
             TypeCobolOptions options = new TypeCobolOptions();
-
+            options.IsCobolLanguage = IsCobolLanguage;
 #if EUROINFO_RULES
             options.AutoRemarksEnable = autoRemarks;
 #endif
@@ -139,6 +140,7 @@ namespace TypeCobol.Test.Utils
         private string _resultsRoot;
         private string[] _copyExtensions;
         private int _nbOfTests;
+        public bool IsCobolLanguage { get; set; }
 
         internal FolderTester(string sampleRoot, string resultsRoot, string folder, string[] fileToTestsExtensions, string[] copyExtensions = null, string[] ignored = null, bool deep = true) {
 			_sampleRoot = sampleRoot;
@@ -188,6 +190,7 @@ namespace TypeCobol.Test.Utils
                 foreach (var comparator in comparators) {
                     Console.WriteLine(comparator.paths.Result + " checked with " + comparator.GetType().Name);
 					var unit = new TestUnit(comparator, _copyExtensions, autoRemarks);
+                    unit.IsCobolLanguage = IsCobolLanguage;
                     unit.Parse();
 				    if (unit.Observer.HasErrors)
 				    {
@@ -219,7 +222,8 @@ namespace TypeCobol.Test.Utils
 				    }
 				}
 			}
-			if (errors.Length > 0) throw new Exception(errors.ToString());
+			if (errors.Length > 0)
+                throw new Exception(errors.ToString());
 		}
 
         private IList<FilesComparator> GetComparators(string sampleRoot, string resultsRoot, string samplePath, bool debug) {
@@ -461,40 +465,42 @@ namespace TypeCobol.Test.Utils
         public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
         {
             var sortedDiags = compilationUnit.AllDiagnostics().OrderBy(d => d.Line).GetEnumerator();
-            
 
             //Create result file
-            
+
             //Read original source file
-            StreamReader sourceReader = new StreamReader(new FileStream(paths.SamplePath , FileMode.Open));
+            using (StreamReader sourceReader = new StreamReader(new FileStream(paths.SamplePath, FileMode.Open)))
+            {
+                StringBuilder resultBuilder = new StringBuilder();
+                int linePos = 0;
+
+                Diagnostic nextDiag = sortedDiags.MoveNext() ? sortedDiags.Current : null;
+                while (!sourceReader.EndOfStream)
+                {
+                    string line = sourceReader.ReadLine();
+                    linePos++;
 
 
-            StringBuilder resultBuilder = new StringBuilder();
-            int linePos = 0;
+                    while (nextDiag != null && nextDiag.Line <= linePos)
+                    {
+                        resultBuilder.Append(nextDiag).Append("\n");
+                        nextDiag = sortedDiags.MoveNext() ? sortedDiags.Current : null;
+                    }
+                    resultBuilder.Append(line).Append("\n");
+                }
 
-            Diagnostic nextDiag = sortedDiags.MoveNext() ? sortedDiags.Current : null;
-            while (!sourceReader.EndOfStream) {
-                string line = sourceReader.ReadLine();
-                linePos++;
-
-
-                while (nextDiag != null && nextDiag.Line <= linePos) {
+                //Print all remaining diags
+                while (nextDiag != null)
+                {
                     resultBuilder.Append(nextDiag).Append("\n");
                     nextDiag = sortedDiags.MoveNext() ? sortedDiags.Current : null;
                 }
-                resultBuilder.Append(line).Append("\n");
+
+
+                string result = resultBuilder.ToString();
+                if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
+                ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader, expectedResultPath);
             }
-
-            //Print all remaining diags
-            while (nextDiag != null){
-                resultBuilder.Append(nextDiag).Append("\n");
-                nextDiag = sortedDiags.MoveNext() ? sortedDiags.Current : null;
-            }
-
-
-            string result = resultBuilder.ToString();
-            if (debug) Console.WriteLine("\"" + paths.SamplePath+ "\" result:\n" + result);
-            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader, expectedResultPath);
         }
     }
 

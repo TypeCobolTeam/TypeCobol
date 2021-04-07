@@ -1,5 +1,4 @@
 --- Diagnostics ---
-Line 1[8,25] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 4[8,34] <27, Error, Syntax> - Syntax error : extraneous input 'DECLAREPROCEDUREInitFrom.' expecting {DataDivisionHeader, ProcedureDivisionHeader, FunctionDeclarationEnd} OffendingSymbol=InitFrom():():():():Local:Procedure/Procedure
 Line 6[6,6] <1, Error, TextFormat> - Invalid indicator character '[6,6]' : use space for source lines, * or / for comment lines, D or d for debugging lines, - for continuation lines
 

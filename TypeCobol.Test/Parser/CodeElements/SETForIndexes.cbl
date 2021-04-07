@@ -9,3 +9,5 @@ set myGroup::table-idx down by 1.
 set myGroup::table-idx down by myGroup::var1.
 SET  table-idx OF myGroup UP BY 1.
 SET  table-idx of myGroup up BY var1 OF myGroup.
+set table-idx up to 1.
+set table-idx down to 1.
