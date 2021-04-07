@@ -49,22 +49,28 @@ namespace TypeCobol.Test.Utils
         }
 
 		public void Parse() {
-#if EUROINFO_RULES
-			try
+            try
             {
+#if EUROINFO_RULES
                 //Check for the presence of a CpyCopies.lst file.
-                FileInfo fi = new FileInfo(this.Compiler.CobolFile.FullPath);
-                FileInfo copyFileMap = new FileInfo(Path.Combine(fi.DirectoryName, fi.Directory.Name + "CpyCopies.lst"));
-                if (copyFileMap.Exists) { 
-                    Compiler.CompilerOptions.CpyCopyNamesMapFilePath = copyFileMap.FullName;
+                string directory = Path.GetDirectoryName(Compiler.CobolFile.FullPath);
+                string cpyListFilePath = Path.Combine(directory, "CpyCopies.lst");
+                if (File.Exists(cpyListFilePath))
+                {
+                    Compiler.CompilerOptions.CpyCopyNamesMapFilePath = cpyListFilePath;
                 }
+#endif
                 Compiler.CompileOnce();
             }
-			catch(Exception e) { Observer.OnError(e); }
-            finally { Compiler.CompilerOptions.CpyCopyNamesMapFilePath = null;}
-#else
-            try { Compiler.CompileOnce(); }
-            catch (Exception e) { Observer.OnError(e); }
+            catch (Exception e)
+            {
+                Observer.OnError(e);
+            }
+#if EUROINFO_RULES
+            finally
+            {
+                Compiler.CompilerOptions.CpyCopyNamesMapFilePath = null;
+            }
 #endif
         }
 
