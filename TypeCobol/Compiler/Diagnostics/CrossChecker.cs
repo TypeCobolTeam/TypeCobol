@@ -249,7 +249,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 whenSearch.CodeElement.Condition.AcceptASTVisitor(whenSearchVisitor);
                 if (whenSearchVisitor.IsInError)
                 {
-                    DiagnosticUtils.AddError(whenSearch, "First index declared for the table when subscripting and one of declared keys must be used.");
+                    DiagnosticUtils.AddError(whenSearch, "When subscripting, first index declared for the table and at least one of declared keys must be used.");
                 }
             }
             return true;
@@ -280,15 +280,13 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     ////////// WHEN must use one of the declared keys (ascending or descending) //////////
                     var dataDefinitionKey = _whenSearch.GetDataDefinitionFromStorageAreaDictionary(variableStorageArea);
-                    if (dataDefinitionKey?.Parent.CodeElement is DataDescriptionEntry tableDescriptionEntry)
+                    if (dataDefinitionKey?.Parent.CodeElement is DataDescriptionEntry tableDescriptionEntryKey)
                     {
-                        if (tableDescriptionEntry.TableSortingKeys != null)
+                        if (tableDescriptionEntryKey.TableSortingKeys != null)
                         {
-                            var tableSortingKeyNames = tableDescriptionEntry.TableSortingKeys
-                                .Where(key => key.SortDirection?.Value != SortDirection.None)
-                                .Select(key => key.SortKey.Name);
-                            var isTableSortingKey = tableSortingKeyNames.Contains(dataDefinitionKey.Name);
-                            if (!isTableSortingKey)
+                            var existsName = tableDescriptionEntryKey.TableSortingKeys
+                                .Any(key => key.SortDirection?.Value != SortDirection.None && key.SortKey.Name.Equals(dataDefinitionKey.Name, StringComparison.OrdinalIgnoreCase));
+                            if (!existsName)
                             {
                                 // error
                                 IsInError = true;
@@ -302,9 +300,9 @@ namespace TypeCobol.Compiler.Diagnostics
                     var dataDefinitionFirstSubscript = _whenSearch.GetDataDefinitionFromStorageAreaDictionary(firstSubscriptStorageArea);
                     // Ensure the subscript is the 1st declared
                     var isFirstIndexDeclaredInTable = false;
-                    if (dataDefinitionFirstSubscript?.Parent.CodeElement is DataDescriptionEntry tableDescriptionEntry2)
+                    if (dataDefinitionFirstSubscript?.Parent.CodeElement is DataDescriptionEntry tableDescriptionEntrySubscript)
                     {
-                        isFirstIndexDeclaredInTable = tableDescriptionEntry2.Indexes[0].Name.Equals(dataDefinitionFirstSubscript.Name, StringComparison.OrdinalIgnoreCase);
+                        isFirstIndexDeclaredInTable = tableDescriptionEntrySubscript.Indexes[0].Name.Equals(dataDefinitionFirstSubscript.Name, StringComparison.OrdinalIgnoreCase);
                     }
                     if (!isFirstIndexDeclaredInTable)
                     {
