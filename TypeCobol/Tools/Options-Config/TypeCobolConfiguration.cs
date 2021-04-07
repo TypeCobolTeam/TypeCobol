@@ -6,9 +6,6 @@ using Mono.Options;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
-#if EUROINFO_RULES
-using TypeCobol.Compiler.Preprocessor;
-#endif
 
 namespace TypeCobol.Tools.Options_Config
 {
@@ -94,12 +91,9 @@ namespace TypeCobol.Tools.Options_Config
             { ReturnCode.MaxDiagnosticsError,     "Maximum diagnostics have to be an integer." },
             { ReturnCode.OutputFormatError,       "Unexpected parameter given for Output format option. Accepted parameters are Cobol85/0(default), PublicSignature/1." },
             { ReturnCode.ExpandingCopyError,      "Expanding copy path given is unreachable." },
-            { ReturnCode.ExtractusedCopyError,    "Extractused copy path given is unreachable." },
+            { ReturnCode.ExtractUsedCopyError,    "Extract used copy path given is unreachable." },
             { ReturnCode.LogFileError,            "Log file path is unreachable." },
-            { ReturnCode.CustomAnalyzerFileError, "Custom analyzer assembly files are unreachable." },
-#if EUROINFO_RULES
-            { ReturnCode.CopyNameMapFileError,    "CPY Copy name map file given is unreachable." },
-#endif
+            { ReturnCode.CustomAnalyzerFileError, "Custom analyzer assembly files are unreachable." }
         };
 
         public TypeCobolConfiguration()
@@ -127,7 +121,6 @@ namespace TypeCobol.Tools.Options_Config
         //Warnings
         Warning = 1,                    // Warning(s) issued during parsing of input file
 
-
         //Errors
         ParsingDiagnostics = 1000,      // Syntax or semantic error in one or more input file
         OutputFileError = 1001,         // CLI parameters error
@@ -153,15 +146,11 @@ namespace TypeCobol.Tools.Options_Config
         MaxDiagnosticsError = 1030,     // Unexpected user input for maximundiagnostics option (not an int)
         OutputFormatError = 1031,       // Unexpected user input for outputFormat option
         ExpandingCopyError = 1032,      // Expanding copy path given is unreachable.
-        ExtractusedCopyError = 1033,    // Extractused copy path given is unreachable.
+        ExtractUsedCopyError = 1033,    // Extract used copy path given is unreachable.
         LogFileError = 1034,            // Wrong log path given
         CustomAnalyzerFileError = 1035, // Invalid path to custom analyzer DLL file
-#if EUROINFO_RULES
-        CopyNameMapFileError = 1036,    // Wrong CPY Copy name map file
-#endif
 
         MultipleErrors = 9999
-
     }
 
     public enum OutputFormat {
@@ -382,7 +371,7 @@ namespace TypeCobol.Tools.Options_Config
 
             //HaltOnMissingCopyFilePathError
             if (!CanCreateFile(config.ExtractedCopiesFilePath) && !string.IsNullOrEmpty(config.ExtractedCopiesFilePath))
-                errorStack.Add(ReturnCode.ExtractusedCopyError, TypeCobolConfiguration.ErrorMessages[ReturnCode.ExtractusedCopyError]);
+                errorStack.Add(ReturnCode.ExtractUsedCopyError, TypeCobolConfiguration.ErrorMessages[ReturnCode.ExtractUsedCopyError]);
 
             //LogFilePathError
             if (!CanCreateFile(config.LogFile) && !string.IsNullOrEmpty(config.LogFile))
