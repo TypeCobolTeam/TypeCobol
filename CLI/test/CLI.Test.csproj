@@ -85,11 +85,11 @@
       <Link>ressources\ycopylist\input\YXXXFAL.cpy</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\\YXXXFAL.cpy">
+    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YXXXFAL.cpy">
       <Link>ressources\ycopylist\input\YXXXFAL.cpy</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\\YXXXFAS.cpy">
+    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YXXXFAS.cpy">
       <Link>ressources\ycopylist\input\YXXXFAS.cpy</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>	
