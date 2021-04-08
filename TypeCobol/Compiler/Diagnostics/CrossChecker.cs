@@ -290,6 +290,7 @@ namespace TypeCobol.Compiler.Diagnostics
                             {
                                 // error
                                 IsInError = true;
+                                return false;
                             }
                         }
                     }
@@ -308,6 +309,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     {
                         // error
                         IsInError = true;
+                        return false;
                     }
                 }
                 return true;
