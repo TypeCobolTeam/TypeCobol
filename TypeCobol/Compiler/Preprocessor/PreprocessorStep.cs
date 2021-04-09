@@ -22,17 +22,17 @@ namespace TypeCobol.Compiler.Preprocessor
         /// <summary>
         /// Initial preprocessing of a complete document
         /// </summary>
-        internal static void ProcessDocument(CompilationDocument document, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, IProcessedTokensDocumentProvider processedTokensDocumentProvider, PerfStatsForParserInvocation perfStatsForParserInvocation, out List<MissingCopy> missingCopies)
+        internal static void ProcessDocument(CompilationDocument document, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, IDocumentImporter documentImporter, PerfStatsForParserInvocation perfStatsForParserInvocation, out List<MissingCopy> missingCopies)
         {
             if (document.CompilerOptions.UseAntlrProgramParsing)
             {
                 ProcessTokensLinesChanges(document, documentLines, null, null,
-                    processedTokensDocumentProvider, perfStatsForParserInvocation, out missingCopies);
+                    documentImporter, perfStatsForParserInvocation, out missingCopies);
             }
             else
             {
                 CupProcessTokensLinesChanges(document, documentLines, null, null,
-                    processedTokensDocumentProvider, perfStatsForParserInvocation, out missingCopies);
+                    documentImporter, perfStatsForParserInvocation, out missingCopies);
             }
         }
 
@@ -68,7 +68,7 @@ namespace TypeCobol.Compiler.Preprocessor
         /// <summary>
         /// Incremental preprocessing of a set of tokens lines changes
         /// </summary>
-        internal static IList<DocumentChange<IProcessedTokensLine>> ProcessTokensLinesChanges(CompilationDocument document, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, IList<DocumentChange<ITokensLine>> tokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, IProcessedTokensDocumentProvider processedTokensDocumentProvider, PerfStatsForParserInvocation perfStatsForParserInvocation, out List<MissingCopy> missingCopies)
+        internal static IList<DocumentChange<IProcessedTokensLine>> ProcessTokensLinesChanges(CompilationDocument document, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, IList<DocumentChange<ITokensLine>> tokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, IDocumentImporter documentImporter, PerfStatsForParserInvocation perfStatsForParserInvocation, out List<MissingCopy> missingCopies)
         {
             var textSourceInfo = document.TextSourceInfo;
 
@@ -316,10 +316,9 @@ namespace TypeCobol.Compiler.Preprocessor
 
                             // Load (or retrieve in cache) the document referenced by the COPY directive
                             //Issue #315: tokensLineWithCopyDirective.ScanState must be passed because special names paragraph such as "Decimal point is comma" are declared in the enclosing program and can affect the parsing of COPY
-                            ProcessedTokensDocument importedDocumentSource =
-                                processedTokensDocumentProvider.GetProcessedTokensDocument(copyDirective.LibraryName,
-                                    copyDirective.TextName,
-                                    tokensLineWithCopyDirective.ScanStateBeforeCOPYToken[copyDirective.COPYToken], document.CopyTextNamesVariations, out perfStats);
+                            ProcessedTokensDocument importedDocumentSource = documentImporter.Import(copyDirective.LibraryName, copyDirective.TextName,
+                                    tokensLineWithCopyDirective.ScanStateBeforeCOPYToken[copyDirective.COPYToken],
+                                    document.CopyTextNamesVariations, out perfStats).ProcessedTokensDocumentSnapshot;
 
                             // The copy has missing copies, add them into the list and report diagnostic
                             foreach (var missingCopy in importedDocumentSource.MissingCopies)
@@ -404,7 +403,7 @@ namespace TypeCobol.Compiler.Preprocessor
             CompilationDocument document, ISearchableReadOnlyList<ProcessedTokensLine> documentLines,
             IList<DocumentChange<ITokensLine>> tokensLinesChanges,
             PrepareDocumentLineForUpdate prepareDocumentLineForUpdate,
-            IProcessedTokensDocumentProvider processedTokensDocumentProvider,
+            IDocumentImporter documentImporter,
             PerfStatsForParserInvocation perfStatsForParserInvocation, out List<MissingCopy> missingCopies)
         {
             var textSourceInfo = document.TextSourceInfo;
@@ -622,11 +621,9 @@ namespace TypeCobol.Compiler.Preprocessor
 
                             // Load (or retrieve in cache) the document referenced by the COPY directive
                             //Issue #315: tokensLineWithCopyDirective.ScanState must be passed because special names paragraph such as "Decimal point is comma" are declared in the enclosing program and can affect the parsing of COPY
-                            ProcessedTokensDocument importedDocumentSource =
-                                processedTokensDocumentProvider.GetProcessedTokensDocument(copyDirective.LibraryName,
-                                    copyDirective.TextName,
+                            ProcessedTokensDocument importedDocumentSource = documentImporter.Import(copyDirective.LibraryName, copyDirective.TextName,
                                     tokensLineWithCopyDirective.ScanStateBeforeCOPYToken[copyDirective.COPYToken],
-                                    document.CopyTextNamesVariations, out perfStats);
+                                    document.CopyTextNamesVariations, out perfStats).ProcessedTokensDocumentSnapshot;
 
                             // The copy has missing copies, add them into the list and report diagnostic
                             foreach (var missingCopy in importedDocumentSource.MissingCopies)
