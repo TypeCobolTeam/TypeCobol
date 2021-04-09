@@ -210,11 +210,12 @@ namespace TypeCobol.LanguageServer
                 arrangedCustomSymbol.CopyAllPrograms(new List<List<Program>>() {prog.ToList()});
                 arrangedCustomSymbol.Programs.Remove(matchingPgm);
             }
+
             fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider,
                 CompilationProject, CompilationProject.CompilationOptions, arrangedCustomSymbol ?? _customSymbols,
-                false, CompilationProject);
+                docContext.IsCopy, CompilationProject);
 #else
-            fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, _customSymbols, false, CompilationProject);
+            fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, _customSymbols, docContext.IsCopy, CompilationProject);
 #endif
             //Set Any Language Server Connection Options.
             docContext.FileCompiler = fileCompiler;
