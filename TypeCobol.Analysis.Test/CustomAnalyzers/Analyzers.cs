@@ -76,7 +76,7 @@ namespace TypeCobol.Analysis.Test.CustomAnalyzers
 
         public override void Inspect(ProcessedTokensDocument processedTokensDocument)
         {
-            AddInfo($"number of tokens (after preprocessing): {processedTokensDocument.ProcessedTokensSource.Count()}");
+            AddInfo($"number of tokens (after preprocessing): {processedTokensDocument.GetProcessedTokens().Count()}");
         }
 
         public override void Inspect(CodeElementsDocument codeElementsDocument)

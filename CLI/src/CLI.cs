@@ -139,7 +139,8 @@ namespace TypeCobol.Server
             foreach (var inputFilePath in _configuration.InputFiles)
             {
                 var parser = new Parser(rootSymbolTable);
-                parser.Init(inputFilePath, typeCobolOptions, _configuration.Format, _configuration.CopyFolders, analyzerProvider);
+                //TODO issue #1876 we have to now beforehand whether source file is a copy or a program
+                parser.Init(inputFilePath, false, typeCobolOptions, _configuration.Format, _configuration.CopyFolders, analyzerProvider);
                 parser.Parse(inputFilePath);
 
                 //Collect results : parsing results, used and missing copies

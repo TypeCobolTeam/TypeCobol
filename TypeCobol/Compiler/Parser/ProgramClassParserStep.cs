@@ -50,6 +50,7 @@ namespace TypeCobol.Compiler.Parser
             SymbolTable customSymbols,
             PerfStatsForParserInvocation perfStatsForParserInvocation,
             ISyntaxDrivenAnalyzer[] customAnalyzers,
+            bool wrapCopyIntoProgram,
             out SourceFile root,
             out List<Diagnostic> diagnostics, 
             out Dictionary<CodeElement, Node> nodeCodeElementLinkers,
@@ -60,7 +61,15 @@ namespace TypeCobol.Compiler.Parser
 #if DEBUG_ANTRL_CUP_TIME
             var t1 = DateTime.UtcNow;            
 #endif
-            CodeElementTokenizer scanner = new CodeElementTokenizer(codeElementsLines);
+            IEnumerable<CodeElement> before = null;
+            IEnumerable<CodeElement> after = null;
+            if (wrapCopyIntoProgram)
+            {
+                var programSkeleton = new CopyParsing.ProgramSkeleton(textSourceInfo);
+                before = programSkeleton.Before();
+                after = programSkeleton.After();
+            }
+            CodeElementTokenizer scanner = new CodeElementTokenizer(codeElementsLines, before, after);
             CupParser.TypeCobolProgramParser parser = new CupParser.TypeCobolProgramParser(scanner);
             CupParserTypeCobolProgramDiagnosticErrorReporter diagReporter = new CupParserTypeCobolProgramDiagnosticErrorReporter();
             parser.ErrorReporter = diagReporter;

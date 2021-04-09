@@ -20,7 +20,6 @@ namespace TypeCobol.Test.Parser
             var errors = new System.Collections.Generic.List<Exception>();
             int nbOfTests = 0;
             string[] extensions = { ".cbl", ".pgm" };
-            string[] compilerExtensions = extensions.Concat(new[] { ".cpy" }).ToArray();
 
 
             var directories = Directory.GetDirectories(Root).ToList();
@@ -30,7 +29,7 @@ namespace TypeCobol.Test.Parser
                 var dirname = Path.GetFileName(directory);
 
                 Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-                var folderTester = new FolderTester(Root, Root, directory, extensions, compilerExtensions);
+                var folderTester = new FolderTester(Root, Root, directory, extensions);
                 try { folderTester.Test(); }
                 catch (Exception ex) { errors.Add(ex); }
                 nbOfTests += folderTester.GetTestCount();
@@ -63,7 +62,7 @@ namespace TypeCobol.Test.Parser
             Assert.IsTrue(tuple.Item2.OutputDeviceName == null);
             Assert.IsFalse(tuple.Item2.IsWithNoAdvancing);
 
-            tuple = ParseOneCodeElement<DisplayStatement>("display toto no advancing no advancing", false);
+            tuple = ParseOneCodeElement<DisplayStatement>("display toto no advancing no advancing", correctSyntax: false);
             Assert.IsTrue(tuple.Item2.Variables.Length == 1);
             Assert.IsTrue(tuple.Item2.OutputDeviceName == null);
             Assert.IsTrue(tuple.Item2.IsWithNoAdvancing);
@@ -120,7 +119,7 @@ namespace TypeCobol.Test.Parser
         /// <returns></returns>
         public static Tuple<CodeElementsDocument, DisplayStatement> ParseDisplayStatement(string textToParse, int nbrOfVarToDisplay, SymbolType? uponMnemonicOrEnvName, bool isWithNoAdvancing = false, bool correctSyntax = true, params string[] varsToDisplay) 
         {
-            Tuple<CodeElementsDocument, DisplayStatement> tuple = ParseOneCodeElement<DisplayStatement>(textToParse, correctSyntax);
+            Tuple<CodeElementsDocument, DisplayStatement> tuple = ParseOneCodeElement<DisplayStatement>(textToParse, false, correctSyntax);
             if (nbrOfVarToDisplay > 0)
             {
                 Assert.IsTrue(tuple.Item2.Variables != null && tuple.Item2.Variables.Length == nbrOfVarToDisplay);
@@ -157,12 +156,12 @@ namespace TypeCobol.Test.Parser
         /// Parse a text that match exactly one code element.
         /// The type of the code element is compared to the parsed one.
         /// </summary>
-        /// <param name="compilationUnit"></param>
         /// <param name="textToParse"></param>
         /// <param name="correctSyntax"></param>
-        public static Tuple<CodeElementsDocument, T> ParseOneCodeElement<T>(string textToParse, bool correctSyntax = true) where T : CodeElement
+        /// <param name="asPartOfACopy"></param>
+        public static Tuple<CodeElementsDocument, T> ParseOneCodeElement<T>(string textToParse, bool asPartOfACopy = false, bool correctSyntax = true) where T : CodeElement
         {
-            CompilationUnit compilationUnit = ParserUtils.ParseCobolString(textToParse);
+            CompilationUnit compilationUnit = ParserUtils.ParseCobolString(textToParse, asPartOfACopy);
 
             CodeElementsDocument codeElementsDocument = compilationUnit.CodeElementsDocumentSnapshot;
             Assert.IsTrue(codeElementsDocument.CodeElements.Any());

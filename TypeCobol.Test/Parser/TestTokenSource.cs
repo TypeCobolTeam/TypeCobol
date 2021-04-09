@@ -23,7 +23,7 @@ namespace TypeCobol.Test.Parser
             DocumentFormat documentFormat = DocumentFormat.RDZReferenceFormat;
 
             // Compile test file
-            CompilationDocument compilationDocument = ParserUtils.ScanCobolFile(relativePath, textName, documentFormat);
+            CompilationDocument compilationDocument = ParserUtils.ScanCobolFile(relativePath, textName, true, documentFormat);
 
             // Create a token iterator on top of tokens lines
             TokensLinesIterator tokensIterator = new TokensLinesIterator(
@@ -117,7 +117,7 @@ namespace TypeCobol.Test.Parser
             DocumentFormat docFormat = DocumentFormat.RDZReferenceFormat;
 
             // Compile test file
-            CompilationDocument compilationDocument = ParserUtils.ScanCobolFile(relativePath, textName, docFormat);
+            CompilationDocument compilationDocument = ParserUtils.ScanCobolFile(relativePath, textName, true, docFormat);
 
             // Create a token iterator on top of tokens lines
             TokensLinesIterator tokensIterator = new TokensLinesIterator(
@@ -180,10 +180,10 @@ namespace TypeCobol.Test.Parser
             DocumentFormat docFormat = DocumentFormat.RDZReferenceFormat;
 
             // Compile test file
-            CompilationDocument compilationDocument = ParserUtils.ScanCobolFile(relativePath, textName, docFormat);
+            CompilationDocument compilationDocument = ParserUtils.ScanCobolFile(relativePath, textName, true, docFormat);
 
             // Search for first level 88 as a start token
-            Token startToken = compilationDocument.TokensDocumentSnapshot.SourceTokens.First(t => (t.TokenType == TokenType.IntegerLiteral && ((IntegerLiteralTokenValue)t.LiteralValue).Number == 88));
+            Token startToken = compilationDocument.TokensDocumentSnapshot.SourceTokens.First(t => (t.TokenType == TokenType.LevelNumber && ((IntegerLiteralTokenValue)t.LiteralValue).Number == 88));
 
             // Create a token iterator on top of tokens lines
             TokensLinesIterator tokensIterator = new TokensLinesIterator(

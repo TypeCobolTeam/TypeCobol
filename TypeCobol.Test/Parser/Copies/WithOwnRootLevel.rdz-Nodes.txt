@@ -1,0 +1,9 @@
+--- Nodes ---
+?
+  WithOwnRootLevel.rdz
+    data-division
+      working-storage
+        simpleGroup
+          data-item1
+          data-item2
+    end

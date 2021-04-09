@@ -155,14 +155,13 @@ namespace TypeCobol.Test {
             var errors = new System.Collections.Generic.List<Exception>();
             int nbOfTests = 0;
             string[] extensions = { ".cbl", ".pgm" };
-            string[] compilerExtensions = extensions.Concat(new[] { ".cpy" }).ToArray();
 
             foreach (string directory in Directory.GetDirectories(root))
             {
                 var dirname = Path.GetFileName(directory);
 
-                Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-                var folderTester = new FolderTester(root, root, directory, extensions, compilerExtensions);
+			    Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
+				var folderTester = new FolderTester(root, root, directory, extensions);
                 folderTester.IsCobolLanguage = cobol;
                 try
                 {
@@ -207,13 +206,12 @@ namespace TypeCobol.Test {
             int nbOfTests = 0;
 
             string[] extensions = { ".tcbl" };
-            string[] compilerExtensions = extensions.Concat(new[] { ".cpy" }).ToArray();
             foreach (string directory in Directory.GetDirectories(root))
             {
                 var dirname = Path.GetFileName(directory);
 
                 Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-                var folderTester = new FolderTester(root, root, directory, extensions, compilerExtensions);
+                var folderTester = new FolderTester(root, root, directory, extensions);
                 folderTester.Test();
                 nbOfTests += folderTester.GetTestCount();
                 Console.Write("\n");
@@ -244,19 +242,15 @@ namespace TypeCobol.Test {
             string tempRoot = PlatformUtils.GetPathForProjectFile("Parser" + Path.DirectorySeparatorChar + "EILegacy");
 
             int nbOfTests = 0;
-            string[] extensions = { ".tcbl", ".cbl"};
+            string[] extensions = {".tcbl", ".cbl"};
 
-            string[] compilerExtensions = extensions.Concat(new[] { ".cpy" }).ToArray();
-            
+            var folderTester = new FolderTester(tempRoot, tempRoot, tempRoot, extensions);
 
-                //Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-                var folderTester = new FolderTester(tempRoot, tempRoot, tempRoot, extensions, compilerExtensions);
+            folderTester.Test(false, false, true);
 
-                folderTester.Test(false, false, true);
+            nbOfTests += folderTester.GetTestCount();
+            Console.Write("\n");
 
-                nbOfTests += folderTester.GetTestCount();
-                Console.Write("\n");
-            
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
         }
@@ -275,7 +269,7 @@ namespace TypeCobol.Test {
 
             var folder = "Parser" + Path.DirectorySeparatorChar + "ExecToStep";
 
-            var compileResult = ParserUtils.ParseCobolFile(fileName, null, folder, ExecutionStep.Scanner);
+            var compileResult = ParserUtils.ParseCobolFile(fileName, folder, execToStep: ExecutionStep.Scanner);
             //Verify that the option hasn't change during processing and that compilation process didn't go further than defined step
             if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.Scanner 
                 && compileResult.TokensLines.Count == 0 
@@ -284,20 +278,20 @@ namespace TypeCobol.Test {
                 && compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("Scanner Step failed");
 
-            compileResult = ParserUtils.ParseCobolFile(fileName, null, folder, ExecutionStep.Preprocessor);
+            compileResult = ParserUtils.ParseCobolFile(fileName, folder, execToStep: ExecutionStep.Preprocessor);
             if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.Preprocessor 
                 && compileResult.ProcessedTokensDocumentSnapshot == null 
                 && compileResult.CodeElementsDocumentSnapshot != null 
                 && compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("Preprocessor Step failed");
 
-            compileResult = ParserUtils.ParseCobolFile(fileName, null, folder, ExecutionStep.SyntaxCheck);
+            compileResult = ParserUtils.ParseCobolFile(fileName, folder, execToStep: ExecutionStep.SyntaxCheck);
             if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.SyntaxCheck 
                 && compileResult.CodeElementsDocumentSnapshot == null 
                 && compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("SyntaxCheck Step failed");
 
-            compileResult = ParserUtils.ParseCobolFile(fileName, null, folder, ExecutionStep.SemanticCheck);
+            compileResult = ParserUtils.ParseCobolFile(fileName, folder, execToStep: ExecutionStep.SemanticCheck);
             if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.SemanticCheck 
                 && !compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("SemanticCheck Step failed");
@@ -316,13 +310,36 @@ namespace TypeCobol.Test {
             int nbOfTests = 0;
 
             string[] extensions = { ".tcbl" };
-            string[] compilerExtensions = extensions.Concat(new[] { ".cpy" }).ToArray();
             var directory =
                 PlatformUtils.GetPathForProjectFile("Parser" + Path.DirectorySeparatorChar + "Documentation");
 
-            var folderTester = new FolderTester(directory, directory, directory, extensions, compilerExtensions);
+            var folderTester = new FolderTester(directory, directory, directory, extensions);
             folderTester.Test();
             nbOfTests += folderTester.GetTestCount();
+            Console.Write("Number of tests: " + nbOfTests + "\n");
+            Assert.IsTrue(nbOfTests > 0, "No tests found");
+        }
+
+
+        /// <summary>
+        /// Direct copy parsing tests. Checks all ".cpy" files from "Parser\Copies".
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "fast")]
+        public void CheckCopies()
+        {
+            int nbOfTests = 0;
+
+            string[] extensions = { ".cpy" };
+            var directory = PlatformUtils.GetPathForProjectFile("Parser" + Path.DirectorySeparatorChar + "Copies");
+            var dirname = Path.GetFileName(directory);
+
+            Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
+            var folderTester = new FolderTester(directory, directory, directory, extensions);
+            folderTester.Test();
+            nbOfTests += folderTester.GetTestCount();
+            Console.Write("\n");
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
         }

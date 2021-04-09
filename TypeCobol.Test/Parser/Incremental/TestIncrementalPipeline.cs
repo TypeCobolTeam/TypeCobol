@@ -26,7 +26,6 @@ namespace TypeCobol.Test.Parser.Incremental {
         {
             Paths paths = new Paths(Root, Root, Root + Path.DirectorySeparatorChar + "Simple.pgm", new Multipass.IndexNames());
             TestUnit unit = new TestUnit(new Multipass(paths));
-            unit.Init(new[] { ".pgm", ".cpy" });
             unit.Parse();
 
             var e = UpdateLine(TextChangeType.LineInserted, 2, "END PROGRAM Simple.");
@@ -49,7 +48,6 @@ namespace TypeCobol.Test.Parser.Incremental {
         {
             Paths paths = new Paths(Root, Root, Root + Path.DirectorySeparatorChar + "Simple.pgm", new Multipass.IndexNames());
             TestUnit unit = new TestUnit(new Multipass(paths));
-            unit.Init(new[] { ".pgm", ".cpy" });
             unit.Parse();
             var names = unit.Comparator.paths.Resultnames as Multipass.IndexNames;
             if (names != null)
@@ -115,7 +113,6 @@ namespace TypeCobol.Test.Parser.Incremental {
         {
             UnitTestPaths = new Paths(Root, Root, Root + Path.DirectorySeparatorChar + inputFileName, new Multipass.IndexNames());
             UnitTest = new TestUnit(new Multipass(UnitTestPaths));
-            UnitTest.Init(new[] { ".tcbl", ".cpy" });
             //Parser file for the first time
             UnitTest.Parse();
         }

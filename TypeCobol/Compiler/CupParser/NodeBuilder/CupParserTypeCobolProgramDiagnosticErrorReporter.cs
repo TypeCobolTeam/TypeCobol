@@ -55,7 +55,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             TypeCobolProgramParser tcpParser = parser as TypeCobolProgramParser;
             ProgramClassBuilder builder = tcpParser.Builder as ProgramClassBuilder;
             var errorReporter = tcpParser.ErrorReporter;
-            var tokenizer = parser.getScanner() as CodeElementTokenizer;
             CodeElementTokenizer newTokenizer = new CodeElementTokenizer(start, firstSymbol);
             TypeCobolProgramParser newParser = new TypeCobolProgramParser(newTokenizer);
             newParser.Builder = builder;

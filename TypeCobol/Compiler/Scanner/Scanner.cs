@@ -17,7 +17,6 @@ namespace TypeCobol.Compiler.Scanner
     /// </summary>
     public class Scanner
     {
-
         /// <summary>
         /// Issue #428, quick fix for this issue.
         /// Method ScanIsolatedTokenInDefaultContext need the scanState of the previous token in order to parser the new token
@@ -25,14 +24,6 @@ namespace TypeCobol.Compiler.Scanner
         /// A solution would be to rescan all the line.
         /// </summary>
         public bool BeSmartWithLevelNumber { get; set; }
-        /// <summary>
-        /// Scan a line of a document when no previous scan state object is available
-        /// </summary>
-        public static void ScanFirstLine(TokensLine tokensLine, bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
-        {
-            MultilineScanState initialScanState = new MultilineScanState(insideDataDivision, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals);            
-            ScanTokensLine(tokensLine, initialScanState, compilerOptions, copyTextNameVariations);
-        }
 
         /// <summary>
         /// Scan a line of a document
@@ -222,15 +213,6 @@ namespace TypeCobol.Compiler.Scanner
             return new CompilerDirectiveToken(remarksDirective, originalTokens, false);
         }
 #endif
-
-        /// <summary>
-        /// Scan a group of continuation lines when no previous scan state object is available
-        /// </summary>
-        public static void ScanFirstLineContinuationGroup(IList<TokensLine> continuationLinesGroup, bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals, ColumnsLayout format, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
-        {
-            MultilineScanState initialScanState = new MultilineScanState(insideDataDivision, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals);
-            ScanTokensLineContinuationGroup(continuationLinesGroup, initialScanState, format, compilerOptions, copyTextNameVariations);
-        }
 
         /// <summary>
         /// Scan a group of continuation lines
@@ -622,17 +604,12 @@ namespace TypeCobol.Compiler.Scanner
         }
 
         /// <summary>
-        /// Scan an isolated token in the given context if not null or in following "default" context otherwise:
-        /// - insideDataDivision = true
-        /// - decimalPointIsComma = false
-        /// - withDebuggingMode = false
-        /// - encodingForAlphanumericLiterals = IBM 1147
-        /// - default compiler options
+        /// Scan an isolated token in the given context.
         /// </summary>
-        public static Token ScanIsolatedToken(string tokenText, out Diagnostic error, MultilineScanState scanContext = null)
+        public static Token ScanIsolatedToken(string tokenText, [NotNull] MultilineScanState scanContext, out Diagnostic error)
         {
             TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
-            tempTokensLine.InitializeScanState(scanContext ?? new MultilineScanState(true, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
+            tempTokensLine.InitializeScanState(scanContext);
 
             Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions(), false);
             Token candidateToken = tempScanner.GetNextToken();

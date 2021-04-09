@@ -19,7 +19,7 @@ namespace TypeCobol.Test.Utils
 {
     public static class ParserUtils
     {
-        public static CompilationDocument ScanCobolFile(string relativePath, string textName, DocumentFormat documentFormat)
+        public static CompilationDocument ScanCobolFile(string relativePath, string textName, bool isCopy, DocumentFormat documentFormat)
         {
             DirectoryInfo localDirectory = new DirectoryInfo(PlatformUtils.GetPathForProjectFile(relativePath));
             if (!localDirectory.Exists)
@@ -31,15 +31,14 @@ namespace TypeCobol.Test.Utils
                 localDirectory.FullName, new string[] { ".cbl", ".cpy" },
                 documentFormat, new TypeCobolOptions(), null);
 
-            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, true, project);
-            compiler.CompileOnce();
+            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, isCopy, project);
+            compiler.CompileOnce(ExecutionStep.Preprocessor, false, false);
 
-            return compiler.CompilationResultsForCopy;
+            return compiler.CompilationResultsForProgram;
         }
 
-        public static CompilationUnit ParseCobolFile(string textName, DocumentFormat documentFormat = null, string folder = null, ExecutionStep execToStep = ExecutionStep.SemanticCheck)
+        public static CompilationUnit ParseCobolFile(string textName, string folder, bool isCopy = false, DocumentFormat documentFormat = null, ExecutionStep execToStep = ExecutionStep.SemanticCheck)
         {
-            if (folder == null) folder = "Parser" + Path.DirectorySeparatorChar + "CodeElements";
             DirectoryInfo localDirectory = new DirectoryInfo(PlatformUtils.GetPathForProjectFile(folder));
             if (!localDirectory.Exists)
             {
@@ -52,13 +51,13 @@ namespace TypeCobol.Test.Utils
                 //First use *.cpy as tests will use file WITH extension for program but without extension for copy inside programs => small perf gain
                 localDirectory.FullName, new string[] { ".cpy", ".cbl" },
                 documentFormat, options, null);
-            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, options, null, false, project);
+            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, options, null, isCopy, project);
             compiler.CompileOnce();
 
             return compiler.CompilationResultsForProgram;
         }
 
-        public static CompilationUnit ParseCobolString(string cobolString)
+        public static CompilationUnit ParseCobolString(string cobolString, bool asPartOfACopy)
         {
             //Prepare
             var textDocument = new ReadOnlyTextDocument("Empty doc", Encoding.Default, ColumnsLayout.FreeTextFormat, "");
@@ -68,7 +67,7 @@ namespace TypeCobol.Test.Utils
             var project = new CompilationProject("Empty project", ".", new[] { ".cbl", ".cpy" },
                 DocumentFormat.FreeTextFormat, typeCobolOptions, null);
 
-            var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, typeCobolOptions, false, project);
+            var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, typeCobolOptions, asPartOfACopy, project);
             compiler.CompileOnce();
 
             return compiler.CompilationResultsForProgram;
