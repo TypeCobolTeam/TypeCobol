@@ -452,7 +452,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     // Transfer the scanner context the of original token to the call below
                     Diagnostic error = null;					
                     MultilineScanState scanState = originalToken.ScanStateSnapshot;
-                    Token generatedToken = Scanner.Scanner.ScanIsolatedToken(replacedTokenText, out error, scanState);
+                    Token generatedToken = Scanner.Scanner.ScanIsolatedToken(replacedTokenText, scanState, out error);
                     // TO DO : find a way to report the error above ...
 
                     if (originalToken.PreviousTokenType != null) //In case orignal token was previously an other type of token reset it back to it's orignal type. 

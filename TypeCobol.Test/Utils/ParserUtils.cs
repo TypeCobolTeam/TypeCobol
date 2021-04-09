@@ -13,6 +13,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using String = System.String;
 
@@ -32,7 +33,9 @@ namespace TypeCobol.Test.Utils
                 localDirectory.FullName, new string[] { ".cbl", ".cpy" },
                 documentFormat, new TypeCobolOptions(), null);
 
-            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, true, project);
+            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project,
+                documentFormat.ColumnsLayout, new TypeCobolOptions(), null, true,
+                new MultilineScanState(documentFormat.Encoding) { InsideCopy = true }, project, null);
             compiler.CompileOnce();
 
             return compiler.CompilationResultsForCopy;

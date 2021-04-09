@@ -135,11 +135,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Analysis\" />
-    <Folder Include="Compiler\Parser\NodeBuilder\" />
-    <Folder Include="Documentation\Presentations\" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="AntlrGrammar\How to configure antlr 4 in Visual Studio.txt" />
     <Content Include="AntlrGrammar\How to edit antlr 4 grammar files.txt" />
     <Content Include="Documentation\Studies\Cobol 2 phases parsing study.txt" />
