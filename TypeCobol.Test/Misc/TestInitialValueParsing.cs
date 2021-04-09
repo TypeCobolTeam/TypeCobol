@@ -28,7 +28,7 @@ namespace TypeCobol.Test.Misc
             };
 
             var folder = Path.Combine("Parser", "Programs", "Cobol85", "ContinuationLine");
-            var compilationUnit = ParserUtils.ParseCobolFile("InitialValuesContinuations", DocumentFormat.RDZReferenceFormat, folder);
+            var compilationUnit = ParserUtils.ParseCobolFile("InitialValuesContinuations", folder);
             var workingStorage = compilationUnit.TemporaryProgramClassDocumentSnapshot.Root.MainProgram.Children[0].Children[0];
 
             for (int i = 0; i < workingStorage.ChildrenCount; i++)

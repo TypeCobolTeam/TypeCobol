@@ -25,7 +25,7 @@ namespace TypeCobol.Codegen {
             ParseGenerateCompare(path, DocumentFormat.RDZReferenceFormat, typeCobolVersion, autoRemarks, copies);
         }
         public static void ParseGenerateCompare(string path, DocumentFormat format, string typeCobolVersion, bool autoRemarks = false, IList<string> copies = null, MemoryStream lmStream = null) {
-            var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), format, autoRemarks, copies);
+            var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), false, format, autoRemarks, copies);
             var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
             var writer = new StringWriter();
             // write parsing errors
