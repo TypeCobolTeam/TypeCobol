@@ -447,19 +447,9 @@ namespace TypeCobol.Compiler.Preprocessor
                     string normalizedPartToReplace = partialWordReplaceOperation.ComparisonToken.NormalizedText;
                     //#258 - PartialReplacementToken can be null. In this case, we consider that it's an empty replacement
                     var replacementPart = partialWordReplaceOperation.PartialReplacementToken != null ? partialWordReplaceOperation.PartialReplacementToken.Text : "";
-
-					string replacedTokenText = Regex.Replace(normalizedTokenText, normalizedPartToReplace, replacementPart, RegexOptions.IgnoreCase);
-                    // Transfer the scanner context the of original token to the call below
-                    Diagnostic error = null;					
-                    MultilineScanState scanState = originalToken.ScanStateSnapshot;
-                    Token generatedToken = Scanner.Scanner.ScanIsolatedToken(replacedTokenText, scanState, out error);
-                    // TO DO : find a way to report the error above ...
-
-                    if (originalToken.PreviousTokenType != null) //In case orignal token was previously an other type of token reset it back to it's orignal type. 
-                        generatedToken.TokenType = originalToken.PreviousTokenType.Value;
-
-                    ReplacedPartialCobolWord replacedPartialCobolWord = new ReplacedPartialCobolWord(generatedToken, partialWordReplaceOperation.PartialReplacementToken, originalToken);
-                    return replacedPartialCobolWord;
+                    string replacedTokenText = Regex.Replace(normalizedTokenText, normalizedPartToReplace, replacementPart, RegexOptions.IgnoreCase);
+                    var generatedToken = GenerateReplacementToken(originalToken, replacedTokenText);
+                    return new ReplacedPartialCobolWord(generatedToken, partialWordReplaceOperation.PartialReplacementToken, originalToken);
 
                 // One comparison token => more than one replacement tokens
                 case ReplaceOperationType.SingleToMultipleTokens:
@@ -506,6 +496,22 @@ namespace TypeCobol.Compiler.Preprocessor
                         return null;
                     }
             }
+        }
+
+        internal static Token GenerateReplacementToken(Token originalToken, string replacedTokenText)
+        { 
+            // Transfer the scanner context the of original token to the call below
+            MultilineScanState scanState = originalToken.ScanStateSnapshot;
+            System.Diagnostics.Debug.Assert(scanState != null);
+
+            Token generatedToken = Scanner.Scanner.ScanIsolatedToken(replacedTokenText, scanState, out _);
+            // TODO : find a way to report the error above ...
+
+            if (originalToken.PreviousTokenType != null)
+                //In case orignial token was previously an other type of token reset it back to it's original type. 
+                generatedToken.TokenType = originalToken.PreviousTokenType.Value;
+
+            return generatedToken;
         }
 
         /// <summary>

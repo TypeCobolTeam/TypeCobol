@@ -92,7 +92,7 @@ namespace TypeCobol.Test.HighLevelAPI {
 
         private static IDictionary<Program, IDictionary<string, string>> ParseAndGetLTNVCopys(string rootPath, string path, bool autoRemarks = false)
         {
-            var parser = TypeCobol.Parser.Parse(rootPath + Path.DirectorySeparatorChar + path, DocumentFormat.RDZReferenceFormat, autoRemarks);
+            var parser = TypeCobol.Parser.Parse(rootPath + Path.DirectorySeparatorChar + path, false, DocumentFormat.RDZReferenceFormat, autoRemarks);
             var diagnostics = parser.Results.AllDiagnostics();
             // There should be no diagnostics errors
             // warning diagnostics are not considered : for example, test with warning with COPY SUPPRESS is always running

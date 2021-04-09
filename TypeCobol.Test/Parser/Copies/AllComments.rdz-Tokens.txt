@@ -1,0 +1,10 @@
+--- Tokens ---
+---------------------------------
+_This copy contains only comments_
+    _This copy contains only comments_    [8,39:This copy contains only comments]<CommentLine>
+---------------------------------
+_Let's see how the parser handles_
+    _Let's see how the parser handles_    [8,39:Let's see how the parser handles]<CommentLine>
+---------------------------------
+_it..._
+    _it..._    [8,12:it...]<CommentLine>

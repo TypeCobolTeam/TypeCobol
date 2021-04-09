@@ -2,7 +2,6 @@
 using System.Text;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
-using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
@@ -72,7 +71,7 @@ namespace TypeCobol.Test.Parser.Preprocessor
         {
             // Tokens
             StringBuilder sbTokens = new StringBuilder();
-            ITokensLinesIterator tokens = ProcessedTokensDocument.GetProcessedTokensIterator(processedDoc.TextSourceInfo, processedDoc.Lines, new TypeCobolOptions());
+            ITokensLinesIterator tokens = processedDoc.GetProcessedTokensIterator();
             Token token = tokens.NextToken();
             if (token != Token.END_OF_FILE)
             {

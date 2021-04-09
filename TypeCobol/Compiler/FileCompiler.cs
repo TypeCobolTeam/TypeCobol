@@ -177,10 +177,20 @@ namespace TypeCobol.Compiler
             // 3. Prepare the data structures used by the different steps of the compiler
             if (isCopyFile)
             {
-                //This is an imported copy
-                Debug.Assert(scanState != null);
-                Debug.Assert(scanState.InsideCopy);
-                CompilationResultsForCopy = new CompilationDocument(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, scanState, copyTextNameVariations);
+                if (scanState != null)
+                {
+                    //This is an imported copy
+                    Debug.Assert(scanState.InsideCopy);
+                    CompilationResultsForCopy = new CompilationDocument(TextDocument.Source, CompilationDocument.ParsingMode.ImportedCopy, TextDocument.Lines, compilerOptions, documentProvider, scanState, copyTextNameVariations);
+                }
+                else
+                {
+                    //Direct copy parsing, copy is assumed to be part of Data Division and using comma as the decimal point.
+                    var initialScanState = new MultilineScanState(TextDocument.Source.EncodingForAlphanumericLiterals, true, true);
+                    initialScanState.InsideCopy = true;
+                    CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, CompilationDocument.ParsingMode.CopyAsProgram, TextDocument.Lines, compilerOptions, documentProvider, initialScanState, copyTextNameVariations, CompilationProject.AnalyzerProvider);
+                    CompilationResultsForCopy = CompilationResultsForProgram;
+                }
 
                 CompilationResultsForCopy.CustomSymbols = customSymbols;
             }
@@ -189,7 +199,7 @@ namespace TypeCobol.Compiler
                 //This is a regular program
                 Debug.Assert(scanState == null);
                 var initialScanState = new MultilineScanState(TextDocument.Source.EncodingForAlphanumericLiterals);
-                CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, initialScanState, copyTextNameVariations, CompilationProject.AnalyzerProvider);
+                CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, CompilationDocument.ParsingMode.Program, TextDocument.Lines, compilerOptions, documentProvider, initialScanState, copyTextNameVariations, CompilationProject.AnalyzerProvider);
                 CompilationResultsForProgram.CustomSymbols = customSymbols;
             }
             CompilerOptions = compilerOptions;

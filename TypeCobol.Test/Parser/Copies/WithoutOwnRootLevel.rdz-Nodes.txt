@@ -1,0 +1,9 @@
+--- Nodes ---
+?
+  WithoutOwnRootLevel.rdz
+    data-division
+      working-storage
+        data-definition
+          data-item1
+          data-item2
+    end

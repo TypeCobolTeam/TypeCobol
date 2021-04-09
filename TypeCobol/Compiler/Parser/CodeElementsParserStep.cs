@@ -11,7 +11,6 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
-using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -108,7 +107,7 @@ namespace TypeCobol.Compiler.Parser
             // --- INITIALIZE ANTLR CodeElements parser ---
 
             // Create a token iterator on top of pre-processed tokens lines
-            ITokensLinesIterator tokensIterator = ProcessedTokensDocument.GetProcessedTokensIterator(processedTokensDocument.TextSourceInfo, documentLines, compilerOptions);
+            ITokensLinesIterator tokensIterator = processedTokensDocument.GetProcessedTokensIterator();
 
             // Create an Antlr compatible token source on top of the token iterator
             TokensLinesTokenSource tokenSource = new TokensLinesTokenSource(
@@ -132,7 +131,7 @@ namespace TypeCobol.Compiler.Parser
                 // Replace the generated parser by a subclass which traces all rules invocations
                 cobolParser = new CodeElementsTracingParser(tokenStream);
 
-                var tokensCountIterator = ProcessedTokensDocument.GetProcessedTokensIterator(processedTokensDocument.TextSourceInfo, documentLines, compilerOptions);
+                var tokensCountIterator = processedTokensDocument.GetProcessedTokensIterator();
                 AntlrPerformanceProfiler.BeginParsingFile(processedTokensDocument.TextSourceInfo, tokensCountIterator);
             }
 

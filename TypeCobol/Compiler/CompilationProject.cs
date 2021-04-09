@@ -178,12 +178,6 @@ namespace TypeCobol.Compiler
             importedCompilationDocumentsCache.Clear();
         }
 
-
-        public virtual ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, string textName, out PerfStatsForImportedDocument perfStats)
-        {
-            return GetProcessedTokensDocument(libraryName, textName, new MultilineScanState(Encoding), null, out perfStats);
-        }
-
         /// <summary>
         /// Returns a ProcessedTokensDocument already in cache or loads, scans and processes a new CompilationDocument
         /// </summary>
