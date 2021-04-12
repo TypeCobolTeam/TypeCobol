@@ -59,10 +59,10 @@ namespace TypeCobol.Compiler.Diagnostics
         protected Diagnostic(DiagnosticMessage info, [NotNull] Position position, params object[] messageArgs)
         {
             Info = info;
-            MessageArgs = messageArgs ?? new object[0];
-            Message = string.Format(Info.MessageTemplate, MessageArgs);
+            messageArgs = messageArgs ?? new object[0];
+            Message = string.Format(Info.MessageTemplate, messageArgs);
             ApplyPosition(position);
-            CaughtException = MessageArgs.OfType<Exception>().FirstOrDefault();
+            CaughtException = messageArgs.OfType<Exception>().FirstOrDefault();
         }
 
         protected Diagnostic([NotNull] Diagnostic other)
@@ -75,7 +75,6 @@ namespace TypeCobol.Compiler.Diagnostics
             ColumnEnd = other.ColumnEnd;
             Message = other.Message;
             CaughtException = other.CaughtException;
-            MessageArgs = other.MessageArgs;
         }
 
         public DiagnosticMessage Info { get; }
@@ -90,9 +89,6 @@ namespace TypeCobol.Compiler.Diagnostics
         public int ColumnEnd { get; private set; }
         public string Message { get; private set; }
         public Exception CaughtException { get; }
-
-        //Required when a diagnostic has to be duplicated
-        internal object[] MessageArgs { get; }//TODO remove this
 
         /// <summary>
         /// Text representation of a diagnostic for debugging or test purposes
