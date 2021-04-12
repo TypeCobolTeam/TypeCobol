@@ -159,6 +159,6 @@ Line 116[39,57] <30, Error, Semantics> - Semantic error: Symbol dataSubNestedGlo
            .
        end-declare.
       
-       END PROGRAM Nested2.
+       END PROGRAM SubNested.
        END PROGRAM Nested.
        END PROGRAM MainProgram.

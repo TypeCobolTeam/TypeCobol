@@ -1,0 +1,16 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Intrinsics.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 ReturnCode TYPEDEF strict PUBLIC.
+         05 Cod1 pic X(04).
+            88 Ok     value '0000'.
+            88 Ko     value '0001'.
+         05 Cod2    pic X(04).
+       01 DateDB2 TYPEDEF STRICT PUBLIC.
+         10  YYYY   PIC 9(04).
+         10  filler PIC X value '-'.
+         10  MM     PIC 9(02).
+         10  filler PIC X value '-'.
+         10  DD     PIC 9(02).
+       END PROGRAM Intrinsics.

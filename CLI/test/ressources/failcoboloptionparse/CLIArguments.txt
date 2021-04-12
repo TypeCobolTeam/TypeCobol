@@ -1,0 +1,1 @@
+-i input\QualifiedVarSubsriptAccess.rdz.tcbl -o output\QualifiedVarSubsriptAccess.rdz.cbl -d output\error.txt -e rdz -cob

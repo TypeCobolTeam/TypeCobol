@@ -496,5 +496,18 @@ namespace TypeCobol.LanguageServer.Test
             LSRTestHelper.Test("CfgDataInformation", LsrTestingOptions.NoLsrTesting, true, useCfg:true);
         }
 
+        [TestMethod]
+        public void EmptyExecStatement()
+        {
+            //Issue #1900, initially a NullReferenceException was thrown instead of a proper diagnostic
+            LSRTestHelper.Test("EmptyExecStatement", LsrTestingOptions.NoLsrTesting);
+        }
+
+        [TestMethod]
+        [TestCategory("CopyEdit")]
+        public void CopyEditAddDataItem()
+        {
+            LSRTestHelper.Test("CopyEditAddDataItem", LsrTestingOptions.NoLsrTesting, true);
+        }
     }
 }

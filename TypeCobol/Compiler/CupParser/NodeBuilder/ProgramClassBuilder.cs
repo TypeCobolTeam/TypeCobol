@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
@@ -89,12 +90,12 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 }
 
                 // TODO#249: use a COPY for these
-                foreach (var type in DataType.BuiltInCustomTypes)
+                foreach (var type in DataType.BuiltInCustomTypeDefinitions)
                 {
-                    var createdType = DataType.CreateBuiltIn(type);
-                    TableOfIntrinsics.AddType(createdType); //Add default TypeCobol types BOOLEAN and DATE
+                    //Add default TypeCobol types BOOLEAN, DATE, STRING and CURRENCY
+                    TableOfIntrinsics.AddType(type); 
                     //Add type and children to DataTypeEntries dictionary in Intrinsic symbol table
-                    TableOfIntrinsics.AddDataDefinitionsUnderType(createdType);
+                    TableOfIntrinsics.AddDataDefinitionsUnderType(type);
                 }
             }
         }
@@ -230,12 +231,37 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Dispatcher.StartCobolProgram(programIdentification, libraryCopy);
         }
 
-        public virtual void EndCobolProgram(TypeCobol.Compiler.CodeElements.ProgramEnd end)
+        public virtual void EndCobolProgram(ProgramEnd end)
         {
-            AttachEndIfExists(end);
-            Exit();
-            programsStack.Pop();
-            Dispatcher.EndCobolProgram(end);
+            var endedProgramName = end?.ProgramName?.Name;
+            if (endedProgramName != null)
+            {
+                // Find the program in the stack that has the name specified by END PROGRAM
+                var matchingProgram = programsStack.FirstOrDefault(p => p.Name.Equals(endedProgramName, StringComparison.OrdinalIgnoreCase));
+                if (matchingProgram != null)
+                {
+                    // Pop all programs to have CurrentProgram as the program whose name match
+                    if (matchingProgram != CurrentProgram)
+                    {
+                        // Recursively close all nested programs
+                        EndCobolProgram(null);
+                    }
+                }
+            }
+
+            if (CurrentProgram != null)
+            {
+                // Add end to current program
+                AttachEndIfExists(end);
+                Exit();
+                programsStack.Pop();
+                Dispatcher.EndCobolProgram(end);
+            }
+            else
+            {
+                // End is attached to the SourceFile and will be checked later to produce a diagnostic
+                AttachEndIfExists(end);
+            }
         }
 
         public virtual void StartEnvironmentDivision(EnvironmentDivisionHeader header)
@@ -342,7 +368,10 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 currentProg.FileConnectors = new Dictionary<SymbolDefinition, FileControlEntry>();
             }
 
-            currentProg.FileConnectors.Add(entry.FileName, entry);
+            if (entry.FileName != null)
+            {
+                currentProg.FileConnectors.Add(entry.FileName, entry);
+            }
 
             var fileControlEntry = new FileControlEntryNode(entry);
             Enter(fileControlEntry, entry);

@@ -178,26 +178,17 @@ namespace TypeCobol.Compiler
             importedCompilationDocumentsCache.Clear();
         }
 
-
-        public virtual ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, string textName, out PerfStatsForImportedDocument perfStats)
-        {
-            return GetProcessedTokensDocument(libraryName, textName, null, null, out perfStats);
-        }
-
         /// <summary>
         /// Returns a ProcessedTokensDocument already in cache or loads, scans and processes a new CompilationDocument
         /// </summary>
-        public virtual ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, [NotNull] string textName,
-            [CanBeNull] MultilineScanState scanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, out PerfStatsForImportedDocument perfStats)
+        public virtual ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, string textName,
+            MultilineScanState scanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, out PerfStatsForImportedDocument perfStats)
         {
             string cacheKey = (libraryName == null ? SourceFileProvider.DEFAULT_LIBRARY_NAME : libraryName.ToUpper()) + "." + textName.ToUpper();
-            if (scanState != null)
-            {
-                cacheKey += (scanState.DecimalPointIsComma ? "D1" : "__") + (scanState.WithDebuggingMode ? "D2" : "__") +
-                            (scanState.InsideDataDivision ? "D3" : "__") + (scanState.InsideProcedureDivision ? "D4" : "__");
-                // NB : the hypothesis here is that we don't need to include more properties of scanState in the cache key, 
-                // because a COPY is always cleanly delimited at CodeElement boundaries.
-            }
+            cacheKey += (scanState.DecimalPointIsComma ? "D1" : "__") + (scanState.WithDebuggingMode ? "D2" : "__") +
+                        (scanState.InsideDataDivision ? "D3" : "__") + (scanState.InsideProcedureDivision ? "D4" : "__");
+            // NB : the hypothesis here is that we don't need to include more properties of scanState in the cache key, 
+            // because a COPY is always cleanly delimited at CodeElement boundaries.
 
             perfStats = new PerfStatsForImportedDocument();
             CompilationDocument resultDocument;
@@ -212,8 +203,12 @@ namespace TypeCobol.Compiler
                 if (copyTextNameVariations != null)
                     copyTextNameVariations.Add(new RemarksDirective.TextNameVariation(textName));
 #endif
+                bool wasAlreadyInsideCopy = scanState.InsideCopy;
+                scanState.InsideCopy = true;
                 FileCompiler fileCompiler = new FileCompiler(libraryName, textName, SourceFileProvider, this, ColumnsLayout, CompilationOptions, null, true, scanState, this, copyTextNameVariations);
                 fileCompiler.CompileOnce();
+                scanState.InsideCopy = wasAlreadyInsideCopy;
+
                 resultDocument = fileCompiler.CompilationResultsForCopy;
                 perfStats.WasRetrievedFromCache = false;
                 perfStats.SourceFileSearchTime = fileCompiler.SourceFileSearchTime;

@@ -52,18 +52,6 @@ namespace TypeCobol.Compiler.Concurrency
         }
 
         /// <summary>
-        /// Gets whether this checkpoint belongs to the same document as the other checkpoint.
-        /// </summary>
-        /// <remarks>
-        /// Returns false when given <c>null</c>.
-        /// </remarks>
-        public bool BelongsToSameDocumentAs(DocumentVersion<T> other)
-        {
-            DocumentVersion<T> o = other as DocumentVersion<T>;
-            return o != null && provider == o.provider;
-        }
-
-        /// <summary>
         /// Compares the age of this checkpoint to the other checkpoint.
         /// </summary>
         /// <remarks>This method is thread-safe.</remarks>

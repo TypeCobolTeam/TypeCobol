@@ -123,4 +123,4 @@ Line 98[12,38] <27, Error, Syntax> - Syntax error : Function 'proc4' expected pa
 
            .
 
-       END PROGRAM DVZF0OSM.
+       END PROGRAM ProcedureCall-ParamCompatibily.

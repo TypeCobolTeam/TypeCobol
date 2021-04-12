@@ -892,8 +892,7 @@ namespace TypeCobol.Codegen.Generators
                         }
                     }
 
-                    MultilineScanState scanState = new MultilineScanState(true, cel.ScanState.DecimalPointIsComma, cel.ScanState.WithDebuggingMode, cel.ScanState.EncodingForAlphanumericLiterals ?? IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147));
-                    tempTokensLine.InitializeScanState(scanState);
+                    tempTokensLine.InitializeScanState(cel.ScanState);
                     Scanner scanner = new Scanner(line, startIndex, line.Length - 1, tempTokensLine, null, true);
                     Token t = null;
 

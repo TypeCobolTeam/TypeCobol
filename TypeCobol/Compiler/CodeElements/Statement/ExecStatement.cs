@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -19,6 +20,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// Secondary compiler used to translate CodeLines
         /// </summary>
+        [CanBeNull]
         public ExternalName ExecTranslatorName { get; set; }
 
         /// <summary>

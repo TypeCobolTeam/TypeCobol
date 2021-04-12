@@ -57,6 +57,10 @@
       <Link>ressources\zcallpgmreportdfa_2\output_expected\InBulkCallPgm88Set.csv</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="..\..\TypeCobol.Test\Parser\Programs\TypeCobol\QualifiedVarSubsriptAccess.rdz.tcbl">
+      <Link>ressources\failcoboloptionparse\input\QualifiedVarSubsriptAccess.rdz.tcbl</Link>
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="ressources\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
