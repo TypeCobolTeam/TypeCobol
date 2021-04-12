@@ -20,6 +20,13 @@ namespace TypeCobol.Compiler.CupCommon
             this.ruleStack = ruleStack;
         }
 
+        private CupParserDiagnostic(CupParserDiagnostic other)
+            : base(other)
+        {
+            OffendingSymbol = other.OffendingSymbol;
+            this.ruleStack = other.ruleStack;
+        }
+
         /// <summary>
         /// First token which did not match the current rule in the grammar
         /// </summary>
@@ -44,5 +51,7 @@ namespace TypeCobol.Compiler.CupCommon
             }
             return str.ToString();
         }
+
+        protected override Diagnostic Duplicate() => new CupParserDiagnostic(this);
     }
 }

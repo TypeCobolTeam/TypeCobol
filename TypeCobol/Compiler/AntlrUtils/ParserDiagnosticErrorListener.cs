@@ -69,6 +69,13 @@ namespace TypeCobol.Compiler.AntlrUtils
             this.ruleStack = ruleStack;
         }
 
+        private ParserDiagnostic(ParserDiagnostic other)
+            : base(other)
+        {
+            OffendingSymbol = other.OffendingSymbol;
+            this.ruleStack = other.ruleStack;
+        }
+
         /// <summary>
         /// First token which did not match the current rule in the grammar
         /// </summary>
@@ -90,5 +97,7 @@ namespace TypeCobol.Compiler.AntlrUtils
             } 
             return str.ToString();
         }
+
+        protected override Diagnostic Duplicate() => new ParserDiagnostic(this);
     }
 }

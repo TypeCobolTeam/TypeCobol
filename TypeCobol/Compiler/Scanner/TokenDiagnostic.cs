@@ -14,9 +14,17 @@ namespace TypeCobol.Compiler.Scanner
             Token = token;
         }
 
+        private TokenDiagnostic(TokenDiagnostic other)
+            : base(other)
+        {
+            Token = other.Token;
+        }
+
         /// <summary>
         /// Token which is the subject of the diagnostics
         /// </summary>
-        public Token Token { get; private set; }
+        public Token Token { get; }
+
+        protected override Diagnostic Duplicate() => new TokenDiagnostic(this);
     }
 }

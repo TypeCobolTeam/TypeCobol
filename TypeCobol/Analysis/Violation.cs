@@ -23,5 +23,7 @@ namespace TypeCobol.Analysis
         {
 
         }
+
+        //Violation does not define any new data, so no need for Duplicate() overload and copy constructor.
     }
 }
