@@ -55,13 +55,7 @@ namespace TypeCobol.Test.Utils
             try
             {
 #if EUROINFO_RULES
-                //Check for the presence of a CpyCopies.lst file.
-                string directory = Path.GetDirectoryName(Compiler.CobolFile.FullPath);
-                string cpyListFilePath = Path.Combine(directory, "CpyCopies.lst");
-                if (File.Exists(cpyListFilePath))
-                {
-                    Compiler.CompilerOptions.CpyCopyNameMap = new CopyNameMapFile(cpyListFilePath);
-                }
+                Compiler.CompilerOptions.CpyCopyNameMap = Comparator.GetCopyNameMap();
 #endif
                 Compiler.CompileOnce();
             }
@@ -304,7 +298,33 @@ namespace TypeCobol.Test.Utils
 				return DocumentFormat.RDZReferenceFormat;
 			return DocumentFormat.FreeUTF8Format;
 		}
-	}
+
+#if EUROINFO_RULES
+        /// <summary>
+        /// CopyNameMap cache
+        /// </summary>
+        private static readonly Dictionary<string, CopyNameMapFile> _CopyNameMaps = new Dictionary<string, CopyNameMapFile>(StringComparer.OrdinalIgnoreCase);
+
+        internal CopyNameMapFile GetCopyNameMap()
+        {
+            //Key is directory full path
+            string directory = Path.GetDirectoryName(paths.SamplePath);
+            System.Diagnostics.Debug.Assert(directory != null);
+
+            if (!_CopyNameMaps.TryGetValue(directory, out var copyNameMap))
+            {
+                //No CopyNameMap info in cache, check for the presence of a 'CpyCopies.lst' file.
+                string copyNameMapFilePath = Path.Combine(directory, "CpyCopies.lst");
+                copyNameMap = File.Exists(copyNameMapFilePath) ? new CopyNameMapFile(copyNameMapFilePath) : null;
+
+                //Add to cache for future tests
+                _CopyNameMaps.Add(directory, copyNameMap);
+            }
+
+            return copyNameMap;
+        }
+#endif
+    }
 
     internal class ArithmeticComparator : FilesComparator
     {
