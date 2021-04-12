@@ -16,10 +16,10 @@ namespace TypeCobol.Test.Compiler.Parser
         public static void CheckProgramCodeElements()
         {
             Diagnostic[] parserDiagnostics = null;
-            var codeElements = ParseCodeElements("TITLE \"test\"\n* First move \nMOVE a b \n* Second move\n   MOVE c TO TO d ", out parserDiagnostics);
+            var codeElements = ParseCodeElements("TITLE \"test\"\n* First move \nMOVE a b \n* Second move\n   MOVE c TO TO d ", false, out parserDiagnostics);
         }
 
-        private static CodeElement[] ParseCodeElements(string cobolString, out Diagnostic[] parserDiagnostics)
+        private static CodeElement[] ParseCodeElements(string cobolString, bool asPartOfACopy, out Diagnostic[] parserDiagnostics)
         {
             // Load text document from string
             var textDocument = new ReadOnlyTextDocument("test string", Encoding.Default, ColumnsLayout.FreeTextFormat, "");
@@ -29,7 +29,7 @@ namespace TypeCobol.Test.Compiler.Parser
             var typeCobolOptions = new TypeCobolOptions();
             var project = new CompilationProject("test project", ".", new[] { ".cbl", ".cpy" },
                 DocumentFormat.FreeTextFormat, typeCobolOptions, null);
-            var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, typeCobolOptions, false, project);
+            var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, typeCobolOptions, asPartOfACopy, project);
 
             // Execute compilation - until the CodeElements phase ONLY
             compiler.CompilationResultsForProgram.UpdateTokensLines();

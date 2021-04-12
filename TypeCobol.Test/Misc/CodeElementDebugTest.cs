@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Test.Utils;
 
@@ -90,7 +89,7 @@ namespace TypeCobol.Test.Misc
         private static void CompareDebugTypes(IReadOnlyList<CodeElement.DebugType> expectedDebugMode, string fileName)
         {
             var folder = Path.Combine("Parser", "Programs", "Cobol85");
-            var compilationUnit = ParserUtils.ParseCobolFile(fileName, DocumentFormat.RDZReferenceFormat, folder);
+            var compilationUnit = ParserUtils.ParseCobolFile(fileName, folder);
 
             var codeElements = compilationUnit.CodeElementsDocumentSnapshot.CodeElements.ToList();
             for (var i = 0; i < codeElements.Count; i++)

@@ -1,0 +1,16 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Pgm.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 StringT.
+         02 DataT      Pic X(10000).
+         02 LengthT    Pic 99999.
+       PROCEDURE DIVISION.
+      *Ok
+             Move Low-Values       To StringT (1 : LengthT)
+      *Ko syntax error, in a Pure Cobol source file
+      *Ok for TypeCobol
+             Move Low-Values       To StringT (1:StringT::LengthT)
+             GOBACK
+             .
+       END Program Pgm.
