@@ -316,21 +316,27 @@ namespace TypeCobol.Compiler.Preprocessor
 
                             // Load (or retrieve in cache) the document referenced by the COPY directive
                             //Issue #315: tokensLineWithCopyDirective.ScanState must be passed because special names paragraph such as "Decimal point is comma" are declared in the enclosing program and can affect the parsing of COPY
-                            ProcessedTokensDocument importedDocumentSource = documentImporter.Import(copyDirective.LibraryName, copyDirective.TextName,
+                            CompilationDocument importedDocumentSource = documentImporter.Import(copyDirective.LibraryName, copyDirective.TextName,
                                     tokensLineWithCopyDirective.ScanStateBeforeCOPYToken[copyDirective.COPYToken],
-                                    document.CopyTextNamesVariations, out perfStats).ProcessedTokensDocumentSnapshot;
+                                    document.CopyTextNamesVariations, out perfStats);
 
-                            // The copy has missing copies, add them into the list and report diagnostic
-                            foreach (var missingCopy in importedDocumentSource.MissingCopies)
+                            // Copy diagnostics from document
+                            foreach (var diagnostic in importedDocumentSource.AllDiagnostics())
+                            {
+                                var position = new Diagnostic.Position(diagnostic.Line, diagnostic.ColumnStart, diagnostic.ColumnEnd, copyDirective);
+                                var copyDiagnostic = diagnostic.CopyAt(position);
+                                tokensLineWithCopyDirective.AddDiagnostic(copyDiagnostic);
+                            }
+
+                            // The copy has missing copies, add them into the list
+                            var processedTokensDocument = importedDocumentSource.ProcessedTokensDocumentSnapshot;
+                            foreach (var missingCopy in processedTokensDocument.MissingCopies)
                             {
                                 missingCopies.Add(missingCopy);
-                                ReportMissingDependentCopy(copyDirective, tokensLineWithCopyDirective, missingCopy);
                             }
 
                             // Store it on the current line after applying the REPLACING directive
-                            ImportedTokensDocument importedDocument = new ImportedTokensDocument(copyDirective,
-                                importedDocumentSource, perfStats, document.CompilerOptions);
-                            
+                            ImportedTokensDocument importedDocument = new ImportedTokensDocument(copyDirective, processedTokensDocument, perfStats, document.CompilerOptions);
                             tokensLineWithCopyDirective.ImportedDocuments[copyDirective] = importedDocument;
                         }
                         catch (Exception e)
@@ -621,20 +627,27 @@ namespace TypeCobol.Compiler.Preprocessor
 
                             // Load (or retrieve in cache) the document referenced by the COPY directive
                             //Issue #315: tokensLineWithCopyDirective.ScanState must be passed because special names paragraph such as "Decimal point is comma" are declared in the enclosing program and can affect the parsing of COPY
-                            ProcessedTokensDocument importedDocumentSource = documentImporter.Import(copyDirective.LibraryName, copyDirective.TextName,
+                            CompilationDocument importedDocumentSource = documentImporter.Import(copyDirective.LibraryName, copyDirective.TextName,
                                     tokensLineWithCopyDirective.ScanStateBeforeCOPYToken[copyDirective.COPYToken],
-                                    document.CopyTextNamesVariations, out perfStats).ProcessedTokensDocumentSnapshot;
+                                    document.CopyTextNamesVariations, out perfStats);
 
-                            // The copy has missing copies, add them into the list and report diagnostic
-                            foreach (var missingCopy in importedDocumentSource.MissingCopies)
+                            // Copy diagnostics from document
+                            foreach (var diagnostic in importedDocumentSource.AllDiagnostics())
+                            {
+                                var position = new Diagnostic.Position(diagnostic.Line, diagnostic.ColumnStart, diagnostic.ColumnEnd, copyDirective);
+                                var copyDiagnostic = diagnostic.CopyAt(position);
+                                tokensLineWithCopyDirective.AddDiagnostic(copyDiagnostic);
+                            }
+
+                            // The copy has missing copies, add them into the list
+                            var processedTokensDocument = importedDocumentSource.ProcessedTokensDocumentSnapshot;
+                            foreach (var missingCopy in processedTokensDocument.MissingCopies)
                             {
                                 missingCopies.Add(missingCopy);
-                                ReportMissingDependentCopy(copyDirective, tokensLineWithCopyDirective, missingCopy);
                             }
 
                             // Store it on the current line after applying the REPLACING directive
-                            ImportedTokensDocument importedDocument = new ImportedTokensDocument(copyDirective,
-                                importedDocumentSource, perfStats, document.CompilerOptions);
+                            ImportedTokensDocument importedDocument = new ImportedTokensDocument(copyDirective, processedTokensDocument, perfStats, document.CompilerOptions);
                             tokensLineWithCopyDirective.ImportedDocuments[copyDirective] = importedDocument;
                         }
                         catch (Exception e)
