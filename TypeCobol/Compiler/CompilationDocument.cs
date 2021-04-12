@@ -641,7 +641,7 @@ namespace TypeCobol.Compiler
 
                 // Apply text changes to the compilation document
                 bool refreshMissingCopies = true;
-                List<MissingCopy> missingCopies;
+                List<string> missingCopies = null;
                 if (scanAllDocumentLines)
                 {
                     if (tokensDocument != null)
@@ -680,17 +680,17 @@ namespace TypeCobol.Compiler
                 {
                     //Apply automatic replacing of partial-words for direct copy parsing mode
                     return Mode == ParsingMode.CopyAsProgram
-                        ? new AutoReplacePartialWordsTokensDocument(tokensDocument, version, lines, CompilerOptions, missingCopies)
-                        : new ProcessedTokensDocument(tokensDocument, version, lines, CompilerOptions, missingCopies);
+                        ? new AutoReplacePartialWordsTokensDocument(tokensDocument, version, lines, CompilerOptions)
+                        : new ProcessedTokensDocument(tokensDocument, version, lines, CompilerOptions);
                 }
 
                 // Refresh missing copies
                 if (refreshMissingCopies)
                 {
                     MissingCopies.Clear();
-                    foreach (var missingCopy in ProcessedTokensDocumentSnapshot.MissingCopies)
+                    foreach (var missingCopy in missingCopies)
                     {
-                        MissingCopies.Add(missingCopy.FaultyDirective.TextName);
+                        MissingCopies.Add(missingCopy);
                     }
                 }
 
