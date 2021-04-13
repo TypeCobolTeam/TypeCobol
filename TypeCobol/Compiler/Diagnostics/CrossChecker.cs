@@ -239,6 +239,83 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(WhenSearch whenSearch)
+        {
+            var search = whenSearch.Parent;
+            System.Diagnostics.Debug.Assert(search is Search);
+            if (search.CodeElement is SearchBinaryStatement)
+            {
+                var whenSearchVisitor = new WhenSearchVisitor(whenSearch);
+                whenSearch.CodeElement.Condition.AcceptASTVisitor(whenSearchVisitor);
+                if (whenSearchVisitor.IsInError)
+                {
+                    DiagnosticUtils.AddError(whenSearch, "When subscripting, first index declared for the table and at least one of declared keys must be used.");
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Visit a WhenSearch and set a flag to true if either:
+        /// WHEN does not use one of the declared keys (ascending or descending)
+        /// WHEN does not use the first index declared for the table when subscripting
+        /// </summary>
+        private class WhenSearchVisitor : AbstractAstVisitor
+        {
+            private readonly WhenSearch _whenSearch;
+            public bool IsInError { get; private set; } = false;
+
+
+            public WhenSearchVisitor(WhenSearch whenSearch)
+            {
+                _whenSearch = whenSearch;
+            }
+
+
+            public override bool Visit(NumericVariable numericVariable)
+            {
+                var variableStorageArea = (DataOrConditionStorageArea)numericVariable.StorageArea;
+                // TODO : Handle the case of sub-tables
+                if (variableStorageArea?.Subscripts.Count == 1)
+                {
+                    ////////// WHEN must use one of the declared keys (ascending or descending) //////////
+                    var dataDefinitionKey = _whenSearch.GetDataDefinitionFromStorageAreaDictionary(variableStorageArea);
+                    if (dataDefinitionKey?.Parent.CodeElement is DataDescriptionEntry tableDescriptionEntryKey)
+                    {
+                        if (tableDescriptionEntryKey.TableSortingKeys != null)
+                        {
+                            var existsName = tableDescriptionEntryKey.TableSortingKeys
+                                .Any(key => key.SortDirection?.Value != SortDirection.None && key.SortKey.Name.Equals(dataDefinitionKey.Name, StringComparison.OrdinalIgnoreCase));
+                            if (!existsName)
+                            {
+                                // error
+                                IsInError = true;
+                                return false;
+                            }
+                        }
+                    }
+
+                    ////////// WHEN must use the first index declared for the table when subscripting //////////
+                    // Get the 1st subscript used
+                    var firstSubscriptStorageArea = ((NumericVariableOperand)variableStorageArea.Subscripts[0].NumericExpression).IntegerVariable.StorageArea;
+                    var dataDefinitionFirstSubscript = _whenSearch.GetDataDefinitionFromStorageAreaDictionary(firstSubscriptStorageArea);
+                    // Ensure the subscript is the 1st declared
+                    var isFirstIndexDeclaredInTable = false;
+                    if (dataDefinitionFirstSubscript?.Parent.CodeElement is DataDescriptionEntry tableDescriptionEntrySubscript)
+                    {
+                        isFirstIndexDeclaredInTable = tableDescriptionEntrySubscript.Indexes[0].Name.Equals(dataDefinitionFirstSubscript.Name, StringComparison.OrdinalIgnoreCase);
+                    }
+                    if (!isFirstIndexDeclaredInTable)
+                    {
+                        // error
+                        IsInError = true;
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+
         public override bool Visit(Evaluate evaluate)
         {
             if (evaluate.GetChildren<WhenOther>().Count == 0)
