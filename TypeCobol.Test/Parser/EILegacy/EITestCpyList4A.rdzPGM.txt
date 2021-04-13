@@ -1,5 +1,4 @@
 --- Diagnostics ---
-Line 1[8,23] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 6[11,19] <27, Error, Syntax> - Error in copy 'YTSTCPM' at line 1 : Syntax error : no viable alternative at input '01 ... Y:TSTCPM:' RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[11,19:Y:TSTCPM:]<PartialCobolWord> in COPY YTSTCPM
 Line 6[15,27] <27, Error, Syntax> - Error in copy 'YTSTCPM' at line 2 : Syntax error : no viable alternative at input '05 ... :TSTCPM:-DATA' RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[15,27::TSTCPM:-DATA]<PartialCobolWord> in COPY YTSTCPM
 Line 6[20,20] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader} OffendingSymbol=[[SentenceEnd]] [20,20+:.]<PeriodSeparator> --> [20,20+:.]<PeriodSeparator>

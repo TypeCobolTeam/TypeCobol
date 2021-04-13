@@ -320,7 +320,7 @@ programIdentification:
 // p85 : An end program marker is optional for the last program in the sequence only if that program does not contain any nested source programs.
 
 programEnd:
-	END PROGRAM programNameReference2 PeriodSeparator;
+	END PROGRAM programNameReference2? PeriodSeparator;
 			  
 // p97 : Class IDENTIFICATION DIVISION
 // For a class, the first paragraph of the IDENTIFICATION DIVISION must
@@ -775,14 +775,11 @@ alphabetClause:
 													EBCDICFiller=UserDefinedWord )
 											|  userDefinedCollatingSequence+);
 
-userDefinedCollatingSequence:
-    (charactersInCollatingSequence | charactersRange | charactersEqualSet);
-
 // In the rule below, if characterInCollatingSequence is an alphanumeric literal, 
 // it may contain SEVERAL characters
 
-charactersInCollatingSequence:
-	alphanumericLiteralToken | ordinalPositionInCollatingSequence;
+userDefinedCollatingSequence:
+    (characterInCollatingSequence | charactersRange | charactersEqualSet);
 
 // In the two rules below, if characterInCollatingSequence is an alphanumeric literal, 
 // it can contain ONLY ONE characters
@@ -901,7 +898,7 @@ classClause:
     CLASS characterClassNameDefinition IS? userDefinedCharacterClass+;
 
 userDefinedCharacterClass: 
-	(charactersInCollatingSequence | charactersRange);
+	(characterInCollatingSequence | charactersRange);
 				
 // p118 : literal-4, literal-5
 // Must be category numeric or alphanumeric, and both must be of the same

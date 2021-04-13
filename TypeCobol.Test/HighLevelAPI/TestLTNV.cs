@@ -97,7 +97,7 @@ namespace TypeCobol.Test.HighLevelAPI {
             {
                 options.CpyCopyNameMap = new CopyNameMapFile(cpyCopyNamesFile);
             }
-            var parser = TypeCobol.Parser.Parse(rootPath + Path.DirectorySeparatorChar + path, options, DocumentFormat.RDZReferenceFormat);
+            var parser = TypeCobol.Parser.Parse(rootPath + Path.DirectorySeparatorChar + path, false, options, DocumentFormat.RDZReferenceFormat);
             var diagnostics = parser.Results.AllDiagnostics();
             // There should be no diagnostics errors
             // warning diagnostics are not considered : for example, test with warning with COPY SUPPRESS is always running

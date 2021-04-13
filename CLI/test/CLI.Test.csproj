@@ -92,7 +92,11 @@
     <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YXXXFAS.cpy">
       <Link>ressources\ycopylist\input\YXXXFAS.cpy</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>	
+    </None>
+    <None Include="..\..\TypeCobol.Test\Parser\Programs\TypeCobol\QualifiedVarSubsriptAccess.rdz.tcbl">
+      <Link>ressources\failcoboloptionparse\input\QualifiedVarSubsriptAccess.rdz.tcbl</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="ressources\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

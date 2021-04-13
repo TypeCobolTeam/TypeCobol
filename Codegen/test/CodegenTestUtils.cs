@@ -41,7 +41,7 @@ namespace TypeCobol.Codegen {
 
         private static void ParseGenerateCompare(string path, TypeCobolOptions options, DocumentFormat format, string typeCobolVersion, IList<string> copies, MemoryStream lmStream)
         {
-            var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), options, format, copies);
+            var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), false, options, format, copies);
             var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
             var writer = new StringWriter();
             // write parsing errors

@@ -26,4 +26,4 @@
            move length of notDeclared2 to MyInt
            set address of MyVar2 to address of MyVar
 000000     .
-000000 END PROGRAM MYPGM.
+000000 END PROGRAM StringStatement.

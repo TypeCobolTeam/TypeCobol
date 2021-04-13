@@ -1,0 +1,12 @@
+--- Nodes ---
+?
+  SpecialCaseDoubleColonPlaceholder.rdz
+    data-division
+      working-storage
+        MYCOPY-group1
+          MYCOPY-data1
+          MYCOPY-data2
+        group2-MYCOPY
+          data1-MYCOPY
+          data2-MYCOPY
+    end

@@ -103,6 +103,9 @@ namespace CLI.Test
         public void TestDependenciesSignatureOverload()
         {
             CLITestHelper.Test("dependenciesSignatureOverload", ReturnCode.Success);
+            CLITestHelper.Test("dependenciesSignatureOverload_2", ReturnCode.Success);
+            CLITestHelper.Test("dependenciesSignatureOverload_3", ReturnCode.ParsingDiagnostics);
+            CLITestHelper.Test("dependenciesSignatureOverload_4", ReturnCode.Success);
         }
 
         [TestMethod]
@@ -245,6 +248,16 @@ namespace CLI.Test
         public void TestDocGen()
         {
             CLITestHelper.Test("documentation", ReturnCode.Warning);
+        }
+
+        /// <summary>
+        /// Try parsing to parse a Pure Cobol Which maybe unparsed because of the presence of
+        /// specific TypeCobol Language feature..
+        /// </summary>
+        [TestMethod]
+        public void TestFailParseNonPureCobol()
+        {
+            CLITestHelper.Test("failcoboloptionparse", ReturnCode.ParsingDiagnostics);
         }
 
         /// <summary>

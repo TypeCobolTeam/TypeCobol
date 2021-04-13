@@ -24,8 +24,7 @@ namespace TypeCobol.Test.Parser.Memory
         public void CheckMemoryOccursRedefines()
         {
             Paths paths = new Paths(MemoryFolder, MemoryFolder, MemoryFolder + Path.DirectorySeparatorChar + "MemoryOccursRedefines.pgm", new MemoryName());
-            TestUnit unit = new TestUnit(new MemoryComparator(paths));
-            unit.Init(new[] { ".pgm", ".cpy" }, false, true);
+            TestUnit unit = new TestUnit(new MemoryComparator(paths), antlrProfiler: true);
             unit.Parse();
 
             unit.Compare();
@@ -39,8 +38,7 @@ namespace TypeCobol.Test.Parser.Memory
         public void CheckMemoryTypeUsage()
         {
             Paths paths = new Paths(MemoryFolder, MemoryFolder, MemoryFolder + Path.DirectorySeparatorChar + "MemoryTypeUsage.pgm", new MemoryName());
-            TestUnit unit = new TestUnit(new MemoryComparator(paths));
-            unit.Init(new[] { ".pgm", ".cpy" }, false, true);
+            TestUnit unit = new TestUnit(new MemoryComparator(paths), antlrProfiler: true);
             unit.Parse();
 
             unit.Compare();
@@ -54,8 +52,7 @@ namespace TypeCobol.Test.Parser.Memory
         public void CheckMemoryNational()
         {
             Paths paths = new Paths(MemoryFolder, MemoryFolder, MemoryFolder + Path.DirectorySeparatorChar + "MemoryNational.pgm", new MemoryName());
-            TestUnit unit = new TestUnit(new MemoryComparator(paths));
-            unit.Init(new[] { ".pgm", ".cpy" }, false, true);
+            TestUnit unit = new TestUnit(new MemoryComparator(paths), antlrProfiler: true);
             unit.Parse();
 
             unit.Compare();
@@ -70,8 +67,7 @@ namespace TypeCobol.Test.Parser.Memory
         public void CheckCGM110_DFHCOMMAREA()
         {
             Paths paths = new Paths(MemoryFolder, MemoryFolder, MemoryFolder + Path.DirectorySeparatorChar + "CGM110-DFHCOMMAREA.rdz.pgm", new MemoryName());
-            TestUnit unit = new TestUnit(new MemoryComparator(paths));
-            unit.Init(new[] { ".pgm", ".cpy" }, false, true);
+            TestUnit unit = new TestUnit(new MemoryComparator(paths), antlrProfiler: true);
             unit.Parse();
 
             unit.Compare();

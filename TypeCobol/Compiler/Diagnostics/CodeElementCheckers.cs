@@ -348,8 +348,7 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             if (set.SendingVariable == null)
             {
-                DiagnosticUtils.AddError(set, "Set xxx up/down by xxx: Sending field missing or type unknown",
-                    context?.variableOrExpression2());
+                DiagnosticUtils.AddError(set, "Set xxx up/down by xxx: Sending field missing or type unknown", context);
             }
         }
     }
@@ -381,22 +380,9 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             if (isDebuggingModeEnabled)
             {
-                // detect CodeElement with a mix of Debug and "Normal" lines in debugging mode
-                int consumedTokensCount = codeElement.ConsumedTokens.Count;
-                if (consumedTokensCount > 1)
+                if (codeElement.DebugMode == CodeElement.DebugType.Mix)
                 {
-                    bool isDebug = false, isNoDebug = false;
-                    for (int i = 0; i < consumedTokensCount; i++)
-                    {
-                        bool isDebugType = char.ToLower(codeElement.ConsumedTokens[i].TokensLine.IndicatorChar) == 'd';
-                        isDebug |= isDebugType;
-                        isNoDebug |= !isDebugType;
-                        if (isDebug && isNoDebug)
-                        {
-                            DiagnosticUtils.AddError(codeElement, "In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.");
-                            break;
-                        }
-                    }
+                    DiagnosticUtils.AddError(codeElement, "In debugging mode, a statement cannot span across lines marked with debug and lines not marked debug.");
                 }
             }
         }

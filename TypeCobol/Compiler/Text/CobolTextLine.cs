@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using TypeCobol.Compiler.Concurrency;
-using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Scanner;
 
@@ -194,7 +193,7 @@ namespace TypeCobol.Compiler.Text
                 }
             }
             TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, line);
-            tempTokensLine.InitializeScanState(new MultilineScanState(false, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
+            tempTokensLine.InitializeScanState(new MultilineScanState(IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
 
             Scanner.Scanner scanner = new Scanner.Scanner(line, 0, line.Length - 1, tempTokensLine, null, false);
             Token t = null;
@@ -328,7 +327,7 @@ namespace TypeCobol.Compiler.Text
         // List of compiler directives keywords which can be encountered before column 8
         // even in Cobol reference format, and which force a certain form a free format
         // text lines in otherwise reference format files
-        private static readonly string[] COMPILER_DIRECTIVE_KEYWORDS_STARTING_BEFORE_LINE_8 = new string[] {
+        private static readonly string[] COMPILER_DIRECTIVE_KEYWORDS_STARTING_BEFORE_COLUMN_8 = new string[] {
             "CBL",
             "PROCESS",
             "*CBL",
@@ -355,9 +354,9 @@ namespace TypeCobol.Compiler.Text
                 if (Char.IsDigit(firstChar) || firstChar == ' ') continue;
 
                 // Try to match each one of the potential compiler directives in turn
-                for (int compilerDirectiveIndex = 0; (compilerDirectiveIndex < COMPILER_DIRECTIVE_KEYWORDS_STARTING_BEFORE_LINE_8.Length && !compilerDirectiveFound); compilerDirectiveIndex++)
+                for (int compilerDirectiveIndex = 0; (compilerDirectiveIndex < COMPILER_DIRECTIVE_KEYWORDS_STARTING_BEFORE_COLUMN_8.Length && !compilerDirectiveFound); compilerDirectiveIndex++)
                 {
-                    string compilerDirectiveKeyword = COMPILER_DIRECTIVE_KEYWORDS_STARTING_BEFORE_LINE_8[compilerDirectiveIndex];
+                    string compilerDirectiveKeyword = COMPILER_DIRECTIVE_KEYWORDS_STARTING_BEFORE_COLUMN_8[compilerDirectiveIndex];
 
                     // Try to match the first character of a compiler directive
                     if (Char.ToUpper(firstChar) == compilerDirectiveKeyword[0])

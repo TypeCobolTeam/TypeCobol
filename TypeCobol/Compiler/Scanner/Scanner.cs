@@ -17,7 +17,6 @@ namespace TypeCobol.Compiler.Scanner
     /// </summary>
     public class Scanner
     {
-
         /// <summary>
         /// Issue #428, quick fix for this issue.
         /// Method ScanIsolatedTokenInDefaultContext need the scanState of the previous token in order to parser the new token
@@ -25,14 +24,6 @@ namespace TypeCobol.Compiler.Scanner
         /// A solution would be to rescan all the line.
         /// </summary>
         public bool BeSmartWithLevelNumber { get; set; }
-        /// <summary>
-        /// Scan a line of a document when no previous scan state object is available
-        /// </summary>
-        public static void ScanFirstLine(TokensLine tokensLine, bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
-        {
-            MultilineScanState initialScanState = new MultilineScanState(insideDataDivision, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals);            
-            ScanTokensLine(tokensLine, initialScanState, compilerOptions, copyTextNameVariations);
-        }
 
         /// <summary>
         /// Scan a line of a document
@@ -222,15 +213,6 @@ namespace TypeCobol.Compiler.Scanner
             return new CompilerDirectiveToken(remarksDirective, originalTokens, false);
         }
 #endif
-
-        /// <summary>
-        /// Scan a group of continuation lines when no previous scan state object is available
-        /// </summary>
-        public static void ScanFirstLineContinuationGroup(IList<TokensLine> continuationLinesGroup, bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals, ColumnsLayout format, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
-        {
-            MultilineScanState initialScanState = new MultilineScanState(insideDataDivision, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals);
-            ScanTokensLineContinuationGroup(continuationLinesGroup, initialScanState, format, compilerOptions, copyTextNameVariations);
-        }
 
         /// <summary>
         /// Scan a group of continuation lines
@@ -622,17 +604,12 @@ namespace TypeCobol.Compiler.Scanner
         }
 
         /// <summary>
-        /// Scan an isolated token in the given context if not null or in following "default" context otherwise:
-        /// - insideDataDivision = true
-        /// - decimalPointIsComma = false
-        /// - withDebuggingMode = false
-        /// - encodingForAlphanumericLiterals = IBM 1147
-        /// - default compiler options
+        /// Scan an isolated token in the given context.
         /// </summary>
-        public static Token ScanIsolatedToken(string tokenText, out Diagnostic error, MultilineScanState scanContext = null)
+        public static Token ScanIsolatedToken(string tokenText, [NotNull] MultilineScanState scanContext, out Diagnostic error)
         {
             TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
-            tempTokensLine.InitializeScanState(scanContext ?? new MultilineScanState(true, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
+            tempTokensLine.InitializeScanState(scanContext);
 
             Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions(), false);
             Token candidateToken = tempScanner.GetNextToken();
@@ -692,7 +669,7 @@ namespace TypeCobol.Compiler.Scanner
                     case ' ':
                         return ScanWhitespace(startIndex);
                     case '.':
-                        return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.PeriodSeparator, MessageCode.InvalidCharAfterPeriod);
+                        return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.PeriodSeparator, MessageCode.DotShouldBeFollowedBySpace, false);
                     default:
                         tryScanCommentEntry = true;
                         break;
@@ -1029,14 +1006,14 @@ namespace TypeCobol.Compiler.Scanner
                     // p46: A separator period is composed of a period followed by a space.
                     if(tokensLine.ScanState.DecimalPointIsComma)
                     {
-                        return ScanOneCharFollowedBySpace(startIndex, TokenType.PeriodSeparator, MessageCode.InvalidCharAfterPeriod);
+                        return ScanOneCharFollowedBySpace(startIndex, TokenType.PeriodSeparator, MessageCode.DotShouldBeFollowedBySpace);
                     }
                     else
                     {
                         //IntegerLiteral = 27,
                         //DecimalLiteral = 28,
                         //FloatingPointLiteral = 29,
-                        return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.PeriodSeparator, MessageCode.InvalidCharAfterPeriod);
+                        return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.PeriodSeparator, MessageCode.DotShouldBeFollowedBySpace);
                     }
                 case ':':
                     // -- TypeCobol specific syntax --
@@ -1482,7 +1459,7 @@ namespace TypeCobol.Compiler.Scanner
                 currentIndex++;
                 if (spaceAfterisMandatory) {
                     Token invalidToken = new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
-                    tokensLine.AddDiagnostic(messageCode, invalidToken);
+                    tokensLine.AddDiagnostic(messageCode, invalidToken, line[currentIndex], currentIndex + 1);
                     return invalidToken;
                 }
                 return new Token(tokenType, startIndex, currentIndex-1, tokensLine);
@@ -1519,7 +1496,7 @@ namespace TypeCobol.Compiler.Scanner
                 currentIndex++;
                 if (spaceAfterIsMandatory) {
                     Token invalidToken = new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
-                    tokensLine.AddDiagnostic(messageCode, invalidToken);
+                    tokensLine.AddDiagnostic(messageCode, invalidToken, line[currentIndex], currentIndex+1);
                     return invalidToken;
                 }
                 return new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
@@ -2408,13 +2385,13 @@ namespace TypeCobol.Compiler.Scanner
             // next character must be ':'
             if (line.Length > index && line[index] == ':')
             {
-                patternEndIndex = index;
-                return true;
+                if (compilerOptions.IsCobolLanguage || !(line.Length > index + 1 && line[index + 1] == ':'))
+                {//For Cobol or if ':' is not followed by ':'. Because in TypeCobol we consider :: to be the qualifier symbol.
+                    patternEndIndex = index;
+                    return true;
+                }
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         // :PREFIX:-NAME or NAME-:SUFFIX: or :TAG:

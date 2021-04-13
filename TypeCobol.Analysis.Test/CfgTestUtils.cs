@@ -133,7 +133,7 @@ namespace TypeCobol.Analysis.Test
                 }
             }
             
-            var parser = Parser.Parse(sourceFilePath, new TypeCobolOptions(), DocumentFormat.RDZReferenceFormat, analyzerProvider: analyzerProvider);
+            var parser = Parser.Parse(sourceFilePath, false, new TypeCobolOptions(), DocumentFormat.RDZReferenceFormat, analyzerProvider: analyzerProvider);
             var results = parser.Results;
 
             if (expectedDiagnosticsFilePath != null)

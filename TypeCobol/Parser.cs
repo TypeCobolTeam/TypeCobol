@@ -4,7 +4,6 @@ using System.IO;
 using JetBrains.Annotations;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler;
-using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
@@ -40,7 +39,7 @@ namespace TypeCobol
 			return DocumentFormat.FreeUTF8Format;//TODO autodetect
 		}
 
-		public void Init([NotNull] string path, TypeCobolOptions options, DocumentFormat format = null, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null) {
+		public void Init([NotNull] string path, bool isCopy, TypeCobolOptions options, DocumentFormat format = null, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null) {
 			FileCompiler compiler;
 			if (Compilers.TryGetValue(path, out compiler)) return;
 			string filename = Path.GetFileName(path);
@@ -55,7 +54,7 @@ namespace TypeCobol
 			foreach (var folder in copies) {
 				sourceFileProvider.AddLocalDirectoryLibrary(folder, false, Helpers.DEFAULT_COPY_EXTENSIONS, format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength);
 			}
-			compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, CustomSymbols, false, project);
+			compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, CustomSymbols, isCopy, project);
             
 			Compilers.Add(path, compiler);
 			Inits.Add(path, false);
@@ -64,15 +63,12 @@ namespace TypeCobol
 
 		public void Parse(string path, TextChangedEvent e=null)
 		{
-            //if the server is restarted during Eclipse lifetime, then we need to init the parser
-            //This is useful when debugging. Perhaps it'll be deleted at the end
-            if (!Compilers.ContainsKey(path))
-			{
-				Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.Generate});
-			}
-			Compiler = Compilers[path];
+            if (!Compilers.TryGetValue(path, out Compiler))
+            {
+                throw new InvalidOperationException($"Parser error: compiler for path '{path}' has not been initialized.");
+            }
 
-			Compiler.CompilationResultsForProgram.TextLinesChanged += OnTextLine;
+            Compiler.CompilationResultsForProgram.TextLinesChanged += OnTextLine;
 			Compiler.CompilationResultsForProgram.CodeElementsLinesChanged += OnCodeElementLine;
 
             if (!Inits[path]) Inits[path] = true;// no need to update with the same content as at compiler creation
@@ -126,29 +122,16 @@ namespace TypeCobol
 			System.Console.WriteLine("--- --> "+(c>0?(""+c):(e.DocumentChanges==null?"?":"0"))+" changes");
 		}
 
-		public IEnumerable<CodeElement> CodeElements
-		{
-			get
-			{
-				// TODO test if compilation is done
-				if (Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot == null) return new List<CodeElement>();
-				return Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.CodeElements;
-			}
-		}
-
-		public ITextDocument Source {
-			get { return Compiler.TextDocument; }
-		}
 
 		public CompilationUnit Results {
 			get { return Compiler.CompilationResultsForProgram; }
 		}
 
-        public static Parser Parse(string path, TypeCobolOptions options, DocumentFormat format, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null)
+        public static Parser Parse(string path, bool isCopy, TypeCobolOptions options, DocumentFormat format, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null)
         {
             var parser = new Parser();
             options.ExecToStep = ExecutionStep.Generate;
-            parser.Init(path, options, format, copies, analyzerProvider);
+            parser.Init(path, isCopy, options, format, copies, analyzerProvider);
             parser.Parse(path);
 			return parser;
 		}

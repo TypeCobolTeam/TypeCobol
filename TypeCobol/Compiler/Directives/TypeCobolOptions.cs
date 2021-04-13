@@ -59,6 +59,14 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public TypeCobolCheckOption CheckEndAlignment { get; set; }
 
+        /// <summary>
+        /// True if we are strictly parsing Cobol source code and not TypeCobol.
+        /// </summary>
+        public bool IsCobolLanguage { get; set; }
+        /// Check if END PROGRAM have a program name associated and this name exists
+        /// </summary>
+        public TypeCobolCheckOption CheckEndProgram { get; set; }
+
         public TypeCobolOptions(TypeCobolConfiguration config)
         {
             HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null;
@@ -72,6 +80,8 @@ namespace TypeCobol.Compiler.Directives
 #endif
 
             CheckEndAlignment = config.CheckEndAlignment;
+            this.IsCobolLanguage = config.IsCobolLanguage;
+            CheckEndProgram = config.CheckEndProgram;
         }
 
         public TypeCobolOptions()

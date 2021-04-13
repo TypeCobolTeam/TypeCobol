@@ -239,6 +239,83 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(WhenSearch whenSearch)
+        {
+            var search = whenSearch.Parent;
+            System.Diagnostics.Debug.Assert(search is Search);
+            if (search.CodeElement is SearchBinaryStatement)
+            {
+                var whenSearchVisitor = new WhenSearchVisitor(whenSearch);
+                whenSearch.CodeElement.Condition.AcceptASTVisitor(whenSearchVisitor);
+                if (whenSearchVisitor.IsInError)
+                {
+                    DiagnosticUtils.AddError(whenSearch, "When subscripting, first index declared for the table and at least one of declared keys must be used.");
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Visit a WhenSearch and set a flag to true if either:
+        /// WHEN does not use one of the declared keys (ascending or descending)
+        /// WHEN does not use the first index declared for the table when subscripting
+        /// </summary>
+        private class WhenSearchVisitor : AbstractAstVisitor
+        {
+            private readonly WhenSearch _whenSearch;
+            public bool IsInError { get; private set; } = false;
+
+
+            public WhenSearchVisitor(WhenSearch whenSearch)
+            {
+                _whenSearch = whenSearch;
+            }
+
+
+            public override bool Visit(NumericVariable numericVariable)
+            {
+                var variableStorageArea = (DataOrConditionStorageArea)numericVariable.StorageArea;
+                // TODO : Handle the case of sub-tables
+                if (variableStorageArea?.Subscripts.Count == 1)
+                {
+                    ////////// WHEN must use one of the declared keys (ascending or descending) //////////
+                    var dataDefinitionKey = _whenSearch.GetDataDefinitionFromStorageAreaDictionary(variableStorageArea);
+                    if (dataDefinitionKey?.Parent.CodeElement is DataDescriptionEntry tableDescriptionEntryKey)
+                    {
+                        if (tableDescriptionEntryKey.TableSortingKeys != null)
+                        {
+                            var existsName = tableDescriptionEntryKey.TableSortingKeys
+                                .Any(key => key.SortDirection?.Value != SortDirection.None && key.SortKey.Name.Equals(dataDefinitionKey.Name, StringComparison.OrdinalIgnoreCase));
+                            if (!existsName)
+                            {
+                                // error
+                                IsInError = true;
+                                return false;
+                            }
+                        }
+                    }
+
+                    ////////// WHEN must use the first index declared for the table when subscripting //////////
+                    // Get the 1st subscript used
+                    var firstSubscriptStorageArea = ((NumericVariableOperand)variableStorageArea.Subscripts[0].NumericExpression).IntegerVariable.StorageArea;
+                    var dataDefinitionFirstSubscript = _whenSearch.GetDataDefinitionFromStorageAreaDictionary(firstSubscriptStorageArea);
+                    // Ensure the subscript is the 1st declared
+                    var isFirstIndexDeclaredInTable = false;
+                    if (dataDefinitionFirstSubscript?.Parent.CodeElement is DataDescriptionEntry tableDescriptionEntrySubscript)
+                    {
+                        isFirstIndexDeclaredInTable = tableDescriptionEntrySubscript.Indexes[0].Name.Equals(dataDefinitionFirstSubscript.Name, StringComparison.OrdinalIgnoreCase);
+                    }
+                    if (!isFirstIndexDeclaredInTable)
+                    {
+                        // error
+                        IsInError = true;
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+
         public override bool Visit(Evaluate evaluate)
         {
             if (evaluate.GetChildren<WhenOther>().Count == 0)
@@ -289,7 +366,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Program program)
         {
-            ProgramChecker.OnNode(program);
+            // Check that program has a closing end
+            CheckEndProgram(program);
 
             //// Set a Warning if the FormCom parameter in unknown or if the program parameter have no description
 
@@ -464,6 +542,16 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(End end)
         {
+            // Check if PROGRAM END is orphan
+            if (_compilerOptions.CheckEndProgram.IsActive)
+            {
+                if (end.CodeElement.Type == CodeElementType.ProgramEnd && !(end.Parent is Program))
+                {
+                    System.Diagnostics.Debug.Assert(end.Parent is SourceFile);
+                    DiagnosticUtils.AddError(end, "Unexpected orphan \"PROGRAM END\".", _compilerOptions.CheckEndProgram.GetMessageCode());
+                }
+            }
+
             // Check end statement is aligned with the matching opening statement
             if (_compilerOptions.CheckEndAlignment.IsActive && end.CodeElement.Type != CodeElementType.SentenceEnd)
             {
@@ -838,6 +926,53 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(endCodeElement,
                     "a End statement is not aligned with the matching opening statement",
                     _compilerOptions.CheckEndAlignment.GetMessageCode());
+            }
+        }
+
+        private void CheckEndProgram(Program node)
+        {
+            var checkEndProgramOption = _compilerOptions.CheckEndProgram;
+            var lastChild = node.Children.LastOrDefault();
+            if (lastChild is End end)
+            {
+                // END PROGRAM is present
+                node.SetFlag(Node.Flag.MissingEndProgram, false);
+                if (checkEndProgramOption.IsActive)
+                {
+                    var programEnd = (ProgramEnd)end.CodeElement;
+                    if (programEnd.ProgramName?.Name == null)
+                    {
+                        // No name is specified after END PROGRAM
+                        DiagnosticUtils.AddError(end, $"\"PROGRAM END\" should have a program name. \"{node.Name}\" was assumed.", checkEndProgramOption.GetMessageCode());
+                    }
+                    else
+                    {
+                        if (!node.Name.Equals(programEnd.ProgramName.Name, StringComparison.OrdinalIgnoreCase))
+                        {
+                            // Wrong name is specified after END PROGRAM
+                            DiagnosticUtils.AddError(end, $"Program name \"{programEnd.ProgramName.Name}\" did not match the name of any open program. The \"END PROGRAM\" marker was assumed to have ended program \"{node.Name}\".", checkEndProgramOption.GetMessageCode());
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // END PROGRAM is missing
+                node.SetFlag(Node.Flag.MissingEndProgram, true);
+                if (checkEndProgramOption.IsActive)
+                {
+                    if (node is SourceProgram && node.Parent.Children.OfType<SourceProgram>().Last() == node)
+                    {
+                        // Node is last program
+                        if (!node.NestedPrograms.Any())
+                        {
+                            // Exception if only last program is not closed and has no nested program
+                            // No diagnostic in this case
+                            return;
+                        }
+                    }
+                    DiagnosticUtils.AddError(node, "\"END PROGRAM\" is missing.", checkEndProgramOption.GetMessageCode());
+                }
             }
         }
     }

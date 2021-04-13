@@ -1,0 +1,63 @@
+{
+  "name": "CompletionCallDuplicateProcedure.tlsp",
+  "session": "C:\\Users\\DELEVOVA\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2021_02_24_11_42_39_308\\TestSuite_2021_02_24_11_42_39_308.slsp",
+  "user": "DELEVOVA",
+  "date": "2021/02/24 11:42:39 321",
+  "uri": "file:///C:/Users/DELEVOVA/Desktop/CompletionCallDuplicateProcedure/CompletionCallDuplicateProcedure.tlsp",
+  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\repositories\\\\Github\\\\TypeCobol\\\\bin\\\\EI_Debug\",\"rootUri\":\"file:/C:/repositories/Github/TypeCobol/bin/EI_Debug/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"signatureHelp\":{\"dynamicRegistration\":true},\"references\":{\"dynamicRegistration\":true},\"documentHighlight\":{\"dynamicRegistration\":true},\"documentSymbol\":{\"dynamicRegistration\":true},\"formatting\":{\"dynamicRegistration\":true},\"rangeFormatting\":{\"dynamicRegistration\":true},\"onTypeFormatting\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true},\"codeAction\":{\"dynamicRegistration\":true},\"codeLens\":{\"dynamicRegistration\":true},\"documentLink\":{\"dynamicRegistration\":true},\"rename\":{\"dynamicRegistration\":true}}},\"trace\":\"off\"}}",
+  "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"experimental\":[{\"Item1\":\"version\",\"Item2\":\"0.1(alpha)\"}],\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
+  "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\repositories\\\\Github\\\\TypeCobol\\\\bin\\\\EI_Debug\\\\TypeCobol.CLI.exe\",\"-1\",\"-e\",\"rdz\",\"-y\",\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\Intrinsic\\\\Intrinsic.txt\",\"-glm\",\"\\\"{6}\\\"\",\"--autoremarks\",\"--outputFormat\\u003dCobol85Mixed\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\\\\Production\",\"-md\",\"200\",\"--dependencies\",\"C:\\\\TypeCobol\\\\Sources\\\\Fast\\\\##Latest_Release##\\\\Dependencies\\\\*.tcbl\",\"--dependencies\",\"\\\\\\\\uf44-004\\\\TYPECOBOL-DEPENDENCIES\\\\Y530\\\\*.tcbl\"]}}",
+  "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZS0OSM.\\r\\n       PROCEDURE DIVISION.\\r\\n       declare procedure Toto.\\r\\n       end-declare.\\r\\n       declare procedure Toto.\\r\\n       end-declare.\\r\\n               Call Toto\\r\\n               GOBACK\\r\\n               .\\r\\n       END PROGRAM DVZS0OSM.\"}}}",
+  "messages": [
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZS0OSM.\\r\\n       PROCEDURE DIVISION.\\r\\n       declare procedure Toto.\\r\\n       end-declare.\\r\\n       declare procedure Toto.\\r\\n       end-declare.\\r\\n               Call\\r\\n               GOBACK\\r\\n               .\\r\\n       END PROGRAM DVZS0OSM.\"}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\"},\"uri\":\"file:/C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":7,\"character\":19},\"end\":{\"line\":7,\"character\":19}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":8,\"character\":16},\"end\":{\"line\":8,\"character\":24}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : No suitable function signature found for 'Toto(no arguments)'\"}]}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":8,\"character\":16},\"end\":{\"line\":8,\"character\":16}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":8,\"character\":16},\"end\":{\"line\":8,\"character\":16}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Empty CALL is not authorized\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\"},\"uri\":\"file:/C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\",\"position\":{\"line\":7,\"character\":20}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":[{\"label\":\"Toto   \",\"kind\":3,\"insertText\":\"Toto\",\"data\":[null,{\"label\":\"DVZS0OSM.Toto\",\"parameters\":[]},null]},{\"label\":\"DVZS0OSM\",\"kind\":9}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\"},\"uri\":\"file:/C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":7,\"character\":20},\"end\":{\"line\":7,\"character\":20}},\"rangeLength\":0,\"text\":\"Toto \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\"},\"signatureInformation\":{\"label\":\"DVZS0OSM.Toto\",\"parameters\":[]}}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"typecobol/signatureHelpContext\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\"}}}"
+    }
+  ],
+  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/DELEVOVA/AppData/Local/Temp/1/tcbl/TCODVA011384460104469398588.cee\"}}}",
+  "IsValid": true
+}
