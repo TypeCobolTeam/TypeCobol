@@ -19,7 +19,7 @@ namespace TypeCobol.Compiler.Diagnostics
         GreaterThanOrEqualOperatorShouldBeFollowedBySpace = 9,
         InvalidCharAfterGreaterThan = 10,
         InvalidCharAfterEquals = 11,
-        InvalidCharAfterPeriod = 12,
+        DotShouldBeFollowedBySpace = 12,
         InvalidCharAfterPlus = 13,
         InvalidCharAfterMinus = 14,
         InvalidCharAfterPseudoTextDelimiter = 15,

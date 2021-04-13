@@ -662,7 +662,7 @@ namespace TypeCobol.Compiler.Scanner
                     case ' ':
                         return ScanWhitespace(startIndex);
                     case '.':
-                        return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.PeriodSeparator, MessageCode.InvalidCharAfterPeriod);
+                        return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.PeriodSeparator, MessageCode.DotShouldBeFollowedBySpace, false);
                     default:
                         tryScanCommentEntry = true;
                         break;
@@ -999,14 +999,14 @@ namespace TypeCobol.Compiler.Scanner
                     // p46: A separator period is composed of a period followed by a space.
                     if(tokensLine.ScanState.DecimalPointIsComma)
                     {
-                        return ScanOneCharFollowedBySpace(startIndex, TokenType.PeriodSeparator, MessageCode.InvalidCharAfterPeriod);
+                        return ScanOneCharFollowedBySpace(startIndex, TokenType.PeriodSeparator, MessageCode.DotShouldBeFollowedBySpace);
                     }
                     else
                     {
                         //IntegerLiteral = 27,
                         //DecimalLiteral = 28,
                         //FloatingPointLiteral = 29,
-                        return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.PeriodSeparator, MessageCode.InvalidCharAfterPeriod);
+                        return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.PeriodSeparator, MessageCode.DotShouldBeFollowedBySpace);
                     }
                 case ':':
                     // -- TypeCobol specific syntax --
@@ -1452,7 +1452,7 @@ namespace TypeCobol.Compiler.Scanner
                 currentIndex++;
                 if (spaceAfterisMandatory) {
                     Token invalidToken = new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
-                    tokensLine.AddDiagnostic(messageCode, invalidToken);
+                    tokensLine.AddDiagnostic(messageCode, invalidToken, line[currentIndex], currentIndex + 1);
                     return invalidToken;
                 }
                 return new Token(tokenType, startIndex, currentIndex-1, tokensLine);
@@ -1489,7 +1489,7 @@ namespace TypeCobol.Compiler.Scanner
                 currentIndex++;
                 if (spaceAfterIsMandatory) {
                     Token invalidToken = new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
-                    tokensLine.AddDiagnostic(messageCode, invalidToken);
+                    tokensLine.AddDiagnostic(messageCode, invalidToken, line[currentIndex], currentIndex+1);
                     return invalidToken;
                 }
                 return new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
