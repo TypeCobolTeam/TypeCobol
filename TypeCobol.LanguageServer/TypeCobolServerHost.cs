@@ -10,10 +10,6 @@ using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.StdioHttp;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 using TypeCobol.LanguageServer.Utilities;
-using TypeCobol.Tools.Options_Config;
-#if EUROINFO_RULES
-using TypeCobol.Compiler.Preprocessor;
-#endif
 
 namespace TypeCobol.LanguageServer
 {
@@ -310,7 +306,7 @@ namespace TypeCobol.LanguageServer
                 typeCobolServer.UseOutlineRefresh = UseOutlineRefresh;
                 typeCobolServer.UseCfgDfaDataRefresh = UseCfg;
 #if EUROINFO_RULES
-                typeCobolServer.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath ?? TypeCobolConfiguration.DefaultCopyNameFile;
+                typeCobolServer.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath;
 #endif
                 //Creating the thread that will read mesages and handle them 
                 var backgroundExecutionThread = new Thread(() => { MessageHandler(jsonRPCServer, typeCobolServer); }) { IsBackground = true };

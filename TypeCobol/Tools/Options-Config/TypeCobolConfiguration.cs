@@ -60,11 +60,33 @@ namespace TypeCobol.Tools.Options_Config
         public string RawOutputFormat = "0";
 
 #if EUROINFO_RULES
-        public static string DefaultCopyNameFile => Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location),"COPIES_CPY.txt");
         /// <summary>
-        /// The Cpy Copy names file
+        /// Default location for CPY copy name map. Expects a file 'COPIES_CPY.txt' next to the current executable.
         /// </summary>
-        public string CpyCopyNamesMapFilePath = DefaultCopyNameFile;
+        private static readonly string _DefaultCpyCopyNameMapFilePath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "COPIES_CPY.txt");
+        
+        /// <summary>
+        /// The CPY copy name map loaded in memory.
+        /// </summary>
+        public CopyNameMapFile CpyCopyNameMap;
+
+        /// <summary>
+        /// Attempts loading of the CPY copy name map. If no path is given, default location is used.
+        /// </summary>
+        /// <param name="cpyCopyNameMapFilePath">Relative or absolute path to a CPY copy name map file on disk</param>
+        /// <remarks>Must be called after <see cref="TypeCobolOptionSet.InitializeCobolOptions"/>, <see cref="LogFile"/> must be writable</remarks>
+        public void LoadCpyCopyNameMap(string cpyCopyNameMapFilePath)
+        {
+            var path = string.IsNullOrWhiteSpace(cpyCopyNameMapFilePath) ? _DefaultCpyCopyNameMapFilePath : cpyCopyNameMapFilePath;
+            if (File.Exists(path))
+            {
+                CpyCopyNameMap = new CopyNameMapFile(path);
+            }
+            else
+            {
+                File.AppendAllText(LogFile ?? DefaultLogFileName, $"CPY Copy name map file '{path}' is unreachable.");
+            }
+        }
 #endif
 
         public static Dictionary<ReturnCode, string> ErrorMessages = new Dictionary<ReturnCode, string>()
@@ -94,12 +116,9 @@ namespace TypeCobol.Tools.Options_Config
             { ReturnCode.MaxDiagnosticsError,     "Maximum diagnostics have to be an integer." },
             { ReturnCode.OutputFormatError,       "Unexpected parameter given for Output format option. Accepted parameters are Cobol85/0(default), PublicSignature/1." },
             { ReturnCode.ExpandingCopyError,      "Expanding copy path given is unreachable." },
-            { ReturnCode.ExtractusedCopyError,    "Extractused copy path given is unreachable." },
+            { ReturnCode.ExtractUsedCopyError,    "Extract used copy path given is unreachable." },
             { ReturnCode.LogFileError,            "Log file path is unreachable." },
-            { ReturnCode.CustomAnalyzerFileError, "Custom analyzer assembly files are unreachable." },
-#if EUROINFO_RULES
-            { ReturnCode.CopyNameMapFileError,    "CPY Copy name map file given is unreachable." },
-#endif
+            { ReturnCode.CustomAnalyzerFileError, "Custom analyzer assembly files are unreachable." }
         };
 
         public TypeCobolConfiguration()
@@ -127,7 +146,6 @@ namespace TypeCobol.Tools.Options_Config
         //Warnings
         Warning = 1,                    // Warning(s) issued during parsing of input file
 
-
         //Errors
         ParsingDiagnostics = 1000,      // Syntax or semantic error in one or more input file
         OutputFileError = 1001,         // CLI parameters error
@@ -153,15 +171,11 @@ namespace TypeCobol.Tools.Options_Config
         MaxDiagnosticsError = 1030,     // Unexpected user input for maximundiagnostics option (not an int)
         OutputFormatError = 1031,       // Unexpected user input for outputFormat option
         ExpandingCopyError = 1032,      // Expanding copy path given is unreachable.
-        ExtractusedCopyError = 1033,    // Extractused copy path given is unreachable.
+        ExtractUsedCopyError = 1033,    // Extract used copy path given is unreachable.
         LogFileError = 1034,            // Wrong log path given
         CustomAnalyzerFileError = 1035, // Invalid path to custom analyzer DLL file
-#if EUROINFO_RULES
-        CopyNameMapFileError = 1036,    // Wrong CPY Copy name map file
-#endif
 
         MultipleErrors = 9999
-
     }
 
     public enum OutputFormat {
@@ -260,10 +274,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "diag.cea|diagnostic.checkEndAlignment=", "Indicate level of check end aligment: warning, error, info, ignore.", v => typeCobolConfig.CheckEndAlignment = TypeCobolCheckOption.Parse(v) },
                 { "log|logfilepath=", "{PATH} to TypeCobol.CLI.log log file", v => typeCobolConfig.LogFile = Path.Combine(v, TypeCobolConfiguration.DefaultLogFileName)},
                 { "cfg|cfgbuild", "Standard CFG build.", v => typeCobolConfig.CfgBuildingMode = CfgBuildingMode.Standard},
-                { "ca|customanalyzer=", "{PATH} to a custom DLL file containing code analyzers. This option can be specified more than once.", v => typeCobolConfig.CustomAnalyzerFiles.Add(v) },
-#if EUROINFO_RULES
-                { "ycpl|ycopylist=", "{PATH} to a file of CPY copy names uppercase sorted.", v => typeCobolConfig.CpyCopyNamesMapFilePath = v },
-#endif
+                { "ca|customanalyzer=", "{PATH} to a custom DLL file containing code analyzers. This option can be specified more than once.", v => typeCobolConfig.CustomAnalyzerFiles.Add(v) }
             };
             return commonOptions;
         }
@@ -382,7 +393,7 @@ namespace TypeCobol.Tools.Options_Config
 
             //HaltOnMissingCopyFilePathError
             if (!CanCreateFile(config.ExtractedCopiesFilePath) && !string.IsNullOrEmpty(config.ExtractedCopiesFilePath))
-                errorStack.Add(ReturnCode.ExtractusedCopyError, TypeCobolConfiguration.ErrorMessages[ReturnCode.ExtractusedCopyError]);
+                errorStack.Add(ReturnCode.ExtractUsedCopyError, TypeCobolConfiguration.ErrorMessages[ReturnCode.ExtractUsedCopyError]);
 
             //LogFilePathError
             if (!CanCreateFile(config.LogFile) && !string.IsNullOrEmpty(config.LogFile))
