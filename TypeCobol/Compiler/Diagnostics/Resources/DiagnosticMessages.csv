@@ -10,7 +10,7 @@ Category;Code;Severity;MessageTemplate;Document;PageNumber;ReferenceText
 2;9;1;Greater than or equal operator >= should be followed by a space;1;260;Each relational operator must be preceded and followed by a space. 
 2;10;1;Invalid character found after > : expecting space or =;1;260;Each relational operator must be preceded and followed by a space. 
 2;11;1;Invalid character found after = : expecting space or =;1;0;Syntax described pages : 47, 260
-2;12;1;Invalid character found after . : expecting space or digit;1;0;Syntax described pages : 37, 38, 46
+2;12;2;A blank was missing before character "{0}" in column {1}. A blank was assumed.;0;0;
 2;13;1;Invalid character found after + : expecting space, digit or .;1;0;Syntax described pages : 37, 38, 254
 2;14;1;Invalid character found after - : expecting space, digit or .;1;0;Syntax described pages : 37, 38, 254
 2;15;1;Invalid character found after pseudo-text delimiter == : expecting space, comma, semicolon or period;1;47;A closing pseudo-text delimiter must be immediately followed by a separator space, comma, semicolon, or period
