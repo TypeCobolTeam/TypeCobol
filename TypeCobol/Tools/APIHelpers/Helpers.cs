@@ -34,7 +34,7 @@ namespace TypeCobol.Tools.APIHelpers
             {
                 try
                 {
-                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck }, intrinsicDocumentFormat);
+                    parser.Init(path, false, new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck }, intrinsicDocumentFormat);
                     parser.Parse(path);
 
                     var diagnostics = parser.Results.AllDiagnostics();
@@ -89,7 +89,7 @@ namespace TypeCobol.Tools.APIHelpers
             var options = new TypeCobolOptions(config) { ExecToStep = ExecutionStep.SemanticCheck };
             var parser = new Parser(customSymbols);
 
-            parser.Init(path, options, config.Format, config.CopyFolders);
+            parser.Init(path, false, options, config.Format, config.CopyFolders);
             parser.Parse(path); //Parse the dependency file
 
             return parser.Results;

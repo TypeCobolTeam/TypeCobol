@@ -348,8 +348,7 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             if (set.SendingVariable == null)
             {
-                DiagnosticUtils.AddError(set, "Set xxx up/down by xxx: Sending field missing or type unknown",
-                    context?.variableOrExpression2());
+                DiagnosticUtils.AddError(set, "Set xxx up/down by xxx: Sending field missing or type unknown", context);
             }
         }
     }

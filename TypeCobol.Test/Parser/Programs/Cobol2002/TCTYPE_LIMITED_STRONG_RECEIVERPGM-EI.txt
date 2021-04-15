@@ -1,5 +1,4 @@
 --- Diagnostics ---
-Line 1[1,28] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 33[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'IntegerStrong' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[18,24:TYPEDEF]<TYPEDEF>
 Line 35[12,18] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'Integer' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[12,18:TYPEDEF]<TYPEDEF>
 Line 39[16,22] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'CharsStrong' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[16,22:TYPEDEF]<TYPEDEF>

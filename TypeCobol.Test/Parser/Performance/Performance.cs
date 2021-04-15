@@ -129,8 +129,7 @@ namespace TypeCobol.Test.Parser.Performance
         public void AntlrPerformanceProfiler()
         {
             Paths paths = new Paths(AntlrFolder, AntlrFolder, AntlrFolder + Path.DirectorySeparatorChar + "AntlrTest.rdz.pgm", new AntlrName());
-            TestUnit unit = new TestUnit(new Multipass(paths));
-            unit.Init(new[] { ".pgm", ".cpy" }, false, true);
+            TestUnit unit = new TestUnit(new Multipass(paths), antlrProfiler: true);
             unit.Parse();
 
             unit.Compare(unit.Compiler.CompilationResultsForProgram.AntlrResult);
@@ -389,7 +388,7 @@ namespace TypeCobol.Test.Parser.Performance
         protected virtual TypeCobol.Parser ParseDocument(string fullPath, TypeCobolOptions options, TypeCobol.Compiler.DocumentFormat format, string[] copiesFolder)
         {
             var document = new TypeCobol.Parser();
-            document.Init(fullPath, options, format, copiesFolder, CreateAnalyzerProvider());
+            document.Init(fullPath, false, options, format, copiesFolder, CreateAnalyzerProvider());
             document.Parse(fullPath);
             return document;
         }

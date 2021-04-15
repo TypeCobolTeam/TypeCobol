@@ -1,0 +1,11 @@
+Line 7[8,24] <27, Error, Syntax> - Syntax error : Program name "Toto" did not match the name of any open program. The "END PROGRAM" marker was assumed to have ended program "Nested0".
+--- Nodes ---
+?
+  Main
+    Nested0
+      end
+    Nested1
+      end
+    end
+  Stacked1
+    end

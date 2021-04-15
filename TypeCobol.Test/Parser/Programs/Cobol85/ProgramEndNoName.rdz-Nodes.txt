@@ -1,0 +1,11 @@
+Line 7[8,19] <27, Error, Syntax> - Syntax error : "PROGRAM END" should have a program name. "Nested0" was assumed.
+--- Nodes ---
+?
+  Main
+    Nested0
+      end
+    Nested1
+      end
+    end
+  Stacked1
+    end

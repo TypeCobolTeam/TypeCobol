@@ -1,5 +1,5 @@
 ﻿       IDENTIFICATION DIVISION.
-       PROGRAM-ID. DependOnPgm.
+       PROGRAM-ID. TypoParenthesis.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SOURCE-COMPUTER. IBM-370.
@@ -106,4 +106,4 @@
        01 pic S9)5(V9)5(.
 
        PROCEDURE DIVISION.
-       END PROGRAM MYPGM.
+       END PROGRAM TypoParenthesis.

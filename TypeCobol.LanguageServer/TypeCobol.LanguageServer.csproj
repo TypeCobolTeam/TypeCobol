@@ -125,6 +125,7 @@
     <Compile Include="VsCodeProtocol\Initialize Method\ServerCapabilities.cs" />
     <Compile Include="VsCodeProtocol\Initialize Method\SignatureHelpOptions.cs" />
     <Compile Include="VsCodeProtocol\Initialize Method\TextDocumentSyncKind.cs" />
+    <Compile Include="VsCodeProtocol\LanguageIds.cs" />
     <Compile Include="VsCodeProtocol\LanguageServer.cs" />
     <Compile Include="VsCodeProtocol\Log Notification\LogMessageNotification.cs" />
     <Compile Include="VsCodeProtocol\Log Notification\LogMessageParams.cs" />

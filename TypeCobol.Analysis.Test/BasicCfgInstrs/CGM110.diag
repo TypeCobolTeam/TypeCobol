@@ -1,5 +1,4 @@
 --- Diagnostics ---
-Line 1[8,22] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 25725[8,28] <37, Warning, General> - Warning: Paragraph 'SDDDD-PROGRAM-DEBUG' is empty
 Line 25842[8,30] <37, Warning, General> - Warning: Paragraph 'A4000-DATA-VALIDATION' is empty
 Line 25852[8,36] <37, Warning, General> - Warning: Paragraph 'A4500-RELATIONAL-VALIDATION' is empty

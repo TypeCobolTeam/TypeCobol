@@ -15,40 +15,55 @@ namespace TypeCobol.Test.Utils
 {
     internal class TestUnit
     {
-        internal FileCompiler Compiler;
-        public readonly FilesComparator Comparator;
-        public readonly TestObserver Observer;
+        public FileCompiler Compiler { get; }
+        public FilesComparator Comparator { get; }
+        public TestObserver Observer { get; }
+        public bool IsCobolLanguage { get; set; }
 
-        public TestUnit(FilesComparator comparator1, bool debug = false)
+        public TestUnit(FilesComparator comparator1, string[] copyExtensions = null, bool autoRemarks = false, bool antlrProfiler = false)
         {
             Comparator = comparator1;
             Observer = new TestObserver();
-        }
 
-        public void Init(string[] extensions = null, bool autoRemarks = false, bool AntlrProfiler = false)
-        {
-            DirectoryInfo localDirectory = new DirectoryInfo(Path.GetDirectoryName( Comparator?.paths?.SamplePath));
+            string filePath = Comparator.paths.SamplePath;
+            DirectoryInfo localDirectory = new DirectoryInfo(Path.GetDirectoryName(filePath));
             DocumentFormat format = Comparator?.GetSampleFormat();
             TypeCobolOptions options = new TypeCobolOptions();
+            options.IsCobolLanguage = IsCobolLanguage;
 #if EUROINFO_RULES
             options.AutoRemarksEnable = autoRemarks;
 #endif
-            if (extensions == null) extensions = new[] { ".cbl", ".cpy" };
-            //comparator.paths.sextension = extensions[0].Substring(1);
-            CompilationProject project = new CompilationProject("TEST",
-                localDirectory.FullName, extensions,
-                format, options, null);
-            string filename = Comparator.paths.SampleName;
-            Compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, null, false, project);
 
-            if(AntlrProfiler)
+            var sampleExtension = Path.GetExtension(filePath);
+            HashSet<string> compilerExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                                                 {
+                                                     sampleExtension
+                                                 };
+            if (copyExtensions == null || copyExtensions.Length == 0)
+            {
+                copyExtensions = new[] {".cpy"};
+            }
+            foreach (var copyExtension in copyExtensions)
+            {
+                compilerExtensions.Add(copyExtension);
+            }
+
+            CompilationProject project = new CompilationProject("TEST",
+                localDirectory.FullName, compilerExtensions.ToArray(),
+                format, options, null);
+            
+            string filename = Comparator.paths.SampleName;
+            bool isCopy = copyExtensions.Contains(sampleExtension, StringComparer.OrdinalIgnoreCase);
+            Compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, null, isCopy, project);
+
+            if (antlrProfiler)
             {
                 Compiler.CompilationResultsForProgram.PerfStatsForCodeElementsParser.ActivateDetailedAntlrPofiling = true;
                 Compiler.CompilationResultsForProgram.PerfStatsForTemporarySemantic.ActivateDetailedAntlrPofiling = true;
             }
         }
 
-		public void Parse() {
+        public void Parse() {
 			try { Compiler.CompileOnce(); }
 			catch(Exception e) { Observer.OnError(e); }
 		}
@@ -121,23 +136,19 @@ namespace TypeCobol.Test.Utils
         };
 
         private IList<string> samples;
-        private string[] compilerExtensions;
-        private string[] fileToTestsExtensions;
-
         private string _sampleRoot;
         private string _resultsRoot;
-
+        private string[] _copyExtensions;
         private int _nbOfTests;
+        public bool IsCobolLanguage { get; set; }
 
-        internal FolderTester(string sampleRoot, string resultsRoot, string folder, string[] fileToTestsExtensions, string[] compilerExtensions, string[] ignored = null, bool deep = true) {
+        internal FolderTester(string sampleRoot, string resultsRoot, string folder, string[] fileToTestsExtensions, string[] copyExtensions = null, string[] ignored = null, bool deep = true) {
 			_sampleRoot = sampleRoot;
 			_resultsRoot = resultsRoot;
-
-			this.compilerExtensions = compilerExtensions;
-            this.fileToTestsExtensions = fileToTestsExtensions;
+            _copyExtensions = copyExtensions;
 			var option = deep? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 			string[] samples = new string[0];
-			foreach(var ext in this.fileToTestsExtensions) {
+			foreach(var ext in fileToTestsExtensions) {
 				string[] paths = Directory.GetFiles(folder, "*" + ext, option);
 				var tmp = new string[samples.Length+paths.Length];
 				samples.CopyTo(tmp, 0);
@@ -176,11 +187,11 @@ namespace TypeCobol.Test.Utils
 					errors.AppendLine("Missing result file \"" + samplePath + "\"");
 					continue;
 				}
-				foreach (var comparator in comparators) {
+                foreach (var comparator in comparators) {
                     Console.WriteLine(comparator.paths.Result + " checked with " + comparator.GetType().Name);
-					var unit = new TestUnit(comparator, debug);
-					unit.Init(compilerExtensions, autoRemarks);
-					unit.Parse();
+					var unit = new TestUnit(comparator, _copyExtensions, autoRemarks);
+                    unit.IsCobolLanguage = IsCobolLanguage;
+                    unit.Parse();
 				    if (unit.Observer.HasErrors)
 				    {
 				        Console.WriteLine(" /!\\ EXCEPTION\n" + unit.Observer.DumpErrors());
@@ -211,7 +222,8 @@ namespace TypeCobol.Test.Utils
 				    }
 				}
 			}
-			if (errors.Length > 0) throw new Exception(errors.ToString());
+			if (errors.Length > 0)
+                throw new Exception(errors.ToString());
 		}
 
         private IList<FilesComparator> GetComparators(string sampleRoot, string resultsRoot, string samplePath, bool debug) {
@@ -453,40 +465,42 @@ namespace TypeCobol.Test.Utils
         public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
         {
             var sortedDiags = compilationUnit.AllDiagnostics().OrderBy(d => d.Line).GetEnumerator();
-            
 
             //Create result file
-            
+
             //Read original source file
-            StreamReader sourceReader = new StreamReader(new FileStream(paths.SamplePath , FileMode.Open));
+            using (StreamReader sourceReader = new StreamReader(new FileStream(paths.SamplePath, FileMode.Open)))
+            {
+                StringBuilder resultBuilder = new StringBuilder();
+                int linePos = 0;
+
+                Diagnostic nextDiag = sortedDiags.MoveNext() ? sortedDiags.Current : null;
+                while (!sourceReader.EndOfStream)
+                {
+                    string line = sourceReader.ReadLine();
+                    linePos++;
 
 
-            StringBuilder resultBuilder = new StringBuilder();
-            int linePos = 0;
+                    while (nextDiag != null && nextDiag.Line <= linePos)
+                    {
+                        resultBuilder.Append(nextDiag).Append("\n");
+                        nextDiag = sortedDiags.MoveNext() ? sortedDiags.Current : null;
+                    }
+                    resultBuilder.Append(line).Append("\n");
+                }
 
-            Diagnostic nextDiag = sortedDiags.MoveNext() ? sortedDiags.Current : null;
-            while (!sourceReader.EndOfStream) {
-                string line = sourceReader.ReadLine();
-                linePos++;
-
-
-                while (nextDiag != null && nextDiag.Line <= linePos) {
+                //Print all remaining diags
+                while (nextDiag != null)
+                {
                     resultBuilder.Append(nextDiag).Append("\n");
                     nextDiag = sortedDiags.MoveNext() ? sortedDiags.Current : null;
                 }
-                resultBuilder.Append(line).Append("\n");
+
+
+                string result = resultBuilder.ToString();
+                if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
+                ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader, expectedResultPath);
             }
-
-            //Print all remaining diags
-            while (nextDiag != null){
-                resultBuilder.Append(nextDiag).Append("\n");
-                nextDiag = sortedDiags.MoveNext() ? sortedDiags.Current : null;
-            }
-
-
-            string result = resultBuilder.ToString();
-            if (debug) Console.WriteLine("\"" + paths.SamplePath+ "\" result:\n" + result);
-            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader, expectedResultPath);
         }
     }
 
@@ -905,7 +919,6 @@ namespace TypeCobol.Test.Utils
 
     #endregion
 
-
     internal interface Names
     {
         string CreateName(string name);
@@ -1112,7 +1125,6 @@ namespace TypeCobol.Test.Utils
                 string ResultFileName = Path.GetFileNameWithoutExtension(SamplePath);
                 return _resultRoot + Path.DirectorySeparatorChar + ResultFilePath  + Path.DirectorySeparatorChar + Resultnames.CreateName(ResultFileName);
             }
-            
         }
     }
 }

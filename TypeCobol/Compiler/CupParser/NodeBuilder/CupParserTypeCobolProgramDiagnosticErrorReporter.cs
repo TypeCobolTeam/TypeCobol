@@ -59,7 +59,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             TypeCobolProgramParser tcpParser = parser as TypeCobolProgramParser;
             ProgramClassBuilder builder = tcpParser.Builder as ProgramClassBuilder;
             var errorReporter = tcpParser.ErrorReporter;
-            var tokenizer = parser.getScanner() as CodeElementTokenizer;
             CodeElementTokenizer newTokenizer = new CodeElementTokenizer(start, firstSymbol);
             TypeCobolProgramParser newParser = new TypeCobolProgramParser(newTokenizer);
             newParser.Builder = builder;
@@ -97,7 +96,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             if (tcpParser.IsTrial)
                 return true;
             List<string> expected = ExpectedSymbols(parser, curToken);
-            string symName = CodeElementTokenizer.CupTokenToString(curToken.sym);
             Symbol validSymbol = GetParserValidStackSymbol(parser, curToken);
             string text = validSymbol != null ? (validSymbol.value as CodeElement).Text : "";
             string msg = string.Format("extraneous input '{0}' expecting {{{1}}}", text, string.Join(", ", expected));

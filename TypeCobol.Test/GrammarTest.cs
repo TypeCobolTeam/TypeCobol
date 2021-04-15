@@ -94,7 +94,8 @@ namespace TypeCobol.Test {
 #endif
                 };
 
-                document.Init(path, options, format, copiesFolder);
+                //We assume here that all sources are programs (not copies)
+                document.Init(path, false, options, format, copiesFolder);
                 document.Parse(path);
                 
 

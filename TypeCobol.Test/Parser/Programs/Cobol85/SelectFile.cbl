@@ -4,7 +4,9 @@
        ENVIRONMENT DIVISION. 
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-                                                            
+           SELECT
+           SELECT ENT00A       ASSIGN
+           SELECT ENT00B       ASSIGN TO
            SELECT ENT010       ASSIGN TO ENT010
                   FILE STATUS WK-ST-ENT010.
        DATA DIVISION.

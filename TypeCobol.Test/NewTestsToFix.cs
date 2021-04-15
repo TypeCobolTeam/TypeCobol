@@ -25,14 +25,13 @@ namespace TypeCobol.Test {
             int nbOfTests = 0;
 
             string[] extensions = { ".cbl", ".pgm" };
-            string[] compilerExtensions = extensions.Concat(new[] { ".cpy" }).ToArray();
             foreach (string directory in GetCurrentAndSubDirectories(sampleRoot))
             {
                 var dirname = Path.GetFileName(directory);
 
                 Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) +
                                          "]:");
-                var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions, compilerExtensions);
+                var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions);
                 folderTester.Test();
                 nbOfTests += folderTester.GetTestCount();
                 Console.Write("\n");
@@ -57,14 +56,13 @@ namespace TypeCobol.Test {
         {
             int nbOfTests = 0;
             string[] extensions = { ".tcbl" };
-            string[] compilerExtensions = extensions.Concat(new[] { ".cpy" }).ToArray();
 
             foreach (string directory in GetCurrentAndSubDirectories(sampleRoot))
             {
                 var dirname = Path.GetFileName(directory);
                 
                 Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-                var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions, compilerExtensions);
+                var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions);
                 folderTester.Test();
                 nbOfTests += folderTester.GetTestCount();
                 Console.Write("\n");
