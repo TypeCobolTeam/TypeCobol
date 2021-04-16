@@ -172,7 +172,7 @@ namespace TypeCobol.Analysis.Test
                 }
             }
 
-            if (results.TryGetAnalyzerResult(CFG_ANALYZER_IDENTIFIER, out IList<ControlFlowGraph<Node, D>> graphs))
+            if (results.TemporaryProgramClassDocumentSnapshot.AnalyzerResults.TryGetResult(CFG_ANALYZER_IDENTIFIER, out IList<ControlFlowGraph<Node, D>> graphs))
             {
                 return graphs;
             }

@@ -296,9 +296,9 @@ namespace TypeCobol.LanguageServer
         /// <returns>CFG/DFA Data information</returns>
         public CfgDfaParams UpdateCfgDfaInformation(DocumentContext docContext, bool writeToFile)
         {
-            CfgDfaParams result = null;
-            docContext.FileCompiler.CompilationResultsForProgram.TryGetAnalyzerResult(lspcfgId, out IList<ControlFlowGraph<Node, object>> cfgs);
-            if (cfgs != null && cfgs.Count > 0)
+            CfgDfaParams result;
+            var analyzerResults = docContext.FileCompiler.CompilationResultsForProgram.TemporaryProgramClassDocumentSnapshot?.AnalyzerResults;
+            if (analyzerResults != null && analyzerResults.TryGetResult(lspcfgId, out IList<ControlFlowGraph<Node, object>> cfgs) && cfgs.Count > 0)
             {                
                 //Create a temporary dot file.
                 string tempFile = Path.GetTempFileName();
