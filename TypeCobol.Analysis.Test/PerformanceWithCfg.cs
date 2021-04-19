@@ -20,10 +20,10 @@ namespace TypeCobol.Analysis.Test
         /// AnalyzerProvider for test.
         /// </summary>
         /// <returns></returns>
-        protected override CompositeAnalyzerProvider CreateAnalyzerProvider()
+        protected override IAnalyzerProvider CreateAnalyzerProvider()
         {
             //Add analyzers
-            var analyzerProvider = new CompositeAnalyzerProvider();
+            var analyzerProvider = new AnalyzerProvider();
             //CFG/DFA
             const string cfgDfaId = "cfg-dfa";
             analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(cfgDfaId, CfgBuildingMode.Standard));

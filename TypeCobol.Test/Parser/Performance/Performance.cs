@@ -220,7 +220,7 @@ namespace TypeCobol.Test.Parser.Performance
         /// Creates the AnalyzerProvider to be used.
         /// </summary>
         /// <returns></returns>
-        protected virtual CompositeAnalyzerProvider CreateAnalyzerProvider()
+        protected virtual IAnalyzerProvider CreateAnalyzerProvider()
         {
             return null;
         }
