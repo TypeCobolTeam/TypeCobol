@@ -46,19 +46,12 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         }
 
         /// <summary>
-        /// Handle -ol and -cfg options from the client configuration change notification.
+        /// Handle -ol option from the client configuration change notification.
         /// </summary>
-        /// <param name="sender">Should be the Workspace instance</param>
         /// <param name="options">Client's Options</param>
         protected override void OnDidChangeConfiguration(string[] options)
         {
             this.UseOutlineRefresh = !options.Contains("-dol");
-            if (options.Contains("-cfg=AsFile"))
-                this.UseCfgDfaDataRefresh = UseCfgMode.AsFile;
-            else if(options.Contains("-cfg=AsContent"))
-                this.UseCfgDfaDataRefresh = UseCfgMode.AsContent;
-            else
-                this.UseCfgDfaDataRefresh = UseCfgMode.No;
             base.OnDidChangeConfiguration(options);
         }
 
