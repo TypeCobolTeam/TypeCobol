@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TypeCobol.Analysis;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
@@ -35,13 +34,14 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         };
 
         /// <summary>
-        /// Are we using the CFG view in the client.    
+        /// Are we using the CFG view in the client.
         /// </summary>
         public UseCfgMode UseCfgDfaDataRefresh { get; set; }
         protected override InitializeResult OnInitialize(InitializeParams parameters)
         {
             var result = base.OnInitialize(parameters);
             this.Workspace.DocumentModifiedEvent += DocumentModified;
+            this.Workspace.UseCfgDfaDataRefresh = UseCfgDfaDataRefresh != UseCfgMode.No;
             return result;
         }
 

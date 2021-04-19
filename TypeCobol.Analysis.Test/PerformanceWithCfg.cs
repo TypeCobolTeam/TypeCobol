@@ -1,14 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TypeCobol.Compiler;
-using TypeCobol.Compiler.Diagnostics;
-using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.Text;
-using TypeCobol.Test.Compiler.Parser;
-using TypeCobol.Test.Utils;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TypeCobol.Analysis.Test
 {
@@ -25,8 +15,7 @@ namespace TypeCobol.Analysis.Test
             //Add analyzers
             var analyzerProvider = new AnalyzerProvider();
             //CFG/DFA
-            const string cfgDfaId = "cfg-dfa";
-            analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(cfgDfaId, CfgBuildingMode.Standard));
+            analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.Standard));
             return analyzerProvider;
         }
 
@@ -61,9 +50,9 @@ namespace TypeCobol.Analysis.Test
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
         //[Ignore]
-        public new void Part1_Incremental_TC_GlobaStorage()
+        public new void Part1_Incremental_TC_GlobalStorage()
         {
-            base.Part1_Incremental_TC_GlobaStorage();
+            base.Part1_Incremental_TC_GlobalStorage();
         }
 
         [TestMethod]

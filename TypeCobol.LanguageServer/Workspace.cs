@@ -126,6 +126,11 @@ namespace TypeCobol.LanguageServer
         public bool UseSyntaxColoring { get; set; }
 
         /// <summary>
+        /// Are we using the CFG view in the client.
+        /// </summary>
+        public bool UseCfgDfaDataRefresh { get; set; }
+
+        /// <summary>
         /// Indicates whether this workspace has opened documents or not.
         /// </summary>
         public bool IsEmpty
@@ -469,11 +474,6 @@ namespace TypeCobol.LanguageServer
             }            
         }
 
-        public void DidChangeConfigurationParams(string settings)
-        {
-            DidChangeConfigurationParams(settings.Split(' '));
-        }
-
         /// <summary>
         /// Handle the Configuration change notification.
         /// </summary>
@@ -503,9 +503,13 @@ namespace TypeCobol.LanguageServer
 
             var typeCobolOptions = new TypeCobolOptions(Configuration);
 
-            //Configure CFG/DFA analyzer + external analyzers if any
+            //Configure CFG/DFA analyzer(s) + external analyzers if any
             var compositeAnalyzerProvider = new CompositeAnalyzerProvider();
-            compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(TypeCobolLanguageServer.lspcfgId, Configuration.CfgBuildingMode));
+            compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(Configuration.CfgBuildingMode));
+            if (UseCfgDfaDataRefresh && Configuration.CfgBuildingMode != CfgBuildingMode.Standard)
+            {
+                compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.Standard));
+            }
             compositeAnalyzerProvider.AddCustomProviders(Configuration.CustomAnalyzerFiles);
 
             CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format, typeCobolOptions, compositeAnalyzerProvider);

@@ -19,8 +19,6 @@ namespace TypeCobol.Analysis.Test
 {
     internal static class CfgTestUtils
     {
-        private const string CFG_ANALYZER_IDENTIFIER = "cfg-test-utils";
-
         private static readonly Dictionary<CfgBuildingMode, AnalyzerProvider> _AnalyzerProviders;
 
         //From TypeCobol.Test
@@ -52,7 +50,7 @@ namespace TypeCobol.Analysis.Test
             void AddAnalyzerProvider(CfgBuildingMode mode)
             {
                 var analyzerProvider = new AnalyzerProvider();
-                analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CFG_ANALYZER_IDENTIFIER, mode));
+                analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(mode));
                 _AnalyzerProviders.Add(mode, analyzerProvider);
             }
         }
@@ -172,7 +170,8 @@ namespace TypeCobol.Analysis.Test
                 }
             }
 
-            if (results.TemporaryProgramClassDocumentSnapshot.AnalyzerResults.TryGetResult(CFG_ANALYZER_IDENTIFIER, out IList<ControlFlowGraph<Node, D>> graphs))
+            string analyzerIdentifier = CfgDfaAnalyzerFactory.GetIdForMode(mode);
+            if (results.TemporaryProgramClassDocumentSnapshot.AnalyzerResults.TryGetResult(analyzerIdentifier, out IList<ControlFlowGraph<Node, D>> graphs))
             {
                 return graphs;
             }
