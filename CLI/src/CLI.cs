@@ -261,14 +261,13 @@ namespace TypeCobol.Server
                 //CFG/DFA for ZCALL report
                 if (!string.IsNullOrEmpty(_configuration.ReportZCallFilePath))
                 {
-                    string zCallCfgDfaId = CfgDfaAnalyzerFactory.GetIdForMode(_configuration.CfgBuildingMode);//May be null if selected mode is None.
                     if (_configuration.CfgBuildingMode != CfgBuildingMode.WithDfa)
                     {
                         //Need to create a dedicated CFG builder with DFA activated
                         analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.WithDfa));
-                        zCallCfgDfaId = CfgDfaAnalyzerFactory.GetIdForMode(CfgBuildingMode.WithDfa);
                     }
 
+                    string zCallCfgDfaId = CfgDfaAnalyzerFactory.GetIdForMode(CfgBuildingMode.WithDfa);
                     var report = new TypeCobol.Analysis.Report.ZCallPgmReport(zCallCfgDfaId);
                     reports.Add(_configuration.ReportZCallFilePath, report);
                 }
