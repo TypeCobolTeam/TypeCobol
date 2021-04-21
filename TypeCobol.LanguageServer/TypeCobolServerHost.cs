@@ -129,6 +129,11 @@ namespace TypeCobol.LanguageServer
         public static System.Diagnostics.Process Process;
 
         /// <summary>
+        /// Custom Analyzers Dll Paths
+        /// </summary>
+        public static List<string> CustomAnalyzerFiles = new List<string>();
+
+        /// <summary>
         /// Run the Lsr Process
         /// </summary>
         /// <param name="fullPath">full path of the process</param>
@@ -218,6 +223,7 @@ namespace TypeCobol.LanguageServer
                 { "cfg=",  "{dot output mode} Control Flow Graph support and Dot Output mode: No/0, AsFile/1 or AsContent/2.",
                     (String m) => {TypeCobolCustomLanguageServer.UseCfgMode ucm = TypeCobolCustomLanguageServer.UseCfgMode.No;
                         Enum.TryParse(m, out ucm); UseCfg = ucm; }  },
+                { "ca|customanalyzer=", "{PATH} to a custom DLL file containing code analyzers. This option can be specified more than once.", v => CustomAnalyzerFiles.Add(v) }
             };
 
             System.Collections.Generic.List<string> arguments;
@@ -295,6 +301,7 @@ namespace TypeCobol.LanguageServer
                 typeCobolServer.UseSyntaxColoring = UseSyntaxColoring;
                 typeCobolServer.UseOutlineRefresh = UseOutlineRefresh;
                 typeCobolServer.UseCfgDfaDataRefresh = UseCfg;
+                typeCobolServer.CustomAnalyzerFiles = CustomAnalyzerFiles;
 
                 //Creating the thread that will read mesages and handle them 
                 var backgroundExecutionThread = new Thread(() => { MessageHandler(jsonRPCServer, typeCobolServer); }) { IsBackground = true };

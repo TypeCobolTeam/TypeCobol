@@ -55,6 +55,12 @@ namespace TypeCobol.LanguageServer
         public EventHandler<string> WarningTrigger { get; set; }
         public Queue<MessageActionWrapper> MessagesActionsQueue { get; private set; }
         private Func<string, Uri, bool> _Logger;
+        public List<string> CustomAnalyzerFiles { get; set; }
+        /// <summary>
+        /// Custom Analyzer Providers Loaded
+        /// </summary>
+        private IEnumerable<IAnalyzerProvider> _customAnalyzerProviders;
+
 
         #region Testing Options
 
@@ -247,6 +253,25 @@ namespace TypeCobol.LanguageServer
             lock (_lockForOpenedDocuments)
             {
                 return _openedDocuments.TryGetValue(fileUri, out openedDocumentContext);
+            }
+        }
+
+        /// <summary>
+        /// Load Custom Analyzers
+        /// </summary>
+        /// <param name="customAnalyzerFiles"></param>
+        internal void LoadCustomAnalyzers(List<string> customAnalyzerFiles)
+        {
+            if (customAnalyzerFiles != null)
+            {
+                try
+                {
+                    _customAnalyzerProviders = customAnalyzerFiles.Select(f => AnalyzerProviderLoader.LoadProvider(f));
+                }
+                catch(Exception e)
+                {
+                    _Logger(e.Message, null);
+                }
             }
         }
 
@@ -505,8 +530,13 @@ namespace TypeCobol.LanguageServer
 
             //Configure CFG/DFA analyzer + external analyzers if any
             var compositeAnalyzerProvider = new CompositeAnalyzerProvider();
-            compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(TypeCobolLanguageServer.lspcfgId, Configuration.CfgBuildingMode));
-            compositeAnalyzerProvider.AddCustomProviders(Configuration.CustomAnalyzerFiles);
+            compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(TypeCobolLanguageServer.lspcfgId, Configuration.CfgBuildingMode));            
+            if (this._customAnalyzerProviders != null)
+            {
+                foreach (var a in this._customAnalyzerProviders) {
+                    compositeAnalyzerProvider.AddProvider(a);
+                }
+            }
 
             CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format, typeCobolOptions, compositeAnalyzerProvider);
 

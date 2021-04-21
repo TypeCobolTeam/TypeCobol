@@ -68,6 +68,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public bool TimerDisabledOption { get; set; }
 
+        /// <summary>
+        /// Custom Analyzers Dll Paths
+        /// </summary>
+        public List<string> CustomAnalyzerFiles { get; set; }
+
         private bool Logger(string message, Uri uri)
         {
             var uriLogMessageParams = new UriLogMessageParams()
@@ -233,6 +238,7 @@ namespace TypeCobol.LanguageServer
             this.Workspace.ExceptionTriggered += ExceptionTriggered;
             this.Workspace.WarningTrigger += WarningTrigger;
             this.Workspace.MissingCopiesEvent += MissingCopiesDetected;
+            this.Workspace.LoadCustomAnalyzers(CustomAnalyzerFiles);
 
             // Return language server capabilities
             var initializeResult = base.OnInitialize(parameters);
