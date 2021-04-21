@@ -54,12 +54,11 @@ namespace TypeCobol.LanguageServer
         public EventHandler<ThreadExceptionEventArgs> ExceptionTriggered { get; set; }
         public EventHandler<string> WarningTrigger { get; set; }
         public Queue<MessageActionWrapper> MessagesActionsQueue { get; private set; }
-        private Func<string, Uri, bool> _Logger;
-        public List<string> CustomAnalyzerFiles { get; set; }
+        private Func<string, Uri, bool> _Logger;       
         /// <summary>
         /// Custom Analyzer Providers Loaded
         /// </summary>
-        private IEnumerable<IAnalyzerProvider> _customAnalyzerProviders;
+        private IAnalyzerProvider[] _customAnalyzerProviders;
 
 
         #region Testing Options
@@ -264,14 +263,18 @@ namespace TypeCobol.LanguageServer
         {
             if (customAnalyzerFiles != null)
             {
-                try
-                {
-                    _customAnalyzerProviders = customAnalyzerFiles.Select(f => AnalyzerProviderLoader.LoadProvider(f));
+                List<IAnalyzerProvider> list = new List<IAnalyzerProvider>();
+                foreach(var f in customAnalyzerFiles) {
+                    try
+                    {
+                        list.Add(AnalyzerProviderLoader.LoadProvider(f));
+                    }
+                    catch(Exception e)
+                    {
+                        _Logger(e.Message, null);
+                    }                    
                 }
-                catch(Exception e)
-                {
-                    _Logger(e.Message, null);
-                }
+                this._customAnalyzerProviders = list.ToArray();
             }
         }
 

@@ -27,6 +27,7 @@ namespace TypeCobol.Server {
             p.Add("h|help", "Output a usage message and exit.", v => help = (v != null));
             p.Add("V|version", "Output the version number of " + PROGNAME + " and exit.", v => version = (v != null));
             p.Add("1|once", "Parse one set of files and exit. DEPRECATED : CLI always uses Once mode so the option is not evaluated.", v => {});
+            p.Add("ca|customanalyzer=", "{PATH} to a custom DLL file containing code analyzers. This option can be specified more than once.", v => config.CustomAnalyzerFiles.Add(v));
 
             p.AddRange(TypeCobolOptionSet.GetCommonTypeCobolOptions(config));
 
