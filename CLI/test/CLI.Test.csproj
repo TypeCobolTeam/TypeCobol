@@ -56,10 +56,46 @@
     <None Include="..\..\TypeCobol.Analysis.Test\Report\InBulkCallPgm88Set.csv">
       <Link>ressources\zcallpgmreportdfa_2\output_expected\InBulkCallPgm88Set.csv</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>	
+    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\XMYCOPY.cpy">
+      <Link>ressources\ycopylist\input\XMYCOPY.cpy</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\XMYCOPY1.cpy">
+      <Link>ressources\ycopylist\input\XMYCOPY1.cpy</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YCONVEA.CPY">
+      <Link>ressources\ycopylist\input\YCONVEA.CPY</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YCPYRDZ.CPY">
+      <Link>ressources\ycopylist\input\YCPYRDZ.CPY</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YMYCOPY.cpy">
+      <Link>ressources\ycopylist\input\YMYCOPY.cpy</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YPRTD20.CPY">
+      <Link>ressources\ycopylist\input\YPRTD20.CPY</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YXXXFAL.cpy">
+      <Link>ressources\ycopylist\input\YXXXFAL.cpy</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YXXXFAL.cpy">
+      <Link>ressources\ycopylist\input\YXXXFAL.cpy</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\TypeCobol.Test\Parser\EILegacy\YXXXFAS.cpy">
+      <Link>ressources\ycopylist\input\YXXXFAS.cpy</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="..\..\TypeCobol.Test\Parser\Programs\TypeCobol\QualifiedVarSubsriptAccess.rdz.tcbl">
       <Link>ressources\failcoboloptionparse\input\QualifiedVarSubsriptAccess.rdz.tcbl</Link>
-	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="ressources\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

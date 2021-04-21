@@ -1,12 +1,12 @@
 --- Program ---
-PROGRAM: MyPGM common:False initial:False recursive:False
+PROGRAM: Pgm common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 --- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
-  XXXFAL:Alphanumeric
-  XXXFAL-buffer:Alphanumeric
-  XXXFALS:Alphanumeric
-  XXXFALS-buffer:Alphanumeric
+  MECOPY:Alphanumeric
+  MECOPY-DATA:Alphanumeric
+  MECOPY1:Alphanumeric
+  MECOPY1-DATA:Alphanumeric
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL

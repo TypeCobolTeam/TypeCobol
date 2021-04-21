@@ -1,18 +1,19 @@
-﻿using System;
+﻿#if EUROINFO_RULES
+
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Tools.APIHelpers;
 
 namespace TypeCobol.Test.HighLevelAPI {
 
     [TestClass]
-
-
     public class TestLTNV {
 
         private static readonly string Root = PlatformUtils.GetPathForProjectFile("HighLevelAPI");
@@ -21,16 +22,14 @@ namespace TypeCobol.Test.HighLevelAPI {
         [TestCategory("Parsing")]
         [TestProperty("Time", "fast")]
         public void TestGetLTNVCopy() {
-#if !EUROINFO_RULES
-            return;
-#endif
 
             var errors = new List<Exception>();
 
             var rootPath = Root + Path.DirectorySeparatorChar + "LTNV";
 
+            string cpyCopyNamesFile = Path.Combine(Root, "LTNV", "FO200001.copylist");
 
-            ParseAndTestGetLTNVCopys(rootPath, "FO200001.rdz.cbl", true, errors, new List<string> {"FO200001"},
+            ParseAndTestGetLTNVCopys(rootPath, "FO200001.rdz.cbl", true, cpyCopyNamesFile, errors, new List<string> {"FO200001"},
                 new Dictionary<string, string>()
                 {
                     {"YFO2FAW", "YFO2FAL"},
@@ -39,7 +38,9 @@ namespace TypeCobol.Test.HighLevelAPI {
                     {"YFO2S1L", "FO2S01"}
                 });
 
-            ParseAndTestGetLTNVCopys(rootPath, "FOOABCDE.rdz.cbl", true, errors, new List<string> { "FOOABCDE" },
+            cpyCopyNamesFile = Path.Combine(Root, "LTNV", "FOOABCDE.copylist");
+
+            ParseAndTestGetLTNVCopys(rootPath, "FOOABCDE.rdz.cbl", true, cpyCopyNamesFile, errors, new List<string> { "FOOABCDE" },
                 new Dictionary<string, string>()
                 {
                     { "YFOOFAW", "FOOFAW" },
@@ -61,13 +62,12 @@ namespace TypeCobol.Test.HighLevelAPI {
             }
         }
 
-
-        private static void ParseAndTestGetLTNVCopys(string rootPath, string path, bool autoRemarks, List < Exception> errors, IList<string> programsName ,params IDictionary<string, string>[] expected )
+        private static void ParseAndTestGetLTNVCopys(string rootPath, string path, bool autoRemarks, string cpyCopyNamesFile, List < Exception> errors, IList<string> programsName ,params IDictionary<string, string>[] expected)
         {
             Assert.IsTrue(programsName.Count == expected.Length);//check if parameter of this method are coherent
             try
             {
-                var result = ParseAndGetLTNVCopys(rootPath, path, autoRemarks);
+                var result = ParseAndGetLTNVCopys(rootPath, path, autoRemarks, cpyCopyNamesFile);
                 Assert.IsTrue(result.Count == expected.Length);
 
                 var actualPgmNames = result.Keys.ToList();
@@ -90,9 +90,14 @@ namespace TypeCobol.Test.HighLevelAPI {
             }
         }
 
-        private static IDictionary<Program, IDictionary<string, string>> ParseAndGetLTNVCopys(string rootPath, string path, bool autoRemarks = false)
+        private static IDictionary<Program, IDictionary<string, string>> ParseAndGetLTNVCopys(string rootPath, string path, bool autoRemarks = false, string cpyCopyNamesFile = null)
         {
-            var parser = TypeCobol.Parser.Parse(rootPath + Path.DirectorySeparatorChar + path, false, DocumentFormat.RDZReferenceFormat, autoRemarks);
+            var options = new TypeCobolOptions() { AutoRemarksEnable = autoRemarks };
+            if (cpyCopyNamesFile != null)
+            {
+                options.CpyCopyNameMap = new CopyNameMapFile(cpyCopyNamesFile);
+            }
+            var parser = TypeCobol.Parser.Parse(rootPath + Path.DirectorySeparatorChar + path, false, options, DocumentFormat.RDZReferenceFormat);
             var diagnostics = parser.Results.AllDiagnostics();
             // There should be no diagnostics errors
             // warning diagnostics are not considered : for example, test with warning with COPY SUPPRESS is always running
@@ -102,3 +107,4 @@ namespace TypeCobol.Test.HighLevelAPI {
         }
     }
 }
+#endif

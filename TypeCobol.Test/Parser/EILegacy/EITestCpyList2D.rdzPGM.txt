@@ -1,0 +1,16 @@
+--- Diagnostics ---
+Line 9[36,47] <30, Error, Semantics> - Semantic error: Symbol MECOPY1-Data is not referenced OffendingSymbol=[36,47:MECOPY1-Data]<UserDefinedWord>
+
+--- Program ---
+PROGRAM: Pgm common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  MECOPY1:Alphanumeric
+  MECOPY-DATA:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
