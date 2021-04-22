@@ -261,21 +261,19 @@ namespace TypeCobol.LanguageServer
         /// <param name="customAnalyzerFiles"></param>
         internal void LoadCustomAnalyzers(List<string> customAnalyzerFiles)
         {
-            if (customAnalyzerFiles != null)
-            {
-                List<IAnalyzerProvider> list = new List<IAnalyzerProvider>();
-                foreach(var f in customAnalyzerFiles) {
-                    try
-                    {
-                        list.Add(AnalyzerProviderLoader.LoadProvider(f));
-                    }
-                    catch(Exception e)
-                    {
-                        _Logger(e.Message, null);
-                    }                    
+            System.Diagnostics.Debug.Assert(customAnalyzerFiles != null);
+            List<IAnalyzerProvider> list = new List<IAnalyzerProvider>();
+            foreach(var f in customAnalyzerFiles) {
+                try
+                {
+                    list.Add(AnalyzerProviderLoader.LoadProvider(f));
                 }
-                this._customAnalyzerProviders = list.ToArray();
+                catch(Exception e)
+                {
+                    _Logger(e.Message, null);
+                }                    
             }
+            this._customAnalyzerProviders = list.ToArray();
         }
 
         /// <summary>
@@ -533,12 +531,10 @@ namespace TypeCobol.LanguageServer
 
             //Configure CFG/DFA analyzer + external analyzers if any
             var compositeAnalyzerProvider = new CompositeAnalyzerProvider();
-            compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(TypeCobolLanguageServer.lspcfgId, Configuration.CfgBuildingMode));            
-            if (this._customAnalyzerProviders != null)
-            {
-                foreach (var a in this._customAnalyzerProviders) {
-                    compositeAnalyzerProvider.AddProvider(a);
-                }
+            compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(TypeCobolLanguageServer.lspcfgId, Configuration.CfgBuildingMode));
+            System.Diagnostics.Debug.Assert(this._customAnalyzerProviders != null);
+            foreach (var a in this._customAnalyzerProviders) {
+                compositeAnalyzerProvider.AddProvider(a);
             }
 
             CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format, typeCobolOptions, compositeAnalyzerProvider);
@@ -550,8 +546,7 @@ namespace TypeCobol.LanguageServer
                     CompilationProject.SourceFileProvider.AddLocalDirectoryLibrary(copyFolder, false,
                         new[] {".cpy"}, Configuration.Format.Encoding,
                         Configuration.Format.EndOfLineDelimiter, Configuration.Format.FixedLineLength);
-                }
-                
+                }                
             }
 
             if (!IsEmpty)
