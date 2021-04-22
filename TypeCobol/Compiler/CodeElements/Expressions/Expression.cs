@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -13,6 +16,19 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 
 		public ExpressionNodeType NodeType { get; private set; }
+
+        /// <summary>
+        /// Returns the characteristic element of a node
+        /// For a operation or relation, this would be the operator
+        /// For a leaf, this would be the name of the variable, ...
+        /// </summary>
+        public abstract object NodeData();
+
+        /// <summary>
+        /// Returns the children of an expression
+        /// </summary>
+        /// <returns>The children of the expression, ordered as left then right, each can be null if there is no child</returns>
+        public abstract (Expression, Expression) GetChildren();
 
         public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
@@ -65,6 +81,16 @@ namespace TypeCobol.Compiler.CodeElements
 		public SyntaxProperty<LogicalOperator> Operator { get; private set;  }
 
 		public ConditionalExpression RightOperand  { get; private set; }
+
+        public override object NodeData()
+        {
+            return Operator;
+        }
+
+        public override (Expression, Expression) GetChildren()
+        {
+            return (LeftOperand, RightOperand);
+        }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
@@ -121,6 +147,16 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public SyntaxProperty<bool> InvertResult { get; private set; }
 
+        public override object NodeData()
+        {
+            return new object[] { DataItem, CharacterClassNameReference, DataItemContentType, InvertResult };
+        }
+
+        public override (Expression, Expression) GetChildren()
+        {
+            return (null, null);
+        }
+
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
                 && this.ContinueVisitToChildren(astVisitor, DataItem, CharacterClassNameReference, DataItemContentType, InvertResult);
@@ -158,6 +194,16 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public DataOrConditionStorageArea ConditionReference { get; private set; }
 
+        public override object NodeData()
+        {
+            return ConditionReference;
+        }
+
+        public override (Expression, Expression) GetChildren()
+        {
+            return (null, null);
+        }
+
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
@@ -188,6 +234,16 @@ namespace TypeCobol.Compiler.CodeElements
 		public SyntaxProperty<RelationalOperator> Operator { get; private set; }
 
 		public ConditionOperand RightOperand { get; private set; }
+
+        public override object NodeData()
+        {
+            return Operator;
+        }
+
+        public override (Expression, Expression) GetChildren()
+        {
+            return (LeftOperand, RightOperand);
+        }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
@@ -233,6 +289,16 @@ namespace TypeCobol.Compiler.CodeElements
 		public SyntaxProperty<SignComparison> SignComparison { get; private set; }
 
 		public SyntaxProperty<bool> InvertResult { get; private set; }
+
+        public override object NodeData()
+        {
+            return new object[] { Operand, SignComparison, InvertResult};
+        }
+
+        public override (Expression, Expression) GetChildren()
+        {
+            return (Operand, null);
+        }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
@@ -297,6 +363,18 @@ namespace TypeCobol.Compiler.CodeElements
 		public NullPointerValue NullPointerValue { get; private set; }
 
 		public Token SelfObjectIdentifier { get; private set; }
+
+        public override object NodeData()
+        {
+            // Constructors allow only one to be not null
+            return ArithmeticExpression ?? Variable ?? NullPointerValue ?? (object) SelfObjectIdentifier;
+        }
+
+        public override (Expression, Expression) GetChildren()
+        {
+            // The only expression possible is ArithmeticExpression, which can be null
+            return (ArithmeticExpression, null);
+        }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
@@ -364,6 +442,16 @@ namespace TypeCobol.Compiler.CodeElements
 		public SyntaxProperty<ArithmeticOperator> Operator { get; private set; }
 		public ArithmeticExpression RightOperand { get; private set; }
 
+        public override object NodeData()
+        {
+            return Operator;
+        }
+
+        public override (Expression, Expression) GetChildren()
+        {
+            return (LeftOperand, RightOperand);
+        }
+
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
@@ -397,6 +485,17 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public IntegerVariable IntegerVariable { get; private set; }
 		public NumericVariable NumericVariable { get; private set; }
+
+        public override object NodeData()
+        {
+            // Constructors allow only one to be not null
+            return IntegerVariable ?? (object) NumericVariable;
+        }
+
+        public override (Expression, Expression) GetChildren()
+        {
+            return (null, null);
+        }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
