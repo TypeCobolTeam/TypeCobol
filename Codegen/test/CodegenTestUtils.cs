@@ -3,6 +3,10 @@ using System.IO;
 using System.Text;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Directives;
+#if EUROINFO_RULES
+using TypeCobol.Compiler.Preprocessor;
+#endif
 using TypeCobol.Test;
 
 namespace TypeCobol.Codegen {
@@ -20,12 +24,24 @@ namespace TypeCobol.Codegen {
         /// <param name="path"></param>
         /// <param name="autoRemarks"></param>
         /// <param name="typeCobolVersion"></param>
-        /// <param name="copies"></param>        
-        public static void ParseGenerateCompare(string path, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null) {
-            ParseGenerateCompare(path, DocumentFormat.RDZReferenceFormat, typeCobolVersion, autoRemarks, copies);
+        /// <param name="copies"></param>
+        public static void ParseGenerateCompare(string path, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null
+#if EUROINFO_RULES
+            , string cpyCopyNamesMapFilePath = null
+#endif
+        )
+        {
+            var options = new TypeCobolOptions();
+#if EUROINFO_RULES
+            options.AutoRemarksEnable = autoRemarks;
+            if (cpyCopyNamesMapFilePath != null) options.CpyCopyNameMap = new CopyNameMapFile(cpyCopyNamesMapFilePath);
+#endif
+            ParseGenerateCompare(path, options, DocumentFormat.RDZReferenceFormat, typeCobolVersion, copies, null);
         }
-        public static void ParseGenerateCompare(string path, DocumentFormat format, string typeCobolVersion, bool autoRemarks = false, IList<string> copies = null, MemoryStream lmStream = null) {
-            var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), false, format, autoRemarks, copies);
+
+        private static void ParseGenerateCompare(string path, TypeCobolOptions options, DocumentFormat format, string typeCobolVersion, IList<string> copies, MemoryStream lmStream)
+        {
+            var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), false, options, format, copies);
             var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
             var writer = new StringWriter();
             // write parsing errors
@@ -76,14 +92,15 @@ namespace TypeCobol.Codegen {
         /// <param name="copies"></param>        
         public static void ParseGenerateCompareWithLineMapping(string path, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null)
         {
-            ParseGenerateCompareWithLineMapping(path, DocumentFormat.RDZReferenceFormat, typeCobolVersion, autoRemarks, copies);
+            var options = new TypeCobolOptions();
+#if EUROINFO_RULES
+            options.AutoRemarksEnable = autoRemarks;
+            //No CPY copy list support yet
+#endif
+            ParseGenerateCompare(path, options, DocumentFormat.RDZReferenceFormat, typeCobolVersion, copies, new MemoryStream());
         }
 
         private static string ML_SUFFIX = ".lm";
-        public static void ParseGenerateCompareWithLineMapping(string path, DocumentFormat format, string typeCobolVersion, bool autoRemarks = false, IList<string> copies = null)
-        {
-            ParseGenerateCompare(path, DocumentFormat.RDZReferenceFormat, typeCobolVersion, autoRemarks, copies, new MemoryStream());
-        }
 
         private static void WriteErrors(TextWriter writer, ICollection<Diagnostic> errors,
             Compiler.Text.ColumnsLayout columns) {

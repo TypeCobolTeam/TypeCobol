@@ -121,6 +121,13 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public static bool UseOutlineRefresh { get; set; }
 
+#if EUROINFO_RULES
+        /// <summary>
+        /// A Path to a file of CPY Copy names
+        /// </summary>
+        private static string CpyCopyNamesMapFilePath { get; set; }
+#endif
+
         /// <summary>
         /// Are we supporting CFG/DFA Refresh Notifications.
         /// </summary>
@@ -220,6 +227,9 @@ namespace TypeCobol.LanguageServer
                 { "dcs|disablecopysuffixing", "Deactictivate Euro Information suffixing", v => UseEuroInformationLegacyReplacingSyntax = false },
                 { "sc|syntaxcolor",  "Syntax Coloring Support.", _ => UseSyntaxColoring = true},
                 { "ol|outlineRefresh",  "Outline Support.", _ => UseOutlineRefresh = true},
+#if EUROINFO_RULES
+                { "ycpl|ycopylist=", "{PATH} to a file of CPY copy names uppercase sorted.", v => CpyCopyNamesMapFilePath = v },
+#endif
                 { "cfg=",  "{dot output mode} Control Flow Graph support and Dot Output mode: No/0, AsFile/1 or AsContent/2.",
                     (String m) => {TypeCobolCustomLanguageServer.UseCfgMode ucm = TypeCobolCustomLanguageServer.UseCfgMode.No;
                         Enum.TryParse(m, out ucm); UseCfg = ucm; }  },
@@ -302,7 +312,9 @@ namespace TypeCobol.LanguageServer
                 typeCobolServer.UseOutlineRefresh = UseOutlineRefresh;
                 typeCobolServer.UseCfgDfaDataRefresh = UseCfg;
                 typeCobolServer.CustomAnalyzerFiles = CustomAnalyzerFiles;
-
+#if EUROINFO_RULES
+                typeCobolServer.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath;
+#endif
                 //Creating the thread that will read mesages and handle them 
                 var backgroundExecutionThread = new Thread(() => { MessageHandler(jsonRPCServer, typeCobolServer); }) { IsBackground = true };
                 backgroundExecutionThread.Start();

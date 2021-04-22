@@ -130,6 +130,13 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public bool UseSyntaxColoring { get; set; }
 
+#if EUROINFO_RULES
+        /// <summary>
+        /// The Cpy Copy names file
+        /// </summary>
+        public string CpyCopyNamesMapFilePath { get; set; }
+#endif
+
         /// <summary>
         /// Indicates whether this workspace has opened documents or not.
         /// </summary>
@@ -145,7 +152,6 @@ namespace TypeCobol.LanguageServer
         }
 
         #endregion
-
 
         public Workspace(string rootDirectoryFullName, string workspaceName, Queue<MessageActionWrapper> messagesActionsQueue, Func<string, Uri, bool> logger)
         {
@@ -495,21 +501,20 @@ namespace TypeCobol.LanguageServer
             }            
         }
 
-        public void DidChangeConfigurationParams(string settings)
-        {
-            DidChangeConfigurationParams(settings.Split(' '));
-        }
-
         /// <summary>
         /// Handle the Configuration change notification.
         /// </summary>
         /// <param name="arguments">The arguments</param>
         public void DidChangeConfigurationParams(string[] arguments)
         {
+#if EUROINFO_RULES
+            var previouslyLoadedCpyCopyNamesMap = Configuration.CpyCopyNameMap;
+#endif
+            
             Configuration = new TypeCobolConfiguration();
             var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(Configuration);
 
-            var errors = TypeCobolOptionSet.InitializeCobolOptions(Configuration, arguments, options);
+            TypeCobolOptionSet.InitializeCobolOptions(Configuration, arguments, options);
 
             //Adding default copies folder
             var folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
@@ -527,8 +532,19 @@ namespace TypeCobol.LanguageServer
             if (Configuration.ExecToStep >= ExecutionStep.Generate)
                 Configuration.ExecToStep = ExecutionStep.QualityCheck; //Language Server does not support Cobol Generation for now
 
+#if EUROINFO_RULES
+            if (previouslyLoadedCpyCopyNamesMap != null)
+            {
+                //re-use already loaded file
+                Configuration.CpyCopyNameMap = previouslyLoadedCpyCopyNamesMap;
+            }
+            else
+            {
+                //load file according to user-supplied value in command line
+                Configuration.LoadCpyCopyNameMap(CpyCopyNamesMapFilePath);
+            }
+#endif
             var typeCobolOptions = new TypeCobolOptions(Configuration);
-
             //Configure CFG/DFA analyzer + external analyzers if any
             var compositeAnalyzerProvider = new CompositeAnalyzerProvider();
             compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(TypeCobolLanguageServer.lspcfgId, Configuration.CfgBuildingMode));

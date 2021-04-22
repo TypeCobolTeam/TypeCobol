@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using TypeCobol.Compiler.Diagnostics;
 using Analytics;
-using TypeCobol.Tools;
 using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Server {
@@ -28,6 +27,10 @@ namespace TypeCobol.Server {
             p.Add("V|version", "Output the version number of " + PROGNAME + " and exit.", v => version = (v != null));
             p.Add("1|once", "Parse one set of files and exit. DEPRECATED : CLI always uses Once mode so the option is not evaluated.", v => {});
             p.Add("ca|customanalyzer=", "{PATH} to a custom DLL file containing code analyzers. This option can be specified more than once.", v => config.CustomAnalyzerFiles.Add(v));
+#if EUROINFO_RULES
+            string cpyCopyNamesMapFilePath = null;
+            p.Add("ycpl|ycopylist=", "{PATH} to a file of CPY copy names uppercase sorted.", v => cpyCopyNamesMapFilePath = v);
+#endif
 
             p.AddRange(TypeCobolOptionSet.GetCommonTypeCobolOptions(config));
 
@@ -58,6 +61,10 @@ namespace TypeCobol.Server {
                 {
                     AnalyticsWrapper.Telemetry.TelemetryVerboseLevel = TelemetryVerboseLevel.CodeGeneration; //If telemetry arg is passed enable telemetry
                 }
+
+#if EUROINFO_RULES
+                config.LoadCpyCopyNameMap(cpyCopyNamesMapFilePath);
+#endif
 
                 if (config.OutputFiles.Count == 0 && config.ExecToStep >= ExecutionStep.Generate)
                     config.ExecToStep = ExecutionStep.QualityCheck; //If there is no given output file, we can't run generation, fallback to QualityCheck
