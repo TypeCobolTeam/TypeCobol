@@ -222,7 +222,7 @@ namespace TypeCobol.Compiler.CodeElements
 	/// </summary>
 	public class RelationCondition : ConditionalExpression
 	{
-		public RelationCondition(ConditionOperand leftOperand, SyntaxProperty<RelationalOperator> relationalOperator, ConditionOperand rightOperand) :
+		public RelationCondition(ConditionOperand leftOperand, RelationalOperator relationalOperator, ConditionOperand rightOperand) :
 			base(ExpressionNodeType.RelationCondition) {
 			LeftOperand = leftOperand;
 			Operator = relationalOperator;
@@ -231,7 +231,7 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public ConditionOperand LeftOperand { get; private set; }
 
-		public SyntaxProperty<RelationalOperator> Operator { get; private set; }
+		public RelationalOperator Operator { get; private set; }
 
 		public ConditionOperand RightOperand { get; private set; }
 
@@ -257,20 +257,90 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 	}
 
-	/// <summary>
-	/// Relational operators and their meanings
-	/// </summary>
-	public enum RelationalOperator
-	{
-		EqualTo,
-		GreaterThan,
-		GreaterThanOrEqualTo,
-		LessThan,
-		LessThanOrEqualTo,
-		NotEqualTo
-	}
+    public class RelationalOperator : IVisitable
+    {
+        public static RelationalOperator EqualTo = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.EqualTo, null));
+        public static RelationalOperator GreaterThan = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThan, null));
+        public static RelationalOperator GreaterThanOrEqualTo = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThanOrEqualTo, null));
+        public static RelationalOperator LessThan = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThan, null));
+        public static RelationalOperator LessThanOrEqualTo = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThanOrEqualTo, null));
+        public static RelationalOperator NotEqualTo = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.NotEqualTo, null));
 
-	/// <summary>
+        public Token NotToken { get; private set; }
+        public SyntaxProperty<RelationalOperatorSymbol> RelationalOperatorSyntaxProperty { get; private set; }
+
+        public RelationalOperator(SyntaxProperty<RelationalOperatorSymbol> relationalOperatorSymbol)
+        {
+            RelationalOperatorSyntaxProperty = relationalOperatorSymbol;
+        }
+
+        public RelationalOperator(SyntaxProperty<RelationalOperatorSymbol> relationalOperatorSymbol, Token notToken) : 
+            this(relationalOperatorSymbol)
+        {
+            NotToken = notToken;
+        }
+
+        public bool SemanticEqualTo(RelationalOperator other)
+        {
+            // Both with NOT or both without NOT
+            if ((NotToken != null && other.NotToken != null) || (NotToken == null && other.NotToken == null))
+            {
+                return RelationalOperatorSyntaxProperty.Value == other.RelationalOperatorSyntaxProperty.Value;
+            }
+
+            return RelationalOperatorSyntaxProperty.Value.Opposite() == other.RelationalOperatorSyntaxProperty.Value;
+        }
+
+        public bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, NotToken, RelationalOperatorSyntaxProperty);
+        }
+
+        public override string ToString()
+        {
+            return (NotToken == null ? "" : NotToken.Text + " ") + RelationalOperatorSyntaxProperty.Value;
+        }
+    }
+
+    /// <summary>
+    /// Relational operators and their meanings
+    /// </summary>
+    public enum RelationalOperatorSymbol
+    {
+        EqualTo,
+        GreaterThan,
+        GreaterThanOrEqualTo,
+        LessThan,
+        LessThanOrEqualTo,
+        NotEqualTo
+    }
+
+    public static class RelationalOperatorSymbolExtension
+    {
+        public static RelationalOperatorSymbol Opposite(this RelationalOperatorSymbol relationalOperatorSymbol)
+        {
+            switch (relationalOperatorSymbol)
+            {
+                case RelationalOperatorSymbol.EqualTo:
+                    return RelationalOperatorSymbol.NotEqualTo;
+                case RelationalOperatorSymbol.GreaterThan:
+                    return RelationalOperatorSymbol.LessThanOrEqualTo;
+                case RelationalOperatorSymbol.GreaterThanOrEqualTo:
+                    return RelationalOperatorSymbol.LessThan;
+                case RelationalOperatorSymbol.LessThan:
+                    return RelationalOperatorSymbol.GreaterThanOrEqualTo;
+                case RelationalOperatorSymbol.LessThanOrEqualTo:
+                    return RelationalOperatorSymbol.GreaterThan;
+                case RelationalOperatorSymbol.NotEqualTo:
+                    return RelationalOperatorSymbol.EqualTo;
+                default:
+                    throw new NotSupportedException($"Unexpected RelationalOperatorSymbol '{relationalOperatorSymbol}'.");
+            }
+        }
+    }
+
+    /// <summary>
 	/// Sign condition
 	/// The sign condition determines whether the algebraic value of a numeric operand is
 	/// greater than, less than, or equal to zero.
