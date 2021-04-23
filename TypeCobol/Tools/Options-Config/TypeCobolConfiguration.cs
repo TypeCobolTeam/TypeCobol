@@ -280,7 +280,6 @@ namespace TypeCobol.Tools.Options_Config
                 { "diag.cep|diagnostic.checkEndProgram=", "Indicate level of check end program: warning, error, info, ignore.", v => typeCobolConfig.CheckEndProgram = TypeCobolCheckOption.Parse(v) },
                 { "log|logfilepath=", "{PATH} to TypeCobol.CLI.log log file", v => typeCobolConfig.LogFile = Path.Combine(v, TypeCobolConfiguration.DefaultLogFileName)},
                 { "cfg|cfgbuild", "Standard CFG build.", v => typeCobolConfig.CfgBuildingMode = CfgBuildingMode.Standard},
-                { "ca|customanalyzer=", "{PATH} to a custom DLL file containing code analyzers. This option can be specified more than once.", v => typeCobolConfig.CustomAnalyzerFiles.Add(v) },
                 { "cob|cobol", "Indicate that it's a pure Cobol85 input file.", v => typeCobolConfig.IsCobolLanguage = true }
             };
             return commonOptions;
