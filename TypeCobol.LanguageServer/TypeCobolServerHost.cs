@@ -121,12 +121,24 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public static bool UseOutlineRefresh { get; set; }
 
+#if EUROINFO_RULES
+        /// <summary>
+        /// A Path to a file of CPY Copy names
+        /// </summary>
+        private static string CpyCopyNamesMapFilePath { get; set; }
+#endif
+
         /// <summary>
         /// Are we supporting CFG/DFA Refresh Notifications.
         /// </summary>
         public static TypeCobolCustomLanguageServer.UseCfgMode UseCfg { get; set; }
 
         public static System.Diagnostics.Process Process;
+
+        /// <summary>
+        /// Custom Analyzers Dll Paths
+        /// </summary>
+        public static List<string> CustomAnalyzerFiles = new List<string>();
 
         /// <summary>
         /// Run the Lsr Process
@@ -215,9 +227,13 @@ namespace TypeCobol.LanguageServer
                 { "dcs|disablecopysuffixing", "Deactictivate Euro Information suffixing", v => UseEuroInformationLegacyReplacingSyntax = false },
                 { "sc|syntaxcolor",  "Syntax Coloring Support.", _ => UseSyntaxColoring = true},
                 { "ol|outlineRefresh",  "Outline Support.", _ => UseOutlineRefresh = true},
+#if EUROINFO_RULES
+                { "ycpl|ycopylist=", "{PATH} to a file of CPY copy names uppercase sorted.", v => CpyCopyNamesMapFilePath = v },
+#endif
                 { "cfg=",  "{dot output mode} Control Flow Graph support and Dot Output mode: No/0, AsFile/1 or AsContent/2.",
                     (String m) => {TypeCobolCustomLanguageServer.UseCfgMode ucm = TypeCobolCustomLanguageServer.UseCfgMode.No;
                         Enum.TryParse(m, out ucm); UseCfg = ucm; }  },
+                { "ca|customanalyzer=", "{PATH} to a custom DLL file containing code analyzers. This option can be specified more than once.", v => CustomAnalyzerFiles.Add(v) }
             };
 
             System.Collections.Generic.List<string> arguments;
@@ -295,7 +311,10 @@ namespace TypeCobol.LanguageServer
                 typeCobolServer.UseSyntaxColoring = UseSyntaxColoring;
                 typeCobolServer.UseOutlineRefresh = UseOutlineRefresh;
                 typeCobolServer.UseCfgDfaDataRefresh = UseCfg;
-
+                typeCobolServer.CustomAnalyzerFiles = CustomAnalyzerFiles;
+#if EUROINFO_RULES
+                typeCobolServer.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath;
+#endif
                 //Creating the thread that will read mesages and handle them 
                 var backgroundExecutionThread = new Thread(() => { MessageHandler(jsonRPCServer, typeCobolServer); }) { IsBackground = true };
                 backgroundExecutionThread.Start();

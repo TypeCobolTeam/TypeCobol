@@ -54,7 +54,12 @@ namespace TypeCobol.LanguageServer
         public EventHandler<ThreadExceptionEventArgs> ExceptionTriggered { get; set; }
         public EventHandler<string> WarningTrigger { get; set; }
         public Queue<MessageActionWrapper> MessagesActionsQueue { get; private set; }
-        private Func<string, Uri, bool> _Logger;
+        private Func<string, Uri, bool> _Logger;       
+        /// <summary>
+        /// Custom Analyzer Providers Loaded
+        /// </summary>
+        private IAnalyzerProvider[] _customAnalyzerProviders;
+
 
         #region Testing Options
 
@@ -125,6 +130,13 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public bool UseSyntaxColoring { get; set; }
 
+#if EUROINFO_RULES
+        /// <summary>
+        /// The Cpy Copy names file
+        /// </summary>
+        public string CpyCopyNamesMapFilePath { get; set; }
+#endif
+
         /// <summary>
         /// Indicates whether this workspace has opened documents or not.
         /// </summary>
@@ -140,7 +152,6 @@ namespace TypeCobol.LanguageServer
         }
 
         #endregion
-
 
         public Workspace(string rootDirectoryFullName, string workspaceName, Queue<MessageActionWrapper> messagesActionsQueue, Func<string, Uri, bool> logger)
         {
@@ -248,6 +259,27 @@ namespace TypeCobol.LanguageServer
             {
                 return _openedDocuments.TryGetValue(fileUri, out openedDocumentContext);
             }
+        }
+
+        /// <summary>
+        /// Load Custom Analyzers
+        /// </summary>
+        /// <param name="customAnalyzerFiles"></param>
+        internal void LoadCustomAnalyzers(List<string> customAnalyzerFiles)
+        {
+            System.Diagnostics.Debug.Assert(customAnalyzerFiles != null);
+            List<IAnalyzerProvider> list = new List<IAnalyzerProvider>();
+            foreach(var f in customAnalyzerFiles) {
+                try
+                {
+                    list.Add(AnalyzerProviderLoader.LoadProvider(f));
+                }
+                catch(Exception e)
+                {
+                    _Logger(e.Message, null);
+                }                    
+            }
+            this._customAnalyzerProviders = list.ToArray();
         }
 
         /// <summary>
@@ -469,21 +501,20 @@ namespace TypeCobol.LanguageServer
             }            
         }
 
-        public void DidChangeConfigurationParams(string settings)
-        {
-            DidChangeConfigurationParams(settings.Split(' '));
-        }
-
         /// <summary>
         /// Handle the Configuration change notification.
         /// </summary>
         /// <param name="arguments">The arguments</param>
         public void DidChangeConfigurationParams(string[] arguments)
         {
+#if EUROINFO_RULES
+            var previouslyLoadedCpyCopyNamesMap = Configuration.CpyCopyNameMap;
+#endif
+            
             Configuration = new TypeCobolConfiguration();
             var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(Configuration);
 
-            var errors = TypeCobolOptionSet.InitializeCobolOptions(Configuration, arguments, options);
+            TypeCobolOptionSet.InitializeCobolOptions(Configuration, arguments, options);
 
             //Adding default copies folder
             var folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
@@ -501,12 +532,26 @@ namespace TypeCobol.LanguageServer
             if (Configuration.ExecToStep >= ExecutionStep.Generate)
                 Configuration.ExecToStep = ExecutionStep.QualityCheck; //Language Server does not support Cobol Generation for now
 
+#if EUROINFO_RULES
+            if (previouslyLoadedCpyCopyNamesMap != null)
+            {
+                //re-use already loaded file
+                Configuration.CpyCopyNameMap = previouslyLoadedCpyCopyNamesMap;
+            }
+            else
+            {
+                //load file according to user-supplied value in command line
+                Configuration.LoadCpyCopyNameMap(CpyCopyNamesMapFilePath);
+            }
+#endif
             var typeCobolOptions = new TypeCobolOptions(Configuration);
-
             //Configure CFG/DFA analyzer + external analyzers if any
             var compositeAnalyzerProvider = new CompositeAnalyzerProvider();
             compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(TypeCobolLanguageServer.lspcfgId, Configuration.CfgBuildingMode));
-            compositeAnalyzerProvider.AddCustomProviders(Configuration.CustomAnalyzerFiles);
+            System.Diagnostics.Debug.Assert(this._customAnalyzerProviders != null);
+            foreach (var a in this._customAnalyzerProviders) {
+                compositeAnalyzerProvider.AddProvider(a);
+            }
 
             CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, Helpers.DEFAULT_EXTENSIONS, Configuration.Format, typeCobolOptions, compositeAnalyzerProvider);
 
@@ -517,8 +562,7 @@ namespace TypeCobol.LanguageServer
                     CompilationProject.SourceFileProvider.AddLocalDirectoryLibrary(copyFolder, false,
                         new[] {".cpy"}, Configuration.Format.Encoding,
                         Configuration.Format.EndOfLineDelimiter, Configuration.Format.FixedLineLength);
-                }
-                
+                }                
             }
 
             if (!IsEmpty)
