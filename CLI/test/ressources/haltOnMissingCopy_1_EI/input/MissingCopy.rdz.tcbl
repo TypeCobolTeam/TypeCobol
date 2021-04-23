@@ -1,16 +1,38 @@
 ﻿       IDENTIFICATION DIVISION.
-       PROGRAM-ID. MYPGM.                   
+       PROGRAM-ID. MYPGM.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SOURCE-COMPUTER. IBM-370.
        DATA DIVISION.
        WORKING-STORAGE section.
-          01 Group type pic X. *>Error that should not be listed in output
-          01 PRTD20L. COPY  YPRTD20L.   
-          01 CONVEAL. COPY  YCONVEAL.
+      * CPY without suffix and declared without replacing clause
+           01 CONVEA.  COPY  YCONVEA.
+      * CPY without suffix and declared with    replacing clause
+           01 PRTD20 COPY YPRTD20 REPLACING ==:PRTD20:== BY ==PRTD20==.
+      * CPY with    suffix and declared without replacing clause
+           01 CONVEAL.  COPY  YCONVEAL.
+      * CPY with    suffix and declared with    replacing clause
+           01 PRTD20L COPY YPRTD20L REPLACING ==:PRTD20:== BY PRTD20.
+      
+      * NON CPY  without suffix and declared without replacing clause
+           COPY XCONVEA.
+      * NON CPY without suffix and declared with    replacing clause
+           COPY XPRTD20 REPLACING ==:PRTD20:== BY ==PRTD20==.
+      * NON CPY with    suffix and declared without replacing clause
+           COPY XCONVEAL.
+      * NON CPY with    suffix and declared with    replacing clause
+           COPY XPRTD20L REPLACING ==:PRTD20:== BY ==PRTD20==.
       
        PROCEDURE DIVISION.
+      * CPY without suffix and declared with EXEC SQL INCLUDE
+       EXEC SQL INCLUDE YTTMCOI END-EXEC.
+      * CPY with    suffix and declared with EXEC SQL INCLUDE
        EXEC SQL INCLUDE YTTMCOIS END-EXEC.
+      
+      * NON CPY without suffix and declared with EXEC SQL INCLUDE
+       EXEC SQL INCLUDE CPXMCOI END-EXEC.
+      * NON CPY with    suffix and declared with EXEC SQL INCLUDE
+       EXEC SQL INCLUDE CPXMCOIS END-EXEC.
            GOBACK
            .
        END PROGRAM MYPGM.

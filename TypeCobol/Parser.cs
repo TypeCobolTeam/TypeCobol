@@ -4,7 +4,6 @@ using System.IO;
 using JetBrains.Annotations;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler;
-using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
@@ -128,15 +127,11 @@ namespace TypeCobol
 			get { return Compiler.CompilationResultsForProgram; }
 		}
 
-
-        public static Parser Parse(string path, bool isCopy, DocumentFormat format, bool autoRemarks = false, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null) {
-			var parser = new Parser();
-            var typeCobolOption = new TypeCobolOptions() { ExecToStep = ExecutionStep.Generate };
-#if EUROINFO_RULES
-		    typeCobolOption.AutoRemarksEnable = autoRemarks;
-#endif
-            parser.Init(path, isCopy, typeCobolOption, format, copies, analyzerProvider);
-
+        public static Parser Parse(string path, bool isCopy, TypeCobolOptions options, DocumentFormat format, IList<string> copies = null, IAnalyzerProvider analyzerProvider = null)
+        {
+            var parser = new Parser();
+            options.ExecToStep = ExecutionStep.Generate;
+            parser.Init(path, isCopy, options, format, copies, analyzerProvider);
             parser.Parse(path);
 			return parser;
 		}

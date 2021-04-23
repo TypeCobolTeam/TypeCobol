@@ -4,29 +4,35 @@ PROGRAM: MYPGM common:False initial:False recursive:False
 --- Intrinsic:Namespace:Program:Global:Local
 -- DATA --------
   PRTD20L:Alphanumeric
-  PRTD20-RECH:Alphanumeric
-  PRTD20-VIDE:Level88
-  PRTD20-I:Alphanumeric
+  PRTD20L-RECH:Alphanumeric
+  PRTD20L-VIDE:Level88
+  PRTD20L-I:Alphanumeric
+  LDO-NO-DOSSIER:Numeric
   LDO-NO-DOSSIER:Numeric
   LDO-NO-DOSSIER:Numeric
   LDO-CD-ETA:Alphanumeric
   LDO-CD-ETA:Alphanumeric
+  LDO-CD-ETA:Alphanumeric
   LDO-CD-ETA-SAI:Level88
   LDO-CD-ETA-SAI:Level88
+  LDO-CD-ETA-SAI:Level88
+  LDO-CD-ETA-VAL:Level88
   LDO-CD-ETA-VAL:Level88
   LDO-CD-ETA-VAL:Level88
   CONVEAL:Alphanumeric
-  CONVEA-VEA-VEA-OUT-VEA:Alphanumeric
-  CONVEA-VEA-VEA-OUT-VEA-2:Alphanumeric
+  CONVEAL-VEAL-VEAL-OUT-VEA:Alphanumeric
+  CONVEAL-VEAL-VEAL-OUT-VEAL-2:Alphanumeric
   CONVEA:Alphanumeric
   CONVEA:Alphanumeric
-  CONVEA-VEA:Alphanumeric
+  CONVEA:Alphanumeric
+  CONVEAL-VEA:Alphanumeric
   ANOTHER-DATA:Alphanumeric
   ANOTHER-DATA:Alphanumeric
-  CONVEA-VEATEST:Alphanumeric
-  CONVEA-TESTVEA:Alphanumeric
-  CONVEA-TESTVEA-TEST:Alphanumeric
-  CONVEA-TESTVEATEST:Alphanumeric
+  ANOTHER-DATA:Alphanumeric
+  CONVEAL-VEATEST:Alphanumeric
+  CONVEAL-TESTVEA:Alphanumeric
+  CONVEAL-TESTVEAL-TEST:Alphanumeric
+  CONVEAL-TESTVEATEST:Alphanumeric
   PRTD20S:Alphanumeric
   PRTD20S-RECH:Alphanumeric
   PRTD20S-VIDE:Level88
@@ -39,6 +45,18 @@ PROGRAM: MYPGM common:False initial:False recursive:False
   CONVEAS-TESTVEA:Alphanumeric
   CONVEAS-TESTVEAS-TEST:Alphanumeric
   CONVEAS-TESTVEATEST:Alphanumeric
+  PRTD20M:Alphanumeric
+  PRTD20M-RECH:Alphanumeric
+  PRTD20M-VIDE:Level88
+  PRTD20M-I:Alphanumeric
+  CONVEAM:Alphanumeric
+  CONVEAM-VEAM-VEAM-OUT-VEA:Alphanumeric
+  CONVEAM-VEAM-VEAM-OUT-VEAM-2:Alphanumeric
+  CONVEAM-VEA:Alphanumeric
+  CONVEAM-VEATEST:Alphanumeric
+  CONVEAM-TESTVEA:Alphanumeric
+  CONVEAM-TESTVEAM-TEST:Alphanumeric
+  CONVEAM-TESTVEATEST:Alphanumeric
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL
