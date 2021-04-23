@@ -1,0 +1,25 @@
+--- Diagnostics ---
+Line 9[11,19] <27, Error, Syntax> - Syntax error : Cannot include copy XMYCOPY1 under level 1 because copy starts at level 1. OffendingSymbol=[11,19:MYCOPY-X2]<UserDefinedWord>
+
+--- Program ---
+PROGRAM: MYCPYTST common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  XMYCOPY-X:Alphanumeric
+  MYCOPY-ENR:Alphanumeric
+  MYCOPY-CLE:Alphanumeric
+  MYCOPY-CODE:Numeric
+  MYCOPY-X2:Alphanumeric
+  MYCOPY1:Alphanumeric
+  MYCOPY1-ENTREE:Alphanumeric
+  MYCOPY1-FONC:Alphanumeric
+  MYCOPY1-FONC-STD:Level88
+  MYCOPY1-Y:Alphanumeric
+  MYCOPY1-DATA:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
