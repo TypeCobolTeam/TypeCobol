@@ -9,5 +9,5 @@ Code: 1029 TypeCobol.CLI.exe: Dependencies files given are unreachable: input\Mi
 Code: 1030 TypeCobol.CLI.exe: Maximum diagnostics have to be an integer.
 Code: 1031 TypeCobol.CLI.exe: Unexpected parameter given for Output format option. Accepted parameters are Cobol85/0(default), PublicSignature/1.
 Code: 1032 TypeCobol.CLI.exe: Expanding copy path given is unreachable.
-Code: 1033 TypeCobol.CLI.exe: Extractused copy path given is unreachable.
+Code: 1033 TypeCobol.CLI.exe: Extract used copy path given is unreachable.
 Try TypeCobol.CLI.exe --help for usage information.

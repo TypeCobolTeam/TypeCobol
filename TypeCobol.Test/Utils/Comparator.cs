@@ -10,6 +10,9 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
+#if EUROINFO_RULES
+using TypeCobol.Compiler.Preprocessor;
+#endif
 
 namespace TypeCobol.Test.Utils
 {
@@ -63,12 +66,28 @@ namespace TypeCobol.Test.Utils
             }
         }
 
-        public void Parse() {
-			try { Compiler.CompileOnce(); }
-			catch(Exception e) { Observer.OnError(e); }
-		}
+        public void Parse()
+        {
+            try
+            {
+#if EUROINFO_RULES
+                Compiler.CompilerOptions.CpyCopyNameMap = Comparator.GetCopyNameMap();
+#endif
+                Compiler.CompileOnce();
+            }
+            catch (Exception e)
+            {
+                Observer.OnError(e);
+            }
+#if EUROINFO_RULES
+            finally
+            {
+                Compiler.CompilerOptions.CpyCopyNameMap = null;
+            }
+#endif
+        }
 
-		public string ToJSON() {
+        public string ToJSON() {
 			return new TestJSONSerializer().ToJSON(Compiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.CodeElements);
 		}
 
@@ -252,7 +271,7 @@ namespace TypeCobol.Test.Utils
         }
     }
 
-    #region Comparators
+#region Comparators
     
     internal interface Comparator
     {
@@ -292,7 +311,33 @@ namespace TypeCobol.Test.Utils
 				return DocumentFormat.RDZReferenceFormat;
 			return DocumentFormat.FreeUTF8Format;
 		}
-	}
+
+#if EUROINFO_RULES
+        /// <summary>
+        /// CopyNameMap cache
+        /// </summary>
+        private static readonly Dictionary<string, CopyNameMapFile> _CopyNameMaps = new Dictionary<string, CopyNameMapFile>(StringComparer.OrdinalIgnoreCase);
+
+        internal CopyNameMapFile GetCopyNameMap()
+        {
+            //Key is directory full path
+            string directory = Path.GetDirectoryName(paths.SamplePath);
+            System.Diagnostics.Debug.Assert(directory != null);
+
+            if (!_CopyNameMaps.TryGetValue(directory, out var copyNameMap))
+            {
+                //No CopyNameMap info in cache, check for the presence of a 'CpyCopies.lst' file.
+                string copyNameMapFilePath = Path.Combine(directory, "CpyCopies.lst");
+                copyNameMap = File.Exists(copyNameMapFilePath) ? new CopyNameMapFile(copyNameMapFilePath) : null;
+
+                //Add to cache for future tests
+                _CopyNameMaps.Add(directory, copyNameMap);
+            }
+
+            return copyNameMap;
+        }
+#endif
+    }
 
     internal class ArithmeticComparator : FilesComparator
     {
@@ -917,7 +962,7 @@ namespace TypeCobol.Test.Utils
         }
     }
 
-    #endregion
+#endregion
 
     internal interface Names
     {
@@ -943,7 +988,7 @@ namespace TypeCobol.Test.Utils
         }
     }
 
-    #region DefaultNames
+#region DefaultNames
     internal class EmptyName : AbstractNames
     {
         private Names _namesImplementation;
@@ -1023,9 +1068,9 @@ namespace TypeCobol.Test.Utils
         public override string CreateName(string name) { return name + "Doc" + Rextension; }
         public override Type GetComparatorType() { return typeof(DocumentationPropertiesComparator); }
     }
-    #endregion
+#endregion
 
-    #region EINames
+#region EINames
 #if EUROINFO_RULES
     internal class EIEmptyName : AbstractEINames
     {
@@ -1087,7 +1132,7 @@ namespace TypeCobol.Test.Utils
         public override Type GetComparatorType() { return typeof(MemoryComparator); }
     }
 #endif
-    #endregion
+#endregion
 
     internal class Paths
     {

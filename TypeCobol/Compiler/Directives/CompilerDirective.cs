@@ -851,21 +851,7 @@ namespace TypeCobol.Compiler.Directives
             /// <summary>
             /// True if a suffix was appended to text name
             /// </summary>
-            public bool HasSuffix
-            {
-                get
-                {
-                    if (TextNameWithSuffix.Length >= 8)
-                    {
-                        if (TextNameWithSuffix.EndsWith("L") && TextNameWithSuffix.Length < 9) //Ends with L is EI specific for Copy
-                            return false;
-                        else
-                            return true;
-                    }
-                    else
-                        return false;
-                }
-            } 
+            public bool HasSuffix => TextNameWithSuffix.Length >= 8;
 
             /// <summary>
             /// Text name without suffix

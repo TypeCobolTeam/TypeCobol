@@ -63,20 +63,38 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public bool UseEuroInformationLegacyReplacingSyntax { get; set; }
 
+#if EUROINFO_RULES
+        /// <summary>
+        /// The Cpy Copy names file
+        /// </summary>
+        public string CpyCopyNamesMapFilePath { get; set; }
+#endif
         /// <summary>
         /// Timer Disabled for TypeCobol.LanguageServer.
         /// </summary>
         public bool TimerDisabledOption { get; set; }
 
+        /// <summary>
+        /// Custom Analyzers Dll Paths
+        /// </summary>
+        public List<string> CustomAnalyzerFiles { get; set; }
+
         private bool Logger(string message, Uri uri)
         {
-            var uriLogMessageParams = new UriLogMessageParams()
+            if (uri == null)
             {
-                type = MessageType.Log,
-                message = message,
-                textDocument = new TextDocumentIdentifier(uri.ToString())
-            };
-            this.RpcServer.SendNotification(UriLogMessageNotification.Type, uriLogMessageParams);
+                RemoteConsole.Log(message);
+            }
+            else
+            {
+                var uriLogMessageParams = new UriLogMessageParams()
+                {
+                    type = MessageType.Log,
+                    message = message,
+                    textDocument = new TextDocumentIdentifier(uri.ToString())
+                };
+                this.RpcServer.SendNotification(UriLogMessageNotification.Type, uriLogMessageParams);
+            }
             return true;
         }
 
@@ -220,7 +238,9 @@ namespace TypeCobol.LanguageServer
 
             // Initialize the workspace.
             this.Workspace = new Workspace(rootDirectory.FullName, workspaceName, _messagesActionsQueue, Logger);
-
+#if EUROINFO_RULES
+            this.Workspace.CpyCopyNamesMapFilePath = CpyCopyNamesMapFilePath;
+#endif
             // Propagate LSR testing options.
             this.Workspace.LsrTestOptions = LsrTestingLevel;
             this.Workspace.UseSyntaxColoring = UseSyntaxColoring;
@@ -233,6 +253,7 @@ namespace TypeCobol.LanguageServer
             this.Workspace.ExceptionTriggered += ExceptionTriggered;
             this.Workspace.WarningTrigger += WarningTrigger;
             this.Workspace.MissingCopiesEvent += MissingCopiesDetected;
+            this.Workspace.LoadCustomAnalyzers(CustomAnalyzerFiles);
 
             // Return language server capabilities
             var initializeResult = base.OnInitialize(parameters);
@@ -306,7 +327,7 @@ namespace TypeCobol.LanguageServer
 
             Uri objUri = new Uri(parameters.uri);
 
-            #region Convert text changes format from multiline range replacement to single line updates
+#region Convert text changes format from multiline range replacement to single line updates
 
             TextChangedEvent textChangedEvent = new TextChangedEvent();
             foreach (var contentChange in parameters.contentChanges)
@@ -448,7 +469,7 @@ namespace TypeCobol.LanguageServer
                 }
             }
 
-            #endregion
+#endregion
 
             // Update the source file with the computed text changes
             this.Workspace.UpdateSourceFile(objUri, textChangedEvent);
