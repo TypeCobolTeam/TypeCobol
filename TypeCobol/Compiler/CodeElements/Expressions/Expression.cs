@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
-using JetBrains.Annotations;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -163,7 +161,7 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public override string ToString() {
-			return new StringBuilder(DataItem.ToString()).Append(InvertResult.Value?" NOT ":" ").Append(CharacterClassNameReference != null ? CharacterClassNameReference.ToString() : DataItemContentType.ToString()).Append(" ?").ToString();
+			return new StringBuilder(DataItem.ToString()).Append(InvertResult!= null && InvertResult.Value?" NOT ":" ").Append(CharacterClassNameReference != null ? CharacterClassNameReference.ToString() : DataItemContentType.ToString()).Append(" ?").ToString();
 		}
 	}
 
@@ -266,8 +264,8 @@ namespace TypeCobol.Compiler.CodeElements
         public static RelationalOperator LessThanOrEqualTo = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThanOrEqualTo, null));
         public static RelationalOperator NotEqualTo = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.NotEqualTo, null));
 
-        public Token NotToken { get; private set; }
-        public SyntaxProperty<RelationalOperatorSymbol> RelationalOperatorSyntaxProperty { get; private set; }
+        public Token NotToken { get; }
+        public SyntaxProperty<RelationalOperatorSymbol> RelationalOperatorSyntaxProperty { get; }
 
         public RelationalOperator(SyntaxProperty<RelationalOperatorSymbol> relationalOperatorSymbol)
         {
@@ -287,7 +285,7 @@ namespace TypeCobol.Compiler.CodeElements
             {
                 return RelationalOperatorSyntaxProperty.Value == other.RelationalOperatorSyntaxProperty.Value;
             }
-
+            // Only one has a NOT so we compare opposite
             return RelationalOperatorSyntaxProperty.Value.Opposite() == other.RelationalOperatorSyntaxProperty.Value;
         }
 
@@ -318,12 +316,17 @@ namespace TypeCobol.Compiler.CodeElements
 
     public static class RelationalOperatorSymbolExtension
     {
+        /// <summary>
+        /// Returns the opposite of the current sign
+        /// </summary>
         public static RelationalOperatorSymbol Opposite(this RelationalOperatorSymbol relationalOperatorSymbol)
         {
             switch (relationalOperatorSymbol)
             {
                 case RelationalOperatorSymbol.EqualTo:
                     return RelationalOperatorSymbol.NotEqualTo;
+                case RelationalOperatorSymbol.NotEqualTo:
+                    return RelationalOperatorSymbol.EqualTo;
                 case RelationalOperatorSymbol.GreaterThan:
                     return RelationalOperatorSymbol.LessThanOrEqualTo;
                 case RelationalOperatorSymbol.GreaterThanOrEqualTo:
@@ -332,8 +335,6 @@ namespace TypeCobol.Compiler.CodeElements
                     return RelationalOperatorSymbol.GreaterThanOrEqualTo;
                 case RelationalOperatorSymbol.LessThanOrEqualTo:
                     return RelationalOperatorSymbol.GreaterThan;
-                case RelationalOperatorSymbol.NotEqualTo:
-                    return RelationalOperatorSymbol.EqualTo;
                 default:
                     throw new NotSupportedException($"Unexpected RelationalOperatorSymbol '{relationalOperatorSymbol}'.");
             }
