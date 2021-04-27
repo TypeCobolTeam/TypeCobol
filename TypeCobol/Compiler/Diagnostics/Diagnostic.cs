@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Xml.Xsl;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Directives;
 
@@ -60,8 +59,8 @@ namespace TypeCobol.Compiler.Diagnostics
         protected Diagnostic(DiagnosticMessage info, [NotNull] Position position, params object[] messageArgs)
         {
             Info = info;
-            MessageArgs = messageArgs ?? new object[0];
-            Message = string.Format(Info.MessageTemplate, MessageArgs);
+            messageArgs = messageArgs ?? new object[0];
+            Message = string.Format(Info.MessageTemplate, messageArgs);
             ApplyPosition(position);
             CaughtException = messageArgs.OfType<Exception>().FirstOrDefault();
         }
@@ -76,7 +75,6 @@ namespace TypeCobol.Compiler.Diagnostics
             ColumnEnd = other.ColumnEnd;
             Message = other.Message;
             CaughtException = other.CaughtException;
-            MessageArgs = other.MessageArgs;
         }
 
         public DiagnosticMessage Info { get; }
@@ -91,7 +89,6 @@ namespace TypeCobol.Compiler.Diagnostics
         public int ColumnEnd { get; private set; }
         public string Message { get; private set; }
         public Exception CaughtException { get; }
-        public object[] MessageArgs { get; }
 
         /// <summary>
         /// Text representation of a diagnostic for debugging or test purposes

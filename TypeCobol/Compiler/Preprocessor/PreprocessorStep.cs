@@ -22,17 +22,17 @@ namespace TypeCobol.Compiler.Preprocessor
         /// <summary>
         /// Initial preprocessing of a complete document
         /// </summary>
-        internal static void ProcessDocument(CompilationDocument document, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, IProcessedTokensDocumentProvider processedTokensDocumentProvider, PerfStatsForParserInvocation perfStatsForParserInvocation, out List<MissingCopy> missingCopies)
+        internal static void ProcessDocument(CompilationDocument document, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, IDocumentImporter documentImporter, PerfStatsForParserInvocation perfStatsForParserInvocation, out List<string> missingCopies)
         {
             if (document.CompilerOptions.UseAntlrProgramParsing)
             {
                 ProcessTokensLinesChanges(document, documentLines, null, null,
-                    processedTokensDocumentProvider, perfStatsForParserInvocation, out missingCopies);
+                    documentImporter, perfStatsForParserInvocation, out missingCopies);
             }
             else
             {
                 CupProcessTokensLinesChanges(document, documentLines, null, null,
-                    processedTokensDocumentProvider, perfStatsForParserInvocation, out missingCopies);
+                    documentImporter, perfStatsForParserInvocation, out missingCopies);
             }
         }
 
@@ -41,34 +41,18 @@ namespace TypeCobol.Compiler.Preprocessor
 
         private static void ReportMissingCopy(CopyDirective copyDirective, ProcessedTokensLine tokensLineWithCopyDirective, Exception exception)
         {
-            ReportCopyDiagnostic(copyDirective, tokensLineWithCopyDirective,
-                MessageCode.FailedToLoadTextDocumentReferencedByCopyDirective,
-                exception.Message, exception);
-        }
-
-        private static void ReportMissingDependentCopy(CopyDirective copyDirective, ProcessedTokensLine tokensLineWithCopyDirective, MissingCopy missingCopy)
-        {
-            string missingCopyName = missingCopy.FaultyDirective.TextName
-                                     + (string.IsNullOrEmpty(missingCopy.FaultyDirective.LibraryName) ? string.Empty : $" in {missingCopy.FaultyDirective.LibraryName}");
-            ReportCopyDiagnostic(copyDirective, tokensLineWithCopyDirective,
-                MessageCode.FailedToLoadDependentCopy,
-                missingCopyName, missingCopy.IncludingDocument.TextSourceInfo.Name);
-        }
-
-        private static void ReportCopyDiagnostic(CopyDirective copyDirective, ProcessedTokensLine tokensLineWithCopyDirective, MessageCode messageCode, params object[] messageArgs)
-        {
             Token targetToken = tokensLineWithCopyDirective
                 .TokensWithCompilerDirectives
                 .First(token => token.TokenType == TokenType.COPY_IMPORT_DIRECTIVE && ((CompilerDirectiveToken) token).CompilerDirective == copyDirective);
 
-            var diagnostic = new Diagnostic(messageCode, targetToken.Position(), messageArgs);
+            var diagnostic = new Diagnostic(MessageCode.FailedToLoadTextDocumentReferencedByCopyDirective, targetToken.Position(), exception.Message, exception);
             tokensLineWithCopyDirective.AddDiagnostic(diagnostic);
         }
 
         /// <summary>
         /// Incremental preprocessing of a set of tokens lines changes
         /// </summary>
-        internal static IList<DocumentChange<IProcessedTokensLine>> ProcessTokensLinesChanges(CompilationDocument document, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, IList<DocumentChange<ITokensLine>> tokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, IProcessedTokensDocumentProvider processedTokensDocumentProvider, PerfStatsForParserInvocation perfStatsForParserInvocation, out List<MissingCopy> missingCopies)
+        internal static IList<DocumentChange<IProcessedTokensLine>> ProcessTokensLinesChanges(CompilationDocument document, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, IList<DocumentChange<ITokensLine>> tokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, IDocumentImporter documentImporter, PerfStatsForParserInvocation perfStatsForParserInvocation, out List<string> missingCopies)
         {
             var textSourceInfo = document.TextSourceInfo;
 
@@ -300,7 +284,7 @@ namespace TypeCobol.Compiler.Preprocessor
             perfStatsForParserInvocation.OnStopTreeBuilding();
 
             // --- COPY IMPORT PHASE : Process COPY (REPLACING) directives ---
-            missingCopies = new List<MissingCopy>();
+            missingCopies = new List<string>();
 
             // 1. Iterate over all updated lines containing a new COPY directive
             if (parsedLinesWithCopyDirectives != null)
@@ -312,34 +296,36 @@ namespace TypeCobol.Compiler.Preprocessor
                     {
                         try
                         {
-                            PerfStatsForImportedDocument perfStats;
-
                             // Load (or retrieve in cache) the document referenced by the COPY directive
                             //Issue #315: tokensLineWithCopyDirective.ScanState must be passed because special names paragraph such as "Decimal point is comma" are declared in the enclosing program and can affect the parsing of COPY
-                            ProcessedTokensDocument importedDocumentSource =
-                                processedTokensDocumentProvider.GetProcessedTokensDocument(copyDirective.LibraryName,
-                                    copyDirective.TextName,
-                                    tokensLineWithCopyDirective.ScanStateBeforeCOPYToken[copyDirective.COPYToken], document.CopyTextNamesVariations, out perfStats);
+                            CompilationDocument importedDocumentSource = documentImporter.Import(copyDirective.LibraryName, copyDirective.TextName,
+                                    tokensLineWithCopyDirective.ScanStateBeforeCOPYToken[copyDirective.COPYToken],
+                                    document.CopyTextNamesVariations, out var perfStats);
 
-                            // The copy has missing copies, add them into the list and report diagnostic
+                            // Copy diagnostics from document
+                            foreach (var diagnostic in importedDocumentSource.AllDiagnostics())
+                            {
+                                var position = new Diagnostic.Position(diagnostic.Line, diagnostic.ColumnStart, diagnostic.ColumnEnd, copyDirective);
+                                var copyDiagnostic = diagnostic.CopyAt(position);
+                                tokensLineWithCopyDirective.AddDiagnostic(copyDiagnostic);
+                            }
+
+                            // The copy itself has missing copies, add them into the list
                             foreach (var missingCopy in importedDocumentSource.MissingCopies)
                             {
                                 missingCopies.Add(missingCopy);
-                                ReportMissingDependentCopy(copyDirective, tokensLineWithCopyDirective, missingCopy);
                             }
 
                             // Store it on the current line after applying the REPLACING directive
-                            ImportedTokensDocument importedDocument = new ImportedTokensDocument(copyDirective,
-                                importedDocumentSource, perfStats, document.CompilerOptions);
-                            
+                            ImportedTokensDocument importedDocument = new ImportedTokensDocument(copyDirective, importedDocumentSource.ProcessedTokensDocumentSnapshot, perfStats, document.CompilerOptions);
                             tokensLineWithCopyDirective.ImportedDocuments[copyDirective] = importedDocument;
                         }
                         catch (Exception e)
                         {
                             // The copy itself is missing
-                            missingCopies.Add(new MissingCopy(document, copyDirective));
+                            missingCopies.Add(copyDirective.TextName);
 
-                            // Text name refenced by COPY directive was not found
+                            // Text name referenced by COPY directive was not found
                             // => register a preprocessor error on this line                            
                             ReportMissingCopy(copyDirective, tokensLineWithCopyDirective, e);
                         }
@@ -404,8 +390,8 @@ namespace TypeCobol.Compiler.Preprocessor
             CompilationDocument document, ISearchableReadOnlyList<ProcessedTokensLine> documentLines,
             IList<DocumentChange<ITokensLine>> tokensLinesChanges,
             PrepareDocumentLineForUpdate prepareDocumentLineForUpdate,
-            IProcessedTokensDocumentProvider processedTokensDocumentProvider,
-            PerfStatsForParserInvocation perfStatsForParserInvocation, out List<MissingCopy> missingCopies)
+            IDocumentImporter documentImporter,
+            PerfStatsForParserInvocation perfStatsForParserInvocation, out List<string> missingCopies)
         {
             var textSourceInfo = document.TextSourceInfo;
 
@@ -603,7 +589,7 @@ namespace TypeCobol.Compiler.Preprocessor
             perfStatsForParserInvocation.OnStopTreeBuilding();
 
             // --- COPY IMPORT PHASE : Process COPY (REPLACING) directives ---
-            missingCopies = new List<MissingCopy>();
+            missingCopies = new List<string>();
 
             // 1. Iterate over all updated lines containing a new COPY directive
             if (parsedLinesWithCopyDirectives != null)
@@ -618,34 +604,36 @@ namespace TypeCobol.Compiler.Preprocessor
                     {
                         try
                         {
-                            PerfStatsForImportedDocument perfStats;
-
                             // Load (or retrieve in cache) the document referenced by the COPY directive
                             //Issue #315: tokensLineWithCopyDirective.ScanState must be passed because special names paragraph such as "Decimal point is comma" are declared in the enclosing program and can affect the parsing of COPY
-                            ProcessedTokensDocument importedDocumentSource =
-                                processedTokensDocumentProvider.GetProcessedTokensDocument(copyDirective.LibraryName,
-                                    copyDirective.TextName,
+                            CompilationDocument importedDocumentSource = documentImporter.Import(copyDirective.LibraryName, copyDirective.TextName,
                                     tokensLineWithCopyDirective.ScanStateBeforeCOPYToken[copyDirective.COPYToken],
-                                    document.CopyTextNamesVariations, out perfStats);
+                                    document.CopyTextNamesVariations, out var perfStats);
 
-                            // The copy has missing copies, add them into the list and report diagnostic
+                            // Copy diagnostics from document
+                            foreach (var diagnostic in importedDocumentSource.AllDiagnostics())
+                            {
+                                var position = new Diagnostic.Position(diagnostic.Line, diagnostic.ColumnStart, diagnostic.ColumnEnd, copyDirective);
+                                var copyDiagnostic = diagnostic.CopyAt(position);
+                                tokensLineWithCopyDirective.AddDiagnostic(copyDiagnostic);
+                            }
+
+                            // The copy itself has missing copies, add them into the list
                             foreach (var missingCopy in importedDocumentSource.MissingCopies)
                             {
                                 missingCopies.Add(missingCopy);
-                                ReportMissingDependentCopy(copyDirective, tokensLineWithCopyDirective, missingCopy);
                             }
 
                             // Store it on the current line after applying the REPLACING directive
-                            ImportedTokensDocument importedDocument = new ImportedTokensDocument(copyDirective,
-                                importedDocumentSource, perfStats, document.CompilerOptions);
+                            ImportedTokensDocument importedDocument = new ImportedTokensDocument(copyDirective, importedDocumentSource.ProcessedTokensDocumentSnapshot, perfStats, document.CompilerOptions);
                             tokensLineWithCopyDirective.ImportedDocuments[copyDirective] = importedDocument;
                         }
                         catch (Exception e)
                         {
                             // The copy itself is missing
-                            missingCopies.Add(new MissingCopy(document, copyDirective));
+                            missingCopies.Add(copyDirective.TextName);
 
-                            // Text name refenced by COPY directive was not found
+                            // Text name referenced by COPY directive was not found
                             // => register a preprocessor error on this line                            
                             ReportMissingCopy(copyDirective, tokensLineWithCopyDirective, e);
                         }

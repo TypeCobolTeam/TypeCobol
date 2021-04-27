@@ -129,44 +129,41 @@ namespace TypeCobol.Compiler.Scanner
             _ScannerDiagnostics.Add(diag);
         }
 
-        /// <summary>
-        /// Filters only the diagnostics attached to a specific token of this line
-        /// </summary>
-        internal IEnumerable<Diagnostic> GetDiagnosticsForToken(Token filterToken)
+        private IEnumerable<Diagnostic> GetDiagnosticsForToken(Token filterToken)
         {
-            return _ScannerDiagnostics.Where(diag => diag is TokenDiagnostic && ((TokenDiagnostic)diag).Token == filterToken );
-        }
-
-
-
-        /// <summary>
-        /// In case a continuation of the last token of this line is discovered on the next line,
-        /// remove all diagnostics specifically attached to this incomplete token
-        /// </summary>
-        internal void RemoveDiagnosticsForLastSourceToken()
-        {
-            Token lastToken = SourceTokens.Last();
-            RemoveDiagnosticsForToken(lastToken);
+            return _ScannerDiagnostics.Where(diagnostic => diagnostic is TokenDiagnostic tokenDiagnostic && tokenDiagnostic.Token == filterToken);
         }
 
         /// <summary>
-        /// Remove all diagnostics already registered for a given token 
+        /// Select diagnostics for the given token and duplicate all of them onto the target line.
         /// </summary>
-        internal void RemoveDiagnosticsForToken(Token token)
+        /// <param name="token">Token to filter diagnostics.</param>
+        /// <param name="targetLine">Target line that shall receive duplicated diagnostics.</param>
+        internal void CopyDiagnosticsForToken(Token token, TokensLine targetLine)
         {
-            if (token != null)
+            if (token == null) return;
+            foreach (var diagnostic in GetDiagnosticsForToken(token))
             {
-                foreach (Diagnostic diag in GetDiagnosticsForToken(token).ToArray()) //ToArray in order to remove reference
-                {
-                    _ScannerDiagnostics.Remove(diag);
-                }
+                targetLine._ScannerDiagnostics.Add(diagnostic.CopyAt(token.Position()));
             }
         }
 
-        internal void RemoveDiagnostics()
+        /// <summary>
+        /// Select diagnostics for the given token and remove them from this line.
+        /// </summary>
+        /// <param name="token">Token to filter diagnostics.</param>
+        internal void ClearDiagnosticsForToken(Token token)
+        {
+            if (token == null) return;
+            foreach (var diagnostic in GetDiagnosticsForToken(token).ToArray())
+            {
+                _ScannerDiagnostics.Remove(diagnostic);
+            }
+        }
+
+        internal void ClearAllDiagnostics()
         {
             System.Diagnostics.Debug.Assert(SourceTokens.Count == 0, "The diagnostics are on the tokens");
-
             _ScannerDiagnostics.Clear();
         }
 
