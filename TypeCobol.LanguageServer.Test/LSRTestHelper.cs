@@ -103,7 +103,7 @@ namespace TypeCobol.LanguageServer.Test
 
             //Build full path to default Cpy Copy names file for LSR tests
             string cpyCopiesFile = Path.GetFullPath(Path.Combine(testWorkingDirectory, "input", "CpyCopies.lst"));
-            arguments += "-ycpl=\"" + cpyCopiesFile + "\"";
+            arguments += " -ycpl=\"" + cpyCopiesFile + "\"";
 
             System.Diagnostics.Process process = new System.Diagnostics.Process();
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
