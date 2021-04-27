@@ -146,7 +146,7 @@ namespace TypeCobol.Analysis.Cfg
         /// <summary>
         /// Delegate to add a new Diagnostic to the root collection of diagnostics.
         /// </summary>
-        new private Action<Diagnostic> AddDiagnostic;
+        private Action<Diagnostic> AddDiagnostic;
 
         /// <summary>
         /// Flag to indicate if this CFG uses PERFORM PROCEDURE instructions having an AFTER clause.
@@ -168,7 +168,7 @@ namespace TypeCobol.Analysis.Cfg
             : base(identifier)
         {
             this.Graphs = new List<ControlFlowGraph<Node, D>>();
-            this.AddDiagnostic = base.AddDiagnostic;
+            this.AddDiagnostic = DiagnosticList.Add;
             this.AllProcedures = new List<Procedure>();
             this.ParentProgramCfgBuilder = null;
             this.ExtendPerformTargets = extendPerformTargets;
