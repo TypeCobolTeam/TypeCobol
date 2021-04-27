@@ -1,0 +1,23 @@
+﻿--- Diagnostics ---
+Line 164[15,25] <30, Error, Semantics> - Semantic error: Symbol MYSWITCH-ON is not referenced OffendingSymbol=[15,25:MYSWITCH-ON]<UserDefinedWord>
+
+--- Program ---
+PROGRAM: Pgm common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  X:Numeric
+  Y:Numeric
+  Z:Numeric
+  Var-txt:Alphanumeric
+  Var-DBCS:DBCS
+  COLORS:Alphanumeric
+  BLUE:Level88
+  GREEN:Level88
+  TURQUOISE:Level88
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
