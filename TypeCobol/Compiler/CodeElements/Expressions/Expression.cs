@@ -245,13 +245,6 @@ namespace TypeCobol.Compiler.CodeElements
 
     public class RelationalOperator : IVisitable
     {
-        public static RelationalOperator EqualTo = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.EqualTo, null), null);
-        public static RelationalOperator GreaterThan = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThan, null), null);
-        public static RelationalOperator GreaterThanOrEqualTo = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThanOrEqualTo, null), null);
-        public static RelationalOperator LessThan = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThan, null), null);
-        public static RelationalOperator LessThanOrEqualTo = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThanOrEqualTo, null), null);
-        public static RelationalOperator NotEqualTo = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.NotEqualTo, null), null);
-
         /// <summary>
         /// If the operator is negated, Token of the NOT
         /// Null if no NOT is present
@@ -274,6 +267,16 @@ namespace TypeCobol.Compiler.CodeElements
             }
             // Only one has a NOT so we compare opposite
             return Operator.Value.Opposite() == other.Operator.Value;
+        }
+
+        public bool SemanticEquals(RelationalOperatorSymbol relationalOperatorSymbol)
+        {
+            if (NotToken == null)
+            {
+                return Operator.Value == relationalOperatorSymbol;
+            }
+            // Operator is negated
+            return Operator.Value.Opposite() == relationalOperatorSymbol;
         }
 
         public bool AcceptASTVisitor(IASTVisitor astVisitor)
@@ -325,6 +328,16 @@ namespace TypeCobol.Compiler.CodeElements
                 default:
                     throw new NotSupportedException($"Unexpected RelationalOperatorSymbol '{relationalOperatorSymbol}'.");
             }
+        }
+
+        public static bool SemanticEquals(this RelationalOperatorSymbol relationalOperatorSymbol, RelationalOperator relationalOperator)
+        {
+            if (relationalOperator != null)
+            {
+                return relationalOperator.SemanticEquals(relationalOperatorSymbol);
+            }
+
+            return false;
         }
     }
 

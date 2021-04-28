@@ -358,15 +358,15 @@ namespace TypeCobol.Compiler.Diagnostics
         public static void OnCodeElement(StartStatement statement, CodeElementsParser.StartStatementContext context)
         {
             if (context?.relationalOperator() != null)
-                if (!statement.RelationalOperator.SemanticEquals(RelationalOperator.EqualTo) &&
-                    !statement.RelationalOperator.SemanticEquals(RelationalOperator.GreaterThan) &&
-                    !statement.RelationalOperator.SemanticEquals(RelationalOperator.GreaterThanOrEqualTo))
+                if (!statement.RelationalOperator.SemanticEquals(RelationalOperatorSymbol.EqualTo) &&
+                    !statement.RelationalOperator.SemanticEquals(RelationalOperatorSymbol.GreaterThan) &&
+                    !statement.RelationalOperator.SemanticEquals(RelationalOperatorSymbol.GreaterThanOrEqualTo))
                     DiagnosticUtils.AddError(statement, "START: Illegal operator " + statement.RelationalOperator,
                         context.relationalOperator());
         }
     }
 
-    class AlterStatementChecker
+    class AlterStatementChecker 
     {
         public static void OnCodeElement(AlterStatement statement, CodeElementsParser.AlterStatementContext context)
         {
