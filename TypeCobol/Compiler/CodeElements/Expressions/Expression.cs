@@ -257,47 +257,46 @@ namespace TypeCobol.Compiler.CodeElements
 
     public class RelationalOperator : IVisitable
     {
-        public static RelationalOperator EqualTo = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.EqualTo, null));
-        public static RelationalOperator GreaterThan = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThan, null));
-        public static RelationalOperator GreaterThanOrEqualTo = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThanOrEqualTo, null));
-        public static RelationalOperator LessThan = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThan, null));
-        public static RelationalOperator LessThanOrEqualTo = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThanOrEqualTo, null));
-        public static RelationalOperator NotEqualTo = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.NotEqualTo, null));
+        public static RelationalOperator EqualTo = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.EqualTo, null), null);
+        public static RelationalOperator GreaterThan = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThan, null), null);
+        public static RelationalOperator GreaterThanOrEqualTo = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThanOrEqualTo, null), null);
+        public static RelationalOperator LessThan = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThan, null), null);
+        public static RelationalOperator LessThanOrEqualTo = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThanOrEqualTo, null), null);
+        public static RelationalOperator NotEqualTo = new RelationalOperator(new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.NotEqualTo, null), null);
 
+        /// <summary>
+        /// If the operator is negated, Token of the NOT
+        /// Null if no NOT is present
+        /// </summary>
         public Token NotToken { get; }
-        public SyntaxProperty<RelationalOperatorSymbol> RelationalOperatorSyntaxProperty { get; }
-
-        public RelationalOperator(SyntaxProperty<RelationalOperatorSymbol> relationalOperatorSymbol)
+        public SyntaxProperty<RelationalOperatorSymbol> Operator { get; }
+        
+        public RelationalOperator(SyntaxProperty<RelationalOperatorSymbol> @operator, Token notToken)
         {
-            RelationalOperatorSyntaxProperty = relationalOperatorSymbol;
-        }
-
-        public RelationalOperator(SyntaxProperty<RelationalOperatorSymbol> relationalOperatorSymbol, Token notToken) : 
-            this(relationalOperatorSymbol)
-        {
+            Operator = @operator;
             NotToken = notToken;
         }
 
-        public bool SemanticEqualTo(RelationalOperator other)
+        public bool SemanticEqual(RelationalOperator other)
         {
             // Both with NOT or both without NOT
             if ((NotToken != null && other.NotToken != null) || (NotToken == null && other.NotToken == null))
             {
-                return RelationalOperatorSyntaxProperty.Value == other.RelationalOperatorSyntaxProperty.Value;
+                return Operator.Value == other.Operator.Value;
             }
             // Only one has a NOT so we compare opposite
-            return RelationalOperatorSyntaxProperty.Value.Opposite() == other.RelationalOperatorSyntaxProperty.Value;
+            return Operator.Value.Opposite() == other.Operator.Value;
         }
 
         public bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this)
-                   && this.ContinueVisitToChildren(astVisitor, NotToken, RelationalOperatorSyntaxProperty);
+                   && this.ContinueVisitToChildren(astVisitor, NotToken, Operator);
         }
 
         public override string ToString()
         {
-            return (NotToken == null ? "" : NotToken.Text + " ") + RelationalOperatorSyntaxProperty.Value;
+            return (NotToken == null ? string.Empty : NotToken.Text + " ") + Operator.Value;
         }
     }
 

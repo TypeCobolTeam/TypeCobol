@@ -207,7 +207,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] ConditionalExpression conditionalExpression);
         bool Visit([NotNull] SignCondition signCondition);
         bool Visit([NotNull] RelationCondition relationCondition);
-        bool Visit(RelationalOperator conditionNameConditionOrSwitchStatusCondition);
+        bool Visit([NotNull] RelationalOperator relationalOperator);
         bool Visit([NotNull] LogicalOperation logicalOperation);
         bool Visit([NotNull] ClassCondition classCondition);
         bool Visit([NotNull] ConditionNameConditionOrSwitchStatusCondition conditionNameConditionOrSwitchStatusCondition);
@@ -830,7 +830,7 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
 
-        public bool Visit(RelationalOperator conditionNameConditionOrSwitchStatusCondition)
+        public virtual bool Visit(RelationalOperator relationalOperator)
         {
             return true;
         }

@@ -818,7 +818,7 @@ namespace TypeCobol.Compiler.Parser
 
 		internal RelationalOperator CreateRelationalOperator(CodeElementsParser.RelationalOperatorContext context)
         {
-            var notToken = ParseTreeUtils.GetFirstToken(context.NOT());
+            var notToken = context.NOT() == null ? null : ParseTreeUtils.GetFirstToken(context.NOT());
 
             if (context.strictRelation() != null)
 			{
