@@ -277,7 +277,7 @@ namespace TypeCobol.Compiler.CodeElements
             NotToken = notToken;
         }
 
-        public bool SemanticEqual(RelationalOperator other)
+        public bool SemanticEquals(RelationalOperator other)
         {
             // Both with NOT or both without NOT
             if ((NotToken != null && other.NotToken != null) || (NotToken == null && other.NotToken == null))
