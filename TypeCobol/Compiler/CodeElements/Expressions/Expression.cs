@@ -20,7 +20,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// For a operation or relation, this would be the operator
         /// For a leaf, this would be the name of the variable, ...
         /// </summary>
-        public abstract object NodeData();
+        public abstract object NodeData { get; }
 
         /// <summary>
         /// Returns the children of an expression
@@ -80,10 +80,7 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public ConditionalExpression RightOperand  { get; private set; }
 
-        public override object NodeData()
-        {
-            return Operator;
-        }
+        public override object NodeData => Operator;
 
         public override (Expression, Expression) GetChildren()
         {
@@ -145,10 +142,7 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public SyntaxProperty<bool> InvertResult { get; private set; }
 
-        public override object NodeData()
-        {
-            return new object[] { DataItem, CharacterClassNameReference, DataItemContentType, InvertResult };
-        }
+        public override object NodeData => new object[] { DataItem, CharacterClassNameReference, DataItemContentType, InvertResult };
 
         public override (Expression, Expression) GetChildren()
         {
@@ -192,10 +186,7 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public DataOrConditionStorageArea ConditionReference { get; private set; }
 
-        public override object NodeData()
-        {
-            return ConditionReference;
-        }
+        public override object NodeData => ConditionReference;
 
         public override (Expression, Expression) GetChildren()
         {
@@ -233,10 +224,7 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public ConditionOperand RightOperand { get; private set; }
 
-        public override object NodeData()
-        {
-            return Operator;
-        }
+        public override object NodeData => Operator;
 
         public override (Expression, Expression) GetChildren()
         {
@@ -360,10 +348,7 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public SyntaxProperty<bool> InvertResult { get; private set; }
 
-        public override object NodeData()
-        {
-            return new object[] { Operand, SignComparison, InvertResult};
-        }
+        public override object NodeData => new object[] { Operand, SignComparison, InvertResult};
 
         public override (Expression, Expression) GetChildren()
         {
@@ -434,11 +419,8 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public Token SelfObjectIdentifier { get; private set; }
 
-        public override object NodeData()
-        {
-            // Constructors allow only one to be not null
-            return ArithmeticExpression ?? Variable ?? NullPointerValue ?? (object) SelfObjectIdentifier;
-        }
+        // Constructors allow only one to be not null
+        public override object NodeData => ArithmeticExpression ?? Variable ?? NullPointerValue ?? (object) SelfObjectIdentifier;
 
         public override (Expression, Expression) GetChildren()
         {
@@ -512,10 +494,7 @@ namespace TypeCobol.Compiler.CodeElements
 		public SyntaxProperty<ArithmeticOperator> Operator { get; private set; }
 		public ArithmeticExpression RightOperand { get; private set; }
 
-        public override object NodeData()
-        {
-            return Operator;
-        }
+        public override object NodeData => Operator;
 
         public override (Expression, Expression) GetChildren()
         {
@@ -556,11 +535,8 @@ namespace TypeCobol.Compiler.CodeElements
 		public IntegerVariable IntegerVariable { get; private set; }
 		public NumericVariable NumericVariable { get; private set; }
 
-        public override object NodeData()
-        {
-            // Constructors allow only one to be not null
-            return IntegerVariable ?? (object) NumericVariable;
-        }
+        // Constructors allow only one to be not null
+        public override object NodeData => IntegerVariable ?? (object) NumericVariable;
 
         public override (Expression, Expression) GetChildren()
         {
