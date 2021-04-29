@@ -20,7 +20,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// Returns the diagnostics produced by this analyzer.
         /// May be empty, but not null.
         /// </summary>
-        public IEnumerable<Diagnostic> Diagnostics => DiagnosticList.AsEnumerable();
+        public IEnumerable<Diagnostic> Diagnostics => DiagnosticList;
 
         /// <summary>
         /// Unique text identifier of this analyzer.

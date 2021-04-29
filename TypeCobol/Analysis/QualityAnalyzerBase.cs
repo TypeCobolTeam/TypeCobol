@@ -25,7 +25,7 @@ namespace TypeCobol.Analysis
         /// Returns the diagnostics produced by this analyzer.
         /// May be empty, but not null.
         /// </summary>
-        public IEnumerable<Diagnostic> Diagnostics => DiagnosticList.AsEnumerable();
+        public IEnumerable<Diagnostic> Diagnostics => DiagnosticList;
 
         protected QualityAnalyzerBase([NotNull] string identifier)
         {
