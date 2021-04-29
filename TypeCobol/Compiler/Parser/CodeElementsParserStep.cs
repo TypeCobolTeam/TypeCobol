@@ -205,8 +205,7 @@ namespace TypeCobol.Compiler.Parser
                 CodeElementsLine codeElementsLine = GetCodeElementsLineForToken(currentToken);
                 if (codeElementsLine != null)
                 {
-                    codeElementsLine.AddParserDiagnostic(new TokenDiagnostic(MessageCode.ImplementationError,
-                        currentToken, currentToken.Line, e));
+                    codeElementsLine.AddParserDiagnostic(new TokenDiagnostic(MessageCode.ImplementationError, currentToken, e));
                 }
             }
 
@@ -259,17 +258,12 @@ namespace TypeCobol.Compiler.Parser
                         catch (Exception ex)
                         {
                             var code = MessageCode.ImplementationError;
-                            int line = 0;
-                            int start = 0;
-                            int stop = 0;
+                            var position = Diagnostic.Position.Default;
                             if (codeElementsLine.SourceTokens != null && codeElementsLine.SourceTokens.Count > 0)
                             {
-                                start = codeElementsLine.SourceTokens[0].StartIndex;
-                                stop =
-                                    codeElementsLine.SourceTokens[codeElementsLine.SourceTokens.Count - 1].StopIndex;
+                                position = codeElementsLine.SourceTokens[0].Position();
                             }
-                            codeElementsLine.AddParserDiagnostic(new ParserDiagnostic(ex.ToString(), start, stop,
-                                line, null, code, ex));
+                            codeElementsLine.AddParserDiagnostic(new ParserDiagnostic(ex.ToString(), position, null, code, ex));
                         }
                         CodeElement codeElement = codeElementBuilder.CodeElement;
                         if (codeElement != null)

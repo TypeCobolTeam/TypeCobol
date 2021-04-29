@@ -32,12 +32,12 @@ namespace TypeCobol.Analysis.Test.CustomAnalyzers
 
         public override void StartCobolProgram(ProgramIdentification programIdentification, LibraryCopyCodeElement libraryCopy)
         {
-            AddDiagnostic(new Diagnostic(MessageCode.Info, 0, 0, 0, $"Analyzer '{Identifier}': starting AST building..."));
+            AddDiagnostic(new Diagnostic(MessageCode.Info, Diagnostic.Position.Default, $"Analyzer '{Identifier}': starting AST building..."));
         }
 
         public override void EndCobolProgram(ProgramEnd end)
         {
-            AddDiagnostic(new Diagnostic(MessageCode.Info, 0, 0, 0, $"Analyzer '{Identifier}': finished AST building."));
+            AddDiagnostic(new Diagnostic(MessageCode.Info, Diagnostic.Position.Default, $"Analyzer '{Identifier}': finished AST building."));
         }
     }
 
@@ -77,7 +77,7 @@ namespace TypeCobol.Analysis.Test.CustomAnalyzers
 
         private void AddInfo(string info)
         {
-            AddDiagnostic(new Diagnostic(MessageCode.Info, 0, 0, 0, $"Analyzer '{Identifier}': {info}"));
+            AddDiagnostic(new Diagnostic(MessageCode.Info, Diagnostic.Position.Default, $"Analyzer '{Identifier}': {info}"));
         }
 
         public override void Inspect(ProcessedTokensDocument processedTokensDocument)
@@ -122,13 +122,13 @@ namespace TypeCobol.Analysis.Test.CustomAnalyzers
                     var programNode = controlFlowGraph.ProgramOrFunctionNode;
                     Assert.IsTrue(programNode is Program);
                     var programNameToken = ((Program) programNode).CodeElement.ProgramName.NameLiteral.Token;
-                    var diagnostic = new Diagnostic(MessageCode.Info, programNameToken.Column, programNameToken.EndColumn, programNameToken.Line, $"CFG/DFA analysis: control flow graphs contains {controlFlowGraph.AllBlocks.Count} blocks.");
+                    var diagnostic = new Diagnostic(MessageCode.Info, programNameToken.Position(), $"CFG/DFA analysis: control flow graphs contains {controlFlowGraph.AllBlocks.Count} blocks.");
                     AddDiagnostic(diagnostic);
                 }
             }
             else
             {
-                var diagnostic = new Diagnostic(MessageCode.Info, 0, 0, 0, "CFG/DFA analysis: no control flow graph found for this file.");
+                var diagnostic = new Diagnostic(MessageCode.Info, Diagnostic.Position.Default, "CFG/DFA analysis: no control flow graph found for this file.");
                 AddDiagnostic(diagnostic);
             }
         }

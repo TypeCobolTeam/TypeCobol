@@ -1,6 +1,6 @@
 --- Diagnostics ---
 Line 2[6,10] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements} RuleStack=,  OffendingSymbol=[6,10:USING]<USING>
-Line 2[1,1] <27, Error, Syntax> - Syntax error : Empty CALL is not authorized
+Line 2[1,4] <27, Error, Syntax> - Syntax error : Empty CALL is not authorized
 Line 4[1,4] <27, Error, Syntax> - Syntax error : mismatched input 'CALL' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword} RuleStack=codeElement>callStatement>cobolCallStatement,  OffendingSymbol=[1,4:CALL]<CALL>
 Line 4[17,17] <27, Error, Syntax> - Syntax error : missing {CONTENT, REFERENCE, VALUE} at 'a' RuleStack=codeElement>callStatement>cobolCallStatement>callUsingParameters,  OffendingSymbol=[17,17:a]<UserDefinedWord>
 Line 5[1,4] <27, Error, Syntax> - Syntax error : CALL .. RETURNING: Missing identifier RuleStack=codeElement>callStatement>cobolCallStatement,  OffendingSymbol=[1,4:CALL]<CALL>

@@ -8,13 +8,12 @@ using TypeCobol.Compiler;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.CupParser.NodeBuilder;
+using TypeCobol.Compiler.CupCommon;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
-using String = System.String;
 
 namespace TypeCobol.Test.Utils
 {
@@ -25,7 +24,7 @@ namespace TypeCobol.Test.Utils
             DirectoryInfo localDirectory = new DirectoryInfo(PlatformUtils.GetPathForProjectFile(relativePath));
             if (!localDirectory.Exists)
             {
-                throw new Exception(String.Format("Directory : {0} does not exist", relativePath));
+                throw new Exception(string.Format("Directory : {0} does not exist", relativePath));
             }
 
             CompilationProject project = new CompilationProject("test",
@@ -43,7 +42,7 @@ namespace TypeCobol.Test.Utils
             DirectoryInfo localDirectory = new DirectoryInfo(PlatformUtils.GetPathForProjectFile(folder));
             if (!localDirectory.Exists)
             {
-                throw new Exception(String.Format("Directory : {0} does not exist", localDirectory.FullName));
+                throw new Exception(string.Format("Directory : {0} does not exist", localDirectory.FullName));
             }
             if (documentFormat == null) documentFormat = DocumentFormat.RDZReferenceFormat;
 
@@ -123,7 +122,7 @@ namespace TypeCobol.Test.Utils
             }
             else
             {
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -144,7 +143,7 @@ namespace TypeCobol.Test.Utils
             }
             else
             {
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -393,7 +392,7 @@ namespace TypeCobol.Test.Utils
         {
             ErrorCount++;
 
-            IList<String> stack = ((Antlr4.Runtime.Parser)recognizer).GetRuleInvocationStack();
+            IList<string> stack = ((Antlr4.Runtime.Parser)recognizer).GetRuleInvocationStack();
             foreach (string ruleInvocation in stack.Reverse())
             {
                 errorLog.AppendLine(ruleInvocation);
