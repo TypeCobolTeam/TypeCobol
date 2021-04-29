@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
@@ -85,8 +84,8 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
 
-        public AutoReplacePartialWordsTokensDocument(TokensDocument previousStepSnapshot, DocumentVersion<IProcessedTokensLine> processedTokensLinesVersion, ISearchableReadOnlyList<CodeElementsLine> processedTokensLines, TypeCobolOptions compilerOptions, List<MissingCopy> missingCopies)
-            : base(previousStepSnapshot, processedTokensLinesVersion, processedTokensLines, compilerOptions, missingCopies)
+        public AutoReplacePartialWordsTokensDocument(TokensDocument previousStepSnapshot, DocumentVersion<IProcessedTokensLine> processedTokensLinesVersion, ISearchableReadOnlyList<CodeElementsLine> processedTokensLines, TypeCobolOptions compilerOptions)
+            : base(previousStepSnapshot, processedTokensLinesVersion, processedTokensLines, compilerOptions)
         {
             
         }

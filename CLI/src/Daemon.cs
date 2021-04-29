@@ -81,38 +81,6 @@ namespace TypeCobol.Server {
             return exit((int)ReturnCode.Success, "Success");
 		}
 
-        /// <summary>
-        /// Add an error message
-        /// </summary>
-        /// <param name="writer">Error Writer</param>
-        /// <param name="messageCode">Message's code</param>
-        /// <param name="message">The text message</param>
-        /// <param name="path">The source file path</param>
-		internal static void AddError(AbstractErrorWriter writer, MessageCode messageCode, string message, string path)
-		{
-            AddError(writer, messageCode, 0, 0, 1, message, path);
-		}
-
-        /// <summary>
-        /// Add an error message
-        /// </summary>
-        /// <param name="writer">Error Writer</param>
-        /// <param name="messageCode">Message's code</param>
-        /// <param name="columnStart">Start column in the source file</param>
-        /// <param name="columnEnd">End column in the source file</param>
-        /// <param name="lineNumber">Lien number in the source file</param>
-        /// <param name="message">The text message</param>
-        /// <param name="path">The source file path</param>
-        internal static void AddError(AbstractErrorWriter writer, MessageCode messageCode, int columnStart, int columnEnd, int lineNumber, string message, string path)
-        {
-            Diagnostic diag = new Diagnostic(messageCode, columnStart, columnEnd, lineNumber,
-                message != null
-                ? (path != null ? new object[2] { message, path } : new object[1] { message })
-                : (path != null ? new object[1] { path } : new object[0]));
-            diag.Message = message;
-            AddError(writer, path, diag);
-        }
-
         internal static void AddError(AbstractErrorWriter writer, string path, Diagnostic diagnostic)
         {
             writer.AddErrors(path, diagnostic);

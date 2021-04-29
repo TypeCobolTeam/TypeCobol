@@ -55,10 +55,10 @@ namespace TypeCobol.Compiler
         public CodeModel.SymbolTable CustomSymbols = null;
 
         /// <summary>
-        /// The build system implements an efficient way to retrieve ProcessedTokensDocuments
+        /// The build system implements an efficient way to retrieve CompilationDocument
         /// for all COPY compiler directives
         /// </summary>
-        private IProcessedTokensDocumentProvider processedTokensDocumentProvider;
+        private IDocumentImporter _documentImporter;
 
         // Internal storage of the document lines :
         // - the document lines are stored in a tree structure, allowing efficient updates
@@ -171,7 +171,7 @@ namespace TypeCobol.Compiler
         /// This method does not scan the inserted text lines to produce tokens.
         /// You must explicitely call UpdateTokensLines() to start an initial scan of the document.
         /// </summary>
-        public CompilationDocument(TextSourceInfo textSourceInfo, ParsingMode mode, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider,
+        public CompilationDocument(TextSourceInfo textSourceInfo, ParsingMode mode, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IDocumentImporter documentImporter,
             [NotNull] MultilineScanState initialScanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
             TextSourceInfo = textSourceInfo;
@@ -179,7 +179,7 @@ namespace TypeCobol.Compiler
             CopyTextNamesVariations = copyTextNameVariations ?? new List<RemarksDirective.TextNameVariation>();
             MissingCopies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            this.processedTokensDocumentProvider = processedTokensDocumentProvider;
+            this._documentImporter = documentImporter;
 
             // Initialize the compilation document lines
             compilationDocumentLines = ImmutableList<CodeElementsLine>.Empty.ToBuilder();
@@ -641,13 +641,13 @@ namespace TypeCobol.Compiler
 
                 // Apply text changes to the compilation document
                 bool refreshMissingCopies = true;
-                List<MissingCopy> missingCopies;
+                List<string> missingCopies = null;
                 if (scanAllDocumentLines)
                 {
                     if (tokensDocument != null)
                     {
                         // Process all lines of the document for the first time
-                        PreprocessorStep.ProcessDocument(this, ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), processedTokensDocumentProvider, perfStatsForParserInvocation, out missingCopies);
+                        PreprocessorStep.ProcessDocument(this, ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), _documentImporter, perfStatsForParserInvocation, out missingCopies);
 
                         // Create the first processed tokens document snapshot
                         ProcessedTokensDocumentSnapshot = CreateProcessedTokensDocument(new DocumentVersion<IProcessedTokensLine>(this), (ISearchableReadOnlyList<CodeElementsLine>) tokensDocument.Lines);
@@ -661,7 +661,7 @@ namespace TypeCobol.Compiler
                 else
                 {
                     ImmutableList<CodeElementsLine>.Builder processedTokensDocumentLines = ((ImmutableList<CodeElementsLine>) tokensDocument.Lines).ToBuilder();
-                    IList<DocumentChange<IProcessedTokensLine>> documentChanges = PreprocessorStep.ProcessTokensLinesChanges(this, processedTokensDocumentLines, tokensLineChanges, PrepareDocumentLineForUpdate, processedTokensDocumentProvider, perfStatsForParserInvocation, out missingCopies);
+                    IList<DocumentChange<IProcessedTokensLine>> documentChanges = PreprocessorStep.ProcessTokensLinesChanges(this, processedTokensDocumentLines, tokensLineChanges, PrepareDocumentLineForUpdate, _documentImporter, perfStatsForParserInvocation, out missingCopies);
 
                     // Create a new version of the document to track these changes
                     DocumentVersion<IProcessedTokensLine> currentProcessedTokensLineVersion = previousProcessedTokensDocument.CurrentVersion;
@@ -680,17 +680,17 @@ namespace TypeCobol.Compiler
                 {
                     //Apply automatic replacing of partial-words for direct copy parsing mode
                     return Mode == ParsingMode.CopyAsProgram
-                        ? new AutoReplacePartialWordsTokensDocument(tokensDocument, version, lines, CompilerOptions, missingCopies)
-                        : new ProcessedTokensDocument(tokensDocument, version, lines, CompilerOptions, missingCopies);
+                        ? new AutoReplacePartialWordsTokensDocument(tokensDocument, version, lines, CompilerOptions)
+                        : new ProcessedTokensDocument(tokensDocument, version, lines, CompilerOptions);
                 }
 
                 // Refresh missing copies
                 if (refreshMissingCopies)
                 {
                     MissingCopies.Clear();
-                    foreach (var missingCopy in ProcessedTokensDocumentSnapshot.MissingCopies)
+                    foreach (var missingCopy in missingCopies)
                     {
-                        MissingCopies.Add(missingCopy.FaultyDirective.TextName);
+                        MissingCopies.Add(missingCopy);
                     }
                 }
 

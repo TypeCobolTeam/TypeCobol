@@ -12,14 +12,13 @@ namespace TypeCobol.Compiler.Preprocessor
     /// </summary>
     public class ProcessedTokensDocument : ICompilerStepDocumentSnapshot<ITokensLine, IProcessedTokensLine>
     {
-        public ProcessedTokensDocument(TokensDocument previousStepSnapshot, DocumentVersion<IProcessedTokensLine> processedTokensLinesVersion, ISearchableReadOnlyList<IProcessedTokensLine> processedTokensLines, TypeCobolOptions compilerOptions, List<MissingCopy> missingCopies)
+        public ProcessedTokensDocument(TokensDocument previousStepSnapshot, DocumentVersion<IProcessedTokensLine> processedTokensLinesVersion, ISearchableReadOnlyList<IProcessedTokensLine> processedTokensLines, TypeCobolOptions compilerOptions)
         {
             TextSourceInfo = previousStepSnapshot.TextSourceInfo;
             PreviousStepSnapshot = previousStepSnapshot;
             CurrentVersion = processedTokensLinesVersion;
             Lines = processedTokensLines;
             _compilerOptions = compilerOptions;
-            MissingCopies = missingCopies;
         }
 
         private readonly TypeCobolOptions _compilerOptions;
@@ -43,11 +42,6 @@ namespace TypeCobol.Compiler.Preprocessor
         /// Lines of the source text file viewed as lists of tokens and error messages
         /// </summary>
         public ISearchableReadOnlyList<IProcessedTokensLine> Lines { get; }
-
-        /// <summary>
-        /// List of all missing copies found while processing the document
-        /// </summary>
-        public List<MissingCopy> MissingCopies { get; }
 
         /// <summary>
         /// Iterator over the tokens contained in this document after
