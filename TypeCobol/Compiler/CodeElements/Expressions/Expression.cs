@@ -258,25 +258,35 @@ namespace TypeCobol.Compiler.CodeElements
             NotToken = notToken;
         }
 
-        public bool SemanticEquals(RelationalOperator other)
+        /// <summary>
+        /// Return a RelationalOperatorSymbol which has the semantic value of this object
+        /// </summary>
+        public RelationalOperatorSymbol SemanticOperator
         {
-            // Both with NOT or both without NOT
-            if ((NotToken != null && other.NotToken != null) || (NotToken == null && other.NotToken == null))
+            get
             {
-                return Operator.Value == other.Operator.Value;
+                if (NotToken == null)
+                {
+                    return Operator.Value;
+                }
+                switch (Operator.Value)
+                {
+                    case RelationalOperatorSymbol.EqualTo:
+                        return RelationalOperatorSymbol.NotEqualTo;
+                    case RelationalOperatorSymbol.NotEqualTo:
+                        return RelationalOperatorSymbol.EqualTo;
+                    case RelationalOperatorSymbol.GreaterThan:
+                        return RelationalOperatorSymbol.LessThanOrEqualTo;
+                    case RelationalOperatorSymbol.GreaterThanOrEqualTo:
+                        return RelationalOperatorSymbol.LessThan;
+                    case RelationalOperatorSymbol.LessThan:
+                        return RelationalOperatorSymbol.GreaterThanOrEqualTo;
+                    case RelationalOperatorSymbol.LessThanOrEqualTo:
+                        return RelationalOperatorSymbol.GreaterThan;
+                    default:
+                        throw new NotSupportedException($"Unexpected RelationalOperatorSymbol '{Operator.Value}'.");
+                }
             }
-            // Only one has a NOT so we compare opposite
-            return Operator.Value.Opposite() == other.Operator.Value;
-        }
-
-        public bool SemanticEquals(RelationalOperatorSymbol relationalOperatorSymbol)
-        {
-            if (NotToken == null)
-            {
-                return Operator.Value == relationalOperatorSymbol;
-            }
-            // Operator is negated
-            return Operator.Value.Opposite() == relationalOperatorSymbol;
         }
 
         public bool AcceptASTVisitor(IASTVisitor astVisitor)
@@ -301,46 +311,12 @@ namespace TypeCobol.Compiler.CodeElements
         GreaterThanOrEqualTo,
         LessThan,
         LessThanOrEqualTo,
+        /// <summary>
+        /// This can't be created from a COBOL source, but is useful for comparison of semantic value of symbols
+        /// </summary>
         NotEqualTo
     }
-
-    public static class RelationalOperatorSymbolExtension
-    {
-        /// <summary>
-        /// Returns the opposite of the current sign
-        /// </summary>
-        public static RelationalOperatorSymbol Opposite(this RelationalOperatorSymbol relationalOperatorSymbol)
-        {
-            switch (relationalOperatorSymbol)
-            {
-                case RelationalOperatorSymbol.EqualTo:
-                    return RelationalOperatorSymbol.NotEqualTo;
-                case RelationalOperatorSymbol.NotEqualTo:
-                    return RelationalOperatorSymbol.EqualTo;
-                case RelationalOperatorSymbol.GreaterThan:
-                    return RelationalOperatorSymbol.LessThanOrEqualTo;
-                case RelationalOperatorSymbol.GreaterThanOrEqualTo:
-                    return RelationalOperatorSymbol.LessThan;
-                case RelationalOperatorSymbol.LessThan:
-                    return RelationalOperatorSymbol.GreaterThanOrEqualTo;
-                case RelationalOperatorSymbol.LessThanOrEqualTo:
-                    return RelationalOperatorSymbol.GreaterThan;
-                default:
-                    throw new NotSupportedException($"Unexpected RelationalOperatorSymbol '{relationalOperatorSymbol}'.");
-            }
-        }
-
-        public static bool SemanticEquals(this RelationalOperatorSymbol relationalOperatorSymbol, RelationalOperator relationalOperator)
-        {
-            if (relationalOperator != null)
-            {
-                return relationalOperator.SemanticEquals(relationalOperatorSymbol);
-            }
-
-            return false;
-        }
-    }
-
+    
     /// <summary>
 	/// Sign condition
 	/// The sign condition determines whether the algebraic value of a numeric operand is
