@@ -32,12 +32,12 @@ namespace TypeCobol.Analysis.Test.CustomAnalyzers
 
         public override void StartCobolProgram(ProgramIdentification programIdentification, LibraryCopyCodeElement libraryCopy)
         {
-            AddDiagnostic(new Diagnostic(MessageCode.Info, Diagnostic.Position.Default, $"Analyzer '{Identifier}': starting AST building..."));
+            DiagnosticList.Add(new Diagnostic(MessageCode.Info, Diagnostic.Position.Default, $"Analyzer '{Identifier}': starting AST building..."));
         }
 
         public override void EndCobolProgram(ProgramEnd end)
         {
-            AddDiagnostic(new Diagnostic(MessageCode.Info, Diagnostic.Position.Default, $"Analyzer '{Identifier}': finished AST building."));
+            DiagnosticList.Add(new Diagnostic(MessageCode.Info, Diagnostic.Position.Default, $"Analyzer '{Identifier}': finished AST building."));
         }
     }
 
@@ -77,7 +77,7 @@ namespace TypeCobol.Analysis.Test.CustomAnalyzers
 
         private void AddInfo(string info)
         {
-            AddDiagnostic(new Diagnostic(MessageCode.Info, Diagnostic.Position.Default, $"Analyzer '{Identifier}': {info}"));
+            DiagnosticList.Add(new Diagnostic(MessageCode.Info, Diagnostic.Position.Default, $"Analyzer '{Identifier}': {info}"));
         }
 
         public override void Inspect(ProcessedTokensDocument processedTokensDocument)
