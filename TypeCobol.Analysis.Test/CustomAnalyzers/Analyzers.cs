@@ -123,13 +123,13 @@ namespace TypeCobol.Analysis.Test.CustomAnalyzers
                     Assert.IsTrue(programNode is Program);
                     var programNameToken = ((Program) programNode).CodeElement.ProgramName.NameLiteral.Token;
                     var diagnostic = new Diagnostic(MessageCode.Info, programNameToken.Position(), $"CFG/DFA analysis: control flow graphs contains {controlFlowGraph.AllBlocks.Count} blocks.");
-                    AddDiagnostic(diagnostic);
+                    DiagnosticList.Add(diagnostic);
                 }
             }
             else
             {
                 var diagnostic = new Diagnostic(MessageCode.Info, Diagnostic.Position.Default, "CFG/DFA analysis: no control flow graph found for this file.");
-                AddDiagnostic(diagnostic);
+                DiagnosticList.Add(diagnostic);
             }
         }
     }
