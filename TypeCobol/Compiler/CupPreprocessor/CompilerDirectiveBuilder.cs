@@ -8,6 +8,7 @@ using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CupCommon;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CupPreprocessor
@@ -62,10 +63,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             else
             {
                 Token errorToken = optionToken;
-                Diagnostic diag = new Diagnostic(
-                    MessageCode.InvalidControlCblCompilerStatementOption,
-                    errorToken.Column, errorToken.EndColumn,
-                    errorToken.Line, option);
+                Diagnostic diag = new Diagnostic(MessageCode.InvalidControlCblCompilerStatementOption, errorToken.Position(), option);
                 CompilerDirective.AddDiagnostic(diag);
             }
         }
@@ -143,8 +141,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             copy.Suppress = suppress != null;
             if (suppress != null)
             {
-                Diagnostic error = new Diagnostic(MessageCode.Warning, suppress.Column, suppress.EndColumn,
-                    suppress.Line, "\"COPY SUPPRESS\" should not be used");
+                Diagnostic error = new Diagnostic(MessageCode.Warning, suppress.Position(), "\"COPY SUPPRESS\" should not be used");
                 CompilerDirective.AddDiagnostic(error);
             }
 
@@ -168,9 +165,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
                     {
                         if (!bReported)
                         {
-                            Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, qualifiedTextName.TextName.Column,
-                                qualifiedTextName.TextName.EndColumn,
-                                  qualifiedTextName.TextName.Line, "\"REPLACE\" Empty Comparison Pseudo Text.");
+                            Diagnostic error = new Diagnostic(MessageCode.SyntaxErrorInParser, qualifiedTextName.TextName.Position(), "\"REPLACE\" Empty Comparison Pseudo Text.");
                             CompilerDirective.AddDiagnostic(error);
                             bReported = true;
                         }
@@ -352,10 +347,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             if (insertDirective.SequenceNumber < 0)
             {
                 Token errorToken = sequenceNumber;
-                Diagnostic error = new Diagnostic(
-                    MessageCode.InvalidNumericLiteralFormat,
-                    errorToken.Column, errorToken.EndColumn,
-                    errorToken.Line, "TODO");
+                Diagnostic error = new Diagnostic(MessageCode.InvalidNumericLiteralFormat, errorToken.Position());
                 CompilerDirective.AddDiagnostic(error);//TODO proper diagnostic error
             }
         }

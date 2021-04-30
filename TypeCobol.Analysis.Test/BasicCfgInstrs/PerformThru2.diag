@@ -1,4 +1,4 @@
 --- Diagnostics ---
-Line 6[12,12] <30, Error, Semantics> - Semantic error: PERFORM 'B' THRU 'A': 'A' is declared before 'B'.
-Line 9[12,12] <30, Error, Semantics> - Semantic error: PERFORM 'S2' THRU 'S1': 'S1' is declared before 'S2'.
-Line 11[12,12] <30, Error, Semantics> - Semantic error: PERFORM 'S1' THRU 'A': 'A' is declared before 'S1'.
+Line 6[12,27] <30, Error, Semantics> - Semantic error: PERFORM 'B' THRU 'A': 'A' is declared before 'B'.
+Line 9[12,29] <30, Error, Semantics> - Semantic error: PERFORM 'S2' THRU 'S1': 'S1' is declared before 'S2'.
+Line 11[12,28] <30, Error, Semantics> - Semantic error: PERFORM 'S1' THRU 'A': 'A' is declared before 'S1'.

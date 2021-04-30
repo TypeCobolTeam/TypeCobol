@@ -8,7 +8,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.CupParser.NodeBuilder;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Nodes;
-
+using TypeCobol.Compiler.Parser;
 using SectionNode = TypeCobol.Compiler.Nodes.Section;
 
 namespace TypeCobol.Analysis.Cfg
@@ -1002,10 +1002,7 @@ namespace TypeCobol.Analysis.Cfg
                 if (procedure.Number > throughProcedure.Number)
                 {
                     // the second procedure name is declared before the first one.
-                    Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                        p.CodeElement.Column,
-                        p.CodeElement.Column,
-                        p.CodeElement.Line,
+                    Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser, p.CodeElement.Position(),
                         string.Format(Resource.BadPerformProcedureThru, procedure.Name, throughProcedure.Name));
                     AddDiagnostic(d);
                     return;
@@ -1059,10 +1056,7 @@ namespace TypeCobol.Analysis.Cfg
                                 System.Diagnostics.Debug.Assert(offendingInstruction != null);
                                 System.Diagnostics.Debug.Assert(offendingInstruction.CodeElement != null);
                                 string offendingStatement = offendingInstruction.CodeElement.SourceText;
-                                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                                    p.CodeElement.Column,
-                                    p.CodeElement.Column,
-                                    p.CodeElement.Line,
+                                Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser, p.CodeElement.Position(),
                                     string.Format(Resource.RecursiveBlockOnPerformProcedure, performTarget, offendingStatement));
                                 AddDiagnostic(d);
                             }
@@ -1166,10 +1160,7 @@ namespace TypeCobol.Analysis.Cfg
                     string offendingStatement = offendingInstruction.CodeElement.SourceText;
                     int offendingLine = offendingInstruction.CodeElement.Line;
                     int offendingColumn = offendingInstruction.CodeElement.Column;
-                    Diagnostic d = new Diagnostic(MessageCode.Warning,
-                        p.CodeElement.Column,
-                        p.CodeElement.Column,
-                        p.CodeElement.Line,
+                    Diagnostic d = new Diagnostic(MessageCode.Warning, p.CodeElement.Position(),
                         string.Format(Resource.BasicBlockGroupGoesBeyondTheLimit, offendingStatement, offendingLine, offendingColumn));
                     AddDiagnostic(d);
                 }
@@ -2222,11 +2213,7 @@ namespace TypeCobol.Analysis.Cfg
 
                         if (!targetGotoResolved)
                         {
-                            Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
-                                alter.CodeElement.Column,
-                                alter.CodeElement.Column,
-                                alter.CodeElement.Line,
-                                Resource.BadAlterIntrWithNoSiblingGotoInstr);
+                            Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser, alter.CodeElement.Position(), Resource.BadAlterIntrWithNoSiblingGotoInstr);
                             AddDiagnostic(d);
                         }
                     }
