@@ -130,6 +130,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public bool UseSyntaxColoring { get; set; }
 
+        /// <summary>
+        /// Are we using the CFG view in the client.
+        /// </summary>
+        public bool UseCfgDfaDataRefresh { get; set; }
+
 #if EUROINFO_RULES
         /// <summary>
         /// The Cpy Copy names file
@@ -545,11 +550,17 @@ namespace TypeCobol.LanguageServer
             }
 #endif
             var typeCobolOptions = new TypeCobolOptions(Configuration);
-            //Configure CFG/DFA analyzer + external analyzers if any
+
+            //Configure CFG/DFA analyzer(s) + external analyzers if any
             var compositeAnalyzerProvider = new CompositeAnalyzerProvider();
-            compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(TypeCobolLanguageServer.lspcfgId, Configuration.CfgBuildingMode));
+            compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(Configuration.CfgBuildingMode));
+            if (UseCfgDfaDataRefresh && Configuration.CfgBuildingMode != CfgBuildingMode.Standard)
+            {
+                compositeAnalyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.Standard));
+            }
             System.Diagnostics.Debug.Assert(this._customAnalyzerProviders != null);
-            foreach (var a in this._customAnalyzerProviders) {
+            foreach (var a in this._customAnalyzerProviders)
+            {
                 compositeAnalyzerProvider.AddProvider(a);
             }
 

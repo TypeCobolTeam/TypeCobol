@@ -256,10 +256,24 @@ namespace TypeCobol.Server
             var reports = new Dictionary<string, IReport>();
             if (_configuration.ExecToStep >= ExecutionStep.CrossCheck)
             {
-                //CFG/DFA
-                const string cfgDfaId = "cfg-dfa";
-                analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(cfgDfaId, _configuration.CfgBuildingMode));
+                //All purpose CFG/DFA
+                analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(_configuration.CfgBuildingMode));
 
+                //CFG/DFA for ZCALL report
+                if (!string.IsNullOrEmpty(_configuration.ReportZCallFilePath))
+                {
+                    if (_configuration.CfgBuildingMode != CfgBuildingMode.WithDfa)
+                    {
+                        //Need to create a dedicated CFG builder with DFA activated
+                        analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(CfgBuildingMode.WithDfa));
+                    }
+
+                    string zCallCfgDfaId = CfgDfaAnalyzerFactory.GetIdForMode(CfgBuildingMode.WithDfa);
+                    var report = new TypeCobol.Analysis.Report.ZCallPgmReport(zCallCfgDfaId);
+                    reports.Add(_configuration.ReportZCallFilePath, report);
+                }
+
+                //CopyMoveInitializeReport
                 if (!string.IsNullOrEmpty(_configuration.ReportCopyMoveInitializeFilePath))
                 {
                     analyzerProvider.AddActivator(
@@ -270,14 +284,6 @@ namespace TypeCobol.Server
                             return report;
                         });
 
-                }
-
-                if (!string.IsNullOrEmpty(_configuration.ReportZCallFilePath))
-                {
-                    const string zcrcfgDfaId = "zcr-cfg-dfa";
-                    analyzerProvider.AddActivator((o, t) => CfgDfaAnalyzerFactory.CreateCfgAnalyzer(zcrcfgDfaId, CfgBuildingMode.WithDfa));
-                    var report = new TypeCobol.Analysis.Report.ZCallPgmReport(zcrcfgDfaId);
-                    reports.Add(_configuration.ReportZCallFilePath, report);
                 }
             }
 
