@@ -9,10 +9,10 @@ Line 242[13,46] <37, Warning, General> - Warning: "end-if" is missing
 Line 250[12,37] <37, Warning, General> - Warning: "end-if" is missing
 Line 266[12,43] <37, Warning, General> - Warning: "end-if" is missing
 Line 267[12,42] <37, Warning, General> - Warning: "end-if" is missing
-Line 269[41,41] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM WRITE-LINE', recursive instruction is '                                      PERFORM WRT-LN'.
-Line 269[41,41] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM WRITE-LINE', recursive instruction is '                                      PERFORM WRT-LN 2 TIMES'.
-Line 269[41,41] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM WRITE-LINE', recursive instruction is '                                         PERFORM WRT-LN'.
-Line 269[41,41] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM WRITE-LINE', recursive instruction is '    PERFORM WRT-LN'.
+Line 269[41,66] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM WRITE-LINE', recursive instruction is '                                      PERFORM WRT-LN'.
+Line 269[41,66] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM WRITE-LINE', recursive instruction is '                                      PERFORM WRT-LN 2 TIMES'.
+Line 269[41,66] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM WRITE-LINE', recursive instruction is '                                         PERFORM WRT-LN'.
+Line 269[41,66] <30, Error, Semantics> - Semantic error: A recursive loop has been encountered while analyzing 'PERFORM WRITE-LINE', recursive instruction is '    PERFORM WRT-LN'.
 Line 276[12,43] <37, Warning, General> - Warning: "end-if" is missing
 Line 277[12,38] <37, Warning, General> - Warning: "end-if" is missing
 Line 293[12,16] <37, Warning, General> - Warning: ALTER should not be used
@@ -27,23 +27,23 @@ Line 380[12,16] <37, Warning, General> - Warning: ALTER should not be used
 Line 397[12,16] <37, Warning, General> - Warning: ALTER should not be used
 Line 407[12,40] <37, Warning, General> - Warning: "end-if" is missing
 Line 411[12,16] <37, Warning, General> - Warning: ALTER should not be used
-Line 426[12,12] <37, Warning, General> - Warning: Statement '    GO TO TEST-5A' located at line 597, column 12 prevents this PERFORM statement to reach its exit.
+Line 426[12,39] <37, Warning, General> - Warning: Statement '    GO TO TEST-5A' located at line 597, column 12 prevents this PERFORM statement to reach its exit.
 Line 427[12,33] <37, Warning, General> - Warning: "end-if" is missing
 Line 448[12,16] <37, Warning, General> - Warning: ALTER should not be used
 Line 451[12,33] <37, Warning, General> - Warning: "end-if" is missing
 Line 470[12,16] <37, Warning, General> - Warning: ALTER should not be used
 Line 485[12,16] <37, Warning, General> - Warning: ALTER should not be used
-Line 495[12,12] <37, Warning, General> - Warning: Statement '        GO TO TEST-3-WRITE' located at line 516, column 16 prevents this PERFORM statement to reach its exit.
-Line 495[12,12] <37, Warning, General> - Warning: Statement '    GO TO TEST-3-WRITE' located at line 520, column 12 prevents this PERFORM statement to reach its exit.
+Line 495[12,26] <37, Warning, General> - Warning: Statement '        GO TO TEST-3-WRITE' located at line 516, column 16 prevents this PERFORM statement to reach its exit.
+Line 495[12,26] <37, Warning, General> - Warning: Statement '    GO TO TEST-3-WRITE' located at line 520, column 12 prevents this PERFORM statement to reach its exit.
 Line 496[12,16] <37, Warning, General> - Warning: ALTER should not be used
 Line 497[12,16] <37, Warning, General> - Warning: ALTER should not be used
-Line 498[12,12] <37, Warning, General> - Warning: Statement '        GO TO TEST-3-WRITE' located at line 516, column 16 prevents this PERFORM statement to reach its exit.
-Line 498[12,12] <37, Warning, General> - Warning: Statement '    GO TO TEST-3-WRITE' located at line 520, column 12 prevents this PERFORM statement to reach its exit.
+Line 498[12,42] <37, Warning, General> - Warning: Statement '        GO TO TEST-3-WRITE' located at line 516, column 16 prevents this PERFORM statement to reach its exit.
+Line 498[12,42] <37, Warning, General> - Warning: Statement '    GO TO TEST-3-WRITE' located at line 520, column 12 prevents this PERFORM statement to reach its exit.
 Line 514[12,33] <37, Warning, General> - Warning: "end-if" is missing
 Line 526[12,33] <37, Warning, General> - Warning: "end-if" is missing
 Line 539[12,33] <37, Warning, General> - Warning: "end-if" is missing
-Line 559[12,12] <37, Warning, General> - Warning: Statement '    GO TO SEG-TEST-2' located at line 369, column 12 prevents this PERFORM statement to reach its exit.
-Line 559[12,12] <37, Warning, General> - Warning: Statement '    GO TO SEG-TEST8' located at line 372, column 12 prevents this PERFORM statement to reach its exit.
+Line 559[12,39] <37, Warning, General> - Warning: Statement '    GO TO SEG-TEST-2' located at line 369, column 12 prevents this PERFORM statement to reach its exit.
+Line 559[12,39] <37, Warning, General> - Warning: Statement '    GO TO SEG-TEST8' located at line 372, column 12 prevents this PERFORM statement to reach its exit.
 Line 560[12,33] <37, Warning, General> - Warning: "end-if" is missing
 Line 576[12,16] <37, Warning, General> - Warning: ALTER should not be used
 Line 578[12,33] <37, Warning, General> - Warning: "end-if" is missing

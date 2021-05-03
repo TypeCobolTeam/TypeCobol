@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler.CodeElements;
@@ -20,15 +21,14 @@ namespace TypeCobol.Compiler
     public class CompilationUnit : CompilationDocument
     {
         private readonly IAnalyzerProvider _analyzerProvider;
-        private readonly Dictionary<string, object> _analyzerResults;
 
         /// <summary>
         /// Initializes a new compilation document from a list of text lines.
         /// This method does not scan the inserted text lines to produce tokens.
         /// You must explicitly call UpdateTokensLines() to start an initial scan of the document.
         /// </summary>
-        public CompilationUnit(TextSourceInfo textSourceInfo, ParsingMode mode, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider, MultilineScanState initialScanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, IAnalyzerProvider analyzerProvider) :
-            base(textSourceInfo, mode, initialTextLines, compilerOptions, processedTokensDocumentProvider, initialScanState, copyTextNameVariations)
+        public CompilationUnit(TextSourceInfo textSourceInfo, ParsingMode mode, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IDocumentImporter documentImporter, MultilineScanState initialScanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, IAnalyzerProvider analyzerProvider) :
+            base(textSourceInfo, mode, initialTextLines, compilerOptions, documentImporter, initialScanState, copyTextNameVariations)
         {
             // Initialize performance stats 
             PerfStatsForCodeElementsParser = new PerfStatsForParsingStep(CompilationStep.CodeElementsParser);
@@ -37,7 +37,6 @@ namespace TypeCobol.Compiler
             PerfStatsForCodeQualityCheck = new PerfStatsForCompilationStep(CompilationStep.CodeQualityCheck);
 
             _analyzerProvider = analyzerProvider;
-            _analyzerResults = new Dictionary<string, object>();
         }
 
         /// <summary>
@@ -158,28 +157,6 @@ namespace TypeCobol.Compiler
         }
 
         /// <summary>
-        /// Attempt to retrieve the result for specific analyzer identified by its id.
-        /// </summary>
-        /// <typeparam name="TResult">Desired type of result.</typeparam>
-        /// <param name="analyzerIdentifier">Unique string identifier of the analyzer.</param>
-        /// <param name="result">The result of the analyzer if found, default(TResult) otherwise.</param>
-        /// <returns>True if the result has been found, False otherwise.</returns>
-        public bool TryGetAnalyzerResult<TResult>(string analyzerIdentifier, out TResult result)
-        {
-            lock (lockObjectForAnalyzerResults)
-            {
-                if (_analyzerResults.TryGetValue(analyzerIdentifier, out var untypedResult) && untypedResult is TResult typedResult)
-                {
-                    result = typedResult;
-                    return true;
-                }
-
-                result = default;
-                return false;
-            }
-        }
-
-        /// <summary>
         /// Creates a new snapshot of the document viewed as complete Cobol Program or Class.
         /// Thread-safe : this method can be called from any thread.
         /// </summary>
@@ -268,21 +245,12 @@ namespace TypeCobol.Compiler
                         out typedVariablesOutsideTypedef,
                         out typeThatNeedTypeLinking);
 
+                    //Capture the syntax-driven analyzers results
+                    var results = customAnalyzers?.ToDictionary(a => a.Identifier, a => a.GetResult()) ?? new Dictionary<string, object>();
+
                     // Capture the produced results
                     TemporaryProgramClassDocumentSnapshot = new TemporarySemanticDocument(codeElementsDocument, new DocumentVersion<ICodeElementsLine>(this), codeElementsDocument.Lines,  root, newDiagnostics, nodeCodeElementLinkers,
-                        typedVariablesOutsideTypedef, typeThatNeedTypeLinking);
-
-                    //Capture the syntax-driven analyzers results, the diagnostics are already collected
-                    if (customAnalyzers != null)
-                    {
-                        lock (lockObjectForAnalyzerResults)
-                        {
-                            foreach (var customAnalyzer in customAnalyzers)
-                            {
-                                _analyzerResults[customAnalyzer.Identifier] = customAnalyzer.GetResult();
-                            }
-                        }
-                    }
+                        typedVariablesOutsideTypedef, typeThatNeedTypeLinking, results);
 
                     //Direct copy parsing : remove redundant root 01 level if any.
                     if (Mode == ParsingMode.CopyAsProgram)
@@ -317,6 +285,7 @@ namespace TypeCobol.Compiler
                     PerfStatsForCodeQualityCheck.OnStartRefresh();
 
                     List<Diagnostic> diagnostics = new List<Diagnostic>();
+                    Dictionary<string, object> results = new Dictionary<string, object>();
                     var analyzers = _analyzerProvider?.CreateQualityAnalyzers(CompilerOptions);
                     if (analyzers != null)
                     {
@@ -326,7 +295,7 @@ namespace TypeCobol.Compiler
                         var processedTokensDocument = (ProcessedTokensDocument) codeElementsDocument.PreviousStepSnapshot;
                         var tokensDocument = (TokensDocument) processedTokensDocument.PreviousStepSnapshot;
 
-                        //Launch code analysis and gather quality rules violations
+                        //Launch code analysis, gather quality rules violations and analyzer additional results
                         foreach (var analyzer in analyzers)
                         {
                             try
@@ -337,38 +306,18 @@ namespace TypeCobol.Compiler
                                 analyzer.Inspect(temporarySemanticDocument);
                                 analyzer.Inspect(programClassDocument);
                                 diagnostics.AddRange(analyzer.Diagnostics);
+                                results[analyzer.Identifier] = analyzer.GetResult();
                             }
                             catch (Exception exception)
                             {
-                                ReportAnalyzerException(analyzer.Identifier, exception);
+                                var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, Diagnostic.Position.Default, analyzer, exception.Message, exception);
+                                diagnostics.Add(diagnostic);
                             }
-                        }
-
-                        //Store analyzer results (if any)
-                        lock (lockObjectForAnalyzerResults)
-                        {
-                            foreach (var analyzer in analyzers)
-                            {
-                                try
-                                {
-                                    _analyzerResults[analyzer.Identifier] = analyzer.GetResult();
-                                }
-                                catch (Exception exception)
-                                {
-                                    ReportAnalyzerException(analyzer.Identifier, exception);
-                                }
-                            }
-                        }
-
-                        void ReportAnalyzerException(string analyzer, Exception exception)
-                        {
-                            var diagnostic = new Diagnostic(MessageCode.AnalyzerFailure, 0, 0, 0, analyzer, exception.Message, exception);
-                            diagnostics.Add(diagnostic);
                         }
                     }
 
                     //Create updated snapshot
-                    CodeAnalysisDocumentSnapshot = new InspectedProgramClassDocument(programClassDocument, diagnostics);
+                    CodeAnalysisDocumentSnapshot = new InspectedProgramClassDocument(programClassDocument, diagnostics, results);
 
                     PerfStatsForCodeQualityCheck.OnStopRefresh();
                 }
@@ -516,7 +465,6 @@ namespace TypeCobol.Compiler
         protected readonly object lockObjectForCodeElementsDocumentSnapshot = new object();
         protected readonly object lockObjectForTemporarySemanticDocument = new object();
         protected readonly object lockObjectForProgramClassDocumentSnapshot = new object();
-        protected readonly object lockObjectForAnalyzerResults = new object();
         protected readonly object lockObjectForCodeAnalysisDocumentSnapshot = new object();
 
         #endregion

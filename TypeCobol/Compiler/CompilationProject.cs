@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using JetBrains.Annotations;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
@@ -14,7 +13,7 @@ namespace TypeCobol.Compiler
     /// <summary>
     /// Collection of linked Cobol files grouped to be compiled together
     /// </summary>
-    public class CompilationProject : IProcessedTokensDocumentProvider
+    public class CompilationProject : IDocumentImporter
     {
         // -- Project creation and persistence --
 
@@ -179,9 +178,9 @@ namespace TypeCobol.Compiler
         }
 
         /// <summary>
-        /// Returns a ProcessedTokensDocument already in cache or loads, scans and processes a new CompilationDocument
+        /// Returns a CompilationDocument already in cache or loads, scans and processes a new CompilationDocument
         /// </summary>
-        public virtual ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, string textName,
+        public virtual CompilationDocument Import(string libraryName, string textName,
             MultilineScanState scanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, out PerfStatsForImportedDocument perfStats)
         {
             string cacheKey = (libraryName == null ? SourceFileProvider.DEFAULT_LIBRARY_NAME : libraryName.ToUpper()) + "." + textName.ToUpper();
@@ -216,7 +215,8 @@ namespace TypeCobol.Compiler
 
                 importedCompilationDocumentsCache[cacheKey] = resultDocument;
             }
-            return resultDocument.ProcessedTokensDocumentSnapshot;
+
+            return resultDocument;
         }
     }
 }

@@ -18,10 +18,12 @@ namespace TypeCobol.Analysis
 
         public string RuleId => Info.ReferenceText;
 
-        public Violation(string ruleId, Severity severity, int lineNumber, int columnStart, int columnEnd, string message)
-            : base(ToDiagnosticMessage(severity, message, ruleId), columnStart, columnEnd, lineNumber)
+        public Violation(string ruleId, Severity severity, Position position, string message)
+            : base(ToDiagnosticMessage(severity, message, ruleId), position)
         {
 
         }
+
+        //Violation does not define any new data, so no need for Duplicate() overload and copy constructor.
     }
 }

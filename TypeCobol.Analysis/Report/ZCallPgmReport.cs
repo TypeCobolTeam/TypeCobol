@@ -296,13 +296,13 @@ namespace TypeCobol.Analysis.Report
         public void Report(TextWriter writer, CompilationUnit unit = null)
         {
             //override graphs with results from analyzer
-            if (unit != null
-                &&
-                _analyzerId != null
-                &&
-                unit.TryGetAnalyzerResult(_analyzerId, out IList<ControlFlowGraph<Node, DfaBasicBlockInfo<VariableSymbol>>> cfgs))
+            if (_analyzerId != null)
             {
-                _allCfgs = cfgs;
+                var analyzerResults = unit?.TemporaryProgramClassDocumentSnapshot?.AnalyzerResults;
+                if (analyzerResults != null && analyzerResults.TryGetResult(_analyzerId, out IList<ControlFlowGraph<Node, DfaBasicBlockInfo<VariableSymbol>>> cfgs))
+                {
+                    _allCfgs = cfgs;
+                }
             }
 
             if (_allCfgs != null)
