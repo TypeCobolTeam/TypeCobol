@@ -366,7 +366,7 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class AlterStatementChecker 
+    class AlterStatementChecker
     {
         public static void OnCodeElement(AlterStatement statement, CodeElementsParser.AlterStatementContext context)
         {

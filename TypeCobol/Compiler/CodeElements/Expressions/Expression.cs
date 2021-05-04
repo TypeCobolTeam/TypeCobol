@@ -16,17 +16,22 @@ namespace TypeCobol.Compiler.CodeElements
 		public ExpressionNodeType NodeType { get; private set; }
 
         /// <summary>
-        /// Returns the characteristic element of a node
-        /// For a operation or relation, this would be the operator
-        /// For a leaf, this would be the name of the variable, ...
+        /// Returns true if the the characteristic element of the nodes are equivalent
+        /// For a operation or relation, the element would be the operator
+        /// For a leaf, it would be the name of the variable, ...
         /// </summary>
-        public abstract object NodeData { get; }
+        public bool EquivalentOperator(Expression other)
+        {
+            return NodeType == other.NodeType && IsEquivalentOperator(other);
+        }
+
+        protected abstract bool IsEquivalentOperator(Expression other);
 
         /// <summary>
         /// Returns the children of an expression
         /// </summary>
         /// <returns>The children of the expression, ordered as left then right, each can be null if there is no child</returns>
-        public abstract (Expression, Expression) GetChildren();
+        public abstract (Expression, Expression) GetOperands();
 
         public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
@@ -80,9 +85,13 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public ConditionalExpression RightOperand  { get; private set; }
 
-        public override object NodeData => Operator;
+        protected override bool IsEquivalentOperator(Expression other)
+        {
+            var otherLogicalOperation = (LogicalOperation)other;
+            return Operator.Value == otherLogicalOperation.Operator.Value;
+        }
 
-        public override (Expression, Expression) GetChildren()
+        public override (Expression, Expression) GetOperands()
         {
             return (LeftOperand, RightOperand);
         }
@@ -142,9 +151,16 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public SyntaxProperty<bool> InvertResult { get; private set; }
 
-        public override object NodeData => new object[] { DataItem, CharacterClassNameReference, DataItemContentType, InvertResult };
+        protected override bool IsEquivalentOperator(Expression other)
+        {
+            var otherClassCondition = (ClassCondition) other;
+            return DataItem.SymbolReference?.Name == otherClassCondition.DataItem.SymbolReference?.Name
+                   && CharacterClassNameReference.Name == otherClassCondition.CharacterClassNameReference.Name
+                   && DataItemContentType.Value == otherClassCondition.DataItemContentType.Value
+                   && InvertResult.Value == otherClassCondition.InvertResult.Value;
+        }
 
-        public override (Expression, Expression) GetChildren()
+        public override (Expression, Expression) GetOperands()
         {
             return (null, null);
         }
@@ -186,9 +202,13 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public DataOrConditionStorageArea ConditionReference { get; private set; }
 
-        public override object NodeData => ConditionReference;
+        protected override bool IsEquivalentOperator(Expression other)
+        {
+            var otherConditionNameConditionOrSwitchStatusCondition = (ConditionNameConditionOrSwitchStatusCondition) other;
+            return ConditionReference.ToString() == otherConditionNameConditionOrSwitchStatusCondition.ConditionReference.ToString();
+        }
 
-        public override (Expression, Expression) GetChildren()
+        public override (Expression, Expression) GetOperands()
         {
             return (null, null);
         }
@@ -224,9 +244,13 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public ConditionOperand RightOperand { get; private set; }
 
-        public override object NodeData => Operator;
+        protected override bool IsEquivalentOperator(Expression other)
+        {
+            var otherRelationCondition = (RelationCondition) other;
+            return Operator.SemanticOperator == otherRelationCondition.Operator.SemanticOperator;
+        }
 
-        public override (Expression, Expression) GetChildren()
+        public override (Expression, Expression) GetOperands()
         {
             return (LeftOperand, RightOperand);
         }
@@ -273,8 +297,6 @@ namespace TypeCobol.Compiler.CodeElements
                 {
                     case RelationalOperatorSymbol.EqualTo:
                         return RelationalOperatorSymbol.NotEqualTo;
-                    case RelationalOperatorSymbol.NotEqualTo:
-                        return RelationalOperatorSymbol.EqualTo;
                     case RelationalOperatorSymbol.GreaterThan:
                         return RelationalOperatorSymbol.LessThanOrEqualTo;
                     case RelationalOperatorSymbol.GreaterThanOrEqualTo:
@@ -336,10 +358,15 @@ namespace TypeCobol.Compiler.CodeElements
 		public SyntaxProperty<SignComparison> SignComparison { get; private set; }
 
 		public SyntaxProperty<bool> InvertResult { get; private set; }
+        
+        protected override bool IsEquivalentOperator(Expression other)
+        {
+            var otherSignCondition = (SignCondition) other;
+            return SignComparison.Value == otherSignCondition.SignComparison.Value
+                   && InvertResult.Value == otherSignCondition.InvertResult.Value;
+        }
 
-        public override object NodeData => new object[] { Operand, SignComparison, InvertResult};
-
-        public override (Expression, Expression) GetChildren()
+        public override (Expression, Expression) GetOperands()
         {
             return (Operand, null);
         }
@@ -408,10 +435,15 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public Token SelfObjectIdentifier { get; private set; }
 
-        // Constructors allow only one to be not null
-        public override object NodeData => ArithmeticExpression ?? Variable ?? NullPointerValue ?? (object) SelfObjectIdentifier;
+        protected override bool IsEquivalentOperator(Expression other)
+        {
+            var otherConditionOperand = (ConditionOperand) other;
+            return Variable?.ToString() == otherConditionOperand.Variable?.ToString()
+                   && NullPointerValue?.Value == otherConditionOperand.NullPointerValue?.Value
+                   && SelfObjectIdentifier?.Text == otherConditionOperand.SelfObjectIdentifier?.Text;
+        }
 
-        public override (Expression, Expression) GetChildren()
+        public override (Expression, Expression) GetOperands()
         {
             // The only expression possible is ArithmeticExpression, which can be null
             return (ArithmeticExpression, null);
@@ -482,10 +514,14 @@ namespace TypeCobol.Compiler.CodeElements
 		public ArithmeticExpression LeftOperand { get; private set; }
 		public SyntaxProperty<ArithmeticOperator> Operator { get; private set; }
 		public ArithmeticExpression RightOperand { get; private set; }
+        
+        protected override bool IsEquivalentOperator(Expression other)
+        {
+            var otherArithmeticOperation = (ArithmeticOperation) other;
+            return Operator.Value == otherArithmeticOperation.Operator.Value;
+        }
 
-        public override object NodeData => Operator;
-
-        public override (Expression, Expression) GetChildren()
+        public override (Expression, Expression) GetOperands()
         {
             return (LeftOperand, RightOperand);
         }
@@ -524,10 +560,14 @@ namespace TypeCobol.Compiler.CodeElements
 		public IntegerVariable IntegerVariable { get; private set; }
 		public NumericVariable NumericVariable { get; private set; }
 
-        // Constructors allow only one to be not null
-        public override object NodeData => IntegerVariable ?? (object) NumericVariable;
+        protected override bool IsEquivalentOperator(Expression other)
+        {
+            var otherNumericVariableOperand = (NumericVariableOperand) other;
+            return IntegerVariable?.ToString() == otherNumericVariableOperand.IntegerVariable?.ToString()
+                   && NumericVariable?.ToString() == otherNumericVariableOperand.NumericVariable?.ToString();
+        }
 
-        public override (Expression, Expression) GetChildren()
+        public override (Expression, Expression) GetOperands()
         {
             return (null, null);
         }
