@@ -236,7 +236,7 @@ namespace TypeCobol.LanguageServer
             if (potentialVariablesForCompletion == null) return completionItems;
 
             foreach (var potentialVariable in potentialVariablesForCompletion.Where(v => v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)).Distinct())
-                SearchVariableInTypesAndLevels(node, potentialVariable, ref completionItems); //Add potential variables to completionItems*           
+                SearchVariableInTypesAndLevels(node, potentialVariable, completionItems); //Add potential variables to completionItems*           
 
             CompletionFactoryHelpers.Case textCase = CompletionFactoryHelpers.GetTextCase(codeElement.ConsumedTokens.First(t => t.TokenType == TokenType.CALL).Text);
             Dictionary<ParameterDescription.PassingTypes, string> paramWithCase = CompletionFactoryHelpers.GetParamsWithCase(textCase);
@@ -642,7 +642,7 @@ namespace TypeCobol.LanguageServer
 
             foreach (var potentialVariable in potentialVariables) //Those variables could be inside a typedef or a level, we need to check to rebuild the qualified name correctly.
             {
-                SearchVariableInTypesAndLevels(node, potentialVariable, ref completionItems);
+                SearchVariableInTypesAndLevels(node, potentialVariable, completionItems);
             }
 
             if (qualifiedNameTokens.Any())
@@ -799,10 +799,10 @@ namespace TypeCobol.LanguageServer
             return null;
         }
 
-        private static void SearchVariableInTypesAndLevels(Node node, DataDefinition variable, ref List<CompletionItem> completionItems)
+        private static void SearchVariableInTypesAndLevels(Node node, DataDefinition variable, List<CompletionItem> completionItems)
         {
             var symbolTable = node.SymbolTable;
-            if (!variable.IsPartOfATypeDef)  //Variable is not comming from a type. 
+            if (!variable.IsPartOfATypeDef)  //Variable is not coming from a type. 
             {
                 if (symbolTable.GetVariablesExplicit(new URI(variable.Name)).Any())   //Check if this variable is present locally. 
                 {
@@ -811,35 +811,33 @@ namespace TypeCobol.LanguageServer
             }
             else
             {
-                if (symbolTable.TypesReferences != null) //We are in a typedef, get references of this type
+                var type = variable.ParentTypeDefinition;
+                var typesReferences = symbolTable.TypesReferences;
+                if (type != null && typesReferences != null && typesReferences.TryGetValue(type, out var references)) //We are in a typedef, get references of this type
                 {
-                    var type = variable.ParentTypeDefinition;
-                    IEnumerable<DataDefinition> references = null;
-                    references = symbolTable.TypesReferences.Where(t => t.Key == type).SelectMany(r => r.Value);
-
                     foreach (var reference in references)
                     {
                         if (symbolTable.GetVariablesExplicit(new URI(reference.Name)).Any())  //Check if this variable is present locally. If not just ignore it
                         {
-                            if (reference.ParentTypeDefinition == null) //Check if the variable is inside a typedef or not, if not it's a final varaible
+                            if (reference.ParentTypeDefinition == null) //Check if the variable is inside a typedef or not, if not it's a final variable
                             {
-                                var referenceArrangedQualifiedName = string.Join("::", reference.VisualQualifiedName.ToString().Split(reference.VisualQualifiedName.Separator).Skip(1)); //Skip Program Name
-                                var finalQualifiedName = string.Format("{0}::{1}", referenceArrangedQualifiedName, variable.VisualQualifiedName.Head);
-                                var variableDisplay = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, finalQualifiedName);
+                                var referenceArrangedQualifiedName = string.Join("::", reference.VisualQualifiedNameWithoutProgram);
+                                var finalQualifiedName = $"{referenceArrangedQualifiedName}::{variable.VisualQualifiedName.Head}";
+                                var variableDisplay = $"{variable.Name} ({variable.DataType.Name}) ({finalQualifiedName})";
                                 completionItems.Add(new CompletionItem(variableDisplay) { insertText = finalQualifiedName, kind = CompletionItemKind.Variable });
                             }
-                            else //If the reference is always in a typedef, let's loop and ride up until we are in a final variable
+                            else //If the reference is still in a typedef, let's loop and ride up until we are in a final variable
                             {
-                                var tempCompletionItems = new List<CompletionItem>();
-                                SearchVariableInTypesAndLevels(node, reference, ref tempCompletionItems);
+                                var completionItemsForReference = new List<CompletionItem>();
+                                SearchVariableInTypesAndLevels(node, reference, completionItemsForReference);
 
-                                if (tempCompletionItems.Count > 0)
+                                if (completionItemsForReference.Count > 0)
                                 {
-                                    foreach (var tempComp in tempCompletionItems)
+                                    foreach (var completionItem in completionItemsForReference)
                                     {
-                                        tempComp.insertText += "::" + variable.VisualQualifiedName.Head;
-                                        tempComp.label = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, tempComp.insertText);
-                                        completionItems.Add(tempComp);
+                                        completionItem.insertText += $"::{variable.VisualQualifiedName.Head}";
+                                        completionItem.label = $"{variable.Name} ({variable.DataType.Name}) ({completionItem.insertText})";
+                                        completionItems.Add(completionItem);
                                     }
                                 }
                             }
