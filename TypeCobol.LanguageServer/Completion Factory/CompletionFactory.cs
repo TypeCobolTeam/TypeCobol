@@ -9,6 +9,7 @@ using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.LanguageServer.VsCodeProtocol;
@@ -236,7 +237,7 @@ namespace TypeCobol.LanguageServer
             if (potentialVariablesForCompletion == null) return completionItems;
 
             foreach (var potentialVariable in potentialVariablesForCompletion.Where(v => v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)).Distinct())
-                SearchVariableInTypesAndLevels(node, potentialVariable, completionItems); //Add potential variables to completionItems*           
+                SearchVariableInTypesAndLevels(node, potentialVariable, fileCompiler.CompilerOptions, completionItems); //Add potential variables to completionItems*           
 
             CompletionFactoryHelpers.Case textCase = CompletionFactoryHelpers.GetTextCase(codeElement.ConsumedTokens.First(t => t.TokenType == TokenType.CALL).Text);
             Dictionary<ParameterDescription.PassingTypes, string> paramWithCase = CompletionFactoryHelpers.GetParamsWithCase(textCase);
@@ -446,7 +447,7 @@ namespace TypeCobol.LanguageServer
                         completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(
                             computedChildrenList.Where(
                                     c => c.Name != null && c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
-                                .Select(child => child as DataDefinition), false));
+                                .Select(child => child as DataDefinition), fileCompiler.CompilerOptions, false));
                     }
                 }
                 else
@@ -475,7 +476,7 @@ namespace TypeCobol.LanguageServer
                     completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(
                         children.Where(
                                 c => c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
-                            .Select(child => child as DataDefinition), false));
+                            .Select(child => child as DataDefinition), fileCompiler.CompilerOptions, false));
                 }
 
                 if (firstSignificantToken != null)
@@ -540,7 +541,7 @@ namespace TypeCobol.LanguageServer
                 return completionItems;
 
             var variables = node.SymbolTable.GetVariables(predicate, SymbolTable.Scope.Program);
-            completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(variables));
+            completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(variables, fileCompiler.CompilerOptions));
 
             return completionItems;
         }
@@ -663,7 +664,7 @@ namespace TypeCobol.LanguageServer
             foreach (var potentialVariable in potentialVariables) //Those variables could be inside a typedef or a level, we need to check to rebuild the qualified name correctly.
             {
                 if (potentialVariable.VisualQualifiedNameWithoutProgram.SequenceEqual(qualifiedNameParts)) continue;
-                SearchVariableInTypesAndLevels(node, potentialVariable, completionItems);
+                SearchVariableInTypesAndLevels(node, potentialVariable, fileCompiler.CompilerOptions, completionItems);
             }
 
             return completionItems.Where(c => c.insertText.IndexOf(userFilterText, StringComparison.InvariantCultureIgnoreCase) >= 0);
@@ -702,12 +703,12 @@ namespace TypeCobol.LanguageServer
                 case TokenType.ADDRESS:
                 {
                     var contextToken = tokensUntilCursor.Skip(2).FirstOrDefault(); //Try to get the token that may define the completion context
-                    completionItems = GetCompletionForAddressOf(node, contextToken, userFilterText);
+                    completionItems = GetCompletionForAddressOf(node, contextToken, userFilterText, fileCompiler.CompilerOptions);
                     break;
                 }
                 case TokenType.UserDefinedWord:
                 {
-                    completionItems = GetCompletionForOfParent(node, tokenBeforeOf, userFilterText);
+                    completionItems = GetCompletionForOfParent(node, tokenBeforeOf, userFilterText, fileCompiler.CompilerOptions);
                     break;
                 }
             }
@@ -723,7 +724,8 @@ namespace TypeCobol.LanguageServer
         /// <param name="node">Node found on cursor position</param>
         /// <param name="contextToken">ContextToken to select if it's a SET or something else</param>
         /// <param name="userFilterText">Variable Name Filter</param>
-        public static IEnumerable<CompletionItem> GetCompletionForAddressOf(Node node, Token contextToken, string userFilterText)
+        /// <param name="options">Current TypeCobolOptions</param>
+        public static IEnumerable<CompletionItem> GetCompletionForAddressOf(Node node, Token contextToken, string userFilterText, TypeCobolOptions options)
         {
             IEnumerable<DataDefinition> potentialVariable = null;
             if (node == null)
@@ -751,12 +753,11 @@ namespace TypeCobol.LanguageServer
                         SymbolTable.Scope.Program);
             }
 
-            return CompletionFactoryHelpers.CreateCompletionItemsForVariables(potentialVariable);
+            return CompletionFactoryHelpers.CreateCompletionItemsForVariables(potentialVariable, options);
         }
 
 
-        public static IEnumerable<CompletionItem> GetCompletionForOfParent(Node node, Token variableNameToken,
-            string userFilterText)
+        public static IEnumerable<CompletionItem> GetCompletionForOfParent(Node node, Token variableNameToken, string userFilterText, TypeCobolOptions options)
         {
             var completionItems = new List<CompletionItem>();
             if (node == null)
@@ -772,7 +773,7 @@ namespace TypeCobol.LanguageServer
             var currentParent = currentVariable.Parent as DataDefinition;
             if (currentParent != null)
             {
-                completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForVariable(currentParent));
+                completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForVariable(currentParent, options));
             }
             return completionItems;
         }
@@ -815,14 +816,14 @@ namespace TypeCobol.LanguageServer
             return null;
         }
 
-        private static void SearchVariableInTypesAndLevels(Node node, DataDefinition variable, List<CompletionItem> completionItems)
+        private static void SearchVariableInTypesAndLevels(Node node, DataDefinition variable, TypeCobolOptions options, List<CompletionItem> completionItems)
         {
             var symbolTable = node.SymbolTable;
             if (!variable.IsPartOfATypeDef)  //Variable is not coming from a type. 
             {
                 if (symbolTable.GetVariablesExplicit(new URI(variable.Name)).Any())   //Check if this variable is present locally. 
                 {
-                    completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForVariable(variable));
+                    completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForVariable(variable, options));
                 }
             }
             else
@@ -845,7 +846,7 @@ namespace TypeCobol.LanguageServer
                             else //If the reference is still in a typedef, let's loop and ride up until we are in a final variable
                             {
                                 var completionItemsForReference = new List<CompletionItem>();
-                                SearchVariableInTypesAndLevels(node, reference, completionItemsForReference);
+                                SearchVariableInTypesAndLevels(node, reference, options, completionItemsForReference);
 
                                 if (completionItemsForReference.Count > 0)
                                 {

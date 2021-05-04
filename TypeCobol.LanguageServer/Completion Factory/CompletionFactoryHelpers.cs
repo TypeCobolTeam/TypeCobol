@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.LanguageServer.SignatureHelper;
@@ -186,21 +187,13 @@ namespace TypeCobol.LanguageServer
             return completionItems;
         }
 
-        public static IEnumerable<CompletionItem> CreateCompletionItemsForVariables(IEnumerable<DataDefinition> variables, bool useQualifiedName = true)
+        public static IEnumerable<CompletionItem> CreateCompletionItemsForVariables(IEnumerable<DataDefinition> variables, TypeCobolOptions options, bool useQualifiedName = true)
         {
-            var completionItems = new List<CompletionItem>();
-
-            foreach (var variable in variables)
-            {
-                completionItems.Add(CreateCompletionItemForVariable(variable, useQualifiedName));
-            }
-
-            return completionItems;
+            return variables.Select(variable => CreateCompletionItemForVariable(variable, options, useQualifiedName)).ToList();
         }
 
-        public static CompletionItem CreateCompletionItemForVariable(DataDefinition variable, bool useQualifiedName = true)
+        public static CompletionItem CreateCompletionItemForVariable(DataDefinition variable, TypeCobolOptions options, bool useQualifiedName = true)
         {
-
             var qualifiedName = variable.VisualQualifiedName.Skip(variable.VisualQualifiedName.Count > 1 ? 1 : 0); //Skip Program Name
 
             var finalQualifiedName = qualifiedName.ToList();
