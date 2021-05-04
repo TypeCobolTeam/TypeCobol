@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
@@ -14,12 +13,11 @@ using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 using TypeCobol.LanguageServer.VsCodeProtocol;
-using TypeCobol.LanguageServices.Editor;
-using TokenType = TypeCobol.Compiler.Scanner.TokenType;
+using TypeCobol.Analysis;
 using TypeCobol.Analysis.Graph;
-using TypeCobol.Compiler.Nodes;
 using TypeCobol.LanguageServer.Context;
-using System.IO;
+
+using TokenType = TypeCobol.Compiler.Scanner.TokenType;
 
 namespace TypeCobol.LanguageServer
 {
@@ -283,11 +281,6 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// LSR Cfg Analyzer ID.
-        /// </summary>
-        internal const string lspcfgId = "lsp-cfg";
-
-        /// <summary>
         /// Method to update CFG/DFA information.
         /// </summary>
         /// <param name="fileCompiler">The underlying File Compiler</param>
@@ -296,9 +289,10 @@ namespace TypeCobol.LanguageServer
         /// <returns>CFG/DFA Data information</returns>
         public CfgDfaParams UpdateCfgDfaInformation(DocumentContext docContext, bool writeToFile)
         {
-            CfgDfaParams result = null;
-            docContext.FileCompiler.CompilationResultsForProgram.TryGetAnalyzerResult(lspcfgId, out IList<ControlFlowGraph<Node, object>> cfgs);
-            if (cfgs != null && cfgs.Count > 0)
+            CfgDfaParams result;
+            var analyzerResults = docContext.FileCompiler.CompilationResultsForProgram.TemporaryProgramClassDocumentSnapshot?.AnalyzerResults;
+            string analyzerIdentifier = CfgDfaAnalyzerFactory.GetIdForMode(CfgBuildingMode.Standard);
+            if (analyzerResults != null && analyzerResults.TryGetResult(analyzerIdentifier, out IList<ControlFlowGraph<Node, object>> cfgs) && cfgs.Count > 0)
             {                
                 //Create a temporary dot file.
                 string tempFile = Path.GetTempFileName();

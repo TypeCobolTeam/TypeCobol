@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using JetBrains.Annotations;
+using TypeCobol.Analysis;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
@@ -16,7 +16,8 @@ namespace TypeCobol.Compiler.Parser
             ISearchableReadOnlyList<ICodeElementsLine> codeElementsLines, SourceFile root, [NotNull] List<Diagnostic> diagnostics, 
             Dictionary<CodeElement, Node> nodeCodeElementLinkers, 
             List<DataDefinition> typedVariablesOutsideTypedef, 
-            List<TypeDefinition> typeThatNeedTypeLinking)
+            List<TypeDefinition> typeThatNeedTypeLinking,
+            [NotNull] Dictionary<string, object> analyzerResults)
         {
             PreviousStepSnapshot = previousSnapShot;
             Root = root;
@@ -27,12 +28,15 @@ namespace TypeCobol.Compiler.Parser
             Lines = codeElementsLines;
             TypedVariablesOutsideTypedef = typedVariablesOutsideTypedef;
             TypeThatNeedTypeLinking = typeThatNeedTypeLinking;
+            AnalyzerResults = new AnalyzerResults(analyzerResults);
         }
 
         public TextSourceInfo TextSourceInfo { get; set; }
         public SourceFile Root { get; private set; }
         public Dictionary<CodeElement, Node> NodeCodeElementLinkers { get; private set; }
 
+        [NotNull]
+        public AnalyzerResults AnalyzerResults { get; }
 
         [NotNull] [ItemNotNull]
         public List<DataDefinition> TypedVariablesOutsideTypedef { get; }

@@ -1,6 +1,6 @@
 --- Diagnostics ---
-Line 6[15,27] <27, Error, Syntax> - Error in copy 'YMECOPY' at line 2 : Syntax error : no viable alternative at input '05 ... :MECOPY:-DATA' RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[15,27::MECOPY:-DATA]<PartialCobolWord> in COPY YMECOPY
-Line 6[44,44] <27, Error, Syntax> - Syntax error : extraneous input '.' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader} OffendingSymbol=[[SentenceEnd]] [44,44+:.]<PeriodSeparator> --> [44,44+:.]<PeriodSeparator>
+Line 6[8,20] <27, Error, Syntax> - Error in copy 'YMECOPY' at line 2 : Syntax error : no viable alternative at input '05 ... :MECOPY:-DATA' RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[15,27::MECOPY:-DATA]<PartialCobolWord> in COPY YMECOPY
+Line 6[8,20] <27, Error, Syntax> - Error in copy 'YMECOPY' at line 2 : Syntax error : extraneous input '.' expecting {ProgramIdentification, ProgramEnd, ClassIdentification, ClassEnd, FactoryEnd, ObjectIdentification, ObjectEnd, MethodEnd, ProcedureDivisionHeader, WorkingStorageSectionHeader, LocalStorageSectionHeader, LinkageSectionHeader, FileDescriptionEntry, DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry, ExecStatement, FunctionDeclarationEnd, GlobalStorageSectionHeader} OffendingSymbol=[[SentenceEnd]] [44,44+:.]<PeriodSeparator> --> [44,44+:.]<PeriodSeparator>
 
 
 --- Program ---

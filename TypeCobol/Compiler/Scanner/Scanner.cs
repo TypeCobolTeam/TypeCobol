@@ -116,7 +116,7 @@ namespace TypeCobol.Compiler.Scanner
                 else
                 {
                     if (tokensLine.ScannerDiagnostics.Count > 0)
-                        tokensLine.RemoveDiagnostics();
+                        tokensLine.ClearAllDiagnostics();
                 }
 
             }
@@ -504,11 +504,7 @@ namespace TypeCobol.Compiler.Scanner
 
                         token.CorrectTokensLine(originalLine, startIndexInOriginalLine, stopIndexInOriginalLine);
                         originalLine.AddToken(token);
-
-                        foreach (Diagnostic diag in virtualContinuationTokensLine.GetDiagnosticsForToken(token))
-                        {
-                            originalLine.AddDiagnostic((MessageCode)diag.Info.Code, token, diag.MessageArgs);
-                        }
+                        virtualContinuationTokensLine.CopyDiagnosticsForToken(token, originalLine);
                     }
 
                     void SplitToken()
@@ -532,10 +528,7 @@ namespace TypeCobol.Compiler.Scanner
                             CreateAndAddContinuationToken(false);
 
                             // Copy diagnostics on the first line only
-                            foreach (Diagnostic diag in virtualContinuationTokensLine.GetDiagnosticsForToken(token))
-                            {
-                                originalLine.AddDiagnostic((MessageCode)diag.Info.Code, token, diag.MessageArgs);
-                            }
+                            virtualContinuationTokensLine.CopyDiagnosticsForToken(token, originalLine);
                         }
 
                         void CreateAndAddFollowingContinuationToken() => CreateAndAddContinuationToken(true);
@@ -1376,7 +1369,7 @@ namespace TypeCobol.Compiler.Scanner
                         currentIndex = saveCurrentIndex;
                         if (numericLiteralToken.TokenType == TokenType.InvalidToken)
                         {
-                            tokensLine.RemoveDiagnosticsForToken(numericLiteralToken);
+                            tokensLine.ClearDiagnosticsForToken(numericLiteralToken);
                         }
 
                         // 3.2 Try to scan a Cobol character string

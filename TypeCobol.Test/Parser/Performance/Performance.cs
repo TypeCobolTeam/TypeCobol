@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -8,7 +7,6 @@ using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Text;
-using TypeCobol.Test.Compiler.Parser;
 using TypeCobol.Test.Utils;
 
 namespace TypeCobol.Test.Parser.Performance
@@ -167,7 +165,7 @@ namespace TypeCobol.Test.Parser.Performance
         [TestCategory("Performance")]
         [TestProperty("Time", "long")]
         //[Ignore]
-        public void Part1_Incremental_TC_GlobaStorage()
+        public void Part1_Incremental_TC_GlobalStorage()
         {
             IncrementalPerformance2(BigTypes_1Procedure, 65807, "           MOVE WS-CMM010-MOIS-BIN TO WS-CMM010-MM                      CMM010AK");
         }
@@ -220,7 +218,7 @@ namespace TypeCobol.Test.Parser.Performance
         /// Creates the AnalyzerProvider to be used.
         /// </summary>
         /// <returns></returns>
-        protected virtual CompositeAnalyzerProvider CreateAnalyzerProvider()
+        protected virtual IAnalyzerProvider CreateAnalyzerProvider()
         {
             return null;
         }

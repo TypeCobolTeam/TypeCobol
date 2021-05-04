@@ -60,6 +60,7 @@ namespace TypeCobol.Tools.Options_Config
         public string RawExecToStep = "6";
         public string RawMaximumDiagnostics;
         public string RawOutputFormat = "0";
+        public string RawCfgBuildingMode = "0";
         public bool IsCobolLanguage;
 
 #if EUROINFO_RULES
@@ -121,7 +122,8 @@ namespace TypeCobol.Tools.Options_Config
             { ReturnCode.ExpandingCopyError,      "Expanding copy path given is unreachable." },
             { ReturnCode.ExtractUsedCopyError,    "Extract used copy path given is unreachable." },
             { ReturnCode.LogFileError,            "Log file path is unreachable." },
-            { ReturnCode.CustomAnalyzerFileError, "Custom analyzer assembly files are unreachable." }
+            { ReturnCode.CustomAnalyzerFileError, "Custom analyzer assembly files are unreachable." },
+            { ReturnCode.CfgOptionError,          "CFG building mode is not supported. Accepted values are None/0, Standard/1, Extended/2, WithDfa/3." }
         };
 
         public TypeCobolConfiguration()
@@ -177,6 +179,7 @@ namespace TypeCobol.Tools.Options_Config
         ExtractUsedCopyError = 1033,    // Extract used copy path given is unreachable.
         LogFileError = 1034,            // Wrong log path given
         CustomAnalyzerFileError = 1035, // Invalid path to custom analyzer DLL file
+        CfgOptionError = 1036,          // Invalid CFG building mode
 
         MultipleErrors = 9999
     }
@@ -279,7 +282,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "diag.cea|diagnostic.checkEndAlignment=", "Indicate level of check end aligment: warning, error, info, ignore.", v => typeCobolConfig.CheckEndAlignment = TypeCobolCheckOption.Parse(v) },
                 { "diag.cep|diagnostic.checkEndProgram=", "Indicate level of check end program: warning, error, info, ignore.", v => typeCobolConfig.CheckEndProgram = TypeCobolCheckOption.Parse(v) },
                 { "log|logfilepath=", "{PATH} to TypeCobol.CLI.log log file", v => typeCobolConfig.LogFile = Path.Combine(v, TypeCobolConfiguration.DefaultLogFileName)},
-                { "cfg|cfgbuild", "Standard CFG build.", v => typeCobolConfig.CfgBuildingMode = CfgBuildingMode.Standard},
+                { "cfg|cfgbuild=", "CFG build option, recognized values are: None/0, Standard/1, Extended/2, WithDfa/3.", v => typeCobolConfig.RawCfgBuildingMode = v },
                 { "cob|cobol", "Indicate that it's a pure Cobol85 input file.", v => typeCobolConfig.IsCobolLanguage = true }
             };
             return commonOptions;
@@ -407,6 +410,10 @@ namespace TypeCobol.Tools.Options_Config
 
             //CustomAnalyzers
             VerifFiles(config.CustomAnalyzerFiles, ReturnCode.CustomAnalyzerFileError, errorStack);
+
+            //CFG Building mode
+            if (!Enum.TryParse(config.RawCfgBuildingMode, true, out config.CfgBuildingMode))
+                errorStack.Add(ReturnCode.CfgOptionError, TypeCobolConfiguration.ErrorMessages[ReturnCode.CfgOptionError]);
 
             return errorStack;
         }

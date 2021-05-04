@@ -13,12 +13,19 @@ namespace TypeCobol.Analysis
     /// </summary>
     public abstract class QualityAnalyzerBase : IQualityAnalyzer
     {
-        private List<Diagnostic> _diagnostics;
-
         /// <summary>
         /// Unique text identifier of this analyzer.
         /// </summary>
         public string Identifier { get; }
+
+        private List<Diagnostic> _diagnostics;
+        protected List<Diagnostic> DiagnosticList => _diagnostics ?? (_diagnostics = new List<Diagnostic>());
+
+        /// <summary>
+        /// Returns the diagnostics produced by this analyzer.
+        /// May be empty, but not null.
+        /// </summary>
+        public IEnumerable<Diagnostic> Diagnostics => DiagnosticList;
 
         protected QualityAnalyzerBase([NotNull] string identifier)
         {
@@ -26,31 +33,11 @@ namespace TypeCobol.Analysis
         }
 
         /// <summary>
-        /// Returns the diagnostics produced by this analyzer.
-        /// May be empty, but not null.
-        /// </summary>
-        public IEnumerable<Diagnostic> Diagnostics => _diagnostics ?? Enumerable.Empty<Diagnostic>();
-
-        /// <summary>
         /// Returns the result produced by this analyzer.
         /// Contract between callers and analyzers is implicit, analyzer may return ANY object.
         /// </summary>
         /// <returns>Result object, may be null if the analyzer produces only diagnostics.</returns>
         public abstract object GetResult();
-
-        /// <summary>
-        /// Add a diagnostic.
-        /// </summary>
-        /// <param name="diagnostic">Non-null diagnostic instance.</param>
-        protected void AddDiagnostic([NotNull] Diagnostic diagnostic)
-        {
-            if (_diagnostics == null)
-            {
-                _diagnostics = new List<Diagnostic>();
-            }
-
-            _diagnostics.Add(diagnostic);
-        }
 
         /// <summary>
         /// Perform inspection of TokensDocument.

@@ -1,1 +1,1 @@
-﻿Line 1[1,1] <35, Warning, Semantics> - Error while parsing dependency file: emptyFolder\, no dependencies found
+﻿Line 0[0,0] <35, Warning, Semantics> - Error while parsing dependency file: emptyFolder\, no dependencies found
