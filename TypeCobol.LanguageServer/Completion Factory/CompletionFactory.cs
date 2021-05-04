@@ -783,19 +783,17 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// Get the matchig node for a given Token and a gien completion mode. Returning a matching Node or null.
+        /// Get the matching node for the given CodeElement, returns null if not found.
         /// </summary>
-        /// <param name="fileCompiler"></param>
-        /// <param name="codeElement"></param>
-        /// <returns></returns>
+        /// <param name="fileCompiler">Current file being compiled with its compilation results</param>
+        /// <param name="codeElement">Target CodeElement</param>
+        /// <returns>Corresponding Node instance, null if not found.</returns>
         public static Node GetMatchingNode(FileCompiler fileCompiler, CodeElement codeElement)
         {
-            if (fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot != null
-                && fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers != null)
+            var codeElementToNode = fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot?.NodeCodeElementLinkers;
+            if (codeElementToNode != null && codeElementToNode.TryGetValue(codeElement, out var node))
             {
-                return
-                    fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers
-                        .FirstOrDefault(t => t.Key.Equals(codeElement)).Value;
+                return node;
             }
 
             return null;
