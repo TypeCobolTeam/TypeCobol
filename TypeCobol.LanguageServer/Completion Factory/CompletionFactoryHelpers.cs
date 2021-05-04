@@ -194,7 +194,7 @@ namespace TypeCobol.LanguageServer
 
         public static CompletionItem CreateCompletionItemForVariable(DataDefinition variable, TypeCobolOptions options, bool useQualifiedName = true)
         {
-            var qualifiedName = variable.VisualQualifiedName.Skip(variable.VisualQualifiedName.Count > 1 ? 1 : 0); //Skip Program Name
+            var qualifiedName = variable.VisualQualifiedNameWithoutProgram;
 
             var finalQualifiedName = qualifiedName.ToList();
 
@@ -203,8 +203,8 @@ namespace TypeCobol.LanguageServer
                 finalQualifiedName.Clear();
                
 #if EUROINFO_RULES
-                var lastSplited = qualifiedName.Last().Split('-');
-                if(!qualifiedName.First().Contains(lastSplited.First()))
+                var parts = qualifiedName.Last().Split('-');
+                if (!qualifiedName.First().Contains(parts.First()))
                     finalQualifiedName.Add(qualifiedName.First());
 #else
                 finalQualifiedName.Add(qualifiedName.First());
@@ -212,12 +212,30 @@ namespace TypeCobol.LanguageServer
 #endif
                 if (qualifiedName.First() != qualifiedName.Last())
                     finalQualifiedName.Add(qualifiedName.Last());
-
             }
 
-            var variableArrangedQualifiedName = useQualifiedName ? string.Join("::", finalQualifiedName) : variable.Name;
+            string variableArrangedQualifiedName;
+            if (useQualifiedName)
+            {
+                if (options.IsCobolLanguage)
+                {
+                    //Pure Cobol, reverse and use 'OF' separator
+                    finalQualifiedName.Reverse();
+                    variableArrangedQualifiedName = string.Join(" OF ", finalQualifiedName);
+                }
+                else
+                {
+                    //Use TypeCobol separator
+                    variableArrangedQualifiedName = string.Join("::", finalQualifiedName);
+                }
+            }
+            else
+            {
+                //Do not use qualifier
+                variableArrangedQualifiedName = variable.Name;
+            }
 
-            var variableDisplay = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, variableArrangedQualifiedName);
+            var variableDisplay = $"{variable.Name} ({variable.DataType.Name}) ({variableArrangedQualifiedName})";
             return new CompletionItem(variableDisplay) { insertText = variableArrangedQualifiedName, kind = CompletionItemKind.Variable };
         }
 
