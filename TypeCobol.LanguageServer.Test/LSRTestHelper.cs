@@ -29,7 +29,7 @@ namespace TypeCobol.LanguageServer.Test
         /// </summary>
         public const int LSR_TEST_TIMEOUT = 1000 * 30;
 
-        public static void Test(string testFolderName, LsrTestingOptions lsrTestingOption, bool activateTdOption = false, bool useSyntaxColoring = false, bool useOutline = false, string copyFolder = null, string customIntrinsicFile = null, string customDependenciesFolder = null, bool useCfg = false)
+        public static void Test(string testFolderName, LsrTestingOptions lsrTestingOption, bool activateTdOption = false, bool useSyntaxColoring = false, bool useOutline = false, string copyFolder = null, string customIntrinsicFile = null, string customDependenciesFolder = null, bool useCfg = false, bool pureCobol = false)
         {
             var workingDirectory = "LSRTests";
             var testWorkingDirectory = workingDirectory + Path.DirectorySeparatorChar + testFolderName;
@@ -57,6 +57,7 @@ namespace TypeCobol.LanguageServer.Test
                                   Path.DirectorySeparatorChar + copyFolder).FullName.Replace(@"\", @"\\"));
             String testOptions = "";
             testOptions += useOutline ? "" : ",\"-dol\"";
+            testOptions += pureCobol ? ",\"-cob\"" : "";
             configFileContent = configFileContent.Replace("{TestOptions}", testOptions);
 
             configFileContent = configFileContent.Replace("{IntrinsicFile}",
