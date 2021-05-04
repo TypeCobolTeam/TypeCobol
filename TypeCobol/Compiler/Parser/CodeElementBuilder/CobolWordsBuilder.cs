@@ -1104,8 +1104,10 @@ namespace TypeCobol.Compiler.Parser
             return CreateExternalName(context.externalName5(), SymbolType.AssignmentName);
         }
 
+        [CanBeNull]
         internal ExternalNameOrSymbolReference CreateAssignmentNameOrFileNameReference(CodeElementsParser.AssignmentNameOrFileNameReferenceContext context)
         {
+            if (context == null) return null;
             return CreateExternalNameOrSymbolReference(context.externalNameOrSymbolReference5(), new SymbolType[] { SymbolType.AssignmentName, SymbolType.FileName });
         }
 

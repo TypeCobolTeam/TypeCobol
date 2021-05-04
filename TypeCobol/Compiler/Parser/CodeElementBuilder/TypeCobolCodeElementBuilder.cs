@@ -407,8 +407,7 @@ namespace TypeCobol.Compiler.Parser
                 {
                     Diagnostics = new List<Diagnostic>
                     {
-                        new Diagnostic(MessageCode.SyntaxErrorInParser, context.Start.Column,
-                            context.Stop.Column, context.Start.Line, "Empty CALL is not authorized")
+                        new Diagnostic(MessageCode.SyntaxErrorInParser, context.Start.Position(), "Empty CALL is not authorized")
                     }
                 };
                 return;
@@ -590,9 +589,7 @@ namespace TypeCobol.Compiler.Parser
                             ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction = ambiguousSymbolReference.MainSymbolReference,
                             Diagnostics = new List<Diagnostic>
                             {
-                                new Diagnostic(MessageCode.ImplementationError, context.Start.Column,
-                                    context.Stop.Column, context.Start.Line,
-                                    "A call with arguments is not a TCFunctionName")
+                                new Diagnostic(MessageCode.ImplementationError, context.Start.Position(), "A call with arguments is not a TCFunctionName")
                             },
                         };
 
@@ -637,8 +634,7 @@ namespace TypeCobol.Compiler.Parser
                             ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction =
                                 ambiguousSymbolReference.MainSymbolReference,
                         };
-                    statement.Diagnostics.Add(new Diagnostic(MessageCode.SyntaxErrorInParser, context.Start.Column,
-                        context.Stop.Column, context.Start.Line, "Error in detecting Procedure Call type"));
+                    statement.Diagnostics.Add(new Diagnostic(MessageCode.SyntaxErrorInParser, context.Start.Position(), "Error in detecting Procedure Call type"));
                     callSite = new CallSite();
                     callSite.CallTarget = statement.ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction;
                 }

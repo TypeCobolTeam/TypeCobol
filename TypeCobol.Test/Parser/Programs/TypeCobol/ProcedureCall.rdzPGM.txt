@@ -10,7 +10,7 @@ Line 41[21,26] <27, Error, Syntax> - Syntax error : Parameter with name 'format'
 Line 111[16,20] <30, Error, Semantics> - Semantic error: A function "proc2" with the same profile already exists in namespace "ProcedureCall". OffendingSymbol=[16,20:proc2]<UserDefinedWord>
 Line 115[16,20] <30, Error, Semantics> - Semantic error: A function "proc2" with the same profile already exists in namespace "ProcedureCall". OffendingSymbol=[16,20:proc2]<UserDefinedWord>
 Line 119[16,20] <30, Error, Semantics> - Semantic error: A function "proc2" with the same profile already exists in namespace "ProcedureCall". OffendingSymbol=[16,20:proc2]<UserDefinedWord>
-Line 127[8,8] <27, Error, Syntax> - Syntax error : Empty CALL is not authorized
+Line 127[8,11] <27, Error, Syntax> - Syntax error : Empty CALL is not authorized
 Line 137[8,43] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'GetPtrFn'  output(Alphanumeric, Alphanumeric)
 Line 142[8,43] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'GetPtrFn'  in-out(Alphanumeric, Alphanumeric)
 Line 147[8,40] <27, Error, Syntax> - Syntax error : Function 'GetPtrFn' expected parameter 'ptrFn' of usage FunctionPointer and received 'someformat' of usage 

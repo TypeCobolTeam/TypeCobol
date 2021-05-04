@@ -1,0 +1,82 @@
+﻿--- Diagnostics ---
+Line 3[1,5] <27, Error, Syntax> - Syntax error : mismatched input 'RERUN' expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, user defined word, ON} RuleStack=codeElement>ioControlEntry>rerunClause,  OffendingSymbol=[1,5:RERUN]<RERUN>
+Line 5[1,5] <27, Error, Syntax> - Syntax error : mismatched input 'RERUN' expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, user defined word} RuleStack=codeElement>ioControlEntry>rerunClause>assignmentNameOrFileNameReference>externalNameOrSymbolReference5>alphanumericValue5,  OffendingSymbol=[1,5:RERUN]<RERUN>
+Line 11[1,5] <27, Error, Syntax> - Syntax error : mismatched input 'RERUN' expecting {user defined word, OF} RuleStack=codeElement>ioControlEntry>rerunClause,  OffendingSymbol=[1,5:RERUN]<RERUN>
+Line 12[1,5] <27, Error, Syntax> - Syntax error : mismatched input 'RERUN' expecting {user defined word, OF} RuleStack=codeElement>ioControlEntry>rerunClause,  OffendingSymbol=[1,5:RERUN]<RERUN>
+Line 13[1,5] <27, Error, Syntax> - Syntax error : mismatched input 'RERUN' expecting {user defined word, OF} RuleStack=codeElement>ioControlEntry>rerunClause,  OffendingSymbol=[1,5:RERUN]<RERUN>
+Line 14[1,5] <27, Error, Syntax> - Syntax error : mismatched input 'RERUN' expecting {user defined word, OF} RuleStack=codeElement>ioControlEntry>rerunClause,  OffendingSymbol=[1,5:RERUN]<RERUN>
+Line 15[1,5] <27, Error, Syntax> - Syntax error : mismatched input 'RERUN' expecting {user defined word, OF} RuleStack=codeElement>ioControlEntry>rerunClause,  OffendingSymbol=[1,5:RERUN]<RERUN>
+Line 16[1,5] <27, Error, Syntax> - Syntax error : mismatched input 'RERUN' expecting {user defined word, OF} RuleStack=codeElement>ioControlEntry>rerunClause,  OffendingSymbol=[1,5:RERUN]<RERUN>
+Line 17[1,5] <27, Error, Syntax> - Syntax error : mismatched input 'RERUN' expecting {user defined word, OF} RuleStack=codeElement>ioControlEntry>rerunClause,  OffendingSymbol=[1,5:RERUN]<RERUN>
+Line 18[1,5] <27, Error, Syntax> - Syntax error : mismatched input 'RERUN' expecting {user defined word, OF} RuleStack=codeElement>ioControlEntry>rerunClause,  OffendingSymbol=[1,5:RERUN]<RERUN>
+Line 19[1,5] <27, Error, Syntax> - Syntax error : mismatched input 'RERUN' expecting {user defined word, OF} RuleStack=codeElement>ioControlEntry>rerunClause,  OffendingSymbol=[1,5:RERUN]<RERUN>
+Line 21[1,5] <27, Error, Syntax> - Syntax error : mismatched input 'RERUN' expecting {user defined word, OF} RuleStack=codeElement>ioControlEntry>rerunClause,  OffendingSymbol=[1,5:RERUN]<RERUN>
+--- Code Elements ---
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [1,5:RERUN]<RERUN>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [7,8:ON]<ON>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [7,20:assignmentName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [10,23:assignmentName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [24,30:RECORDS]<RECORDS>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [26,29:REEL]<REEL>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [26,29:UNIT]<UNIT>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [29,32:REEL]<REEL>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [29,32:UNIT]<UNIT>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [30,36:RECORDS]<RECORDS>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [32,35:REEL]<REEL>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [32,35:UNIT]<UNIT>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [35,38:REEL]<REEL>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [35,38:UNIT]<UNIT>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [32,39:fileName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [31,38:fileName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [31,38:fileName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [34,41:fileName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [34,41:fileName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [38,45:fileName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [37,44:fileName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [37,44:fileName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [40,47:fileName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [40,47:fileName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [35,42:fileName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [34,41:fileName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [34,41:fileName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [37,44:fileName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [37,44:fileName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [41,48:fileName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [40,47:fileName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [40,47:fileName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [43,50:fileName]<UserDefinedWord>
+
+[[IOControlEntry]] [1,5:RERUN]<RERUN> --> [43,50:fileName]<UserDefinedWord>
+

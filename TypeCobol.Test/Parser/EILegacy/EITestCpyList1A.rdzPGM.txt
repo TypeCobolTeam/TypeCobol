@@ -1,5 +1,5 @@
 --- Diagnostics ---
-Line 6[15,25] <27, Error, Syntax> - Error in copy 'YMYCOPY' at line 2 : Syntax error : The variable 'MYCOPY-DATA' can only be of level 01 or 77 OffendingSymbol=[15,25:MYCOPY-DATA]<UserDefinedWord> in COPY YMYCOPY
+Line 6[8,20] <27, Error, Syntax> - Error in copy 'YMYCOPY' at line 2 : Syntax error : The variable 'MYCOPY-DATA' can only be of level 01 or 77 OffendingSymbol=[15,25:MYCOPY-DATA]<UserDefinedWord> in COPY YMYCOPY
 
 --- Program ---
 PROGRAM: Pgm common:False initial:False recursive:False
