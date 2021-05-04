@@ -549,7 +549,7 @@ namespace TypeCobol.LanguageServer
         #region TO Completion
         public static IEnumerable<CompletionItem> GetCompletionForTo(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken, Token lastSignificantToken)
         {
-            List<DataType> seekedDataTypes = new List<DataType>();
+            var compatibleDataTypes = new HashSet<DataType>();
             var completionItems = new List<CompletionItem>();
             var arrangedCodeElement = codeElement as CodeElementWrapper;
             if (arrangedCodeElement == null)
@@ -558,79 +558,99 @@ namespace TypeCobol.LanguageServer
             if (node == null)
                 return completionItems;
 
-            var potentialVariables = Enumerable.Empty<DataDefinition>();
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
             Expression<Func<DataDefinition, bool>> variablePredicate =
                 da =>
                     (da.CodeElement != null && (da.CodeElement).LevelNumber.Value < 88) ||
                     (da.CodeElement == null && da is IndexDefinition); //Ignore variable of level 88.
 
-            //Look if the sending variable is like litteral Alpha / Numeric
-
-            if (node.CodeElement is MoveSimpleStatement)
+            //Look if the sending variable is compatible with Alpha / Numeric
+            if (node.CodeElement is MoveSimpleStatement moveSimpleStatement)
             {
-                var sendingItem = ((MoveSimpleStatement)node.CodeElement).SendingItem;
-                var sendingVar = ((MoveSimpleStatement)node.CodeElement).SendingVariable;
+                var sendingItem = moveSimpleStatement.SendingItem;
+                var sendingVar = moveSimpleStatement.SendingVariable;
                 if (sendingItem != null)
                 {
                     if (!(sendingItem is QualifiedName))
                     {
-                        if (sendingItem is bool?) seekedDataTypes.Add(DataType.Boolean);
-                        if (sendingItem is double?) seekedDataTypes.Add(DataType.Numeric);
-                        if (sendingItem is string) seekedDataTypes.Add(DataType.Alphanumeric);
+                        if (sendingItem is bool) compatibleDataTypes.Add(DataType.Boolean);
+                        else if (sendingItem is double) compatibleDataTypes.Add(DataType.Numeric);
+                        else if (sendingItem is string) compatibleDataTypes.Add(DataType.Alphanumeric);
                     }
 
-                    if (sendingVar != null && sendingVar.IsLiteral == true && sendingItem is double? &&
-                        (sendingVar.NumericValue.Token.TokenType == TokenType.ZERO
-                         || sendingVar.NumericValue.Token.TokenType == TokenType.ZEROS
-                         || sendingVar.NumericValue.Token.TokenType == TokenType.ZEROES))
+                    if (sendingVar != null && sendingVar.IsLiteral && sendingItem is double)
                     {
-                        //See #845, ZERO support Alphabetic/Numeric/Alphanumeric datatype
-                        seekedDataTypes.Add(DataType.Alphanumeric);
-                        seekedDataTypes.Add(DataType.Alphabetic); 
+                        switch (sendingVar.NumericValue.Token.TokenType)
+                        {
+                            case TokenType.ZERO:
+                            case TokenType.ZEROS:
+                            case TokenType.ZEROES:
+                                //See #845, ZERO support Alphabetic/Numeric/Alphanumeric DataType
+                                compatibleDataTypes.Add(DataType.Alphanumeric);
+                                compatibleDataTypes.Add(DataType.Alphabetic);
+                                break;
+                        }
                     }
                 }
 
                 var tokenType = sendingVar?.RepeatedCharacterValue?.Token?.TokenType;
-                if (tokenType != null)
+                switch (tokenType)
                 {
-                    if (tokenType == TokenType.SPACE || tokenType == TokenType.SPACES || tokenType == TokenType.QUOTE || tokenType == TokenType.QUOTES)
-                    {
-                        seekedDataTypes.Add(DataType.Alphanumeric);
-                        seekedDataTypes.Add(DataType.Alphabetic);
-                    }
+                    case TokenType.SPACE:
+                    case TokenType.SPACES:
+                    case TokenType.QUOTE:
+                    case TokenType.QUOTES:
+                        compatibleDataTypes.Add(DataType.Alphanumeric);
+                        compatibleDataTypes.Add(DataType.Alphabetic);
+                        break;
                 }
             }
 
-
             bool unsafeContext = arrangedCodeElement.ArrangedConsumedTokens.Any(t => t != null && t.TokenType == TokenType.UNSAFE);
             var filteredTokens = arrangedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.UserDefinedWord);
-            bool needTailReverse = filteredTokens.Any(t => t.TokenType == TokenType.OF);
-            var qualifiedNameTokens = filteredTokens.TakeWhile(t => t != lastSignificantToken).Where(t => !(t.TokenType == TokenType.QualifiedNameSeparator || t.TokenType == TokenType.OF) && t != userFilterToken);
-            if (!qualifiedNameTokens.Any() && seekedDataTypes.Count == 0)
+            bool needTailReverse = false;
+            List<string> qualifiedNameParts = new List<string>();
+            foreach (var token in filteredTokens)
+            {
+                if (token ==  lastSignificantToken) break; //No need to go further
+                if (token == userFilterToken) continue;
+                switch (token.TokenType)
+                {
+                    case TokenType.QualifiedNameSeparator:
+                        continue;
+                    case TokenType.OF:
+                    case TokenType.IN:
+                        needTailReverse = true;
+                        continue;
+                    default:
+                        qualifiedNameParts.Add(token.Text);
+                        break;
+                }
+            }
+
+            if (!qualifiedNameParts.Any() && compatibleDataTypes.Count == 0)
                 return completionItems;
 
-            if (needTailReverse)
-                qualifiedNameTokens = qualifiedNameTokens.Reverse();
+            if (needTailReverse) qualifiedNameParts.Reverse();
 
+            var potentialVariables = Enumerable.Empty<DataDefinition>();
             if (!unsafeContext) //Search for variable that match the DataType
             {
-                if (seekedDataTypes.Count == 0) //If a Datatype hasn't be found yet. 
+                if (compatibleDataTypes.Count == 0) //If a Datatype hasn't be found yet. 
                 {
-                    var foundedVar = node.SymbolTable.GetVariablesExplicit(new URI(qualifiedNameTokens.Select(t => t.Text))).FirstOrDefault();
-
+                    var foundedVar = node.SymbolTable.GetVariablesExplicit(new URI(qualifiedNameParts)).FirstOrDefault();
                     if (foundedVar != null)
                     {
-                        seekedDataTypes.Add(foundedVar.DataType);
+                        compatibleDataTypes.Add(foundedVar.DataType);
 
                         // Add PrimitiveDataType to extend the search to compatible types, if null default to Alphanumeric
-                        seekedDataTypes.Add(foundedVar.PrimitiveDataType ?? DataType.Alphanumeric);
+                        compatibleDataTypes.Add(foundedVar.PrimitiveDataType ?? DataType.Alphanumeric);
                     }
                 }
 
-                foreach (var seekedDataType in seekedDataTypes.Distinct())
+                foreach (var compatibleDataType in compatibleDataTypes)
                 {
-                    potentialVariables = node.SymbolTable.GetVariablesByType(seekedDataType, potentialVariables, SymbolTable.Scope.Program);
+                    potentialVariables = node.SymbolTable.GetVariablesByType(compatibleDataType, potentialVariables, SymbolTable.Scope.Program);
                 }
 
                 potentialVariables = potentialVariables.AsQueryable().Where(variablePredicate);
@@ -642,13 +662,9 @@ namespace TypeCobol.LanguageServer
 
             foreach (var potentialVariable in potentialVariables) //Those variables could be inside a typedef or a level, we need to check to rebuild the qualified name correctly.
             {
+                if (potentialVariable.VisualQualifiedNameWithoutProgram.SequenceEqual(qualifiedNameParts)) continue;
                 SearchVariableInTypesAndLevels(node, potentialVariable, completionItems);
             }
-
-            if (qualifiedNameTokens.Any())
-                completionItems.Remove(
-                    completionItems.FirstOrDefault(
-                        c => c.label.Contains(string.Join("::", qualifiedNameTokens.Select(t => t.Text)))));
 
             return completionItems.Where(c => c.insertText.IndexOf(userFilterText, StringComparison.InvariantCultureIgnoreCase) >= 0);
         }
