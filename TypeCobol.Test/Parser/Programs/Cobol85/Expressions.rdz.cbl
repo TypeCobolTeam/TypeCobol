@@ -101,9 +101,14 @@
       
            COMPUTE X = Y ** Z
       
-           COMPUTE X ROUNDED = Z
-      
            COMPUTE X = - Y
+
+           COMPUTE X ROUNDED = Z
+
+           ADD Y TO X ROUNDED
+           SUBTRACT Y FROM X ROUNDED
+           MULTIPLY Y BY Z GIVING X ROUNDED
+           DIVIDE Y BY Z GIVING X ROUNDED
       
       * Sign condition
            IF X IS ZERO

@@ -45,6 +45,9 @@
   <ItemGroup>
     <Compile Include="**\*.cs" />
     <Content Include="Parser\**\*" Exclude="Parser\**\*.cs" />
+    <Content Include="Misc\Expressions-expected.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
     <None Include="Report\Input\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

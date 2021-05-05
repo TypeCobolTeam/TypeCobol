@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text;
 using TypeCobol.Compiler.Scanner;
 
@@ -20,17 +21,21 @@ namespace TypeCobol.Compiler.CodeElements
         /// For a operation or relation, the element would be the operator
         /// For a leaf, it would be the name of the variable, ...
         /// </summary>
-        public bool EquivalentOperator(Expression other)
+        public bool IsEquivalent(Expression other)
         {
-            return NodeType == other.NodeType && IsEquivalentOperator(other);
+            return NodeType == other.NodeType && CheckEquivalence(other);
         }
 
-        protected abstract bool IsEquivalentOperator(Expression other);
+        /// <summary>
+        /// Should return true if the characteristic element of the nodes are equivalent
+        /// The type of the Expression should already be the same as the overriding class
+        /// </summary>
+        protected abstract bool CheckEquivalence(Expression other);
 
         /// <summary>
-        /// Returns the children of an expression
+        /// Returns the operands of an expression
         /// </summary>
-        /// <returns>The children of the expression, ordered as left then right, each can be null if there is no child</returns>
+        /// <returns>The operands of the expression, ordered as left then right, each can be null if there is no child operand</returns>
         public abstract (Expression, Expression) GetOperands();
 
         public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
@@ -85,8 +90,9 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public ConditionalExpression RightOperand  { get; private set; }
 
-        protected override bool IsEquivalentOperator(Expression other)
+        protected override bool CheckEquivalence(Expression other)
         {
+            Debug.Assert(other is LogicalOperation);
             var otherLogicalOperation = (LogicalOperation)other;
             return Operator.Value == otherLogicalOperation.Operator.Value;
         }
@@ -151,13 +157,14 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public SyntaxProperty<bool> InvertResult { get; private set; }
 
-        protected override bool IsEquivalentOperator(Expression other)
+        protected override bool CheckEquivalence(Expression other)
         {
+            Debug.Assert(other is ClassCondition);
             var otherClassCondition = (ClassCondition) other;
             return DataItem.SymbolReference?.Name == otherClassCondition.DataItem.SymbolReference?.Name
-                   && CharacterClassNameReference.Name == otherClassCondition.CharacterClassNameReference.Name
-                   && DataItemContentType.Value == otherClassCondition.DataItemContentType.Value
-                   && InvertResult.Value == otherClassCondition.InvertResult.Value;
+                   && CharacterClassNameReference?.Name == otherClassCondition.CharacterClassNameReference?.Name
+                   && DataItemContentType?.Value == otherClassCondition.DataItemContentType?.Value
+                   && InvertResult?.Value == otherClassCondition.InvertResult?.Value;
         }
 
         public override (Expression, Expression) GetOperands()
@@ -202,8 +209,9 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public DataOrConditionStorageArea ConditionReference { get; private set; }
 
-        protected override bool IsEquivalentOperator(Expression other)
+        protected override bool CheckEquivalence(Expression other)
         {
+            Debug.Assert(other is ConditionNameConditionOrSwitchStatusCondition);
             var otherConditionNameConditionOrSwitchStatusCondition = (ConditionNameConditionOrSwitchStatusCondition) other;
             return ConditionReference.ToString() == otherConditionNameConditionOrSwitchStatusCondition.ConditionReference.ToString();
         }
@@ -244,8 +252,9 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public ConditionOperand RightOperand { get; private set; }
 
-        protected override bool IsEquivalentOperator(Expression other)
+        protected override bool CheckEquivalence(Expression other)
         {
+            Debug.Assert(other is RelationCondition);
             var otherRelationCondition = (RelationCondition) other;
             return Operator.SemanticOperator == otherRelationCondition.Operator.SemanticOperator;
         }
@@ -319,7 +328,7 @@ namespace TypeCobol.Compiler.CodeElements
 
         public override string ToString()
         {
-            return (NotToken == null ? string.Empty : NotToken.Text + " ") + Operator.Value;
+            return Operator.Value + (NotToken == null ? string.Empty : " " + NotToken.Text);
         }
     }
 
@@ -359,11 +368,12 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public SyntaxProperty<bool> InvertResult { get; private set; }
         
-        protected override bool IsEquivalentOperator(Expression other)
+        protected override bool CheckEquivalence(Expression other)
         {
+            Debug.Assert(other is SignCondition);
             var otherSignCondition = (SignCondition) other;
             return SignComparison.Value == otherSignCondition.SignComparison.Value
-                   && InvertResult.Value == otherSignCondition.InvertResult.Value;
+                   && InvertResult?.Value == otherSignCondition.InvertResult?.Value;
         }
 
         public override (Expression, Expression) GetOperands()
@@ -435,8 +445,9 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public Token SelfObjectIdentifier { get; private set; }
 
-        protected override bool IsEquivalentOperator(Expression other)
+        protected override bool CheckEquivalence(Expression other)
         {
+            Debug.Assert(other is ConditionOperand);
             var otherConditionOperand = (ConditionOperand) other;
             return Variable?.ToString() == otherConditionOperand.Variable?.ToString()
                    && NullPointerValue?.Value == otherConditionOperand.NullPointerValue?.Value
@@ -515,10 +526,11 @@ namespace TypeCobol.Compiler.CodeElements
 		public SyntaxProperty<ArithmeticOperator> Operator { get; private set; }
 		public ArithmeticExpression RightOperand { get; private set; }
         
-        protected override bool IsEquivalentOperator(Expression other)
+        protected override bool CheckEquivalence(Expression other)
         {
+            Debug.Assert(other is ArithmeticOperation);
             var otherArithmeticOperation = (ArithmeticOperation) other;
-            return Operator.Value == otherArithmeticOperation.Operator.Value;
+            return Operator?.Value == otherArithmeticOperation.Operator?.Value;
         }
 
         public override (Expression, Expression) GetOperands()
@@ -560,8 +572,9 @@ namespace TypeCobol.Compiler.CodeElements
 		public IntegerVariable IntegerVariable { get; private set; }
 		public NumericVariable NumericVariable { get; private set; }
 
-        protected override bool IsEquivalentOperator(Expression other)
+        protected override bool CheckEquivalence(Expression other)
         {
+            Debug.Assert(other is NumericVariableOperand);
             var otherNumericVariableOperand = (NumericVariableOperand) other;
             return IntegerVariable?.ToString() == otherNumericVariableOperand.IntegerVariable?.ToString()
                    && NumericVariable?.ToString() == otherNumericVariableOperand.NumericVariable?.ToString();
