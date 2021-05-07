@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
@@ -18,7 +15,6 @@ namespace TypeCobol.LanguageServer
 {
     public static class CompletionFactory
     {
-
         #region Paragraph Completion
 
         /// <summary>
@@ -29,7 +25,7 @@ namespace TypeCobol.LanguageServer
         /// <returns></returns>
         public static IEnumerable<CompletionItem> GetCompletionPerformParagraph(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
         {
-            var performNode = GetMatchingNode(fileCompiler, codeElement);
+            var performNode = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
             IEnumerable<Paragraph> pargraphs = null;
             IEnumerable<DataDefinition> variables = null;
             var completionItems = new List<CompletionItem>();
@@ -75,7 +71,7 @@ namespace TypeCobol.LanguageServer
             IEnumerable<FunctionDeclaration> procedures = null;
             IEnumerable<DataDefinition> variables = null;
             var completionItems = new List<CompletionItem>();
-            var node = GetMatchingNode(fileCompiler, codeElement);
+            var node = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
             if(node == null)
                 return completionItems;
 
@@ -117,7 +113,7 @@ namespace TypeCobol.LanguageServer
         {
             var completionItems = new List<CompletionItem>();
             var arrangedCodeElement = codeElement as CodeElementWrapper;
-            var node = GetMatchingNode(fileCompiler, codeElement);
+            var node = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
             if (node == null)
                 return completionItems;
 
@@ -320,7 +316,7 @@ namespace TypeCobol.LanguageServer
         #region Library Completion
         public static IEnumerable<CompletionItem> GetCompletionForLibrary(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
         {
-            var callNode = GetMatchingNode(fileCompiler, codeElement);
+            var callNode = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
             IEnumerable<Program> programs = null;
             if (callNode?.SymbolTable != null)
             {
@@ -336,7 +332,7 @@ namespace TypeCobol.LanguageServer
         #region Types Completion
         public static IEnumerable<CompletionItem> GetCompletionForType(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
         {
-            var node = GetMatchingNode(fileCompiler, codeElement);
+            var node = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
             IEnumerable<TypeDefinition> types = null;
             if (node?.SymbolTable == null)
                 return new List<CompletionItem>();
@@ -362,7 +358,7 @@ namespace TypeCobol.LanguageServer
         {
             var completionItems = new List<CompletionItem>();
             var arrangedCodeElement = codeElement as CodeElementWrapper;
-            var node = GetMatchingNode(fileCompiler, codeElement);
+            var node = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
             if (node == null)
                 return completionItems;
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
@@ -536,7 +532,7 @@ namespace TypeCobol.LanguageServer
         public static IEnumerable<CompletionItem> GetCompletionForVariable(FileCompiler fileCompiler, CodeElement codeElement, Expression<Func<DataDefinition, bool>> predicate)
         {
             var completionItems = new List<CompletionItem>();
-            var node = GetMatchingNode(fileCompiler, codeElement);
+            var node = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
             if (node == null)
                 return completionItems;
 
@@ -555,7 +551,7 @@ namespace TypeCobol.LanguageServer
             var arrangedCodeElement = codeElement as CodeElementWrapper;
             if (arrangedCodeElement == null)
                 return completionItems;
-            var node = GetMatchingNode(fileCompiler, codeElement);
+            var node = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
             if (node == null)
                 return completionItems;
 
@@ -684,7 +680,7 @@ namespace TypeCobol.LanguageServer
             IEnumerable<CompletionItem> completionItems = new List<CompletionItem>();
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
             var arrangedCodeElement = codeElement as CodeElementWrapper;
-            var node = GetMatchingNode(fileCompiler, codeElement);
+            var node = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
             if(node == null)
                 return completionItems;
 
@@ -780,11 +776,9 @@ namespace TypeCobol.LanguageServer
 
         #endregion
 
-
-
         #region Helpers
 
-        public static IReadOnlyList<Node> GetTypeChildren(SymbolTable symbolTable, DataDefinition dataDefNode)
+        private static IReadOnlyList<Node> GetTypeChildren(SymbolTable symbolTable, DataDefinition dataDefNode)
         {
             if (symbolTable == null || dataDefNode == null)
                 return null;
@@ -797,23 +791,6 @@ namespace TypeCobol.LanguageServer
                     SymbolTable.Scope.Intrinsic).FirstOrDefault();
 
             return type?.Children;
-        }
-
-        /// <summary>
-        /// Get the matching node for the given CodeElement, returns null if not found.
-        /// </summary>
-        /// <param name="fileCompiler">Current file being compiled with its compilation results</param>
-        /// <param name="codeElement">Target CodeElement</param>
-        /// <returns>Corresponding Node instance, null if not found.</returns>
-        public static Node GetMatchingNode(FileCompiler fileCompiler, CodeElement codeElement)
-        {
-            var codeElementToNode = fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot?.NodeCodeElementLinkers;
-            if (codeElementToNode != null && codeElementToNode.TryGetValue(codeElement, out var node))
-            {
-                return node;
-            }
-
-            return null;
         }
 
         private static void SearchVariableInTypesAndLevels(Node node, DataDefinition variable, TypeCobolOptions options, List<CompletionItem> completionItems)
