@@ -23,7 +23,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public bool IsEquivalent(Expression other)
         {
-            return NodeType == other.NodeType && CheckEquivalence(other);
+            return NodeType == other?.NodeType && CheckEquivalence(other);
         }
 
         /// <summary>
