@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -10,6 +11,135 @@ namespace TypeCobol.Test.Misc
     [TestClass]
     public class TestExpressions
     {
+        /// <summary>
+        /// Issue #1939, check the Expression trees
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "fast")]
+        public void CheckExpressionEquivalence()
+        {
+            var folder = Path.Combine("Misc");
+            var fileName = "ExpressionsEquivalence";
+            var compilationUnit = ParserUtils.ParseCobolFile(fileName, folder, execToStep: ExecutionStep.CrossCheck);
+            var root = compilationUnit.TemporaryProgramClassDocumentSnapshot.Root;
+
+            // Get all expressions
+            var expCollector = new ExpressionCollector();
+            root.AcceptASTVisitor(expCollector);
+            var expressionList = expCollector.Expressions;
+
+            // Relational
+            var firstRelational = expressionList.FindIndex(e => e.NodeType == ExpressionNodeType.RelationCondition);
+            AssertEquivalence(0, 1, firstRelational);
+            AssertNotEquivalent(1, 2, firstRelational);
+            AssertEquivalence(2, 3, firstRelational);
+            AssertNotEquivalent(3, 4, firstRelational);
+            AssertNotEquivalent(4, 5, firstRelational);
+            AssertNotEquivalent(4, 6, firstRelational);
+            AssertEquivalence(5, 6, firstRelational);
+
+            // Logical
+            var firstLogical = expressionList.FindIndex(e => e.NodeType == ExpressionNodeType.LogicalOperation);
+            AssertEquivalence(0, 1, firstLogical);
+            AssertNotEquivalent(1, 2, firstLogical);
+            AssertNotEquivalent(2, 3, firstLogical);
+
+            // Arithmetic
+            var firstArithmetic = expressionList.FindIndex(e => e.NodeType == ExpressionNodeType.ArithmeticOperation);
+            AssertEquivalence(0, 1, firstArithmetic);
+            AssertNotEquivalent(1, 2, firstArithmetic);
+            AssertNotEquivalent(2, 3, firstArithmetic);
+
+            // Sign
+            var firstSign = expressionList.FindIndex(e => e.NodeType == ExpressionNodeType.SignCondition);
+            AssertEquivalence(0, 1, firstSign);
+            AssertNotEquivalent(1, 2, firstSign);
+            AssertEquivalence(2, 3, firstSign);
+            AssertNotEquivalent(3, 4, firstSign);
+            AssertNotEquivalent(4, 5, firstSign);
+
+            // Class
+            var firstClass = expressionList.FindIndex(e => e.NodeType == ExpressionNodeType.ClassCondition);
+            AssertEquivalence(0, 1, firstClass);
+            AssertNotEquivalent(0, 2, firstClass);
+            AssertNotEquivalent(2, 3, firstClass);
+            AssertNotEquivalent(3, 4, firstClass);
+            AssertNotEquivalent(4, 5, firstClass);
+            AssertNotEquivalent(5, 6, firstClass);
+
+            // Class
+            var firstConditionName= expressionList.FindIndex(e => e.NodeType == ExpressionNodeType.ConditionNameConditionOrSwitchStatusCondition);
+            AssertEquivalence(0, 1, firstConditionName);
+            AssertNotEquivalent(1, 2, firstConditionName);
+            AssertNotEquivalent(2, 3, firstConditionName);
+            AssertEquivalence(3, 4, firstConditionName);
+
+            // ConditionOperand
+            var (operand1, operand2) = expressionList[firstRelational].GetOperands();
+            var conditionOperand1 = operand1 as ConditionOperand;
+            var conditionOperand2 = operand2 as ConditionOperand;
+            Assert.IsNotNull(conditionOperand1);
+            Assert.IsNotNull(conditionOperand2);
+            Assert.IsTrue(conditionOperand1.IsEquivalent(conditionOperand2));
+
+            // NumericVariable
+            operand1 = conditionOperand1.ArithmeticExpression;
+            operand2 = conditionOperand2.ArithmeticExpression;
+            var numericVariableOp1 = operand1 as NumericVariableOperand;
+            var numericVariableOp2 = operand2 as NumericVariableOperand;
+            Assert.IsNotNull(numericVariableOp1);
+            Assert.IsNotNull(numericVariableOp2);
+            Assert.IsFalse(numericVariableOp1.IsEquivalent(numericVariableOp2));
+
+            var numericVariableOp3 = expressionList[firstRelational].GetOperands().Item1.GetOperands().Item1 as NumericVariableOperand;
+            Assert.IsNotNull(numericVariableOp3);
+            Assert.IsTrue(numericVariableOp3.IsEquivalent(numericVariableOp1));
+
+            // Other
+            var firstOther = expressionList.FindLastIndex(e => e.NodeType == ExpressionNodeType.ConditionNameConditionOrSwitchStatusCondition) + 1;
+            AssertEquivalence(0, 1, firstOther);
+
+            // Cross expression type
+            var allFirst = new []
+            {
+                firstLogical,
+                firstRelational,
+                firstArithmetic,
+                firstClass,
+                firstConditionName,
+                firstSign
+            };
+
+            foreach (var exp1 in allFirst)
+            {
+                foreach (var exp2 in allFirst)
+                {
+                    if (exp1 != exp2)
+                    {
+                        AssertNotEquivalent(exp1, exp2, 0);
+                    }
+                }
+            }
+
+
+            void AssertEquivalence(int indexA, int indexB, int indexShift)
+            {
+                var expA = expressionList[indexShift + indexA];
+                var expB = expressionList[indexShift + indexB];
+                Assert.IsTrue(expA.IsEquivalent(expB), $"Expressions were not equivalent: '{expA}', '{expB}'");
+            }
+
+            void AssertNotEquivalent(int indexA, int indexB, int indexShift)
+            {
+                var expA = expressionList[indexShift + indexA];
+                var expB = expressionList[indexShift + indexB];
+                Assert.IsFalse(expA.IsEquivalent(expB), $"Expressions were equivalent: '{expA}', '{expB}'");
+            }
+        }
+
+
+
         /// <summary>
         /// Issue #1939, check the Expression trees
         /// </summary>

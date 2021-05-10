@@ -161,8 +161,7 @@ namespace TypeCobol.Compiler.CodeElements
         {
             Debug.Assert(other is ClassCondition);
             var otherClassCondition = (ClassCondition) other;
-            return DataItem.SymbolReference?.Name == otherClassCondition.DataItem.SymbolReference?.Name
-                   && CharacterClassNameReference?.Name == otherClassCondition.CharacterClassNameReference?.Name
+            return CharacterClassNameReference?.Name == otherClassCondition.CharacterClassNameReference?.Name
                    && DataItemContentType?.Value == otherClassCondition.DataItemContentType?.Value
                    && InvertResult?.Value == otherClassCondition.InvertResult?.Value;
         }
