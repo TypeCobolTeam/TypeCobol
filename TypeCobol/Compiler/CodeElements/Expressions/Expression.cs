@@ -23,7 +23,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public bool IsEquivalent(Expression other)
         {
-            return NodeType == other?.NodeType && CheckEquivalence(other);
+            if (other == null) return false;
+            return NodeType == other.NodeType && CheckEquivalence(other);
         }
 
         /// <summary>
@@ -161,7 +162,7 @@ namespace TypeCobol.Compiler.CodeElements
         {
             Debug.Assert(other is ClassCondition);
             var otherClassCondition = (ClassCondition) other;
-            return CharacterClassNameReference?.Name == otherClassCondition.CharacterClassNameReference?.Name
+            return string.Equals(CharacterClassNameReference?.Name, otherClassCondition.CharacterClassNameReference?.Name, StringComparison.OrdinalIgnoreCase)
                    && DataItemContentType?.Value == otherClassCondition.DataItemContentType?.Value
                    && InvertResult?.Value == otherClassCondition.InvertResult?.Value;
         }
@@ -212,7 +213,7 @@ namespace TypeCobol.Compiler.CodeElements
         {
             Debug.Assert(other is ConditionNameConditionOrSwitchStatusCondition);
             var otherConditionNameConditionOrSwitchStatusCondition = (ConditionNameConditionOrSwitchStatusCondition) other;
-            return ConditionReference.ToString() == otherConditionNameConditionOrSwitchStatusCondition.ConditionReference.ToString();
+            return string.Equals(ConditionReference.ToString(), otherConditionNameConditionOrSwitchStatusCondition.ConditionReference.ToString(), StringComparison.OrdinalIgnoreCase);
         }
 
         public override (Expression, Expression) GetOperands()
@@ -448,7 +449,7 @@ namespace TypeCobol.Compiler.CodeElements
         {
             Debug.Assert(other is ConditionOperand);
             var otherConditionOperand = (ConditionOperand) other;
-            return Variable?.ToString() == otherConditionOperand.Variable?.ToString()
+            return string.Equals(Variable?.ToString(), otherConditionOperand.Variable?.ToString(), StringComparison.OrdinalIgnoreCase)
                    && NullPointerValue?.Value == otherConditionOperand.NullPointerValue?.Value
                    && SelfObjectIdentifier?.Text == otherConditionOperand.SelfObjectIdentifier?.Text;
         }
@@ -575,8 +576,9 @@ namespace TypeCobol.Compiler.CodeElements
         {
             Debug.Assert(other is NumericVariableOperand);
             var otherNumericVariableOperand = (NumericVariableOperand) other;
-            return IntegerVariable?.ToString() == otherNumericVariableOperand.IntegerVariable?.ToString()
-                   && NumericVariable?.ToString() == otherNumericVariableOperand.NumericVariable?.ToString();
+            
+            return string.Equals(IntegerVariable?.ToString(), otherNumericVariableOperand.IntegerVariable?.ToString(), StringComparison.OrdinalIgnoreCase)
+                   && string.Equals(NumericVariable?.ToString(), otherNumericVariableOperand.NumericVariable?.ToString(), StringComparison.OrdinalIgnoreCase);
         }
 
         public override (Expression, Expression) GetOperands()

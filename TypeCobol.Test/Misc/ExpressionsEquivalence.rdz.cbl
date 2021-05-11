@@ -108,11 +108,11 @@
       
       * Class condition
       * 0
-           IF Var-txt IS NUMERIC
+           IF Var-txt2 IS NUMERIC
              CONTINUE
            END-IF.
       * 1
-           IF Var-txt2 IS NUMERIC
+           IF Var-txt IS NUMERIC
              CONTINUE
            END-IF.
       * 2

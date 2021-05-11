@@ -62,14 +62,14 @@ namespace TypeCobol.Test.Misc
             // Class
             var firstClass = expressionList.FindIndex(e => e.NodeType == ExpressionNodeType.ClassCondition);
             AssertEquivalence(0, 1, firstClass);
-            AssertNotEquivalent(0, 2, firstClass);
+            AssertNotEquivalent(1, 2, firstClass);
             AssertNotEquivalent(2, 3, firstClass);
             AssertNotEquivalent(3, 4, firstClass);
             AssertNotEquivalent(4, 5, firstClass);
             AssertNotEquivalent(5, 6, firstClass);
 
-            // Class
-            var firstConditionName= expressionList.FindIndex(e => e.NodeType == ExpressionNodeType.ConditionNameConditionOrSwitchStatusCondition);
+            // ConditionNameConditionOrSwitchStatusCondition
+            var firstConditionName = expressionList.FindIndex(e => e.NodeType == ExpressionNodeType.ConditionNameConditionOrSwitchStatusCondition);
             AssertEquivalence(0, 1, firstConditionName);
             AssertNotEquivalent(1, 2, firstConditionName);
             AssertNotEquivalent(2, 3, firstConditionName);
@@ -168,8 +168,6 @@ namespace TypeCobol.Test.Misc
             {
                 strToString.AppendLine(ExpressionToTree(expression));
                 strToString.AppendLine("________________________________________");
-                // Ensure an expression is equivalent to itself
-                Assert.IsTrue(expression.IsEquivalent(expression));
             }
 
             var expectedPath = Path.ChangeExtension(Path.Combine("Misc", "Expressions-expected"), "txt");
@@ -185,7 +183,7 @@ namespace TypeCobol.Test.Misc
         {
             if (expression == null) return string.Empty;
             var (expA, expB) = expression.GetOperands();
-            var paddedExpression = $"{string.Empty.PadLeft(depth * 4)}{expression.NodeType}: {expression}";
+            var paddedExpression = $"{new string(' ', depth * 4)}{expression.NodeType}: {expression}";
 
             if (expA == null && expB == null)
             {
