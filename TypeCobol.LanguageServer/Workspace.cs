@@ -702,10 +702,10 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// Called by a ProgramClass changed event trigger. 
+        /// CodeAnalysis completion event handler.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="cUnit">Sender of the event is the CompilationUnit.</param>
+        /// <param name="programEvent">Event arg, contains the version number of the most up-to-date InspectedProgramClassDocument.</param>
         private void FinalCompilationStepCompleted(object cUnit, ProgramClassEvent programEvent)
         {
             var compilationUnit = cUnit as CompilationUnit;
