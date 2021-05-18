@@ -69,7 +69,11 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// True if we are scanning inside a Copy.
         /// </summary>
-        public bool InsideCopy { get; set; }
+        public bool InsideCopy
+        {
+            get;
+            internal set; //Setter is used only at import time when we jump from including document to included copy.
+        }
 
         /// <summary>
         /// Encoding of the text file : used to decode the value of an hexadecimal alphanumeric literal
@@ -114,8 +118,8 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Initialize scanner state for the first line
         /// </summary>
-        public MultilineScanState(Encoding encodingForAlphanumericLiterals, bool insideDataDivision = false, bool decimalPointIsComma = false, bool withDebuggingMode = false) :
-            this(insideDataDivision, false, false, false, false, false, false, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals)
+        public MultilineScanState(Encoding encodingForAlphanumericLiterals, bool insideDataDivision = false, bool decimalPointIsComma = false, bool withDebuggingMode = false, bool insideCopy = false) :
+            this(insideDataDivision, false, false, false, false, false, false, decimalPointIsComma, withDebuggingMode, insideCopy, encodingForAlphanumericLiterals)
         { }
 
         /// <summary>
@@ -123,7 +127,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         private MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions, 
                 bool insideFormalizedComment, bool insideMultilineComments, bool insideParamsField,
-                bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals)
+                bool decimalPointIsComma, bool withDebuggingMode, bool insideCopy, Encoding encodingForAlphanumericLiterals)
         {
             InsideDataDivision = insideDataDivision;
             InsideProcedureDivision = insideProcedureDivision;
@@ -134,6 +138,7 @@ namespace TypeCobol.Compiler.Scanner
             InsideSymbolicCharacterDefinitions = insideSymbolicCharacterDefinitions;
             DecimalPointIsComma = decimalPointIsComma;
             WithDebuggingMode = withDebuggingMode;
+            InsideCopy = insideCopy;
             EncodingForAlphanumericLiterals = encodingForAlphanumericLiterals;
         }
 
@@ -144,8 +149,7 @@ namespace TypeCobol.Compiler.Scanner
         {
             MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, InsideSymbolicCharacterDefinitions,
                 InsideFormalizedComment, InsideMultilineComments, InsideParamsField, 
-                DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
-            clone.InsideCopy = this.InsideCopy;
+                DecimalPointIsComma, WithDebuggingMode, InsideCopy, EncodingForAlphanumericLiterals);
             if (LastSignificantToken != null) clone.LastSignificantToken = LastSignificantToken;
             if (BeforeLastSignificantToken != null) clone.BeforeLastSignificantToken = BeforeLastSignificantToken;
             if (SymbolicCharacters != null)

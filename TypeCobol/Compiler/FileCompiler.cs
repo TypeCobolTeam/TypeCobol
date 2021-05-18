@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Directives;
@@ -10,7 +8,6 @@ using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
-using TypeCobol.Tools;
 
 namespace TypeCobol.Compiler
 {
@@ -186,8 +183,7 @@ namespace TypeCobol.Compiler
                 else
                 {
                     //Direct copy parsing, copy is assumed to be part of Data Division and using comma as the decimal point.
-                    var initialScanState = new MultilineScanState(TextDocument.Source.EncodingForAlphanumericLiterals, true, true);
-                    initialScanState.InsideCopy = true;
+                    var initialScanState = new MultilineScanState(TextDocument.Source.EncodingForAlphanumericLiterals, true, true, insideCopy: true);
                     CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, CompilationDocument.ParsingMode.CopyAsProgram, TextDocument.Lines, compilerOptions, documentImporter, initialScanState, copyTextNameVariations, CompilationProject.AnalyzerProvider);
                     CompilationResultsForCopy = CompilationResultsForProgram;
                 }
