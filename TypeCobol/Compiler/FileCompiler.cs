@@ -151,7 +151,7 @@ namespace TypeCobol.Compiler
             chrono.Start();
             if (textDocument == null)
             {
-                TextDocument = new ReadOnlyTextDocument(sourceFile?.Name, sourceFile?.Encoding, columnsLayout, sourceFile?.ReadChars());
+                TextDocument = new ReadOnlyTextDocument(sourceFile?.Name, sourceFile?.Encoding, columnsLayout, isCopyFile, sourceFile?.ReadChars());
             }
             // 2.b Load it in an existing text document in memory
             else if (sourceFile != null)

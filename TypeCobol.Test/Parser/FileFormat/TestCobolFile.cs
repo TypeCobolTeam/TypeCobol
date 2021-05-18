@@ -27,7 +27,7 @@ namespace TypeCobol.Test.Parser.FileFormat
             if (fileProvider.TryGetFile("EbcdicRefFormat", out cobolFile))
             {
                 // Load the CobolFile in a TextDocument
-                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("EbcdicRefFormat.TXT", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
+                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("EbcdicRefFormat.TXT", docFormat.Encoding, docFormat.ColumnsLayout, false, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
                 textDocument.TextChanged += textSourceListener.OnTextChanged;
                 textDocument.StartSendingChangeEvents();
@@ -83,8 +83,8 @@ namespace TypeCobol.Test.Parser.FileFormat
             {
                 try
                 {
-                    // Load the CobolFile in a TextDocument
-                    ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("EbcdicRefFormatWithBadChars.TXT", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
+                    // Load the CobolFile in a TextDocumentl;
+                    ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("EbcdicRefFormatWithBadChars.TXT", docFormat.Encoding, docFormat.ColumnsLayout, false, cobolFile.ReadChars());
                 }
                 catch(Exception e)
                 {
@@ -117,7 +117,7 @@ namespace TypeCobol.Test.Parser.FileFormat
             if (fileProvider.TryGetFile("AsciiRefFormat", out cobolFile))
             {
                 // Load the CobolFile in a TextDocument
-                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("MSVCOUT.cpy", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
+                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("MSVCOUT.cpy", docFormat.Encoding, docFormat.ColumnsLayout, true, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
                 textDocument.TextChanged += textSourceListener.OnTextChanged;
                 textDocument.StartSendingChangeEvents();
@@ -172,7 +172,7 @@ namespace TypeCobol.Test.Parser.FileFormat
             if (fileProvider.TryGetFile("AsciiLinuxFormat.14", out cobolFile))
             {
                 // Load the CobolFile in a TextDocument
-                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("AsciiLinuxFormat.14", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
+                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("AsciiLinuxFormat.14", docFormat.Encoding, docFormat.ColumnsLayout, false, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
                 textDocument.TextChanged += textSourceListener.OnTextChanged;
                 textDocument.StartSendingChangeEvents();
@@ -227,7 +227,7 @@ namespace TypeCobol.Test.Parser.FileFormat
             if (fileProvider.TryGetFile("AsciiFreeFormat", out cobolFile))
             {
                 // Load the CobolFile in a TextDocument
-                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("AsciiFreeFormat.cpy", docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
+                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("AsciiFreeFormat.cpy", docFormat.Encoding, docFormat.ColumnsLayout, true, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
                 textDocument.TextChanged += textSourceListener.OnTextChanged;
                 textDocument.StartSendingChangeEvents();
@@ -307,7 +307,7 @@ namespace TypeCobol.Test.Parser.FileFormat
             if (fileProvider.TryGetFile(filename, out cobolFile))
             {
                 // Load the CobolFile in a TextDocument
-                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument(filename, docFormat.Encoding, docFormat.ColumnsLayout, cobolFile.ReadChars());
+                ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument(filename, docFormat.Encoding, docFormat.ColumnsLayout, false, cobolFile.ReadChars());
                 // Send all text lines in one batch to the test observer
                 textDocument.TextChanged += textSourceListener.OnTextChanged;
                 textDocument.StartSendingChangeEvents();

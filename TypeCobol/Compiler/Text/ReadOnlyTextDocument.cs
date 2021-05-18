@@ -20,11 +20,14 @@ namespace TypeCobol.Compiler.Text
         /// Initialize a cobol document from any source of characters
         /// </summary> 
         /// <param name="fileName">Name of the file the document is stored in</param>
+        /// <param name="encodingForAlphanumericLiterals">Document encoding</param>
+        /// <param name="columnsLayout">Document layout</param>
+        /// <param name="isCopy">Document nature</param>
         /// <param name="textSource">Sequence of unicode characters with line delimiters (Cr? Lf)</param>
-        public ReadOnlyTextDocument(string fileName, Encoding encodingForAlphanumericLiterals, ColumnsLayout columnsLayout, IEnumerable<char> textSource)
+        public ReadOnlyTextDocument(string fileName, Encoding encodingForAlphanumericLiterals, ColumnsLayout columnsLayout, bool isCopy, IEnumerable<char> textSource)
         {
             // Document source name and text format
-            Source = new TextSourceInfo(fileName, encodingForAlphanumericLiterals, columnsLayout);
+            Source = new TextSourceInfo(fileName, encodingForAlphanumericLiterals, columnsLayout, isCopy);
 
             // Initialize document text lines
             LoadChars(textSource);
