@@ -254,6 +254,7 @@ namespace TypeCobol.LanguageServer.Test
         public void SimpleMoveToCompletion()
         {
             LSRTestHelper.Test("SimpleMoveToCompletion", LsrTestingOptions.NoLsrTesting, true);
+            LSRTestHelper.Test("SimpleMoveToCompletionNoTC", LsrTestingOptions.NoLsrTesting, true, pureCobol: true);
         }
 
         [TestMethod]
@@ -317,6 +318,7 @@ namespace TypeCobol.LanguageServer.Test
         public void DisplayCompletion()
         {
             LSRTestHelper.Test("DisplayCompletion", LsrTestingOptions.NoLsrTesting, true);
+            LSRTestHelper.Test("DisplayCompletionNoTC", LsrTestingOptions.NoLsrTesting, true, pureCobol: true);
         }
 
         [TestMethod]
