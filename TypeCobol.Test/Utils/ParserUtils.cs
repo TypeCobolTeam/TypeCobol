@@ -31,7 +31,7 @@ namespace TypeCobol.Test.Utils
                 localDirectory.FullName, new string[] { ".cbl", ".cpy" },
                 documentFormat, new TypeCobolOptions(), null);
 
-            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, isCopy, project);
+            FileCompiler compiler = new FileCompiler(null, textName, documentFormat.ColumnsLayout, isCopy, project.SourceFileProvider, project, new TypeCobolOptions(), null, project);
             compiler.CompileOnce(ExecutionStep.Preprocessor, false, false);
 
             return compiler.CompilationResultsForProgram;
@@ -51,7 +51,7 @@ namespace TypeCobol.Test.Utils
                 //First use *.cpy as tests will use file WITH extension for program but without extension for copy inside programs => small perf gain
                 localDirectory.FullName, new string[] { ".cpy", ".cbl" },
                 documentFormat, options, null);
-            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, options, null, isCopy, project);
+            FileCompiler compiler = new FileCompiler(null, textName, documentFormat.ColumnsLayout, isCopy, project.SourceFileProvider, project, options, null, project);
             compiler.CompileOnce();
 
             return compiler.CompilationResultsForProgram;
@@ -67,7 +67,7 @@ namespace TypeCobol.Test.Utils
             var project = new CompilationProject("Empty project", ".", new[] { ".cbl", ".cpy" },
                 DocumentFormat.FreeTextFormat, typeCobolOptions, null);
 
-            var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, typeCobolOptions, asPartOfACopy, project);
+            var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, typeCobolOptions, project);
             compiler.CompileOnce();
 
             return compiler.CompilationResultsForProgram;
