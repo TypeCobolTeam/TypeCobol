@@ -152,6 +152,7 @@ namespace TypeCobol.Compiler
         public CompilationDocument(TextSourceInfo textSourceInfo, bool isImported, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IDocumentImporter documentImporter,
             [NotNull] MultilineScanState initialScanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
+            //Cannot import a program
             if (isImported) Debug.Assert(textSourceInfo.IsCopy);
 
             TextSourceInfo = textSourceInfo;

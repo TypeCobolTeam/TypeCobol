@@ -38,7 +38,7 @@ namespace TypeCobol.Test.Parser.Scanner
 
     internal static class ScannerUtils
     {
-        public static TextSourceInfo TextSourceInfo = new TextSourceInfo("test", IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147), ColumnsLayout.FreeTextFormat, false);
+        public static TextSourceInfo TextSourceInfo = new TextSourceInfo("test", IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147), ColumnsLayout.FreeTextFormat, false);//Assuming a program here, not a copy.
         public static TypeCobolOptions CompilerOptions = new TypeCobolOptions();
         public static List<RemarksDirective.TextNameVariation> CopyTextNameVariations = new List<RemarksDirective.TextNameVariation>();
 

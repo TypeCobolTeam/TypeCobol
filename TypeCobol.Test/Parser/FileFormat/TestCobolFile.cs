@@ -83,7 +83,7 @@ namespace TypeCobol.Test.Parser.FileFormat
             {
                 try
                 {
-                    // Load the CobolFile in a TextDocumentl;
+                    // Load the CobolFile in a TextDocument;
                     ReadOnlyTextDocument textDocument = new ReadOnlyTextDocument("EbcdicRefFormatWithBadChars.TXT", docFormat.Encoding, docFormat.ColumnsLayout, false, cobolFile.ReadChars());
                 }
                 catch(Exception e)
