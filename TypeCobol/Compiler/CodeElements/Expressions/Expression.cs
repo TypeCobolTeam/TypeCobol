@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.Diagnostics;
+using System.Text;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -13,6 +15,29 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 
 		public ExpressionNodeType NodeType { get; private set; }
+
+        /// <summary>
+        /// Returns true if the the characteristic element of the nodes are equivalent
+        /// For a operation or relation, the element would be the operator
+        /// For a leaf, it would be the name of the variable, ...
+        /// </summary>
+        public bool IsEquivalent(Expression other)
+        {
+            if (other == null) return false;
+            return NodeType == other.NodeType && CheckEquivalence(other);
+        }
+
+        /// <summary>
+        /// Should return true if the characteristic element of the nodes are equivalent
+        /// The type of the Expression should already be the same as the overriding class
+        /// </summary>
+        protected abstract bool CheckEquivalence(Expression other);
+
+        /// <summary>
+        /// Returns the operands of an expression
+        /// </summary>
+        /// <returns>The operands of the expression, ordered as left then right, each can be null if there is no child operand</returns>
+        public abstract (Expression, Expression) GetOperands();
 
         public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
@@ -65,6 +90,18 @@ namespace TypeCobol.Compiler.CodeElements
 		public SyntaxProperty<LogicalOperator> Operator { get; private set;  }
 
 		public ConditionalExpression RightOperand  { get; private set; }
+
+        protected override bool CheckEquivalence(Expression other)
+        {
+            Debug.Assert(other is LogicalOperation);
+            var otherLogicalOperation = (LogicalOperation)other;
+            return Operator.Value == otherLogicalOperation.Operator.Value;
+        }
+
+        public override (Expression, Expression) GetOperands()
+        {
+            return (LeftOperand, RightOperand);
+        }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
@@ -121,13 +158,27 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public SyntaxProperty<bool> InvertResult { get; private set; }
 
+        protected override bool CheckEquivalence(Expression other)
+        {
+            Debug.Assert(other is ClassCondition);
+            var otherClassCondition = (ClassCondition) other;
+            return string.Equals(CharacterClassNameReference?.Name, otherClassCondition.CharacterClassNameReference?.Name, StringComparison.OrdinalIgnoreCase)
+                   && DataItemContentType?.Value == otherClassCondition.DataItemContentType?.Value
+                   && InvertResult?.Value == otherClassCondition.InvertResult?.Value;
+        }
+
+        public override (Expression, Expression) GetOperands()
+        {
+            return (null, null);
+        }
+
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
                 && this.ContinueVisitToChildren(astVisitor, DataItem, CharacterClassNameReference, DataItemContentType, InvertResult);
         }
 
         public override string ToString() {
-			return new StringBuilder(DataItem.ToString()).Append(InvertResult.Value?" NOT ":" ").Append(CharacterClassNameReference != null ? CharacterClassNameReference.ToString() : DataItemContentType.ToString()).Append(" ?").ToString();
+			return new StringBuilder(DataItem.ToString()).Append(InvertResult!= null && InvertResult.Value?" NOT ":" ").Append(CharacterClassNameReference != null ? CharacterClassNameReference.ToString() : DataItemContentType.ToString()).Append(" ?").ToString();
 		}
 	}
 
@@ -158,6 +209,18 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public DataOrConditionStorageArea ConditionReference { get; private set; }
 
+        protected override bool CheckEquivalence(Expression other)
+        {
+            Debug.Assert(other is ConditionNameConditionOrSwitchStatusCondition);
+            var otherConditionNameConditionOrSwitchStatusCondition = (ConditionNameConditionOrSwitchStatusCondition) other;
+            return string.Equals(ConditionReference.ToString(), otherConditionNameConditionOrSwitchStatusCondition.ConditionReference.ToString(), StringComparison.OrdinalIgnoreCase);
+        }
+
+        public override (Expression, Expression) GetOperands()
+        {
+            return (null, null);
+        }
+
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
@@ -176,7 +239,7 @@ namespace TypeCobol.Compiler.CodeElements
 	/// </summary>
 	public class RelationCondition : ConditionalExpression
 	{
-		public RelationCondition(ConditionOperand leftOperand, SyntaxProperty<RelationalOperator> relationalOperator, ConditionOperand rightOperand) :
+		public RelationCondition(ConditionOperand leftOperand, RelationalOperator relationalOperator, ConditionOperand rightOperand) :
 			base(ExpressionNodeType.RelationCondition) {
 			LeftOperand = leftOperand;
 			Operator = relationalOperator;
@@ -185,9 +248,21 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public ConditionOperand LeftOperand { get; private set; }
 
-		public SyntaxProperty<RelationalOperator> Operator { get; private set; }
+		public RelationalOperator Operator { get; private set; }
 
 		public ConditionOperand RightOperand { get; private set; }
+
+        protected override bool CheckEquivalence(Expression other)
+        {
+            Debug.Assert(other is RelationCondition);
+            var otherRelationCondition = (RelationCondition) other;
+            return Operator.SemanticOperator == otherRelationCondition.Operator.SemanticOperator;
+        }
+
+        public override (Expression, Expression) GetOperands()
+        {
+            return (LeftOperand, RightOperand);
+        }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
@@ -201,20 +276,79 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 	}
 
-	/// <summary>
-	/// Relational operators and their meanings
-	/// </summary>
-	public enum RelationalOperator
-	{
-		EqualTo,
-		GreaterThan,
-		GreaterThanOrEqualTo,
-		LessThan,
-		LessThanOrEqualTo,
-		NotEqualTo
-	}
+    public class RelationalOperator : IVisitable
+    {
+        /// <summary>
+        /// If the operator is negated, Token of the NOT
+        /// Null if no NOT is present
+        /// </summary>
+        public Token NotToken { get; }
+        public SyntaxProperty<RelationalOperatorSymbol> Operator { get; }
+        
+        public RelationalOperator(SyntaxProperty<RelationalOperatorSymbol> @operator, Token notToken)
+        {
+            Operator = @operator;
+            NotToken = notToken;
+        }
 
-	/// <summary>
+        /// <summary>
+        /// Return a RelationalOperatorSymbol which has the semantic value of this object
+        /// </summary>
+        public RelationalOperatorSymbol SemanticOperator
+        {
+            get
+            {
+                if (NotToken == null)
+                {
+                    return Operator.Value;
+                }
+                switch (Operator.Value)
+                {
+                    case RelationalOperatorSymbol.EqualTo:
+                        return RelationalOperatorSymbol.NotEqualTo;
+                    case RelationalOperatorSymbol.GreaterThan:
+                        return RelationalOperatorSymbol.LessThanOrEqualTo;
+                    case RelationalOperatorSymbol.GreaterThanOrEqualTo:
+                        return RelationalOperatorSymbol.LessThan;
+                    case RelationalOperatorSymbol.LessThan:
+                        return RelationalOperatorSymbol.GreaterThanOrEqualTo;
+                    case RelationalOperatorSymbol.LessThanOrEqualTo:
+                        return RelationalOperatorSymbol.GreaterThan;
+                    default:
+                        throw new NotSupportedException($"Unexpected RelationalOperatorSymbol '{Operator.Value}'.");
+                }
+            }
+        }
+
+        public bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, NotToken, Operator);
+        }
+
+        public override string ToString()
+        {
+            return Operator.Value + (NotToken == null ? string.Empty : " " + NotToken.Text);
+        }
+    }
+
+    /// <summary>
+    /// Relational operators and their meanings
+    /// </summary>
+    public enum RelationalOperatorSymbol
+    {
+        EqualTo,
+        GreaterThan,
+        GreaterThanOrEqualTo,
+        LessThan,
+        LessThanOrEqualTo,
+        /// <summary>
+        /// This can't be created from a COBOL source, but is useful for comparison of semantic value of symbols
+        /// </summary>
+        NotEqualTo
+    }
+    
+    /// <summary>
 	/// Sign condition
 	/// The sign condition determines whether the algebraic value of a numeric operand is
 	/// greater than, less than, or equal to zero.
@@ -233,6 +367,19 @@ namespace TypeCobol.Compiler.CodeElements
 		public SyntaxProperty<SignComparison> SignComparison { get; private set; }
 
 		public SyntaxProperty<bool> InvertResult { get; private set; }
+        
+        protected override bool CheckEquivalence(Expression other)
+        {
+            Debug.Assert(other is SignCondition);
+            var otherSignCondition = (SignCondition) other;
+            return SignComparison.Value == otherSignCondition.SignComparison.Value
+                   && InvertResult?.Value == otherSignCondition.InvertResult?.Value;
+        }
+
+        public override (Expression, Expression) GetOperands()
+        {
+            return (Operand, null);
+        }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
@@ -297,6 +444,21 @@ namespace TypeCobol.Compiler.CodeElements
 		public NullPointerValue NullPointerValue { get; private set; }
 
 		public Token SelfObjectIdentifier { get; private set; }
+
+        protected override bool CheckEquivalence(Expression other)
+        {
+            Debug.Assert(other is ConditionOperand);
+            var otherConditionOperand = (ConditionOperand) other;
+            return string.Equals(Variable?.ToString(), otherConditionOperand.Variable?.ToString(), StringComparison.OrdinalIgnoreCase)
+                   && NullPointerValue?.Value == otherConditionOperand.NullPointerValue?.Value
+                   && SelfObjectIdentifier?.Text == otherConditionOperand.SelfObjectIdentifier?.Text;
+        }
+
+        public override (Expression, Expression) GetOperands()
+        {
+            // The only expression possible is ArithmeticExpression, which can be null
+            return (ArithmeticExpression, null);
+        }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
@@ -363,6 +525,18 @@ namespace TypeCobol.Compiler.CodeElements
 		public ArithmeticExpression LeftOperand { get; private set; }
 		public SyntaxProperty<ArithmeticOperator> Operator { get; private set; }
 		public ArithmeticExpression RightOperand { get; private set; }
+        
+        protected override bool CheckEquivalence(Expression other)
+        {
+            Debug.Assert(other is ArithmeticOperation);
+            var otherArithmeticOperation = (ArithmeticOperation) other;
+            return Operator?.Value == otherArithmeticOperation.Operator?.Value;
+        }
+
+        public override (Expression, Expression) GetOperands()
+        {
+            return (LeftOperand, RightOperand);
+        }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
@@ -397,6 +571,20 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public IntegerVariable IntegerVariable { get; private set; }
 		public NumericVariable NumericVariable { get; private set; }
+
+        protected override bool CheckEquivalence(Expression other)
+        {
+            Debug.Assert(other is NumericVariableOperand);
+            var otherNumericVariableOperand = (NumericVariableOperand) other;
+            
+            return string.Equals(IntegerVariable?.ToString(), otherNumericVariableOperand.IntegerVariable?.ToString(), StringComparison.OrdinalIgnoreCase)
+                   && string.Equals(NumericVariable?.ToString(), otherNumericVariableOperand.NumericVariable?.ToString(), StringComparison.OrdinalIgnoreCase);
+        }
+
+        public override (Expression, Expression) GetOperands()
+        {
+            return (null, null);
+        }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
