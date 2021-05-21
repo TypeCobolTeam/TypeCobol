@@ -28,7 +28,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// When the START statement is executed, a comparison is made between the current
         /// value in the key data-name and the corresponding key field in the file's index.
         /// </summary>
-        public SyntaxProperty<RelationalOperator> RelationalOperator { get; set; }
+        public RelationalOperator RelationalOperator { get; set; }
 
         /// <summary>
         /// p429:
