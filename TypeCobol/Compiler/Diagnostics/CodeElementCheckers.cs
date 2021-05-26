@@ -400,5 +400,30 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
+    static class UnsupportedTypeCobolFeaturesChecker
+    {
+        private static void AddError(CodeElement codeElement, string message, IToken location = null)
+        {
+            if (location != null)
+            {
+                DiagnosticUtils.AddError(codeElement, message, location, null, MessageCode.UnsupportedTypeCobolFeature);
+            }
+            else
+            {
+                DiagnosticUtils.AddError(codeElement, message, MessageCode.UnsupportedTypeCobolFeature);
+            }
+        }
+
+        public static void OnCodeElement(MoveSimpleStatement statement, CodeElementsParser.MoveSimpleContext context)
+        {
+            if (context.booleanValue() != null)
+            {
+                AddError(statement, "moving boolean values is not supported.", context.booleanValue().Start);
+            }
+
+            //No need to check UNSAFE keyword, it will be picked up as a syntax error by ANTLR
+        }
+    }
+
     #endregion
 }

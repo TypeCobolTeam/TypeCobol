@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
@@ -822,17 +823,22 @@ namespace TypeCobol.Compiler.Parser
 		 // MOVE STATEMENT //
 		////////////////////
 
-		internal MoveSimpleStatement CreateMoveStatement(CodeElementsParser.MoveSimpleContext context) {
-		    var statement = new MoveSimpleStatement(CobolExpressionsBuilder.CreateVariable(context.variable7()),
-						BuildObjectArrayFromParserRules(context.storageArea1(), ctx => CobolExpressionsBuilder.CreateStorageArea(ctx)),
-// [TYPECOBOL]
-						CobolWordsBuilder.CreateBooleanValue(context.booleanValue()));
-			if (context.UNSAFE() != null) statement.Unsafe = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.UNSAFE()));
-// [/TYPECOBOL]
-			return statement;
-		}
+        internal MoveSimpleStatement CreateMoveStatement(CodeElementsParser.MoveSimpleContext context)
+        {
+            var statement = new MoveSimpleStatement(CobolExpressionsBuilder.CreateVariable(context.variable7()),
+                BuildObjectArrayFromParserRules(context.storageArea1(),
+                    ctx => CobolExpressionsBuilder.CreateStorageArea(ctx)),
+                CobolWordsBuilder.CreateBooleanValue(context.booleanValue()));
+            if (context.UNSAFE() != null)
+                statement.Unsafe = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.UNSAFE()));
 
-		internal MoveCorrespondingStatement CreateMoveStatement(CodeElementsParser.MoveCorrespondingContext context) {
+            if (CompilerOptions.IsCobolLanguage)
+                UnsupportedTypeCobolFeaturesChecker.OnCodeElement(statement, context);
+
+            return statement;
+        }
+
+        internal MoveCorrespondingStatement CreateMoveStatement(CodeElementsParser.MoveCorrespondingContext context) {
 			var statement = new MoveCorrespondingStatement();
 			statement.FromGroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.fromGroupItem);
 			statement.ToGroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.toGroupItem);
@@ -850,6 +856,9 @@ namespace TypeCobol.Compiler.Parser
                     ReceivingGroupIsAlsoSending = false
                 };
             }
+
+            //No need to check for unsupported TC feature here, as the TC statement only differs on the UNSAFE keyword
+
             return statement;
 		}
 
