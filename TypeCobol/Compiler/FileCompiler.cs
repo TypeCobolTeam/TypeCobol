@@ -137,8 +137,10 @@ namespace TypeCobol.Compiler
             CobolFile sourceFile = null;
             CompilationProject = compilationProject;
 
-            if (fileInfo != null)
+            if (textDocument == null)
             {
+                //No textDocument provided, use fileInfo to find the file
+                Debug.Assert(fileInfo != null);
                 string libraryName = fileInfo.Item1;
                 string fileName = fileInfo.Item2;
                 if (!sourceFileProvider.TryGetFile(libraryName, fileName, out sourceFile))
@@ -149,23 +151,27 @@ namespace TypeCobol.Compiler
                     throw new Exception(message);
                 }
             }
+            else
+            {
+                Debug.Assert(fileInfo == null);
+            }
 
             chrono.Stop();
             SourceFileSearchTime = (int)chrono.ElapsedMilliseconds;
             chrono.Reset();
 
-            // 2.a Load it in a new text document in memory
             chrono.Start();
+
             if (textDocument == null)
             {
+                // 2.a Load it in a new text document in memory
                 Debug.Assert(sourceFile != null);
-                Debug.Assert(fileInfo != null);
                 TextDocument = new ReadOnlyTextDocument(sourceFile.Name, sourceFile.Encoding, fileInfo.Item3, fileInfo.Item4, sourceFile.ReadChars());
             }
-            // 2.b Use existing text document in memory
             else
             {
-                TextDocument = textDocument; //We assume that source is already loaded
+                // 2.b Use existing text document in memory, assuming that source is already loaded
+                TextDocument = textDocument;
             }
 
             chrono.Stop();
