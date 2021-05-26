@@ -1118,6 +1118,8 @@ namespace TypeCobol.Compiler.Parser
 
             if (context.UNSAFE() != null) statement.Unsafe = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.UNSAFE()));
 
+            //No need to check for unsupported TC feature here, as the TC statement only differs on the UNSAFE keyword
+
             return statement;
 		}
 
@@ -1149,7 +1151,11 @@ namespace TypeCobol.Compiler.Parser
 				statement.IncrementDirection = CreateSyntaxProperty(IndexIncrementDirection.Down, context.DOWN());
 			}
 			statement.SendingVariable = CobolExpressionsBuilder.CreateVariableOrExpression(context.variableOrExpression2());
-			return statement;
+
+            if (CompilerOptions.IsCobolLanguage)
+                UnsupportedTypeCobolFeaturesChecker.OnCodeElement(statement, context);
+
+            return statement;
 		}
 
 		internal CodeElement CreateSetStatementForSwitches(CodeElementsParser.SetStatementForSwitchesContext context) {
@@ -1181,6 +1187,10 @@ namespace TypeCobol.Compiler.Parser
 			statement.Conditions = BuildObjectArrayFromParserRules(context.conditionStorageArea(), ctx => CobolExpressionsBuilder.CreateConditionStorageArea(ctx));
             if (context.TRUE()  != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.TRUE());
 			if (context.FALSE() != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.FALSE());
+
+            if (CompilerOptions.IsCobolLanguage)
+                UnsupportedTypeCobolFeaturesChecker.OnCodeElement(statement, context);
+
             return statement;
 		}
 

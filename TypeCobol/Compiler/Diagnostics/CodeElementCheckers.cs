@@ -423,6 +423,22 @@ namespace TypeCobol.Compiler.Diagnostics
 
             //No need to check UNSAFE keyword, it will be picked up as a syntax error by ANTLR
         }
+
+        public static void OnCodeElement(SetStatementForIndexes statement, CodeElementsParser.SetStatementForIndexesContext context)
+        {
+            if (context.variableOrExpression2()?.arithmeticExpression() != null)
+            {
+                AddError(statement, "using arithmetic expressions to manipulate indexes is not supported.");
+            }
+        }
+
+        public static void OnCodeElement(SetStatementForConditions statement, CodeElementsParser.SetStatementForConditionsContext context)
+        {
+            if (context.FALSE() != null)
+            {
+                AddError(statement, "SET TO FALSE statement is not supported.");
+            }
+        }
     }
 
     #endregion
