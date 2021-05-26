@@ -195,14 +195,16 @@ namespace TypeCobol.Compiler.Diagnostics
         public static void OnCodeElement(CallStatement statement, CodeElementsParser.CallStatementContext c)
         {
             var context = c?.cobolCallStatement();
-            if (context != null) //if null it's certainly a CallStatementContext
+            if (context != null) //if null it's certainly a TcCallStatementContext
             {
+                if (context.programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable() == null)
+                    DiagnosticUtils.AddError(statement, "Empty CALL is not authorized", context.Start);
+
                 foreach (var call in context.callUsingParameters()) CheckCallUsings(statement, call);
 
                 if (context.callReturningParameter() != null && statement.OutputParameter == null)
                     DiagnosticUtils.AddError(statement, "CALL .. RETURNING: Missing identifier", context);
             }
-
         }
 
         private static void CheckCallUsings(CallStatement statement, CodeElementsParser.CallUsingParametersContext context)
@@ -437,6 +439,15 @@ namespace TypeCobol.Compiler.Diagnostics
             if (context.FALSE() != null)
             {
                 AddError(statement, "SET TO FALSE statement is not supported.");
+            }
+        }
+
+        public static void OnCodeElement(ProcedureStyleCallStatement statement, CodeElementsParser.TcCallStatementContext context)
+        {
+            var unsupportedKeyword = context.INPUT() ?? context.OUTPUT(); //No need to test for IN-OUT keyword as it is not a keyword in pure Cobol mode
+            if (unsupportedKeyword != null)
+            {
+                AddError(statement, $"'{unsupportedKeyword.GetText()}' keyword is not supported in a Cobol CALL.", unsupportedKeyword.Symbol);
             }
         }
     }

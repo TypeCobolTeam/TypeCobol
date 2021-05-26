@@ -1233,7 +1233,9 @@ namespace TypeCobol.Compiler.Parser
         }
 
 		internal SymbolReferenceVariable CreateProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable(CodeElementsParser.ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariableContext context)
-		{
+        {
+            if (context == null) return null;
+
             SymbolReferenceVariable variable = null;
 			if (context.programNameReferenceOrProgramEntryReference() != null)
 			{
@@ -1243,29 +1245,6 @@ namespace TypeCobol.Compiler.Parser
 			else
 			{
 				StorageArea storageArea = CreateIdentifier(context.identifier());
-				variable = new SymbolReferenceVariable(StorageDataType.ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointer, storageArea);
-			}
-
-            // Collect storage area read/writes at the code element level
-            if (variable.StorageArea != null)
-            {
-                this.storageAreaReads.Add(variable.StorageArea);
-            }
-
-            return variable;
-        }
-
-        internal SymbolReferenceVariable CreateProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariableOrTCFunctionProcedure(CodeElementsParser.ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariableContext context)
-		{
-            SymbolReferenceVariable variable = null;
-			if (context.programNameReferenceOrProgramEntryReference() != null)
-			{
-				SymbolReference symbolReference = CobolWordsBuilder.CreateProgramNameReferenceOrProgramEntryReference(context.programNameReferenceOrProgramEntryReference());
-				variable = new SymbolReferenceVariable(StorageDataType.ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointer, symbolReference);
-			}
-			else
-			{
-				StorageArea storageArea = CreateIdentifierOrTCFunctionProcedure(context.identifier());
 				variable = new SymbolReferenceVariable(StorageDataType.ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointer, storageArea);
 			}
 
