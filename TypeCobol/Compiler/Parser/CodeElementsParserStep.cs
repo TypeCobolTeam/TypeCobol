@@ -146,7 +146,7 @@ namespace TypeCobol.Compiler.Parser
 
             // Prepare to analyze the parse tree
             ParseTreeWalker walker = new ParseTreeWalker();
-            CodeElementBuilder codeElementBuilder = new CodeElementBuilder();
+            CodeElementBuilder codeElementBuilder = new CodeElementBuilder(compilerOptions);
 
             // --- INCREMENTAL PARSING ---
 

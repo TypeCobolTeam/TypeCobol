@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 
@@ -11,14 +12,16 @@ namespace TypeCobol.Compiler.Parser
 {
 	internal class CobolStatementsBuilder
 	{
-		public CobolStatementsBuilder(CobolWordsBuilder cobolWordsBuilder, CobolExpressionsBuilder cobolExpressionsBuilder)
-		{
+        public CobolStatementsBuilder(CobolWordsBuilder cobolWordsBuilder, CobolExpressionsBuilder cobolExpressionsBuilder, TypeCobolOptions compilerOptions)
+        {
+            CompilerOptions = compilerOptions;
 			CobolWordsBuilder = cobolWordsBuilder;
 			CobolExpressionsBuilder = cobolExpressionsBuilder;
 		}
 
-		private CobolWordsBuilder CobolWordsBuilder { get; set; }
-		private CobolExpressionsBuilder CobolExpressionsBuilder { get; set; }
+        private TypeCobolOptions CompilerOptions { get; }
+		private CobolWordsBuilder CobolWordsBuilder { get; }
+		private CobolExpressionsBuilder CobolExpressionsBuilder { get; }
 
 		  ///////////////////////////////
 		 // PROCEDURE DIVISION HEADER //
