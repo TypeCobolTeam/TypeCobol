@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
@@ -404,23 +405,14 @@ namespace TypeCobol.Compiler.Diagnostics
 
     static class UnsupportedTypeCobolFeaturesChecker
     {
-        private static void AddError(CodeElement codeElement, string message, IToken location = null)
-        {
-            if (location != null)
-            {
-                DiagnosticUtils.AddError(codeElement, message, location, null, MessageCode.UnsupportedTypeCobolFeature);
-            }
-            else
-            {
-                DiagnosticUtils.AddError(codeElement, message, MessageCode.UnsupportedTypeCobolFeature);
-            }
-        }
+        private static void AddError(CodeElement codeElement, string message, IParseTree location)
+            => DiagnosticUtils.AddError(codeElement, message, ParseTreeUtils.GetFirstToken(location), null, MessageCode.UnsupportedTypeCobolFeature);
 
         public static void OnCodeElement(MoveSimpleStatement statement, CodeElementsParser.MoveSimpleContext context)
         {
             if (context.booleanValue() != null)
             {
-                AddError(statement, "moving boolean values is not supported.", context.booleanValue().Start);
+                AddError(statement, "moving boolean values is not supported.", context.booleanValue());
             }
 
             //No need to check UNSAFE keyword, it will be picked up as a syntax error by ANTLR
@@ -430,7 +422,7 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             if (context.variableOrExpression2()?.arithmeticExpression() != null)
             {
-                AddError(statement, "using arithmetic expressions to manipulate indexes is not supported.");
+                AddError(statement, "using arithmetic expressions to manipulate indexes is not supported.", context.variableOrExpression2().arithmeticExpression());
             }
         }
 
@@ -438,17 +430,26 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             if (context.FALSE() != null)
             {
-                AddError(statement, "SET TO FALSE statement is not supported.");
+                AddError(statement, "SET TO FALSE statement is not supported.", context.FALSE());
             }
         }
 
         public static void OnCodeElement(ProcedureStyleCallStatement statement, CodeElementsParser.TcCallStatementContext context)
         {
-            var unsupportedKeyword = context.INPUT() ?? context.OUTPUT(); //No need to test for IN-OUT keyword as it is not a keyword in pure Cobol mode
-            if (unsupportedKeyword != null)
+            if (context.INPUT() != null)
             {
-                AddError(statement, $"'{unsupportedKeyword.GetText()}' keyword is not supported in a Cobol CALL.", unsupportedKeyword.Symbol);
+                AddErrorOnUnsupporteKeyword(context.INPUT());
             }
+
+            if (context.OUTPUT() != null)
+            {
+                AddErrorOnUnsupporteKeyword(context.OUTPUT());
+            }
+
+            //No need to test for IN-OUT keyword as it is not a keyword in pure Cobol mode
+
+            void AddErrorOnUnsupporteKeyword(ITerminalNode unsupportedKeyword)
+                => AddError(statement, $"'{unsupportedKeyword.GetText()}' keyword is not supported in a Cobol CALL.", unsupportedKeyword);
         }
     }
 
