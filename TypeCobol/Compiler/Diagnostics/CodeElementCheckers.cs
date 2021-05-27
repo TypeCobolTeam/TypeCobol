@@ -403,6 +403,10 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
+    /// <summary>
+    /// Create diagnostics for TypeCobol-only elements used in strict Cobol parsing context.
+    /// Do not call this checker without testing IsCobolLanguage option first !
+    /// </summary>
     static class UnsupportedTypeCobolFeaturesChecker
     {
         private static void AddError(CodeElement codeElement, string message, IParseTree location)
@@ -438,17 +442,17 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             if (context.INPUT() != null)
             {
-                AddErrorOnUnsupporteKeyword(context.INPUT());
+                AddErrorOnUnsupportedKeyword(context.INPUT());
             }
 
             if (context.OUTPUT() != null)
             {
-                AddErrorOnUnsupporteKeyword(context.OUTPUT());
+                AddErrorOnUnsupportedKeyword(context.OUTPUT());
             }
 
-            //No need to test for IN-OUT keyword as it is not a keyword in pure Cobol mode
+            //No need to check IN-OUT keyword, it will be picked up as a syntax error by ANTLR
 
-            void AddErrorOnUnsupporteKeyword(ITerminalNode unsupportedKeyword)
+            void AddErrorOnUnsupportedKeyword(ITerminalNode unsupportedKeyword)
                 => AddError(statement, $"'{unsupportedKeyword.GetText()}' keyword is not supported in a Cobol CALL.", unsupportedKeyword);
         }
     }
