@@ -277,10 +277,11 @@ namespace TypeCobol.Compiler
         /// </summary>
         public void RefreshCodeAnalysisDocumentSnapshot()
         {
+            bool documentUpdated = false;
             lock (lockObjectForCodeAnalysisDocumentSnapshot)
             {
                 var programClassDocument = ProgramClassDocumentSnapshot;
-                if (programClassDocument != null && CodeAnalysisDocumentNeedsUpdate())
+                if (programClassDocument != null && CodeAnalysisDocumentNeedsUpdate(out int version))
                 {
                     PerfStatsForCodeQualityCheck.OnStartRefresh();
 
@@ -317,17 +318,38 @@ namespace TypeCobol.Compiler
                     }
 
                     //Create updated snapshot
-                    CodeAnalysisDocumentSnapshot = new InspectedProgramClassDocument(programClassDocument, diagnostics, results);
+                    CodeAnalysisDocumentSnapshot = new InspectedProgramClassDocument(programClassDocument, version, diagnostics, results);
+                    documentUpdated = true;
 
                     PerfStatsForCodeQualityCheck.OnStopRefresh();
                 }
 
-                bool CodeAnalysisDocumentNeedsUpdate()
+                bool CodeAnalysisDocumentNeedsUpdate(out int newVersion)
                 {
-                    return CodeAnalysisDocumentSnapshot == null //Not yet computed
-                           ||
-                           (CodeAnalysisDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != programClassDocument.CurrentVersion); //Obsolete version
+                    if (CodeAnalysisDocumentSnapshot == null)
+                    {
+                        //Not yet computed
+                        newVersion = 0;
+                        return true;
+                    }
+
+                    if (CodeAnalysisDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != programClassDocument.CurrentVersion)
+                    {
+                        //Obsolete version
+                        newVersion = CodeAnalysisDocumentSnapshot.CurrentVersion + 1;
+                        return true;
+                    }
+
+                    //No need for update
+                    newVersion = -1;
+                    return false;
                 }
+            }
+
+            EventHandler<ProgramClassEvent> codeAnalysisCompleted = CodeAnalysisCompleted;
+            if (documentUpdated && codeAnalysisCompleted != null)
+            {
+                codeAnalysisCompleted(this, new ProgramClassEvent() { Version = CodeAnalysisDocumentSnapshot.CurrentVersion });
             }
         }
 
@@ -449,6 +471,12 @@ namespace TypeCobol.Compiler
         /// detected after a snapshot refresh.
         /// </summary>
         public event EventHandler<ProgramClassEvent> ProgramClassNotChanged;
+
+        /// <summary>
+        /// Subscribe to this event to get notified of new code analysis results.
+        /// Re-use of <code>ProgramClassEvent</code> class but the version number does correspond to the <code>CodeAnalysisDocumentSnapshot</code> version.
+        /// </summary>
+        public event EventHandler<ProgramClassEvent> CodeAnalysisCompleted;
 
         /// <summary>
         /// Performance stats for the TemporaryProgramClassDocumentSnapshot method
