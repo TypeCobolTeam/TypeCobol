@@ -30,6 +30,6 @@
       *SET statement for conditions
       *OK
            SET test1 TO TRUE.
-      *KO (Only to test the syntax, it actually applies to BOOl variables)
+      *KO (Only to test the syntax, it actually applies to BOOL variables)
            SET test1 TO FALSE.
        END PROGRAM tcSet.
