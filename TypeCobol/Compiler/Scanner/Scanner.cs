@@ -2148,7 +2148,7 @@ namespace TypeCobol.Compiler.Scanner
                 //   as a system-name.
 
                 // Try to match keyword text
-                tokenType = TokenUtils.GetTokenTypeFromTokenString(tokenText);
+                tokenType = TokenUtils.GetTokenTypeFromTokenString(tokenText, compilerOptions.IsCobolLanguage);
 
                 // Special cases of user defined words : 
                 // - symbolic characters

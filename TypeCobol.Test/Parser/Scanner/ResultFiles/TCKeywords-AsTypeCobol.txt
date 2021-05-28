@@ -1,0 +1,50 @@
+-- Line 1 --
+[1,7:TYPEDEF]<TYPEDEF>
+[8,8: ]<SpaceSeparator>
+[9,14:STRONG]<STRONG>
+[15,15: ]<SpaceSeparator>
+[16,21:UNSAFE]<UNSAFE>
+[22,22: ]<SpaceSeparator>
+[23,28:PUBLIC]<PUBLIC>
+[29,29: ]<SpaceSeparator>
+[30,36:PRIVATE]<PRIVATE>
+[37,37: ]<SpaceSeparator>
+[38,43:IN-OUT]<IN_OUT>
+[44,44: ]<SpaceSeparator>
+[45,50:STRICT]<STRICT>
+
+-- Line 2 --
+[1,7:TyPeDeF]<TYPEDEF>
+[8,8: ]<SpaceSeparator>
+[9,14:StRoNg]<STRONG>
+[15,15: ]<SpaceSeparator>
+[16,21:UnSaFe]<UNSAFE>
+[22,22: ]<SpaceSeparator>
+[23,28:PuBlIc]<PUBLIC>
+[29,29: ]<SpaceSeparator>
+[30,36:PrIvAtE]<PRIVATE>
+[37,37: ]<SpaceSeparator>
+[38,43:In-oUt]<IN_OUT>
+[44,44: ]<SpaceSeparator>
+[45,50:StRiCt]<STRICT>
+
+-- Line 3 --
+[1,4:MOVE]<MOVE>
+[5,5: ]<SpaceSeparator>
+[6,11:public]<PUBLIC>
+[12,12: ]<SpaceSeparator>
+[13,14:TO]<TO>
+[15,15: ]<SpaceSeparator>
+[16,22:private]<PRIVATE>
+
+-- Line 4 --
+[1,4:MOVE]<MOVE>
+[5,5: ]<SpaceSeparator>
+[6,11:UNSAFE]<UNSAFE>
+[12,12: ]<SpaceSeparator>
+[13,18:strong]<STRONG>
+[19,19: ]<SpaceSeparator>
+[20,21:TO]<TO>
+[22,22: ]<SpaceSeparator>
+[23,28:strict]<STRICT>
+

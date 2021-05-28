@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Scanner;
 
@@ -115,6 +116,7 @@ namespace TypeCobol.Compiler.Text
         public static ICollection<ITextLine> CreateCobolLines(ColumnsLayout layout, int index, char indicator, string indent, string text, int pmax, int pmin, bool bConvertFirstLine)
         {
             var result = new List<ITextLine>();
+            var scannerOptions = new TypeCobolOptions();
             foreach (var part in text.Split(new[] { Environment.NewLine, "\n", "\r" }, StringSplitOptions.None))
             {
                 int max = pmax;
@@ -133,7 +135,7 @@ namespace TypeCobol.Compiler.Text
                         indicator = '-';
                     }
 
-                    IList<Tuple<string, bool>> lines = Split(part, max, min);
+                    IList<Tuple<string, bool>> lines = Split(part, max, min, scannerOptions);
 
                     for (int i = 0; i < lines.Count; i++)
                     {
@@ -176,7 +178,7 @@ namespace TypeCobol.Compiler.Text
             return result;
         }
 
-        private static IList<Tuple<string, bool> > Split(string line, int max, int min)
+        private static IList<Tuple<string, bool> > Split(string line, int max, int min, TypeCobolOptions scannerOptions)
         {
             var lines = new List<Tuple<string, bool>>();
             int nLine = (line.Length / max) + ((line.Length % max) != 0 ? 1 : 0);
@@ -195,7 +197,7 @@ namespace TypeCobol.Compiler.Text
             TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, line);
             tempTokensLine.InitializeScanState(new MultilineScanState(IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
 
-            Scanner.Scanner scanner = new Scanner.Scanner(line, 0, line.Length - 1, tempTokensLine, null, false);
+            Scanner.Scanner scanner = new Scanner.Scanner(line, 0, line.Length - 1, tempTokensLine, scannerOptions, false);
             Token t = null;
             int nCurLength = 0;
             int nSpan = max;

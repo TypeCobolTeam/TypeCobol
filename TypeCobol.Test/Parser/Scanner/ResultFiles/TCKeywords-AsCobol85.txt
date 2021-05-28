@@ -1,0 +1,50 @@
+-- Line 1 --
+[1,7:TYPEDEF]<UserDefinedWord>
+[8,8: ]<SpaceSeparator>
+[9,14:STRONG]<UserDefinedWord>
+[15,15: ]<SpaceSeparator>
+[16,21:UNSAFE]<UserDefinedWord>
+[22,22: ]<SpaceSeparator>
+[23,28:PUBLIC]<UserDefinedWord>
+[29,29: ]<SpaceSeparator>
+[30,36:PRIVATE]<UserDefinedWord>
+[37,37: ]<SpaceSeparator>
+[38,43:IN-OUT]<UserDefinedWord>
+[44,44: ]<SpaceSeparator>
+[45,50:STRICT]<UserDefinedWord>
+
+-- Line 2 --
+[1,7:TyPeDeF]<UserDefinedWord>
+[8,8: ]<SpaceSeparator>
+[9,14:StRoNg]<UserDefinedWord>
+[15,15: ]<SpaceSeparator>
+[16,21:UnSaFe]<UserDefinedWord>
+[22,22: ]<SpaceSeparator>
+[23,28:PuBlIc]<UserDefinedWord>
+[29,29: ]<SpaceSeparator>
+[30,36:PrIvAtE]<UserDefinedWord>
+[37,37: ]<SpaceSeparator>
+[38,43:In-oUt]<UserDefinedWord>
+[44,44: ]<SpaceSeparator>
+[45,50:StRiCt]<UserDefinedWord>
+
+-- Line 3 --
+[1,4:MOVE]<MOVE>
+[5,5: ]<SpaceSeparator>
+[6,11:public]<UserDefinedWord>
+[12,12: ]<SpaceSeparator>
+[13,14:TO]<TO>
+[15,15: ]<SpaceSeparator>
+[16,22:private]<UserDefinedWord>
+
+-- Line 4 --
+[1,4:MOVE]<MOVE>
+[5,5: ]<SpaceSeparator>
+[6,11:UNSAFE]<UserDefinedWord>
+[12,12: ]<SpaceSeparator>
+[13,18:strong]<UserDefinedWord>
+[19,19: ]<SpaceSeparator>
+[20,21:TO]<TO>
+[22,22: ]<SpaceSeparator>
+[23,28:strict]<UserDefinedWord>
+

@@ -10,9 +10,9 @@ using TypeCobol.Compiler.Source;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Scanner;
-using TypeCobol.Compiler.File;
 using System.Runtime.CompilerServices;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.Directives;
 
 using static TypeCobol.Codegen.Generators.LinearNodeSourceCodeMapper;
 
@@ -864,6 +864,7 @@ namespace TypeCobol.Codegen.Generators
             //Take interessting scan state values from the original input
             TypeCobol.Compiler.Parser.CodeElementsLine cel = Input[FirstGSLine] as TypeCobol.Compiler.Parser.CodeElementsLine;
             //first true argument => we are in a DataDivision.
+            var scannerOptions = new TypeCobolOptions();
             System.Diagnostics.Debug.Assert(cel.ScanState.InsideDataDivision);
             string gsText = gsSrcText.GetTextAt(0, gsSrcText.Size);
             using (StringReader sr = new StringReader(gsText))
@@ -893,7 +894,7 @@ namespace TypeCobol.Codegen.Generators
                     }
 
                     tempTokensLine.InitializeScanState(cel.ScanState);
-                    Scanner scanner = new Scanner(line, startIndex, line.Length - 1, tempTokensLine, null, true);
+                    Scanner scanner = new Scanner(line, startIndex, line.Length - 1, tempTokensLine, scannerOptions, true);
                     Token t = null;
 
                     while ((t = scanner.GetNextToken()) != null)
