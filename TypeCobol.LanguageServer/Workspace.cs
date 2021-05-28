@@ -198,7 +198,7 @@ namespace TypeCobol.LanguageServer
         private FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, LsrTestingOptions lsrOptions)
         {
             string fileName = Path.GetFileName(docContext.Uri.LocalPath);
-            ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, Configuration.Format.Encoding, Configuration.Format.ColumnsLayout, sourceText);
+            ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, Configuration.Format.Encoding, Configuration.Format.ColumnsLayout, docContext.IsCopy, sourceText);
             FileCompiler fileCompiler = null;
 
 #if EUROINFO_RULES //Issue #583
@@ -229,9 +229,9 @@ namespace TypeCobol.LanguageServer
 
             fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider,
                 CompilationProject, CompilationProject.CompilationOptions, arrangedCustomSymbol ?? _customSymbols,
-                docContext.IsCopy, CompilationProject);
+                CompilationProject);
 #else
-            fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, _customSymbols, docContext.IsCopy, CompilationProject);
+            fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, _customSymbols, CompilationProject);
 #endif
             //Set Any Language Server Connection Options.
             docContext.FileCompiler = fileCompiler;
@@ -245,7 +245,7 @@ namespace TypeCobol.LanguageServer
                     CloseSourceFile(docContext.Uri); //Close and remove the previous opened file.
 
                 _openedDocuments.Add(docContext.Uri, docContext);
-                fileCompiler.CompilationResultsForProgram.ProgramClassChanged += ProgramClassChanged;
+                fileCompiler.CompilationResultsForProgram.CodeAnalysisCompleted += FinalCompilationStepCompleted;
             }
 
             fileCompiler.CompilationResultsForProgram.SetOwnerThread(Thread.CurrentThread);
@@ -501,7 +501,7 @@ namespace TypeCobol.LanguageServer
                     var contextToClose = _openedDocuments[fileUri];
                     FileCompiler fileCompilerToClose = contextToClose.FileCompiler;
                     _openedDocuments.Remove(fileUri);
-                    fileCompilerToClose.CompilationResultsForProgram.ProgramClassChanged -= ProgramClassChanged;
+                    fileCompilerToClose.CompilationResultsForProgram.CodeAnalysisCompleted -= FinalCompilationStepCompleted;
                 }
             }            
         }
@@ -702,11 +702,11 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// Called by a ProgramClass changed event trigger. 
+        /// CodeAnalysis completion event handler.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ProgramClassChanged(object cUnit, ProgramClassEvent programEvent)
+        /// <param name="cUnit">Sender of the event is the CompilationUnit.</param>
+        /// <param name="programEvent">Event arg, contains the version number of the most up-to-date InspectedProgramClassDocument.</param>
+        private void FinalCompilationStepCompleted(object cUnit, ProgramClassEvent programEvent)
         {
             var compilationUnit = cUnit as CompilationUnit;
 

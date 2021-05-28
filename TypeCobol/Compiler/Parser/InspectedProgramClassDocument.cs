@@ -10,9 +10,10 @@ namespace TypeCobol.Compiler.Parser
     /// </summary>
     public class InspectedProgramClassDocument
     {
-        public InspectedProgramClassDocument(ProgramClassDocument programClassDocument, List<Diagnostic> diagnostics, Dictionary<string, object> analyzerResults)
+        public InspectedProgramClassDocument(ProgramClassDocument programClassDocument, int version, List<Diagnostic> diagnostics, Dictionary<string, object> analyzerResults)
         {
             PreviousStepSnapshot = programClassDocument;
+            CurrentVersion = version;
             Diagnostics = diagnostics;
             AnalyzerResults = new AnalyzerResults(analyzerResults);
         }
@@ -21,6 +22,11 @@ namespace TypeCobol.Compiler.Parser
         /// Snapshot of the fully parsed program that was quality checked
         /// </summary>
         public ProgramClassDocument PreviousStepSnapshot { get; }
+
+        /// <summary>
+        /// Version number of the current document
+        /// </summary>
+        public int CurrentVersion { get; }
 
         /// <summary>
         /// List of rules violations returned by code analysis
