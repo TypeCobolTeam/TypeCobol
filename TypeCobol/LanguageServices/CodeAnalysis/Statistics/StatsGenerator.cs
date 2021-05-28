@@ -91,7 +91,7 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
                     try
                     {
                         // Compile program
-                        FileCompiler fileCompiler = new FileCompiler(null, textName, project.SourceFileProvider, project, project.ColumnsLayout, project.CompilationOptions.Clone(), null, false, project);
+                        FileCompiler fileCompiler = new FileCompiler(null, textName, project.ColumnsLayout, false, project.SourceFileProvider, project, project.CompilationOptions.Clone(), null, project);
                         fileCompiler.CompileOnce();
                         CompilationUnit compilationResult = fileCompiler.CompilationResultsForProgram;
                         programCopiesNotFound = 0;

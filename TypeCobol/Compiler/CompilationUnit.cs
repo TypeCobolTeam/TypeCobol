@@ -27,8 +27,8 @@ namespace TypeCobol.Compiler
         /// This method does not scan the inserted text lines to produce tokens.
         /// You must explicitly call UpdateTokensLines() to start an initial scan of the document.
         /// </summary>
-        public CompilationUnit(TextSourceInfo textSourceInfo, ParsingMode mode, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IDocumentImporter documentImporter, MultilineScanState initialScanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, IAnalyzerProvider analyzerProvider) :
-            base(textSourceInfo, mode, initialTextLines, compilerOptions, documentImporter, initialScanState, copyTextNameVariations)
+        public CompilationUnit(TextSourceInfo textSourceInfo, bool isImported, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IDocumentImporter documentImporter, MultilineScanState initialScanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, IAnalyzerProvider analyzerProvider) :
+            base(textSourceInfo, isImported, initialTextLines, compilerOptions, documentImporter, initialScanState, copyTextNameVariations)
         {
             // Initialize performance stats 
             PerfStatsForCodeElementsParser = new PerfStatsForParsingStep(CompilationStep.CodeElementsParser);
@@ -238,7 +238,6 @@ namespace TypeCobol.Compiler
                         CustomSymbols,
                         perfStatsForParserInvocation,
                         customAnalyzers,
-                        Mode == ParsingMode.CopyAsProgram,
                         out root,
                         out newDiagnostics,
                         out nodeCodeElementLinkers,
@@ -253,7 +252,7 @@ namespace TypeCobol.Compiler
                         typedVariablesOutsideTypedef, typeThatNeedTypeLinking, results);
 
                     //Direct copy parsing : remove redundant root 01 level if any.
-                    if (Mode == ParsingMode.CopyAsProgram)
+                    if (UseDirectCopyParsing)
                     {
                         var firstDataDefinition = root.MainProgram
                             .Children[0]  //Data Division
