@@ -46,6 +46,9 @@
     <Compile Include="**\*.cs" />
     <Content Include="Parser\**\*" Exclude="Parser\**\*.cs" />
     <None Include="packages.config" />
+    <None Include="Misc\**\*" Exclude="Misc\**\*.cs">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Report\Input\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -4,6 +4,7 @@ using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
 using System.Collections.Generic;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -720,16 +721,16 @@ namespace TypeCobol.Compiler.Parser
 		internal ConditionalExpression CreateRelationCondition(CodeElementsParser.RelationConditionContext context)
 		{
 			ConditionOperand subjectOperand = CreateConditionOperand(context.conditionOperand());
-			SyntaxProperty<RelationalOperator> relationalOperator = CreateRelationalOperator(context.relationalOperator());
+			RelationalOperator relationalOperator = CreateRelationalOperator(context.relationalOperator());
 			return CreateAbbreviatedExpression(subjectOperand, relationalOperator, context.abbreviatedExpression());
 		}
 
-		private ConditionalExpression CreateAbbreviatedExpression(ConditionOperand subjectOperand, SyntaxProperty<RelationalOperator> distributedRelationalOperator, CodeElementsParser.AbbreviatedExpressionContext context)
+		private ConditionalExpression CreateAbbreviatedExpression(ConditionOperand subjectOperand, RelationalOperator distributedRelationalOperator, CodeElementsParser.AbbreviatedExpressionContext context)
 		{
 			if (context.conditionOperand() != null)
 			{
 				ConditionOperand objectOperand = CreateConditionOperand(context.conditionOperand());
-				SyntaxProperty<RelationalOperator> relationalOperator = distributedRelationalOperator;
+				RelationalOperator relationalOperator = distributedRelationalOperator;
 				if (context.relationalOperator() != null)
 				{
 					relationalOperator = CreateRelationalOperator(context.relationalOperator());
@@ -815,81 +816,87 @@ namespace TypeCobol.Compiler.Parser
 			return conditionOperand;
 		}
 
-		internal SyntaxProperty<RelationalOperator> CreateRelationalOperator(CodeElementsParser.RelationalOperatorContext context)
-		{
-			if(context.strictRelation() != null)
-			{
-				bool invertStrictRelation = false;
-				if (context.NOT() != null)
-				{
-					invertStrictRelation = true;
-				}
+		internal RelationalOperator CreateRelationalOperator(CodeElementsParser.RelationalOperatorContext context)
+        {
+            var notToken = context.NOT() == null ? null : ParseTreeUtils.GetFirstToken(context.NOT());
 
-				CodeElementsParser.StrictRelationContext strictContext = context.strictRelation();
+            if (context.strictRelation() != null)
+			{
+                CodeElementsParser.StrictRelationContext strictContext = context.strictRelation();
 				if(strictContext.GREATER() != null)
 				{
-					return new SyntaxProperty<RelationalOperator>(
-						!invertStrictRelation ? RelationalOperator.GreaterThan : RelationalOperator.LessThanOrEqualTo,
-						ParseTreeUtils.GetFirstToken(strictContext.GREATER()));
+					return new RelationalOperator(
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThan, ParseTreeUtils.GetFirstToken(strictContext.GREATER())),
+                        notToken
+                        );
 				}
 				else if (strictContext.GreaterThanOperator() != null)
 				{
-					return new SyntaxProperty<RelationalOperator>(
-						!invertStrictRelation ? RelationalOperator.GreaterThan : RelationalOperator.LessThanOrEqualTo,
-						ParseTreeUtils.GetFirstToken(strictContext.GreaterThanOperator()));
-				}
+                    return new RelationalOperator(
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThan, ParseTreeUtils.GetFirstToken(strictContext.GreaterThanOperator())),
+                        notToken
+                    );
+                }
 				else if (strictContext.LESS() != null)
 				{
-					return new SyntaxProperty<RelationalOperator>(
-						!invertStrictRelation ? RelationalOperator.LessThan : RelationalOperator.GreaterThanOrEqualTo,
-						ParseTreeUtils.GetFirstToken(strictContext.LESS()));
-				}
+                    return new RelationalOperator(
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThan, ParseTreeUtils.GetFirstToken(strictContext.LESS())),
+                        notToken
+                    );
+                }
 				else if (strictContext.LessThanOperator() != null)
 				{
-					return new SyntaxProperty<RelationalOperator>(
-						!invertStrictRelation ? RelationalOperator.LessThan : RelationalOperator.GreaterThanOrEqualTo,
-						ParseTreeUtils.GetFirstToken(strictContext.LessThanOperator()));
-				}
+                    return new RelationalOperator(
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThan, ParseTreeUtils.GetFirstToken(strictContext.LessThanOperator())),
+                        notToken
+                    );
+                }
 				else if (strictContext.EQUAL() != null)
 				{
-					return new SyntaxProperty<RelationalOperator>(
-						!invertStrictRelation ? RelationalOperator.EqualTo : RelationalOperator.NotEqualTo,
-						ParseTreeUtils.GetFirstToken(strictContext.EQUAL()));
-				}
+                    return new RelationalOperator(
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.EqualTo, ParseTreeUtils.GetFirstToken(strictContext.EQUAL())),
+                        notToken
+                    );
+                }
 				else // if (strictContext.EqualOperator() != null)
 				{
-					return new SyntaxProperty<RelationalOperator>(
-						!invertStrictRelation ? RelationalOperator.EqualTo : RelationalOperator.NotEqualTo,
-						ParseTreeUtils.GetFirstToken(strictContext.EqualOperator()));
-				}
+                    return new RelationalOperator(
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.EqualTo, ParseTreeUtils.GetFirstToken(strictContext.EqualOperator())),
+                        notToken
+                    );
+                }
 			}
 			else
 			{
 				CodeElementsParser.SimpleRelationContext simpleContext = context.simpleRelation();
 				if (simpleContext.GREATER() != null)
 				{
-					return new SyntaxProperty<RelationalOperator>(
-						RelationalOperator.GreaterThanOrEqualTo,
-						ParseTreeUtils.GetFirstToken(simpleContext.GREATER()));
-				}
+                    return new RelationalOperator(
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThanOrEqualTo, ParseTreeUtils.GetFirstToken(simpleContext.GREATER())),
+                        notToken
+                    );
+                }
 				else if (simpleContext.GreaterThanOrEqualOperator() != null)
 				{
-					return new SyntaxProperty<RelationalOperator>(
-						RelationalOperator.GreaterThanOrEqualTo,
-						ParseTreeUtils.GetFirstToken(simpleContext.GreaterThanOrEqualOperator()));
-				}
+                    return new RelationalOperator(
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.GreaterThanOrEqualTo, ParseTreeUtils.GetFirstToken(simpleContext.GreaterThanOrEqualOperator())),
+                        notToken
+                    );
+                }
 				if (simpleContext.LESS() != null)
 				{
-					return new SyntaxProperty<RelationalOperator>(
-						RelationalOperator.LessThanOrEqualTo,
-						ParseTreeUtils.GetFirstToken(simpleContext.LESS()));
-				}
+                    return new RelationalOperator(
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThanOrEqualTo, ParseTreeUtils.GetFirstToken(simpleContext.LESS())),
+                        notToken
+                    );
+                }
 				else // if (simpleContext.LessThanOrEqualOperator() != null)
 				{
-					return new SyntaxProperty<RelationalOperator>(
-						RelationalOperator.LessThanOrEqualTo,
-						ParseTreeUtils.GetFirstToken(simpleContext.LessThanOrEqualOperator()));
-				}
+                    return new RelationalOperator(
+                        new SyntaxProperty<RelationalOperatorSymbol>(RelationalOperatorSymbol.LessThanOrEqualTo, ParseTreeUtils.GetFirstToken(simpleContext.LessThanOrEqualOperator())),
+                        notToken
+                    );
+                }
 			}
 		}
 
