@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Antlr4.Runtime;
-using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CupCommon;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
@@ -86,7 +82,6 @@ namespace TypeCobol.Compiler.CupPreprocessor
             TypeCobol.Compiler.Scanner.Token suppress, PairTokenListList replacingOperands)
         {
             var copy = (CopyDirective)CompilerDirective;
-            bool isCopy = copy.COPYToken.TokenType == TokenType.COPY;
             copy.TextName = GetName(qualifiedTextName.TextName);
             copy.TextNameSymbol = qualifiedTextName.TextName;
             {                

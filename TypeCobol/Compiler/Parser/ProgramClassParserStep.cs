@@ -50,7 +50,6 @@ namespace TypeCobol.Compiler.Parser
             SymbolTable customSymbols,
             PerfStatsForParserInvocation perfStatsForParserInvocation,
             ISyntaxDrivenAnalyzer[] customAnalyzers,
-            bool wrapCopyIntoProgram,
             out SourceFile root,
             out List<Diagnostic> diagnostics, 
             out Dictionary<CodeElement, Node> nodeCodeElementLinkers,
@@ -63,7 +62,7 @@ namespace TypeCobol.Compiler.Parser
 #endif
             IEnumerable<CodeElement> before = null;
             IEnumerable<CodeElement> after = null;
-            if (wrapCopyIntoProgram)
+            if (textSourceInfo.IsCopy)
             {
                 var programSkeleton = new CopyParsing.ProgramSkeleton(textSourceInfo);
                 before = programSkeleton.Before();
