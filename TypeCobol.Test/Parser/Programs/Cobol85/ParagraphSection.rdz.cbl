@@ -90,7 +90,7 @@
        Parag3.
            .
       
-           MOVE Level1::Level2 TO Level1::Level2-2.
+           MOVE Level2 OF Level1 TO Level2-2 IN Level1.
       
        Parag4.
            .
