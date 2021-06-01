@@ -33,7 +33,7 @@ namespace TypeCobol.Compiler.Parser
         public CobolExpressionsBuilder(CobolWordsBuilder cobolWordsBuilder, TypeCobolOptions compilerOptions)
         {
             CompilerOptions = compilerOptions;
-			CobolWordsBuilder = cobolWordsBuilder;
+            CobolWordsBuilder = cobolWordsBuilder;
         }
 
         public void Reset()

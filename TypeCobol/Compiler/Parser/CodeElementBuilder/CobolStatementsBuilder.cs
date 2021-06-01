@@ -13,14 +13,14 @@ namespace TypeCobol.Compiler.Parser
 {
 	internal class CobolStatementsBuilder
 	{
-        public CobolStatementsBuilder(CobolWordsBuilder cobolWordsBuilder, CobolExpressionsBuilder cobolExpressionsBuilder, TypeCobolOptions compilerOptions)
-        {
-            CompilerOptions = compilerOptions;
+		public CobolStatementsBuilder(CobolWordsBuilder cobolWordsBuilder, CobolExpressionsBuilder cobolExpressionsBuilder, TypeCobolOptions compilerOptions)
+		{
+			CompilerOptions = compilerOptions;
 			CobolWordsBuilder = cobolWordsBuilder;
 			CobolExpressionsBuilder = cobolExpressionsBuilder;
 		}
 
-        private TypeCobolOptions CompilerOptions { get; }
+		private TypeCobolOptions CompilerOptions { get; }
 		private CobolWordsBuilder CobolWordsBuilder { get; }
 		private CobolExpressionsBuilder CobolExpressionsBuilder { get; }
 
@@ -225,7 +225,7 @@ namespace TypeCobol.Compiler.Parser
 			int parametersCount = statement.InputParameters.Count + (statement.OutputParameter != null ? 1 : 0);
 			callSite.Parameters = new CallSiteParameter[parametersCount];
 			int i = 0;
-			if (statement.InputParameters != null && statement.InputParameters.Count > 0) {
+			if (statement.InputParameters.Count > 0) {
 				foreach (var param in statement.InputParameters) {
 					callSite.Parameters[i] = param;
 					i++;
