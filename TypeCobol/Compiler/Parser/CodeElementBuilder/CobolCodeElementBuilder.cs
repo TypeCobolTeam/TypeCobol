@@ -20,17 +20,18 @@ namespace TypeCobol.Compiler.Parser
         private ParserRuleContext Context;
 		/// <summary>CodeElement object resulting of the visit the parse tree</summary>
 		public CodeElement CodeElement { get; set; }
-        private TypeCobolOptions CompilerOptions { get; }
+        private UnsupportedLanguageLevelFeaturesChecker LanguageLevelChecker { get; }
 		private CobolWordsBuilder CobolWordsBuilder { get; }
 		private CobolExpressionsBuilder CobolExpressionsBuilder { get; }
 		private CobolStatementsBuilder CobolStatementsBuilder { get; }
 
         public CodeElementBuilder(TypeCobolOptions compilerOptions)
         {
-            CompilerOptions = compilerOptions;
-            CobolWordsBuilder = new CobolWordsBuilder(CompilerOptions);
-            CobolExpressionsBuilder = new CobolExpressionsBuilder(CobolWordsBuilder, CompilerOptions);
-            CobolStatementsBuilder = new CobolStatementsBuilder(CobolWordsBuilder, CobolExpressionsBuilder, CompilerOptions);
+            var targetLevel = compilerOptions.IsCobolLanguage ? CobolLanguageLevel.Cobol85 : CobolLanguageLevel.TypeCobol;
+            LanguageLevelChecker = new UnsupportedLanguageLevelFeaturesChecker(targetLevel);
+            CobolWordsBuilder = new CobolWordsBuilder();
+            CobolExpressionsBuilder = new CobolExpressionsBuilder(CobolWordsBuilder);
+            CobolStatementsBuilder = new CobolStatementsBuilder(CobolWordsBuilder, CobolExpressionsBuilder, LanguageLevelChecker);
         }
 
 		/// <summary>Initialization code run before parsing each new COBOL CodeElement</summary>

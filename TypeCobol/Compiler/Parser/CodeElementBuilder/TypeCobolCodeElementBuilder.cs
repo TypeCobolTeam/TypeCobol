@@ -631,8 +631,7 @@ namespace TypeCobol.Compiler.Parser
                 statement.CallSites.Add(callSite);
             }
 
-            if (CompilerOptions.IsCobolLanguage)
-                UnsupportedTypeCobolFeaturesChecker.OnCodeElement(statement, context);
+            LanguageLevelChecker.Check(statement, context);
 
             CodeElement = statement;
         }

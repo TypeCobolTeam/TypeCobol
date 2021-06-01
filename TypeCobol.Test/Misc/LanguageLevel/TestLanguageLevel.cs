@@ -13,7 +13,7 @@ namespace TypeCobol.Test.Misc
         [TestMethod]
         [TestCategory("Parsing")]
         [TestProperty("Time", "fast")]
-        public void CheckUnsupportedTypeCobolFeaturesInCobolCode()
+        public void CheckUnsupportedLanguageFeaturesInCobol85Code()
         {
             int nbOfTests = 0;
 

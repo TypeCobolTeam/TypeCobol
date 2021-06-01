@@ -8,19 +8,12 @@ using TypeCobol.Compiler.Scanner;
 using System.Collections.Generic;
 using Antlr4.Runtime;
 using JetBrains.Annotations;
-using TypeCobol.Compiler.Directives;
 
 namespace TypeCobol.Compiler.Parser
 {
     internal class CobolWordsBuilder
     {
-        private TypeCobolOptions CompilerOptions { get; }
         internal IDictionary<Token, SymbolInformation> symbolInformationForTokens { get; private set; }
-
-        public CobolWordsBuilder(TypeCobolOptions compilerOptions)
-        {
-            CompilerOptions = compilerOptions;
-        }
 
         public void Reset()
         {

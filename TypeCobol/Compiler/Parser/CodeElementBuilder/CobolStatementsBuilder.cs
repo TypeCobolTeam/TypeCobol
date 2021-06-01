@@ -5,7 +5,6 @@ using System.Linq;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
-using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 
@@ -13,14 +12,14 @@ namespace TypeCobol.Compiler.Parser
 {
 	internal class CobolStatementsBuilder
 	{
-        public CobolStatementsBuilder(CobolWordsBuilder cobolWordsBuilder, CobolExpressionsBuilder cobolExpressionsBuilder, TypeCobolOptions compilerOptions)
+        public CobolStatementsBuilder(CobolWordsBuilder cobolWordsBuilder, CobolExpressionsBuilder cobolExpressionsBuilder, UnsupportedLanguageLevelFeaturesChecker languageLevelChecker)
         {
-            CompilerOptions = compilerOptions;
+            LanguageLevelChecker = languageLevelChecker;
 			CobolWordsBuilder = cobolWordsBuilder;
 			CobolExpressionsBuilder = cobolExpressionsBuilder;
 		}
 
-        private TypeCobolOptions CompilerOptions { get; }
+        private UnsupportedLanguageLevelFeaturesChecker LanguageLevelChecker { get; }
 		private CobolWordsBuilder CobolWordsBuilder { get; }
 		private CobolExpressionsBuilder CobolExpressionsBuilder { get; }
 
@@ -830,8 +829,7 @@ namespace TypeCobol.Compiler.Parser
             if (context.UNSAFE() != null)
                 statement.Unsafe = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.UNSAFE()));
 
-            if (CompilerOptions.IsCobolLanguage)
-                UnsupportedTypeCobolFeaturesChecker.OnCodeElement(statement, context);
+            LanguageLevelChecker.Check(statement, context);
 
             return statement;
         }
@@ -1150,8 +1148,7 @@ namespace TypeCobol.Compiler.Parser
 			}
 			statement.SendingVariable = CobolExpressionsBuilder.CreateVariableOrExpression(context.variableOrExpression2());
 
-            if (CompilerOptions.IsCobolLanguage)
-                UnsupportedTypeCobolFeaturesChecker.OnCodeElement(statement, context);
+            LanguageLevelChecker.Check(statement, context);
 
             return statement;
 		}
@@ -1186,8 +1183,7 @@ namespace TypeCobol.Compiler.Parser
             if (context.TRUE()  != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.TRUE());
 			if (context.FALSE() != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.FALSE());
 
-            if (CompilerOptions.IsCobolLanguage)
-                UnsupportedTypeCobolFeaturesChecker.OnCodeElement(statement, context);
+            LanguageLevelChecker.Check(statement, context);
 
             return statement;
 		}

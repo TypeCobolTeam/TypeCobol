@@ -404,16 +404,30 @@ namespace TypeCobol.Compiler.Diagnostics
     }
 
     /// <summary>
-    /// Create diagnostics for TypeCobol-only elements used in strict Cobol parsing context.
-    /// Do not call this checker without testing IsCobolLanguage option first !
+    /// Create diagnostics for language level restricted elements used in a lower level parsing context
+    /// (typically TypeCobol syntax used in Cobol85 code).
     /// </summary>
-    static class UnsupportedTypeCobolFeaturesChecker
+    internal class UnsupportedLanguageLevelFeaturesChecker
     {
-        private static void AddError(CodeElement codeElement, string message, IParseTree location)
-            => DiagnosticUtils.AddError(codeElement, message, ParseTreeUtils.GetFirstToken(location), null, MessageCode.UnsupportedTypeCobolFeature);
+        private readonly CobolLanguageLevel _targetLevel;
 
-        public static void OnCodeElement(MoveSimpleStatement statement, CodeElementsParser.MoveSimpleContext context)
+        public UnsupportedLanguageLevelFeaturesChecker(CobolLanguageLevel targetLevel)
         {
+            _targetLevel = targetLevel;
+        }
+
+        private static void AddError(CodeElement codeElement, string message, IParseTree location, CobolLanguageLevel minLevel = CobolLanguageLevel.TypeCobol)
+        {
+            var position = ParseTreeUtils.GetFirstToken(location).Position();
+            var diagnostic = new Diagnostic(MessageCode.UnsupportedLanguageFeature, position, minLevel, message);
+            if (codeElement.Diagnostics == null) codeElement.Diagnostics = new List<Diagnostic>();
+            codeElement.Diagnostics.Add(diagnostic);
+        }
+
+        public void Check(MoveSimpleStatement statement, CodeElementsParser.MoveSimpleContext context)
+        {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
             if (context.booleanValue() != null)
             {
                 AddError(statement, "moving boolean values is not supported.", context.booleanValue());
@@ -422,24 +436,30 @@ namespace TypeCobol.Compiler.Diagnostics
             //No need to check UNSAFE keyword, it will be picked up as a syntax error by ANTLR
         }
 
-        public static void OnCodeElement(SetStatementForIndexes statement, CodeElementsParser.SetStatementForIndexesContext context)
+        public void Check(SetStatementForIndexes statement, CodeElementsParser.SetStatementForIndexesContext context)
         {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
             if (context.variableOrExpression2()?.arithmeticExpression() != null)
             {
                 AddError(statement, "using arithmetic expressions to manipulate indexes is not supported.", context.variableOrExpression2().arithmeticExpression());
             }
         }
 
-        public static void OnCodeElement(SetStatementForConditions statement, CodeElementsParser.SetStatementForConditionsContext context)
+        public void Check(SetStatementForConditions statement, CodeElementsParser.SetStatementForConditionsContext context)
         {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
             if (context.FALSE() != null)
             {
                 AddError(statement, "SET TO FALSE statement is not supported.", context.FALSE());
             }
         }
 
-        public static void OnCodeElement(ProcedureStyleCallStatement statement, CodeElementsParser.TcCallStatementContext context)
+        public void Check(ProcedureStyleCallStatement statement, CodeElementsParser.TcCallStatementContext context)
         {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
             if (context.INPUT() != null)
             {
                 AddErrorOnUnsupportedKeyword(context.INPUT());
