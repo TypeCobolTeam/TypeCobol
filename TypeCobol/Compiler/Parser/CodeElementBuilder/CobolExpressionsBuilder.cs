@@ -3,6 +3,7 @@ using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
 using System.Collections.Generic;
+using TypeCobol.Compiler.Diagnostics;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -27,9 +28,10 @@ namespace TypeCobol.Compiler.Parser
         // List of program, method, or function call instructions (with shared sotrage areas)
         internal IList<CallSite> callSites { get; set; }
 
-        public CobolExpressionsBuilder(CobolWordsBuilder cobolWordsBuilder)
+        public CobolExpressionsBuilder(CobolWordsBuilder cobolWordsBuilder, UnsupportedLanguageLevelFeaturesChecker languageLevelChecker)
         {
             CobolWordsBuilder = cobolWordsBuilder;
+            LanguageLevelChecker = languageLevelChecker;
         }
 
         public void Reset()
@@ -42,8 +44,10 @@ namespace TypeCobol.Compiler.Parser
             callSites = new List<CallSite>();
         }
 
-		private CobolWordsBuilder CobolWordsBuilder { get; set; }
-        
+		private CobolWordsBuilder CobolWordsBuilder { get; }
+
+        private UnsupportedLanguageLevelFeaturesChecker LanguageLevelChecker { get; }
+
         #region --- (Data storage area) Identifiers 1. Table elements reference : subscripting data names or condition names ---
 
         [CanBeNull]
@@ -290,6 +294,8 @@ namespace TypeCobol.Compiler.Parser
                     functionCallResult.SymbolReference;
                 return functionCallResult;
             }
+
+            LanguageLevelChecker.Check(context);
 
             return null;
         }

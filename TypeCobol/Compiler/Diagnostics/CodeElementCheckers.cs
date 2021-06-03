@@ -416,12 +416,21 @@ namespace TypeCobol.Compiler.Diagnostics
             _targetLevel = targetLevel;
         }
 
-        private static void AddError(CodeElement codeElement, string message, IParseTree location, CobolLanguageLevel minLevel = CobolLanguageLevel.TypeCobol)
+        private static Diagnostic CreateDiagnostic(string message, IParseTree location, CobolLanguageLevel minLevel)
         {
             var position = ParseTreeUtils.GetFirstToken(location).Position();
-            var diagnostic = new Diagnostic(MessageCode.UnsupportedLanguageFeature, position, minLevel, message);
+            return new Diagnostic(MessageCode.UnsupportedLanguageFeature, position, minLevel, message);
+        }
+
+        private static void AddError(CodeElement codeElement, string message, IParseTree location, CobolLanguageLevel minLevel = CobolLanguageLevel.TypeCobol)
+        {
             if (codeElement.Diagnostics == null) codeElement.Diagnostics = new List<Diagnostic>();
-            codeElement.Diagnostics.Add(diagnostic);
+            codeElement.Diagnostics.Add(CreateDiagnostic(message, location, minLevel));
+        }
+
+        private static void AddError(ParserRuleContextWithDiagnostics context, string message, CobolLanguageLevel minLevel = CobolLanguageLevel.TypeCobol)
+        {
+            context.AttachDiagnostic(CreateDiagnostic(message, context, minLevel));
         }
 
         public void Check(MoveSimpleStatement statement, CodeElementsParser.MoveSimpleContext context)
@@ -533,6 +542,31 @@ namespace TypeCobol.Compiler.Diagnostics
             if (context.formalizedComment() != null)
             {
                 AddError(procedureDivisionHeader, "formalized comments are not supported.", context.formalizedComment());
+            }
+        }
+
+        public void Check(CodeElementsParser.FunctionIdentifierContext context)
+        {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
+            //User-defined function call
+            if (context.userDefinedFunctionCall() != null)
+            {
+                AddError(context.userDefinedFunctionCall(), "calling user-defined function is not supported.");
+            }
+
+            //Use of 'FUNCTION func1()' instead of 'FUNCTION func1'
+            //Do not check for user-defined function calls as they would already get an error
+            if (context.intrinsicFunctionCall() != null)
+            {
+                var intrinsicFunctionCall = context.intrinsicFunctionCall();
+                if (intrinsicFunctionCall.LeftParenthesisSeparator() != null
+                    && intrinsicFunctionCall.RightParenthesisSeparator() != null
+                    && intrinsicFunctionCall.argument().Length == 0)
+                {
+                    var name = context.intrinsicFunctionCall().IntrinsicFunctionName().GetText();
+                    AddError(intrinsicFunctionCall, $"FUNCTION {name}() syntax is not allowed, use FUNCTION {name}.");
+                }
             }
         }
     }

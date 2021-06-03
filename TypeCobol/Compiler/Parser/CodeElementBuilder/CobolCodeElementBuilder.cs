@@ -30,7 +30,7 @@ namespace TypeCobol.Compiler.Parser
             var targetLevel = compilerOptions.IsCobolLanguage ? CobolLanguageLevel.Cobol85 : CobolLanguageLevel.TypeCobol;
             LanguageLevelChecker = new UnsupportedLanguageLevelFeaturesChecker(targetLevel);
             CobolWordsBuilder = new CobolWordsBuilder();
-            CobolExpressionsBuilder = new CobolExpressionsBuilder(CobolWordsBuilder);
+            CobolExpressionsBuilder = new CobolExpressionsBuilder(CobolWordsBuilder, LanguageLevelChecker);
             CobolStatementsBuilder = new CobolStatementsBuilder(CobolWordsBuilder, CobolExpressionsBuilder, LanguageLevelChecker);
         }
 
