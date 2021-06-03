@@ -1412,8 +1412,11 @@ namespace TypeCobol.Compiler.Parser
 		    if (context.formalizedComment() != null)
 		        formalizedCommentDocumentation = new FormalizedCommentDocumentation(context.formalizedComment().formalizedCommentLine());
 		    // [/TypeCobol]
+            var procedureDivisionHeader = new ProcedureDivisionHeader(formalizedCommentDocumentation);
             Context = context;
-            CodeElement = new ProcedureDivisionHeader(formalizedCommentDocumentation);
+            CodeElement = procedureDivisionHeader;
+
+            LanguageLevelChecker.Check(procedureDivisionHeader, context);
 		}
 		public override void EnterUsingPhrase(CodeElementsParser.UsingPhraseContext context) {
 			var inputs = CobolStatementsBuilder.CreateInputParameters(context.programInputParameters());

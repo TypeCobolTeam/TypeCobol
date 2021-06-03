@@ -525,6 +525,16 @@ namespace TypeCobol.Compiler.Diagnostics
                 AddError(entry, "TYPE clause is not supported.", context.cobol2002TypeClause()[0], minLevel);
             }
         }
+
+        public void Check(ProcedureDivisionHeader procedureDivisionHeader, CodeElementsParser.ProcedureDivisionHeaderContext context)
+        {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
+            if (context.formalizedComment() != null)
+            {
+                AddError(procedureDivisionHeader, "formalized comments are not supported.", context.formalizedComment());
+            }
+        }
     }
 
     #endregion
