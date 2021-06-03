@@ -421,9 +421,10 @@ namespace TypeCobol.Compiler.Diagnostics
             codeElement.Diagnostics.Add(CreateDiagnostic(message, location, minLevel));
         }
 
-        private static void AddError(ParserRuleContextWithDiagnostics context, string message, CobolLanguageLevel minLevel = CobolLanguageLevel.TypeCobol)
+        private static void AddError(ParserRuleContextWithDiagnostics context, string message, IParseTree location = null, CobolLanguageLevel minLevel = CobolLanguageLevel.TypeCobol)
         {
-            context.AttachDiagnostic(CreateDiagnostic(message, context, minLevel));
+            location = location ?? context;
+            context.AttachDiagnostic(CreateDiagnostic(message, location, minLevel));
         }
 
         private readonly CobolLanguageLevel _targetLevel;
@@ -552,7 +553,7 @@ namespace TypeCobol.Compiler.Diagnostics
             //User-defined function call
             if (context.userDefinedFunctionCall() != null)
             {
-                AddError(context.userDefinedFunctionCall(), "calling user-defined function is not supported.");
+                AddError(context.userDefinedFunctionCall().functionNameReference(), "calling user-defined function is not supported.");
             }
 
             //Use of 'FUNCTION func1()' instead of 'FUNCTION func1'
@@ -564,8 +565,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     && intrinsicFunctionCall.RightParenthesisSeparator() != null
                     && intrinsicFunctionCall.argument().Length == 0)
                 {
-                    var name = context.intrinsicFunctionCall().IntrinsicFunctionName().GetText();
-                    AddError(intrinsicFunctionCall, $"FUNCTION {name}() syntax is not allowed, use FUNCTION {name}.");
+                    var name = intrinsicFunctionCall.IntrinsicFunctionName().GetText();
+                    AddError(intrinsicFunctionCall, $"FUNCTION {name}() syntax is not allowed, use FUNCTION {name}.", intrinsicFunctionCall.IntrinsicFunctionName());
                 }
             }
         }
