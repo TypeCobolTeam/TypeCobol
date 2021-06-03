@@ -659,5 +659,11 @@ namespace TypeCobol.Compiler.Parser
                 mode = new SyntaxProperty<ParameterSharingMode>(by, null);
             }
         }
+
+        public override void ExitDataDescriptionEntry(CodeElementsParser.DataDescriptionEntryContext context)
+        {
+            System.Diagnostics.Debug.Assert(CodeElement is DataDefinitionEntry);
+            LanguageLevelChecker.Check((DataDefinitionEntry) CodeElement, context);
+        }
     }
 }

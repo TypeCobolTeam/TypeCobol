@@ -475,6 +475,56 @@ namespace TypeCobol.Compiler.Diagnostics
             void AddErrorOnUnsupportedKeyword(ITerminalNode unsupportedKeyword)
                 => AddError(statement, $"'{unsupportedKeyword.GetText()}' keyword is not supported in a Cobol CALL.", unsupportedKeyword);
         }
+
+        //dataDescriptionEntry ANTLR rule translates to DataDefinitionEntry CodeElement
+        public void Check(DataDefinitionEntry entry, CodeElementsParser.DataDescriptionEntryContext context)
+        {
+            var minLevel = CobolLanguageLevel.TypeCobol;
+            if (_targetLevel >= minLevel) return;
+
+            //TC-only
+            if (context.formalizedComment() != null)
+            {
+                AddError(entry, "formalized comments are not supported.", context.formalizedComment(), minLevel);
+            }
+
+            if (context.valueClauseWithBoolean() != null && context.valueClauseWithBoolean().Length > 0)
+            {
+                AddError(entry, "initial value for boolean data is not supported.", context.valueClauseWithBoolean()[0], minLevel);
+            }
+
+            //Check STRICT, PRIVATE, PUBLIC keywords which are TC-only.
+            //Check only if target level is Cobol2002 or Cobol2014 to avoid multiple error messages: in Cobol85, the whole typedef is forbidden.
+            bool hasTypedef = context.cobol2002TypedefClause() != null;
+            if (hasTypedef && _targetLevel > CobolLanguageLevel.Cobol85)
+            {
+                var typedef = context.cobol2002TypedefClause();
+                if (typedef.STRICT() != null)
+                {
+                    AddError(entry, "STRICT keyword is not supported in custom type definition.", typedef.STRICT(), minLevel);
+                }
+
+                var visibility = typedef.PUBLIC() ?? typedef.PRIVATE();
+                if (visibility != null)
+                {
+                    AddError(entry, "type visibility is not supported.", visibility, minLevel);
+                }
+            }
+
+            minLevel = CobolLanguageLevel.Cobol2002;
+            if (_targetLevel >= minLevel) return;
+
+            //Cobol2002 and above only
+            if (hasTypedef)
+            {
+                AddError(entry, "custom type definitions are not supported.", context.cobol2002TypedefClause(), minLevel);
+            }
+
+            if (context.cobol2002TypeClause() != null && context.cobol2002TypeClause().Length > 0)
+            {
+                AddError(entry, "TYPE clause is not supported.", context.cobol2002TypeClause()[0], minLevel);
+            }
+        }
     }
 
     #endregion

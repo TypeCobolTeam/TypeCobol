@@ -8,7 +8,7 @@
             06 VarLevel2 PIC X(10).
           05 Level2-2.
             06 VarLevel2-2 PIC X(10).
-          05 MyBool TYPE BOOL.
+
        PROCEDURE DIVISION.
 
       *** Testing perform statements in procedure division
