@@ -665,5 +665,11 @@ namespace TypeCobol.Compiler.Parser
             System.Diagnostics.Debug.Assert(CodeElement is DataDefinitionEntry);
             LanguageLevelChecker.Check((DataDefinitionEntry) CodeElement, context);
         }
+
+        public override void ExitTcCodeElement(CodeElementsParser.TcCodeElementContext context)
+        {
+            System.Diagnostics.Debug.Assert(CodeElement != null);
+            LanguageLevelChecker.Check(CodeElement, context);
+        }
     }
 }

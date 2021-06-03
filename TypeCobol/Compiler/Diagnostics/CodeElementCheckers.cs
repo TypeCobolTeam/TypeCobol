@@ -409,13 +409,6 @@ namespace TypeCobol.Compiler.Diagnostics
     /// </summary>
     internal class UnsupportedLanguageLevelFeaturesChecker
     {
-        private readonly CobolLanguageLevel _targetLevel;
-
-        public UnsupportedLanguageLevelFeaturesChecker(CobolLanguageLevel targetLevel)
-        {
-            _targetLevel = targetLevel;
-        }
-
         private static Diagnostic CreateDiagnostic(string message, IParseTree location, CobolLanguageLevel minLevel)
         {
             var position = ParseTreeUtils.GetFirstToken(location).Position();
@@ -431,6 +424,13 @@ namespace TypeCobol.Compiler.Diagnostics
         private static void AddError(ParserRuleContextWithDiagnostics context, string message, CobolLanguageLevel minLevel = CobolLanguageLevel.TypeCobol)
         {
             context.AttachDiagnostic(CreateDiagnostic(message, context, minLevel));
+        }
+
+        private readonly CobolLanguageLevel _targetLevel;
+
+        public UnsupportedLanguageLevelFeaturesChecker(CobolLanguageLevel targetLevel)
+        {
+            _targetLevel = targetLevel;
         }
 
         public void Check(MoveSimpleStatement statement, CodeElementsParser.MoveSimpleContext context)
@@ -568,6 +568,28 @@ namespace TypeCobol.Compiler.Diagnostics
                     AddError(intrinsicFunctionCall, $"FUNCTION {name}() syntax is not allowed, use FUNCTION {name}.");
                 }
             }
+        }
+
+        public void Check(CodeElement codeElement, CodeElementsParser.TcCodeElementContext context)
+        {
+            if (_targetLevel >= CobolLanguageLevel.TypeCobol) return;
+
+            if (context.globalStorageSectionHeader() != null)
+            {
+                AddError(codeElement, "GLOBAL-STORAGE SECTION is not supported.", context.globalStorageSectionHeader());
+            }
+
+            if (context.libraryCopy() != null)
+            {
+                AddError(codeElement, "service include feature is not supported.", context.libraryCopy());
+            }
+
+            if (context.functionDeclarationHeader() != null)
+            {
+                AddError(codeElement, "defining custom functions/procedures is not supported.", context.functionDeclarationHeader());
+            }
+
+            //If a functionDeclarationEnd is present without any header, there will be a Cup parsing error so no need to check it here.
         }
     }
 
