@@ -625,7 +625,8 @@ namespace TypeCobol.Compiler.Scanner
         private int currentIndex;
         private int lastIndex;
 
-        private TypeCobolOptions compilerOptions;
+        private readonly TypeCobolOptions compilerOptions;
+        private readonly CobolLanguageLevel targetLanguageLevel;
 
         private bool InterpretDoubleColonAsQualifiedNameSeparator
         {
@@ -646,6 +647,7 @@ namespace TypeCobol.Compiler.Scanner
             this.lastIndex = lastIndex;
 
             this.compilerOptions = compilerOptions;
+            this.targetLanguageLevel = compilerOptions.IsCobolLanguage ? CobolLanguageLevel.Cobol85 : CobolLanguageLevel.TypeCobol;
 
             this.BeSmartWithLevelNumber = beSmartWithLevelNumber;
         }
@@ -2156,7 +2158,7 @@ namespace TypeCobol.Compiler.Scanner
                 //   as a system-name.
 
                 // Try to match keyword text
-                tokenType = TokenUtils.GetTokenTypeFromTokenString(tokenText, compilerOptions.IsCobolLanguage);
+                tokenType = TokenUtils.GetTokenTypeFromTokenString(tokenText, targetLanguageLevel);
 
                 // Special cases of user defined words : 
                 // - symbolic characters

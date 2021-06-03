@@ -284,6 +284,9 @@ namespace TypeCobol.Compiler.Parser
                            };
             this.callSites.Add(callSite);
 
+            //Check allowed syntax
+            LanguageLevelChecker.Check(context);
+
             // Create storage area for result
             if (functionCall.FunctionName != null && functionCall.FunctionNameToken != null)
             {
@@ -294,8 +297,6 @@ namespace TypeCobol.Compiler.Parser
                     functionCallResult.SymbolReference;
                 return functionCallResult;
             }
-
-            LanguageLevelChecker.Check(context);
 
             return null;
         }
