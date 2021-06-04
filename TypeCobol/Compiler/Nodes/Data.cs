@@ -657,7 +657,7 @@ namespace TypeCobol.Compiler.Nodes {
         #region TypeProperties
         public AlphanumericValue Picture { get {return _ComonDataDesc != null ? _ComonDataDesc.Picture : null;}}
         public bool IsJustified { get {  if(_ComonDataDesc != null && _ComonDataDesc.IsJustified != null) return _ComonDataDesc.IsJustified.Value; else return false; } }
-        public DataUsage? Usage
+        public virtual DataUsage? Usage
         {
             get
             {
@@ -955,6 +955,17 @@ namespace TypeCobol.Compiler.Nodes {
         public override DataType DataType
         {
             get { return DataType.Numeric; }
+        }
+
+        public override DataUsage? Usage
+        {
+	        get { return DataUsage.Index; }
+        }
+
+        public override long PhysicalLength
+        {
+			//Table indexes are not stored along their declaring parent, so they do not contribute to data item length.
+	        get { return 0; }
         }
 
         public override bool VisitNode(IASTVisitor astVisitor)
