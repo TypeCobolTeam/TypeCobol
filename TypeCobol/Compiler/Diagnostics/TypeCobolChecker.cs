@@ -882,7 +882,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (receiver.Usage == DataUsage.Pointer)
                     {
                         containsPointers = true;
-						System.Diagnostics.Debug.Assert(receiver.CodeElement != null);
+                        System.Diagnostics.Debug.Assert(receiver.CodeElement != null);
                         var levelNumber = receiver.CodeElement.LevelNumber;
                         if (levelNumber != null && levelNumber.Value > 49)
                         {

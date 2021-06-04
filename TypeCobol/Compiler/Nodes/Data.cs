@@ -964,8 +964,8 @@ namespace TypeCobol.Compiler.Nodes {
 
         public override long PhysicalLength
         {
-			//Table indexes are not stored along their declaring parent, so they do not contribute to data item length.
-	        get { return 0; }
+            //Table indexes are not stored along their declaring parent, so they do not contribute to data item length.
+            get { return 0; }
         }
 
         public override bool VisitNode(IASTVisitor astVisitor)
