@@ -44,7 +44,7 @@ namespace TypeCobol.Compiler.Parser
             callSites = new List<CallSite>();
         }
 
-		private CobolWordsBuilder CobolWordsBuilder { get; }
+        private CobolWordsBuilder CobolWordsBuilder { get; }
 
         private UnsupportedLanguageLevelFeaturesChecker LanguageLevelChecker { get; }
 

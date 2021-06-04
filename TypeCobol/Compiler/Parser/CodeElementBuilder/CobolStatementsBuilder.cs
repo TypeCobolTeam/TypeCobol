@@ -14,7 +14,7 @@ namespace TypeCobol.Compiler.Parser
 	{
         public CobolStatementsBuilder(CobolWordsBuilder cobolWordsBuilder, CobolExpressionsBuilder cobolExpressionsBuilder, UnsupportedLanguageLevelFeaturesChecker languageLevelChecker)
         {
-            LanguageLevelChecker = languageLevelChecker;
+	        LanguageLevelChecker = languageLevelChecker;
 			CobolWordsBuilder = cobolWordsBuilder;
 			CobolExpressionsBuilder = cobolExpressionsBuilder;
 		}
