@@ -171,7 +171,13 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                 {
                     var missingCopiesParam = new MissingCopiesParams();
                     missingCopiesParam.textDocument = parameter.textDocument;
+#if EUROINFO_RULES
+                    missingCopiesParam.Copies = copiesName.Where(s => !base.Workspace.CompilationProject.CompilationOptions.HasCpyCopy(s)).ToList();
+                    missingCopiesParam.cpyCopies = copiesName.Where(s => base.Workspace.CompilationProject.CompilationOptions.HasCpyCopy(s)).ToList();
+#else                    
                     missingCopiesParam.Copies = copiesName;
+                    missingCopiesParam.cpyCopies = new List<string>();
+#endif
                     this.RpcServer.SendNotification(MissingCopiesNotification.Type, missingCopiesParam);
                 }
             }

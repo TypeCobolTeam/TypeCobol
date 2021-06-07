@@ -171,7 +171,13 @@ namespace TypeCobol.LanguageServer
 
             //Send missing copies to client
             var missingCopiesParam = new MissingCopiesParams();
+#if EUROINFO_RULES
+            missingCopiesParam.Copies = missingCopiesEvent.Copies.Where(s => !Workspace.CompilationProject.CompilationOptions.HasCpyCopy(s)).ToList();
+            missingCopiesParam.cpyCopies = missingCopiesEvent.Copies.Where(s => Workspace.CompilationProject.CompilationOptions.HasCpyCopy(s)).ToList();
+#else                    
             missingCopiesParam.Copies = missingCopiesEvent.Copies;
+            missingCopiesParam.cpyCopies = new List<string>();
+#endif            
             missingCopiesParam.textDocument = new TextDocumentIdentifier(fileUri.ToString());
             this.RpcServer.SendNotification(MissingCopiesNotification.Type, missingCopiesParam);
         }
