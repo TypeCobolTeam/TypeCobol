@@ -643,7 +643,7 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-        public bool IsIndex { get; internal set; }
+        public bool IsTableIndex { get; internal set; }
         public string Hash
         {
             get
@@ -942,7 +942,7 @@ namespace TypeCobol.Compiler.Nodes {
         public IndexDefinition(SymbolDefinition symbolDefinition) : base(null)
         {
             _SymbolDefinition = symbolDefinition;
-            IsIndex = true;
+            IsTableIndex = true;
         }
 
         private SymbolDefinition _SymbolDefinition;
@@ -964,7 +964,8 @@ namespace TypeCobol.Compiler.Nodes {
 
         public override long PhysicalLength
         {
-            //Table indexes are not stored along their declaring parent, so they do not contribute to data item length.
+            //Table indexes are not physically stored into their parent DATA section.
+            //Their size and actual location in memory depends on the compiler implementation.
             get { return 0; }
         }
 
