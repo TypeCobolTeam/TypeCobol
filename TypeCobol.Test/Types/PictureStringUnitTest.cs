@@ -258,8 +258,7 @@ namespace TypeCobol.Test.Types
             }
 
             //Change other currency symbol than $
-            TypeCobol.Compiler.Types.PictureValidator psv1 = new TypeCobol.Compiler.Types.PictureValidator("$,$$$.99");
-            psv1.CurrencySymbol = "€";
+            TypeCobol.Compiler.Types.PictureValidator psv1 = new TypeCobol.Compiler.Types.PictureValidator("$,$$$.99", currencySymbol: "€");
             Assert.IsFalse(psv1.IsValid());
         }
 
@@ -270,21 +269,39 @@ namespace TypeCobol.Test.Types
         public void StrangeCurrencyPictureStringTest()
         {
             //EURO
-            TypeCobol.Compiler.Types.PictureValidator psv = new TypeCobol.Compiler.Types.PictureValidator("€Z,ZZZ,ZZZ.ZZCR");
-            psv.CurrencySymbol = "€";
+            TypeCobol.Compiler.Types.PictureValidator psv = new TypeCobol.Compiler.Types.PictureValidator("€Z,ZZZ,ZZZ.ZZCR", currencySymbol: "€");
             Assert.IsTrue(psv.IsValid());
 
-            //SUISSE
-            psv = new TypeCobol.Compiler.Types.PictureValidator("CHFZ,ZZZ,ZZZ.ZZCR");
-            psv.CurrencySymbol = "CHF";
+            //Swiss franc
+            psv = new TypeCobol.Compiler.Types.PictureValidator("CHFZ,ZZZ,ZZZ.ZZCR", currencySymbol: "CHF");
             Assert.IsTrue(psv.IsValid());
 
             //Hong Kong Dollar
-            psv = new TypeCobol.Compiler.Types.PictureValidator("HK$Z,ZZZ,ZZZ.ZZCR");
-            psv.CurrencySymbol = "HK$";
+            psv = new TypeCobol.Compiler.Types.PictureValidator("HK$Z,ZZZ,ZZZ.ZZCR", currencySymbol: "HK$");
             Assert.IsTrue(psv.IsValid());
+        }
 
+        /// <summary>
+        /// Test interpretation of DecimalPoint and NumericSeparator chars, based on decimalPointIsComma parameter
+        /// </summary>
+        [TestMethod]
+        public void DecimalPointIsComma()
+        {
+            PictureValidator psv = new PictureValidator("99.999");
+            Assert.IsTrue(psv.IsValid());
+            Assert.AreEqual(3, psv.ValidationContext.Scale);
+
+            psv = new PictureValidator("99,999");
+            Assert.IsTrue(psv.IsValid());
+            Assert.AreEqual(0, psv.ValidationContext.Scale);
+
+            psv = new PictureValidator("99.999", decimalPointIsComma: true);
+            Assert.IsTrue(psv.IsValid());
+            Assert.AreEqual(0, psv.ValidationContext.Scale);
+
+            psv = new PictureValidator("99,999", decimalPointIsComma: true);
+            Assert.IsTrue(psv.IsValid());
+            Assert.AreEqual(3, psv.ValidationContext.Scale);
         }
     }
 }
-

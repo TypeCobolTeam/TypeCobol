@@ -21,7 +21,9 @@ namespace TypeCobol.Compiler.Types
         /// And it does not contains any spaces
         /// </param>
         /// <param name="separateSign">a boolean value indicating whether the sign is separate character</param>
-        public PictureValidator(string picture, bool separateSign = false)
+        /// <param name="currencySymbol">a string to identify the Currency symbol in a picture character string, default is '$'</param>
+        /// <param name="decimalPointIsComma">a boolean to swap NumericSeparator and DecimalPoint characters, default is false</param>
+        public PictureValidator(string picture, bool separateSign = false, string currencySymbol = "$", bool decimalPointIsComma = false)
         {
             System.Diagnostics.Debug.Assert(picture != null);
             System.Diagnostics.Debug.Assert(!picture.ToUpper().Contains("PIC"));
@@ -29,9 +31,17 @@ namespace TypeCobol.Compiler.Types
 
             Picture = picture.ToUpper();
             IsSeparateSign = separateSign;
-            CurrencySymbol = "$";
-            DecimalPoint = '.';
-            NumericSeparator = ',';
+            CurrencySymbol = currencySymbol;
+            if (decimalPointIsComma)
+            {
+                DecimalPoint = ',';
+                NumericSeparator = '.';
+            }
+            else
+            {
+                DecimalPoint = '.';
+                NumericSeparator = ',';
+            }
             ValidationMessages = new List<string>();
         }
 
@@ -48,29 +58,17 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// The Currency Symbol to be used.
         /// </summary>
-        public string CurrencySymbol
-        {
-            get;
-            set;
-        }
+        public string CurrencySymbol { get; }
 
         /// <summary>
         /// The decimal point character
         /// </summary>
-        public char DecimalPoint
-        {
-            get;
-            set;
-        }
+        public char DecimalPoint { get; }
 
         /// <summary>
         /// The Numeric Separator
         /// </summary>
-        public char NumericSeparator
-        {
-            get;
-            set;
-        }
+        public char NumericSeparator { get; }
 
         /// <summary>
         /// All validation messages if any.
