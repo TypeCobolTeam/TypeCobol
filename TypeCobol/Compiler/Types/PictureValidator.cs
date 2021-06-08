@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TypeCobol.Compiler.Types
 {
@@ -10,9 +7,9 @@ namespace TypeCobol.Compiler.Types
     /// The goal of this class is to implement a PICTURE string format validator.
     /// Using precedence rules as described in the IBM Cobol Reference.
     /// 
-    /// My strategy is to implement a NFA (A non-deterministic Finite Automata) over predecence
-    /// character rules. Deterministic is obtained, by taking in acount insertion floating position and whether or nor
-    /// the position is before or after a decimal floating point, cause for these situations specific states handle
+    /// My strategy is to implement a NFA (A non-deterministic Finite Automata) over precedence
+    /// character rules. Determinism is obtained, by taking in account insertion floating position and whether or not
+    /// the position is before or after a decimal floating point, cause for these cases specific states handle
     /// these situations.
     /// </summary>
     public class PictureValidator
@@ -26,40 +23,32 @@ namespace TypeCobol.Compiler.Types
         /// <param name="separateSign">a boolean value indicating whether the sign is separate character</param>
         public PictureValidator(string picture, bool separateSign = false)
         {
-            System.Diagnostics.Contracts.Contract.Requires(picture != null);
-            System.Diagnostics.Contracts.Contract.Requires(picture.ToUpper().IndexOf("PIC") == -1);
-            System.Diagnostics.Contracts.Contract.Requires(picture.ToUpper().IndexOf(' ') == -1);
+            System.Diagnostics.Debug.Assert(picture != null);
+            System.Diagnostics.Debug.Assert(!picture.ToUpper().Contains("PIC"));
+            System.Diagnostics.Debug.Assert(!picture.ToUpper().Contains(" "));
 
             Picture = picture.ToUpper();
             IsSeparateSign = separateSign;
             CurrencySymbol = "$";
             DecimalPoint = '.';
             NumericSeparator = ',';
-            ValidationMesssage = new List<string>();
+            ValidationMessages = new List<string>();
         }
 
         /// <summary>
         /// The Picture string.
         /// </summary>
-        public string Picture
-        {
-            get;
-            private set;
-        }
+        public string Picture { get; }
 
         /// <summary>
         /// Indicating whether the sign is separate character
         /// </summary>
-        public bool IsSeparateSign
-        {
-            get;
-            private set;
-        }
+        public bool IsSeparateSign { get; }
 
         /// <summary>
         /// The Currency Symbol to be used.
         /// </summary>
-        public String CurrencySymbol
+        public string CurrencySymbol
         {
             get;
             set;
@@ -86,17 +75,13 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// All validation messages if any.
         /// </summary>
-        public List<String> ValidationMesssage
-        {
-            get;
-            internal set;
-        }
+        public List<string> ValidationMessages { get; }
 
         /// <summary>
         /// Check the count in a picture string part ([0-9]+)
         /// </summary>
         /// <param name="pic">The picture string</param>
-        /// <param name="startOffset">start offset inside the picture string where should beging the count</param>
+        /// <param name="startOffset">start offset inside the picture string where should begin the count</param>
         /// <param name="count">[out] the count calculated if no error, -1 otherwise.</param>
         /// <returns>The new starting offset after the count part.</returns>
         private static int CheckItemCount(string pic, int startOffset, out int count)
@@ -145,10 +130,10 @@ namespace TypeCobol.Compiler.Types
         /// {("9",2),("X",4),("9",1)}
         /// </summary>
         /// <returns>The list of parts if this is a well formed picture string, null otherwise.</returns>
-        public static List<Tuple<string, int>> PictureStringSplitter(String picture, string currencySymbol)
+        public static List<Tuple<string, int>> PictureStringSplitter(string picture, string currencySymbol)
         {
             List<Tuple<string, int>> items = new List<Tuple<string, int>>();
-            String[] alphabet = { "A", "B", "E", "G", "N", "P", "S", "V", "X", "Z", "9", "0", "/", ",", ".", "+", "-", "CR", "DB", "*", currencySymbol };
+            string[] alphabet = { "A", "B", "E", "G", "N", "P", "S", "V", "X", "Z", "9", "0", "/", ",", ".", "+", "-", "CR", "DB", "*", currencySymbol };
             for (int l = 0; l < picture.Length;)
             {
                 bool match = false;
@@ -182,8 +167,7 @@ namespace TypeCobol.Compiler.Types
                     }
                     if (match)
                     {
-                        int count = -1;
-                        l = CheckItemCount(picture, l + alphabet[i].Length, out count);
+                        l = CheckItemCount(picture, l + alphabet[i].Length, out int count);
                         if (count == -1)
                             return null;
                         items.Add(new Tuple<string, int>(alphabet[i], count));
@@ -273,7 +257,7 @@ namespace TypeCobol.Compiler.Types
             }
         }
 
-        private String SC2String(SC c)
+        private string SC2String(SC c)
         {
             switch (c)
             {
@@ -320,32 +304,22 @@ namespace TypeCobol.Compiler.Types
                 case SC.DB:
                     return "DB";
                 default:
-                    throw new ArgumentException();
+                    throw new ArgumentException($"Unknown '{c}' special character.", nameof(c));
             }
         }
 
         /// <summary>
-        /// Dertermine if the given character is a simple insertion character.
+        /// Determine if the given character is a simple insertion character.
         /// </summary>
         /// <param name="c">Return true if yes, false otherwise</param>
         /// <returns>true if yes, false otherwise</returns>
-        public bool IsSimpleInsertionCharacter(char c)
-        {
-            return c == 'B' || c == '0' || c == '/' || c == NumericSeparator;
-        }
-
-        /// <summary>
-        /// Dertermine if the given character is a simple insertion character.
-        /// </summary>
-        /// <param name="c">Return true if yes, false otherwise</param>
-        /// <returns>true if yes, false otherwise</returns>
-        internal bool IsSimpleInsertionCharacter(SC c)
+        private bool IsSimpleInsertionCharacter(SC c)
         {
             return c == SC.B || c == SC.ZERO || c == SC.SLASH || c == Char2SC(NumericSeparator);
         }
 
         /// <summary>
-        /// Collect the Picture sequence of characters from the list of parts. And perform some prevalidation
+        /// Collect the Picture sequence of characters from the list of parts. And perform some pre-validation
         /// checks.
         /// </summary>
         /// <param name="matches">All Picture items matched</param>
@@ -372,7 +346,7 @@ namespace TypeCobol.Compiler.Types
                 int count = m.Item2;
                 if (count == 0)
                 {//Count cannot be 0.
-                    ValidationMesssage.Add(Context.SymbolCountCannotBeZeroMsg);
+                    ValidationMessages.Add(Context.SymbolCountCannotBeZeroMsg);
                 }
 
                 SC sc;
@@ -425,7 +399,7 @@ namespace TypeCobol.Compiler.Types
                         cr_count += count;
                         if (cr_count > 1)
                         {
-                            ValidationMesssage.Add(Context.MoreThanOne_CR_CharacterMsg);
+                            ValidationMessages.Add(Context.MoreThanOne_CR_CharacterMsg);
                         }
                         break;
                     case SC.DB:
@@ -433,35 +407,35 @@ namespace TypeCobol.Compiler.Types
                         db_count += count;
                         if (db_count > 1)
                         {
-                            ValidationMesssage.Add(Context.MoreThanOne_DB_CharacterMsg);
+                            ValidationMessages.Add(Context.MoreThanOne_DB_CharacterMsg);
                         }
                         break;
                     case SC.S:
                         s_count += count;
                         if (s_count > 1)
                         {
-                            ValidationMesssage.Add(Context.MoreThanOne_S_CharacterMsg);
+                            ValidationMessages.Add(Context.MoreThanOne_S_CharacterMsg);
                         }
                         break;
                     case SC.V:
                         v_count += count;
                         if (v_count > 1)
                         {
-                            ValidationMesssage.Add(Context.MoreThanOne_V_CharacterMsg);
+                            ValidationMessages.Add(Context.MoreThanOne_V_CharacterMsg);
                         }
                         break;
                     case SC.E:
                         e_count += count;
                         if (e_count > 1)
                         {
-                            ValidationMesssage.Add(Context.MoreThanOne_E_CharacterMsg);
+                            ValidationMessages.Add(Context.MoreThanOne_E_CharacterMsg);
                         }
                         break;
                     case SC.DOT:
                         dot_count += count;
                         if (dot_count > 1)
                         {
-                            ValidationMesssage.Add(Context.MoreThanOne_Dot_CharacterMsg);
+                            ValidationMessages.Add(Context.MoreThanOne_Dot_CharacterMsg);
                         }
                         break;
                 }
@@ -470,7 +444,7 @@ namespace TypeCobol.Compiler.Types
             cntFound += (foundPlus || foundMinus ? 1 : 0);
             if (cntFound > 1)
             { // 0 is valid
-                ValidationMesssage.Add(Context.MultuallyExclusiveSymbolMsg);
+                ValidationMessages.Add(Context.MultuallyExclusiveSymbolMsg);
             }
             return sequence;
         }
@@ -490,17 +464,17 @@ namespace TypeCobol.Compiler.Types
         /// <returns>true if the pic is valid, false otherwise</returns>
         public bool IsValid()
         {
-            //0. Picure String must contains at least
+            //0. Picture String must contains at least
             //1. First Validate against the PICTURE string regular expression.
             List<Tuple<string, int>> matches = PictureStringSplitter(Picture, CurrencySymbol);
             if (matches == null)
                 return false;
             if (matches.Count <= 0)
                 return false;
-            //Construct Charcater sequence
-            ValidationMesssage.Clear();
+            //Construct Character sequence
+            ValidationMessages.Clear();
             List<Character> sequence = CollectPictureSequence(matches);
-            if (ValidationMesssage.Count > 0)
+            if (ValidationMessages.Count > 0)
                 return false;
             //No Validate the sequence
             return ValidatePictureSequence(sequence);
@@ -529,8 +503,8 @@ namespace TypeCobol.Compiler.Types
         {
             firstIndex = lastIndex = -1;
             int lastNonSimpleIndex = -1;
-            SC floatChar = (SC)(-1); ; //The float character that corresponds to the first index either CS, + or -.
-            int i = 0;
+            SC floatChar = (SC)(-1); //The float character that corresponds to the first index either CS, + or -.
+            int i;
             for (i = 0; i < sequence.Count; i++)
             {
                 Character c = sequence[i];
@@ -575,7 +549,7 @@ namespace TypeCobol.Compiler.Types
 
             for (++i; i < sequence.Count; i++)
             {
-                Character c = sequence[i]; ;
+                Character c = sequence[i];
                 if (!(IsSimpleInsertionCharacter(c.ch) || c.ch == floatChar))
                     return;
             }
@@ -585,23 +559,20 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// Compute the initial validation context.
         /// </summary>
-        /// <param name="sequence">The sequenc of characters.</param>
+        /// <param name="sequence">The sequence of characters.</param>
         /// <returns></returns>
         private Context ComputeInitialContext(List<Character> sequence)
         {
-            int firstIndex;
-            int lastIndex;
-            ComputeFloatingStringIndexes(sequence, out firstIndex, out lastIndex);
-            Context ctx = new Context(sequence);
-            ctx.FirstFloatingIndex = firstIndex;
-            ctx.LastFloatingIndex = lastIndex;
-            ctx.CurrencySymbol = this.CurrencySymbol;
-            ctx.DecimalPoint = this.DecimalPoint;
-            ctx.NumericSeparator = this.NumericSeparator;
-            ctx.IsSeparateSign = IsSeparateSign;
-            ctx.ValidationMesssage = ValidationMesssage;
-
-            return ctx;
+            ComputeFloatingStringIndexes(sequence, out int firstIndex, out int lastIndex);
+            return new Context(sequence, this.ValidationMessages)
+                   {
+                       FirstFloatingIndex = firstIndex,
+                       LastFloatingIndex = lastIndex,
+                       CurrencySymbol = this.CurrencySymbol,
+                       DecimalPoint = this.DecimalPoint,
+                       NumericSeparator = this.NumericSeparator,
+                       IsSeparateSign = this.IsSeparateSign,
+                   };
         }
 
         /// <summary>
@@ -614,7 +585,7 @@ namespace TypeCobol.Compiler.Types
             /// </summary>
             public SC ch;
             /// <summary>
-            /// The repetion count of the character.
+            /// The repetition count of the character.
             /// </summary>
             public int count;
 
@@ -622,7 +593,7 @@ namespace TypeCobol.Compiler.Types
             /// Constructor.
             /// </summary>
             /// <param name="c">The character</param>
-            /// <param name="n">The repetion count</param>
+            /// <param name="n">The repetition count</param>
             public Character(SC c, int n)
             {
                 ch = c;
@@ -631,7 +602,7 @@ namespace TypeCobol.Compiler.Types
 
             public override string ToString()
             {
-                string s = null;
+                string s;
                 switch (ch)
                 {
                     case SC.A:
@@ -707,12 +678,13 @@ namespace TypeCobol.Compiler.Types
             /// <summary>
             /// Empty constructor.
             /// </summary>
-            internal Context(List<Character> sequence)
+            internal Context(List<Character> sequence, List<string> validationMessages)
             {
-                ValidationMesssage = new List<String>();
+                ValidationMessages = validationMessages;
                 Sequence = sequence;
                 IsBeforeDecimalPoint = true;
             }
+
             /// <summary>
             /// Indicating whether the sign is separate character
             /// </summary>
@@ -722,11 +694,10 @@ namespace TypeCobol.Compiler.Types
                 set;
             }
 
-
             /// <summary>
             /// The Currency Symbol to be used.
             /// </summary>
-            internal String CurrencySymbol
+            internal string CurrencySymbol
             {
                 get;
                 set;
@@ -751,14 +722,6 @@ namespace TypeCobol.Compiler.Types
             }
 
             /// <summary>
-            /// Are we in Floating Insertion Symboils Mode ?
-            /// </summary>
-            internal bool IsFloatingInsertionMode
-            {
-                get;
-                set;
-            }
-            /// <summary>
             /// Current Index in the sequence
             /// </summary>
             internal int SequenceIndex
@@ -766,6 +729,7 @@ namespace TypeCobol.Compiler.Types
                 get;
                 set;
             }
+
             /// <summary>
             /// The sequence
             /// </summary>
@@ -774,10 +738,11 @@ namespace TypeCobol.Compiler.Types
                 get;
                 set;
             }
+
             /// <summary>
             /// Current State
             /// </summary>
-            internal int State
+            internal int StateIndex
             {
                 get;
                 set;
@@ -809,6 +774,7 @@ namespace TypeCobol.Compiler.Types
                 get;
                 private set;
             }
+
             /// <summary>
             /// 1/10^Scale
             /// </summary>
@@ -826,8 +792,9 @@ namespace TypeCobol.Compiler.Types
                 get;
                 private set;
             }
+
             /// <summary>
-            /// Real number of digite
+            /// Real number of digits
             /// </summary>
             public int RealDigits
             {
@@ -836,7 +803,7 @@ namespace TypeCobol.Compiler.Types
             }
 
             /// <summary>
-            /// The Index of the first character of a floating inssertion string in the sequence.
+            /// The Index of the first character of a floating insertion string in the sequence.
             /// </summary>
             internal int FirstFloatingIndex
             {
@@ -845,7 +812,7 @@ namespace TypeCobol.Compiler.Types
             }
 
             /// <summary>
-            /// The Index of the last character of a floating inssertion string in the sequence.
+            /// The Index of the last character of a floating insertion string in the sequence.
             /// </summary>
             internal int LastFloatingIndex
             {
@@ -870,6 +837,7 @@ namespace TypeCobol.Compiler.Types
                 get;
                 set;
             }
+
             /// <summary>
             /// Current count of alphanumeric characters.
             /// </summary>
@@ -890,13 +858,13 @@ namespace TypeCobol.Compiler.Types
             /// Have we seen '*' ?
             /// </summary>
             private bool Star_seen = false;
+
             /// <summary>
-            /// Called when changing transition on the given character, so specific validaton actions can be performed here.
+            /// Called when changing transition on the given character, so specific validation actions can be performed here.
             /// </summary>
             /// <param name="c">Character on the transition</param>
-            /// <param name="t">Transition representing the next state</param>
             /// <param name="state">The current state of the character</param>
-            /// <param name="gotoState">The state to goto, the method cans decide go to to another state that's why thie value is passed by reference.</param>
+            /// <param name="gotoState">The state to goto, the method cans decide go to to another state that's why this value is passed by reference.</param>
             /// <returns>return true to continue validation, false otherwise.</returns>
             internal bool OnGoto(Character c, int state, ref int gotoState)
             {
@@ -921,7 +889,7 @@ namespace TypeCobol.Compiler.Types
                             Star_seen = true;
                         if (Z_seen && Star_seen)
                         {
-                            ValidationMesssage.Add(ZStarMutuallyExclusiveMsg);
+                            ValidationMessages.Add(ZStarMutuallyExclusiveMsg);
                             return false;
                         }
                         this.Category |= PictureCategory.NumericEdited;
@@ -971,12 +939,12 @@ namespace TypeCobol.Compiler.Types
                         this.Category |= PictureCategory.Numeric;
                         if (c.count > 1)
                         {
-                            ValidationMesssage.Add(SymbolSMustOccurOnlyOnceMsg);
+                            ValidationMessages.Add(SymbolSMustOccurOnlyOnceMsg);
                             return false;
                         }
                         if (state != 0 || this.SequenceIndex != 0)
                         {
-                            ValidationMesssage.Add(SymbolSMustBeTheFirstMsg);
+                            ValidationMessages.Add(SymbolSMustBeTheFirstMsg);
                             return false;
                         }
                         S_count += c.count;
@@ -992,7 +960,7 @@ namespace TypeCobol.Compiler.Types
                         V_count += c.count;
                         if (V_count > 1)
                         {
-                            ValidationMesssage.Add(MultipleVMsg);
+                            ValidationMessages.Add(MultipleVMsg);
                             return false;
                         }
                         this.IsBeforeDecimalPoint = false;
@@ -1004,12 +972,10 @@ namespace TypeCobol.Compiler.Types
                         Digits += c.count;
                         Scale += (V_count > 0 ? c.count : (-c.count));
                         break;
-                    default:
-                        break;
                 }
                 if (S_count > 0)
                     HaveSign = true;
-                //Update total sise
+                //Update total size
                 switch (c.ch)
                 {
                     case SC.S:
@@ -1036,8 +1002,8 @@ namespace TypeCobol.Compiler.Types
             /// <summary>
             /// Validate the presence of the P character. 
             /// The Symbol P specified a scaling position and implies an assumed decimal point (to the left of the Ps if the Ps are leftmost PICTURE characters;
-            /// to right of the Ps if the Ps are rightmost PICTURE charcaters).
-            /// If we say that the charcater ^ means the beginning of the PICTURE sequence
+            /// to right of the Ps if the Ps are rightmost PICTURE characters).
+            /// If we say that the character ^ means the beginning of the PICTURE sequence
             /// and $ means the end of the PICTURE sequence sequence, only the following situations are valid for P.
             /// ^P | ^VP | ^SP | ^SVP | P$ | PV$
             /// </summary>
@@ -1061,47 +1027,31 @@ namespace TypeCobol.Compiler.Types
                 }
                 if (this.SequenceIndex == (this.Sequence.Count - 2) && this.Sequence[this.Sequence.Count - 1].ch == SC.V)
                     return true;//$PV
-                this.ValidationMesssage.Add(WrongPPoitionMsg);
+                this.ValidationMessages.Add(WrongPPoitionMsg);
                 return false;
             }
 
             /// <summary>
             /// Determines if the current Sequence Index is inside the Floating Insertion Symbols range.
             /// </summary>
-            private bool IsCurrentIndexInsidefloatingInsertion
-            {
-                get
-                {
-                    return this.FirstFloatingIndex >= 0 && this.LastFloatingIndex >= 0 &&
-                        this.FirstFloatingIndex <= this.SequenceIndex && this.SequenceIndex <= this.LastFloatingIndex;
-                }
-            }
+            private bool IsCurrentIndexInsideFloatingInsertion
+                => this.FirstFloatingIndex >= 0
+                   && this.LastFloatingIndex >= 0
+                   && this.FirstFloatingIndex <= this.SequenceIndex
+                   && this.SequenceIndex <= this.LastFloatingIndex;
 
             /// <summary>
             /// Return true if the current sequence index is the first symbol of the sequence.
             /// </summary>
-            private bool IsFirstSymbol
-            {
-                get
-                {
-                    return SequenceIndex == 0;
-                }
-            }
+            private bool IsFirstSymbol => SequenceIndex == 0;
 
             /// <summary>
             /// Return true if the current sequence index is the last symbol of the sequence.
             /// </summary>
-            private bool IsLastymbol
-            {
-                get
-                {
-                    return SequenceIndex == Sequence.Count - 1;
-                }
-
-            }
+            private bool IsLastSymbol => SequenceIndex == Sequence.Count - 1;
 
             /// <summary>
-            /// Get the state that is used to handle the given charcater in the Automata
+            /// Get the state that is used to handle the given character in the Automata
             /// </summary>
             /// <param name="c">The character to get the handling state</param>
             /// <returns>The state number if one exist, -1 otherwise</returns>
@@ -1121,11 +1071,11 @@ namespace TypeCobol.Compiler.Types
                     case SC.PLUS:
                     case SC.MINUS:
                         {
-                            if (!IsCurrentIndexInsidefloatingInsertion)
+                            if (!IsCurrentIndexInsideFloatingInsertion)
                             {
                                 if (IsFirstSymbol)
                                     return 5;
-                                else if (IsLastymbol)
+                                else if (IsLastSymbol)
                                     return 6;
                                 else
                                     return 5;
@@ -1141,7 +1091,7 @@ namespace TypeCobol.Compiler.Types
                         return 7;
                     case SC.CS:
                         {
-                            if (!IsCurrentIndexInsidefloatingInsertion)
+                            if (!IsCurrentIndexInsideFloatingInsertion)
                             {
                                 return 8;
                             }
@@ -1179,7 +1129,7 @@ namespace TypeCobol.Compiler.Types
             }
 
             /// <summary>
-            /// Determines if the current sequence after a call to Isvalid method, is in fact an ExternalFloat picture string
+            /// Determines if the current sequence after a call to IsValid method, is in fact an ExternalFloat picture string
             /// category.
             /// </summary>
             /// <returns></returns>
@@ -1190,7 +1140,7 @@ namespace TypeCobol.Compiler.Types
                 if (this.Sequence.Count <= 4)
                     return false;// should contained with at leas (+|-)*2,(.|V),E
                 if (this.Category != PictureCategory.NumericEdited)
-                    return false;//By Defualt is a NumericEdited category.
+                    return false;//By Default is a NumericEdited category.
                 int i = 0;
                 if (Sequence[i].ch != SC.PLUS && Sequence[i].ch != SC.MINUS)
                     return false;
@@ -1225,7 +1175,7 @@ namespace TypeCobol.Compiler.Types
             /// Determine whether or not the sequence is alphabetic.
             /// </summary>
             /// <returns>true if the sequence is alphabetic, false otherwise</returns>
-            public bool IsAplphabeticSequence()
+            public bool IsAlphabeticSequence()
             {
                 if (this.Sequence == null)
                     return false;
@@ -1235,7 +1185,7 @@ namespace TypeCobol.Compiler.Types
             }
 
             /// <summary>
-            /// Determines if the current sequence is a Dbcs seqeunce
+            /// Determines if the current sequence is a DBCS sequence
             /// </summary>
             /// <returns>true if yes, false otherwise</returns>
             public bool IsDbcsSequence()
@@ -1335,7 +1285,7 @@ namespace TypeCobol.Compiler.Types
 
             /// <summary>
             /// Is a sequence only formed with national edited characters, that is to say with
-            /// symbols N, B, 0 or /, with at least one N and one other symbol in the picture chracter_string.
+            /// symbols N, B, 0 or /, with at least one N and one other symbol in the picture character string.
             /// </summary>
             /// <returns>true if yes, false otherwise</returns>
             public bool IsNationalEditedSequence()
@@ -1355,12 +1305,7 @@ namespace TypeCobol.Compiler.Types
             /// <summary>
             /// All validation messages if any.
             /// </summary>
-            public List<String> ValidationMesssage
-            {
-                get;
-                internal set;
-            }
-
+            public List<string> ValidationMessages { get; }
         }
 
         /// <summary>
@@ -1371,33 +1316,26 @@ namespace TypeCobol.Compiler.Types
             /// <summary>
             /// The State Number
             /// </summary>
-            public int Number
-            {
-                get;
-                private set;
-            }
+            public int Number { get; }
+
             /// <summary>
             /// Transitions on characters boolean vector.
             /// </summary>
-            public bool[] Trans
-            {
-                get;
-                private set;
-            }
+            public bool[] Trans { get; }
 
             /// <summary>
             /// Transition table constructor
             /// </summary>
             /// <param name="number">The state number</param>
-            /// <param name="gotos"></param>
+            /// <param name="vtrans">Transition table for this state</param>
             public State(int number, params SC[] vtrans)
             {
-                System.Diagnostics.Contracts.Contract.Requires(vtrans != null);
+                System.Diagnostics.Debug.Assert(vtrans != null);
                 bool[] atrans = new bool[(int)SC.SpecialCharCount];
-                for (int i = 0; i < vtrans.Length; i++)
+                foreach (var sc in vtrans)
                 {
-                    System.Diagnostics.Contracts.Contract.Assume(atrans[(int)vtrans[i]] == false);
-                    atrans[(int)vtrans[i]] = true;
+                    System.Diagnostics.Debug.Assert(atrans[(int)sc] == false);
+                    atrans[(int)sc] = true;
                 }
                 Number = number;
                 Trans = atrans;
@@ -1408,36 +1346,25 @@ namespace TypeCobol.Compiler.Types
             /// </summary>
             /// <param name="c">The character to determine if it is a character of transition</param>
             /// <returns>true if a transition is possible, false otherwise</returns>
-            public bool this[Character c]
-            {
-                get
-                {
-                    return this[c.ch];
-                }
-            }
+            public bool this[Character c] => this[c.ch];
 
             /// <summary>
             /// Determines if this state has a transition on the given character.
             /// </summary>
             /// <param name="c">The character to determine if it is a character of transition</param>
             /// <returns>true if a transition is possible, false otherwise</returns>
-            public bool this[SC c]
-            {
-                get
-                {
-                    return Trans[(int)c];
-                }
-            }
+            public bool this[SC c] => Trans[(int)c];
         }
 
         private static SC T(char c)
         {
             return Char2SC(c);
         }
+
         /// <summary>
         /// Static representation of a (NFA) Non Deterministic Finite Automata over PICTURE symbols precedence rules.
         /// </summary>
-        private static State[] Automata =
+        private static readonly State[] _Automata =
         {
             //State 0: Start Symbols
             new State(0,T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),T('Z'),T('*'),SC.CS,T('9'),T('A'),T('X'),T('S'),T('V'),T('P'),T('G'),T('N') ),
@@ -1508,21 +1435,21 @@ namespace TypeCobol.Compiler.Types
         /// <returns>true if we reach the final character in a valid state, false otherwise.</returns>
         private bool RunAutomata(Context ctx)
         {
-            int state = 0;
+            int stateIndex = 0;
             for (int i = 0; i < ctx.Sequence.Count; i++)
             {
                 Character c = ctx.Sequence[i];
-                if (!Automata[state][c])
+                if (!_Automata[stateIndex][c])
                 {//No transition
-                    ctx.ValidationMesssage.Add(string.Format(Context.InvalidSymbolPosMsg, SC2String(c.ch)));
+                    ctx.ValidationMessages.Add(string.Format(Context.InvalidSymbolPosMsg, SC2String(c.ch)));
                     return false;
                 }
-                ctx.State = state;
+                ctx.StateIndex = stateIndex;
                 ctx.SequenceIndex = i;
-                int gotoState = ctx.GetState(c); ;
-                if (!ctx.OnGoto(c, state, ref gotoState))
+                int gotoState = ctx.GetState(c);
+                if (!ctx.OnGoto(c, stateIndex, ref gotoState))
                     return false;
-                state = gotoState;
+                stateIndex = gotoState;
             }
             return true;
         }
