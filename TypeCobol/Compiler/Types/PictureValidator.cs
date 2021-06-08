@@ -442,7 +442,7 @@ namespace TypeCobol.Compiler.Types
             cntFound += (foundPlus || foundMinus ? 1 : 0);
             if (cntFound > 1)
             { // 0 is valid
-                ValidationMessages.Add(Context.MultuallyExclusiveSymbolMsg);
+                ValidationMessages.Add(Context.MutuallyExclusiveSymbolMsg);
             }
             return sequence;
         }
@@ -663,15 +663,15 @@ namespace TypeCobol.Compiler.Types
             internal static readonly string SymbolSMustOccurOnlyOnceMsg = "Character S must be repeated only once in PICTURE string";
             internal static readonly string SymbolSMustBeTheFirstMsg = "S must be at the beginning of a PICTURE string";
             internal static readonly string MultipleVMsg = "V must appears only once in a PICTURE string";
-            internal static readonly string WrongPPoitionMsg = "P must appears at the head or tail position of a PICTURE string";
-            internal static readonly string ZStarMutuallyExclusiveMsg = "Z and * symbols are mutually exclusise in a PICTURE string.";
-            internal static readonly string MoreThanOne_E_CharacterMsg = "Only one occurence of E symbol can appers in a PICTURE string";
-            internal static readonly string MoreThanOne_CR_CharacterMsg = "Only one occurence of CR symbol can appers in a PICTURE string";
-            internal static readonly string MoreThanOne_DB_CharacterMsg = "Only one occurence of DB symbol can appers in a PICTURE string";
-            internal static readonly string MoreThanOne_S_CharacterMsg = "Only one occurence of S symbol can appers in a PICTURE string";
-            internal static readonly string MoreThanOne_V_CharacterMsg = "Only one occurence of V symbol can appers in a PICTURE string";
-            internal static readonly string MoreThanOne_Dot_CharacterMsg = "Only one occurence of '.' symbol can appers in a PICTURE string";
-            internal static readonly string MultuallyExclusiveSymbolMsg = "+/-/CR/DB are mutually exclusive";
+            internal static readonly string WrongPPositionMsg = "P must appears at the head or tail position of a PICTURE string";
+            internal static readonly string ZStarMutuallyExclusiveMsg = "Z and * symbols are mutually exclusive in a PICTURE string.";
+            internal static readonly string MoreThanOne_E_CharacterMsg = "Only one occurrence of E symbol can appear in a PICTURE string";
+            internal static readonly string MoreThanOne_CR_CharacterMsg = "Only one occurrence of CR symbol can appear in a PICTURE string";
+            internal static readonly string MoreThanOne_DB_CharacterMsg = "Only one occurrence of DB symbol can appear in a PICTURE string";
+            internal static readonly string MoreThanOne_S_CharacterMsg = "Only one occurrence of S symbol can appear in a PICTURE string";
+            internal static readonly string MoreThanOne_V_CharacterMsg = "Only one occurrence of V symbol can appear in a PICTURE string";
+            internal static readonly string MoreThanOne_Dot_CharacterMsg = "Only one occurrence of '.' symbol can appear in a PICTURE string";
+            internal static readonly string MutuallyExclusiveSymbolMsg = "+/-/CR/DB are mutually exclusive";
 
             /// <summary>
             /// Empty constructor.
@@ -1025,7 +1025,7 @@ namespace TypeCobol.Compiler.Types
                 }
                 if (this.SequenceIndex == (this.Sequence.Count - 2) && this.Sequence[this.Sequence.Count - 1].ch == SC.V)
                     return true;//$PV
-                this.ValidationMessages.Add(WrongPPoitionMsg);
+                this.ValidationMessages.Add(WrongPPositionMsg);
                 return false;
             }
 
