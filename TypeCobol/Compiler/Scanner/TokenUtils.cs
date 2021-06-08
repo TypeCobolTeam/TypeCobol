@@ -72,17 +72,26 @@ namespace TypeCobol.Compiler.Scanner
 
         private static IDictionary<string, TokenType> tokenTypeFromTokenString;
 
-        internal static TokenType GetTokenTypeFromTokenString(string tokenString)
+        internal static TokenType GetTokenTypeFromTokenString(string tokenString, bool pureCobol)
         {
-            TokenType tokenType;
-            if (tokenTypeFromTokenString.TryGetValue(tokenString, out tokenType))
+            if (tokenTypeFromTokenString.TryGetValue(tokenString, out var tokenType))
             {
-                return tokenType;
+                //In TypeCobol context, return found type
+                if (!pureCobol) return tokenType;
+
+                //In pure Cobol context, check token family
+                switch (GetTokenFamilyFromTokenType(tokenType))
+                {
+                    case TokenFamily.Cobol2002Keyword:
+                    case TokenFamily.TypeCobolKeyword:
+                        //Special case for TC-specific keywords
+                        return TokenType.UserDefinedWord;
+                    default:
+                        return tokenType;
+                }
             }
-            else
-            {
-                return TokenType.UserDefinedWord;
-            }
+
+            return TokenType.UserDefinedWord;
         }
         
         // Formalized Comments only to avoid Formalized Comments tokens detection in Cobol and Cobol tokens in Formalized Comments

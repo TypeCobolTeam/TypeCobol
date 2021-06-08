@@ -235,13 +235,13 @@ namespace TypeCobol.Test.Parser.Performance
             CompilationProject project = new CompilationProject("test",
                 root.FullName, new[] { ".cbl", ".cpy" },
                 documentFormat, new TypeCobolOptions(), CreateAnalyzerProvider());
-            FileCompiler compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, false, project);
+            FileCompiler compiler = new FileCompiler(null, filename, documentFormat.ColumnsLayout, false, project.SourceFileProvider, project, new TypeCobolOptions(), null, project);
             //Make an incremental change to the source code
             TestUtils.CompilationStats stats = new TestUtils.CompilationStats();
             ExecuteIncremental(compiler, stats, newLineIndex, newLineText);
 
             // Display a performance report
-            TestUtils.CreateRunReport("Incremental", TestUtils.GetReportDirectoryPath(), compiler.CobolFile.Name, stats, compiler.CompilationResultsForProgram);
+            TestUtils.CreateRunReport("Incremental", TestUtils.GetReportDirectoryPath(), filename, stats, compiler.CompilationResultsForProgram);
         }
 
         private void ExecuteIncremental(FileCompiler compiler, TestUtils.CompilationStats stats, int newLineIndex, string newLineText)

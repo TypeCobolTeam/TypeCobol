@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.LanguageServer.VsCodeProtocol;
@@ -17,7 +15,6 @@ namespace TypeCobol.LanguageServer
 {
     public static class CompletionFactory
     {
-
         #region Paragraph Completion
 
         /// <summary>
@@ -28,7 +25,7 @@ namespace TypeCobol.LanguageServer
         /// <returns></returns>
         public static IEnumerable<CompletionItem> GetCompletionPerformParagraph(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
         {
-            var performNode = GetMatchingNode(fileCompiler, codeElement);
+            var performNode = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
             IEnumerable<Paragraph> pargraphs = null;
             IEnumerable<DataDefinition> variables = null;
             var completionItems = new List<CompletionItem>();
@@ -74,7 +71,7 @@ namespace TypeCobol.LanguageServer
             IEnumerable<FunctionDeclaration> procedures = null;
             IEnumerable<DataDefinition> variables = null;
             var completionItems = new List<CompletionItem>();
-            var node = GetMatchingNode(fileCompiler, codeElement);
+            var node = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
             if(node == null)
                 return completionItems;
 
@@ -116,7 +113,7 @@ namespace TypeCobol.LanguageServer
         {
             var completionItems = new List<CompletionItem>();
             var arrangedCodeElement = codeElement as CodeElementWrapper;
-            var node = GetMatchingNode(fileCompiler, codeElement);
+            var node = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
             if (node == null)
                 return completionItems;
 
@@ -236,7 +233,7 @@ namespace TypeCobol.LanguageServer
             if (potentialVariablesForCompletion == null) return completionItems;
 
             foreach (var potentialVariable in potentialVariablesForCompletion.Where(v => v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)).Distinct())
-                SearchVariableInTypesAndLevels(node, potentialVariable, ref completionItems); //Add potential variables to completionItems*           
+                SearchVariableInTypesAndLevels(node, potentialVariable, fileCompiler.CompilerOptions, completionItems); //Add potential variables to completionItems*           
 
             CompletionFactoryHelpers.Case textCase = CompletionFactoryHelpers.GetTextCase(codeElement.ConsumedTokens.First(t => t.TokenType == TokenType.CALL).Text);
             Dictionary<ParameterDescription.PassingTypes, string> paramWithCase = CompletionFactoryHelpers.GetParamsWithCase(textCase);
@@ -319,7 +316,7 @@ namespace TypeCobol.LanguageServer
         #region Library Completion
         public static IEnumerable<CompletionItem> GetCompletionForLibrary(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
         {
-            var callNode = GetMatchingNode(fileCompiler, codeElement);
+            var callNode = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
             IEnumerable<Program> programs = null;
             if (callNode?.SymbolTable != null)
             {
@@ -335,7 +332,7 @@ namespace TypeCobol.LanguageServer
         #region Types Completion
         public static IEnumerable<CompletionItem> GetCompletionForType(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
         {
-            var node = GetMatchingNode(fileCompiler, codeElement);
+            var node = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
             IEnumerable<TypeDefinition> types = null;
             if (node?.SymbolTable == null)
                 return new List<CompletionItem>();
@@ -361,7 +358,7 @@ namespace TypeCobol.LanguageServer
         {
             var completionItems = new List<CompletionItem>();
             var arrangedCodeElement = codeElement as CodeElementWrapper;
-            var node = GetMatchingNode(fileCompiler, codeElement);
+            var node = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
             if (node == null)
                 return completionItems;
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
@@ -446,7 +443,7 @@ namespace TypeCobol.LanguageServer
                         completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(
                             computedChildrenList.Where(
                                     c => c.Name != null && c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
-                                .Select(child => child as DataDefinition), false));
+                                .Select(child => child as DataDefinition), fileCompiler.CompilerOptions, false));
                     }
                 }
                 else
@@ -475,7 +472,7 @@ namespace TypeCobol.LanguageServer
                     completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(
                         children.Where(
                                 c => c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
-                            .Select(child => child as DataDefinition), false));
+                            .Select(child => child as DataDefinition), fileCompiler.CompilerOptions, false));
                 }
 
                 if (firstSignificantToken != null)
@@ -535,12 +532,12 @@ namespace TypeCobol.LanguageServer
         public static IEnumerable<CompletionItem> GetCompletionForVariable(FileCompiler fileCompiler, CodeElement codeElement, Expression<Func<DataDefinition, bool>> predicate)
         {
             var completionItems = new List<CompletionItem>();
-            var node = GetMatchingNode(fileCompiler, codeElement);
+            var node = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
             if (node == null)
                 return completionItems;
 
             var variables = node.SymbolTable.GetVariables(predicate, SymbolTable.Scope.Program);
-            completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(variables));
+            completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(variables, fileCompiler.CompilerOptions));
 
             return completionItems;
         }
@@ -549,88 +546,108 @@ namespace TypeCobol.LanguageServer
         #region TO Completion
         public static IEnumerable<CompletionItem> GetCompletionForTo(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken, Token lastSignificantToken)
         {
-            List<DataType> seekedDataTypes = new List<DataType>();
+            var compatibleDataTypes = new HashSet<DataType>();
             var completionItems = new List<CompletionItem>();
             var arrangedCodeElement = codeElement as CodeElementWrapper;
             if (arrangedCodeElement == null)
                 return completionItems;
-            var node = GetMatchingNode(fileCompiler, codeElement);
+            var node = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
             if (node == null)
                 return completionItems;
 
-            var potentialVariables = Enumerable.Empty<DataDefinition>();
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
             Expression<Func<DataDefinition, bool>> variablePredicate =
                 da =>
                     (da.CodeElement != null && (da.CodeElement).LevelNumber.Value < 88) ||
                     (da.CodeElement == null && da is IndexDefinition); //Ignore variable of level 88.
 
-            //Look if the sending variable is like litteral Alpha / Numeric
-
-            if (node.CodeElement is MoveSimpleStatement)
+            //Look if the sending variable is compatible with Alpha / Numeric
+            if (node.CodeElement is MoveSimpleStatement moveSimpleStatement)
             {
-                var sendingItem = ((MoveSimpleStatement)node.CodeElement).SendingItem;
-                var sendingVar = ((MoveSimpleStatement)node.CodeElement).SendingVariable;
+                var sendingItem = moveSimpleStatement.SendingItem;
+                var sendingVar = moveSimpleStatement.SendingVariable;
                 if (sendingItem != null)
                 {
                     if (!(sendingItem is QualifiedName))
                     {
-                        if (sendingItem is bool?) seekedDataTypes.Add(DataType.Boolean);
-                        if (sendingItem is double?) seekedDataTypes.Add(DataType.Numeric);
-                        if (sendingItem is string) seekedDataTypes.Add(DataType.Alphanumeric);
+                        if (sendingItem is bool) compatibleDataTypes.Add(DataType.Boolean);
+                        else if (sendingItem is double) compatibleDataTypes.Add(DataType.Numeric);
+                        else if (sendingItem is string) compatibleDataTypes.Add(DataType.Alphanumeric);
                     }
 
-                    if (sendingVar != null && sendingVar.IsLiteral == true && sendingItem is double? &&
-                        (sendingVar.NumericValue.Token.TokenType == TokenType.ZERO
-                         || sendingVar.NumericValue.Token.TokenType == TokenType.ZEROS
-                         || sendingVar.NumericValue.Token.TokenType == TokenType.ZEROES))
+                    if (sendingVar != null && sendingVar.IsLiteral && sendingItem is double)
                     {
-                        //See #845, ZERO support Alphabetic/Numeric/Alphanumeric datatype
-                        seekedDataTypes.Add(DataType.Alphanumeric);
-                        seekedDataTypes.Add(DataType.Alphabetic); 
+                        switch (sendingVar.NumericValue.Token.TokenType)
+                        {
+                            case TokenType.ZERO:
+                            case TokenType.ZEROS:
+                            case TokenType.ZEROES:
+                                //See #845, ZERO support Alphabetic/Numeric/Alphanumeric DataType
+                                compatibleDataTypes.Add(DataType.Alphanumeric);
+                                compatibleDataTypes.Add(DataType.Alphabetic);
+                                break;
+                        }
                     }
                 }
 
                 var tokenType = sendingVar?.RepeatedCharacterValue?.Token?.TokenType;
-                if (tokenType != null)
+                switch (tokenType)
                 {
-                    if (tokenType == TokenType.SPACE || tokenType == TokenType.SPACES || tokenType == TokenType.QUOTE || tokenType == TokenType.QUOTES)
-                    {
-                        seekedDataTypes.Add(DataType.Alphanumeric);
-                        seekedDataTypes.Add(DataType.Alphabetic);
-                    }
+                    case TokenType.SPACE:
+                    case TokenType.SPACES:
+                    case TokenType.QUOTE:
+                    case TokenType.QUOTES:
+                        compatibleDataTypes.Add(DataType.Alphanumeric);
+                        compatibleDataTypes.Add(DataType.Alphabetic);
+                        break;
                 }
             }
 
-
             bool unsafeContext = arrangedCodeElement.ArrangedConsumedTokens.Any(t => t != null && t.TokenType == TokenType.UNSAFE);
             var filteredTokens = arrangedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.UserDefinedWord);
-            bool needTailReverse = filteredTokens.Any(t => t.TokenType == TokenType.OF);
-            var qualifiedNameTokens = filteredTokens.TakeWhile(t => t != lastSignificantToken).Where(t => !(t.TokenType == TokenType.QualifiedNameSeparator || t.TokenType == TokenType.OF) && t != userFilterToken);
-            if (!qualifiedNameTokens.Any() && seekedDataTypes.Count == 0)
+            bool needTailReverse = false;
+            List<string> qualifiedNameParts = new List<string>();
+            foreach (var token in filteredTokens)
+            {
+                if (token ==  lastSignificantToken) break; //No need to go further
+                if (token == userFilterToken) continue;
+                switch (token.TokenType)
+                {
+                    case TokenType.QualifiedNameSeparator:
+                        continue;
+                    case TokenType.OF:
+                    case TokenType.IN:
+                        needTailReverse = true;
+                        continue;
+                    default:
+                        qualifiedNameParts.Add(token.Text);
+                        break;
+                }
+            }
+
+            if (!qualifiedNameParts.Any() && compatibleDataTypes.Count == 0)
                 return completionItems;
 
-            if (needTailReverse)
-                qualifiedNameTokens = qualifiedNameTokens.Reverse();
+            if (needTailReverse) qualifiedNameParts.Reverse();
 
+            var potentialVariables = Enumerable.Empty<DataDefinition>();
             if (!unsafeContext) //Search for variable that match the DataType
             {
-                if (seekedDataTypes.Count == 0) //If a Datatype hasn't be found yet. 
+                if (compatibleDataTypes.Count == 0) //If a Datatype hasn't be found yet. 
                 {
-                    var foundedVar = node.SymbolTable.GetVariablesExplicit(new URI(qualifiedNameTokens.Select(t => t.Text))).FirstOrDefault();
-
+                    var foundedVar = node.SymbolTable.GetVariablesExplicit(new URI(qualifiedNameParts)).FirstOrDefault();
                     if (foundedVar != null)
                     {
-                        seekedDataTypes.Add(foundedVar.DataType);
+                        compatibleDataTypes.Add(foundedVar.DataType);
 
                         // Add PrimitiveDataType to extend the search to compatible types, if null default to Alphanumeric
-                        seekedDataTypes.Add(foundedVar.PrimitiveDataType ?? DataType.Alphanumeric);
+                        compatibleDataTypes.Add(foundedVar.PrimitiveDataType ?? DataType.Alphanumeric);
                     }
                 }
 
-                foreach (var seekedDataType in seekedDataTypes.Distinct())
+                foreach (var compatibleDataType in compatibleDataTypes)
                 {
-                    potentialVariables = node.SymbolTable.GetVariablesByType(seekedDataType, potentialVariables, SymbolTable.Scope.Program);
+                    potentialVariables = node.SymbolTable.GetVariablesByType(compatibleDataType, potentialVariables, SymbolTable.Scope.Program);
                 }
 
                 potentialVariables = potentialVariables.AsQueryable().Where(variablePredicate);
@@ -642,13 +659,9 @@ namespace TypeCobol.LanguageServer
 
             foreach (var potentialVariable in potentialVariables) //Those variables could be inside a typedef or a level, we need to check to rebuild the qualified name correctly.
             {
-                SearchVariableInTypesAndLevels(node, potentialVariable, ref completionItems);
+                if (potentialVariable.VisualQualifiedNameWithoutProgram.SequenceEqual(qualifiedNameParts)) continue;
+                SearchVariableInTypesAndLevels(node, potentialVariable, fileCompiler.CompilerOptions, completionItems);
             }
-
-            if (qualifiedNameTokens.Any())
-                completionItems.Remove(
-                    completionItems.FirstOrDefault(
-                        c => c.label.Contains(string.Join("::", qualifiedNameTokens.Select(t => t.Text)))));
 
             return completionItems.Where(c => c.insertText.IndexOf(userFilterText, StringComparison.InvariantCultureIgnoreCase) >= 0);
         }
@@ -667,7 +680,7 @@ namespace TypeCobol.LanguageServer
             IEnumerable<CompletionItem> completionItems = new List<CompletionItem>();
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
             var arrangedCodeElement = codeElement as CodeElementWrapper;
-            var node = GetMatchingNode(fileCompiler, codeElement);
+            var node = CompletionFactoryHelpers.GetMatchingNode(fileCompiler, codeElement);
             if(node == null)
                 return completionItems;
 
@@ -686,12 +699,12 @@ namespace TypeCobol.LanguageServer
                 case TokenType.ADDRESS:
                 {
                     var contextToken = tokensUntilCursor.Skip(2).FirstOrDefault(); //Try to get the token that may define the completion context
-                    completionItems = GetCompletionForAddressOf(node, contextToken, userFilterText);
+                    completionItems = GetCompletionForAddressOf(node, contextToken, userFilterText, fileCompiler.CompilerOptions);
                     break;
                 }
                 case TokenType.UserDefinedWord:
                 {
-                    completionItems = GetCompletionForOfParent(node, tokenBeforeOf, userFilterText);
+                    completionItems = GetCompletionForOfParent(node, tokenBeforeOf, userFilterText, fileCompiler.CompilerOptions);
                     break;
                 }
             }
@@ -707,7 +720,8 @@ namespace TypeCobol.LanguageServer
         /// <param name="node">Node found on cursor position</param>
         /// <param name="contextToken">ContextToken to select if it's a SET or something else</param>
         /// <param name="userFilterText">Variable Name Filter</param>
-        public static IEnumerable<CompletionItem> GetCompletionForAddressOf(Node node, Token contextToken, string userFilterText)
+        /// <param name="options">Current TypeCobolOptions</param>
+        public static IEnumerable<CompletionItem> GetCompletionForAddressOf(Node node, Token contextToken, string userFilterText, TypeCobolOptions options)
         {
             IEnumerable<DataDefinition> potentialVariable = null;
             if (node == null)
@@ -735,12 +749,11 @@ namespace TypeCobol.LanguageServer
                         SymbolTable.Scope.Program);
             }
 
-            return CompletionFactoryHelpers.CreateCompletionItemsForVariables(potentialVariable);
+            return CompletionFactoryHelpers.CreateCompletionItemsForVariables(potentialVariable, options);
         }
 
 
-        public static IEnumerable<CompletionItem> GetCompletionForOfParent(Node node, Token variableNameToken,
-            string userFilterText)
+        public static IEnumerable<CompletionItem> GetCompletionForOfParent(Node node, Token variableNameToken, string userFilterText, TypeCobolOptions options)
         {
             var completionItems = new List<CompletionItem>();
             if (node == null)
@@ -756,18 +769,16 @@ namespace TypeCobol.LanguageServer
             var currentParent = currentVariable.Parent as DataDefinition;
             if (currentParent != null)
             {
-                completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForVariable(currentParent));
+                completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForVariable(currentParent, options));
             }
             return completionItems;
         }
 
         #endregion
 
-
-
         #region Helpers
 
-        public static IReadOnlyList<Node> GetTypeChildren(SymbolTable symbolTable, DataDefinition dataDefNode)
+        private static IReadOnlyList<Node> GetTypeChildren(SymbolTable symbolTable, DataDefinition dataDefNode)
         {
             if (symbolTable == null || dataDefNode == null)
                 return null;
@@ -782,66 +793,45 @@ namespace TypeCobol.LanguageServer
             return type?.Children;
         }
 
-        /// <summary>
-        /// Get the matchig node for a given Token and a gien completion mode. Returning a matching Node or null.
-        /// </summary>
-        /// <param name="fileCompiler"></param>
-        /// <param name="codeElement"></param>
-        /// <returns></returns>
-        public static Node GetMatchingNode(FileCompiler fileCompiler, CodeElement codeElement)
-        {
-            if (fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot != null
-                && fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers != null)
-            {
-                return
-                    fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers
-                        .FirstOrDefault(t => t.Key.Equals(codeElement)).Value;
-            }
-
-            return null;
-        }
-
-        private static void SearchVariableInTypesAndLevels(Node node, DataDefinition variable, ref List<CompletionItem> completionItems)
+        private static void SearchVariableInTypesAndLevels(Node node, DataDefinition variable, TypeCobolOptions options, List<CompletionItem> completionItems)
         {
             var symbolTable = node.SymbolTable;
-            if (!variable.IsPartOfATypeDef)  //Variable is not comming from a type. 
+            if (!variable.IsPartOfATypeDef)  //Variable is not coming from a type. 
             {
                 if (symbolTable.GetVariablesExplicit(new URI(variable.Name)).Any())   //Check if this variable is present locally. 
                 {
-                    completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForVariable(variable));
+                    completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForVariable(variable, options));
                 }
             }
             else
             {
-                if (symbolTable.TypesReferences != null) //We are in a typedef, get references of this type
+                var type = variable.ParentTypeDefinition;
+                var typesReferences = symbolTable.TypesReferences;
+                if (type != null && typesReferences != null && typesReferences.TryGetValue(type, out var references)) //We are in a typedef, get references of this type
                 {
-                    var type = variable.ParentTypeDefinition;
-                    IEnumerable<DataDefinition> references = null;
-                    references = symbolTable.TypesReferences.Where(t => t.Key == type).SelectMany(r => r.Value);
-
                     foreach (var reference in references)
                     {
                         if (symbolTable.GetVariablesExplicit(new URI(reference.Name)).Any())  //Check if this variable is present locally. If not just ignore it
                         {
-                            if (reference.ParentTypeDefinition == null) //Check if the variable is inside a typedef or not, if not it's a final varaible
+                            if (reference.ParentTypeDefinition == null) //Check if the variable is inside a typedef or not, if not it's a final variable
                             {
-                                var referenceArrangedQualifiedName = string.Join("::", reference.VisualQualifiedName.ToString().Split(reference.VisualQualifiedName.Separator).Skip(1)); //Skip Program Name
-                                var finalQualifiedName = string.Format("{0}::{1}", referenceArrangedQualifiedName, variable.VisualQualifiedName.Head);
-                                var variableDisplay = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, finalQualifiedName);
+                                var referenceArrangedQualifiedName = string.Join("::", reference.VisualQualifiedNameWithoutProgram);
+                                var finalQualifiedName = $"{referenceArrangedQualifiedName}::{variable.VisualQualifiedName.Head}";
+                                var variableDisplay = $"{variable.Name} ({variable.DataType.Name}) ({finalQualifiedName})";
                                 completionItems.Add(new CompletionItem(variableDisplay) { insertText = finalQualifiedName, kind = CompletionItemKind.Variable });
                             }
-                            else //If the reference is always in a typedef, let's loop and ride up until we are in a final variable
+                            else //If the reference is still in a typedef, let's loop and ride up until we are in a final variable
                             {
-                                var tempCompletionItems = new List<CompletionItem>();
-                                SearchVariableInTypesAndLevels(node, reference, ref tempCompletionItems);
+                                var completionItemsForReference = new List<CompletionItem>();
+                                SearchVariableInTypesAndLevels(node, reference, options, completionItemsForReference);
 
-                                if (tempCompletionItems.Count > 0)
+                                if (completionItemsForReference.Count > 0)
                                 {
-                                    foreach (var tempComp in tempCompletionItems)
+                                    foreach (var completionItem in completionItemsForReference)
                                     {
-                                        tempComp.insertText += "::" + variable.VisualQualifiedName.Head;
-                                        tempComp.label = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, tempComp.insertText);
-                                        completionItems.Add(tempComp);
+                                        completionItem.insertText += $"::{variable.VisualQualifiedName.Head}";
+                                        completionItem.label = $"{variable.Name} ({variable.DataType.Name}) ({completionItem.insertText})";
+                                        completionItems.Add(completionItem);
                                     }
                                 }
                             }

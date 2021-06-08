@@ -1,0 +1,356 @@
+RelationCondition: X Z EqualTo →
+    ConditionOperand: X →
+        NumericVariable: X
+    ConditionOperand: Z →
+        NumericVariable: Z
+________________________________________
+RelationCondition: X Z EqualTo →
+    ConditionOperand: X →
+        NumericVariable: X
+    ConditionOperand: Z →
+        NumericVariable: Z
+________________________________________
+RelationCondition: X Z EqualTo not →
+    ConditionOperand: X →
+        NumericVariable: X
+    ConditionOperand: Z →
+        NumericVariable: Z
+________________________________________
+RelationCondition: X Z EqualTo not →
+    ConditionOperand: X →
+        NumericVariable: X
+    ConditionOperand: Z →
+        NumericVariable: Z
+________________________________________
+RelationCondition: X Y LessThan →
+    ConditionOperand: X →
+        NumericVariable: X
+    ConditionOperand: Y →
+        NumericVariable: Y
+________________________________________
+RelationCondition: X Y LessThan →
+    ConditionOperand: X →
+        NumericVariable: X
+    ConditionOperand: Y →
+        NumericVariable: Y
+________________________________________
+RelationCondition: X Y GreaterThan →
+    ConditionOperand: X →
+        NumericVariable: X
+    ConditionOperand: Y →
+        NumericVariable: Y
+________________________________________
+RelationCondition: X Y GreaterThan →
+    ConditionOperand: X →
+        NumericVariable: X
+    ConditionOperand: Y →
+        NumericVariable: Y
+________________________________________
+RelationCondition: X Y LessThanOrEqualTo →
+    ConditionOperand: X →
+        NumericVariable: X
+    ConditionOperand: Y →
+        NumericVariable: Y
+________________________________________
+RelationCondition: X Y LessThanOrEqualTo →
+    ConditionOperand: X →
+        NumericVariable: X
+    ConditionOperand: Y →
+        NumericVariable: Y
+________________________________________
+RelationCondition: X Y GreaterThan not →
+    ConditionOperand: X →
+        NumericVariable: X
+    ConditionOperand: Y →
+        NumericVariable: Y
+________________________________________
+RelationCondition: X Y GreaterThanOrEqualTo →
+    ConditionOperand: X →
+        NumericVariable: X
+    ConditionOperand: Y →
+        NumericVariable: Y
+________________________________________
+RelationCondition: X Y GreaterThanOrEqualTo →
+    ConditionOperand: X →
+        NumericVariable: X
+    ConditionOperand: Y →
+        NumericVariable: Y
+________________________________________
+RelationCondition: X Y LessThan not →
+    ConditionOperand: X →
+        NumericVariable: X
+    ConditionOperand: Y →
+        NumericVariable: Y
+________________________________________
+LogicalOperation: X Z EqualTo X Y EqualTo AND →
+    RelationCondition: X Z EqualTo →
+        ConditionOperand: X →
+            NumericVariable: X
+        ConditionOperand: Z →
+            NumericVariable: Z
+    RelationCondition: X Y EqualTo →
+        ConditionOperand: X →
+            NumericVariable: X
+        ConditionOperand: Y →
+            NumericVariable: Y
+________________________________________
+LogicalOperation: X Z EqualTo X Y EqualTo OR →
+    RelationCondition: X Z EqualTo →
+        ConditionOperand: X →
+            NumericVariable: X
+        ConditionOperand: Z →
+            NumericVariable: Z
+    RelationCondition: X Y EqualTo →
+        ConditionOperand: X →
+            NumericVariable: X
+        ConditionOperand: Y →
+            NumericVariable: Y
+________________________________________
+LogicalOperation: <?> X Z EqualTo NOT →
+    RelationCondition: X Z EqualTo →
+        ConditionOperand: X →
+            NumericVariable: X
+        ConditionOperand: Z →
+            NumericVariable: Z
+________________________________________
+ArithmeticOperation: Y Z ÷ →
+    NumericVariable: Y
+    NumericVariable: Z
+________________________________________
+ArithmeticOperation: Y Z - →
+    NumericVariable: Y
+    NumericVariable: Z
+________________________________________
+ArithmeticOperation: Y Z + →
+    NumericVariable: Y
+    NumericVariable: Z
+________________________________________
+ArithmeticOperation: Y Z × →
+    NumericVariable: Y
+    NumericVariable: Z
+________________________________________
+ArithmeticOperation: Y Z ^ →
+    NumericVariable: Y
+    NumericVariable: Z
+________________________________________
+ArithmeticOperation: 0 Y - →
+    NumericVariable: Y
+________________________________________
+NumericVariable: Z
+________________________________________
+SignCondition: X IS Zero ? →
+    ConditionOperand: X →
+        NumericVariable: X
+________________________________________
+SignCondition: X IS Positive ? →
+    ConditionOperand: X →
+        NumericVariable: X
+________________________________________
+SignCondition: X IS Negative ? →
+    ConditionOperand: X →
+        NumericVariable: X
+________________________________________
+SignCondition: X IS NOT Zero ? →
+    ConditionOperand: X →
+        NumericVariable: X
+________________________________________
+ClassCondition: Var-txt Numeric ?
+________________________________________
+ClassCondition: Var-txt Alphabetic ?
+________________________________________
+ClassCondition: Var-txt AlphabeticLower ?
+________________________________________
+ClassCondition: Var-txt AlphabeticUpper ?
+________________________________________
+ClassCondition: Var-DBCS DBCS ?
+________________________________________
+ClassCondition: Var-DBCS Kanji ?
+________________________________________
+ClassCondition: Var-txt MYCLASS ?
+________________________________________
+ClassCondition: Var-txt NOT Numeric ?
+________________________________________
+ConditionNameConditionOrSwitchStatusCondition: GREEN
+________________________________________
+ConditionNameConditionOrSwitchStatusCondition: MYSWITCH-ON
+________________________________________
+LogicalOperation: X 3 GreaterThan 5 X LessThan Y 4 LessThan AND OR Y X + 3 EqualTo not Y 5 - Z 2 + LessThan NOT AND Y X LessThanOrEqualTo AND X Y EqualTo not AND OR 9 Y GreaterThan X Z ÷ 2 EqualTo AND OR Y Y + 50 GreaterThan OR Y X 30 - LessThan OR →
+    LogicalOperation: X 3 GreaterThan 5 X LessThan Y 4 LessThan AND OR Y X + 3 EqualTo not Y 5 - Z 2 + LessThan NOT AND Y X LessThanOrEqualTo AND X Y EqualTo not AND OR 9 Y GreaterThan X Z ÷ 2 EqualTo AND OR Y Y + 50 GreaterThan OR →
+        LogicalOperation: X 3 GreaterThan 5 X LessThan Y 4 LessThan AND OR Y X + 3 EqualTo not Y 5 - Z 2 + LessThan NOT AND Y X LessThanOrEqualTo AND X Y EqualTo not AND OR 9 Y GreaterThan X Z ÷ 2 EqualTo AND OR →
+            LogicalOperation: X 3 GreaterThan 5 X LessThan Y 4 LessThan AND OR Y X + 3 EqualTo not Y 5 - Z 2 + LessThan NOT AND Y X LessThanOrEqualTo AND X Y EqualTo not AND OR →
+                LogicalOperation: X 3 GreaterThan 5 X LessThan Y 4 LessThan AND OR →
+                    RelationCondition: X 3 GreaterThan →
+                        ConditionOperand: X →
+                            NumericVariable: X
+                        ConditionOperand: 3 →
+                            NumericVariable: 3
+                    LogicalOperation: 5 X LessThan Y 4 LessThan AND →
+                        RelationCondition: 5 X LessThan →
+                            ConditionOperand: 5 →
+                                NumericVariable: 5
+                            ConditionOperand: X →
+                                NumericVariable: X
+                        RelationCondition: Y 4 LessThan →
+                            ConditionOperand: Y →
+                                NumericVariable: Y
+                            ConditionOperand: 4 →
+                                NumericVariable: 4
+                LogicalOperation: Y X + 3 EqualTo not Y 5 - Z 2 + LessThan NOT AND Y X LessThanOrEqualTo AND X Y EqualTo not AND →
+                    LogicalOperation: Y X + 3 EqualTo not Y 5 - Z 2 + LessThan NOT AND Y X LessThanOrEqualTo AND →
+                        LogicalOperation: Y X + 3 EqualTo not Y 5 - Z 2 + LessThan NOT AND →
+                            RelationCondition: Y X + 3 EqualTo not →
+                                ConditionOperand: Y X + →
+                                    ArithmeticOperation: Y X + →
+                                        NumericVariable: Y
+                                        NumericVariable: X
+                                ConditionOperand: 3 →
+                                    NumericVariable: 3
+                            RelationCondition: Y 5 - Z 2 + LessThan NOT →
+                                ConditionOperand: Y 5 - →
+                                    ArithmeticOperation: Y 5 - →
+                                        NumericVariable: Y
+                                        NumericVariable: 5
+                                ConditionOperand: Z 2 + →
+                                    ArithmeticOperation: Z 2 + →
+                                        NumericVariable: Z
+                                        NumericVariable: 2
+                        RelationCondition: Y X LessThanOrEqualTo →
+                            ConditionOperand: Y →
+                                NumericVariable: Y
+                            ConditionOperand: X →
+                                NumericVariable: X
+                    RelationCondition: X Y EqualTo not →
+                        ConditionOperand: X →
+                            NumericVariable: X
+                        ConditionOperand: Y →
+                            NumericVariable: Y
+            LogicalOperation: 9 Y GreaterThan X Z ÷ 2 EqualTo AND →
+                RelationCondition: 9 Y GreaterThan →
+                    ConditionOperand: 9 →
+                        NumericVariable: 9
+                    ConditionOperand: Y →
+                        NumericVariable: Y
+                RelationCondition: X Z ÷ 2 EqualTo →
+                    ConditionOperand: X Z ÷ →
+                        ArithmeticOperation: X Z ÷ →
+                            NumericVariable: X
+                            NumericVariable: Z
+                    ConditionOperand: 2 →
+                        NumericVariable: 2
+        RelationCondition: Y Y + 50 GreaterThan →
+            ConditionOperand: Y Y + →
+                ArithmeticOperation: Y Y + →
+                    NumericVariable: Y
+                    NumericVariable: Y
+            ConditionOperand: 50 →
+                NumericVariable: 50
+    RelationCondition: Y X 30 - LessThan →
+        ConditionOperand: Y →
+            NumericVariable: Y
+        ConditionOperand: X 30 - →
+            ArithmeticOperation: X 30 - →
+                NumericVariable: X
+                NumericVariable: 30
+________________________________________
+LogicalOperation: X 3 GreaterThan X 4 GreaterThan OR →
+    RelationCondition: X 3 GreaterThan →
+        ConditionOperand: X →
+            NumericVariable: X
+        ConditionOperand: 3 →
+            NumericVariable: 3
+    RelationCondition: X 4 GreaterThan →
+        ConditionOperand: X →
+            NumericVariable: X
+        ConditionOperand: 4 →
+            NumericVariable: 4
+________________________________________
+LogicalOperation: X 3 GreaterThan 5 Y LessThan AND 5 Y LessThan X 3 GreaterThan AND OR →
+    LogicalOperation: X 3 GreaterThan 5 Y LessThan AND →
+        RelationCondition: X 3 GreaterThan →
+            ConditionOperand: X →
+                NumericVariable: X
+            ConditionOperand: 3 →
+                NumericVariable: 3
+        RelationCondition: 5 Y LessThan →
+            ConditionOperand: 5 →
+                NumericVariable: 5
+            ConditionOperand: Y →
+                NumericVariable: Y
+    LogicalOperation: 5 Y LessThan X 3 GreaterThan AND →
+        RelationCondition: 5 Y LessThan →
+            ConditionOperand: 5 →
+                NumericVariable: 5
+            ConditionOperand: Y →
+                NumericVariable: Y
+        RelationCondition: X 3 GreaterThan →
+            ConditionOperand: X →
+                NumericVariable: X
+            ConditionOperand: 3 →
+                NumericVariable: 3
+________________________________________
+LogicalOperation: X 3 GreaterThan X 3 GreaterThan OR →
+    RelationCondition: X 3 GreaterThan →
+        ConditionOperand: X →
+            NumericVariable: X
+        ConditionOperand: 3 →
+            NumericVariable: 3
+    RelationCondition: X 3 GreaterThan →
+        ConditionOperand: X →
+            NumericVariable: X
+        ConditionOperand: 3 →
+            NumericVariable: 3
+________________________________________
+LogicalOperation: X Y EqualTo not Y X EqualTo not OR →
+    RelationCondition: X Y EqualTo not →
+        ConditionOperand: X →
+            NumericVariable: X
+        ConditionOperand: Y →
+            NumericVariable: Y
+    RelationCondition: Y X EqualTo not →
+        ConditionOperand: Y →
+            NumericVariable: Y
+        ConditionOperand: X →
+            NumericVariable: X
+________________________________________
+LogicalOperation: X 3 GreaterThan X 3 GreaterThan OR →
+    RelationCondition: X 3 GreaterThan →
+        ConditionOperand: X →
+            NumericVariable: X
+        ConditionOperand: 3 →
+            NumericVariable: 3
+    RelationCondition: X 3 GreaterThan →
+        ConditionOperand: X →
+            NumericVariable: X
+        ConditionOperand: 3 →
+            NumericVariable: 3
+________________________________________
+LogicalOperation: X 3 GreaterThan X 3 GreaterThan OR →
+    RelationCondition: X 3 GreaterThan →
+        ConditionOperand: X →
+            NumericVariable: X
+        ConditionOperand: 3 →
+            NumericVariable: 3
+    RelationCondition: X 3 GreaterThan →
+        ConditionOperand: X →
+            NumericVariable: X
+        ConditionOperand: 3 →
+            NumericVariable: 3
+________________________________________
+RelationCondition: X X EqualTo not →
+    ConditionOperand: X →
+        NumericVariable: X
+    ConditionOperand: X →
+        NumericVariable: X
+________________________________________
+RelationCondition: X X EqualTo not →
+    ConditionOperand: X →
+        NumericVariable: X
+    ConditionOperand: X →
+        NumericVariable: X
+________________________________________
+RelationCondition: X X EqualTo not →
+    ConditionOperand: X →
+        NumericVariable: X
+    ConditionOperand: X →
+        NumericVariable: X
+________________________________________

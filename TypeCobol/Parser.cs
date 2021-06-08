@@ -54,7 +54,7 @@ namespace TypeCobol
 			foreach (var folder in copies) {
 				sourceFileProvider.AddLocalDirectoryLibrary(folder, false, Helpers.DEFAULT_COPY_EXTENSIONS, format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength);
 			}
-			compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, CustomSymbols, isCopy, project);
+			compiler = new FileCompiler(null, filename, format.ColumnsLayout, isCopy, project.SourceFileProvider, project, options, CustomSymbols, project);
             
 			Compilers.Add(path, compiler);
 			Inits.Add(path, false);

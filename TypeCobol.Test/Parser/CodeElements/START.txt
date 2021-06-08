@@ -1,12 +1,12 @@
 ﻿--- Diagnostics ---
 Line 20[13,14] <27, Error, Syntax> - Syntax error : START: Illegal operator LessThan RuleStack=codeElement>startStatement>relationalOperator,  OffendingSymbol=[13,14:< ]<LessThanOperator>
 Line 21[13,16] <27, Error, Syntax> - Syntax error : START: Illegal operator LessThan RuleStack=codeElement>startStatement>relationalOperator,  OffendingSymbol=[13,16:LESS]<LESS>
-Line 22[13,15] <27, Error, Syntax> - Syntax error : START: Illegal operator LessThanOrEqualTo RuleStack=codeElement>startStatement>relationalOperator,  OffendingSymbol=[13,15:NOT]<NOT>
-Line 23[13,15] <27, Error, Syntax> - Syntax error : START: Illegal operator LessThanOrEqualTo RuleStack=codeElement>startStatement>relationalOperator,  OffendingSymbol=[13,15:NOT]<NOT>
+Line 22[13,15] <27, Error, Syntax> - Syntax error : START: Illegal operator GreaterThan NOT RuleStack=codeElement>startStatement>relationalOperator,  OffendingSymbol=[13,15:NOT]<NOT>
+Line 23[13,15] <27, Error, Syntax> - Syntax error : START: Illegal operator GreaterThan NOT RuleStack=codeElement>startStatement>relationalOperator,  OffendingSymbol=[13,15:NOT]<NOT>
 Line 24[13,15] <27, Error, Syntax> - Syntax error : START: Illegal operator LessThanOrEqualTo RuleStack=codeElement>startStatement>relationalOperator,  OffendingSymbol=[13,15:<= ]<LessThanOrEqualOperator>
 Line 25[13,16] <27, Error, Syntax> - Syntax error : START: Illegal operator LessThanOrEqualTo RuleStack=codeElement>startStatement>relationalOperator,  OffendingSymbol=[13,16:LESS]<LESS>
-Line 26[13,15] <27, Error, Syntax> - Syntax error : START: Illegal operator NotEqualTo RuleStack=codeElement>startStatement>relationalOperator,  OffendingSymbol=[13,15:NOT]<NOT>
-Line 27[13,15] <27, Error, Syntax> - Syntax error : START: Illegal operator NotEqualTo RuleStack=codeElement>startStatement>relationalOperator,  OffendingSymbol=[13,15:NOT]<NOT>
+Line 26[13,15] <27, Error, Syntax> - Syntax error : START: Illegal operator EqualTo NOT RuleStack=codeElement>startStatement>relationalOperator,  OffendingSymbol=[13,15:NOT]<NOT>
+Line 27[13,15] <27, Error, Syntax> - Syntax error : START: Illegal operator EqualTo NOT RuleStack=codeElement>startStatement>relationalOperator,  OffendingSymbol=[13,15:NOT]<NOT>
 --- Code Elements ---
 [[StartStatement]] [1,5:START]<START> --> [7,7:f]<UserDefinedWord>
 

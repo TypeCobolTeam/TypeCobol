@@ -22,14 +22,14 @@ namespace TypeCobol.Test.Compiler.Parser
         private static CodeElement[] ParseCodeElements(string cobolString, bool asPartOfACopy, out Diagnostic[] parserDiagnostics)
         {
             // Load text document from string
-            var textDocument = new ReadOnlyTextDocument("test string", Encoding.Default, ColumnsLayout.FreeTextFormat, "");
+            var textDocument = new ReadOnlyTextDocument("test string", Encoding.Default, ColumnsLayout.FreeTextFormat, asPartOfACopy, string.Empty);
             textDocument.LoadChars(cobolString);
 
             // Create a compilation project and a compiler for this document
             var typeCobolOptions = new TypeCobolOptions();
             var project = new CompilationProject("test project", ".", new[] { ".cbl", ".cpy" },
                 DocumentFormat.FreeTextFormat, typeCobolOptions, null);
-            var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, typeCobolOptions, asPartOfACopy, project);
+            var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, typeCobolOptions, project);
 
             // Execute compilation - until the CodeElements phase ONLY
             compiler.CompilationResultsForProgram.UpdateTokensLines();

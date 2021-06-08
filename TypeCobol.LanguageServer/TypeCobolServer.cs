@@ -808,7 +808,7 @@ namespace TypeCobol.LanguageServer
             if (wrappedCodeElement == null) //No codeelements found
                 return null;
 
-            var node = CompletionFactory.GetMatchingNode(docContext.FileCompiler, wrappedCodeElement);
+            var node = CompletionFactoryHelpers.GetMatchingNode(docContext.FileCompiler, wrappedCodeElement);
 
             //Get procedure name or qualified name
             string procedureName = CompletionFactoryHelpers.GetProcedureNameFromTokens(wrappedCodeElement.ArrangedConsumedTokens);

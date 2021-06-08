@@ -222,6 +222,25 @@ namespace TypeCobol.Test.Parser.Scanner
             };
             result = ScannerUtils.ScanLines(testLines);
             ScannerUtils.CheckWithResultFile(result, testName);
+
+            testName = "TCKeywords";
+            testLines = new string[]
+                        {
+                            "TYPEDEF STRONG UNSAFE PUBLIC PRIVATE IN-OUT STRICT",
+                            "TyPeDeF StRoNg UnSaFe PuBlIc PrIvAtE In-oUt StRiCt",
+                            "MOVE public TO private",
+                            "MOVE UNSAFE strong TO strict"
+                        };
+
+            //Scan as pure cobol
+            ScannerUtils.CompilerOptions.IsCobolLanguage = true;
+            result = ScannerUtils.ScanLines(testLines);
+            ScannerUtils.CheckWithResultFile(result, testName + "-AsCobol85");
+
+            //Scan as TypeCobol
+            ScannerUtils.CompilerOptions.IsCobolLanguage = false;
+            result = ScannerUtils.ScanLines(testLines);
+            ScannerUtils.CheckWithResultFile(result, testName + "-AsTypeCobol");
         }
 
         /// <summary>

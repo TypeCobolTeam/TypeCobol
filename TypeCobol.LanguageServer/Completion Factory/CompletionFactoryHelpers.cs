@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.LanguageServer.SignatureHelper;
@@ -12,9 +11,8 @@ using TypeCobol.LanguageServer.VsCodeProtocol;
 
 namespace TypeCobol.LanguageServer
 {
-    public static class CompletionFactoryHelpers
+    internal static class CompletionFactoryHelpers
     {
-
         /// <summary>
         /// Help to resolve procedure name inside consumed tokens.
         /// Will return a string containing only a proc name or an entire qualified name for the procedure (depending on the given tokens)
@@ -31,6 +29,23 @@ namespace TypeCobol.LanguageServer
                                 && t.TokenType != TokenType.IN_OUT) // Take tokens until keyword found
                 .Where(t => t.TokenType == TokenType.UserDefinedWord)
                 .Select(t => t.Text));
+        }
+
+        /// <summary>
+        /// Get the matching node for the given CodeElement, returns null if not found.
+        /// </summary>
+        /// <param name="fileCompiler">Current file being compiled with its compilation results</param>
+        /// <param name="codeElement">Target CodeElement</param>
+        /// <returns>Corresponding Node instance, null if not found.</returns>
+        public static Node GetMatchingNode(FileCompiler fileCompiler, CodeElement codeElement)
+        {
+            var codeElementToNode = fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot?.NodeCodeElementLinkers;
+            if (codeElementToNode != null && codeElementToNode.TryGetValue(codeElement, out var node))
+            {
+                return node;
+            }
+
+            return null;
         }
 
         public static IEnumerable<string> AggregateTokens(IEnumerable<Token> tokensToAggregate)
@@ -186,22 +201,14 @@ namespace TypeCobol.LanguageServer
             return completionItems;
         }
 
-        public static IEnumerable<CompletionItem> CreateCompletionItemsForVariables(IEnumerable<DataDefinition> variables, bool useQualifiedName = true)
+        public static IEnumerable<CompletionItem> CreateCompletionItemsForVariables(IEnumerable<DataDefinition> variables, TypeCobolOptions options, bool useQualifiedName = true)
         {
-            var completionItems = new List<CompletionItem>();
-
-            foreach (var variable in variables)
-            {
-                completionItems.Add(CreateCompletionItemForVariable(variable, useQualifiedName));
-            }
-
-            return completionItems;
+            return variables.Select(variable => CreateCompletionItemForVariable(variable, options, useQualifiedName)).ToList();
         }
 
-        public static CompletionItem CreateCompletionItemForVariable(DataDefinition variable, bool useQualifiedName = true)
+        public static CompletionItem CreateCompletionItemForVariable(DataDefinition variable, TypeCobolOptions options, bool useQualifiedName = true)
         {
-
-            var qualifiedName = variable.VisualQualifiedName.Skip(variable.VisualQualifiedName.Count > 1 ? 1 : 0); //Skip Program Name
+            var qualifiedName = variable.VisualQualifiedNameWithoutProgram;
 
             var finalQualifiedName = qualifiedName.ToList();
 
@@ -210,8 +217,8 @@ namespace TypeCobol.LanguageServer
                 finalQualifiedName.Clear();
                
 #if EUROINFO_RULES
-                var lastSplited = qualifiedName.Last().Split('-');
-                if(!qualifiedName.First().Contains(lastSplited.First()))
+                var parts = qualifiedName.Last().Split('-');
+                if (!qualifiedName.First().Contains(parts.First()))
                     finalQualifiedName.Add(qualifiedName.First());
 #else
                 finalQualifiedName.Add(qualifiedName.First());
@@ -219,19 +226,31 @@ namespace TypeCobol.LanguageServer
 #endif
                 if (qualifiedName.First() != qualifiedName.Last())
                     finalQualifiedName.Add(qualifiedName.Last());
-
             }
 
-            var variableArrangedQualifiedName = useQualifiedName ? string.Join("::", finalQualifiedName) : variable.Name;
+            string variableArrangedQualifiedName;
+            if (useQualifiedName)
+            {
+                if (options.IsCobolLanguage)
+                {
+                    //Pure Cobol, reverse and use 'OF' separator
+                    finalQualifiedName.Reverse();
+                    variableArrangedQualifiedName = string.Join(" OF ", finalQualifiedName);
+                }
+                else
+                {
+                    //Use TypeCobol separator
+                    variableArrangedQualifiedName = string.Join("::", finalQualifiedName);
+                }
+            }
+            else
+            {
+                //Do not use qualifier
+                variableArrangedQualifiedName = variable.Name;
+            }
 
-            var variableDisplay = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, variableArrangedQualifiedName);
+            var variableDisplay = $"{variable.Name} ({variable.DataType.Name}) ({variableArrangedQualifiedName})";
             return new CompletionItem(variableDisplay) { insertText = variableArrangedQualifiedName, kind = CompletionItemKind.Variable };
-        }
-
-        public static CompletionItem CreateCompletionItemForIndex(Compiler.CodeElements.SymbolInformation index, DataDefinition variable)
-        {
-            var display = string.Format("{0} (from {1})", index.Name, variable.Name);
-            return new CompletionItem(display) {insertText = index.Name, kind = CompletionItemKind.Variable};
         }
 
         public static Case GetTextCase(string tokenText)
@@ -286,12 +305,14 @@ namespace TypeCobol.LanguageServer
             { ParameterDescription.PassingTypes.Output, "OUTPUT" },
             { ParameterDescription.PassingTypes.InOut, "IN-OUT" }
         };
+
         private static readonly Dictionary<ParameterDescription.PassingTypes, string> _CamelParams = new Dictionary<ParameterDescription.PassingTypes, string>()
         {
             { ParameterDescription.PassingTypes.Input, "Input"},
             { ParameterDescription.PassingTypes.Output, "Output" },
             { ParameterDescription.PassingTypes.InOut, "In-Out" }
         };
+
         private static readonly Dictionary<ParameterDescription.PassingTypes, string> _LowerParams = new Dictionary<ParameterDescription.PassingTypes, string>()
         {
             { ParameterDescription.PassingTypes.Input, "input"},
@@ -311,6 +332,7 @@ namespace TypeCobol.LanguageServer
                     return _LowerParams;
             }
         }
+
         public enum Case
         {
             Lower = 0,   // default value
