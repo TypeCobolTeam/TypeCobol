@@ -20,26 +20,26 @@ namespace TypeCobol.Compiler.Parser
         private ParserRuleContext Context;
 		/// <summary>CodeElement object resulting of the visit the parse tree</summary>
 		public CodeElement CodeElement { get; set; }
-        private TypeCobolOptions CompilerOptions { get; }
+		private TypeCobolOptions CompilerOptions { get; }
 		private CobolWordsBuilder CobolWordsBuilder { get; }
 		private CobolExpressionsBuilder CobolExpressionsBuilder { get; }
 		private CobolStatementsBuilder CobolStatementsBuilder { get; }
 
-        public CodeElementBuilder(TypeCobolOptions compilerOptions)
-        {
-            CompilerOptions = compilerOptions;
-            CobolWordsBuilder = new CobolWordsBuilder(CompilerOptions);
-            CobolExpressionsBuilder = new CobolExpressionsBuilder(CobolWordsBuilder, CompilerOptions);
-            CobolStatementsBuilder = new CobolStatementsBuilder(CobolWordsBuilder, CobolExpressionsBuilder, CompilerOptions);
-        }
+		public CodeElementBuilder(TypeCobolOptions compilerOptions)
+		{
+			CompilerOptions = compilerOptions;
+			CobolWordsBuilder = new CobolWordsBuilder(CompilerOptions);
+			CobolExpressionsBuilder = new CobolExpressionsBuilder(CobolWordsBuilder, CompilerOptions);
+			CobolStatementsBuilder = new CobolStatementsBuilder(CobolWordsBuilder, CobolExpressionsBuilder, CompilerOptions);
+		}
 
 		/// <summary>Initialization code run before parsing each new COBOL CodeElement</summary>
 		public override void EnterCodeElement(CodeElementsParser.CodeElementContext context) {
 			CodeElement = null;
 			Context = null;
-            CobolWordsBuilder.Reset();
-            CobolExpressionsBuilder.Reset();
-        }
+			CobolWordsBuilder.Reset();
+			CobolExpressionsBuilder.Reset();
+		}
 
 		/// <summary>Code run after parsing each new CodeElement</summary>
 		public override void ExitCodeElement(CodeElementsParser.CodeElementContext context) {
