@@ -393,30 +393,15 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterTcCallStatement(CodeElementsParser.TcCallStatementContext context)
         {
-            var cbCallProc = context.procedurePointerOrFunctionPointerVariableOrfunctionNameReference;
-
             // Register call parameters (shared storage areas) information at the CodeElement level
-            CallSite callSite = null;
-            ProcedureStyleCallStatement statement = null;
+            CallSite callSite;
+            ProcedureStyleCallStatement statement;
             Context = context;
-
-            //Incomplete CallStatement, create an empty CodeElement and return + Error due to issue #774
-            if (cbCallProc == null)
-            {
-                CodeElement = new ProcedureStyleCallStatement
-                {
-                    Diagnostics = new List<Diagnostic>
-                    {
-                        new Diagnostic(MessageCode.SyntaxErrorInParser, context.Start.Position(), "Empty CALL is not authorized")
-                    }
-                };
-                return;
-            }
-
 
             //Here ambiguousSymbolReference with either CandidatesType:
             // - ProgramNameOrProgramEntry
             // - data, condition, UPSISwitch, TCFunctionName
+            var cbCallProc = context.procedurePointerOrFunctionPointerVariableOrfunctionNameReference;
             var ambiguousSymbolReference = CobolExpressionsBuilder.CreateProcedurePointerOrFunctionPointerVariableOrTCFunctionProcedure(cbCallProc);
           
 
@@ -645,6 +630,9 @@ namespace TypeCobol.Compiler.Parser
                 if (statement.CallSites == null) statement.CallSites = new List<CallSite>();
                 statement.CallSites.Add(callSite);
             }
+
+            if (CompilerOptions.IsCobolLanguage)
+                UnsupportedTypeCobolFeaturesChecker.OnCodeElement(statement, context);
 
             CodeElement = statement;
         }

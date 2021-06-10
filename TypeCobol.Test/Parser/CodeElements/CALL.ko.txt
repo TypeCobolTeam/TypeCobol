@@ -1,6 +1,5 @@
 --- Diagnostics ---
-Line 2[6,10] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, Formalized Comments elements} RuleStack=,  OffendingSymbol=[6,10:USING]<USING>
-Line 2[1,4] <27, Error, Syntax> - Syntax error : Empty CALL is not authorized
+Line 2[1,4] <27, Error, Syntax> - Syntax error : Empty CALL is not authorized OffendingSymbol=[1,4:CALL]<CALL>
 Line 4[1,4] <27, Error, Syntax> - Syntax error : mismatched input 'CALL' expecting {alphanumeric literal, numeric literal, symbol, special register, figurative constant, keyword} RuleStack=codeElement>callStatement>cobolCallStatement,  OffendingSymbol=[1,4:CALL]<CALL>
 Line 4[17,17] <27, Error, Syntax> - Syntax error : missing {CONTENT, REFERENCE, VALUE} at 'a' RuleStack=codeElement>callStatement>cobolCallStatement>callUsingParameters,  OffendingSymbol=[17,17:a]<UserDefinedWord>
 Line 5[1,4] <27, Error, Syntax> - Syntax error : CALL .. RETURNING: Missing identifier RuleStack=codeElement>callStatement>cobolCallStatement,  OffendingSymbol=[1,4:CALL]<CALL>
@@ -11,7 +10,7 @@ Line 11[17,21] <27, Error, Syntax> - Syntax error : missing {CONTENT, REFERENCE,
 Line 13[14,21] <27, Error, Syntax> - Syntax error : CALL .. USING: Illegal function identifier RuleStack=codeElement>callStatement>cobolCallStatement>callUsingParameters,  OffendingSymbol=[14,21:FUNCTION]<FUNCTION>
 Line 14[14,19] <27, Error, Syntax> - Syntax error : CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase RuleStack=codeElement>callStatement>cobolCallStatement>callUsingParameters,  OffendingSymbol=[14,19:LENGTH]<LENGTH>
 --- Code Elements ---
-[[ProcedureStyleCall]] [1,4:CALL]<CALL> --> [1,4:CALL]<CALL>
+[[CallStatement]] [1,4:CALL]<CALL> --> [12,12:x]<UserDefinedWord>
 
 [[CallStatement]] [1,4:CALL]<CALL> --> [8,12:USING]<USING>
 

@@ -46,8 +46,6 @@
        SET ADDRESS OF PicVar TO ADDRESS OF mydate.
       *KO
        SET ADDRESS OF myDate TO W-PointerVar.
-      *OK, use of unsafe in SET
-       SET UNSAFE ADDRESS OF myDate TO W-PointerVar.
       *OK
        SET W-PointerVar TO ADDRESS OF myDate.
 

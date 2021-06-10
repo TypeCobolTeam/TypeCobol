@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
@@ -195,14 +196,16 @@ namespace TypeCobol.Compiler.Diagnostics
         public static void OnCodeElement(CallStatement statement, CodeElementsParser.CallStatementContext c)
         {
             var context = c?.cobolCallStatement();
-            if (context != null) //if null it's certainly a CallStatementContext
+            if (context != null) //if null it's certainly a TcCallStatementContext
             {
+                if (context.programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable() == null)
+                    DiagnosticUtils.AddError(statement, "Empty CALL is not authorized", context.Start);
+
                 foreach (var call in context.callUsingParameters()) CheckCallUsings(statement, call);
 
                 if (context.callReturningParameter() != null && statement.OutputParameter == null)
                     DiagnosticUtils.AddError(statement, "CALL .. RETURNING: Missing identifier", context);
             }
-
         }
 
         private static void CheckCallUsings(CallStatement statement, CodeElementsParser.CallUsingParametersContext context)
@@ -397,6 +400,60 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(statement, "GOBACK should be used instead of STOP RUN", ParseTreeUtils.GetFirstToken(context), 
                     null, MessageCode.Warning);
             }
+        }
+    }
+
+    /// <summary>
+    /// Create diagnostics for TypeCobol-only elements used in strict Cobol parsing context.
+    /// Do not call this checker without testing IsCobolLanguage option first !
+    /// </summary>
+    static class UnsupportedTypeCobolFeaturesChecker
+    {
+        private static void AddError(CodeElement codeElement, string message, IParseTree location)
+            => DiagnosticUtils.AddError(codeElement, message, ParseTreeUtils.GetFirstToken(location), null, MessageCode.UnsupportedTypeCobolFeature);
+
+        public static void OnCodeElement(MoveSimpleStatement statement, CodeElementsParser.MoveSimpleContext context)
+        {
+            if (context.booleanValue() != null)
+            {
+                AddError(statement, "moving boolean values is not supported.", context.booleanValue());
+            }
+
+            //No need to check UNSAFE keyword, it will be picked up as a syntax error by ANTLR
+        }
+
+        public static void OnCodeElement(SetStatementForIndexes statement, CodeElementsParser.SetStatementForIndexesContext context)
+        {
+            if (context.variableOrExpression2()?.arithmeticExpression() != null)
+            {
+                AddError(statement, "using arithmetic expressions to manipulate indexes is not supported.", context.variableOrExpression2().arithmeticExpression());
+            }
+        }
+
+        public static void OnCodeElement(SetStatementForConditions statement, CodeElementsParser.SetStatementForConditionsContext context)
+        {
+            if (context.FALSE() != null)
+            {
+                AddError(statement, "SET TO FALSE statement is not supported.", context.FALSE());
+            }
+        }
+
+        public static void OnCodeElement(ProcedureStyleCallStatement statement, CodeElementsParser.TcCallStatementContext context)
+        {
+            if (context.INPUT() != null)
+            {
+                AddErrorOnUnsupportedKeyword(context.INPUT());
+            }
+
+            if (context.OUTPUT() != null)
+            {
+                AddErrorOnUnsupportedKeyword(context.OUTPUT());
+            }
+
+            //No need to check IN-OUT keyword, it will be picked up as a syntax error by ANTLR
+
+            void AddErrorOnUnsupportedKeyword(ITerminalNode unsupportedKeyword)
+                => AddError(statement, $"'{unsupportedKeyword.GetText()}' keyword is not supported in a Cobol CALL.", unsupportedKeyword);
         }
     }
 
