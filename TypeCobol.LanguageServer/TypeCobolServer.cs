@@ -159,6 +159,25 @@ namespace TypeCobol.LanguageServer
             this.NotifyWarning(message);
         }
 
+        protected void MissingCopiesDetected(TextDocumentIdentifier textDocument, List<string> copiesName)
+        {
+            if (copiesName.Count > 0)
+            {
+                var missingCopiesParam = new MissingCopiesParams();
+                missingCopiesParam.textDocument = textDocument;
+
+#if EUROINFO_RULES
+                ILookup<bool, string> lookup = copiesName.ToLookup<string, bool>(s => Workspace.CompilationProject.CompilationOptions.HasCpyCopy(s));
+                missingCopiesParam.Copies = lookup[false].ToList();
+                missingCopiesParam.cpyCopies = lookup[true].ToList();
+#else
+                missingCopiesParam.Copies = copiesName;
+                missingCopiesParam.cpyCopies = new List<string>();
+#endif
+                this.RpcServer.SendNotification(MissingCopiesNotification.Type, missingCopiesParam);
+            }
+        }
+
         /// <summary>
         /// Event Method triggered when missing copies are detected.
         /// </summary>
@@ -170,16 +189,7 @@ namespace TypeCobol.LanguageServer
             //This event can be used when a dependency have not been loaded
 
             //Send missing copies to client
-            var missingCopiesParam = new MissingCopiesParams();
-#if EUROINFO_RULES
-            missingCopiesParam.Copies = missingCopiesEvent.Copies.Where(s => !Workspace.CompilationProject.CompilationOptions.HasCpyCopy(s)).ToList();
-            missingCopiesParam.cpyCopies = missingCopiesEvent.Copies.Where(s => Workspace.CompilationProject.CompilationOptions.HasCpyCopy(s)).ToList();
-#else                    
-            missingCopiesParam.Copies = missingCopiesEvent.Copies;
-            missingCopiesParam.cpyCopies = new List<string>();
-#endif            
-            missingCopiesParam.textDocument = new TextDocumentIdentifier(fileUri.ToString());
-            this.RpcServer.SendNotification(MissingCopiesNotification.Type, missingCopiesParam);
+            MissingCopiesDetected(new TextDocumentIdentifier(fileUri.ToString()), missingCopiesEvent.Copies);
         }
 
         /// <summary>
