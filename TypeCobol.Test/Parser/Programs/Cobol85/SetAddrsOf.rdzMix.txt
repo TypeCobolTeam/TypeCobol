@@ -50,8 +50,6 @@ Line 30[23,30] <27, Error, Syntax> - Syntax error : Cannot write into ADDRESS(W-
       *KO
 Line 48[12,18] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strongly typed variable ADDRESS(myDate):DATE.
        SET ADDRESS OF myDate TO W-PointerVar.
-      *OK, use of unsafe in SET
-       SET UNSAFE ADDRESS OF myDate TO W-PointerVar.
       *OK
        SET W-PointerVar TO ADDRESS OF myDate.
 

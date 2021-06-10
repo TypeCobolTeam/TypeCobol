@@ -8,17 +8,23 @@ using TypeCobol.Compiler.Scanner;
 using System.Collections.Generic;
 using Antlr4.Runtime;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.Directives;
 
 namespace TypeCobol.Compiler.Parser
 {
     internal class CobolWordsBuilder
     {
-
+        private TypeCobolOptions CompilerOptions { get; }
         internal IDictionary<Token, SymbolInformation> symbolInformationForTokens { get; private set; }
 
-        public CobolWordsBuilder(IDictionary<Token, SymbolInformation> symbolInformationForTokens)
+        public CobolWordsBuilder(TypeCobolOptions compilerOptions)
         {
-            this.symbolInformationForTokens = symbolInformationForTokens;
+            CompilerOptions = compilerOptions;
+        }
+
+        public void Reset()
+        {
+            this.symbolInformationForTokens = new Dictionary<Token, SymbolInformation>();
         }
 
         private void AddToSymbolInformations(AlphanumericValue nameLiteral, SymbolInformation symbolInfo)

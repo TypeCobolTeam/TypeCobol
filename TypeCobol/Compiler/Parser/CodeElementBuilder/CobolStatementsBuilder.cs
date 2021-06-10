@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 
@@ -11,14 +13,16 @@ namespace TypeCobol.Compiler.Parser
 {
 	internal class CobolStatementsBuilder
 	{
-		public CobolStatementsBuilder(CobolWordsBuilder cobolWordsBuilder, CobolExpressionsBuilder cobolExpressionsBuilder)
+		public CobolStatementsBuilder(CobolWordsBuilder cobolWordsBuilder, CobolExpressionsBuilder cobolExpressionsBuilder, TypeCobolOptions compilerOptions)
 		{
+			CompilerOptions = compilerOptions;
 			CobolWordsBuilder = cobolWordsBuilder;
 			CobolExpressionsBuilder = cobolExpressionsBuilder;
 		}
 
-		private CobolWordsBuilder CobolWordsBuilder { get; set; }
-		private CobolExpressionsBuilder CobolExpressionsBuilder { get; set; }
+		private TypeCobolOptions CompilerOptions { get; }
+		private CobolWordsBuilder CobolWordsBuilder { get; }
+		private CobolExpressionsBuilder CobolExpressionsBuilder { get; }
 
 		  ///////////////////////////////
 		 // PROCEDURE DIVISION HEADER //
@@ -217,13 +221,11 @@ namespace TypeCobol.Compiler.Parser
 			}
 
 			// Register call parameters (shared storage areas) information at the CodeElement level
-			var callSite = new CallSite() { CallTarget = statement.ProgramOrProgramEntryOrProcedureOrFunction.SymbolReference };
-			int parametersCount =
-				(statement.InputParameters != null ? statement.InputParameters.Count : 0)
-				+ (statement.OutputParameter != null ? 1 : 0);
+			var callSite = new CallSite() { CallTarget = statement.ProgramOrProgramEntryOrProcedureOrFunction?.SymbolReference };
+			int parametersCount = statement.InputParameters.Count + (statement.OutputParameter != null ? 1 : 0);
 			callSite.Parameters = new CallSiteParameter[parametersCount];
 			int i = 0;
-			if (statement.InputParameters != null && statement.InputParameters.Count > 0) {
+			if (statement.InputParameters.Count > 0) {
 				foreach (var param in statement.InputParameters) {
 					callSite.Parameters[i] = param;
 					i++;
@@ -819,17 +821,22 @@ namespace TypeCobol.Compiler.Parser
 		 // MOVE STATEMENT //
 		////////////////////
 
-		internal MoveSimpleStatement CreateMoveStatement(CodeElementsParser.MoveSimpleContext context) {
-		    var statement = new MoveSimpleStatement(CobolExpressionsBuilder.CreateVariable(context.variable7()),
-						BuildObjectArrayFromParserRules(context.storageArea1(), ctx => CobolExpressionsBuilder.CreateStorageArea(ctx)),
-// [TYPECOBOL]
-						CobolWordsBuilder.CreateBooleanValue(context.booleanValue()));
-			if (context.UNSAFE() != null) statement.Unsafe = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.UNSAFE()));
-// [/TYPECOBOL]
-			return statement;
-		}
+        internal MoveSimpleStatement CreateMoveStatement(CodeElementsParser.MoveSimpleContext context)
+        {
+            var statement = new MoveSimpleStatement(CobolExpressionsBuilder.CreateVariable(context.variable7()),
+                BuildObjectArrayFromParserRules(context.storageArea1(),
+                    ctx => CobolExpressionsBuilder.CreateStorageArea(ctx)),
+                CobolWordsBuilder.CreateBooleanValue(context.booleanValue()));
+            if (context.UNSAFE() != null)
+                statement.Unsafe = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.UNSAFE()));
 
-		internal MoveCorrespondingStatement CreateMoveStatement(CodeElementsParser.MoveCorrespondingContext context) {
+            if (CompilerOptions.IsCobolLanguage)
+                UnsupportedTypeCobolFeaturesChecker.OnCodeElement(statement, context);
+
+            return statement;
+        }
+
+        internal MoveCorrespondingStatement CreateMoveStatement(CodeElementsParser.MoveCorrespondingContext context) {
 			var statement = new MoveCorrespondingStatement();
 			statement.FromGroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.fromGroupItem);
 			statement.ToGroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.toGroupItem);
@@ -847,6 +854,9 @@ namespace TypeCobol.Compiler.Parser
                     ReceivingGroupIsAlsoSending = false
                 };
             }
+
+            //No need to check for unsupported TC feature here, as the TC statement only differs on the UNSAFE keyword
+
             return statement;
 		}
 
@@ -1106,6 +1116,8 @@ namespace TypeCobol.Compiler.Parser
 
             if (context.UNSAFE() != null) statement.Unsafe = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.UNSAFE()));
 
+            //No need to check for unsupported TC feature here, as the TC statement only differs on the UNSAFE keyword
+
             return statement;
 		}
 
@@ -1137,7 +1149,11 @@ namespace TypeCobol.Compiler.Parser
 				statement.IncrementDirection = CreateSyntaxProperty(IndexIncrementDirection.Down, context.DOWN());
 			}
 			statement.SendingVariable = CobolExpressionsBuilder.CreateVariableOrExpression(context.variableOrExpression2());
-			return statement;
+
+            if (CompilerOptions.IsCobolLanguage)
+                UnsupportedTypeCobolFeaturesChecker.OnCodeElement(statement, context);
+
+            return statement;
 		}
 
 		internal CodeElement CreateSetStatementForSwitches(CodeElementsParser.SetStatementForSwitchesContext context) {
@@ -1169,6 +1185,10 @@ namespace TypeCobol.Compiler.Parser
 			statement.Conditions = BuildObjectArrayFromParserRules(context.conditionStorageArea(), ctx => CobolExpressionsBuilder.CreateConditionStorageArea(ctx));
             if (context.TRUE()  != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.TRUE());
 			if (context.FALSE() != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.FALSE());
+
+            if (CompilerOptions.IsCobolLanguage)
+                UnsupportedTypeCobolFeaturesChecker.OnCodeElement(statement, context);
+
             return statement;
 		}
 

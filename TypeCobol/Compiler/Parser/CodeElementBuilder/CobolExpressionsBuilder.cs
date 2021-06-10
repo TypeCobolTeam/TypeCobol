@@ -1,17 +1,18 @@
-﻿using System;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
 using System.Collections.Generic;
-using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Directives;
 
 namespace TypeCobol.Compiler.Parser
 {
 	internal class CobolExpressionsBuilder
 	{
+        private TypeCobolOptions CompilerOptions { get; }
+
         // Storage area definitions (explicit data definitions AND compiler generated storage area allocations)
-       internal IDictionary<SymbolDefinition, DataDescriptionEntry> storageAreaDefinitions { get; set; }
+        internal IDictionary<SymbolDefinition, DataDescriptionEntry> storageAreaDefinitions { get; set; }
         
         // List of storage areas read from by this CodeElement
         internal IList<StorageArea> storageAreaReads { get; set; }
@@ -29,12 +30,18 @@ namespace TypeCobol.Compiler.Parser
         // List of program, method, or function call instructions (with shared sotrage areas)
         internal IList<CallSite> callSites { get; set; }
 
-        public CobolExpressionsBuilder(CobolWordsBuilder cobolWordsBuilder)
-		{
-			CobolWordsBuilder = cobolWordsBuilder;
+        public CobolExpressionsBuilder(CobolWordsBuilder cobolWordsBuilder, TypeCobolOptions compilerOptions)
+        {
+            CompilerOptions = compilerOptions;
+            CobolWordsBuilder = cobolWordsBuilder;
+        }
+
+        public void Reset()
+        {
             storageAreaDefinitions = new Dictionary<SymbolDefinition, DataDescriptionEntry>();
             storageAreaReads = new List<StorageArea>();
             storageAreaWrites = new List<ReceivingStorageArea>();
+            storageAreaGroupsCorrespondingImpact = null;
             callTarget = null;
             callSites = new List<CallSite>();
         }
@@ -1226,7 +1233,9 @@ namespace TypeCobol.Compiler.Parser
         }
 
 		internal SymbolReferenceVariable CreateProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable(CodeElementsParser.ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariableContext context)
-		{
+        {
+            if (context == null) return null;
+
             SymbolReferenceVariable variable = null;
 			if (context.programNameReferenceOrProgramEntryReference() != null)
 			{
@@ -1236,29 +1245,6 @@ namespace TypeCobol.Compiler.Parser
 			else
 			{
 				StorageArea storageArea = CreateIdentifier(context.identifier());
-				variable = new SymbolReferenceVariable(StorageDataType.ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointer, storageArea);
-			}
-
-            // Collect storage area read/writes at the code element level
-            if (variable.StorageArea != null)
-            {
-                this.storageAreaReads.Add(variable.StorageArea);
-            }
-
-            return variable;
-        }
-
-        internal SymbolReferenceVariable CreateProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariableOrTCFunctionProcedure(CodeElementsParser.ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariableContext context)
-		{
-            SymbolReferenceVariable variable = null;
-			if (context.programNameReferenceOrProgramEntryReference() != null)
-			{
-				SymbolReference symbolReference = CobolWordsBuilder.CreateProgramNameReferenceOrProgramEntryReference(context.programNameReferenceOrProgramEntryReference());
-				variable = new SymbolReferenceVariable(StorageDataType.ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointer, symbolReference);
-			}
-			else
-			{
-				StorageArea storageArea = CreateIdentifierOrTCFunctionProcedure(context.identifier());
 				variable = new SymbolReferenceVariable(StorageDataType.ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointer, storageArea);
 			}
 
