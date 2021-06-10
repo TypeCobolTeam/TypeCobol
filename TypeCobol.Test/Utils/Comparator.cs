@@ -202,7 +202,7 @@ namespace TypeCobol.Test.Utils
 				}
                 foreach (var comparator in comparators) {
                     Console.WriteLine(comparator.paths.Result + " checked with " + comparator.GetType().Name);
-					var unit = new TestUnit(comparator, _copyExtensions);
+                    var unit = new TestUnit(comparator, _copyExtensions);
 #if EUROINFO_RULES
                     unit.Compiler.CompilerOptions.AutoRemarksEnable = autoRemarks;
 #endif

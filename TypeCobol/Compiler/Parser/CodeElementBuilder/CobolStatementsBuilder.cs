@@ -224,7 +224,7 @@ namespace TypeCobol.Compiler.Parser
 			int parametersCount = statement.InputParameters.Count + (statement.OutputParameter != null ? 1 : 0);
 			callSite.Parameters = new CallSiteParameter[parametersCount];
 			int i = 0;
-			if (statement.InputParameters != null && statement.InputParameters.Count > 0) {
+			if (statement.InputParameters.Count > 0) {
 				foreach (var param in statement.InputParameters) {
 					callSite.Parameters[i] = param;
 					i++;

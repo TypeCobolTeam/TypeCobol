@@ -38,9 +38,9 @@ namespace TypeCobol.Compiler.Parser
 		public override void EnterCodeElement(CodeElementsParser.CodeElementContext context) {
 			CodeElement = null;
 			Context = null;
-            CobolWordsBuilder.Reset();
-            CobolExpressionsBuilder.Reset();
-        }
+			CobolWordsBuilder.Reset();
+			CobolExpressionsBuilder.Reset();
+		}
 
 		/// <summary>Code run after parsing each new CodeElement</summary>
 		public override void ExitCodeElement(CodeElementsParser.CodeElementContext context) {
