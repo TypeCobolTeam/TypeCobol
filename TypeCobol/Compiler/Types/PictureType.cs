@@ -252,7 +252,7 @@ namespace TypeCobol.Compiler.Types
                     int add = 0;
                     if (Category == PictureCategory.Dbcs)
                     {
-                        add = Sequence.Sum(c => c.ch == PictureValidator.SC.B ? c.count : 0);
+                        add = Sequence.Sum(c => c.SpecialChar == PictureValidator.SC.B ? c.Count : 0);
                     }
                     return Size + add;
                 }
@@ -261,7 +261,7 @@ namespace TypeCobol.Compiler.Types
                     int add = 0;
                     if (Category == PictureCategory.Dbcs)
                     {
-                        add = Sequence.Sum(c => c.ch == PictureValidator.SC.B ? c.count : 0);
+                        add = Sequence.Sum(c => c.SpecialChar == PictureValidator.SC.B ? c.Count : 0);
                     }
                     return Size + add;
                 }
@@ -301,7 +301,7 @@ namespace TypeCobol.Compiler.Types
                             int len = Size;
                             foreach (PictureValidator.Character c in Sequence)
                             {
-                                switch (c.ch)
+                                switch (c.SpecialChar)
                                 {
                                     case PictureValidator.SC.A:
                                     case PictureValidator.SC.E:
@@ -317,11 +317,11 @@ namespace TypeCobol.Compiler.Types
                                     case PictureValidator.SC.B:
                                         if (Category == PictureCategory.Dbcs)
                                         {
-                                            len += c.count;//double the size of B.
+                                            len += c.Count;//double the size of B.
                                         }
                                         break;
                                     default:
-                                        len += c.count;//double the size
+                                        len += c.Count;//double the size
                                         break;
                                 }
                             }
@@ -332,12 +332,12 @@ namespace TypeCobol.Compiler.Types
                             int len = Size;
                             foreach (PictureValidator.Character c in Sequence)
                             {
-                                switch (c.ch)
+                                switch (c.SpecialChar)
                                 {
                                     case PictureValidator.SC.S:
                                         if (IsSeparateSign)
                                         {
-                                            len += c.count;//double the size of S.
+                                            len += c.Count;//double the size of S.
                                         }
                                         break;
                                     case PictureValidator.SC.A:
@@ -346,7 +346,7 @@ namespace TypeCobol.Compiler.Types
                                     case PictureValidator.SC.NINE:
                                     case PictureValidator.SC.DOT:
                                     case PictureValidator.SC.COMMA:
-                                        len += c.count;//double the size.
+                                        len += c.Count;//double the size.
                                         break;
                                 }
                             }
