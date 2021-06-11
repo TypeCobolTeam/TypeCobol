@@ -3,7 +3,7 @@
     public partial class PictureValidator
     {
         /// <summary>
-        /// Special chracters.
+        /// Special characters of a picture character string.
         /// </summary>
         internal enum SC
         {
@@ -27,10 +27,7 @@
             V,
             P,
             G,
-            N,
-
-            //.. The count of special char
-            SpecialCharCount
+            N
         }
     }
 }

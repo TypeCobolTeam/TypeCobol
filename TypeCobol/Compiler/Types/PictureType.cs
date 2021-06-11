@@ -107,16 +107,15 @@ namespace TypeCobol.Compiler.Types
             System.Diagnostics.Debug.Assert(validator != null);
             if (validator.IsValid())
             {
-                this.IsSigned = validator.ValidationContext.HaveSign;
+                this.IsSigned = validator.ValidationContext.IsSigned;
                 this.Scale = validator.ValidationContext.Scale;
                 this.Digits = validator.ValidationContext.Digits;
                 this.RealDigits = validator.ValidationContext.RealDigits;
-                this.IsSigned = validator.ValidationContext.HaveSign;
                 this.Category = validator.ValidationContext.Category;
                 this.IsExternalFloat = validator.ValidationContext.IsExternalFloatSequence();
                 this.Sequence = validator.ValidationContext.Sequence.ToArray();
                 this.Size = validator.ValidationContext.Size;
-                this.IsSeparateSign = validator.ValidationContext.IsSeparateSign;
+                this.IsSeparateSign = validator.IsSeparateSign;
                 if (validator.ValidationContext.IsDbcsSequence())
                     Category = PictureCategory.Dbcs;
                 if (this.IsExternalFloat)

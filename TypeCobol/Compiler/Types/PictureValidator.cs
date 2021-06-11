@@ -531,14 +531,13 @@ namespace TypeCobol.Compiler.Types
         private Context ComputeInitialContext(List<Character> sequence)
         {
             ComputeFloatingStringIndexes(sequence, out int firstIndex, out int lastIndex);
-            return new Context(sequence, this.ValidationMessages)
+            return new Context(sequence, this.ValidationMessages, this.IsSeparateSign)
                    {
                        FirstFloatingIndex = firstIndex,
                        LastFloatingIndex = lastIndex,
                        CurrencySymbol = this.CurrencySymbol,
                        DecimalPoint = this.DecimalPoint,
-                       NumericSeparator = this.NumericSeparator,
-                       IsSeparateSign = this.IsSeparateSign,
+                       NumericSeparator = this.NumericSeparator
                    };
         }
 
@@ -553,65 +552,65 @@ namespace TypeCobol.Compiler.Types
         private static readonly State[] _Automata =
         {
             //State 0: Start Symbols
-            new State(0,T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),T('Z'),T('*'),SC.CS,T('9'),T('A'),T('X'),T('S'),T('V'),T('P'),T('G'),T('N') ),
+            new State(T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),T('Z'),T('*'),SC.CS,T('9'),T('A'),T('X'),T('S'),T('V'),T('P'),T('G'),T('N') ),
 
             //------------------------------------------------------
             // NON FLOATING INSERTION SYMBOLS
             //------------------------------------------------------
             //State 1: --B-->(1)
-            new State(1, T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),SC.CS,T('9'),T('A'),T('X'),T('V'),T('P'),T('G'),T('N') ),
+            new State(T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),SC.CS,T('9'),T('A'),T('X'),T('V'),T('P'),T('G'),T('N') ),
             //State 2: --[0|/]-->(2)
-            new State(2, T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),SC.CS,T('9'),T('A'),T('X'),T('V'),T('P'),T('N') ),
+            new State(T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),SC.CS,T('9'),T('A'),T('X'),T('V'),T('P'),T('N') ),
             //State 3: --,-->(3)
-            new State(3,  T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),SC.CS,T('E'),T('9'),T('V'),T('P') ),
+            new State(T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),SC.CS,T('E'),T('9'),T('V'),T('P') ),
             //State 4: --.-->(4)
-            new State(4, T('B'),T('0'),T('/'),T(','),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),SC.CS,T('E'),T('9') ),
+            new State(T('B'),T('0'),T('/'),T(','),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),SC.CS,T('E'),T('9') ),
             //State 5: --[+|-]-->(5)
-            new State(5, T('B'),T('0'),T('/'),T(','),T('.'),T('Z'),T('*'),SC.CS,T('9'),T('V'),T('P') ),
+            new State(T('B'),T('0'),T('/'),T(','),T('.'),T('Z'),T('*'),SC.CS,T('9'),T('V'),T('P') ),
             //State 6: --[+|-]-->(6)
-            new State(6, new SC[0]),
+            new State(),
             //State : --[CR|DB]-->()
-            new State(7, new SC[0]),
+            new State(),
             //State : --CS-->(8)
-            new State(8, T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),T('9'),T('V'),T('P') ),
+            new State(T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),T('9'),T('V'),T('P') ),
             //State : --E-->(9)
-            new State(9, T('+'),T('-') ),
+            new State(T('+'),T('-') ),
 
             //------------------------------------------------------
             //FLOATING INSERTION SYMBOLS
             //------------------------------------------------------
             //State 10: --[Z|*]-->(10)
-            new State(10, T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),T('9'),T('V'),T('P') ),
+            new State(T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),T('9'),T('V'),T('P') ),
             //State 11: --[Z|*]-->(11)
-            new State(11, T('B'),T('0'),T('/'),T(','),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*') ),
+            new State(T('B'),T('0'),T('/'),T(','),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*') ),
             //State 12: --[+|-]-->(12)
-            new State(12, T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),T('9'),T('V'),T('P') ),
+            new State(T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),T('9'),T('V'),T('P') ),
             //State 13: --[+|-]-->(13)
-            new State(13, T('B'),T('0'),T('/'),T(','),T('+'),T('-') ),
+            new State(T('B'),T('0'),T('/'),T(','),T('+'),T('-') ),
             //State 14: --CS-->(14)
-            new State(14, T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,SC.CS,T('9'),T('V'),T('P') ),
+            new State(T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,SC.CS,T('9'),T('V'),T('P') ),
             //State 15: --CS-->(15)
-            new State(15, T('B'),T('0'),T('/'),T(','),T('+'),T('-'),SC.CR,SC.DB,SC.CS ),
+            new State(T('B'),T('0'),T('/'),T(','),T('+'),T('-'),SC.CR,SC.DB,SC.CS ),
 
             //------------------------------------------------------
             //OTHER SYMBOLS
             //------------------------------------------------------
             //State 16: --9-->(16)
-            new State(16, T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('E'),T('9'),T('A'),T('X'),T('V'),T('P')),
+            new State(T('B'),T('0'),T('/'),T(','),T('.'),T('+'),T('-'),SC.CR,SC.DB,T('E'),T('9'),T('A'),T('X'),T('V'),T('P')),
             //State 17: --[A|X]-->(17)
-            new State(17, T('B'),T('0'),T('/'),T('9'),T('A'),T('X')),
+            new State(T('B'),T('0'),T('/'),T('9'),T('A'),T('X')),
             //State 18: --S-->(18)
-            new State(18, T('9'),T('V'),T('P')),
+            new State(T('9'),T('V'),T('P')),
             //State 19: --V-->(19)
-            new State(19, T('B'),T('0'),T('/'),T(','),T('+'),T('-'),SC.CR,SC.DB,T('E'),T('Z'),T('*'),SC.CS,T('9'),T('P') ),
+            new State(T('B'),T('0'),T('/'),T(','),T('+'),T('-'),SC.CR,SC.DB,T('E'),T('Z'),T('*'),SC.CS,T('9'),T('P') ),
             //State 20: --P-->(20)
-            new State(20, T('+'),T('-'),SC.CR,SC.DB,T('V'),T('P')),
+            new State(T('+'),T('-'),SC.CR,SC.DB,T('V'),T('P')),
             //State 21: --P-->(21)
-            new State(21, T('B'),T('0'),T('/'),T(','),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),T('9'),T('P')),
+            new State(T('B'),T('0'),T('/'),T(','),T('+'),T('-'),SC.CR,SC.DB,T('Z'),T('*'),T('9'),T('P')),
             //State 22: --G-->(22)
-            new State(22, T('B'),T('G') ),
+            new State(T('B'),T('G') ),
             //State 23: --N-->(23)
-            new State(23, T('B'),T('0'),T('/'),T('N') ),
+            new State(T('B'),T('0'),T('/'),T('N') ),
         };
 
         /// <summary>

@@ -69,7 +69,7 @@ namespace TypeCobol.Test.Types
                 Assert.IsTrue(psv.IsValid());
                 Assert.AreEqual(psv.ValidationContext.RealDigits - psv.ValidationContext.Scale, pics[i].Item2);
                 Assert.AreEqual(psv.ValidationContext.Scale, pics[i].Item3);
-                Assert.AreEqual(psv.ValidationContext.HaveSign, pics[i].Item4);
+                Assert.AreEqual(psv.ValidationContext.IsSigned, pics[i].Item4);
             }
 
             string[] ifp_pics =

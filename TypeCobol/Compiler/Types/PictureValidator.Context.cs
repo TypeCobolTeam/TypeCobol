@@ -27,21 +27,18 @@ namespace TypeCobol.Compiler.Types
             /// <summary>
             /// Empty constructor.
             /// </summary>
-            internal Context(List<Character> sequence, List<string> validationMessages)
+            internal Context(List<Character> sequence, List<string> validationMessages, bool isSeparateSign)
             {
-                ValidationMessages = validationMessages;
                 Sequence = sequence;
+                ValidationMessages = validationMessages;
+                _isSeparateSign = isSeparateSign;
                 IsBeforeDecimalPoint = true;
             }
 
             /// <summary>
             /// Indicating whether the sign is separate character
             /// </summary>
-            internal bool IsSeparateSign
-            {
-                get;
-                set;
-            }
+            private readonly bool _isSeparateSign;
 
             /// <summary>
             /// The Currency Symbol to be used.
@@ -136,7 +133,7 @@ namespace TypeCobol.Compiler.Types
             /// <summary>
             /// Have 'S'
             /// </summary>
-            public bool HaveSign
+            public bool IsSigned
             {
                 get;
                 private set;
@@ -323,12 +320,12 @@ namespace TypeCobol.Compiler.Types
                         break;
                 }
                 if (S_count > 0)
-                    HaveSign = true;
+                    IsSigned = true;
                 //Update total size
                 switch (c.SpecialChar)
                 {
                     case SC.S:
-                        Size += this.IsSeparateSign ? 1 : 0;
+                        Size += this._isSeparateSign ? 1 : 0;
                         break;
                     case SC.V:
                     case SC.P:
